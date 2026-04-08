@@ -62,7 +62,7 @@ from Basilisk.architecture.swig_common_model import *
 %pythoncode %{
 import inspect
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, Optional
 import numpy as np
 import numba as nb
 from numba.experimental import jitclass as _nbJitclass
@@ -240,45 +240,172 @@ class MemoryNamespace:
         return object.__getattribute__(self, name)
 
 
+@dataclass
+class NbmMsgEntry:
+    """One scalar reader or writer registered with the C++ layer."""
+    pName: str
+    dtype: np.dtype
+    idx:   int   # position in the read or write slice of allPtrs
+
+@dataclass
+class NbmMsgListEntry:
+    """One list/dict reader or writer registered with the C++ layer."""
+    pName:  str
+    dtype:  np.dtype
+    n:      int                    # element count (0 for empty containers)
+    base:   int                    # first slot index in the read/write slice of allPtrs
+    bufUidx: int                   # user-pointer index for the payload buffer
+    keys:   Optional[tuple[str, ...]]  # dict keys, or None for plain lists
+
+@dataclass
+class NbmMemoryEntry:
+    """Compiled-memory registration."""
+    dtype: np.dtype
+    uidx:  int   # user-pointer index for the memory buffer
+
+
 # ---------------------------------------------------------------------------
 # NbmCtx - mutable compilation context passed through _nbmCompile helpers
 # ---------------------------------------------------------------------------
 
 @dataclass
 class NbmCtx:
-    """Mutable compilation context shared across _nbmCompile helper methods.
+    """Mutable compilation context threaded through all _nbmCompile helper methods.
 
-    Created fresh on every _nbmCompile call and never stored beyond it.
-    All helper methods receive this object and mutate it in place.
+    Created fresh at the start of every _nbmCompile call and discarded once
+    _nbmBuildCfunc returns.  Every helper receives this object and mutates it
+    in place; no field is written by more than one step (see pipeline below).
+
+    Pipeline
+    --------
+    Step 0  _nbmGetImpl          → populates  params
+    Step 1  _nbmClassifyParam    → populates  readers, writers, listReaders,
+                                              listWriters, memoryCodegen,
+                                              linkedSet;
+                                   increments readIdx, writeIdx, userIdx
+    Step 2  _nbmValidateLinks    → reads      readers, listReaders, linkedSet
+                                   (read-only; raises on unsubscribed msgs)
+    Step 3  _nbmRegisterMetaPtrs → populates  linkedUidx, moduleIdUidx, rngUidx;
+                                   increments userIdx
+    Step 4  _nbmGenerateCode     → reads all of the above;
+                                   populates  g, preLines, postLines
+    Step 5  _nbmBuildCfunc       → reads      g, preLines, postLines, params;
+                                   compiles and registers the cfunc
 
     allPtrs layout (assembled by C++ finalizeAllPtrs after _nbmCompile):
-        [0 .. readIdx-1]                         read payloads (refreshed/tick)
-        [readIdx .. readIdx+writeIdx-1]        write payloads
-        [readIdx+writeIdx .. ]                  user pointers
+        [0 .. readIdx-1]               read-payload slots   (refreshed every tick)
+        [readIdx .. readIdx+writeIdx-1] write-payload slots
+        [readIdx+writeIdx .. ]          user-pointer slots   (arbitrary Python objs)
 
-    Generated code uses _WRITE_BASE / _USER_BASE integer constants (set in g
-    by _nbmGenerateCode) so that handlers can embed user-relative indices
-    in preLines strings before those bases are known.
+    _WRITE_BASE = readIdx  and  _USER_BASE = readIdx + writeIdx  are injected into
+    g as integer constants by _nbmGenerateCode so that any preLines strings added
+    by step-1 handlers (before the bases are known) can reference them by name and
+    have them resolved at exec() time.
     """
-    params:         list[str]                                                          = field(default_factory=list)
-    readers:        list[tuple[str, np.dtype, int]]                                    = field(default_factory=list)
-    writers:        list[tuple[str, np.dtype, int]]                                    = field(default_factory=list)
-    listReaders:   list[tuple[str, np.dtype, int, int, int, tuple[str, ...] | None]]  = field(default_factory=list)
-    listWriters:   list[tuple[str, np.dtype, int, int, int, tuple[str, ...] | None]]  = field(default_factory=list)
-    memoryCodegen: tuple[np.dtype, int] | None                                        = None
-    linkedSet:     set[str]                                                           = field(default_factory=set)
-    hasModuleId:  bool                                                               = False
-    hasBsklogger:  bool                                                               = False
-    hasRng:        bool                                                               = False
-    readIdx:       int                                                                = 0
-    writeIdx:      int                                                                = 0
-    userIdx:       int                                                                = 0
-    g:              dict[str, Any]                                                     = field(default_factory=lambda: {'nb': nb, 'np': np})
-    preLines:      list[str]                                                          = field(default_factory=lambda: ["def _wrapper(allPtrs, CurrentSimNanos):"])
-    postLines:     list[str]                                                          = field(default_factory=list)
-    linkedUidx:    int | None                                                         = None
-    moduleIdUidx: int | None                                                         = None
-    rngUidx:       int | None                                                         = None
+
+    # -- Step 0 ---------------------------------------------------------------
+
+    params: list[str] = field(default_factory=list)
+    # Ordered list of UpdateStateImpl parameter names, taken directly from the
+    # function signature.  Drives the step-1 dispatch loop and is later joined
+    # into the _impl(...) call line by _nbmBuildCfunc.
+
+    # -- Step 1 ---------------------------------------------------------------
+
+    readers: list[NbmMsgEntry] = field(default_factory=list)
+    # One entry per scalar InMsg parameter (e.g. dataInMsgPayload).
+    # Set by _nbmHandleInMsgPayload.  Each entry records the parameter name,
+    # payload dtype, and its slot index in the read slice of allPtrs.
+    # Used by _nbmValidateLinks (link check) and _nbmGenerateCode (binding).
+
+    writers: list[NbmMsgEntry] = field(default_factory=list)
+    # One entry per scalar OutMsg parameter (e.g. dataOutMsgPayload).
+    # Set by _nbmHandleOutMsgPayload.  Each entry records the parameter name,
+    # payload dtype, and its slot index in the write slice of allPtrs.
+    # Used by _nbmGenerateCode to emit the write-payload binding lines.
+
+    listReaders: list[NbmMsgListEntry] = field(default_factory=list)
+    # One entry per list/dict InMsg parameter.
+    # Set by _nbmHandleInMsgPayload.  Each entry records the parameter name,
+    # dtype, element count n, base slot in the read slice, user-pointer index
+    # of the payload buffer, and optional dict keys (None for plain lists).
+    # Used by _nbmValidateLinks and _nbmGenerateCode.
+
+    listWriters: list[NbmMsgListEntry] = field(default_factory=list)
+    # One entry per list/dict OutMsg parameter.
+    # Set by _nbmHandleOutMsgPayload.  Each entry mirrors listReaders but for
+    # write slots.  Used by _nbmGenerateCode to emit both the pre-call binding
+    # and the post-call copy-back lines (via postLines).
+
+    memoryCodegen: Optional[NbmMemoryEntry] = None
+    # Set by _nbmHandleMemory when the user declares a 'memory' parameter.
+    # Holds the structured numpy dtype built from self.memory's fields and the
+    # user-pointer index of the memory buffer.  None if 'memory' is not in params.
+    # Used by _nbmGenerateCode to emit the memory binding line.
+
+    linkedSet: set[str] = field(default_factory=set)
+    # Set of *InMsgIsLinked parameter names declared in UpdateStateImpl.
+    # Populated by _nbmHandleInMsgIsLinked (one add per IsLinked param).
+    # Used in _nbmValidateLinks to skip the always-linked assertion, and in
+    # _nbmGenerateCode to emit the per-slot or per-element IsLinked bindings.
+
+    readIdx: int = 0
+    # Running count of registered reader slots.  Incremented by
+    # _nbmHandleInMsgPayload (by 1 for scalars, by n for list/dict).
+    # Final value equals the number of read-payload slots in allPtrs, and
+    # becomes _WRITE_BASE in the generated code.
+
+    writeIdx: int = 0
+    # Running count of registered writer slots.  Incremented by
+    # _nbmHandleOutMsgPayload (by 1 for scalars, by n for list/dict).
+    # Final value equals the number of write-payload slots in allPtrs, and
+    # contributes to _USER_BASE = readIdx + writeIdx.
+
+    userIdx: int = 0
+    # Running count of registered user pointers.  Incremented by step-1
+    # handlers (payload buffers, stub arrays, memory buffer) and step-3
+    # (_nbmRegisterMetaPtrs: readLinked_ array, moduleID array, rng state).
+    # Each increment corresponds to one addUserPointer() call on the C++ side.
+    # The final value is the length of the user-pointer slice of allPtrs.
+
+    # -- Step 4 ---------------------------------------------------------------
+
+    g: dict[str, Any] = field(default_factory=lambda: {'nb': nb, 'np': np})
+    # Global namespace for exec() / cfunc compilation.  Pre-seeded with 'nb'
+    # and 'np' so generated code can reference numba and numpy by name.
+    # Step-4 injects dtype constants (_rdt_*, _wdt_*, _cdt_*, _WRITE_BASE,
+    # _USER_BASE, _impl, and any handler-specific objects like _RngWrapper).
+
+    preLines: list[str] = field(default_factory=lambda: ["def _wrapper(allPtrs, CurrentSimNanos):"])
+    # Lines of the generated _wrapper function body that execute *before*
+    # calling _impl.  Opened with the def line; step-4 appends one or more
+    # variable-binding lines for each registered parameter.
+
+    postLines: list[str] = field(default_factory=list)
+    # Lines appended after the _impl call.  Used exclusively for list/dict
+    # writer copy-back: after _impl returns, each element of the payload buffer
+    # is written back into the individual allPtrs write slots.
+
+    # -- Step 3 ---------------------------------------------------------------
+
+    linkedUidx: Optional[int] = None
+    # User-pointer index of the readLinked_ uint8 array maintained by the C++
+    # layer (one byte per reader slot, non-zero when the slot is linked).
+    # Set by _nbmRegisterMetaPtrs only when readIdx > 0; stays None if there
+    # are no readers.  Used by _nbmGenerateCode to emit IsLinked bindings that
+    # index into allPtrs[_USER_BASE + linkedUidx].
+
+    moduleIdUidx: Optional[int] = None
+    # User-pointer index of the int64[1] array holding self.moduleID.
+    # Set by _nbmRegisterMetaPtrs when 'moduleID' is in params; stays None
+    # otherwise.  Used by _nbmGenerateCode to emit the moduleID binding line.
+
+    rngUidx: Optional[int] = None
+    # User-pointer index of the uint64[4] xoshiro256++ RNG state array.
+    # Set by _nbmRegisterMetaPtrs when 'rng' is in params; stays None
+    # otherwise.  The array is seeded from self.RNGSeed at Reset time and
+    # mutated in place by _RngWrapper so that state persists across ticks.
+    # Used by _nbmGenerateCode to emit the rng binding line.
 
 
 # ---------------------------------------------------------------------------
@@ -303,8 +430,7 @@ class NumbaModel(SysModelMixin, _NumbaModel):
         methods to extend which parameter names are recognised.
         """
         implFunc, params = self._nbmGetImpl()
-        ctx = NbmCtx()
-        ctx.params = params
+        ctx = NbmCtx(params=params)
         for pName in params:
             self._nbmClassifyParam(pName, ctx)
         self._nbmValidateLinks(ctx)
@@ -407,7 +533,7 @@ class NumbaModel(SysModelMixin, _NumbaModel):
                 attr.getLinkedAddress(),
                 dummy.ctypes.data,
             )
-            ctx.readers.append((pName, dt, ctx.readIdx))
+            ctx.readers.append(NbmMsgEntry(pName, dt, ctx.readIdx))
             ctx.readIdx += 1
         else:
             # List / dict reader
@@ -430,7 +556,7 @@ class NumbaModel(SysModelMixin, _NumbaModel):
                 object.__setattr__(self, f'_{attrName}_stub', _stub)
                 if isinstance(attr, dict):
                     object.__setattr__(self, f'_{attrName}Keys', ())
-                ctx.listReaders.append((pName, dt, 0, ctx.readIdx, bufUidx, None))
+                ctx.listReaders.append(NbmMsgListEntry(pName, dt, 0, ctx.readIdx, bufUidx, None))
                 return
 
             dt = self._nbmResolveReaderDtype(attrName, items[0])
@@ -476,7 +602,7 @@ class NumbaModel(SysModelMixin, _NumbaModel):
             if keysOrNone is not None:
                 object.__setattr__(self, f'_{attrName}Keys', keysOrNone)
 
-            ctx.listReaders.append((pName, dt, n, base, bufUidx, keysOrNone))
+            ctx.listReaders.append(NbmMsgListEntry(pName, dt, n, base, bufUidx, keysOrNone))
 
     def _nbmHandleOutMsgPayload(self, pName, ctx):
         attrName = pName[:-len('Payload')]   # "dataOutMsgPayload" → "dataOutMsg"
@@ -493,7 +619,7 @@ class NumbaModel(SysModelMixin, _NumbaModel):
             dt = self._nbmResolveWriterDtype(attrName, attr)
             self.addWritePayloadPtr(attr.getPayloadAddress())
             self.addWriteHeaderPtr(attr.getHeaderAddress())
-            ctx.writers.append((pName, dt, ctx.writeIdx))
+            ctx.writers.append(NbmMsgEntry(pName, dt, ctx.writeIdx))
             ctx.writeIdx += 1
         else:
             # List / dict writer
@@ -508,7 +634,7 @@ class NumbaModel(SysModelMixin, _NumbaModel):
                 object.__setattr__(self, f'_{attrName}_stub', _stub)
                 if isinstance(attr, dict):
                     object.__setattr__(self, f'_{attrName}Keys', ())
-                ctx.listWriters.append((pName, dt, 0, ctx.writeIdx, bufUidx, None))
+                ctx.listWriters.append(NbmMsgListEntry(pName, dt, 0, ctx.writeIdx, bufUidx, None))
                 return
 
             dt = self._nbmResolveWriterDtype(attrName, items[0])
@@ -542,10 +668,10 @@ class NumbaModel(SysModelMixin, _NumbaModel):
 
             object.__setattr__(self, f'_{attrName}_buf', payloadBuf)
 
-            ctx.listWriters.append((pName, dt, n, base, bufUidx, keysOrNone))
+            ctx.listWriters.append(NbmMsgListEntry(pName, dt, n, base, bufUidx, keysOrNone))
 
     def _nbmHandleModuleID(self, pName, ctx):
-        ctx.hasModuleId = True
+        pass
 
     def _nbmHandleMemory(self, pName, ctx):
         mem = object.__getattribute__(self, 'memory')
@@ -559,7 +685,7 @@ class NumbaModel(SysModelMixin, _NumbaModel):
                 if fname == '_':
                     continue
                 memD[fname] = np.array(old_buf[0][fname]) if old_dt[fname].shape else old_buf[0][fname].item()
-        raw = {k: v for k, v in vars(mem).items() if not k.startswith('_nbm_')}
+        raw = {k: v for k, v in vars(mem).items() if not k.startswith('_')}
         memFields = []
         memInit   = {}
         for fname, fval in raw.items():
@@ -581,20 +707,21 @@ class NumbaModel(SysModelMixin, _NumbaModel):
                 memoryBuf[0][fname][:] = fval
             else:
                 memoryBuf[0][fname] = fval
-        # Activate the MemoryNamespace redirect
-        mem._nbmBuf   = memoryBuf
-        mem._nbmDtype = memoryDt
+        # Activate the MemoryNamespace redirect (write directly to __dict__ to
+        # avoid MemoryNamespace.__setattr__ interpreting these as user fields)
+        memD['_nbmBuf']   = memoryBuf
+        memD['_nbmDtype'] = memoryDt
         memoryUidx = ctx.userIdx
         self.addUserPointer(memoryBuf.ctypes.data)
         ctx.userIdx += 1
         object.__setattr__(self, '_memoryBuf', memoryBuf)  # keep alive
-        ctx.memoryCodegen = (memoryDt, memoryUidx)
+        ctx.memoryCodegen = NbmMemoryEntry(memoryDt, memoryUidx)
 
     def _nbmHandleBskLogger(self, pName, ctx):
-        ctx.hasBsklogger = True
+        pass
 
     def _nbmHandleRng(self, pName, ctx):
-        ctx.hasRng = True
+        pass
 
     def _nbmHandleExtraParam(self, pName, ctx):
         """Called when no built-in handler matches pName.
@@ -650,20 +777,7 @@ class NumbaModel(SysModelMixin, _NumbaModel):
                 f"Ensure {attrName!r} is a SWIG-generated ReadFunctor."
             )
         pclsName = swigType[:-len('Reader')] + 'Payload'
-        PayloadClass = getattr(messaging, pclsName, None)
-        if PayloadClass is None:
-            raise AttributeError(
-                f"messaging.{pclsName} does not exist. "
-                f"Derived from SWIG type {swigType!r}; check that the message "
-                f"type is generated and imported correctly."
-            )
-        if PayloadClass.__dtype__ is None:
-            raise TypeError(
-                f"messaging.{pclsName}.__dtype__ is None - this payload contains "
-                f"C++ types (e.g. std::vector) that cannot be represented as a "
-                f"numpy dtype. NumbaModel cannot handle it."
-            )
-        return PayloadClass.__dtype__
+        return NumbaModel._nbmLookupPayloadDtype(attrName, swigType, pclsName)
 
     @staticmethod
     def _nbmResolveWriterDtype(attrName, item):
@@ -675,6 +789,11 @@ class NumbaModel(SysModelMixin, _NumbaModel):
             )
         swigType = type(item).__name__
         pclsName = swigType + 'Payload'
+        return NumbaModel._nbmLookupPayloadDtype(attrName, swigType, pclsName)
+
+    @staticmethod
+    def _nbmLookupPayloadDtype(attrName, swigType, pclsName):
+        """Look up messaging.<pclsName> and return its __dtype__, with clear errors."""
         PayloadClass = getattr(messaging, pclsName, None)
         if PayloadClass is None:
             raise AttributeError(
@@ -698,26 +817,26 @@ class NumbaModel(SysModelMixin, _NumbaModel):
         """Assert that non-guarded readers are subscribed."""
         # Declaring *InMsgPayload without *InMsgIsLinked asserts the reader is
         # always connected; raise a clear error at Reset time if it is not.
-        for pName, dt, ridx in ctx.readers:
-            lnk = pName[:-len('Payload')] + 'IsLinked'
+        for e in ctx.readers:
+            lnk = e.pName[:-len('Payload')] + 'IsLinked'
             if lnk not in ctx.linkedSet:
-                attrName = pName[:-len('Payload')]
+                attrName = e.pName[:-len('Payload')]
                 attr = getattr(self, attrName)
                 if not attr.isLinked():
                     raise RuntimeError(
-                        f"UpdateStateImpl declares {pName!r} without a corresponding "
+                        f"UpdateStateImpl declares {e.pName!r} without a corresponding "
                         f"'{lnk}' guard, but self.{attrName} is not subscribed.\n"
                         f"Either call  self.{attrName}.subscribeTo(...)  before "
                         f"Reset(), or add '{lnk}' to UpdateStateImpl to handle "
                         f"the unlinked case gracefully."
                     )
 
-        for pName, dt, n, base, bufUidx, keysOrNone in ctx.listReaders:
-            if n == 0:
+        for e in ctx.listReaders:
+            if e.n == 0:
                 continue   # empty container, nothing to check
-            lnk = pName[:-len('Payload')] + 'IsLinked'
+            lnk = e.pName[:-len('Payload')] + 'IsLinked'
             if lnk not in ctx.linkedSet:
-                attrName = pName[:-len('Payload')]
+                attrName = e.pName[:-len('Payload')]
                 attr = getattr(self, attrName)
                 itemsCheck = list(attr.values()) if isinstance(attr, dict) else list(attr)
                 for k, item in enumerate(itemsCheck):
@@ -725,7 +844,7 @@ class NumbaModel(SysModelMixin, _NumbaModel):
                         keyDesc = (repr(list(attr.keys())[k])
                                     if isinstance(attr, dict) else str(k))
                         raise RuntimeError(
-                            f"UpdateStateImpl declares {pName!r} without a "
+                            f"UpdateStateImpl declares {e.pName!r} without a "
                             f"corresponding '{lnk}' guard, but "
                             f"self.{attrName}[{keyDesc}] is not subscribed.\n"
                             f"Either subscribe it before Reset(), or add '{lnk}' "
@@ -749,7 +868,7 @@ class NumbaModel(SysModelMixin, _NumbaModel):
             ctx.userIdx += 1
 
         # moduleID scalar (int64)
-        if ctx.hasModuleId:
+        if 'moduleID' in ctx.params:
             moduleIdArr = np.array([self.moduleID], dtype=np.int64)
             object.__setattr__(self, '_moduleIdArr', moduleIdArr)
             ctx.moduleIdUidx = ctx.userIdx
@@ -757,7 +876,7 @@ class NumbaModel(SysModelMixin, _NumbaModel):
             ctx.userIdx += 1
 
         # xoshiro256++ RNG state (uint64[4])
-        if ctx.hasRng:
+        if 'rng' in ctx.params:
             rngState = _seedXoshiro256pp(self.RNGSeed)
             object.__setattr__(self, '_rng_state', rngState)   # keep alive
             ctx.rngUidx = ctx.userIdx
@@ -782,98 +901,97 @@ class NumbaModel(SysModelMixin, _NumbaModel):
         g['_USER_BASE']  = ctx.readIdx + ctx.writeIdx
 
         # Scalar readers
-        for pName, dt, ridx in ctx.readers:
-            g[f'_rdt_{ridx}'] = dt
+        for e in ctx.readers:
+            g[f'_rdt_{e.idx}'] = e.dtype
             preLines.append(
-                f"    {pName} = nb.carray(allPtrs[{ridx}], 1, _rdt_{ridx})[0]"
+                f"    {e.pName} = nb.carray(allPtrs[{e.idx}], 1, _rdt_{e.idx})[0]"
             )
-            lnk = pName[:-len('Payload')] + 'IsLinked'
+            lnk = e.pName[:-len('Payload')] + 'IsLinked'
             if lnk in ctx.linkedSet:
                 preLines.append(
-                    f"    {lnk} = nb.carray(allPtrs[_USER_BASE + {ctx.linkedUidx}], {ctx.readIdx}, np.uint8)[{ridx}] != np.uint8(0)"
+                    f"    {lnk} = nb.carray(allPtrs[_USER_BASE + {ctx.linkedUidx}], {ctx.readIdx}, np.uint8)[{e.idx}] != np.uint8(0)"
                 )
 
         # List / dict readers
-        for pName, dt, n, base, bufUidx, keysOrNone in ctx.listReaders:
-            g[f'_rdt_{base}'] = dt
-            if n > 0:
+        for e in ctx.listReaders:
+            g[f'_rdt_{e.base}'] = e.dtype
+            if e.n > 0:
                 preLines.append(
-                    f"    _{pName}_lnk = nb.carray(allPtrs[_USER_BASE + {ctx.linkedUidx}], {ctx.readIdx}, np.uint8)[{base}:{base+n}]"
+                    f"    _{e.pName}_lnk = nb.carray(allPtrs[_USER_BASE + {ctx.linkedUidx}], {ctx.readIdx}, np.uint8)[{e.base}:{e.base+e.n}]"
                 )
-            if keysOrNone is None:
+            if e.keys is None:
                 preLines.append(
-                    f"    _{pName}_buf = nb.carray(allPtrs[_USER_BASE + {bufUidx}], ({n},), _rdt_{base})"
+                    f"    _{e.pName}_buf = nb.carray(allPtrs[_USER_BASE + {e.bufUidx}], ({e.n},), _rdt_{e.base})"
                 )
-                if n > 0:
-                    preLines.append(f"    for _i_{base} in range({n}):")
-                    preLines.append(f"        if _{pName}_lnk[_i_{base}]:")
+                if e.n > 0:
+                    preLines.append(f"    for _i_{e.base} in range({e.n}):")
+                    preLines.append(f"        if _{e.pName}_lnk[_i_{e.base}]:")
                     preLines.append(
-                        f"            _{pName}_buf[_i_{base}] = "
-                        f"nb.carray(allPtrs[{base} + _i_{base}], 1, _rdt_{base})[0]"
+                        f"            _{e.pName}_buf[_i_{e.base}] = "
+                        f"nb.carray(allPtrs[{e.base} + _i_{e.base}], 1, _rdt_{e.base})[0]"
                     )
-                preLines.append(f"    {pName} = _{pName}_buf")
+                preLines.append(f"    {e.pName} = _{e.pName}_buf")
             else:
-                g[f'_cdt_{base}'] = np.dtype([(k, dt) for k in keysOrNone])
+                g[f'_cdt_{e.base}'] = np.dtype([(k, e.dtype) for k in e.keys])
                 preLines.append(
-                    f"    _{pName}_ctbuf = nb.carray(allPtrs[_USER_BASE + {bufUidx}], 1, _cdt_{base})"
+                    f"    _{e.pName}_ctbuf = nb.carray(allPtrs[_USER_BASE + {e.bufUidx}], 1, _cdt_{e.base})"
                 )
-                for k_i, k in enumerate(keysOrNone):
-                    preLines.append(f"    if _{pName}_lnk[{k_i}]:")
+                for k_i, k in enumerate(e.keys):
+                    preLines.append(f"    if _{e.pName}_lnk[{k_i}]:")
                     preLines.append(
-                        f"        _{pName}_ctbuf[0]['{k}'] = "
-                        f"nb.carray(allPtrs[{base + k_i}], 1, _rdt_{base})[0]"
+                        f"        _{e.pName}_ctbuf[0]['{k}'] = "
+                        f"nb.carray(allPtrs[{e.base + k_i}], 1, _rdt_{e.base})[0]"
                     )
-                preLines.append(f"    {pName} = _{pName}_ctbuf[0]")
-            lnk = pName[:-len('Payload')] + 'IsLinked'
+                preLines.append(f"    {e.pName} = _{e.pName}_ctbuf[0]")
+            lnk = e.pName[:-len('Payload')] + 'IsLinked'
             if lnk in ctx.linkedSet:
-                if keysOrNone is not None:
-                    g[f'_lcdt_{base}'] = np.dtype([(k, np.uint8) for k in keysOrNone])
-                    preLines.append(f"    _lnkbuf_{base} = np.zeros(1, _lcdt_{base})")
-                    for k_i, k in enumerate(keysOrNone):
-                        preLines.append(f"    _lnkbuf_{base}[0]['{k}'] = _{pName}_lnk[{k_i}]")
-                    preLines.append(f"    {lnk} = _lnkbuf_{base}[0]")
+                if e.keys is not None:
+                    g[f'_lcdt_{e.base}'] = np.dtype([(k, np.uint8) for k in e.keys])
+                    preLines.append(f"    _lnkbuf_{e.base} = np.zeros(1, _lcdt_{e.base})")
+                    for k_i, k in enumerate(e.keys):
+                        preLines.append(f"    _lnkbuf_{e.base}[0]['{k}'] = _{e.pName}_lnk[{k_i}]")
+                    preLines.append(f"    {lnk} = _lnkbuf_{e.base}[0]")
                 else:
-                    preLines.append(f"    {lnk} = _{pName}_lnk")
+                    preLines.append(f"    {lnk} = _{e.pName}_lnk")
 
         # Scalar writers
-        for pName, dt, widx in ctx.writers:
-            g[f'_wdt_{widx}'] = dt
+        for e in ctx.writers:
+            g[f'_wdt_{e.idx}'] = e.dtype
             preLines.append(
-                f"    {pName} = nb.carray(allPtrs[_WRITE_BASE + {widx}], 1, _wdt_{widx})[0]"
+                f"    {e.pName} = nb.carray(allPtrs[_WRITE_BASE + {e.idx}], 1, _wdt_{e.idx})[0]"
             )
 
         # List / dict writers - postLines carries copy-back after _impl
-        for pName, dt, n, base, bufUidx, keysOrNone in ctx.listWriters:
-            g[f'_wdt_{base}'] = dt
-            if keysOrNone is not None:
-                g[f'_cdtW{base}'] = np.dtype([(k, dt) for k in keysOrNone])
+        for e in ctx.listWriters:
+            g[f'_wdt_{e.base}'] = e.dtype
+            if e.keys is not None:
+                g[f'_cdtW{e.base}'] = np.dtype([(k, e.dtype) for k in e.keys])
                 preLines.append(
-                    f"    _{pName}_ctbuf = nb.carray(allPtrs[_USER_BASE + {bufUidx}], 1, _cdtW{base})"
+                    f"    _{e.pName}_ctbuf = nb.carray(allPtrs[_USER_BASE + {e.bufUidx}], 1, _cdtW{e.base})"
                 )
-                preLines.append(f"    {pName} = _{pName}_ctbuf[0]")
-                for k_i, k in enumerate(keysOrNone):
+                preLines.append(f"    {e.pName} = _{e.pName}_ctbuf[0]")
+                for k_i, k in enumerate(e.keys):
                     postLines.append(
-                        f"    nb.carray(allPtrs[_WRITE_BASE + {base + k_i}], 1, _wdt_{base})[0]"
-                        f" = _{pName}_ctbuf[0]['{k}']"
+                        f"    nb.carray(allPtrs[_WRITE_BASE + {e.base + k_i}], 1, _wdt_{e.base})[0]"
+                        f" = _{e.pName}_ctbuf[0]['{k}']"
                     )
             else:
                 preLines.append(
-                    f"    _{pName}_buf = nb.carray(allPtrs[_USER_BASE + {bufUidx}], ({n},), _wdt_{base})"
+                    f"    _{e.pName}_buf = nb.carray(allPtrs[_USER_BASE + {e.bufUidx}], ({e.n},), _wdt_{e.base})"
                 )
-                preLines.append(f"    {pName} = _{pName}_buf")
-                if n > 0:
-                    postLines.append(f"    for _j_{base} in range({n}):")
+                preLines.append(f"    {e.pName} = _{e.pName}_buf")
+                if e.n > 0:
+                    postLines.append(f"    for _j_{e.base} in range({e.n}):")
                     postLines.append(
-                        f"        nb.carray(allPtrs[_WRITE_BASE + {base} + _j_{base}], 1, _wdt_{base})[0]"
-                        f" = _{pName}_buf[_j_{base}]"
+                        f"        nb.carray(allPtrs[_WRITE_BASE + {e.base} + _j_{e.base}], 1, _wdt_{e.base})[0]"
+                        f" = _{e.pName}_buf[_j_{e.base}]"
                     )
 
         # Memory
         if ctx.memoryCodegen is not None:
-            memoryDt, memoryUidx = ctx.memoryCodegen
-            g['_memoryDt'] = memoryDt
+            g['_memoryDt'] = ctx.memoryCodegen.dtype
             preLines.append(
-                f"    memory = nb.carray(allPtrs[_USER_BASE + {memoryUidx}], 1, _memoryDt)[0]"
+                f"    memory = nb.carray(allPtrs[_USER_BASE + {ctx.memoryCodegen.uidx}], 1, _memoryDt)[0]"
             )
 
         # moduleID
@@ -883,14 +1001,14 @@ class NumbaModel(SysModelMixin, _NumbaModel):
             )
 
         # rng - xoshiro256++ state backed by userPtr; instance created per tick
-        if ctx.hasRng:
+        if ctx.rngUidx is not None:
             g['_RngWrapper'] = _RngWrapper
             preLines.append(
                 f"    rng = _RngWrapper(nb.carray(allPtrs[_USER_BASE + {ctx.rngUidx}], 4, np.uint64))"
             )
 
         # bskLogger
-        if ctx.hasBsklogger:
+        if 'bskLogger' in ctx.params:
             _bl   = self.bskLogger
             _lmap = _bl.logLevelMap   # dict[int, str] via typemap in py_sys_model.i
             _min  = np.int32(_bl.getLogLevel())
