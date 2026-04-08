@@ -196,6 +196,7 @@ void Update_sunlineUKF(SunlineUKFConfig *configData, uint64_t callTime,
     NavAttMsg_C_write(&configData->outputSunline, &configData->navStateOutMsg, moduleID, callTime);
 
     /*! - Populate the filter states output buffer and write the output message*/
+    sunlineDataOutBuffer = SunlineFilterMsg_C_zeroMsgPayload();
     sunlineDataOutBuffer.timeTag = configData->timeTag;
     sunlineDataOutBuffer.numObs = configData->numObs;
     memmove(sunlineDataOutBuffer.covar, configData->covar,

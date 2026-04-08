@@ -499,7 +499,7 @@ void sunlineHMatrixYMeas(double states[SKF_N_STATES], int numCSS, double cssSens
             *(obs+obsCounter) = cssSensorCos[i];
             *(yMeas+obsCounter) = cssSensorCos[i] - v3Dot(&(states[0]), sensorNormal);
 
-            mSetSubMatrix(sensorNormal, 1, 3, measMat, MAX_NUM_CSS_SENSORS, SKF_N_STATES, obsCounter, 0);
+            mSetSubMatrix(sensorNormal, 1, 3, measMat, MAX_N_CSS_MEAS, SKF_N_STATES, obsCounter, 0);
             obsCounter++;
         }
     }

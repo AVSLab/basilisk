@@ -111,7 +111,7 @@ extern "C" {
                             int64_t moduleId);
     void Reset_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, uint64_t callTime,
                            int64_t moduleId);
-    void pixelLineBiasUKFTwoBodyDyn(double state[PIXLINE_N_STATES], double mu, double *stateDeriv);
+    void pixelLineBiasUKFTwoBodyDyn(double state[PIXLINE_DYN_STATES], double mu, double *stateDeriv);
     int pixelLineBiasUKFTimeUpdate(PixelLineBiasUKFConfig *configData, double updateTime);
     int pixelLineBiasUKFMeasUpdate(PixelLineBiasUKFConfig *configData);
     void pixelLineBiasUKFCleanUpdate(PixelLineBiasUKFConfig *configData);

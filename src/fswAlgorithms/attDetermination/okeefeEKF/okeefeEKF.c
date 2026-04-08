@@ -156,12 +156,13 @@ void Update_okeefeEKF(okeefeEKFConfig *configData, uint64_t callTime,
     NavAttMsg_C_write(&configData->outputSunline, &configData->navStateOutMsg, moduleID, callTime);
 
     /*! - Populate the filter states output buffer and write the output message*/
+    sunlineDataOutBuffer = SunlineFilterMsg_C_zeroMsgPayload();
     sunlineDataOutBuffer.timeTag = configData->timeTag;
     sunlineDataOutBuffer.numObs = (int) configData->numObs;
     memmove(sunlineDataOutBuffer.covar, configData->covar,
             SKF_N_STATES_HALF*SKF_N_STATES_HALF*sizeof(double));
-    memmove(sunlineDataOutBuffer.state, configData->state, SKF_N_STATES*sizeof(double));
-    memmove(sunlineDataOutBuffer.stateError, configData->x, SKF_N_STATES*sizeof(double));
+    memmove(sunlineDataOutBuffer.state, configData->state, SKF_N_STATES_HALF*sizeof(double));
+    memmove(sunlineDataOutBuffer.stateError, configData->x, SKF_N_STATES_HALF*sizeof(double));
     memmove(sunlineDataOutBuffer.postFitRes, configData->postFits, MAX_N_CSS_MEAS*sizeof(double));
     SunlineFilterMsg_C_write(&sunlineDataOutBuffer, &configData->filtDataOutMsg, moduleID, callTime);
 
@@ -509,7 +510,7 @@ void sunlineHMatrixYMeas(double states[SKF_N_STATES_HALF], size_t numCSS, double
 
             *(obs+obsCounter) = cssSensorCos[i];
             *(yMeas+obsCounter) = cssSensorCos[i] - v3Dot(&(states[0]), sensorNormal);
-            mSetSubMatrix(sensorNormal, 1, 3, measMat, MAX_NUM_CSS_SENSORS, SKF_N_STATES_HALF, obsCounter, 0);
+            mSetSubMatrix(sensorNormal, 1, 3, measMat, MAX_N_CSS_MEAS, SKF_N_STATES_HALF, obsCounter, 0);
             obsCounter++;
         }
     }
