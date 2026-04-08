@@ -19,6 +19,7 @@
 
 #include "dataStorageUnitBase.h"
 #include "architecture/utilities/macroDefinitions.h"
+#include <cstdio>
 #include <iostream>
 
 /*! This method initializes some basic parameters for the module.
@@ -179,7 +180,10 @@ void DataStorageUnitBase::integrateDataStatus(double currentTime){
                //! - if a dataNode does not exist in storedData, add it to storedData, integrate baud rate, and add amount
            }
            else if (strcmp(it->dataName, "") != 0) {
-               strncpy(tmpDataInstance.dataInstanceName, it->dataName, sizeof(tmpDataInstance.dataInstanceName));
+               std::snprintf(tmpDataInstance.dataInstanceName,
+                             sizeof(tmpDataInstance.dataInstanceName),
+                             "%s",
+                             it->dataName);
                tmpDataInstance.dataInstanceSum = static_cast<int64_t>(round(it->baudRate * (this->currentTimestep)));
                this->storedData.push_back(tmpDataInstance);
            }
@@ -278,7 +282,10 @@ void DataStorageUnitBase::setDataBuffer(std::string partitionName, int64_t data)
         }
         //! - if a dataNode does not exist in storedData, add it to storedData, and add amount
         else if (strcmp(partitionName.c_str(), "") != 0) {
-            strncpy(tmpDataInstance.dataInstanceName, partitionName.c_str(), sizeof(tmpDataInstance.dataInstanceName));
+            std::snprintf(tmpDataInstance.dataInstanceName,
+                          sizeof(tmpDataInstance.dataInstanceName),
+                          "%s",
+                          partitionName.c_str());
             //! Only perform this operation if the resulting sum in the partition is not negative. If it is, initialize to zero.
             if (data < 0) {
                 data = 0;
