@@ -20,6 +20,7 @@
 #include "simpleTransmitter.h"
 #include "architecture/utilities/bskLogging.h"
 #include <array>
+#include <cstdio>
 
 /*! Constructor, which sets the default nodeDataOut to zero.
 */
@@ -91,11 +92,16 @@ void SimpleTransmitter::evaluateDataModel(DataNodeUsageMsgPayload *dataUsageSimM
         if (this->packetTransmitted == 0.0) {
 
             // Set nodeDataName to the maximum data name
-            strncpy(this->nodeDataName, this->storageUnitMsgs.back().storedDataName[this->currentIndex].c_str(),
-                    sizeof(this->nodeDataName));
+            std::snprintf(this->nodeDataName,
+                          sizeof(this->nodeDataName),
+                          "%s",
+                          this->storageUnitMsgs.back().storedDataName[this->currentIndex].c_str());
 
             // strncpy nodeDataName to the name of the output message
-            strncpy(dataUsageSimMsg->dataName, this->nodeDataName, sizeof(dataUsageSimMsg->dataName));
+            std::snprintf(dataUsageSimMsg->dataName,
+                          sizeof(dataUsageSimMsg->dataName),
+                          "%s",
+                          this->nodeDataName);
             this->packetTransmitted += this->nodeBaudRate * (this->currentTimestep);
 
             // Check to see if maxVal is less than packet size.
@@ -106,7 +112,10 @@ void SimpleTransmitter::evaluateDataModel(DataNodeUsageMsgPayload *dataUsageSimM
                 this->packetTransmitted = 0;
             }
         } else {
-            strncpy(dataUsageSimMsg->dataName, this->nodeDataName, sizeof(dataUsageSimMsg->dataName));
+            std::snprintf(dataUsageSimMsg->dataName,
+                          sizeof(dataUsageSimMsg->dataName),
+                          "%s",
+                          this->nodeDataName);
             this->packetTransmitted += this->nodeBaudRate * (this->currentTimestep);
             // If the transmitted packet size has exceeded the packet size, set packetTransmitted to zero
             // Both of these variables are negative so the comparison is non-intuitive

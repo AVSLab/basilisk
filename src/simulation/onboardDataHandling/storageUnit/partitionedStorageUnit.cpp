@@ -18,6 +18,7 @@
  */
 
 #include <cstdint>
+#include <cstdio>
 
 
 #include "partitionedStorageUnit.h"
@@ -57,7 +58,10 @@ void PartitionedStorageUnit::customReset(uint64_t currentClock){
  */
 void PartitionedStorageUnit::addPartition(std::string dataName){
     dataInstance tmpDataInstance;
-    strncpy(tmpDataInstance.dataInstanceName, dataName.c_str(), sizeof(tmpDataInstance.dataInstanceName));
+    std::snprintf(tmpDataInstance.dataInstanceName,
+                  sizeof(tmpDataInstance.dataInstanceName),
+                  "%s",
+                  dataName.c_str());
     tmpDataInstance.dataInstanceSum = 0;
     this->storedData.push_back(tmpDataInstance);
     return;

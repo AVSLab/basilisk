@@ -20,6 +20,7 @@
 #include "spaceToGroundTransmitter.h"
 #include "architecture/utilities/bskLogging.h"
 #include <array>
+#include <cstdio>
 #include <iostream>
 
 /*! Constructor, which sets the default nodeDataOut to zero.
@@ -166,11 +167,15 @@ SpaceToGroundTransmitter::evaluateDataModel(DataNodeUsageMsgPayload* dataUsageSi
             //! - If we have not transmitted any of the packet, we select a new type of data to downlink
             if (this->packetTransmitted == 0.0) {
                 // Set nodeDataName to the maximum data name
-                strncpy(this->nodeDataName,
-                        this->storageUnitMsgsBuffer.back().storedDataName[maxIndex].c_str(),
-                        sizeof(this->nodeDataName));
+                std::snprintf(this->nodeDataName,
+                              sizeof(this->nodeDataName),
+                              "%s",
+                              this->storageUnitMsgsBuffer.back().storedDataName[maxIndex].c_str());
                 // strncpy nodeDataName to the name of the output message
-                strncpy(dataUsageSimMsg->dataName, this->nodeDataName, sizeof(dataUsageSimMsg->dataName));
+                std::snprintf(dataUsageSimMsg->dataName,
+                              sizeof(dataUsageSimMsg->dataName),
+                              "%s",
+                              this->nodeDataName);
 
                 // Check to see if maxVal is less than packet size. If not set the output message baudRate to zero
                 // We do not want to start downlinking until we have enough data for one packet
@@ -188,7 +193,10 @@ SpaceToGroundTransmitter::evaluateDataModel(DataNodeUsageMsgPayload* dataUsageSi
                 }
 
             } else {
-                strncpy(dataUsageSimMsg->dataName, this->nodeDataName, sizeof(dataUsageSimMsg->dataName));
+                std::snprintf(dataUsageSimMsg->dataName,
+                              sizeof(dataUsageSimMsg->dataName),
+                              "%s",
+                              this->nodeDataName);
 
                 // If the downlink exceeds the available data, don't downlink
                 if ((maxVal + this->nodeBaudRate * (this->currentTimestep)) < 0) {
