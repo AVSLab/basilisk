@@ -174,12 +174,13 @@ void Update_sunlineSEKF(sunlineSEKFConfig *configData, uint64_t callTime,
     NavAttMsg_C_write(&configData->outputSunline, &configData->navStateOutMsg, moduleID, callTime);
 
     /*! - Populate the filter states output buffer and write the output message*/
+    sunlineDataOutBuffer = SunlineFilterMsg_C_zeroMsgPayload();
     sunlineDataOutBuffer.timeTag = configData->timeTag;
     sunlineDataOutBuffer.numObs = (int) configData->numObs;
     memmove(sunlineDataOutBuffer.covar, configData->covar,
             EKF_N_STATES_SWITCH*EKF_N_STATES_SWITCH*sizeof(double));
     memmove(sunlineDataOutBuffer.state, states_BN, EKF_N_STATES_SWITCH*sizeof(double));
-    memmove(sunlineDataOutBuffer.stateError, configData->x, SKF_N_STATES*sizeof(double));
+    memmove(sunlineDataOutBuffer.stateError, configData->x, EKF_N_STATES_SWITCH*sizeof(double));
     memmove(sunlineDataOutBuffer.postFitRes, configData->postFits, MAX_N_CSS_MEAS*sizeof(double));
     SunlineFilterMsg_C_write(&sunlineDataOutBuffer, &configData->filtDataOutMsg, moduleID, callTime);
 
@@ -222,14 +223,14 @@ void sunlineTimeUpdate(sunlineSEKFConfig *configData, double updateTime)
     /*Compute Gamma and add gammaQGamma^T to Pbar. This is the process noise addition*/
     mSetIdentity(d_tilde, SKF_N_STATES_HALF, SKF_N_STATES_HALF);
     mScale(configData->dt, d_tilde, SKF_N_STATES_HALF, SKF_N_STATES_HALF, d_tilde);
-    mSetSubMatrix(&(d_tilde[0][0]), 1, 2, Gamma, 5, 2, 3, 0);
-    mSetSubMatrix(&(d_tilde[1][0]), 1, 2, Gamma, 5, 2, 4, 0);
+    mSetSubMatrix(&(d_tilde[0][0]), 1, 2, Gamma, EKF_N_STATES_SWITCH, (EKF_N_STATES_SWITCH-3), 3, 0);
+    mSetSubMatrix(&(d_tilde[1][0]), 1, 2, Gamma, EKF_N_STATES_SWITCH, (EKF_N_STATES_SWITCH-3), 4, 0);
     v3Tilde(configData->state, d_tilde);
     mMultM(d_tilde, SKF_N_STATES_HALF, SKF_N_STATES_HALF, dcm_BS, SKF_N_STATES_HALF, SKF_N_STATES_HALF, d_tilde);
     mScale(configData->dt*configData->dt/2, d_tilde, SKF_N_STATES_HALF, SKF_N_STATES_HALF, d_tilde);
-    mSetSubMatrix(&(d_tilde[0][1]), 1, 2, Gamma, 5, 2, 0, 0);
-    mSetSubMatrix(&(d_tilde[1][1]), 1, 2, Gamma, 5, 2, 1, 0);
-    mSetSubMatrix(&(d_tilde[2][1]), 1, 2, Gamma, 5, 2, 2, 0);
+    mSetSubMatrix(&(d_tilde[0][1]), 1, 2, Gamma, EKF_N_STATES_SWITCH, (EKF_N_STATES_SWITCH-3), 0, 0);
+    mSetSubMatrix(&(d_tilde[1][1]), 1, 2, Gamma, EKF_N_STATES_SWITCH, (EKF_N_STATES_SWITCH-3), 1, 0);
+    mSetSubMatrix(&(d_tilde[2][1]), 1, 2, Gamma, EKF_N_STATES_SWITCH, (EKF_N_STATES_SWITCH-3), 2, 0);
 
     mMultMt(configData->procNoise, (EKF_N_STATES_SWITCH-3),(EKF_N_STATES_SWITCH-3), Gamma, EKF_N_STATES_SWITCH, (EKF_N_STATES_SWITCH-3), qGammaT);
     mMultM(Gamma, EKF_N_STATES_SWITCH,(EKF_N_STATES_SWITCH-3), qGammaT, (EKF_N_STATES_SWITCH-3), EKF_N_STATES_SWITCH, gammaQGammaT);
@@ -249,7 +250,7 @@ void sunlineTimeUpdate(sunlineSEKFConfig *configData, double updateTime)
     @param dt time step
     @param stateTransition
  */
-void sunlineStateSTMProp(double dynMat[EKF_N_STATES_SWITCH*EKF_N_STATES_SWITCH], double bVec[SKF_N_STATES], double dt, double *stateInOut, double *stateTransition)
+void sunlineStateSTMProp(double dynMat[EKF_N_STATES_SWITCH*EKF_N_STATES_SWITCH], double bVec[SKF_N_STATES_HALF], double dt, double *stateInOut, double *stateTransition)
 {
 
     double deltatASTM[EKF_N_STATES_SWITCH*EKF_N_STATES_SWITCH];
@@ -292,7 +293,7 @@ void sunlineStateSTMProp(double dynMat[EKF_N_STATES_SWITCH*EKF_N_STATES_SWITCH],
  @param dynMat Pointer to the Dynamic Matrix
  */
 
-void sunlineDynMatrix(double states[EKF_N_STATES_SWITCH], double bVec[SKF_N_STATES], double dt, double *dynMat)
+void sunlineDynMatrix(double states[EKF_N_STATES_SWITCH], double bVec[SKF_N_STATES_HALF], double dt, double *dynMat)
 {
     double skewOmega[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
     double skewStates[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
@@ -504,7 +505,7 @@ void sunlineHMatrixYMeas(double states[EKF_N_STATES_SWITCH], size_t numCSS, doub
 
             *(obs+obsCounter) = cssSensorCos[i];
             *(yMeas+obsCounter) = cssSensorCos[i] - v3Dot(&(states[0]), sensorNormal);
-            mSetSubMatrix(&(cssNHat_B[i*3]), 1, 3, measMat, MAX_NUM_CSS_SENSORS, EKF_N_STATES_SWITCH, obsCounter, 0);
+            mSetSubMatrix(&(cssNHat_B[i*3]), 1, 3, measMat, MAX_N_CSS_MEAS, EKF_N_STATES_SWITCH, obsCounter, 0);
             obsCounter++;
         }
     }
