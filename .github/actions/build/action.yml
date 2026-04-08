@@ -29,6 +29,9 @@ runs:
           requirements_dev.txt
           requirements_doc.txt
           requirements.txt
+          .github/workflows/requirements_dev.txt
+          .github/workflows/requirements_doc.txt
+          .github/workflows/requirements.txt
 
     - name: Setup system dependencies
       uses: ./.github/actions/setup
