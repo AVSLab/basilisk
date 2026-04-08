@@ -103,7 +103,7 @@ SphericalHarmonicsGravityModel::computeField(const Eigen::Vector3d& position_pla
     double y = position_planetFixed[1];
     double z = position_planetFixed[2];
     double r, s, t, u;
-    double order;
+    size_t order;
     double rho;
     double a1, a2, a3, a4, sum_a1, sum_a2, sum_a3, sum_a4;
     std::vector<double> rE, iM, rhol;

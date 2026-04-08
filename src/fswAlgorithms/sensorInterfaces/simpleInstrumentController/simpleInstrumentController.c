@@ -119,7 +119,7 @@ void Update_simpleInstrumentController(simpleInstrumentControllerConfig *configD
                 else {
                     if (!configData->constraintsActive) {
                         configData->constraintsActive = 1;
-                        configData->constraintStartTime = callTime;  // current sim time
+                        configData->constraintStartTime = (double) callTime;  // current sim time
                     }
 
                     if (configData->acquisitionTime < 0.0) {

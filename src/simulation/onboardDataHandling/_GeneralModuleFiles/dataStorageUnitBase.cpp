@@ -135,8 +135,8 @@ void DataStorageUnitBase::writeMessages(uint64_t CurrentClock){
 
     //! - Set first three message parameters
     this->storageStatusMsg.currentNetBaud = this->netBaud;
-    this->storageStatusMsg.storageCapacity = this->storageCapacity;
-    this->storageStatusMsg.storageLevel = this->storedDataSum;
+    this->storageStatusMsg.storageCapacity = static_cast<double>(this->storageCapacity);
+    this->storageStatusMsg.storageLevel = static_cast<double>(this->storedDataSum);
 
     //! - Loop through stored data and copy over to the output message
     for(size_t i = 0; i < this->storedData.size(); i++){

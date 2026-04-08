@@ -33,7 +33,7 @@ Eigen::Vector2d calculateSD(const Eigen::MatrixXd& dat, int64_t numPts)
         Eigen::Vector2d diff = dat.col(i) - means;
         variance += diff.cwiseProduct(diff);
     }
-    variance /= (numPts - 1);  // Use n-1 for sample standard deviation
+    variance /= static_cast<double>(numPts - 1);  // Use n-1 for sample standard deviation
 
     return variance.cwiseSqrt();
 }

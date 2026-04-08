@@ -229,8 +229,8 @@ void DentonFluxModel::UpdateState(uint64_t CurrentSimNanos)
             }
         }
 
-        int localTimeFloor = floor(this->localTime);
-        int localTimeCeil = ceil(this->localTime);
+        int localTimeFloor = static_cast<int>(floor(this->localTime));
+        int localTimeCeil = static_cast<int>(ceil(this->localTime));
 
         // Initialize flux variables
         double flux11 = 0.0;

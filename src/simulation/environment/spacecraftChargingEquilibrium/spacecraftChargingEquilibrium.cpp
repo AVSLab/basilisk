@@ -964,7 +964,7 @@ double SpacecraftChargingEquilibrium::interp(Eigen::VectorXd& xVector, Eigen::Ve
     }
     if (idx1 == -1){
         // if no index can be found, x is greater than last element in xVector. Return last index
-        idx1 = xVector.size() - 1;
+        idx1 = static_cast<int>(xVector.size()) - 1;
     }
     else if (idx1 == 0){
         // increase index by one as idx0 = idx1 - 1.
