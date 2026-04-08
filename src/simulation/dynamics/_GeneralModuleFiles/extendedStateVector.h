@@ -60,6 +60,7 @@ makes performing state-wise operations easier.
 using ExtendedStateId = std::pair<size_t, std::string>;
 
 /// @cond DOXYGEN_IGNORE
+#ifndef SWIG
 namespace std // Inject hash for ExtendedStateId into std::
 {
     /** Hash implementation for ``std::pair<size_t, std::string>``,
@@ -76,6 +77,7 @@ namespace std // Inject hash for ExtendedStateId into std::
         }
     };
 }
+#endif
 /// @endcond
 
 using StateIdToIndexMap = std::unordered_map<ExtendedStateId, size_t>;

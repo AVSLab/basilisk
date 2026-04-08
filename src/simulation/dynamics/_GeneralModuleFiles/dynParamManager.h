@@ -37,6 +37,7 @@ void hashCombine(std::size_t& seed, const T& v, const Rest&... rest)
     (hashCombine(seed, rest), ...);
 }
 
+#ifndef SWIG
 namespace std // Inject hash for std::pair<std::string, size_t> into std::
 {
     /** Hash implementation for ``std::pair<std::string, size_t>``,
@@ -53,6 +54,7 @@ namespace std // Inject hash for std::pair<std::string, size_t> into std::
         }
     };
 }
+#endif
 /// @endcond
 
 /** StateVector represents an ordered collection of StateData,
