@@ -21,18 +21,11 @@ import os
 import shutil
 import subprocess
 import sys
-import warnings
 from datetime import date
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import pytest
-
-warnings.filterwarnings(
-    "ignore",
-    message="builtin type swigvarlink has no __module__ attribute",
-    category=DeprecationWarning,
-)
 
 SHOW_PLOTS_REMOVAL_DATE = date(2027, 2, 12)
 SHOW_PLOTS_DEPRECATION_MESSAGE = (

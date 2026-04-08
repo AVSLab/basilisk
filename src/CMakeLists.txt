@@ -71,7 +71,7 @@ if(PY_LIMITED_API AND NOT PY_LIMITED_API STREQUAL "")
   # compatibility (basically, we can build a single Python wheel to
   # support all future Python versions).
   # See https://docs.python.org/3/c-api/stable.html
-  # NOTE: Swig 4.2.0 is required, see https://github.com/swig/swig/pull/2727
+  # NOTE: Swig 4.2.0 is required. Swig 4.4.x avoids the deprecated wrapper warnings on newer Python releases.
   add_definitions("-DPy_LIMITED_API=${PY_LIMITED_API}")  # Support for current Python version
 
   # Force libraries to link to the Stable ABI module instead.
