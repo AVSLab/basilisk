@@ -386,7 +386,7 @@ void ConstraintDynamicEffector::computeForceTorque(double integTime, double time
             this->forceExternal_N = - this->Fc_N;
             this->torqueExternalPntB_B = this->T_B2;
         }
-        this->scID = (1 + pow(-1,this->scID))/2; // toggle spacecraft to be assigned forces and torques
+        this->scID = 1 - this->scID; // toggle spacecraft to be assigned forces and torques
     }
 }
 
