@@ -17,6 +17,8 @@
 
 #include <fstream>
 #include <iostream>
+#include <cmath>
+#include <cstdint>
 #include <cstdio>
 #include <string>
 
@@ -681,10 +683,10 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         vizSettings->set_linesandframeslinewidth(this->settings.linesAndFramesLineWidth);
         vizSettings->set_uselinerenderersfortargetlinesandframes(this->settings.useLineRenderersForTargetLinesAndFrames);
         for (size_t i=0; i<settings.osculatingOrbitLineRange.size(); i++){
-            vizSettings->add_osculatingorbitlinerange(static_cast<float>(this->settings.osculatingOrbitLineRange[i] * R2D));
+            vizSettings->add_osculatingorbitlinerange(static_cast<int32_t>(std::lround(this->settings.osculatingOrbitLineRange[i] * R2D)));
         }
         for (size_t i=0; i<settings.osculatingGroundTrackRange.size(); i++){
-            vizSettings->add_osculatinggroundtrackrange(static_cast<float>(this->settings.osculatingGroundTrackRange[i] * R2D));
+            vizSettings->add_osculatinggroundtrackrange(static_cast<int32_t>(std::lround(this->settings.osculatingGroundTrackRange[i] * R2D)));
         }
         vizSettings->set_showosculatinggroundtracklines(this->settings.showOsculatingGroundTrackLines);
         vizSettings->set_showtruepathgroundtracklines(this->settings.showTruePathGroundTrackLines);
