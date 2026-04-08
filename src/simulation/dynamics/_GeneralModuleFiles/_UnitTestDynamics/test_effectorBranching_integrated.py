@@ -373,15 +373,7 @@ def effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dynamic
     rotAngMom_N = scObjectLog.totRotAngMomPntC_N  # total rotational angular momentum about the total vehicle COM
     totAccumDV_N = datLog.TotalAccumDV_CN_N # total accumulated deltaV of the total vehicle COM
 
-    # Grab effector's inertial position
-    if stateEffector in ["hingedRigidBodies", "dualHingedRigidBodies", "nHingedRigidBodies"]:
-        r_ScN_N_log = np.zeros_like(inertialPropLog.r_BN_N)
-        for i in range(len(inertialPropLog.sigma_BN)):
-            sigmai_SN = inertialPropLog.sigma_BN[i, :] # MRP at timestep i and S is the parent frame not B
-            dcm_NS = np.transpose(rbk.MRP2C(sigmai_SN))
-            r_ScN_N_log[i, :] = inertialPropLog.r_BN_N[i, :] + (dcm_NS @ stateEffProps.r_PcP_P).flatten()
-    else:
-        r_ScN_N_log = inertialPropLog.r_BN_N
+    r_ScN_N_log = inertialPropLog.r_BN_N
 
     # Grab effector's attitude properties
     sigma_SN_log = inertialPropLog.sigma_BN
