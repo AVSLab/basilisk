@@ -232,6 +232,59 @@ def _runTestWithTimeout(resultQueue, numWorkers, iterationsPerWorker):
                 False,
             )
         )
+    finally:
+        _closeQueue(resultQueue)
+
+
+def _closeQueue(resultQueue):
+    """
+    Close a multiprocessing queue and wait for its feeder thread.
+
+    Parameters
+    ----------
+    resultQueue : multiprocessing.Queue
+        Queue to close after all expected data has been read or written.
+    """
+    try:
+        resultQueue.close()
+    except (OSError, ValueError):
+        pass
+    try:
+        resultQueue.join_thread()
+    except (AssertionError, OSError, ValueError):
+        pass
+
+
+def _closeProcess(testProcess):
+    """
+    Release multiprocessing process resources after the process exits.
+
+    Parameters
+    ----------
+    testProcess : multiprocessing.Process
+        Process object to close after it has been joined.
+    """
+    try:
+        testProcess.close()
+    except (OSError, ValueError):
+        pass
+
+
+def _terminateProcess(testProcess):
+    """
+    Stop a multiprocessing process and wait for shutdown.
+
+    Parameters
+    ----------
+    testProcess : multiprocessing.Process
+        Process object to terminate.
+    """
+    testProcess.terminate()
+    shutdownTimeout = 1  # [s]
+    testProcess.join(shutdownTimeout)
+    if testProcess.is_alive():
+        os.kill(testProcess.pid, 9)
+        testProcess.join(shutdownTimeout)
 
 
 @pytest.mark.flaky(reruns=3)
@@ -260,34 +313,37 @@ def testSpiceThreadSafety(numWorkers, iterationsPerWorker):
         target=_runTestWithTimeout,
         args=(resultQueue, numWorkers, iterationsPerWorker),
     )
-    testProcess.start()
-
-    timeoutSeconds = 60
-    testProcess.join(timeoutSeconds)
-
-    if testProcess.is_alive():
-        # Hard timeout: kill the worker process and fail the test
-        testProcess.terminate()
-        testProcess.join(1)
-        if testProcess.is_alive():
-            os.kill(testProcess.pid, 9)
-        pytest.fail(f"Thread safety test timed out after {timeoutSeconds} seconds")
-
     try:
-        results, success = resultQueue.get(block=False)
+        testProcess.start()
 
-        if isinstance(results, dict) and "error" in results:
+        timeoutSeconds = 60  # [s]
+        testProcess.join(timeoutSeconds)
+
+        if testProcess.is_alive():
+            # Hard timeout: kill the worker process and fail the test
+            _terminateProcess(testProcess)
             pytest.fail(
-                "Thread safety test failed with error: "
-                f"{results['error']}\n{results.get('traceback')}"
+                f"Thread safety test timed out after {timeoutSeconds} seconds"
             )
 
-        assert success, "Thread safety test reported thread-safety issues"
-        assert results["failedIterations"] == 0, (
-            "Some iterations failed in the thread-safety test"
-        )
-    except queue.Empty:
-        pytest.fail("Thread safety test completed but did not return any results")
+        try:
+            results, success = resultQueue.get(block=False)
+
+            if isinstance(results, dict) and "error" in results:
+                pytest.fail(
+                    "Thread safety test failed with error: "
+                    f"{results['error']}\n{results.get('traceback')}"
+                )
+
+            assert success, "Thread safety test reported thread-safety issues"
+            assert results["failedIterations"] == 0, (
+                "Some iterations failed in the thread-safety test"
+            )
+        except queue.Empty:
+            pytest.fail("Thread safety test completed but did not return any results")
+    finally:
+        _closeQueue(resultQueue)
+        _closeProcess(testProcess)
 
 
 if __name__ == "__main__":
@@ -307,28 +363,29 @@ if __name__ == "__main__":
         target=_runTestWithTimeout,
         args=(resultQueue, numWorkers, iterationsPerWorker),
     )
-    testProcess.start()
-
-    timeoutSeconds = 60
-    testProcess.join(timeoutSeconds)
-
-    if testProcess.is_alive():
-        testProcess.terminate()
-        testProcess.join(1)
-        if testProcess.is_alive():
-            os.kill(testProcess.pid, 9)
-        print(f"ERROR: Thread safety test timed out after {timeoutSeconds} seconds")
-        sys.exit(2)
-
     try:
-        results, success = resultQueue.get(block=False)
+        testProcess.start()
 
-        if isinstance(results, dict) and "error" in results:
-            print(f"ERROR: Thread safety test failed with error: {results['error']}")
-            print(results.get("traceback"))
+        timeoutSeconds = 60  # [s]
+        testProcess.join(timeoutSeconds)
+
+        if testProcess.is_alive():
+            _terminateProcess(testProcess)
+            print(f"ERROR: Thread safety test timed out after {timeoutSeconds} seconds")
+            sys.exit(2)
+
+        try:
+            results, success = resultQueue.get(block=False)
+
+            if isinstance(results, dict) and "error" in results:
+                print(f"ERROR: Thread safety test failed with error: {results['error']}")
+                print(results.get("traceback"))
+                sys.exit(1)
+
+            sys.exit(0 if success else 1)
+        except queue.Empty:
+            print("ERROR: Thread safety test completed but did not return results")
             sys.exit(1)
-
-        sys.exit(0 if success else 1)
-    except queue.Empty:
-        print("ERROR: Thread safety test completed but did not return results")
-        sys.exit(1)
+    finally:
+        _closeQueue(resultQueue)
+        _closeProcess(testProcess)
