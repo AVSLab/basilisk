@@ -25,26 +25,6 @@
    #include "spaceWeatherData.h"
 %}
 
-%pythonbegin %{
-import warnings as _warnings
-
-_warnings.filterwarnings(
-    "ignore",
-    message=r"builtin type SwigPyPacked has no __module__ attribute",
-    category=DeprecationWarning,
-)
-_warnings.filterwarnings(
-    "ignore",
-    message=r"builtin type SwigPyObject has no __module__ attribute",
-    category=DeprecationWarning,
-)
-_warnings.filterwarnings(
-    "ignore",
-    message=r"builtin type swigvarlink has no __module__ attribute",
-    category=DeprecationWarning,
-)
-%}
-
 %pythoncode %{
 from Basilisk.architecture.swig_common_model import *
 %}
