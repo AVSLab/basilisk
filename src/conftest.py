@@ -35,6 +35,39 @@ SHOW_PLOTS_ELEVATED_MESSAGE = (
     "The pytest option '--show_plots' has been deprecated for a year and will be removed shortly."
 )
 
+
+def _patch_rerunfailures_socket_cleanup():
+    """
+    Close pytest-rerunfailures server-side sockets when xdist is active.
+
+    pytest-rerunfailures 16.1 opens localhost sockets to coordinate reruns
+    between xdist workers, but accepted server connections are not closed by
+    the plugin.  This narrow patch preserves the plugin handler while ensuring
+    each accepted connection is closed when the handler exits.
+    """
+    try:
+        import pytest_rerunfailures
+    except ImportError:
+        return
+
+    server_status_db = getattr(pytest_rerunfailures, "ServerStatusDB", None)
+    if server_status_db is None:
+        return
+    if getattr(server_status_db, "_bsk_socket_cleanup_patched", False):
+        return
+
+    original_run_connection = server_status_db.run_connection
+
+    def run_connection_with_socket_close(self, conn):
+        with conn:
+            return original_run_connection(self, conn)
+
+    server_status_db.run_connection = run_connection_with_socket_close
+    server_status_db._bsk_socket_cleanup_patched = True
+
+
+_patch_rerunfailures_socket_cleanup()
+
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 print(path)
@@ -69,6 +102,17 @@ def pytest_terminal_summary(terminalreporter, exitstatus, config):
     message = f"DEPRECATION WARNING: {warning_message}"
     terminalreporter.write_sep("=", "SHOW_PLOTS DEPRECATION", **{terminal_color: True}, bold=True)
     terminalreporter.write_line(message, **{terminal_color: True}, bold=True)
+
+
+def pytest_unconfigure(config):
+    failures_db = getattr(config, "failures_db", None)
+    socket_handle = getattr(failures_db, "sock", None)
+    if socket_handle is None:
+        return
+    try:
+        socket_handle.close()
+    except OSError:
+        pass
 
 
 @pytest.fixture(scope="module")
