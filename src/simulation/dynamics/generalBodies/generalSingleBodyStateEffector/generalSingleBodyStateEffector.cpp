@@ -94,25 +94,28 @@ void GeneralSingleBodyStateEffector::writeOutputStateMessages(uint64_t currentCl
         this->generalSingleBodyConfigLogOutMsg.write(&configLogMsg, this->moduleID, currentClock);
     }
 
+    uint64_t rotDofIndex = 0;
+    uint64_t transDofIndex = 0;
     for (uint64_t dofIndex = 0; dofIndex < this->numDOF; dofIndex++) {
-        uint64_t msgIndex = this->jointDOFList.at(dofIndex).index;
 
         if (this->jointDOFList.at(dofIndex).type == DOF::Type::ROTATION) {
-            if (this->spinningBodyOutMsgs[msgIndex]->isLinked()) {
-                HingedRigidBodyMsgPayload spinningBodyBuffer = this->spinningBodyOutMsgs[msgIndex]->zeroMsgPayload;
+            if (this->spinningBodyOutMsgs[rotDofIndex]->isLinked()) {
+                HingedRigidBodyMsgPayload spinningBodyBuffer = this->spinningBodyOutMsgs[rotDofIndex]->zeroMsgPayload;
 
                 spinningBodyBuffer.theta = this->jointDOFList.at(dofIndex).beta;
                 spinningBodyBuffer.thetaDot = this->jointDOFList.at(dofIndex).betaDot;
-                this->spinningBodyOutMsgs[msgIndex]->write(&spinningBodyBuffer, this->moduleID, currentClock);
+                this->spinningBodyOutMsgs[rotDofIndex]->write(&spinningBodyBuffer, this->moduleID, currentClock);
             }
+            rotDofIndex++;
         } else {
-            if (this->translatingBodyOutMsgs[msgIndex]->isLinked()) {
-                LinearTranslationRigidBodyMsgPayload translatingBodyBuffer = this->translatingBodyOutMsgs[msgIndex]->zeroMsgPayload;
+            if (this->translatingBodyOutMsgs[transDofIndex]->isLinked()) {
+                LinearTranslationRigidBodyMsgPayload translatingBodyBuffer = this->translatingBodyOutMsgs[transDofIndex]->zeroMsgPayload;
 
                 translatingBodyBuffer.rho = this->jointDOFList.at(dofIndex).beta;
                 translatingBodyBuffer.rhoDot = this->jointDOFList.at(dofIndex).betaDot;
-                this->translatingBodyOutMsgs[msgIndex]->write(&translatingBodyBuffer, this->moduleID, currentClock);
+                this->translatingBodyOutMsgs[transDofIndex]->write(&translatingBodyBuffer, this->moduleID, currentClock);
             }
+            transDofIndex++;
         }
     }
 }
@@ -254,9 +257,6 @@ void GeneralSingleBodyStateEffector::updateEffectorMassProps(double integTime)
         Eigen::Vector3d jointDOFAxis_B = jointDOF->dcm_GB.transpose() * jointDOF->axis_G;
         Eigen::Matrix3d omegaTilde_GB_B = eigenTilde(jointDOF->omega_GB_B);
 
-        this->GMat.col(dofIndex).head<3>().setZero();
-        this->GMat.col(dofIndex).tail<3>().setZero();
-
         if (jointDOF->type == DOF::Type::ROTATION) {
             this->TMat.col(dofIndex).head<3>().setZero();
             this->TMat.col(dofIndex).tail<3>() = jointDOF->screwConstant * jointDOFAxis_B;
@@ -268,19 +268,26 @@ void GeneralSingleBodyStateEffector::updateEffectorMassProps(double integTime)
             this->TPrimeMat.col(dofIndex).head<3>() = omegaTilde_GB_B * jointDOF->screwConstant * jointDOFAxis_B;
             this->TPrimeMat.col(dofIndex).tail<3>().setZero();
         }
+    }
 
-        // Compute G matrix
+    // Compute G matrix
+    for (uint64_t i = 0; i < this->numDOF; i++) {
+
+        this->GMat.col(i).head<3>().setZero();
+        this->GMat.col(i).tail<3>().setZero();
+
         Eigen::VectorXd sumTerm1 = Eigen::VectorXd::Zero(6);
-        for (uint64_t sumIdx1 = dofIndex; sumIdx1 < this->numDOF; sumIdx1++) {
+        for (uint64_t sumIdx1 = i; sumIdx1 < this->numDOF; sumIdx1++) {
             Eigen::VectorXd term1 = this->TMat.col(sumIdx1) * this->jointDOFList.at(sumIdx1).beta;
             sumTerm1 += term1;
         }
-        Eigen::Vector3d tildeVecTerm1 = rotMap * this->TMat.col(dofIndex);
+
+        Eigen::Vector3d tildeVecTerm1 = rotMap * this->TMat.col(i);
         Eigen::Matrix3d tildeMatrixTerm1 = eigenTilde(tildeVecTerm1);
         Eigen::Matrix<double, 6, 6> tildeSixMatrixTerm1 = Eigen::Matrix<double, 6, 6>::Zero();
         tildeSixMatrixTerm1.topLeftCorner<3, 3>() = tildeMatrixTerm1;
         tildeSixMatrixTerm1.bottomRightCorner<3, 3>() = tildeMatrixTerm1;
-        this->GMat.col(dofIndex) = tildeSixMatrixTerm1 * sumTerm1;
+        this->GMat.col(i) = tildeSixMatrixTerm1 * sumTerm1;
     }
 
     // Compute h vector
@@ -384,10 +391,10 @@ void GeneralSingleBodyStateEffector::updateContributions(double integTime,
     Eigen::Matrix3d dcm_GB = this->jointDOFList.at(this->numDOF - 1).dcm_GB;
     Eigen::Vector3d r_GcG_B = dcm_GB.transpose() * this->r_GcG_G;
     Eigen::Matrix3d rTilde_GcG_B = eigenTilde(r_GcG_B);
-    MBeta1.topRows(3) = this->mass * (transMap - rTilde_GcG_B * rotMap) * this->TMat + transMap * this->GMat;
+    MBeta1.topRows(3) = this->mass * ((transMap - rTilde_GcG_B * rotMap) * this->TMat + transMap * this->GMat);
     Eigen::Matrix3d IPntGc_B = dcm_GB.transpose() * this->IPntGc_G * dcm_GB;
     Eigen::Matrix3d IPntG_B = IPntGc_B - this->mass * rTilde_GcG_B * rTilde_GcG_B;
-    MBeta1.bottomRows(3) = (IPntG_B * rotMap + this->mass * rTilde_GcG_B * transMap) * this->TMat + transMap * this->GMat;
+    MBeta1.bottomRows(3) = IPntG_B * rotMap * this->TMat + this->mass * rTilde_GcG_B * transMap * (this->TMat + this->GMat);
 
     Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> MBeta;
     MBeta.resize(this->numDOF, this->numDOF);
@@ -578,7 +585,7 @@ void GeneralSingleBodyStateEffector::computeGeneralBodyInertialStates()
     Eigen::Vector3d rPrime_GcB_B = (transMap - rTilde_GcG_B * rotMap) * this->TMat * this->betaDot + transMap * this->TPrimeMat * this->beta;
     Eigen::Vector3d rDot_GcB_B = rPrime_GcB_B + omegaTilde_BN_B * r_GcB_B;
     this->v_GcN_N = this->dcm_BN.transpose() * rDot_GcB_B + (Eigen::Vector3d)*this->inertialVelocityProperty;
-    Eigen::Vector3d rPrime_GB_B = transMap * this->TMat * this->betaDot + rotMap * this->TPrimeMat * this->beta;
+    Eigen::Vector3d rPrime_GB_B = transMap * this->TMat * this->betaDot + transMap * this->TPrimeMat * this->beta;
     Eigen::Vector3d rDot_GB_B =  rPrime_GB_B + omegaTilde_BN_B * this->r_GB_B;
     *this->v_GN_N = this->dcm_BN.transpose() * rDot_GB_B + (Eigen::Vector3d)*this->inertialVelocityProperty;
 }
