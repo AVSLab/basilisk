@@ -1,0 +1,1 @@
+- Reduced clean build time by compiling generated messaging SWIG wrapper modules with lower optimization while preserving normal optimization settings for Basilisk source modules.
