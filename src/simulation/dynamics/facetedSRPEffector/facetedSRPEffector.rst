@@ -48,6 +48,9 @@ provides information on what each message is used for.
     * - facetProjectedAreaInMsgs
       - :ref:`ProjectedAreaMsgPayload`
       - Input message vector containing pre-computed per-facet projected areas
+    * - sunEclipseInMsg
+      - :ref:`EclipseMsgPayload`
+      - (Optional) Input msg for the Sun eclipse data. If connected, the SRP force and torque are scaled by the illumination factor (0 = full shadow, 1 = full sunlight)
 
 
 Module Functions
@@ -77,13 +80,14 @@ The unit test for this module is located in :ref:`test_facetedSRPEffector`. The 
 correctly computes the aggregate SRP force and torque acting on the spacecraft due to impinging photons
 from the Sun. The test sets up a simulation with a faceted spacecraft modeled as a cubic hub with two attached
 circular solar arrays. Six square facets represent the cubic hub and four circular facets represent the two solar
-arrays. The test varies the initial state information of both the spacecraft and the Sun. Specifically, the test
-parameterizes:
+arrays. The test varies the initial state information of the spacecraft, the initial state information of the Sun,
+and the Sun illumination factor. Specifically, the test parameterizes:
 
     - Spacecraft initial inertial position
     - Sun inertial position
     - Spacecraft initial attitude
     - Spacecraft initial angular velocity
+    - Sun visibility (illumination) factor
 
 The test checks that the computed SRP forces and torques at each timestep match the values output from the module.
 
@@ -192,6 +196,10 @@ The following steps are required to set up the ``facetedSRPEffector`` module in 
 
     faceted_sc_projected_area.sunStateInMsg.subscribeTo(sun_state_message)
     faceted_sc_projected_area.spacecraftStateInMsg.subscribeTo(sc_object.scStateOutMsg)
+
+#. Optionally, connect an eclipse message to account for shadow conditions. If connected, the computed SRP force and torque are scaled by the illumination factor (0.0 = full shadow, 1.0 = full sunlight)::
+
+    faceted_srp_effector.sunEclipseInMsg.subscribeTo(eclipse_msg)
 
 #. Add the SRP effector to the spacecraft::
 
