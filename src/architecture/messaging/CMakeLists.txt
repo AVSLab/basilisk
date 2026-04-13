@@ -1,5 +1,19 @@
 cmake_policy(SET CMP0078 NEW)
 
+function(set_messaging_swig_compile_options targetName)
+  if(MSVC)
+    target_compile_options(${targetName} PRIVATE
+      $<$<CONFIG:Release>:/Od>
+      $<$<CONFIG:RelWithDebInfo>:/Od>
+      $<$<CONFIG:MinSizeRel>:/Od>)
+  else()
+    target_compile_options(${targetName} PRIVATE
+      $<$<CONFIG:Release>:-O0>
+      $<$<CONFIG:RelWithDebInfo>:-O0>
+      $<$<CONFIG:MinSizeRel>:-O0>)
+  endif()
+endfunction()
+
 function(generate_messages searchDir generateCCode)
   file(
     GLOB_RECURSE message_files
@@ -85,6 +99,7 @@ function(generate_messages searchDir generateCCode)
     set_target_properties(
       ${SWIG_MODULE_${TARGET_NAME}_REAL_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELEASE
                                                          "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging")
+    set_messaging_swig_compile_options(${SWIG_MODULE_${TARGET_NAME}_REAL_NAME})
     target_link_libraries(${SWIG_MODULE_${TARGET_NAME}_REAL_NAME} PUBLIC architectureLib)
   endforeach()
 endfunction(generate_messages)
