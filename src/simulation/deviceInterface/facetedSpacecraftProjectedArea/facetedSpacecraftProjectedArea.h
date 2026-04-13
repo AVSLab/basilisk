@@ -62,7 +62,7 @@ private:
     std::vector<Eigen::Vector3d> facetNHat_BList;  //!< [-] List of facet normal vectors expressed in hub B frame components
 
     /* Facet output message data */
-    std::vector<double> facetProjectedAreaList;  //!< [m^2] List of facet projected areas
+    std::vector<double> facetProjectedAreaList{};  //!< [m^2] List of facet projected areas
     double totalProjectedArea{};  //!< [m^2] Total projected area for all facets
 };
 
