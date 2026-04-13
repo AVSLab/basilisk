@@ -69,6 +69,8 @@ void FacetedSpacecraftProjectedArea::Reset(uint64_t callTime) {
         this->facetNHat_BList.push_back(Eigen::Vector3d::Zero());
         this->facetProjectedAreaList.push_back(0.0);
     }
+
+    this->writeOutputMessages(callTime);
 }
 
 /*! Module update method.
