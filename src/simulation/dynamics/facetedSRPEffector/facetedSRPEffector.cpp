@@ -105,6 +105,13 @@ void FacetedSRPEffector::computeForceTorque(double callTime, double timeStep) {
         return;
     }
 
+    // Read optional sun eclipse message
+    this->sunVisibilityFactor = 1.0;
+    if (this->sunEclipseInMsg.isLinked() && this->sunEclipseInMsg.isWritten()) {
+        EclipseMsgPayload sunEclipseIn = this->sunEclipseInMsg();
+        this->sunVisibilityFactor = sunEclipseIn.illuminationFactor;
+    }
+
     // Compute the sun direction unit vector in spacecraft body frame components
     Eigen::MRPd sigma_BN;
     sigma_BN = (Eigen::Vector3d)this->hubSigma->getState();
@@ -173,8 +180,8 @@ void FacetedSRPEffector::computeForceTorque(double callTime, double timeStep) {
     }
 
     // Update the force and torque vectors in the dynamic effector base class
-    this->forceExternal_B = totalSRPForcePntB_B;
-    this->torqueExternalPntB_B = totalSRPTorquePntB_B;
+    this->forceExternal_B = this->sunVisibilityFactor * totalSRPForcePntB_B;
+    this->torqueExternalPntB_B = this->sunVisibilityFactor * totalSRPTorquePntB_B;
 }
 
 /*! Setter method for the total number of spacecraft facets.

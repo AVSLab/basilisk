@@ -59,11 +59,14 @@ from Basilisk.architecture import messaging
         np.array([0.05, -0.05, -0.05]),
     ]
 )
+@pytest.mark.parametrize("illumination_factor", [1.0, 0.5, 0.0])  # [-]
+
 def test_facetedSRPEffector(show_plots,
                             r_BN_N_init,
                             r_SN_N_init,
                             sigma_BN_init,
-                            omega_BN_B_init):
+                            omega_BN_B_init,
+                            illumination_factor):
     r"""
     **Verification Test Description**
 
@@ -82,8 +85,9 @@ def test_facetedSRPEffector(show_plots,
 
     This test sets up a simulation with a faceted spacecraft modeled as a cubic hub with two attached circular solar
     arrays. Six square facets represent the cubic hub and four circular facets represent the two solar arrays.
-    The test varies the initial state information of both the spacecraft and the Sun. The test checks that the computed
-    SRP forces and torques at each timestep match the values output from the module.
+    The test varies the initial state information of the spacecraft, the initial state information of the Sun, and the
+    Sun illumination factor. The test checks that the computed SRP forces and torques at each timestep match the
+    values output from the module.
 
     **Test Parameters**
 
@@ -92,6 +96,7 @@ def test_facetedSRPEffector(show_plots,
         r_SN_N_init (np.ndarray): [m] shape (3,) Initial Sun inertial position
         sigma_BN_init (np.ndarray): [-] shape (3,) Initial spacecraft inertial attitude
         omega_BN_B_init (np.ndarray): [rad/s] shape (3,) Initial spacecraft inertial angular velocity
+        illumination_factor (float): [-] Sun visibility factor (0 = full shadow, 1 = full sunlight)
 
     **Description of Variables Being Tested**
 
@@ -192,6 +197,11 @@ def test_facetedSRPEffector(show_plots,
     faceted_sc_projected_area.spacecraftStateInMsg.subscribeTo(sc_object.scStateOutMsg)
     test_sim.AddModelToTask(task_name, faceted_sc_projected_area)
 
+    # Create the eclipse message
+    eclipse_msg_data = messaging.EclipseMsgPayload()
+    eclipse_msg_data.illuminationFactor = illumination_factor
+    eclipse_msg = messaging.EclipseMsg().write(eclipse_msg_data)
+
     # Create the faceted SRP effector module
     faceted_srp_effector = facetedSRPEffector.FacetedSRPEffector()
     faceted_srp_effector.ModelTag = "facetedSRPEffector"
@@ -200,6 +210,7 @@ def test_facetedSRPEffector(show_plots,
         faceted_srp_effector.facetElementBodyInMsgs[idx].subscribeTo(facet_element_message_list[idx])
         faceted_srp_effector.facetProjectedAreaInMsgs[idx].subscribeTo(faceted_sc_projected_area.facetProjectedAreaOutMsgs[idx])
     faceted_srp_effector.sunStateInMsg.subscribeTo(sun_state_message)
+    faceted_srp_effector.sunEclipseInMsg.subscribeTo(eclipse_msg)
     sc_object.addDynamicEffector(faceted_srp_effector)
     test_sim.AddModelToTask(task_name, faceted_srp_effector)
     test_sim.AddModelToTask(task_name, sc_object)
@@ -244,7 +255,8 @@ def test_facetedSRPEffector(show_plots,
                                                                                sigma_BN,
                                                                                r_BN_N,
                                                                                r_SN_N,
-                                                                               facet_element_projected_area_list_sim)
+                                                                               facet_element_projected_area_list_sim,
+                                                                               illumination_factor)
 
     # Check the simulated srp force and torque values match the computed truth values
     for idx in range(len(timespan)):
@@ -267,7 +279,8 @@ def compute_srp_force_torque(num_facets,
                              sigma_BN,
                              r_BN_N,
                              r_SN_N,
-                             facet_element_projected_area_list_sim):
+                             facet_element_projected_area_list_sim,
+                             illumination_factor):
 
     srp_force_B_list_truth = []  # [N]
     srp_torque_B_list_truth = []  # [Nm]
@@ -302,8 +315,8 @@ def compute_srp_force_torque(num_facets,
                 srp_force_B += facet_force  # [N]
                 srp_torque_B += np.cross(facet_r_CopB_B_list[facet_idx], facet_force)  # [Nm]
 
-        srp_force_B_list_truth.append(srp_force_B)
-        srp_torque_B_list_truth.append(srp_torque_B)
+        srp_force_B_list_truth.append(illumination_factor * srp_force_B)
+        srp_torque_B_list_truth.append(illumination_factor * srp_torque_B)
 
     return np.array(srp_force_B_list_truth), np.array(srp_torque_B_list_truth)
 
@@ -314,5 +327,6 @@ if __name__=="__main__":
         np.array([-4020338.690396649, 7490566.741852513, 5248299.211589362]),  # [m] r_BN_N_init
         np.array([0.0, 0.0, 0.0]),  # [m] r_SN_N_init
         np.array([0.0, 0.0, 0.0]),  # [-] sigma_BN_init
-        np.array([0.0, 0.0, 0.0])  # [rad/s] omega_BN_B_init
+        np.array([0.0, 0.0, 0.0]),  # [rad/s] omega_BN_B_init,
+        1.0  # [-] illumination_factor
     )

@@ -26,6 +26,7 @@
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/utilities/bskLogging.h"
 #include "architecture/messaging/messaging.h"
+#include "architecture/msgPayloadDefC/EclipseMsgPayload.h"
 #include "architecture/msgPayloadDefC/FacetElementBodyMsgPayload.h"
 #include "architecture/msgPayloadDefC/ProjectedAreaMsgPayload.h"
 #include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
@@ -45,6 +46,7 @@ public:
     std::vector<ReadFunctor<FacetElementBodyMsgPayload>> facetElementBodyInMsgs;  //!< List of facet geometry input data (Expressed in hub B frame)
     std::vector<ReadFunctor<ProjectedAreaMsgPayload>> facetProjectedAreaInMsgs;  //!< List of facet projected area input messages
     ReadFunctor<SpicePlanetStateMsgPayload> sunStateInMsg;  //!< Sun spice ephemeris input message
+    ReadFunctor<EclipseMsgPayload> sunEclipseInMsg;  //!< (optional) Sun eclipse input message
 
 private:
     /* Facet input message data */
@@ -58,6 +60,7 @@ private:
     uint64_t numFacets{};  //!< Number of spacecraft facets
     StateData *hubPosition = nullptr;  //!< [m] Hub inertial position vector
     StateData *hubSigma = nullptr;  //!< Hub MRP inertial attitude
+    double sunVisibilityFactor = 1.0;  //!< Sun visibility factor (0 = full shadow, 1 = full sunlight)
 };
 
 #endif
