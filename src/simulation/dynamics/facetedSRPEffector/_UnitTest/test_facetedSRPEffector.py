@@ -191,7 +191,6 @@ def test_facetedSRPEffector(show_plots,
     faceted_sc_projected_area.sunStateInMsg.subscribeTo(sun_state_message)
     faceted_sc_projected_area.spacecraftStateInMsg.subscribeTo(sc_object.scStateOutMsg)
     test_sim.AddModelToTask(task_name, faceted_sc_projected_area)
-    test_sim.AddModelToTask(task_name, sc_object)
 
     # Create the faceted SRP effector module
     faceted_srp_effector = facetedSRPEffector.FacetedSRPEffector()
@@ -203,6 +202,7 @@ def test_facetedSRPEffector(show_plots,
     faceted_srp_effector.sunStateInMsg.subscribeTo(sun_state_message)
     sc_object.addDynamicEffector(faceted_srp_effector)
     test_sim.AddModelToTask(task_name, faceted_srp_effector)
+    test_sim.AddModelToTask(task_name, sc_object)
 
     # Set up data logging
     spacecraft_state_data_log = sc_object.scStateOutMsg.recorder()
