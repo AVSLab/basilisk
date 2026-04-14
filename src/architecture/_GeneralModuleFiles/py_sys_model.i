@@ -83,8 +83,8 @@ class SysModelMixin:
         for base in cls.mro()[1:]:
             if base is object:
                 continue
-            # Heuristic: SWIG proxy types have __swig_destroy__ or similar
-            if hasattr(base, "__swig_destroy__"):
+            # Heuristic: SWIG proxy types define __swig_destroy__ directly
+            if "__swig_destroy__" in base.__dict__:
                 cppBases.append(base)
 
         if not cppBases:
