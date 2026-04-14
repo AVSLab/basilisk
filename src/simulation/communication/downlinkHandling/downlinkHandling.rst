@@ -23,7 +23,7 @@ System Role and Data Flow
 -------------------------
 
 .. _downlinkhandling-figure-flow:
-.. figure:: /../../src/simulation/communication/downlinkHandling/_Documentation/Images/DownlinkHandlingFlow.svg
+.. figure:: /../../src/simulation/communication/downlinkHandling/_Documentation/Images/DownlinkHandlingFlow.png
    :width: 90%
    :align: center
    :alt: downlinkHandling integration flow with simpleAntenna, linkBudget, and storage
@@ -155,7 +155,7 @@ Reliability and Throughput Model
 --------------------------------
 
 .. _downlinkhandling-figure-model:
-.. figure:: /../../src/simulation/communication/downlinkHandling/_Documentation/Images/DownlinkHandlingReliabilityChain.svg
+.. figure:: /../../src/simulation/communication/downlinkHandling/_Documentation/Images/DownlinkHandlingReliabilityChain.png
    :width: 95%
    :align: center
    :alt: CNR to BER to PER to ARQ to effective throughput chain
