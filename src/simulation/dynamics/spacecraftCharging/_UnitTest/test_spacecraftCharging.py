@@ -1,0 +1,222 @@
+#
+#  ISC License
+#
+#  Copyright (c) 2026, Autonomous Vehicle Systems Laboratory, University of Colorado at Boulder
+#
+#  Permission to use, copy, modify, and/or distribute this software for any
+#  purpose with or without fee is hereby granted, provided that the above
+#  copyright notice and this permission notice appear in all copies.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+#
+
+import numpy as np
+import math
+import pytest
+import matplotlib.pyplot as plt
+from Basilisk.simulation import spacecraft
+from Basilisk.simulation import spacecraftCharging
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import macros
+from Basilisk.architecture import messaging
+
+@pytest.mark.parametrize(
+    ("servicer_radius", "target_radius"),  # ([m], [m])
+    [
+        (3.0, 3.0),
+        (2.0, 4.0),
+        (4.0, 2.0)
+    ]
+)
+
+def test_spacecraft_charging_dynamics(show_plots,
+                                      servicer_radius,
+                                      target_radius):
+    r"""
+    **Verification Test Description**
+
+    **Test Parameters**
+
+    Args:
+
+    **Description of Variables Being Tested**
+
+    """
+
+    task_name = "unitTask"
+    process_name = "TestProcess"
+    sim = SimulationBaseClass.SimBaseClass()
+    test_time_step_sec = 1e-6
+    test_process_rate = macros.sec2nano(test_time_step_sec)
+    test_process = sim.CreateNewProcess(process_name)
+    test_process.addTask(sim.CreateNewTask(task_name, test_process_rate))
+
+    # Create the servicer spacecraft
+    mass_servicer = 500  # [kg]
+    length_servicer = servicer_radius  # [m]
+    width_servicer = servicer_radius  # [m]
+    height_servicer = servicer_radius  # [m]
+    I_servicer_11 = (1 / 12) * mass_servicer * (length_servicer * length_servicer + height_servicer * height_servicer)  # [kg m^2]
+    I_servicer_22 = (1 / 12) * mass_servicer * (length_servicer * length_servicer + width_servicer * width_servicer)  # [kg m^2]
+    I_servicer_33 = (1 / 12) * mass_servicer * (width_servicer * width_servicer + height_servicer * height_servicer)  # [kg m^2]
+    servicer_spacecraft = spacecraft.Spacecraft()
+    servicer_spacecraft.ModelTag = "ServicerSpacecraft"
+    servicer_spacecraft.hub.mHub = mass_servicer  # [kg]
+    servicer_spacecraft.hub.r_BcB_B = [0.0, 0.0, 0.0]  # [m]
+    servicer_spacecraft.hub.IHubPntBc_B = [[I_servicer_11, 0.0, 0.0], [0.0, I_servicer_22, 0.0], [0.0, 0.0, I_servicer_33]]  # [kg m^2]
+    servicer_spacecraft.hub.r_CN_NInit = [[10.0], [0.0], [0.0]]  # [m]
+    servicer_spacecraft.hub.v_CN_NInit = [[0.0], [0.0], [0.0]]  # [m/s]
+    servicer_spacecraft.hub.omega_BN_BInit = [[0.0], [0.0], [macros.D2R * 1.5]]  # [rad/s]
+    servicer_spacecraft.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
+    sim.AddModelToTask(task_name, servicer_spacecraft)
+
+    # Create the target spacecraft
+    mass_target = 800  # [kg]
+    length_target = target_radius  # [m]
+    width_target = target_radius  # [m]
+    height_target = target_radius  # [m]
+    I_target_11 = (1 / 12) * mass_target * (length_target * length_target + height_target * height_target)  # [kg m^2]
+    I_target_22 = (1 / 12) * mass_target * (length_target * length_target + width_target * width_target)  # [kg m^2]
+    I_target_33 = (1 / 12) * mass_target * (width_target * width_target + height_target * height_target)  # [kg m^2]
+    target_spacecraft = spacecraft.Spacecraft()
+    target_spacecraft.ModelTag = "TargetSpacecraft"
+    target_spacecraft.hub.mHub = mass_target  # [kg]
+    target_spacecraft.hub.r_BcB_B = [0.0, 0.0, 0.0]  # [m]
+    target_spacecraft.hub.IHubPntBc_B = [[I_target_11, 0.0, 0.0], [0.0, I_target_22, 0.0], [0.0, 0.0, I_target_33]]  # [kg m^2]
+    target_spacecraft.hub.r_CN_NInit = [[5.0], [0.0], [0.0]]  # [m]
+    target_spacecraft.hub.v_CN_NInit = [[0.0], [0.0], [0.0]]  # [m/s]
+    target_spacecraft.hub.omega_BN_BInit = [[0.0], [0.0], [macros.D2R * -1.0]]  # [rad/s]
+    target_spacecraft.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
+    sim.AddModelToTask(task_name, target_spacecraft)
+
+    # Create the spacecraft projected area messages
+    target_projected_area = 4 * np.pi * target_radius * target_radius  # [m^2]
+    servicer_projected_area = 4 * np.pi * servicer_radius * servicer_radius  # [m^2]
+
+    target_projected_area_msg_data = messaging.ProjectedAreaMsgPayload()
+    target_projected_area_msg_data.area = target_projected_area  # [m^2]
+    target_projected_area_msg = messaging.ProjectedAreaMsg().write(target_projected_area_msg_data)
+
+    servicer_projected_area_msg_data = messaging.ProjectedAreaMsgPayload()
+    servicer_projected_area_msg_data.area = servicer_projected_area  # [m^2]
+    servicer_projected_area_msg = messaging.ProjectedAreaMsg().write(servicer_projected_area_msg_data)
+
+    # Create the spacecraft charging module
+    capacitance = 1e-9  # [farads]
+    spacecraft_charging = spacecraftCharging.SpacecraftCharging()
+    spacecraft_charging.ModelTag = "SpacecraftCharging"
+    spacecraft_charging.setServicerCapacitance(capacitance)
+    spacecraft_charging.setTargetCapacitance(capacitance)
+    spacecraft_charging.servicerSunlitAreaInMsg.subscribeTo(servicer_projected_area_msg)
+    spacecraft_charging.targetSunlitAreaInMsg.subscribeTo(target_projected_area_msg)
+    sim.AddModelToTask(task_name, spacecraft_charging)
+
+    # Set up data logging
+    servicer_potential_data_log = spacecraft_charging.servicerPotentialOutMsg.recorder()
+    target_potential_data_log = spacecraft_charging.targetPotentialOutMsg.recorder()
+    servicer_photoelectric_current_sim_data_log = spacecraft_charging.servicerPhotoelectricCurrentOutMsg.recorder()
+    target_photoelectric_current_sim_data_log = spacecraft_charging.targetPhotoelectricCurrentOutMsg.recorder()
+    sim.AddModelToTask(task_name, servicer_potential_data_log)
+    sim.AddModelToTask(task_name, target_potential_data_log)
+    sim.AddModelToTask(task_name, servicer_photoelectric_current_sim_data_log)
+    sim.AddModelToTask(task_name, target_photoelectric_current_sim_data_log)
+
+    # Run the simulation
+    sim.InitializeSimulation()
+    sim_time = 0.0001  # [s]
+    sim.ConfigureStopTime(macros.sec2nano(sim_time))
+    sim.ExecuteSimulation()
+
+    timespan = servicer_potential_data_log.times() * macros.NANO2SEC  # [s]
+    servicer_potential_sim = servicer_potential_data_log.voltage  # [Volts]
+    target_potential_sim = target_potential_data_log.voltage  # [Volts]
+    servicer_photoelectric_current_sim = servicer_photoelectric_current_sim_data_log.current  # [Amps]
+    target_photoelectric_current_sim = target_photoelectric_current_sim_data_log.current  # [Amps]
+
+    # Compute truth information
+    (servicer_photoelectric_current_truth,
+     target_photoelectric_current_truth) = compute_photoelectric_current(timespan,
+                                                                         servicer_potential_sim,
+                                                                         target_potential_sim,
+                                                                         servicer_projected_area,
+                                                                         target_projected_area)
+
+    plt.close("all")
+
+    # Plot the servicer and target photoelectric currents
+    servicer_photoelectric_current_error = np.abs(servicer_photoelectric_current_truth - servicer_photoelectric_current_sim)
+    target_photoelectric_current_error = np.abs(target_photoelectric_current_truth - target_photoelectric_current_sim)
+    plt.figure(1)
+    plt.clf()
+    plt.plot(timespan*1000000, servicer_photoelectric_current_error, label="Servicer")
+    plt.plot(timespan*1000000, target_photoelectric_current_error, label="Target")
+    plt.title(r'Servicer and Target Photoelectric Current Errors', fontsize=16)
+    plt.ylabel('Current (A)', fontsize=16)
+    plt.xlabel('Time ($\mu$s)', fontsize=16)
+    plt.grid(True)
+    plt.legend()
+
+    # Plot the servicer and target potentials
+    plt.figure(2)
+    plt.clf()
+    plt.plot(timespan*1000000, servicer_potential_sim, label=r"$\phi_{\text{S, sim}}$")
+    plt.plot(timespan*1000000, target_potential_sim, label=r"$\phi_{\text{T, sim}}$")
+    plt.suptitle(r'Servicer and Target Spacecraft Potentials', fontsize=16)
+    plt.title(r'$C = 10^{-9} F$', fontsize=14)
+    plt.ylabel('(Volts)', fontsize=16)
+    plt.xlabel('Time ($\mu$s)', fontsize=16)
+    plt.legend(loc='lower right', prop={'size': 16})
+    plt.grid(True)
+    plt.show()
+
+    # Check the simulated photoelectric current values match the computed truth values
+    for idx in range(len(timespan)):
+        np.testing.assert_allclose(servicer_photoelectric_current_sim[idx],
+                                   servicer_photoelectric_current_truth[idx],
+                                   atol=1e-7,
+                                   verbose=True)
+        np.testing.assert_allclose(target_photoelectric_current_sim[idx],
+                                   target_photoelectric_current_truth[idx],
+                                   atol=1e-7,
+                                   verbose=True)
+
+def compute_photoelectric_current(timespan,
+                                  servicer_potential,
+                                  target_potential,
+                                  servicer_projected_area,
+                                  target_projected_area):
+    temp_photons = 2.0  # [eV]
+    flux_photons = 1e-6  # [A/m^2]
+
+    servicer_photoelectric_current_list_truth = []
+    target_photoelectric_current_list_truth = []
+    for idx in range(len(timespan)):
+        # Compute the servicer photoelectric current
+        if servicer_potential[idx] <= 0:
+            servicer_photoelectric_current_truth = flux_photons * servicer_projected_area
+        else:
+            servicer_photoelectric_current_truth = flux_photons * servicer_projected_area * math.exp(-1 * servicer_potential[idx] / temp_photons)
+
+        # Compute the target photoelectric current
+        if target_potential[idx] <= 0:
+            target_photoelectric_current_truth = flux_photons * target_projected_area
+        else:
+            target_photoelectric_current_truth = flux_photons * target_projected_area * math.exp(-1 * target_potential[idx] / temp_photons)
+
+        servicer_photoelectric_current_list_truth.append(servicer_photoelectric_current_truth)
+        target_photoelectric_current_list_truth.append(target_photoelectric_current_truth)
+
+    return servicer_photoelectric_current_list_truth, target_photoelectric_current_list_truth
+
+if __name__ == "__main__":
+    test_spacecraft_charging_dynamics(
+        False,  # show_plots
+        4.0,  # [m]
+        2.0,  # [m]
+    )
