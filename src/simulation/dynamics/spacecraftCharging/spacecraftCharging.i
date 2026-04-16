@@ -37,6 +37,8 @@ from Basilisk.architecture.swig_common_model import *
 
 %include "architecture/msgPayloadDefC/CurrentMsgPayload.h"
 struct CurrentMsg_C;
+%include "architecture/msgPayloadDefC/ElectronBeamMsgPayload.h"
+struct ElectronBeamMsg_C;
 %include "architecture/msgPayloadDefC/ProjectedAreaMsgPayload.h"
 struct ProjectedAreaMsg_C;
 %include "architecture/msgPayloadDefC/VoltMsgPayload.h"

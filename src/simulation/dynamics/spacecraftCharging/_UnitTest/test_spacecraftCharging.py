@@ -34,10 +34,16 @@ from Basilisk.architecture import messaging
         (4.0, 2.0)
     ]
 )
+@pytest.mark.parametrize("electron_beam_energy", [0.0, 10000.0])  # [eV]
+@pytest.mark.parametrize("electron_beam_current", [0.0, 250e-6])  # [Amps] (Don't set above 1)
+@pytest.mark.parametrize("electron_beam_alpha", [0.0, 0.5, 1.0])  # [-]
 
 def test_spacecraft_charging_dynamics(show_plots,
                                       servicer_radius,
-                                      target_radius):
+                                      target_radius,
+                                      electron_beam_energy,
+                                      electron_beam_current,
+                                      electron_beam_alpha):
     r"""
     **Verification Test Description**
 
@@ -107,12 +113,20 @@ def test_spacecraft_charging_dynamics(show_plots,
     servicer_projected_area_msg_data.area = servicer_projected_area  # [m^2]
     servicer_projected_area_msg = messaging.ProjectedAreaMsg().write(servicer_projected_area_msg_data)
 
+    # Create electron beam input message
+    electron_beam_msg_data = messaging.ElectronBeamMsgPayload()
+    electron_beam_msg_data.energyEB = electron_beam_energy
+    electron_beam_msg_data.currentEB = electron_beam_current
+    electron_beam_msg_data.alphaEB = electron_beam_alpha
+    electron_beam_msg = messaging.ElectronBeamMsg().write(electron_beam_msg_data)
+
     # Create the spacecraft charging module
     capacitance = 1e-9  # [farads]
     spacecraft_charging = spacecraftCharging.SpacecraftCharging()
     spacecraft_charging.ModelTag = "SpacecraftCharging"
     spacecraft_charging.setServicerCapacitance(capacitance)
     spacecraft_charging.setTargetCapacitance(capacitance)
+    spacecraft_charging.electronBeamInMsg.subscribeTo(electron_beam_msg)
     spacecraft_charging.servicerSunlitAreaInMsg.subscribeTo(servicer_projected_area_msg)
     spacecraft_charging.targetSunlitAreaInMsg.subscribeTo(target_projected_area_msg)
     sim.AddModelToTask(task_name, spacecraft_charging)
@@ -147,33 +161,33 @@ def test_spacecraft_charging_dynamics(show_plots,
                                                                          servicer_projected_area,
                                                                          target_projected_area)
 
-    plt.close("all")
-
-    # Plot the servicer and target photoelectric currents
-    servicer_photoelectric_current_error = np.abs(servicer_photoelectric_current_truth - servicer_photoelectric_current_sim)
-    target_photoelectric_current_error = np.abs(target_photoelectric_current_truth - target_photoelectric_current_sim)
-    plt.figure(1)
-    plt.clf()
-    plt.plot(timespan*1000000, servicer_photoelectric_current_error, label="Servicer")
-    plt.plot(timespan*1000000, target_photoelectric_current_error, label="Target")
-    plt.title(r'Servicer and Target Photoelectric Current Errors', fontsize=16)
-    plt.ylabel('Current (A)', fontsize=16)
-    plt.xlabel('Time ($\mu$s)', fontsize=16)
-    plt.grid(True)
-    plt.legend()
-
-    # Plot the servicer and target potentials
-    plt.figure(2)
-    plt.clf()
-    plt.plot(timespan*1000000, servicer_potential_sim, label=r"$\phi_{\text{S, sim}}$")
-    plt.plot(timespan*1000000, target_potential_sim, label=r"$\phi_{\text{T, sim}}$")
-    plt.suptitle(r'Servicer and Target Spacecraft Potentials', fontsize=16)
-    plt.title(r'$C = 10^{-9} F$', fontsize=14)
-    plt.ylabel('(Volts)', fontsize=16)
-    plt.xlabel('Time ($\mu$s)', fontsize=16)
-    plt.legend(loc='lower right', prop={'size': 16})
-    plt.grid(True)
-    plt.show()
+    # plt.close("all")
+    #
+    # # Plot the servicer and target photoelectric currents
+    # servicer_photoelectric_current_error = np.abs(servicer_photoelectric_current_truth - servicer_photoelectric_current_sim)
+    # target_photoelectric_current_error = np.abs(target_photoelectric_current_truth - target_photoelectric_current_sim)
+    # plt.figure(1)
+    # plt.clf()
+    # plt.plot(timespan*1000000, servicer_photoelectric_current_error, label="Servicer")
+    # plt.plot(timespan*1000000, target_photoelectric_current_error, label="Target")
+    # plt.title(r'Servicer and Target Photoelectric Current Errors', fontsize=16)
+    # plt.ylabel('Current (A)', fontsize=16)
+    # plt.xlabel('Time ($\mu$s)', fontsize=16)
+    # plt.grid(True)
+    # plt.legend()
+    #
+    # # Plot the servicer and target potentials
+    # plt.figure(2)
+    # plt.clf()
+    # plt.plot(timespan*1000000, servicer_potential_sim, label=r"$\phi_{\text{S, sim}}$")
+    # plt.plot(timespan*1000000, target_potential_sim, label=r"$\phi_{\text{T, sim}}$")
+    # plt.suptitle(r'Servicer and Target Spacecraft Potentials', fontsize=16)
+    # plt.title(r'$C = 10^{-9} F$', fontsize=14)
+    # plt.ylabel('(Volts)', fontsize=16)
+    # plt.xlabel('Time ($\mu$s)', fontsize=16)
+    # plt.legend(loc='lower right', prop={'size': 16})
+    # plt.grid(True)
+    # plt.show()
 
     # Check the simulated photoelectric current values match the computed truth values
     for idx in range(len(timespan)):
@@ -219,4 +233,7 @@ if __name__ == "__main__":
         False,  # show_plots
         4.0,  # [m]
         2.0,  # [m]
+        10000.0,  # [eV]
+        250e-6,  # [Amps] (Don't set above 1)
+        1.0  # [-]
     )
