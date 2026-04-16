@@ -27,6 +27,7 @@
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDefC/CurrentMsgPayload.h"
+#include "architecture/msgPayloadDefC/ElectronBeamMsgPayload.h"
 #include "architecture/msgPayloadDefC/ProjectedAreaMsgPayload.h"
 #include "architecture/msgPayloadDefC/VoltMsgPayload.h"
 #include "architecture/utilities/bskLogging.h"
@@ -42,6 +43,7 @@ public:
     void writeOutputStateMessages(uint64_t clockTime);
     void UpdateState(uint64_t CurrentSimNanos);
     void equationsOfMotion(double integTimeSeconds, double timeStep);
+    void computeElectronBeamCurrent();
     void computePhotoelectricCurrent();
     void preIntegration(uint64_t callTimeNanos) final;
     void postIntegration(uint64_t callTimeNanos) final;
@@ -56,10 +58,13 @@ public:
     double getFluxPhotoelectrons() const;  //!< Getter for the photoelectron flux
     double getTempPhotoelectrons() const;  //!< Getter for the photoelectron temperature
 
+    ReadFunctor<ElectronBeamMsgPayload> electronBeamInMsg; //!< Electron beam input message
     ReadFunctor<ProjectedAreaMsgPayload> servicerSunlitAreaInMsg;  //!< Total servicer sunlit facet area input message
     ReadFunctor<ProjectedAreaMsgPayload> targetSunlitAreaInMsg;  //!< Total target sunlit facet area input message
     Message<VoltMsgPayload> servicerPotentialOutMsg;  //!< Servicer potential (voltage) output message
     Message<VoltMsgPayload> targetPotentialOutMsg;  //!< Target potential (voltage) output message
+    Message<CurrentMsgPayload> servicerEBCurrentOutMsg;  //!< Servicer electron beam current output message
+    Message<CurrentMsgPayload> targetEBCurrentOutMsg;  //!< Target electron beam current output message
     Message<CurrentMsgPayload> servicerPhotoelectricCurrentOutMsg;  //!< Servicer photoelectric current output message
     Message<CurrentMsgPayload> targetPhotoelectricCurrentOutMsg;  //!< Target photoelectric current output message
 
@@ -76,8 +81,14 @@ private:
     double tempPhotoelectrons = 2.0;  //!< [eV] Photoelectron temperature
     double fluxPhotoelectrons = 1e-6;  //!< [A/m^2] Photoelectron flux
 
+    double electronBeamEnergy{};  //!< [keV] Electron beam energy
+    double electronBeamCurrent{};  //!< [Amps] Electron beam current
+    double alphaEB{};  //!< [-] Scaling term for the fraction of current reaching the target
+
     double servicerPotential{};  //!< [Volts] Servicer potential
     double targetPotential{};  //!< [Volts] Target potential
+    double servicerEBCurrent{};  //!< [Amps] Servicer electron beam current
+    double targetEBCurrent{};  //!< [Amps] Target electron beam current
     double servicerPhotoelectricCurrent{};  //!< [Amps] Servicer photoelectric current
     double targetPhotoelectricCurrent{};  //!< [Amps] Target photoelectric current
 

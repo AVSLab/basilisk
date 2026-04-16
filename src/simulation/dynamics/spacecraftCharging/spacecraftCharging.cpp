@@ -78,6 +78,16 @@ void SpacecraftCharging::UpdateState(uint64_t CurrentSimNanos) {
         return;
     }
 
+    // Read the electron beam input message if it is linked and written
+    this->electronBeamEnergy = 0.0;
+    this->electronBeamCurrent = 0.0;
+    if (this->electronBeamInMsg.isLinked() && this->electronBeamInMsg.isWritten()) {
+        ElectronBeamMsgPayload electronBeamInMsgBuffer = this->electronBeamInMsg();
+        this->electronBeamEnergy = electronBeamInMsgBuffer.energyEB;
+        this->electronBeamCurrent = electronBeamInMsgBuffer.currentEB;
+        this->alphaEB = electronBeamInMsgBuffer.alphaEB;
+    }
+
     // Integrate the state forward in time
     this->integrateState(CurrentSimNanos);
 
@@ -96,6 +106,11 @@ void SpacecraftCharging::writeOutputStateMessages(uint64_t clockTime) {
     servicerVoltageMsgBuffer.voltage = this->servicerPotential;
     this->servicerPotentialOutMsg.write(&servicerVoltageMsgBuffer, this->moduleID, clockTime);
 
+    CurrentMsgPayload servicerEBCurrentMsgBuffer;
+    servicerEBCurrentMsgBuffer = this->servicerEBCurrentOutMsg.zeroMsgPayload;
+    servicerEBCurrentMsgBuffer.current = this->servicerEBCurrent;
+    this->servicerEBCurrentOutMsg.write(&servicerEBCurrentMsgBuffer, this->moduleID, clockTime);
+
     CurrentMsgPayload servicerPhotoelectricCurrentMsgBuffer;
     servicerPhotoelectricCurrentMsgBuffer = this->servicerPhotoelectricCurrentOutMsg.zeroMsgPayload;
     servicerPhotoelectricCurrentMsgBuffer.current = this->servicerPhotoelectricCurrent;
@@ -106,6 +121,11 @@ void SpacecraftCharging::writeOutputStateMessages(uint64_t clockTime) {
     targetVoltageMsgBuffer = this->targetPotentialOutMsg.zeroMsgPayload;
     targetVoltageMsgBuffer.voltage = this->targetPotential;
     this->targetPotentialOutMsg.write(&targetVoltageMsgBuffer, this->moduleID, clockTime);
+
+    CurrentMsgPayload targetEBCurrentMsgBuffer;
+    targetEBCurrentMsgBuffer = this->targetEBCurrentOutMsg.zeroMsgPayload;
+    targetEBCurrentMsgBuffer.current = this->targetEBCurrent;
+    this->targetEBCurrentOutMsg.write(&targetEBCurrentMsgBuffer, this->moduleID, clockTime);
 
     CurrentMsgPayload targetPhotoelectricCurrentMsgBuffer;
     targetPhotoelectricCurrentMsgBuffer = this->targetPhotoelectricCurrentOutMsg.zeroMsgPayload;
@@ -118,18 +138,30 @@ void SpacecraftCharging::equationsOfMotion(double integTimeSeconds, double timeS
     this->servicerPotential = this->servicerPotentialState->getState()(0, 0);
     this->targetPotential = this->targetPotentialState->getState()(0, 0);
 
+    // Compute the electron beam currents
+    this->computeElectronBeamCurrent();
+
     // Compute the photoelectric currents
     this->computePhotoelectricCurrent();
 
     // Set the servicer potential derivative
     Eigen::MatrixXd servicerPotentialRate(1, 1);
-    servicerPotentialRate(0, 0) = this->servicerPhotoelectricCurrent / this->servicerCapacitance;
+    servicerPotentialRate(0, 0) = (this->servicerPhotoelectricCurrent + this->servicerEBCurrent) / this->servicerCapacitance;
     this->servicerPotentialState->setDerivative(servicerPotentialRate);
 
     // Set the target potential derivative
     Eigen::MatrixXd targetPotentialRate(1, 1);
-    targetPotentialRate(0, 0) = this->targetPhotoelectricCurrent / this->targetCapacitance;
+    targetPotentialRate(0, 0) = (this->targetPhotoelectricCurrent + this->targetEBCurrent) / this->targetCapacitance;
     this->targetPotentialState->setDerivative(targetPotentialRate);
+}
+
+/*! Method to compute electron beam currents */
+void SpacecraftCharging::computeElectronBeamCurrent() {
+    if (this->electronBeamEnergy > (this->servicerPotential - this->targetPotential)) {
+        double intermediateTerm = -1 * (this->electronBeamEnergy - this->servicerPotential + this->targetPotential) / 20.0;
+        this->servicerEBCurrent = this->electronBeamCurrent * (1 - exp(intermediateTerm));
+        this->targetEBCurrent = - this->electronBeamCurrent * (1 - exp(intermediateTerm));
+    }
 }
 
 /*! Method to compute photoelectric currents */
