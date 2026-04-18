@@ -353,7 +353,7 @@ void DentonFluxModel::readDentonDataFile(const std::string& fullPath,
             }
         }
     } else {
-        bskLogger.bskLog(BSK_ERROR, ("Could not open " + fullPath).c_str());
+        bskLogger.bskLog(BSK_ERROR, "Could not open %s", fullPath.c_str());
         return;
     }
 
