@@ -36,7 +36,7 @@ path = os.path.dirname(os.path.abspath(filename))
 bskPath = __path__[0]
 
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.architecture import messaging
+from Basilisk.architecture import bskLogging, messaging
 from Basilisk.utilities import macros
 from Basilisk.simulation import dentonFluxModel
 from Basilisk.utilities.supportDataTools.dataFetcher import get_path, DataFile
@@ -81,6 +81,30 @@ def test_dentonFluxModel(show_plots, param1_Kp, param2_LT, param3_z, param4_r_EN
     """
     dentonFluxModelTestFunction(show_plots, param1_Kp, param2_LT, param3_z, param4_r_EN,
                                                              accuracy)
+
+
+def test_dentonFluxModel_missing_file_format_string():
+    r"""
+    **Validation Test Description**
+
+    This test verifies that missing Denton data file paths are logged as string data, even when the path contains
+    format specifiers.
+    """
+    module = dentonFluxModel.DentonFluxModel()
+    module.ModelTag = "dentonFluxModule"
+    module.kpIndex = "1o"
+    module.numOutputEnergies = 6
+    missing_path = os.path.join(path, "missing_%s_%n_flux.txt")
+    module.configureDentonFiles(missing_path, missing_path)
+
+    module.scStateInMsg.subscribeTo(messaging.SCStatesMsg().write(messaging.SCStatesMsgPayload()))
+    module.earthStateInMsg.subscribeTo(messaging.SpicePlanetStateMsg().write(messaging.SpicePlanetStateMsgPayload()))
+    module.sunStateInMsg.subscribeTo(messaging.SpicePlanetStateMsg().write(messaging.SpicePlanetStateMsgPayload()))
+
+    with pytest.raises(bskLogging.BasiliskError) as err:
+        module.Reset(0)
+
+    assert missing_path in str(err.value)
 
 
 def dentonFluxModelTestFunction(show_plots, param1_Kp, param2_LT, param3_z, param4_r_EN, accuracy):
