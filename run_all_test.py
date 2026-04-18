@@ -1,4 +1,4 @@
-from os import system
+import subprocess
 
-system('cd dist3 && ctest -C Release')
-system('cd src && pytest -n auto')
+subprocess.run(["ctest", "-C", "Release"], cwd="dist3", check=True)
+subprocess.run(["pytest", "-n", "auto"], cwd="src", check=True)
