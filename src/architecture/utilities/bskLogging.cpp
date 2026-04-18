@@ -147,7 +147,7 @@ EXTERN void _setLogLevel(BSKLogger* bskLogger, logLevel_t logLevel)
 */
 EXTERN void _bskLog(BSKLogger* bskLogger, logLevel_t logLevel, const char* info)
 {
-    bskLogger->bskLog(logLevel, info);
+    bskLogger->bskLog(logLevel, "%s", info);
 }
 
 /// \endcond

@@ -26,6 +26,7 @@
 #include "simulation/communication/linkBudget/linkBudget.h"
 #include "simulation/communication/_GeneralModuleFiles/AntennaDefinitions.h"
 #include "architecture/utilities/ItuRefAtmosphere.h"
+#include <cstdio>
 #include <iostream>
 #include <cstring>
 #include <cmath>
@@ -393,7 +394,7 @@ void LinkBudget::generateLookupTable(LinkBudgetTypes::GasType gasType, LookupTab
     std::ifstream file(filePath);
     if (!file.is_open()) {
         std::string errorMsg = "LinkBudget: Unable to open lookup table file: " + filePath.string();
-        bskLogger.bskLog(BSK_ERROR, errorMsg.c_str());
+        bskLogger.bskLog(BSK_ERROR, "%s", errorMsg.c_str());
         return;
     }
 
@@ -503,9 +504,7 @@ void LinkBudget::generateLookupTable(LinkBudgetTypes::GasType gasType, LookupTab
 
     // Verify that data was loaded
     if (lookupTable->f_l.empty()) {
-        bskLogger.bskLog(BSK_WARNING, ("LinkBudget: No data loaded from " + filename).c_str());
-    } else {
-        // Table was loaded successfully
+        bskLogger.bskLog(BSK_WARNING, "LinkBudget: No data loaded from %s", filename.c_str());
     }
 }
 void LinkBudget::precomputeAtmosphericAttenuationAtLayers(AttenuationLookupTable* attenuationLookup, double frequency)
@@ -617,10 +616,24 @@ void LinkBudget::writeOutputMessages(uint64_t CurrentSimNanos)
     // always zero the output message buffers before assigning values
     linkBudgetOutPayloadBuffer = this->linkBudgetOutPayload.zeroMsgPayload;
     // populate the output message buffer
-    std::strncpy(linkBudgetOutPayloadBuffer.antennaName1, this->antennaIn_1.antennaName, sizeof(linkBudgetOutPayloadBuffer.antennaName1) - 1); // [-]  ID of antenna 1
-    linkBudgetOutPayloadBuffer.antennaName1[sizeof(linkBudgetOutPayloadBuffer.antennaName1) - 1] = '\0';
-    std::strncpy(linkBudgetOutPayloadBuffer.antennaName2, this->antennaIn_2.antennaName, sizeof(linkBudgetOutPayloadBuffer.antennaName2) - 1); // [-]  ID of antenna 2
-    linkBudgetOutPayloadBuffer.antennaName2[sizeof(linkBudgetOutPayloadBuffer.antennaName2) - 1] = '\0';
+    if (std::memchr(this->antennaIn_1.antennaName, '\0', sizeof(this->antennaIn_1.antennaName)) == nullptr) {
+        bskLogger.bskLog(BSK_ERROR,
+                         "LinkBudget: antennaName1 is not null-terminated within %zu characters.",
+                         sizeof(this->antennaIn_1.antennaName));
+    }
+    std::snprintf(linkBudgetOutPayloadBuffer.antennaName1,
+                  sizeof(linkBudgetOutPayloadBuffer.antennaName1),
+                  "%s",
+                  this->antennaIn_1.antennaName); // [-]  ID of antenna 1
+    if (std::memchr(this->antennaIn_2.antennaName, '\0', sizeof(this->antennaIn_2.antennaName)) == nullptr) {
+        bskLogger.bskLog(BSK_ERROR,
+                         "LinkBudget: antennaName2 is not null-terminated within %zu characters.",
+                         sizeof(this->antennaIn_2.antennaName));
+    }
+    std::snprintf(linkBudgetOutPayloadBuffer.antennaName2,
+                  sizeof(linkBudgetOutPayloadBuffer.antennaName2),
+                  "%s",
+                  this->antennaIn_2.antennaName); // [-]  ID of antenna 2
     linkBudgetOutPayloadBuffer.antennaState1 = this->antennaIn_1.antennaState;                                                       // [-]  State of antenna 1 (Off/Tx/Rx/TxRx)
     linkBudgetOutPayloadBuffer.antennaState2 = this->antennaIn_2.antennaState;                                                       // [-]  State of antenna 2 (Off/Tx/Rx/TxRx)
     linkBudgetOutPayloadBuffer.CNR1          = this->CNR1;                                                                           // [-]  Carrier-to-Noise Ratio for antenna 1

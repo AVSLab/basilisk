@@ -140,7 +140,7 @@ bool HaslamMap::loadHaslamMap() {
                       this->brightnessTemperatures.data(), &anynull, &status)) {
         char err_text[256];
         fits_get_errstatus(status, err_text);
-        this->bskLogger.bskLog(BSK_ERROR, ("HaslamMap: Error reading data: " + std::string(err_text)).c_str());
+        this->bskLogger.bskLog(BSK_ERROR, "HaslamMap: Error reading data: %s", err_text);
         this->brightnessTemperatures.clear();
         closeFile();
         return false;

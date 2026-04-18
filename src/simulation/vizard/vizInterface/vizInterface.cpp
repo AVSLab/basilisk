@@ -84,11 +84,11 @@ void VizInterface::Reset(uint64_t CurrentSimNanos)
         if (broadcastConnect != 0) {
             int error_code = zmq_errno();
             text = "Broadcast socket did not connect correctly. ZMQ error code: " + std::to_string(error_code);
-            bskLogger.bskLog(BSK_ERROR, text.c_str());
+            bskLogger.bskLog(BSK_ERROR, "%s", text.c_str());
             return;
         }
         text = "Broadcasting at " + this->pubComProtocol + "://" + this->pubComAddress + ":" + this->pubPortNumber;
-        bskLogger.bskLog(BSK_INFORMATION, text.c_str());
+        bskLogger.bskLog(BSK_INFORMATION, "%s", text.c_str());
     }
 
     if (this->liveStream || this->noDisplay) {
@@ -107,7 +107,7 @@ void VizInterface::Reset(uint64_t CurrentSimNanos)
         if (twoWayConnect != 0) {
             int error_code = zmq_errno();
             text = "2-way socket did not connect correctly. ZMQ error code: " + std::to_string(error_code);
-            bskLogger.bskLog(BSK_ERROR, text.c_str());
+            bskLogger.bskLog(BSK_ERROR, "%s", text.c_str());
             return;
         }
 
@@ -116,7 +116,7 @@ void VizInterface::Reset(uint64_t CurrentSimNanos)
         zmq_msg_t request;
 
         text = "Waiting for Vizard at " + this->reqComProtocol + "://" + this->reqComAddress + ":" + this->reqPortNumber;
-        bskLogger.bskLog(BSK_INFORMATION, text.c_str());
+        bskLogger.bskLog(BSK_INFORMATION, "%s", text.c_str());
 
         zmq_msg_init_data(&request, message, 4, message_buffer_deallocate, NULL);
         zmq_msg_send(&request, this->requester_socket, 0);
@@ -1341,7 +1341,7 @@ void VizInterface::addCamMsgToModule(Message<CameraConfigMsgPayload> *tmpMsg)
 
     CameraConfigMsgPayload tmpCamConfigMsg = {};
     tmpCamConfigMsg.cameraID = -1;
-    strcpy(tmpCamConfigMsg.skyBox, "");
+    tmpCamConfigMsg.skyBox[0] = '\0';
     tmpCamConfigMsg.renderRate = 0;
     this->cameraConfigBuffers.push_back(tmpCamConfigMsg);
 
