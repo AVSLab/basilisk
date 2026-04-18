@@ -18,7 +18,8 @@
 */
 
 #include "simulation/onboardDataHandling/instrument/mappingInstrument/mappingInstrument.h"
-#include "string.h"
+
+#include <cstdio>
 
 /*! This is the constructor for the module class.  It sets default variable
     values and initializes the various parts of the model */
@@ -70,7 +71,10 @@ void MappingInstrument::UpdateState(uint64_t CurrentSimNanos)
             dataNodeOutMsgBuffer.at(c).baudRate = 0;
         }
 
-        strcpy(dataNodeOutMsgBuffer.at(c).dataName, mappingPoints[c].c_str());
+        std::snprintf(dataNodeOutMsgBuffer.at(c).dataName,
+                      sizeof(dataNodeOutMsgBuffer.at(c).dataName),
+                      "%s",
+                      mappingPoints[c].c_str());
 
         /* Write the output message */
         this->dataNodeOutMsgs.at(c)->write(&this->dataNodeOutMsgBuffer.at(c), this->moduleID, CurrentSimNanos);
@@ -84,6 +88,14 @@ void MappingInstrument::UpdateState(uint64_t CurrentSimNanos)
  *
 */
 void MappingInstrument::addMappingPoint(Message<AccessMsgPayload> *tmpAccessMsg, std::string dataName){
+    DataNodeUsageMsgPayload dataNodeUsageMsg = {};
+    if (dataName.size() >= sizeof(dataNodeUsageMsg.dataName)) {
+        bskLogger.bskLog(BSK_ERROR,
+                         "MappingInstrument: dataName is %zu characters, but DataNodeUsageMsgPayload.dataName "
+                         "supports at most %zu characters.",
+                         dataName.size(), sizeof(dataNodeUsageMsg.dataName) - 1);
+    }
+
     /* Add the name of the mapping point */
     this->mappingPoints.push_back(dataName);
 
@@ -96,7 +108,6 @@ void MappingInstrument::addMappingPoint(Message<AccessMsgPayload> *tmpAccessMsg,
     this->dataNodeOutMsgs.push_back(msg);
 
     /* Expand the data node usage buffer vectors */
-    DataNodeUsageMsgPayload dataNodeUsageMsg;
     this->dataNodeOutMsgBuffer.push_back(dataNodeUsageMsg);
 
     return;
