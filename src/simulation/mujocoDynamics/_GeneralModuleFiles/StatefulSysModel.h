@@ -23,37 +23,49 @@
 #include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 
-/**A short-lived class passed to StatefulSysModel for them to register
+/** @brief Helper passed to ``StatefulSysModel`` instances while they register
  * their states.
  *
  * This class serves two purposes. First, it adds a prefix to every state
  * name before registering it on the actual DynParamManager. This prevents
- * state name collisions between StatefulSysModel as long as the prefix
- * are unique. Second, it exponses only the registerState method from
- * the DynParamManager. This prevents StatefulSysModel from registering
+ * state-name collisions between ``StatefulSysModel`` instances as long as the
+ * prefixes are unique. Second, it exposes only the ``registerState`` method
+ * from the ``DynParamManager``. This prevents ``StatefulSysModel`` instances
+ * from registering
  * properties or accessing the states of other models, which would allow for
  * information to flow between models without going through the message system.
  * If a model needs to access information from another model, it should do so
- * thorugh a message, not by sharing a state or property.
+ * through a message, not by sharing a state or property.
  */
 class DynParamRegisterer
 {
 public:
-    /** Constructor */
+    /** @brief Construct a state-registering helper.
+     *
+     * @param manager Underlying dynamics-parameter manager.
+     * @param stateNamePrefix Prefix appended to every registered state name.
+     */
     DynParamRegisterer(DynParamManager& manager, std::string stateNamePrefix)
         : manager(manager)
         , stateNamePrefix(stateNamePrefix)
         {}
 
-    /** Creates and returns a new state, which will be managed by the
-     * underlying ``DynParamManager``.
+    /** @brief Create and return a new state managed by the underlying
+     * ``DynParamManager``.
      *
      * The state name should be unique: registering two states with the
-     * same name on this class will cause an error. Different StatefulSysModel
-     * are allowed to use the same state name, however.
+     * same name on this class will cause an error. Different
+     * ``StatefulSysModel`` instances are allowed to use the same state name,
+     * however.
      *
      * This method may optionally be templated to create StateData of
-     * subclasses of StateData.
+     * subclasses of ``StateData``.
+     *
+     * @tparam StateDataType Concrete state-data type to instantiate.
+     * @param nRow Number of rows in the state storage.
+     * @param nCol Number of columns in the state storage.
+     * @param stateName State name local to the registering model.
+     * @return Pointer to the newly registered state object.
      */
     template <typename StateDataType = StateData,
               std::enable_if_t<std::is_base_of_v<StateData, StateDataType>, bool> = true>
@@ -64,7 +76,9 @@ public:
         );
     }
 
-    /** Used when more than one state have dynamics perturbed
+    /** @brief Register a shared stochastic noise source across multiple states.
+     *
+     * Used when more than one state has dynamics perturbed
      * by the same noise process.
      *
      * For example, consider the following SDE:
@@ -93,7 +107,9 @@ public:
      * and the first noise source of the ``StateData`` 'myStateX1' actually
      * correspond to the same noise process.
      *
-     * NOTE: Some stochastic integrators do not support sharing noise sources.
+     * @param in List of state/noise-source-index pairs that share one process.
+     *
+     * @note Some stochastic integrators do not support shared noise sources.
      * In this case, this method should raise ``std::logic_error``.
      */
     inline void registerSharedNoiseSource(std::vector<std::pair<const StateData&, size_t>> in)
@@ -102,16 +118,16 @@ public:
     }
 
 protected:
-    DynParamManager& manager; ///< wrapped manager
-    std::string stateNamePrefix; ///< prefix added to all registered state names
+    DynParamManager& manager;      //!< Wrapped manager that owns the registered states.
+    std::string stateNamePrefix;   //!< Prefix added to all registered state names.
 };
 
-/** A SysModel that has continuous-time states.
+/** @brief ``SysModel`` base class for modules with continuous-time states.
  *
- * StatefulSysModel are added on the dynamics task of an MJScene.
- * On its UpdateState method, a StatefulSysModel should call each state's
- * setDerivative method. This value will be used by the integrator to
- * update the state for the next integrator step.
+ * ``StatefulSysModel`` instances are added to the dynamics task of an
+ * ``MJScene``. On ``UpdateState()``, a ``StatefulSysModel`` should call each
+ * state's ``setDerivative`` method. That derivative is then used by the
+ * integrator to update the state for the next integration step.
  *
  * The sample code below shows how to get the current value of the state
  * and how to set its derivative. In this case, ``x`` would follow an
@@ -126,23 +142,24 @@ protected:
 class StatefulSysModel : virtual public SysModel
 {
 public:
-    /** Default constructor */
+    /** @brief Construct a stateful system model. */
     StatefulSysModel() = default;
 
-    /**Used to register states on the given DynParamRegisterer.
+    /** @brief Register this model's continuous states.
      *
-     * The main purpose of this method is for this class to call
-     * ``registerState`` on the registerer. Note that state names
-     * should not be repeated within the same StatefulSysModel.
+     * The main purpose of this method is to call ``registerState`` on the
+     * supplied registerer. State names must not be repeated within the same
+     * ``StatefulSysModel`` instance.
      *
      * \code{.cpp}
-     * void registerStates(DynParamRegisterer& registerer) override {
-     *     this->posState = registerer.register(3, 1, "pos");
-     *     this->massState = registerer.register(1, 1, "mass");
+     * void registerStates(DynParamRegisterer registerer) override {
+     *     this->posState = registerer.registerState(3, 1, "pos");
+     *     this->massState = registerer.registerState(1, 1, "mass");
      *     // etc.
      * }
      * \endcode
      *
+     * @param registerer Helper used to create namespaced state registrations.
      */
     virtual void registerStates(DynParamRegisterer registerer) = 0;
 };
