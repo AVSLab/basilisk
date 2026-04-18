@@ -158,7 +158,7 @@ class DownlinkHandling : public DataNodeBase
 
     StorageSelection selectStorageSelection() const;
     bool isStorageRemovalRouteSafe(const StorageSelection& selection) const;
-    bool setDataNameFromStorageSelection(const StorageSelection& selection, char* buffer, std::size_t bufferSize) const;
+    bool setDataNameFromStorageSelection(const StorageSelection& selection, char* buffer, std::size_t bufferSize);
     void selectReceiver(double* cnrLinear, uint32_t* receiverIndex) const;
     bool validateConfiguration() const;
     bool isFinite(double value) const;

@@ -180,6 +180,11 @@ void DataStorageUnitBase::integrateDataStatus(double currentTime){
                //! - if a dataNode does not exist in storedData, add it to storedData, integrate baud rate, and add amount
            }
            else if (strcmp(it->dataName, "") != 0) {
+               if (std::memchr(it->dataName, '\0', sizeof(it->dataName)) == nullptr) {
+                   bskLogger.bskLog(BSK_ERROR,
+                                    "DataStorageUnitBase: dataName is not null-terminated within %zu characters.",
+                                    sizeof(it->dataName));
+               }
                std::snprintf(tmpDataInstance.dataInstanceName,
                              sizeof(tmpDataInstance.dataInstanceName),
                              "%s",
@@ -282,6 +287,12 @@ void DataStorageUnitBase::setDataBuffer(std::string partitionName, int64_t data)
         }
         //! - if a dataNode does not exist in storedData, add it to storedData, and add amount
         else if (strcmp(partitionName.c_str(), "") != 0) {
+            if (partitionName.size() >= sizeof(tmpDataInstance.dataInstanceName)) {
+                bskLogger.bskLog(BSK_ERROR,
+                                 "DataStorageUnitBase: partitionName is %zu characters, but dataInstanceName "
+                                 "supports at most %zu characters.",
+                                 partitionName.size(), sizeof(tmpDataInstance.dataInstanceName) - 1);
+            }
             std::snprintf(tmpDataInstance.dataInstanceName,
                           sizeof(tmpDataInstance.dataInstanceName),
                           "%s",

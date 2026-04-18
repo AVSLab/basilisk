@@ -18,6 +18,8 @@
  */
 
 #include "simpleInstrument.h"
+#include <cstdio>
+#include <cstring>
 
 /*! Constructor, which sets the default nodeDataOut to zero.
 
@@ -39,6 +41,11 @@ SimpleInstrument::~SimpleInstrument(){
 */
 void SimpleInstrument::evaluateDataModel(DataNodeUsageMsgPayload *dataUsageSimMsg, double currentTime){
     dataUsageSimMsg->baudRate = this->nodeBaudRate;
-    strncpy (dataUsageSimMsg->dataName, this->nodeDataName, sizeof(dataUsageSimMsg->dataName));
+    if (std::memchr(this->nodeDataName, '\0', sizeof(this->nodeDataName)) == nullptr) {
+        bskLogger.bskLog(BSK_ERROR,
+                         "SimpleInstrument: nodeDataName is not null-terminated within %zu characters.",
+                         sizeof(this->nodeDataName));
+    }
+    std::snprintf(dataUsageSimMsg->dataName, sizeof(dataUsageSimMsg->dataName), "%s", this->nodeDataName);
     return;
 }

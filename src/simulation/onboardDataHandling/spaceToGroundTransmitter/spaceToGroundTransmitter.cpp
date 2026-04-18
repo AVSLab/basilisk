@@ -167,10 +167,17 @@ SpaceToGroundTransmitter::evaluateDataModel(DataNodeUsageMsgPayload* dataUsageSi
             //! - If we have not transmitted any of the packet, we select a new type of data to downlink
             if (this->packetTransmitted == 0.0) {
                 // Set nodeDataName to the maximum data name
+                const std::string& storedDataName = this->storageUnitMsgsBuffer.back().storedDataName[maxIndex];
+                if (storedDataName.size() >= sizeof(this->nodeDataName)) {
+                    bskLogger.bskLog(BSK_ERROR,
+                                     "SpaceToGroundTransmitter: storedDataName is %zu characters, but nodeDataName "
+                                     "supports at most %zu characters.",
+                                     storedDataName.size(), sizeof(this->nodeDataName) - 1);
+                }
                 std::snprintf(this->nodeDataName,
                               sizeof(this->nodeDataName),
                               "%s",
-                              this->storageUnitMsgsBuffer.back().storedDataName[maxIndex].c_str());
+                              storedDataName.c_str());
                 // strncpy nodeDataName to the name of the output message
                 std::snprintf(dataUsageSimMsg->dataName,
                               sizeof(dataUsageSimMsg->dataName),

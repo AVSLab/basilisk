@@ -17,8 +17,8 @@
 
  */
 #include "simulation/environment/planetEphemeris/planetEphemeris.h"
+#include <cstdio>
 #include <iostream>
-#include <string.h>
 #include "architecture/utilities/astroConstants.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/macroDefinitions.h"
@@ -44,6 +44,15 @@ PlanetEphemeris::~PlanetEphemeris()
 /*! add list of planet names */
 void PlanetEphemeris::setPlanetNames(std::vector<std::string> names)
 {
+    for (const auto& name : names) {
+        if (name.size() >= MAX_BODY_NAME_LENGTH) {
+            bskLogger.bskLog(BSK_ERROR,
+                             "PlanetEphemeris: planet name is %zu characters, but the SPICE payload name "
+                             "supports at most %d characters.",
+                             name.size(), MAX_BODY_NAME_LENGTH - 1);
+        }
+    }
+
     this->planetNames = names;
 
     /* create corresponding output messages */
@@ -141,7 +150,7 @@ void PlanetEphemeris::UpdateState(uint64_t CurrentSimNanos)
         SpicePlanetStateMsgPayload newPlanet;
         newPlanet = this->planetOutMsgs.at(c)->zeroMsgPayload;
         //! - specify planet name in output message
-        strcpy(newPlanet.PlanetName, it->c_str());
+        std::snprintf(newPlanet.PlanetName, sizeof(newPlanet.PlanetName), "%s", it->c_str());
 
         //! - tag time to message
         newPlanet.J2000Current = time;
