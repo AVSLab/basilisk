@@ -1,0 +1,1 @@
+- Fixed a potential stack buffer overflow in :ref:`vizInterface` by rejecting default celestial body names that exceed the fixed SPICE payload name storage.
