@@ -27,6 +27,7 @@
  */
 
 /* modify the path to reflect the new module names */
+#include <cstdio>
 #include <string.h>
 #include "camera.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
@@ -316,7 +317,12 @@ void Camera::UpdateState(uint64_t currentSimNanos)
 
     /*! - Populate the camera message */
     cameraMsg.cameraID = this->cameraID;
-    strcpy(cameraMsg.parentName, this->parentName);
+    if (memchr(this->parentName, '\0', sizeof(this->parentName)) == nullptr) {
+        bskLogger.bskLog(BSK_ERROR,
+                         "Camera: parentName is not null-terminated within %zu characters.",
+                         sizeof(this->parentName));
+    }
+    std::snprintf(cameraMsg.parentName, sizeof(cameraMsg.parentName), "%s", this->parentName);
     cameraMsg.resolution[0] = this->resolution[0];
     cameraMsg.resolution[1] = this->resolution[1];
     cameraMsg.renderRate = this->renderRate;
@@ -324,7 +330,12 @@ void Camera::UpdateState(uint64_t currentSimNanos)
     cameraMsg.isOn = this->cameraIsOn;
     v3Copy(this->cameraPos_B, cameraMsg.cameraPos_B);
     v3Copy(this->sigma_CB, cameraMsg.sigma_CB);
-    strcpy(cameraMsg.skyBox, this->skyBox);
+    if (memchr(this->skyBox, '\0', sizeof(this->skyBox)) == nullptr) {
+        bskLogger.bskLog(BSK_ERROR,
+                         "Camera: skyBox is not null-terminated within %zu characters.",
+                         sizeof(this->skyBox));
+    }
+    std::snprintf(cameraMsg.skyBox, sizeof(cameraMsg.skyBox), "%s", this->skyBox);
     cameraMsg.postProcessingOn = this->postProcessingOn;
     cameraMsg.ppAperture = this->ppAperture;
     cameraMsg.ppFocalLength = this->ppFocalLength;

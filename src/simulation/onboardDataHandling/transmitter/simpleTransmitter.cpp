@@ -92,10 +92,17 @@ void SimpleTransmitter::evaluateDataModel(DataNodeUsageMsgPayload *dataUsageSimM
         if (this->packetTransmitted == 0.0) {
 
             // Set nodeDataName to the maximum data name
+            const std::string& storedDataName = this->storageUnitMsgs.back().storedDataName[this->currentIndex];
+            if (storedDataName.size() >= sizeof(this->nodeDataName)) {
+                bskLogger.bskLog(BSK_ERROR,
+                                 "SimpleTransmitter: storedDataName is %zu characters, but nodeDataName "
+                                 "supports at most %zu characters.",
+                                 storedDataName.size(), sizeof(this->nodeDataName) - 1);
+            }
             std::snprintf(this->nodeDataName,
                           sizeof(this->nodeDataName),
                           "%s",
-                          this->storageUnitMsgs.back().storedDataName[this->currentIndex].c_str());
+                          storedDataName.c_str());
 
             // strncpy nodeDataName to the name of the output message
             std::snprintf(dataUsageSimMsg->dataName,

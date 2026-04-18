@@ -17,6 +17,7 @@
 
  */
 #include "simulation/environment/spiceInterface/spiceInterface.h"
+#include <cstdio>
 #include <sstream>
 #include "SpiceUsr.h"
 #include <string.h>
@@ -358,10 +359,12 @@ void SpiceInterface::addPlanetNames(std::vector<std::string> planetNames) {
         m33SetIdentity(newPlanet.J20002Pfix);
         if(it->size() >= MAX_BODY_NAME_LENGTH)
         {
-            bskLogger.bskLog(BSK_WARNING, "spiceInterface: Warning, your planet name is too long for me.  Ignoring: %s", (*it).c_str());
-            continue;
+            bskLogger.bskLog(BSK_ERROR,
+                             "spiceInterface: planet name is %zu characters, but the SPICE payload name "
+                             "supports at most %d characters.",
+                             it->size(), MAX_BODY_NAME_LENGTH - 1);
         }
-        strcpy(newPlanet.PlanetName, it->c_str());
+        std::snprintf(newPlanet.PlanetName, sizeof(newPlanet.PlanetName), "%s", it->c_str());
 
         this->planetData.push_back(newPlanet);
     }
@@ -410,10 +413,12 @@ void SpiceInterface::addSpacecraftNames(std::vector<std::string> spacecraftNames
         m33SetIdentity(newSpacecraft.J20002Pfix);
         if(it->size() >= MAX_BODY_NAME_LENGTH)
         {
-            bskLogger.bskLog(BSK_WARNING, "spiceInterface: Warning, your spacecraft name is too long for me.  Ignoring: %s", (*it).c_str());
-            continue;
+            bskLogger.bskLog(BSK_ERROR,
+                             "spiceInterface: spacecraft name is %zu characters, but the SPICE payload name "
+                             "supports at most %d characters.",
+                             it->size(), MAX_BODY_NAME_LENGTH - 1);
         }
-        strcpy(newSpacecraft.PlanetName, it->c_str());
+        std::snprintf(newSpacecraft.PlanetName, sizeof(newSpacecraft.PlanetName), "%s", it->c_str());
 
         std::string planetFrame = *it;
         cnmfrm_c(planetFrame.c_str(), this->charBufferSize, &frmCode, name, &frmFound);

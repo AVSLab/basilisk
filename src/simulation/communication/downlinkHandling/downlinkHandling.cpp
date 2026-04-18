@@ -21,6 +21,7 @@ Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado Bould
 
 #include <algorithm>
 #include <cmath>
+#include <cstdio>
 #include <cstring>
 
 #include "architecture/utilities/macroDefinitions.h"
@@ -48,8 +49,7 @@ DownlinkHandling::DownlinkHandling()
     this->linkBudgetBuffer = {};
     this->downlinkOutBuffer = this->downlinkOutMsg.zeroMsgPayload;
 
-    std::strncpy(this->nodeDataName, "STORED DATA", sizeof(this->nodeDataName) - 1);
-    this->nodeDataName[sizeof(this->nodeDataName) - 1] = '\0';
+    std::snprintf(this->nodeDataName, sizeof(this->nodeDataName), "%s", "STORED DATA");
 }
 
 /*! Add a storage-status message to the module input list */
@@ -251,8 +251,10 @@ DownlinkHandling::evaluateDataModel(DataNodeUsageMsgPayload* dataUsageMsg, doubl
     const bool selectedDataNameValid =
       this->setDataNameFromStorageSelection(selection, this->nodeDataName, sizeof(this->nodeDataName));
 
-    std::strncpy(this->downlinkOutBuffer.dataName, this->nodeDataName, sizeof(this->downlinkOutBuffer.dataName) - 1);
-    this->downlinkOutBuffer.dataName[sizeof(this->downlinkOutBuffer.dataName) - 1] = '\0';
+    std::snprintf(this->downlinkOutBuffer.dataName,
+                  sizeof(this->downlinkOutBuffer.dataName),
+                  "%s",
+                  this->nodeDataName);
     this->downlinkOutBuffer.availableDataBits = this->availableDataBits;
     const bool safeStorageRemovalRoute = selectedDataNameValid && this->isStorageRemovalRouteSafe(selection);
     if (!safeStorageRemovalRoute && selection.storageUnitIndex >= 0) {
@@ -280,8 +282,7 @@ DownlinkHandling::evaluateDataModel(DataNodeUsageMsgPayload* dataUsageMsg, doubl
         this->lastBlockedStorageRemovalReason.clear();
     }
     if (safeStorageRemovalRoute) {
-        std::strncpy(dataUsageMsg->dataName, this->nodeDataName, sizeof(dataUsageMsg->dataName) - 1);
-        dataUsageMsg->dataName[sizeof(dataUsageMsg->dataName) - 1] = '\0';
+        std::snprintf(dataUsageMsg->dataName, sizeof(dataUsageMsg->dataName), "%s", this->nodeDataName);
     } else {
         // Leaving the removal message unnamed prevents DataStorageUnitBase from creating a synthetic partition.
         dataUsageMsg->dataName[0] = '\0';
@@ -295,23 +296,33 @@ DownlinkHandling::evaluateDataModel(DataNodeUsageMsgPayload* dataUsageMsg, doubl
     this->downlinkOutBuffer.cnr = this->sanitizeNonNegative(selectedCnr);
 
     // Record which antenna pair created the selected receiver path for downstream diagnostics and plotting.
+    auto copyAntennaName = [this](char* destination, size_t destinationSize, const char* source, size_t sourceSize) {
+        if (std::memchr(source, '\0', sourceSize) == nullptr) {
+            bskLogger.bskLog(BSK_ERROR,
+                             "DownlinkHandling: antenna name is not null-terminated within %zu characters.",
+                             sourceSize);
+        }
+        std::snprintf(destination, destinationSize, "%s", source);
+    };
     if (selectedReceiver == 1) {
-        std::strncpy(this->downlinkOutBuffer.receiverAntennaName,
-                     this->linkBudgetBuffer.antennaName1,
-                     sizeof(this->downlinkOutBuffer.receiverAntennaName) - 1);
-        std::strncpy(this->downlinkOutBuffer.transmitterAntennaName,
-                     this->linkBudgetBuffer.antennaName2,
-                     sizeof(this->downlinkOutBuffer.transmitterAntennaName) - 1);
+        copyAntennaName(this->downlinkOutBuffer.receiverAntennaName,
+                        sizeof(this->downlinkOutBuffer.receiverAntennaName),
+                        this->linkBudgetBuffer.antennaName1,
+                        sizeof(this->linkBudgetBuffer.antennaName1));
+        copyAntennaName(this->downlinkOutBuffer.transmitterAntennaName,
+                        sizeof(this->downlinkOutBuffer.transmitterAntennaName),
+                        this->linkBudgetBuffer.antennaName2,
+                        sizeof(this->linkBudgetBuffer.antennaName2));
     } else if (selectedReceiver == 2) {
-        std::strncpy(this->downlinkOutBuffer.receiverAntennaName,
-                     this->linkBudgetBuffer.antennaName2,
-                     sizeof(this->downlinkOutBuffer.receiverAntennaName) - 1);
-        std::strncpy(this->downlinkOutBuffer.transmitterAntennaName,
-                     this->linkBudgetBuffer.antennaName1,
-                     sizeof(this->downlinkOutBuffer.transmitterAntennaName) - 1);
+        copyAntennaName(this->downlinkOutBuffer.receiverAntennaName,
+                        sizeof(this->downlinkOutBuffer.receiverAntennaName),
+                        this->linkBudgetBuffer.antennaName2,
+                        sizeof(this->linkBudgetBuffer.antennaName2));
+        copyAntennaName(this->downlinkOutBuffer.transmitterAntennaName,
+                        sizeof(this->downlinkOutBuffer.transmitterAntennaName),
+                        this->linkBudgetBuffer.antennaName1,
+                        sizeof(this->linkBudgetBuffer.antennaName1));
     }
-    this->downlinkOutBuffer.receiverAntennaName[sizeof(this->downlinkOutBuffer.receiverAntennaName) - 1] = '\0';
-    this->downlinkOutBuffer.transmitterAntennaName[sizeof(this->downlinkOutBuffer.transmitterAntennaName) - 1] = '\0';
 
     // A valid RF path requires written link-budget data, a positive selected CNR, positive overlap bandwidth,
     // a positive requested bit rate, and a positive packet size.
@@ -487,7 +498,7 @@ DownlinkHandling::isStorageRemovalRouteSafe(const StorageSelection& selection) c
 bool
 DownlinkHandling::setDataNameFromStorageSelection(const StorageSelection& selection,
                                                   char* buffer,
-                                                  std::size_t bufferSize) const
+                                                  std::size_t bufferSize)
 {
     if (bufferSize == 0) {
         return false;
@@ -512,8 +523,13 @@ DownlinkHandling::setDataNameFromStorageSelection(const StorageSelection& select
     if (selectedPartition < storage.storedDataName.size()) {
         const auto& name = storage.storedDataName[selectedPartition];
         if (!name.empty()) {
-            std::strncpy(buffer, name.c_str(), bufferSize - 1);
-            buffer[bufferSize - 1] = '\0';
+            if (name.size() >= bufferSize) {
+                bskLogger.bskLog(BSK_ERROR,
+                                 "DownlinkHandling: selected storage partition name is %zu characters, but "
+                                 "the destination buffer supports at most %zu characters.",
+                                 name.size(), bufferSize - 1);
+            }
+            std::snprintf(buffer, bufferSize, "%s", name.c_str());
             return true;
         }
     }
