@@ -9,6 +9,7 @@
    #include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
 %}
 
+%include "stdint.i"
 %include "std_pair.i"
 %include "std_vector.i"
 %include "std_string.i"
