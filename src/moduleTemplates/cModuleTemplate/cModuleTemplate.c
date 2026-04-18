@@ -24,6 +24,7 @@
 /* modify the path to reflect the new module names */
 #include "cModuleTemplate.h"
 #include "string.h"
+#include <stdio.h>
 
 
 
@@ -57,7 +58,7 @@ void Reset_cModuleTemplate(cModuleTemplateConfig *configData, uint64_t callTime,
     /*! reset any required variables */
     configData->dummy = 0.0;
     char info[MAX_LOGGING_LENGTH];
-    sprintf(info, "Variable dummy set to %f in reset.",configData->dummy);
+    snprintf(info, sizeof(info), "Variable dummy set to %f in reset.", configData->dummy);
     _bskLog(configData->bskLogger, BSK_INFORMATION, info);
 
     /* initialize the output message to zero on reset */
@@ -102,7 +103,8 @@ void Update_cModuleTemplate(cModuleTemplateConfig *configData, uint64_t callTime
     /* this logging statement is not typically required.  It is done here to see in the
      quick-start guide which module is being executed */
     char info[MAX_LOGGING_LENGTH];
-    sprintf(info, "C Module ID %lld ran Update at %fs", (long long int) moduleID, (double) callTime/(1e9));
+    snprintf(info, sizeof(info), "C Module ID %lld ran Update at %fs",
+             (long long int) moduleID, (double) callTime/(1e9));
     _bskLog(configData->bskLogger, BSK_INFORMATION, info);
 
     return;
