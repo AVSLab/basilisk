@@ -14,6 +14,19 @@ from Basilisk.architecture.swig_common_model import *
 %include "std_string.i"
 %include "swig_conly_data.i"
 %include "swig_std_array.i"
+
+/* Convert std::map<int, const char*> (BSKLogger::logLevelMap) to a Python dict */
+%typemap(out) std::map<int, const char*> {
+    $result = PyDict_New();
+    for (const auto& kv : $1) {
+        PyObject* key = PyLong_FromLong(kv.first);
+        PyObject* val = PyUnicode_FromString(kv.second ? kv.second : "");
+        PyDict_SetItem($result, key, val);
+        Py_DECREF(key);
+        Py_DECREF(val);
+    }
+}
+
 %include "architecture/utilities/bskLogging.h"
 
 %include "sys_model.h"
