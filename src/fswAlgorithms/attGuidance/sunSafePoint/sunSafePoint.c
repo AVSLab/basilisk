@@ -19,6 +19,7 @@
 
 #include <string.h>
 #include <math.h>
+#include <stdio.h>
 #include "fswAlgorithms/attGuidance/sunSafePoint/sunSafePoint.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
@@ -59,8 +60,8 @@ void Reset_sunSafePoint(sunSafePointConfig *configData, uint64_t callTime, int64
     /* compute an Eigen axis orthogonal to sHatBdyCmd */
     if (v3Norm(configData->sHatBdyCmd)  < 0.1) {
       char info[MAX_LOGGING_LENGTH];
-      sprintf(info, "The module vector sHatBdyCmd is not setup as a unit vector [%f, %f %f]",
-                configData->sHatBdyCmd[0], configData->sHatBdyCmd[1], configData->sHatBdyCmd[2]);
+      snprintf(info, sizeof(info), "The module vector sHatBdyCmd is not setup as a unit vector [%f, %f %f]",
+               configData->sHatBdyCmd[0], configData->sHatBdyCmd[1], configData->sHatBdyCmd[2]);
       _bskLog(configData->bskLogger, BSK_ERROR, info);
     } else {
         v3Set(1., 0., 0., v1);

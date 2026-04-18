@@ -53,7 +53,9 @@ void Reset_cssProcessTelem(CSSConfigData *configData, uint64_t callTime, int64_t
     if(configData->numSensors > MAX_NUM_CSS_SENSORS)
     {
         char info[MAX_LOGGING_LENGTH];
-        sprintf(info, "The configured number of CSS sensors exceeds the maximum, %d > %d! Changing the number of sensors to the max.", configData->numSensors, MAX_NUM_CSS_SENSORS);
+        snprintf(info, sizeof(info),
+                 "The configured number of CSS sensors exceeds the maximum, %d > %d! Changing the number of sensors to the max.",
+                 configData->numSensors, MAX_NUM_CSS_SENSORS);
         _bskLog(configData->bskLogger, BSK_WARNING, info);
         configData->numSensors = MAX_NUM_CSS_SENSORS;
     }

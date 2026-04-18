@@ -24,6 +24,7 @@
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include "architecture/utilities/macroDefinitions.h"
 #include <math.h>
+#include <stdio.h>
 
 /*!
     This method initializes the output messages for this module.
@@ -84,8 +85,8 @@ void Reset_locationPointing(locationPointingConfig *configData, uint64_t callTim
     /* compute an Eigen axis orthogonal to sHatBdyCmd */
     if (v3Norm(configData->pHat_B)  < 0.1) {
       char info[MAX_LOGGING_LENGTH];
-      sprintf(info, "locationPoint: vector pHat_B is not setup as a unit vector [%f, %f %f]",
-                configData->pHat_B[0], configData->pHat_B[1], configData->pHat_B[2]);
+      snprintf(info, sizeof(info), "locationPoint: vector pHat_B is not setup as a unit vector [%f, %f %f]",
+               configData->pHat_B[0], configData->pHat_B[1], configData->pHat_B[2]);
       _bskLog(configData->bskLogger, BSK_ERROR, info);
     } else {
         double v1[3];
@@ -103,16 +104,16 @@ void Reset_locationPointing(locationPointingConfig *configData, uint64_t callTim
     if (StripStateMsg_C_isLinked(&configData->locationstripInMsg)) {
         if (v3Norm(configData->cHat_B) < 0.1) {
             char info[MAX_LOGGING_LENGTH];
-            sprintf(info, "locationPointing: vector cHat_B is not setup as a unit vector [%f, %f, %f]",
-                          configData->cHat_B[0], configData->cHat_B[1], configData->cHat_B[2]);
+            snprintf(info, sizeof(info), "locationPointing: vector cHat_B is not setup as a unit vector [%f, %f, %f]",
+                     configData->cHat_B[0], configData->cHat_B[1], configData->cHat_B[2]);
             _bskLog(configData->bskLogger, BSK_ERROR, info);
         } else {
             v3Normalize(configData->cHat_B, configData->cHat_B);    /* ensure that this vector is a unit vector */
             double dotPHatCHat = fabs(v3Dot(configData->pHat_B, configData->cHat_B));
             if (dotPHatCHat > 1e-6) {
                 char info[MAX_LOGGING_LENGTH];
-                sprintf(info, "locationPointing: cHat_B is not perpendicular to pHat_B (dot product = %e). "
-                              "These vectors must be orthogonal for strip imaging.", dotPHatCHat);
+                snprintf(info, sizeof(info), "locationPointing: cHat_B is not perpendicular to pHat_B "
+                         "(dot product = %e). These vectors must be orthogonal for strip imaging.", dotPHatCHat);
                 _bskLog(configData->bskLogger, BSK_ERROR, info);
             }
         }
