@@ -28,6 +28,7 @@
 
 /* modify the path to reflect the new module names */
 #include <cstdio>
+#include <limits>
 #include <string.h>
 #include "camera.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
@@ -387,7 +388,14 @@ void Camera::UpdateState(uint64_t currentSimNanos)
         std::vector<unsigned char> buf;
         std::vector<int> compression;
         compression.push_back(0);
-        cv::imencode(".png", blurred, buf, compression);
+        if (!cv::imencode(".png", blurred, buf, compression) || buf.empty()) {
+            bskLogger.bskLog(BSK_ERROR, "camera: failed to encode image output buffer.");
+            return;
+        }
+        if (buf.size() > (size_t)std::numeric_limits<int32_t>::max()) {
+            bskLogger.bskLog(BSK_ERROR, "camera: encoded image output buffer is too large.");
+            return;
+        }
         /*! - Output the saved image */
         imageOut.valid = 1;
         imageOut.timeTag = imageBuffer.timeTag;
@@ -395,7 +403,11 @@ void Camera::UpdateState(uint64_t currentSimNanos)
         imageOut.imageType = imageBuffer.imageType;
         imageOut.imageBufferLength = (int32_t)buf.size();
         this->pointImageOut = malloc(imageOut.imageBufferLength*sizeof(char));
-        memcpy(this->pointImageOut, &buf[0], imageOut.imageBufferLength*sizeof(char));
+        if (this->pointImageOut == nullptr) {
+            bskLogger.bskLog(BSK_ERROR, "camera: failed to allocate image output buffer.");
+            return;
+        }
+        memcpy(this->pointImageOut, buf.data(), imageOut.imageBufferLength*sizeof(char));
         imageOut.imagePointer = this->pointImageOut;
 
         this->imageOutMsg.write(&imageOut, this->moduleID, currentSimNanos);

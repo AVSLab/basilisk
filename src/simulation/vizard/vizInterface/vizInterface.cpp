@@ -1481,7 +1481,10 @@ void VizInterface::receiveUserInput(uint64_t CurrentSimNanos){
 void VizInterface::requestImage(size_t camCounter, uint64_t CurrentSimNanos)
 {
     char buffer[10];
-    zmq_recv(this->requester_socket, buffer, 10, 0);
+    if (zmq_recv(this->requester_socket, buffer, 10, 0) == -1) {
+        bskLogger.bskLog(BSK_ERROR, "Vizard image request acknowledgement was not received.");
+        return;
+    }
     /*! -- Send request */
     std::string cmdMsg = "REQUEST_IMAGE_";
     cmdMsg += std::to_string(this->cameraConfigBuffers[camCounter].cameraID);
@@ -1501,8 +1504,19 @@ void VizInterface::requestImage(size_t camCounter, uint64_t CurrentSimNanos)
         free(this->bskImagePtrs[camCounter]);
         this->bskImagePtrs[camCounter] = NULL;
     }
-    zmq_msg_recv(&length, this->requester_socket, 0);
-    zmq_msg_recv(&image, this->requester_socket, 0);
+    if (zmq_msg_recv(&length, this->requester_socket, 0) == -1
+        || zmq_msg_recv(&image, this->requester_socket, 0) == -1) {
+        zmq_msg_close(&length);
+        zmq_msg_close(&image);
+        bskLogger.bskLog(BSK_ERROR, "Vizard image response was not received.");
+        return;
+    }
+    if (zmq_msg_size(&length) < sizeof(int32_t)) {
+        zmq_msg_close(&length);
+        zmq_msg_close(&image);
+        bskLogger.bskLog(BSK_ERROR, "Vizard image response length field is invalid.");
+        return;
+    }
 
     int32_t *lengthPoint= (int32_t *)zmq_msg_data(&length);
     void *imagePoint= zmq_msg_data(&image);
@@ -1513,9 +1527,24 @@ void VizInterface::requestImage(size_t camCounter, uint64_t CurrentSimNanos)
                                 ((length_unswapped>>8)&0xff00) | // move byte 2 to byte 1
                                 ((length_unswapped<<24)&0xff000000); // byte 0 to byte 3
 
+    if (imageBufferLength < 0 || (size_t)imageBufferLength != zmq_msg_size(&image)) {
+        zmq_msg_close(&length);
+        zmq_msg_close(&image);
+        bskLogger.bskLog(BSK_ERROR, "Vizard image response buffer length is invalid.");
+        return;
+    }
+
     /*!-Copy the image buffer pointer, so that it does not get freed by ZMQ*/
-    this->bskImagePtrs[camCounter] = malloc(imageBufferLength*sizeof(char));
-    memcpy(this->bskImagePtrs[camCounter], imagePoint, imageBufferLength*sizeof(char));
+    if (imageBufferLength > 0) {
+        this->bskImagePtrs[camCounter] = malloc(imageBufferLength*sizeof(char));
+        if (this->bskImagePtrs[camCounter] == NULL) {
+            zmq_msg_close(&length);
+            zmq_msg_close(&image);
+            bskLogger.bskLog(BSK_ERROR, "Vizard image response buffer allocation failed.");
+            return;
+        }
+        memcpy(this->bskImagePtrs[camCounter], imagePoint, imageBufferLength*sizeof(char));
+    }
 
     /*! -- Write out the image information to the Image message */
     CameraImageMsgPayload imageData = {};
