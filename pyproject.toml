@@ -13,7 +13,7 @@ requires = [
     # Requirements for building Basilisk through conanfile
     "conan>=2.0.5,<=2.23.0",
     "cmake>=3.26,<4.0",
-    "swig>=4.2.1,<=4.3.1"  # Known to work with https://github.com/nightlark/swig-pypi/pull/120
+    "swig>=4.2.1,<5",  # Support Basilisk's established SWIG baseline while allowing the latest 4.4.x releases.
 ]
 
 [project]
@@ -103,9 +103,4 @@ markers = [
   "slowtest: mark a test as a slow unit test.",
   "scenarioTest: mark a test as a tutorial scenario test.",
   "ciSkip: mark a test that should be skipped on the CI test runs",
-]
-filterwarnings = [
-  "ignore:builtin type SwigPyPacked has no __module__ attribute:DeprecationWarning",
-  "ignore:builtin type SwigPyObject has no __module__ attribute:DeprecationWarning",
-  "ignore:builtin type swigvarlink has no __module__ attribute:DeprecationWarning",
 ]
