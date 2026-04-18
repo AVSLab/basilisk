@@ -1,0 +1,1 @@
+- Hardened Basilisk module string handling and logging against fixed-buffer overflow and format-string misuse.

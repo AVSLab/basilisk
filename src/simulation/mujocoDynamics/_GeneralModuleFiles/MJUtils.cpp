@@ -32,7 +32,7 @@ logMujocoError(const char* err)
 void
 logMujocoWarning(const char* err)
 {
-    BSKLogger{}.bskLog(BSK_WARNING, ("MuJoCo internal warning: "s + err).c_str());
+    BSKLogger{}.bskLog(BSK_WARNING, "%s", ("MuJoCo internal warning: "s + err).c_str());
 }
 
 } // namespace MJBasilisk::detail

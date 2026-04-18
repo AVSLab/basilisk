@@ -113,5 +113,5 @@ If you want to print variables to the logging string, this must be done before c
 .. code-block:: c
 
    char info[MAX_LOGGING_LENGTH];
-   sprintf(info, "Variable is too large (%d). Setting to max value.", variable);
+   snprintf(info, sizeof(info), "Variable is too large (%d). Setting to max value.", variable);
    _bskLog(configData->bskLogger, BSK_ERROR, info);
