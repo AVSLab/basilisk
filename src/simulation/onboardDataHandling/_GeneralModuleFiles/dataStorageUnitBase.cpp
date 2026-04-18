@@ -19,6 +19,8 @@
 
 #include "dataStorageUnitBase.h"
 #include "architecture/utilities/macroDefinitions.h"
+#include <cstdio>
+#include <cstring>
 #include <iostream>
 
 /*! This method initializes some basic parameters for the module.
@@ -164,6 +166,12 @@ void DataStorageUnitBase::integrateDataStatus(double currentTime){
     //! - loop over all the data nodes
     std::vector<DataNodeUsageMsgPayload>::iterator it;
     for(it = nodeBaudMsgs.begin(); it != nodeBaudMsgs.end(); it++) {
+        if (std::memchr(it->dataName, '\0', sizeof(it->dataName)) == nullptr) {
+            bskLogger.bskLog(BSK_ERROR,
+                             "DataStorageUnitBase: dataName is not null-terminated within %zu characters.",
+                             sizeof(it->dataName));
+            return;
+        }
         index = messageInStoredData(&(*it));
 
         //! - If the storage capacity has not been reached or the baudRate is less than 0 and won't take below 0, then add the data
@@ -179,8 +187,11 @@ void DataStorageUnitBase::integrateDataStatus(double currentTime){
                //! - if a dataNode does not exist in storedData, add it to storedData, integrate baud rate, and add amount
            }
            else if (strcmp(it->dataName, "") != 0) {
-               strncpy(tmpDataInstance.dataInstanceName, it->dataName, sizeof(tmpDataInstance.dataInstanceName));
-               tmpDataInstance.dataInstanceSum = round(it->baudRate * (this->currentTimestep));
+               std::snprintf(tmpDataInstance.dataInstanceName,
+                             sizeof(tmpDataInstance.dataInstanceName),
+                             "%s",
+                             it->dataName);
+               tmpDataInstance.dataInstanceSum = static_cast<int64_t>(round(it->baudRate * (this->currentTimestep)));
                this->storedData.push_back(tmpDataInstance);
            }
        }
@@ -278,7 +289,17 @@ void DataStorageUnitBase::setDataBuffer(std::string partitionName, int64_t data)
         }
         //! - if a dataNode does not exist in storedData, add it to storedData, and add amount
         else if (strcmp(partitionName.c_str(), "") != 0) {
-            strncpy(tmpDataInstance.dataInstanceName, partitionName.c_str(), sizeof(tmpDataInstance.dataInstanceName));
+            if (partitionName.size() >= sizeof(tmpDataInstance.dataInstanceName)) {
+                bskLogger.bskLog(BSK_ERROR,
+                                 "DataStorageUnitBase: partitionName is %zu characters, but dataInstanceName "
+                                 "supports at most %zu characters.",
+                                 partitionName.size(), sizeof(tmpDataInstance.dataInstanceName) - 1);
+                return;
+            }
+            std::snprintf(tmpDataInstance.dataInstanceName,
+                          sizeof(tmpDataInstance.dataInstanceName),
+                          "%s",
+                          partitionName.c_str());
             //! Only perform this operation if the resulting sum in the partition is not negative. If it is, initialize to zero.
             if (data < 0) {
                 data = 0;

@@ -20,6 +20,7 @@
 #include "simpleTransmitter.h"
 #include "architecture/utilities/bskLogging.h"
 #include <array>
+#include <cstdio>
 
 /*! Constructor, which sets the default nodeDataOut to zero.
 */
@@ -91,11 +92,24 @@ void SimpleTransmitter::evaluateDataModel(DataNodeUsageMsgPayload *dataUsageSimM
         if (this->packetTransmitted == 0.0) {
 
             // Set nodeDataName to the maximum data name
-            strncpy(this->nodeDataName, this->storageUnitMsgs.back().storedDataName[this->currentIndex].c_str(),
-                    sizeof(this->nodeDataName));
+            const std::string& storedDataName = this->storageUnitMsgs.back().storedDataName[this->currentIndex];
+            if (storedDataName.size() >= sizeof(this->nodeDataName)) {
+                bskLogger.bskLog(BSK_ERROR,
+                                 "SimpleTransmitter: storedDataName is %zu characters, but nodeDataName "
+                                 "supports at most %zu characters.",
+                                 storedDataName.size(), sizeof(this->nodeDataName) - 1);
+                return;
+            }
+            std::snprintf(this->nodeDataName,
+                          sizeof(this->nodeDataName),
+                          "%s",
+                          storedDataName.c_str());
 
             // strncpy nodeDataName to the name of the output message
-            strncpy(dataUsageSimMsg->dataName, this->nodeDataName, sizeof(dataUsageSimMsg->dataName));
+            std::snprintf(dataUsageSimMsg->dataName,
+                          sizeof(dataUsageSimMsg->dataName),
+                          "%s",
+                          this->nodeDataName);
             this->packetTransmitted += this->nodeBaudRate * (this->currentTimestep);
 
             // Check to see if maxVal is less than packet size.
