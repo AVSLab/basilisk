@@ -34,28 +34,28 @@ registry_path = ROOT.joinpath(
 
 def main():
     # Regenerate registry into a temporary file
-    with tempfile.NamedTemporaryFile(delete=False) as tmp:
-        tmp_path = Path(tmp.name)
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        tmp_path = Path(tmp_dir).joinpath("registrySnippet.py")
+        with tmp_path.open("w") as tmp:
+            result = subprocess.run(
+                [sys.executable, str(make_script)],
+                stdout=tmp,
+                stderr=subprocess.PIPE,
+                text=True,
+            )
 
-    result = subprocess.run(
-        [sys.executable, str(make_script)],
-        stdout=tmp_path.open("w"),
-        stderr=subprocess.PIPE,
-        text=True,
-    )
+        if result.returncode != 0:
+            print("Error running makeRegistry.py")
+            print(result.stderr)
+            return 1
 
-    if result.returncode != 0:
-        print("Error running makeRegistry.py")
-        print(result.stderr)
-        return 1
-
-    # Compare with committed registry
-    if not filecmp.cmp(tmp_path, registry_path, shallow=False):
-        print("❌ supportData/ changed, but registrySnippet.py is outdated.")
-        print(
-            "   Run: python src/utilities/supportDataTools/makeRegistry.py > src/utilities/supportDataTools/registrySnippet.py"
-        )
-        return 1
+        # Compare with committed registry
+        if not filecmp.cmp(tmp_path, registry_path, shallow=False):
+            print("❌ supportData/ changed, but registrySnippet.py is outdated.")
+            print(
+                "   Run: python src/utilities/supportDataTools/makeRegistry.py > src/utilities/supportDataTools/registrySnippet.py"
+            )
+            return 1
 
     return 0
 
