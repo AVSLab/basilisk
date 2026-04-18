@@ -18,15 +18,25 @@
 
 import os
 import requests
+from urllib.parse import urlparse
 
 # define the print color codes
 statusColor = '\033[92m'
 warningColor = '\033[93m'
 endColor = '\033[0m'
+REQUEST_TIMEOUT = 30  # [s]
 
 # this statement is needed to enable Windows to print ANSI codes in the Terminal
 # see https://stackoverflow.com/questions/287871/how-to-print-colored-text-in-terminal-in-python/3332860#3332860
 os.system("")
+
+
+def safe_join(dest_folder, child_name):
+    """Join a GitHub item name to a local folder without allowing path separators."""
+    if child_name in ("", ".", "..") or "/" in child_name or "\\" in child_name:
+        raise ValueError(f"Unsafe GitHub item name: {child_name}")
+    return os.path.join(dest_folder, child_name)
+
 
 # Function to download a single file
 def download_file(file_url, dest_folder):
@@ -34,8 +44,9 @@ def download_file(file_url, dest_folder):
     if not os.path.exists(dest_folder):
         os.makedirs(dest_folder)
 
-    local_filename = os.path.join(dest_folder, file_url.split("/")[-1])
-    with requests.get(file_url, stream=True) as response:
+    file_name = os.path.basename(urlparse(file_url).path)
+    local_filename = safe_join(dest_folder, file_name)
+    with requests.get(file_url, stream=True, timeout=REQUEST_TIMEOUT) as response:
         response.raise_for_status()
         with open(local_filename, "wb") as file:
             for chunk in response.iter_content(chunk_size=8192):
@@ -45,7 +56,7 @@ def download_file(file_url, dest_folder):
 # Function to process a folder or file via GitHub API
 def process_github_folder(api_url, dest_folder):
     """Process the BSK GitHub examples folder recursively and download all files."""
-    response = requests.get(api_url)
+    response = requests.get(api_url, timeout=REQUEST_TIMEOUT)
     if response.status_code != 200:
         print(f"Failed to fetch the URL: {api_url}")
         print(f"Response: {response.text}")
@@ -59,7 +70,7 @@ def process_github_folder(api_url, dest_folder):
         elif item["type"] == "dir":
             print(f"Entering folder: {item['name']}")
             subfolder_api_url = item["url"]
-            subfolder_dest = os.path.join(dest_folder, item["name"])
+            subfolder_dest = safe_join(dest_folder, item["name"])
             process_github_folder(subfolder_api_url, subfolder_dest)
 
 def main():

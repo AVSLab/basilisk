@@ -694,27 +694,14 @@ def SetCArray(InputList, VarType, ArrayPointer):
         raise TypeError(
             "Cannot set a C array if it is actually a python list.  Just assign the variable to the list directly."
         )
-    CmdString = (
-        "sim_model." + VarType + "Array_setitem(ArrayPointer, CurrIndex, CurrElem)"
-    )
-    CurrIndex = 0
-    for CurrElem in InputList:
-        exec(CmdString)
-        CurrIndex += 1
+    arraySetter = getattr(sim_model, VarType + "Array_setitem")
+    for currIndex, currElem in enumerate(InputList):
+        arraySetter(ArrayPointer, currIndex, currElem)
 
 
 def getCArray(varType, arrayPointer, arraySize):
-    CmdString = (
-        "outputList.append(sim_model."
-        + varType
-        + "Array_getitem(arrayPointer, currIndex))"
-    )
-    outputList = []
-    currIndex = 0
-    for currIndex in range(arraySize):
-        exec(CmdString)
-        currIndex += 1
-    return outputList
+    arrayGetter = getattr(sim_model, varType + "Array_getitem")
+    return [arrayGetter(arrayPointer, currIndex) for currIndex in range(arraySize)]
 
 
 def synchronizeTimeHistories(arrayList):

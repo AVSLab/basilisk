@@ -81,43 +81,38 @@ def visualize(
 
     tqpos = np.column_stack([time, qpos])
 
-    with tempfile.NamedTemporaryFile("w", delete=False) as fqpos:
-        np.savetxt(fqpos, tqpos)
+    with tempfile.TemporaryDirectory() as tempDir:
+        stateFile = os.path.join(tempDir, "state.txt")
+        np.savetxt(stateFile, tqpos)
 
-    if isinstance(modelFileOrScene, str):
-        modelFile = modelFileOrScene
-        fmodel = None
-    else:
-        with tempfile.NamedTemporaryFile("w", delete=False) as fmodel:
-            modelFileOrScene.saveToFile(fmodel.name)
-        modelFile = fmodel.name
+        if isinstance(modelFileOrScene, str):
+            modelFile = modelFileOrScene
+        else:
+            modelFile = os.path.join(tempDir, "model.xml")
+            modelFileOrScene.saveToFile(modelFile)
 
-    if platform.system() == "Windows":
-        script_fn = "replay.exe"
-    else:
-        script_fn = "replay"
-    script = os.path.join(bskPath, rf"utilities/mujocoUtils/bin/{script_fn}")
+        if platform.system() == "Windows":
+            script_fn = "replay.exe"
+        else:
+            script_fn = "replay"
+        script = os.path.join(bskPath, rf"utilities/mujocoUtils/bin/{script_fn}")
 
-    if not os.path.exists(script):
-        raise RuntimeError(f"Couldn't find the visualization tool at '{script}'."
-                            " Did you build Basilisk with the flag "
-                            "'--mujocoReplay True'? If so, did this tool build correctly?")
+        if not os.path.exists(script):
+            raise RuntimeError(f"Couldn't find the visualization tool at '{script}'."
+                               " Did you build Basilisk with the flag "
+                               "'--mujocoReplay True'? If so, did this tool build correctly?")
 
-    args = [script, "--model", modelFile, "--state", fqpos.name]
+        args = [script, "--model", modelFile, "--state", stateFile]
 
-    args.extend(["--speed", str(speedUp)])
+        args.extend(["--speed", str(speedUp)])
 
-    if track:
-        args.extend(["--track", track])
+        if track:
+            args.extend(["--track", track])
 
-    for file in files:
-        args.extend(["--file", file])
+        for file in files:
+            args.extend(["--file", file])
 
-    try:
-        subprocess.check_output(args)
-    except subprocess.CalledProcessError as e:
-        print(e)
-
-    os.unlink(fqpos.name)
-    if fmodel is not None:
-        os.unlink(fmodel.name)
+        try:
+            subprocess.check_output(args)
+        except subprocess.CalledProcessError as e:
+            print(e)
