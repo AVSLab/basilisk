@@ -218,7 +218,14 @@ void VizInterface::Reset(uint64_t CurrentSimNanos)
             /* set default zero translation and rotation states */
             SpicePlanetStateMsgPayload logMsg = {};
             m33SetIdentity(logMsg.J20002Pfix);
-            strcpy(logMsg.PlanetName, this->gravBodyInformation.at(c).bodyName.c_str());
+            const std::string& planetName = this->gravBodyInformation.at(c).bodyName;
+            if (planetName.size() >= sizeof(logMsg.PlanetName)) {
+                bskLogger.bskLog(BSK_ERROR,
+                                 "vizInterface: celestial body name is %zu characters, but the default SPICE "
+                                 "payload name supports at most %zu characters.",
+                                 planetName.size(), sizeof(logMsg.PlanetName) - 1);
+            }
+            std::snprintf(logMsg.PlanetName, sizeof(logMsg.PlanetName), "%s", planetName.c_str());
 
             this->spiceInMsgStatus.push_back(spiceStatus);
             this->spiceMessage.push_back(logMsg);

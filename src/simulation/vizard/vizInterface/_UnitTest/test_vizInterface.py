@@ -47,7 +47,7 @@ splitPath = path.split(bskName)
 from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion, simIncludeGravBody, unitTestSupport,
                                 vizSupport, simIncludeThruster)
 from Basilisk.simulation import spacecraft
-from Basilisk.architecture import messaging
+from Basilisk.architecture import messaging, bskLogging
 from Basilisk.simulation import thrusterDynamicEffector
 import pytest
 import time
@@ -83,6 +83,30 @@ def test_vizInterface(show_plots, accuracy):
     """
     [testResults, testMessage] = vizInterfaceTest(show_plots, accuracy)
     assert testResults < 1, testMessage
+
+
+def test_vizInterface_long_gravity_body_name_reset():
+    r"""
+    **Validation Test Description**
+
+    This test verifies that ``vizInterface`` can reset with a celestial body name longer than the fixed
+    ``SpicePlanetStateMsgPayload.PlanetName`` storage.  The full body name remains available to the Vizard
+    protocol buffer path, while the default SPICE payload name must be copied without overflowing its backing array.
+    """
+    if not vizSupport.vizFound:
+        pytest.skip("vizInterface is not configured.")
+
+    reset_time = 0  # [ns]
+    long_body_name = "body_" + "x" * 128
+
+    grav_body = vizInterface.GravBodyInfo()
+    grav_body.bodyName = long_body_name
+
+    viz = vizInterface.VizInterface()
+    viz.gravBodyInformation = vizInterface.GravBodyInfoVector([grav_body])
+
+    with pytest.raises(bskLogging.BasiliskError, match="celestial body name is 133 characters"):
+        viz.Reset(reset_time)
 
 
 def vizInterfaceTest(show_plots, accuracy):
