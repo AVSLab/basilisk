@@ -8,8 +8,16 @@ Basilisk Known Issues
 
     The use of ``cMsgCInterfacePy`` is deprecated.  Use ``messaging`` instead.
 
-Version |release| (April 2, 2026)
----------------------------------
+Version |release|
+-----------------
+- SWIG 4.4.0 caused Basilisk build failures in some Python 3.13+ source-build configurations.
+  The development dependency range now excludes SWIG 4.4.0, and SWIG 4.4.1 has been verified to build
+  successfully. If source builds fail with SWIG 4.4.0 or emit ``builtin type swigvarlink has no __module__ attribute``
+  warnings, upgrade to SWIG 4.4.1 or newer.
+
+
+Version 2.10.0 (April 2, 2026)
+------------------------------
 - When building from source on Python 3.13 using SWIG 4.4.0, a build failure may occur
   if ``pyLimitedAPI`` is set to an ABI lower than Python 3.13 (e.g., ``0x03080000``).
   SWIG 4.4.0 introduces a new C-API codepath for Python 3.13 that expects newer
