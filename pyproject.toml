@@ -13,7 +13,7 @@ requires = [
     # Requirements for building Basilisk through conanfile
     "conan>=2.0.5,<=2.23.0",
     "cmake>=3.26,<4.0",
-    "swig>=4.2.1,<5",  # Support Basilisk's established SWIG baseline while allowing the latest 4.4.x releases.
+    "swig>=4.2.1,!=4.4.0,<5",  # Support Basilisk's established SWIG baseline while avoiding the known-bad 4.4.0 release.
 ]
 
 [project]
