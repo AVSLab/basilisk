@@ -2,6 +2,7 @@ import argparse
 import os
 import json
 import shutil
+import shlex
 import subprocess
 import sys
 from datetime import datetime
@@ -126,10 +127,13 @@ class BasiliskConan(ConanFile):
         # managePipEnvironment (i.e. conanfile.py-based build).
 
         # ensure latest pip is installed
-        cmakeCmdString = f'{sys.executable} -m pip install --upgrade pip'
+        cmakeCmd = [sys.executable, "-m", "pip", "install", "--upgrade", "pip"]
         print(statusColor + "Updating pip:" + endColor)
-        print(cmakeCmdString)
-        os.system(cmakeCmdString)
+        print(shlex.join(cmakeCmd))
+        try:
+            subprocess.check_call(cmakeCmd)
+        except subprocess.CalledProcessError:
+            print(warningColor + "Was not able to upgrade pip; continuing with the existing pip installation." + endColor)
 
         # TODO: Remove this: requirements and optional requirements are
         # installed automatically by add_basilisk_to_sys_path(). Only build
@@ -530,18 +534,17 @@ if __name__ == "__main__":
             raise RuntimeError("Failed to install MuJoCo replay! See error above.")
 
     # setup conan install command arguments
-    conanInstallList = list()
-    conanInstallList.append(f'{sys.executable} -m conans.conan install . --build=missing')
-    conanInstallList.append(' -s build_type=' + str(args.buildType))
+    conanInstallArgs = [sys.executable, "-m", "conans.conan", "install", ".", "--build=missing"]
+    conanInstallArgs.extend(["-s", "build_type=" + str(args.buildType)])
     conanBuildOptionsList = list()  # setup list of conan build arguments
-    conanBuildOptionsList.append(' -s compiler.cppstd=17')
+    conanBuildOptionsList.extend(["-s", "compiler.cppstd=17"])
     if os.name != "nt":
-        conanBuildOptionsList.append(" -s compiler.cstd=gnu17")
+        conanBuildOptionsList.extend(["-s", "compiler.cstd=gnu17"])
     if args.generator:
-        conanBuildOptionsList.append(' -o "&:generator=' + str(args.generator) + '"')
+        conanBuildOptionsList.extend(["-o", "&:generator=" + str(args.generator)])
     for opt, value in bskModuleOptionsBool.items():
-        conanBuildOptionsList.append(' -o "&:' + opt + '=' + str(vars(args)[opt]) + '"')
-    conanInstallList.append(''.join(conanBuildOptionsList))  # argument get used in both install and build
+        conanBuildOptionsList.extend(["-o", "&:" + opt + "=" + str(vars(args)[opt])])
+    conanInstallArgs.extend(conanBuildOptionsList)  # arguments get used in both install and build
 
     # Most of these options go to both conan install and build commands
     for opt, value in bskModuleOptionsString.items():
@@ -549,28 +552,27 @@ if __name__ == "__main__":
             if opt == "pathToExternalModules":
                 externalPath = os.path.abspath(str(vars(args)[opt]).rstrip(os.path.sep))
                 if os.path.exists(externalPath):
-                    conanInstallList.append(' -o "&:' + opt + '=' + externalPath + '"')
-                    conanBuildOptionsList.append(' -o "&:' + opt + '=' + externalPath + '"')
+                    conanInstallArgs.extend(["-o", "&:" + opt + "=" + externalPath])
+                    conanBuildOptionsList.extend(["-o", "&:" + opt + "=" + externalPath])
                 else:
                     print(f"{failColor}Error: path {str(vars(args)[opt])} does not exist{endColor}")
                     sys.exit(1)
             else:
                 if opt != "autoKey":
-                    conanInstallList.append(' -o "&:' + opt + '=' + str(vars(args)[opt]) + '"')
-                    conanBuildOptionsList.append(' -o "&:' + opt + '=' + str(vars(args)[opt]) + '"')
+                    conanInstallArgs.extend(["-o", "&:" + opt + "=" + str(vars(args)[opt])])
+                    conanBuildOptionsList.extend(["-o", "&:" + opt + "=" + str(vars(args)[opt])])
 
     # only used for conan install arguments, not build
     for opt, value in bskModuleOptionsFlag.items():
         if vars(args)[opt]:
-            conanInstallList.append(' -o "&:' + opt + '=True"')
-    conanInstallString = ''.join(conanInstallList)
+            conanInstallArgs.extend(["-o", "&:" + opt + "=True"])
 
     print(statusColor + "Running conan install:" + endColor)
-    print(conanInstallString)
-    completedProcess = subprocess.run(conanInstallString, shell=True, check=True)
+    print(shlex.join(conanInstallArgs))
+    completedProcess = subprocess.run(conanInstallArgs, check=True)
 
     # run conan build
-    buildCmdString = f'{sys.executable} -m conans.conan build . ' + ''.join(conanBuildOptionsList)
+    buildCmd = [sys.executable, "-m", "conans.conan", "build", "."] + conanBuildOptionsList
     print(statusColor + "Running conan build:" + endColor)
-    print(buildCmdString)
-    completedProcess = subprocess.run(buildCmdString, shell=True, check=True)
+    print(shlex.join(buildCmd))
+    completedProcess = subprocess.run(buildCmd, check=True)
