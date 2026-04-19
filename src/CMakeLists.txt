@@ -250,6 +250,36 @@ function(find_package_targets PKG_DIR ALL_TARGET_LIST)
       PARENT_SCOPE)
 endfunction(find_package_targets)
 
+function(find_python_package_targets PKG_DIR ALL_TARGET_LIST)
+  file(
+    GLOB_RECURSE PYTHON_TARGETS
+    RELATIVE ${CMAKE_SOURCE_DIR}
+    "${PKG_DIR}/*.py")
+
+  set(FILTERED_TARGETS "")
+  foreach(PYTHON_TARGET ${PYTHON_TARGETS})
+    if(PYTHON_TARGET MATCHES "(^|/)(_UnitTest|_Documentation|_GeneralModuleFiles|__pycache__)(/|$)")
+      continue()
+    endif()
+
+    get_filename_component(TARGET_FILE ${PYTHON_TARGET} NAME)
+    if(TARGET_FILE STREQUAL "__init__.py")
+      continue()
+    endif()
+
+    get_filename_component(TARGET_NAME ${PYTHON_TARGET} NAME_WE)
+    get_filename_component(PARENT_DIR ${PYTHON_TARGET} DIRECTORY)
+    get_filename_component(PARENT_NAME ${PARENT_DIR} NAME)
+    if(TARGET_NAME STREQUAL PARENT_NAME AND NOT EXISTS "${CMAKE_SOURCE_DIR}/${PARENT_DIR}/${TARGET_NAME}.i")
+      list(APPEND FILTERED_TARGETS ${PYTHON_TARGET})
+    endif()
+  endforeach()
+
+  set(${ALL_TARGET_LIST}
+      ${FILTERED_TARGETS}
+      PARENT_SCOPE)
+endfunction(find_python_package_targets)
+
 function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
 
   if(TARGET_LIST)
@@ -399,6 +429,12 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
                                                     "${CMAKE_BINARY_DIR}/Basilisk/${MODULE_DIR}")
   endforeach()
 endfunction(generate_package_targets)
+
+function(generate_python_package_targets TARGET_LIST MODULE_DIR)
+  foreach(TARGET_FILE ${TARGET_LIST})
+    create_symlinks("${CMAKE_BINARY_DIR}/Basilisk/${MODULE_DIR}" "${CMAKE_SOURCE_DIR}/${TARGET_FILE}")
+  endforeach()
+endfunction(generate_python_package_targets)
 
 # Start of main projection configuration
 
@@ -569,6 +605,10 @@ generate_package_libraries("${CMAKE_SOURCE_DIR}" "${AllLibs}") # This finds Gene
 
 set(ARCHITECTURE_LIBS architectureLib ArchitectureUtilities ModuleIdGenerator cMsgCInterface)
 
+# ARCHITECTURE
+find_package_targets("${CMAKE_SOURCE_DIR}/architecture" ARCHITECTURE_TARGETS)
+generate_package_targets("${ARCHITECTURE_TARGETS}" "${ARCHITECTURE_LIBS};" "architecture")
+
 # SIMULATION
 # TODO: Move the following commands into a seperate CMakeList.txt s.t. this file is just configuration (problem:
 # currently when I do this the targets argument in generate_package_targets gets interpreted differently) TODO: Automate
@@ -661,10 +701,6 @@ generate_package_targets("${TEMPLATE_MODULES_TARGETS}" "${ARCHITECTURE_LIBS};" "
 # MESSAGES
 add_message_headers()
 
-# ARCHITECTURE
-find_package_targets("${CMAKE_SOURCE_DIR}/architecture" ARCHITECTURE_TARGETS)
-generate_package_targets("${ARCHITECTURE_TARGETS}" "${ARCHITECTURE_LIBS};" "architecture")
-
 # Pyswice
 find_package_targets("${CMAKE_SOURCE_DIR}/topLevelModules/pyswice" PYSWICE_TARGETS) # Finds relative path of all .i
                                                                                     # files within the directory
@@ -707,7 +743,7 @@ file(
   "${CMAKE_BINARY_DIR}/Basilisk/*")
 
 foreach(DIR ${DIST_DIRECTORIES})
-  if(IS_DIRECTORY ${DIR})
+  if(IS_DIRECTORY ${DIR} AND NOT IS_SYMLINK ${DIR})
     file(
       GLOB DIST_DIR_FILES
       RELATIVE ${DIR}
@@ -727,6 +763,12 @@ endforeach()
 # associated .i file and many `%pythoncode` directives.
 file(GLOB pythonModules "${CMAKE_SOURCE_DIR}/utilities/*.py" "${CMAKE_SOURCE_DIR}/utilities/**")
 create_symlinks("${CMAKE_BINARY_DIR}/Basilisk/utilities" ${pythonModules})
+
+find_python_package_targets("${CMAKE_SOURCE_DIR}/fswAlgorithms" FSW_PYTHON_TARGETS)
+generate_python_package_targets("${FSW_PYTHON_TARGETS}" "fswAlgorithms")
+
+find_python_package_targets("${CMAKE_SOURCE_DIR}/simulation" SIMULATION_PYTHON_TARGETS)
+generate_python_package_targets("${SIMULATION_PYTHON_TARGETS}" "simulation")
 
 # symlink into package the supportData files to keep
 file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/supportData")
