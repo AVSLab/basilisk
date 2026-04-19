@@ -525,6 +525,14 @@ class fileCrawler():
                 fileName = fileName[:fileName.rfind('.')]
                 lines = ".. _"+ fileName + ":\n\n"
                 lines += fileName + "\n" + "=" * len(fileName) + "\n\n"
+
+                docFileName = os.path.join(os.path.dirname(py_file), fileName + '.rst')
+                if os.path.isfile(docFileName):
+                    with open(docFileName, 'r', encoding="utf8") as docFile:
+                        docContents = docFile.read()
+                    lines += docContents + "\n\n"
+                    lines += "----\n\n"
+
                 lines += """.. toctree::\n   :maxdepth: 1\n   :caption: """ + "Files" + ":\n\n"
                 lines += """.. automodule:: """ + fileName + """\n   :members:\n   :show-inheritance:\n\n"""
                 if self.newFiles:
