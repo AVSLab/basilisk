@@ -20,7 +20,6 @@ import sys
 import numpy as np
 supportFilePath = os.path.join(os.path.dirname(__file__), "..", "thrArmControlSupport")
 sys.path.append(supportFilePath)
-import jointThrAllocation
 import stateMerge
 import thrFiringRound
 from Basilisk.architecture import messaging
@@ -33,6 +32,7 @@ from Basilisk.fswAlgorithms import (
     attTrackingError,
     mrpFeedback,
     inertialCartFeedback,
+    jointThrAllocation,
 )
 from Basilisk.simulation import (
     thrOnTimeToForce,
