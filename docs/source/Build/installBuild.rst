@@ -103,7 +103,7 @@ The script accepts the following options to customize this process.
     * - ``examples``
       - Boolean
       - True
-      - Installs the optional Python dependencies used by Basilisk example scripts, such as ``scipy``.
+      - Installs the optional Python dependencies used by Basilisk example scripts, such as ``scipy`` and ``numba``.
         Disable this flag if you want a leaner clone-based install and do not need the example-only Python packages.
     * - ``mujocoReplay``
       - Boolean
