@@ -20,7 +20,6 @@ import sys
 import numpy as np
 supportFilePath = os.path.join(os.path.dirname(__file__), "..", "thrArmControlSupport")
 sys.path.append(supportFilePath)
-import stateMerge
 import thrFiringRound
 from Basilisk.architecture import messaging
 from Basilisk.utilities import macros as mc
@@ -37,6 +36,7 @@ from Basilisk.fswAlgorithms import (
 from Basilisk.simulation import (
     thrOnTimeToForce,
     simpleNav,
+    stateMerge,
 )
 
 
