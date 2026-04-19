@@ -71,6 +71,7 @@ examples = [
   'scipy==1.13.1; python_version < "3.10"',
   'scipy==1.15.3; python_version >= "3.10" and python_version < "3.11"',
   'scipy==1.17.1; python_version >= "3.11"',
+  'numba',
 ]
 
 [tool.cibuildwheel]
