@@ -9,10 +9,10 @@ Making Python Modules
 
 Python modules are a good alternative to C and C++ modules for quick prototyping.
 They are defined entirely in a Python script, which means that there is no need
-for a header (``.h``), definition (``.cpp``), or SWIG interface file (``.i``). However, they 
+for a header (``.h``), definition (``.cpp``), or SWIG interface file (``.i``). However, they
 are much slower than C or C++ modules, which will significantly slow down your simulation.
 
-Python modules are implemented by subclassing ``SysModel`` from ``Basilisk.architecture.sysModel``. 
+Python modules are implemented by subclassing ``SysModel`` from ``Basilisk.architecture.sysModel``.
 Then, one can implement the ``__init__``,
 ``Reset``, and ``UpdateState`` methods in the same way that one would
 implement these methods in C++. Remember to always call ``__init__`` of
@@ -20,6 +20,22 @@ the parent class ``SysModel`` if you are implementing your own ``__init__``.
 
 The ``ModelTag`` value of these python BSK modules will be a unique positive number,
 same as with C/C++ BSK modules.
+
+.. note::
+
+    To include a pure Python BSK module in the generated Basilisk Python package
+    and wheel, place it in a module folder and give the folder and Python file
+    the same lower camel case name.  For example, a flight software module named
+    ``someModule`` should live in
+    ``src/fswAlgorithms/<moduleCategory>/someModule/someModule.py``.  The same
+    pattern is supported under ``src/simulation`` and ``src/architecture``.
+    Define the BSK module class inside that file using upper camel case, such
+    as ``class SomeModule(sysModel.SysModel):``.  After configuring and building
+    Basilisk, users can import it from the corresponding Basilisk package, such
+    as ``from Basilisk.fswAlgorithms import someModule`` or
+    ``from Basilisk.simulation import someModule`` or
+    ``from Basilisk.architecture import someModule``, and instantiate it with
+    ``someModule.SomeModule()``.
 
 All Python modules have a logger stored in ``bskLogger`` (although it will
 not be available until the module has been added to a simulation). Additionally,
