@@ -20,14 +20,14 @@ from Basilisk.architecture import messaging, sysModel
 
 class StateMerge(sysModel.SysModel):
     """
-    Merge two SCStates messages into one SCStates output message for simpleNav use.
+    Merge attitude and translation state sources into one spacecraft state.
 
-    Inputs:
-    - attStateInMsg: attitude-centric state source
-    - transStateInMsg: translation-centric state source
+    :ivar attStateInMsg: Attitude-centric spacecraft state input message.
+    :ivar transStateInMsg: Translation-centric spacecraft state input message.
+    :ivar stateOutMsg: Merged spacecraft state output message.
 
-    Output:
-    - stateOutMsg: merged state output for simpleNav use
+    The merged output is intended for navigation modules that expect both
+    attitude and translation information in a single ``SCStatesMsgPayload``.
     """
 
     def __init__(self):
@@ -44,12 +44,12 @@ class StateMerge(sysModel.SysModel):
         attState = self.attStateInMsg()
         transState = self.transStateInMsg()
 
-        # Copy over attitude values from attitude source
+        # Copy attitude values from the attitude source.
         self.stateOut.sigma_BN = list(attState.sigma_BN)
         self.stateOut.omega_BN_B = list(attState.omega_BN_B)
 
-        # Relocate the position/velocity from the translation source
-        # this is relocation needed so due to later modules calling r_BN_N for things that relate to CoM
+        # Map translation source center-of-mass state into hub state fields for
+        # downstream modules that read SCStatesMsgPayload.r_BN_N and v_BN_N.
         self.stateOut.r_BN_N = list(transState.r_CN_N)
         self.stateOut.v_BN_N = list(transState.v_CN_N)
 
