@@ -17,19 +17,32 @@
 
 import numpy as np
 
-try:
-    from scipy.optimize import minimize
-except ImportError as exc:
-    raise ImportError(
-        "The MuJoCo thruster-arm example requires the optional example "
-        "dependencies. Install Basilisk with `pip install -e .[examples]`."
-    ) from exc
-
 from Basilisk.architecture import messaging, sysModel
 from Basilisk.utilities import RigidBodyKinematics as rbk
 
+
+def _get_optimizer():
+    try:
+        from scipy.optimize import minimize
+    except ImportError as exc:
+        raise ImportError(
+            "JointThrAllocation requires SciPy. Install Basilisk with "
+            "`pip install -e .[examples]` to use this module."
+        ) from exc
+
+    return minimize
+
+
 def mapMatrix(rVec_B: np.ndarray, fHatVec_B: np.ndarray, r_ComB_B: np.ndarray) -> np.ndarray:
-    """Build wrench map U=[F;L]=T@f where f are thruster magnitudes."""
+    """
+    Build the thruster force-to-wrench map.
+
+    :param rVec_B: Thruster locations in body-frame coordinates.
+    :param fHatVec_B: Thruster unit force directions in body-frame coordinates.
+    :param r_ComB_B: Center-of-mass location relative to the hub origin in
+        body-frame coordinates.
+    :return: Matrix mapping thruster magnitudes to stacked force and torque.
+    """
     rVec_B = np.asarray(rVec_B, dtype=float)
     fHatVec_B = np.asarray(fHatVec_B, dtype=float)
     r_ComB_B = np.asarray(r_ComB_B, dtype=float).reshape(3)
@@ -40,11 +53,12 @@ def mapMatrix(rVec_B: np.ndarray, fHatVec_B: np.ndarray, r_ComB_B: np.ndarray) -
 
 class JointThrAllocation(sysModel.SysModel):
     """
-    Example support module for thruster-on-arm allocation.
+    Allocate thruster forces and joint angles for thrusters mounted on arms.
 
     This implementation is intentionally example-oriented with explicit assumptions:
+
     - Arms are serial chains packed in arm order.
-    - Arm geometry/config comes from THRArmConfigMsgPayload.
+    - Arm geometry/config comes from ``THRArmConfigMsgPayload``.
     - One spacecraft tree is supported (all arms in same kinematic tree).
     - Exactly one thruster per arm (configurable check).
     - Thruster parent joint is the last joint in each arm (configurable check).
@@ -75,7 +89,7 @@ class JointThrAllocation(sysModel.SysModel):
         self.maxiter = 3000
         self.ftol = 1e-10
         self.errTol = 1e-4
-        self.thrForceMax = 2.5
+        self.thrForceMax = 2.5  # [N]
 
         # Runtime data
         self.nArms = 0
@@ -96,9 +110,10 @@ class JointThrAllocation(sysModel.SysModel):
         """
         Set thrust-weight term for the cost function.
 
-        Accepted inputs:
+        Accepted inputs are:
+
         - scalar: applies same weight to all thrusters
-        - vector length nThr: per-thruster weights
+        - vector length ``nThr``: per-thruster weights
         """
         wfArr = np.asarray(wfIn, dtype=float)
         if wfArr.ndim == 0:
@@ -113,10 +128,11 @@ class JointThrAllocation(sysModel.SysModel):
         """
         Set wrench tracking weights for the cost function.
 
-        Accepted inputs:
-        - scalar: wc * I6
-        - length-6 vector: diag(wc)
-        - 6x6 matrix
+        Accepted inputs are:
+
+        - scalar: ``wc * I6``
+        - length-6 vector: ``diag(wc)``
+        - 6-by-6 matrix
         """
         wcArr = np.asarray(wcIn, dtype=float)
         if wcArr.ndim == 0:
@@ -153,9 +169,10 @@ class JointThrAllocation(sysModel.SysModel):
         """
         Set thrust upper bounds.
 
-        Accepted inputs:
+        Accepted inputs are:
+
         - scalar: same upper bound for all thrusters
-        - vector length nThr: per-thruster upper bounds
+        - vector length ``nThr``: per-thruster upper bounds
         """
         thrForceMaxArr = np.asarray(thrForceMaxIn, dtype=float)
         if thrForceMaxArr.ndim == 0:
@@ -209,13 +226,13 @@ class JointThrAllocation(sysModel.SysModel):
         seedList = []
 
         guess = np.zeros(nDecision)
-        guess[self.nJoint:] = 1.0
+        guess[self.nJoint:] = 1.0  # [N]
         seedList.append(guess)
 
         for angleSeed in (np.pi / 4.0, -np.pi / 4.0, np.pi / 2.0, -np.pi / 2.0):
             guess = np.zeros(nDecision)
             guess[: self.nJoint] = angleSeed
-            guess[self.nJoint:] = 1.0
+            guess[self.nJoint:] = 1.0  # [N]
             seedList.append(guess)
 
         self.x0 = np.vstack(seedList)
@@ -224,17 +241,19 @@ class JointThrAllocation(sysModel.SysModel):
         nDecision = self.nJoint + self.nThr
         lowerBound = np.zeros(nDecision)
         upperBound = np.zeros(nDecision)
-        lowerBound[: self.nJoint] = -np.pi
-        upperBound[: self.nJoint] = np.pi
-        lowerBound[self.nJoint:] = 0.0
+        lowerBound[: self.nJoint] = -np.pi  # [rad]
+        upperBound[: self.nJoint] = np.pi  # [rad]
+        lowerBound[self.nJoint:] = 0.0  # [N]
         upperBound[self.nJoint:] = self.resolveThrForceMax()
         return tuple((float(low), float(high)) for low, high in zip(lowerBound, upperBound))
 
     def jointPoseFromTheta(self, theta: np.ndarray):
         """
-        Return joint frame poses in B:
-        - dcm_cb[k]: DCM from joint frame C_k to body frame B
-        - r_cb_b[k]: position of joint frame C_k origin in B
+        Return joint frame poses in body-frame coordinates.
+
+        :param theta: Joint angle vector.
+        :return: Direction cosine matrices and joint-frame origins in body-frame
+            coordinates.
         """
         dcm_CB = [np.eye(3) for _ in range(self.nJoint)]
         r_CB_B = [np.zeros(3) for _ in range(self.nJoint)]
@@ -293,6 +312,8 @@ class JointThrAllocation(sysModel.SysModel):
         self.thrForceOutMsg.write(messaging.THRArrayCmdForceMsgPayload())
 
     def UpdateState(self, CurrentSimNanos):
+        minimize = _get_optimizer()
+
         comStates = self.CoMStatesInMsg()
         hubStates = self.hubStatesInMsg()
 
@@ -348,5 +369,5 @@ class JointThrAllocation(sysModel.SysModel):
         self.jointAnglePayload.stateDots.clear()
         for angleCmd in bestDecision[: self.nJoint]:
             self.jointAnglePayload.states.push_back(float(angleCmd))
-            self.jointAnglePayload.stateDots.push_back(0.0)
+            self.jointAnglePayload.stateDots.push_back(0.0)  # [rad/s]
         self.desJointAnglesOutMsg.write(self.jointAnglePayload, CurrentSimNanos, self.moduleID)
