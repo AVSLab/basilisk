@@ -1227,6 +1227,16 @@ _SUBPROCESS_SCRIPT = textwrap.dedent("""\
 """)
 
 
+def _parse_subprocess_float(stdout):
+    """Return the numeric result line from subprocess stdout."""
+    for line in stdout.splitlines():
+        try:
+            return float(line.strip())
+        except ValueError:
+            continue
+    raise AssertionError(f"No numeric result found in subprocess stdout:\n{stdout}")
+
+
 def test_cacheDiskSurvivesProcessRestart(tmp_path):
     """Disk cache written in process 1 is used correctly by process 2."""
     script = tmp_path / "sub_model.py"
@@ -1238,7 +1248,7 @@ def test_cacheDiskSurvivesProcessRestart(tmp_path):
         capture_output=True, text=True, timeout=120
     )
     assert r1.returncode == 0, f"Process 1 failed:\n{r1.stderr}"
-    assert float(r1.stdout.strip()) == pytest.approx(42.0)
+    assert _parse_subprocess_float(r1.stdout) == pytest.approx(42.0)
 
     # Process 2: should load from disk cache (fast path)
     r2 = subprocess.run(
@@ -1246,7 +1256,7 @@ def test_cacheDiskSurvivesProcessRestart(tmp_path):
         capture_output=True, text=True, timeout=120
     )
     assert r2.returncode == 0, f"Process 2 failed:\n{r2.stderr}"
-    assert float(r2.stdout.splitlines()[0].strip()) == pytest.approx(77.0), (
+    assert _parse_subprocess_float(r2.stdout) == pytest.approx(77.0), (
         "Disk-cached cfunc from process 1 must not contaminate process 2's output"
     )
 
@@ -1305,7 +1315,7 @@ def test_cacheDiskImplBodyChange(tmp_path):
         capture_output=True, text=True, timeout=120
     )
     assert r1.returncode == 0, f"Process 1 failed:\n{r1.stderr}"
-    assert float(r1.stdout.strip()) == pytest.approx(11.0)
+    assert _parse_subprocess_float(r1.stdout) == pytest.approx(11.0)
 
     # Edit the file: impl now outputs 22.0 (mtime advances, co_consts changes)
     script.write_text(_FILE_EDIT_TEMPLATE.format(value="22.0"))
@@ -1316,7 +1326,8 @@ def test_cacheDiskImplBodyChange(tmp_path):
         capture_output=True, text=True, timeout=120
     )
     assert r2.returncode == 0, f"Process 2 failed:\n{r2.stderr}"
-    assert float(r2.stdout.strip()) == pytest.approx(22.0), (
+    result = _parse_subprocess_float(r2.stdout)
+    assert result == pytest.approx(22.0), (
         f"Edited UpdateStateImpl (22.0) must be used; got {r2.stdout.strip()} — "
         "stale disk cache not invalidated after impl body change"
     )
