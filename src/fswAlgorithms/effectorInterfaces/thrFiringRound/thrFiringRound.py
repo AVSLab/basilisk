@@ -24,10 +24,9 @@ class ThrFiringRound(sysModel.SysModel):
     """
     Convert thruster force commands into thruster on-time commands.
 
-    Mapping per thruster i:
-        onTime_i = controlPeriodSec * force_i / thrForceMax_i
-
-    Then rounded to nearest multiple of onTimeResolutionSec.
+    Each thruster on-time is computed from the configured control period, force
+    command, and maximum thruster force.  The result is rounded to the nearest
+    multiple of ``onTimeResolutionSec``.
     """
 
     def __init__(self):
@@ -39,10 +38,10 @@ class ThrFiringRound(sysModel.SysModel):
         self.thrOnTimePayload = messaging.THRArrayOnTimeCmdMsgPayload()
 
         # Configuration
-        self.controlPeriodSec = 1.0
-        self.onTimeResolutionSec = 0.01
+        self.controlPeriodSec = 1.0  # [s]
+        self.onTimeResolutionSec = 0.01  # [s]
         self.numThrusters = None
-        self.thrForceMax = 1.0
+        self.thrForceMax = 1.0  # [N]
 
     def setControlPeriodSec(self, controlPeriodSecIn: float):
         self.controlPeriodSec = float(controlPeriodSecIn)
@@ -57,9 +56,10 @@ class ThrFiringRound(sysModel.SysModel):
         """
         Set thrust normalization for force->on-time conversion.
 
-        Accepted:
+        Accepted inputs are:
+
         - scalar: same max force for all thrusters
-        - vector length nThr: per-thruster max force
+        - vector length ``nThr``: per-thruster max force
         """
         thrForceMaxArr = np.asarray(thrForceMaxIn, dtype=float)
         if thrForceMaxArr.ndim == 0:
@@ -106,12 +106,12 @@ class ThrFiringRound(sysModel.SysModel):
         thrForceMax = self.resolveThrForceMax(nThr)
 
         # Force commands are one-sided for on-time logic.
-        forceCmd = np.maximum(thrForceCmd[:nThr], 0.0)
+        forceCmd = np.maximum(thrForceCmd[:nThr], 0.0)  # [N]
         onTimeRequest = np.zeros(nThr)
         onTimeRequest = self.controlPeriodSec * forceCmd / thrForceMax
-        onTimeRequest = np.clip(onTimeRequest, 0.0, self.controlPeriodSec)
+        onTimeRequest = np.clip(onTimeRequest, 0.0, self.controlPeriodSec)  # [s]
         onTimeRequest = np.rint(onTimeRequest / self.onTimeResolutionSec) * self.onTimeResolutionSec
-        onTimeRequest = np.clip(onTimeRequest, 0.0, self.controlPeriodSec)
+        onTimeRequest = np.clip(onTimeRequest, 0.0, self.controlPeriodSec)  # [s]
 
         self.thrOnTimePayload.OnTimeRequest = onTimeRequest.tolist()
         self.thrOnTimeOutMsg.write(self.thrOnTimePayload, CurrentSimNanos, self.moduleID)

@@ -15,12 +15,7 @@
 #  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-import os
-import sys
 import numpy as np
-supportFilePath = os.path.join(os.path.dirname(__file__), "..", "thrArmControlSupport")
-sys.path.append(supportFilePath)
-import thrFiringRound
 from Basilisk.architecture import messaging
 from Basilisk.utilities import macros as mc
 from Basilisk.fswAlgorithms import (
@@ -32,6 +27,7 @@ from Basilisk.fswAlgorithms import (
     mrpFeedback,
     inertialCartFeedback,
     jointThrAllocation,
+    thrFiringRound,
 )
 from Basilisk.simulation import (
     thrOnTimeToForce,
