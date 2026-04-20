@@ -6,31 +6,19 @@ section below.
 
 Message Connection Descriptions
 -------------------------------
-The following table lists all the module input and output messages.  The module msg variable name is set by the
-user from python.  The msg type contains a link to the message structure definition, while the description
-provides information on what this message is used for.
+The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.
 
-.. _ModuleIO_FSW_MODULE_TEMPLATE:
-.. figure:: /../../src/moduleTemplates/cModuleTemplate/_Documentation/Images/moduleIOcModuleTemplate.svg
-    :align: center
+.. bsk-module-io:: cModuleTemplate
+    :caption: Module I/O Messages
 
-    Figure 1: ``cModuleTemplate()`` Module I/O Illustration
-
-
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
-
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - dataInMsg
-      - :ref:`CModuleTemplateMsgPayload`
-      - (optional) Input message description.  Note here if this message is optional, and what the default behavior
+    input dataInMsg CModuleTemplateMsgPayload
+        (optional) Input message description.  Note here if this message is optional, and what the default behavior
         is if this message is not provided.
-    * - dataOutMsg
-      - :ref:`CModuleTemplateMsgPayload`
-      - Output message description.
+
+    output dataOutMsg CModuleTemplateMsgPayload
+        Output message description.
 
 Detailed Module Description
 ---------------------------

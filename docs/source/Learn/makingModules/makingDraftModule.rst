@@ -42,8 +42,8 @@ The module ``*.i`` file is setup to include the required input and output messag
 RST Module Documentation
 ------------------------
 The module RST documentation file uses the provided module description string to create the module
-executive summary.  Further, a table is created listing all input and output messages, their type and also
-their description
+executive summary.  Further, the module input and output message entries are used to create a generated message
+diagram and table listing each message name, type and description.
 
 Unit Test File
 --------------
