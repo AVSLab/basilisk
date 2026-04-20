@@ -7,44 +7,29 @@ This module computes attitude guidance and reference messages for two imaging mo
 
 Message Connection Descriptions
 -------------------------------
-The following table lists all the module input and output messages.
-The module msg connection is set by the user from python.
-The msg type contains a link to the message structure definition, while the description
-provides information on what this message is used for.
+The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: locationPointing
+    :caption: Module I/O Messages
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - scAttInMsg
-      - :ref:`NavAttMsgPayload`
-      - input msg with inertial spacecraft attitude states
-    * - scTransInMsg
-      - :ref:`NavTransMsgPayload`
-      - input msg with inertial spacecraft translational states
-    * - locationInMsg
-      - :ref:`GroundStateMsgPayload`
-      - input msg containing the inertial point location of interest
-    * - locationstripInMsg
-      - :ref:`StripStateMsgPayload`
-      - (alternative) input msg from :ref:`stripLocation` containing the inertial position and velocity of the current strip target point
-    * - celBodyInMsg
-      - :ref:`EphemerisMsgPayload`
-      - (alternative) input msg containing the inertial point location of a celestial body of interest
-    * - scTargetInMsg
-      - :ref:`NavTransMsgPayload`
-      - (alternative) input msg with inertial target spacecraft translational states
-    * - attGuidOutMsg
-      - :ref:`AttGuidMsgPayload`
-      - output message with the attitude guidance
-    * - attRefOutMsg
-      - :ref:`AttRefMsgPayload`
-      - output message with the attitude reference
-
-
+    input scAttInMsg NavAttMsgPayload
+        Input msg with inertial spacecraft attitude states
+    input scTransInMsg NavTransMsgPayload
+        Input msg with inertial spacecraft translational states
+    input locationInMsg GroundStateMsgPayload
+        Input msg containing the inertial point location of interest
+    input locationstripInMsg StripStateMsgPayload
+        (alternative) input msg from :ref:`stripLocation` containing the inertial position and velocity of the current strip target point
+    input celBodyInMsg EphemerisMsgPayload
+        (alternative) input msg containing the inertial point location of a celestial body of interest
+    input scTargetInMsg NavTransMsgPayload
+        (alternative) input msg with inertial target spacecraft translational states
+    output attGuidOutMsg AttGuidMsgPayload
+        Output message with the attitude guidance
+    output attRefOutMsg AttRefMsgPayload
+        Output message with the attitude reference
 
 Detailed Module Description
 ---------------------------

@@ -8,7 +8,7 @@ is scheduled so that reconfiguration is completed in one orbit period.
 
 In addition to formation control algorithm described in the textbook, some extensions and improvements are included in
 this module.
-First, this module assumes that deputy spacecraft has one-axis thrusters. Therefore, attitude control is also necessary 
+First, this module assumes that deputy spacecraft has one-axis thrusters. Therefore, attitude control is also necessary
 along with burn at certain period. When burn timing is approaching, target attitude is output as ``attRefOutMsg``.
 Otherwise, and if ``attRefInMsg`` (which is optional) is set, the reference message is output as ``attRefOutMsg``.
 Second, if :math:`\delta a` is not zero, drift of :math:`\delta M` occurs. This module can take this drift into consideration
@@ -20,37 +20,31 @@ Parameter attControlTime is used to check whether this integration is necessary 
 
 Message Connection Descriptions
 -------------------------------
-The following table lists all the module input and output messages.  The module msg variable name is set by the
-user from python.  The msg type contains a link to the message structure definition, while the description
-provides information on what this message is used for.
+The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.
 
 .. _ModuleIO_spacecraftReconfig:
 
-.. table:: Module I/O Messages
-    :widths: 25 25 100
+.. bsk-module-io:: spacecraftReconfig
+    :caption: Module I/O Messages
 
-    +--------------------------+----------------------------------------+---------------------------------------------------------------+
-    | Msg Variable Name        | Msg Type                               | Description                                                   |
-    +==========================+========================================+===============================================================+
-    | chiefTransInMsg          | :ref:`NavTransMsgPayload`              | chief's position and velocity input message                   |
-    +--------------------------+----------------------------------------+---------------------------------------------------------------+
-    | deputyTransInMsg         | :ref:`NavTransMsgPayload`              | deputy's position and velocity input message                  |
-    +--------------------------+----------------------------------------+---------------------------------------------------------------+
-    | thrustConfigInMsg        | :ref:`THRArrayConfigMsgPayload`        | deputy's thruster configuration input message                 |
-    +--------------------------+----------------------------------------+---------------------------------------------------------------+
-    | attRefInMsg              | :ref:`AttRefMsgPayload`                | (optional) deputy's reference attitude                        |
-    |                          |                                        | input message. If set, then the deputy will point along this  |
-    |                          |                                        | reference attitude unless it must point the thrusters in a    |
-    |                          |                                        | control direction.                                            |
-    +--------------------------+----------------------------------------+---------------------------------------------------------------+
-    | vehicleConfigInMsg       | :ref:`VehicleConfigMsgPayload`         | deputy's vehicle configuration input message                  |
-    +--------------------------+----------------------------------------+---------------------------------------------------------------+
-    | attRefOutMsg             | :ref:`AttRefMsgPayload`                | deputy's target attitude output message                       |
-    +--------------------------+----------------------------------------+---------------------------------------------------------------+
-    | onTimeOutMsg             | :ref:`THRArrayOnTimeCmdMsgPayload`     | The deputy's thruster's on time output message                |
-    +--------------------------+----------------------------------------+---------------------------------------------------------------+
-    | burnArrayInfoOutMsg      | :ref:`ReconfigBurnArrayInfoMsgPayload` | deputy's scheduled burns info output message                  |
-    +--------------------------+----------------------------------------+---------------------------------------------------------------+
+    input chiefTransInMsg NavTransMsgPayload
+        chief's position and velocity input message
+    input deputyTransInMsg NavTransMsgPayload
+        deputy's position and velocity input message
+    input thrustConfigInMsg THRArrayConfigMsgPayload
+        deputy's thruster configuration input message
+    input attRefInMsg AttRefMsgPayload
+        (optional) deputy's reference attitude input message. If set, then the deputy will point along this reference attitude unless it must point the thrusters in a control direction.
+    input vehicleConfigInMsg VehicleConfigMsgPayload
+        deputy's vehicle configuration input message
+    output attRefOutMsg AttRefMsgPayload
+        deputy's target attitude output message
+    output onTimeOutMsg THRArrayOnTimeCmdMsgPayload
+        The deputy's thruster's on time output message
+    output burnArrayInfoOutMsg ReconfigBurnArrayInfoMsgPayload
+        deputy's scheduled burns info output message
 
 Module Assumptions and Limitations
 ----------------------------------

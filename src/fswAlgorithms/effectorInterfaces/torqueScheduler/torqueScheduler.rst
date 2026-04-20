@@ -7,30 +7,21 @@ This is useful in the case of a system with two coupled degrees of freedom, wher
 
 Message Connection Descriptions
 -------------------------------
-The following table lists all the module input and output messages.  The module msg connection is set by the
-user from python.  The msg type contains a link to the message structure definition, while the description
-provides information on what this message is used for.
+The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: torqueScheduler
+    :caption: Module I/O Messages
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - motorTorqueOutMsg
-      - :ref:`ArrayMotorTorqueMsgPayload`
-      - Output Array Motor Torque Message.
-    * - effectorLockOutMsg
-      - :ref:`ArrayEffectorLockMsgPayload`
-      - Output Array Motor Torque Message.
-    * - motorTorque1InMsg
-      - :ref:`ArrayMotorTorqueMsgPayload`
-      - #1 Input Array Motor Torque Message.
-    * - motorTorque2InMsg
-      - :ref:`ArrayMotorTorqueMsgPayload`
-      - #2 Input Array Motor Torque Message.
-
+    output motorTorqueOutMsg ArrayMotorTorqueMsgPayload
+        Output Array Motor Torque Message.
+    output effectorLockOutMsg ArrayEffectorLockMsgPayload
+        Output Array Motor Torque Message.
+    input motorTorque1InMsg ArrayMotorTorqueMsgPayload
+        #1 Input Array Motor Torque Message.
+    input motorTorque2InMsg ArrayMotorTorqueMsgPayload
+        #2 Input Array Motor Torque Message.
 
 Module Assumptions and Limitations
 ----------------------------------

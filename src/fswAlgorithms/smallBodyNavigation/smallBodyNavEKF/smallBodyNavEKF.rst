@@ -10,64 +10,43 @@ not every source of uncertainty in the problem is an estimated parameter. Future
 
 Message Connection Descriptions
 -------------------------------
-The following table lists all the module input and output messages.  
-The module msg connection is set by the user from python.  
-The msg type contains a link to the message structure definition, while the description 
-provides information on what this message is used for.
+The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.
 
 .. _ModuleIO_smallBodyNavEKF:
-.. figure:: /../../src/fswAlgorithms/smallBodyNavigation/smallBodyNavEKF/_Documentation/Images/moduleIOSmallBodyNavigation.svg
-    :align: center
-
-    Figure 1: ``smallBodyNavEKF()`` Module I/O Illustration
 
 Note that this C++ FSW module provides both C- and C++-wrapped output messages.  The regular C++ wrapped output
 messages end with the usual ``...OutMsg``.  The C wrapped output messages have the same payload type, but end
-with ``...OutMsgC``.  
+with ``...OutMsgC``.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: smallBodyNavEKF
+    :caption: Module I/O Messages
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - navTransInMsg
-      - :ref:`NavTransMsgPayload`
-      - Translational nav input message
-    * - navAttInMsg
-      - :ref:`NavAttMsgPayload`
-      - Attitude nav input message
-    * - asteroidEphemerisInMsg
-      - :ref:`EphemerisMsgPayload`
-      - Small body ephemeris input message
-    * - sunEphemerisInMsg
-      - :ref:`EphemerisMsgPayload`
-      - Sun ephemeris input message
-    * - thrusterInMsgs
-      - :ref:`THROutputMsgPayload`
-      - Vector of thruster input messages
-    * - cmdForceBodyInMsg
-      - :ref:`cmdForceBodyMsgPayload`
-      - Commanded force input
-    * - navTransOutMsg
-      - :ref:`NavTransMsgPayload`
-      - Translational nav output message
-    * - navTransOutMsgC
-      - :ref:`NavTransMsgPayload`
-      - C-wrapped translational nav output message
-    * - smallBodyNavOutMsg
-      - :ref:`SmallBodyNavMsgPayload`
-      - Small body nav output msg - states and covariances
-    * - smallBodyNavOutMsgC
-      - :ref:`SmallBodyNavMsgPayload`
-      - C-wrapped small body nav output msg - states and covariances
-    * - asteroidEphemerisOutMsg
-      - :ref:`EphemerisMsgPayload`
-      - Small body ephemeris output message
-    * - asteroidEphemerisOutMsgC
-      - :ref:`EphemerisMsgPayload`
-      - C-wrapped small body ephemeris output message
+    input navTransInMsg NavTransMsgPayload
+        Translational nav input message
+    input navAttInMsg NavAttMsgPayload
+        Attitude nav input message
+    input asteroidEphemerisInMsg EphemerisMsgPayload
+        Small body ephemeris input message
+    input sunEphemerisInMsg EphemerisMsgPayload
+        Sun ephemeris input message
+    input thrusterInMsgs THROutputMsgPayload
+        Vector of thruster input messages
+    input cmdForceBodyInMsg cmdForceBodyMsgPayload
+        Commanded force input
+    output navTransOutMsg NavTransMsgPayload
+        Translational nav output message
+    output navTransOutMsgC NavTransMsgPayload
+        C-wrapped translational nav output message
+    output smallBodyNavOutMsg SmallBodyNavMsgPayload
+        Small body nav output msg - states and covariances
+    output smallBodyNavOutMsgC SmallBodyNavMsgPayload
+        C-wrapped small body nav output msg - states and covariances
+    output asteroidEphemerisOutMsg EphemerisMsgPayload
+        Small body ephemeris output message
+    output asteroidEphemerisOutMsgC EphemerisMsgPayload
+        C-wrapped small body ephemeris output message
 
 Detailed Module Description
 ---------------------------

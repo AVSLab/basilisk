@@ -7,36 +7,25 @@ The ``hingedJointArrayMotor`` module determines the motor torques for an array o
 
 Message Connection Descriptions
 -------------------------------
-The following table lists all the module input and output messages.
-The module msg connection is set by the user from python.
-The msg type contains a link to the message structure definition, while the description
-provides information on what this message is used for.
+The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: hingedJointArrayMotor
+    :caption: Module I/O Messages
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - massMatrixInMsg
-      - :ref:`MJSysMassMatrixMsgPayload`
-      - System mass matrix input msg
-    * - reactionForcesInMsg
-      - :ref:`MJJointReactionsMsgPayload`
-      - Joint reaction forces and torques input msg
-    * - desJointStatesInMsg
-      - :ref:`JointArrayStateMsgPayload`
-      - Desired joint states input msg
-    * - jointStatesInMsg
-      - :ref:`ScalarJointStateMsgPayload`
-      - Vector of joint state input msgs
-    * - jointStateDotsInMsg
-      - :ref:`ScalarJointStateMsgPayload`
-      - Vector of joint state derivative input msgs
-    * - motorTorquesOutMsg
-      - :ref:`SingleActuatorMsgPayload`
-      - Vector of joint motor torque output msgs
+    input massMatrixInMsg MJSysMassMatrixMsgPayload
+        System mass matrix input msg
+    input reactionForcesInMsg MJJointReactionsMsgPayload
+        Joint reaction forces and torques input msg
+    input desJointStatesInMsg JointArrayStateMsgPayload
+        Desired joint states input msg
+    input jointStatesInMsg ScalarJointStateMsgPayload
+        Vector of joint state input msgs
+    input jointStateDotsInMsg ScalarJointStateMsgPayload
+        Vector of joint state derivative input msgs
+    output motorTorquesOutMsg SingleActuatorMsgPayload
+        Vector of joint motor torque output msgs
 
 User Guide
 ----------

@@ -8,27 +8,17 @@ On reset the net :math:`\Delta\mathbf{v}` is set to zero.  The output navigation
 
 Message Connection Descriptions
 -------------------------------
-The following table lists all the module input and output messages.  The module msg connection is set by the
-user from python.  The msg type contains a link to the message structure definition, while the description
-provides information on what this message is used for.
+The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.
 
 .. _ModuleIO_dvAccumulation:
-.. figure:: /../../src/fswAlgorithms/transDetermination/dvAccumulation/_Documentation/Images/moduleImgDvAccumulation.svg
-    :align: center
 
-    Figure 1: ``dvAccumulation()`` Module I/O Illustration
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: dvAccumulation
+    :caption: Module I/O Messages
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - dvAcumOutMsg
-      - :ref:`NavTransMsgPayload`
-      - accumulated DV output message
-    * - accPktInMsg
-      - :ref:`AccDataMsgPayload`
-      - input accelerometer message
-
+    output dvAcumOutMsg NavTransMsgPayload
+        accumulated DV output message
+    input accPktInMsg AccDataMsgPayload
+        Input accelerometer message

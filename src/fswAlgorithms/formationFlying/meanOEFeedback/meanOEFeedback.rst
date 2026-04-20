@@ -18,25 +18,21 @@ osculating oe. Then, osculating oe is converted to mean oe by Brower's theory.
 
 Message Connection Descriptions
 -------------------------------
-The following table lists all the module input and output messages.  The module msg variable name is set by the
-user from python.  The msg type contains a link to the message structure definition, while the description
-provides information on what this message is used for.
+The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.
 
 .. _ModuleIO_meanOEFeedback:
 
-.. table:: Module I/O Messages
-    :widths: 25 25 100
+.. bsk-module-io:: meanOEFeedback
+    :caption: Module I/O Messages
 
-    +-----------------------+-----------------------------------+---------------------------------------------------------------+
-    | Msg Variable Name     | Msg Type                          | Description                                                   |
-    +=======================+===================================+===============================================================+
-    | chiefTransInMsg       | :ref:`NavTransMsgPayload`         | The name of the chief's position and velocity input message   |
-    +-----------------------+-----------------------------------+---------------------------------------------------------------+
-    | deputyTransInMsg      | :ref:`NavTransMsgPayload`         | The name of the deputy's position and velocity input message  |
-    +-----------------------+-----------------------------------+---------------------------------------------------------------+
-    | forceOutMsg           | :ref:`CmdForceInertialMsgPayload` | Calculated Force to control orbital element difference        |
-    |                       |                                   | output message                                                |
-    +-----------------------+-----------------------------------+---------------------------------------------------------------+
+    input chiefTransInMsg NavTransMsgPayload
+        The name of the chief's position and velocity input message
+    input deputyTransInMsg NavTransMsgPayload
+        The name of the deputy's position and velocity input message
+    output forceOutMsg CmdForceInertialMsgPayload
+        Calculated Force to control orbital element difference output message
 
 Module Assumptions and Limitations
 ----------------------------------

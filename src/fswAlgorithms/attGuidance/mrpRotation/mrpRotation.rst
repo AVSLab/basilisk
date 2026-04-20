@@ -7,31 +7,17 @@ This module creates a dynamic reference frame attitude state message where the i
 
 Message Connection Descriptions
 -------------------------------
-The following table lists all the module input and output messages.  The module msg connection is set by the
-user from python.  The msg type contains a link to the message structure definition, while the description
-provides information on what this message is used for.
+The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.
 
 .. _ModuleIO_mrpRotation:
-.. figure:: /../../src/fswAlgorithms/attGuidance/mrpRotation/_Documentation/Images/moduleIOMrpRotation.svg
-    :align: center
+.. bsk-module-io:: mrpRotation
+    :caption: Module I/O Messages
 
-    Figure 1: ``mrpRotation()`` Module I/O Illustration
-
-
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
-
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - attRefOutMsg
-      - :ref:`AttRefMsgPayload`
-      - name of the output message containing the Reference
-    * - attRefInMsg
-      - :ref:`AttRefMsgPayload`
-      - name of the guidance reference input message
-    * - desiredAttInMsg
-      - :ref:`AttStateMsgPayload`
-      - (optional) name of the incoming message containing the desired Euler angle set
-
+    output attRefOutMsg AttRefMsgPayload
+        name of the output message containing the Reference
+    input attRefInMsg AttRefMsgPayload
+        name of the guidance reference input message
+    input desiredAttInMsg AttStateMsgPayload
+        (optional) name of the incoming message containing the desired Euler angle set

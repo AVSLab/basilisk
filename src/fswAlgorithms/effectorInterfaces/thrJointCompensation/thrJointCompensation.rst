@@ -7,36 +7,25 @@ The ``thrJointCompensation`` module determines the motor torques for an array of
 
 Message Connection Descriptions
 -------------------------------
-The following table lists all the module input and output messages.
-The module msg connection is set by the user from Python.
-The msg type contains a link to the message structure definition, while the description
-provides information on what this message is used for.
+The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: thrJointCompensation
+    :caption: Module I/O Messages
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - armConfigInMsg
-      - :ref:`THRArmConfigMsgPayload`
-      - static spacecraft configuration input msg
-    * - massMatrixInMsg
-      - :ref:`MJSysMassMatrixMsgPayload`
-      - system mass matrix input msg
-    * - reactionForcesInMsg
-      - :ref:`MJJointReactionsMsgPayload`
-      - joint reaction forces and torques input msg
-    * - jointStatesInMsgs
-      - :ref:`ScalarJointStateMsgPayload`
-      - vector of joint state input msgs
-    * - thrForcesInMsgs
-      - :ref:`SingleActuatorMsgPayload`
-      - vector of thruster force input msgs
-    * - motorTorquesOutMsgs
-      - :ref:`SingleActuatorMsgPayload`
-      - vector of joint motor torque output msgs
+    input armConfigInMsg THRArmConfigMsgPayload
+        static spacecraft configuration input msg
+    input massMatrixInMsg MJSysMassMatrixMsgPayload
+        system mass matrix input msg
+    input reactionForcesInMsg MJJointReactionsMsgPayload
+        joint reaction forces and torques input msg
+    input jointStatesInMsgs ScalarJointStateMsgPayload
+        vector of joint state input msgs
+    input thrForcesInMsgs SingleActuatorMsgPayload
+        vector of thruster force input msgs
+    output motorTorquesOutMsgs SingleActuatorMsgPayload
+        vector of joint motor torque output msgs
 
 User Guide
 ----------

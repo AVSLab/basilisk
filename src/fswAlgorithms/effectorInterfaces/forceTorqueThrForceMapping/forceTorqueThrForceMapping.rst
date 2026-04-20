@@ -12,34 +12,23 @@ onto a set of thrusters.
 
 Message Connection Descriptions
 -------------------------------
-The following table lists all the module input and output messages.
-The module msg connection is set by the user from python.
-The msg type contains a link to the message structure definition, while the description
-provides information on what this message is used for.
-Both the `cmdTorqueInMsg` and `cmdForceInMsg` are optional.
+The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: forceTorqueThrForceMapping
+    :caption: Module I/O Messages
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - cmdTorqueInMsg
-      - :ref:`CmdTorqueBodyMsgPayload`
-      - (optional) The name of the vehicle control torque (Lr) input message
-    * - cmdForceInMsg
-      - :ref:`CmdForceBodyMsgPayload`
-      - (optional) The name of the vehicle control force input message
-    * - thrConfigInMsg
-      - :ref:`THRArrayConfigMsgPayload`
-      - The name of the thruster cluster input message
-    * - vehConfigInMsg
-      - :ref:`VehicleConfigMsgPayload`
-      - The name of the vehicle config input message
-    * - thrForceCmdOutMsg
-      - :ref:`THRArrayCmdForceMsgPayload`
-      - The name of the output thruster force message
+    input cmdTorqueInMsg CmdTorqueBodyMsgPayload
+        (optional) The name of the vehicle control torque (Lr) input message
+    input cmdForceInMsg CmdForceBodyMsgPayload
+        (optional) The name of the vehicle control force input message
+    input thrConfigInMsg THRArrayConfigMsgPayload
+        The name of the thruster cluster input message
+    input vehConfigInMsg VehicleConfigMsgPayload
+        The name of the vehicle config input message
+    output thrForceCmdOutMsg THRArrayCmdForceMsgPayload
+        The name of the output thruster force message
 
 Detailed Module Description
 ---------------------------

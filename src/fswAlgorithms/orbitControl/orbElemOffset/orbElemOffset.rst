@@ -47,24 +47,19 @@ This preserves a mean-anomaly interpretation for the offset while still allowing
 
 Message Interfaces
 ------------------
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - mainElementsInMsg
-      - :ref:`ClassicElementsMsgPayload`
-      - Input message containing the baseline classical elements
-        (``a``, ``e``, ``i``, ``Omega``, ``omega``, ``f``).
-    * - offsetElementsInMsg
-      - :ref:`ClassicElementsMsgPayload`
-      - Input message containing additive offsets for the classical elements. The ``f`` field is interpreted either
-        as :math:`\Delta f` or :math:`\Delta M` depending on ``useMeanAnomalyOffset``.
-    * - elementsOutMsg
-      - :ref:`ClassicElementsMsgPayload`
-      - Output message containing the combined classical elements after applying offsets.
+.. bsk-module-io:: orbElemOffset
+    :caption: Module I/O Messages
+
+    input mainElementsInMsg ClassicElementsMsgPayload
+        Input message containing the baseline classical elements (``a``, ``e``, ``i``, ``Omega``, ``omega``, ``f``).
+    input offsetElementsInMsg ClassicElementsMsgPayload
+        Input message containing additive offsets for the classical elements. The ``f`` field is interpreted either as :math:`\Delta f` or :math:`\Delta M` depending on ``useMeanAnomalyOffset``.
+    output elementsOutMsg ClassicElementsMsgPayload
+        Output message containing the combined classical elements after applying offsets.
 
 Detailed Behavior
 -----------------

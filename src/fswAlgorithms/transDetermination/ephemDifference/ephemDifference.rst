@@ -9,30 +9,19 @@ More information can be found in the
 
 Message Connection Descriptions
 -------------------------------
-The following table lists all the module input and output messages.  The module msg connection is set by the
-user from python.  The msg type contains a link to the message structure definition, while the description
-provides information on what this message is used for.
+The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.
 
 .. _ModuleIO_ephemDifference:
-.. figure:: /../../src/fswAlgorithms/transDetermination/ephemDifference/_Documentation/Images/moduleImgEphemDifference.svg
-    :align: center
 
-    Figure 1: ``ephemDifference()`` Module I/O Illustration
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: ephemDifference
+    :caption: Module I/O Messages
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - ephBaseInMsg
-      - :ref:`EphemerisMsgPayload`
-      - base ephemeris input message name
-    * - ephInMsg
-      - :ref:`EphemerisMsgPayload`
-      - ephemeris input message to be converted, stored in ``changeBodies[i]``
-    * - ephOutMsg
-      - :ref:`EphemerisMsgPayload`
-      - converted ephemeris output message, stored in ``changeBodies[i]``
-
+    input ephBaseInMsg EphemerisMsgPayload
+        base ephemeris input message name
+    input ephInMsg EphemerisMsgPayload
+        ephemeris input message to be converted, stored in ``changeBodies[i]``
+    output ephOutMsg EphemerisMsgPayload
+        converted ephemeris output message, stored in ``changeBodies[i]``

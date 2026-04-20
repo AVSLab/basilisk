@@ -6,26 +6,18 @@ More information on can be found in the
 
 Message Connection Descriptions
 -------------------------------
-The following table lists all the module input and output messages.  The module msg connection is set by the
-user from python.  The msg type contains a link to the message structure definition, while the description
-provides information on what this message is used for.
+The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: headingSuKF
+    :caption: Module I/O Messages
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - opnavDataOutMsg
-      - :ref:`OpNavMsgPayload`
-      - output message with opnav information
-    * - filtDataOutMsg
-      - :ref:`HeadingFilterMsgPayload`
-      - output message with filter state data information
-    * - opnavDataInMsg
-      - :ref:`OpNavMsgPayload`
-      - optical navigation input message
-    * - cameraConfigInMsg
-      - :ref:`CameraConfigMsgPayload`
-      - (optional) camera configuration input message
+    output opnavDataOutMsg OpNavMsgPayload
+        Output message with opnav information
+    output filtDataOutMsg HeadingFilterMsgPayload
+        Output message with filter state data information
+    input opnavDataInMsg OpNavMsgPayload
+        optical navigation input message
+    input cameraConfigInMsg CameraConfigMsgPayload
+        (optional) camera configuration input message

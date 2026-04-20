@@ -12,28 +12,19 @@ the Lambert solution is not valid.
 
 Message Connection Descriptions
 -------------------------------
-The following table lists all the module input and output messages.
-The module msg connection is set by the user from python.
-The msg type contains a link to the message structure definition, while the description
-provides information on what this message is used for.
+The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: lambertSecondDV
+    :caption: Module I/O Messages
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - lambertSolutionInMsg
-      - :ref:`LambertSolutionMsgPayload`
-      - lambert problem solution input message
-    * - desiredVelocityInMsg
-      - :ref:`DesiredVelocityMsgPayload`
-      - desired inertial velocity input message
-    * - dvBurnCmdOutMsg
-      - :ref:`DvBurnCmdMsgPayload`
-      - Delta-V command output message
-
+    input lambertSolutionInMsg LambertSolutionMsgPayload
+        lambert problem solution input message
+    input desiredVelocityInMsg DesiredVelocityMsgPayload
+        desired inertial velocity input message
+    output dvBurnCmdOutMsg DvBurnCmdMsgPayload
+        Delta-V command output message
 
 User Guide
 ----------

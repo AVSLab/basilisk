@@ -10,26 +10,23 @@ input.
 
 Message Connection Descriptions
 -------------------------------
-The following table lists all the module input and output messages.  The module msg variable name is set by the user from python.  The msg type contains a link to the message structure definition, while the description provides information on what this message is used for.
+The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.
 
+.. bsk-module-io:: faultDetection
+    :caption: Module I/O Messages
 
-.. table:: Module I/O Messages
-        :widths: 25 25 100
-
-        +------------------------+---------------------------------+---------------------------------------------------+
-        | Msg Variable Name      | Msg Type                        | Description                                       |
-        +========================+=================================+===================================================+
-        | navMeasPrimaryInMsg    | :ref:`OpNavMsgPayload`          | Input primary nav message                         |
-        +------------------------+---------------------------------+---------------------------------------------------+
-        | navMeasSecondaryInMsg  | :ref:`OpNavMsgPayload`          | Input secondary nav message                       |
-        +------------------------+---------------------------------+---------------------------------------------------+
-        | cameraConfigInMsg      | :ref:`CameraConfigMsgPayload`   | Input camera message                              |
-        +------------------------+---------------------------------+---------------------------------------------------+
-        | attInMsg               | :ref:`NavAttMsgPayload`         | Input attitude message                            |
-        +------------------------+---------------------------------+---------------------------------------------------+
-        | opNavOutMsg            | :ref:`OpNavMsgPayload`          | Ouput navigation message given the two inputs     |
-        +------------------------+---------------------------------+---------------------------------------------------+
-
+    input navMeasPrimaryInMsg OpNavMsgPayload
+        Input primary nav message
+    input navMeasSecondaryInMsg OpNavMsgPayload
+        Input secondary nav message
+    input cameraConfigInMsg CameraConfigMsgPayload
+        Input camera message
+    input attInMsg NavAttMsgPayload
+        Input attitude message
+    output opNavOutMsg OpNavMsgPayload
+        Ouput navigation message given the two inputs
 
 Detailed Module Description
 ---------------------------

@@ -27,28 +27,19 @@ The corresponding angle the prescribed body moves through during the rotation is
 
 Message Connection Descriptions
 -------------------------------
-The following table lists all the module input and output messages.
-The module msg connection is set by the user from python.
-The msg type contains a link to the message structure definition, while the description
-provides information on what this message is used for.
+The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: prescribedRot2DOF
+    :caption: Module I/O Messages
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - spinningBodyRef1InMsg
-      - :ref:`HingedRigidBodyMsgPayload`
-      - input msg with the scalar spinning body rotational reference states for the first rotation
-    * - spinningBodyRef2InMsg
-      - :ref:`HingedRigidBodyMsgPayload`
-      - input msg with the scalar spinning body rotational reference states for the second rotation
-    * - prescribedMotionOutMsg
-      - :ref:`PrescribedRotationMsgPayload`
-      - output message with the prescribed spinning body rotational states
-
+    input spinningBodyRef1InMsg HingedRigidBodyMsgPayload
+        Input msg with the scalar spinning body rotational reference states for the first rotation
+    input spinningBodyRef2InMsg HingedRigidBodyMsgPayload
+        Input msg with the scalar spinning body rotational reference states for the second rotation
+    output prescribedMotionOutMsg PrescribedRotationMsgPayload
+        Output message with the prescribed spinning body rotational states
 
 Detailed Module Description
 ---------------------------

@@ -4,45 +4,31 @@ This module computes a reference orientation for a dual-gimballed platform conne
 
 Message Connection Descriptions
 -------------------------------
-The following table lists all the module input and output messages.  The module msg variable name is set by the
-user from python.  The msg type contains a link to the message structure definition, while the description
-provides information on what this message is used for.
+The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: thrusterPlatformReference
+    :caption: Module I/O Messages
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - vehConfigInMsg
-      - :ref:`VehicleConfigMsgPayload`
-      - Input vehicle configuration message containing the position of the center of mass of the system.
-    * - thrusterConfigFInMsg
-      - :ref:`THRConfigMsgPayload`
-      - Input thruster configuration message containing the thrust direction vector and magnitude in **platform frame coordinates**. The entry ``rThrust_B`` here is the position of the thrust application point, with respect to the origin of the platform frame, in platform-frame coordinates (:math:`{}^\mathcal{F}\boldsymbol{r}_{T/F}`).
-    * - rwConfigDataInMsg
-      - :ref:`RWArrayConfigMsgPayload`
-      - Input message containing the number of reaction wheels, relative inertias and orientations with respect to the body frame.
-    * - rwSpeedsInMsg
-      - :ref:`RWSpeedMsgPayload`
-      - Input message containing the relative speeds of the reaction wheels with respect to the hub.
-    * - hingedRigidBodyRef1OutMsg
-      - :ref:`HingedRigidBodyMsgPayload`
-      - Output message containing the reference angle and angle rate for the tip angle.
-    * - hingedRigidBodyRef2OutMsg
-      - :ref:`HingedRigidBodyMsgPayload`
-      - Output message containing the reference angle and angle rate for the tilt angle.
-    * - bodyHeadingOutMsg
-      - :ref:`BodyHeadingMsgPayload`
-      - Output message containing the unit direction vector of the thruster in body-frame coordinates.
-    * - thrusterTorqueOutMsg
-      - :ref:`CmdTorqueBodyMsgPayload`
-      - Output message containing the opposite of the net torque produced by the thruster on the system.
-    * - thrusterConfigBOutMsg
-      - :ref:`THRConfigMsgPayload`
-      - Output thruster configuration message containing the thrust direction vector and magnitude in **reference body frame coordinates**. The entry ``rThrust_B`` here is the position of the thrust application point, with respect to the origin of the body frame, in body-frame coordinates (:math:`{}^\mathcal{B}\boldsymbol{r}_{T/B}`).
-
+    input vehConfigInMsg VehicleConfigMsgPayload
+        Input vehicle configuration message containing the position of the center of mass of the system.
+    input thrusterConfigFInMsg THRConfigMsgPayload
+        Input thruster configuration message containing the thrust direction vector and magnitude in **platform frame coordinates**. The entry ``rThrust_B`` here is the position of the thrust application point, with respect to the origin of the platform frame, in platform-frame coordinates (:math:`{}^\mathcal{F}\boldsymbol{r}_{T/F}`).
+    input rwConfigDataInMsg RWArrayConfigMsgPayload
+        Input message containing the number of reaction wheels, relative inertias and orientations with respect to the body frame.
+    input rwSpeedsInMsg RWSpeedMsgPayload
+        Input message containing the relative speeds of the reaction wheels with respect to the hub.
+    output hingedRigidBodyRef1OutMsg HingedRigidBodyMsgPayload
+        Output message containing the reference angle and angle rate for the tip angle.
+    output hingedRigidBodyRef2OutMsg HingedRigidBodyMsgPayload
+        Output message containing the reference angle and angle rate for the tilt angle.
+    output bodyHeadingOutMsg BodyHeadingMsgPayload
+        Output message containing the unit direction vector of the thruster in body-frame coordinates.
+    output thrusterTorqueOutMsg CmdTorqueBodyMsgPayload
+        Output message containing the opposite of the net torque produced by the thruster on the system.
+    output thrusterConfigBOutMsg THRConfigMsgPayload
+        Output thruster configuration message containing the thrust direction vector and magnitude in **reference body frame coordinates**. The entry ``rThrust_B`` here is the position of the thrust application point, with respect to the origin of the body frame, in body-frame coordinates (:math:`{}^\mathcal{B}\boldsymbol{r}_{T/B}`).
 
 Detailed Module Description
 ---------------------------

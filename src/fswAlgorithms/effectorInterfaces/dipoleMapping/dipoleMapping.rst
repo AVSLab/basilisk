@@ -5,26 +5,19 @@ This module computes individual torque rod dipole commands taking into account s
 
 Message Connection Descriptions
 -------------------------------
-The following table lists all the module input and output messages.  The module msg connection is set by the
-user from python.  The msg type contains a link to the message structure definition, while the description
-provides information on what this message is used for.
+The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: dipoleMapping
+    :caption: Module I/O Messages
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - mtbParamsInMsg
-      - :ref:`MTBArrayConfigMsgPayload`
-      - input message for MTB layout
-    * - dipoleRequestBodyInMsg
-      - :ref:`DipoleRequestBodyMsgPayload`
-      - input message containing the requested body frame dipole
-    * - dipoleRequestMtbOutMsg
-      - :ref:`MTBCmdMsgPayload`
-      - input message containing the individual dipole requests for each torque bar on the vehicle
+    input mtbParamsInMsg MTBArrayConfigMsgPayload
+        Input message for MTB layout
+    input dipoleRequestBodyInMsg DipoleRequestBodyMsgPayload
+        Input message containing the requested body frame dipole
+    output dipoleRequestMtbOutMsg MTBCmdMsgPayload
+        Output message containing the individual dipole requests for each torque bar on the vehicle
 
 Detailed Module Description
 ---------------------------

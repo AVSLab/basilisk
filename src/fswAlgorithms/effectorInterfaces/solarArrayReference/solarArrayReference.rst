@@ -6,37 +6,27 @@ This module is used to calculate the required rotation angle for a solar array t
 
 Message Connection Descriptions
 -------------------------------
-The following table lists all the module input and output messages.  The module msg connection is set by the user from python.  The msg type contains a link to the message structure definition, while the description provides information on what this message is used for.
+The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: solarArrayReference
+    :caption: Module I/O Messages
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - hingedRigidBodyRefOutMsg
-      - :ref:`HingedRigidBodyMsgPayload`
-      - Output Hinged Rigid Body Reference Message.
-    * - attNavInMsg
-      - :ref:`NavAttMsgPayload`
-      - Input Attitude Navigation Message.
-    * - attRefInMsg
-      - :ref:`AttRefMsgPayload`
-      - Input Attitude Reference Message.
-    * - hingedRigidBodyInMsg
-      - :ref:`HingedRigidBodyMsgPayload`
-      - Input Hinged Rigid Body Message Message.
-    * - vehConfigInMsg (optional)
-      - :ref:`VehicleConfigMsgPayload`
-      - Input vehicle configuration message containing the position of the center of mass of the system.
-    * - rwConfigDataInMsg (optional)
-      - :ref:`RWArrayConfigMsgPayload`
-      - Input message containing the number of reaction wheels, relative inertias and orientations with respect to the body frame.
-    * - rwSpeedsInMsg (optional)
-      - :ref:`RWSpeedMsgPayload`
-      - Input message containing the relative speeds of the reaction wheels with respect to the hub.
-
+    output hingedRigidBodyRefOutMsg HingedRigidBodyMsgPayload
+        Output Hinged Rigid Body Reference Message.
+    input attNavInMsg NavAttMsgPayload
+        Input Attitude Navigation Message.
+    input attRefInMsg AttRefMsgPayload
+        Input Attitude Reference Message.
+    input hingedRigidBodyInMsg HingedRigidBodyMsgPayload
+        Input Hinged Rigid Body Message Message.
+    input vehConfigInMsg VehicleConfigMsgPayload
+        (optional) Input vehicle configuration message containing the position of the center of mass of the system.
+    input rwConfigDataInMsg RWArrayConfigMsgPayload
+        (optional) Input message containing the number of reaction wheels, relative inertias and orientations with respect to the body frame.
+    input rwSpeedsInMsg RWSpeedMsgPayload
+        (optional) Input message containing the relative speeds of the reaction wheels with respect to the hub.
 
 Module Assumptions and Limitations
 ----------------------------------

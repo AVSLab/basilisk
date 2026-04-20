@@ -8,27 +8,17 @@ If the time provided is outside the specified range for which the stored Chebysh
 
 Message Connection Descriptions
 -------------------------------
-The following table lists all the module input and output messages.  The module msg connection is set by the
-user from python.  The msg type contains a link to the message structure definition, while the description
-provides information on what this message is used for.
+The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.
 
 .. _ModuleIO_oeStateEphem:
-.. figure:: /../../src/fswAlgorithms/transDetermination/oeStateEphem/_Documentation/Images/moduleImgOeStateEphem.svg
-    :align: center
 
-    Figure 1: ``oeStateEphem()`` Module I/O Illustration
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: oeStateEphem
+    :caption: Module I/O Messages
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - stateFitOutMsg
-      - :ref:`EphemerisMsgPayload`
-      - output navigation message for pos/vel
-    * - clockCorrInMsg
-      - :ref:`TDBVehicleClockCorrelationMsgPayload`
-      - clock correlation input message
-
+    output stateFitOutMsg EphemerisMsgPayload
+        Output navigation message for pos/vel
+    input clockCorrInMsg TDBVehicleClockCorrelationMsgPayload
+        clock correlation input message

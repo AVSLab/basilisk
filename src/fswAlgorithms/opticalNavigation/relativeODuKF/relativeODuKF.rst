@@ -10,25 +10,16 @@ how to run it, as well as testing.
 
 Message Connection Descriptions
 -------------------------------
-The following table lists all the module input and output messages.  The module msg connection is set by the
-user from python.  The msg type contains a link to the message structure definition, while the description
-provides information on what this message is used for.
+The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: relativeODuKF
+    :caption: Module I/O Messages
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - navStateOutMsg
-      - :ref:`NavTransMsgPayload`
-      - navigation translation output message
-    * - filtDataOutMsg
-      - :ref:`OpNavFilterMsgPayload`
-      - output filter data message
-    * - opNavInMsg
-      - :ref:`OpNavMsgPayload`
-      - opnav input message
-
-
+    output navStateOutMsg NavTransMsgPayload
+        navigation translation output message
+    output filtDataOutMsg OpNavFilterMsgPayload
+        Output filter data message
+    input opNavInMsg OpNavMsgPayload
+        opnav input message

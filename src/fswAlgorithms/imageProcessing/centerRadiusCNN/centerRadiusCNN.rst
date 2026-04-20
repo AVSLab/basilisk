@@ -8,27 +8,21 @@ Module Assumptions and Limitations
 ----------------------------------
 The module's assumptions are limited to the model it uploads. The training and performance of this module is not
 protected by this implementation. This assumption is seen in the pixelNoise variable where the user sets the
-performance of the net. 
+performance of the net.
 
 Message Connection Descriptions
 -------------------------------
-The following table lists all the module input and output messages.  The module msg variable name is set by the user from python.  The msg type contains a link to the message structure definition, while the description provides information on what this message is used for.
+The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.
 
+.. bsk-module-io:: centerRadiusCNN
+    :caption: Module I/O Messages
 
-
-.. table:: Module I/O Messages
-    :widths: 25 25 100
-
-    +-----------------------+---------------------------------+---------------------------------------------------+
-    | Msg Variable Name     | Msg Type                        | Description                                       |
-    +=======================+=================================+===================================================+
-    | imageInMsg            | :ref:`CameraImageMsgPayload`    | (optional) Input image message.                   |
-    |                       |                                 | This message either comes from the camera module  |
-    |                       |                                 | or the viz interface if no noise is added.        |
-    +-----------------------+---------------------------------+---------------------------------------------------+
-    | opnavCirclesOutMsg    | :ref:`OpNavCirclesMsgPayload`   | Circle found in the image.                        |
-    +-----------------------+---------------------------------+---------------------------------------------------+
-
+    input imageInMsg CameraImageMsgPayload
+        (optional) Input image message. This message either comes from the camera module or the viz interface if no noise is added.
+    output opnavCirclesOutMsg OpNavCirclesMsgPayload
+        Circle found in the image.
 
 User Guide
 ----------
@@ -40,4 +34,3 @@ The module is set easily using the path to the module and message names:
 
     moduleConfig.pathToNetwork = path + "/../position_net2_trained_11-14.onnx"
     moduleConfig.pixelNoise = [5,5,5]
-

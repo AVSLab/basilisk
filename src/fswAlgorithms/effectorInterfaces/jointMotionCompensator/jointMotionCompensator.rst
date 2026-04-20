@@ -7,30 +7,21 @@ The ``jointMotionCompensator`` module determines the hub torques required to neg
 
 Message Connection Descriptions
 -------------------------------
-The following table lists all the module input and output messages.
-The module msg connection is set by the user from python.
-The msg type contains a link to the message structure definition, while the description
-provides information on what this message is used for.
+The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: jointMotionCompensator
+    :caption: Module I/O Messages
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - massMatrixInMsg
-      - :ref:`MJSysMassMatrixMsgPayload`
-      - system mass matrix input msg
-    * - reactionForcesInMsg
-      - :ref:`MJJointReactionsMsgPayload`
-      - joint reaction forces and torques input msg
-    * - jointTorqueInMsgs
-      - :ref:`SingleActuatorMsgPayload`
-      - vector of joint motor torque input msgs
-    * - hubTorqueOutMsgs
-      - :ref:`SingleActuatorMsgPayload`
-      - vector of hub torque output msgs
+    input massMatrixInMsg MJSysMassMatrixMsgPayload
+        system mass matrix input msg
+    input reactionForcesInMsg MJJointReactionsMsgPayload
+        joint reaction forces and torques input msg
+    input jointTorqueInMsgs SingleActuatorMsgPayload
+        vector of joint motor torque input msgs
+    output hubTorqueOutMsgs SingleActuatorMsgPayload
+        vector of hub torque output msgs
 
 User Guide
 ----------
