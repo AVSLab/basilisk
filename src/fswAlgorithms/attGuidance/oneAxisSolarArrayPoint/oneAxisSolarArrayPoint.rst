@@ -4,35 +4,25 @@ This module computes a reference attitude frame that simultaneously satisfies mu
 
 Message Connection Descriptions
 -------------------------------
-The following table lists all the module input and output messages. The msg type contains a link to the message structure definition, while the description
-provides information on what this message is used for.
+The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: oneAxisSolarArrayPoint
+    :caption: Module I/O Messages
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - attNavInMsg
-      - :ref:`NavAttMsgPayload`
-      - Input message containing current attitude and Sun direction in body-frame coordinates. Note that, for the Sun direction to appear in the message, the :ref:`SpicePlanetStateMsgPayload` must be provided as input msg to :ref:`simpleNav`, otherwise the Sun direction is zeroed by default.
-    * - bodyHeadingInMsg
-      - :ref:`BodyHeadingMsgPayload`
-      - (optional) Input message containing the body-frame direction :math:`{}^\mathcal{B}\hat{h}`. Alternatively, the direction can be specified as input parameter ``h1Hat_B``. When this input msg is connected, the input parameter is neglected in favor of the input msg.
-    * - inertialHeadingInMsg
-      - :ref:`InertialHeadingMsgPayload`
-      - (optional) Input message containing the inertial-frame direction :math:`{}^\mathcal{N}\hat{h}_\text{ref}`. Alternatively, the direction can be specified as input parameter ``hHat_N``. When this input msg is connected, the input parameter is neglected in favor of the input msg.
-    * - ephemerisInMsg
-      - :ref:`EphemerisMsgPayload`
-      - (optional) Input message containing the inertial position of a celestial object, whose direction with respect to the spacecraft serves as the inertial reference direction :math:`{}^\mathcal{N}\hat{h}_\text{ref}`. This input msg must be provided together with ``transNavInMsg`` to compute the relative position of the celestial object to the spacecraft. If both ``inertialHeadingInMsg`` and ``ephemerisInMsg`` are connected, the inertial reference direction :math:`{}^\mathcal{N}\hat{h}_\text{ref}` is computed according to ``inertialHeadingInMsg``.
-    * - transNavInMsg
-      - :ref:`NavTransMsgPayload`
-      - (optional) Input message containing the inertial position and velocity of the spacecraft. This message must be connected together with ``ephemerisInMsg`` to allow to compute :math:`{}^\mathcal{N}\hat{h}_\text{ref}`.
-    * - attRefOutMsg
-      - :ref:`AttRefMsgPayload`
-      - Output attitude reference message containing reference attitude, reference angular rates and accelerations.
-
+    input attNavInMsg NavAttMsgPayload
+        Input message containing current attitude and Sun direction in body-frame coordinates. Note that, for the Sun direction to appear in the message, the :ref:`SpicePlanetStateMsgPayload` must be provided as input msg to :ref:`simpleNav`, otherwise the Sun direction is zeroed by default.
+    input bodyHeadingInMsg BodyHeadingMsgPayload
+        (optional) Input message containing the body-frame direction :math:`{}^\mathcal{B}\hat{h}`. Alternatively, the direction can be specified as input parameter ``h1Hat_B``. When this input msg is connected, the input parameter is neglected in favor of the input msg.
+    input inertialHeadingInMsg InertialHeadingMsgPayload
+        (optional) Input message containing the inertial-frame direction :math:`{}^\mathcal{N}\hat{h}_\text{ref}`. Alternatively, the direction can be specified as input parameter ``hHat_N``. When this input msg is connected, the input parameter is neglected in favor of the input msg.
+    input ephemerisInMsg EphemerisMsgPayload
+        (optional) Input message containing the inertial position of a celestial object, whose direction with respect to the spacecraft serves as the inertial reference direction :math:`{}^\mathcal{N}\hat{h}_\text{ref}`. This input msg must be provided together with ``transNavInMsg`` to compute the relative position of the celestial object to the spacecraft. If both ``inertialHeadingInMsg`` and ``ephemerisInMsg`` are connected, the inertial reference direction :math:`{}^\mathcal{N}\hat{h}_\text{ref}` is computed according to ``inertialHeadingInMsg``.
+    input transNavInMsg NavTransMsgPayload
+        (optional) Input message containing the inertial position and velocity of the spacecraft. This message must be connected together with ``ephemerisInMsg`` to allow to compute :math:`{}^\mathcal{N}\hat{h}_\text{ref}`.
+    output attRefOutMsg AttRefMsgPayload
+        Output attitude reference message containing reference attitude, reference angular rates and accelerations.
 
 Detailed Module Description
 ---------------------------

@@ -4,38 +4,33 @@ This module converts two inertial spacecraft positions into a Hill-frame relativ
 
 Message Connection Descriptions
 -------------------------------
+The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.
 
+.. bsk-module-io:: hillStateConverter
+    :caption: Module I/O Messages
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
-
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - chiefStateInMsg
-      - :ref:`NavTransMsgPayload`
-      - Chief inertial state navigation message used as basis for Hill frame definition
-    * - depStateInMsg
-      - :ref:`NavTransMsgPayload`
-      - Deputy inertial state navigation message.
-    * - hillStateOutMsg
-      - :ref:`HillRelStateMsgPayload`
-      - Relative position message of deputy w.r.t. chief in Hill-frame coordinates.
+    input chiefStateInMsg NavTransMsgPayload
+        Chief inertial state navigation message used as basis for Hill frame definition
+    input depStateInMsg NavTransMsgPayload
+        Deputy inertial state navigation message.
+    output hillStateOutMsg HillRelStateMsgPayload
+        Relative position message of deputy w.r.t. chief in Hill-frame coordinates.
 
 Detailed Module Description
 ---------------------------
 
 This module converts a pair of spacecraft inertial positions into a relative position and velocity represented in the chief spacecraft's hill frame.
 
-The Hill frame relative position and velocity of the deputy spacecraft is returned in a :ref:`HillRelStateMsgPayload`. 
+The Hill frame relative position and velocity of the deputy spacecraft is returned in a :ref:`HillRelStateMsgPayload`.
 
 The chief Hill frame is computed from the Chief navigation message by first calculating the radial and orbit angular momentum unit vectors:
 
-    .. math:: 
+    .. math::
         \hat{h}_r = \frac{r}{|r|}
 
-    .. math:: 
+    .. math::
         \hat{h}_h = \frac{r \times v}{|r \times v|}
 
 These unit vectors are used to compute the final direction used to define the frame via the cross product:
@@ -45,7 +40,7 @@ These unit vectors are used to compute the final direction used to define the fr
 
 Finally, these unit vectors are composed into a DCM that rotates from the inertial to Hill frames:
 
-    .. math:: 
+    .. math::
         [HN] = \{\hat{h}_r, \hat{h}_v, \hat{h}_h\}
 
 The relative position is computed using the difference of the inertial deputy and chief positions and this DCM:

@@ -9,34 +9,18 @@ The output of the module is a setup of thruster firing times.  Each thruster can
 
 Message Connection Descriptions
 -------------------------------
-The following table lists all the module input and output messages.  The module msg connection is set by the
-user from python.  The msg type contains a link to the message structure definition, while the description
-provides information on what this message is used for.
+The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.
 
-.. _ModuleIO_thrMomentumDumping:
-.. figure:: /../../src/fswAlgorithms/effectorInterfaces/thrMomentumDumping/_Documentation/Images/moduleImgThrMomentumDumping.svg
-    :align: center
+.. bsk-module-io:: thrMomentumDumping
+    :caption: Module I/O Messages
 
-    Figure 1: ``thrMomentumDumping()`` Module I/O Illustration
-
-
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
-
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - thrusterOnTimeOutMsg
-      - :ref:`THRArrayOnTimeCmdMsgPayload`
-      - thruster on time output message
-    * - thrusterImpulseInMsg
-      - :ref:`THRArrayCmdForceMsgPayload`
-      - commanded thruster impulse input message
-    * - thrusterConfInMsg
-      - :ref:`THRArrayConfigMsgPayload`
-      - Thruster array configuration input message
-    * - deltaHInMsg
-      - :ref:`CmdTorqueBodyMsgPayload`
-      - requested momentum change input message
-
+    output thrusterOnTimeOutMsg THRArrayOnTimeCmdMsgPayload
+        thruster on time output message
+    input thrusterImpulseInMsg THRArrayCmdForceMsgPayload
+        commanded thruster impulse input message
+    input thrusterConfInMsg THRArrayConfigMsgPayload
+        Thruster array configuration input message
+    input deltaHInMsg CmdTorqueBodyMsgPayload
+        requested momentum change input message

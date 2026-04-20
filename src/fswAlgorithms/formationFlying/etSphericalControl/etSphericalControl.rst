@@ -6,48 +6,31 @@ attractive force between the two craft. The Electrostatic Tractor (ET) concept u
 
 Message Connection Descriptions
 -------------------------------
-The following table lists all the module input and output messages.  The module msg variable name is set by the
-user from python.  The msg type contains a link to the message structure definition, while the description
-provides information on what this message is used for.
+The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.
 
 .. _ModuleIO_ET_spherical_control:
-.. figure:: /../../src/fswAlgorithms/formationFlying/etSphericalControl/_Documentation/Images/moduleEtSphericalControl.svg
-    :align: center
 
-    Figure 1: ``etSphericalControl()`` Module I/O Illustration
+.. bsk-module-io:: etSphericalControl
+    :caption: Module I/O Messages
 
-
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
-
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - servicerTransInMsg
-      - :ref:`NavTransMsgPayload`
-      - Servicer position and velocity input message
-    * - debrisTransInMsg
-      - :ref:`NavTransMsgPayload`
-      - Debris position and velocity input message
-    * - servicerAttInMsg
-      - :ref:`NavAttMsgPayload`
-      - Servicer attitude input message
-    * - servicerVehicleConfigInMsg
-      - :ref:`VehicleConfigMsgPayload`
-      - Servicer vehicle configuration (mass information) input message
-    * - debrisVehicleConfigInMsg
-      - :ref:`VehicleConfigMsgPayload`
-      - Debris vehicle configuration (mass information) input message
-    * - eForceInMsg
-      - :ref:`CmdForceInertialMsgPayload`
-      - Inertial electrostatic force that acts on servicer input message
-    * - forceInertialOutMsg
-      - :ref:`CmdForceInertialMsgPayload`
-      - Inertial frame control thrust force output message
-    * - forceBodyOutMsg
-      - :ref:`CmdForceBodyMsgPayload`
-      - Body frame control thrust force output message
+    input servicerTransInMsg NavTransMsgPayload
+        Servicer position and velocity input message
+    input debrisTransInMsg NavTransMsgPayload
+        Debris position and velocity input message
+    input servicerAttInMsg NavAttMsgPayload
+        Servicer attitude input message
+    input servicerVehicleConfigInMsg VehicleConfigMsgPayload
+        Servicer vehicle configuration (mass information) input message
+    input debrisVehicleConfigInMsg VehicleConfigMsgPayload
+        Debris vehicle configuration (mass information) input message
+    input eForceInMsg CmdForceInertialMsgPayload
+        Inertial electrostatic force that acts on servicer input message
+    output forceInertialOutMsg CmdForceInertialMsgPayload
+        Inertial frame control thrust force output message
+    output forceBodyOutMsg CmdForceBodyMsgPayload
+        Body frame control thrust force output message
 
 Module Assumptions and Limitations
 ----------------------------------

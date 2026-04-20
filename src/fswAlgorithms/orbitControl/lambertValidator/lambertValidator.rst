@@ -20,34 +20,23 @@ indicate that the Lambert solution is not valid or has not converged yet.
 
 Message Connection Descriptions
 -------------------------------
-The following table lists all the module input and output messages.
-The module msg connection is set by the user from python.
-The msg type contains a link to the message structure definition, while the description
-provides information on what this message is used for.
+The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: lambertValidator
+    :caption: Module I/O Messages
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - navTransInMsg
-      - :ref:`NavTransMsgPayload`
-      - translational navigation input message
-    * - lambertProblemInMsg
-      - :ref:`lambertProblemMsgPayload`
-      - lambert problem setup input message
-    * - lambertSolutionInMsg
-      - :ref:`LambertSolutionMsgPayload`
-      - lambert problem solution input message
-    * - lambertPerformanceInMsg
-      - :ref:`LambertPerformanceMsgPayload`
-      - lambert problem performance message (additional information about the solution process)
-    * - dvBurnCmdOutMsg
-      - :ref:`DvBurnCmdMsgPayload`
-      - Delta-V command output message
-
+    input navTransInMsg NavTransMsgPayload
+        translational navigation input message
+    input lambertProblemInMsg lambertProblemMsgPayload
+        lambert problem setup input message
+    input lambertSolutionInMsg LambertSolutionMsgPayload
+        lambert problem solution input message
+    input lambertPerformanceInMsg LambertPerformanceMsgPayload
+        lambert problem performance message (additional information about the solution process)
+    output dvBurnCmdOutMsg DvBurnCmdMsgPayload
+        Delta-V command output message
 
 Module Assumptions and Limitations
 ----------------------------------

@@ -11,36 +11,25 @@ the commanded acceleration back to inertial-frame force using deputy mass.
 
 Message Connection Descriptions
 -------------------------------
-The following table lists all the module input and output messages.
-The module msg connection is set by the user from Python.
-The msg type contains a link to the message structure definition, while the description
-provides information on what this message is used for.
+The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: hillFrameRelativeControl
+    :caption: Module I/O Messages
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - chiefTransInMsg
-      - :ref:`NavTransMsgPayload`
-      - chief translational navigation input message
-    * - hillStateInMsg
-      - :ref:`HillRelStateMsgPayload`
-      - deputy-relative-to-chief Hill-frame state input message (exclusive with ``deputyTransInMsg``)
-    * - deputyTransInMsg
-      - :ref:`NavTransMsgPayload`
-      - deputy translational navigation input message (exclusive with ``hillStateInMsg``)
-    * - deputyVehicleConfigInMsg
-      - :ref:`VehicleConfigMsgPayload`
-      - deputy mass configuration input message
-    * - forceOutMsg
-      - :ref:`CmdForceInertialMsgPayload`
-      - inertial-frame force command output message
-    * - forceOutMsgC
-      - :ref:`CmdForceInertialMsgPayload`
-      - C-wrapped inertial-frame force command output message
+    input chiefTransInMsg NavTransMsgPayload
+        chief translational navigation input message
+    input hillStateInMsg HillRelStateMsgPayload
+        deputy-relative-to-chief Hill-frame state input message (exclusive with ``deputyTransInMsg``)
+    input deputyTransInMsg NavTransMsgPayload
+        deputy translational navigation input message (exclusive with ``hillStateInMsg``)
+    input deputyVehicleConfigInMsg VehicleConfigMsgPayload
+        deputy mass configuration input message
+    output forceOutMsg CmdForceInertialMsgPayload
+        inertial-frame force command output message
+    output forceOutMsgC CmdForceInertialMsgPayload
+        C-wrapped inertial-frame force command output message
 
 Detailed Module Description
 ---------------------------

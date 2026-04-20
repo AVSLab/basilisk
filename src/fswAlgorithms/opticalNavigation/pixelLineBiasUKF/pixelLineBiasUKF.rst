@@ -10,30 +10,20 @@ how to run it, as well as testing.
 
 Message Connection Descriptions
 -------------------------------
-The following table lists all the module input and output messages.  The module msg connection is set by the
-user from python.  The msg type contains a link to the message structure definition, while the description
-provides information on what this message is used for.
+The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: pixelLineBiasUKF
+    :caption: Module I/O Messages
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - navStateOutMsg
-      - :ref:`NavTransMsgPayload`
-      - navigation translation output message
-    * - filtDataOutMsg
-      - :ref:`PixelLineFilterMsgPayload`
-      - output filter data message
-    * - circlesInMsg
-      - :ref:`OpNavCirclesMsgPayload`
-      - input messages with circles information
-    * - cameraConfigInMsg
-      - :ref:`CameraConfigMsgPayload`
-      - camera config input message
-    * - attInMsg
-      - :ref:`NavAttMsgPayload`
-      - attitude input message
-
+    output navStateOutMsg NavTransMsgPayload
+        navigation translation output message
+    output filtDataOutMsg PixelLineFilterMsgPayload
+        Output filter data message
+    input circlesInMsg OpNavCirclesMsgPayload
+        Input messages with circles information
+    input cameraConfigInMsg CameraConfigMsgPayload
+        camera config input message
+    input attInMsg NavAttMsgPayload
+        attitude input message

@@ -8,29 +8,18 @@ The module works for both on-pulsing (nominal thruster state is off such as with
 
 Message Connection Descriptions
 -------------------------------
-The following table lists all the module input and output messages.  The module msg connection is set by the
-user from python.  The msg type contains a link to the message structure definition, while the description
-provides information on what this message is used for.
+The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.
 
+.. bsk-module-io:: thrForceMapping
+    :caption: Module I/O Messages
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
-
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - thrForceCmdOutMsg
-      - :ref:`THRArrayCmdForceMsgPayload`
-      - thruster force output message
-    * - cmdTorqueInMsg
-      - :ref:`CmdTorqueBodyMsgPayload`
-      - commanded attitude control torque vector input message
-    * - thrConfigInMsg
-      - :ref:`THRArrayConfigMsgPayload`
-      - Thruster array configuration input message
-    * - vehConfigInMsg
-      - :ref:`VehicleConfigMsgPayload`
-      - spacecraft configuration input message
-
-
+    output thrForceCmdOutMsg THRArrayCmdForceMsgPayload
+        thruster force output message
+    input cmdTorqueInMsg CmdTorqueBodyMsgPayload
+        commanded attitude control torque vector input message
+    input thrConfigInMsg THRArrayConfigMsgPayload
+        Thruster array configuration input message
+    input vehConfigInMsg VehicleConfigMsgPayload
+        spacecraft configuration input message

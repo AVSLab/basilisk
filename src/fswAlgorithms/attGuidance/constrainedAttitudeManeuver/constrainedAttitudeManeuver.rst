@@ -8,36 +8,25 @@ The module produces an Attitude Reference Message containing the reference traje
 
 Message Connection Descriptions
 -------------------------------
-The following table lists all the module input and output messages.  The module msg connection is set by the
-user from python.  The msg type contains a link to the message structure definition, while the description
-provides information on what this message is used for.
+The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: constrainedAttitudeManeuver
+    :caption: Module I/O Messages
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - attRefOutMsg
-      - :ref:`AttRefMsgPayload`
-      - Output Attitude Reference Message.
-    * - attRefOutMsgC
-      - :ref:`AttRefMsgPayload`
-      - C-wrapped Output Attitude Reference Message.
-    * - scStateInMsg
-      - :ref:`SCStatesMsgPayload`
-      - Input SC States Message.
-    * - vehicleConfigInMsg
-      - :ref:`VehicleConfigMsgPayload`
-      - Input Vehicle Configuration Message.
-    * - keepOutCelBodyInMsg
-      - :ref:`SpicePlanetStateMsgPayload`
-      - Input keep-out Planet State Message.
-    * - keepInCelBodyInMsg
-      - :ref:`SpicePlanetStateMsgPayload`
-      - Input keep-in Planet State Message.
-
+    output attRefOutMsg AttRefMsgPayload
+        Output Attitude Reference Message.
+    output attRefOutMsgC AttRefMsgPayload
+        C-wrapped Output Attitude Reference Message.
+    input scStateInMsg SCStatesMsgPayload
+        Input SC States Message.
+    input vehicleConfigInMsg VehicleConfigMsgPayload
+        Input Vehicle Configuration Message.
+    input keepOutCelBodyInMsg SpicePlanetStateMsgPayload
+        Input keep-out Planet State Message.
+    input keepInCelBodyInMsg SpicePlanetStateMsgPayload
+        Input keep-in Planet State Message.
 
 Module Assumptions and Limitations
 ----------------------------------
@@ -49,7 +38,7 @@ At this stage of development, constraint compliance is only guaranteed for the a
 reference trajectory (see Detailed Module Description below). It may happen that portions of the reference trajectory between waypoints still violate the rotational
 constraints. Ensuring that this does not happen will be subject of further refinements of this module. For the time being, it is possible to circumvent this problem
 changing the grid refinement level ``N``. This changes the coordinates of the grid points, thus yielding a different reference trajectory for every ``N``. A small ``N``
-results in a coarser grid, which is more likely to yield a trajectory that violates some constraints, but is generally smoother. Viceversa, a higher ``N`` gives a 
+results in a coarser grid, which is more likely to yield a trajectory that violates some constraints, but is generally smoother. Viceversa, a higher ``N`` gives a
 finer grid where the chance of obtaining a constraint-incompliant grid is reduced. However, the trajectory in this case is less regular due to the fact that the
 interpolating curve is forced to pass through a larger number of waypoints. A higher ``N`` is also associated with a higher computational cost.
 
@@ -63,10 +52,10 @@ parameter ``N``. Each grid node corresponds to an attitude. An undirected graph 
 - ``startNode`` whose coordinates :math:`\sigma_{BN,S}` correspond to the attitude of the spacecraft contained in the ``vehicleConfigInMsg``;
 - ``goalNode`` whose coordinates :math:`\sigma_{BN,G}` correspond to the desired target attitude at the end of the maneuver.
 
-Two different cost functions are used by the :math:`A^*` algorithm to search a valid path. The first is based on the total cartesian length of the path in MRP space. 
+Two different cost functions are used by the :math:`A^*` algorithm to search a valid path. The first is based on the total cartesian length of the path in MRP space.
 The second is the effort-based cost function computed integrating the control torque norm over the interpolated trajectory obtained from a path., as explained in
 `R. Calaon and H. Schaub <https://arc.aiaa.org/doi/abs/10.2514/1.A35294>`__. In both cases, the final reference passed to the Attitude Reference Message
-consists in the interpolated curve obtained from the optimal path computed by :math:`A^*`, based on the chosen cost function. Interpolation is performed using the 
+consists in the interpolated curve obtained from the optimal path computed by :math:`A^*`, based on the chosen cost function. Interpolation is performed using the
 routine in :ref:`BSpline`.
 
 Note that this module does not implement the constant angular rate norm routine described in `R. Calaon and H. Schaub <https://arc.aiaa.org/doi/abs/10.2514/1.A35294>`__.
@@ -87,7 +76,7 @@ The required module configuration is::
     CAM.appendKeepOutDirection([1,0,0], keepOutFov)
     CAM.appendKeepInDirection([0,1,0], keepInFov)
     scSim.AddModelToTask(simTaskName, CAM)
-	
+
 The module is configurable with the following parameters:
 
 .. list-table:: Module Parameters

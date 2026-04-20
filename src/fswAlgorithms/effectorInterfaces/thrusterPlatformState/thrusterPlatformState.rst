@@ -4,29 +4,21 @@ This module simulates receives the measured tip and tilt angles of the thruster 
 
 Message Connection Descriptions
 -------------------------------
-The following table lists all the module input and output messages.  The module msg variable name is set by the user from python.  The msg type contains a link to the message structure definition, while the description provides information on what this message is used for.
+The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: thrusterPlatformState
+    :caption: Module I/O Messages
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - thrusterConfigFInMsg
-      - :ref:`THRConfigMsgPayload`
-      - Input thruster configuration message containing the thrust direction vector and magnitude in **platform frame coordinates**. The entry ``rThrust_B`` here is the position of the thrust application point, with respect to the origin of the platform frame, in platform-frame coordinates (:math:`{}^\mathcal{F}\boldsymbol{r}_{T/F}`).
-    * - hingedRigidBody1InMsg
-      - :ref:`HingedRigidBodyMsgPayload`
-      - Input message containing the current tip angle and tip rate of the platform frame :math:`\mathcal{F}` with respect to the mount frame :math:`\mathcal{M}`.
-    * - hingedRigidBody2InMsg
-      - :ref:`HingedRigidBodyMsgPayload`
-      - Input message containing the current tilt angle and tilt rate of the platform frame :math:`\mathcal{F}` with respect to the mount frame :math:`\mathcal{M}`.
-    * - thrusterConfigBOutMsg
-      - :ref:`THRConfigMsgPayload`
-      - Output thruster configuration message containing the thrust direction vector and magnitude in **body frame coordinates**, as a function of tip and tilt angles. The entry ``rThrust_B`` here is the position of the thrust application point, with respect to the origin of the body frame, in body-frame coordinates (:math:`{}^\mathcal{B}\boldsymbol{r}_{T/B}`).
-
-
+    input thrusterConfigFInMsg THRConfigMsgPayload
+        Input thruster configuration message containing the thrust direction vector and magnitude in **platform frame coordinates**. The entry ``rThrust_B`` here is the position of the thrust application point, with respect to the origin of the platform frame, in platform-frame coordinates (:math:`{}^\mathcal{F}\boldsymbol{r}_{T/F}`).
+    input hingedRigidBody1InMsg HingedRigidBodyMsgPayload
+        Input message containing the current tip angle and tip rate of the platform frame :math:`\mathcal{F}` with respect to the mount frame :math:`\mathcal{M}`.
+    input hingedRigidBody2InMsg HingedRigidBodyMsgPayload
+        Input message containing the current tilt angle and tilt rate of the platform frame :math:`\mathcal{F}` with respect to the mount frame :math:`\mathcal{M}`.
+    output thrusterConfigBOutMsg THRConfigMsgPayload
+        Output thruster configuration message containing the thrust direction vector and magnitude in **body frame coordinates**, as a function of tip and tilt angles. The entry ``rThrust_B`` here is the position of the thrust application point, with respect to the origin of the body frame, in body-frame coordinates (:math:`{}^\mathcal{B}\boldsymbol{r}_{T/B}`).
 
 Detailed Module Description
 ---------------------------

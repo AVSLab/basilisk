@@ -11,23 +11,21 @@ matrices are derived elsewhere. Specifically, it:
 
 Message Connection Descriptions
 -------------------------------
+The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.
 
+.. bsk-module-io:: hillToAttRef
+    :caption: Module I/O Messages
 
-.. table:: Module I/O Messages
-        :widths: 25 25 100
-
-        +-----------------------+---------------------------------+---------------------------------------------------+
-        | Msg Variable Name     | Msg Type                        | Description                                       |
-        +=======================+=================================+===================================================+
-        | hillStateInMsg        | :ref:`HillRelStateMsgPayload`   | Provides state relative to chief                  |
-        +-----------------------+---------------------------------+---------------------------------------------------+
-        | attRefInMsg           | :ref:`AttRefMsgPayload`         | (Optional) Provides basis for relative attitude   |
-        +-----------------------+---------------------------------+---------------------------------------------------+
-        | attNavInMsg           | :ref:`NavAttMsgPayload`         | (Optional) Provides basis for relative attitude   |
-        +-----------------------+---------------------------------+---------------------------------------------------+
-        | attRefOutMsg          | :ref:`AttRefMsgPayload`         | Provides the attitude reference output message.   |
-        +-----------------------+---------------------------------+---------------------------------------------------+
-
+    input hillStateInMsg HillRelStateMsgPayload
+        Provides state relative to chief
+    input attRefInMsg AttRefMsgPayload
+        (Optional) Provides basis for relative attitude
+    input attNavInMsg NavAttMsgPayload
+        (Optional) Provides basis for relative attitude
+    output attRefOutMsg AttRefMsgPayload
+        Provides the attitude reference output message.
 
 Detailed Module Description
 ---------------------------
@@ -37,15 +35,15 @@ More details on this process can be found in this paper, `Linear Coupled Attitud
 
 Module Assumptions and Limitations
 ----------------------------------
-This module assumes that the user has supplied a gain matrix that correctly maps from relative positions and velocities to 
-relative attitudes such that attitude-coupled orbital dynamics will result in desired behavior. As a result, this module is best used 
-with other modules that implement attitude-coupled orbital dynamics, such as :ref:`facetDragDynamicEffector`. 
+This module assumes that the user has supplied a gain matrix that correctly maps from relative positions and velocities to
+relative attitudes such that attitude-coupled orbital dynamics will result in desired behavior. As a result, this module is best used
+with other modules that implement attitude-coupled orbital dynamics, such as :ref:`facetDragDynamicEffector`.
 
 
 User Guide
 ----------
-This module is configured to multiply a user-provided gain matrix by an evolving relative Hill-frame state. As such, 
-this module requires the user to provide a 3\times6 gain matrix. In addition, users can specify saturation limits for the 
+This module is configured to multiply a user-provided gain matrix by an evolving relative Hill-frame state. As such,
+this module requires the user to provide a 3\times6 gain matrix. In addition, users can specify saturation limits for the
 calculated relative MRP by specifying the ``relMRPMin`` and ``relMRPMax`` attributes.
 
 Notably, the computed relative attitude is automatically combined with a reference attitude (provided either as another :ref:`AttRefMsgPayload`

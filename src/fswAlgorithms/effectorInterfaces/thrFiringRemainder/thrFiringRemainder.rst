@@ -8,33 +8,19 @@ The paper `Steady-State Attitude and Control Effort Sensitivity Analysis of Disc
 
 Message Connection Descriptions
 -------------------------------
-The following table lists all the module input and output messages.  The module msg connection is set by the
-user from python.  The msg type contains a link to the message structure definition, while the description
-provides information on what this message is used for.
+The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.
 
-.. _ModuleIO_ThrFiringRemainder:
-.. figure:: /../../src/fswAlgorithms/effectorInterfaces/thrFiringRemainder/_Documentation/Images/moduleImgThrFiringRemainder.svg
-    :align: center
+.. bsk-module-io:: thrFiringRemainder
+    :caption: Module I/O Messages
 
-    Figure 1: ``rwNullSpace()`` Module I/O Illustration
-
-
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
-
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - thrForceInMsg
-      - :ref:`THRArrayCmdForceMsgPayload`
-      - thruster force input message
-    * - onTimeOutMsg
-      - :ref:`THRArrayOnTimeCmdMsgPayload`
-      - thruster on-time output message
-    * - thrConfInMsg
-      - :ref:`THRArrayConfigMsgPayload`
-      - Thruster array configuration input message
+    input thrForceInMsg THRArrayCmdForceMsgPayload
+        thruster force input message
+    output onTimeOutMsg THRArrayOnTimeCmdMsgPayload
+        thruster on-time output message
+    input thrConfInMsg THRArrayConfigMsgPayload
+        Thruster array configuration input message
 
 Module Assumptions and Limitations
 ----------------------------------

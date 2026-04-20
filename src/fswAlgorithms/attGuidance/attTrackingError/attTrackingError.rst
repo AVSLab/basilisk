@@ -7,25 +7,16 @@ contains further information on this module's function, how to run it, as well a
 
 Message Connection Descriptions
 -------------------------------
-The following table lists all the module input and output messages.  The module msg connection is set by the
-user from python.  The msg type contains a link to the message structure definition, while the description
-provides information on what this message is used for.
+The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: attTrackingError
+    :caption: Module I/O Messages
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - attGuidOutMsg
-      - :ref:`AttGuidMsgPayload`
-      - attitude guidance output message
-    * - attNavInMsg
-      - :ref:`NavAttMsgPayload`
-      - attitude navigation input message
-    * - attRefInMsg
-      - :ref:`AttRefMsgPayload`
-      - attitude reference input message
-
-
+    output attGuidOutMsg AttGuidMsgPayload
+        attitude guidance output message
+    input attNavInMsg NavAttMsgPayload
+        attitude navigation input message
+    input attRefInMsg AttRefMsgPayload
+        attitude reference input message

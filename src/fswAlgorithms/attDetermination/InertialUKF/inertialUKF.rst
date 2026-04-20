@@ -8,33 +8,22 @@ More information on can be found in the
 
 Message Connection Descriptions
 -------------------------------
-The following table lists all the module input and output messages.  The module msg connection is set by the
-user from python.  The msg type contains a link to the message structure definition, while the description
-provides information on what this message is used for.
+The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: inertialUKF
+    :caption: Module I/O Messages
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - navStateOutMsg
-      - :ref:`NavAttMsgPayload`
-      - navigation output message
-    * - filtDataOutMsg
-      - :ref:`InertialFilterMsgPayload`
-      - name of the output filter data message
-    * - massPropsInMsg
-      - :ref:`VehicleConfigMsgPayload`
-      - spacecraft vehicle configuration input message
-    * - rwParamsInMsg
-      - :ref:`RWArrayConfigMsgPayload`
-      - reaction wheel parameter input message.  Can be an empty message if no RW are included.
-    * - rwSpeedsInMsg
-      - :ref:`RWSpeedMsgPayload`
-      - reaction wheel speed input message.  Can be an empty message if no RW are included.
-    * - gyrBuffInMsg
-      - :ref:`AccDataMsgPayload`
-      - rate gyro input message
-
+    output navStateOutMsg NavAttMsgPayload
+        navigation output message
+    output filtDataOutMsg InertialFilterMsgPayload
+        name of the output filter data message
+    input massPropsInMsg VehicleConfigMsgPayload
+        spacecraft vehicle configuration input message
+    input rwParamsInMsg RWArrayConfigMsgPayload
+        reaction wheel parameter input message. Can be an empty message if no RW are included.
+    input rwSpeedsInMsg RWSpeedMsgPayload
+        reaction wheel speed input message. Can be an empty message if no RW are included.
+    input gyrBuffInMsg AccDataMsgPayload
+        rate gyro input message

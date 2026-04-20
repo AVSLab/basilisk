@@ -4,35 +4,25 @@ This module estimates the location of the center of mass (CM) of the entire spac
 
 Message Connection Descriptions
 -------------------------------
-The following table lists all the module input and output messages. The msg type contains a link to the message structure definition, while the description
-provides information on what this message is used for.
+The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: thrustCMEstimation
+    :caption: Module I/O Messages
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - thrusterConfigBInMsg
-      - :ref:`THRConfigMsgPayload`
-      - Input message the thrust application point with respect to the origin of the :math:`\mathcal{B}` frame, thrust unit direction vector, and thrust magnitude, all in :math:`\mathcal{B}`-frame components.
-    * - intFeedbackTorqueInMsg
-      - :ref:`CmdTorqueBodyMsgPayload`
-      - Input message containing the stabilizing integral feedback control torque.
-    * - attGuidInMsg
-      - :ref:`AttGuidMsgPayload`
-      - Input message containing the attitude and angular rates of the body frame with respect to the guidance reference frame.
-    * - vehConfigInMsg
-      - :ref:`VehicleConfigMsgPayload`
-      - (Optional) Input message containing the real location of the CM of the system. It is used to verify the correctness of the estimated solution.
-    * - vehConfigOutMsg
-      - :ref:`VehicleConfigMsgPayload`
-      - Output message containing the estimated location of the CM of the system.
-    * - cmEstDataOutMsg
-      - :ref:`CMEstDataMsgPayload`
-      - Output message containing the estimated state, state errors, state covariance, pre- and post-fit residuals.
-
+    input thrusterConfigBInMsg THRConfigMsgPayload
+        Input message the thrust application point with respect to the origin of the :math:`\mathcal{B}` frame, thrust unit direction vector, and thrust magnitude, all in :math:`\mathcal{B}`-frame components.
+    input intFeedbackTorqueInMsg CmdTorqueBodyMsgPayload
+        Input message containing the stabilizing integral feedback control torque.
+    input attGuidInMsg AttGuidMsgPayload
+        Input message containing the attitude and angular rates of the body frame with respect to the guidance reference frame.
+    input vehConfigInMsg VehicleConfigMsgPayload
+        (Optional) Input message containing the real location of the CM of the system. It is used to verify the correctness of the estimated solution.
+    output vehConfigOutMsg VehicleConfigMsgPayload
+        Output message containing the estimated location of the CM of the system.
+    output cmEstDataOutMsg CMEstDataMsgPayload
+        Output message containing the estimated state, state errors, state covariance, pre- and post-fit residuals.
 
 Detailed Module Description
 ---------------------------
@@ -83,7 +73,7 @@ The required module configuration is::
     cmEstimation.P0 = [0.0025, 0.0025, 0.0025]
     cmEstimation.R0 = [1e-9, 1e-9, 1e-9]
     unitTestSim.AddModelToTask(unitTaskName, cmEstimation)
-	
+
 The module is configurable with the following parameters:
 
 .. list-table:: Module Parameters
@@ -105,4 +95,3 @@ The module is configurable with the following parameters:
    * - ``R0``
      - [0, 0, 0]
      - diagonal elements of the measurement noise covariance
-

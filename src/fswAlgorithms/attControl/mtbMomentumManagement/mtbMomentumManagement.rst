@@ -5,38 +5,27 @@ This module computes the appropriate wheel torques and magnetic torque bar dipol
 
 Message Connection Descriptions
 -------------------------------
-The following table lists all the module input and output messages.  The module msg connection is set by the
-user from python.  The msg type contains a link to the message structure definition, while the description
-provides information on what this message is used for.
+The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: mtbMomentumManagement
+    :caption: Module I/O Messages
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - rwParamsInMsg
-      - :ref:`RWArrayConfigMsgPayload`
-      - input message for RW parameters
-    * - mtbParamsInMsg
-      - :ref:`MTBArrayConfigMsgPayload`
-      - input message for MTB layout
-    * - tamSensorBodyInMsg
-      - :ref:`TAMSensorBodyMsgPayload`
-      - input message for magnetic field sensor data
-    * - rwSpeedsInMsg
-      - :ref:`RWSpeedMsgPayload`
-      - input message for RW speeds
-    * - rwMotorTorqueInMsg
-      - :ref:`ArrayMotorTorqueMsgPayload`
-      - input message for RW motor torques
-    * - mtbCmdOutMsg
-      - :ref:`MTBCmdMsgPayload`
-      - output message for MTB dipole commands
-    * - rwMotorTorqueOutMsg
-      - :ref:`ArrayMotorTorqueMsgPayload`
-      - output message for RW motor torques
+    input rwParamsInMsg RWArrayConfigMsgPayload
+        Input message for RW parameters
+    input mtbParamsInMsg MTBArrayConfigMsgPayload
+        Input message for MTB layout
+    input tamSensorBodyInMsg TAMSensorBodyMsgPayload
+        Input message for magnetic field sensor data
+    input rwSpeedsInMsg RWSpeedMsgPayload
+        Input message for RW speeds
+    input rwMotorTorqueInMsg ArrayMotorTorqueMsgPayload
+        Input message for RW motor torques
+    output mtbCmdOutMsg MTBCmdMsgPayload
+        Output message for MTB dipole commands
+    output rwMotorTorqueOutMsg ArrayMotorTorqueMsgPayload
+        Output message for RW motor torques
 
 User Guide
 ----------
@@ -47,4 +36,3 @@ The optional module list ``wheelSpeedBiases`` can be set to desired RW spin rate
 the default values are zero rates.
 
 Note that the MTB input configuration message variable ``GtMatrix_B`` must be provided in a row major format.
-

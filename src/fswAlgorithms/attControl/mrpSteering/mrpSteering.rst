@@ -6,27 +6,19 @@ module, such as :ref:`rateServoFullNonlinear`, as well.
 
 Message Connection Descriptions
 -------------------------------
-The following table lists all the module input and output messages.  The module msg connection is set by the
-user from python.  The msg type contains a link to the message structure definition, while the description
-provides information on what this message is used for.
-
 .. _ModuleIO_MRP_Steering:
-.. figure:: /../../src/fswAlgorithms/attControl/mrpSteering/_Documentation/Images/moduleIOMrpSteering.svg
-    :align: center
 
-    Figure 1: ``mrpSteering()`` Module I/O Illustration
+The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.
 
+.. bsk-module-io:: mrpSteering
+    :caption: Module I/O Messages
 
-.. table:: Module I/O Messages
-    :widths: 35 35 100
-
-    +-----------------------+-----------------------------------+---------------------------------------------------+
-    | Msg Variable Name     | Msg Type                          | Description                                       |
-    +=======================+===================================+===================================================+
-    | guidInMsg             | :ref:`AttGuidMsgPayload`          | Attitude guidance input message.                  |
-    +-----------------------+-----------------------------------+---------------------------------------------------+
-    | rateCmdOutMsg         | :ref:`RateCmdMsgPayload`          | Rate command output message.                      |
-    +-----------------------+-----------------------------------+---------------------------------------------------+
+    input guidInMsg AttGuidMsgPayload
+        Attitude guidance input message.
+    output rateCmdOutMsg RateCmdMsgPayload
+        Rate command output message.
 
 Detailed Module Description
 ---------------------------
@@ -156,7 +148,7 @@ The Lyapunov rate simplifies to the negative definite expression:
 
 	\dot V = -  \pmb\sigma_{\mathcal{B}/\mathcal{R}}^{T} {\bf f}(\pmb\sigma_{\mathcal{B}/\mathcal{R}}) < 0
 
-Saturated  MRP Steering Law
+Saturated MRP Steering Law
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 A very simple example would be to set
 

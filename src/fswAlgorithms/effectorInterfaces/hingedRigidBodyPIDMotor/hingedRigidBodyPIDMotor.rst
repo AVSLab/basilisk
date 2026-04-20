@@ -7,31 +7,23 @@ torque to a :ref:`spinningBodyOneDOFStateEffector`.
 
 Message Connection Descriptions
 -------------------------------
-The following table lists all the module input and output messages.  The module msg connection is set by the
-user from python.  The msg type contains a link to the message structure definition, while the description
-provides information on what this message is used for.
+The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: hingedRigidBodyPIDMotor
+    :caption: Module I/O Messages
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - motorTorqueOutMsg
-      - :ref:`ArrayMotorTorqueMsgPayload`
-      - Output Spinning Body Reference Message.
-    * - hingedRigidBodyInMsg
-      - :ref:`HingedRigidBodyMsgPayload`
-      - Input Spinning Body Message Message.
-    * - hingedRigidBodyRefInMsg
-      - :ref:`HingedRigidBodyMsgPayload`
-      - Input Spinning Body Reference Message Message. 
-
+    output motorTorqueOutMsg ArrayMotorTorqueMsgPayload
+        Output Spinning Body Reference Message.
+    input hingedRigidBodyInMsg HingedRigidBodyMsgPayload
+        Input Spinning Body Message Message.
+    input hingedRigidBodyRefInMsg HingedRigidBodyMsgPayload
+        Input Spinning Body Reference Message Message.
 
 Module Assumptions and Limitations
 ----------------------------------
-This module is very simple and does not make any assumptions. The only limitations are those inherent to a PID type of control law, here implemented. The type of response (underdamped, 
+This module is very simple and does not make any assumptions. The only limitations are those inherent to a PID type of control law, here implemented. The type of response (underdamped,
 overdamped, or critically damped) depends on the choice of gains provided as inputs to the module.
 
 
@@ -49,12 +41,12 @@ User Guide
 The required module configuration is::
 
     motor = hingedRigidBodyPIDMotorConfig.hingedRigidBodyPIDMotorConfig()
-    motor.ModelTag = "solarArrayPDController"  
+    motor.ModelTag = "solarArrayPDController"
     motor.K = K
     motor.P = P
     motor.P = I
     unitTestSim.AddModelToTask(unitTaskName, motor)
-	
+
 The module is configurable with the following parameters:
 
 .. list-table:: Module Parameters

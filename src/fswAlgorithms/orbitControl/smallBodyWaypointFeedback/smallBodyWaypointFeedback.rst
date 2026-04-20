@@ -4,36 +4,25 @@ This module is provides a feedback control law for waypoint-to-waypoint control 
 
 Message Connection Descriptions
 -------------------------------
-The following table lists all the module input and output messages.  
-The module msg connection is set by the user from python.  
-The msg type contains a link to the message structure definition, while the description 
-provides information on what this message is used for.
+The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: smallBodyWaypointFeedback
+    :caption: Module I/O Messages
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - navTransInMsg
-      - :ref:`NavTransMsgPayload`
-      - translational navigation input message
-    * - navAttInMsg
-      - :ref:`NavAttMsgPayload`
-      - attitude navigation input message
-    * - asteroidEphemerisInMsg
-      - :ref:`EphemerisMsgPayload`
-      - asteroid ephemeris input message
-    * - sunEphemerisInMsg
-      - :ref:`EphemerisMsgPayload`
-      - sun ephemeris input message
-    * - forceOutMsg
-      - :ref:`CmdForceBodyMsgPayload`
-      - force command output
-    * - forceOutMsgC
-      - :ref:`CmdForceBodyMsgPayload`
-      - C-wrapped force output message
+    input navTransInMsg NavTransMsgPayload
+        translational navigation input message
+    input navAttInMsg NavAttMsgPayload
+        attitude navigation input message
+    input asteroidEphemerisInMsg EphemerisMsgPayload
+        asteroid ephemeris input message
+    input sunEphemerisInMsg EphemerisMsgPayload
+        sun ephemeris input message
+    output forceOutMsg CmdForceBodyMsgPayload
+        force command output
+    output forceOutMsgC CmdForceBodyMsgPayload
+        C-wrapped force output message
 
 Detailed Module Description
 ---------------------------

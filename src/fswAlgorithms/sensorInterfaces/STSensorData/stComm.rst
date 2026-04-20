@@ -5,21 +5,14 @@ This module takes the star tracker sensor data in the platform frame and convert
 
 Message Connection Descriptions
 -------------------------------
-The following table lists all the module input and output messages.  The module msg connection is set by the
-user from python.  The msg type contains a link to the message structure definition, while the description
-provides information on what this message is used for.
+The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: stComm
+    :caption: Module I/O Messages
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - stSensorInMsg
-      - :ref:`STSensorMsgPayload`
-      - star tracker sensor input message
-    * - stAttOutMsg
-      - :ref:`STAttMsgPayload`
-      - star tracker attitude output message
-
+    input stSensorInMsg STSensorMsgPayload
+        star tracker sensor input message
+    output stAttOutMsg STAttMsgPayload
+        star tracker attitude output message

@@ -11,32 +11,23 @@ how to run it, as well as testing.
 
 Message Connection Descriptions
 -------------------------------
-The following table lists all the module input and output messages.  The module msg connection is set by the
-user from python.  The msg type contains a link to the message structure definition, while the description
-provides information on what this message is used for.
+The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: rwMotorVoltage
+    :caption: Module I/O Messages
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - voltageOutMsg
-      - :ref:`ArrayMotorVoltageMsgPayload`
-      - RW motor voltage output message
-    * - torqueInMsg
-      - :ref:`ArrayMotorTorqueMsgPayload`
-      - commanded RW motor torque input message
-    * - rwParamsInMsg
-      - :ref:`RWArrayConfigMsgPayload`
-      - RW array configuration input message
-    * - rwAvailInMsg
-      - :ref:`RWAvailabilityMsgPayload`
-      - (optional) RW device availability message
-    * - rwSpeedInMsg
-      - :ref:`RWSpeedMsgPayload`
-      - (optional) RW device speed message
+    output voltageOutMsg ArrayMotorVoltageMsgPayload
+        RW motor voltage output message
+    input torqueInMsg ArrayMotorTorqueMsgPayload
+        commanded RW motor torque input message
+    input rwParamsInMsg RWArrayConfigMsgPayload
+        RW array configuration input message
+    input rwAvailInMsg RWAvailabilityMsgPayload
+        (optional) RW device availability message
+    input rwSpeedInMsg RWSpeedMsgPayload
+        (optional) RW device speed message
 
 Module Assumptions and Limitations
 ----------------------------------
