@@ -9,7 +9,7 @@ Using Sphinx to Document Basilisk Modules and Folders
    This document assumes you are already familiar with the Restructured Text format.  Some sources for help can be found at:
 
    - `restructured Text <http://docutils.sourceforge.net/rst.html>`__
-   - `Spinx Documenation <http://www.sphinx-doc.org/en/master/>`__
+   - `Sphinx Documentation <http://www.sphinx-doc.org/en/master/>`__
    - `Quickguide for restructured text <http://docutils.sourceforge.net/docs/user/rst/quickref.html>`__
 
 Adding Documentation to a Basilisk Module
@@ -21,6 +21,29 @@ Assuming you want to document a Basilisk module called `genericModule`.  This me
 - ``genericModule.i``
 
 Simply add the the desired module documentation as ``genericModule.rst`` to this folder.  The :ref:`cModuleTemplate` has a sample module documentation file that you can copy into your folder.  This content will be parsed ahead of the module function descriptions.  When running ``cmake`` the ``genericModule.rst`` file should be included in the IDE such as Xcode if the module is a C++ module.  The ``*.rst`` is not shown in the IDE if it is a C-module.
+
+
+Documenting Module I/O Messages
+--------------------------------
+Module documentation can use the ``bsk-module-io`` directive to generate both a
+Graphviz module I/O diagram and the standard Basilisk I/O message table from
+one RST block.  This keeps the visual diagram and table entries synchronized.
+
+.. code-block:: rst
+
+   .. bsk-module-io:: GenericModule
+      :caption: Module I/O Messages
+
+      input dataInMsg DataMsgPayload
+         Input data message.
+
+      output dataOutMsg DataMsgPayload
+         Output data message.
+
+Each entry begins with ``input`` or ``output``, followed by the module message
+variable name and the payload type.  The indented text below the entry is used
+as the table description.  Payload types are automatically rendered as
+``:ref:`` links in the generated table.
 
 
 Adding Documentation to a Basilisk Folder

@@ -14,7 +14,7 @@ runs:
     - name: Install doc requirements
       shell: bash
       run: |
-        brew install doxygen
+        brew install doxygen graphviz
         if [[ "${{ inputs.is-canary }}" == 'true' ]]; then
           pip install -r .github/workflows/requirements_doc.txt
         else

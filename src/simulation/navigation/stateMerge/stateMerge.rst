@@ -10,27 +10,19 @@ single ``SCStatesMsgPayload`` input.
 
 Message Connection Descriptions
 -------------------------------
-The following table lists the module input and output messages.  The message
-type contains a link to the message structure definition, while the description
-provides information on what the message is used for.
+The following diagram and table list the module input and output messages.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: StateMerge
+    :caption: Module I/O Messages
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - attStateInMsg
-      - :ref:`SCStatesMsgPayload`
-      - Input spacecraft state message used as the attitude source.
-    * - transStateInMsg
-      - :ref:`SCStatesMsgPayload`
-      - Input spacecraft state message used as the translation source.
-    * - stateOutMsg
-      - :ref:`SCStatesMsgPayload`
-      - Output spacecraft state message containing merged attitude and
-        translation fields.
+    input attStateInMsg SCStatesMsgPayload
+        Input spacecraft state message used as the attitude source.
+
+    input transStateInMsg SCStatesMsgPayload
+        Input spacecraft state message used as the translation source.
+
+    output stateOutMsg SCStatesMsgPayload
+        Output spacecraft state message containing merged attitude and translation fields.
 
 
 Module Assumptions and Limitations

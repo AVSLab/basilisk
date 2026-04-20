@@ -13,38 +13,31 @@ The optimizer uses SciPy.  Importing the module from
 
 Message Connection Descriptions
 -------------------------------
-The following table lists the module input and output messages.  The message
-type contains a link to the message structure definition, while the description
-provides information on what the message is used for.
+The following diagram and table list the module input and output messages.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: JointThrAllocation
+    :caption: Module I/O Messages
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - armConfigInMsg
-      - :ref:`THRArmConfigMsgPayload`
-      - Input articulated thruster-arm configuration message.
-    * - CoMStatesInMsg
-      - :ref:`SCStatesMsgPayload`
-      - Input spacecraft center-of-mass state message.
-    * - hubStatesInMsg
-      - :ref:`SCStatesMsgPayload`
-      - Input spacecraft hub state message.
-    * - transForceInMsg
-      - :ref:`CmdForceInertialMsgPayload`
-      - Input inertial-frame commanded force message.
-    * - rotTorqueInMsg
-      - :ref:`CmdTorqueBodyMsgPayload`
-      - Input body-frame commanded torque message.
-    * - thrForceOutMsg
-      - :ref:`THRArrayCmdForceMsgPayload`
-      - Output thruster force command message.
-    * - desJointAnglesOutMsg
-      - :ref:`JointArrayStateMsgPayload`
-      - Output desired joint angle command message.
+    input armConfigInMsg THRArmConfigMsgPayload
+        Input articulated thruster-arm configuration message.
+
+    input CoMStatesInMsg SCStatesMsgPayload
+        Input spacecraft center-of-mass state message.
+
+    input hubStatesInMsg SCStatesMsgPayload
+        Input spacecraft hub state message.
+
+    input transForceInMsg CmdForceInertialMsgPayload
+        Input inertial-frame commanded force message.
+
+    input rotTorqueInMsg CmdTorqueBodyMsgPayload
+        Input body-frame commanded torque message.
+
+    output thrForceOutMsg THRArrayCmdForceMsgPayload
+        Output thruster force command message.
+
+    output desJointAnglesOutMsg JointArrayStateMsgPayload
+        Output desired joint angle command message.
 
 
 Module Assumptions and Limitations
