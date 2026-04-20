@@ -23,6 +23,14 @@ Assuming you want to document a Basilisk module called `genericModule`.  This me
 Simply add the the desired module documentation as ``genericModule.rst`` to this folder.  The :ref:`cModuleTemplate` has a sample module documentation file that you can copy into your folder.  This content will be parsed ahead of the module function descriptions.  When running ``cmake`` the ``genericModule.rst`` file should be included in the IDE such as Xcode if the module is a C++ module.  The ``*.rst`` is not shown in the IDE if it is a C-module.
 
 
+Module Type Labels
+------------------
+The generated HTML module pages include a module type label next to the page
+title.  The documentation build infers this label from the module source files
+and applies ``C``, ``C++``, or ``Python`` automatically.  Module documentation
+files do not need to add this label manually.
+
+
 Documenting Module I/O Messages
 --------------------------------
 Module documentation can use the ``bsk-module-io`` directive to generate both a
