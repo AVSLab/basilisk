@@ -28,13 +28,13 @@ same as with C/C++ BSK modules.
     the same lower camel case name.  For example, a flight software module named
     ``someModule`` should live in
     ``src/fswAlgorithms/<moduleCategory>/someModule/someModule.py``.  The same
-    pattern is supported under ``src/simulation`` and ``src/architecture``.
+    pattern is supported under ``src/simulation``.  The ``src/architecture``
+    folder contains support code and message infrastructure, not BSK modules.
     Define the BSK module class inside that file using upper camel case, such
     as ``class SomeModule(sysModel.SysModel):``.  After configuring and building
     Basilisk, users can import it from the corresponding Basilisk package, such
     as ``from Basilisk.fswAlgorithms import someModule`` or
-    ``from Basilisk.simulation import someModule`` or
-    ``from Basilisk.architecture import someModule``, and instantiate it with
+    ``from Basilisk.simulation import someModule``, and instantiate it with
     ``someModule.SomeModule()``.
 
 All Python modules have a logger stored in ``bskLogger`` (although it will
