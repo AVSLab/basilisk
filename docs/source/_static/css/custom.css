@@ -107,6 +107,30 @@ figure {
     font-weight: bold;
 }
 
+.module-type-label {
+    padding: 2px 5px;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 65%;
+    margin-right: 0.4em;
+    vertical-align: middle;
+}
+
+.module-type-cpp {
+    background-color: #5A9FCD;
+    color: #fff;
+}
+
+.module-type-c {
+    background-color: #8A7F73;
+    color: #fff;
+}
+
+.module-type-python {
+    background-color: #7FAF8C;
+    color: #fff;
+}
+
 @media (prefers-color-scheme: dark) {
 	.wy-nav-content, .wy-body-for-nav, .wy-nav-content-wrap, math, span[id*='MathJax-Span'] {
 		background-color: black;

@@ -28,6 +28,18 @@ def beta_role(name, rawtext, text, lineno, inliner, options={}, content=[]):
 
 roles.register_local_role('beta', beta_role)
 
+def module_type_role(name, rawtext, text, lineno, inliner, options={}, content=[]):
+    module_type = text.strip()
+    css_class = module_type.lower().replace("+", "p")
+    node = nodes.inline(
+        rawtext,
+        module_type,
+        classes=['module-type-label', f'module-type-{css_class}']
+    )
+    return [node], []
+
+roles.register_local_role('module-type', module_type_role)
+
 #
 # create RST file showing supportData folder information
 #
@@ -380,6 +392,16 @@ class fileCrawler():
                 dirs.append(path)
         return sorted(files), sorted(dirs)
 
+    def getModuleType(self, module_files):
+        file_extensions = {os.path.splitext(file_name)[1] for file_name in module_files}
+        if ".cpp" in file_extensions or ".hpp" in file_extensions:
+            return "C++"
+        return "C"
+
+    def writeModuleTitle(self, module_type, title_text):
+        title = f":module-type:`{module_type}` {title_text}"
+        return title + "\n" + "=" * len(title) + "\n\n"
+
     def populateDocIndex(self, index_path, file_paths, dir_paths):
 
         # get the folder name
@@ -480,18 +502,6 @@ class fileCrawler():
                     lines += ".. _" + c_file_basename + pathToFolder.split("/")[-1] + ":\n\n"
                 else:
                     lines += ".. _" + c_file_basename + ":\n\n"
-                if "architecture" in src_path or "utilities" in src_path:
-                    lines += c_file_basename + "\n" + "=" * (len(c_file_basename) + 8) + "\n\n"
-                else:
-                    lines += "Module: " + c_file_basename + "\n" + "=" * (len(c_file_basename) + 8) + "\n\n"
-
-                # pull in the module documentation file if it exists
-                docFileName = os.path.join(src_path, c_file_basename + '.rst')
-                if os.path.isfile(docFileName):
-                    with open(docFileName, 'r', encoding="utf8") as docFile:
-                        docContents = docFile.read()
-                    lines += docContents + "\n\n"
-                    lines += "----\n\n"
 
                 # Link the path with the modules for Breathe
                 # make sure the list of files match the base name perfectly
@@ -501,6 +511,20 @@ class fileCrawler():
                 c_file_list = [file_name for file_name in c_file_list_coarse if file_name.rsplit(".", 1)[0] == c_file_basename]
                 module_files.extend(c_file_list)
                 module_files_temp.extend(c_file_list)
+                module_type = self.getModuleType(c_file_list)
+
+                if "architecture" in src_path or "utilities" in src_path:
+                    lines += self.writeModuleTitle(module_type, c_file_basename)
+                else:
+                    lines += self.writeModuleTitle(module_type, "Module: " + c_file_basename)
+
+                # pull in the module documentation file if it exists
+                docFileName = os.path.join(src_path, c_file_basename + '.rst')
+                if os.path.isfile(docFileName):
+                    with open(docFileName, 'r', encoding="utf8") as docFile:
+                        docContents = docFile.read()
+                    lines += docContents + "\n\n"
+                    lines += "----\n\n"
 
                 # Populate the module's .rst
                 for module_file in module_files_temp:
@@ -529,7 +553,7 @@ class fileCrawler():
             if fileName not in ["__init__.py"]:
                 fileName = fileName[:fileName.rfind('.')]
                 lines = ".. _"+ fileName + ":\n\n"
-                lines += fileName + "\n" + "=" * len(fileName) + "\n\n"
+                lines += self.writeModuleTitle("Python", fileName)
 
                 docFileName = os.path.join(os.path.dirname(py_file), fileName + '.rst')
                 if os.path.isfile(docFileName):
