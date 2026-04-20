@@ -398,8 +398,40 @@ class fileCrawler():
             return "C++"
         return "C"
 
-    def writeModuleTitle(self, module_type, title_text):
-        title = f":module-type:`{module_type}` {title_text}"
+    def _sourceRelativePath(self, path):
+        return os.path.relpath(os.path.abspath(path), os.path.abspath(officialSrc)).replace(os.sep, "/")
+
+    def isBskCppOrCModule(self, src_path, module_name):
+        rel_path = self._sourceRelativePath(src_path)
+        path_parts = rel_path.split("/")
+
+        if not rel_path.startswith(("fswAlgorithms/", "simulation/", "moduleTemplates/")):
+            return False
+        if "_GeneralModuleFiles" in path_parts:
+            return False
+
+        return os.path.isfile(os.path.join(src_path, module_name + ".i"))
+
+    def isBskPythonModule(self, py_file):
+        module_name = os.path.splitext(os.path.basename(py_file))[0]
+        parent_name = os.path.basename(os.path.dirname(py_file))
+        rel_path = self._sourceRelativePath(py_file)
+        path_parts = rel_path.split("/")
+
+        if not rel_path.startswith(("fswAlgorithms/", "simulation/", "architecture/")):
+            return False
+        if any(folder in path_parts for folder in ("_UnitTest", "_Documentation", "_GeneralModuleFiles", "__pycache__")):
+            return False
+        if module_name != parent_name:
+            return False
+
+        return not os.path.isfile(os.path.join(os.path.dirname(py_file), module_name + ".i"))
+
+    def writeModuleTitle(self, title_text, module_type=None):
+        if module_type:
+            title = f":module-type:`{module_type}` {title_text}"
+        else:
+            title = title_text
         return title + "\n" + "=" * len(title) + "\n\n"
 
     def populateDocIndex(self, index_path, file_paths, dir_paths):
@@ -512,11 +544,14 @@ class fileCrawler():
                 module_files.extend(c_file_list)
                 module_files_temp.extend(c_file_list)
                 module_type = self.getModuleType(c_file_list)
+                is_bsk_module = self.isBskCppOrCModule(src_path, c_file_basename)
 
-                if "architecture" in src_path or "utilities" in src_path:
-                    lines += self.writeModuleTitle(module_type, c_file_basename)
+                if is_bsk_module:
+                    lines += self.writeModuleTitle("Module: " + c_file_basename, module_type)
+                elif "architecture" in src_path or "utilities" in src_path:
+                    lines += self.writeModuleTitle(c_file_basename)
                 else:
-                    lines += self.writeModuleTitle(module_type, "Module: " + c_file_basename)
+                    lines += self.writeModuleTitle(c_file_basename)
 
                 # pull in the module documentation file if it exists
                 docFileName = os.path.join(src_path, c_file_basename + '.rst')
@@ -553,7 +588,10 @@ class fileCrawler():
             if fileName not in ["__init__.py"]:
                 fileName = fileName[:fileName.rfind('.')]
                 lines = ".. _"+ fileName + ":\n\n"
-                lines += self.writeModuleTitle("Python", "Module: " + fileName)
+                if self.isBskPythonModule(py_file):
+                    lines += self.writeModuleTitle("Module: " + fileName, "Python")
+                else:
+                    lines += self.writeModuleTitle(fileName)
 
                 docFileName = os.path.join(os.path.dirname(py_file), fileName + '.rst')
                 if os.path.isfile(docFileName):
