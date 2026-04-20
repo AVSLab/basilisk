@@ -36,11 +36,15 @@ Documenting Module I/O Messages
 Module documentation can use the ``bsk-module-io`` directive to generate both a
 Graphviz module I/O diagram and the standard Basilisk I/O message table from
 one RST block.  This keeps the visual diagram and table entries synchronized.
+The diagram module element uses the inferred module type label colors.  If the
+directive is used outside a generated module page, the ``:module-type:`` option
+can be set to ``C``, ``C++``, or ``Python``.
 
 .. code-block:: rst
 
    .. bsk-module-io:: GenericModule
       :caption: Module I/O Messages
+      :module-type: C++
 
       input dataInMsg DataMsgPayload
          Input data message.

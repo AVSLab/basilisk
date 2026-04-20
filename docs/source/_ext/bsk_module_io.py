@@ -24,7 +24,23 @@ from docutils.parsers.rst import Directive, directives
 from docutils.statemachine import StringList
 
 
-CU_GOLD_70 = "#cfb87cb3"
+MODULE_TYPE_STYLES = {
+    "C++": {
+        "css_class": "module-type-cpp",
+        "fillcolor": "#5A9FCD",
+        "fontcolor": "white",
+    },
+    "C": {
+        "css_class": "module-type-c",
+        "fillcolor": "#8A7F73",
+        "fontcolor": "white",
+    },
+    "Python": {
+        "css_class": "module-type-python",
+        "fillcolor": "#7FAF8C",
+        "fontcolor": "white",
+    },
+}
 
 
 @dataclass
@@ -49,6 +65,17 @@ def _table_payload_ref(payload_type: str) -> str:
     return f":ref:`{payload_type}`"
 
 
+def _canonical_module_type(module_type: str) -> str:
+    normalized_type = module_type.strip().lower()
+    if normalized_type in ("c++", "cpp"):
+        return "C++"
+    if normalized_type == "c":
+        return "C"
+    if normalized_type in ("python", "py"):
+        return "Python"
+    return "Python"
+
+
 class BskModuleIODirective(Directive):
     """
     Render a Basilisk module I/O diagram and standard message table.
@@ -68,6 +95,7 @@ class BskModuleIODirective(Directive):
     has_content = True
     option_spec = {
         "caption": directives.unchanged,
+        "module-type": directives.unchanged,
     }
 
     def run(self):
@@ -123,6 +151,7 @@ class BskModuleIODirective(Directive):
 
     def _build_rst(self, messages):
         module_name = self.arguments[0]
+        module_style = self._get_module_style()
         caption = self.options.get("caption", "Module I/O Messages")
         graph_name = "".join(char if char.isalnum() else "_" for char in module_name) + "IO"
         graph_lines = [
@@ -139,7 +168,8 @@ class BskModuleIODirective(Directive):
             "      \"module\" [",
             f"         label=\"{_dot_escape(module_name)}\",",
             "         style=\"rounded,filled,bold\",",
-            f"         fillcolor=\"{CU_GOLD_70}\"",
+            f"         fillcolor=\"{module_style['fillcolor']}\",",
+            f"         fontcolor=\"{module_style['fontcolor']}\"",
             "      ];",
             "",
         ]
@@ -191,6 +221,19 @@ class BskModuleIODirective(Directive):
             ])
 
         return graph_lines
+
+    def _get_module_style(self):
+        if "module-type" in self.options:
+            module_type = _canonical_module_type(self.options["module-type"])
+            return MODULE_TYPE_STYLES[module_type]
+
+        for node in self.state.document.findall(nodes.inline):
+            node_classes = node.get("classes", [])
+            for module_type, module_style in MODULE_TYPE_STYLES.items():
+                if module_style["css_class"] in node_classes:
+                    return module_style
+
+        return MODULE_TYPE_STYLES["Python"]
 
 
 def setup(app):
