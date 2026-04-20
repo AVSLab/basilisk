@@ -553,7 +553,7 @@ class fileCrawler():
             if fileName not in ["__init__.py"]:
                 fileName = fileName[:fileName.rfind('.')]
                 lines = ".. _"+ fileName + ":\n\n"
-                lines += self.writeModuleTitle("Python", fileName)
+                lines += self.writeModuleTitle("Python", "Module: " + fileName)
 
                 docFileName = os.path.join(os.path.dirname(py_file), fileName + '.rst')
                 if os.path.isfile(docFileName):
