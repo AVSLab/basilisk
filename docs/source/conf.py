@@ -418,7 +418,7 @@ class fileCrawler():
         rel_path = self._sourceRelativePath(py_file)
         path_parts = rel_path.split("/")
 
-        if not rel_path.startswith(("fswAlgorithms/", "simulation/", "architecture/")):
+        if not rel_path.startswith(("fswAlgorithms/", "simulation/")):
             return False
         if any(folder in path_parts for folder in ("_UnitTest", "_Documentation", "_GeneralModuleFiles", "__pycache__")):
             return False

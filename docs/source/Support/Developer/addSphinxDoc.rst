@@ -25,10 +25,16 @@ Simply add the the desired module documentation as ``genericModule.rst`` to this
 
 Module Type Labels
 ------------------
-The generated HTML module pages include a module type label next to the page
-title.  The documentation build infers this label from the module source files
-and applies ``C``, ``C++``, or ``Python`` automatically.  Module documentation
-files do not need to add this label manually.
+The generated HTML pages for BSK modules include a module type label next to
+the page title.  The documentation build infers this label from the module
+source files and applies ``C``, ``C++``, or ``Python`` automatically.  Module
+documentation files do not need to add this label manually.
+
+The labels are only applied to BSK module pages under ``src/fswAlgorithms`` and
+``src/simulation``.  The template modules under ``src/moduleTemplates`` are also
+tagged for developer reference.  Documentation pages for ``src/architecture``,
+message definitions, ``_GeneralModuleFiles`` support code and other support
+files use regular untagged titles.
 
 
 Documenting Module I/O Messages
