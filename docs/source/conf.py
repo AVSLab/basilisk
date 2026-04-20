@@ -15,6 +15,7 @@ import datetime
 #
 import os
 import sys
+sys.path.insert(0, os.path.abspath("_ext"))
 
 import numpy as np
 
@@ -111,11 +112,15 @@ extensions = [
     'sphinx.ext.mathjax',
     'sphinx.ext.viewcode',
     'sphinx.ext.napoleon',
+    'sphinx.ext.graphviz',
     "sphinx_rtd_theme",
     'recommonmark',
     'breathe',
-    'sphinx_copybutton'
+    'sphinx_copybutton',
+    'bsk_module_io',
 ]
+
+graphviz_output_format = "svg"
 
 # Use MathJax SVG output instead of CHTML to avoid browser/font-metric
 # rendering artifacts (e.g., vertically offset multi-character symbols).

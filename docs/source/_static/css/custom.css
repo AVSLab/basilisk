@@ -189,9 +189,9 @@ figure {
 		border-color: gray;
 	}
 
-	img[src$="svg"] {
+	img[src$="svg"], object.graphviz {
 		background-color: white;
-		filter: invert(100%) hue-rotate(180deg) saturate(200%);;
+		filter: invert(100%) hue-rotate(180deg) saturate(200%);
 	}
 
 	img[src$="jpg"], img[src$="png"] {

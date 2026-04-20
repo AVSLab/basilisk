@@ -13,13 +13,28 @@ The `Sphinx <https://pypi.org/project/Sphinx/>`__ and `Doxygen <http://doxygen.n
 
 Tool Requirements
 -----------------
-You need to have a command line version of Doxygen installed on your system. The Doxygen `download
-page <https://www.doxygen.nl/download.html>`__ contains a range of pre-compiled binaries for many different platforms.
+You need to have command line versions of Doxygen and Graphviz installed on
+your system. The Doxygen `download page <https://www.doxygen.nl/download.html>`__
+contains a range of pre-compiled binaries for many different platforms.
+Graphviz provides the ``dot`` executable used by Sphinx to render module I/O
+diagrams.
 
 On macOS the `Homebrew <https://brew.sh>`__ tool is also a very
-convenient method to install Doxygen by typing in the terminal::
+convenient method to install these tools by typing in the terminal::
 
-   brew install doxygen
+   brew install doxygen graphviz
+
+On Ubuntu or Debian Linux systems these tools can be installed with::
+
+   sudo apt install doxygen graphviz
+
+If you are using a conda environment, Graphviz can also be installed with::
+
+   conda install conda-forge::graphviz
+
+You can verify that Graphviz is available with::
+
+   dot -V
 
 To install the required python packages run the command::
 
@@ -37,7 +52,7 @@ Next, in a terminal window switch to the ``docs`` folder::
 
     cd docs
 
-Finally, type the following command to build the HTML documenation::
+Finally, type the following command to build the HTML documentation::
 
     make html
 
