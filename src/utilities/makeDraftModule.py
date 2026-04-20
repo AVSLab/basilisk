@@ -113,7 +113,7 @@ class moduleGenerator:
                 self.copyrightHolder)
         self.log("Done")
 
-    def createRstFile(self):
+    def createRstFile(self, moduleType):
         """Create the Module RST documentation draft."""
         rstFileName = f"{self.moduleName}.rst"
         self.log(f"{statusColor}Creating RST Documentation File {rstFileName}:{endColor}", end=" ")
@@ -123,22 +123,28 @@ class moduleGenerator:
         rstFile += '\n'
         rstFile += 'Message Connection Descriptions\n'
         rstFile += '-------------------------------\n'
-        rstFile += 'The following table lists all the module input and output messages.  \n'
-        rstFile += 'The module msg connection is set by the user from python.  \n'
-        rstFile += 'The msg type contains a link to the message structure definition, while the description \n'
+        rstFile += 'The following diagram and table list all the module input and output messages.  \n'
+        rstFile += 'The module message connection is set by the user from Python.  \n'
+        rstFile += 'The message type contains a link to the message structure definition, while the description \n'
         rstFile += 'provides information on what this message is used for.\n'
         rstFile += '\n'
-        rstFile += '.. list-table:: Module I/O Messages\n'
-        rstFile += '    :widths: 25 25 50\n'
-        rstFile += '    :header-rows: 1\n'
-        rstFile += '\n'
-        rstFile += '    * - Msg Variable Name\n'
-        rstFile += '      - Msg Type\n'
-        rstFile += '      - Description\n'
-        for msg in self.inMsgList + self.outMsgList:
-            rstFile += f'    * - {msg["var"]}\n'
-            rstFile += f'      - :ref:`{msg["type"]}Payload`\n'
-            rstFile += f'      - {msg["desc"]}\n'
+        if self.inMsgList or self.outMsgList:
+            rstFile += f'.. bsk-module-io:: {self.moduleName}\n'
+            rstFile += '    :caption: Module I/O Messages\n'
+            rstFile += f'    :module-type: {moduleType}\n'
+            rstFile += '\n'
+            for msg in self.inMsgList:
+                rstFile += f'    input {msg["var"]} {msg["type"]}Payload\n'
+                for descLine in str(msg["desc"]).splitlines():
+                    rstFile += f'        {descLine}\n'
+                rstFile += '\n'
+            for msg in self.outMsgList:
+                rstFile += f'    output {msg["var"]} {msg["type"]}Payload\n'
+                for descLine in str(msg["desc"]).splitlines():
+                    rstFile += f'        {descLine}\n'
+                rstFile += '\n'
+        else:
+            rstFile += 'This module does not define input or output messages.\n'
         rstFile += '\n'
 
         with open(rstFileName, 'w') as w:
@@ -462,7 +468,7 @@ class moduleGenerator:
         self.log("Done")
 
         # make module definition file
-        self.createRstFile()
+        self.createRstFile("C++")
 
         # make module unit test file
         self.createTestFile("C++")
@@ -672,7 +678,7 @@ class moduleGenerator:
         self.log("Done")
 
         # make module definition file
-        self.createRstFile()
+        self.createRstFile("C")
 
         # make module unit test file
         self.createTestFile("C")
@@ -694,18 +700,18 @@ def fillCppInfo(module):
     # provide list of input messages
     # leave list empty if there are no input messages
     inMsgList = list()
-    inMsgList.append({'type': 'AttRefMsg', 'var': 'someInMsg', 'desc': 'input msg description', 'wrap': 'C'})
-    inMsgList.append({'type': 'AttRefMsg', 'var': 'some2InMsg', 'desc': 'input msg description', 'wrap': 'C'})
-    inMsgList.append({'type': 'CSSConfigMsg', 'var': 'anotherInMsg', 'desc': 'input msg description', 'wrap': 'C'})
-    inMsgList.append({'type': 'CSSConfigLogMsg', 'var': 'anotherCppInMsg', 'desc': 'input msg description', 'wrap': 'C++'})
+    inMsgList.append({'type': 'AttRefMsg', 'var': 'someInMsg', 'desc': 'Input message description.', 'wrap': 'C'})
+    inMsgList.append({'type': 'AttRefMsg', 'var': 'some2InMsg', 'desc': 'Input message description.', 'wrap': 'C'})
+    inMsgList.append({'type': 'CSSConfigMsg', 'var': 'anotherInMsg', 'desc': 'Input message description.', 'wrap': 'C'})
+    inMsgList.append({'type': 'CSSConfigLogMsg', 'var': 'anotherCppInMsg', 'desc': 'Input message description.', 'wrap': 'C++'})
     module.inMsgList = inMsgList
 
     # provide list of output messages
     # leave list empty if there are no input messages
     outMsgList = list()
-    outMsgList.append({'type': 'AttRefMsg', 'var': 'some2OutMsg', 'desc': 'output msg description', 'wrap': 'C'})
-    outMsgList.append({'type': 'SCStatesMsg', 'var': 'someOutMsg', 'desc': 'output msg description', 'wrap': 'C'})
-    outMsgList.append({'type': 'DataStorageStatusMsg', 'var': 'anotherCppOutMsg', 'desc': 'output msg description', 'wrap': 'C++'})
+    outMsgList.append({'type': 'AttRefMsg', 'var': 'some2OutMsg', 'desc': 'Output message description.', 'wrap': 'C'})
+    outMsgList.append({'type': 'SCStatesMsg', 'var': 'someOutMsg', 'desc': 'Output message description.', 'wrap': 'C'})
+    outMsgList.append({'type': 'DataStorageStatusMsg', 'var': 'anotherCppOutMsg', 'desc': 'Output message description.', 'wrap': 'C++'})
     module.outMsgList = outMsgList
 
     # provide list of module variables
@@ -729,16 +735,16 @@ def fillCInfo(module):
     # provide list of input messages
     # leave list empty if there are no input messages
     inMsgList = list()
-    inMsgList.append({'type': 'AttRefMsg', 'var': 'someInMsg', 'desc': 'input msg description', 'wrap': 'C'})
-    inMsgList.append({'type': 'AttRefMsg', 'var': 'some2InMsg', 'desc': 'input msg description', 'wrap': 'C'})
-    inMsgList.append({'type': 'CSSConfigMsg', 'var': 'anotherInMsg', 'desc': 'input msg description', 'wrap': 'C'})
+    inMsgList.append({'type': 'AttRefMsg', 'var': 'someInMsg', 'desc': 'Input message description.', 'wrap': 'C'})
+    inMsgList.append({'type': 'AttRefMsg', 'var': 'some2InMsg', 'desc': 'Input message description.', 'wrap': 'C'})
+    inMsgList.append({'type': 'CSSConfigMsg', 'var': 'anotherInMsg', 'desc': 'Input message description.', 'wrap': 'C'})
     module.inMsgList = inMsgList
 
     # provide list of output messages
     # leave list empty if there are no input messages
     outMsgList = list()
-    outMsgList.append({'type': 'AttRefMsg', 'var': 'some2OutMsg', 'desc': 'output msg description', 'wrap': 'C'})
-    outMsgList.append({'type': 'SCStatesMsg', 'var': 'someOutMsg', 'desc': 'output msg description', 'wrap': 'C'})
+    outMsgList.append({'type': 'AttRefMsg', 'var': 'some2OutMsg', 'desc': 'Output message description.', 'wrap': 'C'})
+    outMsgList.append({'type': 'SCStatesMsg', 'var': 'someOutMsg', 'desc': 'Output message description.', 'wrap': 'C'})
     module.outMsgList = outMsgList
 
     # provide list of module variables
