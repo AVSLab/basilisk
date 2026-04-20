@@ -43,6 +43,7 @@ Apply these rules to all **new or modified code** in this repository.
    - Pattern new module docs after:
      `src/moduleTemplates/cModuleTemplate/cModuleTemplate.rst` or
      `src/moduleTemplates/cppModuleTemplate/cppModuleTemplate.rst`.
+   - For new or modified BSK module `.rst` files, ensure module input/output message documentation uses the `.. bsk-module-io::` directive rather than hand-written module I/O tables or standalone module I/O SVG images.
 
 8. **Basilisk Module Creation**
     - Ensure new Basilisk modules have a unit test
