@@ -86,7 +86,7 @@ def test_spacecraft_charging_dynamics(show_plots,
     servicer_spacecraft.hub.r_BcB_B = [0.0, 0.0, 0.0]  # [m]
     servicer_spacecraft.hub.IHubPntBc_B = [[I_servicer_11, 0.0, 0.0], [0.0, I_servicer_22, 0.0], [0.0, 0.0, I_servicer_33]]  # [kg m^2]
     servicer_spacecraft.hub.r_CN_NInit = [[10.0], [0.0], [0.0]]  # [m]
-    servicer_spacecraft.hub.v_CN_NInit = [[0.0], [0.0], [0.0]]  # [m/s]
+    servicer_spacecraft.hub.v_CN_NInit = [[-5199.77710904224], [-3436.681645356935], [1041.576797498721]]  # [m/s]
     servicer_spacecraft.hub.omega_BN_BInit = [[0.0], [0.0], [macros.D2R * 1.5]]  # [rad/s]
     servicer_spacecraft.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
     sim.AddModelToTask(task_name, servicer_spacecraft)
@@ -105,7 +105,7 @@ def test_spacecraft_charging_dynamics(show_plots,
     target_spacecraft.hub.r_BcB_B = [0.0, 0.0, 0.0]  # [m]
     target_spacecraft.hub.IHubPntBc_B = [[I_target_11, 0.0, 0.0], [0.0, I_target_22, 0.0], [0.0, 0.0, I_target_33]]  # [kg m^2]
     target_spacecraft.hub.r_CN_NInit = [[5.0], [0.0], [0.0]]  # [m]
-    target_spacecraft.hub.v_CN_NInit = [[0.0], [0.0], [0.0]]  # [m/s]
+    target_spacecraft.hub.v_CN_NInit = [[-5199.77710904224], [-3436.681645356935], [1041.576797498721]]  # [m/s]
     target_spacecraft.hub.omega_BN_BInit = [[0.0], [0.0], [macros.D2R * -1.0]]  # [rad/s]
     target_spacecraft.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
     sim.AddModelToTask(task_name, target_spacecraft)
