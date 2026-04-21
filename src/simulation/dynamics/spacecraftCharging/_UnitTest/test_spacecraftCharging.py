@@ -227,36 +227,46 @@ def test_spacecraft_charging_dynamics(show_plots,
                                                                          target_potential_sim,
                                                                          servicer_sunlit_area,
                                                                          target_sunlit_area)
+    plt.close("all")
+    if show_plots:
 
-    # plt.close("all")
-    #
-    # # Plot the servicer and target photoelectric currents
-    # servicer_photoelectric_current_error = np.abs(servicer_photoelectric_current_truth - servicer_photoelectric_current_sim)
-    # target_photoelectric_current_error = np.abs(target_photoelectric_current_truth - target_photoelectric_current_sim)
-    # plt.figure(1)
-    # plt.clf()
-    # plt.plot(timespan*1000000, servicer_photoelectric_current_error, label="Servicer")
-    # plt.plot(timespan*1000000, target_photoelectric_current_error, label="Target")
-    # plt.title(r'Servicer and Target Photoelectric Current Errors', fontsize=16)
-    # plt.ylabel('Current (A)', fontsize=16)
-    # plt.xlabel('Time ($\mu$s)', fontsize=16)
-    # plt.grid(True)
-    # plt.legend()
-    #
-    # # Plot the servicer and target potentials
-    # plt.figure(2)
-    # plt.clf()
-    # plt.plot(timespan*1000000, servicer_potential_sim, label=r"$\phi_{\text{S, sim}}$")
-    # plt.plot(timespan*1000000, target_potential_sim, label=r"$\phi_{\text{T, sim}}$")
-    # plt.suptitle(r'Servicer and Target Spacecraft Potentials', fontsize=16)
-    # plt.title(r'$C = 10^{-9} F$', fontsize=14)
-    # plt.ylabel('(Volts)', fontsize=16)
-    # plt.xlabel('Time ($\mu$s)', fontsize=16)
-    # plt.legend(loc='lower right', prop={'size': 16})
-    # plt.grid(True)
-    # plt.show()
+        # Plot the servicer currents
+        plt.figure(1)
+        plt.clf()
+        plt.plot(timespan*1000000, servicer_photoelectric_current_sim, label=r"$I_{ph}$")
+        plt.plot(timespan*1000000, servicer_plasma_electron_current_sim, label=r"$I_{e}$")
+        plt.plot(timespan*1000000, servicer_plasma_ion_current_sim, label=r"$I_{i}$")
+        plt.title(r'Servicer Currents', fontsize=16)
+        plt.ylabel('Current (A)', fontsize=16)
+        plt.xlabel('Time ($\mu$s)', fontsize=16)
+        plt.grid(True)
+        plt.legend()
 
-    # Check the simulated photoelectric current values match the computed truth values
+        # Plot the target currents
+        plt.figure(2)
+        plt.clf()
+        plt.plot(timespan*1000000, target_photoelectric_current_sim, label=r"$I_{ph}$")
+        plt.plot(timespan*1000000, target_plasma_electron_current_sim, label=r"$I_{e}$")
+        plt.plot(timespan*1000000, target_plasma_ion_current_sim, label=r"$I_{i}$")
+        plt.title(r'Target Currents', fontsize=16)
+        plt.ylabel('Current (A)', fontsize=16)
+        plt.xlabel('Time ($\mu$s)', fontsize=16)
+        plt.grid(True)
+        plt.legend()
+
+        # Plot the servicer and target potentials
+        plt.figure(3)
+        plt.clf()
+        plt.plot(timespan*1000000, servicer_potential_sim, label=r"$\phi_{\text{S, sim}}$")
+        plt.plot(timespan*1000000, target_potential_sim, label=r"$\phi_{\text{T, sim}}$")
+        plt.suptitle(r'Servicer and Target Spacecraft Potentials', fontsize=16)
+        plt.ylabel('(Volts)', fontsize=16)
+        plt.xlabel('Time ($\mu$s)', fontsize=16)
+        plt.legend(loc='lower right', prop={'size': 16})
+        plt.grid(True)
+        plt.show()
+
+    # Check the simulated current values match the computed truth values
     for idx in range(len(timespan)):
         np.testing.assert_allclose(servicer_photoelectric_current_sim[idx],
                                    servicer_photoelectric_current_truth[idx],
