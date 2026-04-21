@@ -274,6 +274,9 @@ void SpacecraftCharging::computeElectronBeamCurrent() {
         double intermediateTerm = -1 * (this->electronBeamEnergy - this->servicerPotential + this->targetPotential) / 20.0;
         this->servicerEBCurrent = this->electronBeamCurrent * (1 - exp(intermediateTerm));
         this->targetEBCurrent = - this->electronBeamCurrent * (1 - exp(intermediateTerm));
+    } else {
+        this->servicerEBCurrent = 0.0;
+        this->targetEBCurrent = 0.0;
     }
 }
 
