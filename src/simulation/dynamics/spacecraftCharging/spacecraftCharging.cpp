@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2025, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -296,14 +296,14 @@ void SpacecraftCharging::computePhotoelectricCurrent() {
 
 /*! Method for pre-integration steps.
  @param integrateToThisTimeNanos Time to integrate to
- */
+*/
 void SpacecraftCharging::preIntegration(uint64_t integrateToThisTimeNanos) {
     this->timeStep = diffNanoToSec(integrateToThisTimeNanos, this->timeBeforeNanos);
 }
 
 /*! Method for post-integration steps.
  @param integrateToThisTimeNanos Time to integrate to
- */
+*/
 void SpacecraftCharging::postIntegration(uint64_t integrateToThisTimeNanos) {
     this->timeBeforeNanos = integrateToThisTimeNanos;
     this->timeBefore = integrateToThisTimeNanos*NANO2SEC;
@@ -311,7 +311,7 @@ void SpacecraftCharging::postIntegration(uint64_t integrateToThisTimeNanos) {
 
 /*! Setter for the servicer spacecraft capacitance.
  @param capacitance [farad] Servicer spacecraft capacitance
- */
+*/
 void SpacecraftCharging::setServicerCapacitance(const double capacitance) {
     assert(capacitance > 0.0);
     this->servicerCapacitance = std::abs(capacitance);
@@ -319,7 +319,7 @@ void SpacecraftCharging::setServicerCapacitance(const double capacitance) {
 
 /*! Setter for the target spacecraft capacitance.
  @param capacitance [farad] Target spacecraft capacitance
- */
+*/
 void SpacecraftCharging::setTargetCapacitance(const double capacitance) {
     assert(capacitance > 0.0);
     this->targetCapacitance = std::abs(capacitance);
@@ -401,7 +401,7 @@ double SpacecraftCharging::getDensityElectrons() const {
 
 /*! Setter for the ion temperature.
  @param temp [eV] Ion temperature
- */
+*/
 void SpacecraftCharging::setTempIons(const double temp) {
     assert(temp > 0.0);
     this->tempIons = std::abs(temp);
@@ -415,8 +415,8 @@ double SpacecraftCharging::getTempIons() const {
 }
 
 /*! Setter for the ion density.
- @param temp [m^-3] Ion density
- */
+ @param density [m^-3] Ion density
+*/
 void SpacecraftCharging::setDensityIons(const double density) {
     assert(density > 0.0);
     this->densityIons = std::abs(density);
@@ -430,8 +430,8 @@ double SpacecraftCharging::getDensityIons() const {
 }
 
 /*! Setter for the bulk ion velocity.
- @param temp [m/s] Bulk ion velocity
- */
+ @param velocity [m/s] Bulk ion velocity
+*/
 void SpacecraftCharging::setBulkVelocityIons(const double velocity) {
     assert(velocity > 0.0);
     this->bulkVelocityIons = std::abs(velocity);
