@@ -63,6 +63,22 @@ void SpacecraftCharging::registerStates(DynParamManager& states) {
 
 /*! Module update method. */
 void SpacecraftCharging::UpdateState(uint64_t CurrentSimNanos) {
+    // Read the target and servicer spacecraft state input message if it is linked and written
+    if (this->servicerStateInMsg.isLinked() && this->servicerStateInMsg.isWritten()) {
+        SCStatesMsgPayload servicerStateInMsgBuffer = this->servicerStateInMsg();
+        this->v_SN_N_norm = cArray2EigenVector3d(servicerStateInMsgBuffer.v_BN_N).norm();
+    } else {
+        this->bskLogger.bskLog(BSK_ERROR, "SpacecraftCharging.servicerStateInMsg was not linked or written.");
+        return;
+    }
+    if (this->targetStateInMsg.isLinked() && this->targetStateInMsg.isWritten()) {
+        SCStatesMsgPayload targetStateInMsgBuffer = this->targetStateInMsg();
+        this->v_TN_N_norm = cArray2EigenVector3d(targetStateInMsgBuffer.v_BN_N).norm();
+    } else {
+        this->bskLogger.bskLog(BSK_ERROR, "SpacecraftCharging.targetStateInMsg was not linked or written.");
+        return;
+    }
+
     // Read the servicer and target spacecraft area input messages if they are linked and written
     if (this->servicerSurfaceAreaInMsg.isLinked() && this->servicerSurfaceAreaInMsg.isWritten()) {
         ProjectedAreaMsgPayload servicerSurfaceAreaInMsgBuffer = this->servicerSurfaceAreaInMsg();
@@ -136,6 +152,11 @@ void SpacecraftCharging::writeOutputStateMessages(uint64_t clockTime) {
     servicerPlasmaElectronCurrentMsgBuffer.current = this->servicerPlasmaElectronCurrent;
     this->servicerPlasmaElectronCurrentOutMsg.write(&servicerPlasmaElectronCurrentMsgBuffer, this->moduleID, clockTime);
 
+    CurrentMsgPayload servicerPlasmaIonCurrentMsgBuffer;
+    servicerPlasmaIonCurrentMsgBuffer = this->servicerPlasmaIonCurrentOutMsg.zeroMsgPayload;
+    servicerPlasmaIonCurrentMsgBuffer.current = this->servicerPlasmaIonCurrent;
+    this->servicerPlasmaIonCurrentOutMsg.write(&servicerPlasmaIonCurrentMsgBuffer, this->moduleID, clockTime);
+
     // Write out the target output messages
     VoltMsgPayload targetVoltageMsgBuffer;
     targetVoltageMsgBuffer = this->targetPotentialOutMsg.zeroMsgPayload;
@@ -156,6 +177,11 @@ void SpacecraftCharging::writeOutputStateMessages(uint64_t clockTime) {
     targetPlasmaElectronCurrentMsgBuffer = this->targetPlasmaElectronCurrentOutMsg.zeroMsgPayload;
     targetPlasmaElectronCurrentMsgBuffer.current = this->targetPlasmaElectronCurrent;
     this->targetPlasmaElectronCurrentOutMsg.write(&targetPlasmaElectronCurrentMsgBuffer, this->moduleID, clockTime);
+
+    CurrentMsgPayload targetPlasmaIonCurrentMsgBuffer;
+    targetPlasmaIonCurrentMsgBuffer = this->targetPlasmaIonCurrentOutMsg.zeroMsgPayload;
+    targetPlasmaIonCurrentMsgBuffer.current = this->targetPlasmaIonCurrent;
+    this->targetPlasmaIonCurrentOutMsg.write(&targetPlasmaIonCurrentMsgBuffer, this->moduleID, clockTime);
 }
 
 /*! Method for the charging equations of motion */
@@ -168,6 +194,17 @@ void SpacecraftCharging::equationsOfMotion(double integTimeSeconds, double timeS
                                                                              this->servicerPotential);
     this->targetPlasmaElectronCurrent = this->computePlasmaElectronCurrent(this->targetSurfaceArea,
                                                                              this->targetPotential);
+
+    // Compute the plasma ion currents
+    this->servicerPlasmaIonCurrent = this->computePlasmaIonCurrent(this->servicerSurfaceArea,
+                                                                    this->servicerSunlitArea,
+                                                                    this->servicerPotential,
+                                                                    this->v_SN_N_norm);
+    this->targetPlasmaIonCurrent = this->computePlasmaIonCurrent(this->targetSurfaceArea,
+                                                                 this->targetSunlitArea,
+                                                                 this->targetPotential,
+                                                                 this->v_TN_N_norm);
+
     // Compute the electron beam currents
     this->computeElectronBeamCurrent();
 
@@ -176,13 +213,13 @@ void SpacecraftCharging::equationsOfMotion(double integTimeSeconds, double timeS
 
     // Set the servicer potential derivative
     Eigen::MatrixXd servicerPotentialRate(1, 1);
-    servicerPotentialRate(0, 0) = (this->servicerPlasmaElectronCurrent +
-            this->servicerPhotoelectricCurrent + this->servicerEBCurrent) / this->servicerCapacitance;
+    servicerPotentialRate(0, 0) = (this->servicerPlasmaElectronCurrent + this->servicerPlasmaIonCurrent
+            + this->servicerPhotoelectricCurrent + this->servicerEBCurrent) / this->servicerCapacitance;
     this->servicerPotentialState->setDerivative(servicerPotentialRate);
 
     // Set the target potential derivative
     Eigen::MatrixXd targetPotentialRate(1, 1);
-    targetPotentialRate(0, 0) = (this->targetPlasmaElectronCurrent
+    targetPotentialRate(0, 0) = (this->targetPlasmaElectronCurrent + this->targetPlasmaIonCurrent
             + this->targetPhotoelectricCurrent + this->targetEBCurrent) / this->targetCapacitance;
     this->targetPotentialState->setDerivative(targetPotentialRate);
 }
@@ -203,6 +240,32 @@ double SpacecraftCharging::computePlasmaElectronCurrent(double surfaceArea, doub
     }
 
     return plasmaElectronCurrent;
+}
+
+/*! Method to compute plasma ion current
+ @param surfaceArea [m^2] Spacecraft surface area
+ @param sunlitArea [m^2] Spacecraft sunlit area
+ @param spacecraftPotential [Volts] Spacecraft potential
+ @param v_BN_N_norm [m/s] Spacecraft inertial velocity norm
+ @return double
+*/
+double SpacecraftCharging::computePlasmaIonCurrent(double surfaceArea, double sunlitArea, double spacecraftPotential, double v_BN_N_norm) {
+    double thermalVelocityIons = std::sqrt((8 * Q_CHARGE * this->tempIons) / (MASS_PROTON * MPI));  // [m/s] thermal ion velocity
+    double relativeVelocityIons = std::abs(v_BN_N_norm - bulkVelocityIons);
+
+    double plasmaIonCurrent{};
+
+    if (thermalVelocityIons >= relativeVelocityIons) {
+        if (spacecraftPotential <= 0.0) {
+            plasmaIonCurrent = (0.25 * surfaceArea * Q_CHARGE * this->densityIons * thermalVelocityIons) * (1 - (spacecraftPotential / this->tempIons));
+        } else {
+            plasmaIonCurrent = (0.25 * surfaceArea * Q_CHARGE * this->densityIons * thermalVelocityIons) * exp(-spacecraftPotential / this->tempIons);
+        }
+    } else {
+        plasmaIonCurrent = sunlitArea * Q_CHARGE * this->densityIons * relativeVelocityIons;
+    }
+
+    return plasmaIonCurrent;
 }
 
 /*! Method to compute electron beam currents */
@@ -334,4 +397,49 @@ void SpacecraftCharging::setDensityElectrons(const double density) {
 */
 double SpacecraftCharging::getDensityElectrons() const {
     return this->densityElectrons;
+}
+
+/*! Setter for the ion temperature.
+ @param temp [eV] Ion temperature
+ */
+void SpacecraftCharging::setTempIons(const double temp) {
+    assert(temp > 0.0);
+    this->tempIons = std::abs(temp);
+}
+
+/*! Getter for the ion temperature.
+ @return double
+*/
+double SpacecraftCharging::getTempIons() const {
+    return this->tempIons;
+}
+
+/*! Setter for the ion density.
+ @param temp [m^-3] Ion density
+ */
+void SpacecraftCharging::setDensityIons(const double density) {
+    assert(density > 0.0);
+    this->densityIons = std::abs(density);
+}
+
+/*! Getter for the ion density.
+ @return double
+*/
+double SpacecraftCharging::getDensityIons() const {
+    return this->densityIons;
+}
+
+/*! Setter for the bulk ion velocity.
+ @param temp [m/s] Bulk ion velocity
+ */
+void SpacecraftCharging::setBulkVelocityIons(const double velocity) {
+    assert(velocity > 0.0);
+    this->bulkVelocityIons = std::abs(velocity);
+}
+
+/*! Getter for the bulk ion velocity.
+ @return double
+*/
+double SpacecraftCharging::getBulkVelocityIons() const {
+    return this->bulkVelocityIons;
 }
