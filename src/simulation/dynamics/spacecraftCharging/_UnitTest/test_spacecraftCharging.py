@@ -27,6 +27,13 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.architecture import messaging
 
+temp_electrons = 2.0  # [eV] Plasma electron temperature
+density_electrons = 950000.0  # [m^-3] Plasma electron density
+temp_ions = 2.0  # [eV] Plasma ion temperature
+density_ions = 950000.0  # [m^-3] Plasma ion density
+temp_photons = 2.0  # [eV] Photoelectron temperature
+flux_photons = 1e-6  # [A/m^2] Photoelectron flux
+
 @pytest.mark.parametrize(
     ("servicer_radius", "target_radius"),  # ([m], [m])
     [
@@ -35,13 +42,14 @@ from Basilisk.architecture import messaging
         (4.0, 2.0)
     ]
 )
+@pytest.mark.parametrize("bulk_velocity_ions", [0.0, 1.0, 400000.0])  # [m/s]
 @pytest.mark.parametrize("electron_beam_energy", [0.0, 10000.0])  # [eV]
-@pytest.mark.parametrize("electron_beam_current", [0.0, 250e-6])  # [Amps] (Don't set above 1)
+@pytest.mark.parametrize("electron_beam_current", [0.0, 0.001, 250e-6])  # [Amps]
 @pytest.mark.parametrize("electron_beam_alpha", [0.0, 0.5, 1.0])  # [-]
-
 def test_spacecraft_charging_dynamics(show_plots,
                                       servicer_radius,
                                       target_radius,
+                                      bulk_velocity_ions,
                                       electron_beam_energy,
                                       electron_beam_current,
                                       electron_beam_alpha):
@@ -137,6 +145,12 @@ def test_spacecraft_charging_dynamics(show_plots,
     spacecraft_charging.ModelTag = "SpacecraftCharging"
     spacecraft_charging.setServicerCapacitance(capacitance)
     spacecraft_charging.setTargetCapacitance(capacitance)
+    spacecraft_charging.setFluxPhotoelectrons(flux_photons)
+    spacecraft_charging.setTempElectrons(temp_electrons)
+    spacecraft_charging.setDensityElectrons(density_electrons)
+    spacecraft_charging.setTempIons(temp_ions)
+    spacecraft_charging.setDensityIons(density_ions)
+    spacecraft_charging.setBulkVelocityIons(bulk_velocity_ions)
     spacecraft_charging.servicerStateInMsg.subscribeTo(servicer_spacecraft.scStateOutMsg)
     spacecraft_charging.targetStateInMsg.subscribeTo(target_spacecraft.scStateOutMsg)
     spacecraft_charging.electronBeamInMsg.subscribeTo(electron_beam_msg)
@@ -199,13 +213,14 @@ def test_spacecraft_charging_dynamics(show_plots,
                                                                         servicer_potential_sim,
                                                                         servicer_surface_area,
                                                                         servicer_sunlit_area,
-                                                                        v_SN_N_sim)
+                                                                        v_SN_N_sim,
+                                                                        bulk_velocity_ions)
     target_plasma_ion_current_list_truth = compute_plasma_ion_current(timespan,
                                                                       target_potential_sim,
                                                                       target_surface_area,
                                                                       target_sunlit_area,
-                                                                      v_TN_N_sim)
-
+                                                                      v_TN_N_sim,
+                                                                      bulk_velocity_ions)
     (servicer_photoelectric_current_truth,
      target_photoelectric_current_truth) = compute_photoelectric_current(timespan,
                                                                          servicer_potential_sim,
@@ -269,9 +284,6 @@ def test_spacecraft_charging_dynamics(show_plots,
                                    verbose=True)
 
 def compute_plasma_electron_current(timespan, spacecraft_potential, surface_area):
-    temp_electrons = 2.0  # [eV]
-    density_electrons = 950000  # [m^-3]
-
     plasma_electron_current_list_truth = []
     for idx in range(len(timespan)):
         velocity_electrons = math.sqrt((8 * astroConstants.Q_CHARGE * temp_electrons) / (astroConstants.MASS_ELECTRON * astroConstants.MPI))
@@ -284,11 +296,7 @@ def compute_plasma_electron_current(timespan, spacecraft_potential, surface_area
 
     return plasma_electron_current_list_truth
 
-def compute_plasma_ion_current(timespan, spacecraft_potential, surface_area, sunlit_area, v_BN_N):
-    temp_ions = 2.0  # [eV]
-    density_ions = 950000  # [m^-3]
-    bulk_velocity_ions = 400000  # [m/s]
-
+def compute_plasma_ion_current(timespan, spacecraft_potential, surface_area, sunlit_area, v_BN_N, bulk_velocity_ions):
     plasma_ion_current_list_truth = []
     for idx in range(len(timespan)):
         thermal_velocity_ions = math.sqrt((8 * astroConstants.Q_CHARGE * temp_ions) / (astroConstants.MASS_PROTON * astroConstants.MPI))
@@ -311,9 +319,6 @@ def compute_photoelectric_current(timespan,
                                   target_potential,
                                   servicer_sunlit_area,
                                   target_sunlit_area):
-    temp_photons = 2.0  # [eV]
-    flux_photons = 1e-6  # [A/m^2]
-
     servicer_photoelectric_current_list_truth = []
     target_photoelectric_current_list_truth = []
     for idx in range(len(timespan)):
@@ -339,7 +344,8 @@ if __name__ == "__main__":
         False,  # show_plots
         4.0,  # [m]
         2.0,  # [m]
+        400000.0,  # [m/s]
         10000.0,  # [eV]
-        250e-6,  # [Amps] (Don't set above 1)
+        250e-6,  # [Amps]
         1.0  # [-]
     )
