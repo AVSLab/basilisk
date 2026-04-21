@@ -50,6 +50,7 @@ public:
     std::vector<ReadFunctor<FacetElementBodyMsgPayload>> facetElementBodyInMsgs;  //!< List of facet geometry input data (Expressed in hub B frame)
     std::vector<Message<ProjectedAreaMsgPayload>*> facetProjectedAreaOutMsgs; //!< List of facet projected area output messages
     Message<ProjectedAreaMsgPayload> totalProjectedAreaOutMsg;  //!< Total spacecraft projected area output message
+    Message<ProjectedAreaMsgPayload> surfaceAreaOutMsg;  //!< Spacecraft surface area output message
 
     BSKLogger *bskLogger = nullptr;  //!< BSK logging
 
@@ -64,6 +65,7 @@ private:
     /* Facet output message data */
     std::vector<double> facetProjectedAreaList{};  //!< [m^2] List of facet projected areas
     double totalProjectedArea{};  //!< [m^2] Total projected area for all facets
+    double surfaceArea{};  //!< [m^2] Total surface area of all facets
 };
 
 #endif
