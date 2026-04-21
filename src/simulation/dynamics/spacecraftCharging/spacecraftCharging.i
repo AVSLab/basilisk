@@ -41,6 +41,8 @@ struct CurrentMsg_C;
 struct ElectronBeamMsg_C;
 %include "architecture/msgPayloadDefC/ProjectedAreaMsgPayload.h"
 struct ProjectedAreaMsg_C;
+%include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
+struct SCStatesMsg_C;
 %include "architecture/msgPayloadDefC/VoltMsgPayload.h"
 struct VoltMsg_C;
 
