@@ -124,6 +124,9 @@ void SpacecraftChargingDynamics::UpdateState(uint64_t CurrentSimNanos) {
     // Integrate the state forward in time
     this->integrateState(CurrentSimNanos);
 
+    // Re-compute the currents before writing the module output messages
+    this->computeCurrents();
+
     // Write the module output messages
     this->writeOutputStateMessages(CurrentSimNanos);
 }
@@ -191,27 +194,8 @@ void SpacecraftChargingDynamics::equationsOfMotion(double integTimeSeconds, doub
     this->servicerPotential = this->servicerPotentialState->getState()(0, 0);
     this->targetPotential = this->targetPotentialState->getState()(0, 0);
 
-    // Compute the plasma electron currents
-    this->servicerPlasmaElectronCurrent = this->computePlasmaElectronCurrent(this->servicerSurfaceArea,
-                                                                             this->servicerPotential);
-    this->targetPlasmaElectronCurrent = this->computePlasmaElectronCurrent(this->targetSurfaceArea,
-                                                                             this->targetPotential);
-
-    // Compute the plasma ion currents
-    this->servicerPlasmaIonCurrent = this->computePlasmaIonCurrent(this->servicerSurfaceArea,
-                                                                    this->servicerSunlitArea,
-                                                                    this->servicerPotential,
-                                                                    this->v_SN_N_norm);
-    this->targetPlasmaIonCurrent = this->computePlasmaIonCurrent(this->targetSurfaceArea,
-                                                                 this->targetSunlitArea,
-                                                                 this->targetPotential,
-                                                                 this->v_TN_N_norm);
-
-    // Compute the electron beam currents
-    this->computeElectronBeamCurrent();
-
-    // Compute the photoelectric currents
-    this->computePhotoelectricCurrent();
+    // Compute all currents acting on the spacecraft
+    this->computeCurrents();
 
     // Set the servicer potential derivative
     Eigen::MatrixXd servicerPotentialRate(1, 1);
@@ -224,6 +208,31 @@ void SpacecraftChargingDynamics::equationsOfMotion(double integTimeSeconds, doub
     targetPotentialRate(0, 0) = (this->targetPlasmaElectronCurrent + this->targetPlasmaIonCurrent
             + this->targetPhotoelectricCurrent + this->targetEBCurrent) / this->targetCapacitance;
     this->targetPotentialState->setDerivative(targetPotentialRate);
+}
+
+/*! Method for computing all currents acting on the spacecraft */
+void SpacecraftChargingDynamics::computeCurrents() {
+    // Compute the plasma electron currents
+    this->servicerPlasmaElectronCurrent = this->computePlasmaElectronCurrent(this->servicerSurfaceArea,
+                                                                             this->servicerPotential);
+    this->targetPlasmaElectronCurrent = this->computePlasmaElectronCurrent(this->targetSurfaceArea,
+                                                                           this->targetPotential);
+
+    // Compute the plasma ion currents
+    this->servicerPlasmaIonCurrent = this->computePlasmaIonCurrent(this->servicerSurfaceArea,
+                                                                   this->servicerSunlitArea,
+                                                                   this->servicerPotential,
+                                                                   this->v_SN_N_norm);
+    this->targetPlasmaIonCurrent = this->computePlasmaIonCurrent(this->targetSurfaceArea,
+                                                                 this->targetSunlitArea,
+                                                                 this->targetPotential,
+                                                                 this->v_TN_N_norm);
+
+    // Compute the electron beam currents
+    this->computeElectronBeamCurrent();
+
+    // Compute the photoelectric currents
+    this->computePhotoelectricCurrent();
 }
 
 /*! Method to compute plasma electron current
