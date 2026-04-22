@@ -9,19 +9,13 @@ The following table lists all the module input and output messages.  The module 
 user from python.  The msg type contains a link to the message structure definition, while the description
 provides information on what this message is used for.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: encoder
+    :caption: Module I/O Messages
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - rwSpeedInMsg
-      - :ref:`RWSpeedMsgPayload`
-      - Input reaction wheel speed message.
-    * - rwSpeedOutMsg
-      - :ref:`RWSpeedMsgPayload`
-      - Output reaction wheel speed message.
+    input rwSpeedInMsg RWSpeedMsgPayload
+        Input reaction wheel speed message.
+    output rwSpeedOutMsg RWSpeedMsgPayload
+        Output reaction wheel speed message.
 
 Detailed Module Description
 ---------------------------
@@ -35,7 +29,7 @@ for the first iteration the time step is set at 0, the wheel speeds will not be 
 Discretization
 ~~~~~~~~~~~~~~
 
-Under normal operating conditions, the discretizer works by setting the wheel speed as a multiple of the resolution of the sensor. This resolution is calculated through the number of 
+Under normal operating conditions, the discretizer works by setting the wheel speed as a multiple of the resolution of the sensor. This resolution is calculated through the number of
 clicks per rotation that the sensor can handle. Let :math:`N` be the number of clicks measured during a time step:
 
 .. math::

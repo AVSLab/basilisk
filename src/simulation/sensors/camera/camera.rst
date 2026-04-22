@@ -5,7 +5,7 @@ codebase. Although images are provided by the visualization, they are
 renders of the Unity engine and are not necessarily representative of
 a camera. The module reads in an image from a file, or in the
 simulation as a pointer to image data, then corrupts it according to
-input parameters. 
+input parameters.
 
 Module Assumptions and Limitations
 ----------------------------------
@@ -21,23 +21,16 @@ The following table lists all the module input and output messages.  The module 
 user from python.  The msg type contains a link to the message structure definition, while the description
 provides information on what this message is used for.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: camera
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - imageInMsg
-      - :ref:`CameraImageMsgPayload`
-      - camera input message
-    * - cameraConfigOutMsg
-      - :ref:`CameraConfigMsgPayload`
-      - camera parameters output message
-    * - imageOutMsg
-      - :ref:`CameraImageMsgPayload`
-      - camera output message
+   input imageInMsg CameraImageMsgPayload
+      camera input message
 
+   output cameraConfigOutMsg CameraConfigMsgPayload
+      camera parameters output message
+
+   output imageOutMsg CameraImageMsgPayload
+      camera output message
 
 Detailed Module Description
 ---------------------------

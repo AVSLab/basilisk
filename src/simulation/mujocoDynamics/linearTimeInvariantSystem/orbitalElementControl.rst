@@ -56,23 +56,16 @@ Convenience gain helpers are provided:
 
 Message Interfaces
 ------------------
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: orbitalElementControl
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - targetOEInMsg
-      - :ref:`ClassicElementsMsgPayload`
-      - Input target classical orbital elements used as the controller reference.
-    * - currentOEInMsg
-      - :ref:`ClassicElementsMsgPayload`
-      - Input current classical orbital elements used to form feedback errors and to build the Gauss mapping and
-        frame transforms.
-    * - forceOutMsg
-      - :ref:`CmdForceInertialMsgPayload`
-      - Output inertial-frame commanded force vector in ``forceRequestInertial``.
+   input targetOEInMsg ClassicElementsMsgPayload
+      Input target classical orbital elements used as the controller reference.
+
+   input currentOEInMsg ClassicElementsMsgPayload
+      Input current classical orbital elements used to form feedback errors and to build the Gauss mapping and frame transforms.
+
+   output forceOutMsg CmdForceInertialMsgPayload
+      Output inertial-frame commanded force vector in ``forceRequestInertial``.
 
 Detailed Behavior
 -----------------

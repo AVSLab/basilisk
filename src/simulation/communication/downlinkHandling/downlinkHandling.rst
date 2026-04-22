@@ -35,30 +35,17 @@ Message Connection Descriptions
 The following table lists all module input and output messages.
 The message connection is set by the user from Python.
 
-.. list-table:: Module I/O Messages
-   :widths: 22 22 36 20
-   :header-rows: 1
+.. bsk-module-io:: downlinkHandling
+   :caption: Module I/O Messages
 
-   * - Msg Variable Name
-     - Msg Type
-     - Description
-     - Note
-   * - ``linkBudgetInMsg``
-     - :ref:`LinkBudgetMsgPayload`
-     - Link-quality input from :ref:`linkBudget` (receiver states, ``CNR1``, ``CNR2``, overlap bandwidth).
-     - Required for non-zero downlink
-   * - ``storageUnitInMsgs`` (via ``addStorageUnitToDownlink``)
-     - :ref:`DataStorageStatusMsgPayload`
-     - Storage state input (partition names, partition bits, total storage level).
-     - Required for actual data removal; actual removal is currently limited to a single linked storage unit
-   * - ``nodeDataOutMsg``
-     - :ref:`DataNodeUsageMsgPayload`
-     - Data-node output inherited from ``DataNodeBase``. Negative baud rate removes bits from storage.
-     - Output
-   * - ``downlinkOutMsg``
-     - :ref:`DownlinkHandlingMsgPayload`
-     - Diagnostics output with link metrics, reliability metrics, rates, and cumulative counters.
-     - Output
+   input linkBudgetInMsg LinkBudgetMsgPayload
+      Link-quality input from :ref:`linkBudget` (receiver states, ``CNR1``, ``CNR2``, overlap bandwidth). Required for non-zero downlink.
+   input storageUnitInMsgs DataStorageStatusMsgPayload
+      Storage state input (partition names, partition bits, total storage level). Required for actual data removal; actual removal is currently limited to a single linked storage unit. Connected via ``addStorageUnitToDownlink``.
+   output nodeDataOutMsg DataNodeUsageMsgPayload
+      Data-node output inherited from ``DataNodeBase``. Negative baud rate removes bits from storage.
+   output downlinkOutMsg DownlinkHandlingMsgPayload
+      Diagnostics output with link metrics, reliability metrics, rates, and cumulative counters.
 
 Detailed Module Description
 ---------------------------

@@ -35,19 +35,13 @@ All quantities are expressed in the site frame :math:`S`, consistent with ``Forc
 
 Message Interfaces
 ------------------
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: forceAtSiteLTI
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - inMsg
-      - :ref:`ForceAtSiteMsgPayload`
-      - Input 3D force vector in site frame. ``force_S`` maps to :math:`\mathbf{u}`.
-    * - outMsg
-      - :ref:`ForceAtSiteMsgPayload`
-      - Output 3D force vector in site frame. ``force_S`` is populated from the first three components of :math:`\mathbf{y}`.
+   input inMsg ForceAtSiteMsgPayload
+      Input 3D force vector in site frame. ``force_S`` maps to :math:`\mathbf{u}`.
+
+   output outMsg ForceAtSiteMsgPayload
+      Output 3D force vector in site frame. ``force_S`` is populated from the first three components of :math:`\mathbf{y}`.
 
 Module Assumptions and Limitations
 ----------------------------------

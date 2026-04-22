@@ -20,19 +20,13 @@ All other atmospheric payload fields are passed through unchanged.
 
 Message Interfaces
 ------------------
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: stochasticAtmDensity
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - atmoDensInMsg
-      - :ref:`AtmoPropsMsgPayload`
-      - Input atmosphere properties message containing baseline ``neutralDensity`` and other atmospheric fields.
-    * - atmoDensOutMsg
-      - :ref:`AtmoPropsMsgPayload`
-      - Output atmosphere properties message with stochastic density correction applied to ``neutralDensity``.
+   input atmoDensInMsg AtmoPropsMsgPayload
+      Input atmosphere properties message containing baseline ``neutralDensity`` and other atmospheric fields.
+
+   output atmoDensOutMsg AtmoPropsMsgPayload
+      Output atmosphere properties message with stochastic density correction applied to ``neutralDensity``.
 
 Detailed Behavior
 -----------------

@@ -21,16 +21,10 @@ The following table lists all the module input and output messages.  The module 
 user from python.  The msg type contains a link to the message structure definition, while the description
 provides information on what this message is used for.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: imuSensor
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - scStateInMsg
-      - :ref:`SCStatesMsgPayload`
-      - input essage name for spacecraft state
-    * - sensorOutMsg
-      - :ref:`IMUSensorMsgPayload`
-      - output message name for IMU output data
+   input scStateInMsg SCStatesMsgPayload
+      input essage name for spacecraft state
+
+   output sensorOutMsg IMUSensorMsgPayload
+      output message name for IMU output data

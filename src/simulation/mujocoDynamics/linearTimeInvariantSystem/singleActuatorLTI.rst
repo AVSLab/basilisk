@@ -30,19 +30,13 @@ System matrices :math:`\mathbf{A},\mathbf{B},\mathbf{C},\mathbf{D}` are configur
 
 Message Interfaces
 ------------------
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: singleActuatorLTI
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - inMsg
-      - :ref:`SingleActuatorMsgPayload`
-      - Input scalar actuator command. The ``input`` field maps to :math:`u`.
-    * - outMsg
-      - :ref:`SingleActuatorMsgPayload`
-      - Output scalar actuator command. The ``input`` field is populated from :math:`y_0`.
+   input inMsg SingleActuatorMsgPayload
+      Input scalar actuator command. The ``input`` field maps to :math:`u`.
+
+   output outMsg SingleActuatorMsgPayload
+      Output scalar actuator command. The ``input`` field is populated from :math:`y_0`.
 
 Module Assumptions and Limitations
 ----------------------------------

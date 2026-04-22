@@ -31,22 +31,15 @@ The module msg connections are set by the user from Python.
 The msg type contains a link to the message structure definition, while the description
 provides information on what each message is used for.
 
-.. list-table:: Module I/O Messages
-    :widths: 30 25 45
-    :header-rows: 1
+.. bsk-module-io:: facetedSpacecraftModel
+    :caption: Module I/O Messages
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - articulatedFacetDataInMsgs
-      - :ref:`HingedRigidBodyMsgPayload`
-      - (Optional) Input msg vector for the articulating facet angles
-    * - facetElementInMsgs
-      - :ref:`FacetElementMsgPayload`
-      - Input msg vector containing all facet geometry data expressed in each local facet frame
-    * - facetElementBodyOutMsgs
-      - :ref:`FacetElementBodyMsgPayload`
-      - Output msg vector containing all facet geometry data expressed in the spacecraft body frame
+    input articulatedFacetDataInMsgs HingedRigidBodyMsgPayload
+        Optional input message vector for the articulating facet angles.
+    input facetElementInMsgs FacetElementMsgPayload
+        Input message vector containing all facet geometry data expressed in each local facet frame.
+    output facetElementBodyOutMsgs FacetElementBodyMsgPayload
+        Output message vector containing all facet geometry data expressed in the spacecraft body frame.
 
 
 Module Functions

@@ -35,25 +35,17 @@ The following table lists all the module input and output messages.  The module 
 user from python.  The msg type contains a link to the message structure definition, while the description
 provides information on what this message is used for.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: stripLocation
+    :caption: Module I/O Messages
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - planetInMsg
-      - :ref:`SpicePlanetStateMsgPayload`
-      - (optional) planet state input message. Default is a zero state for the planet.
-    * - scStateInMsgs
-      - :ref:`SCStatesMsgPayload`
-      - vector of sc state input messages.  These are set through ``addSpacecraftToModel()``
-    * - currentStripStateOutMsg
-      - :ref:`StripStateMsgPayload`
-      - strip location output message providing the current target point inertial position and velocity
-    * - accessOutMsgs
-      - :ref:`AccessMsgPayload`
-      - vector of access output messages (one per spacecraft)
+    input planetInMsg SpicePlanetStateMsgPayload
+        (optional) planet state input message. Default is a zero state for the planet.
+    input scStateInMsgs SCStatesMsgPayload
+        vector of sc state input messages.  These are set through ``addSpacecraftToModel()``.
+    output currentStripStateOutMsg StripStateMsgPayload
+        strip location output message providing the current target point inertial position and velocity.
+    output accessOutMsgs AccessMsgPayload
+        vector of access output messages (one per spacecraft).
 
 
 Detailed Module Description

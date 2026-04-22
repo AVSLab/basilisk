@@ -13,16 +13,10 @@ The module msg connection is set by the user from python.
 The msg type contains a link to the message structure definition, while the description
 provides information on what this message is used for.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: MJSystemMassMatrix
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - massMatrixOutMsg
-      - :ref:`MJSysMassMatrixMsgPayload`
-      - system mass matrix C ++ output msg in generalized coordinates
+   output massMatrixOutMsg MJSysMassMatrixMsgPayload
+      system mass matrix C ++ output msg in generalized coordinates
 
 User Guide
 ----------

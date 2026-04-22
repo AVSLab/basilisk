@@ -20,19 +20,13 @@ The remaining geometry fields are passed through unchanged.
 
 Message Interfaces
 ------------------
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: stochasticDragCoeff
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - dragGeomInMsg
-      - :ref:`DragGeometryMsgPayload`
-      - Input drag geometry message containing ``dragCoeff``, projected area, and center-of-pressure data.
-    * - dragGeomOutMsg
-      - :ref:`DragGeometryMsgPayload`
-      - Output drag geometry message with stochastic correction applied to ``dragCoeff``.
+   input dragGeomInMsg DragGeometryMsgPayload
+      Input drag geometry message containing ``dragCoeff``, projected area, and center-of-pressure data.
+
+   output dragGeomOutMsg DragGeometryMsgPayload
+      Output drag geometry message with stochastic correction applied to ``dragCoeff``.
 
 Detailed Behavior
 -----------------

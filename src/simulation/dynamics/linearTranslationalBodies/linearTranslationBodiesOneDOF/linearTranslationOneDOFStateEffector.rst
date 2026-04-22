@@ -9,28 +9,19 @@ Message Connection Descriptions
 -------------------------------
 The following table lists all the module input and output messages.  The module msg variable name is set by the user from python.  The msg type contains a link to the message structure definition, while the description provides information on what this message is used for.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: linearTranslationOneDOFStateEffector
+    :caption: Module I/O Messages
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - translatingBodyOutMsg
-      - :ref:`LinearTranslationRigidBodyMsgPayload`
-      - Output message containing the linear translation body state displacement and displacement rate
-    * - motorForceInMsg
-      - :ref:`ArrayMotorForceMsgPayload`
-      - (Optional) Input message of the motor force value
-    * - motorLockInMsg
-      - :ref:`ArrayEffectorLockMsgPayload`
-      - (Optional) Input message for locking the axis
-    * - translatingBodyRefInMsg
-      - :ref:`LinearTranslationRigidBodyMsgPayload`
-      - (Optional) Input message for prescribing the displacement and displacement rate
-    * - translatingBodyConfigLogOutMsg
-      - :ref:`SCStatesMsgPayload`
-      - Output message containing the translating body inertial position and attitude states
+    output translatingBodyOutMsg LinearTranslationRigidBodyMsgPayload
+        Output message containing the linear translation body state displacement and displacement rate.
+    input motorForceInMsg ArrayMotorForceMsgPayload
+        (Optional) Input message of the motor force value.
+    input motorLockInMsg ArrayEffectorLockMsgPayload
+        (Optional) Input message for locking the axis.
+    input translatingBodyRefInMsg LinearTranslationRigidBodyMsgPayload
+        (Optional) Input message for prescribing the displacement and displacement rate.
+    output translatingBodyConfigLogOutMsg SCStatesMsgPayload
+        Output message containing the translating body inertial position and attitude states.
 
 
 Detailed Module Description
@@ -122,4 +113,3 @@ This section is to outline the steps needed to setup a Translating Body State Ef
 #. Add the module to the task list::
 
     unitTestSim.AddModelToTask(unitTaskName, translatingBody)
-

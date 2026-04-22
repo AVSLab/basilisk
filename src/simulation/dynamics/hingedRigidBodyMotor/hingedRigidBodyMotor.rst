@@ -4,27 +4,20 @@ Calculates a motor torque given a sensed and reference hinged rigid body state u
 
 Message Connection Descriptions
 -------------------------------
-The following table lists all the module input and output messages.  
-The module msg connection is set by the user from python.  
-The msg type contains a link to the message structure definition, while the description 
+The following table lists all the module input and output messages.
+The module msg connection is set by the user from python.
+The msg type contains a link to the message structure definition, while the description
 provides information on what this message is used for.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: hingedRigidBodyMotor
+    :caption: Module I/O Messages
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - hingedBodyStateSensedInMsg
-      - :ref:`HingedRigidBodyMsgPayload`
-      - sensed rigid body state (theta, theta dot)
-    * - hingedBodyStateReferenceInMsg
-      - :ref:`HingedRigidBodyMsgPayload`
-      - reference hinged rigid body state (theta, theta dot)
-    * - motorTorqueOutMsg
-      - :ref:`ArrayMotorTorqueMsgPayload`
-      - motor torque on hinged rigid body
+    input hingedBodyStateSensedInMsg HingedRigidBodyMsgPayload
+        sensed rigid body state (theta, theta dot).
+    input hingedBodyStateReferenceInMsg HingedRigidBodyMsgPayload
+        reference hinged rigid body state (theta, theta dot).
+    output motorTorqueOutMsg ArrayMotorTorqueMsgPayload
+        motor torque on hinged rigid body.
 
 Detailed Model Description
 --------------------------

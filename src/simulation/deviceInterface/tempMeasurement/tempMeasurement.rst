@@ -4,23 +4,17 @@ Models the addition of noise, bias, and faults to temperature measurements.
 
 Message Connection Descriptions
 -------------------------------
-The following table lists all module input and output messages. The module msg connection 
-is set by the user from python. The msg type contains a link to the message structure definition, 
+The following table lists all module input and output messages. The module msg connection
+is set by the user from python. The msg type contains a link to the message structure definition,
 while the description provides information on what this message is used for.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: tempMeasurement
+    :caption: Module I/O Messages
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - tempInMsg
-      - :ref:`TemperatureMsgPayload`
-      - True temperature measurement
-    * - tempOutMsg
-      - :ref:`TemperatureMsgPayload`
-      - Sensed temperature measurement with corruptions
+    input tempInMsg TemperatureMsgPayload
+        True temperature measurement.
+    output tempOutMsg TemperatureMsgPayload
+        Sensed temperature measurement with corruptions.
 
 Detailed Module Description
 ---------------------------
@@ -30,7 +24,7 @@ bias, and three faults:
 
 - ``TEMP_FAULT_STUCK_VALUE`` is faulty behavior where the measurement sticks to a specific value
 - ``TEMP_FAULT_STUCK_CURRENT`` fixes the measurement to the value
-- ``TEMP_FAULT_SPIKING`` is faulty behavior where the measurement spikes 
+- ``TEMP_FAULT_SPIKING`` is faulty behavior where the measurement spikes
   to a specified multiplier times the actual value, with a given probability
 - ``TEMP_FAULT_NOMINAL`` has no faulty behavior but may still have noise and bias
 
@@ -90,7 +84,7 @@ A sample setup is done using:
 
     tempMeasurementModel.senBias = 1.0  # [C] bias amount
     tempMeasurementModel.senNoiseStd = 5.0  # [C] noise standard devation
-    tempMeasurementModel.walkBounds = 2.0  # 
+    tempMeasurementModel.walkBounds = 2.0  #
     tempMeasurementModel.stuckValue = 10.0  # [C] if the sensor gets stuck, stuck at 10 degrees C
     tempMeasurementModel.spikeProbability = 0.3  # [-] 30% chance of spiking at each time step
     tempMeasurementModel.spikeAmount = 10.0  # [-] 10x the actual sensed value if the spike happens

@@ -11,28 +11,23 @@ The following table lists all the module input and output messages.  The module 
 user from python.  The msg type contains a link to the message structure definition, while the description
 provides information on what this message is used for.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: sensorThermal
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - sunInMsg
-      - :ref:`SpicePlanetStateMsgPayload`
-      - Input planet state message for the sun.
-    * - stateInMsg
-      - :ref:`SCStatesMsgPayload`
-      - Input spacecraft state input message.
-    * - sunEclipseInMsg
-      - :ref:`EclipseMsgPayload`
-      - Optional eclipse input message
-    * - sensorStatusInMsg
-      - :ref:`DeviceStatusMsgPayload`
-      - Optional device status input message
-    * - temperatureOutMsg
-      - :ref:`TemperatureMsgPayload`
-      - Output temperature message.
+   input sunInMsg SpicePlanetStateMsgPayload
+      Input planet state message for the sun.
+
+   input stateInMsg SCStatesMsgPayload
+      Input spacecraft state input message.
+
+   input sunEclipseInMsg EclipseMsgPayload
+      Optional eclipse input message
+
+   input sensorStatusInMsg DeviceStatusMsgPayload
+      Optional device status input message
+
+   output temperatureOutMsg TemperatureMsgPayload
+      Output temperature message.
+
 
 Detailed Module Description
 ---------------------------

@@ -23,32 +23,18 @@ The following table lists all the module input and output messages.  The module 
 user from python.  The msg type contains a link to the message structure definition, while the description
 provides information on what this message is used for.
 
-.. _ModuleIO_SPACECRAFT_PLUS:
-.. figure:: /../../src/simulation/dynamics/spacecraft/_Documentation/Spacecraft/Images/moduleSpacecraft.svg
-    :align: center
 
-    Figure 1: ``Spacecraft()`` Module I/O Illustration
+.. bsk-module-io:: spacecraft
+    :caption: Module I/O Messages
 
-
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
-
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - scStateOutMsg
-      - :ref:`SCStatesMsgPayload`
-      - Spacecraft state output message
-    * - scMassStateOutMsg
-      - :ref:`SCMassPropsMsgPayload`
-      - Output message containing the spacecraft mass properties
-    * - attRefInMsg
-      - :ref:`AttRefMsgPayload`
-      - (Optional) Input message to specify a prescribed attitude motion
-    * - transRefInMsg
-      - :ref:`TransRefMsgPayload`
-      - (Optional) Input message to specify a prescribed translational motion
+    output scStateOutMsg SCStatesMsgPayload
+        Spacecraft state output message.
+    output scMassStateOutMsg SCMassPropsMsgPayload
+        Output message containing the spacecraft mass properties.
+    input attRefInMsg AttRefMsgPayload
+        (Optional) Input message to specify a prescribed attitude motion.
+    input transRefInMsg TransRefMsgPayload
+        (Optional) Input message to specify a prescribed translational motion.
 
 User Guide
 ----------
@@ -118,23 +104,3 @@ This section is to outline the steps needed to setup a Spacecraft module in pyth
     * - r_BcB_B
       - double[3]
       - Center of mass location in B frame
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

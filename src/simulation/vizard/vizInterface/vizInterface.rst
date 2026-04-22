@@ -18,23 +18,16 @@ The following messages are set directly within ``vizInterface``.  Additional mes
 ``VizSpacecraftData`` data structures for each spacecraft.
 
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: vizInterface
 
-    * - Parameter
-      - Default
-      - Description
-    * - opnavImageOutMsgs
-      - :ref:`CameraImageMsgPayload`
-      - (optional) vector of Image output messages, the corresponding camera configuration input message is setup
-        through ``vizInterface.addCamMsgToModule(msg)``
-    * - epochInMsg
-      - :ref:`EpochMsgPayload`
-      - (optional) simulation epoch date/time input msg
-    * - spiceInMsgs
-      - :ref:`SpicePlanetStateMsgPayload`
-      - (optional) vector of input messages of planet Spice data
+   output opnavImageOutMsgs CameraImageMsgPayload
+      (optional) vector of Image output messages, the corresponding camera configuration input message is setup through ``vizInterface.addCamMsgToModule(msg)``
+
+   input epochInMsg EpochMsgPayload
+      (optional) simulation epoch date/time input msg
+
+   input spiceInMsgs SpicePlanetStateMsgPayload
+      (optional) vector of input messages of planet Spice data
 
 The ``VizSpacecraftData`` structure, defined in :ref:`vizStructures`, contains a range of input messages for each spacecraft added.
 

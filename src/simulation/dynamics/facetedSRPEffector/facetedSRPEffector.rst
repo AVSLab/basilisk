@@ -32,25 +32,17 @@ The module msg connections are set by the user from Python.
 The msg type contains a link to the message structure definition, while the description
 provides information on what each message is used for.
 
-.. list-table:: Module I/O Messages
-    :widths: 30 25 45
-    :header-rows: 1
+.. bsk-module-io:: facetedSRPEffector
+    :caption: Module I/O Messages
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - sunStateInMsg
-      - :ref:`SpicePlanetStateMsgPayload`
-      - Input message containing the Sun inertial state
-    * - facetElementBodyInMsgs
-      - :ref:`FacetElementBodyMsgPayload`
-      - Input message vector containing facet element data expressed in body-frame components
-    * - facetProjectedAreaInMsgs
-      - :ref:`ProjectedAreaMsgPayload`
-      - Input message vector containing pre-computed per-facet projected areas
-    * - sunEclipseInMsg
-      - :ref:`EclipseMsgPayload`
-      - (Optional) Input msg for the Sun eclipse data. If connected, the SRP force and torque are scaled by the illumination factor (0 = full shadow, 1 = full sunlight)
+    input sunStateInMsg SpicePlanetStateMsgPayload
+        Input message containing the Sun inertial state.
+    input facetElementBodyInMsgs FacetElementBodyMsgPayload
+        Input message vector containing facet element data expressed in body-frame components.
+    input facetProjectedAreaInMsgs ProjectedAreaMsgPayload
+        Input message vector containing pre-computed per-facet projected areas.
+    input sunEclipseInMsg EclipseMsgPayload
+        (Optional) Input msg for the Sun eclipse data. If connected, the SRP force and torque are scaled by the illumination factor (0 = full shadow, 1 = full sunlight).
 
 
 Module Functions

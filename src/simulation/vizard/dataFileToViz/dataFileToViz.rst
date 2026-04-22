@@ -15,22 +15,16 @@ Message Connection Descriptions
 The following messages are set directly within ``vizInterface``.  Additional messages are set within the
 ``VizSpacecraftData`` data structures for each spacecraft.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: dataFileToViz
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - scStateOutMsgs
-      - :ref:`SCStatesMsgPayload`
-      - Vector of spacecraft output messages
-    * - thrScOutMsgs
-      - :ref:`THROutputMsgPayload`
-      - (optional) vector of vectors of thruster output messages per spacecraft
-    * - rwScOutMsgs
-      - :ref:`RWConfigLogMsgPayload`
-      - (optional) vector of vectors of RW output messages per spacecraft
+   output scStateOutMsgs SCStatesMsgPayload
+      Vector of spacecraft output messages
+
+   output thrScOutMsgs THROutputMsgPayload
+      (optional) vector of vectors of thruster output messages per spacecraft
+
+   output rwScOutMsgs RWConfigLogMsgPayload
+      (optional) vector of vectors of RW output messages per spacecraft
 
 
 
@@ -134,4 +128,3 @@ Next, the RW position, spin axis direction, the wheel speed and the maximum moto
     testModule.appendUMax(0.5)
 
 Repeat the above steps for each wheel.
-

@@ -9,19 +9,13 @@ The module msg connection is set by the user from python.
 The msg type contains a link to the message structure definition, while the description
 provides information on what this message is used for.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: MJSystemCoM
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - comStatesOutMsg
-      - :ref:`SCStatesMsgPayload`
-      - spacecraft CoM states C++ output msg
-    * - comStatesOutMsgC
-      - :ref:`SCStatesMsgPayload`
-      - spacecraft CoM states C output msg
+   output comStatesOutMsg SCStatesMsgPayload
+      spacecraft CoM states C++ output msg
+
+   output comStatesOutMsgC SCStatesMsgPayload
+      spacecraft CoM states C output msg
 
 User Guide
 ----------

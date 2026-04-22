@@ -14,19 +14,13 @@ Message Connection Description
 ------------------------------
 The following table lists the module input and output messages.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: stepperMotor
+    :caption: Module I/O Messages
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - motorStepCommandInMsg
-      - :ref:`MotorStepCommandMsgPayload`
-      - Input message containing the number of commanded motor steps
-    * - stepperMotorOutMsg
-      - :ref:`StepperMotorMsgPayload`
-      - Output message containing the stepper motor states
+    input motorStepCommandInMsg MotorStepCommandMsgPayload
+        Input message containing the number of commanded motor steps.
+    output stepperMotorOutMsg StepperMotorMsgPayload
+        Output message containing the stepper motor states.
 
 Motor Step Actuation Profile
 ----------------------------

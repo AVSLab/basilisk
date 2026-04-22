@@ -18,26 +18,15 @@ The module msg connection is set by the user from python.
 The msg type contains a link to the message structure definition, while the description
 provides information on what this message is used for.
 
-.. list-table:: Module I/O Messages
-    :widths: 20 25 35 20
-    :header-rows: 1
+.. bsk-module-io:: linkBudget
+    :caption: Module I/O Messages
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-      - Note
-    * - antennaInPayload_1
-      - :ref:`AntennaLogMsgPayload`
-      - Output message from antenna 1
-      - Required
-    * - antennaInPayload_2
-      - :ref:`AntennaLogMsgPayload`
-      - Output message from antenna 2
-      - Required
-    * - linkBudgetOutPayload
-      - :ref:`LinkBudgetMsgPayload`
-      - Link budget calculation results
-      - Output
+    input antennaInPayload_1 AntennaLogMsgPayload
+        Output message from antenna 1.
+    input antennaInPayload_2 AntennaLogMsgPayload
+        Output message from antenna 2.
+    output linkBudgetOutPayload LinkBudgetMsgPayload
+        Link budget calculation results.
 
 .. _linkbudget-detailed-module-description:
 

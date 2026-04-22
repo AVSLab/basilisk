@@ -10,19 +10,13 @@ The following table lists all the module input and output messages.  The module 
 user from python.  The msg type contains a link to the message structure definition, while the description
 provides information on what this message is used for.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: motorVoltageInterface
+    :caption: Module I/O Messages
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - motorVoltageInMsg
-      - :ref:`ArrayMotorVoltageMsgPayload`
-      - Message that contains motor voltage input states
-    * - motorTorqueOutMsg
-      - :ref:`ArrayMotorTorqueMsgPayload`
-      - Output message for motor torques
+    input motorVoltageInMsg ArrayMotorVoltageMsgPayload
+        Message that contains motor voltage input states.
+    output motorTorqueOutMsg ArrayMotorTorqueMsgPayload
+        Output message for motor torques.
 
 Detailed Model Description
 --------------------------

@@ -16,19 +16,13 @@ Message Connection Description
 ------------------------------
 The following table lists the module input and output messages.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: scalarJointStatesToRWSpeed
+    :caption: Module I/O Messages
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - jointStateInMsgs
-      - :ref:`ScalarJointStateMsgPayload`
-      - Vector of input messages containing the scalar joint states and rates
-    * - rwSpeedOutMsg
-      - :ref:`RWSpeedMsgPayload`
-      - Output message containing the packed reaction wheel speeds
+    input jointStateInMsgs ScalarJointStateMsgPayload
+        Vector of input messages containing the scalar joint states and rates.
+    output rwSpeedOutMsg RWSpeedMsgPayload
+        Output message containing the packed reaction wheel speeds.
 
 Module Functions
 ----------------

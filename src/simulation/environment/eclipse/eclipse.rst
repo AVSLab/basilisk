@@ -11,25 +11,17 @@ user from python.  The msg type contains a link to the message structure definit
 provides information on what this message is used for.
 
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: eclipse
+    :caption: Module I/O Messages
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - sunInMsg
-      - :ref:`SpicePlanetStateMsgPayload`
-      - sun ephemeris input message name
-    * - planetInMsgs
-      - :ref:`SpicePlanetStateMsgPayload`
-      - A vector of planet incoming state message names ordered by the sequence in which planet are added to the module
-    * - positionInMsgs
-      - :ref:`SCStatesMsgPayload`
-      - vector of msgs for each spacecraft position state for which to evaluate eclipse conditions
-    * - eclipseOutMsgs
-      - :ref:`EclipseMsgPayload`
-      - vector of eclipse output msg names
+    input sunInMsg SpicePlanetStateMsgPayload
+        sun ephemeris input message name.
+    input planetInMsgs SpicePlanetStateMsgPayload
+        A vector of planet incoming state message names ordered by the sequence in which planet are added to the module.
+    input positionInMsgs SCStatesMsgPayload
+        vector of msgs for each spacecraft position state for which to evaluate eclipse conditions.
+    output eclipseOutMsgs EclipseMsgPayload
+        vector of eclipse output msg names.
 
 
 Detailed Module Description

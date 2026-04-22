@@ -12,32 +12,18 @@ The following table lists all the module input and output messages.  The module 
 user from python.  The msg type contains a link to the message structure definition, while the description
 provides information on what this message is used for.
 
-.. _ModuleIO_hingedRigidBodyStateEffector:
-.. figure:: /../../src/simulation/dynamics/HingedRigidBodies/_Documentation/Images/moduleHRBStateEffector.svg
-    :align: center
 
-    Figure 1: ``HingedRigidBodyStateEffector()`` Module I/O Illustration
+.. bsk-module-io:: hingedRigidBodyStateEffector
+    :caption: Module I/O Messages
 
-
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
-
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - hingedRigidBodyRefMsg
-      - :ref:`HingedRigidBodyMsgPayload`
-      - (Optional) Input message of the reference angle and angle rate
-    * - motorTorqueInMsg
-      - :ref:`ArrayMotorTorqueMsgPayload`
-      - (Optional) Input message of the hinge motor torque value
-    * - hingedRigidBodyOutMsg
-      - :ref:`HingedRigidBodyMsgPayload`
-      - Output message containing the panel hinge state angle and angle rate
-    * - hingedRigidBodyConfigLogOutMsg
-      - :ref:`SCStatesMsgPayload`
-      - Output message containing the panel inertial position and attitude states
+    input hingedRigidBodyInMsg HingedRigidBodyMsgPayload
+        (Optional) Input message of the reference angle and angle rate.
+    input motorTorqueInMsg ArrayMotorTorqueMsgPayload
+        (Optional) Input message of the hinge motor torque value.
+    output hingedRigidBodyOutMsg HingedRigidBodyMsgPayload
+        Output message containing the panel hinge state angle and angle rate.
+    output hingedRigidBodyConfigLogOutMsg SCStatesMsgPayload
+        Output message containing the panel inertial position and attitude states.
 
 
 Detailed Module Description
@@ -117,7 +103,3 @@ This section is to outline the steps needed to setup a Hinged Rigid Body State E
 #. Add the module to the task list::
 
     unitTestSim.AddModelToTask(unitTaskName, panel1)
-
-
-
-

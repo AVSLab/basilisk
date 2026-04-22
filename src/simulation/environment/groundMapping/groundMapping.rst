@@ -11,30 +11,22 @@ also assumes the spacecraft instrument has a spherical field-of-view (FOV).
 
 Message Connection Descriptions
 -------------------------------
-The following table lists all the module input and output messages.  
-The module msg connection is set by the user from python.  
-The msg type contains a link to the message structure definition, while the description 
+The following table lists all the module input and output messages.
+The module msg connection is set by the user from python.
+The msg type contains a link to the message structure definition, while the description
 provides information on what this message is used for.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: groundMapping
+    :caption: Module I/O Messages
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - planetInMsg
-      - :ref:`SpicePlanetStateMsgPayload`
-      - (optional) Planet state input message
-    * - scStateInMsg
-      - :ref:`SCStatesMsgPayload`
-      - Spacecraft state input message
-    * - accessOutMsgs
-      - :ref:`AccessMsgPayload`
-      - vector of ground location access messages
-    * - currentGroundStateOutMsgs
-      - :ref:`GroundStateMsgPayload`
-      - vector of ground state messages
+    input planetInMsg SpicePlanetStateMsgPayload
+        (optional) Planet state input message.
+    input scStateInMsg SCStatesMsgPayload
+        Spacecraft state input message.
+    output accessOutMsgs AccessMsgPayload
+        vector of ground location access messages.
+    output currentGroundStateOutMsgs GroundStateMsgPayload
+        vector of ground state messages.
 
 Detailed Module Description
 ---------------------------

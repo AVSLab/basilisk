@@ -25,22 +25,16 @@ Message Connection Descriptions
 -------------------------------
 The following table lists additional module input messages beyond those specified in :ref:`PowerNodeBase`.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: simpleSolarPanel
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - sunInMsg
-      - :ref:`SpicePlanetStateMsgPayload`
-      - Describes sun position
-    * - stateInMsg
-      - :ref:`SCStatesMsgPayload`
-      - Describes spacecraft position, attitude.
-    * - sunEclipseInMsg
-      - :ref:`EclipseMsgPayload`
-      - (optional) Describes illumination factor due to planetary bodies.
+   input sunInMsg SpicePlanetStateMsgPayload
+      Describes sun position
+
+   input stateInMsg SCStatesMsgPayload
+      Describes spacecraft position, attitude.
+
+   input sunEclipseInMsg EclipseMsgPayload
+      (optional) Describes illumination factor due to planetary bodies.
 
 
 

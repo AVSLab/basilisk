@@ -31,28 +31,19 @@ user from python.  The msg type contains a link to the message structure definit
 provides information on what this message is used for.
 
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: prescribedMotionStateEffector
+    :caption: Module I/O Messages
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - prescribedTranslationInMsg
-      - :ref:`PrescribedTranslationMsgPayload`
-      - Input message for the effector's translational prescribed states
-    * - prescribedRotationInMsg
-      - :ref:`PrescribedRotationMsgPayload`
-      - Input message for the effector's rotational prescribed states
-    * - prescribedTranslationOutMsg
-      - :ref:`PrescribedTranslationMsgPayload`
-      - Output message for the effector's translational prescribed states
-    * - prescribedRotationOutMsg
-      - :ref:`PrescribedRotationMsgPayload`
-      - Output message for the effector's rotational prescribed states
-    * - prescribedMotionConfigLogOutMsg
-      - :ref:`SCStatesMsgPayload`
-      - Output message containing the effector's inertial position and attitude states
+    input prescribedTranslationInMsg PrescribedTranslationMsgPayload
+        Input message for the effector's translational prescribed states.
+    input prescribedRotationInMsg PrescribedRotationMsgPayload
+        Input message for the effector's rotational prescribed states.
+    output prescribedTranslationOutMsg PrescribedTranslationMsgPayload
+        Output message for the effector's translational prescribed states.
+    output prescribedRotationOutMsg PrescribedRotationMsgPayload
+        Output message for the effector's rotational prescribed states.
+    output prescribedMotionConfigLogOutMsg SCStatesMsgPayload
+        Output message containing the effector's inertial position and attitude states.
 
 
 Module Overview

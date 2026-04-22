@@ -10,26 +10,17 @@ The following table lists all the module input and output messages.  The module 
 user from python.  The msg type contains a link to the message structure definition, while the description
 provides information on what this message is used for.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: albedo
+    :caption: Module I/O Messages
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - spacecraftStateInMsg
-      - :ref:`SCStatesMsgPayload`
-      - input message with thruster commands
-    * - sunPositionInMsg
-      - :ref:`SpicePlanetStateMsgPayload`
-      - Sun input message
-    * - planetInMsgs
-      - :ref:`SpicePlanetStateMsgPayload`
-      - vector of planet input messages are set by using either the ``addPlanetandAlbedoAverageModel()`` method and
-        ``addPlanetandAlbedoDataModel()`` method
-    * - albOutMsgs
-      - :ref:`AlbedoMsgPayload`
-      - vector of albedo output message names.  The order matches the order with which instruments are added.
+    input spacecraftStateInMsg SCStatesMsgPayload
+        input message with thruster commands.
+    input sunPositionInMsg SpicePlanetStateMsgPayload
+        Sun input message.
+    input planetInMsgs SpicePlanetStateMsgPayload
+        vector of planet input messages are set by using either the ``addPlanetandAlbedoAverageModel()`` method and ``addPlanetandAlbedoDataModel()`` method.
+    output albOutMsgs AlbedoMsgPayload
+        vector of albedo output message names.  The order matches the order with which instruments are added.
 
 
 

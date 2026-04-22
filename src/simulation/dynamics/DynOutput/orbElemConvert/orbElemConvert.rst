@@ -11,31 +11,21 @@ The following table lists all the module input and output messages.  The module 
 user from python.  The msg type contains a link to the message structure definition, while the description
 provides information on what this message is used for.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: orbElemConvert
+    :caption: Module I/O Messages
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - scStateInMsg
-      - :ref:`SCStatesMsgPayload`
-      - Spacecraft state input message
-    * - spiceStateInMsg
-      - :ref:`SpicePlanetStateMsgPayload`
-      - Spice state input message
-    * - elemInMsg
-      - :ref:`ClassicElementsMsgPayload`
-      - classical orbit elements input message
-    * - scStateOutMsg
-      - :ref:`SCStatesMsgPayload`
-      - Spacecraft state output message
-    * - spiceStateOutMsg
-      - :ref:`SpicePlanetStateMsgPayload`
-      - Spice state output message
-    * - elemOutMsg
-      - :ref:`ClassicElementsMsgPayload`
-      - classical orbit elements output message
+    input scStateInMsg SCStatesMsgPayload
+        Spacecraft state input message
+    input spiceStateInMsg SpicePlanetStateMsgPayload
+        Spice state input message
+    input elemInMsg ClassicElementsMsgPayload
+        classical orbit elements input message
+    output scStateOutMsg SCStatesMsgPayload
+        Spacecraft state output message
+    output spiceStateOutMsg SpicePlanetStateMsgPayload
+        Spice state output message
+    output elemOutMsg ClassicElementsMsgPayload
+        classical orbit elements output message
 
 
 .. warning::

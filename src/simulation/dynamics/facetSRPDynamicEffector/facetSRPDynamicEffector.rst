@@ -14,22 +14,15 @@ The module msg connection is set by the user from python.
 The msg type contains a link to the message structure definition, while the description
 provides information on what this message is used for.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: facetSRPDynamicEffector
+    :caption: Module I/O Messages
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - sunInMsg
-      - :ref:`SpicePlanetStateMsgPayload`
-      - Input msg for the Sun state information
-    * - sunEclipseInMsg
-      - :ref:`EclipseMsgPayload`
-      - (Optional) Input msg for the Sun eclipse data. If connected, the SRP force and torque are scaled by the illumination factor (0 = full shadow, 1 = full sunlight)
-    * - articulatedFacetDataInMsgs
-      - :ref:`HingedRigidBodyMsgPayload`
-      - (Optional) Input msg vector containing the current articulated facet angles
+    input sunInMsg SpicePlanetStateMsgPayload
+        Input msg for the Sun state information.
+    input sunEclipseInMsg EclipseMsgPayload
+        (Optional) Input msg for the Sun eclipse data. If connected, the SRP force and torque are scaled by the illumination factor (0 = full shadow, 1 = full sunlight).
+    input articulatedFacetDataInMsgs HingedRigidBodyMsgPayload
+        (Optional) Input msg vector containing the current articulated facet angles.
 
 Detailed Module Description
 ---------------------------

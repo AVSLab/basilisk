@@ -9,20 +9,13 @@ Message Connection Descriptions
 The following table lists all the module input and output messages.  The module msg connection is set by the
 user from python.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: simpleMassProps
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - scMassPropsInMsg
-      - :ref:`SCMassPropsMsgPayload`
-      - Spacecraft mass properties input message. It contains the mass, inertia and center of mass of the spacecraft in a ``simulation`` type message.
-    * - vehicleConfigOutMsg
-      - :ref:`VehicleConfigMsgPayload`
-      - Vehicle configuration output message. It contains the mass, inertia and center of mass of the spacecraft in a ``FSW`` type message.
+   input scMassPropsInMsg SCMassPropsMsgPayload
+      Spacecraft mass properties input message. It contains the mass, inertia and center of mass of the spacecraft in a ``simulation`` type message.
 
+   output vehicleConfigOutMsg VehicleConfigMsgPayload
+      Vehicle configuration output message. It contains the mass, inertia and center of mass of the spacecraft in a ``FSW`` type message.
 
 Detailed Module Description
 ---------------------------

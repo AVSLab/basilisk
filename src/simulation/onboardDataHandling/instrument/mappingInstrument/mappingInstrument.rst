@@ -11,24 +11,18 @@ are not accessible.
 
 Message Connection Descriptions
 -------------------------------
-The following table lists all the module input and output messages.  
-The module msg connection is set by the user from python.  
-The msg type contains a link to the message structure definition, while the description 
+The following table lists all the module input and output messages.
+The module msg connection is set by the user from python.
+The msg type contains a link to the message structure definition, while the description
 provides information on what this message is used for.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: mappingInstrument
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - accessInMsgs
-      - :ref:`AccessMsgPayload`
-      - vector of ground location input access messages
-    * - dataNodeOutMsgs
-      - :ref:`DataNodeUsageMsgPayload`
-      - vector of data node output messages
+   input accessInMsgs AccessMsgPayload
+      vector of ground location input access messages
+
+   output dataNodeOutMsgs DataNodeUsageMsgPayload
+      vector of data node output messages
 
 User Guide
 ----------

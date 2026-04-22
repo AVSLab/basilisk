@@ -20,31 +20,21 @@ The following table lists all the module input and output messages.  The module 
 user from python.  The msg type contains a link to the message structure definition, while the description
 provides information on what this message is used for.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: gravityEffector
+    :caption: GravityEffector Module I/O Messages
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - centralBodyOutMsg
-      - :ref:`SpicePlanetStateMsgPayload`
-      - central planet body state output message
+    output centralBodyOutMsg SpicePlanetStateMsgPayload
+        Central planet body state output message.
 
 The gravity effector contains a list of ``GravBodyData`` objects which contain the planet mass and size properties etc.
 The following table lists the Spice planet ephemeris input message that can be connected to a ``GravBodyData`` object.
-If no message is connected, then the planet has zero position and orientation information by default.  
+If no message is connected, then the planet has zero position and orientation information by default.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: GravBodyData
+    :caption: GravBodyData Message Interfaces
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - planetBodyInMsg
-      - :ref:`SpicePlanetStateMsgPayload`
-      - planet spice ephemerisis input message
+    input planetBodyInMsg SpicePlanetStateMsgPayload
+        Planet spice ephemeris input message.
 
 
 

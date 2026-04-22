@@ -1,7 +1,7 @@
 
 .. warning::
     This module allows for multiple spacecraft units (mother craft and a docked daughter craft, etc.) to be simulated as an integrated dynamical system.  See `Dr. Cody Allard's dissertation <http://hanspeterschaub.info/Papers/grads/CodyAllard.pdf>`__ for more information.  However, this is still work in progress and not all effectors are compatible with this manner of doing the dynamics.  Use :ref:`spacecraft` to create a spacecraft simulation object unless you are familiar what this expanded spacecraft dynamics module provides.
-    
+
 Executive Summary
 -----------------
 
@@ -25,22 +25,12 @@ The following table lists all the module input and output messages.  The module 
 user from python.  The msg type contains a link to the message structure definition, while the description
 provides information on what this message is used for.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: spacecraftSystem
+    :caption: Module I/O Messages
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - scStateOutMsg
-      - :ref:`SCStatesMsgPayload`
-      - spacecraft element state output message
-    * - scMassStateOutMsg
-      - :ref:`SCMassPropsMsgPayload`
-      - spacecraft element mass property output message
-    * - scEnergyMomentumOutMsg
-      - :ref:`SCEnergyMomentumMsgPayload`
-      - spacecraft element energy and momentum output message
-
-
-
+    output scStateOutMsg SCStatesMsgPayload
+        spacecraft element state output message.
+    output scMassStateOutMsg SCMassPropsMsgPayload
+        spacecraft element mass property output message.
+    output scEnergyMomentumOutMsg SCEnergyMomentumMsgPayload
+        spacecraft element energy and momentum output message.
