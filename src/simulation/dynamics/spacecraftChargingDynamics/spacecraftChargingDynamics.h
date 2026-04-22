@@ -17,8 +17,8 @@
 
  */
 
-#ifndef SPACECRAFT_CHARGING_H
-#define SPACECRAFT_CHARGING_H
+#ifndef SPACECRAFT_CHARGING_DYNAMICS_H
+#define SPACECRAFT_CHARGING_DYNAMICS_H
 
 #include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
 #include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
@@ -33,11 +33,11 @@
 #include "architecture/msgPayloadDefC/VoltMsgPayload.h"
 #include "architecture/utilities/bskLogging.h"
 
-/*! @brief spacecraft charging module */
-class SpacecraftCharging : public DynamicObject{
+/*! @brief spacecraft charging dynamics module */
+class SpacecraftChargingDynamics : public DynamicObject{
 public:
-    SpacecraftCharging();  //!< Constructor
-    ~SpacecraftCharging() = default;  //!< Destructor
+    SpacecraftChargingDynamics();  //!< Constructor
+    ~SpacecraftChargingDynamics() = default;  //!< Destructor
     void initializeDynamics();  //!< Method to initialize dynamics
     void Reset(uint64_t CurrentSimNanos);  //!< Reset method
     void registerStates(DynParamManager& states);  //!< Method to register states
@@ -139,4 +139,4 @@ private:
 };
 
 
-#endif /* SPACECRAFT_CHARGING_H */
+#endif /* SPACECRAFT_CHARGING_DYNAMICS_H */

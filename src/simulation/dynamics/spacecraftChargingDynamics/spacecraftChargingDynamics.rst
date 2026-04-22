@@ -1,6 +1,6 @@
 Executive Summary
 -----------------
-The ``spacecraftCharging`` class is derived from the the parent class ``DynamicObject``. This module integrates the
+The ``spacecraftChargingDynamics`` class is derived from the the parent class ``DynamicObject``. This module integrates the
 electric potential of two spacecraft (a servicer and a target) in a plasma environment using a first order
 ordinary differential equation for each spacecraft. The charging model includes plasma electron current, plasma
 ion current, photoelectric current, and an optional electron beam current.
@@ -12,7 +12,7 @@ The module msg connections are set by the user from Python.
 The msg type contains a link to the message structure definition, while the description
 provides information on what each message is used for.
 
-.. bsk-module-io:: spacecraftCharging
+.. bsk-module-io:: spacecraftChargingDynamics
     :caption: Module I/O Messages
 
     input servicerStateInMsg SCStatesMsgPayload
@@ -94,7 +94,7 @@ Module Assumptions and Limitations
 
 Test Description and Success Criteria
 -------------------------------------
-The unit test for this module is located at ``src/simulation/dynamics/spacecraftCharging/_UnitTest/test_spacecraftCharging.py``.
+The unit test for this module is located at ``src/simulation/dynamics/spacecraftChargingDynamics/_UnitTest/test_spacecraftChargingDynamics.py``.
 The test verifies that the spacecraft charging dynamics module correctly computes the different types of currents
 impacting both a target and servicer spacecraft. Specifically, this test checks that the module
 correctly computes the photoelectric current, electron beam current, plasma electron current, and plasma ion
@@ -107,7 +107,7 @@ and plasma ion current acting on both spacecraft.
 
 User Guide
 ----------
-The following steps are required to set up the ``spacecraftCharging`` module in Python.
+The following steps are required to set up the ``spacecraftChargingDynamics`` module in Python.
 
 #. Import required Basilisk modules::
 
@@ -116,7 +116,7 @@ The following steps are required to set up the ``spacecraftCharging`` module in 
     from Basilisk.utilities import macros
     from Basilisk.architecture import astroConstants
     from Basilisk.simulation import spacecraft
-    from Basilisk.simulation import spacecraftCharging
+    from Basilisk.simulation import spacecraftChargingDynamics
     from Basilisk.architecture import messaging
 
 #. Create the servicer spacecraft::
@@ -189,8 +189,8 @@ The following steps are required to set up the ``spacecraftCharging`` module in 
 #. Create and configure the charging dynamics module::
 
     capacitance = 1e-9  # [F]
-    charging_dynamics = spacecraftCharging.SpacecraftCharging()
-    charging_dynamics.ModelTag = "SpacecraftCharging"
+    charging_dynamics = spacecraftChargingDynamics.SpacecraftChargingDynamics()
+    charging_dynamics.ModelTag = "SpacecraftChargingDynamics"
     charging_dynamics.setServicerCapacitance(capacitance)
     charging_dynamics.setTargetCapacitance(capacitance)
 

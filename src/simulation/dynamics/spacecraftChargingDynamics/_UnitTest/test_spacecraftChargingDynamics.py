@@ -22,7 +22,7 @@ import pytest
 import matplotlib.pyplot as plt
 from Basilisk.architecture import astroConstants
 from Basilisk.simulation import spacecraft
-from Basilisk.simulation import spacecraftCharging
+from Basilisk.simulation import spacecraftChargingDynamics
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.architecture import messaging
@@ -159,8 +159,8 @@ def test_spacecraft_charging_dynamics(show_plots,
 
     # Create the spacecraft charging module
     capacitance = 1e-9  # [farads]
-    spacecraft_charging = spacecraftCharging.SpacecraftCharging()
-    spacecraft_charging.ModelTag = "SpacecraftCharging"
+    spacecraft_charging = spacecraftChargingDynamics.SpacecraftChargingDynamics()
+    spacecraft_charging.ModelTag = "SpacecraftChargingDynamics"
     spacecraft_charging.setServicerCapacitance(capacitance)
     spacecraft_charging.setTargetCapacitance(capacitance)
     spacecraft_charging.setFluxPhotoelectrons(flux_photons)
