@@ -16,19 +16,13 @@ Message Connection Description
 ------------------------------
 The following table lists the module input and output messages.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: arrayMotorTorqueToSingleActuators
+    :caption: Module I/O Messages
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - torqueInMsg
-      - :ref:`ArrayMotorTorqueMsgPayload`
-      - Input message containing the motor torque array
-    * - actuatorOutMsgs
-      - :ref:`SingleActuatorMsgPayload`
-      - Vector of output messages containing one scalar actuator command per actuator
+    input torqueInMsg ArrayMotorTorqueMsgPayload
+        Input message containing the motor torque array.
+    output actuatorOutMsgs SingleActuatorMsgPayload
+        Vector of output messages containing one scalar actuator command per actuator.
 
 Module Functions
 ----------------

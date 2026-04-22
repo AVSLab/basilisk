@@ -4,39 +4,24 @@ This module uses the Multi-Sphere-Method (MSM) to evaluate the mutual electrosta
 
 Message Connection Descriptions
 -------------------------------
-The following table lists all the module input and output messages.  
-The module msg connection is set by the user from python.  
-The msg type contains a link to the message structure definition, while the description 
+The following table lists all the module input and output messages.
+The module msg connection is set by the user from python.
+The msg type contains a link to the message structure definition, while the description
 provides information on what this message is used for.
 
-.. _ModuleIO_MSM_FORCE_TORQUE:
-.. figure:: /../../src/simulation/dynamics/msmForceTorque/_Documentation/Images/moduleMsmForceTorque.svg
-    :align: center
+.. bsk-module-io:: msmForceTorque
+    :caption: Module I/O Messages
 
-    Figure 1: ``msmForceTorque()`` Module I/O Illustration
-
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
-
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - scStateInMsgs
-      - :ref:`SCStatesMsgPayload`
-      - vector of spacecraft state input messages
-    * - voltInMsgs
-      - :ref:`VoltMsgPayload`
-      - vector of voltage input messages
-    * - eTorqueOutMsgs
-      - :ref:`CmdTorqueBodyMsgPayload`
-      - vector of E-torques in body frame components
-    * - eForceOutMsgs
-      - :ref:`CmdForceInertialMsgPayload`
-      - vector of E-forces in inertial frame components
-    * - chargeMsmOutMsgs
-      - :ref:`ChargeMsmMsgPayload`
-      - vector of MSM charge messages
+    input scStateInMsgs SCStatesMsgPayload
+        vector of spacecraft state input messages.
+    input voltInMsgs VoltMsgPayload
+        vector of voltage input messages.
+    output eTorqueOutMsgs CmdTorqueBodyMsgPayload
+        vector of E-torques in body frame components.
+    output eForceOutMsgs CmdForceInertialMsgPayload
+        vector of E-forces in inertial frame components.
+    output chargeMsmOutMsgs ChargeMsmMsgPayload
+        vector of MSM charge messages.
 
 
 Module Assumptions and Limitations

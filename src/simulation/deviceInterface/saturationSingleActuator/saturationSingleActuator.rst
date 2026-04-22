@@ -15,19 +15,13 @@ Message Connection Description
 ------------------------------
 The following table lists the module input and output messages.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: saturationSingleActuator
+    :caption: Module I/O Messages
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - actuatorInMsg
-      - :ref:`SingleActuatorMsgPayload`
-      - Input scalar actuator command
-    * - actuatorOutMsg
-      - :ref:`SingleActuatorMsgPayload`
-      - Output saturated or pass-through actuator command
+    input actuatorInMsg SingleActuatorMsgPayload
+        Input scalar actuator command.
+    output actuatorOutMsg SingleActuatorMsgPayload
+        Output saturated or pass-through actuator command.
 
 Module Functions
 ----------------

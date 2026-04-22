@@ -10,19 +10,12 @@ The following table lists all the module input and output messages.  The module 
 user from python.  The msg type contains a link to the message structure definition, while the description
 provides information on what this message is used for.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: boreAngCalc
+    :caption: Module I/O Messages
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - scStateInMsg
-      - :ref:`SCStatesMsgPayload`
-      - spacecraft state input message
-    * - celBodyInMsg
-      - :ref:`SpicePlanetStateMsgPayload`
-      - (optional) celestial body state msg at which we pointing at
-    * - angOutMsg
-      - :ref:`BoreAngleMsgPayload`
-      - bore sight output message
+    input scStateInMsg SCStatesMsgPayload
+        spacecraft state input message
+    input celBodyInMsg SpicePlanetStateMsgPayload
+        (optional) celestial body state msg at which we pointing at
+    output angOutMsg BoreAngleMsgPayload
+        bore sight output message

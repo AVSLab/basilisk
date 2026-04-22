@@ -24,19 +24,13 @@ The following table lists all the module input and output messages.  The module 
 user from python.  The msg type contains a link to the message structure definition, while the description
 provides information on what this message is used for.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: dataStorageUnitBase
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - nodeDataUseInMsgs
-      - :ref:`dataNodeUsageMsgPayload`
-      - Vector of data node usage input messages. Subscribed to using ``addDataNodeToModel(msg)``
-    * - storageUnitDataOutMsg
-      - :ref:`DataStorageStatusMsgPayload`
-      - Output message. Describes storage unit capacity, storage level, net data rate, and contents.
+   input nodeDataUseInMsgs dataNodeUsageMsgPayload
+      Vector of data node usage input messages. Subscribed to using ``addDataNodeToModel(msg)``
+
+   output storageUnitDataOutMsg DataStorageStatusMsgPayload
+      Output message. Describes storage unit capacity, storage level, net data rate, and contents.
 
 
 User Guide

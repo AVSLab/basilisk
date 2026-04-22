@@ -18,20 +18,12 @@ The following table lists all the module input and output messages.  The module 
 user from python.  The msg type contains a link to the message structure definition, while the description
 provides information on what this message is used for.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: extForceTorque
+    :caption: Module I/O Messages
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - cmdTorqueInMsg
-      - :ref:`CmdTorqueBodyMsgPayload`
-      - commanded torque input msg
-    * - cmdForceBodyInMsg
-      - :ref:`CmdForceBodyMsgPayload`
-      - commanded force input msg in B frame
-    * - cmdForceInertialInMsg
-      - :ref:`CmdForceInertialMsgPayload`
-      - commanded force input msg in N frame
-
+    input cmdTorqueInMsg CmdTorqueBodyMsgPayload
+        commanded torque input msg.
+    input cmdForceBodyInMsg CmdForceBodyMsgPayload
+        commanded force input msg in B frame.
+    input cmdForceInertialInMsg CmdForceInertialMsgPayload
+        commanded force input msg in N frame.

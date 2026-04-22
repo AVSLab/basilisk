@@ -53,34 +53,23 @@ The module msg connection is set by the user from python.
 The msg type contains a link to the message structure definition, while the description
 provides information on what the message is used for.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: prescribedRotation1DOF
+    :caption: Module I/O Messages
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - spinningBodyInMsg
-      - :ref:`HingedRigidBodyMsgPayload`
-      - input msg with the spinning body reference states
-    * - spinningBodyOutMsg
-      - :ref:`HingedRigidBodyMsgPayload`
-      - output message with the scalar spinning body states
-    * - spinningBodyOutMsgC
-      - :ref:`HingedRigidBodyMsgPayload`
-      - C-wrapoped output message with the scalar spinning body states
-    * - prescribedRotationOutMsg
-      - :ref:`PrescribedRotationMsgPayload`
-      - output message with the prescribed spinning body rotational states
-    * - prescribedRotationOutMsgC
-      - :ref:`PrescribedRotationMsgPayload`
-      - C-wrapped output message with the prescribed spinning body rotational states
-    * - prescribedTranslationalOutMsg
-      - :ref:`PrescribedRotationMsgPayload`
-      - (optional) output message with the prescribed translational states if helical screw motion is configured
-    * - prescribedRotationOutMsgC
-      - :ref:`PrescribedRotationMsgPayload`
-      - (optional) C-wrapped output message with the prescribed translational states if helical screw motion is configured
+    input spinningBodyInMsg HingedRigidBodyMsgPayload
+        Input message with the spinning body reference states.
+    output spinningBodyOutMsg HingedRigidBodyMsgPayload
+        Output message with the scalar spinning body states.
+    output spinningBodyOutMsgC HingedRigidBodyMsgPayload
+        C-wrapped output message with the scalar spinning body states.
+    output prescribedRotationOutMsg PrescribedRotationMsgPayload
+        Output message with the prescribed spinning body rotational states.
+    output prescribedRotationOutMsgC PrescribedRotationMsgPayload
+        C-wrapped output message with the prescribed spinning body rotational states.
+    output prescribedTranslationOutMsg PrescribedTranslationMsgPayload
+        Optional output message with the prescribed translational states if helical screw motion is configured.
+    output prescribedTranslationOutMsgC PrescribedTranslationMsgPayload
+        Optional C-wrapped output message with the prescribed translational states if helical screw motion is configured.
 
 Detailed Module Description
 ---------------------------

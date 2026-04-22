@@ -52,29 +52,14 @@ Message Connection Descriptions
 --------------------------------
 The following table lists all the module input and output messages.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: windBase
+    :caption: Module I/O Messages
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - scStateInMsgs
-      - :ref:`SCStatesMsgPayload`
-      - Spacecraft state input messages (vector). Use ``addSpacecraftToModel()``
-        to add spacecraft and automatically create corresponding output messages.
-    * - envOutMsgs
-      - :ref:`WindMsgPayload`
-      - Atmospheric wind velocity output messages (vector). Automatically created when
-        spacecraft are added via ``addSpacecraftToModel()``. Each message contains:
-        ``v_air_N`` (full air velocity in inertial frame) and ``v_wind_N``
-        (wind perturbation velocity), both expressed in inertial frame N
-    * - planetPosInMsg
-      - :ref:`SpicePlanetStateMsgPayload`
-      - Planet SPICE state input message. Provides ``PositionVector`` used to compute ``r_BP_N``.
-        Must be connected before ``InitializeSimulation()``.
-    * - epochInMsg
-      - :ref:`EpochMsgPayload`
-      - (Optional) Epoch date/time message. When connected, overrides the default
-        Basilisk epoch stored in ``epochDateTime``. Required by empirical wind
-        models that depend on calendar date.
+    input scStateInMsgs SCStatesMsgPayload
+        Spacecraft state input messages (vector). Use ``addSpacecraftToModel()`` to add spacecraft and automatically create corresponding output messages.
+    output envOutMsgs WindMsgPayload
+        Atmospheric wind velocity output messages (vector). Automatically created when spacecraft are added via ``addSpacecraftToModel()``. Each message contains: ``v_air_N`` (full air velocity in inertial frame) and ``v_wind_N`` (wind perturbation velocity), both expressed in inertial frame N.
+    input planetPosInMsg SpicePlanetStateMsgPayload
+        Planet SPICE state input message. Provides ``PositionVector`` used to compute ``r_BP_N``. Must be connected before ``InitializeSimulation()``.
+    input epochInMsg EpochMsgPayload
+        (Optional) Epoch date/time message. When connected, overrides the default Basilisk epoch stored in ``epochDateTime``. Required by empirical wind models that depend on calendar date.

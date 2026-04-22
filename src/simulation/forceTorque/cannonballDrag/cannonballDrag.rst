@@ -20,44 +20,31 @@ Both force and torque are expressed in the site-fixed reference frame.
 
 Message Interfaces
 ------------------
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: cannonballDrag
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - dragGeometryInMsg
-      - :ref:`DragGeometryMsgPayload`
-      - Input message providing the aerodynamic geometry parameters: ``dragCoeff`` (:math:`C_D`),
-        ``projectedArea`` (:math:`A`), and ``r_CP_S`` (center-of-pressure vector relative to the site frame origin,
-        expressed in the site frame).
-    * - atmoDensInMsg
-      - :ref:`AtmoPropsMsgPayload`
-      - Input message providing local atmospheric properties at the site location, including ``neutralDensity``
-        (:math:`\rho`).
-    * - referenceFrameStateInMsg
-      - :ref:`SCStatesMsgPayload`
-      - Input message providing the inertial state of the site reference frame, including ``sigma_BN`` (MRPs for
-        site frame attitude relative to inertial) and ``v_BN_N`` (inertial velocity of the site frame origin).
-    * - windVelInMsg
-      - :ref:`WindMsgPayload`
-      - (optional) wind velocity input message; when linked, ``v_air_N`` is subtracted from the site frame
-        inertial velocity before computing the drag force, yielding the atmosphere-relative velocity.
-    * - forceOutMsg
-      - :ref:`ForceAtSiteMsgPayload`
-      - Output message containing aerodynamic drag force expressed in the site reference frame.
-    * - forceOutMsgC
-      - :ref:`ForceAtSiteMsgPayload`
-      - Output message containing aerodynamic drag force expressed in the site reference frame (C-wrapped output).
-    * - torqueOutMsg
-      - :ref:`TorqueAtSiteMsgPayload`
-      - Output message containing aerodynamic torque about the site frame origin, expressed in the site reference
-        frame.
-    * - torqueOutMsgC
-      - :ref:`TorqueAtSiteMsgPayload`
-      - Output message containing aerodynamic torque about the site frame origin, expressed in the site reference
-        frame (C-wrapped output).
+   input dragGeometryInMsg DragGeometryMsgPayload
+      Input message providing the aerodynamic geometry parameters: ``dragCoeff`` (:math:`C_D`), ``projectedArea`` (:math:`A`), and ``r_CP_S`` (center-of-pressure vector relative to the site frame origin, expressed in the site frame).
+
+   input atmoDensInMsg AtmoPropsMsgPayload
+      Input message providing local atmospheric properties at the site location, including ``neutralDensity`` (:math:`\rho`).
+
+   input referenceFrameStateInMsg SCStatesMsgPayload
+      Input message providing the inertial state of the site reference frame, including ``sigma_BN`` (MRPs for site frame attitude relative to inertial) and ``v_BN_N`` (inertial velocity of the site frame origin).
+
+   input windVelInMsg WindMsgPayload
+      (optional) wind velocity input message; when linked, ``v_air_N`` is subtracted from the site frame inertial velocity before computing the drag force, yielding the atmosphere-relative velocity.
+
+   output forceOutMsg ForceAtSiteMsgPayload
+      Output message containing aerodynamic drag force expressed in the site reference frame.
+
+   output forceOutMsgC ForceAtSiteMsgPayload
+      Output message containing aerodynamic drag force expressed in the site reference frame (C-wrapped output).
+
+   output torqueOutMsg TorqueAtSiteMsgPayload
+      Output message containing aerodynamic torque about the site frame origin, expressed in the site reference frame.
+
+   output torqueOutMsgC TorqueAtSiteMsgPayload
+      Output message containing aerodynamic torque about the site frame origin, expressed in the site reference frame (C-wrapped output).
 
 Detailed Behavior
 -----------------

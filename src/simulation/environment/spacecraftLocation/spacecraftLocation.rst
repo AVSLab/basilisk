@@ -20,31 +20,21 @@ The following table lists all the module input and output messages.  The module 
 user from python.  The msg type contains a link to the message structure definition, while the description
 provides information on what this message is used for.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: spacecraftLocation
+    :caption: Module I/O Messages
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - planetInMsg
-      - :ref:`SpicePlanetStateMsgPayload`
-      - (optional) planet state input message. Default is a zero state for the planet.
-    * - primaryScStateInMsg
-      - :ref:`SCStatesMsgPayload`
-      - primary spacecraft state message relative to which to evaluate access to other spacecraft in ``scStateInMsgs``
-    * - scStateInMsgs
-      - :ref:`SCStatesMsgPayload`
-      - vector of other spacecraft state input messages.  These are set through ``addSpacecraftToModel()``
-    * - sunInMsg
-      - :ref:`SpicePlanetStateMsgPayload`
-      - (optional) sun state input message. Used for illumination checking if the message is connected and ``theta_solar`` is set.
-    * - eclipseInMsg
-      - :ref:`EclipseMsgPayload`
-      - (optional) eclipse input message. Used for illumination checking if the message is connected and ``min_illumination_factor`` is set.
-    * - accessOutMsgs
-      - :ref:`AccessMsgPayload`
-      - output vector of ground location access messages
+    input planetInMsg SpicePlanetStateMsgPayload
+        (optional) planet state input message. Default is a zero state for the planet.
+    input primaryScStateInMsg SCStatesMsgPayload
+        primary spacecraft state message relative to which to evaluate access to other spacecraft in ``scStateInMsgs``.
+    input scStateInMsgs SCStatesMsgPayload
+        vector of other spacecraft state input messages.  These are set through ``addSpacecraftToModel()``.
+    input sunInMsg SpicePlanetStateMsgPayload
+        (optional) sun state input message. Used for illumination checking if the message is connected and ``theta_solar`` is set.
+    input eclipseInMsg EclipseMsgPayload
+        (optional) eclipse input message. Used for illumination checking if the message is connected and ``min_illumination_factor`` is set.
+    output accessOutMsgs AccessMsgPayload
+        output vector of ground location access messages.
 
 
 Detailed Module Description

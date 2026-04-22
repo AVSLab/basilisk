@@ -36,31 +36,21 @@ The module msg connections are set by the user from Python.
 The msg type contains a link to the message structure definition, while the description
 provides information on what each message is used for.
 
-.. list-table:: Module I/O Messages
-    :widths: 30 25 45
-    :header-rows: 1
+.. bsk-module-io:: facetedSpacecraftProjectedArea
+    :caption: Module I/O Messages
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - bodyHeadingInMsg
-      - :ref:`BodyHeadingMsgPayload`
-      - (Optional) Input message for the direct body heading vector
-    * - spacecraftStateInMsg
-      - :ref:`SCStatesMsgPayload`
-      - (Optional) Input message for the spacecraft inertial state. Used to compute either the velocity-based heading or the sun-direction heading
-    * - sunStateInMsg
-      - :ref:`SpicePlanetStateMsgPayload`
-      - (Optional) Input message for the Sun inertial state used with ``spacecraftStateInMsg`` to compute a sun-direction heading
-    * - facetElementBodyInMsgs
-      - :ref:`FacetElementBodyMsgPayload`
-      - (Required) Input msg vector containing all facet geometry expressed in the spacecraft hub body frame
-    * - facetProjectedAreaOutMsgs
-      - :ref:`ProjectedAreaMsgPayload`
-      - Output msg vector containing the projected area for each facet
-    * - totalProjectedAreaOutMsg
-      - :ref:`ProjectedAreaMsgPayload`
-      - Output msg containing the total projected area summed over all facets
+    input bodyHeadingInMsg BodyHeadingMsgPayload
+        Optional input message for the direct body heading vector.
+    input spacecraftStateInMsg SCStatesMsgPayload
+        Optional input message for the spacecraft inertial state. Used to compute either the velocity-based heading or the sun-direction heading.
+    input sunStateInMsg SpicePlanetStateMsgPayload
+        Optional input message for the Sun inertial state used with ``spacecraftStateInMsg`` to compute a sun-direction heading.
+    input facetElementBodyInMsgs FacetElementBodyMsgPayload
+        Required input message vector containing all facet geometry expressed in the spacecraft hub body frame.
+    output facetProjectedAreaOutMsgs ProjectedAreaMsgPayload
+        Output message vector containing the projected area for each facet.
+    output totalProjectedAreaOutMsg ProjectedAreaMsgPayload
+        Output message containing the total projected area summed over all facets.
 
 
 Module Functions

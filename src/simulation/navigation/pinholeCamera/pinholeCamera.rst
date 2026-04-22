@@ -4,7 +4,7 @@ Executive Summary
 This module simulates a camera pinhole model that computes landmark pixels as seen by a spacecraft.
 It reads the planet's ephemeris and spacecraft state messages as inputs. It outputs a vector of landmark messages.
 
-The module can also account for Sun's lighting constraint by setting a mask angle. 
+The module can also account for Sun's lighting constraint by setting a mask angle.
 
 
 
@@ -18,23 +18,16 @@ Message Connection Descriptions
 -------------------------------
 The following table lists all the module input and output messages.  The module msg variable name is set by the user from python.  The msg type contains a link to the message structure definition, while the description provides information on what this message is used for.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: pinholeCamera
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - ephemerisInMsg
-      - :ref:`EphemerisMsgPayload`
-      - planet ephemeris input message.
-    * - scStateInMsg
-      - :ref:`SCStatesMsgPayload`
-      - vector of sc state input messages.
-    * - landmarkOutMsgs
-      - :ref:`LandmarkMsgPayload`
-      - vector of landmark messages.
+   input ephemerisInMsg EphemerisMsgPayload
+      planet ephemeris input message.
 
+   input scStateInMsg SCStatesMsgPayload
+      vector of sc state input messages.
+
+   output landmarkOutMsgs LandmarkMsgPayload
+      vector of landmark messages.
 
 Detailed Module Description
 ---------------------------

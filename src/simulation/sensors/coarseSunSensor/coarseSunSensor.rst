@@ -59,52 +59,29 @@ The following table lists all the module input and output messages.  The module 
 user from python.  The msg type contains a link to the message structure definition, while the description
 provides information on what this message is used for.
 
-.. _ModuleIO_CSS:
-.. figure:: /../../src/simulation/sensors/coarseSunSensor/_Documentation/Images/moduleDiagramCSS.svg
-    :align: center
+.. bsk-module-io:: coarseSunSensor
+    :caption: ``CoarseSunSensor`` Module I/O Messages
 
-    Figure 1: ``CoarseSunSensor()`` Module I/O Illustration
+    input sunInMsg SpicePlanetStateMsgPayload
+       input message for sun data
 
-.. list-table:: ``CoarseSunSensor`` Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+    input stateInMsg SCStatesMsgPayload
+       input message for spacecraft state
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - sunInMsg
-      - :ref:`SpicePlanetStateMsgPayload`
-      - input message for sun data
-    * - stateInMsg
-      - :ref:`SCStatesMsgPayload`
-      - input message for spacecraft state
-    * - cssDataOutMsg
-      - :ref:`CSSRawDataMsgPayload`
-      - output message for CSS output data
-    * - cssConfigLogOutMsg
-      - :ref:`CSSConfigLogMsgPayload`
-      - output message for CSS configuration log data
-    * - sunEclipseInMsg
-      - :ref:`EclipseMsgPayload`
-      - (optional) input message for sun eclipse state message
-    * - albedoInMsg
-      - :ref:`AlbedoMsgPayload`
-      - (optional) input message for albedo message
+    output cssDataOutMsg CSSRawDataMsgPayload
+       output message for CSS output data
 
-.. _ModuleIO_CSS_Constellation:
-.. figure:: /../../src/simulation/sensors/coarseSunSensor/_Documentation/Images/moduleDiagramConstellation.svg
-    :align: center
+    output cssConfigLogOutMsg CSSConfigLogMsgPayload
+       output message for CSS configuration log data
 
-    Figure 2: ``CSSConstellation()`` Module I/O Illustration
+    input sunEclipseInMsg EclipseMsgPayload
+       (optional) input message for sun eclipse state message
 
+    input albedoInMsg AlbedoMsgPayload
+       (optional) input message for albedo message
 
-.. list-table:: ``CSSConstellation`` Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: CSSConstellation
+    :caption: ``CSSConstellation`` Module I/O Messages
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - constellationOutMsg
-      - :ref:`CSSArraySensorMsgPayload`
-      - CSS constellation output message
+    output constellationOutMsg CSSArraySensorMsgPayload
+       CSS constellation output message

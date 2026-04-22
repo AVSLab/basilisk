@@ -11,22 +11,10 @@ This module is a sub-class of :ref:`PowerNodeBase`. As such it:
 Message Connection Descriptions
 -------------------------------
 
-.. _ModuleIO_ANTENNA_POWER:
-.. figure:: /../../src/simulation/power/antennaPower/_Documentation/Images/PowerAnt.svg
-    :align: center
+.. bsk-module-io:: antennaPower
 
-    Figure 1: ``antennaPower()`` Module I/O Illustration
-
-
-.. table:: Module I/O Messages
-    :widths: 25 25 100
-
-    +-----------------------+-----------------------------------+-----------------------------------------------+
-    | Msg Variable Name     | Msg Type                          | Description                                   |
-    +=======================+===================================+===============================================+
-    | antennaSetStateInMsg  | :ref:`AntennaLogMsgPayload`       | Antenna state input message providing current |
-    |                       |                                   | antenna state and power values.               |
-    +-----------------------+-----------------------------------+-----------------------------------------------+
+   input antennaSetStateInMsg AntennaLogMsgPayload
+      Antenna state input message providing current antenna state and power values.
 
 
 Detailed Module Description

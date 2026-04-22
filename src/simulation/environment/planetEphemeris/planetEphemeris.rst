@@ -14,21 +14,9 @@ The following table lists all the module input and output messages.  The module 
 user from python.  The msg type contains a link to the message structure definition, while the description
 provides information on what this message is used for.
 
-.. _ModuleIO_Planet_Ephemeris:
-.. figure:: /../../src/simulation/environment/planetEphemeris/_Documentation/Images/planetEphemerisIO.svg
-    :align: center
 
-    Figure 1: ``planetEphemeris()`` Module I/O Illustration
+.. bsk-module-io:: planetEphemeris
+    :caption: Module I/O Messages
 
-
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
-
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - planetOutMsgs
-      - :ref:`SpicePlanetStateMsgPayload`
-      - vector of planet spice state output messages
-
+    output planetOutMsgs SpicePlanetStateMsgPayload
+        vector of planet spice state output messages.

@@ -16,20 +16,13 @@ The module msg connection is set by the user from Python.
 The msg type contains a link to the message structure definition, while the description
 provides information on what this message is used for.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: thrOnTimeToForce
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - onTimeInMsg
-      - :ref:`THRArrayOnTimeCmdMsgPayload`
-      - input on-time command array
-    * - thrusterForceOutMsgs
-      - :ref:`SingleActuatorMsgPayload`
-      - vector of thruster force output messages
+   input onTimeInMsg THRArrayOnTimeCmdMsgPayload
+      input on-time command array
 
+   output thrusterForceOutMsgs SingleActuatorMsgPayload
+      vector of thruster force output messages
 
 User Guide
 ----------

@@ -15,31 +15,10 @@ The following table lists all the module input and output messages.  The module 
 user from python.  The msg type contains a link to the message structure definition, while the description
 provides information on what this message is used for.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: radiationPressure
+    :caption: Module I/O Messages
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - sunEphmInMsg
-      - :ref:`SpicePlanetStateMsgPayload`
-      - sun state input message
-    * - sunEclipseInMsg
-      - :ref:`EclipseMsgPayload`
-      - (optional) sun eclipse input message
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    input sunEphmInMsg SpicePlanetStateMsgPayload
+        sun state input message.
+    input sunEclipseInMsg EclipseMsgPayload
+        (optional) sun eclipse input message.

@@ -19,16 +19,11 @@ The following table lists all the module specific input and output messages.  Th
 user from python.  The msg type contains a link to the message structure definition, while the description
 provides information on what this message is used for.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: msisAtmosphere
+    :caption: Module I/O Messages
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - swDataInMsgs
-      - :ref:`SwDataMsgPayload`
-      - vector of 23 space weather data input messages
+    input swDataInMsgs SwDataMsgPayload
+        vector of 23 space weather data input messages.
 
 Regarding the vector ``swDataInMsgs``, the order of these 23 messages must follow this message order::
 
@@ -55,5 +50,3 @@ Regarding the vector ``swDataInMsgs``, the order of these 23 messages must follo
          20 - ap_3_-57
          21 - f107_1944_0
          22 - f107_24_-24
-
-

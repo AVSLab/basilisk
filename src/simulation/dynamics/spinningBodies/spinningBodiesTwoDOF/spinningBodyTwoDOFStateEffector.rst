@@ -11,28 +11,19 @@ Message Connection Descriptions
 -------------------------------
 The following table lists all the module input and output messages.  The module msg variable name is set by the user from python.  The msg type contains a link to the message structure definition, while the description provides information on what this message is used for.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: spinningBodyTwoDOFStateEffector
+    :caption: Module I/O Messages
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - spinningBodyOutMsgs
-      - :ref:`HingedRigidBodyMsgPayload`
-      - Output vector of messages containing the spinning body state angle and angle rate
-    * - motorTorqueInMsg
-      - :ref:`ArrayMotorTorqueMsgPayload`
-      - (Optional) Input message of the motor torque value
-    * - motorLockInMsg
-      - :ref:`ArrayEffectorLockMsgPayload`
-      - (Optional) Input message for locking the axis
-    * - spinningBodyRefInMsgs
-      - :ref:`HingedRigidBodyMsgPayload`
-      - (Optional) Input array of messages for prescribing the angles and angle rates
-    * - spinningBodyConfigLogOutMsgs
-      - :ref:`SCStatesMsgPayload`
-      - Output vector of messages containing the spinning body inertial position and attitude states
+    output spinningBodyOutMsgs HingedRigidBodyMsgPayload
+        Output vector of messages containing the spinning body state angle and angle rate.
+    input motorTorqueInMsg ArrayMotorTorqueMsgPayload
+        (Optional) Input message of the motor torque value.
+    input motorLockInMsg ArrayEffectorLockMsgPayload
+        (Optional) Input message for locking the axis.
+    input spinningBodyRefInMsgs HingedRigidBodyMsgPayload
+        (Optional) Input array of messages for prescribing the angles and angle rates.
+    output spinningBodyConfigLogOutMsgs SCStatesMsgPayload
+        Output vector of messages containing the spinning body inertial position and attitude states.
 
 
 Detailed Module Description

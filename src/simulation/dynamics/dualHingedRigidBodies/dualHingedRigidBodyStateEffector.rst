@@ -11,28 +11,15 @@ The following table lists all the module input and output messages.  The module 
 user from python.  The msg type contains a link to the message structure definition, while the description
 provides information on what this message is used for.
 
-.. _ModuleIO_DualHingedRigidBodyStateEffector:
-.. figure:: /../../src/simulation/dynamics/dualHingedRigidBodies/_Documentation/Images/moduleIODualHingedRigidBodyStateEffector.svg
-    :align: center
+.. bsk-module-io:: dualHingedRigidBodyStateEffector
+    :caption: Module I/O Messages
 
-    Figure 1: ``DualHingedRigidBodyStateEffector()`` Module I/O Illustration
-
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
-
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - motorTorqueInMsg
-      - :ref:`ArrayMotorTorqueMsgPayload`
-      - (Optional) Input message of the two hinge motor torque values
-    * - dualHingedRigidBodyOutMsgs
-      - :ref:`HingedRigidBodyMsgPayload`
-      - vector of output message containing the panel 1 and 2 hinge state angle and angle rate
-    * - dualHingedRigidBodyConfigLogOutMsgs
-      - :ref:`SCStatesMsgPayload`
-      - vector of output messages containing the panel 1 and 2 inertial position and attitude states
+    input motorTorqueInMsg ArrayMotorTorqueMsgPayload
+        (Optional) Input message of the two hinge motor torque values.
+    output dualHingedRigidBodyOutMsgs HingedRigidBodyMsgPayload
+        vector of output message containing the panel 1 and 2 hinge state angle and angle rate.
+    output dualHingedRigidBodyConfigLogOutMsgs SCStatesMsgPayload
+        vector of output messages containing the panel 1 and 2 inertial position and attitude states.
 
 
 Detailed Module Description
@@ -88,5 +75,3 @@ This section is to outline the steps needed to setup a Hinged Rigid Body State E
 #. Add the module to the task list::
 
     unitTestSim.AddModelToTask(unitTaskName, panel1)
-
-

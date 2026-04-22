@@ -16,42 +16,23 @@ The module msg connection is set by the user from python.
 The msg type contains a link to the message structure definition, while the description
 provides information on what this message is used for.
 
-.. list-table:: Module I/O Messages
-    :widths: 15 20 30 40
-    :header-rows: 1
+.. bsk-module-io:: simpleAntenna
+    :caption: Module I/O Messages
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-      - Note
-    * - scStateInMsg
-      - :ref:`SCStatesMsgPayload`
-      - spacecraft state
-      - Required for space-based antennas
-    * - groundStateInMsg
-      - :ref:`GroundStateMsgPayload`
-      - ground state
-      - Required for ground-based antennas
-    * - antennaSetStateInMsg
-      - :ref:`AntennaStateMsgPayload`
-      - setting antenna to [off / Rx / Tx / RxTx]
-      - optional, default is 'Off'
-    * - sunInMsg
-      - :ref:`SpicePlanetStateMsgPayload`
-      - sun ephemeris data input message
-      - Optional, required for advanced sky noise temperature calculation (see :ref:`detailed-module-description`) (irrelevant for ground-based antennas)
-    * - planetInMsgs
-      - :ref:`SpicePlanetStateMsgPayload`
-      - vector of planet ephemeris data input messages
-      - Optional, required for advanced sky noise temperature calculation (see :ref:`detailed-module-description`) (irrelevant for ground-based antennas)
-    * - sunEclipseInMsg
-      - :ref:`EclipseMsgPayload`
-      - sun eclipse state input message
-      - Optional, required for advanced sky noise temperature calculation (see :ref:`detailed-module-description`) (irrelevant for ground-based antennas)
-    * - antennaOutMsg
-      - :ref:`AntennaLogMsgPayload`
-      - output msg description
-      - Output message containing antenna state information
+    input scStateInMsg SCStatesMsgPayload
+        Spacecraft state. Required for space-based antennas.
+    input groundStateInMsg GroundStateMsgPayload
+        Ground state. Required for ground-based antennas.
+    input antennaSetStateInMsg AntennaStateMsgPayload
+        Setting antenna to [off / Rx / Tx / RxTx]. Optional, default is 'Off'.
+    input sunInMsg SpicePlanetStateMsgPayload
+        Sun ephemeris data input message. Optional, required for advanced sky noise temperature calculation (see :ref:`detailed-module-description`), and irrelevant for ground-based antennas.
+    input planetInMsgs SpicePlanetStateMsgPayload
+        Vector of planet ephemeris data input messages. Optional, required for advanced sky noise temperature calculation (see :ref:`detailed-module-description`), and irrelevant for ground-based antennas.
+    input sunEclipseInMsg EclipseMsgPayload
+        Sun eclipse state input message. Optional, required for advanced sky noise temperature calculation (see :ref:`detailed-module-description`), and irrelevant for ground-based antennas.
+    output antennaOutMsg AntennaLogMsgPayload
+        Output message containing antenna state information.
 
 .. _detailed-module-description:
 

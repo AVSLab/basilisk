@@ -15,19 +15,13 @@ Message Connection Descriptions
 This module uses the input and output messages of the :ref:`DataNodeBase` base class, plus an
 additional :ref:`DataStorageStatusMsgPayload` input message subscribed to and read `customRead()` method.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: spaceToGroundTransmitter
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - storageUnitInMsgs
-      - :ref:`DataStorageStatusMsgPayload`
-      - Vector of storage units that are connected to the transmitter. Add storage unit with the ``addStorageUnitToTransmitter`` method.
-    * - groundAccessInMsgs
-      - :ref:`AccessMsgPayload`
-      - Vector of access messages available to the transmitter. Add input messages with the ``addAccessMsgToTransmitter`` method.
+   input storageUnitInMsgs DataStorageStatusMsgPayload
+      Vector of storage units that are connected to the transmitter. Add storage unit with the ``addStorageUnitToTransmitter`` method.
+
+   input groundAccessInMsgs AccessMsgPayload
+      Vector of access messages available to the transmitter. Add input messages with the ``addAccessMsgToTransmitter`` method.
 
 
 User Guide

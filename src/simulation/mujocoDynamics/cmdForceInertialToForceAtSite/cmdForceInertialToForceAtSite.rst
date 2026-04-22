@@ -21,26 +21,19 @@ The output vector :math:`\mathbf{F}_S` is written to ``forceOutMsg.force_S``.
 
 Message Interfaces
 ------------------
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: cmdForceInertialToForceAtSite
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - cmdForceInertialInMsg
-      - :ref:`CmdForceInertialMsgPayload`
-      - Input commanded force vector in inertial frame, read from ``forceRequestInertial``.
-    * - siteAttInMsg
-      - :ref:`NavAttMsgPayload`
-      - Optional/primary input attitude source. If linked, ``sigma_BN`` from this message is used to build the
-        inertial-to-site rotation.
-    * - siteFrameStateInMsg
-      - :ref:`SCStatesMsgPayload`
-      - Optional/fallback input attitude source. Used only when ``siteAttInMsg`` is not linked.
-    * - forceOutMsg
-      - :ref:`ForceAtSiteMsgPayload`
-      - Output site-frame force vector, written to ``force_S``.
+   input cmdForceInertialInMsg CmdForceInertialMsgPayload
+      Input commanded force vector in inertial frame, read from ``forceRequestInertial``.
+
+   input siteAttInMsg NavAttMsgPayload
+      Optional/primary input attitude source. If linked, ``sigma_BN`` from this message is used to build the inertial-to-site rotation.
+
+   input siteFrameStateInMsg SCStatesMsgPayload
+      Optional/fallback input attitude source. Used only when ``siteAttInMsg`` is not linked.
+
+   output forceOutMsg ForceAtSiteMsgPayload
+      Output site-frame force vector, written to ``force_S``.
 
 Detailed Behavior
 -----------------

@@ -41,22 +41,15 @@ The module msg connection is set by the user from python.
 The msg type contains a link to the message structure definition, while the description
 provides information on what this message is used for.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: prescribedLinearTranslation
+    :caption: Module I/O Messages
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - linearTranslationRigidBodyInMsg
-      - :ref:`LinearTranslationRigidBodyMsgPayload`
-      - input msg with the prescribed body reference translational states
-    * - prescribedTranslationOutMsg
-      - :ref:`PrescribedTranslationMsgPayload`
-      - output message with the prescribed body translational states
-    * - prescribedTranslationOutMsgC
-      - :ref:`PrescribedTranslationMsgPayload`
-      - C-wrapped output message with the prescribed body translational states
+    input linearTranslationRigidBodyInMsg LinearTranslationRigidBodyMsgPayload
+        Input message with the prescribed body reference translational states.
+    output prescribedTranslationOutMsg PrescribedTranslationMsgPayload
+        Output message with the prescribed body translational states.
+    output prescribedTranslationOutMsgC PrescribedTranslationMsgPayload
+        C-wrapped output message with the prescribed body translational states.
 
 Detailed Module Description
 ---------------------------

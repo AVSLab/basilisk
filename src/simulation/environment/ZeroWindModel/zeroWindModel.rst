@@ -75,19 +75,12 @@ The following table lists all the module specific input and output messages.  Th
 user from python.  The msg type contains a link to the message structure definition, while the description
 provides information on what this message is used for.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: zeroWindModel
+    :caption: Module I/O Messages
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - planetPosInMsg
-      - :ref:`SpicePlanetStateMsgPayload`
-      - Planet SPICE state input message used to compute spacecraft position relative to planet and derive planet angular velocity
-    * - scStateInMsgs
-      - Array of :ref:`SCStatesMsgPayload`
-      - Spacecraft state input messages (vector). Use ``addSpacecraftToModel()`` to add spacecraft.
-    * - envOutMsgs
-      - Array of :ref:`WindMsgPayload`
-      - Wind velocity output messages (vector). Automatically created when spacecraft are added.
+    input planetPosInMsg SpicePlanetStateMsgPayload
+        Planet SPICE state input message used to compute spacecraft position relative to planet and derive planet angular velocity.
+    input scStateInMsgs SCStatesMsgPayload
+        Spacecraft state input messages (vector). Use ``addSpacecraftToModel()`` to add spacecraft.
+    output envOutMsgs WindMsgPayload
+        Wind velocity output messages (vector). Automatically created when spacecraft are added.

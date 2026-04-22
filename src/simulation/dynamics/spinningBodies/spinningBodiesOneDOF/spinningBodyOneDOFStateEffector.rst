@@ -9,28 +9,19 @@ Message Connection Descriptions
 -------------------------------
 The following table lists all the module input and output messages.  The module msg variable name is set by the user from python.  The msg type contains a link to the message structure definition, while the description provides information on what this message is used for.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: spinningBodyOneDOFStateEffector
+    :caption: Module I/O Messages
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - spinningBodyOutMsg
-      - :ref:`HingedRigidBodyMsgPayload`
-      - Output message containing the spinning body state angle and angle rate
-    * - motorTorqueInMsg
-      - :ref:`ArrayMotorTorqueMsgPayload`
-      - (Optional) Input message of the motor torque value
-    * - motorLockInMsg
-      - :ref:`ArrayEffectorLockMsgPayload`
-      - (Optional) Input message for locking the axis
-    * - spinningBodyRefInMsg
-      - :ref:`HingedRigidBodyMsgPayload`
-      - (Optional) Input message for prescribing the angle and angle rate
-    * - spinningBodyConfigLogOutMsg
-      - :ref:`SCStatesMsgPayload`
-      - Output message containing the spinning body inertial position and attitude states
+    output spinningBodyOutMsg HingedRigidBodyMsgPayload
+        Output message containing the spinning body state angle and angle rate.
+    input motorTorqueInMsg ArrayMotorTorqueMsgPayload
+        (Optional) Input message of the motor torque value.
+    input motorLockInMsg ArrayEffectorLockMsgPayload
+        (Optional) Input message for locking the axis.
+    input spinningBodyRefInMsg HingedRigidBodyMsgPayload
+        (Optional) Input message for prescribing the angle and angle rate.
+    output spinningBodyConfigLogOutMsg SCStatesMsgPayload
+        Output message containing the spinning body inertial position and attitude states.
 
 
 Detailed Module Description
@@ -120,4 +111,3 @@ This section is to outline the steps needed to setup a Spinning Body State Effec
 #. Add the module to the task list::
 
     unitTestSim.AddModelToTask(unitTaskName, spinningBody)
-

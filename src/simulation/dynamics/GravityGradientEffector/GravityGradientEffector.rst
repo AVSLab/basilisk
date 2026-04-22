@@ -10,16 +10,11 @@ The following table lists all the module input and output messages.  The module 
 user from python.  The msg type contains a link to the message structure definition, while the description
 provides information on what this message is used for.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: GravityGradientEffector
+    :caption: Module I/O Messages
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - gravityGradientOutMsg
-      - :ref:`GravityGradientMsgPayload`
-      - gravity gradient output message
+    output gravityGradientOutMsg GravityGradientMsgPayload
+        gravity gradient output message
 
 
 
@@ -97,4 +92,3 @@ Module Output Message Name
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 The effector write an output message with the current gravity gradient torque information at each ``update`` cycle.
 The output message is ``gravityGradientOutMsg``.
-

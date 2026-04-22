@@ -14,32 +14,18 @@ The module msg connection is set by the user from python.
 The msg type contains a link to the message structure definition, while the description
 provides information on what this message is used for.
 
-.. _ModuleIO_Denton_Flux_Model:
-.. figure:: /../../src/simulation/environment/dentonFluxModel/_Documentation/Images/moduleDentonFluxModel.svg
-    :align: center
 
-    Figure 1: ``dentonFluxModel()`` Module I/O Illustration
+.. bsk-module-io:: dentonFluxModel
+    :caption: Module I/O Messages
 
-
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
-
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - ``scStateInMsg``
-      - :ref:`SCStatesMsgPayload`
-      - spacecraft state input message
-    * - ``earthStateInMsg``
-      - :ref:`SpicePlanetStateMsgPayload`
-      - Earth planet state input message
-    * - ``sunStateInMsg``
-      - :ref:`SpicePlanetStateMsgPayload`
-      - Sun state input message
-    * - ``fluxOutMsg``
-      - :ref:`PlasmaFluxMsgPayload`
-      - output ion and electron fluxes
+    input scStateInMsg SCStatesMsgPayload
+        spacecraft state input message.
+    input earthStateInMsg SpicePlanetStateMsgPayload
+        Earth planet state input message.
+    input sunStateInMsg SpicePlanetStateMsgPayload
+        Sun state input message.
+    output fluxOutMsg PlasmaFluxMsgPayload
+        output ion and electron fluxes.
 
 Module Assumptions and Limitations
 ----------------------------------

@@ -20,22 +20,10 @@ The module message variable name is set by the
 user from python.  The message type contains a link to the message structure definition, while the description
 provides information on what this message is used for.
 
-.. _ModuleIO_RW_POWER:
-.. figure:: /../../src/simulation/power/ReactionWheelPower/_Documentation/Images/PowerRW.svg
-    :align: center
+.. bsk-module-io:: ReactionWheelPower
 
-    Figure 1: ``ReactionWheelPower()`` Module I/O Illustration
-
-
-.. table:: Module I/O Messages
-    :widths: 25 25 100
-
-    +-----------------------+-----------------------------------+---------------------------------------------------+
-    | Msg Variable Name     | Msg Type                          | Description                                       |
-    +=======================+===================================+===================================================+
-    | rwStateInMsg          | :ref:`RWConfigLogMsgPayload`      | RW state input message to provide the reaction    |
-    |                       |                                   | wheel speed and motor torque information.         |
-    +-----------------------+-----------------------------------+---------------------------------------------------+
+   input rwStateInMsg RWConfigLogMsgPayload
+      RW state input message to provide the reaction wheel speed and motor torque information.
 
 
 Detailed Module Description

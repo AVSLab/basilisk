@@ -26,31 +26,21 @@ The following table lists all module input and output messages. The module msg v
 from Python. The msg type contains a link to the message structure definition, while the description explains how
 the message is used.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: spacecraftChargingEquilibrium
+    :caption: Module I/O Messages
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - plasmaFluxInMsg
-      - :cpp:struct:`PlasmaFluxMsgPayload`
-      - plasma environment input message containing the energy grid and particle flux distributions used to compute ambient electron/ion collection currents and yield-weighted emission currents
-    * - scStateInMsgs
-      - :cpp:struct:`SCStatesMsgPayload`
-      - vector of spacecraft state input messages; entries are appended via ``addSpacecraft()``
-    * - eBeamInMsgs
-      - :cpp:struct:`ElectronBeamMsgPayload`
-      - vector of electron beam parameter input messages (optional). If a spacecraft’s beam message is linked, its gun parameters are read from the message and used in beam-coupled charging terms
-    * - voltOutMsgs
-      - :cpp:struct:`VoltMsgPayload`
-      - output vector of equilibrium spacecraft potentials (voltage), one per spacecraft
-    * - currentsOutMsgs
-      - :cpp:struct:`ScChargingCurrentsMsgPayload`
-      - output vector of per-spacecraft current-component breakdowns used in the equilibrium evaluation (ambient, beam, and total terms)
-    * - scSunlitAreaInMsgs
-      - :cpp:struct:`ScSunlitFacetAreaMsgPayload`
-      - vector of optional sunlit facet area input messages, one per spacecraft. If linked and written, this overrides the configured per-spacecraft default or fallback sunlit area used in charging calculations.
+    input plasmaFluxInMsg PlasmaFluxMsgPayload
+        plasma environment input message containing the energy grid and particle flux distributions used to compute ambient electron/ion collection currents and yield-weighted emission currents.
+    input scStateInMsgs SCStatesMsgPayload
+        vector of spacecraft state input messages; entries are appended via ``addSpacecraft()``.
+    input eBeamInMsgs ElectronBeamMsgPayload
+        vector of electron beam parameter input messages (optional). If a spacecraft’s beam message is linked, its gun parameters are read from the message and used in beam-coupled charging terms.
+    output voltOutMsgs VoltMsgPayload
+        output vector of equilibrium spacecraft potentials (voltage), one per spacecraft.
+    output currentsOutMsgs ScChargingCurrentsMsgPayload
+        output vector of per-spacecraft current-component breakdowns used in the equilibrium evaluation (ambient, beam, and total terms).
+    input scSunlitAreaInMsgs ScSunlitFacetAreaMsgPayload
+        vector of optional sunlit facet area input messages, one per spacecraft. If linked and written, this overrides the configured per-spacecraft default or fallback sunlit area used in charging calculations.
 
 
 Detailed Module Description

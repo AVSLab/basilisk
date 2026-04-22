@@ -28,19 +28,13 @@ The following table lists all the module input and output messages.  The module 
 user from python.  The msg type contains a link to the message structure definition, while the description
 provides information on what this message is used for.
 
-.. list-table:: Module I/O Messages
-    :widths: 25 25 50
-    :header-rows: 1
+.. bsk-module-io:: thrusterDynamicEffector
+    :caption: Module I/O Messages
 
-    * - Msg Variable Name
-      - Msg Type
-      - Description
-    * - cmdsInMsg
-      - :ref:`THRArrayOnTimeCmdMsgPayload`
-      - (optional) input message with thruster commands. If not connected the thruster commands are set to zero.
-    * - thrusterOutMsgs
-      - :ref:`THROutputMsgPayload`
-      - output message vector for thruster data
+    input cmdsInMsg THRArrayOnTimeCmdMsgPayload
+        (optional) input message with thruster commands. If not connected the thruster commands are set to zero.
+    output thrusterOutMsgs THROutputMsgPayload
+        output message vector for thruster data.
 
 .. note::
   The dynamic behaviour of this module is governed by the variables inside :ref:`THRTimePair`, which determine the on and off-ramp characteristics. The default behaviour is to not have on and off-ramps active. The ``cutoffFrequency`` variable inside :ref:`THRSimConfig` has no impact on this module and is instead supposed to be used to determine the dynamic behaviour within :ref:`thrusterStateEffector`.
