@@ -17,10 +17,10 @@
 
  */
 
-%module spacecraftCharging
+%module spacecraftChargingDynamics
 
 %{
-   #include "spacecraftCharging.h"
+   #include "spacecraftChargingDynamics.h"
 %}
 
 %pythoncode %{
@@ -33,7 +33,7 @@ from Basilisk.architecture.swig_common_model import *
 %include "sys_model.i"
 %include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.i"
 %include "simulation/dynamics/_GeneralModuleFiles/dynamicObject.h"
-%include "spacecraftCharging.h"
+%include "spacecraftChargingDynamics.h"
 
 %include "architecture/msgPayloadDefC/CurrentMsgPayload.h"
 struct CurrentMsg_C;
