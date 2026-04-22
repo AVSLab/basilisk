@@ -28,6 +28,7 @@ DataNodeBase::DataNodeBase()
 {
     this->dataStatus = 1; //!< Node defaults to on unless overwritten.
     this->nodeDataMsg = this->nodeDataOutMsg.zeroMsgPayload;
+    memset(this->nodeDataName, 0, sizeof(this->nodeDataName));
 
     return;
 }
