@@ -1,0 +1,1 @@
+- Added a new :ref:`spacecraftChargingDynamics` module which integrates the electric potential of two spacecraft (a servicer and a target) in a plasma environment using a first order ordinary differential equation for each spacecraft. The charging model includes plasma electron current, plasma ion current, photoelectric current, and an optional electron beam current.
