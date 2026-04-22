@@ -95,8 +95,8 @@ public:
     BSKLogger bskLogger;  //!< BSK Logging
 
 private:
-    double servicerCapacitance{};  //!< [farads] Servicer capacitance
-    double targetCapacitance{};  //!< [farads] Target capacitance
+    double servicerCapacitance{1e-9};  //!< [farads] Servicer capacitance
+    double targetCapacitance{1e-9};  //!< [farads] Target capacitance
     double servicerPotentialInit{};  //!< [Volts] Initial servicer potential
     double targetPotentialInit{};  //!< [Volts] Initial target potential
     double servicerSurfaceArea{};  //!< [m^2] Servicer surface area
