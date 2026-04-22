@@ -401,14 +401,26 @@ class fileCrawler():
     def _sourceRelativePath(self, path):
         return os.path.relpath(os.path.abspath(path), os.path.abspath(officialSrc)).replace(os.sep, "/")
 
+    def _isSupportedBskModulePath(self, rel_path):
+        return rel_path.startswith(("fswAlgorithms/", "simulation/", "moduleTemplates/"))
+
+    def _hasMatchingModuleSource(self, src_path, module_name):
+        return any(
+            os.path.isfile(os.path.join(src_path, module_name + extension))
+            for extension in (".c", ".cpp", ".h", ".hpp")
+        )
+
     def isBskCppOrCModule(self, src_path, module_name):
         rel_path = self._sourceRelativePath(src_path)
         path_parts = rel_path.split("/")
 
-        if not rel_path.startswith(("fswAlgorithms/", "simulation/", "moduleTemplates/")):
+        if not self._isSupportedBskModulePath(rel_path):
             return False
         if "_GeneralModuleFiles" in path_parts:
-            return False
+            if not rel_path.startswith(("fswAlgorithms/", "simulation/")):
+                return False
+            return os.path.isfile(os.path.join(src_path, module_name + ".rst")) and \
+                self._hasMatchingModuleSource(src_path, module_name)
 
         return os.path.isfile(os.path.join(src_path, module_name + ".i"))
 
