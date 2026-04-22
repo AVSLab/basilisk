@@ -438,7 +438,7 @@ double SpacecraftChargingDynamics::getDensityIons() const {
  @param velocity [m/s] Bulk ion velocity
 */
 void SpacecraftChargingDynamics::setBulkVelocityIons(const double velocity) {
-    assert(velocity > 0.0);
+    assert(velocity >= 0.0);
     this->bulkVelocityIons = std::abs(velocity);
 }
 
