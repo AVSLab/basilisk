@@ -223,23 +223,24 @@ minimizes :math:`\dot V` subject to the allowable rate constraint :math:`\omega_
     :scale: 50 %
     :align: center
 
-    Figure 2: :math:`\omega_{\text{max}}` dependency with :math:`K_{1} = 0.1`, :math:`K_{3} = 1`
+    Figure 1: :math:`\omega_{\text{max}}` dependency with :math:`K_{1} = 0.1`, :math:`K_{3} = 1`
 
 .. _ModuleIO_MRP_Steering_fSigmaOptionsB:
 .. figure:: /../../src/fswAlgorithms/attControl/mrpSteering/_Documentation/Images/fSigmaOptionsB.jpg
     :scale: 50 %
     :align: center
 
-    Figure 3: :math:`K_{1}` dependency with :math:`\omega_{\text{max}}` = 1 deg/s, :math:`K_{3} = 1`
+    Figure 2: :math:`K_{1}` dependency with :math:`\omega_{\text{max}}` = 1 deg/s, :math:`K_{3} = 1`
 
 .. _ModuleIO_MRP_Steering_fSigmaOptionsC:
 .. figure:: /../../src/fswAlgorithms/attControl/mrpSteering/_Documentation/Images/fSigmaOptionsC.jpg
     :scale: 50 %
     :align: center
 
-    Figure 4: :math:`K_{3}` dependency with :math:`\omega_{\text{max}}` = 1 deg/s, :math:`K_{1} = 0.1`
+    Figure 3: :math:`K_{3}` dependency with :math:`\omega_{\text{max}}` = 1 deg/s, :math:`K_{1} = 0.1`
 
-Figures 2-4 illustrate how the parameters :math:`\omega_{\text{max}}`, :math:`K_{1}` and :math:`K_{3}`
+Figures 1-3 illustrate how the parameters
+:math:`\omega_{\text{max}}`, :math:`K_{1}` and :math:`K_{3}`
 impact the steering law behavior.  The maximum steering law rate commands are easily set through the
 :math:`\omega_{\text{max}}` parameters.  The gain :math:`K_{1}` controls the linear stiffness when
 the attitude errors have become small, while :math:`K_{3}` controls how rapidly the steering law
