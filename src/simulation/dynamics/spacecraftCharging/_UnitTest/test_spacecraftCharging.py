@@ -255,6 +255,7 @@ def test_spacecraft_charging_dynamics(show_plots,
     target_electron_beam_current_list_truth) = compute_electron_beam_current(timespan,
                                                                              electron_beam_current,
                                                                              electron_beam_energy,
+                                                                             electron_beam_alpha,
                                                                              servicer_potential_sim,
                                                                              target_potential_sim)
     plt.close("all")
@@ -399,6 +400,7 @@ def compute_photoelectric_current(timespan,
 def compute_electron_beam_current(timespan,
                                   electron_beam_current,
                                   electron_beam_energy,
+                                  electron_beam_alpha,
                                   servicer_potential,
                                   target_potential):
     servicer_electron_beam_current_list_truth = []
@@ -407,7 +409,7 @@ def compute_electron_beam_current(timespan,
         if electron_beam_energy > (servicer_potential[idx] - target_potential[idx]):
             intermediate_term = -1 * (electron_beam_energy - servicer_potential[idx] + target_potential[idx]) / 20.0
             servicer_electron_beam_current = electron_beam_current * (1 - math.exp(intermediate_term))
-            target_electron_beam_current = - electron_beam_current * (1 - math.exp(intermediate_term))
+            target_electron_beam_current = - electron_beam_alpha * electron_beam_current * (1 - math.exp(intermediate_term))
         else:
             servicer_electron_beam_current = 0.0
             target_electron_beam_current = 0.0
