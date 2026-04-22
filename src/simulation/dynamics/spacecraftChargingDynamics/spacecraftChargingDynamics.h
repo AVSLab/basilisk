@@ -44,6 +44,7 @@ public:
     void writeOutputStateMessages(uint64_t clockTime);  //!< Method to write output messages
     void UpdateState(uint64_t CurrentSimNanos);  //!< Update method
     void equationsOfMotion(double integTimeSeconds, double timeStep);  //!< Method defining equations of motion
+    void computeCurrents();  //!< Method to compute all electric currents
     void computeElectronBeamCurrent();  //!< Method to compute electron beam current
     void computePhotoelectricCurrent();  //!< Method to compute photoelectric current
     double computePlasmaElectronCurrent(double sunlitArea, double spacecraftPotential);  //!< Method to compute plasma electron current
