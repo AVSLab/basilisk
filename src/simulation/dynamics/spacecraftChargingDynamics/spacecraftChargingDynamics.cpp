@@ -232,13 +232,13 @@ void SpacecraftChargingDynamics::equationsOfMotion(double integTimeSeconds, doub
  @return double
 */
 double SpacecraftChargingDynamics::computePlasmaElectronCurrent(double surfaceArea, double spacecraftPotential) {
-    double velocityElectrons = std::sqrt((8 * Q_CHARGE * this->tempElectrons) / (MASS_ELECTRON * MPI));  // [m/s] thermal electron velocity
+    double thermalVelocityElectrons = std::sqrt((8 * Q_CHARGE * this->tempElectrons) / (MASS_ELECTRON * MPI));  // [m/s] thermal electron velocity
 
     double plasmaElectronCurrent{};
     if (spacecraftPotential <= 0.0) {
-        plasmaElectronCurrent = (-0.25 * surfaceArea * Q_CHARGE * this->densityElectrons * velocityElectrons) * exp(spacecraftPotential / this->tempElectrons);
+        plasmaElectronCurrent = (-0.25 * surfaceArea * Q_CHARGE * this->densityElectrons * thermalVelocityElectrons) * exp(spacecraftPotential / this->tempElectrons);
     } else {
-        plasmaElectronCurrent = (-0.25 * surfaceArea * Q_CHARGE * this->densityElectrons * velocityElectrons) * (1 + (spacecraftPotential / this->tempElectrons));
+        plasmaElectronCurrent = (-0.25 * surfaceArea * Q_CHARGE * this->densityElectrons * thermalVelocityElectrons) * (1 + (spacecraftPotential / this->tempElectrons));
     }
 
     return plasmaElectronCurrent;
