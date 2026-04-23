@@ -1,0 +1,1 @@
+- Deprecated `AU2KM` in favor of `AU` and added `AU2M` for astronomical unit in meters in `astroConstants.h`.

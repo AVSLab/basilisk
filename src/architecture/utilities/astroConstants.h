@@ -23,13 +23,28 @@
 #include <math.h>
 
 #ifndef G_UNIVERSIAL
-#define G_UNIVERSIAL    6.67259e-20 /* universial Gravitational Constant, units are in km^3/s^2/kg */
+#define G_UNIVERSIAL    6.67259e-20 /* [km^3/s^2/kg] universial Gravitational Constant */
 #endif
 #ifndef AU
-#define AU              149597870.693 /* astronomical unit in units of kilometers */
+#define AU              149597870.693 /* [km] astronomical unit */
 #endif
 #ifndef AU2KM
-#define AU2KM           149597870.693 /* convert astronomical unit to kilometers */
+  #if defined(SWIG)
+    /* Avoid deprecation noise in generated wrappers */
+    #define AU2KM AU
+  #elif defined(__cplusplus)
+    [[deprecated("AU2KM is deprecated in favor of AU. In C/C++ both names work until Apr 24, 2027. After that date, code must use AU exclusively.")]]
+    static constexpr double AU2KM_DEPRECATED = AU;
+    #define AU2KM AU2KM_DEPRECATED
+  #elif defined(__GNUC__) || defined(__clang__)
+    static const double AU2KM_DEPRECATED __attribute__((deprecated("AU2KM is deprecated in favor of AU. In C/C++ both names work until Apr 24, 2027. After that date, code must use AU exclusively."))) = AU;
+    #define AU2KM AU2KM_DEPRECATED
+  #else
+    #define AU2KM AU /* DEPRECATED: use AU. Works until Apr 24, 2027 */
+  #endif
+#endif
+#ifndef AU2M
+#define AU2M            149597870693.0 /* [m] astronomical unit in meters */
 #endif
 #ifndef SPEED_LIGHT
 #define SPEED_LIGHT     299792458 /* [m/s] convert astronomical unit to kilometers */
