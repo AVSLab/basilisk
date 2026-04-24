@@ -3,8 +3,9 @@ Executive Summary
 
 This module converts thruster force commands into thruster on-time commands.
 Each positive force command is normalized by the configured maximum thrust,
-scaled by the control period, clipped to the control period, and rounded to the
-nearest configured on-time resolution.
+scaled by the control period, clipped to the control period, rounded to the
+nearest configured on-time resolution, and checked to make sure it is longer
+than the minimum fire time.
 
 
 Message Connection Descriptions
@@ -41,12 +42,14 @@ The module is imported through the standard flight-software package:
     rounder = thrFiringRound.ThrFiringRound()
     rounder.ModelTag = "thrFiringRound"
 
-The control period, on-time resolution, number of thrusters, and maximum
-thruster force are configured with setter methods:
+The control period, on-time resolution, minimum thruster on-time,
+number of thrusters, and maximum thruster force are configured
+with setter methods:
 
 .. code-block:: python
 
     rounder.setControlPeriodSec(10.0)
     rounder.setOnTimeResolutionSec(0.1)
+    rounder.setThrMinFireTime(0.15)
     rounder.setNumThrusters(2)
     rounder.setThrForceMax([2.5, 2.5])
