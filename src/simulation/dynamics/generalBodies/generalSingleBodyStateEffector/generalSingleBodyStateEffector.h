@@ -40,8 +40,6 @@ public:
 
     void setDOFType(Type type) {this->type = type;};
     void setDOFAxis(Eigen::Vector3d axis_G) {this->axis_G = axis_G;};
-    void setR_G0P_P(Eigen::Vector3d r_G0P_P) {this->r_G0P_P = r_G0P_P;};
-    void setDCM_G0P(Eigen::Matrix3d dcm_G0P) {this->dcm_G0P = dcm_G0P;};
     void setBetaInit(double betaInit) {this->betaInit = betaInit;};
     void setBetaDotInit(double betaDotInit) {this->betaDotInit = betaDotInit;};
     void setSpringConstantK(double k) {this->k = k;};
@@ -50,8 +48,6 @@ public:
 
     Type getDOFType() const {return this->type;};
     Eigen::Vector3d getDOFAxis() const {return this->axis_G;};
-    Eigen::Vector3d getR_G0P_P() const {return this->r_G0P_P;};
-    Eigen::Matrix3d getDCM_G0P() const {return this->dcm_G0P;};
     double getBetaInit() const {return this->betaInit;};
     double getBetaDotInit() const {return this->betaDotInit;};
     double getSpringConstantK() const {return this->k;};
@@ -64,8 +60,6 @@ private:
     Type type;
     uint64_t index;
     Eigen::Vector3d axis_G = Eigen::Vector3d::Zero();
-    Eigen::Vector3d r_G0P_P = Eigen::Vector3d::Zero();
-    Eigen::Matrix3d dcm_G0P = Eigen::Matrix3d::Identity();
     double betaInit{};
     double betaDotInit{};
     double screwConstant{1.0};
@@ -95,6 +89,11 @@ public:
     double getMass() const;  //!< Getter method for the effector mass
     const Eigen::Matrix3d getIPntGc_G() const;  //!< Getter method for IPntGc_G
     const Eigen::Vector3d getR_GcG_G() const;  //!< Getter method for r_GcG_G
+    void setR_G0B_B(Eigen::Vector3d r_G0B_B) {this->r_G0B_B = r_G0B_B;};
+    void setDCM_G0B(Eigen::Matrix3d dcm_G0B) {this->dcm_G0B = dcm_G0B;};
+    Eigen::Vector3d getR_G0B_B() const {return this->r_G0B_B;};
+    Eigen::Matrix3d getDCM_G0B() const {return this->dcm_G0B;};
+
     void addRotationalDOF(DOF newDOF);
     void addTranslationalDOF(DOF newDOF);
     DOF getDegreeOfFreedom(uint64_t index);
@@ -135,6 +134,9 @@ private:
     double mass;
     Eigen::Matrix3d IPntGc_G;
     Eigen::Vector3d r_GcG_G{0.0, 0.0, 0.0};
+    Eigen::Vector3d r_G0B_B = Eigen::Vector3d::Zero();
+    Eigen::Matrix3d dcm_G0B = Eigen::Matrix3d::Identity();
+
     Eigen::Vector3d r_GB_B{0.0, 0.0, 0.0};
     uint64_t numDOF = 0;
 

@@ -59,6 +59,10 @@ def test_general_one_dof_rotation(show_plots):
     sc_object.gravField.gravBodies = spacecraft.GravBodyVector([earthGravBody])
 
     # Create the general effector
+    r_G0B_B = np.array([1.0, 0.1, -0.1])
+    dcm_G0B = np.array([[-1.0, 0.0, 0.0],
+                        [0.0, -1.0, 0.0],
+                        [0.0, 0.0, 1.0]])
     general_body = generalSingleBodyStateEffector.GeneralSingleBodyStateEffector()
     general_body.ModelTag = "generalBody"
     general_body.setMass(50.0)
@@ -66,12 +70,10 @@ def test_general_one_dof_rotation(show_plots):
                               [0.0, 30.0, 0.0],
                               [0.0, 0.0, 40.0]])
     general_body.setR_GcG_G(np.array([0.5, 0.5, -0.5]))
+    general_body.setR_G0B_B(r_G0B_B)
+    general_body.setDCM_G0B(dcm_G0B)
 
     rotHat_G = np.array([1.0, 0.0, 0.0])
-    r_G0B_B = np.array([1.0, 0.1, -0.1])
-    dcm_G0B = np.array([[-1.0, 0.0, 0.0],
-                        [0.0, -1.0, 0.0],
-                        [0.0, 0.0, 1.0]])
     thetaInit = 5.0 * macros.D2R
     thetaDotInit = 0.0
     spring_constant_k = 100.0
@@ -79,8 +81,6 @@ def test_general_one_dof_rotation(show_plots):
 
     one_dof_rotation = generalSingleBodyStateEffector.DOF()
     one_dof_rotation.setDOFAxis(rotHat_G)
-    one_dof_rotation.setR_G0P_P(r_G0B_B)
-    one_dof_rotation.setDCM_G0P(dcm_G0B)
     one_dof_rotation.setBetaInit(thetaInit)
     one_dof_rotation.setBetaDotInit(thetaDotInit)
     one_dof_rotation.setSpringConstantK(spring_constant_k)
@@ -174,19 +174,12 @@ def test_general_two_dof_rotation(show_plots):
 
     # Set up first rotational DOF
     rotHat_G1 = np.array([1.0, 0.0, 0.0])
-    r_G10B_B = np.array([0.0, 0.0, 0.0])
-    dcm_G10B = np.array([[1.0, 0.0, 0.0],
-                        [0.0, 1.0, 0.0],
-                        [0.0, 0.0, 1.0]])
     theta1Init = 0.0 * macros.D2R
     thetaDot1Init = 0.0 * macros.D2R
     k_1 = 100.0
     c_1 = 0.0
-
     one_dof_rotation_1 = generalSingleBodyStateEffector.DOF()
     one_dof_rotation_1.setDOFAxis(rotHat_G1)
-    one_dof_rotation_1.setR_G0P_P(r_G10B_B)
-    one_dof_rotation_1.setDCM_G0P(dcm_G10B)
     one_dof_rotation_1.setBetaInit(theta1Init)
     one_dof_rotation_1.setBetaDotInit(thetaDot1Init)
     one_dof_rotation_1.setSpringConstantK(k_1)
@@ -194,25 +187,22 @@ def test_general_two_dof_rotation(show_plots):
 
     # Set up second rotational DOF
     rotHat_G2 = np.array([0.0, 1.0, 0.0])
-    r_G20G1_G1 = np.array([0.0, 0.0, 0.0])
-    dcm_G20G1 = np.array([[1.0, 0.0, 0.0],
-                         [0.0, 1.0, 0.0],
-                         [0.0, 0.0, 1.0]])
     theta2Init = 0.0 * macros.D2R
     thetaDot2Init = 0.0 * macros.D2R
     k_2 = 50.0
     c_2 = 0.0
-
     one_dof_rotation_2 = generalSingleBodyStateEffector.DOF()
     one_dof_rotation_2.setDOFAxis(rotHat_G2)
-    one_dof_rotation_2.setR_G0P_P(r_G20G1_G1)
-    one_dof_rotation_2.setDCM_G0P(dcm_G20G1)
     one_dof_rotation_2.setBetaInit(theta2Init)
     one_dof_rotation_2.setBetaDotInit(thetaDot2Init)
     one_dof_rotation_2.setSpringConstantK(k_2)
     one_dof_rotation_2.setDampingConstantK(c_2)
 
     # Create the general effector
+    r_G0B_B = np.array([0.0, 0.0, 0.0])
+    dcm_G0B = np.array([[1.0, 0.0, 0.0],
+                        [0.0, 1.0, 0.0],
+                        [0.0, 0.0, 1.0]])
     general_body = generalSingleBodyStateEffector.GeneralSingleBodyStateEffector()
     general_body.ModelTag = "generalBody"
     general_body.setMass(50.0)
@@ -220,6 +210,8 @@ def test_general_two_dof_rotation(show_plots):
                               [0.0, 30.0, 0.0],
                               [0.0, 0.0, 40.0]])
     general_body.setR_GcG_G(np.array([1.0, 0.0, 0.0]))
+    general_body.setR_G0B_B(r_G0B_B)
+    general_body.setDCM_G0B(dcm_G0B)
     general_body.addRotationalDOF(one_dof_rotation_1)
     general_body.addRotationalDOF(one_dof_rotation_2)
     sc_object.addStateEffector(general_body)
@@ -310,6 +302,10 @@ def test_general_one_dof_translation(show_plots):
     sc_object.gravField.gravBodies = spacecraft.GravBodyVector([earthGravBody])
 
     # Create the general effector
+    r_G0B_B = np.array([-0.1, 0.1, 0.1])
+    dcm_G0B = np.array([[0.0, -1.0, 0.0],
+                        [0.0, 0.0, -1.0],
+                        [1.0, 0.0, 0.0]])
     general_body = generalSingleBodyStateEffector.GeneralSingleBodyStateEffector()
     general_body.ModelTag = "generalBody"
     general_body.setMass(20.0)
@@ -317,21 +313,17 @@ def test_general_one_dof_translation(show_plots):
                               [0.0, 80.0, 0.0],
                               [0.0, 0.0, 60.0]])
     general_body.setR_GcG_G(np.array([0.1, -0.1, 0.1]))
+    general_body.setR_G0B_B(r_G0B_B)
+    general_body.setDCM_G0B(dcm_G0B)
+
 
     transHat_G = np.array([0.0, 0.0, 1.0])
-    r_G0B_B = np.array([-0.1, 0.1, 0.1])
-    dcm_G0B = np.array([[0.0, -1.0, 0.0],
-                        [0.0, 0.0, -1.0],
-                        [1.0, 0.0, 0.0]])
     rhoInit = 1.0
     rhoDotInit = 0.05
     k = 100
     c = 0.0
-
     one_dof_translation = generalSingleBodyStateEffector.DOF()
     one_dof_translation.setDOFAxis(transHat_G)
-    one_dof_translation.setR_G0P_P(r_G0B_B)
-    one_dof_translation.setDCM_G0P(dcm_G0B)
     one_dof_translation.setBetaInit(rhoInit)
     one_dof_translation.setBetaDotInit(rhoDotInit)
     one_dof_translation.setSpringConstantK(k)
@@ -427,10 +419,6 @@ def test_general_two_dof_rotation_translation(show_plots):
 
     # Set up the rotational DOF
     rotHat_G1 = np.array([1.0, 0.0, 0.0])
-    r_G10B_B = np.array([0.0, 0.0, 0.0])
-    dcm_G10B = np.array([[1.0, 0.0, 0.0],
-                         [0.0, 1.0, 0.0],
-                         [0.0, 0.0, 1.0]])
     theta1Init = 5.0 * macros.D2R
     thetaDot1Init = 0.0 * macros.D2R
     k_1 = 100.0
@@ -438,19 +426,13 @@ def test_general_two_dof_rotation_translation(show_plots):
 
     one_dof_rotation = generalSingleBodyStateEffector.DOF()
     one_dof_rotation.setDOFAxis(rotHat_G1)
-    one_dof_rotation.setR_G0P_P(r_G10B_B)
-    one_dof_rotation.setDCM_G0P(dcm_G10B)
     one_dof_rotation.setBetaInit(theta1Init)
     one_dof_rotation.setBetaDotInit(thetaDot1Init)
     one_dof_rotation.setSpringConstantK(k_1)
     one_dof_rotation.setDampingConstantK(c_1)
 
     # Set up the translational DOF
-    transHat_G2 = np.array([0.0, 0.0, 1.0])
-    r_G20G1_G1 = np.array([0.0, 0.0, 0.0])
-    dcm_G20G1 = np.array([[0.0, -1.0, 0.0],
-                        [0.0, 0.0, -1.0],
-                        [1.0, 0.0, 0.0]])
+    transHat_G2 = np.array([0.0, 1.0, 0.0])
     rhoInit = 0.5
     rhoDotInit = 0.0
     k = 100
@@ -458,21 +440,25 @@ def test_general_two_dof_rotation_translation(show_plots):
 
     one_dof_translation = generalSingleBodyStateEffector.DOF()
     one_dof_translation.setDOFAxis(transHat_G2)
-    one_dof_translation.setR_G0P_P(r_G20G1_G1)
-    one_dof_translation.setDCM_G0P(dcm_G20G1)
     one_dof_translation.setBetaInit(rhoInit)
     one_dof_translation.setBetaDotInit(rhoDotInit)
     one_dof_translation.setSpringConstantK(k)
     one_dof_translation.setDampingConstantK(c)
 
     # Create the general effector
+    r_G0B_B = np.array([0.0, 0.0, 0.0])
+    dcm_G0B = np.array([[1.0, 0.0, 0.0],
+                        [0.0, 1.0, 0.0],
+                        [0.0, 0.0, 1.0]])
     general_body = generalSingleBodyStateEffector.GeneralSingleBodyStateEffector()
     general_body.ModelTag = "generalBody"
     general_body.setMass(50.0)
     general_body.setIPntGc_G([[50.0, 0.0, 0.0],
                               [0.0, 30.0, 0.0],
                               [0.0, 0.0, 40.0]])
-    general_body.setR_GcG_G(np.array([1.0, 0.0, 0.0]))
+    general_body.setR_GcG_G(np.array([0.0, 0.1, 0.0]))
+    general_body.setR_G0B_B(r_G0B_B)
+    general_body.setDCM_G0B(dcm_G0B)
     general_body.addRotationalDOF(one_dof_rotation)
     general_body.addTranslationalDOF(one_dof_translation)
     sc_object.addStateEffector(general_body)

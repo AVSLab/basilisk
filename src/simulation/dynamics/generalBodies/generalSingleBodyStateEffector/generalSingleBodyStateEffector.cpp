@@ -195,15 +195,15 @@ void GeneralSingleBodyStateEffector::updateEffectorMassProps(double integTime)
             Eigen::Matrix3d dcm_GG0 = c2DArray2EigenMatrix3d(dcm_GG0_array);
 
             if (jointDOF->index == 0) {
-                jointDOF->dcm_GB = dcm_GG0 * jointDOF->dcm_G0P;
+                jointDOF->dcm_GB = dcm_GG0 * this->dcm_G0B;
             } else {
-                jointDOF->dcm_GB = dcm_GG0 * jointDOF->dcm_G0P * this->jointDOFList.at(jointDOF->index - 1).dcm_GB;
+                jointDOF->dcm_GB = dcm_GG0 * this->jointDOFList.at(jointDOF->index - 1).dcm_GB;
             }
         } else {
             if (jointDOF->index == 0) {
-                jointDOF->dcm_GB = jointDOF->dcm_G0P;
+                jointDOF->dcm_GB = this->dcm_G0B;
             } else {
-                jointDOF->dcm_GB = jointDOF->dcm_G0P * this->jointDOFList.at(jointDOF->index - 1).dcm_GB;
+                jointDOF->dcm_GB = this->jointDOFList.at(jointDOF->index - 1).dcm_GB;
             }
         }
     }
@@ -215,17 +215,15 @@ void GeneralSingleBodyStateEffector::updateEffectorMassProps(double integTime)
             Eigen::Vector3d r_GG0_B = jointDOF->dcm_GB.transpose() * r_GG0_G;
 
             if (jointDOF->index == 0) {
-                jointDOF->r_GB_B = r_GG0_B + jointDOF->r_G0P_P;
+                jointDOF->r_GB_B = r_GG0_B + this->r_G0B_B;
             } else {
-                Eigen::Vector3d r_G0P_B = this->jointDOFList.at(jointDOF->index - 1).dcm_GB.transpose() * jointDOF->r_G0P_P;
-                jointDOF->r_GB_B = r_GG0_B + r_G0P_B + this->jointDOFList.at(jointDOF->index - 1).r_GB_B;
+                jointDOF->r_GB_B = r_GG0_B + this->jointDOFList.at(jointDOF->index - 1).r_GB_B;
             }
         } else {
             if (jointDOF->index == 0) {
-                jointDOF->r_GB_B = jointDOF->r_G0P_P;
+                jointDOF->r_GB_B = this->r_G0B_B;
             } else {
-                Eigen::Vector3d r_G0P_B = this->jointDOFList.at(jointDOF->index - 1).dcm_GB.transpose() * jointDOF->r_G0P_P;
-                jointDOF->r_GB_B = r_G0P_B + this->jointDOFList.at(jointDOF->index - 1).r_GB_B;
+                jointDOF->r_GB_B = this->jointDOFList.at(jointDOF->index - 1).r_GB_B;
             }
         }
     }
