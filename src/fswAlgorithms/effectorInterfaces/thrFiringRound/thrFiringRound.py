@@ -26,7 +26,8 @@ class ThrFiringRound(sysModel.SysModel):
 
     Each thruster on-time is computed from the configured control period, force
     command, and maximum thruster force.  The result is rounded to the nearest
-    multiple of ``onTimeResolutionSec``.
+    multiple of ``onTimeResolutionSec``. The minimum fire time can be set to
+    prevent short pulses that may not be physically realizable.
     """
 
     def __init__(self):
@@ -40,6 +41,7 @@ class ThrFiringRound(sysModel.SysModel):
         # Configuration
         self.controlPeriodSec = 1.0  # [s]
         self.onTimeResolutionSec = 0.01  # [s]
+        self.thrMinFireTimeSec = 0.0  # [s]
         self.numThrusters = None
         self.thrForceMax = 1.0  # [N]
 
@@ -51,6 +53,9 @@ class ThrFiringRound(sysModel.SysModel):
 
     def setNumThrusters(self, numThrustersIn: int):
         self.numThrusters = int(numThrustersIn)
+
+    def setThrMinFireTime(self, thrMinFireTimeSecIn: float):
+        self.thrMinFireTimeSec = float(thrMinFireTimeSecIn)
 
     def setThrForceMax(self, thrForceMaxIn):
         """
@@ -111,6 +116,7 @@ class ThrFiringRound(sysModel.SysModel):
         onTimeRequest = self.controlPeriodSec * forceCmd / thrForceMax
         onTimeRequest = np.clip(onTimeRequest, 0.0, self.controlPeriodSec)  # [s]
         onTimeRequest = np.rint(onTimeRequest / self.onTimeResolutionSec) * self.onTimeResolutionSec
+        onTimeRequest[onTimeRequest < self.thrMinFireTimeSec] = 0.0  # [s]
         onTimeRequest = np.clip(onTimeRequest, 0.0, self.controlPeriodSec)  # [s]
 
         self.thrOnTimePayload.OnTimeRequest = onTimeRequest.tolist()
