@@ -73,3 +73,33 @@ def test_thr_firing_round_configuration_helpers():
     module.setThrForceMax([1.0, 2.0])  # [N]
     assert module.resolveNumThrusters(forceCmd) == 2
     np.testing.assert_allclose(module.resolveThrForceMax(2), [1.0, 2.0])  # [N]
+
+
+def test_thr_firing_round_minimum_fire_time():
+    """
+    **Validation Test Description**
+
+    This unit test verifies that :class:`thrFiringRound.ThrFiringRound` can
+    apply an optional minimum fire-time threshold to rounded on-time commands.
+
+    **Description of Variables Being Tested**
+
+    This unit test checks that ``OnTimeRequest`` is set to zero when the
+    rounded on-time is less than ``thrMinFireTimeSec``.
+    """
+    module = thrFiringRound.ThrFiringRound()
+    module.setControlPeriodSec(1.0)  # [s]
+    module.setOnTimeResolutionSec(0.1)  # [s]
+    module.setThrMinFireTime(0.15)  # [s]
+    module.setThrForceMax(1.0)  # [N]
+
+    forcePayload = messaging.THRArrayCmdForceMsgPayload()
+    forcePayload.thrForce = [0.14, 0.16]  # [N]
+    forceMsg = messaging.THRArrayCmdForceMsg().write(forcePayload)
+    module.thrForceInMsg.subscribeTo(forceMsg)
+
+    module.Reset(0)
+    module.UpdateState(1)
+
+    onTimeOut = module.thrOnTimeOutMsg.read()
+    np.testing.assert_allclose(onTimeOut.OnTimeRequest[:2], [0.0, 0.2])  # [s]
