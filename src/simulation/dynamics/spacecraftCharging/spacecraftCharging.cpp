@@ -42,6 +42,7 @@ void SpacecraftCharging::Reset(uint64_t CurrentSimNanos) {
     this->timeBeforeNanos = CurrentSimNanos;
 }
 
+/*! Method to initialize dynamics. */
 void SpacecraftCharging::initializeDynamics() {
     this->registerStates(this->dynManager);
 
@@ -49,6 +50,7 @@ void SpacecraftCharging::initializeDynamics() {
     this->equationsOfMotion(0.0, 1.0);
 }
 
+/*! Method to register states. */
 void SpacecraftCharging::registerStates(DynParamManager& states) {
     this->servicerPotentialState = states.registerState(1, 1, this->nameOfServicerPotentialState);
     Eigen::MatrixXd servicerPotentialInitMatrix(1, 1);

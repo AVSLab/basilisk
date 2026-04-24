@@ -36,20 +36,20 @@
 /*! @brief spacecraft charging module */
 class SpacecraftCharging : public DynamicObject{
 public:
-    SpacecraftCharging();
-    ~SpacecraftCharging() = default;
-    void initializeDynamics();
-    void Reset(uint64_t CurrentSimNanos);
-    void registerStates(DynParamManager& states);
-    void writeOutputStateMessages(uint64_t clockTime);
-    void UpdateState(uint64_t CurrentSimNanos);
-    void equationsOfMotion(double integTimeSeconds, double timeStep);
-    void computeElectronBeamCurrent();
-    void computePhotoelectricCurrent();
-    double computePlasmaElectronCurrent(double sunlitArea, double spacecraftPotential);
-    double computePlasmaIonCurrent(double surfaceArea, double sunlitArea, double spacecraftPotential, double v_BN_N_norm);
-    void preIntegration(uint64_t callTimeNanos) final;
-    void postIntegration(uint64_t callTimeNanos) final;
+    SpacecraftCharging();  //!< Constructor
+    ~SpacecraftCharging() = default;  //!< Destructor
+    void initializeDynamics();  //!< Method to initialize dynamics
+    void Reset(uint64_t CurrentSimNanos);  //!< Reset method
+    void registerStates(DynParamManager& states);  //!< Method to register states
+    void writeOutputStateMessages(uint64_t clockTime);  //!< Method to write output messages
+    void UpdateState(uint64_t CurrentSimNanos);  //!< Update method
+    void equationsOfMotion(double integTimeSeconds, double timeStep);  //!< Method defining equations of motion
+    void computeElectronBeamCurrent();  //!< Method to compute electron beam current
+    void computePhotoelectricCurrent();  //!< Method to compute photoelectric current
+    double computePlasmaElectronCurrent(double sunlitArea, double spacecraftPotential);  //!< Method to compute plasma electron current
+    double computePlasmaIonCurrent(double surfaceArea, double sunlitArea, double spacecraftPotential, double v_BN_N_norm);  //!< Method to compute plasma ion current
+    void preIntegration(uint64_t callTimeNanos) final;  //!< Pre-integration method
+    void postIntegration(uint64_t callTimeNanos) final;  //!< Post-integration method
 
     void setServicerCapacitance(const double capacitance);  //!< Setter for the servicer capacitance
     void setTargetCapacitance(const double capacitance);  //!< Setter for the target capacitance
@@ -75,7 +75,7 @@ public:
 
     ReadFunctor<SCStatesMsgPayload> servicerStateInMsg;  //!< Servicer state input message
     ReadFunctor<SCStatesMsgPayload> targetStateInMsg;  //!< Target state input message
-    ReadFunctor<ElectronBeamMsgPayload> electronBeamInMsg; //!< Electron beam input message
+    ReadFunctor<ElectronBeamMsgPayload> electronBeamInMsg; //!< Electron beam input message (optional)
     ReadFunctor<ProjectedAreaMsgPayload> servicerSurfaceAreaInMsg;  //!< Servicer surface area input message
     ReadFunctor<ProjectedAreaMsgPayload> targetSurfaceAreaInMsg;  //!< Target surface area input message
     ReadFunctor<ProjectedAreaMsgPayload> servicerSunlitAreaInMsg;  //!< Total servicer sunlit facet area input message

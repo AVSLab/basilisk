@@ -56,12 +56,30 @@ def test_spacecraft_charging_dynamics(show_plots,
     r"""
     **Verification Test Description**
 
+    This unit test verifies that the spacecraft charging dynamics module correctly computes the different types of
+    currents impacting both a target and servicer spacecraft. Specifically, this test checks that the module
+    correctly computes the photoelectric current, electron beam current, plasma electron current, and plasma ion
+    current acting on both spacecraft. While the module defaults many required variables, the user has the ability
+    to configure all information describing the electrons, ions, and photons using setter methods.
+
+    The module requires several input messages to be connected, including messages for the spacecraft inertial states,
+    surface areas, and sunlit areas. Configuration of the electron beam is optional. The spacecraft potentials and
+    electric currents are output from the module.
+
     **Test Parameters**
 
     Args:
+        servicer_radius (float): [m] Servicer spacecraft radius
+        target_radius (float): [m] Target spacecraft radius
+        bulk_velocity_ions (float): [m/s] Bulk velocity of plasma ions
+        electron_beam_energy (float) [eV] Electron beam energy
+        electron_beam_current (float) [Amps] Electron beam current
+        electron_beam_alpha (float) [-] Scaling term for the fraction of current reaching the target
 
     **Description of Variables Being Tested**
 
+    The test checks that the module correctly computes the photoelectric current, electron beam current, plasma
+    electron current, and plasma ion current acting on both spacecraft.
     """
 
     task_name = "unitTask"
