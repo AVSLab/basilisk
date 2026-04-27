@@ -45,6 +45,7 @@ public:
     void equationsOfMotion(double integTimeSeconds, double timeStep);
     void computeElectronBeamCurrent();
     void computePhotoelectricCurrent();
+    double computePlasmaElectronCurrent(double sunlitArea, double spacecraftPotential);
     void preIntegration(uint64_t callTimeNanos) final;
     void postIntegration(uint64_t callTimeNanos) final;
 
@@ -58,7 +59,14 @@ public:
     double getFluxPhotoelectrons() const;  //!< Getter for the photoelectron flux
     double getTempPhotoelectrons() const;  //!< Getter for the photoelectron temperature
 
+    void setTempElectrons(const double temp);  //!< Setter for the electron temperature
+    double getTempElectrons() const;  //!< Getter for the electron temperature
+    void setDensityElectrons(const double density);  //!< Setter for the electron density
+    double getDensityElectrons() const;  //!< Getter for the electron density
+
     ReadFunctor<ElectronBeamMsgPayload> electronBeamInMsg; //!< Electron beam input message
+    ReadFunctor<ProjectedAreaMsgPayload> servicerSurfaceAreaInMsg;  //!< Servicer surface area input message
+    ReadFunctor<ProjectedAreaMsgPayload> targetSurfaceAreaInMsg;  //!< Target surface area input message
     ReadFunctor<ProjectedAreaMsgPayload> servicerSunlitAreaInMsg;  //!< Total servicer sunlit facet area input message
     ReadFunctor<ProjectedAreaMsgPayload> targetSunlitAreaInMsg;  //!< Total target sunlit facet area input message
     Message<VoltMsgPayload> servicerPotentialOutMsg;  //!< Servicer potential (voltage) output message
@@ -67,6 +75,8 @@ public:
     Message<CurrentMsgPayload> targetEBCurrentOutMsg;  //!< Target electron beam current output message
     Message<CurrentMsgPayload> servicerPhotoelectricCurrentOutMsg;  //!< Servicer photoelectric current output message
     Message<CurrentMsgPayload> targetPhotoelectricCurrentOutMsg;  //!< Target photoelectric current output message
+    Message<CurrentMsgPayload> servicerPlasmaElectronCurrentOutMsg;  //!< Servicer plasma electron current output message
+    Message<CurrentMsgPayload> targetPlasmaElectronCurrentOutMsg;  //!< Target plasma electron current output message
 
     BSKLogger bskLogger;  //!< BSK Logging
 
@@ -75,11 +85,16 @@ private:
     double targetCapacitance{};  //!< [farads] Target capacitance
     double servicerPotentialInit{};  //!< [Volts] Initial servicer potential
     double targetPotentialInit{};  //!< [Volts] Initial target potential
+    double servicerSurfaceArea{};  //!< [m^2] Servicer surface area
+    double targetSurfaceArea{};  //!< [m^2] Target surface area
     double servicerSunlitArea{};  //!< [m^2] Servicer sunlit area
     double targetSunlitArea{};  //!< [m^2] Target sunlit area
 
     double tempPhotoelectrons = 2.0;  //!< [eV] Photoelectron temperature
     double fluxPhotoelectrons = 1e-6;  //!< [A/m^2] Photoelectron flux
+
+    double tempElectrons = 2.0;  //!< [eV] Electron temperature
+    double densityElectrons = 950000; //!< [m^-3] Electron density
 
     double electronBeamEnergy{};  //!< [keV] Electron beam energy
     double electronBeamCurrent{};  //!< [Amps] Electron beam current
@@ -91,6 +106,8 @@ private:
     double targetEBCurrent{};  //!< [Amps] Target electron beam current
     double servicerPhotoelectricCurrent{};  //!< [Amps] Servicer photoelectric current
     double targetPhotoelectricCurrent{};  //!< [Amps] Target photoelectric current
+    double servicerPlasmaElectronCurrent{};  //!< [Amps] Servicer plasma electron current
+    double targetPlasmaElectronCurrent{};  //!< [Amps] Target plasma electron current
 
     StateData *servicerPotentialState = nullptr;  //!< State data container for servicer potential
     StateData *targetPotentialState = nullptr;  //!< State data container for target potential

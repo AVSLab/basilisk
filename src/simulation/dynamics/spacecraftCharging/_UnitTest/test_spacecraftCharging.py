@@ -20,6 +20,7 @@ import numpy as np
 import math
 import pytest
 import matplotlib.pyplot as plt
+from Basilisk.architecture import astroConstants
 from Basilisk.simulation import spacecraft
 from Basilisk.simulation import spacecraftCharging
 from Basilisk.utilities import SimulationBaseClass
@@ -101,17 +102,27 @@ def test_spacecraft_charging_dynamics(show_plots,
     target_spacecraft.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
     sim.AddModelToTask(task_name, target_spacecraft)
 
-    # Create the spacecraft projected area messages
-    target_projected_area = 4 * np.pi * target_radius * target_radius  # [m^2]
-    servicer_projected_area = 4 * np.pi * servicer_radius * servicer_radius  # [m^2]
+    # Create the spacecraft area messages
+    servicer_surface_area = 4 * np.pi * servicer_radius * servicer_radius  # [m^2]
+    target_surface_area = 4 * np.pi * target_radius * target_radius  # [m^2]
+    servicer_sunlit_area = np.pi * servicer_radius * servicer_radius  # [m^2]
+    target_sunlit_area = np.pi * target_radius * target_radius  # [m^2]
 
-    target_projected_area_msg_data = messaging.ProjectedAreaMsgPayload()
-    target_projected_area_msg_data.area = target_projected_area  # [m^2]
-    target_projected_area_msg = messaging.ProjectedAreaMsg().write(target_projected_area_msg_data)
+    servicer_surface_area_msg_data = messaging.ProjectedAreaMsgPayload()
+    servicer_surface_area_msg_data.area = servicer_surface_area  # [m^2]
+    servicer_surface_area_msg = messaging.ProjectedAreaMsg().write(servicer_surface_area_msg_data)
 
-    servicer_projected_area_msg_data = messaging.ProjectedAreaMsgPayload()
-    servicer_projected_area_msg_data.area = servicer_projected_area  # [m^2]
-    servicer_projected_area_msg = messaging.ProjectedAreaMsg().write(servicer_projected_area_msg_data)
+    target_surface_area_msg_data = messaging.ProjectedAreaMsgPayload()
+    target_surface_area_msg_data.area = target_surface_area  # [m^2]
+    target_surface_area_msg = messaging.ProjectedAreaMsg().write(target_surface_area_msg_data)
+
+    servicer_sunlit_area_msg_data = messaging.ProjectedAreaMsgPayload()
+    servicer_sunlit_area_msg_data.area = servicer_sunlit_area  # [m^2]
+    servicer_sunlit_area_msg = messaging.ProjectedAreaMsg().write(servicer_sunlit_area_msg_data)
+
+    target_sunlit_area_msg_data = messaging.ProjectedAreaMsgPayload()
+    target_sunlit_area_msg_data.area = target_sunlit_area  # [m^2]
+    target_sunlit_area_msg = messaging.ProjectedAreaMsg().write(target_sunlit_area_msg_data)
 
     # Create electron beam input message
     electron_beam_msg_data = messaging.ElectronBeamMsgPayload()
@@ -127,8 +138,10 @@ def test_spacecraft_charging_dynamics(show_plots,
     spacecraft_charging.setServicerCapacitance(capacitance)
     spacecraft_charging.setTargetCapacitance(capacitance)
     spacecraft_charging.electronBeamInMsg.subscribeTo(electron_beam_msg)
-    spacecraft_charging.servicerSunlitAreaInMsg.subscribeTo(servicer_projected_area_msg)
-    spacecraft_charging.targetSunlitAreaInMsg.subscribeTo(target_projected_area_msg)
+    spacecraft_charging.servicerSurfaceAreaInMsg.subscribeTo(servicer_surface_area_msg)
+    spacecraft_charging.targetSurfaceAreaInMsg.subscribeTo(target_surface_area_msg)
+    spacecraft_charging.servicerSunlitAreaInMsg.subscribeTo(servicer_sunlit_area_msg)
+    spacecraft_charging.targetSunlitAreaInMsg.subscribeTo(target_sunlit_area_msg)
     sim.AddModelToTask(task_name, spacecraft_charging)
 
     # Set up data logging
@@ -136,10 +149,14 @@ def test_spacecraft_charging_dynamics(show_plots,
     target_potential_data_log = spacecraft_charging.targetPotentialOutMsg.recorder()
     servicer_photoelectric_current_sim_data_log = spacecraft_charging.servicerPhotoelectricCurrentOutMsg.recorder()
     target_photoelectric_current_sim_data_log = spacecraft_charging.targetPhotoelectricCurrentOutMsg.recorder()
+    servicer_plasma_electron_current_sim_data_log = spacecraft_charging.servicerPlasmaElectronCurrentOutMsg.recorder()
+    target_plasma_electron_current_sim_data_log = spacecraft_charging.targetPlasmaElectronCurrentOutMsg.recorder()
     sim.AddModelToTask(task_name, servicer_potential_data_log)
     sim.AddModelToTask(task_name, target_potential_data_log)
     sim.AddModelToTask(task_name, servicer_photoelectric_current_sim_data_log)
     sim.AddModelToTask(task_name, target_photoelectric_current_sim_data_log)
+    sim.AddModelToTask(task_name, servicer_plasma_electron_current_sim_data_log)
+    sim.AddModelToTask(task_name, target_plasma_electron_current_sim_data_log)
 
     # Run the simulation
     sim.InitializeSimulation()
@@ -152,14 +169,19 @@ def test_spacecraft_charging_dynamics(show_plots,
     target_potential_sim = target_potential_data_log.voltage  # [Volts]
     servicer_photoelectric_current_sim = servicer_photoelectric_current_sim_data_log.current  # [Amps]
     target_photoelectric_current_sim = target_photoelectric_current_sim_data_log.current  # [Amps]
+    servicer_plasma_electron_current_sim = servicer_plasma_electron_current_sim_data_log.current  # [Amps]
+    target_plasma_electron_current_sim = target_plasma_electron_current_sim_data_log.current  # [Amps]
 
     # Compute truth information
+    servicer_plasma_electron_current_list_truth = compute_plasma_electron_current(timespan, servicer_potential_sim, servicer_surface_area)
+    target_plasma_electron_current_list_truth = compute_plasma_electron_current(timespan, target_potential_sim, target_surface_area)
+
     (servicer_photoelectric_current_truth,
      target_photoelectric_current_truth) = compute_photoelectric_current(timespan,
                                                                          servicer_potential_sim,
                                                                          target_potential_sim,
-                                                                         servicer_projected_area,
-                                                                         target_projected_area)
+                                                                         servicer_sunlit_area,
+                                                                         target_sunlit_area)
 
     # plt.close("all")
     #
@@ -199,12 +221,36 @@ def test_spacecraft_charging_dynamics(show_plots,
                                    target_photoelectric_current_truth[idx],
                                    atol=1e-7,
                                    verbose=True)
+        np.testing.assert_allclose(servicer_plasma_electron_current_sim[idx],
+                                   servicer_plasma_electron_current_list_truth[idx],
+                                   atol=1e-7,
+                                   verbose=True)
+        np.testing.assert_allclose(target_plasma_electron_current_sim[idx],
+                                   target_plasma_electron_current_list_truth[idx],
+                                   atol=1e-7,
+                                   verbose=True)
+
+def compute_plasma_electron_current(timespan, spacecraft_potential, surface_area):
+    temp_electrons = 2.0  # [eV]
+    density_electrons = 950000  # [m^-3]
+
+    plasma_electron_current_list_truth = []
+    for idx in range(len(timespan)):
+        velocity_electrons = math.sqrt((8 * astroConstants.Q_CHARGE * temp_electrons) / (astroConstants.MASS_ELECTRON * astroConstants.MPI))
+        if spacecraft_potential[idx] <= 0:
+            plasma_electron_current = (-0.25 * surface_area * astroConstants.Q_CHARGE * density_electrons * velocity_electrons) * math.exp(spacecraft_potential[idx] / temp_electrons)
+        else:
+            plasma_electron_current = (-0.25 * surface_area * astroConstants.Q_CHARGE * density_electrons * velocity_electrons) * (1 + (spacecraft_potential[idx] / temp_electrons))
+
+        plasma_electron_current_list_truth.append(plasma_electron_current)
+
+    return plasma_electron_current_list_truth
 
 def compute_photoelectric_current(timespan,
                                   servicer_potential,
                                   target_potential,
-                                  servicer_projected_area,
-                                  target_projected_area):
+                                  servicer_sunlit_area,
+                                  target_sunlit_area):
     temp_photons = 2.0  # [eV]
     flux_photons = 1e-6  # [A/m^2]
 
@@ -213,15 +259,15 @@ def compute_photoelectric_current(timespan,
     for idx in range(len(timespan)):
         # Compute the servicer photoelectric current
         if servicer_potential[idx] <= 0:
-            servicer_photoelectric_current_truth = flux_photons * servicer_projected_area
+            servicer_photoelectric_current_truth = flux_photons * servicer_sunlit_area
         else:
-            servicer_photoelectric_current_truth = flux_photons * servicer_projected_area * math.exp(-1 * servicer_potential[idx] / temp_photons)
+            servicer_photoelectric_current_truth = flux_photons * servicer_sunlit_area * math.exp(-1 * servicer_potential[idx] / temp_photons)
 
         # Compute the target photoelectric current
         if target_potential[idx] <= 0:
-            target_photoelectric_current_truth = flux_photons * target_projected_area
+            target_photoelectric_current_truth = flux_photons * target_sunlit_area
         else:
-            target_photoelectric_current_truth = flux_photons * target_projected_area * math.exp(-1 * target_potential[idx] / temp_photons)
+            target_photoelectric_current_truth = flux_photons * target_sunlit_area * math.exp(-1 * target_potential[idx] / temp_photons)
 
         servicer_photoelectric_current_list_truth.append(servicer_photoelectric_current_truth)
         target_photoelectric_current_list_truth.append(target_photoelectric_current_truth)
