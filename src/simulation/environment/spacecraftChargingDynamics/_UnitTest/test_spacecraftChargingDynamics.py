@@ -35,6 +35,15 @@ temp_photons = 2.0  # [eV] Photoelectron temperature
 flux_photons = 1e-6  # [A/m^2] Photoelectron flux
 
 @pytest.mark.parametrize(
+    ("servicer_potential_init", "target_potential_init"),  # ([Volts], [Volts])
+    [
+        (0.0, 0.0),
+        (-5000.0, -5000.0),  # GEO eclipse
+        (10.0, 10.0),  # GEO sunlit
+        (11000.0, 0.0)  # Electron beam should not reach target
+    ]
+)
+@pytest.mark.parametrize(
     ("servicer_radius", "target_radius"),  # ([m], [m])
     [
         (3.0, 3.0),
@@ -47,6 +56,8 @@ flux_photons = 1e-6  # [A/m^2] Photoelectron flux
 @pytest.mark.parametrize("electron_beam_current", [0.0, 0.001, 250e-6])  # [Amps]
 @pytest.mark.parametrize("electron_beam_alpha", [0.0, 0.5, 1.0])  # [-]
 def test_spacecraft_charging_dynamics(show_plots,
+                                      servicer_potential_init,
+                                      target_potential_init,
                                       servicer_radius,
                                       target_radius,
                                       bulk_velocity_ions,
@@ -69,6 +80,8 @@ def test_spacecraft_charging_dynamics(show_plots,
     **Test Parameters**
 
     Args:
+        servicer_potential_init (float): [Volts] Servicer initial potential
+        target_potential_init (float): [Volts] Target initial potential
         servicer_radius (float): [m] Servicer spacecraft radius
         target_radius (float): [m] Target spacecraft radius
         bulk_velocity_ions (float): [m/s] Bulk velocity of plasma ions
@@ -85,7 +98,7 @@ def test_spacecraft_charging_dynamics(show_plots,
     task_name = "unitTask"
     process_name = "TestProcess"
     sim = SimulationBaseClass.SimBaseClass()
-    test_time_step_sec = 1e-6
+    test_time_step_sec = 1e-7
     test_process_rate = macros.sec2nano(test_time_step_sec)
     test_process = sim.CreateNewProcess(process_name)
     test_process.addTask(sim.CreateNewTask(task_name, test_process_rate))
@@ -161,6 +174,8 @@ def test_spacecraft_charging_dynamics(show_plots,
     capacitance = 1e-9  # [farads]
     spacecraft_charging = spacecraftChargingDynamics.SpacecraftChargingDynamics()
     spacecraft_charging.ModelTag = "SpacecraftChargingDynamics"
+    spacecraft_charging.setServicerPotentialInit(servicer_potential_init)
+    spacecraft_charging.setTargetPotentialInit(target_potential_init)
     spacecraft_charging.setServicerCapacitance(capacitance)
     spacecraft_charging.setTargetCapacitance(capacitance)
     spacecraft_charging.setFluxPhotoelectrons(flux_photons)
@@ -207,7 +222,7 @@ def test_spacecraft_charging_dynamics(show_plots,
 
     # Run the simulation
     sim.InitializeSimulation()
-    sim_time = 0.0001  # [s]
+    sim_time = 0.00001  # [s]
     sim.ConfigureStopTime(macros.sec2nano(sim_time))
     sim.ExecuteSimulation()
 
@@ -272,8 +287,8 @@ def test_spacecraft_charging_dynamics(show_plots,
         target_electron_beam_current_list_truth.append(target_electron_beam_current)
 
     # Compute servicer and target potential truth information
-    servicer_potential_list_truth = [0.0]
-    target_potential_list_truth = [0.0]
+    servicer_potential_list_truth = [servicer_potential_init]
+    target_potential_list_truth = [target_potential_init]
     for idx in range(len(timespan)-1):
         servicer_potential = servicer_potential_list_sim[idx]
         target_potential = target_potential_list_sim[idx]
@@ -551,6 +566,8 @@ def compute_electron_beam_current(electron_beam_current,
 if __name__ == "__main__":
     test_spacecraft_charging_dynamics(
         False,  # show_plots
+        0.0,  # [Volts]
+        0.0,  # [Volts]
         4.0,  # [m]
         2.0,  # [m]
         400000.0,  # [m/s]

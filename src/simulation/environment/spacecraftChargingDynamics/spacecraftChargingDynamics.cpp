@@ -323,6 +323,34 @@ void SpacecraftChargingDynamics::postIntegration(uint64_t integrateToThisTimeNan
     this->timeBefore = integrateToThisTimeNanos*NANO2SEC;
 }
 
+/*! Setter for the initial servicer potential.
+ @param potentialInit [Volts] Servicer initial potential
+*/
+void SpacecraftChargingDynamics::setServicerPotentialInit(const double potentialInit) {
+    this->servicerPotentialInit = potentialInit;
+}
+
+/*! Setter for the initial target potential.
+ @param potentialInit [Volts] Target initial potential
+*/
+void SpacecraftChargingDynamics::setTargetPotentialInit(const double potentialInit) {
+    this->targetPotentialInit = potentialInit;
+}
+
+/*! Getter for the servicer initial potential.
+ @return double
+*/
+double SpacecraftChargingDynamics::getServicerPotentialInit() const {
+    return this->servicerPotentialInit;
+}
+
+/*! Getter for the target initial potential.
+ @return double
+*/
+double SpacecraftChargingDynamics::getTargetPotentialInit() const {
+    return this->targetPotentialInit;
+}
+
 /*! Setter for the servicer spacecraft capacitance.
  @param capacitance [farad] Servicer spacecraft capacitance
 */
