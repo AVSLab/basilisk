@@ -44,11 +44,6 @@ public:
     void writeOutputStateMessages(uint64_t clockTime);  //!< Method to write output messages
     void UpdateState(uint64_t CurrentSimNanos);  //!< Update method
     void equationsOfMotion(double integTimeSeconds, double timeStep);  //!< Method defining equations of motion
-    void computeCurrents();  //!< Method to compute all electric currents
-    void computeElectronBeamCurrent();  //!< Method to compute electron beam current
-    void computePhotoelectricCurrent();  //!< Method to compute photoelectric current
-    double computePlasmaElectronCurrent(double sunlitArea, double spacecraftPotential);  //!< Method to compute plasma electron current
-    double computePlasmaIonCurrent(double surfaceArea, double sunlitArea, double spacecraftPotential, double v_BN_N_norm);  //!< Method to compute plasma ion current
     void preIntegration(uint64_t callTimeNanos) final;  //!< Pre-integration method
     void postIntegration(uint64_t callTimeNanos) final;  //!< Post-integration method
 
@@ -132,6 +127,12 @@ private:
     double targetPlasmaElectronCurrent{};  //!< [Amps] Target plasma electron current
     double servicerPlasmaIonCurrent{};  //!< [Amps] Servicer plasma ion current
     double targetPlasmaIonCurrent{};  //!< [Amps] Target plasma ion current
+
+    void computeCurrents();  //!< Method to compute all electric currents
+    void computeElectronBeamCurrent();  //!< Method to compute electron beam current
+    void computePhotoelectricCurrent();  //!< Method to compute photoelectric current
+    double computePlasmaElectronCurrent(double sunlitArea, double spacecraftPotential);  //!< Method to compute plasma electron current
+    double computePlasmaIonCurrent(double surfaceArea, double sunlitArea, double spacecraftPotential, double v_BN_N_norm);  //!< Method to compute plasma ion current
 
     StateData *servicerPotentialState = nullptr;  //!< State data container for servicer potential
     StateData *targetPotentialState = nullptr;  //!< State data container for target potential
