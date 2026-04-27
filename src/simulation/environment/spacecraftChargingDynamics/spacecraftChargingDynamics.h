@@ -47,6 +47,10 @@ public:
     void preIntegration(uint64_t callTimeNanos) final;  //!< Pre-integration method
     void postIntegration(uint64_t callTimeNanos) final;  //!< Post-integration method
 
+    void setServicerPotentialInit(const double potentialInit);  //!< Setter for the initial servicer potential
+    void setTargetPotentialInit(const double potentialInit);  //!< Setter for the initial target potential
+    double getServicerPotentialInit() const;  //!< Getter for the initial servicer potential
+    double getTargetPotentialInit() const;  //!< Getter for the initial target potential
     void setServicerCapacitance(const double capacitance);  //!< Setter for the servicer capacitance
     void setTargetCapacitance(const double capacitance);  //!< Setter for the target capacitance
     double getServicerCapacitance() const;  //!< Getter for the servicer capacitance
@@ -91,10 +95,10 @@ public:
     BSKLogger bskLogger;  //!< BSK Logging
 
 private:
-    double servicerCapacitance{1e-9};  //!< [farads] Servicer capacitance
-    double targetCapacitance{1e-9};  //!< [farads] Target capacitance
     double servicerPotentialInit{};  //!< [Volts] Initial servicer potential
     double targetPotentialInit{};  //!< [Volts] Initial target potential
+    double servicerCapacitance{1e-9};  //!< [farads] Servicer capacitance
+    double targetCapacitance{1e-9};  //!< [farads] Target capacitance
     double servicerSurfaceArea{};  //!< [m^2] Servicer surface area
     double targetSurfaceArea{};  //!< [m^2] Target surface area
     double servicerSunlitArea{};  //!< [m^2] Servicer sunlit area

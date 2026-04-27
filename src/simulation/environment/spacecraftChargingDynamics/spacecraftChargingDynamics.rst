@@ -5,6 +5,9 @@ electric potential of two spacecraft (a servicer and a target) in a plasma envir
 ordinary differential equation for each spacecraft. The charging model includes plasma electron current, plasma
 ion current, photoelectric current, and an optional electron beam current.
 
+.. note::
+    while this module defaults all module member variables, there is a setter method available for each attribute.
+
 Message Connection Descriptions
 -------------------------------
 The following table lists all module input and output messages.
@@ -58,7 +61,7 @@ See the following journal paper for a detailed description of the charging equat
 
 .. note::
 
-    C. Hammerl and H. Schaub, `“Servicing and Target Spacecraft Charging Behavior Due to Emission of an
+    J. Hammerl and H. Schaub, `“Servicing and Target Spacecraft Charging Behavior Due to Emission of an
     Electron Beam” <https://hanspeterschaub.info/PapersPrivate/Hammerl2024a.pdf>`_.
 
 The module computes the total current on each spacecraft as the sum of:
@@ -101,9 +104,9 @@ correctly computes the photoelectric current, electron beam current, plasma elec
 current acting on both spacecraft. While the module defaults many required variables, the user has the ability
 to configure all information describing the electrons, ions, and photons using setter methods.
 
-The test varies the servicer and target size, the electron beam parameters, and the bulk plasma ion velocity. The test
-checks that the module correctly computes the photoelectric current, electron beam current, plasma electron current,
-and plasma ion current acting on both spacecraft.
+The test varies the initial spacecraft potentials and sizes, the electron beam parameters, and the bulk plasma ion
+velocity. The test checks that the module correctly computes the photoelectric current, electron beam current,
+plasma electron current, and plasma ion current acting on both spacecraft.
 
 User Guide
 ----------
@@ -191,8 +194,10 @@ The following steps are required to set up the ``spacecraftChargingDynamics`` mo
     capacitance = 1e-9  # [F]
     charging_dynamics = spacecraftChargingDynamics.SpacecraftChargingDynamics()
     charging_dynamics.ModelTag = "SpacecraftChargingDynamics"
-    charging_dynamics.setServicerCapacitance(capacitance)
-    charging_dynamics.setTargetCapacitance(capacitance)
+    charging_dynamics.setServicerPotentialInit(0.0)  # [Volts]
+    charging_dynamics.setTargetPotentialInit(0.0)  # [Volts]
+    charging_dynamics.setServicerCapacitance(capacitance)  # [farads]
+    charging_dynamics.setTargetCapacitance(capacitance)  # [farads]
 
     charging_dynamics.setTempPhotoelectrons(2.0)  # [eV]
     charging_dynamics.setFluxPhotoelectrons(1e-6)  # [A/m^2]
