@@ -94,7 +94,7 @@ Module Assumptions and Limitations
 
 Test Description and Success Criteria
 -------------------------------------
-The unit test for this module is located at ``src/simulation/dynamics/spacecraftChargingDynamics/_UnitTest/test_spacecraftChargingDynamics.py``.
+The unit test for this module is located at ``src/simulation/environment/spacecraftChargingDynamics/_UnitTest/test_spacecraftChargingDynamics.py``.
 The test verifies that the spacecraft charging dynamics module correctly computes the different types of currents
 impacting both a target and servicer spacecraft. Specifically, this test checks that the module
 correctly computes the photoelectric current, electron beam current, plasma electron current, and plasma ion

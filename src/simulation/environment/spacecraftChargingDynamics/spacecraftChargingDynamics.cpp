@@ -18,7 +18,7 @@
  */
 
 #include "spacecraftChargingDynamics.h"
-#include "../_GeneralModuleFiles/svIntegratorRK4.h"
+#include "../../dynamics/_GeneralModuleFiles/svIntegratorRK4.h"
 #include "architecture/utilities/astroConstants.h"
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/macroDefinitions.h"
