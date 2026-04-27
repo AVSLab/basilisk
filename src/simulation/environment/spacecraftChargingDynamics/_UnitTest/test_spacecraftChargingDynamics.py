@@ -226,38 +226,53 @@ def test_spacecraft_charging_dynamics(show_plots,
     target_electron_beam_current_sim = target_electron_beam_current_sim_data_log.current  # [Amps]
 
     # Compute truth information
-    servicer_plasma_electron_current_list_truth = compute_plasma_electron_current(timespan,
-                                                                                  servicer_potential_sim,
-                                                                                  servicer_surface_area)
-    target_plasma_electron_current_list_truth = compute_plasma_electron_current(timespan,
-                                                                                target_potential_sim,
-                                                                                target_surface_area)
+    servicer_plasma_electron_current_list_truth = []
+    target_plasma_electron_current_list_truth = []
+    servicer_plasma_ion_current_list_truth = []
+    target_plasma_ion_current_list_truth = []
+    servicer_photoelectric_current_truth = []
+    target_photoelectric_current_truth = []
+    servicer_electron_beam_current_list_truth = []
+    target_electron_beam_current_list_truth = []
 
-    servicer_plasma_ion_current_list_truth = compute_plasma_ion_current(timespan,
-                                                                        servicer_potential_sim,
-                                                                        servicer_surface_area,
-                                                                        servicer_sunlit_area,
-                                                                        v_SN_N_sim,
-                                                                        bulk_velocity_ions)
-    target_plasma_ion_current_list_truth = compute_plasma_ion_current(timespan,
-                                                                      target_potential_sim,
-                                                                      target_surface_area,
-                                                                      target_sunlit_area,
-                                                                      v_TN_N_sim,
-                                                                      bulk_velocity_ions)
-    (servicer_photoelectric_current_truth,
-     target_photoelectric_current_truth) = compute_photoelectric_current(timespan,
-                                                                         servicer_potential_sim,
-                                                                         target_potential_sim,
-                                                                         servicer_sunlit_area,
-                                                                         target_sunlit_area)
-    (servicer_electron_beam_current_list_truth,
-    target_electron_beam_current_list_truth) = compute_electron_beam_current(timespan,
-                                                                             electron_beam_current,
-                                                                             electron_beam_energy,
-                                                                             electron_beam_alpha,
-                                                                             servicer_potential_sim,
-                                                                             target_potential_sim)
+    for idx in range(len(timespan)):
+
+        servicer_plasma_electron_current = compute_plasma_electron_current(servicer_potential_sim[idx],
+                                                                           servicer_surface_area)
+        target_plasma_electron_current = compute_plasma_electron_current(target_potential_sim[idx],
+                                                                         target_surface_area)
+        servicer_plasma_ion_current = compute_plasma_ion_current(servicer_potential_sim[idx],
+                                                                 servicer_surface_area,
+                                                                 servicer_sunlit_area,
+                                                                 v_SN_N_sim[idx],
+                                                                 bulk_velocity_ions)
+        target_plasma_ion_current = compute_plasma_ion_current(target_potential_sim[idx],
+                                                               target_surface_area,
+                                                               target_sunlit_area,
+                                                               v_TN_N_sim[idx],
+                                                               bulk_velocity_ions)
+        (servicer_photoelectric_current,
+         target_photoelectric_current) = compute_photoelectric_current(servicer_potential_sim[idx],
+                                                                       target_potential_sim[idx],
+                                                                       servicer_sunlit_area,
+                                                                       target_sunlit_area)
+
+        servicer_electron_beam_current, target_electron_beam_current = compute_electron_beam_current(electron_beam_current,
+                                                                                                     electron_beam_energy,
+                                                                                                     electron_beam_alpha,
+                                                                                                     servicer_potential_sim[idx],
+                                                                                                     target_potential_sim[idx])
+
+        servicer_plasma_electron_current_list_truth.append(servicer_plasma_electron_current)
+        target_plasma_electron_current_list_truth.append(target_plasma_electron_current)
+        servicer_plasma_ion_current_list_truth.append(servicer_plasma_ion_current)
+        target_plasma_ion_current_list_truth.append(target_plasma_ion_current)
+        servicer_photoelectric_current_truth.append(servicer_photoelectric_current)
+        target_photoelectric_current_truth.append(target_photoelectric_current)
+        servicer_electron_beam_current_list_truth.append(servicer_electron_beam_current)
+        target_electron_beam_current_list_truth.append(target_electron_beam_current)
+
+
     plt.close("all")
     if show_plots:
 
@@ -334,90 +349,67 @@ def test_spacecraft_charging_dynamics(show_plots,
                                    atol=1e-7,
                                    verbose=True)
 
-def compute_plasma_electron_current(timespan,
-                                    spacecraft_potential,
+def compute_plasma_electron_current(spacecraft_potential,
                                     surface_area):
-    plasma_electron_current_list_truth = []
-    for idx in range(len(timespan)):
-        velocity_electrons = math.sqrt((8 * astroConstants.Q_CHARGE * temp_electrons) / (astroConstants.MASS_ELECTRON * astroConstants.MPI))
-        if spacecraft_potential[idx] <= 0:
-            plasma_electron_current = (-0.25 * surface_area * astroConstants.Q_CHARGE * density_electrons * velocity_electrons) * math.exp(spacecraft_potential[idx] / temp_electrons)
-        else:
-            plasma_electron_current = (-0.25 * surface_area * astroConstants.Q_CHARGE * density_electrons * velocity_electrons) * (1 + (spacecraft_potential[idx] / temp_electrons))
+    velocity_electrons = math.sqrt((8 * astroConstants.Q_CHARGE * temp_electrons) / (astroConstants.MASS_ELECTRON * astroConstants.MPI))
+    if spacecraft_potential <= 0:
+        plasma_electron_current = (-0.25 * surface_area * astroConstants.Q_CHARGE * density_electrons * velocity_electrons) * math.exp(spacecraft_potential / temp_electrons)
+    else:
+        plasma_electron_current = (-0.25 * surface_area * astroConstants.Q_CHARGE * density_electrons * velocity_electrons) * (1 + (spacecraft_potential / temp_electrons))
 
-        plasma_electron_current_list_truth.append(plasma_electron_current)
+    return plasma_electron_current
 
-    return plasma_electron_current_list_truth
-
-def compute_plasma_ion_current(timespan,
-                               spacecraft_potential,
+def compute_plasma_ion_current(spacecraft_potential,
                                surface_area,
                                sunlit_area,
                                v_BN_N,
-                               bulk_velocity_ions):
-    plasma_ion_current_list_truth = []
-    for idx in range(len(timespan)):
-        thermal_velocity_ions = math.sqrt((8 * astroConstants.Q_CHARGE * temp_ions) / (astroConstants.MASS_PROTON * astroConstants.MPI))
-        relative_velocity_ions = np.abs(np.linalg.norm(v_BN_N[idx]) - bulk_velocity_ions)
+                           bulk_velocity_ions):
+    thermal_velocity_ions = math.sqrt((8 * astroConstants.Q_CHARGE * temp_ions) / (astroConstants.MASS_PROTON * astroConstants.MPI))
+    relative_velocity_ions = np.abs(np.linalg.norm(v_BN_N) - bulk_velocity_ions)
 
-        if thermal_velocity_ions >= relative_velocity_ions:
-            if spacecraft_potential[idx] <= 0:
-                plasma_ion_current = (0.25 * surface_area * astroConstants.Q_CHARGE * density_ions * thermal_velocity_ions) * (1 - (spacecraft_potential[idx] / temp_ions))
-            else:
-                plasma_ion_current = (0.25 * surface_area * astroConstants.Q_CHARGE * density_ions * thermal_velocity_ions) * math.exp(-spacecraft_potential[idx] / temp_ions)
+    if thermal_velocity_ions >= relative_velocity_ions:
+        if spacecraft_potential <= 0:
+            plasma_ion_current = (0.25 * surface_area * astroConstants.Q_CHARGE * density_ions * thermal_velocity_ions) * (1 - (spacecraft_potential / temp_ions))
         else:
-            plasma_ion_current = sunlit_area * astroConstants.Q_CHARGE * density_ions * relative_velocity_ions
+            plasma_ion_current = (0.25 * surface_area * astroConstants.Q_CHARGE * density_ions * thermal_velocity_ions) * math.exp(-spacecraft_potential / temp_ions)
+    else:
+        plasma_ion_current = sunlit_area * astroConstants.Q_CHARGE * density_ions * relative_velocity_ions
 
-        plasma_ion_current_list_truth.append(plasma_ion_current)
+    return plasma_ion_current
 
-    return plasma_ion_current_list_truth
-
-def compute_photoelectric_current(timespan,
-                                  servicer_potential,
+def compute_photoelectric_current(servicer_potential,
                                   target_potential,
                                   servicer_sunlit_area,
                                   target_sunlit_area):
-    servicer_photoelectric_current_list_truth = []
-    target_photoelectric_current_list_truth = []
-    for idx in range(len(timespan)):
-        # Compute the servicer photoelectric current
-        if servicer_potential[idx] <= 0:
-            servicer_photoelectric_current_truth = flux_photons * servicer_sunlit_area
-        else:
-            servicer_photoelectric_current_truth = flux_photons * servicer_sunlit_area * math.exp(-1 * servicer_potential[idx] / temp_photons)
+    # Compute the servicer photoelectric current
+    if servicer_potential <= 0:
+        servicer_photoelectric_current = flux_photons * servicer_sunlit_area
+    else:
+        servicer_photoelectric_current = flux_photons * servicer_sunlit_area * math.exp(-1 * servicer_potential / temp_photons)
 
-        # Compute the target photoelectric current
-        if target_potential[idx] <= 0:
-            target_photoelectric_current_truth = flux_photons * target_sunlit_area
-        else:
-            target_photoelectric_current_truth = flux_photons * target_sunlit_area * math.exp(-1 * target_potential[idx] / temp_photons)
+    # Compute the target photoelectric current
+    if target_potential <= 0:
+        target_photoelectric_current = flux_photons * target_sunlit_area
+    else:
+        target_photoelectric_current = flux_photons * target_sunlit_area * math.exp(-1 * target_potential / temp_photons)
 
-        servicer_photoelectric_current_list_truth.append(servicer_photoelectric_current_truth)
-        target_photoelectric_current_list_truth.append(target_photoelectric_current_truth)
+    return servicer_photoelectric_current, target_photoelectric_current
 
-    return servicer_photoelectric_current_list_truth, target_photoelectric_current_list_truth
-
-def compute_electron_beam_current(timespan,
-                                  electron_beam_current,
+def compute_electron_beam_current(electron_beam_current,
                                   electron_beam_energy,
                                   electron_beam_alpha,
                                   servicer_potential,
                                   target_potential):
-    servicer_electron_beam_current_list_truth = []
-    target_electron_beam_current_list_truth = []
-    for idx in range(len(timespan)):
-        if electron_beam_energy > (servicer_potential[idx] - target_potential[idx]):
-            intermediate_term = -1 * (electron_beam_energy - servicer_potential[idx] + target_potential[idx]) / 20.0
-            servicer_electron_beam_current = electron_beam_current * (1 - math.exp(intermediate_term))
-            target_electron_beam_current = - electron_beam_alpha * electron_beam_current * (1 - math.exp(intermediate_term))
-        else:
-            servicer_electron_beam_current = 0.0
-            target_electron_beam_current = 0.0
 
-        servicer_electron_beam_current_list_truth.append(servicer_electron_beam_current)
-        target_electron_beam_current_list_truth.append(target_electron_beam_current)
+    if electron_beam_energy > (servicer_potential - target_potential):
+        intermediate_term = -1 * (electron_beam_energy - servicer_potential + target_potential) / 20.0
+        servicer_electron_beam_current = electron_beam_current * (1 - math.exp(intermediate_term))
+        target_electron_beam_current = - electron_beam_alpha * electron_beam_current * (1 - math.exp(intermediate_term))
+    else:
+        servicer_electron_beam_current = 0.0
+        target_electron_beam_current = 0.0
 
-    return servicer_electron_beam_current_list_truth, target_electron_beam_current_list_truth
+    return servicer_electron_beam_current, target_electron_beam_current
 
 if __name__ == "__main__":
     test_spacecraft_charging_dynamics(
