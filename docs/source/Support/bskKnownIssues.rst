@@ -14,6 +14,8 @@ Version |release|
   logging issues are fixed in the current version.
 - Additional build-helper command execution, temporary file cleanup, remote example download, and image buffer
   validation hardening is included in the current version.
+- A Vizard ``noDisplay`` image request regression that caused OpNav scenarios to stop with a
+  ``Vizard image request acknowledgement was not received`` error is fixed in the current version.
 - SWIG 4.4.0 caused Basilisk build failures in some Python 3.13+ source-build configurations.
   The development dependency range now excludes SWIG 4.4.0, and SWIG 4.4.1 has been verified to build
   successfully. If source builds fail with SWIG 4.4.0 or emit ``builtin type swigvarlink has no __module__ attribute``
