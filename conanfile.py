@@ -218,7 +218,7 @@ class BasiliskConan(ConanFile):
 
         if self.options.get_safe("vizInterface") or self.options.get_safe("opNav"):
             self.requires("protobuf/3.21.12") # For compatibility with openCV
-            self.requires("cppzmq/4.5.0")
+            self.requires("cppzmq/4.11.0")
 
         if self.options.get_safe("mujoco"):
             self.requires(f"mujoco/{get_mujoco_version()}")
