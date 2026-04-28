@@ -114,7 +114,7 @@ private:
     double densityIons = 950000; //!< [m^-3] Ion density
     double bulkVelocityIons{400000};  //!< [m/s] Bulk ion velocity
 
-    double electronBeamEnergy{};  //!< [keV] Electron beam energy
+    double electronBeamEnergy{};  //!< [eV] Electron beam energy
     double electronBeamCurrent{};  //!< [Amps] Electron beam current
     double alphaEB{};  //!< [-] Scaling term for the fraction of current reaching the target
 

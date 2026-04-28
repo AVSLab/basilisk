@@ -165,9 +165,9 @@ def test_spacecraft_charging_dynamics(show_plots,
 
     # Create electron beam input message
     electron_beam_msg_data = messaging.ElectronBeamMsgPayload()
-    electron_beam_msg_data.energyEB = electron_beam_energy
-    electron_beam_msg_data.currentEB = electron_beam_current
-    electron_beam_msg_data.alphaEB = electron_beam_alpha
+    electron_beam_msg_data.energyEB = electron_beam_energy  # [eV]
+    electron_beam_msg_data.currentEB = electron_beam_current  # [Amps]
+    electron_beam_msg_data.alphaEB = electron_beam_alpha  # [-]
     electron_beam_msg = messaging.ElectronBeamMsg().write(electron_beam_msg_data)
 
     # Create the spacecraft charging module
@@ -292,8 +292,8 @@ def test_spacecraft_charging_dynamics(show_plots,
     for idx in range(len(timespan)-1):
         servicer_potential = servicer_potential_list_sim[idx]
         target_potential = target_potential_list_sim[idx]
-        v_SN_N = v_SN_N_sim[idx]
-        v_TN_N = v_TN_N_sim[idx]
+        v_SN_N = v_SN_N_sim[idx]  # [m/s]
+        v_TN_N = v_TN_N_sim[idx]  # [m/s]
 
         # Integrate first order odes using RK4 algorithm
         servicer_k1, target_k1 = equations_of_motion(servicer_potential,
