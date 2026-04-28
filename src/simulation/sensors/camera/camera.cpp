@@ -386,8 +386,7 @@ void Camera::UpdateState(uint64_t currentSimNanos)
         }
         /*! - Encode the cv mat into a png for the future modules to decode it the same way */
         std::vector<unsigned char> buf;
-        std::vector<int> compression;
-        compression.push_back(0);
+        std::vector<int> compression = {cv::IMWRITE_PNG_COMPRESSION, 0};
         if (!cv::imencode(".png", blurred, buf, compression) || buf.empty()) {
             bskLogger.bskLog(BSK_ERROR, "camera: failed to encode image output buffer.");
             return;
