@@ -64,6 +64,22 @@ template <typename T = std::invalid_argument>
     throw T(error);
 }
 
+/** Returns the name of the given MuJoCo spec object. */
+template <typename T>
+inline std::string getSpecObjectName(T* object)
+{
+    return mjs_getString(mjs_getName(object->element));
+}
+
+/** Sets the name of the given MuJoCo spec object. */
+template <typename T>
+inline void setSpecObjectName(T* object, const std::string& name)
+{
+    if (mjs_setName(object->element, name.c_str()) != 0) {
+        logAndThrow("Could not set MuJoCo spec object name to: " + name);
+    }
+}
+
 /** Calls ``logAndThrow<std::runtime_error>`` with the given input
  *
  * Meant to be used as an error callback for MuJoCo's ``mju_user_error``.

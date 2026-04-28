@@ -76,11 +76,11 @@ public:
     {
         static size_t namelessIndex = 0; // figure out a better way?
 
-        this->name = mjs_getString(mjsObject->name);
+        this->name = MJBasilisk::detail::getSpecObjectName(mjsObject);
         if (this->name.empty())
         {
             this->name = "_nameless_" + std::to_string(namelessIndex);
-            mjs_setString(mjsObject->name, this->name.c_str());
+            MJBasilisk::detail::setSpecObjectName(mjsObject, this->name);
             namelessIndex++;
         }
     };
