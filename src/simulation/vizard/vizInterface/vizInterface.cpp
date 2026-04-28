@@ -1480,11 +1480,6 @@ void VizInterface::receiveUserInput(uint64_t CurrentSimNanos){
  */
 void VizInterface::requestImage(size_t camCounter, uint64_t CurrentSimNanos)
 {
-    char buffer[10];
-    if (zmq_recv(this->requester_socket, buffer, 10, 0) == -1) {
-        bskLogger.bskLog(BSK_ERROR, "Vizard image request acknowledgement was not received.");
-        return;
-    }
     /*! -- Send request */
     std::string cmdMsg = "REQUEST_IMAGE_";
     cmdMsg += std::to_string(this->cameraConfigBuffers[camCounter].cameraID);
