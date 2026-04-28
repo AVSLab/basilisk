@@ -34,7 +34,7 @@ std::vector<std::string> readCustomSingleSplit(mjSpec* spec, const std::string& 
          element = mjs_nextElement(spec, element)) {
                     auto mjstext = mjs_asText(element);
         assert(mjstext != NULL);
-        if (mjs_getString(mjstext->name) == key) {
+        if (MJBasilisk::detail::getSpecObjectName(mjstext) == key) {
             value = mjs_getString(mjstext->data);
             break;
         }
@@ -148,7 +148,7 @@ void MJSpec::loadActuators()
         auto mjsactuator = mjs_asActuator(element);
         assert(mjsactuator != NULL);
 
-        auto name = std::string(mjs_getString(mjsactuator->name));
+        auto name = MJBasilisk::detail::getSpecObjectName(mjsactuator);
         actuatorObjects.emplace(name, mjsactuator);
     }
 
@@ -190,7 +190,7 @@ void MJSpec::loadEqualities()
         auto mjsequality = mjs_asEquality(element);
         assert(mjsequality != NULL);
 
-        auto name = std::string(mjs_getString(mjsequality->name));
+        auto name = MJBasilisk::detail::getSpecObjectName(mjsequality);
         this->equalities.emplace_back(mjsequality, *this);
     }
 }
@@ -224,7 +224,7 @@ MJSingleActuator& MJSpec::addJointSingleActuator(const std::string& name,
 
     auto newMjsActuator = mjs_addActuator(this->spec.get(), 0);
     newMjsActuator->trntype = mjTRN_JOINT;
-    mjs_setString(newMjsActuator->name, name.c_str());
+    MJBasilisk::detail::setSpecObjectName(newMjsActuator, name);
     mjs_setString(newMjsActuator->target, joint.c_str());
     newMjsActuator->dyntype = mjDYN_NONE;
     newMjsActuator->gaintype = mjGAIN_FIXED;
@@ -246,7 +246,7 @@ MJSingleActuator& MJSpec::addSingleActuator(const std::string& name,
 
     auto newMjsActuator = mjs_addActuator(this->spec.get(), 0);
     newMjsActuator->trntype = mjTRN_SITE;
-    mjs_setString(newMjsActuator->name, name.c_str());
+    MJBasilisk::detail::setSpecObjectName(newMjsActuator, name);
     mjs_setString(newMjsActuator->target, site.c_str());
     newMjsActuator->dyntype = mjDYN_NONE;
     newMjsActuator->gaintype = mjGAIN_FIXED;

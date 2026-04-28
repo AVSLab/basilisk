@@ -301,7 +301,7 @@ void MJBody::addSite(std::string name, const Eigen::Vector3d& position, const Ei
     }
 
     auto mjssite = mjs_addSite(this->mjsObject, 0);
-    mjs_setString(mjssite->name, name.c_str());
+    MJBasilisk::detail::setSpecObjectName(mjssite, name);
 
     auto& site = this->sites.emplace_back(mjssite, *this);
 

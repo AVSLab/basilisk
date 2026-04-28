@@ -18,6 +18,8 @@ Version |release|
   ``Vizard image request acknowledgement was not received`` error is fixed in the current version.
 - The camera module now passes PNG encoding options as OpenCV key-value pairs, fixing OpNav image
   processing failures with OpenCV 4.13.
+- The MuJoCo dynamics wrapper now uses MuJoCo 3.7 element-name APIs, fixing builds after the MuJoCo
+  3.7 upgrade.
 - SWIG 4.4.0 caused Basilisk build failures in some Python 3.13+ source-build configurations.
   The development dependency range now excludes SWIG 4.4.0, and SWIG 4.4.1 has been verified to build
   successfully. If source builds fail with SWIG 4.4.0 or emit ``builtin type swigvarlink has no __module__ attribute``
