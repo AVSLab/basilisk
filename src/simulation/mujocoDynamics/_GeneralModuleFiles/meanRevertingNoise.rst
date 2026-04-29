@@ -9,13 +9,13 @@ Module Description
 The internal scalar state :math:`x` follows
 
 .. math::
-   dx = -\frac{1}{\tau}x\,dt + \sqrt{\frac{2}{\tau}}\sigma_{st}\,dW
+   \text{d}x = -\frac{1}{\tau}x\,\text{d}t + \sqrt{\frac{2}{\tau}}\sigma_{st}\,\text{d}W
 
 where:
 
 - :math:`\tau` is the time constant
 - :math:`\sigma_{st}` is the stationary standard deviation
-- :math:`dW` is Wiener process increment
+- :math:`\text{d}W` is Wiener process increment
 
 At each update, the base class computes:
 
@@ -67,5 +67,5 @@ Module Assumptions and Limitations
 Verification and Testing
 ------------------------
 The OU process implementation is verified in
-``src/simulation/mujocoDynamics/meanRevertingNoise/_UnitTest/test_meanRevertingNoise.py`` through a subclass usage
+``src/simulation/mujocoDynamics/stochasticAtmDensity/_UnitTest/test_stochasticAtmDensity.py`` through a subclass usage
 path. The test validates empirical mean, variance, and estimated time constant against expected OU statistics.

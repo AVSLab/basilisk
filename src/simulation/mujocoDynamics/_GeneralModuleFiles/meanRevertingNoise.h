@@ -36,7 +36,7 @@
  *
  * The state x follows
  * \f[
- *   dx = -\frac{1}{\tau}\,x\,dt + \sqrt{\frac{2}{\tau}}\,\sigma_{\text{st}}\,dW
+ *   \text{d}x = -\frac{1}{\tau}\,x\,\text{d}t + \sqrt{\frac{2}{\tau}}\,\sigma_{\text{st}}\,\text{d}W
  * \f]
  * The base class:
  *   1) registers a 1-by-1 state with one noise source
