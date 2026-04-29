@@ -19,23 +19,16 @@
 #ifndef STOCHASTIC_DRAG_COEFF_H
 #define STOCHASTIC_DRAG_COEFF_H
 
-#include "meanRevertingNoise.h"
+#include "simulation/mujocoDynamics/_GeneralModuleFiles/meanRevertingNoise.h"
 #include "architecture/msgPayloadDefC/DragGeometryMsgPayload.h"
 
 /**
  * @class StochasticDragCoeff
  * @brief Applies a mean-reverting Ornstein–Uhlenbeck correction to the drag coefficient.
  *
- * The scalar state \f$x\f$ evolves as:
- * \f[
- *   dx = -\frac{1}{\tau}\,x\,dt + \sqrt{\frac{2}{\tau}}\,\sigma_{\text{st}}\,dW
- * \f]
- * The outgoing coefficient is modified as
- * \f[
- *   C_{D,\text{out}} = C_{D,\text{in}}(1 + x)
- * \f]
- *
- * The projected area and \f$r_{CP,S}\f$ are passed through unchanged.
+ * Derives from MeanRevertingNoise. Scales the incoming drag coefficient by \f$(1 + x)\f$,
+ * where \f$x\f$ is the OU state maintained by the base class. All other geometry fields are
+ * passed through unchanged.
  */
 class StochasticDragCoeff : public MeanRevertingNoise {
 public:
