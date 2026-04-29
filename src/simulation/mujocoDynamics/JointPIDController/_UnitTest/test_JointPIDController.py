@@ -10,7 +10,7 @@ from Basilisk.utilities import pythonVariableLogger
 
 try:
     from Basilisk.simulation import mujoco
-    from Basilisk.simulation import MJPIDControllers
+    from Basilisk.simulation import MJJointPIDController
 
     couldImportMujoco = True
 except:
@@ -60,7 +60,7 @@ r"""
     ])
     scene.AddModelToDynamicsTask(desiredPosInterpolator)
 
-    armController = MJPIDControllers.JointPIDController()
+    armController = MJJointPIDController.JointPIDController()
     armController.setProportionalGain(1)
     armController.setDerivativeGain(2)
     armController.setIntegralGain(0.02)
