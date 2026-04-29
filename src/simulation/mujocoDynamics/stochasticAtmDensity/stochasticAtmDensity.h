@@ -19,7 +19,7 @@
 #ifndef STOCHASTIC_ATM_DENSITY_H
 #define STOCHASTIC_ATM_DENSITY_H
 
-#include "meanRevertingNoise.h"
+#include "simulation/mujocoDynamics/_GeneralModuleFiles/meanRevertingNoise.h"
 
 #include "architecture/msgPayloadDefC/AtmoPropsMsgPayload.h"
 
@@ -27,19 +27,8 @@
  * @class StochasticAtmDensity
  * @brief Applies a mean-reverting (Ornstein–Uhlenbeck) correction to atmospheric density.
  *
- * This class derives from MeanRevertingNoise, which provides the scalar
- * OU state \f$x\f$ evolving as:
- * \f[
- *   dx = -\frac{1}{\tau}\, x \, dt + \sqrt{\frac{2}{\tau}}\, \sigma_{\text{st}}\, dW
- * \f]
- *
- * The corrected density is:
- * \f[
- *   \rho_\text{out} = \rho_\text{in}\,(1 + x)
- * \f]
- *
- * The state \f$x\f$ is stored and propagated by the base class.
- * This class only specifies how the state modifies the atmosphere message.
+ * Derives from MeanRevertingNoise. Scales the incoming neutral density by \f$(1 + x)\f$,
+ * where \f$x\f$ is the OU state maintained by the base class.
  */
 class StochasticAtmDensity : public MeanRevertingNoise {
 public:

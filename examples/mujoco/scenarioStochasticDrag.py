@@ -100,7 +100,7 @@ from Basilisk.simulation import pointMassGravityModel
 from Basilisk.simulation import NBodyGravity
 from Basilisk.simulation import exponentialAtmosphere
 from Basilisk.simulation import cannonballDrag
-from Basilisk.simulation import MJMeanRevertingNoise
+from Basilisk.simulation import MJStochasticAtmDensity
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
@@ -197,7 +197,7 @@ def run(showPlots: bool = False):
     # Will be updated with the task period
     scSim.AddModelToTask("test", atmo)
 
-    stochasticAtmo = MJMeanRevertingNoise.StochasticAtmDensity()
+    stochasticAtmo = MJStochasticAtmDensity.StochasticAtmDensity()
     stochasticAtmo.setStationaryStd(0.15)
     stochasticAtmo.setTimeConstant(1.8 * 60)  # [s]
     stochasticAtmo.ModelTag = "StochasticExpAtmo"

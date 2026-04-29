@@ -27,6 +27,7 @@ from Basilisk.utilities import macros
 try:
     from Basilisk.simulation import mujoco
     from Basilisk.simulation import MJMeanRevertingNoise
+    from Basilisk.simulation import MJStochasticAtmDensity
 
     couldImportMujoco = True
 except:
@@ -34,15 +35,19 @@ except:
 
 @pytest.mark.skipif(not couldImportMujoco, reason="Compiled Basilisk without --mujoco")
 @pytest.mark.parametrize("usePython", [False, True])
-def test_meanRevertingNoise(usePython: bool, showPlots: bool = False):
+def test_stochasticAtmDensity(usePython: bool, showPlots: bool = False):
     """
-    Unit test for classes that inherit from MeanRevertingNoise.
-    """
-    dt = .002 # s
-    tf = 100 # s
+    Unit test for StochasticAtmDensity.
 
-    sigmaStationary = 0.8 # kg/m^3
-    timeConstant = 0.1 # s
+    Verifies that the output density follows OU statistics: mean, variance, and
+    correlation time match theoretical predictions. Also tests a Python subclass
+    of MeanRevertingNoise.
+    """
+    dt = .002 # [s]
+    tf = 100 # [s]
+
+    sigmaStationary = 0.8 # [-]
+    timeConstant = 0.1 # [s]
 
     scSim = SimulationBaseClass.SimBaseClass()
     dynProcess = scSim.CreateNewProcess("test")
@@ -78,7 +83,7 @@ def test_meanRevertingNoise(usePython: bool, showPlots: bool = False):
         stochasticAtm = PyStochasticAtmDensity()
 
     else:
-        stochasticAtm = MJMeanRevertingNoise.StochasticAtmDensity()
+        stochasticAtm = MJStochasticAtmDensity.StochasticAtmDensity()
     stochasticAtm.setStationaryStd(sigmaStationary)
     stochasticAtm.setTimeConstant(timeConstant)
     stochasticAtm.atmoDensInMsg.subscribeTo( nominal )
@@ -136,4 +141,4 @@ def test_meanRevertingNoise(usePython: bool, showPlots: bool = False):
 
 if __name__ == "__main__":
     assert couldImportMujoco
-    test_meanRevertingNoise(True, True)
+    test_stochasticAtmDensity(True, True)
