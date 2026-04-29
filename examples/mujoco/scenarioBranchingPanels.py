@@ -33,7 +33,7 @@ simultaneously using PID controllers and trapezoidal/triangular
 velocity profiles. In this scenario, the panels are deployed in a
 staged sequence, where the deployment of some panels happens after
 the deployment of others. Moreover, this scenario uses the C++
-implementation of the PID controller (`MJPIDControllers.JointPIDController`),
+implementation of the PID controller (`MJJointPIDController.JointPIDController`),
 which provides improved performance compared to the previous
 Python-based controller.
 
@@ -79,7 +79,7 @@ from Basilisk.utilities import macros
 from Basilisk.simulation import StatefulSysModel
 from Basilisk.architecture import messaging
 from Basilisk.simulation import svIntegrators
-from Basilisk.simulation import MJPIDControllers
+from Basilisk.simulation import MJJointPIDController
 
 import numpy as np
 
@@ -254,7 +254,7 @@ def run(showPlots: bool = False, visualize: bool = False):
         )
 
         # Use the C++ JointPIDController
-        pidController = MJPIDControllers.JointPIDController()
+        pidController = MJJointPIDController.JointPIDController()
         pidController.ModelTag = f"{actuatorName}_controller"
         pidController.setProportionalGain(0.1)
         pidController.setDerivativeGain(0.002)

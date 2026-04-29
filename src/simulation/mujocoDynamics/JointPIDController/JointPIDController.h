@@ -37,30 +37,21 @@ protected:
      * @param i Joint state message payload.
      * @return The joint position (radians or meters).
      */
-    double readMeasuredPosition(const ScalarJointStateMsgPayload& i) const override
-    {
-        return i.state;
-    }
+    double readMeasuredPosition(const ScalarJointStateMsgPayload& i) const override;
 
     /**
      * @brief Read the measured velocity from the joint state payload.
      * @param i Joint state message payload.
      * @return The joint velocity (radians/sec or meters/sec).
      */
-    double readMeasuredVelocity(const ScalarJointStateMsgPayload& i) const override
-    {
-        return i.state;
-    }
+    double readMeasuredVelocity(const ScalarJointStateMsgPayload& i) const override;
 
     /**
      * @brief Write the computed actuator input to the output payload.
      * @param o Actuator message payload.
      * @param val Value to write.
      */
-    void writeOutput(SingleActuatorMsgPayload& o, double val) override
-    {
-        o.input = val;
-    }
+    void writeOutput(SingleActuatorMsgPayload& o, double val) override;
 };
 
 #endif
