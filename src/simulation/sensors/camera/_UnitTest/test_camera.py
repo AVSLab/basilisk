@@ -26,6 +26,8 @@ import os
 import numpy as np
 import pytest
 
+from Basilisk.architecture.bskLogging import BasiliskError
+
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 bskName = 'Basilisk'
@@ -56,6 +58,228 @@ except ImportError:
 # Uncomment this line if this test has an expected failure, adjust message as needed.
 # @pytest.mark.xfail(conditionstring)
 # Provide a unique test method name, starting with 'test_'.
+
+@pytest.mark.skipif(importErr, reason=reasonErr)
+def test_no_image_zero_msg():
+    """
+    **Validation Test Description**
+
+    This module tests that when no image is present (no filename and no input message),
+    the camera module properly outputs a zeroed-out message.
+
+    **Description of Variables Being Tested**
+
+    The camera output message should have all fields set to zero/empty when no image is available.
+    This ensures that downstream modules receive valid (though empty) data.
+
+    - ``imageOutMsg.valid`` should be 0
+    - ``imageOutMsg.imageBufferLength`` should be 0
+    - ``imageOutMsg.imagePointer`` should be nullptr
+    """
+    testFailCount = 0
+    testMessages = []
+
+    unitTaskName = "unitTask"
+    unitProcessName = "TestProcess"
+
+    # Create a sim module as an empty container
+    unitTestSim = SimulationBaseClass.SimBaseClass()
+
+    # Create test thread
+    testProcessRate = macros.sec2nano(0.5)
+    testProc = unitTestSim.CreateNewProcess(unitProcessName)
+    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+
+    # Construct algorithm and associated C++ container
+    module = camera.Camera()
+    module.ModelTag = "cameras"
+
+    # Add test module to runtime call list
+    unitTestSim.AddModelToTask(unitTaskName, module)
+
+    # Don't provide filename or input message - this should trigger zeroed output
+    module.filename = ""
+    module.cameraIsOn = 1
+
+    # Setup logging on the test module output message
+    dataLog = module.imageOutMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
+
+    # Need to call the self-init and cross-init methods
+    unitTestSim.InitializeSimulation()
+
+    # Set the simulation time
+    unitTestSim.ConfigureStopTime(macros.sec2nano(0.5))
+
+    # Begin the simulation time run
+    unitTestSim.ExecuteSimulation()
+
+    # Check that the output message fields are zeroed
+    if len(dataLog.valid) == 0:
+        testFailCount += 1
+        testMessages.append("No image output message was written")
+    else:
+        # Check the last written message
+        if dataLog.valid[-1] != 0:
+            testFailCount += 1
+            testMessages.append(f"imageOutMsg.valid should be 0, but got {dataLog.valid[-1]}")
+
+        if dataLog.imageBufferLength[-1] != 0:
+            testFailCount += 1
+            testMessages.append(f"imageOutMsg.imageBufferLength should be 0, but got {dataLog.imageBufferLength[-1]}")
+
+        if dataLog.timeTag[-1] != 0:
+            testFailCount += 1
+            testMessages.append(f"imageOutMsg.timeTag should be 0, but got {dataLog.timeTag[-1]}")
+
+        if dataLog.cameraID[-1] != 0:
+            testFailCount += 1
+            testMessages.append(f"imageOutMsg.cameraID should be 0, but got {dataLog.cameraID[-1]}")
+
+        if dataLog.imageType[-1] != 0:
+            testFailCount += 1
+            testMessages.append(f"imageOutMsg.imageType should be 0, but got {dataLog.imageType[-1]}")
+
+    assert testFailCount == 0, testMessages
+
+
+@pytest.mark.skipif(importErr, reason=reasonErr)
+def test_filename_metadata():
+    """
+    **Validation Test Description**
+
+    This module tests that when using the filename parameter (without an input message),
+    the camera module outputs an image with correct metadata populated from deterministic sources.
+
+    **Description of Variables Being Tested**
+
+    When loading an image from a filename, the camera should set:
+    - ``imageOutMsg.timeTag`` to the current simulation time
+    - ``imageOutMsg.cameraID`` to the configured camera ID
+    - ``imageOutMsg.imageType`` to 3 (RGB channels)
+    - ``imageOutMsg.valid`` to 1 (image is valid)
+
+    This ensures that downstream consumers receive correct metadata for provenance and synchronization.
+    """
+    testFailCount = 0
+    testMessages = []
+
+    unitTaskName = "unitTask"
+    unitProcessName = "TestProcess"
+
+    # Create a sim module as an empty container
+    unitTestSim = SimulationBaseClass.SimBaseClass()
+
+    # Create test thread
+    testProcessRate = macros.sec2nano(0.5)
+    testProc = unitTestSim.CreateNewProcess(unitProcessName)
+    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+
+    # Construct algorithm and associated C++ container
+    module = camera.Camera()
+    module.ModelTag = "cameras"
+
+    # Add test module to runtime call list
+    unitTestSim.AddModelToTask(unitTaskName, module)
+
+    # Use filename to load image, with a specific camera ID
+    imagePath = path + '/mars.jpg'
+    module.filename = imagePath
+    module.cameraID = 42  # Use a non-default camera ID to verify it's used
+    module.cameraIsOn = 1
+
+    # Setup logging on the test module output message
+    dataLog = module.imageOutMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, dataLog)
+
+    # Need to call the self-init and cross-init methods
+    unitTestSim.InitializeSimulation()
+
+    # Set the simulation time
+    simEndTime = macros.sec2nano(0.5)
+    unitTestSim.ConfigureStopTime(simEndTime)
+
+    # Begin the simulation time run
+    unitTestSim.ExecuteSimulation()
+
+    # Check that the output message has correct metadata
+    if len(dataLog.valid) == 0:
+        testFailCount += 1
+        testMessages.append("No image output message was written")
+    else:
+        # Check the last written message (filename path should produce output)
+        if dataLog.valid[-1] != 1:
+            testFailCount += 1
+            testMessages.append(f"imageOutMsg.valid should be 1, but got {dataLog.valid[-1]}")
+
+        if dataLog.cameraID[-1] != 42:
+            testFailCount += 1
+            testMessages.append(f"imageOutMsg.cameraID should be 42, but got {dataLog.cameraID[-1]}")
+
+        # mars.jpg is a color image, so it should have 3 channels
+        if dataLog.imageType[-1] != 3:
+            testFailCount += 1
+            testMessages.append(f"imageOutMsg.imageType should be 3 (RGB) for mars.jpg, but got {dataLog.imageType[-1]}")
+
+        # timeTag should be close to the simulation end time (within the process rate)
+        if abs(dataLog.timeTag[-1] - simEndTime) > macros.sec2nano(0.1):
+            testFailCount += 1
+            testMessages.append(f"imageOutMsg.timeTag should be ~{simEndTime}, but got {dataLog.timeTag[-1]}")
+
+        if dataLog.imageBufferLength[-1] <= 0:
+            testFailCount += 1
+            testMessages.append(f"imageOutMsg.imageBufferLength should be > 0, but got {dataLog.imageBufferLength[-1]}")
+
+    assert testFailCount == 0, testMessages
+
+
+@pytest.mark.skipif(importErr, reason=reasonErr)
+def test_invalid_filename_error():
+    """
+    **Validation Test Description**
+
+    This module tests that when an invalid filename is provided, the camera module
+    detects the failed image load and emits a BSK_ERROR.
+
+    **Description of Variables Being Tested**
+
+    When a bad filename, unsupported file, or malformed input is provided:
+    - OpenCV's imread() or imdecode() returns an empty cv::Mat
+    - The camera module should check imageCV.empty() and emit BSK_ERROR
+    - BSK_ERROR throws an exception that stops execution
+    """
+    unitTaskName = "unitTask"
+    unitProcessName = "TestProcess"
+
+    # Create a sim module as an empty container
+    unitTestSim = SimulationBaseClass.SimBaseClass()
+
+    # Create test thread
+    testProcessRate = macros.sec2nano(0.5)
+    testProc = unitTestSim.CreateNewProcess(unitProcessName)
+    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+
+    # Construct algorithm and associated C++ container
+    module = camera.Camera()
+    module.ModelTag = "cameras"
+
+    # Add test module to runtime call list
+    unitTestSim.AddModelToTask(unitTaskName, module)
+
+    # Use an invalid filename that cannot be loaded
+    module.filename = "/nonexistent/path/to/image.png"
+    module.cameraIsOn = 1
+
+    # Add the module to the sim and initialize
+    unitTestSim.InitializeSimulation()
+
+    # Set the simulation time
+    unitTestSim.ConfigureStopTime(macros.sec2nano(0.5))
+
+    # Begin the simulation time run - should raise BSK_ERROR
+    with pytest.raises(BasiliskError):
+        unitTestSim.ExecuteSimulation()
+
 
 @pytest.mark.skipif(importErr, reason=reasonErr)
 @pytest.mark.parametrize("gauss, darkCurrent, saltPepper, cosmic, blurSize", [
