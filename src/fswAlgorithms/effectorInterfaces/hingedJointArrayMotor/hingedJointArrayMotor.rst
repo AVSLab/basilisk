@@ -1,6 +1,6 @@
 Executive Summary
 -----------------
-The ``hingedJointArrayMotor`` module determines the motor torques for an array of hinged joints based on commanded angles and the current system configuration.
+The ``hingedJointArrayMotor`` module utilizes a tracking controller to determine the motor torques for an array of hinged joints based on commanded angles, angular rates, angular accelerations, and the current system configuration.
 
 .. note::
   This module is designed to work for systems with multiple spacecraft, however, each spacecraft must be comprised of six degree-of-freedom rigid hub with attached hinged joints only. Additionally, the math assumes the reaction torques experienced by the hub due to the hinged joint motion are cancelled.
