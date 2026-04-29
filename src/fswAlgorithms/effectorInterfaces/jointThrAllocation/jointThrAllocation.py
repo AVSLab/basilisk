@@ -367,7 +367,9 @@ class JointThrAllocation(sysModel.SysModel):
 
         self.jointAnglePayload.states.clear()
         self.jointAnglePayload.stateDots.clear()
+        self.jointAnglePayload.stateDDots.clear()
         for angleCmd in bestDecision[: self.nJoint]:
             self.jointAnglePayload.states.push_back(float(angleCmd))
             self.jointAnglePayload.stateDots.push_back(0.0)  # [rad/s]
+            self.jointAnglePayload.stateDDots.push_back(0.0)  # [rad/s^2]
         self.desJointAnglesOutMsg.write(self.jointAnglePayload, CurrentSimNanos, self.moduleID)
