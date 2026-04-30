@@ -39,25 +39,25 @@ from Basilisk.architecture.swig_common_model import *
 
 // Instantiate templates used by example
 namespace std {
-    %template(PointLineConfig) vector<PointLine>;
-    %template(LocationConfig) vector<LocationPbMsg>;
-    %template(CustomModelConfig) vector<CustomModel>;
-    %template(ActuatorGuiSettingsConfig) vector<ActuatorGuiSettings>;
-    %template(InstrumentGuiSettingsConfig) vector<InstrumentGuiSettings>;
-    %template(KeepOutInConeConfig) vector<KeepOutInCone>;
-    %template(StdCameraConfig) vector<StdCameraSettings>;
-    %template(VizSCVector) vector<VizSpacecraftData>;
-    %template(ThrClusterVector) vector<ThrClusterMap>;
-    %template(GravBodyInfoVector) vector<GravBodyInfo>;
-    %template(GenericSensorVector) vector<GenericSensor *>;
-    %template(LightVector) vector<Light *>;
-    %template(TransceiverVector) vector<Transceiver *>;
-    %template(GenericStorageVector) vector<GenericStorage *>;
-    %template(MultiShapeVector) vector<MultiShape *>;
-    %template(EllipsoidVector) vector<Ellipsoid *>;
-    %template(QuadMapVector) vector<QuadMap *>;
-    %template(VizEventDialogVector) vector<VizEventDialog *>;
-    %template(VizEventReplyVector) vector<VizEventReply>;
+    %template(PointLineConfig) vector<PointLine, allocator<PointLine> >;
+    %template(LocationConfig) vector<LocationPbMsg, allocator<LocationPbMsg> >;
+    %template(CustomModelConfig) vector<CustomModel, allocator<CustomModel> >;
+    %template(ActuatorGuiSettingsConfig) vector<ActuatorGuiSettings, allocator<ActuatorGuiSettings> >;
+    %template(InstrumentGuiSettingsConfig) vector<InstrumentGuiSettings, allocator<InstrumentGuiSettings> >;
+    %template(KeepOutInConeConfig) vector<KeepOutInCone, allocator<KeepOutInCone> >;
+    %template(StdCameraConfig) vector<StdCameraSettings, allocator<StdCameraSettings> >;
+    %template(VizSCVector) vector<VizSpacecraftData, allocator<VizSpacecraftData> >;
+    %template(ThrClusterVector) vector<ThrClusterMap, allocator<ThrClusterMap> >;
+    %template(GravBodyInfoVector) vector<GravBodyInfo, allocator<GravBodyInfo> >;
+    %template(GenericSensorVector) vector<GenericSensor *, allocator<GenericSensor *> >;
+    %template(LightVector) vector<Light *, allocator<Light *> >;
+    %template(TransceiverVector) vector<Transceiver *, allocator<Transceiver *> >;
+    %template(GenericStorageVector) vector<GenericStorage *, allocator<GenericStorage *> >;
+    %template(MultiShapeVector) vector<MultiShape *, allocator<MultiShape *> >;
+    %template(EllipsoidVector) vector<Ellipsoid *, allocator<Ellipsoid *> >;
+    %template(QuadMapVector) vector<QuadMap *, allocator<QuadMap *> >;
+    %template(VizEventDialogVector) vector<VizEventDialog *, allocator<VizEventDialog *> >;
+    %template(VizEventReplyVector) vector<VizEventReply, allocator<VizEventReply> >;
 }
 
 %include "vizInterface.h"

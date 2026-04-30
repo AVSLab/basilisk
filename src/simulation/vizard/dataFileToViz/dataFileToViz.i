@@ -22,6 +22,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 %{
    #include "dataFileToViz.h"
+   #include "simulation/vizard/_GeneralModuleFiles/vizStructures.h"
 %}
 
 %pythoncode %{
@@ -33,7 +34,6 @@ from Basilisk.architecture.swig_common_model import *
 %include "sys_model.i"
 %include "std_vector.i"
 
-
 %include "dataFileToViz.h"
 %include "simulation/vizard/_GeneralModuleFiles/vizStructures.h"
 
@@ -42,11 +42,11 @@ struct SCStatesMsg_C;
 %include "architecture/msgPayloadDefC/RWConfigLogMsgPayload.h"
 struct RWConfigLogMsg_C;
 %include "architecture/msgPayloadDefCpp/THROutputMsgPayload.h"
-
+struct THROutputMsg_C;
 
 // Instantiate templates used by example
 namespace std {
-    %template(VizThrConfig) vector<ThrClusterMap, std::allocator<ThrClusterMap> >;
+    %template(VizThrConfig) vector<ThrClusterMap, allocator<ThrClusterMap> >;
     %template(ThrClusterMapVectorVector) vector <vector <ThrClusterMap, allocator<ThrClusterMap> >, allocator<vector<ThrClusterMap>> >;
     %template(THROutputMsgOutMsgsVector) vector<Message<THROutputMsgPayload>, allocator<Message<THROutputMsgPayload>> >;
     %template(THROutputMsgOutMsgsPtrVector) vector<Message<THROutputMsgPayload>*, allocator<Message<THROutputMsgPayload>*> >;
