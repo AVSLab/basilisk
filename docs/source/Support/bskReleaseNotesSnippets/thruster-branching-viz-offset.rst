@@ -1,0 +1,1 @@
+- Added Vizard plume placement for thrusters mounted on a non-hub body. :ref:`thrusterDynamicEffector` and :ref:`thrusterStateEffector` now expose a ``r_PcP_P`` member, and :ref:`simIncludeThruster`'s ``addToSpacecraftSubcomponent`` accepts a ``r_PcP_P`` argument.
