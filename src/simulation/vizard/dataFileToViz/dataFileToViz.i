@@ -22,6 +22,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 %{
    #include "dataFileToViz.h"
+   #include "simulation/vizard/_GeneralModuleFiles/vizStructures.h"
 %}
 
 %pythoncode %{
@@ -33,15 +34,16 @@ from Basilisk.architecture.swig_common_model import *
 %include "sys_model.i"
 %include "std_vector.i"
 
-
 %include "dataFileToViz.h"
-%include "simulation/vizard/_GeneralModuleFiles/vizStructures.h"
 
 %include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 struct SCStatesMsg_C;
 %include "architecture/msgPayloadDefC/RWConfigLogMsgPayload.h"
 struct RWConfigLogMsg_C;
 %include "architecture/msgPayloadDefCpp/THROutputMsgPayload.h"
+struct THROutputMsg_C;
+
+struct ThrClusterMap;
 
 
 // Instantiate templates used by example
