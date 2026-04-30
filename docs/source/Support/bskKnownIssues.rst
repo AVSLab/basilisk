@@ -18,6 +18,8 @@ Version |release|
   ``Vizard image request acknowledgement was not received`` error is fixed in the current version.
 - The camera module now passes PNG encoding options as OpenCV key-value pairs, fixing OpNav image
   processing failures with OpenCV 4.13.
+- The camera module filename input was only used to test filters and never published to imageOut. This is fixed
+  so images loaded from filename now follow the same processing and publishing pipeline as images from imageInMsg.
 - The MuJoCo dynamics wrapper now uses MuJoCo 3.7 element-name APIs, fixing builds after the MuJoCo
   3.7 upgrade.
 - SWIG 4.4.0 caused Basilisk build failures in some Python 3.13+ source-build configurations.

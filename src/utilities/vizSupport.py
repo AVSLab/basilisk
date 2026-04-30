@@ -1335,9 +1335,10 @@ def enableUnityVisualization(
                     if thrColors:
                         if thrColors[c] is not None:
                             thSet.color = thrColors[c][clusterCounter]
-                    for thrLogMsg in (
-                        thrEff.thrusterOutMsgs
-                    ):  # loop over the THR cluster log message
+                    # optionally offset the thruster positions, useful for effector branching corrections
+                    if scData.parentSpacecraftName != "":
+                        thSet.thrOffset = thrEff.r_PcP_P
+                    for thrLogMsg in (thrEff.thrusterOutMsgs):  # loop over the THR cluster log message
                         thrList.append(thrLogMsg.addSubscriber())
                         thrInfo.append(thSet)
                     clusterCounter += 1
