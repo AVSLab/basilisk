@@ -36,6 +36,7 @@ ThrusterDynamicEffector::ThrusterDynamicEffector()
     forceExternal_B.fill(0.0);
     torqueExternalPntB_B.fill(0.0);
     forceExternal_N.fill(0.0);
+    this->r_PcP_P.setZero();
     this->stateDerivContribution.resize(1);
     this->stateDerivContribution.setZero();
 
