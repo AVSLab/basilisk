@@ -212,17 +212,19 @@ void HingedJointArrayMotor::UpdateState(uint64_t CurrentSimNanos)
         // Compute desired joint accelerations for this tree
         Eigen::VectorXd theta_ddot_des(nHingeJoints);
         theta_ddot_des.setZero();
-        Eigen::VectorXd theta(nHingeJoints), thetaDot(nHingeJoints), theta_des(nHingeJoints), thetaDot_des(nHingeJoints);
+        Eigen::VectorXd theta(nHingeJoints), thetaDot(nHingeJoints), theta_des(nHingeJoints), thetaDot_des(nHingeJoints), thetaDDot_des(nHingeJoints);
         theta.setZero();
         thetaDot.setZero();
         theta_des.setZero();
         thetaDot_des.setZero();
+        thetaDDot_des.setZero();
         for (int i = 0; i < nHingeJoints; ++i) {
             const int jointIdx = hingeGlobalIdxs[i];
             theta(i) = jointStates[jointIdx];
             thetaDot(i) = jointStateDots[jointIdx];
             theta_des(i) = desJointStatesIn.states[jointIdx];
             thetaDot_des(i) = desJointStatesIn.stateDots[jointIdx];
+            thetaDDot_des(i) = desJointStatesIn.stateDDots[jointIdx];
         }
 
         auto wrap = [](double a){ return std::atan2(std::sin(a), std::cos(a)); };
@@ -233,7 +235,7 @@ void HingedJointArrayMotor::UpdateState(uint64_t CurrentSimNanos)
             e(i) = wrap(theta(i) - theta_des(i));
             eDot(i) = thetaDot(i) - thetaDot_des(i);
         }
-        theta_ddot_des = -Ktheta_tree * e - Ptheta_tree * eDot;
+        theta_ddot_des = thetaDDot_des - Ktheta_tree * e - Ptheta_tree * eDot;
 
         // Use Schur complement to compute the motor torques
         Eigen::Vector3d rhs = -Mtth * theta_ddot_des + baseTransBias;

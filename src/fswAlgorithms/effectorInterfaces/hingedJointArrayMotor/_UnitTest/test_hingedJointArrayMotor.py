@@ -24,7 +24,7 @@ from Basilisk.utilities import SimulationBaseClass, macros
 from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import hingedJointArrayMotor
 
-def jointTorques(M, K, P, theta, thetaDot, desTheta, desThetaDot, bias, maxTorque=None):
+def jointTorques(M, K, P, theta, thetaDot, desTheta, desThetaDot, desThetaDDot, bias, maxTorque=None):
     M = np.asarray(M, dtype=float)
     K = np.asarray(K, dtype=float)
     P = np.asarray(P, dtype=float)
@@ -32,12 +32,13 @@ def jointTorques(M, K, P, theta, thetaDot, desTheta, desThetaDot, bias, maxTorqu
     thetaDot   = np.asarray(thetaDot, dtype=float).reshape(-1)
     desTheta   = np.asarray(desTheta, dtype=float).reshape(-1)
     desThetaDot= np.asarray(desThetaDot, dtype=float).reshape(-1)
+    desThetaDDot = np.asarray(desThetaDDot, dtype=float).reshape(-1)
     bias       = np.asarray(bias, dtype=float).reshape(-1)
 
     nj = theta.size
-    e    = theta - desTheta
+    e    = np.arctan2(np.sin(theta - desTheta), np.cos(theta - desTheta))
     edot = thetaDot - desThetaDot
-    theta_ddot_des = -(K @ e) - (P @ edot)
+    theta_ddot_des = desThetaDDot - (K @ e) - (P @ edot)
 
     Mtt = M[0:3,0:3]
     Mtth = M[0:3,6:6+nj]
@@ -149,14 +150,18 @@ def test_hingedJointArrayMotor(nonActForces, maxTorque, numJoints, numSpacecraft
 
     # create the desired joint state input message
     desJointStateInMsgData = messaging.JointArrayStateMsgPayload()
-    desTheta = [0.12] * (numJoints * numSpacecraft)
-    desThetaDot = [0.05] * (numJoints * numSpacecraft)
+    desTheta = [0.12] * (numJoints * numSpacecraft) #[rad]
+    desThetaDot = [0.05] * (numJoints * numSpacecraft)  #[rad/s]
+    desThetaDDot = [0.002] * (numJoints * numSpacecraft)    #[rad/s^2]
     desJointStateInMsgData.states.clear()
     desJointStateInMsgData.stateDots.clear()
+    desJointStateInMsgData.stateDDots.clear()
     for v in np.asarray(desTheta).flatten():
         desJointStateInMsgData.states.push_back(float(v))
     for v in np.asarray(desThetaDot).flatten():
         desJointStateInMsgData.stateDots.push_back(float(v))
+    for v in np.asarray(desThetaDDot).flatten():
+        desJointStateInMsgData.stateDDots.push_back(float(v))
 
     # create the joint reactions input message
     JointReactionsInMsgData = messaging.MJJointReactionsMsgPayload()
@@ -252,6 +257,7 @@ def test_hingedJointArrayMotor(nonActForces, maxTorque, numJoints, numSpacecraft
         thetaDot_sc = thetaDot[0:numJoints]
         desTheta_sc = desTheta[sc*numJoints:(sc+1)*numJoints]
         desThetaDot_sc = desThetaDot[sc*numJoints:(sc+1)*numJoints]
+        desThetaDDot_sc = desThetaDDot[sc*numJoints:(sc+1)*numJoints]
         bias_sc = -reactionForces[startIdx:startIdx+6+numJoints]
 
         if maxTorque:
@@ -260,7 +266,8 @@ def test_hingedJointArrayMotor(nonActForces, maxTorque, numJoints, numSpacecraft
             uMax_sc = None
 
         torques_sc = jointTorques(M_sc, K_sc, P_sc, theta_sc, thetaDot_sc,
-                                  desTheta_sc, desThetaDot_sc, bias_sc, maxTorque=uMax_sc)
+                                  desTheta_sc, desThetaDot_sc, desThetaDDot_sc,
+                                  bias_sc, maxTorque=uMax_sc)
         expectedTorques[sc*numJoints:(sc+1)*numJoints] = torques_sc
 
     # Assert the motor torques are correct

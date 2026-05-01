@@ -31,6 +31,7 @@ JointArrayStateMsgPayload
 {
     std::vector<double> states;                    //!< [-] list of joint states
     std::vector<double> stateDots;              //!< [-] list of joint state derivatives
+    std::vector<double> stateDDots;             //!< [-] list of joint state second derivatives
 } JointArrayStateMsgPayload;
 
 #endif
