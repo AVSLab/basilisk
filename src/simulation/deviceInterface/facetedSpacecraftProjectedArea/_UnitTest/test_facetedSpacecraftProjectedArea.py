@@ -155,11 +155,13 @@ def test_facetedSpacecraftProjectedArea(show_plots,
             faceted_sc_projected_area.sunStateInMsg.subscribeTo(sun_state_message)
 
     # Set up data logging
+    surface_area_data_log = faceted_sc_projected_area.surfaceAreaOutMsg.recorder()
     total_projected_area_data_log = faceted_sc_projected_area.totalProjectedAreaOutMsg.recorder()
     facet_element_projected_area_data_log = []
     for outMsg in faceted_sc_projected_area.facetProjectedAreaOutMsgs:
         facet_element_projected_area_data_log.append(outMsg.recorder())
         test_sim.AddModelToTask(task_name, facet_element_projected_area_data_log[-1])
+    test_sim.AddModelToTask(task_name, surface_area_data_log)
     test_sim.AddModelToTask(task_name, total_projected_area_data_log)
 
     # Execute simulation
@@ -169,6 +171,7 @@ def test_facetedSpacecraftProjectedArea(show_plots,
     test_sim.ExecuteSimulation()
 
     # Retrieve the logged data
+    surface_area_sim = surface_area_data_log.area  # [m^2]
     total_projected_area_sim = total_projected_area_data_log.area  # [m^2]
     facet_element_projected_area_list_sim = []
     for data in facet_element_projected_area_data_log:
@@ -176,7 +179,8 @@ def test_facetedSpacecraftProjectedArea(show_plots,
 
     # Compute truth data
     (facet_element_projected_area_list_truth,
-     total_projected_area_truth) = compute_facet_projected_area(general_heading,
+     total_projected_area_truth,
+     surface_area_truth) = compute_facet_projected_area(general_heading,
                                                                 sun_heading,
                                                                 velocity_heading,
                                                                 num_facets,
@@ -204,6 +208,14 @@ def test_facetedSpacecraftProjectedArea(show_plots,
     np.testing.assert_allclose(
         total_projected_area_sim,
         total_projected_area_truth,
+        atol=accuracy,
+        verbose=True
+    )
+
+    # Check total area
+    np.testing.assert_allclose(
+        surface_area_sim,
+        surface_area_truth,
         atol=accuracy,
         verbose=True
     )
@@ -237,16 +249,18 @@ def compute_facet_projected_area(general_heading,
                 heading_hat_B = r_SB_B / norm
 
     # Compute the total and per-facet projected area
-    projected_area_list_truth = []
-    total_projected_area_truth = 0.0
+    projected_area_list_truth = []  # [m^2]
+    total_projected_area_truth = 0.0  # [m^2]
+    surface_area_truth = 0.0  # [m^2]
     for idx in range(num_facets):
         cos_theta = np.dot(facet_nHat_B_list[idx], heading_hat_B)
         projected_area = facet_area_list[idx] * max(0.0, cos_theta)  # [m^2]
 
         projected_area_list_truth.append(projected_area)
         total_projected_area_truth += projected_area
+        surface_area_truth += facet_area_list[idx]
 
-    return projected_area_list_truth, total_projected_area_truth
+    return projected_area_list_truth, total_projected_area_truth, surface_area_truth
 
 
 if __name__=="__main__":

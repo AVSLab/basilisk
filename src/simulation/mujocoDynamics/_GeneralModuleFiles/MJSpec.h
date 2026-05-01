@@ -363,7 +363,7 @@ MJSpec::createActuator(const std::string& name,
         else {
             auto newMjsActuator = mjs_addActuator(this->spec.get(), 0);
             newMjsActuator->trntype = mjTRN_SITE;
-            mjs_setString(newMjsActuator->name, subActuatorName.c_str());
+            MJBasilisk::detail::setSpecObjectName(newMjsActuator, subActuatorName);
             mjs_setString(newMjsActuator->target, siteHint.c_str());
             newMjsActuator->gear[0] = 0;
             newMjsActuator->gear[gearInd] = 1;

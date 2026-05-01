@@ -348,6 +348,7 @@ void Camera::UpdateState(uint64_t currentSimNanos)
 
     cv::Mat imageCV;
     cv::Mat blurred;
+    bool usingFilename = false;
     if (this->saveDir != ""){
         localPath = this->saveDir + std::to_string(currentSimNanos*1E-9) + ".png";
     }
@@ -357,63 +358,71 @@ void Camera::UpdateState(uint64_t currentSimNanos)
         imageBuffer = this->imageInMsg();
         this->sensorTimeTag = this->imageInMsg.timeWritten();
     }
-    /* Added for debugging purposes*/
+
     if (!this->filename.empty()){
         imageCV = imread(this->filename, cv::IMREAD_COLOR);
-        this->applyFilters(imageCV, blurred);
-        if (this->saveImages == 1){
-            if (!cv::imwrite(localPath, blurred)) {
-                bskLogger.bskLog(BSK_WARNING, "camera: wasn't able to save the camera module image" );
-            }
-        }
+        usingFilename = true;
     }
     else if(imageBuffer.valid == 1 && imageBuffer.timeTag >= currentSimNanos){
         /*! - Recast image pointer to CV type*/
         std::vector<unsigned char> vectorBuffer((char*)imageBuffer.imagePointer,
                                                 (char*)imageBuffer.imagePointer + imageBuffer.imageBufferLength);
         imageCV = cv::imdecode(vectorBuffer, cv::IMREAD_COLOR);
-
-        this->applyFilters(imageCV, blurred);
-        if (this->saveImages == 1){
-            if (!cv::imwrite(localPath, blurred)) {
-                bskLogger.bskLog(BSK_WARNING, "camera: wasn't able to save the camera module image" );
-            }
-        }
-        /*! If the permanent image buffer is not populated, it will be equal to null*/
-        if (this->pointImageOut != nullptr) {
-            free(this->pointImageOut);
-            this->pointImageOut = nullptr;
-        }
-        /*! - Encode the cv mat into a png for the future modules to decode it the same way */
-        std::vector<unsigned char> buf;
-        std::vector<int> compression;
-        compression.push_back(0);
-        if (!cv::imencode(".png", blurred, buf, compression) || buf.empty()) {
-            bskLogger.bskLog(BSK_ERROR, "camera: failed to encode image output buffer.");
-            return;
-        }
-        if (buf.size() > (size_t)std::numeric_limits<int32_t>::max()) {
-            bskLogger.bskLog(BSK_ERROR, "camera: encoded image output buffer is too large.");
-            return;
-        }
-        /*! - Output the saved image */
-        imageOut.valid = 1;
-        imageOut.timeTag = imageBuffer.timeTag;
-        imageOut.cameraID = imageBuffer.cameraID;
-        imageOut.imageType = imageBuffer.imageType;
-        imageOut.imageBufferLength = (int32_t)buf.size();
-        this->pointImageOut = malloc(imageOut.imageBufferLength*sizeof(char));
-        if (this->pointImageOut == nullptr) {
-            bskLogger.bskLog(BSK_ERROR, "camera: failed to allocate image output buffer.");
-            return;
-        }
-        memcpy(this->pointImageOut, buf.data(), imageOut.imageBufferLength*sizeof(char));
-        imageOut.imagePointer = this->pointImageOut;
-
-        this->imageOutMsg.write(&imageOut, this->moduleID, currentSimNanos);
     }
     else{
         /*! - If no image is present, write zeros in message */
         this->imageOutMsg.write(&imageOut, this->moduleID, currentSimNanos);
+        return;
     }
+    /*! - Check if image was loaded successfully */
+    if (imageCV.empty()) {
+        if (usingFilename) {
+            this->bskLogger.bskLog(BSK_ERROR, "camera: failed to load image from %s.", this->filename.c_str());
+        } else {
+            this->bskLogger.bskLog(BSK_ERROR, "camera: failed to decode image from input buffer.");
+        }
+    }
+    this->applyFilters(imageCV, blurred);
+    if (this->saveImages == 1){
+        if (!cv::imwrite(localPath, blurred)) {
+            bskLogger.bskLog(BSK_WARNING, "camera: wasn't able to save the camera module image" );
+        }
+    }
+    /*! If the permanent image buffer is not populated, it will be equal to null*/
+    if (this->pointImageOut != nullptr) {
+        free(this->pointImageOut);
+        this->pointImageOut = nullptr;
+    }
+    /*! - Encode the cv mat into a png for the future modules to decode it the same way */
+    std::vector<unsigned char> buf;
+    std::vector<int> compression = {cv::IMWRITE_PNG_COMPRESSION, 0};
+    if (!cv::imencode(".png", blurred, buf, compression) || buf.empty()) {
+        bskLogger.bskLog(BSK_ERROR, "camera: failed to encode image output buffer.");
+        return;
+    }
+    if (buf.size() > (size_t)std::numeric_limits<int32_t>::max()) {
+        bskLogger.bskLog(BSK_ERROR, "camera: encoded image output buffer is too large.");
+        return;
+    }
+    /*! - Output the saved image */
+    imageOut.valid = 1;
+    if (usingFilename) {
+        imageOut.timeTag = currentSimNanos;
+        imageOut.cameraID = this->cameraID;
+        imageOut.imageType = blurred.channels();
+    } else {
+        imageOut.timeTag = imageBuffer.timeTag;
+        imageOut.cameraID = imageBuffer.cameraID;
+        imageOut.imageType = imageBuffer.imageType;
+    }
+    imageOut.imageBufferLength = (int32_t)buf.size();
+    this->pointImageOut = malloc(imageOut.imageBufferLength*sizeof(char));
+    if (this->pointImageOut == nullptr) {
+        bskLogger.bskLog(BSK_ERROR, "camera: failed to allocate image output buffer.");
+        return;
+    }
+    memcpy(this->pointImageOut, buf.data(), imageOut.imageBufferLength*sizeof(char));
+    imageOut.imagePointer = this->pointImageOut;
+
+    this->imageOutMsg.write(&imageOut, this->moduleID, currentSimNanos);
 }

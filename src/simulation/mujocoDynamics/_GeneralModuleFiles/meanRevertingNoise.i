@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2025, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2026, Autonomous Vehicle Systems Lab
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -14,47 +14,37 @@
  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
  */
 
-
-%module MJPIDControllers
+%module(directors="1",threads="1",package="Basilisk.simulation") MJMeanRevertingNoise
 
 %include "architecture/utilities/bskException.swg"
 %default_bsk_exception();
 
 %{
-   #include "JointPIDController.h"
+  #include "simulation/mujocoDynamics/_GeneralModuleFiles/meanRevertingNoise.h"
 %}
 
 %pythoncode %{
 from Basilisk.architecture.swig_common_model import *
 %}
+
 %include "swig_eigen.i"
 %include "std_string.i"
 %include "exception.i"
 
 %import "simulation/mujocoDynamics/_GeneralModuleFiles/StatefulSysModel.i"
-%include "simulation/mujocoDynamics/_GeneralModuleFiles/PIDController.h"
 
-// JointPIDController
-%template(_JointPIDControllerBase) PIDController<ScalarJointStateMsgPayload, ScalarJointStateMsgPayload, SingleActuatorMsgPayload>;
-
-%ignore JointPIDController::readMeasuredPosition;
-%ignore JointPIDController::readMeasuredVelocity;
-%ignore JointPIDController::readDesiredPosition;
-%ignore JointPIDController::readDesiredVelocity;
-%ignore JointPIDController::writeOutput;
-
-%include "JointPIDController.h"
-
-// Messages
-%include "architecture/msgPayloadDefC/ScalarJointStateMsgPayload.h"
-struct ScalarJointStateMsgPayload_C;
-%include "architecture/msgPayloadDefC/SingleActuatorMsgPayload.h"
-struct SingleActuatorMsgPayload_C;
+// Enable Python subclassing: director allows Python to override the C++ virtual writeOutput().
+%feature("director") MeanRevertingNoise;
+// Rename the C++ class so that the Python wrapper class defined below can use the unqualified name.
+%rename("_MeanRevertingNoise") MeanRevertingNoise;
+%include "simulation/mujocoDynamics/_GeneralModuleFiles/meanRevertingNoise.h"
 
 %pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
+from Basilisk.architecture.sysModel import SysModelMixin
+
+# Mixin must come first so that SysModelMixin.__init_subclass__ runs before _MeanRevertingNoise.__init__.
+class MeanRevertingNoise(SysModelMixin, _MeanRevertingNoise):
+    """Python-subclassable wrapper for the C++ MeanRevertingNoise base class."""
 %}

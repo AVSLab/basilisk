@@ -34,6 +34,7 @@ ThrusterStateEffector::ThrusterStateEffector()
     this->effProps.IEffPntB_B.fill(0.0);
     this->effProps.rEffPrime_CB_B.fill(0.0);
     this->effProps.IEffPrimePntB_B.fill(0.0);
+    this->r_PcP_P.setZero();
 
     // initialize the state derivative contribution for mass rate
     this->stateDerivContribution.resize(1);

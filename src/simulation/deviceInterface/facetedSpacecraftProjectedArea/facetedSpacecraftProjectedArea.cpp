@@ -95,6 +95,7 @@ void FacetedSpacecraftProjectedArea::UpdateState(uint64_t callTime) {
 
     // Compute the projected area for all facets
     this->totalProjectedArea = 0.0;
+    this->surfaceArea = 0.0;
     double projectedArea{};
     double cosTheta{};
     for (uint64_t idx = 0; idx < this->numFacets; idx++) {
@@ -102,6 +103,7 @@ void FacetedSpacecraftProjectedArea::UpdateState(uint64_t callTime) {
         projectedArea = facetAreaList[idx] * std::max(0.0, cosTheta);
         this->facetProjectedAreaList[idx] = projectedArea;
         this->totalProjectedArea += projectedArea;
+        this->surfaceArea += facetAreaList[idx];
     }
 
     // Write module output messages
@@ -206,6 +208,11 @@ void FacetedSpacecraftProjectedArea::writeOutputMessages(uint64_t callTime) {
     ProjectedAreaMsgPayload totalProjectedAreaOut{};
     totalProjectedAreaOut.area = this->totalProjectedArea;
     this->totalProjectedAreaOutMsg.write(&totalProjectedAreaOut, moduleID, callTime);
+
+    // Write total spacecraft surface area output message
+    ProjectedAreaMsgPayload surfaceAreaOut{};
+    surfaceAreaOut.area = this->surfaceArea;
+    this->surfaceAreaOutMsg.write(&surfaceAreaOut, moduleID, callTime);
 
     // Write individual facet projected area output messages
     for (uint64_t idx = 0; idx < this->numFacets; idx++) {

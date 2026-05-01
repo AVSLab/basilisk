@@ -1,0 +1,224 @@
+Executive Summary
+-----------------
+The ``spacecraftChargingDynamics`` class is derived from the the parent class ``DynamicObject``. This module integrates the
+electric potential of two spacecraft (a servicer and a target) in a plasma environment using a first order
+ordinary differential equation for each spacecraft. The charging model includes plasma electron current, plasma
+ion current, photoelectric current, and an optional electron beam current.
+
+.. note::
+    while this module defaults all module member variables, there is a setter method available for each attribute.
+
+Message Connection Descriptions
+-------------------------------
+The following table lists all module input and output messages.
+The module msg connections are set by the user from Python.
+The msg type contains a link to the message structure definition, while the description
+provides information on what each message is used for.
+
+.. bsk-module-io:: spacecraftChargingDynamics
+    :caption: Module I/O Messages
+
+    input servicerStateInMsg SCStatesMsgPayload
+        Input spacecraft inertial state message for the servicer.
+    input targetStateInMsg SCStatesMsgPayload
+        Input spacecraft inertial state message for the target.
+    input servicerSurfaceAreaInMsg ProjectedAreaMsgPayload
+        Input message containing the total servicer surface area.
+    input targetSurfaceAreaInMsg ProjectedAreaMsgPayload
+        Input message containing the total target surface area.
+    input servicerSunlitAreaInMsg ProjectedAreaMsgPayload
+        Input message containing the total servicer sunlit area.
+    input targetSunlitAreaInMsg ProjectedAreaMsgPayload
+        Input message containing total target sunlit area.
+    input electronBeamInMsg ElectronBeamMsgPayload
+        Optional input message containing the electron beam parameters.
+    output servicerPotentialOutMsg VoltMsgPayload
+        Output message containing the servicer electric potential.
+    output targetPotentialOutMsg VoltMsgPayload
+        Output message containing the target electric potential.
+    output servicerEBCurrentOutMsg CurrentMsgPayload
+        Output message containing the servicer electron beam current.
+    output targetEBCurrentOutMsg CurrentMsgPayload
+        Output message containing the target electron beam current.
+    output servicerPhotoelectricCurrentOutMsg CurrentMsgPayload
+        Output message containing the servicer photoelectric current.
+    output targetPhotoelectricCurrentOutMsg CurrentMsgPayload
+        Output message containing the target photoelectric current.
+    output servicerPlasmaElectronCurrentOutMsg CurrentMsgPayload
+        Output message containing the servicer plasma electron current.
+    output targetPlasmaElectronCurrentOutMsg CurrentMsgPayload
+        Output message containing the target plasma electron current.
+    output servicerPlasmaIonCurrentOutMsg CurrentMsgPayload
+        Output message containing the servicer plasma ion current.
+    output targetPlasmaIonCurrentOutMsg CurrentMsgPayload
+        Output message containing the target plasma ion current.
+
+
+Detailed Module Description
+---------------------------
+
+See the following journal paper for a detailed description of the charging equations implemented in this module.
+
+.. note::
+
+    J. Hammerl and H. Schaub, `“Servicing and Target Spacecraft Charging Behavior Due to Emission of an
+    Electron Beam” <https://hanspeterschaub.info/PapersPrivate/Hammerl2024a.pdf>`_.
+
+The module computes the total current on each spacecraft as the sum of:
+
+    - plasma electron current
+    - plasma ion current
+    - photoelectric current
+    - optional electron beam current
+
+For each spacecraft, total current is divided by the spacecraft capacitance and integrated to determine the
+spacecraft potential as a function of time.
+
+Module Functions
+----------------
+Below is a list of functions this module performs:
+
+    - Reads the servicer and target spacecraft inertial velocity states
+    - Reads the servicer and target total surface area and sunlit area inputs
+    - Reads the optional electron beam input message
+    - Computes the plasma electron current for each spacecraft
+    - Computes the plasma ion current for each spacecraft
+    - Computes the electron beam current for each spacecraft
+    - Computes the photoelectric current for each spacecraft
+    - Integrates the servicer and target potential states forward in time
+    - Writes the spacecraft potentials and all currents as output messages
+
+Module Assumptions and Limitations
+----------------------------------
+    - The module requires two spacecraft to be configured: servicer and target
+    - Each spacecraft is represented by a fixed capacitance and a potential.
+    - The module requires all state and area input messages (except the optional ``electronBeamInMsg``) to be linked and written.
+    - If a required input message is not linked or not written, the module logs an error and returns from ``UpdateState()``.
+
+Test Description and Success Criteria
+-------------------------------------
+The unit test for this module is located at ``src/simulation/environment/spacecraftChargingDynamics/_UnitTest/test_spacecraftChargingDynamics.py``.
+The test verifies that the spacecraft charging dynamics module correctly computes the different types of currents
+impacting both a target and servicer spacecraft. Specifically, this test checks that the module
+correctly computes the photoelectric current, electron beam current, plasma electron current, and plasma ion
+current acting on both spacecraft. While the module defaults many required variables, the user has the ability
+to configure all information describing the electrons, ions, and photons using setter methods.
+
+The test varies the initial spacecraft potentials and sizes, the electron beam parameters, and the bulk plasma ion
+velocity. The test checks that the module correctly computes the photoelectric current, electron beam current,
+plasma electron current, and plasma ion current acting on both spacecraft.
+
+User Guide
+----------
+The following steps are required to set up the ``spacecraftChargingDynamics`` module in Python.
+
+#. Import required Basilisk modules::
+
+    import numpy as np
+    from Basilisk.utilities import SimulationBaseClass
+    from Basilisk.utilities import macros
+    from Basilisk.architecture import astroConstants
+    from Basilisk.simulation import spacecraft
+    from Basilisk.simulation import spacecraftChargingDynamics
+    from Basilisk.architecture import messaging
+
+#. Create the servicer spacecraft::
+
+    servicer_radius = 3.0  # [m]
+    mass_servicer = 500.0  # [kg]
+    length_servicer = servicer_radius  # [m]
+    width_servicer = servicer_radius  # [m]
+    height_servicer = servicer_radius  # [m]
+    I_servicer_11 = (1.0 / 12.0) * mass_servicer * (length_servicer * length_servicer + height_servicer * height_servicer)  # [kg m^2]
+    I_servicer_22 = (1.0 / 12.0) * mass_servicer * (length_servicer * length_servicer + width_servicer * width_servicer)  # [kg m^2]
+    I_servicer_33 = (1.0 / 12.0) * mass_servicer * (width_servicer * width_servicer + height_servicer * height_servicer)  # [kg m^2]
+
+    servicer_spacecraft = spacecraft.Spacecraft()
+    servicer_spacecraft.ModelTag = "ServicerSpacecraft"
+    servicer_spacecraft.hub.mHub = mass_servicer  # [kg]
+    servicer_spacecraft.hub.r_BcB_B = [0.0, 0.0, 0.0]  # [m]
+    servicer_spacecraft.hub.IHubPntBc_B = [[I_servicer_11, 0.0, 0.0], [0.0, I_servicer_22, 0.0], [0.0, 0.0, I_servicer_33]]  # [kg m^2]
+    servicer_spacecraft.hub.r_CN_NInit = [[10.0], [0.0], [0.0]]  # [m]
+    servicer_spacecraft.hub.v_CN_NInit = [[-5199.77710904224], [-3436.681645356935], [1041.576797498721]]  # [m/s]
+    servicer_spacecraft.hub.omega_BN_BInit = [[0.0], [0.0], [macros.D2R * 1.5]]  # [rad/s]
+    servicer_spacecraft.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
+
+#. Create the target spacecraft::
+
+    target_radius = 2.0  # [m]
+    mass_target = 800.0  # [kg]
+    length_target = target_radius  # [m]
+    width_target = target_radius  # [m]
+    height_target = target_radius  # [m]
+    I_target_11 = (1.0 / 12.0) * mass_target * (length_target * length_target + height_target * height_target)  # [kg m^2]
+    I_target_22 = (1.0 / 12.0) * mass_target * (length_target * length_target + width_target * width_target)  # [kg m^2]
+    I_target_33 = (1.0 / 12.0) * mass_target * (width_target * width_target + height_target * height_target)  # [kg m^2]
+    target_spacecraft = spacecraft.Spacecraft()
+    target_spacecraft.ModelTag = "TargetSpacecraft"
+    target_spacecraft.hub.mHub = mass_target  # [kg]
+    target_spacecraft.hub.r_BcB_B = [0.0, 0.0, 0.0]  # [m]
+    target_spacecraft.hub.IHubPntBc_B = [[I_target_11, 0.0, 0.0], [0.0, I_target_22, 0.0], [0.0, 0.0, I_target_33]]  # [kg m^2]
+    target_spacecraft.hub.r_CN_NInit = [[5.0], [0.0], [0.0]]  # [m]
+    target_spacecraft.hub.v_CN_NInit = [[-5199.77710904224], [-3436.681645356935], [1041.576797498721]]  # [m/s]
+    target_spacecraft.hub.omega_BN_BInit = [[0.0], [0.0], [macros.D2R * -1.0]]  # [rad/s]
+    target_spacecraft.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
+
+#. Create the total surface area and sunlit area messages for each spacecraft. (For complex articulating spacecraft, the :ref:`FacetedSpacecraftProjectedArea` module should be used)::
+
+    servicer_surface_area_msg_data = messaging.ProjectedAreaMsgPayload()
+    servicer_surface_area_msg_data.area = 4.0 * np.pi * servicer_radius * servicer_radius  # [m^2]
+    servicer_surface_area_msg = messaging.ProjectedAreaMsg().write(servicer_surface_area_msg_data)
+
+    target_surface_area_msg_data = messaging.ProjectedAreaMsgPayload()
+    target_surface_area_msg_data.area = 4.0 * np.pi * target_radius * target_radius  # [m^2]
+    target_surface_area_msg = messaging.ProjectedAreaMsg().write(target_surface_area_msg_data)
+
+    servicer_sunlit_area_msg_data = messaging.ProjectedAreaMsgPayload()
+    servicer_sunlit_area_msg_data.area = np.pi * servicer_radius * servicer_radius  # [m^2]
+    servicer_sunlit_area_msg = messaging.ProjectedAreaMsg().write(servicer_sunlit_area_msg_data)
+
+    target_sunlit_area_msg_data = messaging.ProjectedAreaMsgPayload()
+    target_sunlit_area_msg_data.area = np.pi * target_radius * target_radius  # [m^2]
+    target_sunlit_area_msg = messaging.ProjectedAreaMsg().write(target_sunlit_area_msg_data)
+
+#. Create the electron beam input message (optional)::
+
+    electron_beam_msg_data = messaging.ElectronBeamMsgPayload()
+    electron_beam_msg_data.energyEB = 10000.0  # [eV]
+    electron_beam_msg_data.currentEB = 250e-6  # [A]
+    electron_beam_msg_data.alphaEB = 0.5  # [-]
+    electron_beam_msg = messaging.ElectronBeamMsg().write(electron_beam_msg_data)
+
+#. Create and configure the charging dynamics module::
+
+    capacitance = 1e-9  # [F]
+    charging_dynamics = spacecraftChargingDynamics.SpacecraftChargingDynamics()
+    charging_dynamics.ModelTag = "SpacecraftChargingDynamics"
+    charging_dynamics.setServicerPotentialInit(0.0)  # [Volts]
+    charging_dynamics.setTargetPotentialInit(0.0)  # [Volts]
+    charging_dynamics.setServicerCapacitance(capacitance)  # [farads]
+    charging_dynamics.setTargetCapacitance(capacitance)  # [farads]
+
+    charging_dynamics.setTempPhotoelectrons(2.0)  # [eV]
+    charging_dynamics.setFluxPhotoelectrons(1e-6)  # [A/m^2]
+    charging_dynamics.setTempElectrons(2.0)  # [eV]
+    charging_dynamics.setDensityElectrons(950000.0)  # [m^-3]
+    charging_dynamics.setTempIons(2.0)  # [eV]
+    charging_dynamics.setDensityIons(950000.0)  # [m^-3]
+    charging_dynamics.setBulkVelocityIons(400000.0)  # [m/s]
+
+#. Connect all required input messages::
+
+    charging_dynamics.servicerStateInMsg.subscribeTo(servicer_spacecraft.scStateOutMsg)
+    charging_dynamics.targetStateInMsg.subscribeTo(target_spacecraft.scStateOutMsg)
+    charging_dynamics.electronBeamInMsg.subscribeTo(electron_beam_msg)
+    charging_dynamics.servicerSurfaceAreaInMsg.subscribeTo(servicer_surface_area_msg)
+    charging_dynamics.targetSurfaceAreaInMsg.subscribeTo(target_surface_area_msg)
+    charging_dynamics.servicerSunlitAreaInMsg.subscribeTo(servicer_sunlit_area_msg)
+    charging_dynamics.targetSunlitAreaInMsg.subscribeTo(target_sunlit_area_msg)
+
+#. Add all modules to a task::
+
+    sim.AddModelToTask(task_name, servicer_spacecraft)
+    sim.AddModelToTask(task_name, target_spacecraft)
+    sim.AddModelToTask(task_name, charging_dynamics)

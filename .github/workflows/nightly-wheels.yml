@@ -1,0 +1,100 @@
+name: Nightly Wheels
+
+on:
+  schedule:
+    - cron: "0 6 * * *" # Every day at 6:00 UTC
+  workflow_dispatch:
+
+jobs:
+  build-wheels:
+    name: Build Wheels (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - macos-latest
+          - ubuntu-latest
+          - ubuntu-22.04-arm
+          - windows-latest
+
+    steps:
+      - name: Checkout develop
+        uses: actions/checkout@v5
+        with:
+          ref: develop
+
+      - name: Setup system dependencies
+        uses: ./.github/actions/setup
+
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v3.1.4
+        env:
+          CONAN_ARGS: "--opNav True --mujoco True --mujocoReplay True"
+          CIBW_TEST_SKIP: "*"
+
+      - name: Upload wheels
+        uses: actions/upload-artifact@v6
+        with:
+          name: nightly-wheels-${{ matrix.os }}
+          path: ./wheelhouse/*.whl
+
+  publish-index:
+    name: Publish Nightly Index
+    needs: build-wheels
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout scripts
+        uses: actions/checkout@v5
+        with:
+          ref: develop
+          sparse-checkout: .github/scripts
+
+      - name: Download all wheels
+        uses: actions/download-artifact@v4
+        with:
+          pattern: nightly-wheels-*
+          merge-multiple: true
+          path: wheels
+
+      - name: Generate simple index
+        run: python .github/scripts/generate_nightly_index.py --wheels-dir wheels --output-dir nightly
+
+      - name: Deploy nightly index to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./nightly
+          destination_dir: nightly
+          keep_files: false
+
+      - name: Checkout gh-pages branch
+        uses: actions/checkout@v5
+        with:
+          ref: gh-pages
+          fetch-depth: 0
+          path: gh-pages-site
+
+      - name: Trim gh-pages history
+        shell: bash
+        working-directory: gh-pages-site
+        run: |
+          set -euo pipefail
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          archive_path="${RUNNER_TEMP}/gh-pages-site.tar"
+          tar --exclude=.git -cf "${archive_path}" .
+
+          git checkout --orphan gh-pages-reset
+          find . -mindepth 1 -maxdepth 1 ! -name '.git' -exec rm -rf {} +
+          tar -xf "${archive_path}"
+
+          git add -A
+          git commit -m "Trim gh-pages history"
+          git branch -M gh-pages
+          git push --force origin gh-pages

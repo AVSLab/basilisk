@@ -51,6 +51,8 @@ provides information on what each message is used for.
         Output message vector containing the projected area for each facet.
     output totalProjectedAreaOutMsg ProjectedAreaMsgPayload
         Output message containing the total projected area summed over all facets.
+    output surfaceAreaOutMsg ProjectedAreaMsgPayload
+        Output message containing the total spacecraft surface area summed over all facets.
 
 
 Module Functions
@@ -62,6 +64,7 @@ Below is a list of functions this module performs:
     - Computes the individual projected area for each facet. Negative projected areas are set to zero
     - Computes the total projected area for all facets by summing all individual facet projected areas
     - Writes a single and a vector of :ref:`ProjectedAreaMsgPayload` output messages for the total projected area and per-facet projected areas, respectively
+    - Writes a single :ref:`ProjectedAreaMsgPayload` output message for the total spacecraft surface area
 
 
 Module Assumptions and Limitations

@@ -30,6 +30,9 @@ To prepare ``develop`` for the next beta cycle:
 #. Update ``docs/source/Support/bskReleaseNotes.rst``
    and ``docs/source/Support/bskKnownIssues.rst`` files to next beta cycle
 #. Make PR and push to ``develop``
+#. Manually run the ``Nightly Wheels`` workflow using the ``workflow_dispatch``
+   trigger after merging the beta branch so the nightly package index is
+   republished on GitHub Pages.
 
 
 The following documentation provides detailed instructions for some of these steps.

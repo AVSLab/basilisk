@@ -66,6 +66,48 @@ versions.
    This requires a C++ compiler toolchain and standard build tools
    to be installed on your system.
 
+Nightly Builds
+--------------
+
+Nightly pre-release wheels are built automatically from the ``develop`` branch and
+published to the Basilisk nightly index for all supported platforms. These
+builds are replaced each night and reflect the latest state of active development.
+They are intended for testing and early access to new features, but may be
+unstable and are not recommended for production use.
+
+To install the latest nightly build, use the Basilisk nightly index as the primary
+source, allow pip to fall back to PyPI for dependencies, and pass ``--pre`` since
+nightly wheels are pre-release versions:
+
+.. code-block:: bash
+
+   pip install \
+     --index-url https://avslab.github.io/basilisk/nightly/ \
+     --extra-index-url https://pypi.org/simple/ \
+     --pre \
+     bsk
+
+Because nightly wheels are built from the ``develop`` branch and carry the same
+version string until ``bskVersion.txt`` changes, pip may report
+``Requirement already satisfied`` even when a newer build is available. To
+force an overwrite of whatever is currently installed, add
+``--upgrade --force-reinstall --no-cache-dir``:
+
+.. code-block:: bash
+
+   pip install \
+     --index-url https://avslab.github.io/basilisk/nightly/ \
+     --extra-index-url https://pypi.org/simple/ \
+     --pre \
+     --upgrade --force-reinstall --no-cache-dir \
+     bsk
+
+.. warning::
+
+   Nightly builds are development snapshots and are not suitable for production use.
+   For stable releases, install from `PyPI <https://pypi.org/project/bsk/>`_ as described above.
+
+
 Basilisk Support Data
 ---------------------
 

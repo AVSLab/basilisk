@@ -31,7 +31,7 @@ mjsEquality* createConstrainedEquality(const std::string& jointName,
     auto mjsequality = mjs_addEquality(spec, 0);
 
     std::string eqName = "_basilisk_constrainedEquality_" + jointName;
-    mjs_setString(mjsequality->name, eqName.c_str());
+    MJBasilisk::detail::setSpecObjectName(mjsequality, eqName);
 
     mjs_setString(mjsequality->name1, jointName.c_str());
     mjsequality->type = mjEQ_JOINT;
