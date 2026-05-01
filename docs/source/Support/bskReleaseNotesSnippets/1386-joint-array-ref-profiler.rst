@@ -1,0 +1,1 @@
+- Added the :ref:`jointArrayRefProfiler` device-interface module to generate low-pass or time-profiled joint angle, rate, and acceleration references from scalar joint state inputs and a desired joint-array command.
