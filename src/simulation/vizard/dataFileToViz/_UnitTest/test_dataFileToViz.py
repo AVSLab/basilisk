@@ -26,6 +26,8 @@
 
 
 import os
+import subprocess
+import sys
 
 import numpy as np
 import pytest
@@ -49,6 +51,62 @@ except ImportError:
 path = os.path.dirname(os.path.abspath(__file__))
 
 dataFileName = None
+
+
+def _run_python_import_order_check(import_statement):
+    """Run a SWIG wrapper import-order check in a fresh Python process.
+
+    Args:
+        import_statement (str): Basilisk import statement to execute before
+            constructing cross-module SWIG wrapper objects.
+
+    """
+    script = f"""
+{import_statement}
+
+thr_info = dataFileToViz.ThrClusterMap()
+thr_info.thrTag = "adcs"
+thr_vector = vizInterface.ThrClusterVector([thr_info])
+assert type(thr_vector[0]).__name__ == "ThrClusterMap"
+assert thr_vector[0].thrTag == "adcs"
+
+viz_thr_info = vizInterface.ThrClusterMap()
+viz_thr_info.thrTag = "dv"
+viz_thr_vector = dataFileToViz.VizThrConfig([viz_thr_info])
+assert type(viz_thr_vector[0]).__name__ == "ThrClusterMap"
+assert viz_thr_vector[0].thrTag == "dv"
+"""
+    return subprocess.run([sys.executable, "-c", script], capture_output=True, text=True)
+
+
+@pytest.mark.parametrize("import_statement", [
+    "from Basilisk.simulation import dataFileToViz, vizInterface",
+    "from Basilisk.simulation import vizInterface, dataFileToViz"
+])
+def test_data_file_to_viz_viz_interface_import_order(import_statement):
+    """Verify compatible SWIG wrappers across ``dataFileToViz`` and ``vizInterface``.
+
+    **Validation Test Description**
+
+    This test starts a fresh Python interpreter for each import order and
+    verifies that the shared ``ThrClusterMap`` vector wrappers can consume
+    objects created by either module.
+
+    **Description of Variables Being Tested**
+
+    The test checks that these vector wrappers return typed ``ThrClusterMap``
+    objects rather than generic SWIG pointer objects:
+
+    - ``vizInterface.ThrClusterVector``
+    - ``dataFileToViz.VizThrConfig``
+
+    """
+    pytest.importorskip("Basilisk.simulation.vizInterface")
+
+    result = _run_python_import_order_check(import_statement)
+    assert result.returncode == 0, result.stderr
+
+
 @pytest.mark.parametrize("convertPosUnits", [-1, 1000])
 @pytest.mark.parametrize("attType", [-1, 0, 1, 2])
 @pytest.mark.parametrize("checkThruster", [False, True])
@@ -347,7 +405,7 @@ def run(show_plots, convertPosUnits, attType, checkThruster, checkRW, verbose):
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
 
-    unitTestSim.ConfigureStopTime(simulationTime) 
+    unitTestSim.ConfigureStopTime(simulationTime)
 
     # Begin the simulation time run set above
     unitTestSim.ExecuteSimulation()
@@ -458,4 +516,3 @@ if __name__ == "__main__":
        )
     if os.path.exists(dataFileName):
         os.remove(dataFileName)
-
