@@ -1,0 +1,1 @@
+- Fixed :ref:`dataFileToViz` and :ref:`vizInterface` SWIG wrapper compatibility so shared Vizard thruster configuration types work regardless of import order.
