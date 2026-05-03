@@ -1,0 +1,1 @@
+- Added ``BSKLogger::bskError()`` as a non-returning C++ fatal logging method while preserving existing ``bskLog(BSK_ERROR, ...)`` behavior.
