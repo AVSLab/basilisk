@@ -48,11 +48,11 @@ on ``Reset()``, and that ``someInMsg`` is a required input message:L
         this->value = 0.0;
 
         if (!this->someInMsg.isLinked()) {
-            bskLogger.bskLog(BSK_ERROR, "SomeModule does not have someInMsg connected!");
+            bskLogger.bskError("SomeModule does not have someInMsg connected!");
         }
 
         if (this->gain <= 0) {
-            bskLogger.bskLog(BSK_ERROR, "The required gain value was not set to a positive value.");
+            bskLogger.bskError("The required gain value was not set to a positive value.");
         }
     }
 

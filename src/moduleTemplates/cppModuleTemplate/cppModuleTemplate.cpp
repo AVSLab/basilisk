@@ -91,7 +91,7 @@ void CppModuleTemplate::setDummy(double value)
     if (value > 0) {
         this->dummy = value;
     } else {
-        bskLogger.bskLog(BSK_ERROR, "CppModuleTemplate: dummy variable must be strictly positive, you tried to set %f", value);
+        bskLogger.bskError("CppModuleTemplate: dummy variable must be strictly positive, you tried to set %f", value);
     }
 }
 
@@ -100,8 +100,7 @@ void CppModuleTemplate::setDumVector(std::array<double, 3> value)
     // check that value is in acceptable range
     for (int i = 0; i < 3; i++) {
         if (value[i] <= 0.0) {
-            bskLogger.bskLog(BSK_ERROR, "CppModuleTemplate: dumVariable variables must be strictly positive");
-            return;
+            bskLogger.bskError("CppModuleTemplate: dumVariable variables must be strictly positive");
         }
     }
     this->dumVector = value;

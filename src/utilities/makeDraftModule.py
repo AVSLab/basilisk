@@ -379,7 +379,7 @@ class moduleGenerator:
         defFile += '    // check that required input messages are connected\n'
         for msg in inMsgList:
             defFile += f'    if (!this->{msg["var"]}.isLinked()) {{\n'
-            defFile += f'        bskLogger.bskLog(BSK_ERROR, "{self._className}.{msg["var"]} was not linked.");\n'
+            defFile += f'        bskLogger.bskError("{self._className}.{msg["var"]} was not linked.");\n'
             defFile += '    }\n'
         defFile += '\n'
         defFile += '}\n'
