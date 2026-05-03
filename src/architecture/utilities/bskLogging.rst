@@ -1,6 +1,6 @@
 Executive Summary
 -----------------
-This support class ``bskLogger`` enables C++ ``bskLog()`` and ANSI-C ``_bskLog()`` method to be used to log various debug, information, warning and error messages. The verbosity, i.e. what level of messages are printed to the terminal, can be set from the Basilisk python script.
+This support class ``bskLogger`` enables the C++ ``bskLog()`` and ``bskError()`` methods and the ANSI-C ``_bskLog()`` method to be used to log various debug, information, warning and error messages. The verbosity, i.e. what level of messages are printed to the terminal, can be set from the Basilisk python script.
 
 .. table:: Verbosity Level Options
         :widths: 25 25 100
@@ -16,7 +16,8 @@ This support class ``bskLogger`` enables C++ ``bskLog()`` and ANSI-C ``_bskLog()
         | BSK_WARNING           | Warnings about unexpected behavior, but not outright errors.                        |
         +-----------------------+---------------------------------+---------------------------------------------------+
         | BSK_ERROR             | Erroneous behavior that needs to be fixed. Errors raised at this level will raise a |
-        |                       | ``BasiliskError`` exception and stop the simulation immediately.                    |
+        |                       | ``BasiliskError`` exception and stop the simulation immediately. In C++ code,       |
+        |                       | ``bskError()`` is the preferred fatal logging call.                                 |
         +-----------------------+---------------------------------+---------------------------------------------------+
         | BSK_SILENT            | This level is used to silence all `bskLog` statements.  This should never be used   |
         |                       | with the `bskLog` method within the C++ or C code.                                  |
@@ -67,8 +68,8 @@ Another option is to use the ``BSKLogger()`` constructor to provide the verbosit
 Unlike change the global verbosity level, the module specific verbosity can be changed later on in the Basilisk
 python script as the corresponding module is created and configured.
 
-Using ``bskLog`` in C++ Basilisk Modules
-----------------------------------------
+Using ``bskLog`` and ``bskError`` in C++ Basilisk Modules
+---------------------------------------------------------
 The first step is to include the ``bskLogging`` support file with the module `*.h` file using:
 
 .. code-block:: cpp
@@ -86,6 +87,16 @@ Within the ``*.cpp`` file, the ``bskLog()`` method can be called with:
 .. code-block:: cpp
 
     bskLogger.bskLog(BSK_INFORMATION, "%d %d", arg1, arg2);
+
+For fatal C++ errors, use ``bskError()``.  This method raises ``BasiliskError`` like
+``bskLog(BSK_ERROR, ...)``, but is also declared as non-returning so compilers can
+reason correctly about control flow after the call.
+
+.. code-block:: cpp
+
+    bskLogger.bskError("The required gain value was not set to a positive value.");
+
+The legacy ``bskLog(BSK_ERROR, ...)`` call remains supported for existing C++ code.
 
 
 Using ``_bskLog`` in C Basilisk Modules
