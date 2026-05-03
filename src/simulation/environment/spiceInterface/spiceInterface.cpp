@@ -138,7 +138,7 @@ void SpiceInterface::Reset(uint64_t CurrenSimNanos)
     //! - Bail if the SPICEDataPath is not present
     if (!hasExplicitKernels && this->SPICEDataPath == "")
     {
-        bskLogger.bskLog(BSK_ERROR, "SPICE data path was not set.  No SPICE.");
+        bskLogger.bskError("SPICE data path was not set.  No SPICE.");
         return;
     }
 
@@ -152,7 +152,7 @@ void SpiceInterface::Reset(uint64_t CurrenSimNanos)
             {
                 auto kernel = SpiceKernel::request(std::filesystem::path(kp));
                 if (!kernel->wasLoadSuccesful()) {
-                    bskLogger.bskLog(BSK_ERROR, "Unable to load SPICE kernel: %s", kp.c_str());
+                    bskLogger.bskError("Unable to load SPICE kernel: %s", kp.c_str());
                     continue;
                 }
                 this->loadedKernels[kernel->getPath()] = kernel;
@@ -162,16 +162,16 @@ void SpiceInterface::Reset(uint64_t CurrenSimNanos)
         {
             // Load default kernels from SPICEDataPath
             if(loadSpiceKernel((char *)"naif0012.tls", this->SPICEDataPath.c_str())) {
-                bskLogger.bskLog(BSK_ERROR, "Unable to load %s", "naif0012.tls");
+                bskLogger.bskError("Unable to load %s", "naif0012.tls");
             }
             if(loadSpiceKernel((char *)"pck00010.tpc", this->SPICEDataPath.c_str())) {
-                bskLogger.bskLog(BSK_ERROR, "Unable to load %s", "pck00010.tpc");
+                bskLogger.bskError("Unable to load %s", "pck00010.tpc");
             }
             if(loadSpiceKernel((char *)"de-403-masses.tpc", this->SPICEDataPath.c_str())) {
-                bskLogger.bskLog(BSK_ERROR, "Unable to load %s", "de-403-masses.tpc");
+                bskLogger.bskError("Unable to load %s", "de-403-masses.tpc");
             }
             if(loadSpiceKernel((char *)"de430.bsp", this->SPICEDataPath.c_str())) {
-                bskLogger.bskLog(BSK_ERROR, "Unable to load %s", "de430.tpc");
+                bskLogger.bskError("Unable to load %s", "de430.tpc");
             }
         }
 
@@ -229,7 +229,7 @@ void SpiceInterface::initTimeData()
         EpochMsgPayload epochMsg;
         epochMsg = this->epochInMsg();
         if (!this->epochInMsg.isWritten()) {
-            bskLogger.bskLog(BSK_ERROR, "The input epoch message name was set, but the message was never written.  Not using the input message.");
+            bskLogger.bskError("The input epoch message name was set, but the message was never written.  Not using the input message.");
         } else {
             // Set the epoch information from the input message
             char string[255];
@@ -359,8 +359,7 @@ void SpiceInterface::addPlanetNames(std::vector<std::string> planetNames) {
         m33SetIdentity(newPlanet.J20002Pfix);
         if(it->size() >= MAX_BODY_NAME_LENGTH)
         {
-            bskLogger.bskLog(BSK_ERROR,
-                             "spiceInterface: planet name is %zu characters, but the SPICE payload name "
+            bskLogger.bskError("spiceInterface: planet name is %zu characters, but the SPICE payload name "
                              "supports at most %d characters.",
                              it->size(), MAX_BODY_NAME_LENGTH - 1);
         }
@@ -413,8 +412,7 @@ void SpiceInterface::addSpacecraftNames(std::vector<std::string> spacecraftNames
         m33SetIdentity(newSpacecraft.J20002Pfix);
         if(it->size() >= MAX_BODY_NAME_LENGTH)
         {
-            bskLogger.bskLog(BSK_ERROR,
-                             "spiceInterface: spacecraft name is %zu characters, but the SPICE payload name "
+            bskLogger.bskError("spiceInterface: spacecraft name is %zu characters, but the SPICE payload name "
                              "supports at most %d characters.",
                              it->size(), MAX_BODY_NAME_LENGTH - 1);
         }
@@ -565,7 +563,7 @@ std::string SpiceInterface::getCurrentTimeString()
 
 	if (allowedOutputLength < 0)
 	{
-        bskLogger.bskLog(BSK_ERROR, "The output format string is not long enough. It should be much larger than 5 characters.  It is currently: %s", this->timeOutPicture.c_str());
+        bskLogger.bskError("The output format string is not long enough. It should be much larger than 5 characters.  It is currently: %s", this->timeOutPicture.c_str());
 		return("");
 	}
 

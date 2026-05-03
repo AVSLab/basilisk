@@ -35,22 +35,22 @@ void SimpleSolarPanel::customReset(uint64_t CurrentClock) {
     this->illuminationFactor = 1.0;
 
     if (this->panelArea < 0.0) {
-        bskLogger.bskLog(BSK_ERROR, "The panelArea must be a positive value");
+        bskLogger.bskError("The panelArea must be a positive value");
     }
     if (this->panelEfficiency < 0.0) {
-        bskLogger.bskLog(BSK_ERROR, "The panelEfficiency variable must be a positive value");
+        bskLogger.bskError("The panelEfficiency variable must be a positive value");
     }
     if (this->nHat_B.norm() > 0.1) {
         this->nHat_B.normalize();
     } else {
-        bskLogger.bskLog(BSK_ERROR, "The nHat_B must be set to a non-zero vector");
+        bskLogger.bskError("The nHat_B must be set to a non-zero vector");
     }
     // check if required input messages are connected
     if (!this->sunInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "simpleSolarPanel.sunInMsg was not linked.");
+        bskLogger.bskError("simpleSolarPanel.sunInMsg was not linked.");
     }
     if (!this->stateInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "simpleSolarPanel.stateInMsg was not linked.");
+        bskLogger.bskError("simpleSolarPanel.stateInMsg was not linked.");
     }
 
     return;

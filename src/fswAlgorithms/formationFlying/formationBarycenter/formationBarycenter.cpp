@@ -48,12 +48,12 @@ void FormationBarycenter::SelfInit()
 void FormationBarycenter::Reset(uint64_t CurrentSimNanos) {
     // check that required input messages are connected
     if (this->scNavInMsgs.size() == 0 || this->scPayloadInMsgs.size() == 0) {
-        bskLogger.bskLog(BSK_ERROR, "FormationBarycenter module must have at least one spacecraft added through `addSpacecraftToModel`");
+        bskLogger.bskError("FormationBarycenter module must have at least one spacecraft added through `addSpacecraftToModel`");
     }
 
     // check if the gravitational parameter is set if using orbital elements averaging
     if (this->mu == 0 && this->useOrbitalElements) {
-        bskLogger.bskLog(BSK_ERROR, "FormationBarycenter module requires defining a gravitational parameter if using orbital elements.");
+        bskLogger.bskError("FormationBarycenter module requires defining a gravitational parameter if using orbital elements.");
     }
 
 }

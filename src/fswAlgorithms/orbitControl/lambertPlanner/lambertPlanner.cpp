@@ -40,13 +40,12 @@ void LambertPlanner::Reset(uint64_t currentSimNanos)
 {
     // check that required input messages are connected
     if (!this->navTransInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "lambertPlanner.navTransInMsg was not linked.");
+        bskLogger.bskError("lambertPlanner.navTransInMsg was not linked.");
     }
 
     // check that the provided input module parameters are valid
     if (this->finalTime - this->maneuverTime < 0.0){
-        bskLogger.bskLog(BSK_ERROR,
-                         "lambertPlanner: Maneuver start time maneuverTime must be before final time finalTime.");
+        bskLogger.bskError("lambertPlanner: Maneuver start time maneuverTime must be before final time finalTime.");
     }
 }
 
@@ -114,8 +113,7 @@ void LambertPlanner::readMessages()
     NavTransMsgPayload navTransInMsgBuffer = this->navTransInMsg();
 
     if (this->maneuverTime - navTransInMsgBuffer.timeTag < 0.0){
-        bskLogger.bskLog(BSK_ERROR,
-                         "lambertPlanner: current time must be before maneuver time maneuverTime.");
+        bskLogger.bskError("lambertPlanner: current time must be before maneuver time maneuverTime.");
     } else {
         this->time = navTransInMsgBuffer.timeTag;
     }
@@ -223,7 +221,7 @@ void LambertPlanner::setManeuverTime(const double value){
 
 void LambertPlanner::setMu(const double value){
     if (value < 0.0){
-        bskLogger.bskLog(BSK_ERROR, "lambertPlanner: mu must be positive.");
+        bskLogger.bskError("lambertPlanner: mu must be positive.");
     }
     this->mu = value;
 }

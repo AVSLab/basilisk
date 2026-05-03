@@ -36,10 +36,10 @@ void LambertSurfaceRelativeVelocity::Reset(uint64_t currentSimNanos)
 {
     // check that required input messages are connected
     if (!this->lambertProblemInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "lambertSurfaceRelativeVelocity.lambertProblemInMsg was not linked.");
+        bskLogger.bskError("lambertSurfaceRelativeVelocity.lambertProblemInMsg was not linked.");
     }
     if (!this->ephemerisInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "lambertSurfaceRelativeVelocity.ephemerisInMsg was not linked.");
+        bskLogger.bskError("lambertSurfaceRelativeVelocity.ephemerisInMsg was not linked.");
     }
 }
 

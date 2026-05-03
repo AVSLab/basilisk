@@ -45,7 +45,7 @@ void BoreAngCalc::Reset(uint64_t CurrentSimNanos)
 {
     // check if required input messages have not been included
     if (!this->scStateInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "boreAngCalc.scStateInMsg was not linked.");
+        bskLogger.bskError("boreAngCalc.scStateInMsg was not linked.");
     }
 
     if (this->celBodyInMsg.isLinked()) {
@@ -55,7 +55,7 @@ void BoreAngCalc::Reset(uint64_t CurrentSimNanos)
         this->useInertialHeading = true;
     }
     else {
-        bskLogger.bskLog(BSK_ERROR, "Either boreAngCalc.celBodyInMsg was not linked or boreAngCalc.inertialHeadingVec_N was not set.");
+        bskLogger.bskError("Either boreAngCalc.celBodyInMsg was not linked or boreAngCalc.inertialHeadingVec_N was not set.");
     }
 
 }

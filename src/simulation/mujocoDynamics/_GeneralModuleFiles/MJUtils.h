@@ -57,9 +57,9 @@ template <typename T = std::invalid_argument>
 [[noreturn]] inline void logAndThrow (const std::string& error, BSKLogger* logger = nullptr)
 {
     if (logger) {
-        logger->bskLog(BSK_ERROR, "%s", error.c_str());
+        logger->bskError("%s", error.c_str());
     } else {
-        BSKLogger{}.bskLog(BSK_ERROR, "%s", error.c_str());
+        BSKLogger{}.bskError("%s", error.c_str());
     }
     throw T(error);
 }

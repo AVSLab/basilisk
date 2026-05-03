@@ -86,7 +86,7 @@ void VizInterface::Reset(uint64_t CurrentSimNanos)
         if (broadcastConnect != 0) {
             int error_code = zmq_errno();
             text = "Broadcast socket did not connect correctly. ZMQ error code: " + std::to_string(error_code);
-            bskLogger.bskLog(BSK_ERROR, "%s", text.c_str());
+            bskLogger.bskError("%s", text.c_str());
             return;
         }
         text = "Broadcasting at " + this->pubComProtocol + "://" + this->pubComAddress + ":" + this->pubPortNumber;
@@ -109,7 +109,7 @@ void VizInterface::Reset(uint64_t CurrentSimNanos)
         if (twoWayConnect != 0) {
             int error_code = zmq_errno();
             text = "2-way socket did not connect correctly. ZMQ error code: " + std::to_string(error_code);
-            bskLogger.bskLog(BSK_ERROR, "%s", text.c_str());
+            bskLogger.bskError("%s", text.c_str());
             return;
         }
 
@@ -137,7 +137,7 @@ void VizInterface::Reset(uint64_t CurrentSimNanos)
             scIt->scStateInMsgStatus.dataFresh = false;
             scIt->scStateInMsgStatus.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
         } else {
-            bskLogger.bskLog(BSK_ERROR, "vizInterface: spacecraft msg not linked.");
+            bskLogger.bskError("vizInterface: spacecraft msg not linked.");
         }
 
         /* Check CSS data input messages */
@@ -150,7 +150,7 @@ void VizInterface::Reset(uint64_t CurrentSimNanos)
             for (size_t idx = 0; idx < (size_t) scIt->cssInMsgs.size(); idx++)
             {
                 if (!scIt->cssInMsgs.at(idx).isLinked()) {
-                    bskLogger.bskLog(BSK_ERROR, "vizInterface: CSS(%zu) msg not linked.", idx);
+                    bskLogger.bskError("vizInterface: CSS(%zu) msg not linked.", idx);
                 }
                 scIt->cssConfLogInMsgStatus.push_back(cssStatus);
                 CSSConfigLogMsgPayload logMsg = {};
@@ -168,7 +168,7 @@ void VizInterface::Reset(uint64_t CurrentSimNanos)
             for (size_t idx = 0; idx < (size_t) scIt->rwInMsgs.size(); idx++)
             {
                 if (!scIt->rwInMsgs.at(idx).isLinked()) {
-                    bskLogger.bskLog(BSK_ERROR, "vizInterface: RW(%zu) msg not linked.", idx);
+                    bskLogger.bskError("vizInterface: RW(%zu) msg not linked.", idx);
                 }
                 scIt->rwInMsgStatus.push_back(rwStatus);
                 RWConfigLogMsgPayload logMsg = {};
@@ -189,11 +189,11 @@ void VizInterface::Reset(uint64_t CurrentSimNanos)
                     THROutputMsgPayload logMsg;
                     scIt->thrOutputMessage.push_back(logMsg);
                 } else {
-                    bskLogger.bskLog(BSK_ERROR, "vizInterface: TH(%d) msg requested but not found.", thrCounter);
+                    bskLogger.bskError("vizInterface: TH(%d) msg requested but not found.", thrCounter);
                 }
             }
             if (scIt->thrInfo.size() != scIt->thrInMsgs.size()) {
-                bskLogger.bskLog(BSK_ERROR, "vizInterface: thrInfo vector (%d) must be the same size as thrInMsgs (%d)"
+                bskLogger.bskError("vizInterface: thrInfo vector (%d) must be the same size as thrInMsgs (%d)"
                                  , (int) scIt->thrInfo.size(), (int) scIt->thrInMsgs.size());
             }
         }
@@ -220,8 +220,7 @@ void VizInterface::Reset(uint64_t CurrentSimNanos)
             m33SetIdentity(logMsg.J20002Pfix);
             const std::string& planetName = this->gravBodyInformation.at(c).bodyName;
             if (planetName.size() >= sizeof(logMsg.PlanetName)) {
-                bskLogger.bskLog(BSK_ERROR,
-                                 "vizInterface: celestial body name is %zu characters, but the default SPICE "
+                bskLogger.bskError("vizInterface: celestial body name is %zu characters, but the default SPICE "
                                  "payload name supports at most %zu characters.",
                                  planetName.size(), sizeof(logMsg.PlanetName) - 1);
             }
@@ -239,7 +238,7 @@ void VizInterface::Reset(uint64_t CurrentSimNanos)
         /* check if file could be opened */
         if (!this->outputStream->is_open()) {
             this->saveFile = false; // turn off save file flag
-            bskLogger.bskLog(BSK_ERROR, "VizInterface: Unable to open file %s for writing.", this->protoFilename.c_str());
+            bskLogger.bskError("VizInterface: Unable to open file %s for writing.", this->protoFilename.c_str());
             return;
         } else {
             bskLogger.bskLog(BSK_INFORMATION, "VizInterface: Writing data to %s", this->protoFilename.c_str());
@@ -435,7 +434,7 @@ void VizInterface::ReadBSKMessages()
                             scIt->msmInfo.msmList[idx]->currentValue = msmChargeMsgBuffer.q[idx];
                         }
                     } else {
-                        bskLogger.bskLog(BSK_ERROR, "vizInterface: the number of charged in MSM message and the number of msm vizInterface spheres must be the same.");
+                        bskLogger.bskError("vizInterface: the number of charged in MSM message and the number of msm vizInterface spheres must be the same.");
 
                     }
                 }
@@ -1174,11 +1173,11 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             // Send serialized message to BROADCAST (PUBLISHER) socket */
             int sendStatus = zmq_send(this->publisher_socket, "SIM_UPDATE", 10, ZMQ_SNDMORE);
             if (sendStatus == -1) {
-                bskLogger.bskLog(BSK_ERROR, "Broadcast header did not send to socket.");
+                bskLogger.bskError("Broadcast header did not send to socket.");
             }
             sendStatus = zmq_send(this->publisher_socket, serialized_message, byteCount, 0);
             if (sendStatus == -1) {
-                bskLogger.bskLog(BSK_ERROR, "Broadcast protobuffer did not send to socket.");
+                bskLogger.bskError("Broadcast protobuffer did not send to socket.");
             }
         }
 
@@ -1268,12 +1267,12 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                     std::string receiveOKStr (static_cast<char*>(msgData), msgSize);
                     std::string errStatusStr = "OK";
                     if (receiveOKStr.compare(errStatusStr) != 0) {
-                        bskLogger.bskLog(BSK_ERROR, "Vizard 2-way [0]: Error processing SIM_UPDATE.");
+                        bskLogger.bskError("Vizard 2-way [0]: Error processing SIM_UPDATE.");
                         return;
                     }
                 }
                 else {
-                    bskLogger.bskLog(BSK_ERROR, "Vizard: Did not return a status (OK) message during SIM_UPDATE.");
+                    bskLogger.bskError("Vizard: Did not return a status (OK) message during SIM_UPDATE.");
                 }
                 zmq_msg_close(&receiveOK);
 
@@ -1380,7 +1379,7 @@ void VizInterface::receiveUserInput(uint64_t CurrentSimNanos){
 
     // If socket was empty, throw an error and exit
     if (receive_status == -1) {
-        bskLogger.bskLog(BSK_ERROR, "Vizard 2-way [1]: Communication error. No data on socket.");
+        bskLogger.bskError("Vizard 2-way [1]: Communication error. No data on socket.");
         return;
     }
     // Else, parse the status string and ensure Vizard did not send "ERROR"
@@ -1390,7 +1389,7 @@ void VizInterface::receiveUserInput(uint64_t CurrentSimNanos){
         std::string receive_status_str (static_cast<char*>(msgData), msgSize);
         std::string err_status_str = "ERROR";
         if (receive_status_str.compare(err_status_str) == 0) {
-            bskLogger.bskLog(BSK_ERROR, "Vizard 2-way [2]: Invalid request string.");
+            bskLogger.bskError("Vizard 2-way [2]: Invalid request string.");
             return;
         }
     }
@@ -1457,11 +1456,11 @@ void VizInterface::receiveUserInput(uint64_t CurrentSimNanos){
             // Send sync settings message to BROADCAST (PUBLISHER) socket */
             int sendStatus = zmq_send(this->publisher_socket, "SYNC_SETTINGS", 13, ZMQ_SNDMORE);
             if (sendStatus == -1) {
-                bskLogger.bskLog(BSK_ERROR, "Broadcast header did not send to socket.");
+                bskLogger.bskError("Broadcast header did not send to socket.");
             }
             sendStatus = zmq_send(this->publisher_socket, sync_settings, syncByteCount, 0);
             if (sendStatus == -1) {
-                bskLogger.bskLog(BSK_ERROR, "Broadcast protobuffer did not send to socket.");
+                bskLogger.bskError("Broadcast protobuffer did not send to socket.");
             }
         }
 
@@ -1470,7 +1469,7 @@ void VizInterface::receiveUserInput(uint64_t CurrentSimNanos){
         delete msgRecv;
     }
     else {
-        bskLogger.bskLog(BSK_ERROR, "Vizard 2-way [2]: Did not return a user input message.");
+        bskLogger.bskError("Vizard 2-way [2]: Did not return a user input message.");
     }
 
     zmq_msg_close(&viz_response);
@@ -1505,13 +1504,13 @@ void VizInterface::requestImage(size_t camCounter, uint64_t CurrentSimNanos)
         || zmq_msg_recv(&image, this->requester_socket, 0) == -1) {
         zmq_msg_close(&length);
         zmq_msg_close(&image);
-        bskLogger.bskLog(BSK_ERROR, "Vizard image response was not received.");
+        bskLogger.bskError("Vizard image response was not received.");
         return;
     }
     if (zmq_msg_size(&length) < sizeof(int32_t)) {
         zmq_msg_close(&length);
         zmq_msg_close(&image);
-        bskLogger.bskLog(BSK_ERROR, "Vizard image response length field is invalid.");
+        bskLogger.bskError("Vizard image response length field is invalid.");
         return;
     }
 
@@ -1527,7 +1526,7 @@ void VizInterface::requestImage(size_t camCounter, uint64_t CurrentSimNanos)
     if (imageBufferLength < 0 || (size_t)imageBufferLength != zmq_msg_size(&image)) {
         zmq_msg_close(&length);
         zmq_msg_close(&image);
-        bskLogger.bskLog(BSK_ERROR, "Vizard image response buffer length is invalid.");
+        bskLogger.bskError("Vizard image response buffer length is invalid.");
         return;
     }
 
@@ -1537,7 +1536,7 @@ void VizInterface::requestImage(size_t camCounter, uint64_t CurrentSimNanos)
         if (this->bskImagePtrs[camCounter] == NULL) {
             zmq_msg_close(&length);
             zmq_msg_close(&image);
-            bskLogger.bskLog(BSK_ERROR, "Vizard image response buffer allocation failed.");
+            bskLogger.bskError("Vizard image response buffer allocation failed.");
             return;
         }
         memcpy(this->bskImagePtrs[camCounter], imagePoint, imageBufferLength*sizeof(char));

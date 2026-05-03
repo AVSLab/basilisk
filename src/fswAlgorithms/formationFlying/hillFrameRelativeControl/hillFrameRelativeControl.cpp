@@ -35,34 +35,31 @@ void HillFrameRelativeControl::Reset(uint64_t currentSimNanos)
 {
     (void) currentSimNanos;
     if (!this->chiefTransInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "hillFrameRelativeControl.chiefTransInMsg was not linked.");
+        this->bskLogger.bskError("hillFrameRelativeControl.chiefTransInMsg was not linked.");
     }
 
     const bool hillStateLinked = this->hillStateInMsg.isLinked();
     const bool deputyStateLinked = this->deputyTransInMsg.isLinked();
     if (hillStateLinked == deputyStateLinked) {
-        this->bskLogger.bskLog(BSK_ERROR,
-                               "hillFrameRelativeControl requires exactly one of hillStateInMsg or deputyTransInMsg to be linked.");
+        this->bskLogger.bskError("hillFrameRelativeControl requires exactly one of hillStateInMsg or deputyTransInMsg to be linked.");
     }
     if (!this->deputyVehicleConfigInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "hillFrameRelativeControl.deputyVehicleConfigInMsg was not linked.");
+        this->bskLogger.bskError("hillFrameRelativeControl.deputyVehicleConfigInMsg was not linked.");
     } else {
         const VehicleConfigMsgPayload deputyVehicleConfig = this->deputyVehicleConfigInMsg();
         if (deputyVehicleConfig.massSC <= 0.0) {
-            this->bskLogger.bskLog(
-                BSK_ERROR,
-                "hillFrameRelativeControl.deputyVehicleConfigInMsg.massSC must be positive."
+            this->bskLogger.bskError("hillFrameRelativeControl.deputyVehicleConfigInMsg.massSC must be positive."
             );
         }
     }
     if (this->mu <= 0.0) {
-        this->bskLogger.bskLog(BSK_ERROR, "hillFrameRelativeControl.mu must be positive.");
+        this->bskLogger.bskError("hillFrameRelativeControl.mu must be positive.");
     }
     if (!this->setKFlag) {
-        this->bskLogger.bskLog(BSK_ERROR, "HillFrameRelativeControl.K must be set before simulation start.");
+        this->bskLogger.bskError("HillFrameRelativeControl.K must be set before simulation start.");
     }
     if (!this->setPFlag) {
-        this->bskLogger.bskLog(BSK_ERROR, "HillFrameRelativeControl.P must be set before simulation start.");
+        this->bskLogger.bskError("HillFrameRelativeControl.P must be set before simulation start.");
     }
 }
 
@@ -102,13 +99,13 @@ void HillFrameRelativeControl::computeForceCommand()
     v3SetZero(this->forceCmd_N);  // Reset commanded inertial force vector before recomputing this cycle. [N]
 
     if (this->mu <= 0.0) {
-        this->bskLogger.bskLog(BSK_ERROR, "hillFrameRelativeControl.mu must be positive.");
+        this->bskLogger.bskError("hillFrameRelativeControl.mu must be positive.");
         return;
     }
 
     const double rChiefNorm = v3Norm(this->chiefNavBuffer.r_BN_N);  // Chief orbital radius magnitude. [m]
     if (rChiefNorm <= 0.0) {
-        this->bskLogger.bskLog(BSK_ERROR, "hillFrameRelativeControl chief radius norm is zero.");
+        this->bskLogger.bskError("hillFrameRelativeControl chief radius norm is zero.");
         return;
     }
 
@@ -116,7 +113,7 @@ void HillFrameRelativeControl::computeForceCommand()
     v3Cross(this->chiefNavBuffer.r_BN_N, this->chiefNavBuffer.v_BN_N, hChief_N);
     const double hChiefNorm = v3Norm(hChief_N);  // Chief specific angular momentum magnitude. [m^2/s]
     if (hChiefNorm <= 0.0) {
-        this->bskLogger.bskLog(BSK_ERROR, "hillFrameRelativeControl chief angular momentum norm is zero.");
+        this->bskLogger.bskError("hillFrameRelativeControl chief angular momentum norm is zero.");
         return;
     }
 
@@ -185,7 +182,7 @@ void HillFrameRelativeControl::writeMessages(uint64_t currentSimNanos)
 void HillFrameRelativeControl::setK(const std::vector<double>& gain)
 {
     if (gain.size() != 9) {
-        this->bskLogger.bskLog(BSK_ERROR, "hillFrameRelativeControl: K must contain exactly 9 elements.");
+        this->bskLogger.bskError("hillFrameRelativeControl: K must contain exactly 9 elements.");
         return;
     }
 
@@ -196,13 +193,13 @@ void HillFrameRelativeControl::setK(const std::vector<double>& gain)
     double kTranspose[3][3];
     m33Transpose(kCandidate, kTranspose);
     if (!m33IsEqual(kCandidate, kTranspose, 1e-12)) {
-        this->bskLogger.bskLog(BSK_ERROR, "hillFrameRelativeControl: K must be symmetric positive definite.");
+        this->bskLogger.bskError("hillFrameRelativeControl: K must be symmetric positive definite.");
         return;
     }
     double kEigVals[3];
     m33EigenValues(kCandidate, kEigVals);
     if (!(kEigVals[0] > 1e-12 && kEigVals[1] > 1e-12 && kEigVals[2] > 1e-12)) {
-        this->bskLogger.bskLog(BSK_ERROR, "hillFrameRelativeControl: K must be symmetric positive definite.");
+        this->bskLogger.bskError("hillFrameRelativeControl: K must be symmetric positive definite.");
         return;
     }
     m33Copy(kCandidate, this->K);
@@ -214,7 +211,7 @@ void HillFrameRelativeControl::setK(const std::vector<double>& gain)
 void HillFrameRelativeControl::setP(const std::vector<double>& gain)
 {
     if (gain.size() != 9) {
-        this->bskLogger.bskLog(BSK_ERROR, "hillFrameRelativeControl: P must contain exactly 9 elements.");
+        this->bskLogger.bskError("hillFrameRelativeControl: P must contain exactly 9 elements.");
         return;
     }
 
@@ -225,13 +222,13 @@ void HillFrameRelativeControl::setP(const std::vector<double>& gain)
     double pTranspose[3][3];
     m33Transpose(pCandidate, pTranspose);
     if (!m33IsEqual(pCandidate, pTranspose, 1e-12)) {
-        this->bskLogger.bskLog(BSK_ERROR, "hillFrameRelativeControl: P must be symmetric positive definite.");
+        this->bskLogger.bskError("hillFrameRelativeControl: P must be symmetric positive definite.");
         return;
     }
     double pEigVals[3];
     m33EigenValues(pCandidate, pEigVals);
     if (!(pEigVals[0] > 1e-12 && pEigVals[1] > 1e-12 && pEigVals[2] > 1e-12)) {
-        this->bskLogger.bskLog(BSK_ERROR, "hillFrameRelativeControl: P must be symmetric positive definite.");
+        this->bskLogger.bskError("hillFrameRelativeControl: P must be symmetric positive definite.");
         return;
     }
     m33Copy(pCandidate, this->P);
@@ -243,7 +240,7 @@ void HillFrameRelativeControl::setP(const std::vector<double>& gain)
 void HillFrameRelativeControl::setReferencePosition(const std::vector<double>& rRef_H)
 {
     if (rRef_H.size() != 3) {
-        this->bskLogger.bskLog(BSK_ERROR, "hillFrameRelativeControl.setReferencePosition requires a length-3 vector.");
+        this->bskLogger.bskError("hillFrameRelativeControl.setReferencePosition requires a length-3 vector.");
         return;
     }
     double rRefArray[3];
@@ -256,7 +253,7 @@ void HillFrameRelativeControl::setReferencePosition(const std::vector<double>& r
 void HillFrameRelativeControl::setReferenceVelocity(const std::vector<double>& vRef_H)
 {
     if (vRef_H.size() != 3) {
-        this->bskLogger.bskLog(BSK_ERROR, "hillFrameRelativeControl.setReferenceVelocity requires a length-3 vector.");
+        this->bskLogger.bskError("hillFrameRelativeControl.setReferenceVelocity requires a length-3 vector.");
         return;
     }
     double vRefArray[3];
@@ -267,7 +264,7 @@ void HillFrameRelativeControl::setReferenceVelocity(const std::vector<double>& v
 void HillFrameRelativeControl::setMu(double mu)
 {
     if (mu <= 0.0) {
-        this->bskLogger.bskLog(BSK_ERROR, "hillFrameRelativeControl: mu must be positive.");
+        this->bskLogger.bskError("hillFrameRelativeControl: mu must be positive.");
     } else {
         this->mu = mu;
     }

@@ -42,7 +42,7 @@ inline double getBrightnessTemperatureFromData(const std::string& celestialBody,
     if (celestialBody == "Sun") {
         // Sun brightness temperature modeled after ITU-R P.372-17 Figure 10
         if (frequency_Hz < 5e7) {                                                        // ->   f < 50 MHz
-            bskLogger.bskLog(BSK_ERROR, "brightnessTemperatureSolarSystem: Frequency out of range for Sun brightness temperature model");
+            bskLogger.bskError("brightnessTemperatureSolarSystem: Frequency out of range for Sun brightness temperature model");
             return 1e6;                                                                  // [K]  Return worst case value from the valid frequency range
         } else if (frequency_Hz >= 5e7 && frequency_Hz < 2e8) {                          // ->   50 MHz <= f < 200 MHz
             return 1e6;                                                                  // [K]  (ITU-R P.372-17, 4.1 Brightness temperature due to extra-terrestrial sources)
@@ -57,7 +57,7 @@ inline double getBrightnessTemperatureFromData(const std::string& celestialBody,
         } else if (frequency_Hz >= 1e11) {                                               // ->   f >= 100 GHz
             return 5.0e3;                                                                // [K]  (ITU-R P.372-17, Figure 10 "Quiet Sun")
         } else {                                                                         // ->   Fallback case (should never be reached)
-            bskLogger.bskLog(BSK_ERROR, "brightnessTemperatureSolarSystem: Frequency out of range for Sun brightness temperature model");
+            bskLogger.bskError("brightnessTemperatureSolarSystem: Frequency out of range for Sun brightness temperature model");
             return 1e6;                                                                  // [K]  Return worst case value for the frequency range
         }
     } else if (celestialBody == "Earth") {
@@ -75,7 +75,7 @@ inline double getBrightnessTemperatureFromData(const std::string& celestialBody,
         }
     } else if (celestialBody == "Galaxy") {
         if (frequency_Hz <= 1e7) {                                                       // ->   f <= 10 MHz
-            bskLogger.bskLog(BSK_ERROR, "brightnessTemperatureSolarSystem: Invalid frequency for Galaxy brightness temperature model");
+            bskLogger.bskError("brightnessTemperatureSolarSystem: Invalid frequency for Galaxy brightness temperature model");
             return 864.0;                                                                // [K]  Return worst case for valid frequency range
         } else if (frequency_Hz > 1e7 && frequency_Hz <= 1e8) {                          // ->   100 MHz   >= f >   10 MHz
             double F_am_dB       = 52.0 - 23.0 * log10(frequency_Hz * 1e-6);             // [dB] (ITU-R P.372-17, eq: 15) -> 100MHz=864K ; 10MHz=2.3e5 ; 1MHz=4.6e6K
@@ -86,11 +86,11 @@ inline double getBrightnessTemperatureFromData(const std::string& celestialBody,
         } else if (frequency_Hz > 1.16e9) {                                              // ->   f > 1.16 GHz
             return CMB_TEMPERATURE;                                                      // [K]  Above 1.16 GHz, galactic contribution is negligible; only CMB remains (ITU-R P.372-17, Figure 10)
         } else {                                                                         // ->   Frequency out of range (This should never happen)
-            bskLogger.bskLog(BSK_ERROR, "brightnessTemperatureSolarSystem: Frequency out of range for Galaxy brightness temperature model");
+            bskLogger.bskError("brightnessTemperatureSolarSystem: Frequency out of range for Galaxy brightness temperature model");
             return CMB_TEMPERATURE;                                                      // [K]  Return CMB value for invalid frequency
         }
     } else {                                                                             // ->   Celestial body not implemented
-        bskLogger.bskLog(BSK_ERROR, "brightnessTemperatureSolarSystem: Celestial body not (yet) implemented");
+        bskLogger.bskError("brightnessTemperatureSolarSystem: Celestial body not (yet) implemented");
         return CMB_TEMPERATURE;                                                          // [K]  Return CMB value for unimplemented celestial body
     }
 }

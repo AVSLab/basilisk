@@ -46,7 +46,7 @@ void FacetDragDynamicEffector::Reset(uint64_t CurrentSimNanos)
 {
 	// check if input message has not been included
 	if (!this->atmoDensInMsg.isLinked()) {
-		bskLogger.bskLog(BSK_ERROR, "facetDragDynamicEffector.atmoDensInMsg was not linked.");
+		bskLogger.bskError("facetDragDynamicEffector.atmoDensInMsg was not linked.");
 	}
 
     return;

@@ -245,17 +245,17 @@ void Albedo::UpdateState(uint64_t CurrentSimNanos)
 void Albedo::Reset(uint64_t CurrentSimNanos)
 {
     if (this->modelNames.empty()) {
-        bskLogger.bskLog(BSK_ERROR, "Albedo Module (Reset): Albedo model was not set.");
+        bskLogger.bskError("Albedo Module (Reset): Albedo model was not set.");
         return;
     }
     if (this->planetInMsgs.empty()) {
-        bskLogger.bskLog(BSK_ERROR, "Albedo Module (Reset): Planet message vector (planetInMsgs) is empty.");
+        bskLogger.bskError("Albedo Module (Reset): Planet message vector (planetInMsgs) is empty.");
     }
     if (!this->sunPositionInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "Albedo Module (Reset): Sun message (sunPositionInMsg) is not linked.");
+        bskLogger.bskError("Albedo Module (Reset): Sun message (sunPositionInMsg) is not linked.");
     }
     if (!this->spacecraftStateInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "Albedo Module (Reset): Spacecraft message (spacecraftStateInMsg) is not linked.");
+        bskLogger.bskError("Albedo Module (Reset): Spacecraft message (spacecraftStateInMsg) is not linked.");
     }
 
     int idx = 0;
@@ -353,7 +353,7 @@ void Albedo::getPlanetRadius(std::string planetSpiceName)
         this->RP_planets.push_back(-1.0);                  // [m]
     }
     else {
-        bskLogger.bskLog(BSK_ERROR, "Albedo Module (getPlanetRadius): The planet's radius cannot be obtained. The planet (%s) is not found.", planetSpiceName.c_str());
+        bskLogger.bskError("Albedo Module (getPlanetRadius): The planet's radius cannot be obtained. The planet (%s) is not found.", planetSpiceName.c_str());
     }
     return;
 }
@@ -392,7 +392,7 @@ double Albedo::getAlbedoAverage(std::string planetSpiceName)
         ALB_avg = 0.31; return ALB_avg;
     }
     else {
-        bskLogger.bskLog(BSK_ERROR, "Albedo Module (getAlbedoAverage): The average albedo value is not defined for the specified planet (%s).", planetSpiceName.c_str()); return 0.;
+        bskLogger.bskError("Albedo Module (getAlbedoAverage): The average albedo value is not defined for the specified planet (%s).", planetSpiceName.c_str()); return 0.;
     }
 }
 
@@ -425,7 +425,7 @@ void Albedo::evaluateAlbedoModel(int idx)
         //! - Albedo model based on data
         //! - Check that required module variables are set
         if (fileName == "") {
-            bskLogger.bskLog(BSK_ERROR, "Albedo Module (evaluateAlbedoModel): Albedo fileName was not set.");
+            bskLogger.bskError("Albedo Module (evaluateAlbedoModel): Albedo fileName was not set.");
         }
         else {
             this->readFile = true;
@@ -433,17 +433,17 @@ void Albedo::evaluateAlbedoModel(int idx)
         fileName = dataPath + "/" + fileName;
     }
     else {
-        bskLogger.bskLog(BSK_ERROR, "Albedo Module (evaluateAlbedoModel): Check the model name (%s).", modelName.c_str());
+        bskLogger.bskError("Albedo Module (evaluateAlbedoModel): Check the model name (%s).", modelName.c_str());
     }
     //! - Read the albedo coefficient file if the model requires
     if (this->readFile) {
         //! - Check that required module variables are set
         if (dataPath == "") {
-            bskLogger.bskLog(BSK_ERROR, "Albedo Module (evaluateAlbedoModel): Albedo data path was not set.");
+            bskLogger.bskError("Albedo Module (evaluateAlbedoModel): Albedo data path was not set.");
         }
         std::ifstream input(fileName);
         if (!input) {
-            bskLogger.bskLog(BSK_ERROR, "Albedo Module (evaluateAlbedoModel): Albedo module is unable to load file %s", fileName.c_str());
+            bskLogger.bskError("Albedo Module (evaluateAlbedoModel): Albedo module is unable to load file %s", fileName.c_str());
             // return to avoid reading/attempting to process the invalid file below
             return;
         }
@@ -465,7 +465,7 @@ void Albedo::evaluateAlbedoModel(int idx)
         numLon = (int) array[0].size();
         //! - Compare if the numLat/numLon are not zero
         if (!numLat || !numLon) {
-            bskLogger.bskLog(BSK_ERROR, "Albedo Module (evaluateAlbedoModel): There has been an error in reading albedo data from (%s).", fileName.c_str());
+            bskLogger.bskError("Albedo Module (evaluateAlbedoModel): There has been an error in reading albedo data from (%s).", fileName.c_str());
         }
         //! - Define the albedo array based on the number of grid points
         this->ALB[idx] = std::vector < std::vector < double > >(numLat, std::vector < double >(numLon, 0.0));

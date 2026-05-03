@@ -61,17 +61,15 @@ void
 SpacecraftLocation::Reset(uint64_t CurrentSimNanos)
 {
     if (this->scStateInMsgs.size() == 0) {
-        bskLogger.bskLog(
-          BSK_ERROR,
-          "SpacecraftLocation module must have at least one spacecraft added through `addSpacecraftToModel`");
+        bskLogger.bskError("SpacecraftLocation module must have at least one spacecraft added through `addSpacecraftToModel`");
     }
 
     if (!this->primaryScStateInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "SpacecraftLocation module must have `primaryScStateInMsg` connected.");
+        bskLogger.bskError("SpacecraftLocation module must have `primaryScStateInMsg` connected.");
     }
 
     if (this->rEquator < 0.0) {
-        bskLogger.bskLog(BSK_ERROR, "SpacecraftLocation rEquator must be set to the planet equatorial radius");
+        bskLogger.bskError("SpacecraftLocation rEquator must be set to the planet equatorial radius");
     }
     /* if the polar radius is not specified, then it is set equal to the equatorial radius */
     if (this->rEquator > 0.0 && this->rPolar < 0.0) {
@@ -81,14 +79,14 @@ SpacecraftLocation::Reset(uint64_t CurrentSimNanos)
 
     if (this->aHat_B.norm() > 0.1) {
         if (this->theta < 0.0) {
-            bskLogger.bskLog(BSK_ERROR, "SpacecraftLocation must set theta if you specify aHat_B");
+            bskLogger.bskError("SpacecraftLocation must set theta if you specify aHat_B");
         }
         this->aHat_B.normalize();
     }
 
     if (this->theta_solar >= 0.0) {
         if (this->aHat_B.norm() < 0.001) {
-            bskLogger.bskLog(BSK_ERROR, "SpacecraftLocation must set aHat_B if you specify theta_solar");
+            bskLogger.bskError("SpacecraftLocation must set aHat_B if you specify theta_solar");
         }
     }
 
@@ -141,7 +139,7 @@ SpacecraftLocation::ReadMessages()
             this->scStatesBuffer.push_back(scMsg);
         }
     } else {
-        bskLogger.bskLog(BSK_ERROR, "Spacecraft location has no other spacecraft to track.");
+        bskLogger.bskError("Spacecraft location has no other spacecraft to track.");
         scRead = false;
     }
     //! - Read in the optional planet message.  if no planet message is set, then a zero planet position, velocity and

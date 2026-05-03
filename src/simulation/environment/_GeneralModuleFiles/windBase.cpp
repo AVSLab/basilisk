@@ -48,16 +48,16 @@ WindBase::~WindBase()
 void WindBase::Reset(uint64_t CurrentSimNanos)
 {
     if (this->scStateInMsgs.empty()) {
-        bskLogger.bskLog(BSK_ERROR, "Wind model has no spacecraft added to it.");
+        bskLogger.bskError("Wind model has no spacecraft added to it.");
     }
     if (!this->planetPosInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "WindBase: planetPosInMsg is not linked.");
+        bskLogger.bskError("WindBase: planetPosInMsg is not linked.");
     }
 
     //! - set epoch from message if provided, otherwise let subclass set it from a variable
     if (this->epochInMsg.isLinked()) {
         if (!this->epochInMsg.isWritten()) {
-            bskLogger.bskLog(BSK_ERROR, "WindBase: epochInMsg is linked but has not been written.");
+            bskLogger.bskError("WindBase: epochInMsg is linked but has not been written.");
         }
         EpochMsgPayload epochMsg = this->epochInMsg();
         this->epochDateTime.tm_year  = epochMsg.year - 1900;
@@ -131,7 +131,7 @@ void WindBase::setPlanetOmega_N(const Eigen::Vector3d &omega)
     // Validate input for NaN and infinite values
     if (std::isnan(omega(0)) || std::isnan(omega(1)) || std::isnan(omega(2)) ||
         std::isinf(omega(0)) || std::isinf(omega(1)) || std::isinf(omega(2))) {
-        bskLogger.bskLog(BSK_ERROR, "Planet angular velocity contains NaN or infinite values.");
+        bskLogger.bskError("Planet angular velocity contains NaN or infinite values.");
     } else {
         this->planetOmega_N = omega;
     }

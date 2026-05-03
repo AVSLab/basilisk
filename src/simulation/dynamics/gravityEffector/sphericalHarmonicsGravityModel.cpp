@@ -96,7 +96,7 @@ SphericalHarmonicsGravityModel::computeField(const Eigen::Vector3d& position_pla
     if (degree > this->maxDeg) {
         auto errorMsg =
             "Requested degree greater than maximum degree in Spherical Harmonics gravity model";
-        bskLogger.bskLog(BSK_ERROR, "%s", errorMsg);
+        bskLogger.bskError("%s", errorMsg);
     }
 
     double x = position_planetFixed[0];

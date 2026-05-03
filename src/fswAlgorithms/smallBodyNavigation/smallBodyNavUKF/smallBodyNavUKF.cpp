@@ -68,10 +68,10 @@ void SmallBodyNavUKF::Reset(uint64_t CurrentSimNanos)
 {
     /* check that required input messages are connected */
     if (!this->navTransInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "SmallBodyNavUKF.navTransInMsg was not linked.");
+        bskLogger.bskError("SmallBodyNavUKF.navTransInMsg was not linked.");
     }
     if (!this->asteroidEphemerisInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "SmallBodyNavUKF.asteroidEphemerisInMsg was not linked.");
+        bskLogger.bskError("SmallBodyNavUKF.asteroidEphemerisInMsg was not linked.");
     }
 
     /* compute UT weights to be used in the UT */

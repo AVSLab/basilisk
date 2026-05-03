@@ -61,18 +61,18 @@ void SimpleVoltEstimator::Reset(uint64_t CurrentSimNanos)
 {
     // check if input message has not been included
     if (!this->voltInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "SimpleVoltEstimator.voltInMsg was not linked.");
+        bskLogger.bskError("SimpleVoltEstimator.voltInMsg was not linked.");
     }
 
     int64_t numStates = 1;
 
     //! - Alert the user and stop if the noise matrix is the wrong size.  That'd be bad.
     if (this->PMatrix.size() != numStates*numStates) {
-        bskLogger.bskLog(BSK_ERROR, "Your process noise matrix (PMatrix) is not %ld*%ld. Size is %ld.  Quitting", numStates, numStates, this->PMatrix.size());
+        bskLogger.bskError("Your process noise matrix (PMatrix) is not %ld*%ld. Size is %ld.  Quitting", numStates, numStates, this->PMatrix.size());
         return;
     }
     if (this->walkBounds.size() != numStates) {
-        bskLogger.bskLog(BSK_ERROR, "Your walkbounds vector  is not %ld elements. Quitting", numStates);
+        bskLogger.bskError("Your walkbounds vector  is not %ld elements. Quitting", numStates);
     }
 
     //! - Update the noise model parameters
@@ -137,7 +137,7 @@ void SimpleVoltEstimator::UpdateState(uint64_t CurrentSimNanos)
 void SimpleVoltEstimator::setAMatrix(const Eigen::MatrixXd& propMatrix)
 {
     if(propMatrix.rows() != 1 || propMatrix.cols() != 1) {
-        bskLogger.bskLog(BSK_ERROR, "SimpleVoltEstimator: Propagation matrix must be 1x1");
+        bskLogger.bskError("SimpleVoltEstimator: Propagation matrix must be 1x1");
         return;
     }
     this->AMatrix = propMatrix;

@@ -100,7 +100,7 @@ void MsisAtmosphere::customReset(uint64_t CurrentSimNanos)
 {
     for(int ind = 0; ind < 23; ind++) {
         if (!this->swDataInMsgs[ind].isLinked()) {
-            bskLogger.bskLog(BSK_ERROR, "Required MSIS input messages No. %d are not connected.", ind);
+            bskLogger.bskError("Required MSIS input messages No. %d are not connected.", ind);
         }
     }
 }

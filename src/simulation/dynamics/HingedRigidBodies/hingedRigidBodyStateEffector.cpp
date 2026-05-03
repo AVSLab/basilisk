@@ -125,7 +125,7 @@ void HingedRigidBodyStateEffector::linkInStates(DynParamManager& statesIn)
 void HingedRigidBodyStateEffector::addDynamicEffector(DynamicEffector *newDynamicEffector, int segment)
 {
     if (segment != 1) {
-        bskLogger.bskLog(BSK_ERROR, "Specifying attachment to a non-existent hinged rigid body linkage because this is 1DOF.");
+        bskLogger.bskError("Specifying attachment to a non-existent hinged rigid body linkage because this is 1DOF.");
     }
 
     this->assignStateParamNames<DynamicEffector *>(newDynamicEffector);

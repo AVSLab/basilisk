@@ -42,11 +42,11 @@ TempMeasurement::~TempMeasurement() = default;
 void TempMeasurement::Reset(uint64_t CurrentSimNanos)
 {
     if (!this->tempInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "TempMeasurement.tempInMsg was not linked.");
+        bskLogger.bskError("TempMeasurement.tempInMsg was not linked.");
     }
 
     if (this->spikeProbability > 1.0 || this->spikeProbability < 0.0) {
-        bskLogger.bskLog(BSK_ERROR, "The probability of temperature spike on fault must be between 0 and 1.");
+        bskLogger.bskError("The probability of temperature spike on fault must be between 0 and 1.");
     }
     // set up gaussMarkov and random number generator parameters
     this->spikeProbabilityGenerator.seed(this->RNGSeed);

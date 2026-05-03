@@ -246,7 +246,7 @@ void ConstrainedAttitudeManeuver::Reset(uint64_t CurrentSimNanos)
 		effortBasedAStar();
 	}
 	else {
-		bskLogger.bskLog(BSK_ERROR, "ConstraintAttitudeManeuver: costFcnType has not been specified.");
+		bskLogger.bskError("ConstraintAttitudeManeuver: costFcnType has not been specified.");
 	}
 	pathHandle();
 	spline();
@@ -719,7 +719,7 @@ void ConstrainedAttitudeManeuver::spline()
 		approximate(this->Input, 100, (int) this->Input.X1.size(), 4, &this->Output);  // review
 	}
 	else {
-		bskLogger.bskLog(BSK_ERROR, "ConstraintAttitudeManeuver: BSplineType has not been specified.");
+		bskLogger.bskError("ConstraintAttitudeManeuver: BSplineType has not been specified.");
 	}
 }
 

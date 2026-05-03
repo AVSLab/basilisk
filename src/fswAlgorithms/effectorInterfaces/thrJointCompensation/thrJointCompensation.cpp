@@ -26,35 +26,35 @@ void ThrJointCompensation::Reset(uint64_t CurrentSimNanos)
 {
     // check that required input messages are connected
     if (!this->armConfigInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "ThrJointCompensation.armConfigInMsg was not linked.");
+        bskLogger.bskError("ThrJointCompensation.armConfigInMsg was not linked.");
     }
     if (!this->massMatrixInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "ThrJointCompensation.massMatrixInMsg was not linked.");
+        bskLogger.bskError("ThrJointCompensation.massMatrixInMsg was not linked.");
     }
     if (!this->reactionForcesInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "ThrJointCompensation.reactionForcesInMsg was not linked.");
+        bskLogger.bskError("ThrJointCompensation.reactionForcesInMsg was not linked.");
     }
     if (this->jointStatesInMsgs.empty()) {
-        bskLogger.bskLog(BSK_ERROR, "ThrJointCompensation.jointStatesInMsgs vector is empty.");
+        bskLogger.bskError("ThrJointCompensation.jointStatesInMsgs vector is empty.");
     } else {
         if (this->jointStatesInMsgs.size() != static_cast<std::size_t>(this->numHingedJoints)) {
-            bskLogger.bskLog(BSK_ERROR, "ThrJointCompensation.jointStatesInMsgs size does not match numHingedJoints.");
+            bskLogger.bskError("ThrJointCompensation.jointStatesInMsgs size does not match numHingedJoints.");
         }
         for (std::size_t i = 0; i < this->jointStatesInMsgs.size(); ++i) {
             if (!this->jointStatesInMsgs[i].isLinked()) {
-                bskLogger.bskLog(BSK_ERROR, "ThrJointCompensation.jointStatesInMsgs[%zu] was not linked.", i);
+                bskLogger.bskError("ThrJointCompensation.jointStatesInMsgs[%zu] was not linked.", i);
             }
         }
     }
     if (this->thrForcesInMsgs.empty()) {
-        bskLogger.bskLog(BSK_ERROR, "ThrJointCompensation.thrForcesInMsgs vector is empty.");
+        bskLogger.bskError("ThrJointCompensation.thrForcesInMsgs vector is empty.");
     } else {
         if (this->thrForcesInMsgs.size() != static_cast<std::size_t>(this->numThrusters)) {
-            bskLogger.bskLog(BSK_ERROR, "ThrJointCompensation.thrForcesInMsgs size does not match numThrusters.");
+            bskLogger.bskError("ThrJointCompensation.thrForcesInMsgs size does not match numThrusters.");
         }
         for (std::size_t i = 0; i < this->thrForcesInMsgs.size(); ++i) {
             if (!this->thrForcesInMsgs[i].isLinked()) {
-                bskLogger.bskLog(BSK_ERROR, "ThrJointCompensation.thrForcesInMsgs[%zu] was not linked.", i);
+                bskLogger.bskError("ThrJointCompensation.thrForcesInMsgs[%zu] was not linked.", i);
             }
         }
     }
@@ -109,13 +109,13 @@ void ThrJointCompensation::UpdateState(uint64_t CurrentSimNanos)
                 ++this->numKinematicTrees;
                 // check that first joint in tree is free
                 if (jointType != 0) {
-                    bskLogger.bskLog(BSK_ERROR, "ThrJointCompensation: first joint in kinematic tree %d is not a free joint.", tree);
+                    bskLogger.bskError("ThrJointCompensation: first joint in kinematic tree %d is not a free joint.", tree);
                 }
                 info.freeJointIdx = static_cast<int>(joint);
             } else {
                 // subsequent joints must be hinges
                 if (jointType != 3) {
-                    bskLogger.bskLog(BSK_ERROR, "ThrJointCompensation: joint %zu in kinematic tree %d is not a hinged joint.", joint, tree);
+                    bskLogger.bskError("ThrJointCompensation: joint %zu in kinematic tree %d is not a hinged joint.", joint, tree);
                 }
                 info.hingeJointIdxs.push_back(static_cast<int>(joint));
                 info.hingeGlobalIdxs.push_back(nextHingeIdx);
@@ -124,12 +124,11 @@ void ThrJointCompensation::UpdateState(uint64_t CurrentSimNanos)
             }
         }
         if (this->numHingedJoints != nextHingeIdx) {
-            bskLogger.bskLog(BSK_ERROR, "ThrJointCompensation: numHingedJoints does not match the number of hinge joints found in the kinematic trees.");
+            bskLogger.bskError("ThrJointCompensation: numHingedJoints does not match the number of hinge joints found in the kinematic trees.");
         }
 
         if (this->kinCfg.armTreeIdx.size() != this->kinCfg.armJointCount.size()) {
-            bskLogger.bskLog(BSK_ERROR,
-                "ThrJointCompensation: armTreeIdx size (%zu) does not match armJointCount size (%zu).",
+            bskLogger.bskError("ThrJointCompensation: armTreeIdx size (%zu) does not match armJointCount size (%zu).",
                 this->kinCfg.armTreeIdx.size(), this->kinCfg.armJointCount.size());
             return;
         }
@@ -156,16 +155,14 @@ void ThrJointCompensation::UpdateState(uint64_t CurrentSimNanos)
 
             auto itTree = this->treeMap.find(treeId);
             if (itTree == this->treeMap.end()) {
-                bskLogger.bskLog(BSK_ERROR,
-                    "ThrJointCompensation: treeId %d for arm %d was not found in joint reaction tree data.",
+                bskLogger.bskError("ThrJointCompensation: treeId %d for arm %d was not found in joint reaction tree data.",
                     treeId, a);
                 return;
             }
             const auto& hinges = itTree->second.hingeGlobalIdxs;
             int& cur = treeCursor[treeId];
             if (cur + cnt > static_cast<int>(hinges.size())) {
-                bskLogger.bskLog(BSK_ERROR,
-                    "ThrJointCompensation: arm %d expects %d hinge joints in tree %d, but only %zu are available (cursor=%d).",
+                bskLogger.bskError("ThrJointCompensation: arm %d expects %d hinge joints in tree %d, but only %zu are available (cursor=%d).",
                     a, cnt, treeId, hinges.size(), cur);
                 return;
             }
@@ -397,7 +394,7 @@ void ThrJointCompensation::UpdateState(uint64_t CurrentSimNanos)
     // Apply torque limits if specified
     if (!this->uMax.empty()) {
         if (static_cast<int>(this->uMax.size()) != this->numHingedJoints) {
-            bskLogger.bskLog(BSK_ERROR, "ThrJointCompensation: size of uMax does not match numHingedJoints.");
+            bskLogger.bskError("ThrJointCompensation: size of uMax does not match numHingedJoints.");
         }
         for (int i = 0; i < this->numHingedJoints; ++i) {
             uH(i) = std::max(-this->uMax[i], std::min(this->uMax[i], uH(i)));

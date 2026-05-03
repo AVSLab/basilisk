@@ -46,19 +46,19 @@ VscmgVelocitySteering::Reset(uint64_t CurrentSimNanos)
 {
     // check that required input messages are connected
     if (!this->vscmgParamsInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "VscmgVelocitySteering.vscmgParamsInMsg was not linked.");
+        bskLogger.bskError("VscmgVelocitySteering.vscmgParamsInMsg was not linked.");
     }
     if (!this->vehControlInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "VscmgVelocitySteering.vehControlInMsg was not linked.");
+        bskLogger.bskError("VscmgVelocitySteering.vehControlInMsg was not linked.");
     }
     if (!this->attNavInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "VscmgVelocitySteering.attNavInMsg was not linked.");
+        bskLogger.bskError("VscmgVelocitySteering.attNavInMsg was not linked.");
     }
     if (!this->attGuideInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "VscmgVelocitySteering.attGuideInMsg was not linked.");
+        bskLogger.bskError("VscmgVelocitySteering.attGuideInMsg was not linked.");
     }
     if (!this->speedsInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "VscmgVelocitySteering.speedsInMsg was not linked.");
+        bskLogger.bskError("VscmgVelocitySteering.speedsInMsg was not linked.");
     }
 
     this->vscmgConfigParams = this->vscmgParamsInMsg();

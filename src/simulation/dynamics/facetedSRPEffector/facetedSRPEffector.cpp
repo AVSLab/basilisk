@@ -28,20 +28,18 @@
 void FacetedSRPEffector::Reset(uint64_t currentSimNanos) {
     // Check Sun state input message is linked
     if (!this->sunStateInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "FacetedSRPEffector.sunStateInMsg was not linked.");
+        this->bskLogger.bskError("FacetedSRPEffector.sunStateInMsg was not linked.");
         return;
     }
 
     // Check all facet input messages are linked
     for (uint64_t idx = 0; idx < this->facetElementBodyInMsgs.size(); idx++) {
         if (!this->facetElementBodyInMsgs[idx].isLinked()) {
-            this->bskLogger.bskLog(BSK_ERROR,
-                                    "FacetedSRPEffector: Input message error. facetElementBodyInMsgs is not linked.");
+            this->bskLogger.bskError("FacetedSRPEffector: Input message error. facetElementBodyInMsgs is not linked.");
             return;
         }
         if (!this->facetProjectedAreaInMsgs[idx].isLinked()) {
-            this->bskLogger.bskLog(BSK_ERROR,
-                                    "FacetedSRPEffector: Input message error. facetProjectedAreaInMsgs is not linked.");
+            this->bskLogger.bskError("FacetedSRPEffector: Input message error. facetProjectedAreaInMsgs is not linked.");
             return;
         }
     }
@@ -88,8 +86,7 @@ void FacetedSRPEffector::computeForceTorque(double callTime, double timeStep) {
     this->forceExternal_B.setZero();
     this->torqueExternalPntB_B.setZero();
     if (this->facetAreaList.size() != this->numFacets) {
-        this->bskLogger.bskLog(BSK_ERROR,
-                                "FacetedSRPEffector: Size of facetAreaList must equal numFacets");
+        this->bskLogger.bskError("FacetedSRPEffector: Size of facetAreaList must equal numFacets");
         return;
     }
 
@@ -100,8 +97,7 @@ void FacetedSRPEffector::computeForceTorque(double callTime, double timeStep) {
         sunStateIn = this->sunStateInMsg();
         r_SN_N = cArray2EigenVector3d(sunStateIn.PositionVector);
     } else {
-        this->bskLogger.bskLog(BSK_ERROR,
-                                "FacetedSRPEffector: Input message error. sunStateInMsg was not written.");
+        this->bskLogger.bskError("FacetedSRPEffector: Input message error. sunStateInMsg was not written.");
         return;
     }
 
@@ -126,8 +122,7 @@ void FacetedSRPEffector::computeForceTorque(double callTime, double timeStep) {
     } else {
         this->forceExternal_B = Eigen::Vector3d::Zero();
         this->torqueExternalPntB_B = Eigen::Vector3d::Zero();
-        this->bskLogger.bskLog(BSK_ERROR,
-                                "FacetedSRPEffector: No unique body heading vector can be resolved.");
+        this->bskLogger.bskError("FacetedSRPEffector: No unique body heading vector can be resolved.");
         return;
     }
 
@@ -146,8 +141,7 @@ void FacetedSRPEffector::computeForceTorque(double callTime, double timeStep) {
             facetProjectedAreaIn = this->facetProjectedAreaInMsgs[idx]();
             this->facetProjectedAreaList[idx] = facetProjectedAreaIn.area;
         } else {
-            this->bskLogger.bskLog(BSK_ERROR,
-                                    "FacetedSRPEffector: Input message error. facetElementBodyInMsgs or facetProjectedAreaInMsgs was not written.");
+            this->bskLogger.bskError("FacetedSRPEffector: Input message error. facetElementBodyInMsgs or facetProjectedAreaInMsgs was not written.");
             return;
         }
     }

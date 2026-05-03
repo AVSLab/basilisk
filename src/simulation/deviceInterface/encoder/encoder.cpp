@@ -45,19 +45,19 @@ void Encoder::Reset(uint64_t CurrentSimNanos)
     // check if input message is linked
     if (!this->rwSpeedInMsg.isLinked())
     {
-        bskLogger.bskLog(BSK_ERROR, "encoder.rwSpeedInMsg is not linked.");
+        bskLogger.bskError("encoder.rwSpeedInMsg is not linked.");
     }
 
     // if the number of clicks is not greater than 0, throw a warning message
     if (this->clicksPerRotation <= 0)
     {
-        bskLogger.bskLog(BSK_ERROR, "encoder: number of clicks must be a positive integer.");
+        bskLogger.bskError("encoder: number of clicks must be a positive integer.");
     }
 
     // if the number of reaction wheels is not greater than 0, throw a warning message
     if (this->numRW <= 0)
     {
-        bskLogger.bskLog(BSK_ERROR, "encoder: number of reaction wheels must be a positive integer. It may not have been set.");
+        bskLogger.bskError("encoder: number of reaction wheels must be a positive integer. It may not have been set.");
     }
 
     // reset the previous time
@@ -150,7 +150,7 @@ void Encoder::encode(uint64_t CurrentSimNanos)
             } else if (this->rwSignalState[i] == SIGNAL_STUCK) {
                 // if the encoder is stuck, it will output the previous results
             } else {
-                bskLogger.bskLog(BSK_ERROR, "encoder: un-modeled encoder signal mode %d selected.", this->rwSignalState[i]);
+                bskLogger.bskError("encoder: un-modeled encoder signal mode %d selected.", this->rwSignalState[i]);
             }
         }
     }

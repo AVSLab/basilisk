@@ -49,7 +49,7 @@ void TranslatingBody::setMass(double mass) {
     if (mass > 0.0)
         this->mass = mass;
     else {
-        this->bskLogger.bskLog(BSK_ERROR, "Mass must be greater than 0.");
+        this->bskLogger.bskError("Mass must be greater than 0.");
     }
 }
 
@@ -58,7 +58,7 @@ void TranslatingBody::setFHat_P(Eigen::Vector3d fHat_P) {
         this->fHat_P = fHat_P.normalized();
     }
     else {
-        this->bskLogger.bskLog(BSK_ERROR, "Norm of fHat must be greater than 0.");
+        this->bskLogger.bskError("Norm of fHat must be greater than 0.");
     }
 }
 
@@ -66,7 +66,7 @@ void TranslatingBody::setK(double k) {
     if (k >= 0.0)
         this->k = k;
     else {
-        this->bskLogger.bskLog(BSK_ERROR, "k must be greater than or equal to 0.");
+        this->bskLogger.bskError("k must be greater than or equal to 0.");
     }
 }
 
@@ -74,7 +74,7 @@ void TranslatingBody::setC(double c) {
     if (c >= 0.0)
         this->c = c;
     else {
-        this->bskLogger.bskLog(BSK_ERROR, "c must be greater than or equal to 0.");
+        this->bskLogger.bskError("c must be greater than or equal to 0.");
     }
 }
 
@@ -86,7 +86,7 @@ void LinearTranslationNDOFStateEffector::Reset(uint64_t CurrentClock)
             translatingBody->fHat_P.normalize();
         }
         else {
-            bskLogger.bskLog(BSK_ERROR, "Norm of fHat must be greater than 0. sHat may not have been set by the user.");
+            bskLogger.bskError("Norm of fHat must be greater than 0. sHat may not have been set by the user.");
         }
     }
 }

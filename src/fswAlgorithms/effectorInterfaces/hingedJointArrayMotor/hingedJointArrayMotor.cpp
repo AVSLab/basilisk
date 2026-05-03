@@ -27,45 +27,45 @@ void HingedJointArrayMotor::Reset(uint64_t CurrentSimNanos)
 {
     // check that required input messages are connected
     if (!this->massMatrixInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "HingedJointArrayMotor.massMatrixInMsg was not linked.");
+        bskLogger.bskError("HingedJointArrayMotor.massMatrixInMsg was not linked.");
     }
     if (!this->reactionForcesInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "HingedJointArrayMotor.reactionForcesInMsg was not linked.");
+        bskLogger.bskError("HingedJointArrayMotor.reactionForcesInMsg was not linked.");
     }
     if (!this->desJointStatesInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "HingedJointArrayMotor.desJointStatesInMsg was not linked.");
+        bskLogger.bskError("HingedJointArrayMotor.desJointStatesInMsg was not linked.");
     }
     if (this->jointStatesInMsgs.empty()) {
-        bskLogger.bskLog(BSK_ERROR, "HingedJointArrayMotor.jointStatesInMsgs vector is empty.");
+        bskLogger.bskError("HingedJointArrayMotor.jointStatesInMsgs vector is empty.");
     } else {
         if (this->jointStatesInMsgs.size() != static_cast<std::size_t>(this->numHingedJoints)) {
-            bskLogger.bskLog(BSK_ERROR, "HingedJointArrayMotor.jointStatesInMsgs size does not match numHingedJoints.");
+            bskLogger.bskError("HingedJointArrayMotor.jointStatesInMsgs size does not match numHingedJoints.");
         }
         for (std::size_t i = 0; i < this->jointStatesInMsgs.size(); ++i) {
             if (!this->jointStatesInMsgs[i].isLinked()) {
-                bskLogger.bskLog(BSK_ERROR, "HingedJointArrayMotor.jointStatesInMsgs[%zu] was not linked.", i);
+                bskLogger.bskError("HingedJointArrayMotor.jointStatesInMsgs[%zu] was not linked.", i);
             }
         }
     }
     if (this->jointStateDotsInMsgs.empty()) {
-        bskLogger.bskLog(BSK_ERROR, "HingedJointArrayMotor.jointStateDotsInMsgs vector is empty.");
+        bskLogger.bskError("HingedJointArrayMotor.jointStateDotsInMsgs vector is empty.");
     } else {
         if (this->jointStateDotsInMsgs.size() != static_cast<std::size_t>(this->numHingedJoints)) {
-            bskLogger.bskLog(BSK_ERROR, "HingedJointArrayMotor.jointStateDotsInMsgs size does not match numHingedJoints.");
+            bskLogger.bskError("HingedJointArrayMotor.jointStateDotsInMsgs size does not match numHingedJoints.");
         }
         for (std::size_t i = 0; i < this->jointStateDotsInMsgs.size(); ++i) {
             if (!this->jointStateDotsInMsgs[i].isLinked()) {
-                bskLogger.bskLog(BSK_ERROR, "HingedJointArrayMotor.jointStateDotsInMsgs[%zu] was not linked.", i);
+                bskLogger.bskError("HingedJointArrayMotor.jointStateDotsInMsgs[%zu] was not linked.", i);
             }
         }
     }
 
     // Check that the gains have been set properly
     if (this->Ktheta.rows() != this->numHingedJoints || this->Ktheta.cols() != this->numHingedJoints) {
-        bskLogger.bskLog(BSK_ERROR, "HingedJointArrayMotor Ktheta gains matrix does not have dimensions of %d x %d.", this->numHingedJoints, this->numHingedJoints);
+        bskLogger.bskError("HingedJointArrayMotor Ktheta gains matrix does not have dimensions of %d x %d.", this->numHingedJoints, this->numHingedJoints);
     }
     if (this->Ptheta.rows() != this->numHingedJoints || this->Ptheta.cols() != this->numHingedJoints) {
-        bskLogger.bskLog(BSK_ERROR, "HingedJointArrayMotor Ptheta gains matrix does not have dimensions of %d x %d.", this->numHingedJoints, this->numHingedJoints);
+        bskLogger.bskError("HingedJointArrayMotor Ptheta gains matrix does not have dimensions of %d x %d.", this->numHingedJoints, this->numHingedJoints);
     }
 
 
@@ -95,13 +95,13 @@ void HingedJointArrayMotor::UpdateState(uint64_t CurrentSimNanos)
                 ++this->numKinematicTrees;
                 // check that first joint in tree is free
                 if (jointType != 0) {
-                    bskLogger.bskLog(BSK_ERROR, "HingedJointArrayMotor: first joint in kinematic tree %d is not a free joint.", tree);
+                    bskLogger.bskError("HingedJointArrayMotor: first joint in kinematic tree %d is not a free joint.", tree);
                 }
                 info.freeJointIdx = static_cast<int>(joint);
             } else {
                 // subsequent joints must be hinges
                 if (jointType != 3) {
-                    bskLogger.bskLog(BSK_ERROR, "HingedJointArrayMotor: joint %zu in kinematic tree %d is not a hinged joint.", joint, tree);
+                    bskLogger.bskError("HingedJointArrayMotor: joint %zu in kinematic tree %d is not a hinged joint.", joint, tree);
                 }
                 info.hingeJointIdxs.push_back(static_cast<int>(joint));
                 info.hingeGlobalIdxs.push_back(nextHingeIdx);
@@ -109,7 +109,7 @@ void HingedJointArrayMotor::UpdateState(uint64_t CurrentSimNanos)
             }
         }
         if (this->numHingedJoints != nextHingeIdx) {
-            bskLogger.bskLog(BSK_ERROR, "HingedJointArrayMotor: numHingedJoints does not match the number of hinge joints found in the kinematic trees.");
+            bskLogger.bskError("HingedJointArrayMotor: numHingedJoints does not match the number of hinge joints found in the kinematic trees.");
         }
         this->treeInfoInitialized = true;
     }
@@ -253,7 +253,7 @@ void HingedJointArrayMotor::UpdateState(uint64_t CurrentSimNanos)
     // Apply torque limits if specified
     if (!this->uMax.empty()) {
         if (static_cast<int>(this->uMax.size()) != this->numHingedJoints) {
-            bskLogger.bskLog(BSK_ERROR, "HingedJointArrayMotor: size of uMax does not match numHingedJoints.");
+            bskLogger.bskError("HingedJointArrayMotor: size of uMax does not match numHingedJoints.");
         }
         for (int i = 0; i < this->numHingedJoints; ++i) {
             uH(i) = std::max(-this->uMax[i], std::min(this->uMax[i], uH(i)));

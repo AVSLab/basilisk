@@ -107,7 +107,7 @@ void AtmosphereBase::Reset(uint64_t CurrentSimNanos)
         // Read in the epoch message and set the internal time structure
         EpochMsgPayload epochMsg;
         if (!this->epochInMsg.isWritten()) {
-            bskLogger.bskLog(BSK_ERROR, "An un-written epoch msg was linked in!");
+            bskLogger.bskError("An un-written epoch msg was linked in!");
         }
         epochMsg = this->epochInMsg();
         this->epochDateTime.tm_year = epochMsg.year - 1900;
@@ -191,7 +191,7 @@ bool AtmosphereBase::readMessages()
             this->scStates.push_back(scMsg);
         }
     } else {
-        bskLogger.bskLog(BSK_ERROR, "Atmosphere model has no spacecraft added to it.");
+        bskLogger.bskError("Atmosphere model has no spacecraft added to it.");
         scRead = false;
     }
 

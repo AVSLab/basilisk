@@ -31,28 +31,24 @@ void FacetedSpacecraftProjectedArea::Reset(uint64_t callTime) {
     // If general heading is linked, no other messages can be linked
     if (this->bodyHeadingInMsg.isLinked() &&
         (this->spacecraftStateInMsg.isLinked() || this->sunStateInMsg.isLinked())) {
-        this->bskLogger->bskLog(BSK_ERROR,
-                                "FacetedSpacecraftProjectedArea: Input message error. bodyHeadingInMsg cannot be used with spacecraftStateInMsg and/or sunStateInMsg.");
+        this->bskLogger->bskError("FacetedSpacecraftProjectedArea: Input message error. bodyHeadingInMsg cannot be used with spacecraftStateInMsg and/or sunStateInMsg.");
         return;
     }
     // If Sun heading is linked, the spacecraft state message must also be linked
     if (this->sunStateInMsg.isLinked() && !this->spacecraftStateInMsg.isLinked()) {
-        this->bskLogger->bskLog(BSK_ERROR,
-                                "FacetedSpacecraftProjectedArea: Input message error. sunStateInMsg requires spacecraftStateInMsg to be linked.");
+        this->bskLogger->bskError("FacetedSpacecraftProjectedArea: Input message error. sunStateInMsg requires spacecraftStateInMsg to be linked.");
         return;
     }
     // If no messages are linked, no valid heading is configured
     if (! this->bodyHeadingInMsg.isLinked() && !this->sunStateInMsg.isLinked() && !this->spacecraftStateInMsg.isLinked()) {
-        this->bskLogger->bskLog(BSK_ERROR,
-                                "FacetedSpacecraftProjectedArea: Input message error. No valid heading source configured.");
+        this->bskLogger->bskError("FacetedSpacecraftProjectedArea: Input message error. No valid heading source configured.");
         return;
     }
 
     // Check facet element messages are linked
     for (uint64_t idx = 0; idx < this->facetElementBodyInMsgs.size(); idx++) {
         if (!this->facetElementBodyInMsgs[idx].isLinked()) {
-            this->bskLogger->bskLog(BSK_ERROR,
-                                    "FacetedSpacecraftProjectedArea: Input message error. facetElementBodyInMsgs is not linked.");
+            this->bskLogger->bskError("FacetedSpacecraftProjectedArea: Input message error. facetElementBodyInMsgs is not linked.");
             return;
         }
     }
@@ -83,8 +79,7 @@ void FacetedSpacecraftProjectedArea::UpdateState(uint64_t callTime) {
         this->facetProjectedAreaList.size() != this->numFacets ||
         this->facetElementBodyInMsgs.size() != this->numFacets ||
         this->facetProjectedAreaOutMsgs.size() != this->numFacets) {
-        this->bskLogger->bskLog(BSK_ERROR,
-                                "FacetedSpacecraftProjectedArea: UpdateState() called before successful Reset().");
+        this->bskLogger->bskError("FacetedSpacecraftProjectedArea: UpdateState() called before successful Reset().");
         return;
     }
 
@@ -120,8 +115,7 @@ bool FacetedSpacecraftProjectedArea::readInputMessages() {
     // Read input messages
     if (this->spacecraftStateInMsg.isLinked()) {
         if (!this->spacecraftStateInMsg.isWritten()) {
-            this->bskLogger->bskLog(BSK_ERROR,
-                                    "FacetedSpacecraftProjectedArea: Input message error. spacecraftStateInMsg is linked but not written.");
+            this->bskLogger->bskError("FacetedSpacecraftProjectedArea: Input message error. spacecraftStateInMsg is linked but not written.");
             return false;
         }
 
@@ -134,8 +128,7 @@ bool FacetedSpacecraftProjectedArea::readInputMessages() {
             // Option 1: Sun direction heading (Application: sunlit area calculation)
             // Also requires spacecraftStateInMsg
             if (!this->sunStateInMsg.isWritten()) {
-                this->bskLogger->bskLog(BSK_ERROR,
-                                        "FacetedSpacecraftProjectedArea: Input message error. sunStateInMsg is linked but not written.");
+                this->bskLogger->bskError("FacetedSpacecraftProjectedArea: Input message error. sunStateInMsg is linked but not written.");
                 return false;
             }
 
@@ -150,8 +143,7 @@ bool FacetedSpacecraftProjectedArea::readInputMessages() {
             if (norm > 1e-12) {
                 this->bodyHeadingVec_B = r_SB_B / norm;
             } else {
-                this->bskLogger->bskLog(BSK_ERROR,
-                                        "FacetedSpacecraftProjectedArea: No unique body heading vector can be resolved.");
+                this->bskLogger->bskError("FacetedSpacecraftProjectedArea: No unique body heading vector can be resolved.");
                 return false;
             }
         } else {
@@ -162,15 +154,13 @@ bool FacetedSpacecraftProjectedArea::readInputMessages() {
             if (norm > 1e-12) {
                 this->bodyHeadingVec_B = v_BN_B / norm;
             } else {
-                this->bskLogger->bskLog(BSK_ERROR,
-                                        "FacetedSpacecraftProjectedArea: No unique body heading vector can be resolved.");
+                this->bskLogger->bskError("FacetedSpacecraftProjectedArea: No unique body heading vector can be resolved.");
                 return false;
             }
         }
     } else if (this->bodyHeadingInMsg.isLinked()) {
         if (!this->bodyHeadingInMsg.isWritten()) {
-            this->bskLogger->bskLog(BSK_ERROR,
-                                    "FacetedSpacecraftProjectedArea: Input message error. bodyHeadingInMsg is linked but not written.");
+            this->bskLogger->bskError("FacetedSpacecraftProjectedArea: Input message error. bodyHeadingInMsg is linked but not written.");
             return false;
         }
         // Option 3: Direct heading
@@ -178,8 +168,7 @@ bool FacetedSpacecraftProjectedArea::readInputMessages() {
         bodyHeadingIn = this->bodyHeadingInMsg();
         this->bodyHeadingVec_B = cArray2EigenVector3d(bodyHeadingIn.rHat_XB_B);
     } else {
-        this->bskLogger->bskLog(BSK_ERROR,
-                                "FacetedSpacecraftProjectedArea: Input message error. Cannot subscribe multiple direction vectors to the module.");
+        this->bskLogger->bskError("FacetedSpacecraftProjectedArea: Input message error. Cannot subscribe multiple direction vectors to the module.");
         return false;
     }
 
@@ -191,8 +180,7 @@ bool FacetedSpacecraftProjectedArea::readInputMessages() {
             this->facetAreaList[idx] = facetElementBodyIn.area;
             this->facetNHat_BList[idx] = cArray2EigenVector3d(facetElementBodyIn.nHat_B);
         } else {
-            this->bskLogger->bskLog(BSK_ERROR,
-                                    "FacetedSpacecraftProjectedArea: Input message error. facetElementBodyInMsgs is not written.");
+            this->bskLogger->bskError("FacetedSpacecraftProjectedArea: Input message error. facetElementBodyInMsgs is not written.");
             return false;
         }
     }

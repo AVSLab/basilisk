@@ -29,14 +29,12 @@ CmdForceInertialToForceAtSite::UpdateState(uint64_t CurrentSimNanos)
 void CmdForceInertialToForceAtSite::Reset(uint64_t /*CurrentSimNanos*/)
 {
     if (!this->cmdForceInertialInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR,
-            "CmdForceInertialToForceAtSite: cmdForceInertialInMsg is not linked. "
+        bskLogger.bskError("CmdForceInertialToForceAtSite: cmdForceInertialInMsg is not linked. "
             "Call cmdForceInertialInMsg.subscribeTo(<CmdForceInertialMsg>) before simulation.");
     }
 
     if (!this->siteFrameStateInMsg.isLinked() && !this->siteAttInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR,
-            "CmdForceInertialToForceAtSite: siteFrameStateInMsg and siteAttInMsg are not linked. At least one must be linked."
+        bskLogger.bskError("CmdForceInertialToForceAtSite: siteFrameStateInMsg and siteAttInMsg are not linked. At least one must be linked."
             "Call siteFrameStateInMsg.subscribeTo(<SCStatesMsg>) or siteAttInMsg.subscribeTo(<NavAttMsg>) before simulation.");
     }
 

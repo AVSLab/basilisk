@@ -57,10 +57,10 @@ void PinholeCamera::Reset(uint64_t CurrentSimNanos)
 
     /* Check that required input messages are connected */
     if (!this->scStateInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "PinholeCamera.scStateInMsg was not linked.");
+        bskLogger.bskError("PinholeCamera.scStateInMsg was not linked.");
     }
     if (!this->ephemerisInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "PinholeCamera.ephemerisInMsg was not linked.");
+        bskLogger.bskError("PinholeCamera.ephemerisInMsg was not linked.");
     }
 
     /* Compute field of view */

@@ -27,26 +27,26 @@ void InertialCartFeedback::SelfInit()
 void InertialCartFeedback::Reset(uint64_t CurrentSimNanos)
 {
     if (!this->deputyNavInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "InertialCartFeedback.deputyNavInMsg was not linked.");
+        bskLogger.bskError("InertialCartFeedback.deputyNavInMsg was not linked.");
     }
     if (!this->deputyRefInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "InertialCartFeedback.deputyRefInMsg was not linked.");
+        bskLogger.bskError("InertialCartFeedback.deputyRefInMsg was not linked.");
     }
     if (!this->deputyVehicleConfigInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "InertialCartFeedback.deputyVehicleConfigInMsg was not linked.");
+        bskLogger.bskError("InertialCartFeedback.deputyVehicleConfigInMsg was not linked.");
     }
 
     const VehicleConfigMsgPayload depCfg = this->deputyVehicleConfigInMsg();
     this->deputyMass = depCfg.massSC;
 
     if (this->deputyMass <= 0.0) {
-        bskLogger.bskLog(BSK_ERROR, "InertialCartFeedback.deputyMass must be positive.");
+        bskLogger.bskError("InertialCartFeedback.deputyMass must be positive.");
     }
     if (!this->setKFlag) {
-        bskLogger.bskLog(BSK_ERROR, "InertialCartFeedback.K must be set before simulation start.");
+        bskLogger.bskError("InertialCartFeedback.K must be set before simulation start.");
     }
     if (!this->setPFlag) {
-        bskLogger.bskLog(BSK_ERROR, "InertialCartFeedback.P must be set before simulation start.");
+        bskLogger.bskError("InertialCartFeedback.P must be set before simulation start.");
     }
 }
 
@@ -70,7 +70,7 @@ void InertialCartFeedback::UpdateState(uint64_t CurrentSimNanos)
         if (normRDeputy > 1e-6) {
             aGravDeputy_N = -this->mu * r_BN_N / (normRDeputy * normRDeputy * normRDeputy);
         } else {
-            bskLogger.bskLog(BSK_ERROR, "InertialCartFeedback deputy position norm too small to evaluate gravity.");
+            bskLogger.bskError("InertialCartFeedback deputy position norm too small to evaluate gravity.");
         }
     }
 
@@ -88,7 +88,7 @@ void InertialCartFeedback::UpdateState(uint64_t CurrentSimNanos)
 void InertialCartFeedback::setMu(const double value)
 {
     if (value < 0.0) {
-        bskLogger.bskLog(BSK_ERROR, "inertialCartFeedback: mu must be non-negative.");
+        bskLogger.bskError("inertialCartFeedback: mu must be non-negative.");
     } else {
         this->mu = value;
     }
@@ -97,7 +97,7 @@ void InertialCartFeedback::setMu(const double value)
 void InertialCartFeedback::setK(const std::vector<double>& value)
 {
     if (value.size() != 9) {
-        bskLogger.bskLog(BSK_ERROR, "inertialCartFeedback: K must contain exactly 9 elements.");
+        bskLogger.bskError("inertialCartFeedback: K must contain exactly 9 elements.");
         return;
     }
     this->K << value[0], value[1], value[2],
@@ -105,13 +105,13 @@ void InertialCartFeedback::setK(const std::vector<double>& value)
                value[6], value[7], value[8];
 
     if ((this->K - this->K.transpose()).norm() > 1e-12) {
-        bskLogger.bskLog(BSK_ERROR, "inertialCartFeedback: K must be symmetric positive definite.");
+        bskLogger.bskError("inertialCartFeedback: K must be symmetric positive definite.");
         return;
     }
 
     const double minEigK = this->K.selfadjointView<Eigen::Lower>().eigenvalues().minCoeff();
     if (!(minEigK > 0.0)) {
-        bskLogger.bskLog(BSK_ERROR, "inertialCartFeedback: K must be symmetric positive definite.");
+        bskLogger.bskError("inertialCartFeedback: K must be symmetric positive definite.");
         return;
     }
     this->setKFlag = true;
@@ -120,7 +120,7 @@ void InertialCartFeedback::setK(const std::vector<double>& value)
 void InertialCartFeedback::setP(const std::vector<double>& value)
 {
     if (value.size() != 9) {
-        bskLogger.bskLog(BSK_ERROR, "inertialCartFeedback: P must contain exactly 9 elements.");
+        bskLogger.bskError("inertialCartFeedback: P must contain exactly 9 elements.");
         return;
     }
     this->P << value[0], value[1], value[2],
@@ -128,13 +128,13 @@ void InertialCartFeedback::setP(const std::vector<double>& value)
                value[6], value[7], value[8];
 
     if ((this->P - this->P.transpose()).norm() > 1e-12) {
-        bskLogger.bskLog(BSK_ERROR, "inertialCartFeedback: P must be symmetric positive definite.");
+        bskLogger.bskError("inertialCartFeedback: P must be symmetric positive definite.");
         return;
     }
 
     const double minEigP = this->P.selfadjointView<Eigen::Lower>().eigenvalues().minCoeff();
     if (!(minEigP > 0.0)) {
-        bskLogger.bskLog(BSK_ERROR, "inertialCartFeedback: P must be symmetric positive definite.");
+        bskLogger.bskError("inertialCartFeedback: P must be symmetric positive definite.");
         return;
     }
     this->setPFlag = true;

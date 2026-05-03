@@ -32,7 +32,7 @@ const double solarRadFlux = 1368.0;  // [W/m^2] Solar radiation flux at 1 AU
 */
 void FacetSRPDynamicEffector::Reset(uint64_t currentSimNanos) {
     if (!this->sunInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "FacetSRPDynamicEffector.sunInMsg was not linked.");
+        bskLogger.bskError("FacetSRPDynamicEffector.sunInMsg was not linked.");
     }
     // Default to full sunlight if no eclipse message is connected
     this->sunVisibilityFactor.illuminationFactor = 1.0;
@@ -117,7 +117,7 @@ void FacetSRPDynamicEffector::ReadMessages() {
             }
         }
     } else {
-        bskLogger.bskLog(BSK_ERROR, "NUMBER OF ARTICULATED FACETS DOES NOT MATCH COUNTED VALUE.");
+        bskLogger.bskError("NUMBER OF ARTICULATED FACETS DOES NOT MATCH COUNTED VALUE.");
     }
 }
 

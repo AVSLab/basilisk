@@ -36,7 +36,7 @@ void LambertSolver::Reset(uint64_t currentSimNanos)
 {
     // check that required input messages are connected
     if (!this->lambertProblemInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "lambertSolver.lambertProblemInMsg was not linked.");
+        bskLogger.bskError("lambertSolver.lambertProblemInMsg was not linked.");
     }
 }
 
@@ -74,17 +74,17 @@ void LambertSolver::readMessages(){
 
     // check if input parameters are valid
     if (lambertProblemInMsgBuffer.mu <= 0.0){
-        bskLogger.bskLog(BSK_ERROR, "lambertSolver: mu must be positive.");
+        bskLogger.bskError("lambertSolver: mu must be positive.");
     } else {
         this->mu = lambertProblemInMsgBuffer.mu;
     }
     if (lambertProblemInMsgBuffer.transferTime <= 0.0){
-        bskLogger.bskLog(BSK_ERROR, "lambertSolver: transferTime must be positive.");
+        bskLogger.bskError("lambertSolver: transferTime must be positive.");
     } else {
         this->transferTime = lambertProblemInMsgBuffer.transferTime;
     }
     if (lambertProblemInMsgBuffer.numRevolutions < 0){
-        bskLogger.bskLog(BSK_ERROR, "lambertSolver: numberOfRevolutions must be zero or positive.");
+        bskLogger.bskError("lambertSolver: numberOfRevolutions must be zero or positive.");
     } else {
         this->numberOfRevolutions = lambertProblemInMsgBuffer.numRevolutions;
     }

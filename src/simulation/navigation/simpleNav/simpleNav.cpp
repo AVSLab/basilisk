@@ -65,7 +65,7 @@ void SimpleNav::Reset(uint64_t CurrentSimNanos)
 {
     // check if input message has not been included
     if (!this->scStateInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "SimpleNav.scStateInMsg was not linked.");
+        bskLogger.bskError("SimpleNav.scStateInMsg was not linked.");
     }
 
     //! - Initialize the propagation matrix to default values for use in update
@@ -75,14 +75,14 @@ void SimpleNav::Reset(uint64_t CurrentSimNanos)
 
     //! - Alert the user and stop if the noise matrix is the wrong size.  That'd be bad.
     if (this->PMatrix.size() != this->numStates*this->numStates) {
-        bskLogger.bskLog(BSK_ERROR, "Your process noise matrix (PMatrix) is not 18*18. Size is %ld.  Quitting", this->PMatrix.size());
+        bskLogger.bskError("Your process noise matrix (PMatrix) is not 18*18. Size is %ld.  Quitting", this->PMatrix.size());
         return;
     }
     //! - Set the matrices of the lower level error propagation (GaussMarkov)
     this->errorModel.setNoiseMatrix(this->PMatrix);
     this->errorModel.setRNGSeed(this->RNGSeed);
     if (this->walkBounds.size() != this->numStates) {
-        bskLogger.bskLog(BSK_ERROR, "Your walkbounds vector  is not 18 elements. Quitting");
+        bskLogger.bskError("Your walkbounds vector  is not 18 elements. Quitting");
     }
     this->errorModel.setUpperBounds(this->walkBounds);
 }
@@ -183,12 +183,12 @@ void SimpleNav::computeErrors(uint64_t CurrentSimNanos)
 
     //! - Set the GaussMarkov propagation matrix and compute errors
     if (this->PMatrix.size() != this->numStates*this->numStates) {
-        bskLogger.bskLog(BSK_ERROR, "Your process noise matrix (PMatrix) is not 18*18. Size is %ld.  Quitting during Simulation", this->PMatrix.size());
+        bskLogger.bskError("Your process noise matrix (PMatrix) is not 18*18. Size is %ld.  Quitting during Simulation", this->PMatrix.size());
         return;
     }
     this->errorModel.setNoiseMatrix(this->PMatrix);
     if (this->walkBounds.size() != this->numStates) {
-        bskLogger.bskLog(BSK_ERROR, "Your walkbounds vector  is not 18 elements. Quitting during Simulation");
+        bskLogger.bskError("Your walkbounds vector  is not 18 elements. Quitting during Simulation");
     }
     this->errorModel.setUpperBounds(this->walkBounds);
     this->errorModel.setPropMatrix(localProp);

@@ -37,7 +37,7 @@ SimpleBattery::~SimpleBattery(){
 void SimpleBattery::customReset(uint64_t CurrentClock) {
 
     if (this->storageCapacity <= 0.0) {
-        bskLogger.bskLog(BSK_ERROR, "The storageCapacity variable must be set to a positive value.");
+        bskLogger.bskError("The storageCapacity variable must be set to a positive value.");
     }
     return;
 }
@@ -74,7 +74,7 @@ void SimpleBattery::evaluateBatteryModel(PowerStorageStatusMsgPayload *msg) {
 
     this->readInputMessage();
     if (this->faultCapacityRatio < 0 || this->faultCapacityRatio > 1) {
-        bskLogger.bskLog(BSK_ERROR, "faultCapacityRatio should be between 0 and 1!");
+        bskLogger.bskError("faultCapacityRatio should be between 0 and 1!");
     } else if(this->storedCharge > this->storageCapacity * this->faultCapacityRatio) {
             this->storedCharge = this->storageCapacity * this->faultCapacityRatio;
     }

@@ -39,7 +39,7 @@ void PrescribedRotation1DOF::SelfInit() {
 */
 void PrescribedRotation1DOF::Reset(uint64_t callTime) {
     if (!this->spinningBodyInMsg.isLinked()) {
-        _bskLog(this->bskLogger, BSK_ERROR, "prescribedRotation1DOF.spinningBodyInMsg wasn't connected.");
+        this->bskLogger->bskError("prescribedRotation1DOF.spinningBodyInMsg wasn't connected.");
     }
 
     this->tInit = 0.0;

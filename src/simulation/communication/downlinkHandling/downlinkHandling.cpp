@@ -57,7 +57,7 @@ bool
 DownlinkHandling::addStorageUnitToDownlink(Message<DataStorageStatusMsgPayload>* tmpStorageUnitMsg)
 {
     if (tmpStorageUnitMsg == nullptr) {
-        bskLogger.bskLog(BSK_ERROR, "DownlinkHandling.addStorageUnitToDownlink: null message pointer.");
+        bskLogger.bskError("DownlinkHandling.addStorageUnitToDownlink: null message pointer.");
         return false;
     }
 
@@ -79,7 +79,7 @@ bool
 DownlinkHandling::setBitRateRequest(double bitRateRequest)
 {
     if (!this->isFiniteNonNegative(bitRateRequest)) {
-        bskLogger.bskLog(BSK_ERROR, "DownlinkHandling.setBitRateRequest: value must be finite and >= 0 [bit/s].");
+        bskLogger.bskError("DownlinkHandling.setBitRateRequest: value must be finite and >= 0 [bit/s].");
         return false;
     }
 
@@ -92,7 +92,7 @@ bool
 DownlinkHandling::setPacketSizeBits(double packetSizeBits)
 {
     if (!this->isFinitePositive(packetSizeBits)) {
-        bskLogger.bskLog(BSK_ERROR, "DownlinkHandling.setPacketSizeBits: value must be finite and > 0 [bit].");
+        bskLogger.bskError("DownlinkHandling.setPacketSizeBits: value must be finite and > 0 [bit].");
         return false;
     }
 
@@ -105,7 +105,7 @@ bool
 DownlinkHandling::setMaxRetransmissions(int64_t maxRetransmissions)
 {
     if (maxRetransmissions < 1) {
-        bskLogger.bskLog(BSK_ERROR, "DownlinkHandling.setMaxRetransmissions: value must be >= 1.");
+        bskLogger.bskError("DownlinkHandling.setMaxRetransmissions: value must be >= 1.");
         return false;
     }
 
@@ -118,7 +118,7 @@ bool
 DownlinkHandling::setReceiverAntenna(int64_t receiverAntenna)
 {
     if (receiverAntenna != 0 && receiverAntenna != 1 && receiverAntenna != 2) {
-        bskLogger.bskLog(BSK_ERROR, "DownlinkHandling.setReceiverAntenna: value must be 0 (auto), 1, or 2.");
+        bskLogger.bskError("DownlinkHandling.setReceiverAntenna: value must be 0 (auto), 1, or 2.");
         return false;
     }
 
@@ -139,8 +139,7 @@ DownlinkHandling::setRemovalPolicy(int64_t removalPolicy)
         return true;
     }
 
-    bskLogger.bskLog(
-      BSK_ERROR, "DownlinkHandling.setRemovalPolicy: value must be 0 (REMOVE_ATTEMPTED) or 1 (REMOVE_DELIVERED_ONLY).");
+    bskLogger.bskError("DownlinkHandling.setRemovalPolicy: value must be 0 (REMOVE_ATTEMPTED) or 1 (REMOVE_DELIVERED_ONLY).");
     return false;
 }
 
@@ -298,8 +297,7 @@ DownlinkHandling::evaluateDataModel(DataNodeUsageMsgPayload* dataUsageMsg, doubl
     // Record which antenna pair created the selected receiver path for downstream diagnostics and plotting.
     auto copyAntennaName = [this](char* destination, size_t destinationSize, const char* source, size_t sourceSize) {
         if (std::memchr(source, '\0', sourceSize) == nullptr) {
-            bskLogger.bskLog(BSK_ERROR,
-                             "DownlinkHandling: antenna name is not null-terminated within %zu characters.",
+            bskLogger.bskError("DownlinkHandling: antenna name is not null-terminated within %zu characters.",
                              sourceSize);
         }
         std::snprintf(destination, destinationSize, "%s", source);
@@ -524,8 +522,7 @@ DownlinkHandling::setDataNameFromStorageSelection(const StorageSelection& select
         const auto& name = storage.storedDataName[selectedPartition];
         if (!name.empty()) {
             if (name.size() >= bufferSize) {
-                bskLogger.bskLog(BSK_ERROR,
-                                 "DownlinkHandling: selected storage partition name is %zu characters, but "
+                bskLogger.bskError("DownlinkHandling: selected storage partition name is %zu characters, but "
                                  "the destination buffer supports at most %zu characters.",
                                  name.size(), bufferSize - 1);
             }

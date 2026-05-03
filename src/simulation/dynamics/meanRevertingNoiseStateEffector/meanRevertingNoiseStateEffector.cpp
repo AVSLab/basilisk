@@ -38,8 +38,7 @@ MeanRevertingNoiseStateEffector::MeanRevertingNoiseStateEffector()
 void MeanRevertingNoiseStateEffector::setStationaryStd(double sigmaStationary)
 {
     if (sigmaStationary < 0.0) {
-        this->bskLogger.bskLog(BSK_ERROR,
-            "MeanRevertingNoiseStateEffector::setStationaryStd requires sigmaStationary >= 0.");
+        this->bskLogger.bskError("MeanRevertingNoiseStateEffector::setStationaryStd requires sigmaStationary >= 0.");
         return;
     }
     this->sigmaStationary = sigmaStationary;
@@ -48,8 +47,7 @@ void MeanRevertingNoiseStateEffector::setStationaryStd(double sigmaStationary)
 void MeanRevertingNoiseStateEffector::setTimeConstant(double timeConstant)
 {
     if (timeConstant <= 0.0) {
-        this->bskLogger.bskLog(BSK_ERROR,
-            "MeanRevertingNoiseStateEffector::setTimeConstant requires timeConstant > 0.");
+        this->bskLogger.bskError("MeanRevertingNoiseStateEffector::setTimeConstant requires timeConstant > 0.");
         return;
     }
     this->timeConstant = timeConstant;
@@ -93,8 +91,7 @@ void MeanRevertingNoiseStateEffector::computeDerivatives(double /** integTime */
                                                          Eigen::Vector3d /** sigma_BN */)
 {
     if (this->state == nullptr) {
-        this->bskLogger.bskLog(BSK_ERROR,
-            "MeanRevertingNoiseStateEffector::computeDerivatives called before registerStates.");
+        this->bskLogger.bskError("MeanRevertingNoiseStateEffector::computeDerivatives called before registerStates.");
         return;
     }
 

@@ -24,24 +24,21 @@
 void ThrOnTimeToForce::Reset(uint64_t CurrentSimNanos)
 {
     if (!this->onTimeInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "ThrOnTimeToForce.onTimeInMsg was not linked.");
+        bskLogger.bskError("ThrOnTimeToForce.onTimeInMsg was not linked.");
     }
 
     if (this->thrMag.size() > MAX_EFF_CNT) {
-        bskLogger.bskLog(BSK_ERROR,
-                         "ThrOnTimeToForce configured for %zu thrusters, but THRArrayOnTimeCmdMsgPayload supports at most %d.",
+        bskLogger.bskError("ThrOnTimeToForce configured for %zu thrusters, but THRArrayOnTimeCmdMsgPayload supports at most %d.",
                          this->thrMag.size(), MAX_EFF_CNT);
     }
 
     if (this->numThr != this->thrMag.size()) {
-        bskLogger.bskLog(BSK_ERROR,
-                         "ThrOnTimeToForce thruster count (%zu) does not match size of thrMag vector (%zu).",
+        bskLogger.bskError("ThrOnTimeToForce thruster count (%zu) does not match size of thrMag vector (%zu).",
                          this->numThr, this->thrMag.size());
     }
 
     if (this->thrusterForceOutMsgs.size() != this->numThr) {
-        bskLogger.bskLog(BSK_ERROR,
-                         "ThrOnTimeToForce output message count (%zu) does not match thruster count (%zu).",
+        bskLogger.bskError("ThrOnTimeToForce output message count (%zu) does not match thruster count (%zu).",
                          this->thrusterForceOutMsgs.size(), this->numThr);
     }
 

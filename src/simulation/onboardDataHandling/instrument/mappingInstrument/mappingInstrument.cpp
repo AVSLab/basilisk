@@ -43,7 +43,7 @@ void MappingInstrument::Reset(uint64_t CurrentSimNanos)
 {
     // check that the baud rate is set
     if (this->nodeBaudRate < 0.0){
-        bskLogger.bskLog(BSK_ERROR, "MappingInstrument.nodeBaudRate is not set to a positive value.");
+        bskLogger.bskError("MappingInstrument.nodeBaudRate is not set to a positive value.");
     }
 
     return;
@@ -90,8 +90,7 @@ void MappingInstrument::UpdateState(uint64_t CurrentSimNanos)
 void MappingInstrument::addMappingPoint(Message<AccessMsgPayload> *tmpAccessMsg, std::string dataName){
     DataNodeUsageMsgPayload dataNodeUsageMsg = {};
     if (dataName.size() >= sizeof(dataNodeUsageMsg.dataName)) {
-        bskLogger.bskLog(BSK_ERROR,
-                         "MappingInstrument: dataName is %zu characters, but DataNodeUsageMsgPayload.dataName "
+        bskLogger.bskError("MappingInstrument: dataName is %zu characters, but DataNodeUsageMsgPayload.dataName "
                          "supports at most %zu characters.",
                          dataName.size(), sizeof(dataNodeUsageMsg.dataName) - 1);
     }

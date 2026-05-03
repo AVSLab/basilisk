@@ -41,16 +41,16 @@ void
 VscmgGimbalRateServo::Reset(uint64_t CurrentSimNanos)
 {
     if (!this->vsmcgParamsInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "VscmgGimbalRateServo.vsmcgParamsInMsg was not linked.");
+        bskLogger.bskError("VscmgGimbalRateServo.vsmcgParamsInMsg was not linked.");
     }
     if (!this->vscmgRefStatesInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "VscmgGimbalRateServo.vscmgRefStatesInMsg was not linked.");
+        bskLogger.bskError("VscmgGimbalRateServo.vscmgRefStatesInMsg was not linked.");
     }
     if (!this->attInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "VscmgGimbalRateServo.attInMsg was not linked.");
+        bskLogger.bskError("VscmgGimbalRateServo.attInMsg was not linked.");
     }
     if (!this->speedsInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "VscmgGimbalRateServo.speedsInMsg was not linked.");
+        bskLogger.bskError("VscmgGimbalRateServo.speedsInMsg was not linked.");
     }
 
     this->vscmgConfigParams = this->vsmcgParamsInMsg();

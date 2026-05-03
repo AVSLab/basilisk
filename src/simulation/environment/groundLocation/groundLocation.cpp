@@ -63,7 +63,7 @@ void GroundLocation::Reset(uint64_t CurrentSimNanos)
     this->r_LP_P = this->r_LP_P_Init;
 
     if (this->planetRadius < 0) {
-        bskLogger.bskLog(BSK_ERROR, "GroundLocation module must have planetRadius set.");
+        bskLogger.bskError("GroundLocation module must have planetRadius set.");
     }
 }
 
@@ -132,7 +132,7 @@ bool GroundLocation::ReadMessages()
             this->scStatesBuffer.push_back(scMsg);
         }
     } else {
-        bskLogger.bskLog(BSK_ERROR, "Ground location has no spacecraft to track.");
+        bskLogger.bskError("Ground location has no spacecraft to track.");
         scRead = false;
     }
     //! - Read in the optional planet message.  if no planet message is set, then a zero planet position, velocity and orientation is assumed

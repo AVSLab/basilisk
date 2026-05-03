@@ -49,8 +49,7 @@ bool HaslamMap::loadHaslamMap() {
     if (fits_open_file(&fptr, this->filepath.c_str(), READONLY, &status)) {
         char err_text[256];
         fits_get_errstatus(status, err_text);
-        this->bskLogger.bskLog(BSK_ERROR,
-            ("HaslamMap: Error opening FITS file: " + std::string(err_text)).c_str());
+        this->bskLogger.bskError("HaslamMap: Error opening FITS file: %s", err_text);
         return false;
     }
 
@@ -67,7 +66,7 @@ bool HaslamMap::loadHaslamMap() {
     // Move to binary table extension (HDU 2)
     int hdutype = 0;
     if (fits_movabs_hdu(fptr, 2, &hdutype, &status) || hdutype != BINARY_TBL) {
-        this->bskLogger.bskLog(BSK_ERROR, "HaslamMap: HDU 2 is not a binary table");
+        this->bskLogger.bskError("HaslamMap: HDU 2 is not a binary table");
         closeFile();
         return false;
     }
@@ -76,12 +75,12 @@ bool HaslamMap::loadHaslamMap() {
     status = 0;
     char coordsys[20] = {0};
     if (fits_read_key(fptr, TSTRING, "COORDSYS", coordsys, nullptr, &status)) {
-        this->bskLogger.bskLog(BSK_ERROR, "HaslamMap: Error reading COORDSYS");
+        this->bskLogger.bskError("HaslamMap: Error reading COORDSYS");
         closeFile();
         return false;
     }
     if (strcmp(coordsys, "GALACTIC") != 0) {
-        this->bskLogger.bskLog(BSK_ERROR, "HaslamMap: Expected GALACTIC coordinate system");
+        this->bskLogger.bskError("HaslamMap: Expected GALACTIC coordinate system");
         closeFile();
         return false;
     }
@@ -91,7 +90,7 @@ bool HaslamMap::loadHaslamMap() {
 
     status = 0;
     if (fits_read_key(fptr, TLONG, "NSIDE", &nside_header, nullptr, &status)) {
-        this->bskLogger.bskLog(BSK_ERROR, "HaslamMap: Error reading NSIDE");
+        this->bskLogger.bskError("HaslamMap: Error reading NSIDE");
         closeFile();
         return false;
     }
@@ -103,7 +102,7 @@ bool HaslamMap::loadHaslamMap() {
     status = 0;
     fits_read_key(fptr, TSTRING, "PIXTYPE", pixtype, nullptr, &status);
     if (status || strcmp(pixtype, "HEALPIX") != 0) {
-        this->bskLogger.bskLog(BSK_ERROR, "HaslamMap: FITS file is not HEALPix format");
+        this->bskLogger.bskError("HaslamMap: FITS file is not HEALPix format");
         closeFile();
         return false;
     }
@@ -112,7 +111,7 @@ bool HaslamMap::loadHaslamMap() {
     status = 0;
     fits_read_key(fptr, TSTRING, "ORDERING", ordering, nullptr, &status);
     if (status || strcmp(ordering, "RING") != 0) {
-        this->bskLogger.bskLog(BSK_ERROR, "HaslamMap: HEALPix map must be RING ordered");
+        this->bskLogger.bskError("HaslamMap: HEALPix map must be RING ordered");
         closeFile();
         return false;
     }
@@ -126,7 +125,7 @@ bool HaslamMap::loadHaslamMap() {
     long nrows, values_per_row = 1024;
     fits_get_num_rows(fptr, &nrows, &status);
     if (status || nrows * values_per_row != this->npix) {
-        this->bskLogger.bskLog(BSK_ERROR, "HaslamMap: Pixel count mismatch");
+        this->bskLogger.bskError("HaslamMap: Pixel count mismatch");
         closeFile();
         return false;
     }
@@ -140,7 +139,7 @@ bool HaslamMap::loadHaslamMap() {
                       this->brightnessTemperatures.data(), &anynull, &status)) {
         char err_text[256];
         fits_get_errstatus(status, err_text);
-        this->bskLogger.bskLog(BSK_ERROR, "HaslamMap: Error reading data: %s", err_text);
+        this->bskLogger.bskError("HaslamMap: Error reading data: %s", err_text);
         this->brightnessTemperatures.clear();
         closeFile();
         return false;

@@ -53,7 +53,7 @@ void HingedRigidBodyMotorSensor::Reset(uint64_t CurrentSimNanos)
 {
     //!< check that required input messages are connected
     if (!this->hingedRigidBodyMotorSensorInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "HingedRigidBodyMotorSensor.hingedRigidBodyMotorSensorInMsg was not linked.");
+        bskLogger.bskError("HingedRigidBodyMotorSensor.hingedRigidBodyMotorSensorInMsg was not linked.");
     }
 
 }

@@ -319,8 +319,7 @@ void Camera::UpdateState(uint64_t currentSimNanos)
     /*! - Populate the camera message */
     cameraMsg.cameraID = this->cameraID;
     if (memchr(this->parentName, '\0', sizeof(this->parentName)) == nullptr) {
-        bskLogger.bskLog(BSK_ERROR,
-                         "Camera: parentName is not null-terminated within %zu characters.",
+        bskLogger.bskError("Camera: parentName is not null-terminated within %zu characters.",
                          sizeof(this->parentName));
     }
     std::snprintf(cameraMsg.parentName, sizeof(cameraMsg.parentName), "%s", this->parentName);
@@ -332,8 +331,7 @@ void Camera::UpdateState(uint64_t currentSimNanos)
     v3Copy(this->cameraPos_B, cameraMsg.cameraPos_B);
     v3Copy(this->sigma_CB, cameraMsg.sigma_CB);
     if (memchr(this->skyBox, '\0', sizeof(this->skyBox)) == nullptr) {
-        bskLogger.bskLog(BSK_ERROR,
-                         "Camera: skyBox is not null-terminated within %zu characters.",
+        bskLogger.bskError("Camera: skyBox is not null-terminated within %zu characters.",
                          sizeof(this->skyBox));
     }
     std::snprintf(cameraMsg.skyBox, sizeof(cameraMsg.skyBox), "%s", this->skyBox);
@@ -377,9 +375,9 @@ void Camera::UpdateState(uint64_t currentSimNanos)
     /*! - Check if image was loaded successfully */
     if (imageCV.empty()) {
         if (usingFilename) {
-            this->bskLogger.bskLog(BSK_ERROR, "camera: failed to load image from %s.", this->filename.c_str());
+            this->bskLogger.bskError("camera: failed to load image from %s.", this->filename.c_str());
         } else {
-            this->bskLogger.bskLog(BSK_ERROR, "camera: failed to decode image from input buffer.");
+            this->bskLogger.bskError("camera: failed to decode image from input buffer.");
         }
     }
     this->applyFilters(imageCV, blurred);
@@ -397,11 +395,11 @@ void Camera::UpdateState(uint64_t currentSimNanos)
     std::vector<unsigned char> buf;
     std::vector<int> compression = {cv::IMWRITE_PNG_COMPRESSION, 0};
     if (!cv::imencode(".png", blurred, buf, compression) || buf.empty()) {
-        bskLogger.bskLog(BSK_ERROR, "camera: failed to encode image output buffer.");
+        bskLogger.bskError("camera: failed to encode image output buffer.");
         return;
     }
     if (buf.size() > (size_t)std::numeric_limits<int32_t>::max()) {
-        bskLogger.bskLog(BSK_ERROR, "camera: encoded image output buffer is too large.");
+        bskLogger.bskError("camera: encoded image output buffer is too large.");
         return;
     }
     /*! - Output the saved image */
@@ -418,7 +416,7 @@ void Camera::UpdateState(uint64_t currentSimNanos)
     imageOut.imageBufferLength = (int32_t)buf.size();
     this->pointImageOut = malloc(imageOut.imageBufferLength*sizeof(char));
     if (this->pointImageOut == nullptr) {
-        bskLogger.bskLog(BSK_ERROR, "camera: failed to allocate image output buffer.");
+        bskLogger.bskError("camera: failed to allocate image output buffer.");
         return;
     }
     memcpy(this->pointImageOut, buf.data(), imageOut.imageBufferLength*sizeof(char));

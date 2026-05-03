@@ -44,22 +44,21 @@ void LambertValidator::Reset(uint64_t currentSimNanos)
 {
     // check that required input messages are connected
     if (!this->navTransInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "lambertValidator.navTransInMsg was not linked.");
+        bskLogger.bskError("lambertValidator.navTransInMsg was not linked.");
     }
     if (!this->lambertProblemInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "lambertValidator.lambertProblemInMsg was not linked.");
+        bskLogger.bskError("lambertValidator.lambertProblemInMsg was not linked.");
     }
     if (!this->lambertSolutionInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "lambertValidator.lambertSolutionInMsg was not linked.");
+        bskLogger.bskError("lambertValidator.lambertSolutionInMsg was not linked.");
     }
     if (!this->lambertPerformanceInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "lambertValidator.lambertPerformanceInMsg was not linked.");
+        bskLogger.bskError("lambertValidator.lambertPerformanceInMsg was not linked.");
     }
 
     // check that the provided input module parameters are valid
     if (this->finalTime - this->maneuverTime < 0.0){
-        bskLogger.bskLog(BSK_ERROR,
-                         "lambertValidator: Maneuver start time maneuverTime must be before final time finalTime.");
+        bskLogger.bskError("lambertValidator: Maneuver start time maneuverTime must be before final time finalTime.");
     }
 }
 
@@ -133,13 +132,12 @@ void LambertValidator::readMessages()
 
     // check if input parameters are valid
     if (lambertProblemInMsgBuffer.mu <= 0.0){
-        bskLogger.bskLog(BSK_ERROR, "lambertSolver: mu must be positive.");
+        bskLogger.bskError("lambertSolver: mu must be positive.");
     } else {
         this->mu = lambertProblemInMsgBuffer.mu;
     }
     if (this->maneuverTime - navTransInMsgBuffer.timeTag < 0.0){
-        bskLogger.bskLog(BSK_ERROR,
-                         "lambertValidator: current time must be before maneuver time maneuverTime.");
+        bskLogger.bskError("lambertValidator: current time must be before maneuver time maneuverTime.");
     } else {
         this->time = navTransInMsgBuffer.timeTag;
     }
@@ -166,8 +164,7 @@ void LambertValidator::readMessages()
         this->numIterLambert = lambertPerformanceInMsgBuffer.numIterSol2;
         this->errXLambert = lambertPerformanceInMsgBuffer.errXSol2;
     } else {
-        bskLogger.bskLog(BSK_ERROR,
-                         "lambertValidator: the parameter lambertSolutionSpecifier that specifies which "
+        bskLogger.bskError("lambertValidator: the parameter lambertSolutionSpecifier that specifies which "
                          "Lambert solution should be used must be either 1 or 2.");
     }
 }

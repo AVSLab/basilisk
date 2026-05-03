@@ -38,13 +38,13 @@ void ThrustCMEstimation::Reset(uint64_t CurrentSimNanos)
 {
     /*! - Check if the required message has not been connected */
     if (!this->thrusterConfigBInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR,  " thrusterConfigInMsg wasn't connected.");
+        bskLogger.bskError(" thrusterConfigInMsg wasn't connected.");
     }
     if (!this->intFeedbackTorqueInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR,  " intFeedbackTorqueInMsg wasn't connected.");
+        bskLogger.bskError(" intFeedbackTorqueInMsg wasn't connected.");
     }
     if (!this->attGuidInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR,  " attGuidInMsg wasn't connected.");
+        bskLogger.bskError(" attGuidInMsg wasn't connected.");
     }
     if (this->vehConfigInMsg.isLinked()) {
         this->cmKnowledge = true;

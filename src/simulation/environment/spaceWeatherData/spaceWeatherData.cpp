@@ -151,15 +151,14 @@ SpaceWeatherData::~SpaceWeatherData()
 void SpaceWeatherData::Reset(uint64_t CurrentSimNanos)
 {
     if (!this->epochInMsg.isLinked()) {
-        this->bskLogger.bskLog(BSK_ERROR, "SpaceWeatherData.epochInMsg was not linked.");
+        this->bskLogger.bskError("SpaceWeatherData.epochInMsg was not linked.");
     }
     if (this->weatherData.empty()) {
-        this->bskLogger.bskLog(BSK_ERROR, "SpaceWeatherData space-weather table is empty. Call loadSpaceWeatherFile().");
+        this->bskLogger.bskError("SpaceWeatherData space-weather table is empty. Call loadSpaceWeatherFile().");
     }
     std::array<double, numSwMessages> probe = {};
     if (!this->computeSwState(CurrentSimNanos, probe)) {
-        this->bskLogger.bskLog(BSK_ERROR,
-            "SpaceWeatherData: simulation start date is not covered by the loaded table. "
+        this->bskLogger.bskError("SpaceWeatherData: simulation start date is not covered by the loaded table. "
             "Check the epoch and the date range of the loaded file.");
     }
 
@@ -211,13 +210,13 @@ void SpaceWeatherData::loadSpaceWeatherFile(const std::string& fileName)
 
     std::ifstream weatherFile(fileName);
     if (!weatherFile.good()) {
-        this->bskLogger.bskLog(BSK_ERROR, "Could not open space-weather file: %s", fileName.c_str());
+        this->bskLogger.bskError("Could not open space-weather file: %s", fileName.c_str());
         return;
     }
 
     std::string line;
     if (!std::getline(weatherFile, line)) {
-        this->bskLogger.bskLog(BSK_ERROR, "Space-weather file is empty: %s", fileName.c_str());
+        this->bskLogger.bskError("Space-weather file is empty: %s", fileName.c_str());
         return;
     }
     const std::vector<std::string> headerColumns = splitCsvLine(line);
@@ -227,8 +226,7 @@ void SpaceWeatherData::loadSpaceWeatherFile(const std::string& fileName)
     };
     for (const auto& columnName : requiredColumns) {
         if (findHeaderIndex(headerColumns, columnName) < 0) {
-            this->bskLogger.bskLog(BSK_ERROR,
-                                   "Space-weather file missing required column '%s': %s",
+            this->bskLogger.bskError("Space-weather file missing required column '%s': %s",
                                    columnName.c_str(),
                                    fileName.c_str());
             return;
@@ -254,20 +252,18 @@ void SpaceWeatherData::loadSpaceWeatherFile(const std::string& fileName)
     }
 
     if (loadedData.empty()) {
-        this->bskLogger.bskLog(BSK_ERROR, "No valid weather rows were loaded from: %s", fileName.c_str());
+        this->bskLogger.bskError("No valid weather rows were loaded from: %s", fileName.c_str());
         return;
     }
 
     for (size_t rowIndex = 1; rowIndex < loadedData.size(); rowIndex++) {
         if (loadedData[rowIndex - 1].dayNumber == loadedData[rowIndex].dayNumber) {
-            this->bskLogger.bskLog(BSK_ERROR,
-                                   "Duplicate DATE row found in space-weather table '%s'.",
+            this->bskLogger.bskError("Duplicate DATE row found in space-weather table '%s'.",
                                    fileName.c_str());
             return;
         }
         if (loadedData[rowIndex - 1].dayNumber > loadedData[rowIndex].dayNumber) {
-            this->bskLogger.bskLog(BSK_ERROR,
-                                   "Space-weather DATE rows must be sorted in ascending order: %s",
+            this->bskLogger.bskError("Space-weather DATE rows must be sorted in ascending order: %s",
                                    fileName.c_str());
             return;
         }
@@ -307,7 +303,7 @@ void SpaceWeatherData::publishZeroState(uint64_t CurrentSimNanos)
 void SpaceWeatherData::getEpochState(double CurrentSimSeconds, int64_t& currentDay, double& secondsOfDay)
 {
     if (!this->epochInMsg.isWritten()) {
-        this->bskLogger.bskLog(BSK_ERROR, "SpaceWeatherData space-weather epochInMsg was not written.");
+        this->bskLogger.bskError("SpaceWeatherData space-weather epochInMsg was not written.");
     }
     const EpochMsgPayload epochMsg = this->epochInMsg();
     int year = epochMsg.year;
