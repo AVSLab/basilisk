@@ -58,6 +58,7 @@ def _writable_view(payload, dtype):
 # ---------------------------------------------------------------------------
 
 def test_epochDtypeLayout():
+    """Check the Epoch payload dtype layout and padding offsets."""
     dt = messaging.EpochMsgPayload.__dtype__
     assert dt is not None
     assert dt.itemsize == 32
@@ -70,6 +71,7 @@ def test_epochDtypeLayout():
 
 
 def test_epochDtypeNumpyToPython():
+    """Check numpy writes into Epoch payload memory update Python fields."""
     p   = messaging.EpochMsgPayload()
     arr = _writable_view(p, messaging.EpochMsgPayload.__dtype__)
 
@@ -89,6 +91,7 @@ def test_epochDtypeNumpyToPython():
 
 
 def test_epochDtypePythonToNumpy():
+    """Check Python writes to Epoch fields are visible through the dtype view."""
     p   = messaging.EpochMsgPayload()
     arr = _writable_view(p, messaging.EpochMsgPayload.__dtype__)
 
@@ -105,6 +108,7 @@ def test_epochDtypePythonToNumpy():
 # ---------------------------------------------------------------------------
 
 def test_attStateDtypeLayout():
+    """Check the attitude-state payload dtype layout and vector shapes."""
     dt = messaging.AttStateMsgPayload.__dtype__
     assert dt is not None
     assert dt.itemsize == 48
@@ -115,6 +119,7 @@ def test_attStateDtypeLayout():
 
 
 def test_attStateDtypeNumpyToPython():
+    """Check numpy writes into attitude-state memory update Python fields."""
     p   = messaging.AttStateMsgPayload()
     arr = _writable_view(p, messaging.AttStateMsgPayload.__dtype__)
 
@@ -126,6 +131,7 @@ def test_attStateDtypeNumpyToPython():
 
 
 def test_attStateDtypePythonToNumpy():
+    """Check Python attitude-state writes are visible through the dtype view."""
     p   = messaging.AttStateMsgPayload()
     arr = _writable_view(p, messaging.AttStateMsgPayload.__dtype__)
 
@@ -142,6 +148,7 @@ def test_attStateDtypePythonToNumpy():
 # ---------------------------------------------------------------------------
 
 def test_scMassPropsDtypeLayout():
+    """Check spacecraft mass-properties dtype offsets and matrix shape."""
     dt = messaging.SCMassPropsMsgPayload.__dtype__
     assert dt is not None
     assert dt.itemsize == 104
@@ -152,6 +159,7 @@ def test_scMassPropsDtypeLayout():
 
 
 def test_scMassPropsDtypeNumpyToPython():
+    """Check numpy writes into mass-properties memory update Python fields."""
     p   = messaging.SCMassPropsMsgPayload()
     arr = _writable_view(p, messaging.SCMassPropsMsgPayload.__dtype__)
 
@@ -166,6 +174,7 @@ def test_scMassPropsDtypeNumpyToPython():
 
 
 def test_scMassPropsDtypePythonToNumpy():
+    """Check Python mass-property writes are visible through the dtype view."""
     p   = messaging.SCMassPropsMsgPayload()
     arr = _writable_view(p, messaging.SCMassPropsMsgPayload.__dtype__)
 
@@ -180,6 +189,7 @@ def test_scMassPropsDtypePythonToNumpy():
 # ---------------------------------------------------------------------------
 
 def test_deviceStatusDtypeLayout():
+    """Check the device-status enum dtype layout."""
     dt = messaging.DeviceStatusMsgPayload.__dtype__
     assert dt is not None
     assert dt.itemsize == 4
@@ -188,6 +198,7 @@ def test_deviceStatusDtypeLayout():
 
 
 def test_deviceStatusDtypeNumpyToPython():
+    """Check numpy writes into device-status memory update Python fields."""
     p   = messaging.DeviceStatusMsgPayload()
     arr = _writable_view(p, messaging.DeviceStatusMsgPayload.__dtype__)
 
@@ -196,6 +207,7 @@ def test_deviceStatusDtypeNumpyToPython():
 
 
 def test_deviceStatusDtypePythonToNumpy():
+    """Check Python device-status writes are visible through the dtype view."""
     p   = messaging.DeviceStatusMsgPayload()
     arr = _writable_view(p, messaging.DeviceStatusMsgPayload.__dtype__)
 
@@ -211,6 +223,7 @@ def test_deviceStatusDtypePythonToNumpy():
 # ---------------------------------------------------------------------------
 
 def test_spicePlanetDtypeLayout():
+    """Check the SPICE planet-state dtype offsets and string field type."""
     dt = messaging.SpicePlanetStateMsgPayload.__dtype__
     assert dt is not None
     assert dt.itemsize == 272
@@ -220,6 +233,7 @@ def test_spicePlanetDtypeLayout():
 
 
 def test_spicePlanetDtypeNumpyToPython():
+    """Check numpy writes into SPICE planet-state memory update Python fields."""
     p   = messaging.SpicePlanetStateMsgPayload()
     arr = _writable_view(p, messaging.SpicePlanetStateMsgPayload.__dtype__)
 
@@ -234,6 +248,7 @@ def test_spicePlanetDtypeNumpyToPython():
 
 
 def test_spicePlanetDtypePythonToNumpy():
+    """Check Python SPICE planet-state writes are visible through the dtype view."""
     p   = messaging.SpicePlanetStateMsgPayload()
     arr = _writable_view(p, messaging.SpicePlanetStateMsgPayload.__dtype__)
 
@@ -249,6 +264,7 @@ def test_spicePlanetDtypePythonToNumpy():
 # ---------------------------------------------------------------------------
 
 def test_accDataDtypeLayout():
+    """Check the accelerometer-packet nested dtype layout."""
     dt = messaging.AccDataMsgPayload.__dtype__
     assert dt is not None
     assert dt.itemsize == 6720
@@ -261,6 +277,7 @@ def test_accDataDtypeLayout():
 
 
 def test_accDataDtypeNumpyToPython():
+    """Check numpy writes into accelerometer-packet memory update Python fields."""
     p   = messaging.AccDataMsgPayload()
     arr = _writable_view(p, messaging.AccDataMsgPayload.__dtype__)
 
@@ -272,6 +289,7 @@ def test_accDataDtypeNumpyToPython():
 
 
 def test_accDataDtypePythonToNumpy():
+    """Check Python accelerometer-packet writes are visible through the dtype view."""
     p   = messaging.AccDataMsgPayload()
     arr = _writable_view(p, messaging.AccDataMsgPayload.__dtype__)
 
@@ -286,6 +304,7 @@ def test_accDataDtypePythonToNumpy():
 # ---------------------------------------------------------------------------
 
 def test_cameraImageDtypeLayout():
+    """Check the camera-image payload dtype layout and pointer field type."""
     dt = messaging.CameraImageMsgPayload.__dtype__
     assert dt is not None
     assert dt.itemsize == 40
@@ -296,6 +315,7 @@ def test_cameraImageDtypeLayout():
 
 
 def test_cameraImageDtypeNumpyToPython():
+    """Check numpy writes into camera-image memory update Python fields."""
     p   = messaging.CameraImageMsgPayload()
     arr = _writable_view(p, messaging.CameraImageMsgPayload.__dtype__)
 
@@ -309,6 +329,7 @@ def test_cameraImageDtypeNumpyToPython():
 
 
 def test_cameraImageDtypePythonToNumpy():
+    """Check Python camera-image writes are visible through the dtype view."""
     p   = messaging.CameraImageMsgPayload()
     arr = _writable_view(p, messaging.CameraImageMsgPayload.__dtype__)
 
@@ -321,4 +342,5 @@ def test_cameraImageDtypePythonToNumpy():
 # ---------------------------------------------------------------------------
 
 def test_jointArrayStateDtypeIsNone():
+    """Check payloads with unsupported vector fields expose no numpy dtype."""
     assert messaging.JointArrayStateMsgPayload.__dtype__ is None

@@ -105,6 +105,7 @@ class BasicModel(NumbaModel):
 
 
 def test_basicModel():
+    """Smoke-test scalar I/O and persistent memory updates."""
     mod = BasicModel()
     mod.ModelTag = "basic"
     _run(mod, dt_ns=5, n_ticks=5)
@@ -135,6 +136,7 @@ class AutoConvertModel(NumbaModel):
 
 
 def test_autoConvertMemory():
+    """Check scalar and list memory fields are converted at reset."""
     mod = AutoConvertModel()
     _run(mod, dt_ns=5, n_ticks=1)
 
@@ -149,6 +151,7 @@ def test_autoConvertMemory():
 # 3. Post-Reset convenience writes via memory namespace
 # ===========================================================================
 def test_postResetConvenienceWrite():
+    """Check post-reset memory writes update existing fields and reject new ones."""
     mod = BasicModel()
     _run(mod, dt_ns=5, n_ticks=1)
 
@@ -185,6 +188,7 @@ class TimeRecorderModel(NumbaModel):
 
 
 def test_currentSimNanos():
+    """Check the compiled model receives the current simulation time."""
     mod = TimeRecorderModel(); mod.ModelTag = "timer"
     # ticks at t = 0, 5, 10 ns
     _run(mod, dt_ns=5, n_ticks=3)
@@ -315,6 +319,7 @@ class ConsumerModel(NumbaModel):
 
 
 def test_messageChain():
+    """Check a NumbaModel output can feed another NumbaModel input."""
     scSim = SimulationBaseClass.SimBaseClass()
     proc  = scSim.CreateNewProcess("proc")
     proc.addTask(scSim.CreateNewTask("task", 5))
@@ -438,6 +443,7 @@ class MultiOutModel(NumbaModel):
 
 
 def test_listWriter():
+    """Check list-based output messages are written by index."""
     scSim = SimulationBaseClass.SimBaseClass()
     proc  = scSim.CreateNewProcess("proc")
     proc.addTask(scSim.CreateNewTask("task", 5))
@@ -561,6 +567,7 @@ class DictOutModel(NumbaModel):
 
 
 def test_dictWriter():
+    """Check dictionary-based output messages are written by key."""
     src = messaging.CModuleTemplateMsg()
     mod = DictOutModel(); mod.ModelTag = "dictOut"
 
@@ -636,6 +643,7 @@ class ModuleIDModel(NumbaModel):
 
 
 def test_moduleIdParameter():
+    """Check the compiled model receives the owning module identifier."""
     mod = ModuleIDModel(); mod.ModelTag = "mid"
     _run(mod, dt_ns=5, n_ticks=1)
     # Python modules receive negative IDs from the sim framework
@@ -727,6 +735,7 @@ def test_memoryWritePersistsThroughReset():
 # 15. Error cases
 # ===========================================================================
 def test_errorNotOverridden():
+    """Check Reset fails when ``UpdateStateImpl`` is not overridden."""
     class Bad(NumbaModel):
         """Model that intentionally omits ``UpdateStateImpl``."""
         pass
@@ -735,6 +744,7 @@ def test_errorNotOverridden():
 
 
 def test_errorNotStaticmethod():
+    """Check Reset fails when ``UpdateStateImpl`` is not static."""
     class Bad(NumbaModel):
         """Model with a non-static compiled entry point."""
 
@@ -746,6 +756,7 @@ def test_errorNotStaticmethod():
 
 
 def test_errorMissingInMsg():
+    """Check Reset fails when a referenced input message is missing."""
     class Bad(NumbaModel):
         """Model whose implementation references a missing input reader."""
 
@@ -786,6 +797,7 @@ def test_errorIslinkedWithoutPayload():
 
 
 def test_errorUnrecognisedParam():
+    """Check Reset fails when the compiled signature has an unknown parameter."""
     class Bad(NumbaModel):
         """Model with an unsupported parameter name in the compiled signature."""
 
