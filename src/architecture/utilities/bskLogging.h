@@ -48,6 +48,14 @@ void printDefaultLogLevel();
 %include "std_except.i"
 #endif
 
+#ifndef BSK_NORETURN
+#ifdef SWIG
+#define BSK_NORETURN
+#else
+#define BSK_NORETURN [[noreturn]]
+#endif
+#endif
+
 void setDefaultLogLevel(logLevel_t logLevel);
 logLevel_t getDefaultLogLevel();
 
@@ -73,6 +81,7 @@ class BSKLogger
         void printLogLevel();
         int getLogLevel();
         void bskLog(logLevel_t targetLevel, const char* info, ...);
+        BSK_NORETURN void bskError(const char* info, ...);
 
     //Provides a mapping from log level enum to str
     public:

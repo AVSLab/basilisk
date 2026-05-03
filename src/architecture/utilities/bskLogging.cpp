@@ -26,6 +26,15 @@
 
 logLevel_t LogLevel = BSK_DEBUG;
 
+namespace {
+std::string formatLogMessage(const char* info, va_list args)
+{
+    char formatMessage[MAX_LOGGING_LENGTH];
+    vsnprintf(formatMessage, sizeof(formatMessage), info, args);
+    return formatMessage;
+}
+}
+
 /*! This method sets the default logging verbosity
     @param logLevel
  */
@@ -98,10 +107,9 @@ int BSKLogger::getLogLevel()
 void BSKLogger::bskLog(logLevel_t targetLevel, const char* info, ...)
 {
     const char* targetLevelStr = this->logLevelMap[targetLevel];
-    char formatMessage[MAX_LOGGING_LENGTH];
     va_list args;
     va_start (args, info);
-    vsnprintf(formatMessage, sizeof(formatMessage), info, args);
+    std::string formatMessage = formatLogMessage(info, args);
     va_end(args);
 
     // Raise an error that swig can pipe to python
@@ -112,8 +120,22 @@ void BSKLogger::bskLog(logLevel_t targetLevel, const char* info, ...)
     // Otherwise, print the message accordingly
     if(targetLevel >= this->_logLevel)
     {
-        printf("%s: %s\n", targetLevelStr, formatMessage);
+        printf("%s: %s\n", targetLevelStr, formatMessage.c_str());
     }
+}
+
+/*! This method logs a fatal error and raises a BasiliskError.
+    This should be used in C++ code paths that do not return after the error.
+    @param info
+*/
+BSK_NORETURN void BSKLogger::bskError(const char* info, ...)
+{
+    va_list args;
+    va_start (args, info);
+    std::string formatMessage = formatLogMessage(info, args);
+    va_end(args);
+
+    throw BasiliskError(formatMessage);
 }
 
 /*! Section contains C interfacing to C++ object */
