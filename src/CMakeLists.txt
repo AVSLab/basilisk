@@ -33,24 +33,7 @@ elseif(Python3_VERSION VERSION_LESS "3.10")
     message(WARNING "You are using Python ${Python3_VERSION}, but support for Python 3.9 is deprecated and will be removed in March 2027.")
 endif()
 
-# Find SWIG early (no version requirement yet)
-find_package(SWIG REQUIRED COMPONENTS python)
-
-# Check both versions
-if(Python3_VERSION VERSION_GREATER_EQUAL 3.12)
-  if(SWIG_VERSION VERSION_LESS "4.2.0")
-    message(FATAL_ERROR
-      "Python ${Python3_VERSION} requires SWIG 4.2.0 or newer, but found SWIG ${SWIG_VERSION}."
-    )
-  endif()
-endif()
-
-# Now safely require SWIG in the appropriate version range
-if(Python3_VERSION VERSION_GREATER_EQUAL 3.12)
-  find_package(SWIG 4.2...<5 REQUIRED COMPONENTS python)
-else()
-  find_package(SWIG 4.0...<5 REQUIRED COMPONENTS python)
-endif()
+find_package(SWIG 4.4.1...<5 REQUIRED COMPONENTS python)
 include(${SWIG_USE_FILE})
 
 # Set the Python module library to be linked to.
@@ -58,10 +41,6 @@ set(PYTHON3_MODULE Python3::Module)
 if(PY_LIMITED_API AND NOT PY_LIMITED_API STREQUAL "")
   message(STATUS "Requested Py_LIMITED_API=${PY_LIMITED_API}")
   message(STATUS "(Refer to https://docs.python.org/3/c-api/stable.html#limited-c-api for details)")
-
-  if(${SWIG_VERSION} VERSION_LESS 4.2)
-    message(FATAL_ERROR "Could not find a suitable version of SWIG (found ${SWIG_VERSION}, need SWIG>=4.2.0)")
-  endif()
 
   if(NOT Python3_Development.SABIModule_FOUND)
     message(FATAL_ERROR "Could not find the required Python3 Stable ABI module!")
@@ -71,7 +50,7 @@ if(PY_LIMITED_API AND NOT PY_LIMITED_API STREQUAL "")
   # compatibility (basically, we can build a single Python wheel to
   # support all future Python versions).
   # See https://docs.python.org/3/c-api/stable.html
-  # NOTE: Swig 4.2.0 is required. Swig 4.4.x avoids the deprecated wrapper warnings on newer Python releases.
+  # NOTE: SWIG 4.4.1 or a newer supported 4.x release is required for SWIG ABI 5 support between Basilisk and compatible plugins.
   add_definitions("-DPy_LIMITED_API=${PY_LIMITED_API}")  # Support for current Python version
 
   # Force libraries to link to the Stable ABI module instead.
