@@ -51,7 +51,7 @@ void MagneticFieldWMM::configureWMMFile(const std::string& file)
     fs::path p(file);
 
     if (!p.has_extension() || p.extension() != ".COF") {
-        bskLogger.bskLog(BSK_ERROR, "WMM file must have .COF extension");
+        bskLogger.bskError("WMM file must have .COF extension");
         return;
     }
 
@@ -143,7 +143,7 @@ double MagneticFieldWMM::gregorian2DecimalYear(double currentTime)
     calendar.Month = localDateTime.tm_mon + 1;
     calendar.Day = localDateTime.tm_mday;
     if (!MAG_DateToYear(&calendar, Error_Message)){
-        bskLogger.bskLog(BSK_ERROR, "Could not convert date to decimal year. \nError message: %s", Error_Message);
+        bskLogger.bskError("Could not convert date to decimal year. \nError message: %s", Error_Message);
     }
 
     //! - determine number of days in this year
@@ -241,7 +241,7 @@ void MagneticFieldWMM::initializeWmm()
 
     MAGtype_MagneticModel *models[1];
     if (!MAG_robustReadMagModels(const_cast<char*>(this->wmmDataFullPath.c_str()), &models, 1)) {
-        bskLogger.bskLog(BSK_ERROR, "WMM unable to load file %s", this->wmmDataFullPath.c_str());
+        bskLogger.bskError("WMM unable to load file %s", this->wmmDataFullPath.c_str());
         return;
     }
     this->magneticModel = models[0];

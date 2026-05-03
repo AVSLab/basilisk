@@ -59,8 +59,7 @@ void PartitionedStorageUnit::customReset(uint64_t currentClock){
 void PartitionedStorageUnit::addPartition(std::string dataName){
     dataInstance tmpDataInstance;
     if (dataName.size() >= sizeof(tmpDataInstance.dataInstanceName)) {
-        bskLogger.bskLog(BSK_ERROR,
-                         "PartitionedStorageUnit: dataName is %zu characters, but dataInstanceName "
+        bskLogger.bskError("PartitionedStorageUnit: dataName is %zu characters, but dataInstanceName "
                          "supports at most %zu characters.",
                          dataName.size(), sizeof(tmpDataInstance.dataInstanceName) - 1);
     }

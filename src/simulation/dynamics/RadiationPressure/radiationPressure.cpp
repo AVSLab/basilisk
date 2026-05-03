@@ -55,7 +55,7 @@ void RadiationPressure::Reset(uint64_t CurrenSimNanos)
 {
     if(!this->sunEphmInMsg.isLinked())
     {
-        bskLogger.bskLog(BSK_ERROR, "Did not find a valid sun ephemeris message connection.");
+        bskLogger.bskError("Did not find a valid sun ephemeris message connection.");
     }
 }
 
@@ -117,7 +117,7 @@ void RadiationPressure::computeForceTorque(double integTime, double timeStep)
         this->forceExternal_B = this->forceExternal_B * this->sunVisibilityFactor.illuminationFactor;
         this->torqueExternalPntB_B = this->torqueExternalPntB_B * this->sunVisibilityFactor.illuminationFactor;
     } else {
-        bskLogger.bskLog(BSK_ERROR,"Requested SRF Model not implemented.\n");
+        bskLogger.bskError("Requested SRF Model not implemented.\n");
     }
 }
 

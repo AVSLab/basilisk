@@ -38,44 +38,43 @@ void DentonFluxModel::Reset(uint64_t CurrentSimNanos)
     // Check that required input messages are connected
     if (!this->scStateInMsg.isLinked())
     {
-        bskLogger.bskLog(BSK_ERROR, "DentonFluxModel.scStateInMsg was not linked.");
+        bskLogger.bskError("DentonFluxModel.scStateInMsg was not linked.");
     }
 
     if (!this->earthStateInMsg.isLinked())
     {
-        bskLogger.bskLog(BSK_ERROR, "DentonFluxModel.earthStateInMsg was not linked.");
+        bskLogger.bskError("DentonFluxModel.earthStateInMsg was not linked.");
     }
 
     if (!this->sunStateInMsg.isLinked())
     {
-        bskLogger.bskLog(BSK_ERROR, "DentonFluxModel.sunStateInMsg was not linked.");
+        bskLogger.bskError("DentonFluxModel.sunStateInMsg was not linked.");
     }
     // Check that required parameters are set
     if (this->numOutputEnergies < 0)
     {
-        bskLogger.bskLog(BSK_ERROR, "DentonFluxModel.numEnergies was not set.");
+        bskLogger.bskError("DentonFluxModel.numEnergies was not set.");
     }
     if (this->kpIndex == "")
     {
-        bskLogger.bskLog(BSK_ERROR, "DentonFluxModel.kpIndex was not set.");
+        bskLogger.bskError("DentonFluxModel.kpIndex was not set.");
     }
     // Check the desired array size is not larger than the maximum value
     if (this->numOutputEnergies > MAX_PLASMA_FLUX_SIZE)
     {
-        bskLogger.bskLog(BSK_ERROR, "DentonFluxModel: Maximum denton space weather array size exceeded.");
+        bskLogger.bskError("DentonFluxModel: Maximum denton space weather array size exceeded.");
     }
     // Check that the Kp index is a string of length 2
     if (!(this->kpIndex.length() == 2))
     {
-        bskLogger.bskLog(BSK_ERROR,
-                         "DentonFluxModel.kpIndex must be a string of length 2, such as '1-', '3o', '4+' etc.");
+        bskLogger.bskError("DentonFluxModel.kpIndex must be a string of length 2, such as '1-', '3o', '4+' etc.");
     }
     // Convert Kp index (such as '0o', '1-', '5+' etc.) to Kp index counter (int 0-27)
     char kpMain = this->kpIndex[0]; // main Kp index, between 0 and 9
     char kpSub = this->kpIndex[1]; // sub Kp index, either '-', 'o', or '+'
     int kpMainInt = kpMain - '0'; // convert main Kp from char to int
     if (kpMainInt < 0 || kpMainInt > 9) {
-        bskLogger.bskLog(BSK_ERROR, "DentonFluxModel: Kp index not set to a proper value.");
+        bskLogger.bskError("DentonFluxModel: Kp index not set to a proper value.");
     }
     if (kpSub == '-') {
         this->kpIndexCounter = 3*kpMainInt - 1;
@@ -87,13 +86,12 @@ void DentonFluxModel::Reset(uint64_t CurrentSimNanos)
         this->kpIndexCounter = 3*kpMainInt + 1;
     }
     else {
-        bskLogger.bskLog(BSK_ERROR, "DentonFluxModel: Kp index not set to a proper value.");
+        bskLogger.bskError("DentonFluxModel: Kp index not set to a proper value.");
     }
     // Check that Kp index is between 0o and 9o (corresponding to Kp index counter 0-27)
     if (this->kpIndexCounter < 0 || this->kpIndexCounter > MAX_NUM_KPS - 1)
     {
-        bskLogger.bskLog(BSK_ERROR,
-                         "DentonFluxModel: Kp index must be between 0o and 9o. Indices 0- and 9+ do not exist.");
+        bskLogger.bskError("DentonFluxModel: Kp index must be between 0o and 9o. Indices 0- and 9+ do not exist.");
     }
 
     // convert energies to log10 values
@@ -116,7 +114,7 @@ void DentonFluxModel::Reset(uint64_t CurrentSimNanos)
     }
 
     if (this->eDataFullPath == "" || this->iDataFullPath == "") {
-        bskLogger.bskLog(BSK_ERROR, "DentonFluxModel: configureDentonFiles() was not called.");
+        bskLogger.bskError("DentonFluxModel: configureDentonFiles() was not called.");
         return;
     }
 
@@ -353,7 +351,7 @@ void DentonFluxModel::readDentonDataFile(const std::string& fullPath,
             }
         }
     } else {
-        bskLogger.bskLog(BSK_ERROR, "Could not open %s", fullPath.c_str());
+        bskLogger.bskError("Could not open %s", fullPath.c_str());
         return;
     }
 

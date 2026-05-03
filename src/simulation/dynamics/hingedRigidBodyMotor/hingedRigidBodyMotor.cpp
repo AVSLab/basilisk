@@ -42,13 +42,13 @@ void HingedRigidBodyMotor::Reset(uint64_t CurrentSimNanos)
 {
     //! check that required input messages are connected
     if (!this->hingedBodyStateSensedInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "HingedRigidBodyMotor.hingedBodyStateSensedInMsg was not linked.");
+        bskLogger.bskError("HingedRigidBodyMotor.hingedBodyStateSensedInMsg was not linked.");
     }
     if (!this->hingedBodyStateReferenceInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "HingedRigidBodyMotor.hingedBodyStateReferenceInMsg was not linked.");
+        bskLogger.bskError("HingedRigidBodyMotor.hingedBodyStateReferenceInMsg was not linked.");
     }
     if (this->K <= 0.0 || this->P <= 0.0) {
-        bskLogger.bskLog(BSK_ERROR, "HingedRigidBodyMotor K and P must be set to positive values.");
+        bskLogger.bskError("HingedRigidBodyMotor K and P must be set to positive values.");
     }
 
 }

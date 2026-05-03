@@ -69,35 +69,35 @@ void SimpleAntenna::Reset(uint64_t CurrentSimNanos)
     // check that required input messages are connected
     if (!this->scStateInMsg.isLinked() && !this->groundStateInMsg.isLinked()) {
         // Antenna is NOT connected to ground or spacecraft (needs to be connected to one)
-        bskLogger.bskLog(BSK_ERROR, "Neither SimpleAntenna.scStateInMsg nor SimpleAntenna.groundState was linked.");
+        bskLogger.bskError("Neither SimpleAntenna.scStateInMsg nor SimpleAntenna.groundState was linked.");
     }
     if (this->scStateInMsg.isLinked() && this->groundStateInMsg.isLinked()) {
         // Antenna is connected to BOTH ground and spacecraft (needs to be connected to only one)
-        bskLogger.bskLog(BSK_ERROR, "Both SimpleAntenna.scStateInMsg and SimpleAntenna.groundState were linked. Please link only one to define the environment.");
+        bskLogger.bskError("Both SimpleAntenna.scStateInMsg and SimpleAntenna.groundState were linked. Please link only one to define the environment.");
     }
     if (this->antennaName.empty()) {
         // Antenna name is empty
-        bskLogger.bskLog(BSK_ERROR, "SimpleAntenna antennaName has not been set!");
+        bskLogger.bskError("SimpleAntenna antennaName has not been set!");
     }
     if (this->frequency == -1) {
         // Antenna operating frequency is invalid
-        bskLogger.bskLog(BSK_ERROR, "SimpleAntenna operating frequency [Hz] has not been set!");
+        bskLogger.bskError("SimpleAntenna operating frequency [Hz] has not been set!");
     }
     if (this->B == -1) {
         // Antenna bandwidth is invalid
-        bskLogger.bskLog(BSK_ERROR, "SimpleAntenna bandwidth B [Hz] has not been set!");
+        bskLogger.bskError("SimpleAntenna bandwidth B [Hz] has not been set!");
     }
     if (this->DdB == -1) {
         // Antenna directivity is invalid
-        bskLogger.bskLog(BSK_ERROR, "SimpleAntenna directivity D [dB] has not been set!");
+        bskLogger.bskError("SimpleAntenna directivity D [dB] has not been set!");
     }
     if (this->k == -1) {
         // Antenna HPBW ratio is invalid
-        bskLogger.bskLog(BSK_ERROR, "SimpleAntenna HPBW ratio k has not been set!");
+        bskLogger.bskError("SimpleAntenna HPBW ratio k has not been set!");
     }
     if (this->P_Tx == -1) {
         // Antenna transmit power is invalid
-        bskLogger.bskLog(BSK_ERROR, "SimpleAntenna transmit power P_Tx [W] has not been set!");
+        bskLogger.bskError("SimpleAntenna transmit power P_Tx [W] has not been set!");
     }
     if (this->P_Rx == -1) {
         // Antenna receive power is invalid
@@ -106,15 +106,15 @@ void SimpleAntenna::Reset(uint64_t CurrentSimNanos)
     }
     if (this->T_E == -1) {
         // Antenna equivalent noise temperature is invalid
-        bskLogger.bskLog(BSK_ERROR, "SimpleAntenna equivalent noise temperature T_E [K] has not been set!");
+        bskLogger.bskError("SimpleAntenna equivalent noise temperature T_E [K] has not been set!");
     }
     if (this->eta_r == -1) {
         // Antenna radiation efficiency is invalid
-        bskLogger.bskLog(BSK_ERROR, "SimpleAntenna radiation efficiency eta_r has not been set!");
+        bskLogger.bskError("SimpleAntenna radiation efficiency eta_r has not been set!");
     }
     if (!this->sunInMsg.isLinked() && this->planetInMsgs.size() != 0) {
         // Sun data message is NOT linked while planet messages are linked (sun data is required to calculate sky noise)
-        bskLogger.bskLog(BSK_ERROR, "SimpleAntenna.sunInMsg was not linked while planetInMsgs is not empty. Sun data is required to calculate sky noise.");
+        bskLogger.bskError("SimpleAntenna.sunInMsg was not linked while planetInMsgs is not empty. Sun data is required to calculate sky noise.");
     }
 
     // WARNINGS
@@ -150,7 +150,7 @@ void SimpleAntenna::initializeAntenna()
         this->environment = AntennaTypes::EnvironmentType::ENVIRONMENT_EARTH; // EARTH
     } else {
         // Error condition (unreachable due to checks in Reset())
-        bskLogger.bskLog(BSK_ERROR, "SimpleAntenna: Unable to determine environment. Please link either GroundState or scState message, not both.");
+        bskLogger.bskError("SimpleAntenna: Unable to determine environment. Please link either GroundState or scState message, not both.");
     }
 
     // Calculate HPBW_el && HPBW_az based on k and G
@@ -168,7 +168,7 @@ void SimpleAntenna::initializeAntenna()
             try {
                 HaslamMap::getInstance().initialize();
             } catch (...) {
-                bskLogger.bskLog(BSK_ERROR, "HaslamMap failed to initialize. Check FITS file path.");
+                bskLogger.bskError("HaslamMap failed to initialize. Check FITS file path.");
             }
         }
     }
@@ -428,13 +428,13 @@ double SimpleAntenna::getPlanetEquatorialRadius(std::string planetSpiceName)
         return REQ_NEPTUNE*1000.0;
     } else if (planetSpiceName == "custom") {
         if (rEqCustom <= 0.0) {
-            bskLogger.bskLog(BSK_ERROR, "SimpleAntenna: Invalid rEqCustom set.");
+            bskLogger.bskError("SimpleAntenna: Invalid rEqCustom set.");
             return 1.0;
         } else {
             return rEqCustom;
         }
     } else {
-        bskLogger.bskLog(BSK_ERROR, "SimpleAntenna: unrecognized planetSpiceName.");
+        bskLogger.bskError("SimpleAntenna: unrecognized planetSpiceName.");
         return 1.0;
     }
 }
@@ -457,7 +457,7 @@ double SimpleAntenna::calculateTambient()
         T_ambientLocal       = T_groundLocal - dTdh_local * altitude;                                  // [K] ITU-R P.835-6 eq. 1 (assumption altitude of ground station always < 11 km)
     } else {
         // UNKNOWN environment (FUTURE EXPANSION)
-        bskLogger.bskLog(BSK_ERROR, "SimpleAntenna: Unable to calculate ambient temperature due to unknown environment.");
+        bskLogger.bskError("SimpleAntenna: Unable to calculate ambient temperature due to unknown environment.");
         T_ambientLocal = 150.0; // [K] Default value
     }
     return T_ambientLocal;
@@ -503,7 +503,7 @@ void SimpleAntenna::populateOutputMsg(AntennaLogMsgPayload *output)
         output->r_AP_N[2]    = this->r_AP_N[2];
     } else {
         // Raise error (should not happen due to checks in Reset)
-        bskLogger.bskLog(BSK_ERROR, "SimpleAntenna: Unable to populate output message due to unknown environment.");
+        bskLogger.bskError("SimpleAntenna: Unable to populate output message due to unknown environment.");
     }
 }
 
@@ -569,7 +569,7 @@ void SimpleAntenna::setAntennaName(const std::string& var)
 {
     /*Make sure antennaName is < 20 characters */
     if (var.length() >= 20) {
-        bskLogger.bskLog(BSK_ERROR, "SimpleAntenna: Antenna name length exceeds 20 characters.");
+        bskLogger.bskError("SimpleAntenna: Antenna name length exceeds 20 characters.");
     }
     this->antennaName = var;
 }
@@ -584,31 +584,31 @@ void SimpleAntenna::setAntennaState(AntennaTypes::AntennaStateEnum var) {
 }
 void SimpleAntenna::setAntennaFrequency(double var) {
     if (var <= 3e7 || var >= 6e10) {        // Center frequency shall be between 30 Hz and 60 GHz
-        bskLogger.bskLog(BSK_ERROR, "SimpleAntenna operating frequency [Hz] is set outside the valid range of 30 MHz to 60 GHz.");
+        bskLogger.bskError("SimpleAntenna operating frequency [Hz] is set outside the valid range of 30 MHz to 60 GHz.");
     }
     this->frequency = var;       // [Hz] antenna operating frequency
 }
 void SimpleAntenna::setAntennaBandwidth(double var) {
     if (var <= minThreshold) {                // Bandwidth cannot be zero or negative
-        bskLogger.bskLog(BSK_ERROR, "SimpleAntenna bandwidth B [Hz] is too small, must be larger than minimum threshold (10^-6 Hz).");
+        bskLogger.bskError("SimpleAntenna bandwidth B [Hz] is too small, must be larger than minimum threshold (10^-6 Hz).");
     }
     this->B = var;               // [Hz] antenna frequency bandwidth
 }
 void SimpleAntenna::setAntennaDirectivity_dB(double var) {
     if (var <= 9) {
-        bskLogger.bskLog(BSK_ERROR, "SimpleAntenna: Attempting to set invalid low antenna directivity D[dB]. Value must be > 9dB for the assumptions made in this model.");
+        bskLogger.bskError("SimpleAntenna: Attempting to set invalid low antenna directivity D[dB]. Value must be > 9dB for the assumptions made in this model.");
     }
     this->DdB = var;             // [dB] antenna directivity
 }
 void SimpleAntenna::setAntennaHpbwRatio(double var) {
     if (var <= 0.5 || var >= 5.0) {
-        bskLogger.bskLog(BSK_ERROR, "SimpleAntenna: Attempting to set invalid antenna HPBW ratio. Value must be between 0.5 and 5 (set to k=1.0 for a symmetric beam).");
+        bskLogger.bskError("SimpleAntenna: Attempting to set invalid antenna HPBW ratio. Value must be between 0.5 and 5 (set to k=1.0 for a symmetric beam).");
     }
     this->k = var;
 }
 void SimpleAntenna::setAntennaP_Tx(double var) {
     if (var <= this->minThreshold) {
-        bskLogger.bskLog(BSK_ERROR, "SimpleAntenna transmit power P_Tx [W] is set to a value below the minimum threshold (10^-6 W) => Antenna transmit power must be larger than minimal threshold.");
+        bskLogger.bskError("SimpleAntenna transmit power P_Tx [W] is set to a value below the minimum threshold (10^-6 W) => Antenna transmit power must be larger than minimal threshold.");
         return;
     }
     this->P_Tx = var;            // [W] transmit power
@@ -622,20 +622,20 @@ void SimpleAntenna::setAntennaP_Rx(double var) {
 }
 void SimpleAntenna::setAntennaEquivalentNoiseTemp(double var) {
     if (var < this->minThreshold) {
-        bskLogger.bskLog(BSK_ERROR, "SimpleAntenna equivalent noise temperature T_E [K] is set to a negative value => Antenna equivalent noise temperature must be non-negative.");
+        bskLogger.bskError("SimpleAntenna equivalent noise temperature T_E [K] is set to a negative value => Antenna equivalent noise temperature must be non-negative.");
         return;
     }
     this->T_E = var;             // [K] equivalent noise temperature
 }
 void SimpleAntenna::setAntennaRadEfficiency(double var) {
     if (var < 0 || var > 1) {
-        bskLogger.bskLog(BSK_ERROR, "SimpleAntenna: Attempting to set invalid antenna radiation efficiency eta_r. Value must be between 0 and 1");
+        bskLogger.bskError("SimpleAntenna: Attempting to set invalid antenna radiation efficiency eta_r. Value must be between 0 and 1");
     }
     this->eta_r = var;           // [-] antenna radiation efficiency
 }
 void SimpleAntenna::setAntennaEnvironmentTemperature(double var) {
     if (var < this->minThreshold) {
-        bskLogger.bskLog(BSK_ERROR, "SimpleAntenna: Attempting to set an unrealistic environment temperature T_Ambient [K]. Value must be > 1e-6 K.");
+        bskLogger.bskError("SimpleAntenna: Attempting to set an unrealistic environment temperature T_Ambient [K]. Value must be > 1e-6 K.");
     }
     this->T_AmbientSet = var;
 }

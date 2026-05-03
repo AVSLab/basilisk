@@ -28,12 +28,12 @@
 void MJSystemMassMatrix::Reset(uint64_t CurrentSimNanos)
 {
     if (!scene) {
-        bskLogger.bskLog(BSK_ERROR, "MJSystemMassMatrix: scene pointer not set!");
+        bskLogger.bskError("MJSystemMassMatrix: scene pointer not set!");
     }
 
     const mjModel* model = scene->getMujocoModel();
     if (!model) {
-        bskLogger.bskLog(BSK_ERROR, "MJSystemMassMatrix: MuJoCo model not available in Reset()");
+        bskLogger.bskError("MJSystemMassMatrix: MuJoCo model not available in Reset()");
     }
 
     // extract the DOF dimensions
@@ -72,8 +72,7 @@ void MJSystemMassMatrix::Reset(uint64_t CurrentSimNanos)
             const bool jointIsFirstOnBody = (j == model->body_jntadr[b]);
 
             if (!bodyIsTreeRoot || !jointIsFirstOnBody) {
-                bskLogger.bskLog(BSK_ERROR,
-                    "MJSystemMassMatrix: Free joint j=%d on body b=%d must be the first joint on a tree root body.", j, b);
+                bskLogger.bskError("MJSystemMassMatrix: Free joint j=%d on body b=%d must be the first joint on a tree root body.", j, b);
             }
         }
     }

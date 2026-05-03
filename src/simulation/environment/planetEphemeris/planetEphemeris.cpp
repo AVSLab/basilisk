@@ -46,8 +46,7 @@ void PlanetEphemeris::setPlanetNames(std::vector<std::string> names)
 {
     for (const auto& name : names) {
         if (name.size() >= MAX_BODY_NAME_LENGTH) {
-            bskLogger.bskLog(BSK_ERROR,
-                             "PlanetEphemeris: planet name is %zu characters, but the SPICE payload name "
+            bskLogger.bskError("PlanetEphemeris: planet name is %zu characters, but the SPICE payload name "
                              "supports at most %d characters.",
                              name.size(), MAX_BODY_NAME_LENGTH - 1);
         }
@@ -71,7 +70,7 @@ void PlanetEphemeris::Reset(uint64_t CurrenSimNanos)
 
     /*! - do sanity checks that the vector arrays for planet names and ephemeris have the same length */
     if (this->planetElements.size() != this->planetNames.size()) {
-        bskLogger.bskLog(BSK_ERROR, "Only %lu planet element sets provided, but %lu plane names are present.",
+        bskLogger.bskError("Only %lu planet element sets provided, but %lu plane names are present.",
                   this->planetElements.size(), this->planetNames.size());
     }
 
@@ -87,25 +86,25 @@ void PlanetEphemeris::Reset(uint64_t CurrenSimNanos)
     if (computeAttitudeFlag) {
         /*! - check that the right number of planet local sideral time angles are provided */
         if (this->lst0.size() != this->planetNames.size()) {
-            bskLogger.bskLog(BSK_ERROR, "Only %lu planet initial principal rotation angles provided, but %lu planet names are present.",
+            bskLogger.bskError("Only %lu planet initial principal rotation angles provided, but %lu planet names are present.",
                       this->lst0.size(), this->planetNames.size());
         }
 
         /*! - check that the right number of planet polar axis right ascension angles are provided */
         if (this->rightAscension.size() != this->planetNames.size()) {
-            bskLogger.bskLog(BSK_ERROR, "Only %lu planet right ascension angles provided, but %lu planet names are present.",
+            bskLogger.bskError("Only %lu planet right ascension angles provided, but %lu planet names are present.",
                       this->rightAscension.size(), this->planetNames.size());
         }
 
         /*! - check that the right number of planet polar axis declination angles are provided */
         if (this->declination.size() != this->planetNames.size()) {
-            bskLogger.bskLog(BSK_ERROR, "Only %lu planet declination angles provided, but %lu planet names are present.",
+            bskLogger.bskError("Only %lu planet declination angles provided, but %lu planet names are present.",
                       this->declination.size(), this->planetNames.size());
         }
 
         /*! - check that the right number of planet polar rotation rates are provided */
         if (this->rotRate.size() != this->planetNames.size()) {
-            bskLogger.bskLog(BSK_ERROR, "Only %lu planet rotation rates provided, but %lu planet names are present.",
+            bskLogger.bskError("Only %lu planet rotation rates provided, but %lu planet names are present.",
                       this->rotRate.size(), this->planetNames.size());
         }
     }

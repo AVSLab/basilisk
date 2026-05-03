@@ -51,7 +51,7 @@ void LinearTranslationOneDOFStateEffector::setMass(double mass) {
     if (mass > 0.0)
         this->mass = mass;
     else {
-        this->bskLogger.bskLog(BSK_ERROR, "Mass must be greater than 0.");
+        this->bskLogger.bskError("Mass must be greater than 0.");
     }
 }
 
@@ -60,7 +60,7 @@ void LinearTranslationOneDOFStateEffector::setFHat_B(Eigen::Vector3d fHat_B) {
         this->fHat_B = fHat_B.normalized();
     }
     else {
-        this->bskLogger.bskLog(BSK_ERROR, "Norm of fHat must be greater than 0.");
+        this->bskLogger.bskError("Norm of fHat must be greater than 0.");
     }
 }
 
@@ -68,7 +68,7 @@ void LinearTranslationOneDOFStateEffector::setK(double k) {
     if (k >= 0.0)
         this->k = k;
     else {
-        this->bskLogger.bskLog(BSK_ERROR, "k must be greater than or equal to 0.");
+        this->bskLogger.bskError("k must be greater than or equal to 0.");
     }
 }
 
@@ -76,7 +76,7 @@ void LinearTranslationOneDOFStateEffector::setC(double c) {
     if (c >= 0.0)
         this->c = c;
     else {
-        this->bskLogger.bskLog(BSK_ERROR, "c must be greater than or equal to 0.");
+        this->bskLogger.bskError("c must be greater than or equal to 0.");
     }
 }
 
@@ -122,7 +122,7 @@ void LinearTranslationOneDOFStateEffector::registerStates(DynParamManager& state
 void LinearTranslationOneDOFStateEffector::addDynamicEffector(DynamicEffector *newDynamicEffector, int segment)
 {
     if (segment != 1) {
-        bskLogger.bskLog(BSK_ERROR, "Specifying attachment to a non-existent translating bodies linkage.");
+        bskLogger.bskError("Specifying attachment to a non-existent translating bodies linkage.");
     }
 
     this->assignStateParamNames<DynamicEffector *>(newDynamicEffector);

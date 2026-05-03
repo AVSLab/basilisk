@@ -55,17 +55,17 @@ void StarTracker::Reset(uint64_t CurrentSimNanos)
 {
     // check if input message has not been included
     if (!this->scStateInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "starTracker.scStateInMsg was not linked.");
+        bskLogger.bskError("starTracker.scStateInMsg was not linked.");
     }
 
     //! - Alert the user if the noise matrix was not the right size.  That'd be bad.
     if(this->PMatrix.size() != 9)
     {
-        bskLogger.bskLog(BSK_ERROR, "Your process noise matrix (PMatrix) is not 3*3. Quitting.");
+        bskLogger.bskError("Your process noise matrix (PMatrix) is not 3*3. Quitting.");
         return;
     }
     if(this->walkBounds.size() != 3){
-        bskLogger.bskLog(BSK_ERROR, "Your walkbounds is not size 3. Quitting");
+        bskLogger.bskError("Your walkbounds is not size 3. Quitting");
         return;
     }
 
@@ -155,7 +155,7 @@ void StarTracker::UpdateState(uint64_t CurrentSimNanos)
 void StarTracker::setAMatrix(const Eigen::MatrixXd& propMatrix)
 {
     if(propMatrix.rows() != 3 || propMatrix.cols() != 3) {
-        bskLogger.bskLog(BSK_ERROR, "StarTracker: Propagation matrix must be 3x3");
+        bskLogger.bskError("StarTracker: Propagation matrix must be 3x3");
         return;
     }
     this->AMatrix = propMatrix;

@@ -62,7 +62,7 @@ public:
         if (points.cols() != (nArgs + 1)) {
             auto error =
                 "Expected points to have exactly " + std::to_string(nArgs + 1) + " columns.";
-            this->bskLogger.bskLog(BSK_ERROR, "%s", error.c_str());
+            this->bskLogger.bskError("%s", error.c_str());
             throw std::invalid_argument(error);
         }
 
@@ -70,7 +70,7 @@ public:
             auto error =
                 "Provided 'degrees' is higher or equal than number of data points (illegal for "
                 "interpolation).";
-            this->bskLogger.bskLog(BSK_ERROR, "%s", error);
+            this->bskLogger.bskError("%s", error);
             throw std::invalid_argument(error);
         }
 
@@ -130,7 +130,7 @@ public:
         if (this->xMin == 0 && this->xMax == 0) {
             auto error = "Tried to call Reset or UpdateState on Interpolator before setDataPoints "
                          "was called.";
-            this->bskLogger.bskLog(BSK_ERROR, "%s", error);
+            this->bskLogger.bskError("%s", error);
             throw std::invalid_argument(error);
         }
 

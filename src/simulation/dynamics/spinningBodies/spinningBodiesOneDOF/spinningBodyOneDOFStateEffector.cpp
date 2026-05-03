@@ -70,7 +70,7 @@ void SpinningBodyOneDOFStateEffector::Reset(uint64_t CurrentClock)
         this->sHat_S.normalize();
     }
     else {
-        bskLogger.bskLog(BSK_ERROR, "Norm of sHat must be greater than 0. sHat may not have been set by the user.");
+        bskLogger.bskError("Norm of sHat must be greater than 0. sHat may not have been set by the user.");
     }
 }
 
@@ -154,7 +154,7 @@ void SpinningBodyOneDOFStateEffector::registerStates(DynParamManager& states)
 void SpinningBodyOneDOFStateEffector::addDynamicEffector(DynamicEffector *newDynamicEffector, int segment)
 {
     if (segment != 1) {
-        bskLogger.bskLog(BSK_ERROR, "Specifying attachment to a non-existent spinning bodies linkage.");
+        bskLogger.bskError("Specifying attachment to a non-existent spinning bodies linkage.");
     }
 
     this->assignStateParamNames<DynamicEffector *>(newDynamicEffector);

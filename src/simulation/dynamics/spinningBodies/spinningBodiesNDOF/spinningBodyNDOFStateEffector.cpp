@@ -47,14 +47,14 @@ SpinningBodyNDOFStateEffector::~SpinningBodyNDOFStateEffector()
 void SpinningBodyNDOFStateEffector::Reset(uint64_t CurrentClock)
 {
     if (this->spinningBodyVec.back()->mass <= 0.0)
-        bskLogger.bskLog(BSK_ERROR, "The mass of the last element must be greater than 0.");
+        bskLogger.bskError("The mass of the last element must be greater than 0.");
 }
 
 void SpinningBody::setMass(double mass) {
     if (mass >= 0.0)
         this->mass = mass;
     else {
-        bskLogger.bskLog(BSK_ERROR, "Mass must be greater than or equal to 0.");
+        bskLogger.bskError("Mass must be greater than or equal to 0.");
     }
 }
 
@@ -63,7 +63,7 @@ void SpinningBody::setSHat_S(Eigen::Vector3d sHat_S) {
         this->sHat_S = sHat_S.normalized();
     }
     else {
-        bskLogger.bskLog(BSK_ERROR, "Norm of sHat must be greater than 0.");
+        bskLogger.bskError("Norm of sHat must be greater than 0.");
     }
 }
 
@@ -71,7 +71,7 @@ void SpinningBody::setK(double k) {
     if (k >= 0.0)
         this->k = k;
     else {
-        bskLogger.bskLog(BSK_ERROR, "k must be greater than or equal to 0.");
+        bskLogger.bskError("k must be greater than or equal to 0.");
     }
 }
 
@@ -79,7 +79,7 @@ void SpinningBody::setC(double c) {
     if (c >= 0.0)
         this->c = c;
     else {
-        bskLogger.bskLog(BSK_ERROR, "c must be greater than or equal to 0.");
+        bskLogger.bskError("c must be greater than or equal to 0.");
     }
 }
 
@@ -201,7 +201,7 @@ void SpinningBodyNDOFStateEffector::registerStates(DynParamManager& states)
 void SpinningBodyNDOFStateEffector::addDynamicEffector(DynamicEffector *newDynamicEffector, int segment)
 {
     if (segment <= 0 || segment > this->numberOfDegreesOfFreedom) {
-        bskLogger.bskLog(BSK_ERROR, "Specifying attachment to a non-existent spinning bodies linkage.");
+        bskLogger.bskError("Specifying attachment to a non-existent spinning bodies linkage.");
     } else {
         this->spinningBodyVec[segment-1]->assignStateParamNames(newDynamicEffector);
         this->spinningBodyVec[segment-1]->dynEffectors.push_back(newDynamicEffector);

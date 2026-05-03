@@ -42,8 +42,7 @@ SimpleInstrument::~SimpleInstrument(){
 void SimpleInstrument::evaluateDataModel(DataNodeUsageMsgPayload *dataUsageSimMsg, double currentTime){
     dataUsageSimMsg->baudRate = this->nodeBaudRate;
     if (std::memchr(this->nodeDataName, '\0', sizeof(this->nodeDataName)) == nullptr) {
-        bskLogger.bskLog(BSK_ERROR,
-                         "SimpleInstrument: nodeDataName is not null-terminated within %zu characters.",
+        bskLogger.bskError("SimpleInstrument: nodeDataName is not null-terminated within %zu characters.",
                          sizeof(this->nodeDataName));
     }
     std::snprintf(dataUsageSimMsg->dataName, sizeof(dataUsageSimMsg->dataName), "%s", this->nodeDataName);

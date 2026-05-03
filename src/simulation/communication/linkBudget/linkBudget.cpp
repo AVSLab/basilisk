@@ -72,10 +72,10 @@ void LinkBudget::Reset(uint64_t CurrentSimNanos)
 {
     // check that required input messages are connected
     if (!this->antennaInPayload_1.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "LinkBudget.antennaInPayload_1 was not linked.");
+        bskLogger.bskError("LinkBudget.antennaInPayload_1 was not linked.");
     }
     if (!this->antennaInPayload_2.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "LinkBudget.antennaInPayload_2 was not linked.");
+        bskLogger.bskError("LinkBudget.antennaInPayload_2 was not linked.");
     }
     this->initialization();
 }
@@ -94,7 +94,7 @@ void LinkBudget::initialization()
         this->env2 == AntennaTypes::EnvironmentType::ENVIRONMENT_EARTH) {
         // -------- Both antennas are on EARTH --> not supported --------
         this->antennaPlacement = LinkBudgetTypes::AntennaPlacement::_UNKNOWN_BLOCKED;
-        bskLogger.bskLog(BSK_ERROR, "This module does currently not support link budget calculations between two ground stations.");
+        bskLogger.bskError("This module does currently not support link budget calculations between two ground stations.");
         return;
     } else if (this->env1 == AntennaTypes::EnvironmentType::ENVIRONMENT_EARTH &&
                this->env2 == AntennaTypes::EnvironmentType::ENVIRONMENT_SPACE) {
@@ -118,7 +118,7 @@ void LinkBudget::initialization()
     } else {
         // robustness case: unknown antenna environments
         this->antennaPlacement = LinkBudgetTypes::AntennaPlacement::_UNKNOWN_BLOCKED;
-        bskLogger.bskLog(BSK_ERROR, "LinkBudget: Unable to determine antenna placement type.");
+        bskLogger.bskError("LinkBudget: Unable to determine antenna placement type.");
         return;
     }
 
@@ -212,7 +212,7 @@ void LinkBudget::calculateFSPL()
 //    std::cout<<"z components are: "<<this->antennaIn_1.r_AN_N[2]<<"and second component is "<<this->antennaIn_2.r_AN_N[2]<<std::endl;
 //    std::cout<<"Distance is : "<<distance<<std::endl;
     if (this->distance <= 0.0) {
-        bskLogger.bskLog(BSK_ERROR, "LinkBudget: Distance between antennas is zero or negative.");
+        bskLogger.bskError("LinkBudget: Distance between antennas is zero or negative.");
     }
     if (this->distance <= 10.0*1e3) {
         bskLogger.bskLog(BSK_WARNING, "LinkBudget: You are calculating a linkBudget for a distance below 10 km. the gaussian-beam assumption might be inaccurate at this range.");
@@ -368,7 +368,7 @@ void LinkBudget::generateLookupTable(LinkBudgetTypes::GasType gasType, LookupTab
     } else if (gasType == LinkBudgetTypes::GasType::WATER_VAPOR) {
         filename = this->waterVaporLookupFilePath.empty() ? "supportData/AtmRadioFreqDampData/waterVapour.json" : this->waterVaporLookupFilePath;
     } else {
-        bskLogger.bskLog(BSK_ERROR, "LinkBudget: Invalid gas type for lookup table generation.");
+        bskLogger.bskError("LinkBudget: Invalid gas type for lookup table generation.");
         return;
     }
     // Clear any existing data
@@ -394,7 +394,7 @@ void LinkBudget::generateLookupTable(LinkBudgetTypes::GasType gasType, LookupTab
     std::ifstream file(filePath);
     if (!file.is_open()) {
         std::string errorMsg = "LinkBudget: Unable to open lookup table file: " + filePath.string();
-        bskLogger.bskLog(BSK_ERROR, "%s", errorMsg.c_str());
+        bskLogger.bskError("%s", errorMsg.c_str());
         return;
     }
 
@@ -430,61 +430,61 @@ void LinkBudget::generateLookupTable(LinkBudgetTypes::GasType gasType, LookupTab
                 // Parse oxygen data line
                 size_t pos = line.find("\"f0\":");
                 if (pos == std::string::npos || sscanf(line.c_str() + pos, "\"f0\": %lf", &f0) != 1) {
-                    bskLogger.bskLog(BSK_ERROR, "LinkBudget: Error parsing f0 value in oxygen lookup table.");
+                    bskLogger.bskError("LinkBudget: Error parsing f0 value in oxygen lookup table.");
                 }
                 pos = line.find("\"a1\":");
                 if (pos == std::string::npos || sscanf(line.c_str() + pos, "\"a1\": %lf", &c1) != 1) {
-                    bskLogger.bskLog(BSK_ERROR, "LinkBudget: Error parsing a1 value in oxygen lookup table.");
+                    bskLogger.bskError("LinkBudget: Error parsing a1 value in oxygen lookup table.");
                 }
                 pos = line.find("\"a2\":");
                 if (pos == std::string::npos || sscanf(line.c_str() + pos, "\"a2\": %lf", &c2) != 1) {
-                    bskLogger.bskLog(BSK_ERROR, "LinkBudget: Error parsing a2 value in oxygen lookup table.");
+                    bskLogger.bskError("LinkBudget: Error parsing a2 value in oxygen lookup table.");
                 }
                 pos = line.find("\"a3\":");
                 if (pos == std::string::npos || sscanf(line.c_str() + pos, "\"a3\": %lf", &c3) != 1) {
-                    bskLogger.bskLog(BSK_ERROR, "LinkBudget: Error parsing a3 value in oxygen lookup table.");
+                    bskLogger.bskError("LinkBudget: Error parsing a3 value in oxygen lookup table.");
                 }
                 pos = line.find("\"a4\":");
                 if (pos == std::string::npos || sscanf(line.c_str() + pos, "\"a4\": %lf", &c4) != 1) {
-                    bskLogger.bskLog(BSK_ERROR, "LinkBudget: Error parsing a4 value in oxygen lookup table.");
+                    bskLogger.bskError("LinkBudget: Error parsing a4 value in oxygen lookup table.");
                 }
                 pos = line.find("\"a5\":");
                 if (pos == std::string::npos || sscanf(line.c_str() + pos, "\"a5\": %lf", &c5) != 1) {
-                    bskLogger.bskLog(BSK_ERROR, "LinkBudget: Error parsing a5 value in oxygen lookup table.");
+                    bskLogger.bskError("LinkBudget: Error parsing a5 value in oxygen lookup table.");
                 }
                 pos = line.find("\"a6\":");
                 if (pos == std::string::npos || sscanf(line.c_str() + pos, "\"a6\": %lf", &c6) != 1) {
-                    bskLogger.bskLog(BSK_ERROR, "LinkBudget: Error parsing a6 value in oxygen lookup table.");
+                    bskLogger.bskError("LinkBudget: Error parsing a6 value in oxygen lookup table.");
                 }
             } else {
                 // Parse water vapor data line
                 size_t pos = line.find("\"f0\":");
                 if (pos == std::string::npos || sscanf(line.c_str() + pos, "\"f0\": %lf", &f0) != 1) {
-                    bskLogger.bskLog(BSK_ERROR, "LinkBudget: Error parsing f0 value in water vapor lookup table.");
+                    bskLogger.bskError("LinkBudget: Error parsing f0 value in water vapor lookup table.");
                 }
                 pos = line.find("\"b1\":");
                 if (pos == std::string::npos || sscanf(line.c_str() + pos, "\"b1\": %lf", &c1) != 1) {
-                    bskLogger.bskLog(BSK_ERROR, "LinkBudget: Error parsing b1 value in water vapor lookup table.");
+                    bskLogger.bskError("LinkBudget: Error parsing b1 value in water vapor lookup table.");
                 }
                 pos = line.find("\"b2\":");
                 if (pos == std::string::npos || sscanf(line.c_str() + pos, "\"b2\": %lf", &c2) != 1) {
-                    bskLogger.bskLog(BSK_ERROR, "LinkBudget: Error parsing b2 value in water vapor lookup table.");
+                    bskLogger.bskError("LinkBudget: Error parsing b2 value in water vapor lookup table.");
                 }
                 pos = line.find("\"b3\":");
                 if (pos == std::string::npos || sscanf(line.c_str() + pos, "\"b3\": %lf", &c3) != 1) {
-                    bskLogger.bskLog(BSK_ERROR, "LinkBudget: Error parsing b3 value in water vapor lookup table.");
+                    bskLogger.bskError("LinkBudget: Error parsing b3 value in water vapor lookup table.");
                 }
                 pos = line.find("\"b4\":");
                 if (pos == std::string::npos || sscanf(line.c_str() + pos, "\"b4\": %lf", &c4) != 1) {
-                    bskLogger.bskLog(BSK_ERROR, "LinkBudget: Error parsing b4 value in water vapor lookup table.");
+                    bskLogger.bskError("LinkBudget: Error parsing b4 value in water vapor lookup table.");
                 }
                 pos = line.find("\"b5\":");
                 if (pos == std::string::npos || sscanf(line.c_str() + pos, "\"b5\": %lf", &c5) != 1) {
-                    bskLogger.bskLog(BSK_ERROR, "LinkBudget: Error parsing b5 value in water vapor lookup table.");
+                    bskLogger.bskError("LinkBudget: Error parsing b5 value in water vapor lookup table.");
                 }
                 pos = line.find("\"b6\":");
                 if (pos == std::string::npos || sscanf(line.c_str() + pos, "\"b6\": %lf", &c6) != 1) {
-                    bskLogger.bskLog(BSK_ERROR, "LinkBudget: Error parsing b6 value in water vapor lookup table.");
+                    bskLogger.bskError("LinkBudget: Error parsing b6 value in water vapor lookup table.");
                 }
             }
 
@@ -612,8 +612,7 @@ void LinkBudget::writeOutputMessages(uint64_t CurrentSimNanos)
     linkBudgetOutPayloadBuffer = this->linkBudgetOutPayload.zeroMsgPayload;
     // populate the output message buffer
     if (std::memchr(this->antennaIn_1.antennaName, '\0', sizeof(this->antennaIn_1.antennaName)) == nullptr) {
-        bskLogger.bskLog(BSK_ERROR,
-                         "LinkBudget: antennaName1 is not null-terminated within %zu characters.",
+        bskLogger.bskError("LinkBudget: antennaName1 is not null-terminated within %zu characters.",
                          sizeof(this->antennaIn_1.antennaName));
     }
     std::snprintf(linkBudgetOutPayloadBuffer.antennaName1,
@@ -621,8 +620,7 @@ void LinkBudget::writeOutputMessages(uint64_t CurrentSimNanos)
                   "%s",
                   this->antennaIn_1.antennaName); // [-]  ID of antenna 1
     if (std::memchr(this->antennaIn_2.antennaName, '\0', sizeof(this->antennaIn_2.antennaName)) == nullptr) {
-        bskLogger.bskLog(BSK_ERROR,
-                         "LinkBudget: antennaName2 is not null-terminated within %zu characters.",
+        bskLogger.bskError("LinkBudget: antennaName2 is not null-terminated within %zu characters.",
                          sizeof(this->antennaIn_2.antennaName));
     }
     std::snprintf(linkBudgetOutPayloadBuffer.antennaName2,

@@ -40,7 +40,7 @@ void MJQPosStateData::propagateState(double dt, std::vector<double> pseudoStep)
         auto errorMsg = "State " + this->getName() + " has stochastic dynamics, but "
             + "the integrator tried to propagate it without pseudoSteps. Are you sure "
             + "you are using a stochastic integrator?";
-        bskLogger.bskLog(BSK_ERROR, "%s", errorMsg.c_str());
+        bskLogger.bskError("%s", errorMsg.c_str());
         throw std::invalid_argument(errorMsg);
     }
 

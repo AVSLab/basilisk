@@ -127,8 +127,7 @@ Eigen::MatrixXd* DynParamManager::getPropertyReference(std::string propName)
     std::map<std::string, Eigen::MatrixXd>::iterator it;
     it = dynProperties.find(propName);
     if (it == dynProperties.end()) {
-        bskLogger.bskLog(BSK_ERROR,
-                         "You requested the property: %s which doesn't exist.  Null returned.",
+        bskLogger.bskError("You requested the property: %s which doesn't exist.  Null returned.",
                          propName.c_str());
         return nullptr;
     }
@@ -142,8 +141,7 @@ void DynParamManager::setPropertyValue(const std::string propName, const Eigen::
     std::map<std::string, Eigen::MatrixXd>::iterator it;
     it = dynProperties.find(propName);
     if (it == dynProperties.end()) {
-        bskLogger.bskLog(BSK_ERROR,
-                         "You tried to set the property value for: %s which has not been created "
+        bskLogger.bskError("You tried to set the property value for: %s which has not been created "
                          "yet. I can't do that.",
                          propName.c_str());
     }

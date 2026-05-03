@@ -26,17 +26,17 @@ void JointMotionCompensator::Reset(uint64_t CurrentSimNanos)
 {
     // check that required input messages are connected
     if (!this->massMatrixInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "JointMotionCompensator.massMatrixInMsg was not linked.");
+        bskLogger.bskError("JointMotionCompensator.massMatrixInMsg was not linked.");
     }
     if (!this->reactionForcesInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "JointMotionCompensator.reactionForcesInMsg was not linked.");
+        bskLogger.bskError("JointMotionCompensator.reactionForcesInMsg was not linked.");
     }
     if (this->jointTorqueInMsgs.empty()) {
-        bskLogger.bskLog(BSK_ERROR, "JointMotionCompensator.jointTorqueInMsgs vector is empty.");
+        bskLogger.bskError("JointMotionCompensator.jointTorqueInMsgs vector is empty.");
     } else {
         for (size_t i = 0; i < this->jointTorqueInMsgs.size(); ++i) {
             if (!this->jointTorqueInMsgs[i].isLinked()) {
-                bskLogger.bskLog(BSK_ERROR, "JointMotionCompensator.jointTorqueInMsgs[%zu] was not linked.", i);
+                bskLogger.bskError("JointMotionCompensator.jointTorqueInMsgs[%zu] was not linked.", i);
             }
         }
     }
@@ -65,13 +65,13 @@ void JointMotionCompensator::UpdateState(uint64_t CurrentSimNanos)
                 ++numKinematicTrees;
                 // check that first joint in tree is free
                 if (jointType != 0) {
-                    bskLogger.bskLog(BSK_ERROR, "JointMotionCompensator: first joint in kinematic tree %d is not a free joint.", tree);
+                    bskLogger.bskError("JointMotionCompensator: first joint in kinematic tree %d is not a free joint.", tree);
                 }
                 info.freeJointIdx = static_cast<int>(joint);
             } else {
                 // subsequent joints are hinges
                 if (jointType != 3) {
-                    bskLogger.bskLog(BSK_ERROR, "JointMotionCompensator: joint %zu in kinematic tree %d is not a hinged joint.", joint, tree);
+                    bskLogger.bskError("JointMotionCompensator: joint %zu in kinematic tree %d is not a hinged joint.", joint, tree);
                 }
                 info.hingeJointIdxs.push_back(static_cast<int>(joint));
                 info.hingeGlobalIdxs.push_back(nextHingeIdx);
@@ -80,10 +80,10 @@ void JointMotionCompensator::UpdateState(uint64_t CurrentSimNanos)
         }
 
         if (this->numHingedJoints != nextHingeIdx) {
-            bskLogger.bskLog(BSK_ERROR, "JointMotionCompensator: numHingedJoints does not match the number of hinge joints found in the kinematic trees.");
+            bskLogger.bskError("JointMotionCompensator: numHingedJoints does not match the number of hinge joints found in the kinematic trees.");
         }
         if (this->numSpacecraft != numKinematicTrees) {
-            bskLogger.bskLog(BSK_ERROR, "JointMotionCompensator: numSpacecraft does not match the number of kinematic trees found in the system.");
+            bskLogger.bskError("JointMotionCompensator: numSpacecraft does not match the number of kinematic trees found in the system.");
         }
         this->treeInfoInitialized = true;
     }
@@ -186,7 +186,7 @@ void JointMotionCompensator::UpdateState(uint64_t CurrentSimNanos)
     // Apply saturation if uMax is set
     if (!this->uMax.empty()) {
         if (static_cast<int>(this->uMax.size()) != this->numSpacecraft * 3) {
-            bskLogger.bskLog(BSK_ERROR, "JointMotionCompensator: size of uMax does not match 3 x number of spacecraft.");
+            bskLogger.bskError("JointMotionCompensator: size of uMax does not match 3 x number of spacecraft.");
         }
         for (int i = 0; i < this->numSpacecraft * 3; ++i) {
             hubTorques(i) = std::max(-this->uMax[i], std::min(this->uMax[i], hubTorques(i)));
@@ -207,7 +207,7 @@ void JointMotionCompensator::setUMax(std::vector<double> var)
     // Check each entry is non-negative
     for (size_t i = 0; i < var.size(); ++i) {
         if (var[i] < 0.0) {
-            bskLogger.bskLog(BSK_ERROR, "JointMotionCompensator: uMax[%zu] is negative.", i);
+            bskLogger.bskError("JointMotionCompensator: uMax[%zu] is negative.", i);
         }
     }
 

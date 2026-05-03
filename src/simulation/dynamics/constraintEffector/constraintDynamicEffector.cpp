@@ -42,10 +42,10 @@ void ConstraintDynamicEffector::Reset(uint64_t CurrentSimNanos)
     // check if any individual gains are not specified
     bool gainset = this->k_d != 0 || this->c_d != 0 || this->k_a != 0 || this->c_a != 0;
     if (this->alpha <= 0 && !gainset) {
-        bskLogger.bskLog(BSK_ERROR, "Alpha must be set to a positive nonzero value prior to initialization");
+        bskLogger.bskError("Alpha must be set to a positive nonzero value prior to initialization");
     }
     if (this->beta <= 0 && !gainset) {
-        bskLogger.bskLog(BSK_ERROR, "Beta must be set to a positive nonzero value prior to initializaiton");
+        bskLogger.bskError("Beta must be set to a positive nonzero value prior to initializaiton");
     }
     // if individual k's or c's are already set, don't use alpha & beta
     if (this->k_d == 0) {
@@ -82,7 +82,7 @@ void ConstraintDynamicEffector::setAlpha(double alpha) {
     if (alpha > 0.0)
         this->alpha = alpha;
     else {
-        bskLogger.bskLog(BSK_ERROR, "Proportional gain tuning variable alpha must be greater than 0.");
+        bskLogger.bskError("Proportional gain tuning variable alpha must be greater than 0.");
     }
 }
 
@@ -90,7 +90,7 @@ void ConstraintDynamicEffector::setBeta(double beta) {
     if (beta > 0.0)
         this->beta = beta;
     else {
-        bskLogger.bskLog(BSK_ERROR, "Derivative gain tuning parameter beta must be greater than 0.");
+        bskLogger.bskError("Derivative gain tuning parameter beta must be greater than 0.");
     }
 }
 
@@ -98,7 +98,7 @@ void ConstraintDynamicEffector::setK_d(double k_d) {
     if (k_d > 0.0)
         this->k_d = k_d;
     else {
-        bskLogger.bskLog(BSK_ERROR, "Direction constraint proportional gain k_d must be greater than 0.");
+        bskLogger.bskError("Direction constraint proportional gain k_d must be greater than 0.");
     }
 }
 
@@ -106,7 +106,7 @@ void ConstraintDynamicEffector::setC_d(double c_d) {
     if (c_d > 0.0)
         this->c_d = c_d;
     else {
-        bskLogger.bskLog(BSK_ERROR, "Direction constraint derivative gain c_d must be greater than 0.");
+        bskLogger.bskError("Direction constraint derivative gain c_d must be greater than 0.");
     }
 }
 
@@ -114,7 +114,7 @@ void ConstraintDynamicEffector::setK_a(double k_a) {
     if (k_a > 0.0)
         this->k_a = k_a;
     else {
-        bskLogger.bskLog(BSK_ERROR, "Attitude constraint proportional gain k_a must be greater than 0.");
+        bskLogger.bskError("Attitude constraint proportional gain k_a must be greater than 0.");
     }
 }
 
@@ -122,7 +122,7 @@ void ConstraintDynamicEffector::setC_a(double c_a) {
     if (c_a > 0.0)
         this->c_a = c_a;
     else {
-        bskLogger.bskLog(BSK_ERROR, "Attitude constraint derivative gain c_a must be greater than 0.");
+        bskLogger.bskError("Attitude constraint derivative gain c_a must be greater than 0.");
     }
 }
 
@@ -130,7 +130,7 @@ void ConstraintDynamicEffector::setStateNameOfPosition(std::string value) {
     if (!value.empty()) {
         this->stateNameOfPosition.push_back(value);
     } else {
-        bskLogger.bskLog(BSK_ERROR, "ConstraintDynamicEffector: stateNameOfPosition variable must be a non-empty string");
+        bskLogger.bskError("ConstraintDynamicEffector: stateNameOfPosition variable must be a non-empty string");
     }
 }
 
@@ -138,7 +138,7 @@ void ConstraintDynamicEffector::setStateNameOfVelocity(std::string value) {
     if (!value.empty()) {
         this->stateNameOfVelocity.push_back(value);
     } else {
-        bskLogger.bskLog(BSK_ERROR, "ConstraintDynamicEffector: stateNameOfVelocity variable must be a non-empty string");
+        bskLogger.bskError("ConstraintDynamicEffector: stateNameOfVelocity variable must be a non-empty string");
     }
 }
 
@@ -146,7 +146,7 @@ void ConstraintDynamicEffector::setStateNameOfSigma(std::string value) {
     if (!value.empty()) {
         this->stateNameOfSigma.push_back(value);
     } else {
-        bskLogger.bskLog(BSK_ERROR, "ConstraintDynamicEffector: stateNameOfSigma variable must be a non-empty string");
+        bskLogger.bskError("ConstraintDynamicEffector: stateNameOfSigma variable must be a non-empty string");
     }
 }
 
@@ -154,7 +154,7 @@ void ConstraintDynamicEffector::setStateNameOfOmega(std::string value) {
     if (!value.empty()) {
         this->stateNameOfOmega.push_back(value);
     } else {
-        bskLogger.bskLog(BSK_ERROR, "ConstraintDynamicEffector: stateNameOfOmega variable must be a non-empty string");
+        bskLogger.bskError("ConstraintDynamicEffector: stateNameOfOmega variable must be a non-empty string");
     }
 }
 
@@ -162,7 +162,7 @@ void ConstraintDynamicEffector::setPropName_inertialPosition(std::string value) 
     if (!value.empty()) {
         this->propName_inertialPosition.push_back(value);
     } else {
-        bskLogger.bskLog(BSK_ERROR, "ConstraintDynamicEffector: propName_inertialPosition variable must be a non-empty string");
+        bskLogger.bskError("ConstraintDynamicEffector: propName_inertialPosition variable must be a non-empty string");
     }
 }
 
@@ -170,7 +170,7 @@ void ConstraintDynamicEffector::setPropName_inertialVelocity(std::string value) 
     if (!value.empty()) {
         this->propName_inertialVelocity.push_back(value);
     } else {
-        bskLogger.bskLog(BSK_ERROR, "ConstraintDynamicEffector: propName_inertialVelocity variable must be a non-empty string");
+        bskLogger.bskError("ConstraintDynamicEffector: propName_inertialVelocity variable must be a non-empty string");
     }
 }
 
@@ -178,7 +178,7 @@ void ConstraintDynamicEffector::setPropName_inertialAttitude(std::string value) 
     if (!value.empty()) {
         this->propName_inertialAttitude.push_back(value);
     } else {
-        bskLogger.bskLog(BSK_ERROR, "ConstraintDynamicEffector: propName_inertialAttitude variable must be a non-empty string");
+        bskLogger.bskError("ConstraintDynamicEffector: propName_inertialAttitude variable must be a non-empty string");
     }
 }
 
@@ -186,7 +186,7 @@ void ConstraintDynamicEffector::setPropName_inertialAngVelocity(std::string valu
     if (!value.empty()) {
         this->propName_inertialAngVelocity.push_back(value);
     } else {
-        bskLogger.bskLog(BSK_ERROR, "ConstraintDynamicEffector: propName_inertialAngVelocity variable must be a non-empty string");
+        bskLogger.bskError("ConstraintDynamicEffector: propName_inertialAngVelocity variable must be a non-empty string");
     }
 }
 
@@ -208,7 +208,7 @@ void ConstraintDynamicEffector::setFilter_Data(double wc, double h, double k){
     this->e = num_coeffs[0]/denom_coeffs[2];
     }
     else{
-        bskLogger.bskLog(BSK_ERROR, "Cut off frequency of low pass filter w_c must be greater than 0.");
+        bskLogger.bskError("Cut off frequency of low pass filter w_c must be greater than 0.");
     }
 }
 
@@ -230,7 +230,7 @@ void ConstraintDynamicEffector::readInputMessage(){
 void ConstraintDynamicEffector::linkInStates(DynParamManager& states)
 {
     if (this->scInitCounter > 1) {
-        bskLogger.bskLog(BSK_ERROR, "constraintDynamicEffector: tried to attach more than 2 parents");
+        bskLogger.bskError("constraintDynamicEffector: tried to attach more than 2 parents");
     }
 
     int stateIdx = -1;
@@ -263,7 +263,7 @@ void ConstraintDynamicEffector::linkInStates(DynParamManager& states)
  */
 void ConstraintDynamicEffector::linkInProperties(DynParamManager& properties){
     if (this->scInitCounter > 1) {
-        bskLogger.bskLog(BSK_ERROR, "constraintDynamicEffector: tried to attach more than 2 parents");
+        bskLogger.bskError("constraintDynamicEffector: tried to attach more than 2 parents");
     }
 
     int propIdx = -1;

@@ -41,7 +41,7 @@ void SimpleMassProps::Reset(uint64_t CurrentSimNanos)
     // check if input message is linked
     if (!this->scMassPropsInMsg.isLinked())
     {
-        bskLogger.bskLog(BSK_ERROR, "simpleMassProps.scMassPropsInMsg is not linked.");
+        bskLogger.bskError("simpleMassProps.scMassPropsInMsg is not linked.");
     }
 
     // zero the incoming message buffer

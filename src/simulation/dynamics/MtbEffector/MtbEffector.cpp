@@ -44,13 +44,13 @@ void MtbEffector::Reset(uint64_t CurrentSimNanos)
      * Check that required input messages are connected.
      */
     if (!this->mtbCmdInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "MtbEffector.mtbCmdInMsg was not linked.");
+        bskLogger.bskError("MtbEffector.mtbCmdInMsg was not linked.");
     }
     if (!this->magInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "MtbEffector.magInMsg was not linked.");
+        bskLogger.bskError("MtbEffector.magInMsg was not linked.");
     }
     if (!this->mtbParamsInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "MtbEffector.mtbParamsInMsg was not linked.");
+        bskLogger.bskError("MtbEffector.mtbParamsInMsg was not linked.");
     }
 
     /*

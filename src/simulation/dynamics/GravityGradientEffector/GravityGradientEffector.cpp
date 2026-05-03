@@ -44,7 +44,7 @@ void GravityGradientEffector::Reset(uint64_t CurrentSimNanos)
     this->forceExternal_N.fill(0.0);
 
     if (this->planetPropertyNames.size()==0) {
-        bskLogger.bskLog(BSK_ERROR, "planetPropertyNames array is empty, you must specify at least one planet using addPlanetName().");
+        bskLogger.bskError("planetPropertyNames array is empty, you must specify at least one planet using addPlanetName().");
     }
 
     /* empty the vector of planet state pointers */

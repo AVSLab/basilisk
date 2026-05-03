@@ -77,20 +77,17 @@ CannonballDrag::UpdateState(uint64_t CurrentSimNanos)
 void CannonballDrag::Reset(uint64_t /*CurrentSimNanos*/)
 {
     if (!this->atmoDensInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR,
-            "CannonballDrag: atmoDensInMsg is not linked. "
+        bskLogger.bskError("CannonballDrag: atmoDensInMsg is not linked. "
             "Call atmoDensInMsg.subscribeTo(<AtmoPropsMsg>) before simulation.");
     }
 
     if (!this->dragGeometryInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR,
-            "CannonballDrag: dragGeometryInMsg is not linked. "
+        bskLogger.bskError("CannonballDrag: dragGeometryInMsg is not linked. "
             "Call dragGeometryInMsg.subscribeTo(<DragGeometryMsg>) before simulation.");
     }
 
     if (!this->referenceFrameStateInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR,
-            "CannonballDrag: referenceFrameStateInMsg is not linked. "
+        bskLogger.bskError("CannonballDrag: referenceFrameStateInMsg is not linked. "
             "Call referenceFrameStateInMsg.subscribeTo(<SiteStateMsg>) before simulation.");
     }
 }

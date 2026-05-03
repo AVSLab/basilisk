@@ -121,10 +121,10 @@ void CoarseSunSensor::Reset(uint64_t CurrentSimNanos)
 {
     //! - If either messages is not valid, send a warning message
     if(!this->sunInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "CoarseSunSensor: Failed to link a sun sensor input message");
+        bskLogger.bskError("CoarseSunSensor: Failed to link a sun sensor input message");
     }
     if(!this->stateInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "CoarseSunSensor: Failed to link a spacecraft state input message");
+        bskLogger.bskError("CoarseSunSensor: Failed to link a spacecraft state input message");
     }
 
     Eigen::VectorXd nMatrix;
@@ -449,7 +449,7 @@ void CSSConstellation::appendCSS(CoarseSunSensor* newSensor) {
 void CoarseSunSensor::setAMatrix(const Eigen::Matrix<double, -1, 1, 0, -1, 1>& propMatrix)
 {
     if(propMatrix.rows() != 1 || propMatrix.cols() != 1) {
-        bskLogger.bskLog(BSK_ERROR, "CoarseSunSensor: Propagation matrix must be 1x1");
+        bskLogger.bskError("CoarseSunSensor: Propagation matrix must be 1x1");
         return;
     }
     this->propagationMatrix = propMatrix;

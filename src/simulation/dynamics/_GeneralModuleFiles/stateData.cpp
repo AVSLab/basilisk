@@ -69,7 +69,7 @@ void StateData::propagateState(double dt, std::vector<double> pseudoStep)
         auto errorMsg = "State " + this->getName() + " has stochastic dynamics, but "
             + "the integrator tried to propagate it without pseudoSteps. Are you sure "
             + "you are using a stochastic integrator?";
-        bskLogger.bskLog(BSK_ERROR, "%s", errorMsg.c_str());
+        bskLogger.bskError("%s", errorMsg.c_str());
         throw std::invalid_argument(errorMsg);
     }
 
@@ -95,7 +95,7 @@ void StateData::setDiffusion(const Eigen::MatrixXd & newDiffusion, size_t index)
     {
         auto errorMsg = "Tried to set diffusion index greater than number of noise sources configured: "
             + std::to_string(index) + " >= " + std::to_string(stateDiffusion.size());
-        bskLogger.bskLog(BSK_ERROR, "%s", errorMsg.c_str());
+        bskLogger.bskError("%s", errorMsg.c_str());
         throw std::out_of_range(errorMsg);
     }
 }

@@ -56,13 +56,13 @@ WaypointReference::~WaypointReference()
 void WaypointReference::Reset(uint64_t CurrentSimNanos)
 {
     if (this->dataFileName.length() == 0) {
-        bskLogger.bskLog(BSK_ERROR, "WaypointReference: dataFileName must be an non-empty string.");
+        bskLogger.bskError("WaypointReference: dataFileName must be an non-empty string.");
     }
 
     /* open the data file*/
     this->fileHandle = new std::ifstream(this->dataFileName);
     if (this->fileHandle->fail()) {
-        bskLogger.bskLog(BSK_ERROR, "WaypointReference: was not able to load the file %s.", this->dataFileName.c_str());
+        bskLogger.bskError("WaypointReference: was not able to load the file %s.", this->dataFileName.c_str());
     }
 
 	/* read and bypass header line(s) */
@@ -199,7 +199,7 @@ void WaypointReference::pullDataLine(uint64_t *t, AttRefMsgPayload *attRefMsg_t)
 				EP2MRP(att4Norm, attRefMsg_t->sigma_RN);
 				break;
 			default:
-			    bskLogger.bskLog(BSK_ERROR, "WaypointReference: the attitude type provided is invalid.");
+			    bskLogger.bskError("WaypointReference: the attitude type provided is invalid.");
 		}
 
 		if (this->useReferenceFrame == false) {

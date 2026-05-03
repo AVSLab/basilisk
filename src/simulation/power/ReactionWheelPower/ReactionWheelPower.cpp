@@ -43,7 +43,7 @@ ReactionWheelPower::~ReactionWheelPower(){
 void ReactionWheelPower::customReset(uint64_t CurrentSimNanos)
 {
     if (this->elecToMechEfficiency <= 0.0) {
-        bskLogger.bskLog(BSK_ERROR, "PowerRW: elecToMechEfficiency is %f, must a strictly positive value.",
+        bskLogger.bskError("PowerRW: elecToMechEfficiency is %f, must a strictly positive value.",
                          this->elecToMechEfficiency);
     }
     return;

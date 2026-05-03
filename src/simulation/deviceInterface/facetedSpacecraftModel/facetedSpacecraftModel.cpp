@@ -31,15 +31,13 @@ FacetedSpacecraftModel::~FacetedSpacecraftModel() {
 */
 void FacetedSpacecraftModel::Reset(uint64_t callTime) {
     if (this->numArticulatedFacets > this->numFacets) {
-        this->bskLogger->bskLog(BSK_ERROR,
-                        "FacetedSpacecraftModel: numArticulatedFacets cannot be greater than total numFacets");
+        this->bskLogger->bskError("FacetedSpacecraftModel: numArticulatedFacets cannot be greater than total numFacets");
         return;
     }
     if (this->facetElementInMsgs.size() != this->numFacets ||
         this->facetElementBodyOutMsgs.size() != this->numFacets ||
         this->articulatedFacetDataInMsgs.size() != this->numArticulatedFacets) {
-            this->bskLogger->bskLog(BSK_ERROR,
-                                    "FacetedSpacecraftModel: Message vector size mismatch during Reset.");
+            this->bskLogger->bskError("FacetedSpacecraftModel: Message vector size mismatch during Reset.");
             return;
         }
 
@@ -70,8 +68,7 @@ void FacetedSpacecraftModel::Reset(uint64_t callTime) {
     // Read faceted spacecraft element messages
     for (uint64_t idx = 0; idx < this->numFacets; idx++) {
         if (!this->facetElementInMsgs[idx].isLinked() || !this->facetElementInMsgs[idx].isWritten()) {
-            this->bskLogger->bskLog(BSK_ERROR,
-                                    "FacetedSpacecraftModel: Input message is not linked or written.");
+            this->bskLogger->bskError("FacetedSpacecraftModel: Input message is not linked or written.");
             return;
         }
 
@@ -121,8 +118,7 @@ void FacetedSpacecraftModel::UpdateState(uint64_t callTime) {
         this->facetRotHat_FList.size() != this->numFacets ||
         this->facetDcm_F0BList.size() != this->numFacets ||
         this->facetR_FB_BList.size() != this->numFacets) {
-        this->bskLogger->bskLog(BSK_ERROR,
-                                "FacetedSpacecraftModel: UpdateState() called before successful Reset().");
+        this->bskLogger->bskError("FacetedSpacecraftModel: UpdateState() called before successful Reset().");
         return;
     }
 
@@ -130,8 +126,7 @@ void FacetedSpacecraftModel::UpdateState(uint64_t callTime) {
     std::vector<double> articulatedFacetAngleList;
     for (uint64_t idx = 0; idx < this->numArticulatedFacets; idx++) {
         if (!this->articulatedFacetDataInMsgs[idx].isLinked() || !this->articulatedFacetDataInMsgs[idx].isWritten()) {
-            this->bskLogger->bskLog(BSK_ERROR,
-                                    "FacetedSpacecraftModel: Articulated facet input message is not linked or written.");
+            this->bskLogger->bskError("FacetedSpacecraftModel: Articulated facet input message is not linked or written.");
             return;
         }
         articulatedFacetAngleList.push_back(this->articulatedFacetDataInMsgs[idx]().theta);
@@ -200,8 +195,7 @@ void FacetedSpacecraftModel::addArticulatedFacet(Message<HingedRigidBodyMsgPaylo
         // Update number of articulated facets
         this->numArticulatedFacets = static_cast<uint64_t>(this->articulatedFacetDataInMsgs.size());
         if (this->numArticulatedFacets > this->numFacets) {
-            this->bskLogger->bskLog(BSK_ERROR,
-                                    "FacetedSpacecraftModel: addArticulatedFacet() called more times than number of set total facets.");
+            this->bskLogger->bskError("FacetedSpacecraftModel: addArticulatedFacet() called more times than number of set total facets.");
         }
     }
 }
@@ -229,8 +223,7 @@ void FacetedSpacecraftModel::setNumTotalFacets(const uint64_t numFacets) {
     this->articulatedFacetDataInMsgs = this->articulatedFacetRequestInMsgs;
     this->numArticulatedFacets = static_cast<uint64_t>(this->articulatedFacetDataInMsgs.size());
     if (this->numArticulatedFacets > this->numFacets) {
-        this->bskLogger->bskLog(BSK_ERROR,
-                                "FacetedSpacecraftModel:  numArticulatedFacets cannot be greater than number of set total facets.");
+        this->bskLogger->bskError("FacetedSpacecraftModel:  numArticulatedFacets cannot be greater than number of set total facets.");
     }
 }
 

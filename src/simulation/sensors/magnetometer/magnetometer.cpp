@@ -83,11 +83,11 @@ Eigen::Matrix3d Magnetometer::setBodyToSensorDCM(double yaw, double pitch, doubl
 void Magnetometer::Reset(uint64_t CurrentSimNanos)
 {
     if (!this->magInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "Magnetic field interface message name (magInMsg) is empty.");
+        bskLogger.bskError("Magnetic field interface message name (magInMsg) is empty.");
     }
 
     if (!this->stateInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "Spacecraft state message name (stateInMsg) is empty.");
+        bskLogger.bskError("Spacecraft state message name (stateInMsg) is empty.");
     }
 
     // Only apply noise if user has configured it

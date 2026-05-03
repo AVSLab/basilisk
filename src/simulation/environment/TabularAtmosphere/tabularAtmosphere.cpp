@@ -52,15 +52,15 @@ void TabularAtmosphere::customReset(uint64_t CurrentClock)
 
 
     if((this->altList_length != this->rhoList_length) || (this->altList_length != this->tempList_length)){
-        bskLogger.bskLog(BSK_ERROR, "Input arrays not of equal length.");
+        bskLogger.bskError("Input arrays not of equal length.");
     }
 
     if(this->altList_length == 0){
-        bskLogger.bskLog(BSK_ERROR, "No data in altitude list.");
+        bskLogger.bskError("No data in altitude list.");
     } else if(this->rhoList_length == 0){
-        bskLogger.bskLog(BSK_ERROR, "No data in density list.");
+        bskLogger.bskError("No data in density list.");
     } else if(this->tempList_length == 0){
-        bskLogger.bskLog(BSK_ERROR, "No data in temperature list.");
+        bskLogger.bskError("No data in temperature list.");
     }
 
     return;

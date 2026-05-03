@@ -23,71 +23,56 @@ void JointArrayRefProfiler::Reset(uint64_t CurrentSimNanos)
 {
     // check that required input messages are connected
     if (this->jointStatesInMsgs.empty()) {
-        bskLogger.bskLog(BSK_ERROR, "JointArrayRefProfiler.jointStatesInMsgs vector is empty.");
+        bskLogger.bskError("JointArrayRefProfiler.jointStatesInMsgs vector is empty.");
     } else {
         if (this->jointStatesInMsgs.size() != static_cast<std::size_t>(this->numHingedJoints)) {
-            bskLogger.bskLog(BSK_ERROR, "JointArrayRefProfiler.jointStatesInMsgs size does not match numHingedJoints.");
+            bskLogger.bskError("JointArrayRefProfiler.jointStatesInMsgs size does not match numHingedJoints.");
         }
         for (std::size_t i = 0; i < this->jointStatesInMsgs.size(); ++i) {
             if (!this->jointStatesInMsgs[i].isLinked()) {
-                bskLogger.bskLog(BSK_ERROR, "JointArrayRefProfiler.jointStatesInMsgs[%zu] was not linked.", i);
+                bskLogger.bskError("JointArrayRefProfiler.jointStatesInMsgs[%zu] was not linked.", i);
             }
         }
     }
     if (this->jointStateDotsInMsgs.empty()) {
-        bskLogger.bskLog(BSK_ERROR, "JointArrayRefProfiler.jointStateDotsInMsgs vector is empty.");
+        bskLogger.bskError("JointArrayRefProfiler.jointStateDotsInMsgs vector is empty.");
     } else {
         if (this->jointStateDotsInMsgs.size() != static_cast<std::size_t>(this->numHingedJoints)) {
-            bskLogger.bskLog(BSK_ERROR, "JointArrayRefProfiler.jointStateDotsInMsgs size does not match numHingedJoints.");
+            bskLogger.bskError("JointArrayRefProfiler.jointStateDotsInMsgs size does not match numHingedJoints.");
         }
         for (std::size_t i = 0; i < this->jointStateDotsInMsgs.size(); ++i) {
             if (!this->jointStateDotsInMsgs[i].isLinked()) {
-                bskLogger.bskLog(BSK_ERROR, "JointArrayRefProfiler.jointStateDotsInMsgs[%zu] was not linked.", i);
+                bskLogger.bskError("JointArrayRefProfiler.jointStateDotsInMsgs[%zu] was not linked.", i);
             }
         }
     }
     if (!this->desJointStatesInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "JointArrayRefProfiler.desJointStatesInMsg was not linked.");
+        bskLogger.bskError("JointArrayRefProfiler.desJointStatesInMsg was not linked.");
     }
 
     // check that the profile type is set and valid
     if (this->profileType.empty()) {
-        this->bskLogger.bskLog(
-            BSK_ERROR,
-            "JointArrayRefProfiler.profileType is not set."
-        );
+        this->bskLogger.bskError("JointArrayRefProfiler.profileType is not set.");
     }
     const std::vector<std::string> validProfileTypes = {"lowPass", "linear", "cubic", "quintic"};
     if (std::find(validProfileTypes.begin(), validProfileTypes.end(), this->profileType) == validProfileTypes.end()) {
-        this->bskLogger.bskLog(
-            BSK_ERROR,
-            "JointArrayRefProfiler.profileType is not valid."
-        );
+        this->bskLogger.bskError("JointArrayRefProfiler.profileType is not valid.");
     }
 
     // check that wc and filterDt are positive if the profile type is low pass
     if (this->profileType == "lowPass") {
         if (this->wc <= 0.0) {
-            this->bskLogger.bskLog(
-                BSK_ERROR,
-                "JointArrayRefProfiler.wc must be positive."
-            );
+            this->bskLogger.bskError("JointArrayRefProfiler.wc must be positive.");
         }
         if (this->filterDt <= 0.0) {
-            this->bskLogger.bskLog(
-                BSK_ERROR,
-                "JointArrayRefProfiler.filterDt must be positive."
-            );
+            this->bskLogger.bskError("JointArrayRefProfiler.filterDt must be positive.");
         }
     }
 
     // check that profile duration is positive if the profile type is not low pass
     if (this->profileType != "lowPass") {
         if (this->profileDuration <= 0.0) {
-            this->bskLogger.bskLog(
-                BSK_ERROR,
-                "JointArrayRefProfiler.profileDuration must be positive."
-            );
+            this->bskLogger.bskError("JointArrayRefProfiler.profileDuration must be positive.");
         }
     }
 
@@ -101,27 +86,18 @@ void JointArrayRefProfiler::Reset(uint64_t CurrentSimNanos)
 void JointArrayRefProfiler::UpdateState(uint64_t CurrentSimNanos)
 {
     if (!this->desJointStatesInMsg.isWritten()) {
-        this->bskLogger.bskLog(BSK_ERROR, "JointArrayRefProfiler called before desired joint states message was written.");
+        this->bskLogger.bskError("JointArrayRefProfiler called before desired joint states message was written.");
     }
 
     JointArrayStateMsgPayload desJointStatesIn = this->desJointStatesInMsg();
     if (desJointStatesIn.states.size() != static_cast<std::size_t>(this->numHingedJoints)) {
-        this->bskLogger.bskLog(
-            BSK_ERROR,
-            "JointArrayRefProfiler.desJointStatesInMsg.states size does not match numHingedJoints."
-        );
+        this->bskLogger.bskError("JointArrayRefProfiler.desJointStatesInMsg.states size does not match numHingedJoints.");
     }
     if (desJointStatesIn.stateDots.size() != static_cast<std::size_t>(this->numHingedJoints)) {
-        this->bskLogger.bskLog(
-            BSK_ERROR,
-            "JointArrayRefProfiler.desJointStatesInMsg.stateDots size does not match numHingedJoints."
-        );
+        this->bskLogger.bskError("JointArrayRefProfiler.desJointStatesInMsg.stateDots size does not match numHingedJoints.");
     }
     if (desJointStatesIn.stateDDots.size() != static_cast<std::size_t>(this->numHingedJoints)) {
-        this->bskLogger.bskLog(
-            BSK_ERROR,
-            "JointArrayRefProfiler.desJointStatesInMsg.stateDDots size does not match numHingedJoints."
-        );
+        this->bskLogger.bskError("JointArrayRefProfiler.desJointStatesInMsg.stateDDots size does not match numHingedJoints.");
     }
 
     bool newDesiredStateMsg = false;

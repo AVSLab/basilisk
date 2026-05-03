@@ -60,12 +60,12 @@ void GroundMapping::Reset(uint64_t CurrentSimNanos)
 {
     // check that required input messages are connected
     if (!this->scStateInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "GroundMapping.scStateInMsg was not linked.");
+        bskLogger.bskError("GroundMapping.scStateInMsg was not linked.");
     }
 
     // check that the direction of the camera is provided
     if (this->nHat_B.isZero()){
-        bskLogger.bskLog(BSK_ERROR, "GroundMapping.nHat_B vector not set.");
+        bskLogger.bskError("GroundMapping.nHat_B vector not set.");
     }
 }
 

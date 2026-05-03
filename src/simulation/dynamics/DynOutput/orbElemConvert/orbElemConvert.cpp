@@ -50,13 +50,13 @@ void OrbElemConvert::Reset(uint64_t CurrentSimNanos)
     numOutputs += this->elemOutMsg.isLinked();
 
     if (numInputs == 0) {
-        bskLogger.bskLog(BSK_ERROR, "No input message was connected.");
+        bskLogger.bskError("No input message was connected.");
     }
     if (numOutputs == 0) {
-        bskLogger.bskLog(BSK_ERROR, "No output message was connected.");
+        bskLogger.bskError("No output message was connected.");
     }
     if (numInputs > 1) {
-        bskLogger.bskLog(BSK_ERROR, "Found %d input messages.  There can be only one.", numInputs);
+        bskLogger.bskError("Found %d input messages.  There can be only one.", numInputs);
     }
 }
 

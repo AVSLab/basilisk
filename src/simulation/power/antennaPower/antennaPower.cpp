@@ -34,7 +34,7 @@ void AntennaPower::customReset(uint64_t CurrentSimNanos)
 {
     // Check that basePowerNeed is non-negative
     if (this->basePowerNeed < 0.0) {
-        bskLogger.bskLog(BSK_ERROR, "AntennaPower: basePowerNeed cannot be negative.");
+        bskLogger.bskError("AntennaPower: basePowerNeed cannot be negative.");
     }
 }
 
@@ -82,7 +82,7 @@ void AntennaPower::evaluatePowerModel(PowerNodeUsageMsgPayload *powerUsage){
             powerUsage->netPower = -this->antennaStatusMsgBuffer.P_Rx - this->antennaStatusMsgBuffer.P_Tx - this->basePowerNeed;
             break;
         default:
-            bskLogger.bskLog(BSK_ERROR, "AntennaPower: Invalid antenna state.");
+            bskLogger.bskError("AntennaPower: Invalid antenna state.");
             powerUsage->netPower = -this->basePowerNeed;
             break;
     }

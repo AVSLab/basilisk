@@ -219,8 +219,7 @@ template <typename StateDataType,
 StateDataType* DynParamManager::registerState(uint32_t nRow, uint32_t nCol, std::string stateName)
 {
     if (stateName == "") {
-        bskLogger.bskLog(BSK_ERROR,
-                         "Your state name can't be an empty string.  Come on.  You get null.");
+        bskLogger.bskError("Your state name can't be an empty string.  Come on.  You get null.");
         return nullptr;
     }
 
@@ -233,16 +232,14 @@ StateDataType* DynParamManager::registerState(uint32_t nRow, uint32_t nCol, std:
         auto& stateData = stateContainer.stateMap.at(stateName);
 
         if (stateData->getRowSize() != nRow || stateData->getColumnSize() != nCol) {
-            bskLogger.bskLog(BSK_ERROR,
-                             "In addition to that, you tried to change the size of the state in "
+            bskLogger.bskError("In addition to that, you tried to change the size of the state in "
                              "question.  Come on.  You get null.");
             return nullptr;
         }
 
         auto casted = dynamic_cast<StateDataType*>(stateData.get());
         if (!casted) {
-            bskLogger.bskLog(BSK_ERROR,
-                             "In addition to that, you tried to change the StateData type.  Come "
+            bskLogger.bskError("In addition to that, you tried to change the StateData type.  Come "
                              "on.  You get null.");
             return nullptr;
         }

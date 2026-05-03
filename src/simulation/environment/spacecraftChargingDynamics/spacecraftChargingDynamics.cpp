@@ -69,14 +69,14 @@ void SpacecraftChargingDynamics::UpdateState(uint64_t CurrentSimNanos) {
         SCStatesMsgPayload servicerStateInMsgBuffer = this->servicerStateInMsg();
         this->v_SN_N_norm = cArray2EigenVector3d(servicerStateInMsgBuffer.v_BN_N).norm();
     } else {
-        this->bskLogger.bskLog(BSK_ERROR, "SpacecraftChargingDynamics.servicerStateInMsg was not linked or written.");
+        this->bskLogger.bskError("SpacecraftChargingDynamics.servicerStateInMsg was not linked or written.");
         return;
     }
     if (this->targetStateInMsg.isLinked() && this->targetStateInMsg.isWritten()) {
         SCStatesMsgPayload targetStateInMsgBuffer = this->targetStateInMsg();
         this->v_TN_N_norm = cArray2EigenVector3d(targetStateInMsgBuffer.v_BN_N).norm();
     } else {
-        this->bskLogger.bskLog(BSK_ERROR, "SpacecraftChargingDynamics.targetStateInMsg was not linked or written.");
+        this->bskLogger.bskError("SpacecraftChargingDynamics.targetStateInMsg was not linked or written.");
         return;
     }
 
@@ -85,28 +85,28 @@ void SpacecraftChargingDynamics::UpdateState(uint64_t CurrentSimNanos) {
         ProjectedAreaMsgPayload servicerSurfaceAreaInMsgBuffer = this->servicerSurfaceAreaInMsg();
         this->servicerSurfaceArea = servicerSurfaceAreaInMsgBuffer.area;
     } else {
-        this->bskLogger.bskLog(BSK_ERROR, "SpacecraftChargingDynamics.servicerSurfaceAreaInMsg was not linked or written.");
+        this->bskLogger.bskError("SpacecraftChargingDynamics.servicerSurfaceAreaInMsg was not linked or written.");
         return;
     }
     if (this->targetSurfaceAreaInMsg.isLinked() && this->targetSurfaceAreaInMsg.isWritten()) {
         ProjectedAreaMsgPayload targetSurfaceAreaInMsgBuffer = this->targetSurfaceAreaInMsg();
         this->targetSurfaceArea = targetSurfaceAreaInMsgBuffer.area;
     } else {
-        this->bskLogger.bskLog(BSK_ERROR, "SpacecraftChargingDynamics.targetSurfaceAreaInMsg was not linked or written.");
+        this->bskLogger.bskError("SpacecraftChargingDynamics.targetSurfaceAreaInMsg was not linked or written.");
         return;
     }
     if (this->servicerSunlitAreaInMsg.isLinked() && this->servicerSunlitAreaInMsg.isWritten()) {
         ProjectedAreaMsgPayload servicerSunlitFacetAreaInMsgBuffer = this->servicerSunlitAreaInMsg();
         this->servicerSunlitArea = servicerSunlitFacetAreaInMsgBuffer.area;
     } else {
-        this->bskLogger.bskLog(BSK_ERROR, "SpacecraftChargingDynamics.servicerSunlitAreaInMsg was not linked or written.");
+        this->bskLogger.bskError("SpacecraftChargingDynamics.servicerSunlitAreaInMsg was not linked or written.");
         return;
     }
     if (this->targetSunlitAreaInMsg.isLinked() && this->targetSunlitAreaInMsg.isWritten()) {
         ProjectedAreaMsgPayload targetSunlitFacetAreaInMsgBuffer = this->targetSunlitAreaInMsg();
         this->targetSunlitArea = targetSunlitFacetAreaInMsgBuffer.area;
     } else {
-        this->bskLogger.bskLog(BSK_ERROR, "SpacecraftChargingDynamics.targetSunlitAreaInMsg was not linked or written.");
+        this->bskLogger.bskError("SpacecraftChargingDynamics.targetSunlitAreaInMsg was not linked or written.");
         return;
     }
 

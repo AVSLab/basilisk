@@ -45,15 +45,15 @@ Eclipse::~Eclipse()
 void Eclipse::Reset(uint64_t CurrenSimNanos)
 {
     if (!this->sunInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "Eclipse: sunInMsg must be linked to sun Spice state message.");
+        bskLogger.bskError("Eclipse: sunInMsg must be linked to sun Spice state message.");
     }
 
     if (this->positionInMsgs.size() == 0) {
-        bskLogger.bskLog(BSK_ERROR, "Eclipse: positionInMsgs is empty.  Must use addSpacecraftToModel() to add at least one spacecraft.");
+        bskLogger.bskError("Eclipse: positionInMsgs is empty.  Must use addSpacecraftToModel() to add at least one spacecraft.");
     }
 
     if (this->planetInMsgs.size() == 0) {
-        bskLogger.bskLog(BSK_ERROR, "Eclipse: planetInMsgs is empty.  Must use addPlanetToModel() to add at least one planet.");
+        bskLogger.bskError("Eclipse: planetInMsgs is empty.  Must use addPlanetToModel() to add at least one planet.");
     }
 
 }
@@ -285,13 +285,13 @@ double Eclipse::getPlanetEquatorialRadius(std::string planetSpiceName)
         return REQ_NEPTUNE*1000.0;
     } else if (planetSpiceName == "custom") {
         if (rEqCustom <= 0.0) {
-            bskLogger.bskLog(BSK_ERROR, "Eclipse: Invalid rEqCustom set.");
+            bskLogger.bskError("Eclipse: Invalid rEqCustom set.");
             return 1.0;
         } else {
             return rEqCustom;
         }
     } else {
-        bskLogger.bskLog(BSK_ERROR, "Eclipse: unrecognized planetSpiceName.");
+        bskLogger.bskError("Eclipse: unrecognized planetSpiceName.");
         return 1.0;
     }
 }

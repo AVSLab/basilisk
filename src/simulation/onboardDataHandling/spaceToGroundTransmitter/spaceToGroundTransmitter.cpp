@@ -169,8 +169,7 @@ SpaceToGroundTransmitter::evaluateDataModel(DataNodeUsageMsgPayload* dataUsageSi
                 // Set nodeDataName to the maximum data name
                 const std::string& storedDataName = this->storageUnitMsgsBuffer.back().storedDataName[maxIndex];
                 if (storedDataName.size() >= sizeof(this->nodeDataName)) {
-                    bskLogger.bskLog(BSK_ERROR,
-                                     "SpaceToGroundTransmitter: storedDataName is %zu characters, but nodeDataName "
+                    bskLogger.bskError("SpaceToGroundTransmitter: storedDataName is %zu characters, but nodeDataName "
                                      "supports at most %zu characters.",
                                      storedDataName.size(), sizeof(this->nodeDataName) - 1);
                 }

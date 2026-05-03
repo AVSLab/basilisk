@@ -56,7 +56,7 @@ void PlanetNav::Reset(uint64_t CurrentSimNanos)
 {
     // check that required input messages are connected
     if (!this->ephemerisInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "PlanetNav.ephemerisInMsg was not linked.");
+        bskLogger.bskError("PlanetNav.ephemerisInMsg was not linked.");
     }
 
     int64_t numStates = 12;
@@ -68,14 +68,14 @@ void PlanetNav::Reset(uint64_t CurrentSimNanos)
 
     //! - Alert the user and stop if the noise matrix is the wrong size.  That'd be bad.
     if (this->PMatrix.size() != numStates*numStates) {
-        bskLogger.bskLog(BSK_ERROR, "Your process noise matrix (PMatrix) is not 12*12. Size is %ld.  Quitting", this->PMatrix.size());
+        bskLogger.bskError("Your process noise matrix (PMatrix) is not 12*12. Size is %ld.  Quitting", this->PMatrix.size());
         return;
     }
     //! - Set the matrices of the lower level error propagation (GaussMarkov)
     this->errorModel.setNoiseMatrix(this->PMatrix);
     this->errorModel.setRNGSeed(this->RNGSeed);
     if (this->walkBounds.size() != numStates) {
-        bskLogger.bskLog(BSK_ERROR, "Your walkbounds vector  is not 12 elements. Quitting");
+        bskLogger.bskError("Your walkbounds vector  is not 12 elements. Quitting");
     }
     this->errorModel.setUpperBounds(this->walkBounds);
 

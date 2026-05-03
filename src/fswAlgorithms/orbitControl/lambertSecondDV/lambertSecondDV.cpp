@@ -38,10 +38,10 @@ void LambertSecondDV::Reset(uint64_t currentSimNanos)
 {
     // check that required input messages are connected
     if (!this->lambertSolutionInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "lambertSecondDV.lambertSolutionInMsg was not linked.");
+        bskLogger.bskError("lambertSecondDV.lambertSolutionInMsg was not linked.");
     }
     if (!this->desiredVelocityInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "lambertSecondDV.desiredVelocityInMsg was not linked.");
+        bskLogger.bskError("lambertSecondDV.desiredVelocityInMsg was not linked.");
     }
 }
 
@@ -79,8 +79,7 @@ void LambertSecondDV::readMessages()
         this->vExpected_N = cArray2EigenVector3d(lambertSolutionInMsgBuffer.v2Sol2_N);
         this->validLambert = lambertSolutionInMsgBuffer.validSol2;
     } else {
-        bskLogger.bskLog(BSK_ERROR,
-                         "lambertValidator: the parameter lambertSolutionSpecifier that specifies which "
+        bskLogger.bskError("lambertValidator: the parameter lambertSolutionSpecifier that specifies which "
                          "Lambert solution should be used must be either 1 or 2.");
     }
 

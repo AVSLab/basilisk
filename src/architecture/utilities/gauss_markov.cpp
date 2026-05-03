@@ -70,12 +70,12 @@ void GaussMarkov::computeNextState()
     if((this->propMatrix.size() != this->noiseMatrix.size()) ||
        ((uint64_t) this->propMatrix.size() != this->numStates*this->numStates))
     {
-        bskLogger.bskLog(BSK_ERROR, "Matrix size mismatch in Gauss Markov model");
+        bskLogger.bskError("Matrix size mismatch in Gauss Markov model");
         return;
     }
     if((uint64_t) this->stateBounds.size() != this->numStates)
     {
-        bskLogger.bskLog(BSK_ERROR, "State bounds size mismatch in Gauss Markov model");
+        bskLogger.bskError("State bounds size mismatch in Gauss Markov model");
         return;
     }
 

@@ -55,7 +55,7 @@ public:
     const messageType& operator()(){
         if (!this->initialized) {
             messageType var;
-            bskLogger.bskLog(BSK_ERROR, "In C++ read functor, you are trying to read an un-connected message of type %s\nThis program is about to self destruct.",  typeid(var).name());
+            bskLogger.bskError("In C++ read functor, you are trying to read an un-connected message of type %s\nThis program is about to self destruct.",  typeid(var).name());
         }
         return *this->payloadPointer;
 
@@ -70,7 +70,7 @@ public:
             return this->headerPointer->isWritten;
         } else {
             messageType var;
-            bskLogger.bskLog(BSK_ERROR, "In C++ read functor, you are checking if an unconnected msg of type %s is written.", typeid(var).name());
+            bskLogger.bskError("In C++ read functor, you are checking if an unconnected msg of type %s is written.", typeid(var).name());
             return false;
         }
     };
@@ -79,7 +79,7 @@ public:
     uint64_t timeWritten(){
         if (!this->initialized) {
             messageType var;
-            bskLogger.bskLog(BSK_ERROR, "In C++ read functor, you are requesting the write time of an unconnected msg of type %s.", typeid(var).name());
+            bskLogger.bskError("In C++ read functor, you are requesting the write time of an unconnected msg of type %s.", typeid(var).name());
             return 0;
         }
         return this->headerPointer->timeWritten;
@@ -89,12 +89,12 @@ public:
     int64_t moduleID(){
         if (!this->initialized) {
             messageType var;
-            bskLogger.bskLog(BSK_ERROR, "In C++ read functor, you are requesting moduleID of an unconnected msg of type %s.", typeid(var).name());
+            bskLogger.bskError("In C++ read functor, you are requesting moduleID of an unconnected msg of type %s.", typeid(var).name());
             return 0;
         }
         if (!this->headerPointer->isWritten) {
             messageType var;
-            bskLogger.bskLog(BSK_ERROR, "In C++ read functor, you are requesting moduleID of an unwritten msg of type %s.", typeid(var).name());
+            bskLogger.bskError("In C++ read functor, you are requesting moduleID of an unwritten msg of type %s.", typeid(var).name());
             return 0;
         }
         return this->headerPointer->moduleID;
@@ -297,7 +297,7 @@ public:
         this->readMessage = *messageReader;
         if (!messageReader->isLinked()) {
             messageType var;
-            bskLogger.bskLog(BSK_ERROR, "In C++ read functor, you are requesting to record an un-connected input message of type %s.", typeid(var).name());
+            bskLogger.bskError("In C++ read functor, you are requesting to record an un-connected input message of type %s.", typeid(var).name());
         }
         this->ModelTag = "Rec:" + findMsgName(std::string(typeid(*messageReader).name()));
     }

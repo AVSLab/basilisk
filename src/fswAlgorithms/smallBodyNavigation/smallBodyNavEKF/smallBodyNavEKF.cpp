@@ -83,16 +83,16 @@ void SmallBodyNavEKF::Reset(uint64_t CurrentSimNanos)
 {
     /* check that required input messages are connected */
     if (!this->navTransInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "SmallBodyNavEKF.navTransInMsg was not linked.");
+        bskLogger.bskError("SmallBodyNavEKF.navTransInMsg was not linked.");
     }
     if (!this->navAttInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "SmallBodyNavEKF.navAttInMsg was not linked.");
+        bskLogger.bskError("SmallBodyNavEKF.navAttInMsg was not linked.");
     }
     if (!this->asteroidEphemerisInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "SmallBodyNavEKF.asteroidEphemerisInMsg was not linked.");
+        bskLogger.bskError("SmallBodyNavEKF.asteroidEphemerisInMsg was not linked.");
     }
     if (!this->sunEphemerisInMsg.isLinked()) {
-        bskLogger.bskLog(BSK_ERROR, "SmallBodyNavEKF.sunEphemerisInMsg was not linked.");
+        bskLogger.bskError("SmallBodyNavEKF.sunEphemerisInMsg was not linked.");
     }
 
 }
