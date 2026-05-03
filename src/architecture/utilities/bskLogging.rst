@@ -97,6 +97,8 @@ reason correctly about control flow after the call.
     bskLogger.bskError("The required gain value was not set to a positive value.");
 
 The legacy ``bskLog(BSK_ERROR, ...)`` call remains supported for existing C++ code.
+Python modules should continue to use ``bskLog()`` with a preformatted message string;
+``bskError()`` is intended for C++ code and is not exposed through SWIG.
 
 
 Using ``_bskLog`` in C Basilisk Modules

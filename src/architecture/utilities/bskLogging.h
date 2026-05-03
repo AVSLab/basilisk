@@ -81,7 +81,9 @@ class BSKLogger
         void printLogLevel();
         int getLogLevel();
         void bskLog(logLevel_t targetLevel, const char* info, ...);
+#ifndef SWIG
         BSK_NORETURN void bskError(const char* info, ...);
+#endif
 
     //Provides a mapping from log level enum to str
     public:
