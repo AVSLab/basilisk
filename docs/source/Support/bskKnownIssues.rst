@@ -23,9 +23,10 @@ Version |release|
 - The MuJoCo dynamics wrapper now uses MuJoCo 3.7 element-name APIs, fixing builds after the MuJoCo
   3.7 upgrade.
 - SWIG 4.4.0 caused Basilisk build failures in some Python 3.13+ source-build configurations.
-  The development dependency range now excludes SWIG 4.4.0, and SWIG 4.4.1 has been verified to build
-  successfully. If source builds fail with SWIG 4.4.0 or emit ``builtin type swigvarlink has no __module__ attribute``
-  warnings, upgrade to SWIG 4.4.1 or newer.
+  Basilisk now requires SWIG 4.4.1 or a newer supported 4.x release, which provides SWIG ABI 5 support
+  for Basilisk and compatible plugins. If source builds fail with SWIG 4.4.0 or emit
+  ``builtin type swigvarlink has no __module__ attribute`` warnings, upgrade to SWIG 4.4.1 or a newer
+  supported 4.x release.
 
 
 Version 2.10.0 (April 2, 2026)
