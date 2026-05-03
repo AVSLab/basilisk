@@ -54,6 +54,7 @@ files = fnmatch.filter(os.listdir(path + '/../../docs/source/codeSamples'), "*.p
 @pytest.mark.parametrize("bskScript", files)
 @pytest.mark.scenarioTest
 def test_scenarioBskPrinciples(show_plots, bskScript):
+    """Run each documentation code sample included in the BSK principles set."""
 
     if bskScript == "making-numbaModules.py":
         pytest.importorskip("numba")
