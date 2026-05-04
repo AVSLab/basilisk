@@ -316,7 +316,7 @@ public:
             this->msgRecordTimes.push_back(CurrentSimNanos);
             this->msgWrittenTimes.push_back(this->readMessage.timeWritten());
             this->msgRecord.push_back(this->readMessage());
-            this->nextUpdateTime += this->timeInterval;
+            this->nextUpdateTime = CurrentSimNanos + this->timeInterval;
         }
     };
     //! Reset method
@@ -366,6 +366,9 @@ public:
     //! method to update the minimum time interval before recording the next message
     void updateTimeInterval(uint64_t timeDiff) {
         this->timeInterval = timeDiff;
+        if (!this->msgRecordTimes.empty()) {
+            this->nextUpdateTime = this->msgRecordTimes.back() + this->timeInterval;
+        }
     };
 
 private:
@@ -373,7 +376,7 @@ private:
     std::vector<uint64_t> msgRecordTimes;         //!< vector of times at which messages are recorded
     std::vector<uint64_t> msgWrittenTimes;        //!< vector of times at which messages are written
     uint64_t nextUpdateTime = 0;                  //!< [ns] earliest time at which the msg is recorded again
-    uint64_t timeInterval;                        //!< [ns] recording time intervale
+    uint64_t timeInterval;                        //!< [ns] recording time interval
 
 private:
     ReadFunctor<messageType> readMessage;   //!< method description
