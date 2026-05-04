@@ -49,6 +49,12 @@ Here ``minUpdateTime`` is the minimum time interval that must pass before this r
 
 In the full script above, the recorder module ``msgRec`` is set up to record the message at the ``dynamicsTask`` update rate.  In contrast, the module ``msgRec20`` is setup to record the message only after 20s have passed.  Note that the ``minUpdateTime`` argument must be provided again in nano-seconds.
 
+The minimum recorder update time can also be changed after the simulation is stopped and before it is continued.  For example, assume a message recorder ``scRec`` should use a new minimum update time ``newMinUpdateTime`` for the next segment of the simulation.  This is done with::
+
+    scRec.updateTimeInterval(newMinUpdateTime)
+
+After this call, the next eligible recording time is recomputed from the last recorded message time using the updated interval.  If the updated interval has already elapsed when the simulation continues, the recorder samples on its next task execution.
+
 That is all that is required to set up message recording.  Next the code initializes the simulation and executes it.
 
 
