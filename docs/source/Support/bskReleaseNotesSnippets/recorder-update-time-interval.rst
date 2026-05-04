@@ -1,0 +1,1 @@
+- Updated message recorders so ``updateTimeInterval()`` reschedules the next recording opportunity when the minimum update time is changed between simulation runs.
