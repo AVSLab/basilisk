@@ -134,7 +134,7 @@ Pointing Loss
 
    Figure 3: Illustration of pointing loss due to antenna misalignment (pointing error angle in elevation, :math:`\| \theta_\mathrm{el} \| > 0^\circ`)
 
-The pointing error loss accounts for signal degradation when the antennas are not perfectly aligned. This loss is computed assuming a Gaussian antenna radiation pattern (consistent with the :ref:`simpleAntenna` module).
+The pointing error loss accounts for signal degradation when the antennas are not perfectly aligned. This loss is computed assuming a Gaussian antenna radiation pattern (consistent with the :ref:`simpleAntenna` module). The antenna orientation is read from ``AntennaLogMsgPayload.sigma_AN`` and the inertial line-of-sight vector is decomposed in the antenna frame, where the antenna boresight is the local +Z axis.
 
 For each antenna, the pointing error is decomposed into azimuth and elevation components relative to the antenna boresight direction\:
 

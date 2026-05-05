@@ -187,7 +187,7 @@ private:
     double calcCosSlantGround(Eigen::Vector3d r_AN_N, Eigen::Vector3d n_A_N, Eigen::Vector3d r_BN_N);
     void generateLookupTable(LinkBudgetTypes::GasType gasType, LookupTable* lookupTable);
     void precomputeAtmosphericAttenuationAtLayers(AttenuationLookupTable* tableAttenuation, double frequency);
-    Eigen::Vector2d getPointingError(Eigen::Vector3d r_A1N_N, Eigen::Vector3d r_A2N_N, Eigen::MRPd sigma_NA1);
+    Eigen::Vector2d getPointingError(Eigen::Vector3d r_A1N_N, Eigen::Vector3d r_A2N_N, Eigen::MRPd sigma_AN1);
     void calculatePointingLoss();
     void calculateFrequencyOffsetLoss();
     void calculateCNR();
