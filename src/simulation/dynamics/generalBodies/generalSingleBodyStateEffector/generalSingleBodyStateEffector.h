@@ -62,7 +62,7 @@ private:
     Eigen::Vector3d axis_G = Eigen::Vector3d::Zero();
     double betaInit{};
     double betaDotInit{};
-    double screwConstant{1.0};
+    double screwConstant{};
     double k{};
     double c{};
 

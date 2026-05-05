@@ -184,87 +184,81 @@ void GeneralSingleBodyStateEffector::updateEffectorMassProps(double integTime)
 
     // Compute general body attitudes
     std::vector<DOF>::iterator jointDOF;
-    for(jointDOF = this->jointDOFList.begin(); jointDOF != this->jointDOFList.end(); jointDOF++) {
+    for (jointDOF = this->jointDOFList.begin(); jointDOF != this->jointDOFList.end(); jointDOF++) {
+        Eigen::Vector3d prv_GG0{};
         if (jointDOF->type == DOF::Type::ROTATION) {
-            Eigen::Vector3d prv_GG0 = jointDOF->beta * jointDOF->axis_G;
-            double prv_GG0_array[3];
-            eigenVector3d2CArray(prv_GG0, prv_GG0_array);
-
-            double dcm_GG0_array[3][3];
-            PRV2C(prv_GG0_array, dcm_GG0_array);
-            Eigen::Matrix3d dcm_GG0 = c2DArray2EigenMatrix3d(dcm_GG0_array);
-
-            if (jointDOF->index == 0) {
-                jointDOF->dcm_GB = dcm_GG0 * this->dcm_G0B;
-            } else {
-                jointDOF->dcm_GB = dcm_GG0 * this->jointDOFList.at(jointDOF->index - 1).dcm_GB;
-            }
+            prv_GG0 = jointDOF->beta * jointDOF->axis_G;
         } else {
-            if (jointDOF->index == 0) {
-                jointDOF->dcm_GB = this->dcm_G0B;
-            } else {
-                jointDOF->dcm_GB = this->jointDOFList.at(jointDOF->index - 1).dcm_GB;
-            }
+            prv_GG0 = jointDOF->screwConstant * jointDOF->beta * jointDOF->axis_G;
+        }
+
+        double prv_GG0_array[3];
+        eigenVector3d2CArray(prv_GG0, prv_GG0_array);
+
+        double dcm_GG0_array[3][3];
+        PRV2C(prv_GG0_array, dcm_GG0_array);
+        Eigen::Matrix3d dcm_GG0 = c2DArray2EigenMatrix3d(dcm_GG0_array);
+
+        if (jointDOF->index == 0) {
+            jointDOF->dcm_GB = dcm_GG0 * this->dcm_G0B;
+        } else {
+            jointDOF->dcm_GB = dcm_GG0 * this->jointDOFList.at(jointDOF->index - 1).dcm_GB;
         }
     }
 
     // Compute joint and general body position vectors relative to hub frame
-    for(jointDOF = this->jointDOFList.begin(); jointDOF != this->jointDOFList.end(); jointDOF++) {
+    for (jointDOF = this->jointDOFList.begin(); jointDOF != this->jointDOFList.end(); jointDOF++) {
+        Eigen::Vector3d r_GG0_G{};
         if (jointDOF->type == DOF::Type::TRANSLATION) {
-            Eigen::Vector3d r_GG0_G = jointDOF->beta * jointDOF->axis_G;
-            Eigen::Vector3d r_GG0_B = jointDOF->dcm_GB.transpose() * r_GG0_G;
-
-            if (jointDOF->index == 0) {
-                jointDOF->r_GB_B = r_GG0_B + this->r_G0B_B;
-            } else {
-                jointDOF->r_GB_B = r_GG0_B + this->jointDOFList.at(jointDOF->index - 1).r_GB_B;
-            }
+            r_GG0_G = jointDOF->beta * jointDOF->axis_G;
         } else {
-            if (jointDOF->index == 0) {
-                jointDOF->r_GB_B = this->r_G0B_B;
-            } else {
-                jointDOF->r_GB_B = this->jointDOFList.at(jointDOF->index - 1).r_GB_B;
-            }
+            r_GG0_G = jointDOF->screwConstant * jointDOF->beta * jointDOF->axis_G;
+        }
+
+        Eigen::Vector3d r_GG0_B = jointDOF->dcm_GB.transpose() * r_GG0_G;
+
+        if (jointDOF->index == 0) {
+            jointDOF->r_GB_B = r_GG0_B + this->r_G0B_B;
+        } else {
+            jointDOF->r_GB_B = r_GG0_B + this->jointDOFList.at(jointDOF->index - 1).r_GB_B;
         }
     }
 
     // Compute joint and general body angular velocity vectors relative to the hub frame
-    for(jointDOF = this->jointDOFList.begin(); jointDOF != this->jointDOFList.end(); jointDOF++) {
+    for (jointDOF = this->jointDOFList.begin(); jointDOF != this->jointDOFList.end(); jointDOF++) {
+        Eigen::Vector3d omega_GP_G{};
         if (jointDOF->type == DOF::Type::ROTATION) {
-            Eigen::Vector3d omega_GP_G = jointDOF->betaDot * jointDOF->axis_G;
-            Eigen::Vector3d omega_GP_B = jointDOF->dcm_GB.transpose() * omega_GP_G;
-
-            if (jointDOF->index == 0) {
-                jointDOF->omega_GB_B = omega_GP_B;
-            } else {
-                jointDOF->omega_GB_B = omega_GP_B + this->jointDOFList.at(jointDOF->index - 1).omega_GB_B;
-            }
+            omega_GP_G = jointDOF->betaDot * jointDOF->axis_G;
         } else {
-            if (jointDOF->index == 0) {
-                jointDOF->omega_GB_B = Eigen::Vector3d::Zero();
-            } else {
-                jointDOF->omega_GB_B = this->jointDOFList.at(jointDOF->index - 1).omega_GB_B;
-            }
+            omega_GP_G = jointDOF->screwConstant * jointDOF->betaDot * jointDOF->axis_G;
+        }
+
+        Eigen::Vector3d omega_GP_B = jointDOF->dcm_GB.transpose() * omega_GP_G;
+
+        if (jointDOF->index == 0) {
+            jointDOF->omega_GB_B = omega_GP_B;
+        } else {
+            jointDOF->omega_GB_B = omega_GP_B + this->jointDOFList.at(jointDOF->index - 1).omega_GB_B;
         }
     }
 
     // Compute general body transformation matrix and its first time derivative
-    for(jointDOF = this->jointDOFList.begin(); jointDOF != this->jointDOFList.end(); jointDOF++) {
+    for (jointDOF = this->jointDOFList.begin(); jointDOF != this->jointDOFList.end(); jointDOF++) {
 
         uint64_t dofIndex = jointDOF->index;
         Eigen::Vector3d jointDOFAxis_B = jointDOF->dcm_GB.transpose() * jointDOF->axis_G;
         Eigen::Matrix3d omegaTilde_GB_B = eigenTilde(jointDOF->omega_GB_B);
 
         if (jointDOF->type == DOF::Type::ROTATION) {
-            this->TMat.col(dofIndex).head<3>().setZero();
-            this->TMat.col(dofIndex).tail<3>() = jointDOF->screwConstant * jointDOFAxis_B;
-            this->TPrimeMat.col(dofIndex).head<3>().setZero();
-            this->TPrimeMat.col(dofIndex).tail<3>() = omegaTilde_GB_B * jointDOF->screwConstant * jointDOFAxis_B;
-        } else {
             this->TMat.col(dofIndex).head<3>() = jointDOF->screwConstant * jointDOFAxis_B;
-            this->TMat.col(dofIndex).tail<3>().setZero();
+            this->TMat.col(dofIndex).tail<3>() = jointDOFAxis_B;
             this->TPrimeMat.col(dofIndex).head<3>() = omegaTilde_GB_B * jointDOF->screwConstant * jointDOFAxis_B;
-            this->TPrimeMat.col(dofIndex).tail<3>().setZero();
+            this->TPrimeMat.col(dofIndex).tail<3>() = omegaTilde_GB_B * jointDOFAxis_B;
+        } else {
+            this->TMat.col(dofIndex).head<3>() = jointDOFAxis_B;
+            this->TMat.col(dofIndex).tail<3>() = jointDOF->screwConstant * jointDOFAxis_B;
+            this->TPrimeMat.col(dofIndex).head<3>() = omegaTilde_GB_B * jointDOFAxis_B;
+            this->TPrimeMat.col(dofIndex).tail<3>() = omegaTilde_GB_B * jointDOF->screwConstant * jointDOFAxis_B;
         }
     }
 
