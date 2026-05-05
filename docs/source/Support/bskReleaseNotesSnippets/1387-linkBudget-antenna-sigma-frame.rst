@@ -1,0 +1,1 @@
+- Fixed :ref:`linkBudget` pointing-loss frame handling so ``AntennaLogMsgPayload.sigma_AN`` antenna orientations are interpreted consistently with :ref:`simpleAntenna`.

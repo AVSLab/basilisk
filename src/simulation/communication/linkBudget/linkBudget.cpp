@@ -283,8 +283,8 @@ Eigen::Vector2d LinkBudget::getPointingError(Eigen::Vector3d r_A1N_N, Eigen::Vec
         bskLogger.bskLog(BSK_WARNING, "LinkBudget.getPointingError: antenna positions are coincident; returning zero pointing errors.");
         return {0.0, 0.0};
     }
-    // Calculate the unit vector from antenna 1 to antenna 2
-    Eigen::Vector3d n_A2A1_A1 = dcm_NA1 * (r_A2A1_N / deltaNorm);
+    // Calculate the unit vector from antenna 1 to antenna 2, decomposed in antenna 1 frame
+    Eigen::Vector3d n_A2A1_A1 = dcm_NA1.transpose() * (r_A2A1_N / deltaNorm);
     // boresight vector of antenna 1 in {A1} frame
     double boresightComponent = n_A2A1_A1[2];
     double azimuthError       = std::atan2(n_A2A1_A1[0], boresightComponent);  // [rad] Azimuth pointing error
