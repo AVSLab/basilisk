@@ -105,11 +105,18 @@ _bsklogSpec = [
     ('_t3',    nb.types.unicode_type),
 ]
 
+_BSK_LOG_TAGS = (
+    "BSK_DEBUG",
+    "\033[92mBSK_INFORMATION\033[0m",
+    "\033[93mBSK_WARNING\033[0m",
+    "\033[91mBSK_ERROR\033[0m",
+)
+
 @_nbJitclass(_bsklogSpec)
 class BskLoggerProxy:
     """Logging proxy usable inside UpdateStateImpl (nopython mode).
     Calls print(); output goes to stdout.
-    Tags and min-level are read from the module's BSKLogger at Reset time.
+    Tags mirror BSKLogger's static labels; min-level is read from user storage.
     """
     def __init__(self, level, t0, t1, t2, t3):
         self._level = level
@@ -1070,12 +1077,11 @@ class NumbaModel(SysModelMixin, _NumbaModel):
 
         # bskLogger, log level read from userPtr at runtime; tags are compile-time
         if 'bskLogger' in ctx.params:
-            _lmap = self.bskLogger.logLevelMap
             g['BskLoggerProxy'] = BskLoggerProxy
-            g['_bsklog_t0']     = _lmap[0]
-            g['_bsklog_t1']     = _lmap[1]
-            g['_bsklog_t2']     = _lmap[2]
-            g['_bsklog_t3']     = _lmap[3]
+            g['_bsklog_t0']     = _BSK_LOG_TAGS[0]
+            g['_bsklog_t1']     = _BSK_LOG_TAGS[1]
+            g['_bsklog_t2']     = _BSK_LOG_TAGS[2]
+            g['_bsklog_t3']     = _BSK_LOG_TAGS[3]
             preLines.append(
                 f"    bskLogger = BskLoggerProxy("
                 f"nb.carray(allPtrs[_USER_BASE + {ctx.bskLogMinUidx}], 1, np.int32)[0],"
