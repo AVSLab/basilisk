@@ -30,7 +30,7 @@ In essence, think of BSK providing lots of spacecraft lego blocks where the user
 
 From Modules to Spacecraft
 --------------------------
-The BSK modules contain a series of input and output message connections which are they key to assembling components into a functioning spacecraft simulation.  The messages provide a method to control how information is shared across the simulation.  A module may have one or more input message connections. Some input messages are optional and change the behavior of the module if they are connected.  For example, a feedback control module provides a standard control solution if the reaction wheel message is not connected, but will incorporate the reaction wheel data in the control if such a message is connected.
+The BSK modules contain a series of input and output message connections which are the key to assembling components into a functioning spacecraft simulation.  The messages provide a method to control how information is shared across the simulation.  A module may have one or more input message connections. Some input messages are optional and change the behavior of the module if they are connected.  For example, a feedback control module provides a standard control solution if the reaction wheel message is not connected, but will incorporate the reaction wheel data in the control if such a message is connected.
 
 
 .. image:: ../../_images/static/qs-bsk-0.svg
@@ -43,4 +43,3 @@ Module Behavior Testing
 -----------------------
 How do we know that the BSK modules are doing what they are supposed to?
 In each BSK module folder there is a ``_UnitTest`` folder which contains python scripts to test the functionality of the given module.  This assures that each module is working as planned.  The ``src/examples`` folder contains many integrated simulation scripts where the modules are assembled into sample spacecraft simulations.  These scripts are also tested to ensure the integrated simulation is working.  Thus, unit tests ensure a module is working individually, and integrated tests ensure that the module connections and interfaces are working properly.  As a result of this integrated testing, developing and enhancing Basilisk can be done readily while being confident that other code has not been broken.
-
