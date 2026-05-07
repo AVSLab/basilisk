@@ -1,1 +1,0 @@
-- Fixed a potential heap buffer overflow in :ref:`mappingInstrument` by rejecting mapping point names that exceed the fixed data node name storage.

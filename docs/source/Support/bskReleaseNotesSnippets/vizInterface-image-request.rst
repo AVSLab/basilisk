@@ -1,1 +1,0 @@
-- Fixed a :ref:`vizInterface` ``noDisplay`` image request regression that could stop OpNav scenarios when communicating with Vizard.

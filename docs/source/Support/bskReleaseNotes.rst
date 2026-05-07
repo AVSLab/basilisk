@@ -23,9 +23,21 @@ Basilisk Release Notes
     - `pip`-based installation and pre-compiled releases
     - integrating the `MuJoCo <https://mujoco.org>`_ library as an alternate dynamics engine
 
-Version |release| (April 26, 2026)
-----------------------------------
-.. include:: bskReleaseNotesSnippets/_compiled_latest.rst
+Version 2.10.2 (May 7, 2026)
+----------------------------
+- Fixed :ref:`linkBudget` pointing-loss frame handling so ``AntennaLogMsgPayload.sigma_AN`` antenna orientations are interpreted consistently with :ref:`simpleAntenna`.
+- Fixed a :ref:`vizInterface` ``noDisplay`` image request regression that could stop OpNav scenarios when communicating with Vizard.
+
+
+Version 2.10.1 (April 26, 2026)
+-------------------------------
+- Updated SWIG dependency support to allow compatible latest SWIG releases while excluding SWIG 4.4.0 due to compile regressions observed during testing.  If you are getting lots of ``builtin type swigvarlink has no __module__ attribute`` warnings upgrade to SWIG 4.4.1
+- Cleaned up pytest resource handling so parallel test runs with pytest-xdist and pytest-rerunfailures no longer report unclosed socket warnings.
+- Fixed a potential stack buffer overflow in :ref:`vizInterface` by rejecting default celestial body names that exceed the fixed SPICE payload name storage.
+- Fixed a potential heap buffer overflow in :ref:`mappingInstrument` by rejecting mapping point names that exceed the fixed data node name storage.
+- Fixed a potential format string vulnerability in :ref:`dentonFluxModel` when reporting missing Denton data files.
+- Hardened Basilisk module string handling and logging against fixed-buffer overflow and format-string misuse.
+- Hardened build and helper utilities against shell command injection, unsafe temporary file cleanup, unbounded downloads, and malformed image buffer lengths.
 
 
 Version 2.10.0 (April 2, 2026)
