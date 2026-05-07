@@ -1220,6 +1220,51 @@ def test_linkBudget_pointing_loss():
     assert testFailCount == 0, "\n".join(testMessages)
 
 
+def test_linkBudget_pointing_loss_nontrivial_attitude_zero_error():
+    """
+    Verify that a perfectly pointed, non-identity antenna attitude produces
+    negligible pointing loss.
+
+    This catches frame-convention regressions where the inertial LOS vector is
+    transformed with the antenna-to-inertial DCM instead of its transpose.
+    """
+    frequency_Hz = 2.2e9  # [Hz]
+    directivity_dB = 20.0  # [dB]
+    k = 1.0  # [-]
+    pointing_loss_tolerance = 1e-10  # [dB]
+
+    pos1 = [0.0, 0.0, 0.0]  # [m]
+    pos2 = [1000e3, 400e3, 700e3]  # [m]
+
+    ant1_payload, _ = create_antenna_msg_payload(
+        name="Ant1",
+        state=ANTENNA_TX,
+        frequency=frequency_Hz,
+        directivity_dB=directivity_dB,
+        k=k,
+        position=pos1,
+        target_position=pos2,
+    )
+    ant2_payload, _ = create_antenna_msg_payload(
+        name="Ant2",
+        state=ANTENNA_RX,
+        frequency=frequency_Hz,
+        directivity_dB=directivity_dB,
+        k=k,
+        position=pos2,
+        target_position=pos1,
+    )
+
+    unitTestSim, linkBudgetModule, _ = setup_link_budget_sim(ant1_payload, ant2_payload)
+    run_simulation(unitTestSim)
+
+    L_point_sim = linkBudgetModule.getL_point()
+    assert abs(L_point_sim) < pointing_loss_tolerance, (
+        "Perfectly aligned non-identity antenna attitudes should have near-zero "
+        f"pointing loss, got {L_point_sim:.6e} dB"
+    )
+
+
 def test_linkBudget_no_bandwidth_overlap():
     """
     Test behavior when antennas have no overlapping bandwidth.

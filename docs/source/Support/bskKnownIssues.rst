@@ -20,6 +20,9 @@ Version |release|
   The development dependency range now excludes SWIG 4.4.0, and SWIG 4.4.1 has been verified to build
   successfully. If source builds fail with SWIG 4.4.0 or emit ``builtin type swigvarlink has no __module__ attribute``
   warnings, upgrade to SWIG 4.4.1 or newer.
+- BSK-1387: :ref:`linkBudget` could compute excessive pointing loss for non-identity antenna attitudes
+  because the inertial line-of-sight vector was transformed using the antenna-to-inertial DCM. This is
+  fixed in the current version.
 
 
 Version 2.10.0 (April 2, 2026)
