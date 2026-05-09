@@ -33,12 +33,10 @@ void DynamicObject::setIntegrator(StateVecIntegrator* newIntegrator)
 
     if (!newIntegrator) {
         bskLogger.bskError("New integrator cannot be a null pointer");
-        return;
     }
 
     if (newIntegrator->dynPtrs.at(0) != this) {
         bskLogger.bskError("New integrator must have been created using this DynamicObject");
-        return;
     }
 
     // If there was already an integrator set, then whatever dynPtrs that the

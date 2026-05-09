@@ -52,7 +52,6 @@ void MagneticFieldWMM::configureWMMFile(const std::string& file)
 
     if (!p.has_extension() || p.extension() != ".COF") {
         bskLogger.bskError("WMM file must have .COF extension");
-        return;
     }
 
     this->wmmDataFullPath = p.string();
@@ -242,7 +241,6 @@ void MagneticFieldWMM::initializeWmm()
     MAGtype_MagneticModel *models[1];
     if (!MAG_robustReadMagModels(const_cast<char*>(this->wmmDataFullPath.c_str()), &models, 1)) {
         bskLogger.bskError("WMM unable to load file %s", this->wmmDataFullPath.c_str());
-        return;
     }
     this->magneticModel = models[0];
 

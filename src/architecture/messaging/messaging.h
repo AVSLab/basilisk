@@ -71,7 +71,6 @@ public:
         } else {
             messageType var;
             bskLogger.bskError("In C++ read functor, you are checking if an unconnected msg of type %s is written.", typeid(var).name());
-            return false;
         }
     };
 
@@ -80,7 +79,6 @@ public:
         if (!this->initialized) {
             messageType var;
             bskLogger.bskError("In C++ read functor, you are requesting the write time of an unconnected msg of type %s.", typeid(var).name());
-            return 0;
         }
         return this->headerPointer->timeWritten;
     };
@@ -90,12 +88,10 @@ public:
         if (!this->initialized) {
             messageType var;
             bskLogger.bskError("In C++ read functor, you are requesting moduleID of an unconnected msg of type %s.", typeid(var).name());
-            return 0;
         }
         if (!this->headerPointer->isWritten) {
             messageType var;
             bskLogger.bskError("In C++ read functor, you are requesting moduleID of an unwritten msg of type %s.", typeid(var).name());
-            return 0;
         }
         return this->headerPointer->moduleID;
     };

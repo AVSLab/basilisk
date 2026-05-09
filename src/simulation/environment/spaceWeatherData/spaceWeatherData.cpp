@@ -211,13 +211,11 @@ void SpaceWeatherData::loadSpaceWeatherFile(const std::string& fileName)
     std::ifstream weatherFile(fileName);
     if (!weatherFile.good()) {
         this->bskLogger.bskError("Could not open space-weather file: %s", fileName.c_str());
-        return;
     }
 
     std::string line;
     if (!std::getline(weatherFile, line)) {
         this->bskLogger.bskError("Space-weather file is empty: %s", fileName.c_str());
-        return;
     }
     const std::vector<std::string> headerColumns = splitCsvLine(line);
 
@@ -229,7 +227,6 @@ void SpaceWeatherData::loadSpaceWeatherFile(const std::string& fileName)
             this->bskLogger.bskError("Space-weather file missing required column '%s': %s",
                                    columnName.c_str(),
                                    fileName.c_str());
-            return;
         }
     }
 
@@ -253,19 +250,16 @@ void SpaceWeatherData::loadSpaceWeatherFile(const std::string& fileName)
 
     if (loadedData.empty()) {
         this->bskLogger.bskError("No valid weather rows were loaded from: %s", fileName.c_str());
-        return;
     }
 
     for (size_t rowIndex = 1; rowIndex < loadedData.size(); rowIndex++) {
         if (loadedData[rowIndex - 1].dayNumber == loadedData[rowIndex].dayNumber) {
             this->bskLogger.bskError("Duplicate DATE row found in space-weather table '%s'.",
                                    fileName.c_str());
-            return;
         }
         if (loadedData[rowIndex - 1].dayNumber > loadedData[rowIndex].dayNumber) {
             this->bskLogger.bskError("Space-weather DATE rows must be sorted in ascending order: %s",
                                    fileName.c_str());
-            return;
         }
     }
 

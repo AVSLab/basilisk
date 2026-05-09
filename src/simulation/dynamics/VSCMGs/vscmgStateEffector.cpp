@@ -606,7 +606,6 @@ void VSCMGStateEffector::ReadInputs()
 	if(!this->cmdsInMsg.isLinked() || !this->cmdsInMsg.isWritten())
 	{
 		bskLogger.bskError("vscmgStateEffector.cmdsInMsg was not linked or written.");
-		return;
 	}
 
 	//! - Zero the command buffer and read the incoming command array

@@ -100,13 +100,11 @@ void HillFrameRelativeControl::computeForceCommand()
 
     if (this->mu <= 0.0) {
         this->bskLogger.bskError("hillFrameRelativeControl.mu must be positive.");
-        return;
     }
 
     const double rChiefNorm = v3Norm(this->chiefNavBuffer.r_BN_N);  // Chief orbital radius magnitude. [m]
     if (rChiefNorm <= 0.0) {
         this->bskLogger.bskError("hillFrameRelativeControl chief radius norm is zero.");
-        return;
     }
 
     double hChief_N[3];  // Chief specific angular momentum vector in inertial frame. [m^2/s]
@@ -114,7 +112,6 @@ void HillFrameRelativeControl::computeForceCommand()
     const double hChiefNorm = v3Norm(hChief_N);  // Chief specific angular momentum magnitude. [m^2/s]
     if (hChiefNorm <= 0.0) {
         this->bskLogger.bskError("hillFrameRelativeControl chief angular momentum norm is zero.");
-        return;
     }
 
     double dcm_HN[3][3];  // Direction cosine matrix from inertial frame N to Hill frame H. [-]
@@ -183,7 +180,6 @@ void HillFrameRelativeControl::setK(const std::vector<double>& gain)
 {
     if (gain.size() != 9) {
         this->bskLogger.bskError("hillFrameRelativeControl: K must contain exactly 9 elements.");
-        return;
     }
 
     double kCandidate[3][3];
@@ -194,13 +190,11 @@ void HillFrameRelativeControl::setK(const std::vector<double>& gain)
     m33Transpose(kCandidate, kTranspose);
     if (!m33IsEqual(kCandidate, kTranspose, 1e-12)) {
         this->bskLogger.bskError("hillFrameRelativeControl: K must be symmetric positive definite.");
-        return;
     }
     double kEigVals[3];
     m33EigenValues(kCandidate, kEigVals);
     if (!(kEigVals[0] > 1e-12 && kEigVals[1] > 1e-12 && kEigVals[2] > 1e-12)) {
         this->bskLogger.bskError("hillFrameRelativeControl: K must be symmetric positive definite.");
-        return;
     }
     m33Copy(kCandidate, this->K);
     this->setKFlag = true;
@@ -212,7 +206,6 @@ void HillFrameRelativeControl::setP(const std::vector<double>& gain)
 {
     if (gain.size() != 9) {
         this->bskLogger.bskError("hillFrameRelativeControl: P must contain exactly 9 elements.");
-        return;
     }
 
     double pCandidate[3][3];
@@ -223,13 +216,11 @@ void HillFrameRelativeControl::setP(const std::vector<double>& gain)
     m33Transpose(pCandidate, pTranspose);
     if (!m33IsEqual(pCandidate, pTranspose, 1e-12)) {
         this->bskLogger.bskError("hillFrameRelativeControl: P must be symmetric positive definite.");
-        return;
     }
     double pEigVals[3];
     m33EigenValues(pCandidate, pEigVals);
     if (!(pEigVals[0] > 1e-12 && pEigVals[1] > 1e-12 && pEigVals[2] > 1e-12)) {
         this->bskLogger.bskError("hillFrameRelativeControl: P must be symmetric positive definite.");
-        return;
     }
     m33Copy(pCandidate, this->P);
     this->setPFlag = true;
@@ -241,7 +232,6 @@ void HillFrameRelativeControl::setReferencePosition(const std::vector<double>& r
 {
     if (rRef_H.size() != 3) {
         this->bskLogger.bskError("hillFrameRelativeControl.setReferencePosition requires a length-3 vector.");
-        return;
     }
     double rRefArray[3];
     v3Set(rRef_H[0], rRef_H[1], rRef_H[2], rRefArray);
@@ -254,7 +244,6 @@ void HillFrameRelativeControl::setReferenceVelocity(const std::vector<double>& v
 {
     if (vRef_H.size() != 3) {
         this->bskLogger.bskError("hillFrameRelativeControl.setReferenceVelocity requires a length-3 vector.");
-        return;
     }
     double vRefArray[3];
     v3Set(vRef_H[0], vRef_H[1], vRef_H[2], vRefArray);

@@ -62,11 +62,9 @@ void StarTracker::Reset(uint64_t CurrentSimNanos)
     if(this->PMatrix.size() != 9)
     {
         bskLogger.bskError("Your process noise matrix (PMatrix) is not 3*3. Quitting.");
-        return;
     }
     if(this->walkBounds.size() != 3){
         bskLogger.bskError("Your walkbounds is not size 3. Quitting");
-        return;
     }
 
     this->errorModel.setNoiseMatrix(this->PMatrix);
@@ -156,7 +154,6 @@ void StarTracker::setAMatrix(const Eigen::MatrixXd& propMatrix)
 {
     if(propMatrix.rows() != 3 || propMatrix.cols() != 3) {
         bskLogger.bskError("StarTracker: Propagation matrix must be 3x3");
-        return;
     }
     this->AMatrix = propMatrix;
     this->errorModel.setPropMatrix(propMatrix);

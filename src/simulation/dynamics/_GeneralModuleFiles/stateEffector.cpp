@@ -121,7 +121,6 @@ void StateEffector::addDynamicEffector(DynamicEffector *newDynamicEffector, int 
 void StateEffector::linkInPrescribedMotionProperties(DynParamManager& properties)
 {
     bskLogger.bskError("StateEffector: This effector is not compatible for attachment to prescribed motion.");
-    return;
 }
 
 /*! This method ensures that stateEffectors can be implemented using the multi-spacecraft archticture */

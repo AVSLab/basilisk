@@ -107,7 +107,6 @@ void ImuSensor::Reset(uint64_t CurrentSimNanos)
     if(this->PMatrixAccel.cols() != this->numStates || this->PMatrixAccel.rows() != this->numStates)
     {
         bskLogger.bskError("Your process noise matrix (PMatrixAccel) is not 3*3. Quitting.");
-        return;
     }
     this->errorModelAccel.setNoiseMatrix(this->PMatrixAccel);
     this->errorModelAccel.setRNGSeed(this->RNGSeed);
@@ -116,7 +115,6 @@ void ImuSensor::Reset(uint64_t CurrentSimNanos)
     if(this->PMatrixGyro.rows() != this->numStates || this->PMatrixGyro.cols() != this->numStates)
     {
         bskLogger.bskError("Your process noise matrix (PMatrixGyro) is not 3*3. Quitting.");
-        return;
     }
     this->errorModelGyro.setNoiseMatrix(this->PMatrixGyro);
     this->errorModelGyro.setRNGSeed(this->RNGSeed);

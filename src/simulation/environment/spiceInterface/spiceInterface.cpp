@@ -139,7 +139,6 @@ void SpiceInterface::Reset(uint64_t CurrenSimNanos)
     if (!hasExplicitKernels && this->SPICEDataPath == "")
     {
         bskLogger.bskError("SPICE data path was not set.  No SPICE.");
-        return;
     }
 
     //!- Load the SPICE kernels if they haven't already been loaded
@@ -564,7 +563,6 @@ std::string SpiceInterface::getCurrentTimeString()
 	if (allowedOutputLength < 0)
 	{
         bskLogger.bskError("The output format string is not long enough. It should be much larger than 5 characters.  It is currently: %s", this->timeOutPicture.c_str());
-		return("");
 	}
 
 	spiceOutputBuffer = new char[allowedOutputLength];

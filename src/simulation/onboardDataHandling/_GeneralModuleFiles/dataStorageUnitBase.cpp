@@ -169,7 +169,6 @@ void DataStorageUnitBase::integrateDataStatus(double currentTime){
         if (std::memchr(it->dataName, '\0', sizeof(it->dataName)) == nullptr) {
             bskLogger.bskError("DataStorageUnitBase: dataName is not null-terminated within %zu characters.",
                              sizeof(it->dataName));
-            return;
         }
         index = messageInStoredData(&(*it));
 

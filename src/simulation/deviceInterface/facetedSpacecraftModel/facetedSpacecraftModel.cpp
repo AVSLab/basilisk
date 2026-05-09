@@ -32,13 +32,11 @@ FacetedSpacecraftModel::~FacetedSpacecraftModel() {
 void FacetedSpacecraftModel::Reset(uint64_t callTime) {
     if (this->numArticulatedFacets > this->numFacets) {
         this->bskLogger->bskError("FacetedSpacecraftModel: numArticulatedFacets cannot be greater than total numFacets");
-        return;
     }
     if (this->facetElementInMsgs.size() != this->numFacets ||
         this->facetElementBodyOutMsgs.size() != this->numFacets ||
         this->articulatedFacetDataInMsgs.size() != this->numArticulatedFacets) {
             this->bskLogger->bskError("FacetedSpacecraftModel: Message vector size mismatch during Reset.");
-            return;
         }
 
     // Clear and allocate data lists
@@ -69,7 +67,6 @@ void FacetedSpacecraftModel::Reset(uint64_t callTime) {
     for (uint64_t idx = 0; idx < this->numFacets; idx++) {
         if (!this->facetElementInMsgs[idx].isLinked() || !this->facetElementInMsgs[idx].isWritten()) {
             this->bskLogger->bskError("FacetedSpacecraftModel: Input message is not linked or written.");
-            return;
         }
 
         FacetElementMsgPayload facetElementIn = this->facetElementInMsgs[idx]();
@@ -119,7 +116,6 @@ void FacetedSpacecraftModel::UpdateState(uint64_t callTime) {
         this->facetDcm_F0BList.size() != this->numFacets ||
         this->facetR_FB_BList.size() != this->numFacets) {
         this->bskLogger->bskError("FacetedSpacecraftModel: UpdateState() called before successful Reset().");
-        return;
     }
 
     // Read the articulated facet input messages
@@ -127,7 +123,6 @@ void FacetedSpacecraftModel::UpdateState(uint64_t callTime) {
     for (uint64_t idx = 0; idx < this->numArticulatedFacets; idx++) {
         if (!this->articulatedFacetDataInMsgs[idx].isLinked() || !this->articulatedFacetDataInMsgs[idx].isWritten()) {
             this->bskLogger->bskError("FacetedSpacecraftModel: Articulated facet input message is not linked or written.");
-            return;
         }
         articulatedFacetAngleList.push_back(this->articulatedFacetDataInMsgs[idx]().theta);
     }

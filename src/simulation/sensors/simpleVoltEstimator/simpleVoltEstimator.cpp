@@ -69,7 +69,6 @@ void SimpleVoltEstimator::Reset(uint64_t CurrentSimNanos)
     //! - Alert the user and stop if the noise matrix is the wrong size.  That'd be bad.
     if (this->PMatrix.size() != numStates*numStates) {
         bskLogger.bskError("Your process noise matrix (PMatrix) is not %ld*%ld. Size is %ld.  Quitting", numStates, numStates, this->PMatrix.size());
-        return;
     }
     if (this->walkBounds.size() != numStates) {
         bskLogger.bskError("Your walkbounds vector  is not %ld elements. Quitting", numStates);
@@ -138,7 +137,6 @@ void SimpleVoltEstimator::setAMatrix(const Eigen::MatrixXd& propMatrix)
 {
     if(propMatrix.rows() != 1 || propMatrix.cols() != 1) {
         bskLogger.bskError("SimpleVoltEstimator: Propagation matrix must be 1x1");
-        return;
     }
     this->AMatrix = propMatrix;
     this->errorModel.setPropMatrix(propMatrix);

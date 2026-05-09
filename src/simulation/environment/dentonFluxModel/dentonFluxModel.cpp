@@ -115,7 +115,6 @@ void DentonFluxModel::Reset(uint64_t CurrentSimNanos)
 
     if (this->eDataFullPath == "" || this->iDataFullPath == "") {
         bskLogger.bskError("DentonFluxModel: configureDentonFiles() was not called.");
-        return;
     }
 
     readDentonDataFile(this->eDataFullPath, this->mean_e_flux);
@@ -352,7 +351,6 @@ void DentonFluxModel::readDentonDataFile(const std::string& fullPath,
         }
     } else {
         bskLogger.bskError("Could not open %s", fullPath.c_str());
-        return;
     }
 
     // Close file

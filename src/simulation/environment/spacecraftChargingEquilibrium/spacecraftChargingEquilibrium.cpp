@@ -97,7 +97,6 @@ void SpacecraftChargingEquilibrium::setYieldSEEelectron(const Eigen::VectorXd& y
 {
     if (!isValidYieldVector(yieldVector)) {
         this->bskLogger.bskError("SpacecraftChargingEquilibrium: setYieldSEEelectron requires a non-empty vector with finite non-negative values.");
-        return;
     }
     this->yieldSEEelectron = yieldVector;
 }
@@ -106,7 +105,6 @@ void SpacecraftChargingEquilibrium::setYieldSEEion(const Eigen::VectorXd& yieldV
 {
     if (!isValidYieldVector(yieldVector)) {
         this->bskLogger.bskError("SpacecraftChargingEquilibrium: setYieldSEEion requires a non-empty vector with finite non-negative values.");
-        return;
     }
     this->yieldSEEion = yieldVector;
 }
@@ -115,7 +113,6 @@ void SpacecraftChargingEquilibrium::setYieldBackscattered(const Eigen::VectorXd&
 {
     if (!isValidYieldVector(yieldVector)) {
         this->bskLogger.bskError("SpacecraftChargingEquilibrium: setYieldBackscattered requires a non-empty vector with finite non-negative values.");
-        return;
     }
     this->yieldBackscattered = yieldVector;
 }
@@ -139,13 +136,11 @@ void SpacecraftChargingEquilibrium::setSunlitAreaDefault(unsigned int spacecraft
 {
     if (!std::isfinite(sunlitArea) || sunlitArea < 0.0) {
         this->bskLogger.bskError("SpacecraftChargingEquilibrium: setSunlitAreaDefault requires a finite non-negative area.");
-        return;
     }
     if (spacecraftIndex >= this->scSunlitAreaDefaults.size()) {
         this->bskLogger.bskError("SpacecraftChargingEquilibrium: setSunlitAreaDefault index %u is out of range (configured spacecraft: %lu).",
                                spacecraftIndex,
                                this->scSunlitAreaDefaults.size());
-        return;
     }
     this->scSunlitAreaDefaults[spacecraftIndex] = sunlitArea;
     if (spacecraftIndex < this->scSunlitAreaWarned.size()) {
@@ -167,7 +162,6 @@ void SpacecraftChargingEquilibrium::clearSunlitAreaDefault(unsigned int spacecra
         this->bskLogger.bskError("SpacecraftChargingEquilibrium: clearSunlitAreaDefault index %u is out of range (configured spacecraft: %lu).",
                                spacecraftIndex,
                                this->scSunlitAreaDefaults.size());
-        return;
     }
     this->scSunlitAreaDefaults[spacecraftIndex] = std::numeric_limits<double>::quiet_NaN();
 }
@@ -176,7 +170,6 @@ void SpacecraftChargingEquilibrium::setSunlitAreaFallback(double sunlitArea)
 {
     if (!std::isfinite(sunlitArea) || sunlitArea < 0.0) {
         this->bskLogger.bskError("SpacecraftChargingEquilibrium: setSunlitAreaFallback requires a finite non-negative area.");
-        return;
     }
     this->sunlitAreaFallback = sunlitArea;
 }
@@ -190,7 +183,6 @@ void SpacecraftChargingEquilibrium::setRootSolveBounds(double lowerBound, double
 {
     if (!std::isfinite(lowerBound) || !std::isfinite(upperBound) || lowerBound >= upperBound) {
         this->bskLogger.bskError("SpacecraftChargingEquilibrium: setRootSolveBounds requires finite lowerBound < upperBound.");
-        return;
     }
     this->rootSolveLowerBound = lowerBound;
     this->rootSolveUpperBound = upperBound;
@@ -210,7 +202,6 @@ void SpacecraftChargingEquilibrium::setSurfaceAreaDefault(double area)
 {
     if (!std::isfinite(area) || area <= 0.0) {
         this->bskLogger.bskError("SpacecraftChargingEquilibrium: setSurfaceAreaDefault requires a finite positive area.");
-        return;
     }
     this->defaultSurfaceArea = area;
 }
@@ -224,7 +215,6 @@ void SpacecraftChargingEquilibrium::setPhotoelectronFlux(double photoelectronFlu
 {
     if (!std::isfinite(photoelectronFluxIn) || photoelectronFluxIn < 0.0) {
         this->bskLogger.bskError("SpacecraftChargingEquilibrium: setPhotoelectronFlux requires a finite non-negative value.");
-        return;
     }
     this->photoelectronFlux = photoelectronFluxIn;
 }
@@ -238,7 +228,6 @@ void SpacecraftChargingEquilibrium::setPhotoelectronTemperature(double photoelec
 {
     if (!std::isfinite(photoelectronTemperatureIn) || photoelectronTemperatureIn <= 0.0) {
         this->bskLogger.bskError("SpacecraftChargingEquilibrium: setPhotoelectronTemperature requires a finite positive value.");
-        return;
     }
     this->photoelectronTemperature = photoelectronTemperatureIn;
 }
@@ -252,7 +241,6 @@ void SpacecraftChargingEquilibrium::setSecondaryElectronTemperature(double secon
 {
     if (!std::isfinite(secondaryElectronTemperatureIn) || secondaryElectronTemperatureIn <= 0.0) {
         this->bskLogger.bskError("SpacecraftChargingEquilibrium: setSecondaryElectronTemperature requires a finite positive value.");
-        return;
     }
     this->secondaryElectronTemperature = secondaryElectronTemperatureIn;
 }
@@ -266,7 +254,6 @@ void SpacecraftChargingEquilibrium::setBackscatterElectronTemperature(double bac
 {
     if (!std::isfinite(backscatterElectronTemperatureIn) || backscatterElectronTemperatureIn <= 0.0) {
         this->bskLogger.bskError("SpacecraftChargingEquilibrium: setBackscatterElectronTemperature requires a finite positive value.");
-        return;
     }
     this->backscatterElectronTemperature = backscatterElectronTemperatureIn;
 }
@@ -280,7 +267,6 @@ void SpacecraftChargingEquilibrium::setBeamElectronTemperature(double beamElectr
 {
     if (!std::isfinite(beamElectronTemperatureIn) || beamElectronTemperatureIn <= 0.0) {
         this->bskLogger.bskError("SpacecraftChargingEquilibrium: setBeamElectronTemperature requires a finite positive value.");
-        return;
     }
     this->beamElectronTemperature = beamElectronTemperatureIn;
 }
@@ -294,7 +280,6 @@ void SpacecraftChargingEquilibrium::setTrapzBins(int trapzBinsIn)
 {
     if (trapzBinsIn <= 0) {
         this->bskLogger.bskError("SpacecraftChargingEquilibrium: setTrapzBins requires a strictly positive integer.");
-        return;
     }
     this->trapzBins = trapzBinsIn;
 }
@@ -311,11 +296,9 @@ bool SpacecraftChargingEquilibrium::validateSolveConfiguration()
         this->bskLogger.bskError("SpacecraftChargingEquilibrium: root solve bounds are invalid (lower=%g, upper=%g).",
                                this->rootSolveLowerBound,
                                this->rootSolveUpperBound);
-        return false;
     }
     if (this->trapzBins <= 0) {
         this->bskLogger.bskError("SpacecraftChargingEquilibrium: trapzBins must be strictly positive.");
-        return false;
     }
     return true;
 }
@@ -369,7 +352,6 @@ void SpacecraftChargingEquilibrium::UpdateState(uint64_t CurrentSimNanos)
     if (this->numSat != 2) {
         this->bskLogger.bskError("SpacecraftChargingEquilibrium.UpdateState called with numSat=%lu. Exactly two spacecraft are required.",
             this->numSat);
-        return;
     }
     if (!this->validateSolveConfiguration()) {
         return;
@@ -379,14 +361,12 @@ void SpacecraftChargingEquilibrium::UpdateState(uint64_t CurrentSimNanos)
     this->readMessages();
     if (this->energies.size() < 2) {
         this->bskLogger.bskError("SpacecraftChargingEquilibrium.UpdateState: energy grid has fewer than 2 valid bins.");
-        return;
     }
     if (this->yieldSEEelectron.size() < this->energies.size() ||
         this->yieldSEEion.size() < this->energies.size() ||
         this->yieldBackscattered.size() < this->energies.size()) {
         this->bskLogger.bskError("SpacecraftChargingEquilibrium.UpdateState: yield vectors must have at least %d entries to match the plasma energy grid.",
             this->energies.size());
-        return;
     }
 
     if (this->enableDebugPrints && this->energies.size() > 0) {
@@ -475,7 +455,6 @@ void SpacecraftChargingEquilibrium::UpdateState(uint64_t CurrentSimNanos)
     equilibriums[0] = bisectionSolve(bracket, this->servicerSolveAccuracy, sumCurrentsServicer);
     if (!std::isfinite(equilibriums[0])) {
         this->bskLogger.bskError("SpacecraftChargingEquilibrium: servicer root solve returned a non-finite value. Check solve bounds and current model configuration.");
-        return;
     }
 
     const int tID = 1;
@@ -522,7 +501,6 @@ void SpacecraftChargingEquilibrium::UpdateState(uint64_t CurrentSimNanos)
     equilibriums[1] = bisectionSolve(bracket, this->targetSolveAccuracy, sumCurrentsTarget);
     if (!std::isfinite(equilibriums[1])) {
         this->bskLogger.bskError("SpacecraftChargingEquilibrium: target root solve returned a non-finite value. Check solve bounds and current model configuration.");
-        return;
     }
 
     if (this->enableDebugPrints) {
@@ -603,7 +581,6 @@ void SpacecraftChargingEquilibrium::addSpacecraft(Message<SCStatesMsgPayload> *t
 {
     if (this->scStateInMsgs.size() >= 2) {
         this->bskLogger.bskError("SpacecraftChargingEquilibrium.addSpacecraft only supports two spacecraft (index 0 servicer, index 1 target).");
-        return;
     }
 
     // Add the input spacecraft-state subscriber.
@@ -771,7 +748,6 @@ double SpacecraftChargingEquilibrium::SEEelectronCurrent(double phi, double A)
         return iSEEElectron * exp(-phi / this->secondaryElectronTemperature);
     } else {
         this->bskLogger.bskError("SpacecraftChargingEquilibrium.SEEelectronCurrent: phi not a real number");
-        return NAN;
     }
 }
 
@@ -808,7 +784,6 @@ double SpacecraftChargingEquilibrium::SEEionCurrent(double phi, double A)
         return iSEEIon * exp(-phi / this->secondaryElectronTemperature);
     } else {
         this->bskLogger.bskError("SpacecraftChargingEquilibrium.SEEionCurrent: phi not a real number");
-        return NAN;
     }
 }
 
@@ -845,7 +820,6 @@ double SpacecraftChargingEquilibrium::backscatteringCurrent(double phi, double A
         return iBackscatter * exp(-phi / this->backscatterElectronTemperature);
     } else {
         this->bskLogger.bskError("SpacecraftChargingEquilibrium.backscatteringCurrent: phi not a real number");
-        return NAN;
     }
 }
 
@@ -896,7 +870,6 @@ double SpacecraftChargingEquilibrium::electronBeamCurrent(double phiS, double ph
         return iBeamTarget;
     } else {
         this->bskLogger.bskError("SpacecraftChargingEquilibrium.electronBeamCurrent: incorrect craftType. Must specify 'servicer' or 'target'.");
-        return NAN;
     }
 }
 
@@ -929,7 +902,6 @@ double SpacecraftChargingEquilibrium::interp(Eigen::VectorXd& xVector, Eigen::Ve
 {
     if (xVector.size() < 2 || yVector.size() < 2 || yVector.size() < xVector.size()) {
         this->bskLogger.bskError("SpacecraftChargingEquilibrium.interp: input vectors must have compatible size >= 2.");
-        return NAN;
     }
 
     // find the index corresponding to the first element in xVector that is greater than x
@@ -1008,7 +980,6 @@ double SpacecraftChargingEquilibrium::getFlux(double E, const std::string& parti
         return flux;
     } else{
         this->bskLogger.bskError("SpacecraftChargingEquilibrium.getFlux: particle must be an electron or ion");
-        return NAN;
     }
 }
 
@@ -1045,6 +1016,5 @@ double SpacecraftChargingEquilibrium::getYield(double E, const std::string& yiel
         return yield;
     } else{
         this->bskLogger.bskError("SpacecraftChargingEquilibrium.getYield: yield type must be electron, ion, or backscattered");
-        return NAN;
     }
 }

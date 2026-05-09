@@ -396,11 +396,9 @@ void Camera::UpdateState(uint64_t currentSimNanos)
     std::vector<int> compression = {cv::IMWRITE_PNG_COMPRESSION, 0};
     if (!cv::imencode(".png", blurred, buf, compression) || buf.empty()) {
         bskLogger.bskError("camera: failed to encode image output buffer.");
-        return;
     }
     if (buf.size() > (size_t)std::numeric_limits<int32_t>::max()) {
         bskLogger.bskError("camera: encoded image output buffer is too large.");
-        return;
     }
     /*! - Output the saved image */
     imageOut.valid = 1;
@@ -417,7 +415,6 @@ void Camera::UpdateState(uint64_t currentSimNanos)
     this->pointImageOut = malloc(imageOut.imageBufferLength*sizeof(char));
     if (this->pointImageOut == nullptr) {
         bskLogger.bskError("camera: failed to allocate image output buffer.");
-        return;
     }
     memcpy(this->pointImageOut, buf.data(), imageOut.imageBufferLength*sizeof(char));
     imageOut.imagePointer = this->pointImageOut;
