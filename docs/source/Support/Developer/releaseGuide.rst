@@ -4,12 +4,15 @@
 Release Guide
 =============
 
+Major Release Guide
+-------------------
+
 These docs outline the process for releasing a new version of Basilisk. It is
 intended for developers and maintainers of the Basilisk software.
 
 The high level steps to release a new version of Basilisk are as follows:
 
-#. Create a new branch ``v2_X_Y`` on ``develop`` for the release.
+#. Create a new branch ``feature/v2_X_Y`` on ``develop`` for the release.
 #. Modify the version number in ``docs/source/bskVersion.txt``
    to reflect the new release.
 #. Add release date to ``docs/source/Support/bskReleaseNotes.rst``
@@ -38,7 +41,7 @@ To prepare ``develop`` for the next beta cycle:
 The following documentation provides detailed instructions for some of these steps.
 
 Updating the Version Number
----------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 The version number is stored in the ``docs/source/bskVersion.txt`` file. This file
 gets read by the ``pyproject.toml`` during packaging to set the version of the
 package. Previously, this file was updated automatically during the CI/CD
@@ -56,29 +59,25 @@ is pushed, reset ``bskVersion.txt`` to the plain ``MAJOR.MINOR.PATCH`` form
 (e.g., ``2.10.2``) before tagging.
 
 Updating the Release Notes
---------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 For normal PR development, release notes are contributed as snippet files in:
 ``docs/source/Support/bskReleaseNotesSnippets``.
 These snippets are compiled and included automatically into the current
 ``Version |release|`` section in ``docs/source/Support/bskReleaseNotes.rst`` when documentation is built.
 
 Creating a Release Branch
--------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^
 Active development occurs on the ``develop`` branch. Once all commits for a new
-minor release have been merged into ``develop``, and the version number and
-changelog have been updated, a new release branch should be created.
+minor release have been merged into ``develop``, then a release branch ``feature/v2_X_0`` is created
+off of ``develop`` where the version number and changelog are updated.  After ``feature/v2_X_0``
+is merged into ``develop``, ``develop`` is merged into ``master`` and that commit is tagged with ``v2.X.0``.
 
-The release branch is named after the minor version (e.g. ``2.9``) and is a
-long-lived maintenance branch. It represents the released ``X.Y`` line and is
-used for the initial release as well as any future patch releases (``X.Y.1``,
-``X.Y.2``, etc.).
-
-All patches and fixes for the ``X.Y`` release line must be made on this branch.
+All patches and fixes for the ``2.X`` release line must be made on the ``patch/v2_X_x`` branch.
 Any changes applied to the release branch should also be merged or cherry-picked
 back into ``develop`` to ensure they are included in future releases.
 
 Creating and Pushing Tags
--------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^
 Releases are published by pushing a git tag. The ``Publish Wheels`` GitHub Actions
 workflow triggers on tag pushes and routes artifacts based on the tag name:
 
@@ -99,12 +98,12 @@ This means: **pushing a tag kicks off the wheel builds on all supported
 platforms, builds an sdist, and then publishes the artifacts**.
 
 Tag format
-^^^^^^^^^^
+""""""""""
 - Full release tags must follow the format ``vX.Y.Z`` (for example, ``v2.9.0``).
 - Release candidate tags follow ``vX.Y.ZrcN`` (for example, ``v2.10.2rc1``).
 
 When to use a release candidate tag
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+"""""""""""""""""""""""""""""""""""
 Push an RC tag when you want to publish a pre-release build to TestPyPI for
 validation before committing to a final release. Typical scenarios include:
 
@@ -126,20 +125,20 @@ The workflow for an RC release is:
    the production PyPI publish.
 
 Where to tag
-^^^^^^^^^^^^
-Tags for the ``X.Y`` patch release line must be created from the corresponding
-maintenance branch (e.g. create ``v2.9.1`` from branch ``2.9``).
+""""""""""""
+Tags for the ``2.X.Y`` patch release line must be created from the corresponding
+maintenance branch (e.g. create tag ``v2.9.1`` on the branch ``patch/v2_9_x``).
 
 Notes
-^^^^^
+"""""
 - Tag pushes are immutable release triggers: once a tag is pushed, CI will build
   and attempt to publish. If a mistake is made, prefer bumping the version and
   tagging again rather than reusing the same version tag.
-- After patching on ``X.Y``, merge or cherry-pick the fix back into ``develop``
+- After patching on ``v2.X``, merge or cherry-pick the fix back into ``develop``
   so the next release line also contains the change.
 
 Creating a Release on GitHub
-----------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 After pushing the release tag, create a new release on GitHub:
 
 #. Go to “Code” tab, on right column select Releases
@@ -152,33 +151,38 @@ After pushing the release tag, create a new release on GitHub:
 
 This will make the release official and provide users with information about the new version.
 
-Patch and Backport Workflow
----------------------------
-Once a release branch (``X.Y``) exists we only maintain this latest ``X.Y`` release on ``master``
-and the current beta on ``develop``.
+Patch Release Guide
+-------------------
+Once a major tagged release (``v2.X.0``) exists we only maintain this latest ``v2.X.Y`` patch release on
+a branch ``patch/v2_X_x`` and the current beta on ``develop``.
 
-Where to make changes
-^^^^^^^^^^^^^^^^^^^^^
-- **New features or breaking changes**:
-  Go directly into ``develop`` for the next beta cycle (never into a release branch).
+To release a patch version ``v2.X.Y`` the following steps are used:
 
-- **Bug fixes for an existing release**:
-
-   #. Create branch on develop to test the fix.
-   #. Create PR for this fix branch, don't update beta release notes
-   #. On master, create a patch branch and cherry pick over the fix commit(s)
-   #. On the patch branch, update the release notes for ``v2.X.Y`` with a release date
-   #. Merge this branch into ``master``
-   #. Create a Release on GitHub
-   #. Charry pick the commit that updated the ``v2.X.Y`` release notes back into
-      the beta cycle on ``develop``.
-
+#. If this is the first patch since ``v2.X``, create a branch off the ``v2.X.0`` tagged release on ``master``
+   and call it ``patch/v2_X_x``.  Pull this ``patch/v2_X_x`` branch.
+#. Cherry pick over the commits from ``develop`` for this patch release.
+#. Update Basilisk version number in ``docs/source/bskVersion.txt`` to ``2.X.Y``.
+#. Update ``docs/source/Support/bskReleaseNotes.rst`` by
+   removing release notes snippets to add them to ``bskReleaseNotes.rst`` directly in a dated section for ``2.X.Y``.
+#. If needed, update ``docs/source/Support/bskKnownIssues.rst`` to have a section for ``2.X.Y``.
+#. Locally test a clean build of Basilisk and documentation.
+#. Push branch to ``origin``.
+#. On https://github.com/AVSLab/basilisk/actions, run the action "Pull Request" on the branch ``patch/v2_X_x``.
+   Wait for tests to complete.
+#. Add a tag ``v2.X.Y`` to this branch and push tag to origin.  This will trigger the wheel build process.
+#. The last step does not trigger the patch release documentation process as this patch release is neither
+   on ``master`` or ``develop``.  On https://github.com/AVSLab/basilisk/actions manually run the
+   action ``Merge to master or develop`` on the branch ``patch/v2_X_x``.
+#. The last step deletes the online developer documentation and it needs to be rebuilt.
+   On https://github.com/AVSLab/basilisk/actions manually run the
+   action ``Merge to master or develop`` on the branch ``develop``.
+#. Create a Release on GitHub
 
 .. important::
 
    - Never develop directly on multiple branches in parallel for the same fix.
      This leads to divergence and hard-to-resolve conflicts.
-   - Do not merge ``develop`` back into ``X.Y`` after the release branch is
+   - Do not merge ``develop`` back into ``v2.X`` after the release branch is
      created. Release branches must remain stable and focused on fixes only.
    - Cherry-picks should be small, focused, and preferably reference the original
      commit hash in the message.
@@ -189,14 +193,34 @@ The `bsk-sdk <https://github.com/AVSLab/bsk_sdk>`_ package vendors the Basilisk
 SDK headers and runtime for plugin authors. Its version is kept in sync with
 Basilisk, so a new BSK release requires a corresponding SDK release.
 
-CI automatically checks out the Basilisk submodule at the tag matching the
-version string in ``pyproject.toml``, so no manual submodule update is needed.
-The only manual steps are:
+The following steps are to be done after the Basilisk ``v2.X.Y`` release is fully completed.
+This ensures that the Basilisk release is completed and available on the expected Basilisk branch.
+
+Major SDK Release
+^^^^^^^^^^^^^^^^^
+To release a major version ``2.X.0`` the following steps are used:
 
 #. On a branch of develop, update the ``version`` field in ``pyproject.toml``
-   to match the new BSK release (e.g. ``2.X.Y``).
-#. Open a PR merging the updated ``pyproject.toml`` into ``develop`` on the
-   ``bsk-sdk`` repo. The PR CI workflow will test the SDK wheel build.
+   to match the new major BSK release (e.g. ``2.X.0``).
+#. Push branch to ``origin`` and create a PR to trigger the CI workflow to test the SDK wheel.
+#. Merge the PR to ``develop`` once CI tests pass.
 #. Merge ``develop`` into ``master``.
-#. Push the matching tag ``v2.X.Y`` to ``master`` to trigger the wheel build
+#. Add the tag ``v2.X.0`` to ``master`` and push tag to origin to trigger the wheel build
    and PyPI publish via GitHub Actions.
+#. Create a Release on GitHub
+
+Patch Release
+^^^^^^^^^^^^^
+To release a patch version ``2.X.Y`` the following steps are used:
+
+#. If this is the first patch since ``v2.X``, create a branch off the ``v2.X.0`` tagged release on ``master``
+   and call it ``patch/v2_X_x``.  Pull this ``patch/v2_X_x`` branch.
+#. Cherry pick over the commits from ``develop`` for this patch release.
+#. Update the ``version`` field in ``pyproject.toml`` to match the patch BSK release (e.g. ``2.X.Y``).
+#. Update ``.github/workflows/ci.yml``, section ``Install bsk-sdk wheel and Basilisk``, to pull the matching
+   Basilisk branch ``--branch patch/v2_X_x``
+#. Commit edits and push to ``origin``
+#. Manually run the ``CI`` action on https://github.com/AVSLab/bsk_sdk/actions. Wait for tests to complete.
+#. Add the tag ``v2.X.Y`` to ``patch/v2_X_x`` and push tag to origin to trigger the wheel build
+   and PyPI publish via GitHub Actions.
+#. Create a Release on GitHub
