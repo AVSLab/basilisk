@@ -1,0 +1,1 @@
+- Updated CI sccache setup to use a Node.js 24-compatible GitHub Action release.
