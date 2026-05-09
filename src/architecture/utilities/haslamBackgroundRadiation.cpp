@@ -50,7 +50,6 @@ bool HaslamMap::loadHaslamMap() {
         char err_text[256];
         fits_get_errstatus(status, err_text);
         this->bskLogger.bskError("HaslamMap: Error opening FITS file: %s", err_text);
-        return false;
     }
 
     auto closeFile = [&]() {

@@ -246,7 +246,6 @@ void Albedo::Reset(uint64_t CurrentSimNanos)
 {
     if (this->modelNames.empty()) {
         bskLogger.bskError("Albedo Module (Reset): Albedo model was not set.");
-        return;
     }
     if (this->planetInMsgs.empty()) {
         bskLogger.bskError("Albedo Module (Reset): Planet message vector (planetInMsgs) is empty.");
@@ -392,7 +391,7 @@ double Albedo::getAlbedoAverage(std::string planetSpiceName)
         ALB_avg = 0.31; return ALB_avg;
     }
     else {
-        bskLogger.bskError("Albedo Module (getAlbedoAverage): The average albedo value is not defined for the specified planet (%s).", planetSpiceName.c_str()); return 0.;
+        bskLogger.bskError("Albedo Module (getAlbedoAverage): The average albedo value is not defined for the specified planet (%s).", planetSpiceName.c_str());
     }
 }
 
@@ -444,8 +443,6 @@ void Albedo::evaluateAlbedoModel(int idx)
         std::ifstream input(fileName);
         if (!input) {
             bskLogger.bskError("Albedo Module (evaluateAlbedoModel): Albedo module is unable to load file %s", fileName.c_str());
-            // return to avoid reading/attempting to process the invalid file below
-            return;
         }
         //! - Read the albedo coefficients
         std::string line, field;

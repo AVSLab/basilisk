@@ -286,12 +286,10 @@ double Eclipse::getPlanetEquatorialRadius(std::string planetSpiceName)
     } else if (planetSpiceName == "custom") {
         if (rEqCustom <= 0.0) {
             bskLogger.bskError("Eclipse: Invalid rEqCustom set.");
-            return 1.0;
         } else {
             return rEqCustom;
         }
     } else {
         bskLogger.bskError("Eclipse: unrecognized planetSpiceName.");
-        return 1.0;
     }
 }

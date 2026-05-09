@@ -69,7 +69,6 @@ void PlanetNav::Reset(uint64_t CurrentSimNanos)
     //! - Alert the user and stop if the noise matrix is the wrong size.  That'd be bad.
     if (this->PMatrix.size() != numStates*numStates) {
         bskLogger.bskError("Your process noise matrix (PMatrix) is not 12*12. Size is %ld.  Quitting", this->PMatrix.size());
-        return;
     }
     //! - Set the matrices of the lower level error propagation (GaussMarkov)
     this->errorModel.setNoiseMatrix(this->PMatrix);

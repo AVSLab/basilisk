@@ -129,7 +129,6 @@ Eigen::MatrixXd* DynParamManager::getPropertyReference(std::string propName)
     if (it == dynProperties.end()) {
         bskLogger.bskError("You requested the property: %s which doesn't exist.  Null returned.",
                          propName.c_str());
-        return nullptr;
     }
     else {
         return (&(it->second));

@@ -315,18 +315,15 @@ double bisectionSolve(double *interval, double accuracy, std::function< double(d
     const bool accuracyIsPositive = accuracy > 0.0;
     if (!accuracyIsFinite || !accuracyIsPositive) {
         bskLogger.bskError("avsEigenSupport.bisectionSolve: accuracy must be finite and strictly positive");
-        return NAN;
     }
     const bool leftIsFinite = std::isfinite(left);
     const bool rightIsFinite = std::isfinite(right);
     if (!leftIsFinite || !rightIsFinite) {
         bskLogger.bskError("avsEigenSupport.bisectionSolve: interval bounds must be finite");
-        return NAN;
     }
     // check if interval is good
     if (left > right){
         bskLogger.bskError("avsEigenSupport.bisectionSolve: Interval must be from left to right");
-        return NAN;
     }
     double fLeft = f(left);
     double fRight = f(right);
@@ -339,7 +336,6 @@ double bisectionSolve(double *interval, double accuracy, std::function< double(d
     // check if interval has opposite signs
     if ((fLeft * fRight) > 0){
         bskLogger.bskError("avsEigenSupport.bisectionSolve: function values at interval bounds must have opposite signs");
-        return NAN;
     }
     // find root
     while ((right - left) >= accuracy){

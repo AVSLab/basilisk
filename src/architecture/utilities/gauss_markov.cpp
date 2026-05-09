@@ -71,12 +71,10 @@ void GaussMarkov::computeNextState()
        ((uint64_t) this->propMatrix.size() != this->numStates*this->numStates))
     {
         bskLogger.bskError("Matrix size mismatch in Gauss Markov model");
-        return;
     }
     if((uint64_t) this->stateBounds.size() != this->numStates)
     {
         bskLogger.bskError("State bounds size mismatch in Gauss Markov model");
-        return;
     }
 
     //! - Generate base random numbers

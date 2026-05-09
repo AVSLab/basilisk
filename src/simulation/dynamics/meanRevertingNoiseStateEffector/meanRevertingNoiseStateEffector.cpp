@@ -39,7 +39,6 @@ void MeanRevertingNoiseStateEffector::setStationaryStd(double sigmaStationary)
 {
     if (sigmaStationary < 0.0) {
         this->bskLogger.bskError("MeanRevertingNoiseStateEffector::setStationaryStd requires sigmaStationary >= 0.");
-        return;
     }
     this->sigmaStationary = sigmaStationary;
 }
@@ -48,7 +47,6 @@ void MeanRevertingNoiseStateEffector::setTimeConstant(double timeConstant)
 {
     if (timeConstant <= 0.0) {
         this->bskLogger.bskError("MeanRevertingNoiseStateEffector::setTimeConstant requires timeConstant > 0.");
-        return;
     }
     this->timeConstant = timeConstant;
 }
@@ -92,7 +90,6 @@ void MeanRevertingNoiseStateEffector::computeDerivatives(double /** integTime */
 {
     if (this->state == nullptr) {
         this->bskLogger.bskError("MeanRevertingNoiseStateEffector::computeDerivatives called before registerStates.");
-        return;
     }
 
     const double x = this->state->getState()(0, 0);

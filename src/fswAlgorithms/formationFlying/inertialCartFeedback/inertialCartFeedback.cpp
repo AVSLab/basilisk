@@ -98,7 +98,6 @@ void InertialCartFeedback::setK(const std::vector<double>& value)
 {
     if (value.size() != 9) {
         bskLogger.bskError("inertialCartFeedback: K must contain exactly 9 elements.");
-        return;
     }
     this->K << value[0], value[1], value[2],
                value[3], value[4], value[5],
@@ -106,13 +105,11 @@ void InertialCartFeedback::setK(const std::vector<double>& value)
 
     if ((this->K - this->K.transpose()).norm() > 1e-12) {
         bskLogger.bskError("inertialCartFeedback: K must be symmetric positive definite.");
-        return;
     }
 
     const double minEigK = this->K.selfadjointView<Eigen::Lower>().eigenvalues().minCoeff();
     if (!(minEigK > 0.0)) {
         bskLogger.bskError("inertialCartFeedback: K must be symmetric positive definite.");
-        return;
     }
     this->setKFlag = true;
 }
@@ -121,7 +118,6 @@ void InertialCartFeedback::setP(const std::vector<double>& value)
 {
     if (value.size() != 9) {
         bskLogger.bskError("inertialCartFeedback: P must contain exactly 9 elements.");
-        return;
     }
     this->P << value[0], value[1], value[2],
                value[3], value[4], value[5],
@@ -129,13 +125,11 @@ void InertialCartFeedback::setP(const std::vector<double>& value)
 
     if ((this->P - this->P.transpose()).norm() > 1e-12) {
         bskLogger.bskError("inertialCartFeedback: P must be symmetric positive definite.");
-        return;
     }
 
     const double minEigP = this->P.selfadjointView<Eigen::Lower>().eigenvalues().minCoeff();
     if (!(minEigP > 0.0)) {
         bskLogger.bskError("inertialCartFeedback: P must be symmetric positive definite.");
-        return;
     }
     this->setPFlag = true;
 }

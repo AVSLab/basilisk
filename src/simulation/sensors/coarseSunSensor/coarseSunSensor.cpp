@@ -450,7 +450,6 @@ void CoarseSunSensor::setAMatrix(const Eigen::Matrix<double, -1, 1, 0, -1, 1>& p
 {
     if(propMatrix.rows() != 1 || propMatrix.cols() != 1) {
         bskLogger.bskError("CoarseSunSensor: Propagation matrix must be 1x1");
-        return;
     }
     this->propagationMatrix = propMatrix;
     // Set the propagation matrix for both noise models

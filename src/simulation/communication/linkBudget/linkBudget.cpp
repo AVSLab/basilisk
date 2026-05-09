@@ -95,7 +95,6 @@ void LinkBudget::initialization()
         // -------- Both antennas are on EARTH --> not supported --------
         this->antennaPlacement = LinkBudgetTypes::AntennaPlacement::_UNKNOWN_BLOCKED;
         bskLogger.bskError("This module does currently not support link budget calculations between two ground stations.");
-        return;
     } else if (this->env1 == AntennaTypes::EnvironmentType::ENVIRONMENT_EARTH &&
                this->env2 == AntennaTypes::EnvironmentType::ENVIRONMENT_SPACE) {
         // -------- Antenna 1 is on EARTH, antenna 2 is in SPACE --------
@@ -119,7 +118,6 @@ void LinkBudget::initialization()
         // robustness case: unknown antenna environments
         this->antennaPlacement = LinkBudgetTypes::AntennaPlacement::_UNKNOWN_BLOCKED;
         bskLogger.bskError("LinkBudget: Unable to determine antenna placement type.");
-        return;
     }
 
     // If atmospheric attenuation is enabled, calculate the ground antenna parameters (fixed values for ground antenna)
@@ -369,7 +367,6 @@ void LinkBudget::generateLookupTable(LinkBudgetTypes::GasType gasType, LookupTab
         filename = this->waterVaporLookupFilePath.empty() ? "supportData/AtmRadioFreqDampData/waterVapour.json" : this->waterVaporLookupFilePath;
     } else {
         bskLogger.bskError("LinkBudget: Invalid gas type for lookup table generation.");
-        return;
     }
     // Clear any existing data
     lookupTable->f_l.clear();
@@ -395,7 +392,6 @@ void LinkBudget::generateLookupTable(LinkBudgetTypes::GasType gasType, LookupTab
     if (!file.is_open()) {
         std::string errorMsg = "LinkBudget: Unable to open lookup table file: " + filePath.string();
         bskLogger.bskError("%s", errorMsg.c_str());
-        return;
     }
 
 

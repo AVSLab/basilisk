@@ -429,13 +429,11 @@ double SimpleAntenna::getPlanetEquatorialRadius(std::string planetSpiceName)
     } else if (planetSpiceName == "custom") {
         if (rEqCustom <= 0.0) {
             bskLogger.bskError("SimpleAntenna: Invalid rEqCustom set.");
-            return 1.0;
         } else {
             return rEqCustom;
         }
     } else {
         bskLogger.bskError("SimpleAntenna: unrecognized planetSpiceName.");
-        return 1.0;
     }
 }
 
@@ -609,7 +607,6 @@ void SimpleAntenna::setAntennaHpbwRatio(double var) {
 void SimpleAntenna::setAntennaP_Tx(double var) {
     if (var <= this->minThreshold) {
         bskLogger.bskError("SimpleAntenna transmit power P_Tx [W] is set to a value below the minimum threshold (10^-6 W) => Antenna transmit power must be larger than minimal threshold.");
-        return;
     }
     this->P_Tx = var;            // [W] transmit power
 }
@@ -623,7 +620,6 @@ void SimpleAntenna::setAntennaP_Rx(double var) {
 void SimpleAntenna::setAntennaEquivalentNoiseTemp(double var) {
     if (var < this->minThreshold) {
         bskLogger.bskError("SimpleAntenna equivalent noise temperature T_E [K] is set to a negative value => Antenna equivalent noise temperature must be non-negative.");
-        return;
     }
     this->T_E = var;             // [K] equivalent noise temperature
 }

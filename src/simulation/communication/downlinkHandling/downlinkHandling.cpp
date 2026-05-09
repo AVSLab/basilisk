@@ -58,7 +58,6 @@ DownlinkHandling::addStorageUnitToDownlink(Message<DataStorageStatusMsgPayload>*
 {
     if (tmpStorageUnitMsg == nullptr) {
         bskLogger.bskError("DownlinkHandling.addStorageUnitToDownlink: null message pointer.");
-        return false;
     }
 
     for (auto* msgPtr : this->storageUnitMsgPtrs) {
@@ -80,7 +79,6 @@ DownlinkHandling::setBitRateRequest(double bitRateRequest)
 {
     if (!this->isFiniteNonNegative(bitRateRequest)) {
         bskLogger.bskError("DownlinkHandling.setBitRateRequest: value must be finite and >= 0 [bit/s].");
-        return false;
     }
 
     this->bitRateRequest = bitRateRequest;
@@ -93,7 +91,6 @@ DownlinkHandling::setPacketSizeBits(double packetSizeBits)
 {
     if (!this->isFinitePositive(packetSizeBits)) {
         bskLogger.bskError("DownlinkHandling.setPacketSizeBits: value must be finite and > 0 [bit].");
-        return false;
     }
 
     this->packetSizeBits = packetSizeBits;
@@ -106,7 +103,6 @@ DownlinkHandling::setMaxRetransmissions(int64_t maxRetransmissions)
 {
     if (maxRetransmissions < 1) {
         bskLogger.bskError("DownlinkHandling.setMaxRetransmissions: value must be >= 1.");
-        return false;
     }
 
     this->maxRetransmissions = static_cast<uint64_t>(maxRetransmissions);
@@ -119,7 +115,6 @@ DownlinkHandling::setReceiverAntenna(int64_t receiverAntenna)
 {
     if (receiverAntenna != 0 && receiverAntenna != 1 && receiverAntenna != 2) {
         bskLogger.bskError("DownlinkHandling.setReceiverAntenna: value must be 0 (auto), 1, or 2.");
-        return false;
     }
 
     this->receiverAntenna = receiverAntenna;
@@ -140,7 +135,6 @@ DownlinkHandling::setRemovalPolicy(int64_t removalPolicy)
     }
 
     bskLogger.bskError("DownlinkHandling.setRemovalPolicy: value must be 0 (REMOVE_ATTEMPTED) or 1 (REMOVE_DELIVERED_ONLY).");
-    return false;
 }
 
 /*! Set packet-gating behavior flag */

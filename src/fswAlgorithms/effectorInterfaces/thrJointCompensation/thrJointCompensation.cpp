@@ -130,7 +130,6 @@ void ThrJointCompensation::UpdateState(uint64_t CurrentSimNanos)
         if (this->kinCfg.armTreeIdx.size() != this->kinCfg.armJointCount.size()) {
             bskLogger.bskError("ThrJointCompensation: armTreeIdx size (%zu) does not match armJointCount size (%zu).",
                 this->kinCfg.armTreeIdx.size(), this->kinCfg.armJointCount.size());
-            return;
         }
 
         const int nArms = static_cast<int>(this->kinCfg.armJointCount.size());
@@ -157,14 +156,12 @@ void ThrJointCompensation::UpdateState(uint64_t CurrentSimNanos)
             if (itTree == this->treeMap.end()) {
                 bskLogger.bskError("ThrJointCompensation: treeId %d for arm %d was not found in joint reaction tree data.",
                     treeId, a);
-                return;
             }
             const auto& hinges = itTree->second.hingeGlobalIdxs;
             int& cur = treeCursor[treeId];
             if (cur + cnt > static_cast<int>(hinges.size())) {
                 bskLogger.bskError("ThrJointCompensation: arm %d expects %d hinge joints in tree %d, but only %zu are available (cursor=%d).",
                     a, cnt, treeId, hinges.size(), cur);
-                return;
             }
             for (int j = 0; j < cnt; ++j) {
                 this->kinCfg.armHingeGlobalIdx[start + j] = hinges[cur++];

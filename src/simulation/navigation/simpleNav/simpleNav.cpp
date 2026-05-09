@@ -76,7 +76,6 @@ void SimpleNav::Reset(uint64_t CurrentSimNanos)
     //! - Alert the user and stop if the noise matrix is the wrong size.  That'd be bad.
     if (this->PMatrix.size() != this->numStates*this->numStates) {
         bskLogger.bskError("Your process noise matrix (PMatrix) is not 18*18. Size is %ld.  Quitting", this->PMatrix.size());
-        return;
     }
     //! - Set the matrices of the lower level error propagation (GaussMarkov)
     this->errorModel.setNoiseMatrix(this->PMatrix);
@@ -184,7 +183,6 @@ void SimpleNav::computeErrors(uint64_t CurrentSimNanos)
     //! - Set the GaussMarkov propagation matrix and compute errors
     if (this->PMatrix.size() != this->numStates*this->numStates) {
         bskLogger.bskError("Your process noise matrix (PMatrix) is not 18*18. Size is %ld.  Quitting during Simulation", this->PMatrix.size());
-        return;
     }
     this->errorModel.setNoiseMatrix(this->PMatrix);
     if (this->walkBounds.size() != this->numStates) {
