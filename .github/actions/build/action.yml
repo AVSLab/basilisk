@@ -51,7 +51,7 @@ runs:
       run: pip install ninja
 
     - name: Setup sccache
-      uses: mozilla/sccache-action@v0.0.9
+      uses: mozilla-actions/sccache-action@v0.0.10
 
     - name: Set sccache as compiler launcher
       shell: bash
