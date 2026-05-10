@@ -37,7 +37,18 @@ class StateMerge(sysModel.SysModel):
         self.stateOutMsg = messaging.SCStatesMsg()
         self.stateOut = messaging.SCStatesMsgPayload()
 
+    def validateInputMessages(self):
+        """Raise ``BasiliskError`` if a required input message is not linked."""
+        requiredInputMessages = [
+            ("attStateInMsg", self.attStateInMsg),
+            ("transStateInMsg", self.transStateInMsg),
+        ]
+        for msgName, msgReader in requiredInputMessages:
+            if not msgReader.isLinked():
+                self.bskLogger.bskError(f"StateMerge.{msgName} was not linked.")
+
     def Reset(self, CurrentSimNanos):
+        self.validateInputMessages()
         self.stateOutMsg.write(messaging.SCStatesMsgPayload())
 
     def UpdateState(self, CurrentSimNanos):

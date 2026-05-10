@@ -16,8 +16,9 @@
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 import numpy as np
+import pytest
 
-from Basilisk.architecture import messaging
+from Basilisk.architecture import bskLogging, messaging
 from Basilisk.fswAlgorithms import thrFiringRound
 
 
@@ -103,3 +104,21 @@ def test_thr_firing_round_minimum_fire_time():
 
     onTimeOut = module.thrOnTimeOutMsg.read()
     np.testing.assert_allclose(onTimeOut.OnTimeRequest[:2], [0.0, 0.2])  # [s]
+
+
+def test_reset_rejects_missing_input_message():
+    """
+    **Validation Test Description**
+
+    This unit test verifies that :class:`thrFiringRound.ThrFiringRound`
+    rejects reset calls when its required input message is not connected.
+
+    **Description of Variables Being Tested**
+
+    This unit test checks the ``thrForceInMsg`` input message reader.
+    """
+    module = thrFiringRound.ThrFiringRound()
+    module.bskLogger = bskLogging.BSKLogger()
+
+    with pytest.raises(bskLogging.BasiliskError, match="ThrFiringRound.thrForceInMsg"):
+        module.Reset(0)

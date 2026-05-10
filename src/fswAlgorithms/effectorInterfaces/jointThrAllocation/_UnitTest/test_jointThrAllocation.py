@@ -16,8 +16,25 @@
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 import numpy as np
+import pytest
 
+from Basilisk.architecture import bskLogging, messaging
 from Basilisk.fswAlgorithms import jointThrAllocation
+
+
+def _linked_input_messages():
+    armConfigMsg = messaging.THRArmConfigMsg().write(messaging.THRArmConfigMsgPayload())
+    comStatesMsg = messaging.SCStatesMsg().write(messaging.SCStatesMsgPayload())
+    hubStatesMsg = messaging.SCStatesMsg().write(messaging.SCStatesMsgPayload())
+    transForceMsg = messaging.CmdForceInertialMsg().write(messaging.CmdForceInertialMsgPayload())
+    rotTorqueMsg = messaging.CmdTorqueBodyMsg().write(messaging.CmdTorqueBodyMsgPayload())
+    return {
+        "armConfigInMsg": armConfigMsg,
+        "CoMStatesInMsg": comStatesMsg,
+        "hubStatesInMsg": hubStatesMsg,
+        "transForceInMsg": transForceMsg,
+        "rotTorqueInMsg": rotTorqueMsg,
+    }
 
 
 def test_map_matrix():
@@ -84,3 +101,35 @@ def test_allocation_configuration_helpers():
     assert bounds[1] == (-np.pi, np.pi)
     assert bounds[2] == (0.0, 4.0)  # [N]
     assert bounds[3] == (0.0, 4.0)  # [N]
+
+
+@pytest.mark.parametrize(
+    "missing_msg_name",
+    [
+        "armConfigInMsg",
+        "CoMStatesInMsg",
+        "hubStatesInMsg",
+        "transForceInMsg",
+        "rotTorqueInMsg",
+    ],
+)
+def test_reset_rejects_missing_input_message(missing_msg_name):
+    """
+    **Validation Test Description**
+
+    This unit test verifies that :class:`jointThrAllocation.JointThrAllocation`
+    rejects reset calls when any required input message is not connected.
+
+    **Description of Variables Being Tested**
+
+    This unit test checks each required input message reader.
+    """
+    allocation = jointThrAllocation.JointThrAllocation()
+    allocation.bskLogger = bskLogging.BSKLogger()
+
+    for msgName, msg in _linked_input_messages().items():
+        if msgName != missing_msg_name:
+            getattr(allocation, msgName).subscribeTo(msg)
+
+    with pytest.raises(bskLogging.BasiliskError, match=f"JointThrAllocation.{missing_msg_name}"):
+        allocation.Reset(0)

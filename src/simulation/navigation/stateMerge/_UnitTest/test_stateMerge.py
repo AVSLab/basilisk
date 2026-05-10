@@ -16,8 +16,9 @@
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 import numpy as np
+import pytest
 
-from Basilisk.architecture import messaging
+from Basilisk.architecture import bskLogging, messaging
 from Basilisk.simulation import stateMerge
 
 
@@ -58,3 +59,30 @@ def test_state_merge_output_payload():
     np.testing.assert_allclose(stateOut.omega_BN_B, attPayload.omega_BN_B)
     np.testing.assert_allclose(stateOut.r_BN_N, transPayload.r_CN_N)
     np.testing.assert_allclose(stateOut.v_BN_N, transPayload.v_CN_N)
+
+
+@pytest.mark.parametrize("missing_msg_name", ["attStateInMsg", "transStateInMsg"])
+def test_reset_rejects_missing_input_message(missing_msg_name):
+    """
+    **Validation Test Description**
+
+    This unit test verifies that :class:`stateMerge.StateMerge` rejects reset
+    calls when any required input message is not connected.
+
+    **Description of Variables Being Tested**
+
+    This unit test checks each required input message reader.
+    """
+    module = stateMerge.StateMerge()
+    module.bskLogger = bskLogging.BSKLogger()
+
+    inputMessages = {
+        "attStateInMsg": messaging.SCStatesMsg().write(messaging.SCStatesMsgPayload()),
+        "transStateInMsg": messaging.SCStatesMsg().write(messaging.SCStatesMsgPayload()),
+    }
+    for msgName, msg in inputMessages.items():
+        if msgName != missing_msg_name:
+            getattr(module, msgName).subscribeTo(msg)
+
+    with pytest.raises(bskLogging.BasiliskError, match=f"StateMerge.{missing_msg_name}"):
+        module.Reset(0)
