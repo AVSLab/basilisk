@@ -30,22 +30,29 @@ Prerequisites
 Plugin Layout
 -------------
 
-Follow the same folder convention as BSK — one folder per module, named
-identically to the module:
+Every plugin needs a Python package directory (``my_plugin/`` below). This
+is the importable namespace your users will ``import`` from, and where both
+compiled SWIG extensions and pure-Python modules are installed.  C++/SWIG
+source trees live alongside it at the repo root and get compiled into that
+package at build time.  Pure-Python modules can be added directly inside the
+package directory with no extra build steps:
 
 .. code-block:: text
 
     my-plugin/
     ├── pyproject.toml
     ├── CMakeLists.txt
-    ├── messages/               # (optional) custom message definitions
+    ├── my_plugin/                      # Python package (SWIG outputs install here too)
+    │   ├── __init__.py
+    │   └── examplePythonModule.py      # (optional) pure-Python modules
+    ├── messages/                       # (optional) custom message definitions
     │   └── MyMsgPayload.h
-    └── myModule/
-        ├── myModule.h
-        ├── myModule.cpp
-        ├── myModule.i
+    └── exampleCppModule/               # C++/SWIG module source
+        ├── exampleCppModule.h
+        ├── exampleCppModule.cpp
+        ├── exampleCppModule.i
         └── _UnitTest/
-            └── test_myModule.py
+            └── test_exampleCppModule.py
 
 SWIG Interface
 --------------
@@ -55,14 +62,14 @@ The ``.i`` file is the same as any BSK module.  For C++ use
 
 .. code-block:: swig
 
-    %module myModule
+    %module exampleCppModule
     %{
-    #include "myModule.h"
+    #include "exampleCppModule.h"
     %}
 
     %include "swig_common_model.i"   /* C++ modules */
     /* %include "swig_c_wrap.i"      C modules — use %c_wrap_2 instead */
-    %include "myModule.h"
+    %include "exampleCppModule.h"
 
 If subclassing a BSK base class, ``%include`` its ``.i`` file before yours:
 
@@ -107,24 +114,22 @@ plugin-specific section:
     # Plugin-specific configuration
     # ==========================================================================
 
-    file(GLOB PLUGIN_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/myModule/*.cpp")
+    file(GLOB PLUGIN_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/exampleCppModule/*.cpp")
 
     # If subclassing a BSK base class (AtmosphereBase, DynamicEffector, etc.),
-    # add its implementation from the SDK:
-    # list(APPEND PLUGIN_SOURCES "${BSK_SDK_RUNTIME_MIN_DIR}/atmosphereBase.cpp")
-
+    # bsk_add_swig_module automatically links the required SDK runtime sources —
+    # no manual list(APPEND) is needed.  See the `custom-atm-plugin` example.
     bsk_add_swig_module(
-      TARGET myModule
-      INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/myModule/myModule.i"
+      TARGET exampleCppModule
+      INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/exampleCppModule/exampleCppModule.i"
       SOURCES   ${PLUGIN_SOURCES}
       INCLUDE_DIRS
-        "${CMAKE_CURRENT_SOURCE_DIR}/myModule"
+        "${CMAKE_CURRENT_SOURCE_DIR}/exampleCppModule"
         "${CMAKE_CURRENT_SOURCE_DIR}/messages"
-      LINK_LIBS bsk::plugin
       OUTPUT_DIR "${PKG_DIR}"
     )
 
-    # Optional: generate Python bindings for custom messages
+    # Optionally generate Python bindings for custom messages
     bsk_generate_messages(
       OUTPUT_DIR "${PKG_DIR}/messaging"
       MSG_HEADERS
@@ -137,17 +142,24 @@ pyproject.toml
 .. code-block:: toml
 
     [build-system]
-    requires = ["scikit-build-core>=0.9"]
+    requires = ["scikit-build-core>=0.9.3", "bsk-sdk==2.X.Y", "bsk==2.X.Y", "swig==4.4.1"]
     build-backend = "scikit_build_core.build"
 
     [project]
     name = "my-plugin"
     version = "1.0.0"
     requires-python = ">=3.9"
-    dependencies = ["bsk"]
+    dependencies = ["bsk==2.X.Y"]
 
     [tool.scikit-build]
-    wheel.packages = []
+    wheel.packages = ["my_plugin"]
+
+.. note::
+
+   ``bsk-sdk``, ``bsk``, and the runtime ``dependencies`` entry must all be
+   **pinned to the same version**.  The SDK compiles BSK sources into your
+   plugin at build time, so mismatched versions will produce a CMake error.
+   Replace ``2.X.Y`` with the Basilisk version you are targeting.
 
 Building and Installing
 -----------------------
@@ -162,7 +174,7 @@ Building and Installing
     pip install dist/*.whl
 
     # Run unit tests
-    pytest myModule/_UnitTest/ -v
+    pytest exampleCppModule/_UnitTest/ -v
 
 Publishing to PyPI
 ------------------
