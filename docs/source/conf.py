@@ -9,6 +9,7 @@
 # -- Path setup --------------------------------------------------------------
 
 import datetime
+import shutil
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
@@ -133,6 +134,8 @@ extensions = [
 ]
 
 graphviz_output_format = "svg"
+_dot_candidates = ["/opt/homebrew/bin/dot", "/usr/local/bin/dot"]
+graphviz_dot = shutil.which("dot") or next((p for p in _dot_candidates if os.path.exists(p)), "dot")
 
 # Use MathJax SVG output instead of CHTML to avoid browser/font-metric
 # rendering artifacts (e.g., vertically offset multi-character symbols).
@@ -323,7 +326,6 @@ epub_exclude_files = ['search.html']
 # breathe_projects = {"Basilisk": "../../src/*"}
 
 from glob import glob
-import shutil
 
 class fileCrawler():
     def __init__(self, newFiles=False):
