@@ -28,10 +28,7 @@ void MeanRevertingNoise::registerStates(DynParamRegisterer registerer) {
 void MeanRevertingNoise::UpdateState(uint64_t CurrentSimNanos) {
     // Safety
     if (!xState) {
-        MJBasilisk::detail::logAndThrow<std::runtime_error>(
-            "MeanRevertingNoise: state not registered",
-            &bskLogger
-        );
+        bskLogger.bskError("MeanRevertingNoise: state not registered");
     }
 
     // Current x
@@ -54,40 +51,28 @@ void MeanRevertingNoise::UpdateState(uint64_t CurrentSimNanos) {
 
 double MeanRevertingNoise::getStateValue() const {
     if (!xState) {
-        MJBasilisk::detail::logAndThrow<std::runtime_error>(
-            "MeanRevertingNoise: getStateValue before initialization",
-            &const_cast<BSKLogger&>(bskLogger)
-        );
+        BSKLogger{}.bskError("MeanRevertingNoise: getStateValue before initialization");
     }
     return xState->getState()(0, 0);
 }
 
 void MeanRevertingNoise::setStateValue(double val) {
     if (!xState) {
-        MJBasilisk::detail::logAndThrow<std::runtime_error>(
-            "MeanRevertingNoise: setStateValue before initialization",
-            &bskLogger
-        );
+        bskLogger.bskError("MeanRevertingNoise: setStateValue before initialization");
     }
     xState->setState(Eigen::Matrix<double, 1, 1>::Constant(val));
 }
 
 void MeanRevertingNoise::setTimeConstant(double t) {
     if (t <= 0.0) {
-        MJBasilisk::detail::logAndThrow<std::invalid_argument>(
-            "MeanRevertingNoise::setTimeConstant: tau must be > 0",
-            &bskLogger
-        );
+        bskLogger.bskError("MeanRevertingNoise::setTimeConstant: tau must be > 0");
     }
     timeConstant = t;
 }
 
 void MeanRevertingNoise::setStationaryStd(double s) {
     if (s < 0.0) {
-        MJBasilisk::detail::logAndThrow<std::invalid_argument>(
-            "MeanRevertingNoise::setStationaryStd: sigma_st must be >= 0",
-            &bskLogger
-        );
+        bskLogger.bskError("MeanRevertingNoise::setStationaryStd: sigma_st must be >= 0");
     }
     sigmaStationary = s;
 }

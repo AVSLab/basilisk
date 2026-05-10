@@ -26,7 +26,7 @@ namespace MJBasilisk::detail
 void
 logMujocoError(const char* err)
 {
-    logAndThrow<std::runtime_error>("MuJoCo internal error: "s + err);
+    BSKLogger{}.bskError("MuJoCo internal error: %s", err);
 }
 
 void

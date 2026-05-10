@@ -123,7 +123,7 @@ void MJBody::configure(const mjModel* mujocoModel)
     // Update the mass property states
     if (!this->massState) {
         // Should not happen
-        this->getSpec().getScene().logAndThrow("Tried to configure MJBody before massState was created.");
+        this->getSpec().getScene().bskLogger.bskError("Tried to configure MJBody before massState was created.");
     }
 
     this->massState->setState(Eigen::Matrix<double, 1, 1>{mujocoModel->body_mass[this->getId()]});
@@ -136,7 +136,7 @@ MJSite& MJBody::getSite(const std::string& name)
     });
 
     if (sitePtr == std::end(sites)) {
-        this->getSpec().getScene().logAndThrow("Unknown site '" + name + "' in body '" + this->name + "'");
+        this->getSpec().getScene().bskLogger.bskError("Unknown site '%s' in body '%s'", name.c_str(), this->name.c_str());
     }
 
     return *sitePtr;
@@ -150,14 +150,13 @@ MJScalarJoint& MJBody::getScalarJoint(const std::string& name)
 
     if (jointPtr != std::end(scalarJoints)) return *jointPtr;
 
-    this->getSpec().getScene().logAndThrow("Unknown scalar joint '" + name + "' in body '" + this->getName() + "'");
+    this->getSpec().getScene().bskLogger.bskError("Unknown scalar joint '%s' in body '%s'", name.c_str(), this->getName().c_str());
 }
 
 MJBallJoint& MJBody::getBallJoint()
 {
     if (!this->ballJoint.has_value()) {
-        this->getSpec().getScene().logAndThrow<std::runtime_error>("Tried to get a ball joint for a body without ball joints: " +
-                                                    name);
+        this->getSpec().getScene().bskLogger.bskError("Tried to get a ball joint for a body without ball joints: %s", name.c_str());
     }
     return this->ballJoint.value();
 }
@@ -166,8 +165,7 @@ MJBallJoint& MJBody::getBallJoint()
 MJFreeJoint & MJBody::getFreeJoint()
 {
     if (!this->freeJoint.has_value()) {
-        this->getSpec().getScene().logAndThrow<std::runtime_error>("Tried to get a free joint for a body without free joints: " +
-                                                    name);
+        this->getSpec().getScene().bskLogger.bskError("Tried to get a free joint for a body without free joints: %s", name.c_str());
     }
     return this->freeJoint.value();
 }
@@ -186,8 +184,7 @@ void MJBody::setPosition(const Eigen::Vector3d& position)
             ++idx;
         }
     } else {
-        this->getSpec().getScene().logAndThrow<std::runtime_error>("Tried to set position in a body with no 'free' joint or no 3D translational joints " +
-                                                    name);
+        this->getSpec().getScene().bskLogger.bskError("Tried to set position in a body with no 'free' joint or no 3D translational joints: %s", name.c_str());
     }
 }
 
@@ -205,16 +202,14 @@ void MJBody::setVelocity(const Eigen::Vector3d& velocity)
             ++idx;
         }
     } else {
-        this->getSpec().getScene().logAndThrow<std::runtime_error>("Tried to set velocity in a body with no 'free' joint or no 3D translational joints " +
-                                                    name);
+        this->getSpec().getScene().bskLogger.bskError("Tried to set velocity in a body with no 'free' joint or no 3D translational joints: %s", name.c_str());
     }
 }
 
 void MJBody::setAttitude(const Eigen::MRPd& attitude)
 {
     if (!this->freeJoint.has_value()) {
-        this->getSpec().getScene().logAndThrow<std::runtime_error>("Tried to set attitude in non-free body " +
-                                                    name);
+        this->getSpec().getScene().bskLogger.bskError("Tried to set attitude in non-free body: %s", name.c_str());
     }
     this->freeJoint.value().setAttitude(attitude);
 }
@@ -222,8 +217,7 @@ void MJBody::setAttitude(const Eigen::MRPd& attitude)
 void MJBody::setAttitudeRate(const Eigen::Vector3d& attitudeRate)
 {
     if (!this->freeJoint.has_value()) {
-        this->getSpec().getScene().logAndThrow<std::runtime_error>("Tried to set attitude rate in non-free body " +
-                                                    name);
+        this->getSpec().getScene().bskLogger.bskError("Tried to set attitude rate in non-free body: %s", name.c_str());
     }
     this->freeJoint.value().setAttitudeRate(attitudeRate);
 }
@@ -296,8 +290,7 @@ void MJBody::addSite(std::string name, const Eigen::Vector3d& position, const Ei
 {
 
     if (this->hasSite(name)) {
-        this->getSpec().getScene().logAndThrow("Tried to create site " + name + " twice for body " +
-                                     this->name);
+        this->getSpec().getScene().bskLogger.bskError("Tried to create site '%s' twice for body '%s'", name.c_str(), this->name.c_str());
     }
 
     auto mjssite = mjs_addSite(this->mjsObject, 0);

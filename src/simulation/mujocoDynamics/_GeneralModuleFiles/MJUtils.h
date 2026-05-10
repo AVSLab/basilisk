@@ -22,7 +22,6 @@
 
 #include <iomanip>
 #include <iostream>
-#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -52,18 +51,6 @@ using mjSpecDeleter = mjDeleter<mjSpec, mj_deleteSpec>;
 
 using mjVFSDeleter = mjDeleter<mjVFS, mj_deleteVFS>;
 
-/** Loggs an error message and then throws an error. */
-template <typename T = std::invalid_argument>
-[[noreturn]] inline void logAndThrow (const std::string& error, BSKLogger* logger = nullptr)
-{
-    if (logger) {
-        logger->bskError("%s", error.c_str());
-    } else {
-        BSKLogger{}.bskError("%s", error.c_str());
-    }
-    throw T(error);
-}
-
 /** Returns the name of the given MuJoCo spec object. */
 template <typename T>
 inline std::string getSpecObjectName(T* object)
@@ -76,11 +63,11 @@ template <typename T>
 inline void setSpecObjectName(T* object, const std::string& name)
 {
     if (mjs_setName(object->element, name.c_str()) != 0) {
-        logAndThrow("Could not set MuJoCo spec object name to: " + name);
+        BSKLogger{}.bskError("Could not set MuJoCo spec object name to: %s", name.c_str());
     }
 }
 
-/** Calls ``logAndThrow<std::runtime_error>`` with the given input
+/** Calls ``BSKLogger::bskError`` with the given input
  *
  * Meant to be used as an error callback for MuJoCo's ``mju_user_error``.
 */

@@ -219,9 +219,7 @@ void MJScene::equationsOfMotion(double t, double timeStep)
     // Sanity check the produced accelerations
     auto qacc = this->spec.getMujocoData()->qacc;
     if (std::any_of(qacc, qacc + this->spec.getMujocoModel()->nv, [](mjtNum v){return std::isnan(v);})) {
-        logAndThrow<std::runtime_error>("Encountered NaN acceleration at time " +
-                                        std::to_string(t) +
-                                        "s in MJScene with ID: " + std::to_string(moduleID));
+        this->bskLogger.bskError("Encountered NaN acceleration at time %gs in MJScene with ID: %d", t, moduleID);
     }
 
     // The derivative of the position is simply the state of the velocity
@@ -303,7 +301,7 @@ void MJScene::saveToFile(std::string filename)
 MJQPosStateData* MJScene::getQposState()
 {
     if (!this->qposState) {
-        logAndThrow<std::runtime_error>("Tried to get qpos state before initialization.");
+        this->bskLogger.bskError("Tried to get qpos state before initialization.");
     }
     return this->qposState;
 }
@@ -311,7 +309,7 @@ MJQPosStateData* MJScene::getQposState()
 StateData* MJScene::getQvelState()
 {
     if (!this->qvelState) {
-        logAndThrow<std::runtime_error>("Tried to get qvel state before initialization.");
+        this->bskLogger.bskError("Tried to get qvel state before initialization.");
     }
     return this->qvelState;
 }
@@ -319,7 +317,7 @@ StateData* MJScene::getQvelState()
 StateData* MJScene::getActState()
 {
     if (!this->actState) {
-        logAndThrow<std::runtime_error>("Tried to get qpos state before initialization.");
+        this->bskLogger.bskError("Tried to get qpos state before initialization.");
     }
     return this->actState;
 }
@@ -337,7 +335,7 @@ MJBody& MJScene::getBody(const std::string& name)
                                 [&](auto&& obj) { return obj.getName() == name; });
 
     if (bodyPtr == std::end(bodies)) {
-        logAndThrow("Unknown body '" + name + "' in MJScene");
+        this->bskLogger.bskError("Unknown body '%s' in MJScene", name.c_str());
     }
     return *bodyPtr;
 }
@@ -347,7 +345,7 @@ MJSite& MJScene::getSite(const std::string& name)
     for (auto&& body : this->spec.getBodies()) {
         if (body.hasSite(name)) return body.getSite(name);
     }
-    logAndThrow("Unknown site '" + name + "' in MJScene");
+    this->bskLogger.bskError("Unknown site '%s' in MJScene", name.c_str());
 }
 
 MJEquality&
@@ -359,7 +357,7 @@ MJScene::getEquality(const std::string& name)
                                 [&](auto&& obj) { return obj.getName() == name; });
 
     if (equalityPtr == std::end(equalities)) {
-        logAndThrow("Unknown equality '" + name + "' in MJScene");
+        this->bskLogger.bskError("Unknown equality '%s' in MJScene", name.c_str());
     }
     return *equalityPtr;
 }

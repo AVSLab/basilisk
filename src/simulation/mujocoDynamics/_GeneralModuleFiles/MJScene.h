@@ -597,15 +597,6 @@ public:
      */
     void printMujocoModelDebugInfo(const std::string& path);
 
-    /**
-     * @brief Logs an error message on the BKLogger and throws an exception.
-     *
-     * @tparam T The type of the exception to throw.
-     * @param error The error message.
-     */
-    template <typename T = std::invalid_argument>
-    [[noreturn]] void logAndThrow (const std::string& error);
-
 public:
     static const int FWD_KINEMATICS_PRIORITY = 10000; ///< Priority for default forward kinematics model.
 
@@ -650,11 +641,5 @@ protected:
     StateData* qvelState; ///< Velocity state data.
     StateData* actState; ///< Actuator state data.
 };
-
-template <typename T>
-inline void MJScene::logAndThrow (const std::string& error)
-{
-    MJBasilisk::detail::logAndThrow<T>(error, &this->bskLogger);
-}
 
 #endif
