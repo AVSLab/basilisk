@@ -78,11 +78,9 @@ class PythonVariableLogger(sysModel.SysModel):
             try:
                 val = np.array(fn(CurrentSimNanos)).squeeze()
             except Exception as ex:
-                self.bskLogger.bskLog(
-                    sysModel.BSK_ERROR,
-                    f"Error logging '{name}' in '{self.ModelTag}': {ex}",
+                self.bskLogger.bskError(
+                    f"Error logging '{name}' in '{self.ModelTag}': {ex}"
                 )
-                val = None
             self._variables[name].append(val)
 
         self._next_update_time += self.min_log_period

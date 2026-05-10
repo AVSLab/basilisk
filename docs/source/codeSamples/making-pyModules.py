@@ -91,9 +91,7 @@ class TestPythonModule(sysModel.SysModel):
     def Reset(self, CurrentSimNanos):
         # Ensure that self.dataInMsg is linked
         if not self.dataInMsg.isLinked():
-            self.bskLogger.bskLog(
-                bskLogging.BSK_ERROR, "TestPythonModule.dataInMsg is not linked."
-            )
+            self.bskLogger.bskError("TestPythonModule.dataInMsg is not linked.")
 
         # Initialiazing self.dataOutMsg
         payload = self.dataOutMsg.zeroMsgPayload
