@@ -56,8 +56,7 @@ void MJJoint::configure(const mjModel* m)
 void MJJoint::checkInitialized() const
 {
     if (!this->qposAdr.has_value()) {
-        return body.getSpec().getScene().logAndThrow<std::runtime_error>(
-            "Tried to manipulate joint state before the joint was configured.");
+        body.getSpec().getScene().bskLogger.bskError("Tried to manipulate joint state before the joint was configured.");
     }
 }
 

@@ -78,10 +78,7 @@ public:
     double getIntegralError() {
         if (!this->integralErrorState)
         {
-            MJBasilisk::detail::logAndThrow<std::runtime_error>(
-                "Tried to get integral error before simulation has been initialized",
-                &bskLogger
-            );
+            bskLogger.bskError("Tried to get integral error before simulation has been initialized");
         }
         return this->integralErrorState->getState()(0,0);
     }
@@ -93,10 +90,7 @@ public:
     void setIntegralError(double val) {
         if (!this->integralErrorState)
         {
-            MJBasilisk::detail::logAndThrow<std::runtime_error>(
-                "Tried to set integral error before simulation has been initialized",
-                &bskLogger
-            );
+            bskLogger.bskError("Tried to set integral error before simulation has been initialized");
         }
         this->integralErrorState->setState(Eigen::Matrix<double, 1, 1>::Constant(val));
     }
@@ -128,17 +122,11 @@ public:
         {
             if (!desiredPosInMsg.isLinked())
             {
-                MJBasilisk::detail::logAndThrow<std::runtime_error>(
-                    "PIDController [" + ModelTag + "]: desiredPosInMsg must be linked when Kp is non-zero.",
-                    &bskLogger
-                );
+                bskLogger.bskError("PIDController [%s]: desiredPosInMsg must be linked when Kp is non-zero.", ModelTag.c_str());
             }
             if (!measuredPosInMsg.isLinked())
             {
-                MJBasilisk::detail::logAndThrow<std::runtime_error>(
-                    "PIDController [" + ModelTag + "]: measuredPosInMsg must be linked when Kp is non-zero.",
-                    &bskLogger
-                );
+                bskLogger.bskError("PIDController [%s]: measuredPosInMsg must be linked when Kp is non-zero.", ModelTag.c_str());
             }
             positionError = readDesiredPosition(desiredPosInMsg()) - readMeasuredPosition(measuredPosInMsg());
         }
@@ -148,17 +136,11 @@ public:
         {
             if (!desiredVelInMsg.isLinked())
             {
-                MJBasilisk::detail::logAndThrow<std::runtime_error>(
-                    "PIDController [" + ModelTag + "]: desiredVelInMsg must be linked when Kd is non-zero.",
-                    &bskLogger
-                );
+                bskLogger.bskError("PIDController [%s]: desiredVelInMsg must be linked when Kd is non-zero.", ModelTag.c_str());
             }
             if (!measuredVelInMsg.isLinked())
             {
-                MJBasilisk::detail::logAndThrow<std::runtime_error>(
-                    "PIDController [" + ModelTag + "]: measuredVelInMsg must be linked when Kd is non-zero.",
-                    &bskLogger
-                );
+                bskLogger.bskError("PIDController [%s]: measuredVelInMsg must be linked when Kd is non-zero.", ModelTag.c_str());
             }
             velocityError = readDesiredVelocity(desiredVelInMsg()) - readMeasuredVelocity(measuredVelInMsg());
         }

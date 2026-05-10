@@ -298,13 +298,11 @@ template <typename T> T& MJSpec::getActuator(const std::string& name)
     });
 
     if (actuatorPtr == std::end(actuators))
-        MJBasilisk::detail::logAndThrow("Tried to get actuator '" + name +
-                                        "' but it does not exist.");
+        BSKLogger{}.bskError("Tried to get actuator '%s' but it does not exist.", name.c_str());
 
     auto casted = dynamic_cast<T*>(actuatorPtr->get());
     if (!casted)
-        MJBasilisk::detail::logAndThrow("Tried to get actuator '" + name +
-                                        "', but it is not of the expected type.");
+        BSKLogger{}.bskError("Tried to get actuator '%s', but it is not of the expected type.", name.c_str());
 
     return *casted;
 }
@@ -356,8 +354,7 @@ MJSpec::createActuator(const std::string& name,
         // We need to generate a new subactuator name, but we can only do so if
         // siteHint was given
         else if (siteHint.empty()) {
-            MJBasilisk::detail::logAndThrow("Tried to autogenerate mujoco actuator for actuator " +
-                                            name + ", but no 'site' was provided.");
+            BSKLogger{}.bskError("Tried to autogenerate mujoco actuator for actuator '%s', but no 'site' was provided.", name.c_str());
         }
         // We need to create the mjs element with the given hint and gear
         else {
@@ -381,8 +378,7 @@ template <typename T>
 inline T& MJSpec::addCompositeActuator(const std::string& name, const std::string& site)
 {
     if ((this->hasActuator(name)))
-        MJBasilisk::detail::logAndThrow("Tried to add actuator with name '" + name +
-                                        "' but one already exists with that name.");
+        BSKLogger{}.bskError("Tried to add actuator with name '%s' but one already exists with that name.", name.c_str());
 
     std::unordered_map<std::string, MJActuatorObject> existingActuators;
     this->actuators.emplace_back(createActuator<T>(name, site, existingActuators));

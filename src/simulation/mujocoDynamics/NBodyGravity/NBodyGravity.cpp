@@ -29,12 +29,12 @@ NBodyGravity::Reset(uint64_t CurrentSimNanos)
     {
         if (!target.centerOfMassStateInMsg.isLinked())
         {
-            MJBasilisk::detail::logAndThrow<std::runtime_error>(errorPreffix + "Target '" + name + "' centerOfMassStateInMsg is not linked!", &bskLogger);
+            bskLogger.bskError("%sTarget '%s' centerOfMassStateInMsg is not linked!", errorPreffix.c_str(), name.c_str());
         }
 
         if (!target.massPropertiesInMsg.isLinked())
         {
-            MJBasilisk::detail::logAndThrow<std::runtime_error>(errorPreffix + "Target '" + name + "' massPropertiesInMsg is not linked!", &bskLogger);
+            bskLogger.bskError("%sTarget '%s' massPropertiesInMsg is not linked!", errorPreffix.c_str(), name.c_str());
         }
     }
 
@@ -44,20 +44,20 @@ NBodyGravity::Reset(uint64_t CurrentSimNanos)
     {
         if (sources.size() > 1 && !source.stateInMsg.isLinked())
         {
-            MJBasilisk::detail::logAndThrow<std::runtime_error>(errorPreffix + "Source '" + name + "' stateInMsg is not linked but there are more than one sources!", &bskLogger);
+            bskLogger.bskError("%sSource '%s' stateInMsg is not linked but there are more than one sources!", errorPreffix.c_str(), name.c_str());
         }
 
         auto error = source.model->initializeParameters();
         if (error)
         {
-            MJBasilisk::detail::logAndThrow<std::runtime_error>(errorPreffix + "While initializing source '" + name + "' gravity model, " + *error, &bskLogger);
+            bskLogger.bskError("%sWhile initializing source '%s' gravity model: %s", errorPreffix.c_str(), name.c_str(), error->c_str());
         }
 
         if (source.isCentralBody)
         {
             if (foundCentralSource)
             {
-                MJBasilisk::detail::logAndThrow<std::runtime_error>(errorPreffix + "More than one central body!", &bskLogger);
+                bskLogger.bskError("%sMore than one central body!", errorPreffix.c_str());
             }
             foundCentralSource = true;
         }
@@ -95,7 +95,7 @@ NBodyGravity::addGravitySource(std::string name, std::shared_ptr<GravityModel> g
 
     if (!actuallyEmplaced)
     {
-        MJBasilisk::detail::logAndThrow("Cannot use repeated source name " + name, &bskLogger);
+        bskLogger.bskError("Cannot use repeated source name: %s", name.c_str());
     }
 
     return source->second;
@@ -116,7 +116,7 @@ NBodyGravity::addGravityTarget(std::string name)
 
     if (!actuallyEmplaced)
     {
-        MJBasilisk::detail::logAndThrow("Cannot use repeated target name " + name, &bskLogger);
+        bskLogger.bskError("Cannot use repeated target name: %s", name.c_str());
     }
 
     return target->second;

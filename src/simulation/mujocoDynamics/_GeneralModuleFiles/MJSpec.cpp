@@ -90,7 +90,7 @@ MJSpec::MJSpec(MJScene& scene, std::string xmlString, const std::vector<std::str
 
     if (!loadingError.empty())
     {
-        MJBasilisk::detail::logAndThrow(loadingError);
+        BSKLogger{}.bskError("%s", loadingError.c_str());
     }
 
     char error[1024];
@@ -100,7 +100,7 @@ MJSpec::MJSpec(MJScene& scene, std::string xmlString, const std::vector<std::str
     if (maybeSpec) {
         this->spec.reset(maybeSpec);
     } else {
-        MJBasilisk::detail::logAndThrow(error);
+        BSKLogger{}.bskError("%s", error);
     }
 
     // Make sure the gravity is deactivated
@@ -218,8 +218,7 @@ MJSingleActuator& MJSpec::addJointSingleActuator(const std::string& name,
                                             const std::string& joint)
 {
     if (this->hasActuator(name)) {
-        MJBasilisk::detail::logAndThrow("Tried to add actuator with name '" + name +
-                                        "' but one already exists with that name.");
+        BSKLogger{}.bskError("Tried to add actuator with name '%s' but one already exists with that name.", name.c_str());
     }
 
     auto newMjsActuator = mjs_addActuator(this->spec.get(), 0);
@@ -240,8 +239,7 @@ MJSingleActuator& MJSpec::addSingleActuator(const std::string& name,
                                             const Eigen::Vector6d& gear)
 {
     if (this->hasActuator(name)) {
-        MJBasilisk::detail::logAndThrow("Tried to add actuator with name '" + name +
-                                        "' but one already exists with that name.");
+        BSKLogger{}.bskError("Tried to add actuator with name '%s' but one already exists with that name.", name.c_str());
     }
 
     auto newMjsActuator = mjs_addActuator(this->spec.get(), 0);
