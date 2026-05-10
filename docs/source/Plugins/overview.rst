@@ -94,24 +94,24 @@ Basilisk plugins are built with `bsk-sdk <https://pypi.org/project/bsk-sdk/>`_,
 a companion Python package that ships the headers, SWIG interface files, and
 CMake helpers needed to compile out-of-tree modules.
 
-.. code-block:: text
+.. graphviz::
 
-    ┌─────────────────────────────────────┐
-    │  Your plugin (separate repo/wheel)  │
-    │                                     │
-    │   myModule.cpp / myModule.h         │
-    │   myModule.i                        │
-    │   CMakeLists.txt                    │
-    └──────────────┬──────────────────────┘
-                   │ links against
-    ┌──────────────▼──────────────────────┐
-    │  bsk-sdk wheel                      │
-    │  (vendored BSK headers + cmake)     │
-    └──────────────┬──────────────────────┘
-                   │ compatible with
-    ┌──────────────▼──────────────────────┐
-    │  Basilisk (pip install bsk)         │
-    └─────────────────────────────────────┘
+   digraph plugin_arch {
+      graph [rankdir=TB, splines=ortho, bgcolor=transparent, nodesep=0.5]
+      node  [shape=box, style="rounded,filled", fontname="Helvetica",
+             fontsize=13, margin="0.4,0.2", width=4, fixedsize=false]
+      edge  [fontname="Helvetica", fontsize=11, minlen=2]
+
+      plugin [label="Your plugin\n(separate repo / wheel)",
+              fillcolor="#dce8fb"]
+      sdk    [label="bsk-sdk\n(BSK headers · SWIG interfaces · CMake helpers)",
+              fillcolor="#d4edda"]
+      bsk    [label="Basilisk: pip install bsk",
+              fillcolor="#fff3cd"]
+
+      plugin -> sdk [label="  compiles against  "]
+      sdk    -> bsk [label="  compatible with  "]
+   }
 
 The plugin compiles against the same BSK headers and SWIG runtime that
 Basilisk uses, so message types, base classes, and the module API are
@@ -126,19 +126,21 @@ Quick Start
 
     pip install bsk-sdk
 
-**2. Create your plugin layout** (following BSK module conventions)
+**2. Create your plugin layout**
 
 .. code-block:: text
 
     my-plugin/
     ├── pyproject.toml
     ├── CMakeLists.txt
-    └── myModule/
-        ├── myModule.h
-        ├── myModule.cpp
-        ├── myModule.i
+    ├── my_plugin/                  # importable Python package
+    │   └── __init__.py
+    └── exampleCppModule/           # C++/SWIG source
+        ├── exampleCppModule.h
+        ├── exampleCppModule.cpp
+        ├── exampleCppModule.i
         └── _UnitTest/
-            └── test_myModule.py
+            └── test_exampleCppModule.py
 
 **3. Wire up CMakeLists.txt**
 
@@ -158,10 +160,9 @@ Quick Start
     find_package(bsk-sdk CONFIG REQUIRED)
 
     bsk_add_swig_module(
-      TARGET myModule
-      INTERFACE myModule/myModule.i
-      SOURCES   myModule/myModule.cpp
-      LINK_LIBS bsk::plugin
+      TARGET exampleCppModule
+      INTERFACE exampleCppModule/exampleCppModule.i
+      SOURCES   exampleCppModule/exampleCppModule.cpp
       OUTPUT_DIR "${SKBUILD_PLATLIB_DIR}/my_plugin"
     )
 
@@ -177,11 +178,11 @@ Quick Start
 
 .. code-block:: python
 
-    from my_plugin import myModule
+    from my_plugin import exampleCppModule
     from Basilisk.utilities import SimulationBaseClass
 
     sim = SimulationBaseClass.SimBaseClass()
-    mod = myModule.MyModule()
+    mod = exampleCppModule.ExampleCppModule()
     sim.AddModelToTask("task", mod)
 
 A complete working example is provided in the
