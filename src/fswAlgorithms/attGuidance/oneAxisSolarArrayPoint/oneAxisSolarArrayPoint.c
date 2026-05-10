@@ -49,7 +49,7 @@ void SelfInit_oneAxisSolarArrayPoint(OneAxisSolarArrayPointConfig *configData, i
 void Reset_oneAxisSolarArrayPoint(OneAxisSolarArrayPointConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     if (!NavAttMsg_C_isLinked(&configData->attNavInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, " oneAxisSolarArrayPoint.attNavInMsg wasn't connected.");
+        _bskError(configData->bskLogger, " oneAxisSolarArrayPoint.attNavInMsg wasn't connected.");
     }
 
     // check how the input body heading is provided
@@ -60,7 +60,7 @@ void Reset_oneAxisSolarArrayPoint(OneAxisSolarArrayPointConfig *configData, uint
             configData->bodyAxisInput = inputBodyHeadingParameter;
     }
     else {
-            _bskLog(configData->bskLogger, BSK_ERROR, " oneAxisSolarArrayPoint.bodyHeadingInMsg wasn't connected and no body heading h1Hat_B was specified.");
+            _bskError(configData->bskLogger, " oneAxisSolarArrayPoint.bodyHeadingInMsg wasn't connected and no body heading h1Hat_B was specified.");
     }
 
     // check how the input inertial heading is provided
@@ -72,7 +72,7 @@ void Reset_oneAxisSolarArrayPoint(OneAxisSolarArrayPointConfig *configData, uint
     }
     else if (EphemerisMsg_C_isLinked(&configData->ephemerisInMsg)) {
         if (!NavTransMsg_C_isLinked(&configData->transNavInMsg)) {
-            _bskLog(configData->bskLogger, BSK_ERROR, " oneAxisSolarArrayPoint.ephemerisInMsg was specified but oneAxisSolarArrayPoint.transNavInMsg was not.");
+            _bskError(configData->bskLogger, " oneAxisSolarArrayPoint.ephemerisInMsg was specified but oneAxisSolarArrayPoint.transNavInMsg was not.");
         }
         else {
             configData->inertialAxisInput = inputEphemerisMsg;
@@ -83,7 +83,7 @@ void Reset_oneAxisSolarArrayPoint(OneAxisSolarArrayPointConfig *configData, uint
             configData->inertialAxisInput = inputInertialHeadingParameter;
         }
         else {
-            _bskLog(configData->bskLogger, BSK_ERROR, " neither oneAxisSolarArrayPoint.inertialHeadingInMsg nor oneAxisSolarArrayPoint.ephemerisInMsg were connected and no inertial heading h_N was specified.");
+            _bskError(configData->bskLogger, " neither oneAxisSolarArrayPoint.inertialHeadingInMsg nor oneAxisSolarArrayPoint.ephemerisInMsg were connected and no inertial heading h_N was specified.");
         }
     }
 

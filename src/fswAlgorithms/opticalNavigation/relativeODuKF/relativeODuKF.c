@@ -46,7 +46,7 @@ void Reset_relODuKF(RelODuKFConfig *configData, uint64_t callTime,
 {
     // check if the required message has not been connected
     if (!OpNavMsg_C_isLinked(&configData->opNavInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: relativeODuKF.opNavInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: relativeODuKF.opNavInMsg wasn't connected.");
     }
 
     size_t i;
@@ -119,7 +119,7 @@ void Reset_relODuKF(RelODuKFConfig *configData, uint64_t callTime,
 
     /* check that required input messages are linked */
     if (!OpNavMsg_C_isLinked(&configData->opNavInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "relODuKF: required opNavInMsg is not linked");
+        _bskError(configData->bskLogger, "relODuKF: required opNavInMsg is not linked");
     }
     return;
 }
@@ -308,7 +308,7 @@ int relODuKFTimeUpdate(RelODuKFConfig *configData, double updateTime)
     /*! - Read the planet ID from the message*/
     if(configData->planetId == 0)
     {
-      _bskLog(configData->bskLogger, BSK_ERROR, "relODuKF: Need a planet to navigate");
+      _bskError(configData->bskLogger, "relODuKF: Need a planet to navigate");
     }
 
     mCopy(configData->sQnoise, ODUKF_N_STATES, ODUKF_N_STATES, procNoise);

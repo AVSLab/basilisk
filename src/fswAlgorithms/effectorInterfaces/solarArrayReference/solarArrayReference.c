@@ -48,13 +48,13 @@ void SelfInit_solarArrayReference(solarArrayReferenceConfig *configData, int64_t
 void Reset_solarArrayReference(solarArrayReferenceConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     if (!NavAttMsg_C_isLinked(&configData->attNavInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "solarArrayReference.attNavInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "solarArrayReference.attNavInMsg wasn't connected.");
     }
     if (!AttRefMsg_C_isLinked(&configData->attRefInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "solarArrayReference.attRefInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "solarArrayReference.attRefInMsg wasn't connected.");
     }
     if (!HingedRigidBodyMsg_C_isLinked(&configData->hingedRigidBodyInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "solarArrayReference.hingedRigidBodyInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "solarArrayReference.hingedRigidBodyInMsg wasn't connected.");
     }
     configData->count = 0;
 
@@ -113,7 +113,7 @@ void Update_solarArrayReference(solarArrayReferenceConfig *configData, uint64_t 
             break;
 
         default:
-            _bskLog(configData->bskLogger, BSK_ERROR, "solarArrayAngle.bodyFrame input can be either 0 or 1.");
+            _bskError(configData->bskLogger, "solarArrayAngle.bodyFrame input can be either 0 or 1.");
     }
 
     /*! compute solar array frame axes at zero rotation */

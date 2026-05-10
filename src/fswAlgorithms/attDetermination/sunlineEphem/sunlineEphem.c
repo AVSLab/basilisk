@@ -67,13 +67,13 @@ void Update_sunlineEphem(sunlineEphemConfig *configData, uint64_t callTime, int6
 
     // check if the required input messages are included
     if (!EphemerisMsg_C_isLinked(&configData->sunPositionInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: sunlineEphem.sunPositionInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: sunlineEphem.sunPositionInMsg wasn't connected.");
     }
     if (!NavTransMsg_C_isLinked(&configData->scPositionInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: sunlineEphem.scPositionInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: sunlineEphem.scPositionInMsg wasn't connected.");
     }
     if (!NavAttMsg_C_isLinked(&configData->scAttitudeInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: sunlineEphem.scAttitudeInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: sunlineEphem.scAttitudeInMsg wasn't connected.");
     }
 
     /*! - Read the input messages */

@@ -47,7 +47,7 @@ void Reset_ephemDifference(EphemDifferenceData *configData, uint64_t callTime,
 {
     // check if the required message has not been connected
     if (!EphemerisMsg_C_isLinked(&configData->ephBaseInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: ephemDifference.ephBaseInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: ephemDifference.ephBaseInMsg wasn't connected.");
     }
 
     configData->ephBdyCount = 0;

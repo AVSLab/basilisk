@@ -61,10 +61,10 @@ void Reset_thrFiringSchmitt(thrFiringSchmittConfig *configData, uint64_t callTim
 
 	// check if the required input messages are included
 	if (!THRArrayConfigMsg_C_isLinked(&configData->thrConfInMsg)) {
-		_bskLog(configData->bskLogger, BSK_ERROR, "Error: thrFiringSchmitt.thrConfInMsg wasn't connected.");
+		_bskError(configData->bskLogger, "Error: thrFiringSchmitt.thrConfInMsg wasn't connected.");
 	}
     if (!THRArrayCmdForceMsg_C_isLinked(&configData->thrForceInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: thrFiringSchmitt.thrForceInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: thrFiringSchmitt.thrForceInMsg wasn't connected.");
     }
 
 	/*! - Zero and read in the support messages */

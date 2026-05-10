@@ -65,7 +65,7 @@ void Reset_rwMotorTorque(rwMotorTorqueConfig *configData, uint64_t callTime, int
 
     // check if the required input messages are included
     if (!RWArrayConfigMsg_C_isLinked(&configData->rwParamsInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: rwMotorTorque.rwParamsInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: rwMotorTorque.rwParamsInMsg wasn't connected.");
     }
 
     /*! - Read static RW config data message and store it in module variables */
@@ -105,7 +105,7 @@ void Update_rwMotorTorque(rwMotorTorqueConfig *configData, uint64_t callTime, in
 
     // check if the required input messages are included
     if (!CmdTorqueBodyMsg_C_isLinked(&configData->vehControlInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: rwMotorTorque.vehControlInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: rwMotorTorque.vehControlInMsg wasn't connected.");
     }
 
     /*! - Read the input messages */

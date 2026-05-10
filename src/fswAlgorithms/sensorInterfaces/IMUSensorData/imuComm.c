@@ -45,7 +45,7 @@ void Reset_imuProcessTelem(IMUConfigData *configData, uint64_t callTime, int64_t
 {
     // check if the required message has not been connected
     if (!IMUSensorMsg_C_isLinked(&configData->imuComInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: imuComm.imuComInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: imuComm.imuComInMsg wasn't connected.");
     }
 }
 

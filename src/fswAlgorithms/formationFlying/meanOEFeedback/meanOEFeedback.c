@@ -55,20 +55,20 @@ void SelfInit_meanOEFeedback(meanOEFeedbackConfig *configData, int64_t moduleID)
 void Reset_meanOEFeedback(meanOEFeedbackConfig *configData, uint64_t callTime, int64_t moduleID) {
     // check if the required input messages are included
     if (!NavTransMsg_C_isLinked(&configData->chiefTransInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: meanOEFeedback.chiefTransInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: meanOEFeedback.chiefTransInMsg wasn't connected.");
     }
     if (!NavTransMsg_C_isLinked(&configData->deputyTransInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: meanOEFeedback.deputyTransInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: meanOEFeedback.deputyTransInMsg wasn't connected.");
     }
 
     if (configData->mu <= 0.0) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error in meanOEFeedback: mu must be set to a positive value.");
+        _bskError(configData->bskLogger, "Error in meanOEFeedback: mu must be set to a positive value.");
     }
     if (configData->req <= 0.0) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error in meanOEFeedback: req must be set to a positive value.");
+        _bskError(configData->bskLogger, "Error in meanOEFeedback: req must be set to a positive value.");
     }
     if (configData->J2 <= 0.0) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error in meanOEFeedback: J2 must be set to a positive value.");
+        _bskError(configData->bskLogger, "Error in meanOEFeedback: J2 must be set to a positive value.");
     }
 
     return;

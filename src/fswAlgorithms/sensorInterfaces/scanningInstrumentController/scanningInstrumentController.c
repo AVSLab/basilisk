@@ -41,10 +41,10 @@ void Reset_scanningInstrumentController(scanningInstrumentControllerConfig *conf
 {
     // check if the required message has not been connected
     if (!AccessMsg_C_isLinked(&configData->accessInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: scanningInstrumentController.accessInMsg was not connected.");
+        _bskError(configData->bskLogger, "Error: scanningInstrumentController.accessInMsg was not connected.");
     }
     if (!AttGuidMsg_C_isLinked(&configData->attGuidInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: scanningInstrumentController.attGuidInMsg was not connected.");
+        _bskError(configData->bskLogger, "Error: scanningInstrumentController.attGuidInMsg was not connected.");
     }
 }
 

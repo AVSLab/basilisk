@@ -46,10 +46,10 @@ void Reset_celestialTwoBodyPoint(celestialTwoBodyPointConfig *configData, uint64
 
     // check if required input messages have been included
     if (!NavTransMsg_C_isLinked(&configData->transNavInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: celestialTwoBodyPoint.transNavInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: celestialTwoBodyPoint.transNavInMsg wasn't connected.");
     }
     if (!EphemerisMsg_C_isLinked(&configData->celBodyInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: celestialTwoBodyPoint.celBodyInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: celestialTwoBodyPoint.celBodyInMsg wasn't connected.");
     }
 
     return;

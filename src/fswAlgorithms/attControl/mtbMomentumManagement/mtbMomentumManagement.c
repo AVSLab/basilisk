@@ -55,19 +55,19 @@ void Reset_mtbMomentumManagement(mtbMomentumManagementConfig *configData, uint64
      * Check if the required input messages are linked.
      */
     if (!RWArrayConfigMsg_C_isLinked(&configData->rwParamsInMsg)){
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: mtbMomentumManagement.rwParamsInMsg is not connected.");
+        _bskError(configData->bskLogger, "Error: mtbMomentumManagement.rwParamsInMsg is not connected.");
     }
     if(!MTBArrayConfigMsg_C_isLinked(&configData->mtbParamsInMsg)){
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: mtbMomentumManagement.mtbParamsInMsg is not connected.");
+        _bskError(configData->bskLogger, "Error: mtbMomentumManagement.mtbParamsInMsg is not connected.");
     }
     if (!TAMSensorBodyMsg_C_isLinked(&configData->tamSensorBodyInMsg)){
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: mtbMomentumManagement.tamSensorBodyInMsg is not connected.");
+        _bskError(configData->bskLogger, "Error: mtbMomentumManagement.tamSensorBodyInMsg is not connected.");
     }
     if (!RWSpeedMsg_C_isLinked(&configData->rwSpeedsInMsg)){
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: mtbMomentumManagement.rwSpeedsInMsg is not connected.");
+        _bskError(configData->bskLogger, "Error: mtbMomentumManagement.rwSpeedsInMsg is not connected.");
     }
     if (!ArrayMotorTorqueMsg_C_isLinked(&configData->rwMotorTorqueInMsg)){
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: mtbMomentumManagement.rwMotorTorqueInMsg is not connected.");
+        _bskError(configData->bskLogger, "Error: mtbMomentumManagement.rwMotorTorqueInMsg is not connected.");
     }
 
     /*! - Read the input configuration messages.*/

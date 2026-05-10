@@ -57,10 +57,10 @@ void Reset_thrFiringRemainder(thrFiringRemainderConfig *configData, uint64_t cal
 
 	// check if the required input messages are included
 	if (!THRArrayConfigMsg_C_isLinked(&configData->thrConfInMsg)) {
-		_bskLog(configData->bskLogger, BSK_ERROR, "Error: thrFiringRemainder.thrConfInMsg wasn't connected.");
+		_bskError(configData->bskLogger, "Error: thrFiringRemainder.thrConfInMsg wasn't connected.");
 	}
     if (!THRArrayCmdForceMsg_C_isLinked(&configData->thrForceInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: thrFiringRemainder.thrForceInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: thrFiringRemainder.thrForceInMsg wasn't connected.");
     }
 
 	/*! - read in the support messages */

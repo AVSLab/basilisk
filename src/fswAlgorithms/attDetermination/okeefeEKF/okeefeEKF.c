@@ -56,16 +56,16 @@ void Reset_okeefeEKF(okeefeEKFConfig *configData, uint64_t callTime,
 
     // check if the required input messages are included
     if (!CSSConfigMsg_C_isLinked(&configData->cssConfigInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: okeefeEKF.cssConfigInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: okeefeEKF.cssConfigInMsg wasn't connected.");
     }
     if (!CSSArraySensorMsg_C_isLinked(&configData->cssDataInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: okeefeEKF.cssDataInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: okeefeEKF.cssDataInMsg wasn't connected.");
     }
 
     /*! - Read in coarse sun sensor configuration information.*/
     cssConfigInBuffer = CSSConfigMsg_C_read(&configData->cssConfigInMsg);
     if (cssConfigInBuffer.nCSS > MAX_N_CSS_MEAS) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "okeefeEKF.cssConfigInMsg.nCSS must not be greater than "
+        _bskError(configData->bskLogger, "okeefeEKF.cssConfigInMsg.nCSS must not be greater than "
                                                   "MAX_N_CSS_MEAS value.");
     }
 

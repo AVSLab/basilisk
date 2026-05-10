@@ -52,11 +52,11 @@ void Reset_mrpPD(MrpPDConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     // check if the required input messages are included
     if (!AttGuidMsg_C_isLinked(&configData->guidInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: mrpPD.guidInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: mrpPD.guidInMsg wasn't connected.");
     }
 
     if (!VehicleConfigMsg_C_isLinked(&configData->vehConfigInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: mrpPD.vehConfigInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: mrpPD.vehConfigInMsg wasn't connected.");
     }
 
 

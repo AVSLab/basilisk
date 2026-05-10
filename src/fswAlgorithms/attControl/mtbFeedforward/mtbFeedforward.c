@@ -51,16 +51,16 @@ void Reset_mtbFeedforward(mtbFeedforwardConfig *configData, uint64_t callTime, i
      * Check if the required input messages are connected.
      */
     if (!MTBCmdMsg_C_isLinked(&configData->dipoleRequestMtbInMsg)){
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: mtbFeedForward.dipoleRequestMtbInMsg is not connected.");
+        _bskError(configData->bskLogger, "Error: mtbFeedForward.dipoleRequestMtbInMsg is not connected.");
     }
     if (!CmdTorqueBodyMsg_C_isLinked(&configData->vehControlInMsg)){
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: mtbFeedForward.vehControlInMsg is not connected.");
+        _bskError(configData->bskLogger, "Error: mtbFeedForward.vehControlInMsg is not connected.");
     }
     if (!TAMSensorBodyMsg_C_isLinked(&configData->tamSensorBodyInMsg)){
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: mtbFeedForward.tamSensorBodyInMsg is not connected.");
+        _bskError(configData->bskLogger, "Error: mtbFeedForward.tamSensorBodyInMsg is not connected.");
     }
     if (!MTBArrayConfigMsg_C_isLinked(&configData->mtbArrayConfigParamsInMsg)){
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: mtbFeedForward.mtbArrayConfigParamsInMsg is not connected.");
+        _bskError(configData->bskLogger, "Error: mtbFeedForward.mtbArrayConfigParamsInMsg is not connected.");
     }
 
     /*! - Read in the torque rod input configuration message. This gives us the transformation from the

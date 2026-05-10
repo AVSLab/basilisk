@@ -43,10 +43,10 @@ void SelfInit_torqueScheduler(torqueSchedulerConfig *configData, int64_t moduleI
 void Reset_torqueScheduler(torqueSchedulerConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     if (!ArrayMotorTorqueMsg_C_isLinked(&configData->motorTorque1InMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "torqueScheduler.motorTorque1InMsg wasn't connected.");
+        _bskError(configData->bskLogger, "torqueScheduler.motorTorque1InMsg wasn't connected.");
     }
     if (!ArrayMotorTorqueMsg_C_isLinked(&configData->motorTorque2InMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "torqueScheduler.motorTorque2InMsg wasn't connected.");
+        _bskError(configData->bskLogger, "torqueScheduler.motorTorque2InMsg wasn't connected.");
     }
 
     configData->t0 = callTime;
@@ -114,7 +114,7 @@ void Update_torqueScheduler(torqueSchedulerConfig *configData, uint64_t callTime
             break;
 
         default:
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: torqueScheduler.lockFlag has to be an integer between 0 and 3.");
+        _bskError(configData->bskLogger, "Error: torqueScheduler.lockFlag has to be an integer between 0 and 3.");
 
     }
 

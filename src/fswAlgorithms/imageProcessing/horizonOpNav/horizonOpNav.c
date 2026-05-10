@@ -45,13 +45,13 @@ void Reset_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime, int64_t
 {
     // check that the required message has not been connected
     if (!CameraConfigMsg_C_isLinked(&configData->cameraConfigInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: horizonOpNav.cameraConfigInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: horizonOpNav.cameraConfigInMsg wasn't connected.");
     }
     if (!OpNavLimbMsg_C_isLinked(&configData->limbInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: horizonOpNav.limbInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: horizonOpNav.limbInMsg wasn't connected.");
     }
     if (!NavAttMsg_C_isLinked(&configData->attInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: horizonOpNav.attInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: horizonOpNav.attInMsg wasn't connected.");
     }
 
 }

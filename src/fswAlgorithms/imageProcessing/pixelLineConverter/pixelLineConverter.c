@@ -45,13 +45,13 @@ void Reset_pixelLineConverter(PixelLineConvertData *configData, uint64_t callTim
 {
     // check that the required message has not been connected
     if (!CameraConfigMsg_C_isLinked(&configData->cameraConfigInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: pixelLineConverter.cameraConfigInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: pixelLineConverter.cameraConfigInMsg wasn't connected.");
     }
     if (!OpNavCirclesMsg_C_isLinked(&configData->circlesInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: pixelLineConverter.circlesInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: pixelLineConverter.circlesInMsg wasn't connected.");
     }
     if (!NavAttMsg_C_isLinked(&configData->attInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: pixelLineConverter.attInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: pixelLineConverter.attInMsg wasn't connected.");
     }
 
 }

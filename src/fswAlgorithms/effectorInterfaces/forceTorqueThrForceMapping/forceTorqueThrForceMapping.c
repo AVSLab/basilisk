@@ -45,10 +45,10 @@ void SelfInit_forceTorqueThrForceMapping(forceTorqueThrForceMappingConfig  *conf
 void Reset_forceTorqueThrForceMapping(forceTorqueThrForceMappingConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     if (!THRArrayConfigMsg_C_isLinked(&configData->thrConfigInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: forceTorqueThrForceMapping.thrConfigInMsg was not connected.");
+        _bskError(configData->bskLogger, "Error: forceTorqueThrForceMapping.thrConfigInMsg was not connected.");
     }
     if (!VehicleConfigMsg_C_isLinked(&configData->vehConfigInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: forceTorqueThrForceMapping.vehConfigInMsg was not connected.");
+        _bskError(configData->bskLogger, "Error: forceTorqueThrForceMapping.vehConfigInMsg was not connected.");
     }
 
     VehicleConfigMsgPayload vehConfigInMsgBuffer;  //!< local copy of message buffer
@@ -63,7 +63,7 @@ void Reset_forceTorqueThrForceMapping(forceTorqueThrForceMappingConfig *configDa
     configData->numThrusters = (uint32_t) thrConfigInMsgBuffer.numThrusters;
     v3Copy(vehConfigInMsgBuffer.CoM_B, configData->CoM_B);
     if (configData->numThrusters > MAX_EFF_CNT) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: forceTorqueThrForceMapping thruster configuration input message has a number of thrusters that is larger than MAX_EFF_CNT");
+        _bskError(configData->bskLogger, "Error: forceTorqueThrForceMapping thruster configuration input message has a number of thrusters that is larger than MAX_EFF_CNT");
     }
 
     /*! - copy the thruster position and thruster force heading information into the module configuration data */
@@ -72,7 +72,7 @@ void Reset_forceTorqueThrForceMapping(forceTorqueThrForceMappingConfig *configDa
         v3Copy(thrConfigInMsgBuffer.thrusters[i].rThrust_B, configData->rThruster_B[i]);
         v3Copy(thrConfigInMsgBuffer.thrusters[i].tHatThrust_B, configData->gtThruster_B[i]);
         if(thrConfigInMsgBuffer.thrusters[i].maxThrust <= 0.0){
-            _bskLog(configData->bskLogger, BSK_ERROR, "Error: forceTorqueThrForceMapping: A configured thruster has a non-sensible saturation limit of <= 0 N!");
+            _bskError(configData->bskLogger, "Error: forceTorqueThrForceMapping: A configured thruster has a non-sensible saturation limit of <= 0 N!");
         }
     }
 

@@ -51,10 +51,10 @@ void Reset_torque2Dipole(torque2DipoleConfig *configData, uint64_t callTime, int
      * Check if the required input messages are connected.
      */
     if (!TAMSensorBodyMsg_C_isLinked(&configData->tamSensorBodyInMsg)){
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: torque2Dipole.tamSensorBodyInMsg is not connected.");
+        _bskError(configData->bskLogger, "Error: torque2Dipole.tamSensorBodyInMsg is not connected.");
     }
     if (!CmdTorqueBodyMsg_C_isLinked(&configData->tauRequestInMsg)){
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: torque2Dipole.tauRequestInMsg is not connected.");
+        _bskError(configData->bskLogger, "Error: torque2Dipole.tauRequestInMsg is not connected.");
     }
 
     /* zero the dipole request output message */

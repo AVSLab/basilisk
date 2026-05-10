@@ -61,36 +61,36 @@ void Reset_etSphericalControl(etSphericalControlConfig *configData, uint64_t cal
 {
     // check if the required input messages are included
     if (!NavTransMsg_C_isLinked(&configData->servicerTransInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: etSphericalControl.servicerTransInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: etSphericalControl.servicerTransInMsg wasn't connected.");
     }
     if (!NavTransMsg_C_isLinked(&configData->debrisTransInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: etSphericalControl.debrisTransInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: etSphericalControl.debrisTransInMsg wasn't connected.");
     }
     if (!NavAttMsg_C_isLinked(&configData->servicerAttInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: etSphericalControl.servicerAttInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: etSphericalControl.servicerAttInMsg wasn't connected.");
     }
     if (!VehicleConfigMsg_C_isLinked(&configData->servicerVehicleConfigInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: etSphericalControl.servicerVehicleConfigInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: etSphericalControl.servicerVehicleConfigInMsg wasn't connected.");
     }
     if (!VehicleConfigMsg_C_isLinked(&configData->debrisVehicleConfigInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: etSphericalControl.debrisVehicleConfigInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: etSphericalControl.debrisVehicleConfigInMsg wasn't connected.");
     }
     if (!CmdForceInertialMsg_C_isLinked(&configData->eForceInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: etSphericalControl.eForceInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: etSphericalControl.eForceInMsg wasn't connected.");
     }
     // check if input parameters are valid
 
     // L_r must be a positive value
     if (configData->L_r <= 0.0) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error in etSphericalControl: L_r must be set to a positive value.");
+        _bskError(configData->bskLogger, "Error in etSphericalControl: L_r must be set to a positive value.");
     }
 
     // m_T and m_D must be positive and non-zero
     if (VehicleConfigMsg_C_read(&configData->servicerVehicleConfigInMsg).massSC <= 0.0) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error in etSphericalControl: servicer mass must be set to a positive value.");
+        _bskError(configData->bskLogger, "Error in etSphericalControl: servicer mass must be set to a positive value.");
     }
     if (VehicleConfigMsg_C_read(&configData->debrisVehicleConfigInMsg).massSC <= 0.0) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error in etSphericalControl: debris mass must be set to a positive value.");
+        _bskError(configData->bskLogger, "Error in etSphericalControl: debris mass must be set to a positive value.");
     }
     // [K] and [P] must be positive definite matrices
     double EigenValuesK[3];
@@ -100,10 +100,10 @@ void Reset_etSphericalControl(etSphericalControlConfig *configData, uint64_t cal
     v3Scale(-1., EigenValuesK, EigenValuesK);
     v3Scale(-1., EigenValuesP, EigenValuesP);
     if (vMax(EigenValuesK, 3) > 0.0) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error in etSphericalControl: K must be a positive definite 3 by 3 matrix.");
+        _bskError(configData->bskLogger, "Error in etSphericalControl: K must be a positive definite 3 by 3 matrix.");
     }
     if (vMax(EigenValuesP, 3) > 0.0) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error in etSphericalControl: P must be a positive definite 3 by 3 matrix.");
+        _bskError(configData->bskLogger, "Error in etSphericalControl: P must be a positive definite 3 by 3 matrix.");
     }
 
     return;

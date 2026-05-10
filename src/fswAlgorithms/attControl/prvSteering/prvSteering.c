@@ -50,7 +50,7 @@ void SelfInit_prvSteering(PrvSteeringConfig *configData, int64_t moduleID)
 void Reset_prvSteering(PrvSteeringConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     if (!AttGuidMsg_C_isLinked(&configData->guidInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: prvSteering.guidInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: prvSteering.guidInMsg wasn't connected.");
     }
 
     return;

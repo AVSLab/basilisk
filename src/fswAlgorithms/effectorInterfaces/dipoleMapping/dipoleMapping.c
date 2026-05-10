@@ -50,10 +50,10 @@ void Reset_dipoleMapping(dipoleMappingConfig *configData, uint64_t callTime, int
      * Check if the required input messages are connected.
      */
     if (!DipoleRequestBodyMsg_C_isLinked(&configData->dipoleRequestBodyInMsg)){
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: dipoleMapping.dipoleRequestBodyInMsg is not connected.");
+        _bskError(configData->bskLogger, "Error: dipoleMapping.dipoleRequestBodyInMsg is not connected.");
     }
     if (!MTBArrayConfigMsg_C_isLinked(&configData->mtbArrayConfigParamsInMsg)){
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: mtbMomentumManagement.mtbArrayConfigParamsInMsg is not connected.");
+        _bskError(configData->bskLogger, "Error: mtbMomentumManagement.mtbArrayConfigParamsInMsg is not connected.");
     }
 
     /*! - Read in the torque rod input configuration message. This gives us the number of torque rods

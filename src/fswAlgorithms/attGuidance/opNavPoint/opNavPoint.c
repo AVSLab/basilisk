@@ -50,13 +50,13 @@ void Reset_opNavPoint(OpNavPointConfig *configData, uint64_t callTime, int64_t m
 
     // check if the required input messages are included
     if (!OpNavMsg_C_isLinked(&configData->opnavDataInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: opNavPoint.opnavDataInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: opNavPoint.opnavDataInMsg wasn't connected.");
     }
     if (!NavAttMsg_C_isLinked(&configData->imuInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: opNavPoint.imuInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: opNavPoint.imuInMsg wasn't connected.");
     }
     if (!CameraConfigMsg_C_isLinked(&configData->cameraConfigInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: opNavPoint.cameraConfigInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: opNavPoint.cameraConfigInMsg wasn't connected.");
     }
 
     /* compute an Eigen axis orthogonal to alignAxis_C */
@@ -64,7 +64,7 @@ void Reset_opNavPoint(OpNavPointConfig *configData, uint64_t callTime, int64_t m
         char info[MAX_LOGGING_LENGTH];
         snprintf(info, sizeof(info), "The module vector alignAxis_C is not setup as a unit vector [%f, %f %f]",
                  configData->alignAxis_C[0], configData->alignAxis_C[1], configData->alignAxis_C[2]);
-        _bskLog(configData->bskLogger, BSK_ERROR, info);
+        _bskError(configData->bskLogger, info);
     } else {
         v3Set(1., 0., 0., v1);
         v3Normalize(configData->alignAxis_C, configData->alignAxis_C);    /* ensure that this vector is a unit vector */

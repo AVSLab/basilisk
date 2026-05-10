@@ -36,15 +36,15 @@ void SelfInit_hillToAttRef(HillToAttRefConfig *configData, int64_t moduleID){
 void Reset_hillToAttRef(HillToAttRefConfig *configData,  uint64_t callTime, int64_t moduleID)
 {
     if (!HillRelStateMsg_C_isLinked(&configData->hillStateInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: hillToAttRef.hillStateInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: hillToAttRef.hillStateInMsg wasn't connected.");
     }
 
     if (AttRefMsg_C_isLinked(&configData->attRefInMsg) && NavAttMsg_C_isLinked(&configData->attNavInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: hillToAttRef can't have both attRefInMsg and attNavInMsg connected.");
+        _bskError(configData->bskLogger, "Error: hillToAttRef can't have both attRefInMsg and attNavInMsg connected.");
     }
 
     if (!AttRefMsg_C_isLinked(&configData->attRefInMsg) && !NavAttMsg_C_isLinked(&configData->attNavInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: hillToAttRef must have one of attRefInMsg and attNavInMsg connected.");
+        _bskError(configData->bskLogger, "Error: hillToAttRef must have one of attRefInMsg and attNavInMsg connected.");
     }
 
     return;

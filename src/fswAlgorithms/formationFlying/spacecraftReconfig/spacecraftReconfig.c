@@ -52,16 +52,16 @@ void Reset_spacecraftReconfig(spacecraftReconfigConfig *configData, uint64_t cal
 {
     // check if the required input messages are included
     if (!NavTransMsg_C_isLinked(&configData->chiefTransInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: spacecraftReconfig.chiefTransInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: spacecraftReconfig.chiefTransInMsg wasn't connected.");
     }
     if (!NavTransMsg_C_isLinked(&configData->deputyTransInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: spacecraftReconfig.deputyTransInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: spacecraftReconfig.deputyTransInMsg wasn't connected.");
     }
     if (!THRArrayConfigMsg_C_isLinked(&configData->thrustConfigInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: spacecraftReconfig.thrustConfigInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: spacecraftReconfig.thrustConfigInMsg wasn't connected.");
     }
     if (!VehicleConfigMsg_C_isLinked(&configData->vehicleConfigInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: spacecraftReconfig.vehicleConfigInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: spacecraftReconfig.vehicleConfigInMsg wasn't connected.");
     }
 
     // zero the burn info buffer

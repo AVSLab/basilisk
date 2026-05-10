@@ -44,7 +44,7 @@ void Reset_stProcessTelem(STConfigData *configData, uint64_t callTime, int64_t m
 {
     // check if the required message has not been connected
     if (!STSensorMsg_C_isLinked(&configData->stSensorInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: stComm.stSensorInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: stComm.stSensorInMsg wasn't connected.");
     }
 }
 
