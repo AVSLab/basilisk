@@ -49,6 +49,7 @@ void printDefaultLogLevel();
 #endif
 
 #ifndef BSK_NORETURN
+// SWIG parses this shared header through %include; keep C++ attributes out of that pass.
 #ifdef SWIG
 #define BSK_NORETURN
 #else
