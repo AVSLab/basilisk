@@ -25,6 +25,15 @@ int callBskErrorFromNonVoid(BSKLogger& bskLogger)
 {
     bskLogger.bskError("fatal value %d", 7);
 }
+
+#ifdef _MSC_VER
+// MSVC /EHc assumes extern "C" calls do not throw, so catch through a C++ helper.
+__declspec(noinline)
+#endif
+void callCBskError(BSKLogger& bskLogger, const char* info)
+{
+    _bskError(&bskLogger, info);
+}
 }
 
 TEST(BSKLogging, bskErrorThrowsFormattedMessage)
@@ -53,4 +62,18 @@ TEST(BSKLogging, bskLogErrorMaintainsExistingBehavior)
     }
 
     FAIL() << "Expected bskLog with BSK_ERROR to throw BasiliskError.";
+}
+
+TEST(BSKLogging, cBskErrorTreatsMessageAsText)
+{
+    BSKLogger bskLogger;
+
+    try {
+        callCBskError(bskLogger, "preformatted %s message");
+    } catch (const BasiliskError& error) {
+        EXPECT_STREQ("preformatted %s message", error.what());
+        return;
+    }
+
+    FAIL() << "Expected _bskError to throw BasiliskError.";
 }

@@ -39,6 +39,23 @@ void printDefaultLogLevel();
 
 /// \cond DO_NOT_DOCUMENT
 
+#ifndef BSK_NORETURN
+// SWIG parses this shared header through %include; keep C++ attributes out of that pass.
+#ifdef SWIG
+#define BSK_NORETURN
+#elif defined(__cplusplus)
+#define BSK_NORETURN [[noreturn]]
+#elif defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L
+#define BSK_NORETURN _Noreturn
+#elif defined(__GNUC__) || defined(__clang__)
+#define BSK_NORETURN __attribute__((noreturn))
+#elif defined(_MSC_VER)
+#define BSK_NORETURN __declspec(noreturn)
+#else
+#define BSK_NORETURN
+#endif
+#endif
+
 #ifdef __cplusplus
 #include <map>
 #include <string>
@@ -46,15 +63,6 @@ void printDefaultLogLevel();
 
 #ifdef SWIG
 %include "std_except.i"
-#endif
-
-#ifndef BSK_NORETURN
-// SWIG parses this shared header through %include; keep C++ attributes out of that pass.
-#ifdef SWIG
-#define BSK_NORETURN
-#else
-#define BSK_NORETURN [[noreturn]]
-#endif
 #endif
 
 void setDefaultLogLevel(logLevel_t logLevel);
@@ -101,14 +109,26 @@ class BSKLogger
         logLevel_t _logLevel;
 };
 
+#ifdef SWIG
+%extend BSKLogger {
+    void bskError(const char* info) {
+        $self->bskLog(BSK_ERROR, "%s", info);
+    }
+}
+#endif
+
 #else
 typedef struct BSKLogger BSKLogger;
 #endif
 
 #ifdef __cplusplus
     #define EXTERN extern "C"
+    // C++ callers should use BSKLogger::bskError(), which is marked non-returning.
+    // Keep the C wrapper unannotated in C++ so BasiliskError unwinds consistently on MSVC.
+    #define EXTERN_NORETURN extern "C"
 #else
     #define EXTERN
+    #define EXTERN_NORETURN BSK_NORETURN
 #endif
 
 EXTERN BSKLogger* _BSKLogger(void);
@@ -116,6 +136,7 @@ EXTERN void _BSKLogger_d(BSKLogger*);
 EXTERN void _printLogLevel(BSKLogger*);
 EXTERN void _setLogLevel(BSKLogger*, logLevel_t);
 EXTERN void _bskLog(BSKLogger*, logLevel_t, const char*);
+EXTERN_NORETURN void _bskError(BSKLogger*, const char*);
 
 
 /// \endcond

@@ -172,4 +172,9 @@ EXTERN void _bskLog(BSKLogger* bskLogger, logLevel_t logLevel, const char* info)
     bskLogger->bskLog(logLevel, "%s", info);
 }
 
+EXTERN_NORETURN void _bskError(BSKLogger* bskLogger, const char* info)
+{
+    bskLogger->bskError("%s", info == nullptr ? "" : info);
+}
+
 /// \endcond
