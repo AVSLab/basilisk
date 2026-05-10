@@ -106,6 +106,19 @@ class JointThrAllocation(sysModel.SysModel):
         self.dcm_C0P = None
         self.x0 = None
 
+    def validateInputMessages(self):
+        """Raise ``BasiliskError`` if a required input message is not linked."""
+        requiredInputMessages = [
+            ("armConfigInMsg", self.armConfigInMsg),
+            ("CoMStatesInMsg", self.CoMStatesInMsg),
+            ("hubStatesInMsg", self.hubStatesInMsg),
+            ("transForceInMsg", self.transForceInMsg),
+            ("rotTorqueInMsg", self.rotTorqueInMsg),
+        ]
+        for msgName, msgReader in requiredInputMessages:
+            if not msgReader.isLinked():
+                self.bskLogger.bskError(f"JointThrAllocation.{msgName} was not linked.")
+
     def setWf(self, wfIn):
         """
         Set thrust-weight term for the cost function.
@@ -304,6 +317,7 @@ class JointThrAllocation(sysModel.SysModel):
         return float(wrenchError.T @ self.Wc @ wrenchError + self.Wf.T @ thrForces)
 
     def Reset(self, CurrentSimNanos):
+        self.validateInputMessages()
         self.parseArmConfig()
         self.resolveWf()
         self.initialGuesses()

@@ -97,7 +97,13 @@ class ThrFiringRound(sysModel.SysModel):
             raise ValueError(f"thrForceMax vector length {thrForceMaxArr.size} does not match nThr {nThr}.")
         return thrForceMaxArr.copy()
 
+    def validateInputMessages(self):
+        """Raise ``BasiliskError`` if a required input message is not linked."""
+        if not self.thrForceInMsg.isLinked():
+            self.bskLogger.bskError("ThrFiringRound.thrForceInMsg was not linked.")
+
     def Reset(self, CurrentSimNanos):
+        self.validateInputMessages()
         self.thrOnTimeOutMsg.write(messaging.THRArrayOnTimeCmdMsgPayload())
 
     def UpdateState(self, CurrentSimNanos):
