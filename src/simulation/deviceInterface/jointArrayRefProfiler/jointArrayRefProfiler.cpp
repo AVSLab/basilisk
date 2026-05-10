@@ -101,7 +101,6 @@ void JointArrayRefProfiler::UpdateState(uint64_t CurrentSimNanos)
     }
 
     bool newDesiredStateMsg = false;
-    const uint64_t desMsgTime = this->desJointStatesInMsg.timeWritten();
 
     if (!this->profileStartTimeSet) {
         newDesiredStateMsg = true;
