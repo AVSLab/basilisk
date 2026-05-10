@@ -21,6 +21,7 @@
 import numpy as np
 import pytest
 
+from Basilisk.architecture import bskLogging
 from Basilisk.utilities.pythonVariableLogger import PythonVariableLogger
 
 
@@ -104,3 +105,17 @@ def test_python_variable_logger_rejects_negative_min_log_period() -> None:
         PythonVariableLogger({
             "value": lambda current_sim_nanos: current_sim_nanos,
         }, min_log_period=-1)
+
+
+def test_python_variable_logger_raises_bsk_error_for_logging_failure() -> None:
+    """Ensure logging callback failures raise ``BasiliskError``."""
+    def fail_to_log(current_sim_nanos: int) -> int:
+        raise RuntimeError("bad %s value")
+
+    logger = PythonVariableLogger({
+        "value": fail_to_log,
+    })
+    logger.bskLogger = bskLogging.BSKLogger()
+
+    with pytest.raises(bskLogging.BasiliskError, match="bad %s value"):
+        logger.UpdateState(0)

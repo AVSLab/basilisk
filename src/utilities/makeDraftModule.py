@@ -595,7 +595,7 @@ class moduleGenerator:
         defFile += '    // check if the required message has not been connected\n'
         for msg in inMsgList:
             defFile += f'    if (!{msg["type"]}_C_isLinked(&configData->{msg["var"]})) {{\n'
-            defFile += f'        _bskLog(configData->bskLogger, BSK_ERROR, "Error: {name}.{msg["var"]}' \
+            defFile += f'        _bskError(configData->bskLogger, "Error: {name}.{msg["var"]}' \
                        + ' was not connected.");\n'
             defFile += '    }\n'
 
