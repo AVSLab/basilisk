@@ -131,9 +131,16 @@ jobs:
       - name: Resolve publish config
         id: config
         run: |
-          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            testpypi="${{ inputs.destination == 'testpypi' }}"
-          elif [[ "${{ github.ref }}" == refs/tags/test* || "${{ github.ref_name }}" == *rc* ]]; then
+          ref="${{ github.ref_name }}"
+          # Guard: manual PyPI publish requires a non-RC version tag
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" && "${{ inputs.destination }}" == "pypi" ]]; then
+            if [[ "${{ github.ref_type }}" != "tag" || "$ref" == *rc* || "$ref" != v* ]]; then
+              echo "::error::PyPI publish requires a non-RC version tag (e.g. vX.Y.Z). Got: $ref"
+              exit 1
+            fi
+          fi
+          # Route to TestPyPI for RC/test tags or manual testpypi dispatch
+          if [[ "$ref" == *rc* || "$ref" == test* || "${{ inputs.destination }}" == "testpypi" ]]; then
             testpypi="true"
           else
             testpypi="false"
