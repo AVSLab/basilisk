@@ -42,6 +42,11 @@ In order to run Basilisk on macOS, the following software is necessary:
 #. (Optional) Get the `PyCharm <https://www.jetbrains.com/pycharm/>`__
    application to be able to edit python source files
 
+#. (Optional, required to build docs locally) Install `Doxygen <https://www.doxygen.nl>`__ and
+   `Graphviz <https://graphviz.org>`__ via Homebrew::
+
+     $ brew install doxygen graphviz
+
 Install Python 3
 ----------------
 To install Python 3 on macOS there are two common options:
