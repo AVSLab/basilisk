@@ -1,1 +1,1 @@
-- Added ``BSKLogger::bskError()`` as a non-returning C++ fatal logging method while preserving existing ``bskLog(BSK_ERROR, ...)`` behavior.
+- Added ``BSKLogger::bskError()`` as a non-returning C++ fatal logging method, with safe Python and C fatal logging wrappers, while preserving existing ``bskLog(BSK_ERROR, ...)`` behavior.
