@@ -57,7 +57,7 @@ void Reset_simpleDeadband(simpleDeadbandConfig *configData, uint64_t callTime, i
 {
     // check if the required input messages are included
     if (!AttGuidMsg_C_isLinked(&configData->guidInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: simpleDeadband.guidInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: simpleDeadband.guidInMsg wasn't connected.");
     }
     configData->wasControlOff = 1;
 }

@@ -42,7 +42,7 @@ void Reset_ephemNavConverter(EphemNavConverterData *configData, uint64_t callTim
 {
     // check if the required message has not been connected
     if (!EphemerisMsg_C_isLinked(&configData->ephInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: ephemNavConverter.ephInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: ephemNavConverter.ephInMsg wasn't connected.");
     }
 }
 

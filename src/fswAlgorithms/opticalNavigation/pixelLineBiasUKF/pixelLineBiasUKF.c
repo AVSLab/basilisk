@@ -46,13 +46,13 @@ void Reset_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, uint64_t callTim
 {
     // check if the required message has not been connected
     if (!OpNavCirclesMsg_C_isLinked(&configData->circlesInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: pixelLineBiasUKF.circlesInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: pixelLineBiasUKF.circlesInMsg wasn't connected.");
     }
     if (!CameraConfigMsg_C_isLinked(&configData->cameraConfigInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: pixelLineBiasUKF.cameraConfigInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: pixelLineBiasUKF.cameraConfigInMsg wasn't connected.");
     }
     if (!NavAttMsg_C_isLinked(&configData->attInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: pixelLineBiasUKF.attInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: pixelLineBiasUKF.attInMsg wasn't connected.");
     }
 
     size_t i;
@@ -310,7 +310,7 @@ int pixelLineBiasUKFTimeUpdate(PixelLineBiasUKFConfig *configData, double update
     /*! - Read the planet ID from the message*/
     if(configData->planetId == 0)
     {
-      _bskLog(configData->bskLogger, BSK_ERROR, "Need a planet to navigate");
+      _bskError(configData->bskLogger, "Need a planet to navigate");
     }
 
     mCopy(configData->sQnoise, PIXLINE_N_STATES, PIXLINE_N_STATES, procNoise);

@@ -67,14 +67,14 @@ void Reset_aggregateNav(NavAggregateData *configData, uint64_t callTime, int64_t
     for(uint32_t i=0; i<configData->attMsgCount; i=i+1)
     {
         if (!NavAttMsg_C_isLinked(&configData->attMsgs[i].navAttInMsg)) {
-            _bskLog(configData->bskLogger, BSK_ERROR, "An attitude input message name was not linked.  Be sure that attMsgCount is set properly.");
+            _bskError(configData->bskLogger, "An attitude input message name was not linked.  Be sure that attMsgCount is set properly.");
         }
     }
     /*! - loop over the number of translational input messages and make sure they are linked */
     for(uint32_t i=0; i<configData->transMsgCount; i=i+1)
     {
         if (!NavTransMsg_C_isLinked(&configData->transMsgs[i].navTransInMsg)) {
-            _bskLog(configData->bskLogger, BSK_ERROR, "A translation input message name was not specified.  Be sure that transMsgCount is set properly.");
+            _bskError(configData->bskLogger, "A translation input message name was not specified.  Be sure that transMsgCount is set properly.");
         }
     }
 

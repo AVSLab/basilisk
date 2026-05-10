@@ -51,10 +51,10 @@ void Reset_sunSafePoint(sunSafePointConfig *configData, uint64_t callTime, int64
 
     // check if the required input messages are included
     if (!NavAttMsg_C_isLinked(&configData->sunDirectionInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: sunSafePoint.sunDirectionInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: sunSafePoint.sunDirectionInMsg wasn't connected.");
     }
     if (!NavAttMsg_C_isLinked(&configData->imuInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: sunSafePoint.imuInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: sunSafePoint.imuInMsg wasn't connected.");
     }
 
     /* compute an Eigen axis orthogonal to sHatBdyCmd */
@@ -62,7 +62,7 @@ void Reset_sunSafePoint(sunSafePointConfig *configData, uint64_t callTime, int64
       char info[MAX_LOGGING_LENGTH];
       snprintf(info, sizeof(info), "The module vector sHatBdyCmd is not setup as a unit vector [%f, %f %f]",
                configData->sHatBdyCmd[0], configData->sHatBdyCmd[1], configData->sHatBdyCmd[2]);
-      _bskLog(configData->bskLogger, BSK_ERROR, info);
+      _bskError(configData->bskLogger, info);
     } else {
         v3Set(1., 0., 0., v1);
         v3Normalize(configData->sHatBdyCmd, configData->sHatBdyCmd);    /* ensure that this vector is a unit vector */

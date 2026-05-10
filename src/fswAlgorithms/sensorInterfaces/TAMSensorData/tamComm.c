@@ -46,7 +46,7 @@ void Reset_tamProcessTelem(tamConfigData* configData, uint64_t callTime, int64_t
 {
     // check if the required message has not been connected
     if (!TAMSensorMsg_C_isLinked(&configData->tamInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: tamComm.tamInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: tamComm.tamInMsg wasn't connected.");
     }
 
     if (fabs(m33Determinant(RECAST3X3 configData->dcm_BS) - 1.0) > 1e-10) {

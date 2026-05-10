@@ -52,7 +52,7 @@ void Reset_mrpRotation(mrpRotationConfig *configData, uint64_t callTime, int64_t
 {
     // check if the required input messages are included
     if (!AttRefMsg_C_isLinked(&configData->attRefInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: mrpRotation.attRefInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: mrpRotation.attRefInMsg wasn't connected.");
     }
 
     configData->priorTime = 0;

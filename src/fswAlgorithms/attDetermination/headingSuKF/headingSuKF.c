@@ -56,7 +56,7 @@ void Reset_headingSuKF(HeadingSuKFConfig *configData, uint64_t callTime,
 
     // check if the required input message is included
     if (!OpNavMsg_C_isLinked(&configData->opnavDataInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: headingSuKF.opnavDataInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: headingSuKF.opnavDataInMsg wasn't connected.");
     }
 
     /*! - Check input message connections */

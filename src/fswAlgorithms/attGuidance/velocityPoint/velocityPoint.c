@@ -54,7 +54,7 @@ void Reset_velocityPoint(velocityPointConfig *configData, uint64_t callTime, int
 {
     // check if the required input messages are included
     if (!NavTransMsg_C_isLinked(&configData->transNavInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: velocityPoint.transNavInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: velocityPoint.transNavInMsg wasn't connected.");
     }
     configData->planetMsgIsLinked = EphemerisMsg_C_isLinked(&configData->celBodyInMsg);
 }

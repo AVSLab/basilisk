@@ -54,7 +54,7 @@ void Reset_rateMsgConverter(rateMsgConverterConfig *configData, uint64_t callTim
 {
     // check if the required message has not been connected
     if (!IMUSensorBodyMsg_C_isLinked(&configData->imuRateInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: rateMsgConverter.imuRateInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: rateMsgConverter.imuRateInMsg wasn't connected.");
     }
 }
 

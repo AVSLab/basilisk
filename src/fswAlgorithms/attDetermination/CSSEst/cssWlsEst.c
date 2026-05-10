@@ -48,15 +48,15 @@ void Reset_cssWlsEst(CSSWLSConfig *configData, uint64_t callTime, int64_t module
 
     // check that required messages have been included
     if (!CSSConfigMsg_C_isLinked(&configData->cssConfigInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: cssWIsEst.cssConfigInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: cssWIsEst.cssConfigInMsg wasn't connected.");
     }
     if (!CSSArraySensorMsg_C_isLinked(&configData->cssDataInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: cssWIsEst.cssDataInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: cssWIsEst.cssDataInMsg wasn't connected.");
     }
 
     configData->cssConfigInBuffer = CSSConfigMsg_C_read(&configData->cssConfigInMsg);
     if (configData->cssConfigInBuffer.nCSS > MAX_N_CSS_MEAS) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "cssWIsEst.cssDataInMsg.nCSS must not be greater than "
+        _bskError(configData->bskLogger, "cssWIsEst.cssDataInMsg.nCSS must not be greater than "
                                                   "MAX_N_CSS_MEAS value.");
     }
 

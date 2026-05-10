@@ -53,10 +53,10 @@ void Reset_mtbMomentumManagementSimple(mtbMomentumManagementSimpleConfig *config
      * Check if the required input messages are connected.
      */
     if (!RWArrayConfigMsg_C_isLinked(&configData->rwParamsInMsg)){
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: mtbMomentumManagement.rwParamsInMsg is not connected.");
+        _bskError(configData->bskLogger, "Error: mtbMomentumManagement.rwParamsInMsg is not connected.");
     }
     if (!RWSpeedMsg_C_isLinked(&configData->rwSpeedsInMsg)){
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: mtbMomentumManagement.rwSpeedsInMsg is not connected.");
+        _bskError(configData->bskLogger, "Error: mtbMomentumManagement.rwSpeedsInMsg is not connected.");
     }
 
     /*! - Read in the reaction wheels input configuration message. This gives us the transformation from
@@ -74,7 +74,7 @@ void Reset_mtbMomentumManagementSimple(mtbMomentumManagementSimpleConfig *config
      * Sanity check configs.
      */
     if (configData->Kp < 0.0)
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: k < 0.0");
+        _bskError(configData->bskLogger, "Error: k < 0.0");
 
     return;
 }

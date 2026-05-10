@@ -45,7 +45,7 @@ void Reset_dvAccumulation(DVAccumulationData *configData, uint64_t callTime,
 
     // check if the required message has not been connected
     if (!AccDataMsg_C_isLinked(&configData->accPktInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: dvAccumulation.accPktInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: dvAccumulation.accPktInMsg wasn't connected.");
     }
 
     /*! - read in the accelerometer data message */

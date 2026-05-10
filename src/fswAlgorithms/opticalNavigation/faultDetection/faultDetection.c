@@ -44,16 +44,16 @@ void Reset_faultDetection(FaultDetectionData *configData, uint64_t callTime, int
 {
     // check that the opnave messages are linked
     if (!OpNavMsg_C_isLinked(&configData->navMeasPrimaryInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: faultDetection.navMeasPrimaryInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: faultDetection.navMeasPrimaryInMsg wasn't connected.");
     }
     if (!OpNavMsg_C_isLinked(&configData->navMeasSecondaryInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: faultDetection.navMeasSecondaryInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: faultDetection.navMeasSecondaryInMsg wasn't connected.");
     }
     if (!CameraConfigMsg_C_isLinked(&configData->cameraConfigInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: faultDetection.cameraConfigInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: faultDetection.cameraConfigInMsg wasn't connected.");
     }
     if (!NavAttMsg_C_isLinked(&configData->attInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: faultDetection.attInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: faultDetection.attInMsg wasn't connected.");
     }
 
 }

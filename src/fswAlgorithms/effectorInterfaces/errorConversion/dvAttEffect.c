@@ -53,7 +53,7 @@ void Reset_dvAttEffect(dvAttEffectConfig *configData, uint64_t callTime,
 {
     // check if the required input messages are included
     if (!CmdTorqueBodyMsg_C_isLinked(&configData->cmdTorqueBodyInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: dvAttEffect.cmdTorqueBodyInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: dvAttEffect.cmdTorqueBodyInMsg wasn't connected.");
     }
 
     for(uint32_t i=0; i<configData->numThrGroups; i=i+1)

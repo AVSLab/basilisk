@@ -52,10 +52,10 @@ void Reset_thrMomentumManagement(thrMomentumManagementConfig *configData, uint64
 {
     // check if the required input messages are included
     if (!RWArrayConfigMsg_C_isLinked(&configData->rwConfigDataInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: thrMomentumManagement.rwConfigDataInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: thrMomentumManagement.rwConfigDataInMsg wasn't connected.");
     }
     if (!RWSpeedMsg_C_isLinked(&configData->rwSpeedsInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: thrMomentumManagement.rwSpeedsInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: thrMomentumManagement.rwSpeedsInMsg wasn't connected.");
     }
 
     /*! - read in the RW configuration message */

@@ -54,10 +54,10 @@ void Reset_simpleInstrumentController(simpleInstrumentControllerConfig *configDa
 {
     // check if the required message has not been connected
     if (!AccessMsg_C_isLinked(&configData->locationAccessInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: simpleInstrumentController.locationAccessInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: simpleInstrumentController.locationAccessInMsg wasn't connected.");
     }
     if (!AttGuidMsg_C_isLinked(&configData->attGuidInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: simpleInstrumentController.attGuidInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: simpleInstrumentController.attGuidInMsg wasn't connected.");
     }
 
     // reset the imaged variable to zero

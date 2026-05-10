@@ -47,10 +47,10 @@ void Reset_spacecraftPointing(spacecraftPointingConfig *configData, uint64_t cal
 {
     // check if the required input messages are included
     if (!NavTransMsg_C_isLinked(&configData->chiefPositionInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: spacecraftPointing.chiefPositionInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: spacecraftPointing.chiefPositionInMsg wasn't connected.");
     }
     if (!NavTransMsg_C_isLinked(&configData->deputyPositionInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: spacecraftPointing.deputyPositionInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: spacecraftPointing.deputyPositionInMsg wasn't connected.");
     }
 
     /* Build a coordinate system around the vector within the body frame that points towards the antenna and write the orientation

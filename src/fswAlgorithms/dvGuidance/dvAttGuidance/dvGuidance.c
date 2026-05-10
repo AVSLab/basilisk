@@ -46,7 +46,7 @@ void Reset_dvGuidance(dvGuidanceConfig *configData, uint64_t callTime,
 {
     // check if the required input messages are included
     if (!DvBurnCmdMsg_C_isLinked(&configData->burnDataInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: dvGuidance.burnDataInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: dvGuidance.burnDataInMsg wasn't connected.");
     }
     return;
 }

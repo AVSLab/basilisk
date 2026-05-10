@@ -47,10 +47,10 @@ void Reset_hillStateConverter(HillStateConverterConfig *configData, uint64_t cal
 {
     // check if the required input messages are included
     if (!NavTransMsg_C_isLinked(&configData->chiefStateInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: hillStateConverter.chiefStateInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: hillStateConverter.chiefStateInMsg wasn't connected.");
     }
     if (!NavTransMsg_C_isLinked(&configData->depStateInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: hillStateConverter.depStateInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: hillStateConverter.depStateInMsg wasn't connected.");
     }
 }
 

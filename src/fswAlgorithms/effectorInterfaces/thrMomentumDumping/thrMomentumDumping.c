@@ -60,13 +60,13 @@ void Reset_thrMomentumDumping(thrMomentumDumpingConfig *configData, uint64_t cal
 
     // check if the required input messages are included
     if (!THRArrayConfigMsg_C_isLinked(&configData->thrusterConfInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: thrMomentumDumping.thrusterConfInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: thrMomentumDumping.thrusterConfInMsg wasn't connected.");
     }
     if (!CmdTorqueBodyMsg_C_isLinked(&configData->deltaHInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: thrMomentumDumping.deltaHInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: thrMomentumDumping.deltaHInMsg wasn't connected.");
     }
     if (!THRArrayCmdForceMsg_C_isLinked(&configData->thrusterImpulseInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: thrMomentumDumping.thrusterImpulseInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: thrMomentumDumping.thrusterImpulseInMsg wasn't connected.");
     }
 
     /*! - read in number of thrusters installed and maximum thrust values */

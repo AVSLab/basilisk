@@ -48,24 +48,24 @@ void Reset_prescribedRot2DOF(PrescribedRot2DOFConfig *configData, uint64_t callT
 {
     // Check if the required input messages are linked */
     if (!HingedRigidBodyMsg_C_isLinked(&configData->spinningBodyRef1InMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "prescribedRot2DOF.spinningBodyRef1InMsg wasn't connected.");
+        _bskError(configData->bskLogger, "prescribedRot2DOF.spinningBodyRef1InMsg wasn't connected.");
     }
 
     if (!HingedRigidBodyMsg_C_isLinked(&configData->spinningBodyRef2InMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "prescribedRot2DOF.spinningBodyRef2InMsg wasn't connected.");
+        _bskError(configData->bskLogger, "prescribedRot2DOF.spinningBodyRef2InMsg wasn't connected.");
     }
 
     // Check that the user-configurable variables are set
     if (configData->phiDDotMax < 0) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "prescribedRot2DOF.phiDDotMax wasn't set.");
+        _bskError(configData->bskLogger, "prescribedRot2DOF.phiDDotMax wasn't set.");
     }
 
     if (v3Norm(configData->rotAxis1_M) < 1e-6) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "prescribedRot2DOF.rotAxis1_M wasn't set.");
+        _bskError(configData->bskLogger, "prescribedRot2DOF.rotAxis1_M wasn't set.");
     }
 
     if (v3Norm(configData->rotAxis2_P1) < 1e-6) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "prescribedRot2DOF.rotAxis2_P1 wasn't set.");
+        _bskError(configData->bskLogger, "prescribedRot2DOF.rotAxis2_P1 wasn't set.");
     }
 
     // Store the initial time */

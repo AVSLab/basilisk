@@ -46,7 +46,7 @@ void Reset_oeStateEphem(OEStateEphemData *configData, uint64_t callTime,
 {
     // check if the required message has not been connected
     if (!TDBVehicleClockCorrelationMsg_C_isLinked(&configData->clockCorrInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: oeStateEphem.clockCorrInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: oeStateEphem.clockCorrInMsg wasn't connected.");
     }
 }
 

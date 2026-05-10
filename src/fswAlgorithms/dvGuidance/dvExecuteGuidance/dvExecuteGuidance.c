@@ -48,10 +48,10 @@ void Reset_dvExecuteGuidance(dvExecuteGuidanceConfig *configData, uint64_t callT
 {
     // check if the required input messages are included
     if (!NavTransMsg_C_isLinked(&configData->navDataInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: dvExecuteGuidance.navDataInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: dvExecuteGuidance.navDataInMsg wasn't connected.");
     }
     if (!DvBurnCmdMsg_C_isLinked(&configData->burnDataInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: dvExecuteGuidance.burnDataInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: dvExecuteGuidance.burnDataInMsg wasn't connected.");
     }
 }
 

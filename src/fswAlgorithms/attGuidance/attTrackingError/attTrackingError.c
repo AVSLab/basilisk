@@ -45,10 +45,10 @@ void Reset_attTrackingError(attTrackingErrorConfig *configData, uint64_t callTim
 {
     // check if the required input messages are included
     if (!AttRefMsg_C_isLinked(&configData->attRefInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: attTrackingError.attRefInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: attTrackingError.attRefInMsg wasn't connected.");
     }
     if (!NavAttMsg_C_isLinked(&configData->attNavInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: attTrackingError.attNavInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: attTrackingError.attNavInMsg wasn't connected.");
     }
 
     return;

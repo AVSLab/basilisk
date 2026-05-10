@@ -64,21 +64,21 @@ void Reset_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime,
         }
     }
     if (configData->numControlAxes==0) {
-        _bskLog(configData->bskLogger, BSK_ERROR,"thrForceMapping() is not setup to control any axes!");
+        _bskError(configData->bskLogger, "thrForceMapping() is not setup to control any axes!");
     }
     if (configData->thrForceSign==0) {
-        _bskLog(configData->bskLogger, BSK_ERROR,"thrForceMapping() must have thrForceSign set to either +1 or -1");
+        _bskError(configData->bskLogger, "thrForceMapping() must have thrForceSign set to either +1 or -1");
     }
 
     // check if the required input messages are included
     if (!THRArrayConfigMsg_C_isLinked(&configData->thrConfigInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: thrForceMapping.thrConfigInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: thrForceMapping.thrConfigInMsg wasn't connected.");
     }
     if (!VehicleConfigMsg_C_isLinked(&configData->vehConfigInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: thrForceMapping.vehConfigInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: thrForceMapping.vehConfigInMsg wasn't connected.");
     }
     if (!CmdTorqueBodyMsg_C_isLinked(&configData->cmdTorqueInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: thrForceMapping.cmdTorqueInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: thrForceMapping.cmdTorqueInMsg wasn't connected.");
     }
 
     /*! - read in the support thruster and vehicle configuration messages */
@@ -92,7 +92,7 @@ void Reset_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime,
         v3Copy(localThrusterData.thrusters[i].rThrust_B, configData->rThruster_B[i]);
         v3Copy(localThrusterData.thrusters[i].tHatThrust_B, configData->gtThruster_B[i]);
         if(localThrusterData.thrusters[i].maxThrust <= 0.0){
-            _bskLog(configData->bskLogger, BSK_ERROR, "A configured thruster has a non-sensible saturation limit of <= 0 N!");
+            _bskError(configData->bskLogger, "A configured thruster has a non-sensible saturation limit of <= 0 N!");
         } else {
             configData->thrForcMag[i] = localThrusterData.thrusters[i].maxThrust;
         }

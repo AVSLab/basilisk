@@ -55,13 +55,13 @@ void Reset_rwNullSpace(rwNullSpaceConfig *configData, uint64_t callTime,
 
     // check if the required input messages are included
     if (!RWConstellationMsg_C_isLinked(&configData->rwConfigInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: rwNullSpace.rwConfigInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: rwNullSpace.rwConfigInMsg wasn't connected.");
     }
     if (!ArrayMotorTorqueMsg_C_isLinked(&configData->rwMotorTorqueInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: rwNullSpace.rwMotorTorqueInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: rwNullSpace.rwMotorTorqueInMsg wasn't connected.");
     }
     if (!RWSpeedMsg_C_isLinked(&configData->rwSpeedsInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: rwNullSpace.rwSpeedsInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: rwNullSpace.rwSpeedsInMsg wasn't connected.");
     }
 
     /* read in the RW spin axis headings */
@@ -70,7 +70,7 @@ void Reset_rwNullSpace(rwNullSpaceConfig *configData, uint64_t callTime,
     /* create the 3xN [Gs] RW spin axis projection matrix */
     configData->numWheels = (uint32_t) localRWData.numRW;
     if (configData->numWheels > MAX_EFF_CNT) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: rwNullSpace.numWheels is larger that max effector count.");
+        _bskError(configData->bskLogger, "Error: rwNullSpace.numWheels is larger that max effector count.");
     }
     for(uint32_t i=0; i<configData->numWheels; i=i+1)
     {

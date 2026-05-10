@@ -57,21 +57,21 @@ void Reset_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uint
     /* make sure option msg connections are correctly done */
     if (RWArrayConfigMsg_C_isLinked(&configData->rwParamsInMsg)) {
         if (!RWSpeedMsg_C_isLinked(&configData->rwSpeedsInMsg)) {
-            _bskLog(configData->bskLogger, BSK_ERROR,"The rwSpeedsInMsg wasn't connected while rwParamsInMsg was connected.");
+            _bskError(configData->bskLogger, "The rwSpeedsInMsg wasn't connected while rwParamsInMsg was connected.");
         }
     }
 
     // check if essential messages are connected
     if (!AttGuidMsg_C_isLinked(&configData->guidInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: rateServoFullNonlinear.guidInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: rateServoFullNonlinear.guidInMsg wasn't connected.");
     }
 
     if (!VehicleConfigMsg_C_isLinked(&configData->vehConfigInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: rateServoFullNonlinear.vehConfigInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: rateServoFullNonlinear.vehConfigInMsg wasn't connected.");
     }
 
     if (!RateCmdMsg_C_isLinked(&configData->rateSteeringInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: rateServoFullNonlinear.rateSteeringInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: rateServoFullNonlinear.rateSteeringInMsg wasn't connected.");
     }
 
 

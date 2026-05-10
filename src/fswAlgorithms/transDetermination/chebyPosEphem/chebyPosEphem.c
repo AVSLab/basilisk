@@ -49,7 +49,7 @@ void Reset_chebyPosEphem(ChebyPosEphemData *configData, uint64_t callTime,
 {
     // check if the required message has not been connected
     if (!TDBVehicleClockCorrelationMsg_C_isLinked(&configData->clockCorrInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: chebyPosEphem.clockCorrInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: chebyPosEphem.clockCorrInMsg wasn't connected.");
     }
 
     int i, j, k, n;

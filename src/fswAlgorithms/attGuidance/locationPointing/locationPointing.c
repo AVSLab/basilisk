@@ -52,10 +52,10 @@ void Reset_locationPointing(locationPointingConfig *configData, uint64_t callTim
 
     // check if the required message has not been connected
     if (!NavAttMsg_C_isLinked(&configData->scAttInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: locationPointing.scAttInMsg was not connected.");
+        _bskError(configData->bskLogger, "Error: locationPointing.scAttInMsg was not connected.");
     }
     if (!NavTransMsg_C_isLinked(&configData->scTransInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: locationPointing.scTransInMsg was not connected.");
+        _bskError(configData->bskLogger, "Error: locationPointing.scTransInMsg was not connected.");
     }
     int numInMsgs = GroundStateMsg_C_isLinked(&configData->locationInMsg)
                     + StripStateMsg_C_isLinked(&configData->locationstripInMsg)
@@ -63,10 +63,10 @@ void Reset_locationPointing(locationPointingConfig *configData, uint64_t callTim
                     + NavTransMsg_C_isLinked(&configData->scTargetInMsg);
 
     if (numInMsgs == 0) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: In the locationPointing module no target messages were not connected.");
+        _bskError(configData->bskLogger, "Error: In the locationPointing module no target messages were not connected.");
     }
     else if (numInMsgs > 1) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: In the locationPointing module multiple target messages were connected. Defaulting to either ground location, planet location or spacecraft location, in that order.");
+        _bskError(configData->bskLogger, "Error: In the locationPointing module multiple target messages were connected. Defaulting to either ground location, planet location or spacecraft location, in that order.");
     }
 
     configData->init = 1;
@@ -87,7 +87,7 @@ void Reset_locationPointing(locationPointingConfig *configData, uint64_t callTim
       char info[MAX_LOGGING_LENGTH];
       snprintf(info, sizeof(info), "locationPoint: vector pHat_B is not setup as a unit vector [%f, %f %f]",
                configData->pHat_B[0], configData->pHat_B[1], configData->pHat_B[2]);
-      _bskLog(configData->bskLogger, BSK_ERROR, info);
+      _bskError(configData->bskLogger, info);
     } else {
         double v1[3];
         v3Set(1., 0., 0., v1);
@@ -106,7 +106,7 @@ void Reset_locationPointing(locationPointingConfig *configData, uint64_t callTim
             char info[MAX_LOGGING_LENGTH];
             snprintf(info, sizeof(info), "locationPointing: vector cHat_B is not setup as a unit vector [%f, %f, %f]",
                      configData->cHat_B[0], configData->cHat_B[1], configData->cHat_B[2]);
-            _bskLog(configData->bskLogger, BSK_ERROR, info);
+            _bskError(configData->bskLogger, info);
         } else {
             v3Normalize(configData->cHat_B, configData->cHat_B);    /* ensure that this vector is a unit vector */
             double dotPHatCHat = fabs(v3Dot(configData->pHat_B, configData->cHat_B));
@@ -114,7 +114,7 @@ void Reset_locationPointing(locationPointingConfig *configData, uint64_t callTim
                 char info[MAX_LOGGING_LENGTH];
                 snprintf(info, sizeof(info), "locationPointing: cHat_B is not perpendicular to pHat_B "
                          "(dot product = %e). These vectors must be orthogonal for strip imaging.", dotPHatCHat);
-                _bskLog(configData->bskLogger, BSK_ERROR, info);
+                _bskError(configData->bskLogger, info);
             }
         }
     }

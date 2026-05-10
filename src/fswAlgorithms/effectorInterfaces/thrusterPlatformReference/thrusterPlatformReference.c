@@ -50,10 +50,10 @@ void SelfInit_thrusterPlatformReference(ThrusterPlatformReferenceConfig *configD
 void Reset_thrusterPlatformReference(ThrusterPlatformReferenceConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     if (!VehicleConfigMsg_C_isLinked(&configData->vehConfigInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, " thrusterPlatformReference.vehConfigInMsg wasn't connected.");
+        _bskError(configData->bskLogger, " thrusterPlatformReference.vehConfigInMsg wasn't connected.");
     }
     if (!THRConfigMsg_C_isLinked(&configData->thrusterConfigFInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, " thrusterPlatformReference.thrusterConfigFInMsg wasn't connected.");
+        _bskError(configData->bskLogger, " thrusterPlatformReference.thrusterConfigFInMsg wasn't connected.");
     }
     if (RWArrayConfigMsg_C_isLinked(&configData->rwConfigDataInMsg) && RWSpeedMsg_C_isLinked(&configData->rwSpeedsInMsg)) {
         configData->momentumDumping = Yes;

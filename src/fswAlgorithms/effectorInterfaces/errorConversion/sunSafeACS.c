@@ -44,7 +44,7 @@ void Reset_sunSafeACS(sunSafeACSConfig *configData, uint64_t callTime,
 {
     // check if the required input messages are included
     if (!CmdTorqueBodyMsg_C_isLinked(&configData->cmdTorqueBodyInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: sunSafeACS.cmdTorqueBodyInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: sunSafeACS.cmdTorqueBodyInMsg wasn't connected.");
     }
 }
 

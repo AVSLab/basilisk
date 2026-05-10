@@ -57,7 +57,7 @@ void Reset_eulerRotation(eulerRotationConfig *configData, uint64_t callTime, int
 {
     // check if the required input message is included
     if (!AttRefMsg_C_isLinked(&configData->attRefInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: eulerRotation.attRefInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: eulerRotation.attRefInMsg wasn't connected.");
     }
 
     configData->priorTime = 0;

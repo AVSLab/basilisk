@@ -52,7 +52,7 @@ void Reset_hillPoint(hillPointConfig *configData, uint64_t callTime, int64_t mod
 {
     // check if the required input message is included
     if (!NavTransMsg_C_isLinked(&configData->transNavInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: hillPoint.transNavInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: hillPoint.transNavInMsg wasn't connected.");
     }
     configData->planetMsgIsLinked = EphemerisMsg_C_isLinked(&configData->celBodyInMsg);
 }

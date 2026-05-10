@@ -46,7 +46,7 @@ void Reset_attRefCorrection(attRefCorrectionConfig *configData, uint64_t callTim
 {
     // check if the required message has not been connected
     if (!AttRefMsg_C_isLinked(&configData->attRefInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: attRefCorrection.attRefInMsg was not connected.");
+        _bskError(configData->bskLogger, "Error: attRefCorrection.attRefInMsg was not connected.");
     }
 }
 

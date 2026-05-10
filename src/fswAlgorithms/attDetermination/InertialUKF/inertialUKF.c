@@ -54,16 +54,16 @@ void Reset_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
 
     // check if the required input messages are included
     if (!RWArrayConfigMsg_C_isLinked(&configData->rwParamsInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: inertialUKF.rwParamsInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: inertialUKF.rwParamsInMsg wasn't connected.");
     }
     if (!VehicleConfigMsg_C_isLinked(&configData->massPropsInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: inertialUKF.massPropsInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: inertialUKF.massPropsInMsg wasn't connected.");
     }
     if (!RWSpeedMsg_C_isLinked(&configData->rwSpeedsInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: inertialUKF.rwSpeedsInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: inertialUKF.rwSpeedsInMsg wasn't connected.");
     }
     if (!AccDataMsg_C_isLinked(&configData->gyrBuffInMsg)) {
-        _bskLog(configData->bskLogger, BSK_ERROR, "Error: inertialUKF.gyrBuffInMsg wasn't connected.");
+        _bskError(configData->bskLogger, "Error: inertialUKF.gyrBuffInMsg wasn't connected.");
     }
 
     /*! - Read static RW config data message and store it in module variables */
