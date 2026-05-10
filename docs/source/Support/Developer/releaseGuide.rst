@@ -46,7 +46,14 @@ process; however, it must now be updated manually to prevent excessive version
 bumps.
 
 Update this file to reflect the new version number following semantic versioning
-guidelines (e.g., MAJOR.MINOR.PATCH).
+guidelines (e.g., ``MAJOR.MINOR.PATCH``).
+
+For a release candidate, set the version to ``MAJOR.MINOR.PATCHrcN``
+(e.g., ``2.10.2rc1``). This ensures artifacts built from an RC tag are
+correctly identified as pre-release and are published to TestPyPI rather than
+production PyPI. Once the release candidate is validated and a final release tag
+is pushed, reset ``bskVersion.txt`` to the plain ``MAJOR.MINOR.PATCH`` form
+(e.g., ``2.10.2``) before tagging.
 
 Updating the Release Notes
 --------------------------
@@ -72,17 +79,51 @@ back into ``develop`` to ensure they are included in future releases.
 
 Creating and Pushing Tags
 -------------------------
-Releases are published by pushing a git tag to the ``master`` branch. Our GitHub Actions workflow
-(``Publish Wheels``) is triggered on tag pushes matching:
+Releases are published by pushing a git tag. The ``Publish Wheels`` GitHub Actions
+workflow triggers on tag pushes and routes artifacts based on the tag name:
 
-- ``v[0-9]*``  (real releases, published to PyPI)
+.. list-table::
+   :header-rows: 1
+   :widths: 30 70
+
+   * - Tag pattern
+     - Destination
+   * - ``vX.Y.Z`` (no ``rc``)
+     - PyPI (public release)
+   * - ``vX.Y.ZrcN``
+     - TestPyPI (release candidate)
+   * - ``test*``
+     - TestPyPI (ad-hoc testing)
 
 This means: **pushing a tag kicks off the wheel builds on all supported
 platforms, builds an sdist, and then publishes the artifacts**.
 
 Tag format
 ^^^^^^^^^^
-Release tags must follow the format ``vX.Y.Z`` (for example, ``v2.9.0``).
+- Full release tags must follow the format ``vX.Y.Z`` (for example, ``v2.9.0``).
+- Release candidate tags follow ``vX.Y.ZrcN`` (for example, ``v2.10.2rc1``).
+
+When to use a release candidate tag
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Push an RC tag when you want to publish a pre-release build to TestPyPI for
+validation before committing to a final release. Typical scenarios include:
+
+- Verifying that the wheel build pipeline works end-to-end for a new version.
+- Giving early adopters a chance to test a release before it is published to
+  production PyPI.
+- Debugging the publish workflow itself without touching the production index.
+
+The workflow for an RC release is:
+
+#. Set ``docs/source/bskVersion.txt`` to the RC version (e.g. ``2.10.2rc1``).
+#. Push an RC tag (e.g. ``v2.10.2rc1``) — CI builds wheels and publishes to
+   TestPyPI automatically.
+#. Validate the artifacts from TestPyPI.
+#. If further changes are needed, increment the RC counter (``rc2``, ``rc3``,
+   …) and repeat.
+#. Once the RC is validated, reset ``bskVersion.txt`` to the final version
+   (e.g. ``2.10.2``) and push the release tag (e.g. ``v2.10.2``) to trigger
+   the production PyPI publish.
 
 Where to tag
 ^^^^^^^^^^^^
