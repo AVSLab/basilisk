@@ -5,6 +5,16 @@ on:
     tags:
       - "v[0-9]*"
       - "test*"
+  workflow_dispatch:
+    inputs:
+      destination:
+        description: "Publish destination"
+        required: true
+        default: testpypi
+        type: choice
+        options:
+          - testpypi
+          - pypi
 
 jobs:
   build-wheels:
@@ -76,7 +86,7 @@ jobs:
           name: cibw-sdist
           path: dist/*.tar.gz
 
-  test_sdist:
+  test-sdist:
     name: Test SDist
     needs: make_sdist
     runs-on: ubuntu-latest
@@ -99,19 +109,12 @@ jobs:
         run: pip install dist/*.tar.gz
 
   publish:
-    name: Publish to PyPI
-    needs: [build-wheels, test_sdist]
+    name: Publish
+    needs: [build-wheels, test-sdist]
     runs-on: ubuntu-latest
     permissions:
       id-token: write
-      contents: read
     steps:
-      - name: Checkout tagged source
-        uses: actions/checkout@v5
-        with:
-          ref: ${{ github.ref }}
-          fetch-depth: 0
-
       - name: Download wheels
         uses: actions/download-artifact@v4
         with:
@@ -125,17 +128,28 @@ jobs:
           name: cibw-sdist
           path: dist
 
-      - name: Publish to TestPyPI (test tags)
-        if: startsWith(github.ref, 'refs/tags/test')
-        uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          repository-url: https://test.pypi.org/legacy/
-          packages-dir: dist
-          skip-existing: true
-          verbose: true
+      - name: Resolve publish config
+        id: config
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            testpypi="${{ inputs.destination == 'testpypi' }}"
+          elif [[ "${{ github.ref }}" == refs/tags/test* || "${{ github.ref_name }}" == *rc* ]]; then
+            testpypi="true"
+          else
+            testpypi="false"
+          fi
+          if [[ "$testpypi" == "true" ]]; then
+            echo "repo-url=https://test.pypi.org/legacy/" >> "$GITHUB_OUTPUT"
+            echo "skip-existing=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "repo-url=https://upload.pypi.org/legacy/" >> "$GITHUB_OUTPUT"
+            echo "skip-existing=false" >> "$GITHUB_OUTPUT"
+          fi
 
-      - name: Publish to PyPI (real releases)
-        if: startsWith(github.ref, 'refs/tags/v')
+      - name: Publish
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
+          repository-url: ${{ steps.config.outputs.repo-url }}
           packages-dir: dist
+          skip-existing: ${{ steps.config.outputs.skip-existing }}
+          verbose: true
