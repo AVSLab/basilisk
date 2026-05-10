@@ -1,0 +1,2 @@
+- Updated ``publish-wheels`` CI workflow to route release candidate tags (``v*rc*``) to TestPyPI instead of PyPI.
+- Added a manual ``workflow_dispatch`` trigger so wheels can be published from the GitHub UI without requiring a tag push.
