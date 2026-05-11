@@ -25,11 +25,29 @@
 %template_mujoco_object(mjsJoint)
 
 %ignore MJJoint::MJJoint;
+%ignore MJJoint::registerStates;
+%ignore MJJoint::writeStateToMujoco;
+%ignore MJJoint::readStateFromMujoco;
+%ignore MJJoint::setDerivativesFromMujoco;
 
 %ignore MJScalarJoint::MJScalarJoint;
 %ignore MJScalarJoint::configure;
 %ignore MJScalarJoint::updateConstrainedEquality;
 %ignore MJScalarJoint::writeJointStateMessage;
+%ignore MJScalarJoint::registerStates;
+%ignore MJScalarJoint::writeStateToMujoco;
+%ignore MJScalarJoint::readStateFromMujoco;
+%ignore MJScalarJoint::setDerivativesFromMujoco;
+
+%ignore MJBallJoint::registerStates;
+%ignore MJBallJoint::writeStateToMujoco;
+%ignore MJBallJoint::readStateFromMujoco;
+%ignore MJBallJoint::setDerivativesFromMujoco;
+
+%ignore MJFreeJoint::registerStates;
+%ignore MJFreeJoint::writeStateToMujoco;
+%ignore MJFreeJoint::readStateFromMujoco;
+%ignore MJFreeJoint::setDerivativesFromMujoco;
 
 %include "MJJoint.h"
 

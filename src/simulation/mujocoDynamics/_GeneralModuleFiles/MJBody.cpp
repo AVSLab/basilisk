@@ -29,7 +29,8 @@
 
 namespace
 {
-    /** Returns true if the first three scalar joints are translational
+    /**
+     * Returns true if the first three scalar joints are translational
      * and along the main axis ([1,0,0], [0,1,0], [0,0,1]).
     */
     bool areJoints3DTranslation(std::list<MJScalarJoint>& joints)
@@ -246,6 +247,40 @@ void MJBody::writeStateDependentOutputMessages(uint64_t CurrentSimNanos)
 void MJBody::registerStates(DynParamRegisterer paramManager)
 {
     this->massState = paramManager.registerState(1, 1, "mass");
+
+    // Each joint owns its own qpos/qvel state(s).  Registering here puts
+    // them all under this body's prefix so the manager-wide names stay
+    // unique even when bodies have joints with the same XML name.
+    for (auto&& joint : this->scalarJoints) {
+        joint.registerStates(paramManager);
+    }
+    if (this->ballJoint.has_value()) {
+        this->ballJoint->registerStates(paramManager);
+    }
+    if (this->freeJoint.has_value()) {
+        this->freeJoint->registerStates(paramManager);
+    }
+}
+
+void MJBody::writeJointStateToMujoco(mjData* d) const
+{
+    for (auto&& joint : this->scalarJoints) joint.writeStateToMujoco(d);
+    if (this->ballJoint.has_value()) this->ballJoint->writeStateToMujoco(d);
+    if (this->freeJoint.has_value()) this->freeJoint->writeStateToMujoco(d);
+}
+
+void MJBody::readJointStatesFromMujoco(const mjData* d)
+{
+    for (auto&& joint : this->scalarJoints) joint.readStateFromMujoco(d);
+    if (this->ballJoint.has_value()) this->ballJoint->readStateFromMujoco(d);
+    if (this->freeJoint.has_value()) this->freeJoint->readStateFromMujoco(d);
+}
+
+void MJBody::setJointDerivativesFromMujoco(const mjData* d)
+{
+    for (auto&& joint : this->scalarJoints) joint.setDerivativesFromMujoco(d);
+    if (this->ballJoint.has_value()) this->ballJoint->setDerivativesFromMujoco(d);
+    if (this->freeJoint.has_value()) this->freeJoint->setDerivativesFromMujoco(d);
 }
 
 void MJBody::updateMujocoModelFromMassProps()

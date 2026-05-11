@@ -29,7 +29,6 @@
 #include <functional>
 #include <iostream>
 #include <sstream>
-#include <stdexcept>
 #include <vector>
 #include <cmath>
 #include <unordered_set>
@@ -95,11 +94,10 @@ void MJScene::Reset(uint64_t CurrentSimNanos)
 
 void MJScene::initializeDynamics()
 {
-    // We need to use a special StateData type for qpos
-    // since it is integrated using a mujoco function
-    this->qposState = this->dynManager.registerState<MJQPosStateData>(1, 1, "mujocoQpos");
-
-    this->qvelState = this->dynManager.registerState(1, 1, "mujocoQvel");
+    // Each joint owns its own qpos/qvel StateData. Registering them
+    // per-body means the adaptive integrator scales tolerances independently
+    // per joint, at each joint's natural scale.  The actuator state is the
+    // only scene-wide state that remains a bulk array.
     this->actState = this->dynManager.registerState(1, 1, "mujocoAct");
 
     for (auto&& body : this->spec.getBodies()) {
@@ -115,6 +113,17 @@ void MJScene::initializeDynamics()
     // Always call `configure`, which will reshape the states size
     if (!recompiled) {
         this->spec.configure();
+    }
+
+    // After spec compile the joint addresses (qposAdr/qvelAdr) are known and
+    // mjData::qpos / mjData::qvel hold the values declared in the XML.  Seed
+    // each joint's StateData from those values so user-visible state matches
+    // the model out of the box.
+    {
+        auto d = this->spec.getMujocoData();
+        for (auto&& body : this->spec.getBodies()) {
+            body.readJointStatesFromMujoco(d);
+        }
     }
 
     // Register the states of the models in the dynamics task
@@ -222,12 +231,16 @@ void MJScene::equationsOfMotion(double t, double timeStep)
         this->bskLogger.bskError("Encountered NaN acceleration at time %gs in MJScene with ID: %d", t, moduleID);
     }
 
-    // The derivative of the position is simply the state of the velocity
-    this->qposState->setDerivative(this->qvelState->getState());
-
-    // Copy the computed accelerations into the derivative of the velocity
-    auto qvelDeriv = this->qvelState->stateDeriv.data();
-    std::copy_n(qacc, this->spec.getMujocoModel()->nv, qvelDeriv);
+    // Each joint pulls its derivatives from the freshly computed mjData.
+    // Quaternion type joints ball and free-attitude set their qpos
+    // derivative to body angular velocity. Every other DOF uses the standard
+    // qpos' = qvel / qvel' = qacc.
+    {
+        auto d = this->spec.getMujocoData();
+        for (auto&& body : this->spec.getBodies()) {
+            body.setJointDerivativesFromMujoco(d);
+        }
+    }
 
     // Also copy the derivative of the actuator states, if we have them
     if (this->spec.getMujocoModel()->na > 0) {
@@ -298,31 +311,16 @@ void MJScene::saveToFile(std::string filename)
     }
 }
 
-MJQPosStateData* MJScene::getQposState()
-{
-    if (!this->qposState) {
-        this->bskLogger.bskError("Tried to get qpos state before initialization.");
-    }
-    return this->qposState;
-}
-
-StateData* MJScene::getQvelState()
-{
-    if (!this->qvelState) {
-        this->bskLogger.bskError("Tried to get qvel state before initialization.");
-    }
-    return this->qvelState;
-}
-
 StateData* MJScene::getActState()
 {
     if (!this->actState) {
-        this->bskLogger.bskError("Tried to get qpos state before initialization.");
+        this->bskLogger.bskError("Tried to get act state before initialization.");
     }
     return this->actState;
 }
 
-void MJScene::printMujocoModelDebugInfo(const std::string& path)
+void
+MJScene::printMujocoModelDebugInfo(const std::string& path)
 {
     mj_printModel(this->getMujocoModel(), path.c_str());
 }
@@ -443,13 +441,12 @@ MJScene::addForceTorqueActuator(const std::string& name, const MJSite& site)
 void MJScene::updateMujocoArraysFromStates()
 {
     auto mujocoModel = this->getMujocoModel();
-    auto mujocoData = this->getMujocoData();
+    auto mujocoData  = this->getMujocoData();
 
-    // Copy the joint positions and velocity stored in the states
-    // into the mujoco arrays
-    std::copy_n(this->qposState->state.data(), mujocoModel->nq, mujocoData->qpos);
-
-    std::copy_n(this->qvelState->state.data(), mujocoModel->nv, mujocoData->qvel);
+    // Each joint copies its owned state into mjData at its qposAdr/qvelAdr.
+    for (auto&& body : this->spec.getBodies()) {
+        body.writeJointStateToMujoco(mujocoData);
+    }
 
     if (mujocoModel->na > 0) {
         std::copy_n(this->actState->state.data(), mujocoModel->na, mujocoData->act);
@@ -458,11 +455,32 @@ void MJScene::updateMujocoArraysFromStates()
     markKinematicsAsStale();
 }
 
-void MJScene::writeOutputStateMessages(uint64_t CurrentSimNanos)
+Eigen::VectorXd
+MJScene::assembleFullQpos()
 {
-    MJSceneStateMsgPayload stateOutMsgPayload{this->qposState->getState(),
-                                              this->qvelState->getState(),
-                                              this->actState->getState()};
+    // Sync joints into mjData first then read straight from the contiguous
+    // mjData::qpos.
+    this->updateMujocoArraysFromStates();
+    auto m = this->spec.getMujocoModel();
+    auto d = this->spec.getMujocoData();
+    return Eigen::Map<const Eigen::VectorXd>(d->qpos, m->nq);
+}
+
+Eigen::VectorXd
+MJScene::assembleFullQvel()
+{
+    this->updateMujocoArraysFromStates();
+    auto m = this->spec.getMujocoModel();
+    auto d = this->spec.getMujocoData();
+    return Eigen::Map<const Eigen::VectorXd>(d->qvel, m->nv);
+}
+
+void
+MJScene::writeOutputStateMessages(uint64_t CurrentSimNanos)
+{
+    MJSceneStateMsgPayload stateOutMsgPayload{ this->assembleFullQpos(),
+                                               this->assembleFullQvel(),
+                                               this->actState->getState() };
 
     stateOutMsg.write(&stateOutMsgPayload, this->moduleID, CurrentSimNanos);
 }
