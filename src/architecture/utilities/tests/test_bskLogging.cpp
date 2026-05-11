@@ -69,7 +69,14 @@ TEST(BSKLogging, cBskErrorTreatsMessageAsText)
     BSKLogger bskLogger;
 
     try {
+#ifdef _MSC_VER
+        // Keep MSVC from applying /EHc's extern "C" non-throwing assumption here.
+        using CBskErrorCaller = void (*)(BSKLogger&, const char*);
+        CBskErrorCaller volatile cBskErrorCaller = callCBskError;
+        cBskErrorCaller(bskLogger, "preformatted %s message");
+#else
         callCBskError(bskLogger, "preformatted %s message");
+#endif
     } catch (const BasiliskError& error) {
         EXPECT_STREQ("preformatted %s message", error.what());
         return;
