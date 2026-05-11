@@ -35,7 +35,7 @@ jobs:
       - name: CTest
         if: ${{ always() }}
         working-directory: dist3
-        run: ctest
+        run: ctest --output-on-failure
 
   build-windows:
     runs-on: windows-2025
@@ -63,7 +63,7 @@ jobs:
         shell: pwsh
         working-directory: dist3
         run: |
-          ctest
+          ctest --output-on-failure
           if(($LastExitCode -ne 0) -and ($LastExitCode -ne 5)) { exit 1 }
 
   build-macos:
@@ -105,7 +105,7 @@ jobs:
       - name: CTest
         if: ${{ always() }}
         working-directory: dist3
-        run: ctest -C Release
+        run: ctest -C Release --output-on-failure
 
   docs:
     runs-on: macos-latest

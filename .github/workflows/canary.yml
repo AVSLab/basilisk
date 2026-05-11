@@ -51,7 +51,7 @@ jobs:
       # handles running the Python tests internally
       - name: Run C/C++ Tests
         working-directory: ./dist3
-        run: ctest -C Release
+        run: ctest -C Release --output-on-failure
         if: ${{ always() }}
       - name: Build docs
         uses: ./.github/actions/docs
