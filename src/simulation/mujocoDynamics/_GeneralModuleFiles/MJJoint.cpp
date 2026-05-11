@@ -60,6 +60,10 @@ void MJJoint::checkInitialized() const
     }
 }
 
+// ---------------------------------------------------------------------------
+// MJScalarJoint
+// ---------------------------------------------------------------------------
+
 MJScalarJoint::MJScalarJoint(mjsJoint* joint, MJBody& body)
     : MJJoint(joint, body),
       constrainedEquality(
@@ -97,35 +101,62 @@ void MJScalarJoint::updateConstrainedEquality()
     }
 }
 
+void MJScalarJoint::registerStates(DynParamRegisterer registerer)
+{
+    this->qposState = registerer.registerState(1, 1, "joint_" + this->name + "_qpos");
+    this->qvelState = registerer.registerState(1, 1, "joint_" + this->name + "_qvel");
+}
+
+void MJScalarJoint::writeStateToMujoco(mjData* d) const
+{
+    d->qpos[this->qposAdr.value()] = this->qposState->state(0);
+    d->qvel[this->qvelAdr.value()] = this->qvelState->state(0);
+}
+
+void MJScalarJoint::readStateFromMujoco(const mjData* d)
+{
+    this->qposState->state(0) = d->qpos[this->qposAdr.value()];
+    this->qvelState->state(0) = d->qvel[this->qvelAdr.value()];
+}
+
+void MJScalarJoint::setDerivativesFromMujoco(const mjData* d)
+{
+    Eigen::Matrix<double, 1, 1> dPos;
+    dPos(0) = d->qvel[this->qvelAdr.value()];
+    this->qposState->setDerivative(dPos);
+
+    Eigen::Matrix<double, 1, 1> dVel;
+    dVel(0) = d->qacc[this->qvelAdr.value()];
+    this->qvelState->setDerivative(dVel);
+}
+
 void MJScalarJoint::writeJointStateMessage(uint64_t CurrentSimNanos)
 {
     checkInitialized();
 
+    auto& scene = body.getSpec().getScene();
+
     ScalarJointStateMsgPayload stateOutMsgPayload;
-    auto state = body.getSpec().getScene().getQposState()->getState();
-    stateOutMsgPayload.state = state(this->qposAdr.value());
-    this->stateOutMsg.write(&stateOutMsgPayload, body.getSpec().getScene().moduleID, 0);
+    stateOutMsgPayload.state = this->qposState->state(0);
+    this->stateOutMsg.write(&stateOutMsgPayload, scene.moduleID, 0);
 
     ScalarJointStateMsgPayload stateDotOutMsgPayload;
-    auto stateDot = body.getSpec().getScene().getQvelState()->getState();
-    stateDotOutMsgPayload.state = stateDot(this->qvelAdr.value());
-    this->stateDotOutMsg.write(&stateDotOutMsgPayload, body.getSpec().getScene().moduleID, 0);
+    stateDotOutMsgPayload.state = this->qvelState->state(0);
+    this->stateDotOutMsg.write(&stateDotOutMsgPayload, scene.moduleID, 0);
 }
 
 void MJScalarJoint::setPosition(double value)
 {
     checkInitialized();
-
-    body.getSpec().getScene().getQposState()->state(this->qposAdr.value()) = value;
-    body.getSpec().getScene().markKinematicsAsStale();
+    this->qposState->state(0) = value;
+    this->body.getSpec().getScene().markKinematicsAsStale();
 }
 
 void MJScalarJoint::setVelocity(double value)
 {
     checkInitialized();
-
-    body.getSpec().getScene().getQvelState()->state(this->qvelAdr.value()) = value;
-    body.getSpec().getScene().markKinematicsAsStale();
+    this->qvelState->state(0) = value;
+    this->body.getSpec().getScene().markKinematicsAsStale();
 }
 
 MJSingleJointEquality
@@ -134,49 +165,135 @@ MJScalarJoint::getConstrainedEquality()
     return this->constrainedEquality;
 }
 
+// ---------------------------------------------------------------------------
+// MJBallJoint
+// ---------------------------------------------------------------------------
+
+void MJBallJoint::registerStates(DynParamRegisterer registerer)
+{
+    this->qposState = registerer.registerState<QuaternionStateData>(
+        4, 1, "joint_" + this->name + "_qpos");
+    this->qvelState = registerer.registerState(3, 1, "joint_" + this->name + "_qvel");
+}
+
+void MJBallJoint::writeStateToMujoco(mjData* d) const
+{
+    auto qp = this->qposAdr.value();
+    auto qv = this->qvelAdr.value();
+    for (int k = 0; k < 4; ++k) d->qpos[qp + k] = this->qposState->state(k);
+    for (int k = 0; k < 3; ++k) d->qvel[qv + k] = this->qvelState->state(k);
+}
+
+void MJBallJoint::readStateFromMujoco(const mjData* d)
+{
+    auto qp = this->qposAdr.value();
+    auto qv = this->qvelAdr.value();
+    for (int k = 0; k < 4; ++k) this->qposState->state(k) = d->qpos[qp + k];
+    for (int k = 0; k < 3; ++k) this->qvelState->state(k) = d->qvel[qv + k];
+}
+
+void MJBallJoint::setDerivativesFromMujoco(const mjData* d)
+{
+    auto qv = this->qvelAdr.value();
+    // qpos integrator consumes body angular velocity (3 elements).
+    Eigen::Matrix<double, 3, 1> omega;
+    for (int k = 0; k < 3; ++k) omega(k) = d->qvel[qv + k];
+    this->qposState->setDerivative(omega);
+
+    Eigen::Matrix<double, 3, 1> alpha;
+    for (int k = 0; k < 3; ++k) alpha(k) = d->qacc[qv + k];
+    this->qvelState->setDerivative(alpha);
+}
+
+// ---------------------------------------------------------------------------
+// MJFreeJoint
+// ---------------------------------------------------------------------------
+
+void MJFreeJoint::registerStates(DynParamRegisterer registerer)
+{
+    this->qposTranslationState = registerer.registerState(
+        3, 1, "joint_" + this->name + "_qposTranslation");
+    this->qposAttitudeState    = registerer.registerState<QuaternionStateData>(
+        4, 1, "joint_" + this->name + "_qposAttitude");
+    this->qvelTranslationState = registerer.registerState(
+        3, 1, "joint_" + this->name + "_qvelTranslation");
+    this->qvelAttitudeState    = registerer.registerState(
+        3, 1, "joint_" + this->name + "_qvelAttitude");
+}
+
+void MJFreeJoint::writeStateToMujoco(mjData* d) const
+{
+    auto qp = this->qposAdr.value();
+    auto qv = this->qvelAdr.value();
+    for (int k = 0; k < 3; ++k) d->qpos[qp + k]     = this->qposTranslationState->state(k);
+    for (int k = 0; k < 4; ++k) d->qpos[qp + 3 + k] = this->qposAttitudeState->state(k);
+    for (int k = 0; k < 3; ++k) d->qvel[qv + k]     = this->qvelTranslationState->state(k);
+    for (int k = 0; k < 3; ++k) d->qvel[qv + 3 + k] = this->qvelAttitudeState->state(k);
+}
+
+void MJFreeJoint::readStateFromMujoco(const mjData* d)
+{
+    auto qp = this->qposAdr.value();
+    auto qv = this->qvelAdr.value();
+    for (int k = 0; k < 3; ++k) this->qposTranslationState->state(k) = d->qpos[qp + k];
+    for (int k = 0; k < 4; ++k) this->qposAttitudeState->state(k)    = d->qpos[qp + 3 + k];
+    for (int k = 0; k < 3; ++k) this->qvelTranslationState->state(k) = d->qvel[qv + k];
+    for (int k = 0; k < 3; ++k) this->qvelAttitudeState->state(k)    = d->qvel[qv + 3 + k];
+}
+
+void MJFreeJoint::setDerivativesFromMujoco(const mjData* d)
+{
+    auto qv = this->qvelAdr.value();
+
+    // Translation qpos derivative is the inertial translational velocity.
+    Eigen::Matrix<double, 3, 1> dPosTran;
+    for (int k = 0; k < 3; ++k) dPosTran(k) = d->qvel[qv + k];
+    this->qposTranslationState->setDerivative(dPosTran);
+
+    // Attitude qpos derivative is the body angular velocity (consumed by
+    // QuaternionStateData::propagateState as omega).
+    Eigen::Matrix<double, 3, 1> omega;
+    for (int k = 0; k < 3; ++k) omega(k) = d->qvel[qv + 3 + k];
+    this->qposAttitudeState->setDerivative(omega);
+
+    Eigen::Matrix<double, 3, 1> dVelTran;
+    for (int k = 0; k < 3; ++k) dVelTran(k) = d->qacc[qv + k];
+    this->qvelTranslationState->setDerivative(dVelTran);
+
+    Eigen::Matrix<double, 3, 1> dVelAtt;
+    for (int k = 0; k < 3; ++k) dVelAtt(k) = d->qacc[qv + 3 + k];
+    this->qvelAttitudeState->setDerivative(dVelAtt);
+}
+
 void MJFreeJoint::setPosition(const Eigen::Vector3d& position)
 {
     checkInitialized();
-
-    auto& qposState = body.getSpec().getScene().getQposState()->state;
-    auto i = this->qposAdr.value();
-    qposState.middleRows(i, 3) = position;
-
-    body.getSpec().getScene().markKinematicsAsStale();
+    for (int k = 0; k < 3; ++k) this->qposTranslationState->state(k) = position[k];
+    this->body.getSpec().getScene().markKinematicsAsStale();
 }
 
 void MJFreeJoint::setVelocity(const Eigen::Vector3d& velocity)
 {
     checkInitialized();
-
-    auto& qvelState = body.getSpec().getScene().getQvelState()->state;
-    auto i = this->qvelAdr.value();
-    qvelState.middleRows(i, 3) = velocity;
-
-    body.getSpec().getScene().markKinematicsAsStale();
+    for (int k = 0; k < 3; ++k) this->qvelTranslationState->state(k) = velocity[k];
+    this->body.getSpec().getScene().markKinematicsAsStale();
 }
 
 void MJFreeJoint::setAttitude(const Eigen::MRPd& attitude)
 {
     checkInitialized();
-
-    auto& qposState = body.getSpec().getScene().getQposState()->state;
-    auto i = this->qposAdr.value();
-
-    auto mat = attitude.toRotationMatrix();
+    auto mat  = attitude.toRotationMatrix();
     auto quat = Eigen::Quaterniond(mat);
-
-    qposState.middleRows(i + 3, 4) = Eigen::Vector4d{quat.w(), quat.x(), quat.y(), quat.z()};
-    body.getSpec().getScene().markKinematicsAsStale();
+    this->qposAttitudeState->state(0) = quat.w();
+    this->qposAttitudeState->state(1) = quat.x();
+    this->qposAttitudeState->state(2) = quat.y();
+    this->qposAttitudeState->state(3) = quat.z();
+    this->body.getSpec().getScene().markKinematicsAsStale();
 }
 
 void MJFreeJoint::setAttitudeRate(const Eigen::Vector3d& attitudeRate)
 {
     checkInitialized();
-
-    auto& qvelState = body.getSpec().getScene().getQvelState()->state;
-    auto i = this->qvelAdr.value();
-    qvelState.middleRows(i + 3, 3) = attitudeRate;
-
-    body.getSpec().getScene().markKinematicsAsStale();
+    for (int k = 0; k < 3; ++k) this->qvelAttitudeState->state(k) = attitudeRate[k];
+    this->body.getSpec().getScene().markKinematicsAsStale();
 }

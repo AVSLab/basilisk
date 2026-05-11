@@ -28,8 +28,9 @@
 #include "MJUtils.h"
 #include "architecture/_GeneralModuleFiles/sys_model_task.h"
 #include "architecture/msgPayloadDefCpp/MJSceneStateMsgPayload.h"
-#include "MJQPosStateData.h"
 #include "simulation/dynamics/_GeneralModuleFiles/dynamicObject.h"
+
+#include <vector>
 
 /**
  * @brief Represents a dynamic object that solves multi-body dynamics through MuJoCo.
@@ -567,22 +568,6 @@ public:
     mjData* getMujocoData() { return this->spec.getMujocoData(); }
 
     /**
-     * @brief Retrieves the position state data.
-     *
-     * @return Pointer to `MJQPosStateData`.
-     * @throw std::runtime_error If the state has not been initialized.
-     */
-    MJQPosStateData* getQposState();
-
-    /**
-     * @brief Retrieves the velocity state data.
-     *
-     * @return Pointer to `StateData`.
-     * @throw std::runtime_error If the state has not been initialized.
-     */
-    StateData* getQvelState();
-
-    /**
      * @brief Retrieves the actuation state data.
      *
      * @return Pointer to `StateData`.
@@ -615,6 +600,16 @@ public:
 
     Message<MJSceneStateMsgPayload> stateOutMsg; ///< Message with all the the scene's position, velocity, and actuators states.
 
+    /**
+     * @brief Returns the total qpos vector reassembled from the split states.
+     *
+     * This matches the layout of `mjData::qpos` (length `nq`).
+     */
+    Eigen::VectorXd assembleFullQpos();
+
+    /** Companion to `assembleFullQpos`, for the qvel space (length `nv`). */
+    Eigen::VectorXd assembleFullQvel();
+
 protected:
     /**
      * @brief Updates MuJoCo structs from the Basilisk `StateData` objects.
@@ -637,9 +632,7 @@ protected:
     SysModelTask dynamicsDiffusionTask; ///< Task managing models involved in the diffusion stochastic dynamics of this scene.
     std::vector<std::unique_ptr<SysModel>> ownedSysModel; ///< System models that should be cleared on this scene destruction.
 
-    MJQPosStateData* qposState; ///< Position state data.
-    StateData* qvelState; ///< Velocity state data.
-    StateData* actState; ///< Actuator state data.
+    StateData* actState = nullptr; ///< Actuator state data.
 };
 
 #endif

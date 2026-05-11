@@ -33,6 +33,9 @@
 %ignore MJBody::updateMujocoModelFromMassProps;
 %ignore MJBody::updateMassPropsDerivative;
 %ignore MJBody::updateConstrainedEqualityJoints;
+%ignore MJBody::writeJointStateToMujoco;
+%ignore MJBody::readJointStatesFromMujoco;
+%ignore MJBody::setJointDerivativesFromMujoco;
 
 %extend MJBody {
 MJScene& getScene() { return $self->getSpec().getScene(); }

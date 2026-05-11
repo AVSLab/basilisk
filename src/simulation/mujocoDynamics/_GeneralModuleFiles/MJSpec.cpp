@@ -291,15 +291,9 @@ void MJSpec::configure()
         equality.configure(this->model.get());
     }
 
-    // Update the sizes of the states according to the model size
-    // and copy the state in mjData to the Basilisk state objects
-    this->scene.getQposState()->configure(this->model.get());
-    std::copy_n(this->data->qpos, this->model->nq, this->scene.getQposState()->state.data());
-
-    this->scene.getQvelState()->state.resize(this->model->nv, 1);
-    this->scene.getQvelState()->stateDeriv.resize(this->model->nv, 1);
-    std::copy_n(this->data->qvel, this->model->nv, this->scene.getQvelState()->state.data());
-
+    // qpos/qvel state ownership belongs to the individual joints. Their
+    // states are seeded by MJScene::initializeDynamics after configure()
+    // returns.
     this->scene.getActState()->state.resize(this->model->na, 1);
     this->scene.getActState()->stateDeriv.resize(this->model->na, 1);
     std::copy_n(this->data->act, this->model->na, this->scene.getActState()->state.data());
