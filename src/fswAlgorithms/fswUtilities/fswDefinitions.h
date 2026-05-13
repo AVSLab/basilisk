@@ -18,7 +18,7 @@
  */
 /*
 * ADCSDefinitions.h
-* 
+*
 * Provide generation defintions related to the ADCS Algorithms
 *
 * University of Colorado, Autonomous Vehicle Systems (AVS) Lab
@@ -30,10 +30,18 @@
 
 
 /* Boolean Definition */
+#ifdef __APPLE__
+/* <mach/boolean.h> defines boolean_t and is idempotent; including it here
+ * prevents a redefinition conflict when system headers pull it in later. */
+#  include <mach/boolean.h>
+#  define BOOL_FALSE 0
+#  define BOOL_TRUE  1
+#else
 typedef enum {
     BOOL_FALSE = 0,
     BOOL_TRUE
 } boolean_t;
+#endif
 
 /*! @brief Structure used to define the output definition for component availability */
  typedef enum {

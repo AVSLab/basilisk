@@ -1,0 +1,1 @@
+- Fixed ``fswDefinitions.h`` so it can be included on macOS without a ``boolean_t`` typedef redefinition error. On Apple platforms, ``boolean_t`` is now sourced from ``<mach/boolean.h>`` (which defines it idempotently) instead of redefining it as an enum that conflicts with the system type.
