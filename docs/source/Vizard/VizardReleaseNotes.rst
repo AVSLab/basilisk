@@ -4,6 +4,8 @@
 Release Notes
 =============
 
+.. Note::
+    Earth, Mars, and Venus HD Atmosphere materials depend on the PlanetShader Unity Asset and were moved to a remote addressable bundle in preparation for Vizard 2.4 release as open source code. You will need to download the Vizard_HD_Materials bundle for your platform and install it following the instructions for CustomModels.
 
 .. sidebar:: In Progress Features
 
@@ -18,6 +20,17 @@ Release Notes
     - Visualize aerobraking maneuvers
     - Continue to refine and improve the interactive information panels
     - Save streamed data to file to avoid unbounded memory usage when viewing live data
+
+**Version 2.4.0 (May 2026)**
+
+- Vizard is now open-source and available on https://github.com/AVSLab/vizard/tree/master
+- Added Aspect Ratio panel under View menu, allows user to snap size of Vizard window to a desired ratio relative to the current window height
+- Vizard in live-streaming mode will allow user to move time slider into past once live-streaming has ceased
+- Added improved Moon texture and normal map
+- Fixed bug with osculating ground track lines not correctly displaying when range is all negative
+- Made all atmosphere materials (Earth, Mars, Venus) and Saturn ring into remote Addressable bundle to support move to Vizard Open Source
+- Fixed bug with zooming camera in/out in AdjustModelPanel’s model view
+
 
 **Version 2.3.2 (December 2025)**
 
