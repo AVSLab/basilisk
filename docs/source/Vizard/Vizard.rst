@@ -21,7 +21,7 @@ About Vizard
 
     **License:** Freeware
 
-    **Status:** Version 2.3.2 (Released December 2025)
+    **Status:** Version 2.4.0 (Released May 2026)
 
     **Logo:** :download:`PNG <../_images/static/basiliskVizardLogo.png>`
 
