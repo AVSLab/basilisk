@@ -57,6 +57,7 @@ class TaskBaseClass(object):
         self.TaskData = sys_model_task.SysModelTask(TaskRate, FirstStart)
         self.TaskData.TaskName = TaskName
         self.TaskModels = []
+        self.TaskModelPriorities = []
 
     def disable(self):
         self.TaskData.disableTask()
