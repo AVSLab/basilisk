@@ -18,6 +18,7 @@
 import errno
 import math
 import os
+import shutil
 from datetime import datetime, timedelta
 
 import matplotlib as mpl
@@ -394,24 +395,58 @@ def writeTeXSnippet(snippetName, texSnippet, path):
     return
 
 
-def saveScenarioFigure(figureName, plt, path, extension=".svg"):
-    """save a python scenario result into the documentation image folder"""
-    imgFileName = os.path.join(
-        path,
-        "..",
-        "..",
-        "docs",
-        "source",
-        "_images",
-        "Scenarios",
-        figureName + extension,
-    )
+def getScenarioFigureFileName(figureName, path, extension=".svg"):
+    """Return the documentation image path for a scenario figure."""
+    if not extension.startswith("."):
+        extension = "." + extension
+
+    searchPath = os.path.abspath(path)
+    if os.path.isfile(searchPath):
+        searchPath = os.path.dirname(searchPath)
+
+    while True:
+        if os.path.isdir(os.path.join(searchPath, "docs", "source")):
+            scenarioFigurePath = os.path.join(
+                searchPath,
+                "docs",
+                "source",
+                "_images",
+                "Scenarios",
+            )
+            return os.path.join(scenarioFigurePath, figureName + extension)
+
+        parentPath = os.path.dirname(searchPath)
+        if parentPath == searchPath:
+            scenarioFigurePath = os.path.join(
+                path,
+                "..",
+                "..",
+                "docs",
+                "source",
+                "_images",
+                "Scenarios",
+            )
+            return os.path.abspath(
+                os.path.join(scenarioFigurePath, figureName + extension)
+            )
+
+        searchPath = parentPath
+
+
+def _createScenarioFigurePath(imgFileName):
+    """Create the documentation image folder if needed."""
     if not os.path.exists(os.path.dirname(imgFileName)):
         try:
             os.makedirs(os.path.dirname(imgFileName))
         except OSError as exc:  # Guard against race condition
             if exc.errno != errno.EEXIST:
                 raise
+
+
+def saveScenarioFigure(figureName, plt, path, extension=".svg"):
+    """save a python scenario result into the documentation image folder"""
+    imgFileName = getScenarioFigureFileName(figureName, path, extension)
+    _createScenarioFigurePath(imgFileName)
     plt.savefig(imgFileName, transparent=True)
     # Close the saved figure to avoid accumulating open figures during CI.
     try:
@@ -421,6 +456,30 @@ def saveScenarioFigure(figureName, plt, path, extension=".svg"):
             plt.close()
         except Exception:
             pass
+
+
+def saveScenarioGraphvizFigure(
+    figureName,
+    simulationBase,
+    path,
+    extension=".svg",
+    show_plots=False,
+    **kwargs
+):
+    """Save a Graphviz message flow figure into the documentation image folder."""
+    if shutil.which("dot") is None:
+        return None
+
+    imgFileName = getScenarioFigureFileName(figureName, path, extension)
+    graphvizFormat = extension.lstrip(".")
+    _createScenarioFigurePath(imgFileName)
+    return simulationBase.ShowMessageConnectionFigure(
+        renderer="graphviz",
+        fileName=imgFileName,
+        show_plots=show_plots,
+        graphvizFormat=graphvizFormat,
+        **kwargs
+    )
 
 
 def saveFigurePDF(figureName, plt, path):
