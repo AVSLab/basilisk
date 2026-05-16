@@ -1,3 +1,4 @@
 - Updated message recorders so ``updateTimeInterval()`` reschedules the next recording opportunity when the minimum update time is changed between simulation runs.
 - Added a message recorder mode to record only when message payload content changes after the minimum update time has elapsed.
 - Added explicit errors when change-only recording is requested for payload types without supported equality comparison.
+- Added shallow metadata comparison support for ``CameraImageMsgPayload`` without comparing pointed-to image bytes.
