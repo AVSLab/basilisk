@@ -24,7 +24,7 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  *  To enable recordOnChange() for a payload type, provide a specialization either:
  *   - automatically, via generatePayloadEqualityHeader.py (for fully-supported struct fields), or
  *   - manually, as a PayloadEqualityTraits<T> specialization in the payload header file
- *     (guarded by \#ifdef __cplusplus).
+ *     (guarded by \#ifdef __cplusplus) when the comparison semantics can be defined safely.
  */
 template<typename T>
 struct PayloadEqualityTraits {

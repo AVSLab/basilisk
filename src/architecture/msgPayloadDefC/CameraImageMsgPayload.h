@@ -36,24 +36,30 @@ typedef struct {
     int8_t imageType;         //!< -- Number of channels in each pixel, RGB = 3, RGBA = 4
 }CameraImageMsgPayload;
 
-#ifdef __cplusplus
-#include <cstring>
+#if defined(__cplusplus) && !defined(SWIG)
 #include "architecture/messaging/payloadEqualityTraits.h"
 
+/*! @brief Enable shallow payload equality for CameraImageMsgPayload.
+ *
+ * The image pointer is compared by address only.  The recorder stores this
+ * payload structure, but it does not deep-copy or compare the pointed-to image
+ * buffer.  Thus, recordOnChange() detects changes in image metadata, such as
+ * timeTag, cameraID, imageBufferLength, imageType, valid, or imagePointer
+ * address, but it does not detect in-place changes to image bytes behind a
+ * reused imagePointer.
+ */
 template<>
 struct PayloadEqualityTraits<CameraImageMsgPayload> {
     static constexpr bool supported = true;
     static bool equal(const CameraImageMsgPayload& lhs, const CameraImageMsgPayload& rhs) {
-        if (lhs.timeTag != rhs.timeTag)                     return false;
-        if (lhs.valid != rhs.valid)                         return false;
-        if (lhs.cameraID != rhs.cameraID)                   return false;
-        if (lhs.imageType != rhs.imageType)                 return false;
-        if (lhs.imageBufferLength != rhs.imageBufferLength) return false;
-        if (lhs.imagePointer == rhs.imagePointer)           return true;
-        if (!lhs.imagePointer || !rhs.imagePointer)         return false;
-        return std::memcmp(lhs.imagePointer, rhs.imagePointer, lhs.imageBufferLength) == 0;
+        return lhs.timeTag == rhs.timeTag
+            && lhs.valid == rhs.valid
+            && lhs.cameraID == rhs.cameraID
+            && lhs.imagePointer == rhs.imagePointer
+            && lhs.imageBufferLength == rhs.imageBufferLength
+            && lhs.imageType == rhs.imageType;
     }
 };
-#endif /* __cplusplus */
+#endif /* defined(__cplusplus) && !defined(SWIG) */
 
 #endif

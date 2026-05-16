@@ -163,5 +163,6 @@ if __name__ == "__main__":
                 "// one or more fields have unsupported types (e.g., raw pointers).\n"
                 "// To support recordOnChange() for this payload, add a manual\n"
                 f"// PayloadEqualityTraits<{payloadTypeName}> specialization\n"
-                "// in the payload header file, guarded by #ifdef __cplusplus.\n"
+                "// in the payload header file, guarded by #ifdef __cplusplus, only\n"
+                "// when the comparison semantics can be defined safely.\n"
             )

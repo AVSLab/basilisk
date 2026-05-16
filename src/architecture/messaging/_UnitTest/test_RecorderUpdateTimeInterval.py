@@ -177,61 +177,70 @@ def test_record_on_change_unsupported_payload():
 
 
 def test_record_on_change_camera_image_payload():
-    """CameraImageMsgPayload has a hand-written PayloadEqualityTraits specialization.
+    """Test CameraImageMsgPayload change-only recording with shallow metadata equality.
 
-    recordOnChange() should only store a frame when the scalar fields differ from the
-    last recorded payload. imagePointer is left null here, so equality reduces to
-    comparing timeTag, valid, cameraID, imageType, and imageBufferLength.
+    CameraImageMsgPayload equality compares payload fields, including the image
+    pointer address, but it does not compare the pointed-to image bytes.
     """
 
     sc_sim = SimulationBaseClass.SimBaseClass()
     sim_process = sc_sim.CreateNewProcess("testProcess")
-    sim_process.addTask(sc_sim.CreateNewTask("testTask", macros.sec2nano(1.0)))
+
+    task_time = macros.sec2nano(1.0)  # [ns]
+    sim_process.addTask(sc_sim.CreateNewTask("testTask", task_time))
 
     test_module = ChangingCameraModule()
     sc_sim.AddModelToTask("testTask", test_module)
 
-    minimum_record_time = macros.sec2nano(4.0)
+    minimum_record_time = macros.sec2nano(4.0)  # [ns]
     msg_recorder = test_module.cameraOutMsg.recorder(minimum_record_time)
     msg_recorder.recordOnChange()
     sc_sim.AddModelToTask("testTask", msg_recorder)
 
     sc_sim.InitializeSimulation()
-    sc_sim.ConfigureStopTime(macros.sec2nano(10.0))
+
+    final_stop_time = macros.sec2nano(10.0)  # [ns]
+    sc_sim.ConfigureStopTime(final_stop_time)
     sc_sim.ExecuteSimulation()
 
-    # cameraID changes at t = 5 s. With a 4 s minimum interval:
-    #   t = 0: recorded (cameraID = 0), next eligible = t = 4 s
-    #   t = 4: payload unchanged → skipped,  next eligible = t = 8 s
-    #   t = 8: payload changed (cameraID = 1) → recorded
+    first_record_time = macros.sec2nano(0.0)  # [ns]
+    first_eligible_change_time = macros.sec2nano(8.0)  # [ns]
     expected_times = np.array([
+        first_record_time,
+        first_eligible_change_time,
+    ])  # [ns]
+    expected_time_tags = np.array([
         macros.sec2nano(0.0),
-        macros.sec2nano(8.0),
-    ])
-    expected_camera_ids = np.array([0, 1])
+        test_module.image_time_tag,
+    ])  # [ns]
 
     np.testing.assert_array_equal(msg_recorder.times(), expected_times)
-    np.testing.assert_array_equal(msg_recorder.cameraID, expected_camera_ids)
+    np.testing.assert_array_equal(msg_recorder.timeTag, expected_time_tags)
 
 
 class ChangingCameraModule(sysModel.SysModel):
-    """Write a CameraImageMsgPayload whose cameraID steps up at a fixed simulation time."""
+    """Write a CameraImageMsgPayload whose metadata changes at a fixed time."""
 
     def __init__(self):
         super().__init__()
         self.cameraOutMsg = messaging.CameraImageMsg()
-        self.change_time = macros.sec2nano(5.0)
+        self.change_time = macros.sec2nano(5.0)  # [ns]
+        self.image_time_tag = macros.sec2nano(5.0)  # [ns]
 
     def Reset(self, CurrentSimNanos):
-        self._write(CurrentSimNanos)
+        self.write_payload(CurrentSimNanos)
 
     def UpdateState(self, CurrentSimNanos):
-        self._write(CurrentSimNanos)
+        self.write_payload(CurrentSimNanos)
 
-    def _write(self, CurrentSimNanos):
+    def write_payload(self, CurrentSimNanos):
         payload = self.cameraOutMsg.zeroMsgPayload
-        payload.cameraID = 1 if CurrentSimNanos >= self.change_time else 0
         payload.valid = 1
+        payload.cameraID = 7
+        payload.imageBufferLength = 10  # [bytes]
+        payload.imageType = 1
+        if CurrentSimNanos >= self.change_time:
+            payload.timeTag = self.image_time_tag
         self.cameraOutMsg.write(payload, CurrentSimNanos, self.moduleID)
 
 

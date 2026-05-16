@@ -61,7 +61,7 @@ The recorder can also be configured to record only when the message payload cont
 
 To turn off this mode use ``scRec.recordOnChange(False)``.  The default argument of this method is ``True``.
 
-This change-only mode is only available for message payload types that support field-wise equality comparison.  Basilisk generates this support for payloads whose fields can be compared directly.  If a payload contains an unknown field type, or a pointer field that cannot be compared safely, then ``recordOnChange()`` emits an error instead of silently falling back to normal interval recording.  Use the regular recorder mode for these payloads, or add a ``PayloadEqualityTraits`` specialization when the payload can be compared safely.
+This change-only mode is only available for message payload types that support field-wise equality comparison.  Basilisk generates this support for payloads whose fields can be compared directly.  If a payload contains an unknown field type, or a pointer field without explicit comparison semantics, then ``recordOnChange()`` emits an error instead of silently falling back to normal interval recording.  Use the regular recorder mode for these payloads, or add a ``PayloadEqualityTraits`` specialization only when the payload comparison behavior can be defined safely.  For example, ``CameraImageMsgPayload`` supports change-only recording through a shallow metadata comparison.  Its image pointer is compared by address, but the pointed-to image buffer is not deep-copied or compared by the recorder.
 
 That is all that is required to set up message recording.  Next the code initializes the simulation and executes it.
 
