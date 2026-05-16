@@ -42,6 +42,13 @@ The simulation layout is shown in the following illustration.
 .. image:: /_images/static/test_scenario_FeedbackRW.svg
    :align: center
 
+The optional message flow diagram below shows how module input and output messages are connected,
+including the stand-alone BSK gateway and configuration messages supplied through ``extraMessages``.
+Recorder modules are hidden so the diagram focuses on the regular BSK modules.
+
+.. image:: /_images/Scenarios/scenario_FeedbackRWMessageConnectionsGraphviz.svg
+   :align: center
+
 Two simulation processes are created: one
 which contains dynamics modules, and one that contains the FSW
 modules. The initial setup for the simulation closely models that of :ref:`scenario_BasicOrbit`.
@@ -138,10 +145,11 @@ import inspect
 import os
 import sys
 
+import matplotlib.pyplot as plt
 import numpy as np
 
 # Import utilities
-from Basilisk.utilities import macros, orbitalMotion, vizSupport
+from Basilisk.utilities import macros, orbitalMotion, unitTestSupport, vizSupport
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -220,6 +228,8 @@ class scenario_AttitudeFeedbackRW(BSKSim, BSKScenario):
         return
 
     def pull_outputs(self, showPlots):
+        FswModel = self.get_FswModel()
+        DynModel = self.get_DynModel()
         num_RW = 4  # number of wheels used in the scenario
 
         # FSW process outputs, remove first data point as it is before FSW is called
@@ -239,12 +249,49 @@ class scenario_AttitudeFeedbackRW(BSKSim, BSKScenario):
         BSK_plt.plot_rate_error(timeData, omega_BR_B)
         BSK_plt.plot_rw_speeds(timeData, RW_speeds, num_RW)
         figureList = {}
+        fileName = os.path.basename(os.path.splitext(__file__)[0])
+        # Optionally create a figure showing the simulation message connections.
+        # This figure is for setup inspection and documentation; it does not affect
+        # the simulation execution or logged state data.  BSK gateway and
+        # stand-alone configuration messages are supplied through extraMessages so
+        # their links appear in the figure.  The recorder modules are hidden so
+        # this complex scenario focuses on module flow.
+        extraMessages = [
+            {"epochMsg": DynModel.epochMsg},
+            {"vehicleConfigMsg": FswModel.vcMsg},
+            {"rwConfigMsg": FswModel.fswRwConfigMsg},
+            {"cssConfigMsg": FswModel.cssConfigMsg},
+            {"attRefMsg": FswModel.attRefMsg},
+            {"attGuidMsg": FswModel.attGuidMsg},
+            {"cmdTorqueMsg": FswModel.cmdTorqueMsg},
+            {"cmdTorqueDirectMsg": FswModel.cmdTorqueDirectMsg},
+            {"cmdRwMotorMsg": FswModel.cmdRwMotorMsg},
+        ]
+        pltName = fileName + "MessageConnectionsGraphviz"
+        messageFigure = self.ShowMessageConnectionFigure(
+            show_plots=showPlots,
+            extraMessages=extraMessages,
+            includeUnlinked=False,
+            includeRecorders=False,
+        )
+
+        if "pytest" in sys.modules:
+            unitTestSupport.saveScenarioGraphvizFigure(
+                pltName,
+                self,
+                path,
+                extraMessages=extraMessages,
+                includeUnlinked=False,
+                includeRecorders=False,
+                graphvizLayout="vertical",
+            )
+
         if showPlots:
             BSK_plt.show_all_plots()
         else:
-            fileName = os.path.basename(os.path.splitext(__file__)[0])
             figureNames = ["attitudeErrorNorm", "rwMotorTorque", "rateError", "rwSpeed"]
             figureList = BSK_plt.save_all_plots(fileName, figureNames)
+        plt.close("all")
 
         return figureList
 
