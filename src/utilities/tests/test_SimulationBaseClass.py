@@ -1,4 +1,5 @@
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
+import shutil
 
 import matplotlib
 import numpy as np
@@ -11,7 +12,7 @@ import matplotlib.pyplot as plt
 from Basilisk.architecture import messaging
 from Basilisk.moduleTemplates import cModuleTemplate, cppModuleTemplate
 from Basilisk.simulation import simpleNav
-from Basilisk.utilities import SimulationBaseClass, macros
+from Basilisk.utilities import SimulationBaseClass, macros, unitTestSupport
 
 
 @pytest.mark.parametrize("stopTime1", [0.0, 8.0, 10.0, 12.0])
@@ -158,7 +159,130 @@ def test_ShowMessageConnectionFigure_returns_figure():
     fig = scSim.ShowMessageConnectionFigure(show_plots=False)
 
     assert len(fig.axes) == 1
+    assert fig.number not in plt.get_fignums()
     plt.close(fig)
+
+
+def test_GetMessageConnectionDot_contains_graphviz_edges():
+    """Check that the message graph can be exported as Graphviz DOT text."""
+    scSim = SimulationBaseClass.SimBaseClass()
+    testProcess = scSim.CreateNewProcess("testProcess")
+    simulationTimeStep = macros.sec2nano(1.0)  # [ns]
+    testProcess.addTask(scSim.CreateNewTask("testTask", simulationTimeStep))
+
+    cModule = cModuleTemplate.cModuleTemplate()
+    cModule.ModelTag = "cModule"
+    cppModule = cppModuleTemplate.CppModuleTemplate()
+    cppModule.ModelTag = "cppModule"
+
+    extraMsg = messaging.CModuleTemplateMsg().write(
+        messaging.CModuleTemplateMsgPayload()
+    )
+    cModule.dataInMsg.subscribeTo(extraMsg)
+    cppModule.dataInMsg.subscribeTo(cModule.dataOutMsg)
+
+    scSim.AddModelToTask("testTask", cModule)
+    scSim.AddModelToTask("testTask", cppModule)
+
+    dotText = scSim.GetMessageConnectionDot(
+        extraMessages={"extraMsg": extraMsg},
+        includeUnlinked=False,
+    )
+
+    assert "digraph BSKMessageConnections" in dotText
+    assert 'rankdir="TB"' in dotText
+    assert "extraMsg" in dotText
+    assert 'style="dashed"' in dotText
+    assert 'style="solid"' in dotText
+
+    horizontalDotText = scSim.GetMessageConnectionDot(
+        extraMessages={"extraMsg": extraMsg},
+        includeUnlinked=False,
+        graphvizLayout="horizontal",
+    )
+    assert 'rankdir="LR"' in horizontalDotText
+
+
+def test_ShowMessageConnectionFigure_graphviz_writes_file(tmp_path):
+    """Check that the Graphviz renderer writes a rendered file when available."""
+    if shutil.which("dot") is None:
+        pytest.skip("Graphviz dot executable is not available.")
+
+    scSim = SimulationBaseClass.SimBaseClass()
+    testProcess = scSim.CreateNewProcess("testProcess")
+    simulationTimeStep = macros.sec2nano(1.0)  # [ns]
+    testProcess.addTask(scSim.CreateNewTask("testTask", simulationTimeStep))
+
+    cModule = cModuleTemplate.cModuleTemplate()
+    cModule.ModelTag = "cModule"
+    cppModule = cppModuleTemplate.CppModuleTemplate()
+    cppModule.ModelTag = "cppModule"
+    cppModule.dataInMsg.subscribeTo(cModule.dataOutMsg)
+
+    scSim.AddModelToTask("testTask", cModule)
+    scSim.AddModelToTask("testTask", cppModule)
+
+    outputPath = tmp_path / "messageConnections.svg"
+    renderedPath = scSim.ShowMessageConnectionFigure(
+        renderer="graphviz",
+        fileName=str(outputPath),
+        includeUnlinked=False,
+    )
+
+    assert renderedPath == str(outputPath)
+    assert outputPath.exists()
+    assert outputPath.read_text().lstrip().startswith("<?xml")
+
+
+def test_saveScenarioGraphvizFigure_uses_documentation_image_path(tmp_path):
+    """Check that Graphviz scenario figures are saved to the docs image path."""
+    if shutil.which("dot") is None:
+        pytest.skip("Graphviz dot executable is not available.")
+
+    docsPath = tmp_path / "docs" / "source"
+    docsPath.mkdir(parents=True)
+    scenarioPath = tmp_path / "examples"
+    scenarioPath.mkdir()
+    expectedPath = docsPath / "_images" / "Scenarios" / "messageFlow.svg"
+    scSim = MagicMock()
+    scSim.ShowMessageConnectionFigure.return_value = str(expectedPath)
+
+    renderedPath = unitTestSupport.saveScenarioGraphvizFigure(
+        "messageFlow",
+        scSim,
+        str(scenarioPath),
+        includeUnlinked=False,
+    )
+
+    assert renderedPath == str(expectedPath)
+    assert expectedPath.parent.exists()
+    scSim.ShowMessageConnectionFigure.assert_called_once_with(
+        renderer="graphviz",
+        fileName=str(expectedPath),
+        show_plots=False,
+        graphvizFormat="svg",
+        includeUnlinked=False,
+    )
+
+
+def test_saveScenarioGraphvizFigure_skips_without_graphviz(tmp_path):
+    """Check that optional Graphviz scenario figures do not require Graphviz."""
+    docsPath = tmp_path / "docs" / "source"
+    docsPath.mkdir(parents=True)
+    scenarioPath = tmp_path / "examples"
+    scenarioPath.mkdir()
+    scSim = MagicMock()
+
+    with patch("Basilisk.utilities.unitTestSupport.shutil.which", return_value=None):
+        renderedPath = unitTestSupport.saveScenarioGraphvizFigure(
+            "messageFlow",
+            scSim,
+            str(scenarioPath),
+            includeUnlinked=False,
+        )
+
+    assert renderedPath is None
+    scSim.ShowMessageConnectionFigure.assert_not_called()
 
 
 def test_GetMessageConnectionGraph_with_recorder():
