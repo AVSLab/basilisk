@@ -1,6 +1,6 @@
 cmake_policy(SET CMP0078 NEW)
 
-function(generate_messages searchDir generateCCode)
+function(generate_messages searchDir generateCCode outEqualityHeaders)
   file(
     GLOB_RECURSE message_files
     RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/"
@@ -14,6 +14,8 @@ function(generate_messages searchDir generateCCode)
   else()
     set(CLANG_LANG_FLAG "c++")
   endif()
+
+  set(local_equality_headers "")
 
   foreach(msgFile ${message_files})
     get_filename_component(TARGET_NAME ${msgFile} NAME_WE)
@@ -39,13 +41,27 @@ function(generate_messages searchDir generateCCode)
       VERBATIM
     )
 
+    set(EQUALITY_OUT_NAME "${CMAKE_BINARY_DIR}/autoSource/${TARGET_NAME}_equality.h")
+    add_custom_command(
+      OUTPUT ${EQUALITY_OUT_NAME}
+      COMMAND ${Python3_EXECUTABLE}
+              msgAutoSource/generatePayloadEqualityHeader.py
+              ${EQUALITY_OUT_NAME} ${MSG_META_OUTPUT} ${TARGET_NAME} ${searchDir}
+      DEPENDS ${MSG_META_OUTPUT} msgAutoSource/generatePayloadEqualityHeader.py
+      WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/"
+      COMMENT "Generating payload equality header for ${TARGET_NAME}"
+      VERBATIM
+    )
+    list(APPEND local_equality_headers "${TARGET_NAME}_equality.h")
+
     get_filename_component(TARGET_DIR ${msgFile} DIRECTORY)
     set(COMP_OUT_NAME "${CMAKE_BINARY_DIR}/autoSource/${TARGET_NAME}.i")
     add_custom_command(
       OUTPUT ${COMP_OUT_NAME}
       COMMAND ${Python3_EXECUTABLE} generateSWIGModules.py ${COMP_OUT_NAME} ${msgFile} ${TARGET_NAME} ${searchDir}
               ${generateCCode} ${MSG_META_OUTPUT} ${RECORDER_PROPERTY_ROLLBACK}
-      DEPENDS ${msgFile} ${MSG_META_OUTPUT} msgAutoSource/generateSWIGModules.py msgAutoSource/msgInterfacePy.i.in
+      DEPENDS ${msgFile} ${MSG_META_OUTPUT} ${EQUALITY_OUT_NAME}
+              msgAutoSource/generateSWIGModules.py msgAutoSource/msgInterfacePy.i.in
       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/msgAutoSource/)
     set_property(SOURCE ${COMP_OUT_NAME} PROPERTY CPLUSPLUS ON)
 
@@ -87,6 +103,8 @@ function(generate_messages searchDir generateCCode)
                                                          "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging")
     target_link_libraries(${SWIG_MODULE_${TARGET_NAME}_REAL_NAME} PUBLIC architectureLib)
   endforeach()
+
+  set(${outEqualityHeaders} ${local_equality_headers} PARENT_SCOPE)
 endfunction(generate_messages)
 
 # Copy the cMsgCInterfacePy wrapper module to support backwards-compatibility.
@@ -114,6 +132,12 @@ endif(NOT "${EXTERNAL_MODULES_PATH}" STREQUAL "")
 # Custom target for establishing dependency
 add_custom_target(swigtrick DEPENDS ${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/__init__.py)
 
-# Dependency
-generate_messages(msgPayloadDefCpp "False")
-generate_messages(msgPayloadDefC "True")
+# Generate per-payload equality headers and aggregate into a single umbrella.
+generate_messages(msgPayloadDefCpp "False" cpp_equality_headers)
+generate_messages(msgPayloadDefC "True" c_equality_headers)
+
+set(UMBRELLA "${CMAKE_BINARY_DIR}/autoSource/payloadEquality_generated.h")
+file(WRITE  ${UMBRELLA} "// AUTO-GENERATED — DO NOT EDIT\n#pragma once\n")
+foreach(eqHeader ${cpp_equality_headers} ${c_equality_headers})
+  file(APPEND ${UMBRELLA} "#if __has_include(\"${eqHeader}\")\n#  include \"${eqHeader}\"\n#endif\n")
+endforeach()

@@ -36,5 +36,24 @@ typedef struct {
     int8_t imageType;         //!< -- Number of channels in each pixel, RGB = 3, RGBA = 4
 }CameraImageMsgPayload;
 
+#ifdef __cplusplus
+#include <cstring>
+#include "architecture/messaging/payloadEqualityTraits.h"
+
+template<>
+struct PayloadEqualityTraits<CameraImageMsgPayload> {
+    static constexpr bool supported = true;
+    static bool equal(const CameraImageMsgPayload& lhs, const CameraImageMsgPayload& rhs) {
+        if (lhs.timeTag != rhs.timeTag)                     return false;
+        if (lhs.valid != rhs.valid)                         return false;
+        if (lhs.cameraID != rhs.cameraID)                   return false;
+        if (lhs.imageType != rhs.imageType)                 return false;
+        if (lhs.imageBufferLength != rhs.imageBufferLength) return false;
+        if (lhs.imagePointer == rhs.imagePointer)           return true;
+        if (!lhs.imagePointer || !rhs.imagePointer)         return false;
+        return std::memcmp(lhs.imagePointer, rhs.imagePointer, lhs.imageBufferLength) == 0;
+    }
+};
+#endif /* __cplusplus */
 
 #endif
