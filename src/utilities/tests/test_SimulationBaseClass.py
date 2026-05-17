@@ -204,10 +204,7 @@ def test_GetMessageConnectionDot_contains_graphviz_edges():
 
 
 def test_ShowMessageConnectionFigure_graphviz_writes_file(tmp_path):
-    """Check that the Graphviz renderer writes a rendered file when available."""
-    if shutil.which("dot") is None:
-        pytest.skip("Graphviz dot executable is not available.")
-
+    """Check that the Graphviz renderer writes an output file."""
     scSim = SimulationBaseClass.SimBaseClass()
     testProcess = scSim.CreateNewProcess("testProcess")
     simulationTimeStep = macros.sec2nano(1.0)  # [ns]
@@ -222,23 +219,28 @@ def test_ShowMessageConnectionFigure_graphviz_writes_file(tmp_path):
     scSim.AddModelToTask("testTask", cModule)
     scSim.AddModelToTask("testTask", cppModule)
 
-    outputPath = tmp_path / "messageConnections.svg"
+    graphvizIsAvailable = shutil.which("dot") is not None
+    outputPath = tmp_path / (
+        "messageConnections.svg" if graphvizIsAvailable else "messageConnections.dot"
+    )
     renderedPath = scSim.ShowMessageConnectionFigure(
         renderer="graphviz",
         fileName=str(outputPath),
+        graphvizFormat="svg" if graphvizIsAvailable else "dot",
         includeUnlinked=False,
     )
 
     assert renderedPath == str(outputPath)
     assert outputPath.exists()
-    assert outputPath.read_text().lstrip().startswith("<?xml")
+    outputText = outputPath.read_text()
+    if graphvizIsAvailable:
+        assert outputText.lstrip().startswith("<?xml")
+    else:
+        assert "digraph BSKMessageConnections" in outputText
 
 
 def test_saveScenarioGraphvizFigure_uses_documentation_image_path(tmp_path):
     """Check that Graphviz scenario figures are saved to the docs image path."""
-    if shutil.which("dot") is None:
-        pytest.skip("Graphviz dot executable is not available.")
-
     docsPath = tmp_path / "docs" / "source"
     docsPath.mkdir(parents=True)
     scenarioPath = tmp_path / "examples"
@@ -247,12 +249,13 @@ def test_saveScenarioGraphvizFigure_uses_documentation_image_path(tmp_path):
     scSim = MagicMock()
     scSim.ShowMessageConnectionFigure.return_value = str(expectedPath)
 
-    renderedPath = unitTestSupport.saveScenarioGraphvizFigure(
-        "messageFlow",
-        scSim,
-        str(scenarioPath),
-        includeUnlinked=False,
-    )
+    with patch("Basilisk.utilities.unitTestSupport.shutil.which", return_value="dot"):
+        renderedPath = unitTestSupport.saveScenarioGraphvizFigure(
+            "messageFlow",
+            scSim,
+            str(scenarioPath),
+            includeUnlinked=False,
+        )
 
     assert renderedPath == str(expectedPath)
     assert expectedPath.parent.exists()
@@ -265,7 +268,7 @@ def test_saveScenarioGraphvizFigure_uses_documentation_image_path(tmp_path):
     )
 
 
-def test_saveScenarioGraphvizFigure_skips_without_graphviz(tmp_path):
+def test_saveScenarioGraphvizFigure_returns_none_without_graphviz(tmp_path):
     """Check that optional Graphviz scenario figures do not require Graphviz."""
     docsPath = tmp_path / "docs" / "source"
     docsPath.mkdir(parents=True)
