@@ -53,7 +53,15 @@ The minimum recorder update time can also be changed after the simulation is sto
 
     scRec.updateTimeInterval(newMinUpdateTime)
 
-After this call, the next eligible recording time is recomputed from the last recorded message time using the updated interval.  If the updated interval has already elapsed when the simulation continues, the recorder samples on its next task execution.
+After this call, the next eligible recording time is recomputed from the last eligible recorder update using the updated interval.  For normal recording this is the last recorded message time.  For change-only recording this can be the last time the recorder checked the payload, even if the payload was unchanged and no record was stored.  If the updated interval has already elapsed when the simulation continues, the recorder samples on its next task execution.
+
+The recorder can also be configured to record only when the message payload content changes.  In this mode the first eligible recorder update is saved, and subsequent eligible updates are saved only when the payload data differs from the last recorded payload.  The ``minUpdateTime`` value is still respected while this mode is active, including eligible updates where the payload is unchanged.  For example, assume a message recorder ``scRec`` has already been set up.  Change-only recording is enabled with::
+
+    scRec.recordOnChange()
+
+To turn off this mode use ``scRec.recordOnChange(False)``.  The default argument of this method is ``True``.
+
+This change-only mode is only available for message payload types that support field-wise equality comparison.  Basilisk generates this support for payloads whose fields can be compared directly.  If a payload contains an unknown field type, or a pointer field that cannot be compared safely, then ``recordOnChange()`` emits an error instead of silently falling back to normal interval recording.  Use the regular recorder mode for these payloads, or add a ``PayloadEqualityTraits`` specialization when the payload can be compared safely.
 
 That is all that is required to set up message recording.  Next the code initializes the simulation and executes it.
 
