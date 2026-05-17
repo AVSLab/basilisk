@@ -553,6 +553,9 @@ def _ensureRecorderSourceHooks():
             pass
 
 
+_ensureRecorderSourceHooks()
+
+
 class SimBaseClass:
     """Simulation Base Class"""
 
