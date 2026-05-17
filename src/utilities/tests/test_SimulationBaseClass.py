@@ -305,6 +305,26 @@ def test_GetMessageConnectionGraph_with_recorder():
     assert ("dataOutMsg", "recordedMsg") in edgePairs
 
 
+def test_GetMessageConnectionGraph_with_recorder_before_sim_creation():
+    """Check recorder source tracking before creating the simulation object."""
+    cModule = cModuleTemplate.cModuleTemplate()
+    cModule.ModelTag = "cModule"
+    dataRec = cModule.dataOutMsg.recorder()
+
+    scSim = SimulationBaseClass.SimBaseClass()
+    testProcess = scSim.CreateNewProcess("testProcess")
+    simulationTimeStep = macros.sec2nano(1.0)  # [ns]
+    testProcess.addTask(scSim.CreateNewTask("testTask", simulationTimeStep))
+
+    scSim.AddModelToTask("testTask", cModule)
+    scSim.AddModelToTask("testTask", dataRec)
+
+    graph = scSim.GetMessageConnectionGraph(includeUnlinked=False)
+    edgePairs = {(edge["sourceName"], edge["targetName"]) for edge in graph["edges"]}
+
+    assert ("dataOutMsg", "recordedMsg") in edgePairs
+
+
 def test_GetMessageConnectionGraph_with_input_message_recorder():
     """Check that input message recorders show their recorded input."""
     scSim = SimulationBaseClass.SimBaseClass()
