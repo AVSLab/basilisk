@@ -23,6 +23,7 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 #include "architecture/utilities/bskLogging.h"
 #include <typeinfo>
 #include <stdlib.h>
+#include "architecture/messaging/payloadEqualityTraits.h"
 
 /*! forward-declare sim message for use by read functor */
 template<typename messageType>
@@ -308,15 +309,15 @@ public:
         if (CurrentSimNanos >= this->nextUpdateTime) {
             // Log warning if message is invalid but don't change behavior
             if (!this->readMessage.isLinked() || !this->readMessage.isWritten()) {
-                messageType var;
-                bskLogger.bskLog(BSK_WARNING, "Recording message of type %s that is not properly initialized or written", typeid(var).name());
+                this->logInvalidMessageWarning();
             }
 
-            // Record the message
-            this->msgRecordTimes.push_back(CurrentSimNanos);
-            this->msgWrittenTimes.push_back(this->readMessage.timeWritten());
-            this->msgRecord.push_back(this->readMessage());
-            this->nextUpdateTime = CurrentSimNanos + this->timeInterval;
+            const messageType& messageData = this->readMessage();
+            if (!this->recordOnlyOnChange || this->messagePayloadChanged(messageData)) {
+                this->recordMessage(CurrentSimNanos, messageData);
+            } else {
+                this->scheduleNextUpdate(CurrentSimNanos);
+            }
         }
     };
     //! Reset method
@@ -325,6 +326,7 @@ public:
         this->msgRecordTimes.clear();
         this->msgWrittenTimes.clear();
         this->nextUpdateTime = CurrentSimNanos;
+        this->hasLastUpdateTime = false;
     };
     //! time recorded method
     std::vector<uint64_t>& times(){return this->msgRecordTimes;}
@@ -366,9 +368,24 @@ public:
     //! method to update the minimum time interval before recording the next message
     void updateTimeInterval(uint64_t timeDiff) {
         this->timeInterval = timeDiff;
-        if (!this->msgRecordTimes.empty()) {
-            this->nextUpdateTime = this->msgRecordTimes.back() + this->timeInterval;
+        if (this->hasLastUpdateTime) {
+            this->nextUpdateTime = this->lastUpdateTime + this->timeInterval;
         }
+    };
+
+    //! method to record messages only when the payload content changes
+    void recordOnChange(bool enabled = true) {
+        if constexpr (!supportsPayloadEquality<messageType>()) {
+            if (enabled) {
+                bskLogger.bskLog(BSK_ERROR,
+                    "Recorder::recordOnChange() called for a payload type that does not "
+                    "support equality comparison. Add a PayloadEqualityTraits<messageType> "
+                    "specialization in the payload header file (guarded by #ifdef __cplusplus), "
+                    "or check whether generatePayloadEqualityHeader.py can cover all fields.");
+                return;
+            }
+        }
+        this->recordOnlyOnChange = enabled;
     };
 
 private:
@@ -377,8 +394,40 @@ private:
     std::vector<uint64_t> msgWrittenTimes;        //!< vector of times at which messages are written
     uint64_t nextUpdateTime = 0;                  //!< [ns] earliest time at which the msg is recorded again
     uint64_t timeInterval;                        //!< [ns] recording time interval
+    uint64_t lastUpdateTime = 0;                  //!< [ns] last time the msg was checked for recording
+    bool hasLastUpdateTime = false;               //!< flag indicating whether the msg was checked
+    bool recordOnlyOnChange = false;              //!< flag to record only changed message payloads
 
 private:
+    //! log warning if message is invalid but don't change behavior
+    void logInvalidMessageWarning(){
+        messageType var;
+        bskLogger.bskLog(BSK_WARNING, "Recording message of type %s that is not properly initialized or written", typeid(var).name());
+    };
+
+    //! record the supplied message payload
+    void recordMessage(uint64_t CurrentSimNanos, const messageType& messageData){
+        this->msgRecordTimes.push_back(CurrentSimNanos);
+        this->msgWrittenTimes.push_back(this->readMessage.timeWritten());
+        this->msgRecord.push_back(messageData);
+        this->scheduleNextUpdate(CurrentSimNanos);
+    };
+
+    //! schedule the next eligible recorder update
+    void scheduleNextUpdate(uint64_t CurrentSimNanos){
+        this->lastUpdateTime = CurrentSimNanos;
+        this->hasLastUpdateTime = true;
+        this->nextUpdateTime = CurrentSimNanos + this->timeInterval;
+    };
+
+    //! check if the payload differs from the last recorded payload
+    bool messagePayloadChanged(const messageType& messageData){
+        if constexpr (supportsPayloadEquality<messageType>()) {
+            return this->msgRecord.empty() || !payloadsAreEqual(messageData, this->msgRecord.back());
+        }
+        return true;
+    };
+
     ReadFunctor<messageType> readMessage;   //!< method description
 };
 
