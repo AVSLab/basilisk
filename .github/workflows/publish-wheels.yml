@@ -24,9 +24,9 @@ jobs:
       fail-fast: false
       matrix:
         os:
-          - macos-latest # ARM64
-          - ubuntu-latest # x86_64
-          - ubuntu-22.04-arm # ARM64
+          - macos-26 # ARM64
+          - ubuntu-24.04 # x86_64
+          - ubuntu-24.04-arm # ARM64
           - windows-2025-vs2026 # x86_64
 
     steps:
@@ -68,7 +68,7 @@ jobs:
 
   make_sdist:
     name: Make SDist
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v5
         with:
@@ -89,7 +89,7 @@ jobs:
   test-sdist:
     name: Test SDist
     needs: make_sdist
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v5
 
@@ -111,7 +111,7 @@ jobs:
   publish:
     name: Publish
     needs: [build-wheels, test-sdist]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       id-token: write
     steps:
