@@ -1,0 +1,1 @@
+- Pinned pull request and wheel CI runners to macOS 26, Ubuntu 24.04, and Windows 2025 with Visual Studio 2026.

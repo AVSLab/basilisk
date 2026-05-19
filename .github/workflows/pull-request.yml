@@ -10,13 +10,13 @@ concurrency:
 
 jobs:
   pre-commit:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v5
       - uses: ./.github/actions/pre-commit
 
   build-linux:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     timeout-minutes: 90
     needs: pre-commit
     name: Linux (MAX Python)
@@ -67,7 +67,7 @@ jobs:
           if(($LastExitCode -ne 0) -and ($LastExitCode -ne 5)) { exit 1 }
 
   build-macos:
-    runs-on: macos-latest
+    runs-on: macos-26
     timeout-minutes: 90
     needs: pre-commit
     strategy:
@@ -108,7 +108,7 @@ jobs:
         run: ctest -C Release --output-on-failure
 
   docs:
-    runs-on: macos-latest
+    runs-on: macos-26
     steps:
       - uses: actions/checkout@v5
       - uses: ./.github/actions/data-cache

@@ -12,11 +12,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os:
-          - macos-latest
-          - ubuntu-latest
-          - ubuntu-22.04-arm
-          - windows-latest
+        os: # keep these platforms in sync with the pull-request.yml file
+          - macos-26
+          - ubuntu-24.04
+          - ubuntu-24.04-arm
+          - windows-2025-vs2026
 
     steps:
       - name: Checkout develop
@@ -42,7 +42,7 @@ jobs:
   publish-index:
     name: Publish Nightly Index
     needs: build-wheels
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       contents: write
 
