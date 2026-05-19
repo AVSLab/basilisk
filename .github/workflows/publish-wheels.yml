@@ -27,7 +27,7 @@ jobs:
           - macos-latest # ARM64
           - ubuntu-latest # x86_64
           - ubuntu-22.04-arm # ARM64
-          - windows-latest # x86_64
+          - windows-2025-vs2026 # x86_64
 
     steps:
       - name: Checkout Code
