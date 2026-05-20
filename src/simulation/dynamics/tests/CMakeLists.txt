@@ -1,6 +1,6 @@
 add_executable(test_quaternionStateData test_quaternionStateData.cpp)
-target_link_libraries(test_quaternionStateData GTest::gtest_main)
-target_link_libraries(test_quaternionStateData dynamicsLib)
+target_link_libraries(test_quaternionStateData PRIVATE GTest::gtest_main)
+target_link_libraries(test_quaternionStateData PRIVATE dynamicsLib)
 
 if(WIN32)
     add_custom_command(TARGET test_quaternionStateData POST_BUILD
