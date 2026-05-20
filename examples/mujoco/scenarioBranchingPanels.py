@@ -205,8 +205,8 @@ def run(showPlots: bool = False, visualize: bool = False):
 
     # Set the integrator of the DynamicObject to RK4(5)
     integ = svIntegrators.svIntegratorRKF45(scene)
-    # integ.setRelativeTolerance(1e-5)
-    # integ.setAbsoluteTolerance(1e-6)
+    integ.setRelativeTolerance(1e-5)
+    integ.setAbsoluteTolerance(1e-6)
     scene.setIntegrator(integ)
 
     # Enable an additional call to all models in the dynamics task

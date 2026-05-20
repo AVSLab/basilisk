@@ -314,8 +314,8 @@ def createSimulationModels(
 
     # Select integrator
     integrator = svIntegrators.svIntegratorRKF45(scene)
-    integrator.relTol = 1e-10
-    integrator.absTol = 1e-10
+    integrator.setRelativeTolerance(1e-5)
+    integrator.setAbsoluteTolerance(1e-5)
     scene.setIntegrator(integrator)
 
     # Get MuJoCo bodies
