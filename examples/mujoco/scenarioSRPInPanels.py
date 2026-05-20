@@ -154,6 +154,8 @@ def run(initialSpin: bool = False, showPlots: bool = False, visualize: bool = Fa
 
     # Set the integrator of the DynamicObject to RK4(5)
     integ = svIntegrators.svIntegratorRKF45(scene)
+    integ.setRelativeTolerance(1e-3)
+    integ.setAbsoluteTolerance(1e-3)
     scene.setIntegrator(integ)
 
     # We want to record the SRP force generated, which is computed
@@ -369,4 +371,4 @@ class SRPPanel(sysModel.SysModel):
 
 
 if __name__ == "__main__":
-    run(False)
+    run(showPlots=True)
