@@ -1,0 +1,1 @@
+- Updated Python requirement version caps to include the latest dependency releases.
