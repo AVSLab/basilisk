@@ -107,13 +107,13 @@ void MJScalarJoint::registerStates(DynParamRegisterer registerer)
     this->qvelState = registerer.registerState(1, 1, "joint_" + this->name + "_qvel");
 }
 
-void MJScalarJoint::writeStateToMujoco(mjData* d) const
+void MJScalarJoint::setStateInMujoco(mjData* d) const
 {
     d->qpos[this->qposAdr.value()] = this->qposState->state(0);
     d->qvel[this->qvelAdr.value()] = this->qvelState->state(0);
 }
 
-void MJScalarJoint::readStateFromMujoco(const mjData* d)
+void MJScalarJoint::getStateFromMujoco(const mjData* d)
 {
     this->qposState->state(0) = d->qpos[this->qposAdr.value()];
     this->qvelState->state(0) = d->qvel[this->qvelAdr.value()];
@@ -176,7 +176,7 @@ void MJBallJoint::registerStates(DynParamRegisterer registerer)
     this->qvelState = registerer.registerState(3, 1, "joint_" + this->name + "_qvel");
 }
 
-void MJBallJoint::writeStateToMujoco(mjData* d) const
+void MJBallJoint::setStateInMujoco(mjData* d) const
 {
     auto qp = this->qposAdr.value();
     auto qv = this->qvelAdr.value();
@@ -184,7 +184,7 @@ void MJBallJoint::writeStateToMujoco(mjData* d) const
     for (int k = 0; k < 3; ++k) d->qvel[qv + k] = this->qvelState->state(k);
 }
 
-void MJBallJoint::readStateFromMujoco(const mjData* d)
+void MJBallJoint::getStateFromMujoco(const mjData* d)
 {
     auto qp = this->qposAdr.value();
     auto qv = this->qvelAdr.value();
@@ -221,7 +221,7 @@ void MJFreeJoint::registerStates(DynParamRegisterer registerer)
         3, 1, "joint_" + this->name + "_qvelAttitude");
 }
 
-void MJFreeJoint::writeStateToMujoco(mjData* d) const
+void MJFreeJoint::setStateInMujoco(mjData* d) const
 {
     auto qp = this->qposAdr.value();
     auto qv = this->qvelAdr.value();
@@ -231,7 +231,7 @@ void MJFreeJoint::writeStateToMujoco(mjData* d) const
     for (int k = 0; k < 3; ++k) d->qvel[qv + 3 + k] = this->qvelAttitudeState->state(k);
 }
 
-void MJFreeJoint::readStateFromMujoco(const mjData* d)
+void MJFreeJoint::getStateFromMujoco(const mjData* d)
 {
     auto qp = this->qposAdr.value();
     auto qv = this->qvelAdr.value();

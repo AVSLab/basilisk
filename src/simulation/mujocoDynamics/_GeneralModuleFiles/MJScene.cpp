@@ -122,7 +122,7 @@ void MJScene::initializeDynamics()
     {
         auto d = this->spec.getMujocoData();
         for (auto&& body : this->spec.getBodies()) {
-            body.readJointStatesFromMujoco(d);
+            body.getJointStatesFromMujoco(d);
         }
     }
 
@@ -443,9 +443,9 @@ void MJScene::updateMujocoArraysFromStates()
     auto mujocoModel = this->getMujocoModel();
     auto mujocoData  = this->getMujocoData();
 
-    // Each joint copies its owned state into mjData at its qposAdr/qvelAdr.
+    // Each joint sets its owned state into mjData at its qposAdr/qvelAdr.
     for (auto&& body : this->spec.getBodies()) {
-        body.writeJointStateToMujoco(mujocoData);
+        body.setJointStatesInMujoco(mujocoData);
     }
 
     if (mujocoModel->na > 0) {

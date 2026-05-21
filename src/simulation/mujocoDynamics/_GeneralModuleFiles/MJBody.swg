@@ -33,8 +33,8 @@
 %ignore MJBody::updateMujocoModelFromMassProps;
 %ignore MJBody::updateMassPropsDerivative;
 %ignore MJBody::updateConstrainedEqualityJoints;
-%ignore MJBody::writeJointStateToMujoco;
-%ignore MJBody::readJointStatesFromMujoco;
+%ignore MJBody::setJointStatesInMujoco;
+%ignore MJBody::getJointStatesFromMujoco;
 %ignore MJBody::setJointDerivativesFromMujoco;
 
 %extend MJBody {
