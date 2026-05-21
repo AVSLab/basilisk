@@ -45,7 +45,13 @@
 class QuaternionStateData : public StateData
 {
   public:
-    /** Constructs a 4x1 quaternion state with a 3x1 derivative. */
+    /**
+     * @brief Constructs a 4x1 quaternion state with a 3x1 derivative.
+     *
+     * A zero or empty initial state defaults to the identity quaternion. A
+     * nonzero 4x1 initial quaternion is normalized and used as the initial
+     * state.
+     */
     QuaternionStateData(std::string inName, const Eigen::MatrixXd& newState);
 
     /** Returns a deep copy of this state. */

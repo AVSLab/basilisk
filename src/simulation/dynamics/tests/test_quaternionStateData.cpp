@@ -66,6 +66,48 @@ TEST(QuaternionStateDataTest, ConstructsAtIdentity)
     EXPECT_DOUBLE_EQ(q.stateDeriv(2), 0.0);
 }
 
+TEST(QuaternionStateDataTest, ConstructsAtIdentityFromEmptyState)
+{
+    QuaternionStateData q("default", Eigen::MatrixXd());
+
+    EXPECT_DOUBLE_EQ(q.state(0), 1.0);
+    EXPECT_DOUBLE_EQ(q.state(1), 0.0);
+    EXPECT_DOUBLE_EQ(q.state(2), 0.0);
+    EXPECT_DOUBLE_EQ(q.state(3), 0.0);
+}
+
+TEST(QuaternionStateDataTest, ConstructsFromInitialQuaternion)
+{
+    Eigen::MatrixXd initial(4, 1);
+    initial << 0.5, -0.5, 0.5, -0.5;
+
+    QuaternionStateData q("initial", initial);
+
+    EXPECT_DOUBLE_EQ(q.state(0), initial(0));
+    EXPECT_DOUBLE_EQ(q.state(1), initial(1));
+    EXPECT_DOUBLE_EQ(q.state(2), initial(2));
+    EXPECT_DOUBLE_EQ(q.state(3), initial(3));
+}
+
+TEST(QuaternionStateDataTest, NormalizesInitialQuaternion)
+{
+    Eigen::MatrixXd initial(4, 1);
+    initial << 1.0, 1.0, 1.0, 1.0;
+
+    QuaternionStateData q("initial", initial);
+
+    EXPECT_NEAR(q.state.norm(), 1.0, TOL);
+    EXPECT_NEAR(q.state(0), 0.5, TOL);
+    EXPECT_NEAR(q.state(1), 0.5, TOL);
+    EXPECT_NEAR(q.state(2), 0.5, TOL);
+    EXPECT_NEAR(q.state(3), 0.5, TOL);
+}
+
+TEST(QuaternionStateDataTest, RejectsInitialStateWithWrongSize)
+{
+    EXPECT_THROW(QuaternionStateData("invalid", Eigen::MatrixXd::Zero(3, 1)), BasiliskError);
+}
+
 TEST(QuaternionStateDataTest, ZeroAngularVelocityIsFixedPoint)
 {
     // Arbitrary unit quaternion. Propagating with zero omega should not move it.
