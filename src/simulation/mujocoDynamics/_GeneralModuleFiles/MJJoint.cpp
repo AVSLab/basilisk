@@ -138,11 +138,11 @@ void MJScalarJoint::writeJointStateMessage(uint64_t CurrentSimNanos)
 
     ScalarJointStateMsgPayload stateOutMsgPayload;
     stateOutMsgPayload.state = this->qposState->state(0);
-    this->stateOutMsg.write(&stateOutMsgPayload, scene.moduleID, 0);
+    this->stateOutMsg.write(&stateOutMsgPayload, scene.moduleID, CurrentSimNanos);
 
     ScalarJointStateMsgPayload stateDotOutMsgPayload;
     stateDotOutMsgPayload.state = this->qvelState->state(0);
-    this->stateDotOutMsg.write(&stateDotOutMsgPayload, scene.moduleID, 0);
+    this->stateDotOutMsg.write(&stateDotOutMsgPayload, scene.moduleID, CurrentSimNanos);
 }
 
 void MJScalarJoint::setPosition(double value)
