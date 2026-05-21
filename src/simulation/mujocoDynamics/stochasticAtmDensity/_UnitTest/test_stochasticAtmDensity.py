@@ -78,7 +78,7 @@ def test_stochasticAtmDensity(usePython: bool, showPlots: bool = False):
                 payload = messaging.AtmoPropsMsgPayload(
                     neutralDensity = self.atmoDensInMsg().neutralDensity * (1 + x)
                 )
-                self.atmoDensOutMsg.write(payload, self.moduleID, CurrentSimNanos)
+                self.atmoDensOutMsg.write(payload, CurrentSimNanos, self.moduleID)
 
         stochasticAtm = PyStochasticAtmDensity()
 

@@ -151,7 +151,7 @@ public:
 
         auto& payload = outputOutMsg.zeroMsgPayload;
         writeOutput(payload, outputVal);
-        outputOutMsg.write(&payload, CurrentSimNanos, this->moduleID);
+        outputOutMsg.write(&payload, this->moduleID, CurrentSimNanos);
     }
 
 public:

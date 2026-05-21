@@ -22,5 +22,5 @@ void StochasticDragCoeff::writeOutput(uint64_t CurrentSimNanos, double x)
 {
     DragGeometryMsgPayload out  = dragGeomInMsg();
     out.dragCoeff *= (1.0 + x);
-    dragGeomOutMsg.write(&out, CurrentSimNanos, this->moduleID);
+    dragGeomOutMsg.write(&out, this->moduleID, CurrentSimNanos);
 }

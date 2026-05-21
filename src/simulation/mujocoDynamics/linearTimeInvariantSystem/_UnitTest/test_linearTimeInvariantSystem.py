@@ -98,7 +98,7 @@ def test_linearTimeInvariantSystemFirstOrder(usePythonSubclass: bool,
                 # Write y[0] to SingleActuatorMsg
                 payload = messaging.SingleActuatorMsgPayload()
                 payload.input = y[0][0]
-                self.outMsg.write(payload, self.moduleID, CurrentSimNanos)
+                self.outMsg.write(payload, CurrentSimNanos, self.moduleID)
 
         system = PyFirstOrderLTI()
 
