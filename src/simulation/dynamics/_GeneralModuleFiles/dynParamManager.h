@@ -244,8 +244,7 @@ StateDataType* DynParamManager::registerState(uint32_t nRow, uint32_t nCol, std:
         return casted;
     }
 
-    Eigen::MatrixXd stateMatrix;
-    stateMatrix.resize(nRow, nCol);
+    Eigen::MatrixXd stateMatrix = Eigen::MatrixXd::Zero(nRow, nCol);
 
     // Emplacing this stateData in the map will wrap the raw
     // pointer in a unique_ptr, so no worries about leaks.

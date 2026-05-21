@@ -19,8 +19,56 @@
 
 #include "quaternionStateData.h"
 
+#include <cmath>
+
 namespace
 {
+constexpr double ZERO_QUATERNION_NORM_TOL = 1e-15;
+
+Eigen::MatrixXd identityQuaternionState()
+{
+    Eigen::MatrixXd initialState = Eigen::MatrixXd::Zero(4, 1);
+    initialState(0) = 1.0;
+    return initialState;
+}
+
+void logAndThrow(BSKLogger& logger, const std::string& errorMsg)
+{
+    logger.bskError("%s", errorMsg.c_str());
+}
+
+void logAndThrow(const std::string& errorMsg)
+{
+    BSKLogger logger;
+    logAndThrow(logger, errorMsg);
+}
+
+Eigen::MatrixXd initialQuaternionState(const std::string& stateName, const Eigen::MatrixXd& newState)
+{
+    if (newState.size() == 0) {
+        return identityQuaternionState();
+    }
+
+    if (newState.rows() != 4 || newState.cols() != 1) {
+        auto errorMsg = "State " + stateName + " expected a 4x1 quaternion initial state but received " +
+                        std::to_string(newState.rows()) + "x" +
+                        std::to_string(newState.cols()) + ".";
+        logAndThrow(errorMsg);
+    }
+
+    double norm = newState.norm();
+    if (!std::isfinite(norm)) {
+        auto errorMsg = "State " + stateName + " received a quaternion initial state with non-finite values.";
+        logAndThrow(errorMsg);
+    }
+
+    if (norm < ZERO_QUATERNION_NORM_TOL) {
+        return identityQuaternionState();
+    }
+
+    return newState / norm;
+}
+
 Eigen::Quaterniond applyRotationVector(const Eigen::Quaterniond& q, const Eigen::Vector3d& rotVec)
 {
     double angle = rotVec.norm();
@@ -47,19 +95,12 @@ void writeQuaternion(Eigen::MatrixXd& state, const Eigen::Quaterniond& q)
     state(3) = q.z();
 }
 
-void logAndThrow(BSKLogger& logger, const std::string& errorMsg)
-{
-    logger.bskError("%s", errorMsg.c_str());
-}
 } // namespace
 
 QuaternionStateData::QuaternionStateData(std::string inName, const Eigen::MatrixXd& newState)
-  : StateData(std::move(inName), newState)
+  : StateData(inName, initialQuaternionState(inName, newState))
 {
     // state holds (w,x,y,z). Derivative is the body angular velocity (3x1).
-    this->state.resize(4, 1);
-    this->state.setZero();
-    this->state(0) = 1.0; // identity quaternion
     this->stateDeriv.resize(3, 1);
     this->stateDeriv.setZero();
 }
