@@ -22,5 +22,5 @@ void StochasticAtmDensity::writeOutput(uint64_t CurrentSimNanos, double x)
 {
     AtmoPropsMsgPayload out = atmoDensInMsg();
     out.neutralDensity *= 1.0 + x;
-    atmoDensOutMsg.write(&out, CurrentSimNanos, this->moduleID);
+    atmoDensOutMsg.write(&out, this->moduleID, CurrentSimNanos);
 }
