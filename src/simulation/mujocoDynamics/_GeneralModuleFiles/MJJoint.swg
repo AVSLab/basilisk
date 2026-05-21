@@ -26,8 +26,8 @@
 
 %ignore MJJoint::MJJoint;
 %ignore MJJoint::registerStates;
-%ignore MJJoint::writeStateToMujoco;
-%ignore MJJoint::readStateFromMujoco;
+%ignore MJJoint::setStateInMujoco;
+%ignore MJJoint::getStateFromMujoco;
 %ignore MJJoint::setDerivativesFromMujoco;
 
 %ignore MJScalarJoint::MJScalarJoint;
@@ -35,18 +35,18 @@
 %ignore MJScalarJoint::updateConstrainedEquality;
 %ignore MJScalarJoint::writeJointStateMessage;
 %ignore MJScalarJoint::registerStates;
-%ignore MJScalarJoint::writeStateToMujoco;
-%ignore MJScalarJoint::readStateFromMujoco;
+%ignore MJScalarJoint::setStateInMujoco;
+%ignore MJScalarJoint::getStateFromMujoco;
 %ignore MJScalarJoint::setDerivativesFromMujoco;
 
 %ignore MJBallJoint::registerStates;
-%ignore MJBallJoint::writeStateToMujoco;
-%ignore MJBallJoint::readStateFromMujoco;
+%ignore MJBallJoint::setStateInMujoco;
+%ignore MJBallJoint::getStateFromMujoco;
 %ignore MJBallJoint::setDerivativesFromMujoco;
 
 %ignore MJFreeJoint::registerStates;
-%ignore MJFreeJoint::writeStateToMujoco;
-%ignore MJFreeJoint::readStateFromMujoco;
+%ignore MJFreeJoint::setStateInMujoco;
+%ignore MJFreeJoint::getStateFromMujoco;
 %ignore MJFreeJoint::setDerivativesFromMujoco;
 
 %include "MJJoint.h"

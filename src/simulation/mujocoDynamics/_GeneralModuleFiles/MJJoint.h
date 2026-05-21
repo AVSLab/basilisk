@@ -102,17 +102,17 @@ public:
     virtual void registerStates(DynParamRegisterer registerer) = 0;
 
     /**
-     * @brief Copies the joint's owned state values into `mjData::qpos`
-     * and `mjData::qvel` at this joint's address.
+     * @brief Sets `mjData::qpos` and `mjData::qvel` from the joint's owned
+     * state values at this joint's address.
      */
-    virtual void writeStateToMujoco(mjData* d) const = 0;
+    virtual void setStateInMujoco(mjData* d) const = 0;
 
     /**
-     * @brief Reads the joint's slice of `mjData::qpos`/`mjData::qvel` into
-     * the joint's owned states.  Used at initialization to seed states
-     * from the values declared in the XML.
+     * @brief Gets the joint's slice of `mjData::qpos`/`mjData::qvel` and
+     * stores it in the joint's owned states.  Used at initialization to seed
+     * states from the values declared in the XML.
      */
-    virtual void readStateFromMujoco(const mjData* d) = 0;
+    virtual void getStateFromMujoco(const mjData* d) = 0;
 
     /**
      * @brief Sets the joint's qpos and qvel state derivatives from the
@@ -240,8 +240,8 @@ public:
     void writeJointStateMessage(uint64_t CurrentSimNanos);
 
     void registerStates(DynParamRegisterer registerer) override;
-    void writeStateToMujoco(mjData* d) const override;
-    void readStateFromMujoco(const mjData* d) override;
+    void setStateInMujoco(mjData* d) const override;
+    void getStateFromMujoco(const mjData* d) override;
     void setDerivativesFromMujoco(const mjData* d) override;
 
 public:
@@ -271,8 +271,8 @@ public:
     using MJJoint::MJJoint;
 
     void registerStates(DynParamRegisterer registerer) override;
-    void writeStateToMujoco(mjData* d) const override;
-    void readStateFromMujoco(const mjData* d) override;
+    void setStateInMujoco(mjData* d) const override;
+    void getStateFromMujoco(const mjData* d) override;
     void setDerivativesFromMujoco(const mjData* d) override;
 
 protected:
@@ -327,8 +327,8 @@ public:
     void setAttitudeRate(const Eigen::Vector3d& attitudeRate);
 
     void registerStates(DynParamRegisterer registerer) override;
-    void writeStateToMujoco(mjData* d) const override;
-    void readStateFromMujoco(const mjData* d) override;
+    void setStateInMujoco(mjData* d) const override;
+    void getStateFromMujoco(const mjData* d) override;
     void setDerivativesFromMujoco(const mjData* d) override;
 
 protected:

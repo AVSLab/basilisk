@@ -262,18 +262,18 @@ void MJBody::registerStates(DynParamRegisterer paramManager)
     }
 }
 
-void MJBody::writeJointStateToMujoco(mjData* d) const
+void MJBody::setJointStatesInMujoco(mjData* d) const
 {
-    for (auto&& joint : this->scalarJoints) joint.writeStateToMujoco(d);
-    if (this->ballJoint.has_value()) this->ballJoint->writeStateToMujoco(d);
-    if (this->freeJoint.has_value()) this->freeJoint->writeStateToMujoco(d);
+    for (auto&& joint : this->scalarJoints) joint.setStateInMujoco(d);
+    if (this->ballJoint.has_value()) this->ballJoint->setStateInMujoco(d);
+    if (this->freeJoint.has_value()) this->freeJoint->setStateInMujoco(d);
 }
 
-void MJBody::readJointStatesFromMujoco(const mjData* d)
+void MJBody::getJointStatesFromMujoco(const mjData* d)
 {
-    for (auto&& joint : this->scalarJoints) joint.readStateFromMujoco(d);
-    if (this->ballJoint.has_value()) this->ballJoint->readStateFromMujoco(d);
-    if (this->freeJoint.has_value()) this->freeJoint->readStateFromMujoco(d);
+    for (auto&& joint : this->scalarJoints) joint.getStateFromMujoco(d);
+    if (this->ballJoint.has_value()) this->ballJoint->getStateFromMujoco(d);
+    if (this->freeJoint.has_value()) this->freeJoint->getStateFromMujoco(d);
 }
 
 void MJBody::setJointDerivativesFromMujoco(const mjData* d)

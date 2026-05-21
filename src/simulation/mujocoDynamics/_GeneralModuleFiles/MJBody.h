@@ -257,15 +257,15 @@ class MJBody : public MJObject<mjsBody>
      */
     void registerStates(DynParamRegisterer paramManager);
 
-    /** Pushes the qpos/qvel values from each owned joint's state into `mjData`. */
-    void writeJointStateToMujoco(mjData* d) const;
+    /** Sets `mjData` qpos/qvel values from each owned joint's state. */
+    void setJointStatesInMujoco(mjData* d) const;
 
     /**
-     * Seeds each owned joint's state from `mjData::qpos`/`mjData::qvel`.
+     * Gets `mjData::qpos`/`mjData::qvel` values into each owned joint's state.
      * Called once after spec compile so the user-visible state matches the
      * values declared in the XML before any setPosition/setVelocity calls.
      */
-    void readJointStatesFromMujoco(const mjData* d);
+    void getJointStatesFromMujoco(const mjData* d);
 
     /**
      * Sets each owned joint's qpos/qvel state derivatives from the current
