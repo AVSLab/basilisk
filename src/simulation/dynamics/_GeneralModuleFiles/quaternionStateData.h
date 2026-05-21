@@ -34,6 +34,9 @@
  *
  * `state` is a 4x1 unit quaternion in `(w, x, y, z)` order.
  * `stateDeriv` is a 3x1 body angular velocity in rad/s.
+ * Each `stateDiffusion` entry, when present, must be a 3x1 rotational
+ * increment vector that is composed into the quaternion with the matching
+ * pseudo-step.
  *
  * Sizes intentionally differ — the standard Euler step `state += deriv * dt`
  * is not valid on SO(3).  `propagateState` instead applies the exact
@@ -51,7 +54,8 @@ class QuaternionStateData : public StateData
     /**
      * @brief Integrates `state` over `dt` using the body angular velocity in
      * `stateDeriv`.  Composes the current quaternion with
-     * `exp(0.5 * dt * omega)` and renormalizes so `|q| = 1` after each step.
+     * `exp(0.5 * dt * omega)`, applies any stochastic rotational diffusion,
+     * and renormalizes so `|q| = 1` after each step.
      */
     void propagateState(double dt, std::vector<double> pseudoStep = {}) override;
 };

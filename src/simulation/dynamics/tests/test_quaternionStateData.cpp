@@ -122,6 +122,48 @@ TEST(QuaternionStateDataTest, SmallAngleBranchIsStable)
     EXPECT_NEAR(q.state(3), 0.0, TOL);
 }
 
+TEST(QuaternionStateDataTest, AppliesRotationalDiffusion)
+{
+    auto q = makeQ(1.0, 0.0, 0.0, 0.0);
+    q.setNumNoiseSources(1);
+
+    Eigen::Matrix<double, 3, 1> diffusion = Eigen::Matrix<double, 3, 1>::Zero();
+    diffusion(2) = 1.0; // [-]
+    q.setDiffusion(diffusion, 0);
+
+    const double rotationAngle = M_PI_2; // [rad]
+    q.propagateState(0.0, {rotationAngle});
+
+    EXPECT_NEAR(q.state(0), std::cos(rotationAngle / 2.0), TOL);
+    EXPECT_NEAR(q.state(1), 0.0, TOL);
+    EXPECT_NEAR(q.state(2), 0.0, TOL);
+    EXPECT_NEAR(q.state(3), std::sin(rotationAngle / 2.0), TOL);
+}
+
+TEST(QuaternionStateDataTest, RejectsMissingPseudoStepsForStochasticState)
+{
+    auto q = makeQ(1.0, 0.0, 0.0, 0.0);
+    q.setNumNoiseSources(1);
+
+    EXPECT_THROW(q.propagateState(0.0), BasiliskError);
+}
+
+TEST(QuaternionStateDataTest, RejectsMismatchedPseudoStepCount)
+{
+    auto q = makeQ(1.0, 0.0, 0.0, 0.0);
+    q.setNumNoiseSources(1);
+
+    EXPECT_THROW(q.propagateState(0.0, {1.0, 2.0}), BasiliskError);
+}
+
+TEST(QuaternionStateDataTest, RejectsNonRotationalDiffusionSize)
+{
+    auto q = makeQ(1.0, 0.0, 0.0, 0.0);
+    q.setNumNoiseSources(1);
+
+    EXPECT_THROW(q.propagateState(0.0, {1.0}), BasiliskError);
+}
+
 TEST(QuaternionStateDataTest, CloneDeepCopiesAndIsIndependent)
 {
     auto q = makeQ(0.5, 0.5, 0.5, 0.5, /*omega*/ 0.1, 0.2, 0.3);
