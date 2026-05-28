@@ -41,11 +41,31 @@ If the verbosity level is to be changed for a particular Basilisk script, then t
 
     from Basilisk.architecture import bskLogging
 
+Log Level Constants
+^^^^^^^^^^^^^^^^^^^
+Log levels can be referenced using either the original ``BSK_``-prefixed
+constants or shorter aliases that mirror Python's standard ``logging`` module
+naming:
+
+.. code-block:: python
+
+    bskLogging.BSK_WARNING  # original form
+    bskLogging.WARNING      # short alias (equivalent)
+
+A ``LogLevel`` enum is also available:
+
+.. code-block:: python
+
+    bskLogging.LogLevel.WARNING
+
+The available levels are ``DEBUG``, ``INFO``, ``WARNING``, ``ERROR``, and
+``SILENT``.
+
 Setting Verbosity Globally for all BSK Modules
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 The ``bskLog`` verbosity can be modified for all Basilisk modules by using::
 
-    bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
+    bskLogging.setDefaultLogLevel(bskLogging.WARNING)
 
 The verbosity options are listed in the table above.  Note that this command must be included at the very beginning of
 the Basilisk simulation script, certainly before the call for ``SimulationBaseClass.SimBaseClass()``.
@@ -57,16 +77,32 @@ It is possible to override the global verbosity setting and specify a different 
     sNavObject = simpleNav.SimpleNav()
     scSim.AddModelToTask(simTaskName, sNavObject)
     logger = bskLogging.BSKLogger()
-    logger.setLogLevel(bskLogging.BSK_INFORMATION)
+    logger.setLevel(bskLogging.INFO)
     sNavObject.bskLogger = logger
 
 Another option is to use the ``BSKLogger()`` constructor to provide the verbosity directly through::
 
     sNavObject = simpleNav.SimpleNav()
-    sNavObject.bskLogger = bskLogging.BSKLogger(bskLogging.BSK_INFORMATION)
+    sNavObject.bskLogger = bskLogging.BSKLogger(bskLogging.INFO)
 
 Unlike change the global verbosity level, the module specific verbosity can be changed later on in the Basilisk
 python script as the corresponding module is created and configured.
+
+Logging from Python Module Code
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Python-side module code can use convenience methods on ``bskLogger`` that mirror
+Python's standard ``logging`` API:
+
+.. code-block:: python
+
+    self.bskLogger.debug("message")
+    self.bskLogger.info("message")
+    self.bskLogger.warning("message")
+    self.bskLogger.error("message")   # raises BasiliskError
+
+These are equivalent to calling ``bskLog`` with the corresponding level and are
+the preferred form for Python call sites. ``error()`` is equivalent to
+``bskError()`` and raises ``BasiliskError`` immediately.
 
 Using ``bskLog`` and ``bskError`` in C++ Basilisk Modules
 ---------------------------------------------------------

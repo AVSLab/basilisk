@@ -217,8 +217,8 @@ Add ``bskLogger`` as a parameter to receive a Numba-compatible logging proxy::
 
     @staticmethod
     def UpdateStateImpl(dataOutMsgPayload, bskLogger, memory):
-        bskLogger.bskLog(bskLogging.BSK_INFORMATION, "tick")
-        bskLogger.bskLog1(bskLogging.BSK_WARNING, "step:", memory.step)
+        bskLogger.info("tick")
+        bskLogger.bskLog1(bskLogging.WARNING, "step:", memory.step)
 
 The proxy respects the log level set on ``self.bskLogger`` at ``Reset`` time:
 messages below the current threshold are suppressed.  Output goes to stdout via
@@ -232,6 +232,14 @@ Available methods:
 
    * - Method
      - Prints
+   * - ``debug(msg)``
+     - ``[TAG] msg``
+   * - ``info(msg)``
+     - ``[TAG] msg``
+   * - ``warning(msg)``
+     - ``[TAG] msg``
+   * - ``error(msg)``
+     - ``[TAG] msg``
    * - ``bskLog(level, msg)``
      - ``[TAG] msg``
    * - ``bskLog1(level, msg, v0)``
