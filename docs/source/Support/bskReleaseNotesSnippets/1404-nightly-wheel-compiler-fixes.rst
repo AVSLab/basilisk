@@ -1,0 +1,2 @@
+- Fixed nightly wheel builds on ``macos-26`` and ``windows-2025-vs2026`` runners. Conan 2.23.0 did not recognise apple-clang 21 or Visual Studio 2026. This would cause macOS builds to abort and Windows builds to fall back to MinGW gcc.
+- Aligned the ``cmake``, ``setuptools``, ``setuptools-scm``, and ``packaging`` upper bounds in ``pyproject.toml`` with ``requirements_dev.txt``.
