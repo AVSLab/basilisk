@@ -28,7 +28,7 @@ def test_CMsgTimeWritten():
     testing recording timeWritten in C-wrapped message
     """
 
-    bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
+    bskLogging.setDefaultLogLevel(bskLogging.WARNING)
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty array to store test log messages
 
@@ -72,4 +72,3 @@ def test_CMsgTimeWritten():
 
 if __name__ == "__main__":
     CMsgTimeWritten()
-

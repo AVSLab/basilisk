@@ -50,7 +50,7 @@ def test_space_weather_data_celestrak_example_columns():
     the epoch ``2026-03-04 21:48:00``.
     """
 
-    bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
+    bskLogging.setDefaultLogLevel(bskLogging.WARNING)
     unit_task_name = "unitTask"
     unit_process_name = "unitProcess"
 
@@ -105,7 +105,7 @@ def test_space_weather_data_stops_at_first_invalid_row():
     as the valid CelesTrak example set.
     """
 
-    bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
+    bskLogging.setDefaultLogLevel(bskLogging.WARNING)
     unit_task_name = "unitTask"
     unit_process_name = "unitProcess"
 
@@ -170,7 +170,7 @@ def test_space_weather_data_missing_required_column():
     The test checks all 23 weather outputs and verifies every value is zero.
     """
 
-    bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
+    bskLogging.setDefaultLogLevel(bskLogging.WARNING)
 
     module = spaceWeatherData.SpaceWeatherData()
     module.ModelTag = "spaceWeatherData"
@@ -204,7 +204,7 @@ def test_space_weather_data_duplicate_date_rows():
     The test checks all 23 weather outputs and verifies every value is zero.
     """
 
-    bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
+    bskLogging.setDefaultLogLevel(bskLogging.WARNING)
 
     module = spaceWeatherData.SpaceWeatherData()
     module.ModelTag = "spaceWeatherData"
@@ -238,7 +238,7 @@ def test_space_weather_data_unsorted_rows():
     The test checks all 23 weather outputs and verifies every value is zero.
     """
 
-    bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
+    bskLogging.setDefaultLogLevel(bskLogging.WARNING)
 
     module = spaceWeatherData.SpaceWeatherData()
     module.ModelTag = "spaceWeatherData"
@@ -275,7 +275,7 @@ def test_reset_error_when_epoch_before_table():
     ``"simulation start date is not covered"``.
     """
 
-    bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
+    bskLogging.setDefaultLogLevel(bskLogging.WARNING)
     unit_task_name = "unitTask"
     unit_process_name = "unitProcess"
 
@@ -317,7 +317,7 @@ def test_stale_output_retained_on_missing_day():
     - ``swDataOutMsgs[21]`` (``f107_1944_0``, F10.7c81): 138.5 after both stages.
     """
     # Suppress the expected BSK_WARNING, not testing them at the moment.
-    bskLogging.setDefaultLogLevel(bskLogging.BSK_ERROR)
+    bskLogging.setDefaultLogLevel(bskLogging.ERROR)
     unit_task_name = "unitTask"
     unit_process_name = "unitProcess"
 
@@ -373,7 +373,7 @@ def test_space_weather_data_epoch_update():
     and propagating the simulation for 1 day and 3 hours.
     """
 
-    bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
+    bskLogging.setDefaultLogLevel(bskLogging.WARNING)
     unit_task_name = "unitTask"
     unit_process_name = "unitProcess"
 
@@ -431,7 +431,7 @@ def test_space_weather_data_rejects_date_with_trailing_chars():
 
     module = spaceWeatherData.SpaceWeatherData()
     module.ModelTag = "spaceWeatherData"
-    module.bskLogger.setLevel(bskLogging.BSK_ERROR)
+    module.bskLogger.setLevel(bskLogging.ERROR)
 
     csv_text = "\n".join([
         "DATE,AP1,AP2,AP3,AP4,AP5,AP6,AP7,AP8,AP_AVG,F10.7_OBS,F10.7_OBS_CENTER81",
@@ -463,7 +463,7 @@ def test_space_weather_data_rejects_numeric_with_trailing_chars():
 
     module = spaceWeatherData.SpaceWeatherData()
     module.ModelTag = "spaceWeatherData"
-    module.bskLogger.setLevel(bskLogging.BSK_ERROR)
+    module.bskLogger.setLevel(bskLogging.ERROR)
 
     csv_text = "\n".join([
         "DATE,AP1,AP2,AP3,AP4,AP5,AP6,AP7,AP8,AP_AVG,F10.7_OBS,F10.7_OBS_CENTER81",
@@ -486,7 +486,7 @@ def _load_single_row_csv(row: str) -> spaceWeatherData.SpaceWeatherData:
     """Helper: write a single-data-row CSV and call loadSpaceWeatherFile."""
     module = spaceWeatherData.SpaceWeatherData()
     module.ModelTag = "spaceWeatherData"
-    module.bskLogger.setLevel(bskLogging.BSK_ERROR)
+    module.bskLogger.setLevel(bskLogging.ERROR)
     csv_text = _MINIMAL_HEADER + "\n" + row
     with tempfile.TemporaryDirectory() as temp_dir:
         file_path = Path(temp_dir) / "sw.csv"
@@ -594,7 +594,7 @@ def test_valid_date_feb_29_leap_accepted():
 
     ``swDataOutMsgs[0].dataValue`` is non-zero after a successful look-up.
     """
-    bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
+    bskLogging.setDefaultLogLevel(bskLogging.WARNING)
     unit_task_name = "unitTask"
     unit_process_name = "unitProcess"
 
@@ -648,7 +648,7 @@ def test_valid_date_feb_29_quad_century_leap_accepted():
 
     No exception from ``loadSpaceWeatherFile``.
     """
-    bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
+    bskLogging.setDefaultLogLevel(bskLogging.WARNING)
 
     csv_text = "\n".join([
         _MINIMAL_HEADER,
@@ -734,7 +734,7 @@ def test_failed_reload_preserves_previous_table():
     ``swDataOutMsgs[0].dataValue`` equals the expected AP_AVG value from the
     first table after the failed reload.
     """
-    bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
+    bskLogging.setDefaultLogLevel(bskLogging.WARNING)
     unit_task_name = "unitTask"
     unit_process_name = "unitProcess"
 

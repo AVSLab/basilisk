@@ -70,7 +70,7 @@ def test_module(show_plots, setRAN, setDEC, setLST, setRate):
 
 
 def planetEphemerisTest(show_plots, setRAN, setDEC, setLST, setRate):
-    bskLogging.setDefaultLogLevel(bskLogging.BSK_SILENT)
+    bskLogging.setDefaultLogLevel(bskLogging.SILENT)
 
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages

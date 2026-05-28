@@ -110,7 +110,7 @@ def simpleInstrumentControllerTestFunction(show_plots, use_rate_limit=1, rate_li
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"
     unitProcessName = "TestProcess"
-    bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
+    bskLogging.setDefaultLogLevel(bskLogging.WARNING)
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()

@@ -32,7 +32,7 @@ def test_cMsgTypes():
     Test the Python-side types of various message payload C types
     """
 
-    bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
+    bskLogging.setDefaultLogLevel(bskLogging.WARNING)
 
     test = messaging.TypesTestMsgPayload()
 

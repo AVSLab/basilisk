@@ -99,7 +99,7 @@ def test_module(show_plots, setRwMsg, setDeviceStatusMsg, setEta_e2m, OmegaValue
 
 def powerRW(show_plots, setRwMsg, setDeviceStatusMsg, setEta_e2m, OmegaValue, setEta_m2c, accuracy):
     if not setRwMsg:
-        bskLogging.setDefaultLogLevel(bskLogging.BSK_ERROR)
+        bskLogging.setDefaultLogLevel(bskLogging.ERROR)
 
     """Module Unit Test"""
     testFailCount = 0                       # zero unit test result counter
