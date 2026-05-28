@@ -84,8 +84,10 @@ def _setUseHaslamMap_wrapper(self, value):
             brightness_file = get_path(DataFile.SkyBrightnessData.skyTemperature408MHz)
             self._configureBrightnessFile(str(brightness_file))
         except Exception as e:
-            print(f"Warning: Could not auto-configure Haslam brightness file: {e}")
-            print("Please call configureBrightnessFile() manually before setUseHaslamMap(True)")
+            from Basilisk.architecture import bskLogging
+            self.bskLogger.bskLog(bskLogging.BSK_WARNING,
+                f"Could not auto-configure Haslam brightness file: {e}. "
+                "Please call configureBrightnessFile() manually before setUseHaslamMap(True)")
     self._setUseHaslamMap(value)
 
 SimpleAntenna.configureBrightnessFile = _configureBrightnessFile_wrapper
