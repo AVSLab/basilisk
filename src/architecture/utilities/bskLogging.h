@@ -115,6 +115,23 @@ class BSKLogger
         $self->bskLog(BSK_ERROR, "%s", info);
         throw BasiliskError(info);
     }
+
+    /* Convenience methods that mirror the Python logging.Logger API. These are
+       defined here in the SWIG %extend block (rather than as Python monkey-patches
+       in bskLogging.i) so that every module which %includes this header gets them
+       on its own BSKLogger proxy class. A pure-Python patch attaches only to
+       bskLogging.BSKLogger; depending on import order the bskLogger handed back by
+       SysModel-derived modules can be wrapped by a different proxy class, which
+       would leave the patched methods unreachable. error() raises BasiliskError to
+       match bskError(). */
+    void debug(const char* info)   { $self->bskLog(BSK_DEBUG,       "%s", info); }
+    void info(const char* info)    { $self->bskLog(BSK_INFORMATION, "%s", info); }
+    void warning(const char* info) { $self->bskLog(BSK_WARNING,     "%s", info); }
+    void error(const char* info) {
+        $self->bskLog(BSK_ERROR, "%s", info);
+        throw BasiliskError(info);
+    }
+    void setLevel(logLevel_t logLevel) { $self->setLogLevel(logLevel); }
 }
 #endif
 
