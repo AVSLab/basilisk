@@ -83,7 +83,7 @@ def platformRotationTestFunction(show_plots, theta1, theta2, accuracy):
 
     unitTaskName = "unitTask"                # arbitrary name (don't change)
     unitProcessName = "TestProcess"          # arbitrary name (don't change)
-    bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
+    bskLogging.setDefaultLogLevel(bskLogging.WARNING)
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
@@ -166,7 +166,7 @@ def test_reset():
     testMessages = []
     unitTaskName = "unitTask"
     unitProcessName = "TestProcess"
-    bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
+    bskLogging.setDefaultLogLevel(bskLogging.WARNING)
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()

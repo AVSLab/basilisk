@@ -53,7 +53,7 @@ def messaging_unit_tests():
 def test_cpp_msg_subscription_check():
     # Check whether python-wrapped C++ messages are properly checked for subscription
 
-    bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
+    bskLogging.setDefaultLogLevel(bskLogging.WARNING)
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
 
@@ -119,7 +119,7 @@ def test_cpp_msg_subscription_check():
 def test_c_msg_subscription_check():
     # Check whether python-wrapped C++ messages are properly checked for subscription
 
-    bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
+    bskLogging.setDefaultLogLevel(bskLogging.WARNING)
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
 
@@ -177,7 +177,7 @@ def test_c_msg_subscription_check():
 
 def test_c_2_cpp_msg_subscription_check():
 
-    bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
+    bskLogging.setDefaultLogLevel(bskLogging.WARNING)
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
 
@@ -246,7 +246,7 @@ def test_c_2_cpp_msg_subscription_check():
 
 
 def test_cpp_2_c_msg_subscription_check():
-    bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
+    bskLogging.setDefaultLogLevel(bskLogging.WARNING)
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
 

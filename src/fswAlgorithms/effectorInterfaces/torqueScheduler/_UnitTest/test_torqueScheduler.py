@@ -84,7 +84,7 @@ def torqueSchedulerTestFunction(lockFlag, tSwitch, accuracy):
     testMessages = []                        # create empty array to store test log messages
     unitTaskName = "unitTask"                # arbitrary name (don't change)
     unitProcessName = "TestProcess"          # arbitrary name (don't change)
-    bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
+    bskLogging.setDefaultLogLevel(bskLogging.WARNING)
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
@@ -198,7 +198,7 @@ def test_reset():
     testMessages = []
     unitTaskName = "unitTask"
     unitProcessName = "TestProcess"
-    bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
+    bskLogging.setDefaultLogLevel(bskLogging.WARNING)
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()

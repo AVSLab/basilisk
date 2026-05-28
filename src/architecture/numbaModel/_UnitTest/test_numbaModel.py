@@ -930,7 +930,7 @@ def test_bsklogger():
             """Log two messages and publish the incremented step count."""
             memory.step += np.int32(1)
             bskLogger.info("step update")
-            bskLogger.bskLog1(bskLogging.BSK_WARNING, "step:", memory.step)
+            bskLogger.bskLog1(bskLogging.WARNING, "step:", memory.step)
             dataOutMsgPayload.dataVector[0] = float(memory.step)
 
     mod = LoggingModel(); mod.ModelTag = "logsimple"
@@ -1073,12 +1073,12 @@ def test_cacheLoggerLevelRuntime(monkeypatch, tmp_path, capfd):
     monkeypatch.setattr(numbaModelModule, "getCacheDir", lambda: tmp_path)
 
     modA = _LoggerCacheModel(); modA.ModelTag = "logCacheA"
-    _runWithLoggerLevel(modA, bskLogging.BSK_ERROR)
+    _runWithLoggerLevel(modA, bskLogging.ERROR)
     suppressed = capfd.readouterr()
     assert "logger cache warning" not in suppressed.out
 
     modB = _LoggerCacheModel(); modB.ModelTag = "logCacheB"
-    _runWithLoggerLevel(modB, bskLogging.BSK_WARNING)
+    _runWithLoggerLevel(modB, bskLogging.WARNING)
     emitted = capfd.readouterr()
     assert "logger cache warning" in emitted.out
     assert modA._cfunc is modB._cfunc

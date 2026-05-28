@@ -36,7 +36,7 @@ def test_RecordingInputMessages():
     testing recording a C-wrapped input message with the recorder module
     """
 
-    bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
+    bskLogging.setDefaultLogLevel(bskLogging.WARNING)
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty array to store test log messages
 

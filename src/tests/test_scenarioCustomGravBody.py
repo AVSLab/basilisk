@@ -37,7 +37,7 @@ def test_simplePowerDemo(show_plots):
     """This function is called by the py.test environment."""
 
     # suppress printing out BSK_INFORMATION states
-    bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
+    bskLogging.setDefaultLogLevel(bskLogging.WARNING)
 
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
