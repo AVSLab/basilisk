@@ -37,11 +37,6 @@ def planetPositionVelocity(
     Convenience function to get planet position from SPICE.
     """
 
-    from Basilisk.utilities.supportDataTools.dataFetcher import get_path, DataFile
-    from pathlib import Path
-    from Basilisk.topLevelModules import pyswice
-    from Basilisk.utilities.pyswice_spk_utilities import spkRead
-
     # Resolve kernel paths
     de430_path = Path(get_path(DataFile.EphemerisData.de430))
     naif0012_path = Path(get_path(DataFile.EphemerisData.naif0012))
