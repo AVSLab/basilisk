@@ -92,7 +92,7 @@ def test_ErrorPySysModel():
 
     mod = ErroringPythonModule()
 
-    simulated_syserr_reset = io.StringIO("")    
+    simulated_syserr_reset = io.StringIO("")
 
     with contextlib.redirect_stderr(simulated_syserr_reset):
         try:
@@ -116,7 +116,7 @@ def test_ErrorPySysModel():
             pass
 
     error_update = simulated_syserr_update.getvalue()
-    
+
     if len(error_update) == 0:
         testMessage.append("Reset did not print its exception")
     elif not error_update.rstrip().endswith("ValueError: Error in UpdateState"):
@@ -134,13 +134,13 @@ class PythonModule(sysModel.SysModel):
         payload = self.dataOutMsg.zeroMsgPayload
         payload.dataVector = np.array([0,0,0])
         self.dataOutMsg.write(payload, CurrentSimNanos, self.moduleID)
-        self.bskLogger.bskLog(bskLogging.BSK_INFORMATION, "Reset in TestPythonModule")
+        self.bskLogger.info("Reset in TestPythonModule")
 
     def UpdateState(self, CurrentSimNanos):
         payload = self.dataOutMsg.zeroMsgPayload
         payload.dataVector = self.dataOutMsg.read().dataVector + np.array([0,1,0])
         self.dataOutMsg.write(payload, CurrentSimNanos, self.moduleID)
-        self.bskLogger.bskLog(bskLogging.BSK_INFORMATION, f"Python Module ID {self.moduleID} ran Update at {CurrentSimNanos*1e-9}s")
+        self.bskLogger.info(f"Python Module ID {self.moduleID} ran Update at {CurrentSimNanos*1e-9}s")
 
 class ErroringPythonModule(sysModel.SysModel):
 

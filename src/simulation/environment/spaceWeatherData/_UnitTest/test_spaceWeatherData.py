@@ -431,7 +431,7 @@ def test_space_weather_data_rejects_date_with_trailing_chars():
 
     module = spaceWeatherData.SpaceWeatherData()
     module.ModelTag = "spaceWeatherData"
-    module.bskLogger.setLogLevel(bskLogging.BSK_ERROR)
+    module.bskLogger.setLevel(bskLogging.BSK_ERROR)
 
     csv_text = "\n".join([
         "DATE,AP1,AP2,AP3,AP4,AP5,AP6,AP7,AP8,AP_AVG,F10.7_OBS,F10.7_OBS_CENTER81",
@@ -463,7 +463,7 @@ def test_space_weather_data_rejects_numeric_with_trailing_chars():
 
     module = spaceWeatherData.SpaceWeatherData()
     module.ModelTag = "spaceWeatherData"
-    module.bskLogger.setLogLevel(bskLogging.BSK_ERROR)
+    module.bskLogger.setLevel(bskLogging.BSK_ERROR)
 
     csv_text = "\n".join([
         "DATE,AP1,AP2,AP3,AP4,AP5,AP6,AP7,AP8,AP_AVG,F10.7_OBS,F10.7_OBS_CENTER81",
@@ -486,7 +486,7 @@ def _load_single_row_csv(row: str) -> spaceWeatherData.SpaceWeatherData:
     """Helper: write a single-data-row CSV and call loadSpaceWeatherFile."""
     module = spaceWeatherData.SpaceWeatherData()
     module.ModelTag = "spaceWeatherData"
-    module.bskLogger.setLogLevel(bskLogging.BSK_ERROR)
+    module.bskLogger.setLevel(bskLogging.BSK_ERROR)
     csv_text = _MINIMAL_HEADER + "\n" + row
     with tempfile.TemporaryDirectory() as temp_dir:
         file_path = Path(temp_dir) / "sw.csv"

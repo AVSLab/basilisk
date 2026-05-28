@@ -239,7 +239,7 @@ def test_albedo_invalid_file(tmp_path):
     """
     albModule = albedo.Albedo()
     # silence expected error message
-    albModule.bskLogger.setLogLevel(bskLogging.BSK_SILENT)
+    albModule.bskLogger.setLevel(bskLogging.BSK_SILENT)
 
     gravFactory = simIncludeGravBody.gravBodyFactory()
     gravFactory.createEarth()

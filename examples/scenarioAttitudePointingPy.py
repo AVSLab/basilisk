@@ -355,10 +355,10 @@ class PythonMRPPD(sysModel.SysModel):
         # accessed from sysModel
         if False:
             """Sample Python module method"""
-            self.bskLogger.bskLog(sysModel.BSK_INFORMATION, f"Time: {CurrentSimNanos * 1.0E-9} s")
-            self.bskLogger.bskLog(sysModel.BSK_INFORMATION, f"TorqueRequestBody: {torqueOutMsgBuffer.torqueRequestBody}")
-            self.bskLogger.bskLog(sysModel.BSK_INFORMATION, f"sigma_BR: {guidMsgBuffer.sigma_BR}")
-            self.bskLogger.bskLog(sysModel.BSK_INFORMATION, f"omega_BR_B: {guidMsgBuffer.omega_BR_B}")
+            self.bskLogger.info(f"Time: {CurrentSimNanos * 1.0E-9} s")
+            self.bskLogger.info(f"TorqueRequestBody: {torqueOutMsgBuffer.torqueRequestBody}")
+            self.bskLogger.info(f"sigma_BR: {guidMsgBuffer.sigma_BR}")
+            self.bskLogger.info(f"omega_BR_B: {guidMsgBuffer.omega_BR_B}")
 
         return
 

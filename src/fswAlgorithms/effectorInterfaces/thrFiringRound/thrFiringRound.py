@@ -94,13 +94,15 @@ class ThrFiringRound(sysModel.SysModel):
         if thrForceMaxArr.size == 1:
             return np.full(nThr, float(thrForceMaxArr[0]), dtype=float)
         if thrForceMaxArr.size != nThr:
-            raise ValueError(f"thrForceMax vector length {thrForceMaxArr.size} does not match nThr {nThr}.")
+            raise ValueError(
+                f"thrForceMax vector length {thrForceMaxArr.size} does not match nThr {nThr}."
+            )
         return thrForceMaxArr.copy()
 
     def validateInputMessages(self):
         """Raise ``BasiliskError`` if a required input message is not linked."""
         if not self.thrForceInMsg.isLinked():
-            self.bskLogger.bskError("ThrFiringRound.thrForceInMsg was not linked.")
+            self.bskLogger.error("ThrFiringRound.thrForceInMsg was not linked.")
 
     def Reset(self, CurrentSimNanos):
         self.validateInputMessages()
@@ -121,9 +123,13 @@ class ThrFiringRound(sysModel.SysModel):
         onTimeRequest = np.zeros(nThr)
         onTimeRequest = self.controlPeriodSec * forceCmd / thrForceMax
         onTimeRequest = np.clip(onTimeRequest, 0.0, self.controlPeriodSec)  # [s]
-        onTimeRequest = np.rint(onTimeRequest / self.onTimeResolutionSec) * self.onTimeResolutionSec
+        onTimeRequest = (
+            np.rint(onTimeRequest / self.onTimeResolutionSec) * self.onTimeResolutionSec
+        )
         onTimeRequest[onTimeRequest < self.thrMinFireTimeSec] = 0.0  # [s]
         onTimeRequest = np.clip(onTimeRequest, 0.0, self.controlPeriodSec)  # [s]
 
         self.thrOnTimePayload.OnTimeRequest = onTimeRequest.tolist()
-        self.thrOnTimeOutMsg.write(self.thrOnTimePayload, CurrentSimNanos, self.moduleID)
+        self.thrOnTimeOutMsg.write(
+            self.thrOnTimePayload, CurrentSimNanos, self.moduleID
+        )
