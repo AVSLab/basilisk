@@ -132,6 +132,19 @@ class BskLoggerProxy:
         if level >= self._level:
             print(self._tag(level), msg)
 
+    def debug(self, msg):
+        self.bskLog(0, msg)
+
+    def info(self, msg):
+        self.bskLog(1, msg)
+
+    def warning(self, msg):
+        self.bskLog(2, msg)
+
+    def error(self, msg):
+        # prints at BSK_ERROR level but does not throw — use bskError() outside numba context
+        self.bskLog(3, msg)
+
     def bskLog1(self, level, msg, v0):
         if level >= self._level:
             print(self._tag(level), msg, v0)

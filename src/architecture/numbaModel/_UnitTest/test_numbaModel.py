@@ -929,7 +929,7 @@ def test_bsklogger():
         def UpdateStateImpl(dataOutMsgPayload, bskLogger, memory):
             """Log two messages and publish the incremented step count."""
             memory.step += np.int32(1)
-            bskLogger.bskLog(bskLogging.BSK_INFORMATION, "step update")
+            bskLogger.info("step update")
             bskLogger.bskLog1(bskLogging.BSK_WARNING, "step:", memory.step)
             dataOutMsgPayload.dataVector[0] = float(memory.step)
 
@@ -992,14 +992,14 @@ class _LoggerCacheModel(NumbaModel):
     @staticmethod
     def UpdateStateImpl(dataOutMsgPayload, bskLogger):
         """Emit a warning and write a sentinel value."""
-        bskLogger.bskLog(bskLogging.BSK_WARNING, "logger cache warning")
+        bskLogger.warning("logger cache warning")
         dataOutMsgPayload.dataVector[0] = 1.0
 
 
 def _runWithLoggerLevel(model, logLevel, dt_ns=5, n_ticks=1):
     """Run one model while setting the owning simulation logger level."""
     scSim = SimulationBaseClass.SimBaseClass()
-    scSim.bskLogger.setLogLevel(logLevel)
+    scSim.bskLogger.setLevel(logLevel)
     proc = scSim.CreateNewProcess("proc")
     proc.addTask(scSim.CreateNewTask("task", dt_ns))
     scSim.AddModelToTask("task", model)

@@ -104,7 +104,7 @@ class FilterModel(NumbaModel):
                         dataOutMsgPayload, bskLogger, memory):
         """Scale the input vector when linked and warn otherwise."""
         if not dataInMsgIsLinked:
-            bskLogger.bskLog(bskLogging.BSK_WARNING, "FilterModel: input not linked")
+            bskLogger.warning("FilterModel: input not linked")
             return
         for i in range(3):
             dataOutMsgPayload.dataVector[i] = dataInMsgPayload.dataVector[i] * memory.gain

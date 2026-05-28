@@ -52,8 +52,7 @@ class PythonVariableLogger(sysModel.SysModel):
 
         if name not in variables:
             raise KeyError(
-                f"Logger is not logging '{name}'. "
-                f"Available: {', '.join(variables)}"
+                f"Logger is not logging '{name}'. Available: {', '.join(variables)}"
             )
         return np.array(variables[name])
 
@@ -78,7 +77,7 @@ class PythonVariableLogger(sysModel.SysModel):
             try:
                 val = np.array(fn(CurrentSimNanos)).squeeze()
             except Exception as ex:
-                self.bskLogger.bskError(
+                self.bskLogger.error(
                     f"Error logging '{name}' in '{self.ModelTag}': {ex}"
                 )
             self._variables[name].append(val)

@@ -33,7 +33,9 @@ def _get_optimizer():
     return minimize
 
 
-def mapMatrix(rVec_B: np.ndarray, fHatVec_B: np.ndarray, r_ComB_B: np.ndarray) -> np.ndarray:
+def mapMatrix(
+    rVec_B: np.ndarray, fHatVec_B: np.ndarray, r_ComB_B: np.ndarray
+) -> np.ndarray:
     """
     Build the thruster force-to-wrench map.
 
@@ -115,7 +117,7 @@ class JointThrAllocation(sysModel.SysModel):
         ]
         for msgName, msgReader in requiredInputMessages:
             if not msgReader.isLinked():
-                self.bskLogger.bskError(f"JointThrAllocation.{msgName} was not linked.")
+                self.bskLogger.error(f"JointThrAllocation.{msgName} was not linked.")
 
     def setWf(self, wfIn):
         """
@@ -173,7 +175,9 @@ class JointThrAllocation(sysModel.SysModel):
             self.Wf = np.full(self.nThr, float(wfArr[0]), dtype=float)
             return
         if wfArr.size != self.nThr:
-            raise ValueError(f"Wf vector length {wfArr.size} does not match nThr {self.nThr}.")
+            raise ValueError(
+                f"Wf vector length {wfArr.size} does not match nThr {self.nThr}."
+            )
         self.Wf = wfArr.copy()
 
     def setThrForceMax(self, thrForceMaxIn):
@@ -203,7 +207,9 @@ class JointThrAllocation(sysModel.SysModel):
         if thrForceMaxArr.size == 1:
             return np.full(self.nThr, float(thrForceMaxArr[0]), dtype=float)
         if thrForceMaxArr.size != self.nThr:
-            raise ValueError(f"thrForceMax vector length {thrForceMaxArr.size} does not match nThr {self.nThr}.")
+            raise ValueError(
+                f"thrForceMax vector length {thrForceMaxArr.size} does not match nThr {self.nThr}."
+            )
         return thrForceMaxArr.copy()
 
     def parseArmConfig(self):
@@ -237,20 +243,22 @@ class JointThrAllocation(sysModel.SysModel):
         self.r_LcP_P = np.asarray(cfgMsg.r_LcP_P, dtype=float).reshape(-1, 3)
 
         # Convert each flat 9-entry block from column-major to 3x3 matrix.
-        self.dcm_C0P = np.array([dcmFlat.reshape(3, 3, order="F") for dcmFlat in self.dcm_C0P], dtype=float)
+        self.dcm_C0P = np.array(
+            [dcmFlat.reshape(3, 3, order="F") for dcmFlat in self.dcm_C0P], dtype=float
+        )
 
     def initialGuesses(self):
         nDecision = self.nJoint + self.nThr
         seedList = []
 
         guess = np.zeros(nDecision)
-        guess[self.nJoint:] = 1.0  # [N]
+        guess[self.nJoint :] = 1.0  # [N]
         seedList.append(guess)
 
         for angleSeed in (np.pi / 4.0, -np.pi / 4.0, np.pi / 2.0, -np.pi / 2.0):
             guess = np.zeros(nDecision)
             guess[: self.nJoint] = angleSeed
-            guess[self.nJoint:] = 1.0  # [N]
+            guess[self.nJoint :] = 1.0  # [N]
             seedList.append(guess)
 
         self.x0 = np.vstack(seedList)
@@ -261,9 +269,11 @@ class JointThrAllocation(sysModel.SysModel):
         upperBound = np.zeros(nDecision)
         lowerBound[: self.nJoint] = -np.pi  # [rad]
         upperBound[: self.nJoint] = np.pi  # [rad]
-        lowerBound[self.nJoint:] = 0.0  # [N]
-        upperBound[self.nJoint:] = self.resolveThrForceMax()
-        return tuple((float(low), float(high)) for low, high in zip(lowerBound, upperBound))
+        lowerBound[self.nJoint :] = 0.0  # [N]
+        upperBound[self.nJoint :] = self.resolveThrForceMax()
+        return tuple(
+            (float(low), float(high)) for low, high in zip(lowerBound, upperBound)
+        )
 
     def jointPoseFromTheta(self, theta: np.ndarray):
         """
@@ -340,7 +350,9 @@ class JointThrAllocation(sysModel.SysModel):
             jointLocalIdx = int(self.thrArmJointIdx[thrIdx])
             jointFlatIdx = int(self.armJointStart[armIdx] + jointLocalIdx)
 
-            r_TB_B[thrIdx] = r_CB_B[jointFlatIdx] + dcm_CB[jointFlatIdx].T @ self.r_TP_P[thrIdx]
+            r_TB_B[thrIdx] = (
+                r_CB_B[jointFlatIdx] + dcm_CB[jointFlatIdx].T @ self.r_TP_P[thrIdx]
+            )
             fHatVec_B[thrIdx] = dcm_CB[jointFlatIdx].T @ self.fHat_P[thrIdx]
 
         return mapMatrix(r_TB_B, fHatVec_B, r_ComB_B)
@@ -415,7 +427,7 @@ class JointThrAllocation(sysModel.SysModel):
         if bestDecision is None:
             bestDecision = np.zeros(self.nJoint + self.nThr)
 
-        self.thrForcePayload.thrForce = bestDecision[self.nJoint:].tolist()
+        self.thrForcePayload.thrForce = bestDecision[self.nJoint :].tolist()
         self.thrForceOutMsg.write(self.thrForcePayload, CurrentSimNanos, self.moduleID)
 
         self.jointAnglePayload.states.clear()
@@ -425,4 +437,6 @@ class JointThrAllocation(sysModel.SysModel):
             self.jointAnglePayload.states.push_back(float(angleCmd))
             self.jointAnglePayload.stateDots.push_back(0.0)  # [rad/s]
             self.jointAnglePayload.stateDDots.push_back(0.0)  # [rad/s^2]
-        self.desJointAnglesOutMsg.write(self.jointAnglePayload, CurrentSimNanos, self.moduleID)
+        self.desJointAnglesOutMsg.write(
+            self.jointAnglePayload, CurrentSimNanos, self.moduleID
+        )

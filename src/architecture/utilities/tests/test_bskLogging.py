@@ -26,7 +26,7 @@ def test_bsk_error_treats_python_message_as_text():
     bsk_logger = bskLogging.BSKLogger()
 
     with pytest.raises(bskLogging.BasiliskError, match="preformatted %s message"):
-        bsk_logger.bskError("preformatted %s message")
+        bsk_logger.error("preformatted %s message")
 
 
 def test_warning_level_output_is_flushed(capfd):

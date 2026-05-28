@@ -91,14 +91,14 @@ class TestPythonModule(sysModel.SysModel):
     def Reset(self, CurrentSimNanos):
         # Ensure that self.dataInMsg is linked
         if not self.dataInMsg.isLinked():
-            self.bskLogger.bskError("TestPythonModule.dataInMsg is not linked.")
+            self.bskLogger.error("TestPythonModule.dataInMsg is not linked.")
 
         # Initialiazing self.dataOutMsg
         payload = self.dataOutMsg.zeroMsgPayload
         payload.dataVector = np.array([0, 0, 0])
         self.dataOutMsg.write(payload, CurrentSimNanos, self.moduleID)
 
-        self.bskLogger.bskLog(bskLogging.BSK_INFORMATION, "Reset in TestPythonModule")
+        self.bskLogger.info("Reset in TestPythonModule")
 
     def UpdateState(self, CurrentSimNanos):
         # Read input message
@@ -112,9 +112,8 @@ class TestPythonModule(sysModel.SysModel):
         )
         self.dataOutMsg.write(payload, CurrentSimNanos, self.moduleID)
 
-        self.bskLogger.bskLog(
-            bskLogging.BSK_INFORMATION,
-            f"Python Module ID {self.moduleID} ran Update at {CurrentSimNanos*1e-9}s",
+        self.bskLogger.info(
+            f"Python Module ID {self.moduleID} ran Update at {CurrentSimNanos * 1e-9}s",
         )
 
 

@@ -45,7 +45,7 @@ class StateMerge(sysModel.SysModel):
         ]
         for msgName, msgReader in requiredInputMessages:
             if not msgReader.isLinked():
-                self.bskLogger.bskError(f"StateMerge.{msgName} was not linked.")
+                self.bskLogger.error(f"StateMerge.{msgName} was not linked.")
 
     def Reset(self, CurrentSimNanos):
         self.validateInputMessages()

@@ -113,7 +113,7 @@ def run(case):
     elif case == 2:
         # here the bskLog verbosity is only changed for this module by setting a custom bskLog instance
         logger = bskLogging.BSKLogger()
-        logger.setLogLevel(bskLogging.BSK_ERROR)
+        logger.setLevel(bskLogging.BSK_ERROR)
         print("The verbosity is only changed for this module.")
         logger.printLogLevel()
         module.bskLogger = logger
