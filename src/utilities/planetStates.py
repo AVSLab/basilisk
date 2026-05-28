@@ -42,32 +42,22 @@ def planetPositionVelocity(
     from Basilisk.topLevelModules import pyswice
     from Basilisk.utilities.pyswice_spk_utilities import spkRead
 
-    # --- Resolve kernel paths ---
+    # Resolve kernel paths
     de430_path = Path(get_path(DataFile.EphemerisData.de430))
     naif0012_path = Path(get_path(DataFile.EphemerisData.naif0012))
 
-    print("\n==== planetPositionVelocity DEBUG ====")
-    print("planetName:", planetName)
-    print("time:", time)
-    print("ephemerisPath:", ephemerisPath)
-    print("de430_path:", de430_path)
-    print("naif0012_path:", naif0012_path)
-
-    # --- Load global kernels ---
+    # Load global kernels
     pyswice.furnsh_c(str(de430_path))
     pyswice.furnsh_c(str(naif0012_path))
 
-    # --- Resolve ephemeris path ---
+    # Resolve ephemeris path
     eph = Path(ephemerisPath)
 
     if eph.is_dir():
-        # historical Basilisk behavior:
-        # when passed a directory, only load pck00010.tpc
         candidate = eph / "pck00010.tpc"
         if not candidate.exists():
             raise RuntimeError(
-                f"Directory {eph} does not contain pck00010.tpc "
-                "(required for old-style planetPositionVelocity)"
+                f"Directory {eph} does not contain pck00010.tpc, which is required for old-style planetPositionVelocity"
             )
         eph = candidate
 
