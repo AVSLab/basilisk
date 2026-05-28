@@ -43,4 +43,25 @@ import sys
 protectAllClasses(sys.modules[__name__])
 
 BasiliskError = _bskLogging.BasiliskError
+
+import enum
+
+class LogLevel(enum.IntEnum):
+    DEBUG = BSK_DEBUG
+    INFO = BSK_INFORMATION
+    WARNING = BSK_WARNING
+    ERROR = BSK_ERROR
+    SILENT = BSK_SILENT
+
+DEBUG = LogLevel.DEBUG
+INFO = LogLevel.INFO
+WARNING = LogLevel.WARNING
+ERROR = LogLevel.ERROR
+SILENT = LogLevel.SILENT
+
+# The debug()/info()/warning()/error()/setLevel() convenience methods are defined
+# as SWIG %extend methods in bskLogging.h, not monkey-patched here. That way they
+# exist on every BSKLogger proxy class regardless of module import order; a Python
+# patch on this module's BSKLogger would not reach instances vended by other
+# modules that %include bskLogging.h (e.g. anything derived from SysModel).
 %}
