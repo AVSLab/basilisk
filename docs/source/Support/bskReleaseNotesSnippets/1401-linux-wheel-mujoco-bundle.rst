@@ -1,0 +1,1 @@
+- Fixed Linux wheels to include the MuJoCo runtime and SWIG bindings. ``CONAN_ARGS`` was set in the wheel build workflow but never reached the manylinux container, so MuJoCo was silently disabled on Linux while macOS and Windows shipped the full payload. Added ``environment-pass`` to the cibuildwheel Linux configuration so the option propagates.
