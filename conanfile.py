@@ -242,6 +242,8 @@ class BasiliskConan(ConanFile):
             self.options['opencv'].with_openexr = False  # generate image in EXR format
             self.options['opencv'].with_quirc = False  # QR code lib
             self.options['opencv'].with_webp = False  # raster graphics file format for web
+            if self.settings.get_safe("os") == "Linux":
+                self.options['opencv'].with_wayland = False  # desktop display protocol
 
         # Other dependency options
         if self.options.get_safe("vizInterface") or self.options.get_safe("opNav"):
