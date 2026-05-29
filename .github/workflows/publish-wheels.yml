@@ -57,7 +57,7 @@ jobs:
       - name: Build wheels
         uses: pypa/cibuildwheel@v3.1.4
         env:
-          CONAN_ARGS: "--opNav True --mujoco True --mujocoReplay True"
+          CONAN_ARGS: "--opNav True --mujoco True"
           CIBW_TEST_SKIP: "*"
 
       - name: Upload wheels
