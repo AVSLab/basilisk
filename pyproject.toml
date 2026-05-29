@@ -90,11 +90,12 @@ MACOSX_DEPLOYMENT_TARGET = "11.0"
 CMAKE_OSX_DEPLOYMENT_TARGET = "11.0"
 
 [tool.cibuildwheel.windows]
-before-build = "pip install \"libclang>=15.0.6.1,<=18.1.1\" && pip install delvewheel"
+before-build = "pip install \"libclang>=15.0.6.1,<=18.1.1\" delvewheel ninja"
 repair-wheel-command = "python -m delvewheel repair -v --ignore-existing --analyze-existing -w {dest_dir} {wheel}"
 
 [tool.cibuildwheel.linux]
 archs = ["native"]
+before-all = "mkdir -p ~/.conan2 && printf '%s\\n' 'tools.system.package_manager:mode=install' 'tools.system.package_manager:sudo=False' >> ~/.conan2/global.conf"
 repair-wheel-command = [
   "auditwheel repair --strip -w {dest_dir} {wheel}"
 ]
