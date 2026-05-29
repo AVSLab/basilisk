@@ -22,10 +22,10 @@ jobs:
             extra-conan-args: --generator Ninja
 
     steps:
-      - name: Checkout develop
+      - name: Checkout source
         uses: actions/checkout@v5
         with:
-          ref: develop
+          ref: ${{ github.sha }}
 
       - name: Setup system dependencies
         uses: ./.github/actions/setup
@@ -45,6 +45,7 @@ jobs:
   publish-index:
     name: Publish Nightly Index
     needs: build-wheels
+    if: ${{ github.ref_name == 'develop' }}
     runs-on: ubuntu-24.04
     permissions:
       contents: write
@@ -53,7 +54,7 @@ jobs:
       - name: Checkout scripts
         uses: actions/checkout@v5
         with:
-          ref: develop
+          ref: ${{ github.sha }}
           sparse-checkout: .github/scripts
 
       - name: Download all wheels
