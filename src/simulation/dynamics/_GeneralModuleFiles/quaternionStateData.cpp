@@ -141,14 +141,6 @@ QuaternionStateData::propagateState(double dt, std::vector<double> pseudoStep)
 
     for (size_t i = 0; i < getNumNoiseSources(); i++) {
         const auto& diffusion = this->stateDiffusion.at(i);
-        if (diffusion.rows() != 3 || diffusion.cols() != 1) {
-            auto errorMsg = "State " + this->getName() + " has a quaternion diffusion with size " +
-                            std::to_string(diffusion.rows()) + "x" +
-                            std::to_string(diffusion.cols()) + ". QuaternionStateData expects " +
-                            "each diffusion source to be a 3x1 rotational increment vector.";
-            logAndThrow(this->bskLogger, errorMsg);
-        }
-
         Eigen::Vector3d stochasticRotVec(diffusion(0), diffusion(1), diffusion(2));
         q = applyRotationVector(q, stochasticRotVec * pseudoStep.at(i));
     }

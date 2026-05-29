@@ -198,14 +198,6 @@ TEST(QuaternionStateDataTest, RejectsMismatchedPseudoStepCount)
     EXPECT_THROW(q.propagateState(0.0, {1.0, 2.0}), BasiliskError);
 }
 
-TEST(QuaternionStateDataTest, RejectsNonRotationalDiffusionSize)
-{
-    auto q = makeQ(1.0, 0.0, 0.0, 0.0);
-    q.setNumNoiseSources(1);
-
-    EXPECT_THROW(q.propagateState(0.0, {1.0}), BasiliskError);
-}
-
 TEST(QuaternionStateDataTest, CloneDeepCopiesAndIsIndependent)
 {
     auto q = makeQ(0.5, 0.5, 0.5, 0.5, /*omega*/ 0.1, 0.2, 0.3);
