@@ -1,0 +1,2 @@
+- Fixed Linux and Windows wheel builds by configuring Conan system package installation inside cibuildwheel's manylinux containers, disabling unused OpenCV Wayland support, and matching the PR Windows build's Ninja generator.
+- Distributed Linux and Windows wheels now have OpenCV and MuJoCo support included as well.
