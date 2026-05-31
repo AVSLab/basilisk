@@ -46,6 +46,78 @@ def test_ConfigureStopTime(stopTime1, stopTime2, StopCondition):
             )
 
 
+def test_ProgressBarChunksLongRuns():
+    """Check that enabled progress bars force periodic Python-side updates."""
+    sim_rate = 10.0  # [s]
+    stop_time = 100.0  # [s]
+
+    class FakeProgressBar:
+        def __init__(self, max_value, enable=False):
+            self.max_value = max_value
+            self.last_update = 0
+
+        def update(self, update_value):
+            self.last_update = min(update_value, self.max_value)
+
+        def markComplete(self):
+            self.last_update = self.max_value
+
+        def close(self):
+            pass
+
+    scSim = SimulationBaseClass.SimBaseClass()
+    dynProcess = scSim.CreateNewProcess("TestProcess")
+    simulationTimeStep = macros.sec2nano(sim_rate)
+    dynProcess.addTask(scSim.CreateNewTask("TestTask", simulationTimeStep))
+    scSim.InitializeSimulation()
+    scSim.SetProgressBar(True)
+    scSim.ConfigureStopTime(macros.sec2nano(stop_time))
+
+    with patch(
+        "Basilisk.utilities.SimulationBaseClass.SimulationProgressBar",
+        FakeProgressBar,
+    ):
+        with patch.object(
+            scSim.TotalSim,
+            "StepUntilStop",
+            wraps=scSim.TotalSim.StepUntilStop,
+        ) as stepUntilStop:
+            scSim.ExecuteSimulation()
+
+    assert stepUntilStop.call_count > 1
+    assert scSim.TotalSim.CurrentNanos == macros.sec2nano(stop_time)
+
+
+def test_SetProgressBarConfig():
+    """Check progress-bar configuration remains backward compatible."""
+    update_interval = macros.sec2nano(2.0)  # [ns]
+    scSim = SimulationBaseClass.SimBaseClass()
+
+    scSim.SetProgressBar(True)
+    assert scSim.showProgressBar is True
+    assert scSim.progressBarTargetUpdates == 1000
+    assert scSim.progressBarUpdateInterval is None
+
+    scSim.SetProgressBar(False)
+    assert scSim.showProgressBar is False
+
+    scSim.SetProgressBar(True, targetUpdates=10)
+    assert scSim.showProgressBar is True
+    assert scSim.progressBarTargetUpdates == 10
+    assert scSim.progressBarUpdateInterval is None
+
+    scSim.SetProgressBar(True, updateInterval=update_interval)
+    assert scSim.showProgressBar is True
+    assert scSim.progressBarUpdateInterval == update_interval
+
+    with pytest.raises(ValueError):
+        scSim.SetProgressBar(True, targetUpdates=10, updateInterval=update_interval)
+    with pytest.raises(ValueError):
+        scSim.SetProgressBar(True, targetUpdates=0)
+    with pytest.raises(ValueError):
+        scSim.SetProgressBar(True, updateInterval=0)
+
+
 @pytest.mark.parametrize(
     "creationTime,eventRate,expectedCallsExactRate,expectedCallsInexactRate",
     [
