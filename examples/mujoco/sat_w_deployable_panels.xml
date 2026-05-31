@@ -17,7 +17,7 @@
 
 	<worldbody>
 		<body name="hub">
-			<freejoint/>
+			<freejoint name="hub_free"/>
 			<geom name="hub_box" type="box" size="1 1 1" rgba="1 0 0 0.5" contype="1" conaffinity="2" density="200"/>
 
 			<body name="panel_p1" childclass="panel" pos="1 0 -1" xyaxes="0 -1 0 0 0 -1">
