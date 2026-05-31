@@ -575,12 +575,32 @@ class SimBaseClass:
         self.simulationFinished = False
         self.bskLogger = bskLogging.BSKLogger()
         self.showProgressBar = False
+        self.progressBarTargetUpdates = 1000  # [-]
+        self.progressBarUpdateInterval = None
         self.allModules = set()
 
-    def SetProgressBar(self, value):
+    def SetProgressBar(self, value, targetUpdates=None, updateInterval=None):
         """
         Shows a dynamic progress in the terminal while the simulation is executing.
+
+        Args:
+            value (bool): Flag indicating if progress should be displayed.
+            targetUpdates (int, optional): Approximate number of progress updates
+                to produce over the simulation run.
+            updateInterval (int, optional): Fixed progress update interval in
+                nanoseconds.
         """
+        if targetUpdates is not None and updateInterval is not None:
+            raise ValueError("Only specify targetUpdates or updateInterval, not both.")
+        if targetUpdates is not None:
+            if targetUpdates <= 0:
+                raise ValueError("targetUpdates must be positive.")
+            self.progressBarTargetUpdates = targetUpdates
+            self.progressBarUpdateInterval = None
+        if updateInterval is not None:
+            if updateInterval <= 0:
+                raise ValueError("updateInterval must be positive.")
+            self.progressBarUpdateInterval = int(updateInterval)
         self.showProgressBar = value
 
     def ShowExecutionOrder(self):
@@ -1894,12 +1914,30 @@ class SimBaseClass:
                 or self.TotalSim.NextTaskTime == self.StopTime
             )
 
+    def _progressBarUpdateInterval(self):
+        if not self.showProgressBar or self.StopTime <= self.TotalSim.CurrentNanos:
+            return None
+        if self.progressBarUpdateInterval is not None:
+            return self.progressBarUpdateInterval
+        remainingTime = self.StopTime - self.TotalSim.CurrentNanos
+        return max(1, math.ceil(remainingTime / self.progressBarTargetUpdates))
+
+    def _limitStopTimeForProgress(self, nextStopTime, nextProgressUpdateTime):
+        if nextProgressUpdateTime is None:
+            return nextStopTime
+        progressStopTime = max(nextProgressUpdateTime, self.TotalSim.NextTaskTime)
+        return min(nextStopTime, progressStopTime)
+
     def ExecuteSimulation(self):
         """
         run the simulation until the prescribed stop time or termination.
         """
 
         progressBar = SimulationProgressBar(self.StopTime, self.showProgressBar)
+        progressUpdateInterval = self._progressBarUpdateInterval()
+        nextProgressUpdateTime = None
+        if progressUpdateInterval is not None:
+            nextProgressUpdateTime = self.TotalSim.CurrentNanos + progressUpdateInterval
         while self.CheckStopCondition():
             # Check events
             for event in self.activeEvents():
@@ -1928,10 +1966,17 @@ class SimBaseClass:
             if self.StopCondition == ">=":
                 nextStopTime = max(nextStopTime, self.TotalSim.NextTaskTime)
 
+            nextStopTime = self._limitStopTimeForProgress(
+                nextStopTime, nextProgressUpdateTime
+            )
+
             # Execute the sim
             nextPriority = -1
             self.TotalSim.StepUntilStop(int(nextStopTime), nextPriority)
             progressBar.update(self.TotalSim.NextTaskTime)
+            if nextProgressUpdateTime is not None:
+                while nextProgressUpdateTime <= self.TotalSim.NextTaskTime:
+                    nextProgressUpdateTime += progressUpdateInterval
         self.terminate = False
         progressBar.markComplete()
         progressBar.close()
