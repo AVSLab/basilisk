@@ -41,5 +41,3 @@ MJScene& getScene() { return $self->getSpec().getScene(); }
 
 %include "architecture/msgPayloadDefC/SCMassPropsMsgPayload.h"
 struct SCMassPropsMsgPayload_C;
-%include "architecture/msgPayloadDefC/SCMassPropsMsgPayload.h"
-struct SCMassPropsMsgPayload_C;
