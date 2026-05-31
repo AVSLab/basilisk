@@ -37,6 +37,8 @@ from Basilisk.architecture import messaging
 
 %pythoncode "simulation/mujocoDynamics/_GeneralModuleFiles/pythonUtils.py"
 
+%import "simulation/dynamics/_GeneralModuleFiles/gravityModel.i"
+
 %include "sys_model.i"
 
 %include "MJInterpolators.swg"

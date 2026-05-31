@@ -22,19 +22,21 @@
 #include "MJFwdKinematics.h"
 #include "StatefulSysModel.h"
 
-#include "simulation/dynamics/_GeneralModuleFiles/svIntegratorRK4.h"
 #include "architecture/utilities/macroDefinitions.h"
+#include "simulation/dynamics/_GeneralModuleFiles/svIntegratorRK4.h"
 
+#include <cmath>
 #include <fstream>
 #include <functional>
 #include <iostream>
 #include <sstream>
-#include <vector>
-#include <cmath>
 #include <unordered_set>
+#include <vector>
+
+using MJBasilisk::detail::logAndThrow;
 
 MJScene::MJScene(std::string xml, const std::vector<std::string>& files)
-    : spec(*this, xml, files)
+  : spec(*this, xml, files)
 {
     this->AddFwdKinematicsToDynamicsTask(MJScene::FWD_KINEMATICS_PRIORITY);
     this->integrator = new svIntegratorRK4(this);
@@ -44,46 +46,54 @@ MJScene::MJScene(std::string xml, const std::vector<std::string>& files)
     mju_user_warning = MJBasilisk::detail::logMujocoWarning;
 }
 
-MJScene MJScene::fromFile(const std::string& fileName)
+MJScene
+MJScene::fromFile(const std::string& fileName)
 {
     std::stringstream os(std::stringstream::out);
     os << std::ifstream(fileName).rdbuf();
     return MJScene(os.str());
 }
 
-void MJScene::AddModelToDynamicsTask(SysModel* model, int32_t priority)
+void
+MJScene::AddModelToDynamicsTask(SysModel* model, int32_t priority)
 {
     this->dynamicsTask.AddNewObject(model, priority);
 }
 
-void MJScene::AddFwdKinematicsToDynamicsTask(int32_t priority)
+void
+MJScene::AddFwdKinematicsToDynamicsTask(int32_t priority)
 {
     this->ownedSysModel.emplace_back(std::make_unique<MJFwdKinematics>(*this));
-    this->ownedSysModel.back()->ModelTag = "FwdKinematics" + std::to_string(this->ownedSysModel.size()-1);
+    this->ownedSysModel.back()->ModelTag = "FwdKinematics" + std::to_string(this->ownedSysModel.size() - 1);
     this->AddModelToDynamicsTask(this->ownedSysModel.back().get(), priority);
 }
 
-void MJScene::AddModelToDiffusionDynamicsTask(SysModel* model, int32_t priority)
+void
+MJScene::AddModelToDiffusionDynamicsTask(SysModel* model, int32_t priority)
 {
     this->dynamicsDiffusionTask.AddNewObject(model, priority);
 }
 
-void MJScene::AddFwdKinematicsToDiffusionDynamicsTask(int32_t priority)
+void
+MJScene::AddFwdKinematicsToDiffusionDynamicsTask(int32_t priority)
 {
     this->ownedSysModel.emplace_back(std::make_unique<MJFwdKinematics>(*this));
-    this->ownedSysModel.back()->ModelTag = "FwdKinematics" + std::to_string(this->ownedSysModel.size()-1);
+    this->ownedSysModel.back()->ModelTag = "FwdKinematics" + std::to_string(this->ownedSysModel.size() - 1);
     this->AddModelToDiffusionDynamicsTask(this->ownedSysModel.back().get(), priority);
 }
 
-void MJScene::SelfInit()
+void
+MJScene::SelfInit()
 {
     this->dynamicsTask.SelfInitTaskList();
     this->dynamicsDiffusionTask.SelfInitTaskList();
 }
 
-void MJScene::Reset(uint64_t CurrentSimNanos)
+void
+MJScene::Reset(uint64_t CurrentSimNanos)
 {
     this->timeBefore = CurrentSimNanos * NANO2SEC;
+    this->firstDynamicsCall = true;
     this->initializeDynamics();
     this->dynamicsTask.TaskName = "Dynamics:" + this->ModelTag;
     this->dynamicsTask.ResetTaskList(CurrentSimNanos);
@@ -92,7 +102,8 @@ void MJScene::Reset(uint64_t CurrentSimNanos)
     this->writeOutputStateMessages(CurrentSimNanos);
 }
 
-void MJScene::initializeDynamics()
+void
+MJScene::initializeDynamics()
 {
     // A MuJoCo scene integrates a small, fixed set of bulk states regardless of
     // how many bodies or joints it contains: the whole position vector (qpos),
@@ -138,34 +149,33 @@ void MJScene::initializeDynamics()
 
     // Register the states of the models in the dynamics task
     std::unordered_set<StatefulSysModel*> alreadyRegisteredModels;
-    auto registerStatesOnSysModel = [this, &alreadyRegisteredModels](SysModel* sysModelPtr)
-    {
-        if (auto statefulSysModelPtr = dynamic_cast<StatefulSysModel*>(sysModelPtr))
-        {
+    auto registerStatesOnSysModel = [this, &alreadyRegisteredModels](SysModel* sysModelPtr) {
+        if (auto statefulSysModelPtr = dynamic_cast<StatefulSysModel*>(sysModelPtr)) {
             // Don't registerStates in a model twice!
-            if (alreadyRegisteredModels.count(statefulSysModelPtr) > 0) return;
+            if (alreadyRegisteredModels.count(statefulSysModelPtr) > 0)
+                return;
 
-            statefulSysModelPtr->registerStates(DynParamRegisterer(
-                this->dynManager,
-                sysModelPtr->ModelTag.empty() ? std::string("model") : sysModelPtr->ModelTag
-                + "_" + std::to_string(sysModelPtr->moduleID) + "_"
-            ));
+            statefulSysModelPtr->registerStates(
+              DynParamRegisterer(this->dynManager,
+                                 sysModelPtr->ModelTag.empty()
+                                   ? std::string("model")
+                                   : sysModelPtr->ModelTag + "_" + std::to_string(sysModelPtr->moduleID) + "_"));
 
             alreadyRegisteredModels.emplace(statefulSysModelPtr);
         }
     };
 
-    for (auto[_, sysModelPtr] : this->dynamicsTask.TaskModels)
-    {
+    for (auto [_, sysModelPtr] : this->dynamicsTask.TaskModels) {
         registerStatesOnSysModel(sysModelPtr);
     }
-    for (auto[_, sysModelPtr] : this->dynamicsDiffusionTask.TaskModels)
-    {
+    for (auto [_, sysModelPtr] : this->dynamicsDiffusionTask.TaskModels) {
         registerStatesOnSysModel(sysModelPtr);
     }
+
 }
 
-void MJScene::UpdateState(uint64_t CurrentSimNanos)
+void
+MJScene::UpdateState(uint64_t CurrentSimNanos)
 {
     this->integrateState(CurrentSimNanos);
     this->writeOutputStateMessages(CurrentSimNanos);
@@ -174,7 +184,8 @@ void MJScene::UpdateState(uint64_t CurrentSimNanos)
     }
 }
 
-void MJScene::equationsOfMotion(double t, double timeStep)
+void
+MJScene::equationsOfMotion(double t, double timeStep)
 {
     auto nanos = static_cast<uint64_t>(t * SEC2NANO);
 
@@ -183,6 +194,45 @@ void MJScene::equationsOfMotion(double t, double timeStep)
 
     // Copy data from Basilisk state objects to MuJoCo structs
     updateMujocoArraysFromStates();
+
+    // Zero free-joint translational pos/vel immediately after copying from Basilisk
+    // state, before ANY MuJoCo call (including mj_setConst).  This keeps the entire
+    // MuJoCo solve in a co-moving frame so there is no floating-point cancellation
+    // at orbital speeds.  Saved values are restored after the dynamics solve.
+    auto mujocoData = this->spec.getMujocoData();
+    struct SavedFrame
+    {
+        MJFreeJoint* fj;
+        Eigen::Vector3d r;
+        Eigen::Vector3d v;
+    };
+    std::vector<SavedFrame> savedFrames;
+    for (auto&& body : this->spec.getBodies()) {
+        if (body.isFree()) {
+            auto& fj = body.getFreeJoint();
+            savedFrames.push_back(
+                { &fj,
+                  fj.getTranslationalPositionFromData(mujocoData),
+                  fj.getTranslationalVelocityFromData(mujocoData) });
+            fj.setTranslationalPositionInData(mujocoData, Eigen::Vector3d::Zero());
+            fj.setTranslationalVelocityInData(mujocoData, Eigen::Vector3d::Zero());
+        }
+    }
+
+    // Keep MuJoCo's internal time in sync with the Basilisk simulation time so
+    // diagnostics and MuJoCo warnings report the correct timestamp.
+    this->spec.getMujocoData()->time = t;
+
+    // On the first dynamics call, zero the CTRL array to prevent NaN/uninitialized
+    // actuator commands from triggering instability at t=0.
+    if (this->firstDynamicsCall) {
+        auto m = this->spec.getMujocoModel();
+        auto d = this->spec.getMujocoData();
+        for (int i = 0; i < m->nu; ++i) {
+            d->ctrl[i] = 0.0;
+        }
+        this->firstDynamicsCall = false;
+    }
 
     for (auto&& body : this->spec.getBodies()) {
         // The mass of bodies is stored as a state, which may evolve in time.
@@ -211,10 +261,9 @@ void MJScene::equationsOfMotion(double t, double timeStep)
     // This is similar to how prescribing joint states should be followed
     // by running forward kinematics.
 
-    // If the kinematics have become stale while running the dynamics
-    // modules, we need to update them so that the accelerations
-    // calculations are correct. We do not need to write the messages
-    // though, since nothing needs them (only running mujoco now)
+    // If the kinematics became stale while running dynamics modules, refresh
+    // MuJoCo's cached position/velocity quantities before actuator, equality,
+    // and acceleration calculations read them.
     if (areKinematicsStale()) {
         mj_fwdPosition(this->spec.getMujocoModel(), this->spec.getMujocoData());
         mj_fwdVelocity(this->spec.getMujocoModel(), this->spec.getMujocoData());
@@ -235,10 +284,41 @@ void MJScene::equationsOfMotion(double t, double timeStep)
     mj_fwdAcceleration(this->spec.getMujocoModel(), this->spec.getMujocoData());
     mj_fwdConstraint(this->spec.getMujocoModel(), this->spec.getMujocoData());
 
+    // Restore translational velocities so mjData is consistent for any code
+    // that reads it after this call (e.g. extraEoMCall output messages).
+    for (auto& sf : savedFrames) {
+        sf.fj->setTranslationalPositionInData(mujocoData, sf.r);
+        sf.fj->setTranslationalVelocityInData(mujocoData, sf.v);
+    }
+
+    // Overwrite forward-kinematics messages in the true inertial frame so
+    // visualization/output readers do not see the temporary co-moving frame.
+    mj_fwdPosition(this->spec.getMujocoModel(), this->spec.getMujocoData());
+    mj_fwdVelocity(this->spec.getMujocoModel(), this->spec.getMujocoData());
+    this->writeFwdKinematicsMessages(nanos);
+
     // Sanity check the produced accelerations
     auto qacc = this->spec.getMujocoData()->qacc;
-    if (std::any_of(qacc, qacc + this->spec.getMujocoModel()->nv, [](mjtNum v){return std::isnan(v);})) {
-        this->bskLogger.bskError("Encountered NaN acceleration at time %gs in MJScene with ID: %d", t, moduleID);
+    if (std::any_of(qacc, qacc + this->spec.getMujocoModel()->nv, [](mjtNum v) { return std::isnan(v); })) {
+        logAndThrow<std::runtime_error>("Encountered NaN acceleration at time " + std::to_string(t) +
+                                        "s in MJScene with ID: " + std::to_string(moduleID));
+    }
+
+    // Replace the floating-frame translational acceleration for each free joint.
+    // In the co-moving frame, MuJoCo solves the dynamics with the body at the
+    // origin, so the qacc translation it produces is just floating-point noise
+    // from the co-moving cancellation. Keeping it would drive the RKF45
+    // step-size controller off the attitude PID timescale.  We therefore
+    // overwrite it with the true inertial translational acceleration: the sum
+    // of gravity accelerations from all of the body's gravity sources evaluated
+    // at the body's saved (un-zeroed) inertial position, or zero if the body
+    // has no gravity sources (the original zero-gravity behaviour).
+    for (auto& sf : savedFrames) {
+        size_t i = sf.fj->getQvelAdr();
+        Eigen::Vector3d gravAccel = sf.fj->getBody().computeGravityAt(sf.r);
+        mujocoData->qacc[i]     = gravAccel[0];
+        mujocoData->qacc[i + 1] = gravAccel[1];
+        mujocoData->qacc[i + 2] = gravAccel[2];
     }
 
     // The derivative of the bulk position is the bulk velocity.  The
@@ -265,15 +345,21 @@ void MJScene::equationsOfMotion(double t, double timeStep)
     }
 }
 
-void MJScene::equationsOfMotionDiffusion(double t, double timeStep)
+void
+MJScene::equationsOfMotionDiffusion(double t, double timeStep)
 {
     auto nanos = static_cast<uint64_t>(t * SEC2NANO);
     this->dynamicsDiffusionTask.ExecuteTaskList(nanos);
 }
 
-void MJScene::preIntegration(uint64_t callTime) { this->timeStep = diffNanoToSec(callTime, this->timeBeforeNanos); }
+void
+MJScene::preIntegration(uint64_t callTime)
+{
+    this->timeStep = diffNanoToSec(callTime, this->timeBeforeNanos);
+}
 
-void MJScene::postIntegration(uint64_t callTimeNanos)
+void
+MJScene::postIntegration(uint64_t callTimeNanos)
 {
     this->timeBefore = callTimeNanos * NANO2SEC;
     this->timeBeforeNanos = callTimeNanos;
@@ -282,22 +368,20 @@ void MJScene::postIntegration(uint64_t callTimeNanos)
     // Copy data from Basilisk state objects to MuJoCo structs
     updateMujocoArraysFromStates();
 
-    if (extraEoMCall)
-    {
+    if (extraEoMCall) {
         // If asked, this will call the equations of motion one last
         // time with the final/integrated state. This also calls
         // MJFwdKinematics::fwdKinematics
         equationsOfMotion(callTime, 0);
         equationsOfMotionDiffusion(callTime, 0);
-    }
-    else
-    {
+    } else {
         // Always forward the kinematics with the final state
         MJFwdKinematics::fwdKinematics(*this, static_cast<uint64_t>(callTime * SEC2NANO));
     }
 }
 
-void MJScene::writeFwdKinematicsMessages(uint64_t CurrentSimNanos)
+void
+MJScene::writeFwdKinematicsMessages(uint64_t CurrentSimNanos)
 {
     for (auto&& body : this->spec.getBodies()) {
         body.writeFwdKinematicsMessages(this->spec.getMujocoModel(), this->spec.getMujocoData(), CurrentSimNanos);
@@ -305,24 +389,23 @@ void MJScene::writeFwdKinematicsMessages(uint64_t CurrentSimNanos)
     this->forwardKinematicsStale = false;
 }
 
-void MJScene::saveToFile(std::string filename)
+void
+MJScene::saveToFile(std::string filename)
 {
     std::string suffix = ".mjb";
-    bool binary_file = filename.size() >= suffix.size() &&
-        filename.compare(filename.size() - suffix.size(), suffix.size(), suffix) == 0;
+    bool binary_file =
+      filename.size() >= suffix.size() && filename.compare(filename.size() - suffix.size(), suffix.size(), suffix) == 0;
 
-    if (binary_file)
-    {
+    if (binary_file) {
         mj_saveModel(this->getMujocoModel(), filename.c_str(), NULL, 0);
-    }
-    else
-    {
+    } else {
         char error[1024];
         mj_saveXML(this->spec.getMujocoSpec(), filename.c_str(), error, sizeof(error));
     }
 }
 
-StateData* MJScene::getActState()
+StateData*
+MJScene::getActState()
 {
     // Returns nullptr when the model has no actuator activation states (na == 0),
     // in which case no act state is created.  Callers must handle nullptr.
@@ -341,27 +424,30 @@ MJScene::printMujocoModelDebugInfo(const std::string& path)
     mj_printModel(this->getMujocoModel(), path.c_str());
 }
 
-std::vector<std::string> MJScene::getBodyNames() const
+std::vector<std::string>
+MJScene::getBodyNames() const
 {
     return this->spec.getBodyNames();
 }
 
-std::string MJScene::getBodyParentName(const std::string& bodyName) const
+std::string
+MJScene::getBodyParentName(const std::string& bodyName) const
 {
     return this->spec.getBodyParentName(bodyName);
 }
 
-std::vector<MJGeomInfo> MJScene::getGeomInfos() const
+std::vector<MJGeomInfo>
+MJScene::getGeomInfos() const
 {
     return this->spec.getGeomInfos();
 }
 
-MJBody& MJScene::getBody(const std::string& name)
+MJBody&
+MJScene::getBody(const std::string& name)
 {
     auto& bodies = this->spec.getBodies();
-    auto bodyPtr = std::find_if(std::begin(bodies),
-                                std::end(bodies),
-                                [&](auto&& obj) { return obj.getName() == name; });
+    auto bodyPtr =
+      std::find_if(std::begin(bodies), std::end(bodies), [&](auto&& obj) { return obj.getName() == name; });
 
     if (bodyPtr == std::end(bodies)) {
         this->bskLogger.bskError("Unknown body '%s' in MJScene", name.c_str());
@@ -369,10 +455,12 @@ MJBody& MJScene::getBody(const std::string& name)
     return *bodyPtr;
 }
 
-MJSite& MJScene::getSite(const std::string& name)
+MJSite&
+MJScene::getSite(const std::string& name)
 {
     for (auto&& body : this->spec.getBodies()) {
-        if (body.hasSite(name)) return body.getSite(name);
+        if (body.hasSite(name))
+            return body.getSite(name);
     }
     this->bskLogger.bskError("Unknown site '%s' in MJScene", name.c_str());
 }
@@ -381,9 +469,8 @@ MJEquality&
 MJScene::getEquality(const std::string& name)
 {
     auto& equalities = this->spec.getEqualities();
-    auto equalityPtr = std::find_if(std::begin(equalities),
-                                std::end(equalities),
-                                [&](auto&& obj) { return obj.getName() == name; });
+    auto equalityPtr =
+      std::find_if(std::begin(equalities), std::end(equalities), [&](auto&& obj) { return obj.getName() == name; });
 
     if (equalityPtr == std::end(equalities)) {
         this->bskLogger.bskError("Unknown equality '%s' in MJScene", name.c_str());
@@ -391,28 +478,32 @@ MJScene::getEquality(const std::string& name)
     return *equalityPtr;
 }
 
-MJSingleActuator& MJScene::getSingleActuator(const std::string& name)
+MJSingleActuator&
+MJScene::getSingleActuator(const std::string& name)
 {
     return this->spec.getActuator<MJSingleActuator>(name);
 }
 
-MJForceActuator& MJScene::getForceActuator(const std::string& name)
+MJForceActuator&
+MJScene::getForceActuator(const std::string& name)
 {
     return this->spec.getActuator<MJForceActuator>(name);
 }
 
-MJTorqueActuator& MJScene::getTorqueActuator(const std::string& name)
+MJTorqueActuator&
+MJScene::getTorqueActuator(const std::string& name)
 {
     return this->spec.getActuator<MJTorqueActuator>(name);
 }
 
-MJForceTorqueActuator& MJScene::getForceTorqueActuator(const std::string& name)
+MJForceTorqueActuator&
+MJScene::getForceTorqueActuator(const std::string& name)
 {
     return this->spec.getActuator<MJForceTorqueActuator>(name);
 }
 
-MJSingleActuator& MJScene::addJointSingleActuator(const std::string& name,
-                                             const std::string& joint)
+MJSingleActuator&
+MJScene::addJointSingleActuator(const std::string& name, const std::string& joint)
 {
     return this->spec.addJointSingleActuator(name, joint);
 }
@@ -423,9 +514,8 @@ MJScene::addJointSingleActuator(const std::string& name, const MJJoint& joint)
     return this->addJointSingleActuator(name, joint.getName());
 }
 
-MJSingleActuator& MJScene::addSingleActuator(const std::string& name,
-                                             const std::string& site,
-                                             const Eigen::Vector6d& gear)
+MJSingleActuator&
+MJScene::addSingleActuator(const std::string& name, const std::string& site, const Eigen::Vector6d& gear)
 {
     return this->spec.addSingleActuator(name, site, gear);
 }
@@ -436,17 +526,20 @@ MJScene::addSingleActuator(const std::string& name, const MJSite& site, const Ei
     return this->addSingleActuator(name, site.getName(), gear);
 }
 
-MJForceActuator& MJScene::addForceActuator(const std::string& name, const std::string& site)
+MJForceActuator&
+MJScene::addForceActuator(const std::string& name, const std::string& site)
 {
     return this->spec.addCompositeActuator<MJForceActuator>(name, site);
 }
 
-MJForceActuator & MJScene::addForceActuator(const std::string & name, const MJSite & site)
+MJForceActuator&
+MJScene::addForceActuator(const std::string& name, const MJSite& site)
 {
     return this->addForceActuator(name, site.getName());
 }
 
-MJTorqueActuator& MJScene::addTorqueActuator(const std::string& name, const std::string& site)
+MJTorqueActuator&
+MJScene::addTorqueActuator(const std::string& name, const std::string& site)
 {
     return this->spec.addCompositeActuator<MJTorqueActuator>(name, site);
 }
@@ -457,8 +550,8 @@ MJScene::addTorqueActuator(const std::string& name, const MJSite& site)
     return this->addTorqueActuator(name, site.getName());
 }
 
-MJForceTorqueActuator& MJScene::addForceTorqueActuator(const std::string& name,
-                                                       const std::string& site)
+MJForceTorqueActuator&
+MJScene::addForceTorqueActuator(const std::string& name, const std::string& site)
 {
     return this->spec.addCompositeActuator<MJForceTorqueActuator>(name, site);
 }
@@ -469,7 +562,8 @@ MJScene::addForceTorqueActuator(const std::string& name, const MJSite& site)
     return this->addForceTorqueActuator(name, site.getName());
 }
 
-void MJScene::updateMujocoArraysFromStates()
+void
+MJScene::updateMujocoArraysFromStates()
 {
     auto mujocoModel = this->getMujocoModel();
     auto mujocoData  = this->getMujocoData();

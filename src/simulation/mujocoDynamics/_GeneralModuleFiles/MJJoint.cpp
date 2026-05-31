@@ -181,3 +181,35 @@ void MJFreeJoint::setAttitudeRate(const Eigen::Vector3d& attitudeRate)
     qvel.middleRows(i + 3, 3) = attitudeRate;
     this->body.getSpec().getScene().markKinematicsAsStale();
 }
+
+Eigen::Vector3d MJFreeJoint::getTranslationalVelocityFromData(const mjData* data) const
+{
+    checkInitialized();
+    auto i = this->qvelAdr.value();
+    return {data->qvel[i], data->qvel[i + 1], data->qvel[i + 2]};
+}
+
+Eigen::Vector3d MJFreeJoint::getTranslationalPositionFromData(const mjData* data) const
+{
+    checkInitialized();
+    auto i = this->qposAdr.value();
+    return {data->qpos[i], data->qpos[i + 1], data->qpos[i + 2]};
+}
+
+void MJFreeJoint::setTranslationalVelocityInData(mjData* data, const Eigen::Vector3d& vel)
+{
+    checkInitialized();
+    auto i = this->qvelAdr.value();
+    data->qvel[i]     = vel[0];
+    data->qvel[i + 1] = vel[1];
+    data->qvel[i + 2] = vel[2];
+}
+
+void MJFreeJoint::setTranslationalPositionInData(mjData* data, const Eigen::Vector3d& pos)
+{
+    checkInitialized();
+    auto i = this->qposAdr.value();
+    data->qpos[i]     = pos[0];
+    data->qpos[i + 1] = pos[1];
+    data->qpos[i + 2] = pos[2];
+}

@@ -30,6 +30,7 @@
 #include "architecture/_GeneralModuleFiles/sys_model_task.h"
 #include "architecture/msgPayloadDefCpp/MJSceneStateMsgPayload.h"
 #include "simulation/dynamics/_GeneralModuleFiles/dynamicObject.h"
+#include "simulation/dynamics/_GeneralModuleFiles/gravityModel.h"
 
 #include <vector>
 
@@ -85,12 +86,14 @@ public:
     /**
      * @brief Retrieves the parent body name of a given body.
      *
-     * Returns an empty string if the body's parent is the worldbody
-     * or the body is not found. This method does not trigger model
-     * recompilation, so it can safely be called before initialization.
+     * Returns the string @c "world" if the body's direct parent is the
+     * worldbody. Throws @c std::invalid_argument if no body with the
+     * given name exists. This method does not trigger model recompilation,
+     * so it can safely be called before initialization.
      *
      * @param bodyName The name of the body.
-     * @return The parent body's name, or empty string if none.
+     * @return The parent body's name, or @c "world" if the parent is the worldbody.
+     * @throw std::invalid_argument If the body does not exist.
      */
     std::string getBodyParentName(const std::string& bodyName) const;
 
@@ -698,6 +701,7 @@ protected:
     MJSpec spec; ///< `MJSpec` (MuJoCo model specification wrapper) associated with this scene.
     bool mjModelConstStale = false; ///< Flag indicating stale model constants.
     bool forwardKinematicsStale = true; ///< Flag indicating stale forward kinematics.
+    bool firstDynamicsCall = true; ///< Flag to track if this is the first equationsOfMotion evaluation.
 
     SysModelTask dynamicsTask; ///< Task managing models involved in the dynamics of this scene.
     SysModelTask dynamicsDiffusionTask; ///< Task managing models involved in the diffusion stochastic dynamics of this scene.
