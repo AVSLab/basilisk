@@ -295,7 +295,7 @@ class MJBody : public MJObject<mjsBody>
      *
      * Gravity sources registered here are evaluated each EoM step at the
      * body's saved (un-zeroed) inertial position and their accelerations are
-     * summed into the translational `qacc` for the body's free joint —
+     * summed into the translational `qacc` for the body's free joint,
      * replacing the floating-frame translational noise that would otherwise
      * be zeroed.  This is the mechanism by which free-joint MuJoCo bodies
      * experience orbital gravity in the floating reference frame.
@@ -317,6 +317,9 @@ class MJBody : public MJObject<mjsBody>
      *                   inertial frame.
      */
     Eigen::Vector3d computeGravityAt(const Eigen::Vector3d& position_N) const;
+
+    /** Returns true if at least one gravity source has been added via addGravitySource(). */
+    bool hasGravitySources() const { return !this->gravitySources.empty(); }
 
   public:
     Message<SCMassPropsMsgPayload> massPropertiesOutMsg; ///< Message to output body mass properties.
