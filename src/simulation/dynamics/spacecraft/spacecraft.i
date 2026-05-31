@@ -39,7 +39,7 @@ from Basilisk.simulation.gravityEffector import GravBodyVector
 %include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.i"
 %include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
 %include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
-%include "simulation/dynamics/_GeneralModuleFiles/dynamicObject.h"
+%include "simulation/dynamics/_GeneralModuleFiles/dynamicObject.i"
 %import  "simulation/dynamics/gravityEffector/gravityEffector.i"
 %include "spacecraft.h"
 
