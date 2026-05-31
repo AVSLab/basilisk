@@ -28,25 +28,13 @@
 
 #include "MJActuator.h"
 #include "MJBody.h"
+#include "MJGeomInfo.h"
 #include "MJUtils.h"
 
 namespace Eigen
 {
 using Vector6d = Eigen::Matrix<double, 6, 1>;
 }
-
-/**
- * @brief Describes the geometry (shape, size, position, orientation, color) of a single
- * MuJoCo geom, suitable for visualization.
- */
-struct MJGeomInfo {
-    std::string bodyName; ///< Name of the body this geom belongs to.
-    int type;             ///< MuJoCo geom type (e.g. mjGEOM_BOX=6, mjGEOM_SPHERE=2, mjGEOM_CYLINDER=5, etc.).
-    std::vector<double> size;  ///< Size parameters (3 elements).
-    std::vector<double> pos;   ///< Position in body frame (3 elements).
-    std::vector<double> quat;  ///< Quaternion in body frame (4 elements: w, x, y, z).
-    std::vector<double> rgba;  ///< Color (4 elements, 0-1 range).
-};
 
 class MJScene;
 
@@ -191,11 +179,13 @@ public:
      * @brief Retrieves the parent body name of a given body.
      *
      * Uses the existing compiled model (without triggering recompilation)
-     * to look up the parent relationship. Returns an empty string if
-     * the body's parent is the worldbody or the body is not found.
+     * to look up the parent relationship. Returns the string @c "world"
+     * if the body's direct parent is the worldbody. Throws
+     * @c std::invalid_argument if no body with the given name exists.
      *
      * @param bodyName The name of the body.
-     * @return The parent body's name, or empty string if none.
+     * @return The parent body's name, or @c "world" if the parent is the worldbody.
+     * @throw std::invalid_argument If the body does not exist.
      */
     std::string getBodyParentName(const std::string& bodyName) const;
 

@@ -210,20 +210,21 @@ mjData* MJSpec::getMujocoData()
 std::vector<std::string> MJSpec::getBodyNames() const
 {
     std::vector<std::string> names;
-    for (auto&& body : this->bodies) {
-        names.push_back(body.getName());
-    }
+    names.reserve(this->bodies.size());
+    std::transform(std::begin(this->bodies), std::end(this->bodies), std::back_inserter(names),
+                   [](const MJBody& b) { return b.getName(); });
     return names;
 }
 
 std::string MJSpec::getBodyParentName(const std::string& bodyName) const
 {
-    // Use the existing model directly without recompile since the body structure 
-    // should not change after initial compilation
     int bodyId = mj_name2id(this->model.get(), mjOBJ_BODY, bodyName.c_str());
-    if (bodyId <= 0) return "";
+    if (bodyId < 0) {
+        MJBasilisk::detail::logAndThrow<std::invalid_argument>(
+            "Tried to get parent of unknown body '" + bodyName + "'.");
+    }
     int parentId = this->model->body_parentid[bodyId];
-    if (parentId == 0) return "";
+    if (parentId == 0) return "world";
     return std::string(this->model->names + this->model->name_bodyadr[parentId]);
 }
 
@@ -233,23 +234,17 @@ std::vector<MJGeomInfo> MJSpec::getGeomInfos() const
     auto m = this->model.get();
 
     for (int i = 0; i < m->ngeom; i++) {
-        MJGeomInfo info;
-
         int bodyId = m->geom_bodyid[i];
         if (bodyId == 0) continue;
+
+        auto& info = geoms.emplace_back();
         info.bodyName = std::string(m->names + m->name_bodyadr[bodyId]);
-
         info.type = m->geom_type[i];
-        info.size = {m->geom_size[i * 3], m->geom_size[i * 3 + 1], m->geom_size[i * 3 + 2]};
-        info.pos = {m->geom_pos[i * 3], m->geom_pos[i * 3 + 1], m->geom_pos[i * 3 + 2]};
-        info.quat = {m->geom_quat[i * 4], m->geom_quat[i * 4 + 1],
-                     m->geom_quat[i * 4 + 2], m->geom_quat[i * 4 + 3]};
-        info.rgba = {static_cast<double>(m->geom_rgba[i * 4]),
-                     static_cast<double>(m->geom_rgba[i * 4 + 1]),
-                     static_cast<double>(m->geom_rgba[i * 4 + 2]),
-                     static_cast<double>(m->geom_rgba[i * 4 + 3])};
-
-        geoms.push_back(std::move(info));
+        std::copy_n(m->geom_size + i * 3, 3, std::begin(info.size));
+        std::copy_n(m->geom_pos  + i * 3, 3, std::begin(info.pos));
+        std::copy_n(m->geom_quat + i * 4, 4, std::begin(info.quat));
+        std::transform(m->geom_rgba + i * 4, m->geom_rgba + (i + 1) * 4, std::begin(info.rgba),
+                       [](float v) { return static_cast<double>(v); });
     }
     return geoms;
 }
