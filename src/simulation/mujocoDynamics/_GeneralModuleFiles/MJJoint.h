@@ -280,6 +280,40 @@ public:
      * @todo Verify if this matches the expected attitude rate conventions with Basilisk.
      */
     void setAttitudeRate(const Eigen::Vector3d& attitudeRate);
+
+    /**
+     * @brief Reads the translational velocity directly from a MuJoCo data struct.
+     *
+     * Operates on mjData rather than the Basilisk state, so it reflects the
+     * value currently visible to MuJoCo's solver.
+     */
+    Eigen::Vector3d getTranslationalVelocityFromData(const mjData* data) const;
+
+    /**
+     * @brief Reads the translational position directly from a MuJoCo data struct.
+     *
+     * Operates on mjData rather than the Basilisk state, so it reflects the
+     * value currently visible to MuJoCo's solver.
+     */
+    Eigen::Vector3d getTranslationalPositionFromData(const mjData* data) const;
+
+    /**
+     * @brief Writes a translational velocity directly into a MuJoCo data struct.
+     *
+     * Operates on mjData rather than the Basilisk state.  Used to temporarily
+     * reframe the scene at the origin before running MuJoCo's dynamics, then
+     * restore the original value afterward.
+     */
+    void setTranslationalVelocityInData(mjData* data, const Eigen::Vector3d& vel);
+
+    /**
+     * @brief Writes a translational position directly into a MuJoCo data struct.
+     *
+     * Operates on mjData rather than the Basilisk state. Used to temporarily
+     * reframe the scene at the origin before running MuJoCo's dynamics, then
+     * restore the original value afterward.
+     */
+    void setTranslationalPositionInData(mjData* data, const Eigen::Vector3d& pos);
 };
 
 #endif

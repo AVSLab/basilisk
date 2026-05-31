@@ -301,6 +301,26 @@ void MJBody::updateConstrainedEqualityJoints()
     }
 }
 
+void MJBody::addGravitySource(std::shared_ptr<GravityModel> gravityModel)
+{
+    if (!gravityModel) return;
+    auto error = gravityModel->initializeParameters();
+    if (error) {
+        MJBasilisk::detail::logAndThrow<std::runtime_error>(
+            "In MJBody '" + this->getName() + "': while initializing gravity source, " + *error);
+    }
+    this->gravitySources.push_back(std::move(gravityModel));
+}
+
+Eigen::Vector3d MJBody::computeGravityAt(const Eigen::Vector3d& position_N) const
+{
+    Eigen::Vector3d accel = Eigen::Vector3d::Zero();
+    for (auto const& source : this->gravitySources) {
+        accel += source->computeField(position_N);
+    }
+    return accel;
+}
+
 void MJBody::addSite(std::string name, const Eigen::Vector3d& position, const Eigen::MRPd& attitude)
 {
 

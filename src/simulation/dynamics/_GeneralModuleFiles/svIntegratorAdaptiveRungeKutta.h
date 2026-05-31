@@ -408,7 +408,7 @@ template <size_t numberStages>
 void svIntegratorAdaptiveRungeKutta<numberStages>::setRelativeTolerance(std::string stateName,
                                                                         double relTol)
 {
-    this->stateSpecificRelTol.at(stateName) = relTol;
+    this->stateSpecificRelTol[stateName] = relTol;
 }
 
 template <size_t numberStages>
@@ -425,7 +425,7 @@ template <size_t numberStages>
 void svIntegratorAdaptiveRungeKutta<numberStages>::setAbsoluteTolerance(std::string stateName,
                                                                         double absTol)
 {
-    this->stateSpecificAbsTol.at(stateName) = absTol;
+    this->stateSpecificAbsTol[stateName] = absTol;
 }
 
 template <size_t numberStages>
@@ -444,8 +444,7 @@ void svIntegratorAdaptiveRungeKutta<numberStages>::setRelativeTolerance(
     std::string stateName,
     double relTol)
 {
-    this->dynObjectStateSpecificRelTol.at(
-        {this->findDynamicObjectIndex(dynamicObject), stateName}) = relTol;
+    this->dynObjectStateSpecificRelTol[{this->findDynamicObjectIndex(dynamicObject), stateName}] = relTol;
 }
 
 template <size_t numberStages>
@@ -466,8 +465,7 @@ void svIntegratorAdaptiveRungeKutta<numberStages>::setAbsoluteTolerance(
     std::string stateName,
     double absTol)
 {
-    this->dynObjectStateSpecificAbsTol.at(
-        {this->findDynamicObjectIndex(dynamicObject), stateName}) = absTol;
+    this->dynObjectStateSpecificAbsTol[{this->findDynamicObjectIndex(dynamicObject), stateName}] = absTol;
 }
 
 template <size_t numberStages>

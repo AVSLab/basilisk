@@ -22,6 +22,7 @@
 
 #include <iomanip>
 #include <iostream>
+#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -78,6 +79,19 @@ void logMujocoError(const char* err);
  * Meant to be used as an error callback for MuJoCo's ``mju_user_warning``.
 */
 void logMujocoWarning(const char* err);
+
+/**
+ * Logs an error via BSKLogger then throws an exception of type @p ExceptionType.
+ *
+ * @tparam ExceptionType Exception to throw (default: @c std::runtime_error).
+ * @param message        Human-readable error message.
+ */
+template <typename ExceptionType = std::runtime_error>
+[[noreturn]] inline void logAndThrow(const std::string& message)
+{
+    BSKLogger{}.bskError("%s", message.c_str());
+    throw ExceptionType(message);
+}
 
 } // namespace MJBasilisk::detail
 
