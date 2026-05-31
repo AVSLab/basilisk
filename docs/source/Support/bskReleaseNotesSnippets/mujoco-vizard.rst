@@ -1,0 +1,3 @@
+- Added :ref:`MJScene` Vizard support to :ref:`vizSupport`, including Python body and geom introspection, MuJoCo body hierarchy discovery, multiple spacecraft roots, and automatic Vizard model generation from supported MuJoCo geoms.
+- Expanded MuJoCo example Vizard coverage with a new :ref:`scenarioMJSceneVizard` example and visualization support for planets, thruster plumes, asteroid custom models, textured geometry, and deployed multi-body spacecraft.
+- Improved MuJoCo orbital free-body propagation and adaptive integrator handling for gravity-driven scenes, including reusable state-specific tolerance controls and safer Python/C++ integrator ownership transfer.
