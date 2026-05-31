@@ -32,7 +32,7 @@ from Basilisk.architecture.swig_common_model import *
 
 %include "sys_model.i"
 %include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.i"
-%include "simulation/dynamics/_GeneralModuleFiles/dynamicObject.h"
+%include "simulation/dynamics/_GeneralModuleFiles/dynamicObject.i"
 %include "spacecraftChargingDynamics.h"
 
 %include "architecture/msgPayloadDefC/CurrentMsgPayload.h"
