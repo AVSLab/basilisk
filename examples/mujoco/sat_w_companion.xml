@@ -1,0 +1,42 @@
+<mujoco>
+	<option gravity="0 0 0"/>
+
+	<asset>
+		<texture name="checker2" builtin="checker" width="10" height="10"/>
+		<material name="checker2" texture="checker2" />
+	</asset>
+
+	<default class="main">
+		<default class="companion_panel">
+			<geom type="box" pos="0 0 1" size="1 0.05 1" rgba="0 0.5 1 1" contype="1" conaffinity="2"/>
+		</default>
+	</default>
+
+	<worldbody>
+		<body name="companion_hub">
+			<freejoint name="companion_hub_free"/>
+			<geom name="companion_hub_box" type="box" size="1 1 1" rgba="0.2 0.2 1 0.8" contype="1" conaffinity="2" density="200"/>
+
+			<body name="companion_panel_p1" childclass="companion_panel" pos="1 0 -1" xyaxes="0 -1 0 0 0 -1">
+				<geom name="companion_panel_p1_box"/>
+				<joint name="companion_panel_p1_deploy" axis="1 0 0" range="0 90"/>
+			</body>
+
+			<body name="companion_panel_n1" childclass="companion_panel" pos="-1 0 -1" xyaxes="0 1 0 0 0 -1">
+				<geom name="companion_panel_n1_box"/>
+				<joint name="companion_panel_n1_deploy" axis="1 0 0" range="0 90"/>
+			</body>
+
+		</body>
+	</worldbody>
+
+	<actuator>
+		<motor name="companion_panel_p1_deploy" joint="companion_panel_p1_deploy"/>
+		<motor name="companion_panel_n1_deploy" joint="companion_panel_n1_deploy"/>
+	</actuator>
+
+	<keyframe>
+		<key qpos='0 0 0 1 0 0 0 1.571 1.571' ctrl="0 0"/>
+	</keyframe>
+
+</mujoco>
