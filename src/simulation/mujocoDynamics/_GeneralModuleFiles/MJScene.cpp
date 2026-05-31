@@ -171,7 +171,6 @@ MJScene::initializeDynamics()
     for (auto [_, sysModelPtr] : this->dynamicsDiffusionTask.TaskModels) {
         registerStatesOnSysModel(sysModelPtr);
     }
-
 }
 
 void
@@ -195,10 +194,15 @@ MJScene::equationsOfMotion(double t, double timeStep)
     // Copy data from Basilisk state objects to MuJoCo structs
     updateMujocoArraysFromStates();
 
-    // Zero free-joint translational pos/vel immediately after copying from Basilisk
-    // state, before ANY MuJoCo call (including mj_setConst).  This keeps the entire
-    // MuJoCo solve in a co-moving frame so there is no floating-point cancellation
-    // at orbital speeds.  Saved values are restored after the dynamics solve.
+    // For free bodies that use addGravitySource(), zero the translational
+    // pos/vel before ANY MuJoCo call so the entire solve runs in a co-moving
+    // frame, avoiding floating-point cancellation at orbital speeds.  Saved
+    // values are restored after the solve and the true gravitational
+    // acceleration is substituted back into qacc.
+    //
+    // Bodies that do NOT use addGravitySource() (e.g. those driven by
+    // NBodyGravity) are left at their true position so force models in the
+    // dynamics task evaluate gravity at the correct orbital location.
     auto mujocoData = this->spec.getMujocoData();
     struct SavedFrame
     {
@@ -208,7 +212,7 @@ MJScene::equationsOfMotion(double t, double timeStep)
     };
     std::vector<SavedFrame> savedFrames;
     for (auto&& body : this->spec.getBodies()) {
-        if (body.isFree()) {
+        if (body.isFree() && body.hasGravitySources()) {
             auto& fj = body.getFreeJoint();
             savedFrames.push_back(
                 { &fj,
@@ -304,16 +308,15 @@ MJScene::equationsOfMotion(double t, double timeStep)
                                         "s in MJScene with ID: " + std::to_string(moduleID));
     }
 
-    // Replace the floating-frame translational acceleration for each free joint.
-    // In the co-moving frame, MuJoCo solves the dynamics with the body at the
-    // origin, so the qacc translation it produces is just floating-point noise
-    // from the co-moving cancellation. Keeping it would drive the RKF45
-    // step-size controller off the attitude PID timescale.  We therefore
-    // overwrite it with the true inertial translational acceleration: the sum
-    // of gravity accelerations from all of the body's gravity sources evaluated
-    // at the body's saved (un-zeroed) inertial position, or zero if the body
-    // has no gravity sources (the original zero-gravity behaviour).
+    // Replace the floating-frame translational acceleration for each free joint
+    // that has gravity sources registered via addGravitySource().  In the
+    // co-moving frame MuJoCo solves with the body at the origin, so the qacc
+    // translation it produces is floating-point noise; overwrite it with the
+    // true inertial gravitational acceleration evaluated at the saved position.
+    // Bodies without addGravitySource sources are left untouched so that other
+    // force mechanisms (e.g. NBodyGravity) keep their computed qacc.
     for (auto& sf : savedFrames) {
+        if (!sf.fj->getBody().hasGravitySources()) continue;
         size_t i = sf.fj->getQvelAdr();
         Eigen::Vector3d gravAccel = sf.fj->getBody().computeGravityAt(sf.r);
         mujocoData->qacc[i]     = gravAccel[0];
