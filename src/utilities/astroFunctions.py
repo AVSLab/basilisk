@@ -23,7 +23,7 @@ from numpy import linalg as la
 from Basilisk.architecture import astroConstants
 
 # Reference solar flux at Earth [W/m^2]
-solarFluxEarth = 1372.5398
+solarFluxEarth = 1361.0
 
 # ------------------------------------------------------------------------------------------------------------------- #
 #                                           Normalize vector

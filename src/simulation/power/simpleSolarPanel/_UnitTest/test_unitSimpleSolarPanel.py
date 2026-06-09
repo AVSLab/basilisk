@@ -69,7 +69,7 @@ def test_simpleSolarPanel(show_plots, orbitDistance, eclipseValue, scAttitude):
         This is evaluated by testing the solar panel at both Earth (1AU) and Mars (1.52 AU) to see whether
         power production drops.
 
-    Nominal power generation when face-on towards the Sun at earth is set to be 1372.5398 W, which assumes
+    Nominal power generation when face-on towards the Sun at earth is set to be 1361.0 W, which assumes
     a 1m^2 solar panel that operates at perfect efficiency.
     """
 
