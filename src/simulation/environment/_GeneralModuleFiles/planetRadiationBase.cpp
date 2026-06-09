@@ -380,9 +380,9 @@ void PlanetRadiationBase::Reset(uint64_t CurrentSimNanos)
                 "PlanetRadiationBase (Reset): REQ_m must be positive, got %f for planet %d.",
                 REQ, i);
         }
-        if (RP < 0.0) {
+        if (RP < 0.0 && RP != -1.0) {
             this->bskLogger.bskError(
-                "PlanetRadiationBase (Reset): RP_m must be non-negative, got %f for planet %d.",
+                "PlanetRadiationBase (Reset): RP_m must be non-negative or -1 (sentinel), got %f for planet %d.",
                 RP, i);
         }
         if (RP > 0.0 && RP != REQ) {

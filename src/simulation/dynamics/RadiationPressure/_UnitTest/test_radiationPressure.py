@@ -117,7 +117,7 @@ def unitRadiationPressure(show_plots, modelType, eclipseOn):
             srpDynEffector.addTorqueLookupBEntry(handler.torqueBLookup[i, :])
             srpDynEffector.addSHatLookupBEntry(handler.sHatBLookup[i, :])
         srpDynEffector2.setUseCannonballModel()
-        srpDynEffector2.area = 182018.072141393 #set to give a force of 1N at 1AU to make spherical table generation easy
+        srpDynEffector2.area = 183561.3874602008  # [m^2] set to give a force of 1N at 1AU to make spherical table generation easy
         srpDynEffector2.coefficientReflection = 1.2
         r_N = [np.sin(np.pi/4.)*np.cos(np.pi/4.)*10.*om.AU*1000., np.sin(np.pi/4.)*np.sin(np.pi/4.)*10.*om.AU*1000., np.cos(np.pi/4.)*10.*om.AU*1000.]  # [m]
         sun_r_N = [0., 0., 0.]  # [m]
@@ -170,7 +170,7 @@ def unitRadiationPressure(show_plots, modelType, eclipseOn):
     errTol = 1E-12
     if modelType == "cannonball":
         truthForceExternal_B = [0, 0, 0]
-        truthForceExternal_N = [-2.44694525395e-06, -1.94212316004e-05, -8.42121070088e-06]
+        truthForceExternal_N = [-2.4263722557462318e-06, -1.9257945167191118e-05, -8.3504083188649253e-06]
         truthTorqueExternalPntB_B = [0, 0, 0]
         testFailCount, testMessages = unitTestSupport.compareVector(truthForceExternal_B,
                                                                     srpDataForce_B[1,1:],
