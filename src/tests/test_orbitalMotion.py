@@ -231,7 +231,7 @@ def test_orbitalMotion(show_plots):
     m = 500
     sunvec = np.array([1.2, 1.2, 1.2])
     arvec = orbitalMotion.solarRad(A, m, sunvec)
-    arvecCValue = np.array([-4.77259E-12, -4.77259E-12, -4.77259E-12])
+    arvecCValue = np.array([-4.732468E-12, -4.732468E-12, -4.732468E-12])
     e_count += arrayEqualCheck(arvec, arvecCValue, 'solarRad')
 
     # Function clMeanOscMap

@@ -905,7 +905,7 @@ void solarRad(double A, double m, double *sunvec, double *arvec)
     double sundist;
 
     /* Solar Radiation Flux */
-    flux = 1372.5398;           /* Watts/m^2 */
+    flux = 1361.0;   /* Watts/m^2 */
 
     /* Speed of light */
     c = 299792458.;             /* m/s */

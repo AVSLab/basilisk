@@ -1020,7 +1020,7 @@ def solarRad(A: float, m: float, sunvec: np.ndarray) -> np.ndarray:
                components of the sunvec input vector.
     """
     # Solar Radiation Flux #
-    flux = 1372.5398
+    flux = 1361.0
 
     # Speed of light #
     c = 299792458.
