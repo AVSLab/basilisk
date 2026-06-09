@@ -85,10 +85,10 @@ Module Assumptions and Limitations
 - Earth is treated as a Lambertian sphere (no specular component).
 - IR flux uses a constant global mean OLR; no seasonal or geographic variation unless CERES data
   [VielbergKusche2020]_, [Wielicki1996]_ are provided for the albedo channel.
-- No penumbra / partial shadow model is applied to individual patches.
+- A smooth penumbra / partial shadow model is applied to individual patches.
 - Eclipse modeling is enabled by calling ``setEclipseCase(True)``.  When enabled, the base-class
-  ``isPatchEclipsed()`` applies a Knocke penumbra model per patch; albedo contributions from
-  eclipsed patches are zeroed out.  IR flux is unaffected by eclipse.
+  ``computeIlluminationAtdA()`` applies a smooth illumination factor (0-1) per patch; albedo
+  contributions are scaled by this factor.  IR flux is unaffected by eclipse.
 
 User Guide
 ----------
