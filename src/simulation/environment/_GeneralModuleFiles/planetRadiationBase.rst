@@ -1,0 +1,97 @@
+
+Executive Summary
+-----------------
+Abstract Basilisk base class for modules that compute planetary radiation using the
+Knocke et al. (1988) [Knocke1988]_ patch model.
+
+``PlanetRadiationBase`` owns the full simulation loop:
+
+* message validation and reading (spacecraft, Sun, per-planet)
+* authalic planet radius computation from WGS-84/spheroid parameters
+* patch grid initialisation and distance-corrected solar flux
+* per-timestep call to ``evaluatePlanet()`` for every registered planet
+
+Derived classes implement a set of **virtual hooks** rather than overriding
+``Reset()`` / ``UpdateState()`` directly.
+
+User Guide
+-----------------------
+Register planets by calling ``addPlanetEntry(msg, gridConfig)`` from a derived
+``addPlanet*()`` method.  The grid config may contain sentinel values (e.g.
+``REQ_m = -1``, ``albedoAvg = -1``, ``nLat = 0``) that
+``resolvePlanetEntry()`` fills in during ``Reset()``.
+
+.. list-table:: Virtual hooks
+
+    * - ``evaluatePlanet(scMsg, sunMsg, planetMsg, entry, S_sun, nanos)``
+      - **pure virtual**
+      - Called once per planet per timestep.  Call ``entry.grid.computePatches()``
+        at the appropriate observer position and accumulate results.
+    * - ``resolvePlanetEntry(planetMsg, grid, idx)``
+      - optional
+      - Called in ``Reset()`` after reading the planet message.  Fill in
+        ``grid.REQ_m``, ``grid.RP_m``, ``grid.albedoAvg``, ``grid.nLat``,
+        ``grid.nLon`` from the planet name.  Default: no-op (ERM uses scalar
+        config members set before ``Reset()``).
+    * - ``onUpdateBegin(scMsg, sunMsg, nanos)``
+      - optional
+      - Called before the planet loop.  Clear per-timestep accumulators or
+        cache spacecraft attitude.  Default: no-op.
+    * - ``onUpdateEnd(nanos)``
+      - optional
+      - Called after the planet loop.  Write output messages.  Default: no-op.
+    * - ``customReset(nanos)``
+      - optional
+      - Called at the end of ``Reset()``.  Validate instrument configuration
+        or size accumulator vectors.  Default: no-op.
+    * - ``isPatchEclipsed(patch, scMsg, sunMsg)``
+      - optional
+      - Determine if a patch is in eclipse (umbra/penumbra).  Default implementation
+        applies the Knocke penumbra model when ``getEclipseCase()=True``; returns ``False``
+        immediately when ``getEclipseCase()=False``.  Override to customise eclipse logic.
+
+Single-planet backward-compatibility path
+------------------------------------------
+If no planets are registered via ``addPlanetEntry()`` at ``Reset()`` time
+(i.e. ``planets_`` is empty), the base class automatically builds one entry
+from the public scalar config members (``nLat``, ``nLon``, ``irFluxMean``,
+``albedoAvg``, ``useAlbedoData``, ``REQ_m``, ``RP_m``) and the public
+``planetInMsg`` functor.  This means ``EarthRadiationModel`` users need no
+code changes.
+
+Current derived classes
+-----------------------
+* :ref:`earthRadiationModel` — ERP flux and flux-weighted direction vectors.
+  Uses the backward-compat single-planet path; overrides
+  ``evaluatePlanet()``, ``onUpdateBegin()``, and ``onUpdateEnd()``.
+* :ref:`albedo` — per-instrument albedo ratio and flux for multiple planets
+  and multiple instruments.  Registers planets via ``addPlanetEntry()`` inside
+  ``addPlanetandAlbedoAverageModel()`` / ``addPlanetandAlbedoDataModel()``;
+  overrides all five hooks.
+
+Known limitations
+-----------------
+``EarthRadiationModel`` has no Python-facing ``addPlanetandAlbedoAverageModel()``-style
+API.  Multi-planet support is wired in the base class (the ``planets_`` loop runs
+for all registered entries), but the user must call ``addPlanetEntry()`` directly
+from C++ or a future Python-facing wrapper is needed.
+
+Message Connection Descriptions
+--------------------------------
+The following messages are defined in ``PlanetRadiationBase`` and inherited by all
+derived classes.
+
+.. bsk-module-io:: Module I/O Messages
+    :caption: Module I/O Messages
+
+    input spacecraftStateInMsg SCStatesMsgPayload
+      spacecraft position and attitude in inertial frame N
+    input planetInMsg SpicePlanetStateMsgPayload
+      single-planet state (ERM backward-compat path only)
+    input sunPositionInMsg SpicePlanetStateMsgPayload
+      Sun position used for solar flux distance correction and patch illumination
+
+References
+----------
+
+.. [Knocke1988] Knocke, P. C., Ries, J. C., and Tapley, B. D., *Earth Radiation Pressure Effects on Satellites*, AIAA/AAS Astrodynamics Conference, 1988. DOI: `10.2514/6.1988-4292 <https://doi.org/10.2514/6.1988-4292>`_
