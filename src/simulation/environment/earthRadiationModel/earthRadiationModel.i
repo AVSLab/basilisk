@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2020, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2026, PIC4SeR & AVS Lab, Politecnico di Torino & Argotec S.R.L., University of Colorado Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -14,15 +14,14 @@
  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
- */
-%module albedo
+*/
+%module earthRadiationModel
 
 %include "architecture/utilities/bskException.swg"
 %default_bsk_exception();
 
 %{
-   #include "albedo.h"
+   #include "earthRadiationModel.h"
 %}
 
 %pythoncode %{
@@ -30,24 +29,18 @@ from Basilisk.architecture.swig_common_model import *
 %}
 
 %include "std_string.i"
-%include "std_vector.i"
-%include "swig_eigen.i"
-%include "swig_conly_data.i"
 %include "sys_model.i"
-
-// Explicitly instantiate std::vector for PatchResult
-namespace std {
-    %template(VectorPatchResult) vector<PatchResult>;
-}
-
 %include "simulation/environment/_GeneralModuleFiles/planetRadiationBase.h"
-%include "albedo.h"
-%include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
-struct SpicePlanetStateMsg_C;
-%include "architecture/msgPayloadDefC/AlbedoMsgPayload.h"
-struct AlbedoMsg_C;
+%include "earthRadiationModel.h"
+%include "swig_conly_data.i"
+%include "std_vector.i"
+
+%include "architecture/msgPayloadDefC/EarthRadiationMsgPayload.h"
+struct EarthRadiationMsg_C;
 %include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 struct SCStatesMsg_C;
+%include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+struct SpicePlanetStateMsg_C;
 
 %pythoncode %{
 import sys

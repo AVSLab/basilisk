@@ -113,6 +113,7 @@ class BSKLogger
 %extend BSKLogger {
     void bskError(const char* info) {
         $self->bskLog(BSK_ERROR, "%s", info);
+        throw BasiliskError(info);
     }
 }
 #endif
