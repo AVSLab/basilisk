@@ -50,7 +50,7 @@
 #define SPEED_LIGHT     299792458 /* [m/s] convert astronomical unit to kilometers */
 #endif
 #ifndef SOLAR_FLUX_EARTH
-#define SOLAR_FLUX_EARTH    1372.5398 /* [W/m^2] solar flux at earth */
+#define SOLAR_FLUX_EARTH    1361.0 /* [W/m^2] solar flux at earth */
 #endif
 #ifndef Q_CHARGE
 #define Q_CHARGE    1.602176634e-19 /* [C] elementary charge */

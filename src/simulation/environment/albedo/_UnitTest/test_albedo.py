@@ -49,7 +49,7 @@ path = os.path.dirname(os.path.abspath(__file__))
     "modelType", ["ALBEDO_AVG_IMPLICIT", "ALBEDO_AVG_EXPLICIT", "ALBEDO_DATA"]
 )
 @pytest.mark.parametrize("useEclipse", [True, False])
-def test_unitAlbedo(show_plots, planetCase, modelType, useEclipse):
+def test_unitAlbedo(planetCase, modelType, useEclipse):
     """
     **Validation Test Description**
 
@@ -74,12 +74,12 @@ def test_unitAlbedo(show_plots, planetCase, modelType, useEclipse):
     """
     # each test method requires a single assert method to be called
     [testResults, testMessage] = unitAlbedo(
-        show_plots, planetCase, modelType, useEclipse
+        planetCase, modelType, useEclipse
     )
     assert testResults < 1, testMessage
 
 
-def unitAlbedo(show_plots, planetCase, modelType, useEclipse):
+def unitAlbedo(planetCase, modelType, useEclipse):
     __tracebackhide__ = True
     testFailCount = 0
     testMessages = []
@@ -121,7 +121,8 @@ def unitAlbedo(show_plots, planetCase, modelType, useEclipse):
             albModule.addPlanetandAlbedoAverageModel(planetInMsg)
 
     if useEclipse:
-        albModule.eclipseCase = True
+        albModule.bskLogger.setLogLevel(bskLogging.BSK_ERROR)
+        albModule.setEclipseCase(True)
     # Create dummy sun message
     sunPositionMsg = messaging.SpicePlanetStateMsgPayload()
 
@@ -265,6 +266,454 @@ def test_albedo_invalid_file(tmp_path):
     assert True
 
 
+def _run_albedo_at_planet_offset(planet_offset_m):
+    """
+    Run Albedo (ALBEDO_AVG_EXPLICIT, earth, eclipseCase=True) with the whole
+    scene translated by ``planet_offset_m``.  Returns ``albedoAtInstrument``.
+
+    Translating planet + Sun + SC by the same vector leaves every relative
+    distance and angle unchanged, so the eclipse-model output must be
+    identical regardless of the offset.  This invariance is broken when
+    ``isPatchEclipsed()`` uses the inertial Sun position instead of
+    the planet-relative Sun vector ``r_SP_N = r_SN_N - r_PN_N``.
+    """
+    offset = np.asarray(planet_offset_m, dtype=float)
+
+    sim = SimulationBaseClass.SimBaseClass()
+    proc = sim.CreateNewProcess("testProc_p1")
+    proc.addTask(sim.CreateNewTask("testTask_p1", macros.sec2nano(1.0)))
+
+    planetInMsg = messaging.SpicePlanetStateMsg()
+
+    albModule = albedo.Albedo()
+    albModule.ModelTag = "Albedo_p1"
+    # ALBEDO_AVG_EXPLICIT with fine grid — same parameters as test_unitAlbedo
+    albModule.addPlanetandAlbedoAverageModel(planetInMsg, 0.5, 200, 400)
+    albModule.setEclipseCase(True)
+
+    # Sun at -x relative to planet, shifted by offset
+    sun_pos = offset + np.array([-om.AU * 1000.0, 0.0, 0.0])
+    sunMsg = messaging.SpicePlanetStateMsgPayload()
+    sunMsg.PositionVector = sun_pos.tolist()
+    sunInMsg = messaging.SpicePlanetStateMsg().write(sunMsg)
+    albModule.sunPositionInMsg.subscribeTo(sunInMsg)
+
+    # Planet at offset
+    planetMsg = messaging.SpicePlanetStateMsgPayload()
+    planetMsg.PositionVector = offset.tolist()
+    planetMsg.PlanetName = "earth"
+    planetMsg.J20002Pfix = np.identity(3)
+    planetInMsg.write(planetMsg)
+
+    # SC at alpha=71° from x, altitude 6000 km above planet equatorial radius
+    req_m = om.REQ_EARTH * 1e3          # km → m
+    rSC_m = req_m + 6000e3
+    alpha = 71.0 * macros.D2R
+    sc_pos = offset + np.array([rSC_m * np.cos(alpha), rSC_m * np.sin(alpha), 0.0])
+    scMsg = messaging.SCStatesMsgPayload()
+    scMsg.r_BN_N = sc_pos.tolist()
+    scMsg.sigma_BN = [0.0, 0.0, 0.0]
+    scInMsg = messaging.SCStatesMsg().write(scMsg)
+    albModule.spacecraftStateInMsg.subscribeTo(scInMsg)
+
+    cfg = albedo.instConfig_t()
+    cfg.fov = 80.0 * macros.D2R
+    cfg.nHat_B = np.array([-np.cos(alpha), -np.sin(alpha), 0.0])
+    cfg.r_IB_B = np.array([0.0, 0.0, 0.0])
+    albModule.addInstrumentConfig(cfg)
+
+    sim.AddModelToTask("testTask_p1", albModule)
+    dataLog = albModule.albOutMsgs[0].recorder()
+    sim.AddModelToTask("testTask_p1", dataLog)
+
+    sim.InitializeSimulation()
+    sim.TotalSim.SingleStepProcesses()
+    return float(dataLog.albedoAtInstrument[0])
+
+
+def test_albedo_eclipse_uses_planet_relative_sun_vector():
+    """
+    ``isPatchEclipsed()`` must use the planet-relative Sun
+    vector ``r_SP_N = r_SN_N - r_PN_N``, not the inertial Sun position.
+
+    A rigid translation of the whole scene (planet + Sun + SC) leaves every
+    relative distance and angle unchanged.  Eclipse output must therefore be
+    identical regardless of where the scene is placed in inertial space.
+
+    ``r_SN_N`` was passed directly to the penumbra geometry instead of
+    ``r_SP_N``.  With the planet offset by 1e12 m (~6.7 AU), the inertial Sun
+    distance grows from 1 AU to ~7.7 AU.
+    """
+    alb_origin = _run_albedo_at_planet_offset([0.0, 0.0, 0.0])
+    alb_offset = _run_albedo_at_planet_offset([1e12, 0.0, 0.0])
+
+    assert alb_origin > 0.0, "reference albedo at origin must be positive"
+
+    rel_err = abs(alb_origin - alb_offset) / alb_origin
+    assert rel_err < 1e-10, (
+        f"Eclipse output is not translation-invariant: "
+        f"origin={alb_origin:.15e}, offset={alb_offset:.15e}, "
+        f"rel_err={rel_err:.2e}.  "
+        f"isPatchEclipsed() likely used r_SN_N instead of r_SP_N."
+    )
+
+
+def _albedo_run_earth(nHat_B, fov_rad, *,
+                      altitudeRateLimit=-1.0,
+                      illuminationFactorAtdA=1.0,
+                      ALB_avg=0.5, numLat=200, numLon=400,
+                      logLevel=None):
+    """
+    Run Albedo (ALBEDO_AVG_EXPLICIT, earth, eclipseCase=False) for one step.
+
+    Standard geometry:
+      Earth at origin, Sun at -x AU, SC at (REQ+6000 km)·[cos 71°, sin 71°, 0].
+
+    logLevel: optional bskLogging level (e.g. BSK_ERROR) to suppress expected warnings.
+
+    Returns the recorder attached to albOutMsgs[0].
+    """
+    bskLogging.setDefaultLogLevel(logLevel)
+    sim = SimulationBaseClass.SimBaseClass()
+    proc = sim.CreateNewProcess("tp_a")
+    proc.addTask(sim.CreateNewTask("tt_a", macros.sec2nano(1.0)))
+
+    planetInMsg = messaging.SpicePlanetStateMsg()
+
+    albModule = albedo.Albedo()
+    albModule.ModelTag = "alb_helper"
+    albModule.addPlanetandAlbedoAverageModel(planetInMsg, ALB_avg, numLat, numLon)
+    albModule.altitudeRateLimit      = altitudeRateLimit
+    albModule.illuminationFactorAtdA = illuminationFactorAtdA
+
+    sunPayload = messaging.SpicePlanetStateMsgPayload()
+    sunPayload.PositionVector = [-om.AU * 1000.0, 0.0, 0.0]
+    sunInMsg = messaging.SpicePlanetStateMsg().write(sunPayload)  # keep alive
+    albModule.sunPositionInMsg.subscribeTo(sunInMsg)
+
+    gravFactory = simIncludeGravBody.gravBodyFactory()
+    planet = gravFactory.createEarth()
+    req = planet.radEquator
+    planetPayload = messaging.SpicePlanetStateMsgPayload()
+    planetPayload.PositionVector = [0.0, 0.0, 0.0]
+    planetPayload.PlanetName     = "earth"
+    planetPayload.J20002Pfix     = np.identity(3)
+    planetInMsg.write(planetPayload)
+
+    rSC   = req + 6000.0 * 1000.0
+    alpha = 71.0 * macros.D2R
+    scPayload = messaging.SCStatesMsgPayload()
+    scPayload.r_BN_N   = np.dot(rSC, [np.cos(alpha), np.sin(alpha), 0.0])
+    scPayload.sigma_BN = [0.0, 0.0, 0.0]
+    scInMsg = messaging.SCStatesMsg().write(scPayload)           # keep alive
+    albModule.spacecraftStateInMsg.subscribeTo(scInMsg)
+
+    cfg = albedo.instConfig_t()
+    cfg.fov    = fov_rad
+    cfg.nHat_B = np.asarray(nHat_B, dtype=float)
+    cfg.r_IB_B = np.zeros(3)
+    albModule.addInstrumentConfig(cfg)
+
+    sim.AddModelToTask("tt_a", albModule)
+    log = albModule.albOutMsgs[0].recorder()
+    sim.AddModelToTask("tt_a", log)
+    sim.InitializeSimulation()
+    sim.TotalSim.SingleStepProcesses()
+    return log
+
+
+def test_albedo_altitudeRateLimit_suppresses_output():
+    """
+    Setting altitudeRateLimit=0 must zero albedo for any satellite above the surface.
+
+    The altitude/radius ratio for the standard 6000 km orbit is ~0.94, which exceeds
+    a limit of 0.  The module must skip that planet and write 0 for all output fields.
+    """
+    alpha = 71.0 * macros.D2R
+    nHat  = np.array([-np.cos(alpha), -np.sin(alpha), 0.0])
+    fov   = 80.0 * macros.D2R
+
+    log_free    = _albedo_run_earth(nHat, fov, logLevel=bskLogging.BSK_WARNING)
+    log_limited = _albedo_run_earth(nHat, fov, altitudeRateLimit=0.0,
+                                    logLevel=bskLogging.BSK_ERROR)
+
+    assert log_free.albedoAtInstrument[0] > 0.0, "baseline albedo must be positive"
+    assert log_limited.albedoAtInstrument[0] == 0.0, (
+        f"altitudeRateLimit=0 must suppress albedo; "
+        f"got {log_limited.albedoAtInstrument[0]:.4e}"
+    )
+
+
+def test_albedo_instConfig_defaults_fallback():
+    """
+    Default instConfig_t (fov<0, nHat_B=zeros) must use module-level defaults.
+
+    The test overrides albModule.nHat_B_default and albModule.fov_default to
+    match a useful geometry, adds a default-constructed instConfig_t, and
+    verifies that the result is identical to an explicit config with the same
+    values.
+    """
+    alpha       = 71.0 * macros.D2R
+    useful_nHat = np.array([-np.cos(alpha), -np.sin(alpha), 0.0])
+    useful_fov  = 80.0 * macros.D2R
+
+    # ---- reference: explicit instConfig_t ----
+    log_explicit = _albedo_run_earth(useful_nHat, useful_fov,
+                                     logLevel=bskLogging.BSK_WARNING)
+    alb_explicit = log_explicit.albedoAtInstrument[0]
+    assert alb_explicit > 0.0, "reference albedo must be positive"
+
+    # ---- default instConfig_t with overridden module-level defaults ----
+    sim = SimulationBaseClass.SimBaseClass()
+    proc = sim.CreateNewProcess("tp_d")
+    proc.addTask(sim.CreateNewTask("tt_d", macros.sec2nano(1.0)))
+
+    planetInMsg = messaging.SpicePlanetStateMsg()
+    albModule = albedo.Albedo()
+    albModule.ModelTag = "alb_defaults"
+    albModule.addPlanetandAlbedoAverageModel(planetInMsg, 0.5, 200, 400)
+    # Override module-level defaults to match the reference config
+    albModule.nHat_B_default = useful_nHat
+    albModule.fov_default    = useful_fov
+    # Default-constructed instConfig_t: fov=-1, nHat_B=zeros → triggers fallback
+    albModule.bskLogger.setLogLevel(bskLogging.BSK_ERROR)
+    albModule.addInstrumentConfig(albedo.instConfig_t())
+
+    sunPayload = messaging.SpicePlanetStateMsgPayload()
+    sunPayload.PositionVector = [-om.AU * 1000.0, 0.0, 0.0]
+    sunInMsg_d = messaging.SpicePlanetStateMsg().write(sunPayload)  # keep alive
+    albModule.sunPositionInMsg.subscribeTo(sunInMsg_d)
+
+    gravFactory = simIncludeGravBody.gravBodyFactory()
+    planet = gravFactory.createEarth()
+    req = planet.radEquator
+    planetPayload = messaging.SpicePlanetStateMsgPayload()
+    planetPayload.PositionVector = [0.0, 0.0, 0.0]
+    planetPayload.PlanetName     = "earth"
+    planetPayload.J20002Pfix     = np.identity(3)
+    planetInMsg.write(planetPayload)
+
+    rSC   = req + 6000.0 * 1000.0
+    scPayload = messaging.SCStatesMsgPayload()
+    scPayload.r_BN_N   = np.dot(rSC, [np.cos(alpha), np.sin(alpha), 0.0])
+    scPayload.sigma_BN = [0.0, 0.0, 0.0]
+    scInMsg_d = messaging.SCStatesMsg().write(scPayload)           # keep alive
+    albModule.spacecraftStateInMsg.subscribeTo(scInMsg_d)
+
+    sim.AddModelToTask("tt_d", albModule)
+    log_default = albModule.albOutMsgs[0].recorder()
+    sim.AddModelToTask("tt_d", log_default)
+    sim.InitializeSimulation()
+    sim.TotalSim.SingleStepProcesses()
+
+    assert log_default.albedoAtInstrument[0] == pytest.approx(alb_explicit, rel=1e-10), (
+        "default instConfig_t with overridden module defaults must match explicit config"
+    )
+
+
+def test_albedo_nHat_B_normalization():
+    """
+    Non-unit nHat_B must be normalised; output must be identical to the unit version.
+    """
+    alpha    = 71.0 * macros.D2R
+    nHat     = np.array([-np.cos(alpha), -np.sin(alpha), 0.0])
+    nHat_big = nHat * 5.0   # same direction, arbitrary scale factor
+    fov      = 80.0 * macros.D2R
+
+    log_unit    = _albedo_run_earth(nHat,     fov, logLevel=bskLogging.BSK_WARNING)
+    log_nonunit = _albedo_run_earth(nHat_big, fov, logLevel=bskLogging.BSK_WARNING)
+
+    assert log_unit.albedoAtInstrument[0] > 0.0, "baseline albedo must be positive"
+    assert log_unit.albedoAtInstrument[0] == pytest.approx(
+        log_nonunit.albedoAtInstrument[0], rel=1e-10
+    ), "scaled nHat_B must give identical output after normalisation"
+
+
+def test_albedo_illuminationFactor_scaling():
+    """
+    User-set illuminationFactorAtdA (eclipseCase=False) must scale albedo linearly.
+
+    All other parameters are fixed; only illuminationFactorAtdA changes from 1.0
+    to 0.5.  Both albedoAtInstrument and AfluxAtInstrument must halve.
+    """
+    alpha = 71.0 * macros.D2R
+    nHat  = np.array([-np.cos(alpha), -np.sin(alpha), 0.0])
+    fov   = 80.0 * macros.D2R
+
+    log_full = _albedo_run_earth(nHat, fov, illuminationFactorAtdA=1.0, logLevel=bskLogging.BSK_WARNING)
+    log_half = _albedo_run_earth(nHat, fov, illuminationFactorAtdA=0.5, logLevel=bskLogging.BSK_WARNING)
+
+    alb_full = log_full.albedoAtInstrument[0]
+    alb_half = log_half.albedoAtInstrument[0]
+
+    assert alb_full > 0.0, "baseline must be positive"
+    assert alb_half == pytest.approx(alb_full * 0.5, rel=1e-10), (
+        f"illuminationFactorAtdA=0.5 must halve albedo; "
+        f"full={alb_full:.6e}  half={alb_half:.6e}"
+    )
+
+
+def test_albedo_AfluxAtInstrument_positive_and_consistent():
+    """
+    AfluxAtInstrument and AfluxAtInstrumentMax (W/m^2) must both be positive.
+    AfluxAtInstrumentMax ignores the FOV cone filter, so it must be >= AfluxAtInstrument.
+    """
+    alpha = 71.0 * macros.D2R
+    nHat  = np.array([-np.cos(alpha), -np.sin(alpha), 0.0])
+    fov   = 80.0 * macros.D2R
+
+    log = _albedo_run_earth(nHat, fov, logLevel=bskLogging.BSK_WARNING)
+
+    aFlux    = log.AfluxAtInstrument[0]
+    aFluxMax = log.AfluxAtInstrumentMax[0]
+
+    assert aFlux    > 0.0, f"AfluxAtInstrument must be > 0; got {aFlux}"
+    assert aFluxMax > 0.0, f"AfluxAtInstrumentMax must be > 0; got {aFluxMax}"
+    assert aFluxMax >= aFlux - 1e-12, (
+        f"AfluxAtInstrumentMax ({aFluxMax:.6e}) must be >= AfluxAtInstrument ({aFlux:.6e})"
+    )
+
+
+def _run_albedo_multi_planet_scene(planet_positions_m, sun_position_m, sc_position_m):
+    sim = SimulationBaseClass.SimBaseClass()
+    proc = sim.CreateNewProcess("tp_multi")
+    proc.addTask(sim.CreateNewTask("tt_multi", macros.sec2nano(1.0)))
+
+    alb_module = albedo.Albedo()
+    alb_module.ModelTag = "alb_multi"
+
+    cfg = albedo.instConfig_t()
+    cfg.fov = 120.0 * macros.D2R
+    cfg.nHat_B = np.array([1.0, 0.0, 0.0])
+    cfg.r_IB_B = np.array([0.0, 0.0, 0.0])
+    alb_module.addInstrumentConfig(cfg)
+
+    sun_payload = messaging.SpicePlanetStateMsgPayload()
+    sun_payload.PositionVector = list(sun_position_m)
+    sun_msg = messaging.SpicePlanetStateMsg()
+    sun_msg.write(sun_payload)
+    alb_module.sunPositionInMsg.subscribeTo(sun_msg)
+
+    sc_payload = messaging.SCStatesMsgPayload()
+    sc_payload.r_BN_N = list(sc_position_m)
+    sc_payload.sigma_BN = [0.0, 0.0, 0.0]
+    sc_msg = messaging.SCStatesMsg()
+    sc_msg.write(sc_payload)
+    alb_module.spacecraftStateInMsg.subscribeTo(sc_msg)
+
+    # Keep planet messages alive for full sim step
+    planet_msgs = []
+    for planet_pos in planet_positions_m:
+        pmsg = messaging.SpicePlanetStateMsg()
+        planet_msgs.append(pmsg)
+        alb_module.addPlanetandAlbedoAverageModel(pmsg, 0.5, 120, 240)
+
+        pp = messaging.SpicePlanetStateMsgPayload()
+        pp.PositionVector = list(planet_pos)
+        pp.PlanetName = "earth"
+        pp.J20002Pfix = np.identity(3)
+        pmsg.write(pp)
+
+    sim.AddModelToTask("tt_multi", alb_module)
+    log = alb_module.albOutMsgs[0].recorder()
+    sim.AddModelToTask("tt_multi", log)
+
+    sim.InitializeSimulation()
+    sim.TotalSim.SingleStepProcesses()
+
+    # Return messages too so references stay alive until after run
+    return log, planet_msgs, sun_msg, sc_msg
+
+
+def test_albedo_two_planet_superposition_ratio_max():
+    sun = np.array([-1.0e8, 0.0, 0.0])   # [m]
+    p_a = np.array([-2.0e7, 0.0, 0.0])   # [m]
+    p_b = np.array([ 2.0e7, 0.0, 0.0])   # [m]
+    sc  = np.array([ 0.0, 8.0e7, 0.0])   # [m]
+
+    log_a, *_  = _run_albedo_multi_planet_scene([p_a], sun, sc)
+    log_b, *_  = _run_albedo_multi_planet_scene([p_b], sun, sc)
+    log_ab, *_ = _run_albedo_multi_planet_scene([p_a, p_b], sun, sc)
+
+    a = float(log_a.albedoAtInstrumentMax[0])
+    b = float(log_b.albedoAtInstrumentMax[0])
+    ab = float(log_ab.albedoAtInstrumentMax[0])
+
+    assert a > 0.0 and b > 0.0 and ab > 0.0
+    assert ab == pytest.approx(a + b, rel=5e-3), (
+        f"Superposition failed for albedoAtInstrumentMax: AB={ab:.6e}, A+B={a+b:.6e}"
+    )
+
+
+def test_albedo_two_planet_order_invariance_max_fields():
+    sun = np.array([-1.0e8, 0.0, 0.0])   # [m]
+    p_a = np.array([-2.0e7, 0.0, 0.0])   # [m]
+    p_b = np.array([ 2.0e7, 0.0, 0.0])   # [m]
+    sc  = np.array([ 0.0, 8.0e7, 0.0])   # [m]
+
+    log_ab, *_ = _run_albedo_multi_planet_scene([p_a, p_b], sun, sc)
+    log_ba, *_ = _run_albedo_multi_planet_scene([p_b, p_a], sun, sc)
+
+    assert float(log_ab.albedoAtInstrumentMax[0]) == pytest.approx(
+        float(log_ba.albedoAtInstrumentMax[0]), rel=1e-10
+    )
+    assert float(log_ab.AfluxAtInstrumentMax[0]) == pytest.approx(
+        float(log_ba.AfluxAtInstrumentMax[0]), rel=1e-10
+    )
+
+
+def test_ir_flux_conservation():
+    """Test IR flux conservation for PlanetGrid (Lambertian sphere)."""
+    albedo_mod = albedo.Albedo()
+    grid = albedo.PlanetGrid()
+    grid.nLat = 180
+    grid.nLon = 360
+    grid.REQ_m = 6371000.0  # [m]
+    grid.RP_m = 6371000.0  # [m]
+    grid.irFluxMean = 237.0  # [W/m^2]
+    grid.albedoAvg = 0.0  # [-]
+    grid.useAlbedoData = False
+    grid.initialize(albedo_mod.bskLogger)
+
+    d_center = 1e9  # [m]
+
+    r_sat    = np.array([d_center, 0.0, 0.0])  # [m]
+    r_planet = np.array([0.0, 0.0, 0.0])  # [m]
+    r_sun    = np.array([1e11, 0.0, 0.0])  # [m]
+    J = np.eye(3)
+
+    patches = grid.computePatches(r_sat, r_sun, r_planet, J, grid.REQ_m, 1361.0)
+    total_flux = sum(p.irFlux for p in patches)  # [W/m^2]
+
+    # Far-field Lambertian sphere: E = M * R^2 / D^2
+    expected = grid.irFluxMean * grid.REQ_m**2 / d_center**2  # [W/m^2]
+
+    rel_error = abs(total_flux - expected) / expected
+
+    print(f"Computed:  {total_flux:.6e} W/m^2")
+    print(f"Expected:  {expected:.6e} W/m^2")
+    print(f"Rel error: {rel_error:.2e}")
+    print(f"Patches:   {len(patches)}")
+
+    assert total_flux > 0, "No IR flux"
+    assert len(patches) > 0, "No visible patch"
+    assert rel_error < 1e-4, f"Relative error: {rel_error:.4e} >= 1e-4"
+
+
+def test_planet_grid_initialize_invalid_albedo_file_raises():
+    grid = albedo.PlanetGrid()
+    albedo_mod = albedo.Albedo()
+
+    grid.useAlbedoData = True
+    #grid.albedoDataPath = "/tmp"  # valid directory
+    grid.albedoDataFile = "nope.csv"
+
+    # initialize should raise a catchable BasiliskError
+    with pytest.raises(BasiliskError):
+        grid.initialize(albedo_mod.bskLogger)
+
+
 if __name__ == "__main__":
-    # unitAlbedo(False, 'earth', 'ALBEDO_AVG_EXPLICIT', True)
-    unitAlbedo(False, "mars", "ALBEDO_AVG_IMPLICIT", False)
+    # unitAlbedo('earth', 'ALBEDO_AVG_EXPLICIT', True)
+    unitAlbedo("mars", "ALBEDO_AVG_IMPLICIT", False)
+    test_albedo_eclipse_uses_planet_relative_sun_vector()

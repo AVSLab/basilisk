@@ -4,6 +4,9 @@ Executive Summary
 This document describes how albedo is modeled in the Basilisk software. The purpose of this module is to calculate
 albedo value at the given instrument locations.
 
+The :ref:`albedo` module is a subclass of :ref:`planetRadiationBase`, which provides the core infrastructure for
+planetary radiation modeling including patch grid generation, IR flux computation, and eclipse handling.
+
 Message Connection Descriptions
 -------------------------------
 The following table lists all the module input and output messages.  The module msg variable names are set by the
@@ -117,8 +120,8 @@ conditions.
 The Mars' albedo data is obtained from `TES instrument <http://www.mars.asu.edu/data/tes_albedo/>`__ as VICAR format
 and converted to .csv format for consistency with 1x1, 5x5, and 10x10 degree resolutions.
 
-``illuminationFactorAtdA`` is optional to be calculated with eclipseCase being True or can be assigned
-directly by the user with eclipseCase False. It is used as a multiplication term in Eq. :eq:`eq:albedo:10`, if defined.
+``illuminationFactorAtdA`` is optional to be calculated when getEclipseCase() returns True or can be assigned
+directly by the user when getEclipseCase() returns False. It is used as a multiplication term in Eq. :eq:`eq:albedo:10`, if defined.
 Therefore, when using albedo output on an instrument, it should be used after the illumination factor multiplication of the
 instrument, if exists.
 
@@ -178,7 +181,7 @@ where albedo average value is calculated automatically based on the given planet
 
       albModule.addPlanetandAlbedoAverageModel(planetMsg, ALB_avg, numLat, numLon)
 
-where the user can set the albedo average value. Number of latitude/longitude can also be specified or set to a negative
+where the user can set the albedo average value. Number of latitude/longitude can also be specified or set to a negative, or zero,
 value to let default values being used instead (``defaultNumLat = 180`` and ``defaultNumLon = 360``). The default values can
 be changed by the user as well.
 For ``ALBEDO_DATA`` case,
@@ -198,3 +201,8 @@ The model can  be added to a task like other simModels.
    ``shadowFactor`` is **deprecated** in favor of ``illuminationFactor``.
    In C/C++ both names work until **Dec 31, 2026**. After that date, code must
    use ``illuminationFactor`` exclusively.
+
+.. warning::
+   ``eclipseCase`` will become a protected member, prefer using getter/setter.
+   In C/C++ both names work until **May 1, 2027**. After that date, code must
+   use getter/setter exclusively.
