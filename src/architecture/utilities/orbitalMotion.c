@@ -899,13 +899,9 @@ void jPerturb(double *rvec, int num, double *ajtot, ...)
  */
 void solarRad(double A, double m, double *sunvec, double *arvec)
 {
-    double flux;
     double c;
     double Cr;
     double sundist;
-
-    /* Solar Radiation Flux */
-    flux = 1361.0;   /* Watts/m^2 */
 
     /* Speed of light */
     c = 299792458.;             /* m/s */
@@ -917,7 +913,7 @@ void solarRad(double A, double m, double *sunvec, double *arvec)
     sundist = v3Norm(sunvec);   /* AU */
 
     /* Computing the acceleration vector */
-    v3Scale((-Cr * A * flux) / (m * c * pow(sundist, 3)) / 1000., sunvec, arvec);
+    v3Scale((-Cr * A * SOLAR_FLUX_EARTH) / (m * c * pow(sundist, 3)) / 1000., sunvec, arvec);
 }
 
 /*! maps classical mean orbit elements to Osculating elements */
