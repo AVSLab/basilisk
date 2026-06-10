@@ -1019,8 +1019,10 @@ def solarRad(A: float, m: float, sunvec: np.ndarray) -> np.ndarray:
                components of the output are the same as the vector
                components of the sunvec input vector.
     """
+    from Basilisk.utilities import astroFunctions
+
     # Solar Radiation Flux #
-    flux = 1361.0
+    flux = astroFunctions.solarFluxEarth
 
     # Speed of light #
     c = 299792458.
