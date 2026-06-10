@@ -337,10 +337,9 @@ void inertialStateProp(InertialUKFConfig *configData, double *stateInOut, double
     double sigmaDot[3];
     double BMatrix[3][3];
     double torqueTotal[3];
-    double wheelAccel;
+    double wheelTorque = 0.0;
     double torqueSingle[3];
     double angAccelTotal[3];
-    int i;
 
     /*! - Convert the state derivative (body rate) to sigmaDot and propagate
           the attitude MRPs*/
@@ -353,16 +352,16 @@ void inertialStateProp(InertialUKFConfig *configData, double *stateInOut, double
     /*! - Assemble the total torque from the reaction wheels to get the forcing
      function from any wheels present*/
     v3SetZero(torqueTotal);
-    for(i=0; i<configData->rwConfigParams.numRW; i++)
+    for(int i=0; i<configData->rwConfigParams.numRW; i++)
     {
         if(configData->speedDt == 0.0)
         {
             continue;
         }
-        wheelAccel = configData->rwSpeeds.wheelSpeeds[i]-
+        wheelTorque = configData->rwSpeeds.wheelSpeeds[i]-
             configData->rwSpeedPrev.wheelSpeeds[i];
-        wheelAccel /= configData->speedDt/configData->rwConfigParams.JsList[i];
-        v3Scale(wheelAccel, &(configData->rwConfigParams.GsMatrix_B[i*3]), torqueSingle);
+        wheelTorque /= configData->speedDt/configData->rwConfigParams.JsList[i];
+        v3Scale(wheelTorque, &(configData->rwConfigParams.GsMatrix_B[i*3]), torqueSingle);
         v3Subtract(torqueTotal, torqueSingle, torqueTotal);
     }
     /*! - Get the angular acceleration and propagate the state forward (euler prop)*/

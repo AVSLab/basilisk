@@ -1,0 +1,1 @@
+- Fixed variable semantic mismatch in InertialUKF where `wheelAccel` stored torque units; renamed to `wheelTorque` to correctly reflect the stored physical quantity.
