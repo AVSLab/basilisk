@@ -700,6 +700,23 @@ def test_ir_flux_conservation():
     assert rel_error < 1e-4, f"Relative error: {rel_error:.4e} >= 1e-4"
 
 
+def test_planet_grid_compute_patches_requires_initialize():
+    """Verify direct PlanetGrid calls raise a Python exception before initialization."""
+    grid = albedo.PlanetGrid()
+    grid.nLat = 1
+    grid.nLon = 1
+
+    r_sat = np.array([7000000.0, 0.0, 0.0])  # [m]
+    r_sun = np.array([1.0e11, 0.0, 0.0])  # [m]
+    r_planet = np.array([0.0, 0.0, 0.0])  # [m]
+    J = np.eye(3)
+    planet_radius = 6371000.0  # [m]
+    solar_flux = 1361.0  # [W/m^2]
+
+    with pytest.raises(BasiliskError, match="grid is not initialized"):
+        grid.computePatches(r_sat, r_sun, r_planet, J, planet_radius, solar_flux)
+
+
 def test_planet_grid_initialize_invalid_albedo_file_raises():
     grid = albedo.PlanetGrid()
     albedo_mod = albedo.Albedo()

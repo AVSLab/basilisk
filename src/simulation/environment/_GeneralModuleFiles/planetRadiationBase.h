@@ -87,6 +87,7 @@ private:
     bool   hasAuthalic  = false; //!< true when oblate spheroid correction is active
     double latDiff      = 0.0;   //!< [rad] latitude spacing between grid points
     double lonDiff      = 0.0;   //!< [rad] longitude spacing between grid points
+    bool initialized    = false; //!< true after initialize() completes successfully
 };
 
 /*! @brief One registered planet: message functor, initialised grid, authalic radius. */
