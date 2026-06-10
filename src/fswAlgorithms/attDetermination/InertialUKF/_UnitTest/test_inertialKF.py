@@ -140,8 +140,11 @@ def filterMethods():
     for i in range(len(stateInput)):
         inertialUKF.doubleArray_setitem(state, i, stateInput[i])
 
-    wheelAccel = numpy.array([-5, 5]) / 1. * numpy.array([1., 1])
-    angAccel = -0.5 * (wheelAccel[0] + wheelAccel[1]) * numpy.array([1., 0., 0])
+    wheelSpeedDelta = numpy.array([-5, 5])  # [rad/s]
+    wheelSpeedDt = 1.0  # [s]
+    wheelInertia = numpy.array([1., 1.])  # [kg*m^2]
+    wheelTorque = wheelSpeedDelta / wheelSpeedDt * wheelInertia  # [N*m]
+    angAccel = -0.5 * (wheelTorque[0] + wheelTorque[1]) * numpy.array([1., 0., 0])  # [rad/s^2]
     expectedRate = numpy.array(stateInput[3:]) + angAccel
 
     inertialUKF.inertialStateProp(module.getConfig(), state, 0.5)
@@ -151,7 +154,7 @@ def filterMethods():
 
     if numpy.linalg.norm(expectedRate - numpy.array(stateOut)[3:]) > accuracy:
         testFailCount += 1
-        testMessages.append("Failed to capture wheel acceleration in inertialStateProp")
+        testMessages.append("Failed to capture wheel torque in inertialStateProp")
 
     setupFilterData(module)
     vehicleConfigOut = messaging.VehicleConfigMsgPayload()

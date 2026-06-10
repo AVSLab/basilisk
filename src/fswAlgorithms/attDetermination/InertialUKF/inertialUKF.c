@@ -25,9 +25,9 @@
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include "architecture/utilities/macroDefinitions.h"
 
-/*! This method creates the two moduel output messages.
+/*! This method creates the two module output messages.
 
- @param configData The configuration data associated with the CSS WLS estimator
+ @param configData The configuration data associated with the Inertial UKF estimator
  @param moduleId The module identifier
  */
 void SelfInit_inertialUKF(InertialUKFConfig *configData, int64_t moduleId)
@@ -37,10 +37,10 @@ void SelfInit_inertialUKF(InertialUKFConfig *configData, int64_t moduleId)
 }
 
 
-/*! This method resets the inertial inertial filter to an initial state and
+/*! This method resets the inertial filter to an initial state and
  initializes the internal estimation matrices.
 
- @param configData The configuration data associated with the CSS estimator
+ @param configData The configuration data associated with the Inertial UKF estimator
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleId The module identifier
  */
@@ -50,7 +50,7 @@ void Reset_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
 
     size_t i;
     int32_t badUpdate=0; /* Negative badUpdate is faulty, */
-    double tempMatrix[AKF_N_STATES*AKF_N_STATES];
+    double tempMatrix[AKF_N_STATES*AKF_N_STATES]; /* [-] */
 
     // check if the required input messages are included
     if (!RWArrayConfigMsg_C_isLinked(&configData->rwParamsInMsg)) {
@@ -71,14 +71,14 @@ void Reset_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
     configData->localConfigData = VehicleConfigMsg_C_read(&configData->massPropsInMsg);
 
     /*! - Initialize filter parameters to max values */
-    configData->timeTag = callTime*NANO2SEC;
-    configData->dt = 0.0;
-    configData->numStates = AKF_N_STATES;
-    configData->countHalfSPs = AKF_N_STATES;
-    configData->numObs = 3;
-    configData->firstPassComplete = 0;
-    configData->speedDt = 0.0;
-    configData->timeWheelPrev = 0;
+    configData->timeTag = callTime*NANO2SEC;  /* [s] */
+    configData->dt = 0.0;  /* [s] */
+    configData->numStates = AKF_N_STATES;     /* [-] */
+    configData->countHalfSPs = AKF_N_STATES;  /* [-] */
+    configData->numObs = 3;                    /* [-] */
+    configData->firstPassComplete = 0;         /* [-] */
+    configData->speedDt = 0.0;  /* [s] */
+    configData->timeWheelPrev = 0;  /* [ns] */
 
     /*! - Ensure that all internal filter matrices are zeroed*/
     vSetZero(configData->obs, configData->numObs);
@@ -89,22 +89,22 @@ void Reset_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
              configData->numStates);
     mSetZero(configData->sQnoise, configData->numStates, configData->numStates);
 
-    /*! - Set lambda/gamma to standard value for unscented kalman filters */
+    /*! - Set lambda/gamma to standard value for unscented Kalman filters */
     configData->lambdaVal = configData->alpha*configData->alpha*
-        (configData->numStates + configData->kappa) - configData->numStates;
-    configData->gamma = sqrt(configData->numStates + configData->lambdaVal);
+        (configData->numStates + configData->kappa) - configData->numStates;  /* [-] */
+    configData->gamma = sqrt(configData->numStates + configData->lambdaVal);  /* [-] */
 
 
-    /*! - Set the wM/wC vectors to standard values for unscented kalman filters*/
+    /*! - Set the wM/wC vectors to standard values for unscented Kalman filters*/
     configData->wM[0] = configData->lambdaVal / (configData->numStates +
-                                                 configData->lambdaVal);
+                                                 configData->lambdaVal);  /* [-] */
     configData->wC[0] = configData->lambdaVal / (configData->numStates +
-                                                 configData->lambdaVal) + (1 - configData->alpha*configData->alpha + configData->beta);
+                                                 configData->lambdaVal) + (1 - configData->alpha*configData->alpha + configData->beta);  /* [-] */
     for (i = 1; i<configData->countHalfSPs * 2 + 1; i++)
     {
         configData->wM[i] = 1.0 / 2.0*1.0 / (configData->numStates +
-                                             configData->lambdaVal);
-        configData->wC[i] = configData->wM[i];
+                                             configData->lambdaVal);  /* [-] */
+        configData->wC[i] = configData->wM[i];  /* [-] */
     }
 
     vCopy(configData->stateInit, configData->numStates, configData->state);
@@ -128,7 +128,7 @@ void Reset_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
 
     v3Copy(configData->state, configData->sigma_BNOut);
     v3Copy(&(configData->state[3]), configData->omega_BN_BOut);
-    configData->timeTagOut = configData->timeTag;
+    configData->timeTagOut = configData->timeTag;  /* [s] */
     Read_STMessages(configData);
 
     if (badUpdate <0){
@@ -139,26 +139,26 @@ void Reset_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
 
 /*! This method reads in the messages from all available star trackers and orders them with respect to time of measurement
 
- @param configData The configuration data associated with the CSS estimator
+ @param configData The configuration data associated with the Inertial UKF estimator
  */
 void Read_STMessages(InertialUKFConfig *configData)
 {
-    uint64_t timeOfMsgWritten; /* [ns] Read time when the message was written*/
-    int isWritten;      /* has the message been written */
-    int bufferSTIndice; /* Local ST message to copy and organize  */
+    uint64_t timeOfMsgWritten;  /* [ns] Read time when the message was written*/
+    int isWritten;      /* [-] has the message been written */
+    int bufferSTIndice; /* [-] Local ST message to copy and organize */
     int i;
     int j;
 
     for (i = 0; i < configData->STDatasStruct.numST; i++)
     {
-        /*! - Read the input parsed CSS sensor data message*/
+        /*! - Read the input parsed star tracker sensor data message*/
         configData->stSensorIn[i] = STAttMsg_C_read(&configData->STDatasStruct.STMessages[i].stInMsg);
-        timeOfMsgWritten = STAttMsg_C_timeWritten(&configData->STDatasStruct.STMessages[i].stInMsg);
+        timeOfMsgWritten = STAttMsg_C_timeWritten(&configData->STDatasStruct.STMessages[i].stInMsg);  /* [ns] */
 
         /*! - Only mark valid size if message isn't stale*/
         isWritten = STAttMsg_C_isWritten(&configData->STDatasStruct.STMessages[i].stInMsg);
-        configData->isFreshST[i] = timeOfMsgWritten != configData->ClockTimeST[i] ? isWritten : 0;
-        configData->ClockTimeST[i] = timeOfMsgWritten;
+        configData->isFreshST[i] = timeOfMsgWritten != configData->ClockTimeST[i] ? isWritten : 0;  /* [-] */
+        configData->ClockTimeST[i] = timeOfMsgWritten;  /* [ns] */
 
         /*! - If the time tag from the measured data is new compared to previous step,
          propagate and update the filter*/
@@ -178,10 +178,10 @@ void Read_STMessages(InertialUKFConfig *configData)
 
 
 }
-/*! This method takes the parsed CSS sensor data and outputs an estimate of the
- sun vector in the ADCS body frame
+/*! This method updates the inertial UKF filter using star tracker and gyro measurements
+ to estimate the spacecraft attitude.
 
- @param configData The configuration data associated with the CSS estimator
+ @param configData The configuration data associated with the Inertial UKF estimator
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
  */
@@ -194,7 +194,7 @@ void Update_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
     double sigma_BNSum[3]; /* [-] Local MRP for propagated state*/
     InertialFilterMsgPayload inertialDataOutBuffer; /* [-] Output filter info*/
     AccDataMsgPayload gyrBuffer; /* [-] Buffer of IMU messages for gyro prop*/
-    NavAttMsgPayload outputInertial;
+    NavAttMsgPayload outputInertial;  /* [-] output navigation attitude message payload */
     int i;
 
     // Reset update check to zero
@@ -210,7 +210,7 @@ void Update_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
     configData->localConfigData = VehicleConfigMsg_C_read(&configData->massPropsInMsg);
     gyrBuffer = AccDataMsg_C_read(&configData->gyrBuffInMsg);
     configData->rwSpeeds = RWSpeedMsg_C_read(&configData->rwSpeedsInMsg);
-    timeOfRWSpeeds = RWSpeedMsg_C_timeWritten(&configData->rwSpeedsInMsg);
+    timeOfRWSpeeds = RWSpeedMsg_C_timeWritten(&configData->rwSpeedsInMsg);  /* [ns] */
     Read_STMessages(configData);
 
     m33Inverse(RECAST3X3 configData->localConfigData.ISCPntB_B, configData->IInv);
@@ -218,17 +218,17 @@ void Update_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
     if(configData->firstPassComplete == 0)
     {
         /*! - Set wheel speeds so that acceleration can be safely computed*/
-        configData->rwSpeedPrev = configData->rwSpeeds;
-        configData->timeWheelPrev = timeOfRWSpeeds;
+        configData->rwSpeedPrev = configData->rwSpeeds;  /* [rad/s] */
+        configData->timeWheelPrev = timeOfRWSpeeds;  /* [ns] */
 
         /*! - Loop through ordered time-tags and select largest valid one*/
-        newTimeTag = 0.0;
+        newTimeTag = 0.0;  /* [s] */
         for (i=0; i<configData->STDatasStruct.numST; i++)
         {
             if(configData->isFreshST[configData->stSensorOrder[i]] &&
                configData->stSensorIn[configData->stSensorOrder[i]].timeTag*NANO2SEC > newTimeTag)
             {
-                newTimeTag = configData->stSensorIn[configData->stSensorOrder[i]].timeTag*NANO2SEC;
+                newTimeTag = configData->stSensorIn[configData->stSensorOrder[i]].timeTag*NANO2SEC;  /* [s] */
                 /*! - If any ST message is valid mark initialization complete*/
                 configData->firstPassComplete = 1;
             }
@@ -238,18 +238,18 @@ void Update_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
         {
             return;
         }
-        configData->timeTag = newTimeTag;
+        configData->timeTag = newTimeTag;  /* [s] */
     }
 
-    configData->speedDt = (timeOfRWSpeeds - configData->timeWheelPrev)*NANO2SEC;
-    configData->timeWheelPrev = timeOfRWSpeeds;
+    configData->speedDt = (timeOfRWSpeeds - configData->timeWheelPrev)*NANO2SEC;  /* [s] */
+    configData->timeWheelPrev = timeOfRWSpeeds;  /* [ns] */
 
     inertialDataOutBuffer.numObs = 0;
     trackerValid = 0;
     for (i = 0; i < configData->STDatasStruct.numST; i++)
     {
-        newTimeTag = configData->stSensorIn[configData->stSensorOrder[i]].timeTag * NANO2SEC;
-        int isFresh = configData->isFreshST[configData->stSensorOrder[i]];
+        newTimeTag = configData->stSensorIn[configData->stSensorOrder[i]].timeTag * NANO2SEC;  /* [s] */
+        int isFresh = configData->isFreshST[configData->stSensorOrder[i]];  /* [-] */
 
         /*! - If the star tracker has provided a new message compared to last time,
               update the filter to the new measurement*/
@@ -259,7 +259,7 @@ void Update_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
             if((newTimeTag - configData->timeTag) > configData->maxTimeJump
                 && configData->maxTimeJump > 0)
             {
-                configData->timeTag = newTimeTag - configData->maxTimeJump;
+                configData->timeTag = newTimeTag - configData->maxTimeJump;  /* [s] */
                 _bskLog(configData->bskLogger, BSK_WARNING, "Large jump in state time that was set to max.");
             }
             trackerValid += inertialUKFTimeUpdate(configData, newTimeTag);
@@ -269,7 +269,7 @@ void Update_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
     }
     /*! - If current clock time is further ahead than the measured time, then
      propagate to this current time-step*/
-    newTimeTag = callTime*NANO2SEC;
+    newTimeTag = callTime*NANO2SEC;  /* [s] */
     if(trackerValid < 1)
     {
         /*! - If no star tracker measurement was available, propagate the state
@@ -293,9 +293,9 @@ void Update_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
          solution*/
         for(i=0; i<3; i++)
         {
-            configData->omega_BN_BOut[i] = configData->gyroFilt[i].currentState;
+            configData->omega_BN_BOut[i] = configData->gyroFilt[i].currentState;  /* [rad/s] */
         }
-        configData->timeTagOut = configData->gyrAggTimeTag;
+        configData->timeTagOut = configData->gyrAggTimeTag;  /* [s] */
 
     }
     else
@@ -304,18 +304,18 @@ void Update_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
          change*/
         v3Copy(configData->state, configData->sigma_BNOut);
         v3Copy(&(configData->state[3]), configData->omega_BN_BOut);
-        configData->timeTagOut = configData->timeTag;
+        configData->timeTagOut = configData->timeTag;  /* [s] */
     }
 
     /*! - Write the inertial estimate into the copy of the navigation message structure*/
     v3Copy(configData->sigma_BNOut, outputInertial.sigma_BN);
     v3Copy(configData->omega_BN_BOut, outputInertial.omega_BN_B);
-    outputInertial.timeTag = configData->timeTagOut;
+    outputInertial.timeTag = configData->timeTagOut;  /* [s] */
 
     NavAttMsg_C_write(&outputInertial, &configData->navStateOutMsg, moduleID, callTime);
 
     /*! - Populate the filter states output buffer and write the output message*/
-    inertialDataOutBuffer.timeTag = configData->timeTag;
+    inertialDataOutBuffer.timeTag = configData->timeTag;  /* [s] */
     memmove(inertialDataOutBuffer.covar, configData->covar,
             AKF_N_STATES*AKF_N_STATES*sizeof(double));
     memmove(inertialDataOutBuffer.state, configData->state, AKF_N_STATES*sizeof(double));
@@ -324,7 +324,7 @@ void Update_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
     return;
 }
 
-/*! This method propagates a inertial state vector forward in time.  Note
+/*! This method propagates an inertial state vector forward in time.  Note
     that the calling parameter is updated in place to save on data copies.
 
     @param configData The configuration data associated with this module
@@ -334,12 +334,13 @@ void Update_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
 void inertialStateProp(InertialUKFConfig *configData, double *stateInOut, double dt)
 {
 
-    double sigmaDot[3];
-    double BMatrix[3][3];
-    double torqueTotal[3];
-    double wheelAccel;
-    double torqueSingle[3];
-    double angAccelTotal[3];
+    double sigmaDot[3];       /* [1/s] */
+    double BMatrix[3][3];     /* [-] */
+    double torqueTotal[3];  /* [N*m] */
+    double wheelSpeedDelta = 0.0;  /* [rad/s] */
+    double wheelTorque = 0.0;  /* [N*m] */
+    double torqueSingle[3];  /* [N*m] */
+    double angAccelTotal[3];  /* [rad/s^2] */
     int i;
 
     /*! - Convert the state derivative (body rate) to sigmaDot and propagate
@@ -359,10 +360,10 @@ void inertialStateProp(InertialUKFConfig *configData, double *stateInOut, double
         {
             continue;
         }
-        wheelAccel = configData->rwSpeeds.wheelSpeeds[i]-
-            configData->rwSpeedPrev.wheelSpeeds[i];
-        wheelAccel /= configData->speedDt/configData->rwConfigParams.JsList[i];
-        v3Scale(wheelAccel, &(configData->rwConfigParams.GsMatrix_B[i*3]), torqueSingle);
+        wheelSpeedDelta = configData->rwSpeeds.wheelSpeeds[i]-
+            configData->rwSpeedPrev.wheelSpeeds[i];  /* [rad/s] */
+        wheelTorque = wheelSpeedDelta * configData->rwConfigParams.JsList[i] / configData->speedDt;  /* [N*m] */
+        v3Scale(wheelTorque, &(configData->rwConfigParams.GsMatrix_B[i*3]), torqueSingle);
         v3Subtract(torqueTotal, torqueSingle, torqueTotal);
     }
     /*! - Get the angular acceleration and propagate the state forward (euler prop)*/
@@ -372,26 +373,29 @@ void inertialStateProp(InertialUKFConfig *configData, double *stateInOut, double
 	return;
 }
 
-/*! This method performs the time update for the inertial kalman filter.
+/*! This method performs the time update for the inertial Kalman filter.
      It propagates the sigma points forward in time and then gets the current
 	 covariance and state estimates.
 
-     @param configData The configuration data associated with the CSS estimator
+     @param configData The configuration data associated with the Inertial UKF estimator
      @param updateTime The time that we need to fix the filter to (seconds)
 */
 int inertialUKFTimeUpdate(InertialUKFConfig *configData, double updateTime)
 {
     size_t i;
     int Index, k;
-	double sBarT[AKF_N_STATES*AKF_N_STATES];
-	double xComp[AKF_N_STATES], AT[(2 * AKF_N_STATES + AKF_N_STATES)*AKF_N_STATES];
-	double aRow[AKF_N_STATES], rAT[AKF_N_STATES*AKF_N_STATES], xErr[AKF_N_STATES];
-	double sBarUp[AKF_N_STATES*AKF_N_STATES];
-	double *spPtr;
-    double procNoise[AKF_N_STATES*AKF_N_STATES];
+	double sBarT[AKF_N_STATES*AKF_N_STATES];               /* [-] */
+	double xComp[AKF_N_STATES];                            /* [-] */
+	double AT[(2 * AKF_N_STATES + AKF_N_STATES)*AKF_N_STATES]; /* [-] */
+	double aRow[AKF_N_STATES];                             /* [-] */
+	double rAT[AKF_N_STATES*AKF_N_STATES];                 /* [-] */
+	double xErr[AKF_N_STATES];                             /* [-] */
+	double sBarUp[AKF_N_STATES*AKF_N_STATES];              /* [-] */
+	double *spPtr;                                         /* [-] */
+    double procNoise[AKF_N_STATES*AKF_N_STATES];           /* [-] */
     int32_t badUpdate=0;
 
-	configData->dt = updateTime - configData->timeTag;
+	configData->dt = updateTime - configData->timeTag;  /* [s] */
     vCopy(configData->state, configData->numStates, configData->statePrev);
     mCopy(configData->sBar, configData->numStates, configData->numStates, configData->sBarPrev);
     mCopy(configData->covar, configData->numStates, configData->numStates, configData->covarPrev);
@@ -454,8 +458,8 @@ int inertialUKFTimeUpdate(InertialUKFConfig *configData, double updateTime)
 	}
    /*! - Scale sQNoise matrix depending on the dt*/
     for (k=0;k<3;k++){
-        procNoise[k*AKF_N_STATES+k] *= configData->dt*configData->dt/2;
-        procNoise[(k+3)*AKF_N_STATES+(k+3)] *= configData->dt;
+        procNoise[k*AKF_N_STATES+k] *= configData->dt*configData->dt/2;        /* [rad^2] */
+        procNoise[(k+3)*AKF_N_STATES+(k+3)] *= configData->dt;                 /* [rad^2/s^2] */
     }
     /*! - Pop the sQNoise matrix on to the end of AT prior to getting QR decomposition*/
 	memcpy(&AT[2 * configData->countHalfSPs*configData->numStates],
@@ -490,26 +494,26 @@ int inertialUKFTimeUpdate(InertialUKFConfig *configData, double updateTime)
         inertialUKFCleanUpdate(configData);
         return(-1);}
     else{
-        configData->timeTag = updateTime;
+        configData->timeTag = updateTime;  /* [s] */
     }
     return(0);
 }
 
-/*! This method computes what the expected measurement vector is for each CSS
+/*! This method computes what the expected measurement vector is for each star tracker
     that is present on the spacecraft.  All data is transacted from the main
     data structure for the model because there are many variables that would
     have to be updated otherwise.
 
- @param configData The configuration data associated with the CSS estimator
+ @param configData The configuration data associated with the Inertial UKF estimator
  @param currentST current star tracker state
 
  */
 void inertialUKFMeasModel(InertialUKFConfig *configData, int currentST)
 {
-    double quatTranspose[4];
-    double quatMeas[4];
-    double EPSum[4];
-    double mrpSum[3];
+    double quatTranspose[4];  /* [-] */
+    double quatMeas[4];       /* [-] */
+    double EPSum[4];          /* [-] */
+    double mrpSum[3];         /* [-] */
     size_t i;
 
     /*! This math seems more difficult than it should be, but there is a method.
@@ -537,7 +541,7 @@ void inertialUKFMeasModel(InertialUKFConfig *configData, int currentST)
     }
 
     v3Copy(configData->stSensorIn[currentST].MRP_BdyInrtl, configData->obs);
-    configData->numObs = 3;
+    configData->numObs = 3;  /* [-] */
 
 }
 
@@ -545,7 +549,7 @@ void inertialUKFMeasModel(InertialUKFConfig *configData, int currentST)
     rotation to push the state forward by.  This information is stored in the
     main data structure for use in the propagation routines.
 
- @param configData The configuration data associated with the CSS estimator
+ @param configData The configuration data associated with the Inertial UKF estimator
  @param prevTime [s] Previous time step
  @param propTime The time that we need to fix the filter to (seconds)
  @param gyrData The gyro measurements that we are going to accumulate forward into time
@@ -560,68 +564,72 @@ void inertialUKFAggGyrData(InertialUKFConfig *configData, double prevTime,
     /*! Note that the math here is tortured to avoid the issues of adding
           PRVs together.  That is numerically problematic, so we convert to
           euler parameters (quaternions) and add those*/
-    double ep_BpropB0[4], ep_B1B0[4], epTemp[4], omeg_BN_B[3], prvTemp[3];
-    double dt;
+    double ep_BpropB0[4];   /* [-] */
+    double ep_B1B0[4];      /* [-] */
+    double epTemp[4];       /* [-] */
+    double omeg_BN_B[3];    /* [rad/s] */
+    double prvTemp[3];      /* [rad] */
+    double dt;              /* [s] */
 
     minFutInd = 0;
-    minFutTime = -1;
+    minFutTime = -1;  /* [s] */
     /*! - Loop through the entire gyro buffer to find the first index that is
           in the future compared to prevTime*/
     for(i=0; i<MAX_ACC_BUF_PKT; i++)
     {
-        measTime = gyrData->accPkts[i].measTime*NANO2SEC;
+        measTime = gyrData->accPkts[i].measTime*NANO2SEC;  /* [s] */
         if(measTime > prevTime && (measTime < minFutTime || minFutTime < 0.0))
         {
             minFutInd = (uint32_t) i;
-            minFutTime = measTime;
+            minFutTime = measTime;  /* [s] */
         }
     }
     /*! - Initialize the propagated euler parameters and time*/
     v4SetZero(ep_BpropB0);
     ep_BpropB0[0] = 1.0;
     i=0;
-    measTime = prevTime;
+    measTime = prevTime;  /* [s] */
     /*! - Loop through buffer for all valid measurements to assemble the
           composite rotation since the previous time*/
     while(minFutTime > prevTime && i<MAX_ACC_BUF_PKT)
     {
-        dt = minFutTime - measTime;
+        dt = minFutTime - measTime;  /* [s] */
         /*! - Treat rates scaled by dt as a PRV (small angle approximation)*/
         v3Copy(gyrData->accPkts[minFutInd].gyro_B, omeg_BN_B);
-        v3Scale(dt, omeg_BN_B, prvTemp);
+        v3Scale(dt, omeg_BN_B, prvTemp);  /* [rad] */
 
         /*! - Convert the PRV to euler parameters and add that delta-rotation
               to the running sum (ep_BpropB0)*/
         PRV2EP(prvTemp, ep_B1B0);
         v4Copy(ep_BpropB0, epTemp);
         addEP(epTemp, ep_B1B0, ep_BpropB0);
-        configData->gyrAggTimeTag = minFutTime;
+        configData->gyrAggTimeTag = minFutTime;  /* [s] */
         i++;
         /*! - Prepare for the next measurement and set time-tags for termination*/
-        measTime = minFutTime;
+        measTime = minFutTime;  /* [s] */
         /*% operator used because gyro buffer is a ring-buffer and this operator
             wraps the index back to zero when we overflow.*/
         minFutInd = (minFutInd + 1)%MAX_ACC_BUF_PKT;
-        minFutTime = gyrData->accPkts[minFutInd].measTime*NANO2SEC;
+        minFutTime = gyrData->accPkts[minFutInd].measTime*NANO2SEC;  /* [s] */
         /*! - Apply low-pass filter to gyro measurements to get smoothed body rate*/
         for(j=0; j<3; j++)
         {
-            lowPassFilterSignal(omeg_BN_B[j], &(configData->gyroFilt[j]));
+            lowPassFilterSignal(omeg_BN_B[j], &(configData->gyroFilt[j]));  // [rad/s]
         }
     }
     /*! - Saved the measurement count and convert the euler parameters to MRP
           as that is our filter representation*/
-    configData->numUsedGyros = (uint32_t) i;
-    EP2MRP(ep_BpropB0, configData->aggSigma_b2b1);
+    configData->numUsedGyros = (uint32_t) i;  /* [-] */
+    EP2MRP(ep_BpropB0, configData->aggSigma_b2b1);  /* [-] */
 
     return;
 }
 
-/*! This method performs the measurement update for the inertial kalman filter.
+/*! This method performs the measurement update for the inertial Kalman filter.
  It applies the observations in the obs vectors to the current state estimate and
  updates the state/covariance with that information.
 
- @param configData The configuration data associated with the CSS estimator
+ @param configData The configuration data associated with the Inertial UKF estimator
  @param currentST Current star tracker state
  */
 int inertialUKFMeasUpdate(InertialUKFConfig *configData, int currentST)
@@ -758,11 +766,11 @@ int inertialUKFMeasUpdate(InertialUKFConfig *configData, int currentST)
     return(0);
 }
 
-/*! This method cleans the filter states after a bad upadate on the fly.
+/*! This method cleans the filter states after a bad update on the fly.
  It removes the potentially corrupted previous estimates and puts the filter
  back to a working state.
 
- @param configData The configuration data associated with the CSS estimator
+ @param configData The configuration data associated with the Inertial UKF estimator
  */
 void inertialUKFCleanUpdate(InertialUKFConfig *configData){
     size_t i;
@@ -772,16 +780,16 @@ void inertialUKFCleanUpdate(InertialUKFConfig *configData){
     mCopy(configData->sBarPrev, configData->numStates, configData->numStates, configData->sBar);
     mCopy(configData->covarPrev, configData->numStates, configData->numStates, configData->covar);
 
-    /*! - Reset the wM/wC vectors to standard values for unscented kalman filters*/
+    /*! - Reset the wM/wC vectors to standard values for unscented Kalman filters*/
     configData->wM[0] = configData->lambdaVal / (configData->numStates +
-                                                 configData->lambdaVal);
+                                                 configData->lambdaVal);  /* [-] */
     configData->wC[0] = configData->lambdaVal / (configData->numStates +
-                                                 configData->lambdaVal) + (1 - configData->alpha*configData->alpha + configData->beta);
+                                                 configData->lambdaVal) + (1 - configData->alpha*configData->alpha + configData->beta);  /* [-] */
     for (i = 1; i<configData->countHalfSPs * 2 + 1; i++)
     {
         configData->wM[i] = 1.0 / 2.0*1.0 / (configData->numStates +
-                                             configData->lambdaVal);
-        configData->wC[i] = configData->wM[i];
+                                             configData->lambdaVal);  /* [-] */
+        configData->wC[i] = configData->wM[i];  /* [-] */
     }
 
     return;
