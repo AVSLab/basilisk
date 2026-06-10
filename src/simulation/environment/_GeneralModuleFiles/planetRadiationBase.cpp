@@ -33,6 +33,11 @@ namespace fs = std::filesystem;
 
 void PlanetGrid::initialize(BSKLogger bskLogger)
 {
+    this->initialized = false;
+    this->patchDirs_P.clear();
+    this->normAreas.clear();
+    this->patchAlbedo.clear();
+
     // --- Validate grid dimensions ---
     // Check that latitude and longitude grid counts are positive
     if (this->nLat <= 0) {
@@ -151,6 +156,8 @@ void PlanetGrid::initialize(BSKLogger bskLogger)
             this->patchAlbedo[k] = this->useAlbedoData ? albGrid[ilat][ilon] : this->albedoAvg;  // [-]
         }
     }
+
+    this->initialized = true;
 }
 
 std::vector<std::vector<double>> PlanetGrid::loadAlbedoGridFromCsv(BSKLogger bskLogger) const
@@ -261,6 +268,16 @@ std::vector<PatchResult> PlanetGrid::computePatches(
     double       R_planet,
     const double S_sun) const
 {
+    const int nPatches = this->nLat * this->nLon;
+    if (!this->initialized ||
+        this->patchDirs_P.size() != static_cast<size_t>(nPatches) ||
+        this->normAreas.size() != static_cast<size_t>(nPatches) ||
+        this->patchAlbedo.size() != static_cast<size_t>(nPatches)) {
+        throw BasiliskError(
+            "PlanetGrid::computePatches(): grid is not initialized. "
+            "Call PlanetGrid::initialize() after configuring the grid before computePatches().");
+    }
+
     // Convert the SPICE J2000->P rotation matrix into an Eigen matrix.
     // Due to row-major/column-major interpretation, this yields J20002Pfixᵀ,
     // i.e. the rotation from planet-fixed frame P to inertial frame N.
@@ -274,10 +291,10 @@ std::vector<PatchResult> PlanetGrid::computePatches(
 
     std::vector<PatchResult> results;
     // Reserve approximate storage; only visible patches contribute.
-    results.reserve(static_cast<size_t>(this->nLat * this->nLon) / 2);
+    results.reserve(static_cast<size_t>(nPatches) / 2);
 
     // Iterate over all patches and compute radiation contributions
-    for (int k = 0; k < this->nLat * this->nLon; ++k) {
+    for (int k = 0; k < nPatches; ++k) {
         // Patch direction in planet frame P
         const Eigen::Vector3d dir_P(this->patchDirs_P[k][0], this->patchDirs_P[k][1], this->patchDirs_P[k][2]);  // [-]
         // Rotate patch direction to inertial frame N and scale by planet radius
