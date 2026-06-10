@@ -69,7 +69,6 @@ class JointThrAllocation(sysModel.SysModel):
 
         # Input messages
         self.armConfigInMsg = messaging.THRArmConfigMsgReader()
-        self.CoMStatesInMsg = messaging.SCStatesMsgReader()
         self.hubStatesInMsg = messaging.SCStatesMsgReader()
         self.transForceInMsg = messaging.CmdForceInertialMsgReader()
         self.rotTorqueInMsg = messaging.CmdTorqueBodyMsgReader()
@@ -110,7 +109,6 @@ class JointThrAllocation(sysModel.SysModel):
         """Raise ``BasiliskError`` if a required input message is not linked."""
         requiredInputMessages = [
             ("armConfigInMsg", self.armConfigInMsg),
-            ("CoMStatesInMsg", self.CoMStatesInMsg),
             ("hubStatesInMsg", self.hubStatesInMsg),
             ("transForceInMsg", self.transForceInMsg),
             ("rotTorqueInMsg", self.rotTorqueInMsg),
@@ -231,6 +229,13 @@ class JointThrAllocation(sysModel.SysModel):
         self.fHat_P = np.asarray(cfgMsg.fhat_P, dtype=float).reshape(-1, 3)
         self.dcm_C0P = np.asarray(cfgMsg.dcm_C0P, dtype=float).reshape(-1, 9)
 
+        self.hubMass = float(cfgMsg.hubMass)
+        self.r_BcB_B = np.asarray(cfgMsg.r_BcB_B, dtype=float).reshape(3)
+        self.bodyArmIdx = np.asarray(cfgMsg.bodyArmIdx, dtype=int)
+        self.bodyJointIdx = np.asarray(cfgMsg.bodyJointIdx, dtype=int)
+        self.bodyMass = np.asarray(cfgMsg.bodyMass, dtype=float)
+        self.r_LcP_P = np.asarray(cfgMsg.r_LcP_P, dtype=float).reshape(-1, 3)
+
         # Convert each flat 9-entry block from column-major to 3x3 matrix.
         self.dcm_C0P = np.array([dcmFlat.reshape(3, 3, order="F") for dcmFlat in self.dcm_C0P], dtype=float)
 
@@ -293,8 +298,39 @@ class JointThrAllocation(sysModel.SysModel):
 
         return dcm_CB, r_CB_B
 
-    def mapping(self, theta: np.ndarray, r_ComB_B: np.ndarray):
+    def computeComFromTheta(self, dcm_CB, r_CB_B):
+        """
+        Compute the position of the system CoM relative to the body frame origin.
+
+        :param dcm_CB: List of direction cosine matrices for each joint.
+        :param r_CB_B: List of joint-frame origins in body-frame coordinates.
+        :return: Position vector of the system CoM relative to the body frame origin.
+        """
+        totalMass = self.hubMass + np.sum(self.bodyMass)  # [kg]
+        if totalMass <= 0.0:
+            raise ValueError("Total spacecraft mass must be positive.")
+        comNumerator = self.hubMass * self.r_BcB_B  # [kg*m]
+
+        for bodyIdx in range(self.bodyMass.size):
+            armIdx = int(self.bodyArmIdx[bodyIdx])
+            jointLocalIdx = int(self.bodyJointIdx[bodyIdx])
+            jointFlatIdx = int(self.armJointStart[armIdx] + jointLocalIdx)
+
+            comNumerator += self.bodyMass[bodyIdx] * (
+                r_CB_B[jointFlatIdx] + dcm_CB[jointFlatIdx].T @ self.r_LcP_P[bodyIdx]
+            )  # [kg*m]
+
+        return comNumerator / totalMass  # [m]
+
+    def mapping(self, theta: np.ndarray,):
+        """
+        Compute the thruster force-to-wrench map for given joint angles.
+
+        :param theta: Joint angle vector.
+        :return: Thruster force-to-wrench map for the given joint angles.
+        """
         dcm_CB, r_CB_B = self.jointPoseFromTheta(theta)
+        r_ComB_B = self.computeComFromTheta(dcm_CB, r_CB_B)
 
         r_TB_B = np.zeros((self.nThr, 3))
         fHatVec_B = np.zeros((self.nThr, 3))
@@ -309,10 +345,17 @@ class JointThrAllocation(sysModel.SysModel):
 
         return mapMatrix(r_TB_B, fHatVec_B, r_ComB_B)
 
-    def cost(self, decisionVar: np.ndarray, r_ComB_B: np.ndarray, desiredWrench_B: np.ndarray) -> float:
+    def cost(self, decisionVar: np.ndarray, desiredWrench_B: np.ndarray) -> float:
+        """
+        Compute the cost function for the given decision variables and desired wrench.
+
+        :param decisionVar: Concatenated vector of joint angles and thruster forces.
+        :param desiredWrench_B: Desired force and torque in body-frame coordinates.
+        :return: Cost function value.
+        """
         theta = decisionVar[: self.nJoint]
         thrForces = decisionVar[self.nJoint:]
-        wrenchMap = self.mapping(theta, r_ComB_B)
+        wrenchMap = self.mapping(theta)
         wrenchError = desiredWrench_B - wrenchMap @ thrForces
         return float(wrenchError.T @ self.Wc @ wrenchError + self.Wf.T @ thrForces)
 
@@ -328,13 +371,9 @@ class JointThrAllocation(sysModel.SysModel):
     def UpdateState(self, CurrentSimNanos):
         minimize = _get_optimizer()
 
-        comStates = self.CoMStatesInMsg()
         hubStates = self.hubStatesInMsg()
-
-        r_ComB_N = np.array(comStates.r_CN_N).reshape(3) - np.array(hubStates.r_BN_N).reshape(3)
         sigmaBN = np.array(hubStates.sigma_BN).reshape(3)
         dcm_BN = rbk.MRP2C(sigmaBN)
-        r_ComB_B = dcm_BN @ r_ComB_N
 
         forceInertialMsg = self.transForceInMsg()
         torqueBodyMsg = self.rotTorqueInMsg()
@@ -352,7 +391,7 @@ class JointThrAllocation(sysModel.SysModel):
 
         for initialDecision in self.x0:
             optResult = minimize(
-                fun=lambda decision: self.cost(decision, r_ComB_B, desiredWrench_B),
+                fun=lambda decision: self.cost(decision, desiredWrench_B),
                 x0=initialDecision,
                 bounds=boundTuple,
                 method="SLSQP",
@@ -364,7 +403,7 @@ class JointThrAllocation(sysModel.SysModel):
             decisionOpt = optResult.x
             wrenchError = (
                 desiredWrench_B
-                - self.mapping(decisionOpt[: self.nJoint], r_ComB_B) @ decisionOpt[self.nJoint:]
+                - self.mapping(decisionOpt[: self.nJoint]) @ decisionOpt[self.nJoint:]
             )
             errInf = float(np.linalg.norm(wrenchError, ord=np.inf))
             if errInf < bestErrInf:
