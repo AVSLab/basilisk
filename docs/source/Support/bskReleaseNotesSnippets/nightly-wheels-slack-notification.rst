@@ -1,0 +1,1 @@
+- Added Slack failure notifications for the Nightly Wheels workflow.

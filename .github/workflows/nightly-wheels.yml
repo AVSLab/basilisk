@@ -42,6 +42,54 @@ jobs:
           name: nightly-wheels-${{ matrix.os }}
           path: ./wheelhouse/*.whl
 
+  notify-failure:
+    name: Notify Slack on Failure
+    needs: build-wheels
+    if: ${{ always() && needs.build-wheels.result == 'failure' }}
+    runs-on: ubuntu-24.04
+    permissions: {}
+
+    steps:
+      - name: Post failure to bsk_general
+        env:
+          HEAD_BRANCH: ${{ github.ref_name }}
+          HEAD_SHA: ${{ github.sha }}
+          RUN_NUMBER: ${{ github.run_number }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          SLACK_WEBHOOK_URL: ${{ secrets.BSK_GENERAL_SLACK_WEBHOOK_URL }}
+          WORKFLOW_NAME: ${{ github.workflow }}
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          import sys
+          import urllib.request
+
+          webhook_url = os.environ["SLACK_WEBHOOK_URL"].strip()
+          if not webhook_url:
+              print("::error::Missing BSK_GENERAL_SLACK_WEBHOOK_URL repository secret")
+              sys.exit(1)
+
+          run_url = os.environ["RUN_URL"]
+          run_number = os.environ["RUN_NUMBER"]
+          short_sha = os.environ["HEAD_SHA"][:7]
+          text = (
+              f":warning: {os.environ['WORKFLOW_NAME']} failed "
+              f"for `{os.environ['HEAD_BRANCH']}` at `{short_sha}`. "
+              f"<{run_url}|View run #{run_number}>"
+          )
+
+          timeout = 30  # [s]
+          request = urllib.request.Request(
+              webhook_url,
+              data=json.dumps({"text": text}).encode("utf-8"),
+              headers={"Content-Type": "application/json"},
+              method="POST",
+          )
+          with urllib.request.urlopen(request, timeout=timeout) as response:
+              print(f"Slack notification response: {response.status}")
+          PY
+
   publish-index:
     name: Publish Nightly Index
     needs: build-wheels
