@@ -56,30 +56,43 @@ class BSKMujocoFSWModels:
         # Define default values for the scenario
         self.numJoints = 8
         self.numThrusters = 2
-        self.thrForces = [2.5]*self.numThrusters # N
-        self.maxJointTorques = [22.5]*self.numJoints # Nm
+        self.thrForces = [2.5]*self.numThrusters # [N]
+        if fswRate == 0.01:
+            self.maxJointTorques = [5.0]*self.numJoints # [N*m]
+        else:
+            self.maxJointTorques = [22.5]*self.numJoints # [N*m]
+        self.hubMass = 330.0    # [kg]
         self.controlWeight = 1.0
         self.thrustWeight = 1e-6
 
         # Define the default control gains
-        self.Tpos = 27.0
-        self.Tatt = 10.0
-        self.omegaOuter = 2*np.pi/10
-        self.omegaInner = 5*self.omegaOuter
-        piRot = (2*1/3*330.0*(0.79**2+0.69**2))/self.Tatt
-        self.pRot = piRot
-        xiRot = 1.0
-        self.kRot = piRot**2/(4*xiRot**2*(1/3*330.0*(0.79**2+0.69**2)))
-        self.kiRot = -1.0
-        piPos = 2.0*350.0/self.Tpos
-        self.pTrans = (piPos * np.eye(3)).flatten().tolist()
-        xiPos = 1.0
-        self.kTrans = (piPos**2/(4*xiPos**2*350.0) * np.eye(3)).flatten().tolist()
-        kiMotor = self.omegaInner**2
-        self.kTheta = (kiMotor * np.eye(8)).flatten().tolist()
-        xiMotor = 1.5
-        piMotor = 2 * xiMotor * self.omegaInner
-        self.pTheta = (piMotor * np.eye(8)).flatten().tolist()
+        if fswRate == 0.01:
+            self.pTrans = (2.0*350.0/25.0 * np.eye(3)).flatten().tolist() #[N*s/m]
+            self.kTrans =((2.0*350.0/25.0)**2 / (4*350.0) * np.eye(3)).flatten().tolist()   #[N/m]
+            self.pRot = (2.0*1/3*330.0*(0.79**2+0.69**2))/15.0  #[N*m*s]
+            self.kRot = self.pRot**2/(4*(1/3*330.0*(0.79**2+0.69**2)))  #[N*m]
+            self.kiRot = -1.0
+            self.kTheta = (np.pi**2 * np.eye(8)).flatten().tolist() #[N*m/rad]
+            self.pTheta = (2.0*1.5*np.pi * np.eye(8)).flatten().tolist()    #[N*m*s/rad]
+        else:
+            self.Tpos = 15.0
+            self.Tatt = 10.0
+            self.omegaOuter = 2*np.pi/10
+            self.omegaInner = 5*self.omegaOuter
+            piRot = (2*1/3*330.0*(0.79**2+0.69**2))/self.Tatt
+            self.pRot = piRot #[N*m*s]
+            xiRot = 1.0
+            self.kRot = piRot**2/(4*xiRot**2*(1/3*330.0*(0.79**2+0.69**2))) #[N*m]
+            self.kiRot = -1.0
+            piPos = 2.0*350.0/self.Tpos
+            self.pTrans = (piPos * np.eye(3)).flatten().tolist() #[N*s/m]
+            xiPos = 1.0
+            self.kTrans = (piPos**2/(4*xiPos**2*350.0) * np.eye(3)).flatten().tolist() #[N/m]
+            kiMotor = self.omegaInner**2
+            self.kTheta = (kiMotor * np.eye(8)).flatten().tolist() #[N*m/rad]
+            xiMotor = 1.5
+            piMotor = 2 * xiMotor * self.omegaInner
+            self.pTheta = (piMotor * np.eye(8)).flatten().tolist() #[N*m*s/rad]
 
 
         # Define the XML object names for later use
@@ -263,14 +276,24 @@ class BSKMujocoFSWModels:
     def SetVehicleConfiguration(self):
         """Set the spacecraft configuration information"""
         vehicleConfigOut = messaging.VehicleConfigMsgPayload()
-        vehicleConfigOut.massSC = 350.0
+        vehicleConfigOut.massSC = 350.0 #[kg]
         # use the hub inertia for mrp feedback module since will not have instantaneous inertia otherwise
-        vehicleConfigOut.ISCPntB_B = [1/3*330.0*(0.69**2+0.52**2), 0.0, 0.0, 0.0, 1/3*330.0*(0.79**2+0.52**2), 0.0, 0.0, 0.0, 1/3*330.0*(0.79**2+0.69**2)]
+        vehicleConfigOut.ISCPntB_B = [1/3*self.hubMass*(0.69**2+0.52**2), 0.0, 0.0, 0.0, 1/3*self.hubMass*(0.79**2+0.52**2), 0.0, 0.0, 0.0, 1/3*self.hubMass*(0.79**2+0.69**2)] #[kg*m^2]
         self.vcMsg = messaging.VehicleConfigMsg().write(vehicleConfigOut)
 
     def SetThrArmConfig(self):
         """Set the thruster arm configuration information"""
         thrArmConfigOut = messaging.THRArmConfigMsgPayload()
+        r_BcB_B = [0.0, 0.0, 0.0] #[m]
+        bodyArmIdx = [0, 0, 1, 1]
+        bodyJointIdx = [1, 3, 1, 3]
+        bodyMass = [8.0, 2.0, 8.0, 2.0] #[kg]
+        r_LcP_P = [
+            0.5, 0.0, 0.0,
+            0.05, 0.0, 0.0,
+            0.5, 0.0, 0.0,
+            0.05, 0.0, 0.0,
+        ] #[m]
         thrArmIdx = [0, 1]
         thrArmJointIdx = [3, 3]
         armTreeIdx = [0, 0]
@@ -284,11 +307,11 @@ class BSKMujocoFSWModels:
             0.0, 0.0, 0.0,
             1.0, 0.0, 0.0,
             0.0, 0.0, 0.0,
-        ]
+        ] #[m]
         r_TP_P = [
             0.1, 0.0, 0.0,
             0.1, 0.0, 0.0,
-        ]
+        ] #[m]
         shat_P = [
             1.0, 0.0, 0.0,
             0.0, 1.0, 0.0,
@@ -318,6 +341,10 @@ class BSKMujocoFSWModels:
             + arm2BaseDcm + identity + identity + identity
         )
 
+        thrArmConfigOut.bodyArmIdx.clear()
+        thrArmConfigOut.bodyJointIdx.clear()
+        thrArmConfigOut.bodyMass.clear()
+        thrArmConfigOut.r_LcP_P.clear()
         thrArmConfigOut.thrArmIdx.clear()
         thrArmConfigOut.thrArmJointIdx.clear()
         thrArmConfigOut.armTreeIdx.clear()
@@ -327,6 +354,18 @@ class BSKMujocoFSWModels:
         thrArmConfigOut.shat_P.clear()
         thrArmConfigOut.fhat_P.clear()
         thrArmConfigOut.dcm_C0P.clear()
+
+        thrArmConfigOut.hubMass = self.hubMass
+        for v in r_BcB_B:
+            thrArmConfigOut.r_BcB_B.push_back(v)
+        for v in bodyArmIdx:
+            thrArmConfigOut.bodyArmIdx.push_back(v)
+        for v in bodyJointIdx:
+            thrArmConfigOut.bodyJointIdx.push_back(v)
+        for v in bodyMass:
+            thrArmConfigOut.bodyMass.push_back(v)
+        for v in r_LcP_P:
+            thrArmConfigOut.r_LcP_P.push_back(v)
         for v in thrArmIdx:
             thrArmConfigOut.thrArmIdx.push_back(v)
         for v in thrArmJointIdx:
@@ -350,9 +389,9 @@ class BSKMujocoFSWModels:
     def SetTransRef(self):
         """Set the translational reference state information"""
         transRefOut = messaging.TransRefMsgPayload()
-        transRefOut.r_RN_N = [0.0, 0.0, 0.0]
-        transRefOut.v_RN_N = [0.0, 0.0, 0.0]
-        transRefOut.a_RN_N = [0.0, 0.0, 0.0]
+        transRefOut.r_RN_N = [0.0, 0.0, 0.0] #[m]
+        transRefOut.v_RN_N = [0.0, 0.0, 0.0] #[m/s]
+        transRefOut.a_RN_N = [0.0, 0.0, 0.0] #[m/s^2]
         self.transRefMsg = messaging.TransRefMsg().write(transRefOut)
 
     def SetInertial3D(self):
@@ -399,7 +438,6 @@ class BSKMujocoFSWModels:
         """Define the joint and thruster allocation module"""
         self.jointThrAllocation.ModelTag = "jointThrAllocation"
         self.jointThrAllocation.armConfigInMsg.subscribeTo(self.thrArmConfigMsg)
-        self.jointThrAllocation.CoMStatesInMsg.subscribeTo(SimBase.DynModels.systemCoM.comStatesOutMsg)
         self.jointThrAllocation.hubStatesInMsg.subscribeTo(SimBase.DynModels.scene.getBody(self.hubName).getOrigin().stateOutMsg)
         self.jointThrAllocation.transForceInMsg.subscribeTo(self.inertialCartFeedback.forceOutMsg)
         self.jointThrAllocation.rotTorqueInMsg.subscribeTo(self.mrpFeedback.cmdTorqueOutMsg)
