@@ -30,6 +30,9 @@ Version |release|
 - BSK-1387: :ref:`linkBudget` could compute excessive pointing loss for non-identity antenna attitudes
   because the inertial line-of-sight vector was transformed using the antenna-to-inertial DCM. This is
   fixed in the current version.
+- BSK-1416 : :ref:`jointThrAllocation` was using a static value for the vector between the hub center of
+  mass (CoM) and system CoM. This caused the resulting thruster mapping to be incorrect for a given
+  set of joint angles. This is fixed in the current version.
 
 
 Version 2.10.0 (April 2, 2026)
