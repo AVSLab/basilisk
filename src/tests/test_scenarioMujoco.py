@@ -49,7 +49,7 @@ SCENARIO_FILES = [
 ]
 
 SCENARIO_RUN_KWARGS = {
-    "scenarioThrArmControl": {"showPlots": False, "timeStep": 0.075, "runTime": 270.0},
+    "scenarioThrArmControl": {"showPlots": False, "timeStep": 0.08, "runTime": 240.0},
 }
 OPTIONAL_EXAMPLE_DEPENDENCIES = {"scipy"}
 
