@@ -64,6 +64,8 @@ class BSKMujocoDynamicsModels():
     def setScene(self):
         self.scene.extraEoMCall = True
         self.scene.ModelTag = "mujocoScene"
+        self.integrator.setRelativeTolerance(1e-2)
+        self.integrator.setAbsoluteTolerance(1e-2)
         self.scene.setIntegrator(self.integrator)
 
     def setSystemCoM(self):

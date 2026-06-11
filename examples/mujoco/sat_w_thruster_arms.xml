@@ -8,25 +8,25 @@
       <site name="hub_center" pos="0 0 0" />
 
       <body name="arm_1_base" pos="0.79 0 0">
-	  	<geom name="boom_1" type="capsule" size="0.1" fromto="0 0 0 1 0 0" rgba="1 0 0 1" contype="1" conaffinity="2" mass="8" />
+        <geom name="boom_1" type="capsule" size="0.1" fromto="0 0 0 1 0 0" rgba="1 0 0 1" contype="1" conaffinity="2" mass="8" />
         <joint name="arm_1_joint_1" axis="1 0 0" />
         <joint name="arm_1_joint_2" axis="0 1 0" />
 
         <body name="arm_1_tip" pos="1 0 0">
-		  <geom name="tip_1" type="capsule" size="0.05" fromto="0 0 0 0.1 0 0" rgba="1 0 0 1" contype="1" conaffinity="2" mass="2" />
+		      <geom name="tip_1" type="capsule" size="0.05" fromto="0 0 0 0.1 0 0" rgba="1 0 0 1" contype="1" conaffinity="2" mass="2" />
           <joint name="arm_1_joint_3" axis="0 0 1" />
           <joint name="arm_1_joint_4" axis="0 1 0" />
           <site name="thruster_1" pos="0.1 0 0" />
         </body>
-	  </body>
+      </body>
 
       <body name="arm_2_base" pos="-0.79 0 0" xyaxes="-1 0 0 0 -1 0">
-	  	<geom name="boom_2" type="capsule" size="0.1" fromto="0 0 0 1 0 0" rgba="1 0 0 1" contype="1" conaffinity="2" mass="8" />
+        <geom name="boom_2" type="capsule" size="0.1" fromto="0 0 0 1 0 0" rgba="1 0 0 1" contype="1" conaffinity="2" mass="8" />
         <joint name="arm_2_joint_1" axis="1 0 0" />
         <joint name="arm_2_joint_2" axis="0 1 0" />
 
-		<body name="arm_2_tip" pos="1 0 0">
-		  <geom name="tip_2" type="capsule" size="0.05" fromto="0 0 0 0.1 0 0" rgba="1 0 0 1" contype="1" conaffinity="2" mass="2" />
+        <body name="arm_2_tip" pos="1 0 0">
+          <geom name="tip_2" type="capsule" size="0.05" fromto="0 0 0 0.1 0 0" rgba="1 0 0 1" contype="1" conaffinity="2" mass="2" />
           <joint name="arm_2_joint_3" axis="0 0 1" />
           <joint name="arm_2_joint_4" axis="0 1 0" />
           <site name="thruster_2" pos="0.1 0 0" />

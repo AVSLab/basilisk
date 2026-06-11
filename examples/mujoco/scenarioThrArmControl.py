@@ -206,7 +206,7 @@ def runScenario(scenario, runTime: float = 320.0):
     scenario.ConfigureStopTime(simulationTime)
     scenario.ExecuteSimulation()
 
-def run(showPlots: bool = False, timeStep: float = 0.01, runTime: float = 320.0):
+def run(showPlots: bool = False, timeStep: float = 0.01, runTime: float = 500.0):
    """
     The scenarios can be run with the following setups parameters:
 
@@ -241,7 +241,7 @@ if __name__ == "__main__":
         parser.add_argument(
         "--runTime",
         type=float,
-        default=320.0,
+        default=500.0,
         help="Simulation run time [s]."
         )
 
