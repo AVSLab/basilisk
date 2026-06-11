@@ -1,0 +1,1 @@
+- Fixed the use of a static vector between the hub center of mass and the system center of mass in :ref:`jointThrAllocation`. The vector is now computed from the current articulated-arm configuration, which corrects the thruster mapping and resulting optimization solution for a given set of joint angles.
