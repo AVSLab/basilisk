@@ -80,6 +80,10 @@ runs:
         restore-keys: |
           conan-${{ runner.os }}-py${{ inputs.python-version }}-
 
+    - name: Configure Conan network retries
+      shell: bash
+      run: python .github/scripts/configure_conan_retries.py
+
     - name: Configure Conan profile
       shell: bash
       run: |
