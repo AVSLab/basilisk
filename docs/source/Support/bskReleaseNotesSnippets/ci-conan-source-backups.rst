@@ -1,0 +1,1 @@
+- Added a Conan source backup URL so CI can fall back to mirrored third-party source archives.

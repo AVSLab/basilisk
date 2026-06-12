@@ -19,16 +19,18 @@ from pathlib import Path
 from typing import Optional
 
 
-CONAN_DOWNLOAD_RETRIES = 8
-CONAN_HTTP_RETRIES = 8
-CONAN_RETRY_WAIT = 15  # [s]
-CONAN_HTTP_TIMEOUT = 120  # [s]
+CONAN_DOWNLOAD_RETRIES = 1
+CONAN_HTTP_RETRIES = 1
+CONAN_RETRY_WAIT = 5  # [s]
+CONAN_HTTP_TIMEOUT = 30  # [s]
+CONAN_SOURCE_BACKUP_URL = "https://hanspeterschaub.info/bskFiles/backup/conan-sources"
 
 CONAN_RETRY_SETTINGS = {
     "tools.files.download:retry": CONAN_DOWNLOAD_RETRIES,
     "tools.files.download:retry_wait": CONAN_RETRY_WAIT,
     "core.net.http:max_retries": CONAN_HTTP_RETRIES,
     "core.net.http:timeout": CONAN_HTTP_TIMEOUT,
+    "core.sources:download_urls": ["origin", CONAN_SOURCE_BACKUP_URL],
 }
 
 GLOBAL_CONF_PATH = Path.home() / ".conan2" / "global.conf"
@@ -42,7 +44,7 @@ def _conf_key(line: str) -> Optional[str]:
 
 
 def update_global_conf(path: Path = GLOBAL_CONF_PATH) -> None:
-    """Set Conan retry configuration in ``global.conf``."""
+    """Set Conan retry and source-backup configuration in ``global.conf``."""
     path.parent.mkdir(parents=True, exist_ok=True)
     lines = path.read_text(encoding="utf-8").splitlines() if path.exists() else []
 
@@ -63,7 +65,7 @@ def update_global_conf(path: Path = GLOBAL_CONF_PATH) -> None:
             updated_lines.append(f"{key}={value}")
 
     path.write_text("\n".join(updated_lines) + "\n", encoding="utf-8")
-    print(f"Configured Conan download retries in {path}")
+    print(f"Configured Conan download retries and source backups in {path}")
 
 
 if __name__ == "__main__":
