@@ -158,3 +158,42 @@ def test_retrying_http_downloader_does_not_retry_not_found():
         downloader("https://example.com/missing.dat", "unused", None)
 
     assert calls == ["https://example.com/missing.dat"]
+
+
+def test_retrying_http_downloader_uses_backup_after_primary_failure():
+    """RetryingHTTPDownloader must try backup URLs after primary failures."""
+    calls = []
+
+    def fail_primary(url, output_file, pooch_obj, check_only=False):
+        calls.append(url)
+        if url == "https://example.com/primary.dat":
+            raise RuntimeError("primary download failure")
+        return None
+
+    downloader = dataFetcher.RetryingHTTPDownloader(
+        attempts=1,
+        retry_wait=1,  # [s]
+        timeout=2,  # [s]
+        sleep=lambda wait: None,
+        downloader_factory=lambda **kwargs: fail_primary,
+        backup_urls_for=lambda url: ["https://example.com/backup.dat"],
+    )
+
+    downloader("https://example.com/primary.dat", "unused", None)
+
+    assert calls == [
+        "https://example.com/primary.dat",
+        "https://example.com/backup.dat",
+    ]
+
+
+def test_external_kernel_backup_urls_include_haslam_file():
+    """The Haslam map must have a mirrored support-data fallback URL."""
+    primary_url = dataFetcher.EXTERNAL_KERNEL_URLS[
+        "supportData/SkyBrightnessData/haslam408_dsds_Remazeilles2014.fits"
+    ]
+
+    assert dataFetcher.EXTERNAL_KERNEL_BACKUP_URLS[primary_url] == [
+        "https://hanspeterschaub.info/bskFiles/backup/"
+        "supportData/SkyBrightnessData/haslam408_dsds_Remazeilles2014.fits"
+    ]

@@ -22,7 +22,7 @@ import functools
 import logging
 import os
 import time
-from typing import Callable, Optional
+from typing import Callable, Optional, Sequence
 
 import pooch
 import requests
@@ -33,9 +33,14 @@ from Basilisk import __version__
 pooch_logger = pooch.utils.get_logger()
 pooch_logger.setLevel(logging.INFO)
 
-SUPPORT_DATA_DOWNLOAD_ATTEMPTS = 5
-SUPPORT_DATA_DOWNLOAD_TIMEOUT = 120  # [s]
-SUPPORT_DATA_RETRY_WAIT = 15  # [s]
+SUPPORT_DATA_DOWNLOAD_ATTEMPTS = 2
+SUPPORT_DATA_DOWNLOAD_TIMEOUT = 30  # [s]
+SUPPORT_DATA_RETRY_WAIT = 5  # [s]
+DEFAULT_SUPPORT_DATA_BACKUP_BASE_URL = "https://hanspeterschaub.info/bskFiles/backup"
+SUPPORT_DATA_BACKUP_BASE_URL = os.environ.get(
+    "BSK_SUPPORT_DATA_BACKUP_BASE_URL",
+    DEFAULT_SUPPORT_DATA_BACKUP_BASE_URL,
+)
 
 # Override URLs for large NAIF kernels (not in GitHub repo)
 EXTERNAL_KERNEL_URLS = {
@@ -52,6 +57,25 @@ EXTERNAL_KERNEL_URLS = {
 # they may change without notice.
 for key in EXTERNAL_KERNEL_URLS:
     REGISTRY[key] = None
+
+
+def _join_url(base_url: str, rel: str) -> str:
+    """Return ``rel`` appended to ``base_url`` as a URL path."""
+    return f"{base_url.rstrip('/')}/{rel.lstrip('/')}"
+
+
+def _external_backup_url(rel: str) -> Optional[str]:
+    """Return the mirrored support-data URL for ``rel``, if enabled."""
+    if not SUPPORT_DATA_BACKUP_BASE_URL:
+        return None
+    return _join_url(SUPPORT_DATA_BACKUP_BASE_URL, rel)
+
+
+EXTERNAL_KERNEL_BACKUP_URLS = {
+    url: [_external_backup_url(rel)]
+    for rel, url in EXTERNAL_KERNEL_URLS.items()
+    if _external_backup_url(rel)
+}
 
 DATA_VERSION = f"v{__version__}"
 
@@ -127,8 +151,13 @@ def _is_retryable_error(error: Exception) -> bool:
     return True
 
 
+def _external_backup_urls_for(url: str) -> Sequence[str]:
+    """Return configured backup URLs for the given external support-data URL."""
+    return EXTERNAL_KERNEL_BACKUP_URLS.get(url, [])
+
+
 class RetryingHTTPDownloader:
-    """Retry transient HTTP failures during Pooch downloads."""
+    """Retry transient HTTP failures and fall back to mirrored support data."""
 
     def __init__(
         self,
@@ -138,6 +167,7 @@ class RetryingHTTPDownloader:
         progressbar: bool = False,
         sleep: Callable[[int], None] = time.sleep,
         downloader_factory: Callable[..., pooch.HTTPDownloader] = pooch.HTTPDownloader,
+        backup_urls_for: Callable[[str], Sequence[str]] = _external_backup_urls_for,
     ):
         self.attempts = attempts
         self.retry_wait = retry_wait
@@ -145,6 +175,7 @@ class RetryingHTTPDownloader:
         self.progressbar = progressbar
         self.sleep = sleep
         self.downloader_factory = downloader_factory
+        self.backup_urls_for = backup_urls_for
 
     def __call__(self, url, output_file, pooch_obj, check_only=False):
         last_error = None
@@ -152,22 +183,41 @@ class RetryingHTTPDownloader:
             progressbar=self.progressbar,
             timeout=self.timeout,
         )
-        for attempt in range(1, self.attempts + 1):
-            try:
-                return downloader(url, output_file, pooch_obj, check_only=check_only)
-            except Exception as error:
-                last_error = error
-                if attempt == self.attempts or not _is_retryable_error(error):
-                    raise
+        urls = [url]
+        for backup_url in self.backup_urls_for(url):
+            if backup_url not in urls:
+                urls.append(backup_url)
+
+        for url_index, candidate_url in enumerate(urls):
+            for attempt in range(1, self.attempts + 1):
+                try:
+                    return downloader(
+                        candidate_url,
+                        output_file,
+                        pooch_obj,
+                        check_only=check_only,
+                    )
+                except Exception as error:
+                    last_error = error
+                    if attempt == self.attempts or not _is_retryable_error(error):
+                        break
+                    pooch_logger.warning(
+                        "Download attempt %d/%d failed for %s: %s. Retrying in %d s.",
+                        attempt,
+                        self.attempts,
+                        candidate_url,
+                        error,
+                        self.retry_wait,
+                    )
+                    self.sleep(self.retry_wait)
+
+            if url_index < len(urls) - 1:
                 pooch_logger.warning(
-                    "Download attempt %d/%d failed for %s: %s. Retrying in %d s.",
-                    attempt,
-                    self.attempts,
-                    url,
-                    error,
-                    self.retry_wait,
+                    "Download failed for %s. Trying backup URL %s.",
+                    candidate_url,
+                    urls[url_index + 1],
                 )
-                self.sleep(self.retry_wait)
+
         raise last_error
 
 
