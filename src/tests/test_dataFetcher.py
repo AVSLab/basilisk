@@ -22,14 +22,24 @@ Unit tests for Basilisk supportData fetching (Pooch + local fallback).
 
 import pytest
 from pathlib import Path
-from unittest.mock import patch
 
-from Basilisk.utilities.supportDataTools.dataFetcher import (
-    DataFile,
-    get_path,
-    relpath,
-    REGISTRY,
-)
+import requests
+
+from Basilisk.utilities.supportDataTools import dataFetcher
+
+
+class TransientDownloader:
+    """Fail a fixed number of times before succeeding."""
+
+    def __init__(self, failures_before_success: int):
+        self.failures_before_success = failures_before_success
+        self.calls = 0
+
+    def __call__(self, url, output_file, pooch_obj, check_only=False):
+        self.calls += 1
+        if self.calls <= self.failures_before_success:
+            raise RuntimeError("temporary download failure")
+        return None
 
 
 @pytest.fixture
@@ -39,9 +49,11 @@ def fake_fetch(monkeypatch, tmp_path):
     dummy.write_text("test")
 
     monkeypatch.setattr(
-        "Basilisk.utilities.supportDataTools.dataFetcher.POOCH.fetch",
-        lambda key: str(dummy),
+        dataFetcher.POOCH,
+        "fetch",
+        lambda key, downloader=None: str(dummy),
     )
+    monkeypatch.setattr(dataFetcher, "LOCAL_SUPPORT", None)
 
     return dummy
 
@@ -50,11 +62,11 @@ def test_all_enum_entries_are_in_registry():
     """Every DataFile enum value must correspond to a key in REGISTRY."""
     missing = []
 
-    for category in DataFile.__dict__.values():
+    for category in dataFetcher.DataFile.__dict__.values():
         if isinstance(category, type) and hasattr(category, "__members__"):
             for enum_value in category:
-                key = relpath(enum_value)
-                if key not in REGISTRY:
+                key = dataFetcher.relpath(enum_value)
+                if key not in dataFetcher.REGISTRY:
                     missing.append(key)
 
     assert not missing, f"Registry missing entries: {missing}"
@@ -62,7 +74,87 @@ def test_all_enum_entries_are_in_registry():
 
 def test_get_path_uses_pooch_when_not_local(fake_fetch):
     """get_path() must return a Path backed by mocked Pooch."""
-    path = get_path(DataFile.MagneticFieldData.WMM)
+    path = dataFetcher.get_path(dataFetcher.DataFile.MagneticFieldData.WMM)
 
     assert isinstance(path, Path)
     assert path.exists(), "get_path() should return an existing dummy file"
+
+
+def test_fetch_support_data_uses_retrying_downloader(monkeypatch, tmp_path):
+    """fetch_support_data() must pass a retrying downloader to Pooch."""
+    dummy = tmp_path / "dummy.dat"
+    dummy.write_text("test")
+    captured = {}
+
+    def fake_pooch_fetch(key, downloader=None):
+        captured["key"] = key
+        captured["downloader"] = downloader
+        return str(dummy)
+
+    monkeypatch.setattr(dataFetcher.POOCH, "fetch", fake_pooch_fetch)
+
+    path = dataFetcher.fetch_support_data("supportData/MagneticField/WMM2025.COF")
+
+    assert path == str(dummy)
+    assert captured["key"] == "supportData/MagneticField/WMM2025.COF"
+    assert isinstance(captured["downloader"], dataFetcher.RetryingHTTPDownloader)
+
+
+def test_retrying_http_downloader_retries_transient_errors():
+    """RetryingHTTPDownloader must retry transient download failures."""
+    transient_downloader = TransientDownloader(failures_before_success=2)
+    retry_waits = []
+    downloader = dataFetcher.RetryingHTTPDownloader(
+        attempts=3,
+        retry_wait=1,  # [s]
+        timeout=2,  # [s]
+        sleep=retry_waits.append,
+        downloader_factory=lambda **kwargs: transient_downloader,
+    )
+
+    downloader("https://example.com/file.dat", "unused", None)
+
+    assert transient_downloader.calls == 3
+    assert retry_waits == [1, 1]
+
+
+def test_retrying_http_downloader_raises_after_last_attempt():
+    """RetryingHTTPDownloader must raise when retries are exhausted."""
+    transient_downloader = TransientDownloader(failures_before_success=3)
+    downloader = dataFetcher.RetryingHTTPDownloader(
+        attempts=3,
+        retry_wait=1,  # [s]
+        timeout=2,  # [s]
+        sleep=lambda wait: None,
+        downloader_factory=lambda **kwargs: transient_downloader,
+    )
+
+    with pytest.raises(RuntimeError, match="temporary download failure"):
+        downloader("https://example.com/file.dat", "unused", None)
+
+    assert transient_downloader.calls == 3
+
+
+def test_retrying_http_downloader_does_not_retry_not_found():
+    """RetryingHTTPDownloader must not retry hard HTTP client errors."""
+    response = requests.Response()
+    response.status_code = 404
+    not_found_error = requests.exceptions.HTTPError(response=response)
+    calls = []
+
+    def fail_with_not_found(url, output_file, pooch_obj, check_only=False):
+        calls.append(url)
+        raise not_found_error
+
+    downloader = dataFetcher.RetryingHTTPDownloader(
+        attempts=3,
+        retry_wait=1,  # [s]
+        timeout=2,  # [s]
+        sleep=lambda wait: None,
+        downloader_factory=lambda **kwargs: fail_with_not_found,
+    )
+
+    with pytest.raises(requests.exceptions.HTTPError):
+        downloader("https://example.com/missing.dat", "unused", None)
+
+    assert calls == ["https://example.com/missing.dat"]

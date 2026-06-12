@@ -23,7 +23,7 @@ import pooch
 from tqdm import tqdm
 
 from Basilisk.utilities.supportDataTools.dataFetcher import (
-    POOCH,
+    fetch_support_data,
     local_support_path,
 )
 from Basilisk.utilities.supportDataTools.registrySnippet import REGISTRY
@@ -41,7 +41,7 @@ def quiet_fetch(rel: str):
     pooch_logger.setLevel(logging.CRITICAL)
 
     try:
-        return POOCH.fetch(rel)
+        return fetch_support_data(rel)
     finally:
         pooch_logger.setLevel(old_level)
 
