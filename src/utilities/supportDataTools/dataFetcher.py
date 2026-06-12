@@ -19,17 +19,23 @@
 from enum import Enum
 from pathlib import Path
 import functools
-import os
-import requests
-import pooch
 import logging
-from typing import Optional
+import os
+import time
+from typing import Callable, Optional
+
+import pooch
+import requests
 
 from Basilisk.utilities.supportDataTools.registrySnippet import REGISTRY
 from Basilisk import __version__
 
 pooch_logger = pooch.utils.get_logger()
 pooch_logger.setLevel(logging.INFO)
+
+SUPPORT_DATA_DOWNLOAD_ATTEMPTS = 5
+SUPPORT_DATA_DOWNLOAD_TIMEOUT = 120  # [s]
+SUPPORT_DATA_RETRY_WAIT = 15  # [s]
 
 # Override URLs for large NAIF kernels (not in GitHub repo)
 EXTERNAL_KERNEL_URLS = {
@@ -111,6 +117,66 @@ POOCH = pooch.create(
 )
 
 
+def _is_retryable_error(error: Exception) -> bool:
+    """Return ``True`` if a support data download error should be retried."""
+    if isinstance(error, requests.exceptions.HTTPError):
+        response = getattr(error, "response", None)
+        status_code = getattr(response, "status_code", None)
+        if status_code and 400 <= status_code < 500 and status_code not in (408, 429):
+            return False
+    return True
+
+
+class RetryingHTTPDownloader:
+    """Retry transient HTTP failures during Pooch downloads."""
+
+    def __init__(
+        self,
+        attempts: int = SUPPORT_DATA_DOWNLOAD_ATTEMPTS,
+        retry_wait: int = SUPPORT_DATA_RETRY_WAIT,
+        timeout: int = SUPPORT_DATA_DOWNLOAD_TIMEOUT,
+        progressbar: bool = False,
+        sleep: Callable[[int], None] = time.sleep,
+        downloader_factory: Callable[..., pooch.HTTPDownloader] = pooch.HTTPDownloader,
+    ):
+        self.attempts = attempts
+        self.retry_wait = retry_wait
+        self.timeout = timeout
+        self.progressbar = progressbar
+        self.sleep = sleep
+        self.downloader_factory = downloader_factory
+
+    def __call__(self, url, output_file, pooch_obj, check_only=False):
+        last_error = None
+        downloader = self.downloader_factory(
+            progressbar=self.progressbar,
+            timeout=self.timeout,
+        )
+        for attempt in range(1, self.attempts + 1):
+            try:
+                return downloader(url, output_file, pooch_obj, check_only=check_only)
+            except Exception as error:
+                last_error = error
+                if attempt == self.attempts or not _is_retryable_error(error):
+                    raise
+                pooch_logger.warning(
+                    "Download attempt %d/%d failed for %s: %s. Retrying in %d s.",
+                    attempt,
+                    self.attempts,
+                    url,
+                    error,
+                    self.retry_wait,
+                )
+                self.sleep(self.retry_wait)
+        raise last_error
+
+
+def fetch_support_data(rel: str, progressbar: bool = False) -> str:
+    """Fetch a support data file using retry-hardened HTTP downloads."""
+    downloader = RetryingHTTPDownloader(progressbar=progressbar)
+    return POOCH.fetch(rel, downloader=downloader)
+
+
 def _local_rel(rel: str) -> str:
     """Convert a registry-style key into a path relative to LOCAL_SUPPORT."""
     prefix = "supportData/"
@@ -141,7 +207,7 @@ def get_path(file_enum: Enum) -> Path:
 
     # No local repo or missing local file so fetch from remote
     try:
-        return Path(POOCH.fetch(rel))
+        return Path(fetch_support_data(rel))
     except Exception as e:
         raise FileNotFoundError(f"Support data file not found via pooch: {rel}") from e
 
