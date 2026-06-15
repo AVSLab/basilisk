@@ -25,7 +25,8 @@ Version |release|
 - Monte Carlo now applies nested dispersion paths and randomized ``RNGSeed`` modifications to the actual
   simulation objects.
 - The :ref:`linearTranslationNDOFStateEffector` getter assertion no longer references the spinning-body-only
-  degree-of-freedom counter, fixing source builds where that assertion is compiled.
+  degree-of-freedom counter, fixing source builds where that assertion is compiled. The related
+  :ref:`spinningBodyNDOFStateEffector` getter assertion now rejects the first out-of-range index.
 - SWIG 4.4.0 caused Basilisk build failures in some Python 3.13+ source-build configurations.
   Basilisk now requires SWIG 4.4.1 or a newer supported 4.x release, which provides SWIG ABI 5 support
   for Basilisk and compatible plugins. If source builds fail with SWIG 4.4.0 or emit
