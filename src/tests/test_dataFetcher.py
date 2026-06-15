@@ -20,11 +20,12 @@
 Unit tests for Basilisk supportData fetching (Pooch + local fallback).
 """
 
-import pytest
 from pathlib import Path
 
+import pytest
 import requests
 
+from Basilisk.utilities import bskLargeData
 from Basilisk.utilities.supportDataTools import dataFetcher
 
 
@@ -78,6 +79,21 @@ def test_get_path_uses_pooch_when_not_local(fake_fetch):
 
     assert isinstance(path, Path)
     assert path.exists(), "get_path() should return an existing dummy file"
+
+
+def test_bsk_large_data_quiet_fetch_keeps_warnings_visible(monkeypatch):
+    """quiet_fetch() must keep retry and backup warnings visible."""
+    logger_levels = []
+
+    def fake_fetch(rel):
+        logger_levels.append(bskLargeData.pooch.utils.get_logger().level)
+        return "dummy"
+
+    monkeypatch.setattr(bskLargeData, "fetch_support_data", fake_fetch)
+
+    assert bskLargeData.quiet_fetch("supportData/example.dat") == "dummy"
+
+    assert logger_levels == [bskLargeData.logging.WARNING]
 
 
 def test_fetch_support_data_uses_retrying_downloader(monkeypatch, tmp_path):
