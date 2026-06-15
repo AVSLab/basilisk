@@ -113,7 +113,8 @@ void SpinningBodyNDOFStateEffector::addSpinningBody(const std::shared_ptr<Spinni
 }
 
 std::shared_ptr<SpinningBody> SpinningBodyNDOFStateEffector::getSpinningBody(uint64_t index) {
-    assert(("Index can't be greater than the number of degrees of freedom of the effector", index <= this->numberOfDegreesOfFreedom));
+    assert(("Index must be less than the number of degrees of freedom of the effector",
+            index < static_cast<uint64_t>(this->numberOfDegreesOfFreedom)));
 
     return this->spinningBodyVec.at(index);
 }

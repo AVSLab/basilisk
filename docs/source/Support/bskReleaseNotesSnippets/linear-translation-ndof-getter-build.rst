@@ -1,1 +1,1 @@
-- Fixed a source-build error in :ref:`linearTranslationNDOFStateEffector` from an invalid getter assertion.
+- Fixed N-DoF getter assertions in :ref:`linearTranslationNDOFStateEffector` and :ref:`spinningBodyNDOFStateEffector`.
