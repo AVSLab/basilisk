@@ -34,11 +34,11 @@ endColor = "\033[0m"
 
 def quiet_fetch(rel: str):
     """
-    Silences Pooch logging for a single fetch call.
+    Suppress routine Pooch logging for a single fetch call.
     """
     pooch_logger = pooch.utils.get_logger()
     old_level = pooch_logger.level
-    pooch_logger.setLevel(logging.CRITICAL)
+    pooch_logger.setLevel(logging.WARNING)
 
     try:
         return fetch_support_data(rel)
