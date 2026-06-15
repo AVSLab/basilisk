@@ -110,7 +110,7 @@ void LinearTranslationNDOFStateEffector::addTranslatingBody(const std::shared_pt
 
 /*! This method is used to get a translating body. */
 std::shared_ptr<TranslatingBody> LinearTranslationNDOFStateEffector::getTranslatingBody(uint64_t index) {
-    assert(("Index can't be greater than the number of degrees of freedom of the effector", index <= this->numberOfDegreesOfFreedom));
+    assert(("Index must be less than the number of translating body axes", index < static_cast<uint64_t>(this->N)));
 
     return this->translatingBodyVec.at(index);
 }

@@ -1,0 +1,1 @@
+- Fixed a source-build error in :ref:`linearTranslationNDOFStateEffector` from an invalid getter assertion.
