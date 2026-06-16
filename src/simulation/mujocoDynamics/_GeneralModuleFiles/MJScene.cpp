@@ -326,20 +326,18 @@ MJScene::equationsOfMotion(double t, double timeStep)
                                         "s in MJScene with ID: " + std::to_string(moduleID));
     }
 
-    // Replace the floating-frame translational acceleration for each free joint
-    // that has gravity sources registered via addGravitySource().  In the
-    // co-moving frame MuJoCo solves with the body at the origin, so the qacc
-    // translation it produces is floating-point noise; overwrite it with the
-    // true inertial gravitational acceleration evaluated at the saved position.
-    // Bodies without addGravitySource sources are left untouched so that other
-    // force mechanisms (e.g. NBodyGravity) keep their computed qacc.
+    // Add inertial gravity to each free joint that has gravity sources
+    // registered via addGravitySource().  MuJoCo still computes local
+    // non-gravity translational effects (e.g. actuators, contacts, constraints)
+    // in the co-moving frame, while these gravity sources are evaluated at the
+    // saved inertial position and added to the computed translational qacc.
     for (auto& sf : savedFrames) {
         if (!sf.fj->getBody().hasGravitySources()) continue;
         size_t i = sf.fj->getQvelAdr();
         Eigen::Vector3d gravAccel = sf.fj->getBody().computeGravityAt(sf.r);
-        mujocoData->qacc[i]     = gravAccel[0];
-        mujocoData->qacc[i + 1] = gravAccel[1];
-        mujocoData->qacc[i + 2] = gravAccel[2];
+        mujocoData->qacc[i]     += gravAccel[0];
+        mujocoData->qacc[i + 1] += gravAccel[1];
+        mujocoData->qacc[i + 2] += gravAccel[2];
     }
 
     // The derivative of the bulk position is the bulk velocity.  The
