@@ -19,7 +19,9 @@ About Vizard
 
     **Description:** Unity-Based 3D Visualization of Basilisk Simulation Data
 
-    **License:** Freeware
+    **Binary License:** Binaries are Freeware under `Creative Commons Attribution 4.0 International <https://creativecommons.org/licenses/by/4.0/>`_
+
+    **Open Source License:** Vizard is distributed under the `ISC License <https://opensource.org/license/isc>`_.
 
     **Status:** Version 2.4.0 (Released May 2026)
 
