@@ -61,6 +61,29 @@ def test_scenarioIntegrators(show_plots, integratorCase):
     assert testResults < 1, testMessage
 
 
+def test_adaptive_integrator_state_specific_tolerances_insert():
+    """Check adaptive integrator state-specific tolerance setters insert new keys."""
+    relTol = 0.0  # [-]
+    absTol = 1e-6  # [-]
+    objectRelTol = 0.2  # [-]
+    objectAbsTol = 0.3  # [-]
+    stateName = "customState"
+    objectStateName = "objectCustomState"
+
+    scObject = spacecraft.Spacecraft()
+    integratorObject = svIntegrators.svIntegratorRKF45(scObject)
+
+    integratorObject.setRelativeTolerance(stateName, relTol)
+    integratorObject.setAbsoluteTolerance(stateName, absTol)
+    integratorObject.setRelativeTolerance(scObject, objectStateName, objectRelTol)
+    integratorObject.setAbsoluteTolerance(scObject, objectStateName, objectAbsTol)
+
+    assert integratorObject.getRelativeTolerance(stateName) == relTol
+    assert integratorObject.getAbsoluteTolerance(stateName) == absTol
+    assert integratorObject.getRelativeTolerance(scObject, objectStateName) == objectRelTol
+    assert integratorObject.getAbsoluteTolerance(scObject, objectStateName) == objectAbsTol
+
+
 def run(doUnitTests, show_plots, integratorCase):
     """Call this routine directly to run the tutorial scenario."""
     testFailCount = 0  # zero unit test result counter
