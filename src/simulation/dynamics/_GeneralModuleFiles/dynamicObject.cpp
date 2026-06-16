@@ -19,9 +19,17 @@
 
 #include "dynamicObject.h"
 #include "architecture/utilities/macroDefinitions.h"
+#include <memory>
+
+DynamicObject::~DynamicObject()
+{
+    delete this->integrator;
+}
 
 void DynamicObject::setIntegrator(StateVecIntegrator* newIntegrator)
 {
+    std::unique_ptr<StateVecIntegrator> ownedIntegrator(newIntegrator);
+
     if (this->isDynamicsSynced) {
         bskLogger.bskLog(
             BSK_WARNING,
@@ -31,23 +39,23 @@ void DynamicObject::setIntegrator(StateVecIntegrator* newIntegrator)
         return;
     }
 
-    if (!newIntegrator) {
+    if (!ownedIntegrator) {
         bskLogger.bskError("New integrator cannot be a null pointer");
     }
 
-    if (newIntegrator->dynPtrs.at(0) != this) {
+    if (ownedIntegrator->dynPtrs.at(0) != this) {
         bskLogger.bskError("New integrator must have been created using this DynamicObject");
     }
 
     // If there was already an integrator set, then whatever dynPtrs that the
     // original integrator had take priority over the dynPtrs of newIntegrator
     if (this->integrator) {
-        newIntegrator->dynPtrs = std::move(this->integrator->dynPtrs);
+        ownedIntegrator->dynPtrs = std::move(this->integrator->dynPtrs);
     }
 
     delete this->integrator;
 
-    this->integrator = newIntegrator;
+    this->integrator = ownedIntegrator.release();
 }
 
 void DynamicObject::syncDynamicsIntegration(DynamicObject* dynPtr)
