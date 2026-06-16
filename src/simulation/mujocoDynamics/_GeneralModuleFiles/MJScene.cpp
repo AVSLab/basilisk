@@ -23,6 +23,7 @@
 #include "StatefulSysModel.h"
 
 #include "architecture/utilities/macroDefinitions.h"
+#include "simulation/dynamics/_GeneralModuleFiles/svIntegratorAdaptiveRungeKutta.h"
 #include "simulation/dynamics/_GeneralModuleFiles/svIntegratorRK4.h"
 
 #include <cmath>
@@ -170,6 +171,23 @@ MJScene::initializeDynamics()
     }
     for (auto [_, sysModelPtr] : this->dynamicsDiffusionTask.TaskModels) {
         registerStatesOnSysModel(sysModelPtr);
+    }
+
+    // If an adaptive integrator is advancing a gravity-driven free body, zero
+    // the relative tolerance on the bulk qpos/qvel states. At orbital position
+    // and velocity scales, the default relative tolerance can permit absolute
+    // errors large enough to destabilize stiff appendage dynamics.
+    bool hasGravityDrivenFreeBody = false;
+    for (auto&& body : this->spec.getBodies()) {
+        if (body.isFree() && body.hasGravitySources()) {
+            hasGravityDrivenFreeBody = true;
+            break;
+        }
+    }
+    auto* adaptiveIntegrator = dynamic_cast<StateVecAdaptiveIntegrator*>(this->integrator);
+    if (adaptiveIntegrator && hasGravityDrivenFreeBody) {
+        adaptiveIntegrator->setRelativeTolerance("mujocoQpos", 0.0);
+        adaptiveIntegrator->setRelativeTolerance("mujocoQvel", 0.0);
     }
 }
 

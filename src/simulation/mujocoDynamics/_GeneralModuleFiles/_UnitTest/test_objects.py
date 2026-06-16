@@ -19,6 +19,8 @@ import os
 
 try:
     from Basilisk.simulation import mujoco
+    from Basilisk.simulation import pointMassGravityModel
+    from Basilisk.simulation import svIntegrators
 
     couldImportMujoco = True
 except:
@@ -72,6 +74,25 @@ def test_loading():
     # Move time forward, which will trigger a re-compile (since
     # we added actuators), and check that the simulation runs ok
     scene.UpdateState(1)
+
+
+@pytest.mark.skipif(not couldImportMujoco, reason="Compiled Basilisk without --mujoco")
+def test_adaptive_free_joint_translation_tolerances_are_stage_independent():
+    """Tests MJScene configures bulk relTol through the adaptive-integrator interface."""
+
+    scene = mujoco.MJScene.fromFile(XML_PATH)
+    cube_body = scene.getBody("cube")
+
+    gravity = pointMassGravityModel.PointMassGravityModel()
+    gravity.muBody = 1.0  # [m^3/s^2]
+    cube_body.addGravitySource(gravity)
+
+    integrator = svIntegrators.svIntegratorRKF78(scene)
+    scene.setIntegrator(integrator)
+    scene.Reset(0)
+
+    assert integrator.getRelativeTolerance("mujocoQpos") == pytest.approx(0.0)
+    assert integrator.getRelativeTolerance("mujocoQvel") == pytest.approx(0.0)
 
 
 if __name__ == "__main__":

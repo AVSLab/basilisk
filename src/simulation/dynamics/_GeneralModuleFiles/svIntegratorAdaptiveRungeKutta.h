@@ -27,6 +27,24 @@
 #include <memory>
 #include <optional>
 #include <stdint.h>
+#include <string>
+
+/**
+ * @brief Interface for integrators that support state-specific adaptive tolerances.
+ *
+ * This non-templated interface lets callers configure per-state tolerances
+ * without needing to know the concrete Runge-Kutta stage count.
+ */
+class StateVecAdaptiveIntegrator {
+  public:
+    virtual ~StateVecAdaptiveIntegrator() = default;
+
+    /** Sets the relative tolerance for the state identified by the given name. */
+    virtual void setRelativeTolerance(std::string stateName, double relTol) = 0;
+
+    /** Sets the absolute tolerance for the state identified by the given name. */
+    virtual void setAbsoluteTolerance(std::string stateName, double absTol) = 0;
+};
 
 /**
  * Extends RKCoefficients with "b" coefficients used for the lower order method.
@@ -55,7 +73,8 @@ template <size_t numberStages> struct RKAdaptiveCoefficients : public RKCoeffici
  * are met.
  */
 template <size_t numberStages>
-class svIntegratorAdaptiveRungeKutta : public svIntegratorRungeKutta<numberStages> {
+class svIntegratorAdaptiveRungeKutta : public svIntegratorRungeKutta<numberStages>,
+                                       public StateVecAdaptiveIntegrator {
   public:
     /**
      * Constructs the integrator for the given dynamic object and specified Adaptive RK
@@ -113,7 +132,7 @@ class svIntegratorAdaptiveRungeKutta : public svIntegratorRungeKutta<numberStage
      * Sets the relative tolerance for every DynamicObject
      * and the state identified by the given name.
      */
-    void setRelativeTolerance(std::string stateName, double relTol);
+    void setRelativeTolerance(std::string stateName, double relTol) override;
 
     /**
      * Returns the relative tolerance for every DynamicObject
@@ -128,7 +147,7 @@ class svIntegratorAdaptiveRungeKutta : public svIntegratorRungeKutta<numberStage
      * Sets the absolute tolerance for every DynamicObject
      * and the state identified by the given name.
      */
-    void setAbsoluteTolerance(std::string stateName, double absTol);
+    void setAbsoluteTolerance(std::string stateName, double absTol) override;
 
     /**
      * Returns the absolute tolerance for every DynamicObject
