@@ -295,10 +295,10 @@ class MJBody : public MJObject<mjsBody>
      *
      * Gravity sources registered here are evaluated each EoM step at the
      * body's saved (un-zeroed) inertial position and their accelerations are
-     * summed into the translational `qacc` for the body's free joint,
-     * replacing the floating-frame translational noise that would otherwise
-     * be zeroed.  This is the mechanism by which free-joint MuJoCo bodies
-     * experience orbital gravity in the floating reference frame.
+     * added to the translational `qacc` for the body's free joint.  This is
+     * the mechanism by which free-joint MuJoCo bodies experience orbital
+     * gravity in the floating reference frame while still retaining MuJoCo's
+     * local non-gravity translational effects.
      *
      * Multiple sources may be added; their contributions sum.  Has no effect
      * unless the body has a free joint.  For sliding-joint translation-only
