@@ -24,6 +24,7 @@ std::unique_ptr<StateData> StateData::clone() const
 {
     auto result = std::make_unique<StateData>(this->stateName, this->state);
     result->stateDeriv = this->stateDeriv;
+    result->perComponentErrorControl = this->perComponentErrorControl;
     result->stateDiffusion.resize(this->stateDiffusion.size());
     for (size_t i = 0; i < this->stateDiffusion.size(); i++)
     {

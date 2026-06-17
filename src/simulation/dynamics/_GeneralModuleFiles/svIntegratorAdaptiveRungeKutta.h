@@ -335,21 +335,46 @@ double svIntegratorAdaptiveRungeKutta<numberStages>::computeMaxRelativeError(
     // Compute the absolute truncation error for every state
     ExtendedStateVector truncationError = highOrderNextStep - lowOrderNextStep;
 
-    // Compute the maximum relative error being committed
-    // Each state has a truncationError (thisTruncationError),
-    // and an acceptable error tolerance (a combination of relTol and absTol)
-    // We care only about the largest relationship between
-    // truncation error and tolerance.
+    // Compute the maximum relative error being committed.
+    //
+    // By default each state has a single truncation error (its error norm) and an
+    // acceptable tolerance (relTol * stateNorm + absTol); we keep the largest
+    // ratio of the two.  This whole-vector measure is correct when every
+    // component of a state is the same physical quantity.
+    //
+    // A state may instead request per-component error control (see
+    // ``StateData::perComponentErrorControl``), in which case each scalar
+    // component is compared against its own tolerance relTol * |state_i| + absTol
+    // and the largest ratio over components is used.  This matters when a single
+    // state bundles quantities of very different magnitudes -- e.g. the MuJoCo
+    // bulk position/velocity states, where an orbital velocity of ~7600 m/s
+    // shares a vector with an order-unity attitude quaternion component, and a
+    // whole-vector norm would let the large component loosen the small one's
+    // effective tolerance.
     double maxRelativeError = 0;
     auto maxRelativeErrorRef = std::ref(maxRelativeError);
     highOrderNextStep.apply([this, &maxRelativeErrorRef, &truncationError](
                                  const size_t& dynObjIndex,
                                  const std::string& stateName,
                                  const Eigen::MatrixXd& thisState) {
-        double thisTruncationError = truncationError.at({dynObjIndex, stateName}).norm();
-        double thisErrorTolerance = this->getTolerance(dynObjIndex, stateName, thisState.norm());
-        maxRelativeErrorRef.get() =
-            std::max(maxRelativeErrorRef.get(), thisTruncationError / thisErrorTolerance);
+        const Eigen::MatrixXd& thisError = truncationError.at({dynObjIndex, stateName});
+
+        const StateData* stateData =
+            this->dynPtrs.at(dynObjIndex)->dynManager.stateContainer.stateMap.at(stateName).get();
+
+        if (stateData->perComponentErrorControl) {
+            for (Eigen::Index i = 0; i < thisState.size(); ++i) {
+                double thisErrorTolerance =
+                    this->getTolerance(dynObjIndex, stateName, std::abs(thisState(i)));
+                maxRelativeErrorRef.get() =
+                    std::max(maxRelativeErrorRef.get(), std::abs(thisError(i)) / thisErrorTolerance);
+            }
+        } else {
+            double thisTruncationError = thisError.norm();
+            double thisErrorTolerance = this->getTolerance(dynObjIndex, stateName, thisState.norm());
+            maxRelativeErrorRef.get() =
+                std::max(maxRelativeErrorRef.get(), thisTruncationError / thisErrorTolerance);
+        }
     });
 
     return maxRelativeError;
