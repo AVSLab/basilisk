@@ -68,11 +68,14 @@ to rotate.
 """
 
 import os
+from typing import Any, Sequence
 
 from Basilisk.simulation import mujoco
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
+from Basilisk.utilities import vizSupport
 from Basilisk.architecture import messaging
+from Basilisk.architecture import sysModel
 from Basilisk.simulation import svIntegrators
 
 import numpy as np
@@ -80,6 +83,55 @@ import matplotlib.pyplot as plt
 
 CURRENT_FOLDER = os.path.dirname(__file__)
 XML_PATH = f"{CURRENT_FOLDER}/sat_w_thrusters.xml"
+HUB_BODY_NAME = "hub"
+THRUSTER_VIZ_INFO = {
+    "tank_1_thrust": {
+        "location": [0.6, 0.6, -1.0],  # [m]
+        "direction": [0.0, 0.0, 1.0],  # [-]
+    },
+    "tank_2_thrust": {
+        "location": [-0.6, 0.6, -1.0],  # [m]
+        "direction": [0.0, 0.0, 1.0],  # [-]
+    },
+    "tank_3_thrust": {
+        "location": [0.6, -0.6, -1.0],  # [m]
+        "direction": [0.0, 0.0, 1.0],  # [-]
+    },
+    "tank_4_thrust": {
+        "location": [-0.6, -0.6, -1.0],  # [m]
+        "direction": [0.0, 0.0, 1.0],  # [-]
+    },
+}
+THRUSTER_COLOR = "yellow"
+
+
+def _attach_thruster_visualization(viz, spacecraftName, thrusterVizWriters):
+    """Attach MuJoCo thruster visualization messages to one Vizard body."""
+    from Basilisk.simulation import vizInterface
+
+    for scDataIndex in range(len(viz.scData)):
+        scData = viz.scData[scDataIndex]
+        if scData.spacecraftName == spacecraftName:
+            thrList = []
+            thrInfo = []
+            for writer in thrusterVizWriters:
+                thrList.append(writer.thrOutMsg.addSubscriber())
+                thrInfo.append(vizInterface.ThrClusterMap())
+                thrInfo[-1].thrTag = writer.ModelTag
+                thrInfo[-1].color = vizSupport.toRGBA255(THRUSTER_COLOR)
+
+            scData.thrInMsgs = messaging.THROutputMsgInMsgsVector(thrList)
+            scData.thrInfo = vizInterface.ThrClusterVector(thrInfo)
+            vizSupport.setActuatorGuiSetting(
+                viz,
+                spacecraftName=spacecraftName,
+                viewThrusterHUD=True,
+            )
+            return
+
+    raise ValueError(
+        f"Could not find spacecraft '{spacecraftName}' in Vizard spacecraft data."
+    )
 
 
 def run(showPlots: bool = False, visualize: bool = False):
@@ -91,8 +143,8 @@ def run(showPlots: bool = False, visualize: bool = False):
         visualize (bool, optional): If True, the ``MJScene`` visualization tool is
             run on the simulation results. Defaults to False.
     """
-    dt = 1 # s
-    tf = 2.5 * 60 # s
+    dt = 1.0  # [s]
+    tf = 2.5 * 60.0  # [s]
 
     # Create a simulation, process, and task as usual
     scSim = SimulationBaseClass.SimBaseClass()
@@ -108,13 +160,16 @@ def run(showPlots: bool = False, visualize: bool = False):
     integ = svIntegrators.svIntegratorRKF45(scene)
     scene.setIntegrator(integ)
 
-    thrust = 5 # N
-    mDot = -1 # kg/s
+    thrust = 5.0  # [N]
+    mDot = -1.0  # [kg/s]
 
     messages = []
     massPropRecorders = []
+    thrusterVizInputs = []
 
     for i in range(1, 5):
+        actuatorName = f"tank_{i}_thrust"
+        bodyName = f"tank_{i}"
 
         # Define a standalone ``SingleActuatorMsg`` used to
         # define the force that each thruster applies.
@@ -127,11 +182,10 @@ def run(showPlots: bool = False, visualize: bool = False):
         thrustMsg = messaging.SingleActuatorMsg()
         thrustMsg.write(messaging.SingleActuatorMsgPayload(input=thrust))
 
-        actuatorName = f"tank_{i}_thrust"
-
         scene.getSingleActuator(actuatorName).actuatorInMsg.subscribeTo(thrustMsg)
 
         messages.append(thrustMsg)
+        thrusterVizInputs.append((actuatorName, thrustMsg))
 
         # Define a ``SCMassPropsMsg`` used to define the time derivative
         # of the mass of the tank bodies. The mass of the tank
@@ -142,7 +196,6 @@ def run(showPlots: bool = False, visualize: bool = False):
         mDotMsg = messaging.SCMassPropsMsg()
         mDotMsg.write(messaging.SCMassPropsMsgPayload(massSC=mDot if i < 4 else mDot * 2))
 
-        bodyName = f"tank_{i}"
         body = scene.getBody(bodyName)
 
         body.derivativeMassPropertiesInMsg.subscribeTo(mDotMsg)
@@ -164,6 +217,28 @@ def run(showPlots: bool = False, visualize: bool = False):
     # Record the minimal coordinates of the entire scene for visualization
     stateRecorder = scene.stateOutMsg.recorder()
     scSim.AddModelToTask("test", stateRecorder)
+
+    if vizSupport.vizFound:
+        thrusterVizWriters = []
+        for actuatorName, thrustMsg in thrusterVizInputs:
+            vizInfo = THRUSTER_VIZ_INFO[actuatorName]
+            writer = ThrusterVizMessageWriter(
+                actuatorName,
+                thrustMsg,
+                thrust,
+                vizInfo["location"],
+                vizInfo["direction"],
+            )
+            scSim.AddModelToTask("test", writer)
+            thrusterVizWriters.append(writer)
+
+        viz = vizSupport.enableUnityVisualization(
+            scSim,
+            "test",
+            scene,
+            # saveFile=__file__,
+        )
+        _attach_thruster_visualization(viz, HUB_BODY_NAME, thrusterVizWriters)
 
     # Initialize the simulation
     scSim.InitializeSimulation()
@@ -203,6 +278,62 @@ def run(showPlots: bool = False, visualize: bool = False):
         mujoco.visualize(
             stateRecorder.times(), np.squeeze(stateRecorder.qpos), scene, speedUp
         )
+
+
+class ThrusterVizMessageWriter(sysModel.SysModel):
+    """Publish a ``THROutputMsg`` from a MuJoCo scalar thrust command."""
+
+    def __init__(
+        self,
+        thrusterName: str,
+        thrustInMsg: messaging.SingleActuatorMsg,
+        maxThrust: float,
+        thrusterLocation: Sequence[float],
+        thrusterDirection: Sequence[float],
+        *args: Any,
+    ):
+        """Create a Vizard thruster message writer.
+
+        :param thrusterName: Name of the MuJoCo actuator represented in Vizard.
+        :param thrustInMsg: Scalar thrust command message used by MuJoCo.
+        :param maxThrust: Nominal maximum thrust for Vizard scaling.
+        :param thrusterLocation: Thruster location in the attached body frame.
+        :param thrusterDirection: Unit thrust direction in the attached body frame.
+        """
+        super().__init__(*args)
+        self.ModelTag = thrusterName
+        self.maxThrust = abs(maxThrust)  # [N]
+        self.thrusterLocation = list(thrusterLocation)
+        self.thrusterDirection = list(thrusterDirection)
+        self.thrustInMsg = messaging.SingleActuatorMsgReader()
+        self.thrustInMsg.subscribeTo(thrustInMsg)
+        self.thrOutMsg = messaging.THROutputMsg()
+
+    def Reset(self, CurrentSimNanos: int):
+        """Write the initial thruster visualization payload."""
+        self._write_thruster_payload(CurrentSimNanos)
+
+    def UpdateState(self, CurrentSimNanos: int):
+        """Write the current thruster visualization payload."""
+        self._write_thruster_payload(CurrentSimNanos)
+
+    def _write_thruster_payload(self, CurrentSimNanos: int):
+        """Write the current scalar thrust command for Vizard."""
+        thrustForce = self.thrustInMsg().input  # [N]
+        payload = messaging.THROutputMsgPayload()
+        payload.maxThrust = self.maxThrust
+        payload.thrustForce = thrustForce
+        if self.maxThrust > 0.0:
+            payload.thrustFactor = thrustForce / self.maxThrust
+        payload.thrustBlowDownFactor = 1.0
+        payload.ispBlowDownFactor = 1.0
+        payload.thrusterLocation = self.thrusterLocation
+        payload.thrusterDirection = self.thrusterDirection
+        payload.thrustForce_B = [
+            thrustForce * directionComponent
+            for directionComponent in self.thrusterDirection
+        ]
+        self.thrOutMsg.write(payload, CurrentSimNanos, self.moduleID)
 
 
 if __name__ == "__main__":

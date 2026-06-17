@@ -106,6 +106,7 @@ from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.utilities import simSetPlanetEnvironment
+from Basilisk.utilities import vizSupport
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -137,7 +138,9 @@ def run(showPlots: bool = False):
             Defaults to False.
     """
     initialAlt = 250 # [km]
-    planet = simIncludeGravBody.BODY_DATA["earth"]
+    gravFactory = simIncludeGravBody.gravBodyFactory()
+    planet = gravFactory.createEarth()
+    planet.isCentralBody = True
 
     # Set up a circular orbit using classical orbit elements
     oe = orbitalMotion.ClassicElements()
@@ -162,6 +165,7 @@ def run(showPlots: bool = False):
     # Create the Mujoco scene (our MuJoCo DynamicObject)
     # Load the XML file that defines the system from a file
     scene = mujoco.MJScene(CANNONBALL_SCENE_XML)
+    scene._vizGravBodies = gravFactory.gravBodies
     scSim.AddModelToTask("test", scene)
 
     # Set the integrator of the DynamicObject to W2Ito2
@@ -246,6 +250,14 @@ def run(showPlots: bool = False):
 
     dragRecorder = drag.forceOutMsg.recorder()
     scSim.AddModelToTask("test", dragRecorder)
+
+    if vizSupport.vizFound:
+        vizSupport.enableUnityVisualization(
+            scSim,
+            "test",
+            scene,
+            # saveFile=__file__,
+        )
 
     # Initialize the simulation
     scSim.InitializeSimulation()
