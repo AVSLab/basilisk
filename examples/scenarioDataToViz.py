@@ -77,11 +77,6 @@ from Basilisk.simulation import spacecraft
 from Basilisk.utilities import (SimulationBaseClass, macros, simIncludeGravBody, vizSupport)
 from Basilisk.utilities import unitTestSupport
 
-try:
-    from Basilisk.simulation import vizInterface
-except ImportError:
-    pass
-
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
 fileName = os.path.basename(os.path.splitext(__file__)[0])
@@ -197,14 +192,11 @@ def run(show_plots, attType):
                                      scale=[0.09, 0.09, 0.09])
 
         # over-ride the default to not read the SC states from scObjects, but set them directly
-        # to read from the dataFileToFiz output message
-        viz.scData.clear()
+        # to read from the dataFileToViz output message
         for c in range(len(scList)):
-            scData = vizInterface.VizSpacecraftData()
+            scData = viz.scData[c]
             scData.spacecraftName = scList[c].ModelTag
             scData.scStateInMsg.subscribeTo(dataModule.scStateOutMsgs[c])
-
-            viz.scData.push_back(scData)
 
     #   initialize Simulation
     scSim.InitializeSimulation()

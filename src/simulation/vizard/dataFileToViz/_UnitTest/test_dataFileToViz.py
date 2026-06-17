@@ -348,10 +348,9 @@ def run(show_plots, convertPosUnits, attType, checkThruster, checkRW, verbose):
                                               )
     if vizSupport.vizFound:
         # over-ride the default to not read the SC states from scObjects, but set them directly
-        # to read from the dataFileToFiz output message
-        viz.scData.clear()
+        # to read from the dataFileToViz output message
         for c in range(len(scNames)):
-            scData = vizInterface.VizSpacecraftData()
+            scData = viz.scData[c]
             scData.spacecraftName = scNames[c]
             scData.scStateInMsg.subscribeTo(testModule.scStateOutMsgs[c])
 
@@ -373,8 +372,6 @@ def run(show_plots, convertPosUnits, attType, checkThruster, checkRW, verbose):
                 for rwLogMsg in testModule.rwScOutMsgs[c]:
                     rwList.append(rwLogMsg.addSubscriber())
                 scData.rwInMsgs = messaging.RWConfigLogMsgInMsgsVector(rwList)
-
-            viz.scData.push_back(scData)
 
         if checkThruster:
             viz.settings.defaultThrusterColor = vizSupport.toRGBA255("yellow")

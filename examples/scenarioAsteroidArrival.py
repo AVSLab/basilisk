@@ -141,15 +141,9 @@ To add a camera to the science-pointing mode, the ``createStandardCamera`` metho
                                     pointingVector_B=[0,1,0], position_B=cameraLocation)
 
 Finally, to add a thruster visualization for the thruster burn mode, the ``vizInterface`` is again invoked.
-Here we manually add the Vizard interface elements back in to redo what the ``enableUnityVisualization()``
-normally does for us.  The main difference is that we are manually setting the thruster information as
-the spacecraft dynamics does not contain a thruster effector::
-
-    scData = vizInterface.VizSpacecraftData()
-    scData.spacecraftName = scObject.ModelTag
-    scData.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
-    scData.transceiverList = vizInterface.TransceiverVector([transceiverHUD])
-    scData.genericSensorList = vizInterface.GenericSensorVector([genericSensor])
+Here we add custom visualization elements to the spacecraft data entry created by
+``enableUnityVisualization()``.  The main difference is that we are manually setting the thruster
+information as the spacecraft dynamics does not contain a thruster effector::
 
     thrusterMsgInfo = messaging.THROutputMsgPayload()
     thrusterMsgInfo.maxThrust = 1  # Newtons
@@ -157,13 +151,11 @@ the spacecraft dynamics does not contain a thruster effector::
     thrusterMsgInfo.thrusterLocation = [0, 0, -1.5]
     thrusterMsgInfo.thrusterDirection = [0, 0, 1]
     thrMsg = messaging.THROutputMsg().write(thrusterMsgInfo)
-    scData.thrInMsgs = messaging.THROutputInMsgsVector([thrMsg.addSubscriber()])
 
-After running the ``enableUnityVisualization()`` method, we need to clear the ``vizInterface`` spacecraft
-data container ``scData`` and push our custom copy to it::
-
-    viz.scData.clear()
-    viz.scData.push_back(scData)
+    scData = viz.scData[0]
+    scData.transceiverList = vizInterface.TransceiverVector([transceiverHUD])
+    scData.genericSensorList = vizInterface.GenericSensorVector([genericSensor])
+    scData.thrInMsgs = messaging.THROutputMsgInMsgsVector([thrMsg.addSubscriber()])
 
 
 Illustration of Simulation Results
@@ -477,13 +469,6 @@ def run(show_plots):
         # Set up the thruster visualization info
         # Note: This process is different from the usual procedure of creating a thruster effector.
         # The following code creates a thruster visualization only.
-        # before adding the thruster
-        scData = vizInterface.VizSpacecraftData()
-        scData.spacecraftName = scObject.ModelTag
-        scData.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
-        scData.transceiverList = vizInterface.TransceiverVector([transceiverHUD])
-        scData.genericSensorList = vizInterface.GenericSensorVector([genericSensor])
-
         thrusterMsgInfo = messaging.THROutputMsgPayload(
             maxThrust=1,
             thrustForce=0,
@@ -492,11 +477,9 @@ def run(show_plots):
         )
 
         thrMsg = messaging.THROutputMsg().write(thrusterMsgInfo)
-        scData.thrInMsgs = messaging.THROutputMsgInMsgsVector([thrMsg.addSubscriber()])
 
         thrInfo = vizInterface.ThrClusterMap()
         thrInfo.thrTag = "DV"
-        scData.thrInfo = vizInterface.ThrClusterVector([thrInfo])
 
         # Create the Vizard visualization file and set parameters
         viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
@@ -520,10 +503,12 @@ def run(show_plots):
                                         displayName="10˚ FOV Camera",
                                         pointingVector_B=[0, 1, 0], position_B=cameraLocation)
 
-        # Note: After running the enableUnityVisualization() method, we need to clear the
-        # vizInterface spacecraft data container, scData, and push our custom copy to it.
-        viz.scData.clear()
-        viz.scData.push_back(scData)
+        # Add custom visualization elements to the scData entry created by enableUnityVisualization().
+        scData = viz.scData[0]
+        scData.transceiverList = vizInterface.TransceiverVector([transceiverHUD])
+        scData.genericSensorList = vizInterface.GenericSensorVector([genericSensor])
+        scData.thrInMsgs = messaging.THROutputMsgInMsgsVector([thrMsg.addSubscriber()])
+        scData.thrInfo = vizInterface.ThrClusterVector([thrInfo])
 
     # Initialize and execute the simulation for the first section
     scSim.InitializeSimulation()
