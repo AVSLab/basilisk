@@ -20,6 +20,7 @@ import pytest
 
 try:
     from Basilisk.simulation import mujoco
+    from Basilisk.simulation import svIntegrators
 
     couldImportMujoco = True
 except:
@@ -125,6 +126,100 @@ def test_integration(showPlots: bool = False):
     )
     quat = rbk.MRP2EP(cubeState.sigma_BN)
     assert ref[check, 4:8] == pytest.approx(quat)
+
+
+# A torque-free single rigid body. With no external moment and a symmetric
+# inertia the body rate is conserved, so a high-accuracy integration provides a
+# reference attitude for the convergence and normalization checks below.
+SPHERE_XML = """
+<mujoco>
+  <option gravity="0 0 0"/>
+  <worldbody>
+    <body name="hub">
+      <freejoint/>
+      <geom type="sphere" size="1" mass="10"/>
+    </body>
+  </worldbody>
+</mujoco>
+"""
+
+
+def _runFreeSpin(highOrder, dt, tf, omega):
+    """Integrate the torque-free sphere from an initial body rate and return the
+    final orientation quaternion (w,x,y,z) from the hub origin message."""
+    scSim = SimulationBaseClass.SimBaseClass()
+    process = scSim.CreateNewProcess("test")
+    process.addTask(scSim.CreateNewTask("test", macros.sec2nano(dt)))
+
+    scene = mujoco.MJScene(SPHERE_XML)
+    scene.extraEoMCall = True
+    scene.highOrderAttitudeIntegration = highOrder
+    scSim.AddModelToTask("test", scene)
+
+    integ = svIntegrators.svIntegratorRK4(scene)
+    scene.setIntegrator(integ)
+    _hold = [integ]
+
+    rec = scene.getBody("hub").getOrigin().stateOutMsg.recorder(macros.sec2nano(dt))
+    scSim.AddModelToTask("test", rec)
+
+    scSim.InitializeSimulation()
+    scene.getBody("hub").setAttitudeRate(list(omega))
+    scSim.ConfigureStopTime(macros.sec2nano(tf))
+    scSim.ExecuteSimulation()
+
+    return rbk.MRP2EP(np.array(rec.sigma_BN)[-1])  # (w,x,y,z)
+
+
+@pytest.mark.skipif(not couldImportMujoco, reason="Compiled Basilisk without --mujoco")
+def test_highOrderQuaternionConvergesFasterThanDefault():
+    """High-order attitude integration converges at a higher order than the
+    default exponential-map path.
+
+    Both are compared against a high-accuracy reference (very small step). When
+    the step is halved, the high-order (RK4) quaternion error falls by roughly
+    2^4 = 16, while the default path is only second order on SO(3) and falls by
+    roughly 2^2 = 4.
+    """
+    omega = [0.4, -0.3, 0.8]  # rad/s, constant for a torque-free symmetric body
+    tf = 5.0
+
+    def attError(highOrder, dt, ref):
+        q = _runFreeSpin(highOrder, dt, tf, omega)
+        dcm = rbk.EP2C(q).dot(rbk.EP2C(ref).T)
+        return 4.0 * np.arctan(np.linalg.norm(rbk.C2MRP(dcm)))
+
+    refHi = _runFreeSpin(True, 0.005, tf, omega)
+    refLo = _runFreeSpin(False, 0.005, tf, omega)
+
+    ratioHi = attError(True, 0.10, refHi) / attError(True, 0.05, refHi)
+    ratioLo = attError(False, 0.10, refLo) / attError(False, 0.05, refLo)
+
+    assert ratioHi > 8.0  # close to 16 (fourth order)
+    assert ratioLo < 6.0  # close to 4 (second order)
+
+
+@pytest.mark.skipif(not couldImportMujoco, reason="Compiled Basilisk without --mujoco")
+@pytest.mark.parametrize("highOrder", [False, True])
+def test_quaternionStaysNormalized(highOrder):
+    """The orientation quaternion stays unit-norm after many integration steps in
+    both the default and high-order attitude modes."""
+    w, x, y, z = _runFreeSpin(highOrder, dt=0.1, tf=20.0, omega=[0.3, -0.2, 0.5])
+    assert np.sqrt(w * w + x * x + y * y + z * z) == pytest.approx(1.0, abs=1e-10)
+
+
+@pytest.mark.skipif(not couldImportMujoco, reason="Compiled Basilisk without --mujoco")
+def test_repeatedResetSucceeds():
+    """A scene can be reset more than once. ``test_sat.xml`` has nq != nv (free
+    joint plus hinges), so the bulk states must be registered at their compiled
+    sizes for a second reset to succeed."""
+    scene = mujoco.MJScene.fromFile(XML_PATH)
+    integ = svIntegrators.svIntegratorRK4(scene)
+    scene.setIntegrator(integ)
+    _hold = [integ]
+
+    scene.Reset(0)
+    scene.Reset(0)  # must not raise
 
 
 if __name__ == "__main__":
