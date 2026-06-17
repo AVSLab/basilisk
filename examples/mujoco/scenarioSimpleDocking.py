@@ -21,9 +21,12 @@ recommended scenario(s) that they may have):
 
 #. ``examples/mujoco/scenarioArmWithThrusters.py``
 
-This scripts shows how one can simulate two independent spacecraft
+This script shows how one can simulate two independent spacecraft
 docking and constraining their movement with respect to each other.
 This illustrates the use of MuJoCo ``equality`` in :ref:`MJScene<MJScene>`.
+The single :ref:`MJScene<MJScene>` is
+sent to :ref:`Vizard <vizard>` as two individual spacecraft, ``hub_1``
+and ``hub_2``.
 
 The multi-body system is defined in the XML file ``sats_dock.xml``.
 The system defined in this XML file is simple, but it illustrates some
@@ -50,6 +53,7 @@ from typing import Sequence
 from Basilisk.simulation import mujoco
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
+from Basilisk.utilities import vizSupport
 from Basilisk.architecture import messaging
 from Basilisk.simulation import svIntegrators
 
@@ -113,6 +117,14 @@ def run(showPlots: bool = False, visualize: bool = False):
     # Record the minimal coordinates of the entire scene for visualization
     stateRecorder = scene.stateOutMsg.recorder()
     scSim.AddModelToTask("test", stateRecorder)
+
+    if vizSupport.vizFound:
+        vizSupport.enableUnityVisualization(
+            scSim,
+            "test",
+            scene,
+            # saveFile=__file__,
+        )
 
     # Initialize the simulation
     scSim.InitializeSimulation()
@@ -178,4 +190,4 @@ def run(showPlots: bool = False, visualize: bool = False):
 
 
 if __name__ == "__main__":
-    run(True, True)
+    run(True, False)

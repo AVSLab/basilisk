@@ -1300,6 +1300,10 @@ def _handleMJScene(viz, sc, scSim, c, planetNameList, planetInfoList, spiceMsgLi
                    usedSpacecraftNames=None):
     """Register all MJScene bodies with the vizInterface messenger.
 
+    Each world-parented MuJoCo body is emitted as an individual Vizard
+    spacecraft.  Non-root MuJoCo bodies are emitted as child spacecraft using
+    their MuJoCo parent body name as ``parentSpacecraftName``.
+
     Gravity bodies are pulled from the ``_vizGravBodies`` attribute on the
     scene if present.  Set this before calling
     :func:`enableUnityVisualization`::
@@ -1311,15 +1315,15 @@ def _handleMJScene(viz, sc, scSim, c, planetNameList, planetInfoList, spiceMsgLi
     The entry at index *c* for each visual-element list may be:
 
     * ``None``  — no visuals.
-    * A plain list / object — applied to hub (world-parented) bodies only.
+    * A plain list / object — applied to root (world-parented) bodies only.
     * A ``dict {bodyName: list}`` — applied per named body (hub or child).
     """
     bodyNames = sc.getBodyNames()
 
-    freeBodyNames = [name for name in bodyNames if sc.getBodyParentName(name) == "world"]
-    if not freeBodyNames:
+    rootBodyNames = [name for name in bodyNames if sc.getBodyParentName(name) == "world"]
+    if not rootBodyNames:
         raise ValueError(
-            "MJScene has no top-level body. Cannot determine the hub spacecraft."
+            "MJScene has no world-parented body. Cannot determine Vizard spacecraft roots."
         )
 
     # Collect gravity bodies attached by the user for Vizard planet display.
@@ -1351,7 +1355,7 @@ def _handleMJScene(viz, sc, scSim, c, planetNameList, planetInfoList, spiceMsgLi
             msmInfoList=resolve(msmInfoList),
         )
 
-    for hubName in freeBodyNames:
+    for hubName in rootBodyNames:
         scData = vizInterface.VizSpacecraftData()
         _registerVizardSpacecraftName(hubName, usedSpacecraftNames)
         scData.spacecraftName = hubName
@@ -1360,7 +1364,7 @@ def _handleMJScene(viz, sc, scSim, c, planetNameList, planetInfoList, spiceMsgLi
         viz.scData.push_back(scData)
 
     for name in bodyNames:
-        if name in freeBodyNames:
+        if name in rootBodyNames:
             continue
         scData = vizInterface.VizSpacecraftData()
         _registerVizardSpacecraftName(name, usedSpacecraftNames)
@@ -1597,7 +1601,9 @@ def enableUnityVisualization(
         Can be a single object or list of objects.
         When an :ref:`MJScene` is provided, all bodies are auto-discovered and their
         parent-child hierarchy is resolved from the MuJoCo model.  Each
-        emitted Vizard spacecraft name must be unique across this list.  For an
+        world-parented MuJoCo body is emitted as an individual Vizard spacecraft;
+        non-root MuJoCo bodies are emitted as child spacecraft.  Each emitted
+        Vizard spacecraft name must be unique across this list.  For an
         MJScene, the emitted names are the local MuJoCo body names.
 
         **Gravity bodies** — attach a ``gravBodyFactory`` body list to the scene
@@ -1712,8 +1718,9 @@ def enableUnityVisualization(
 
     # firstSpacecraftName is the name used to default per-spacecraft helpers
     # like setInstrumentGuiSetting.  For MJScene, the scData entries are keyed
-    # by *body* name (each free body becomes one spacecraft in Vizard) rather
-    # than the scene's ModelTag, so default to the first free body name.
+    # by *body* name (each world-parented body becomes one spacecraft in
+    # Vizard) rather than the scene's ModelTag, so default to the first root
+    # body name.
     if mujocoFound and isinstance(scList[0], mujoco.MJScene):
         sceneBodyNames = scList[0].getBodyNames()
         firstSpacecraftName = next(
