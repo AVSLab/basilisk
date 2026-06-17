@@ -34,6 +34,20 @@ public:
     const std::string stateName; //!< [-] Name of the state
     BSKLogger bskLogger;         //!< -- BSK Logging
 
+    /** [-] Whether an adaptive integrator should measure this state's relative
+     * truncation error per scalar component instead of over the whole vector.
+     *
+     * The default (``false``) compares the L2 norm of the state's error against
+     * a tolerance built from the L2 norm of the whole state, which is the right
+     * choice when every component of the state is the same physical quantity
+     * (e.g. a position in metres).  When a single state instead bundles
+     * quantities of very different scales (e.g. the MuJoCo bulk position state,
+     * which mixes orbital translation in metres with order-unity attitude
+     * quaternion components), the whole-vector norm lets the large component
+     * swamp the small one and loosen its effective tolerance.  Setting this flag
+     * makes the integrator scale each component by its own magnitude instead. */
+    bool perComponentErrorControl = false;
+
 public:
     /** Creates a new state with the given name and set's the initial state.
      *
@@ -77,7 +91,7 @@ public:
     void setState(const Eigen::MatrixXd& newState);
 
     /** Updates the derivative of the value of the state */
-    void setDerivative(const Eigen::MatrixXd& newDeriv);
+    virtual void setDerivative(const Eigen::MatrixXd& newDeriv);
 
     /** Updates the diffusion of the value of the state.
      *
