@@ -275,6 +275,39 @@ bool MJSpec::recompileIfNeeded()
 
 void MJSpec::configure()
 {
+    // configure() can run via recompileIfNeeded() while MJScene::initializeDynamics
+    // is still registering the bulk states, before they exist. In that case there
+    // is nothing to size yet; initializeDynamics calls configure() again once the
+    // states are registered.
+    if (!this->scene.getQposState()) {
+        return;
+    }
+
+    // Size the bulk states to the model dimensions. Only sizes are touched, not
+    // values: configure() runs on every recompile, and the stored state must
+    // survive it. conservativeResize keeps existing entries when the size is
+    // unchanged.
+    auto resizeState = [](StateData* s, int n) {
+        s->state.conservativeResize(n, 1);
+        s->stateDeriv.conservativeResize(n, 1);
+    };
+
+    // getQposState()->configure() sizes qpos to nq and records the location of
+    // every orientation quaternion in it.
+    this->scene.getQposState()->configure(this->model.get());
+    resizeState(this->scene.getQvelState(), this->model->nv);
+
+    // The bodies seed their own mass entries below; the world body (index 0) has
+    // no MJBody, so seed it here to keep the whole vector well-defined.
+    resizeState(this->scene.getMassState(), this->model->nbody);
+    this->scene.getMassState()->stateDeriv.setZero();
+    this->scene.getMassState()->state(0) = this->model->body_mass[0];
+
+    // The act state exists only when na > 0.
+    if (this->scene.getActState()) {
+        resizeState(this->scene.getActState(), this->model->na);
+    }
+
     // Configure the bodies, which caches the body id corresponding to the name,
     // and also configures all sites and updates the position of the COM
     for (auto&& body : this->bodies) {
@@ -290,11 +323,4 @@ void MJSpec::configure()
     for (auto&& equality : this->equalities) {
         equality.configure(this->model.get());
     }
-
-    // qpos/qvel state ownership belongs to the individual joints. Their
-    // states are seeded by MJScene::initializeDynamics after configure()
-    // returns.
-    this->scene.getActState()->state.resize(this->model->na, 1);
-    this->scene.getActState()->stateDeriv.resize(this->model->na, 1);
-    std::copy_n(this->data->act, this->model->na, this->scene.getActState()->state.data());
 }

@@ -121,13 +121,9 @@ void MJBody::configure(const mjModel* mujocoModel)
     auto siteId = com.getId();
     std::copy_n(mujocoModel->body_ipos + 3 * bodyId, 3, mujocoModel->site_pos + 3 * siteId);
 
-    // Update the mass property states
-    if (!this->massState) {
-        // Should not happen
-        this->getSpec().getScene().bskLogger.bskError("Tried to configure MJBody before massState was created.");
-    }
-
-    this->massState->setState(Eigen::Matrix<double, 1, 1>{mujocoModel->body_mass[this->getId()]});
+    // Seed this body's entry of the scene's bulk mass state from the model.
+    this->getSpec().getScene().getMassState()->state(this->getId()) =
+        mujocoModel->body_mass[this->getId()];
 }
 
 MJSite& MJBody::getSite(const std::string& name)
@@ -234,7 +230,7 @@ void MJBody::writeStateDependentOutputMessages(uint64_t CurrentSimNanos)
 {
     SCMassPropsMsgPayload massPropertiesOutMsgPayload;
 
-    massPropertiesOutMsgPayload.massSC = this->massState->getState()(0);
+    massPropertiesOutMsgPayload.massSC = this->getMass();
     this->massPropertiesOutMsg.write(&massPropertiesOutMsgPayload,
                                      this->getSpec().getScene().moduleID,
                                      CurrentSimNanos);
@@ -244,50 +240,17 @@ void MJBody::writeStateDependentOutputMessages(uint64_t CurrentSimNanos)
     }
 }
 
-void MJBody::registerStates(DynParamRegisterer paramManager)
+double MJBody::getMass()
 {
-    this->massState = paramManager.registerState(1, 1, "mass");
-
-    // Each joint owns its own qpos/qvel state(s).  Registering here puts
-    // them all under this body's prefix so the manager-wide names stay
-    // unique even when bodies have joints with the same XML name.
-    for (auto&& joint : this->scalarJoints) {
-        joint.registerStates(paramManager);
-    }
-    if (this->ballJoint.has_value()) {
-        this->ballJoint->registerStates(paramManager);
-    }
-    if (this->freeJoint.has_value()) {
-        this->freeJoint->registerStates(paramManager);
-    }
-}
-
-void MJBody::setJointStatesInMujoco(mjData* d) const
-{
-    for (auto&& joint : this->scalarJoints) joint.setStateInMujoco(d);
-    if (this->ballJoint.has_value()) this->ballJoint->setStateInMujoco(d);
-    if (this->freeJoint.has_value()) this->freeJoint->setStateInMujoco(d);
-}
-
-void MJBody::getJointStatesFromMujoco(const mjData* d)
-{
-    for (auto&& joint : this->scalarJoints) joint.getStateFromMujoco(d);
-    if (this->ballJoint.has_value()) this->ballJoint->getStateFromMujoco(d);
-    if (this->freeJoint.has_value()) this->freeJoint->getStateFromMujoco(d);
-}
-
-void MJBody::setJointDerivativesFromMujoco(const mjData* d)
-{
-    for (auto&& joint : this->scalarJoints) joint.setDerivativesFromMujoco(d);
-    if (this->ballJoint.has_value()) this->ballJoint->setDerivativesFromMujoco(d);
-    if (this->freeJoint.has_value()) this->freeJoint->setDerivativesFromMujoco(d);
+    // This body's mass lives at its body id in the scene's bulk mass state.
+    return this->getSpec().getScene().getMassState()->state(this->getId());
 }
 
 void MJBody::updateMujocoModelFromMassProps()
 {
     auto m = spec.getMujocoModel();
 
-    double newMass = this->massState->getState()(0, 0);
+    double newMass = this->getMass();
     auto diff = abs(m->body_mass[this->getId()] - newMass);
     if (diff > 10 * std::numeric_limits<double>::epsilon()) {
 
@@ -310,7 +273,8 @@ void MJBody::updateMassPropsDerivative()
 {
     if (this->derivativeMassPropertiesInMsg.isLinked()) {
         auto deriv = this->derivativeMassPropertiesInMsg();
-        this->massState->setDerivative(Eigen::Matrix<double, 1, 1>{deriv.massSC});
+        // Write into this body's entry of the bulk mass state derivative.
+        this->getSpec().getScene().getMassState()->stateDeriv(this->getId()) = deriv.massSC;
     }
 }
 

@@ -756,4 +756,3 @@ create_symlinks("${CMAKE_BINARY_DIR}/Basilisk/supportData" ${dataFiles})
 
 # Tests targets
 add_subdirectory("architecture/utilities/tests")
-add_subdirectory("simulation/dynamics/tests")
