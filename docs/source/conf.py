@@ -187,6 +187,9 @@ exclude_patterns = [
     'examples/OpNavScenarios/scenariosOpNav/OpNavMC/index.rst',
     'examples/OpNavScenarios/index.rst',
     'examples/mujoco/index.rst',
+    'examples/dynamicsComparison/index.rst',
+    # The dynamicsComparison/results folder holds generated JSON/SVG artifacts, not docs.
+    'examples/dynamicsComparison/results/index.rst',
     # Release note snippets are consumed via include in bskReleaseNotes.rst and
     # should not be treated as standalone documentation pages.
     'Support/bskReleaseNotesSnippets/*.rst',
