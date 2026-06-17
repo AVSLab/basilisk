@@ -94,36 +94,46 @@ void MJScene::Reset(uint64_t CurrentSimNanos)
 
 void MJScene::initializeDynamics()
 {
-    // Each joint owns its own qpos/qvel StateData. Registering them
-    // per-body means the adaptive integrator scales tolerances independently
-    // per joint, at each joint's natural scale.  The actuator state is the
-    // only scene-wide state that remains a bulk array.
-    this->actState = this->dynManager.registerState(1, 1, "mujocoAct");
-
-    for (auto&& body : this->spec.getBodies()) {
-        body.registerStates(DynParamRegisterer(
-            this->dynManager,
-            "body_" + body.getName() + "_"
-        ));
+    // A MuJoCo scene integrates a small, fixed set of bulk states regardless of
+    // how many bodies or joints it contains: the whole position vector (qpos),
+    // the whole velocity vector (qvel), one mass entry per body, and the actuator
+    // state (act, only when the model has actuator activation states). Joints and
+    // bodies address their own slices of these. States are registered at the
+    // compiled model dimensions so a repeated Reset re-registers them at a
+    // matching size.
+    mjModel* model = this->spec.getMujocoModel();
+    this->qposState = this->dynManager.registerState<MJQPosStateData>(model->nq, 1, "mujocoQpos");
+    this->qvelState = this->dynManager.registerState(model->nv, 1, "mujocoQvel");
+    this->massState = this->dynManager.registerState(model->nbody, 1, "mujocoMass");
+    if (model->na > 0) {
+        this->actState = this->dynManager.registerState(model->na, 1, "mujocoAct");
     }
 
-    // Make sure the spec is compiled
-    bool recompiled = this->spec.recompileIfNeeded();
+    // The bulk position state advances quaternion blocks on SO(3).
+    this->qposState->highOrderIntegration = this->highOrderAttitudeIntegration;
 
-    // Always call `configure`, which will reshape the states size
+    // qpos and qvel bundle degrees of freedom of very different magnitudes
+    // (e.g. orbital translation alongside attitude quaternion components), so the
+    // adaptive integrator scales their truncation error per component. The
+    // homogeneous act and mass states keep the default whole-vector measure.
+    this->qposState->perComponentErrorControl = true;
+    this->qvelState->perComponentErrorControl = true;
+
+    bool recompiled = this->spec.recompileIfNeeded();
     if (!recompiled) {
         this->spec.configure();
     }
 
-    // After spec compile the joint addresses (qposAdr/qvelAdr) are known and
-    // mjData::qpos / mjData::qvel hold the values declared in the XML.  Seed
-    // each joint's StateData from those values so user-visible state matches
-    // the model out of the box.
-    {
-        auto d = this->spec.getMujocoData();
-        for (auto&& body : this->spec.getBodies()) {
-            body.getJointStatesFromMujoco(d);
-        }
+    // Seed the bulk states from mjData once, here rather than in configure():
+    // configure() also runs on mid-simulation recompiles, where re-seeding would
+    // discard state the user set on the stale model. body_mass includes the world
+    // body's entry at index 0, which no MJBody owns.
+    mjData* data = this->spec.getMujocoData();
+    std::copy_n(data->qpos, model->nq, this->qposState->state.data());
+    std::copy_n(data->qvel, model->nv, this->qvelState->state.data());
+    std::copy_n(model->body_mass, model->nbody, this->massState->state.data());
+    if (this->actState) {
+        std::copy_n(data->act, model->na, this->actState->state.data());
     }
 
     // Register the states of the models in the dynamics task
@@ -231,15 +241,15 @@ void MJScene::equationsOfMotion(double t, double timeStep)
         this->bskLogger.bskError("Encountered NaN acceleration at time %gs in MJScene with ID: %d", t, moduleID);
     }
 
-    // Each joint pulls its derivatives from the freshly computed mjData.
-    // Quaternion type joints ball and free-attitude set their qpos
-    // derivative to body angular velocity. Every other DOF uses the standard
-    // qpos' = qvel / qvel' = qacc.
+    // The derivative of the bulk position is the bulk velocity.  The
+    // MJQPosStateData consumes it directly (default mode) or expands the
+    // quaternion blocks into four-component rates (high-order mode).
+    this->qposState->setDerivative(this->qvelState->getState());
+
+    // The derivative of the bulk velocity is the computed acceleration.
     {
-        auto d = this->spec.getMujocoData();
-        for (auto&& body : this->spec.getBodies()) {
-            body.setJointDerivativesFromMujoco(d);
-        }
+        auto qvelDeriv = this->qvelState->stateDeriv.data();
+        std::copy_n(this->spec.getMujocoData()->qacc, this->spec.getMujocoModel()->nv, qvelDeriv);
     }
 
     // Also copy the derivative of the actuator states, if we have them
@@ -248,7 +258,8 @@ void MJScene::equationsOfMotion(double t, double timeStep)
         std::copy_n(this->spec.getMujocoData()->act_dot, this->spec.getMujocoModel()->na, actDeriv);
     }
 
-    // Update the derivative of the body mass property states
+    // Update the derivative of the body mass property states (into the bulk
+    // mass state, one entry per body).
     for (auto&& body : this->spec.getBodies()) {
         body.updateMassPropsDerivative();
     }
@@ -313,11 +324,16 @@ void MJScene::saveToFile(std::string filename)
 
 StateData* MJScene::getActState()
 {
-    if (!this->actState) {
-        this->bskLogger.bskError("Tried to get act state before initialization.");
-    }
+    // Returns nullptr when the model has no actuator activation states (na == 0),
+    // in which case no act state is created.  Callers must handle nullptr.
     return this->actState;
 }
+
+MJQPosStateData* MJScene::getQposState() { return this->qposState; }
+
+StateData* MJScene::getQvelState() { return this->qvelState; }
+
+StateData* MJScene::getMassState() { return this->massState; }
 
 void
 MJScene::printMujocoModelDebugInfo(const std::string& path)
@@ -443,10 +459,9 @@ void MJScene::updateMujocoArraysFromStates()
     auto mujocoModel = this->getMujocoModel();
     auto mujocoData  = this->getMujocoData();
 
-    // Each joint sets its owned state into mjData at its qposAdr/qvelAdr.
-    for (auto&& body : this->spec.getBodies()) {
-        body.setJointStatesInMujoco(mujocoData);
-    }
+    // Copy the bulk position/velocity states straight into mjData.
+    std::copy_n(this->qposState->state.data(), mujocoModel->nq, mujocoData->qpos);
+    std::copy_n(this->qvelState->state.data(), mujocoModel->nv, mujocoData->qvel);
 
     if (mujocoModel->na > 0) {
         std::copy_n(this->actState->state.data(), mujocoModel->na, mujocoData->act);
@@ -458,29 +473,27 @@ void MJScene::updateMujocoArraysFromStates()
 Eigen::VectorXd
 MJScene::assembleFullQpos()
 {
-    // Sync joints into mjData first then read straight from the contiguous
-    // mjData::qpos.
-    this->updateMujocoArraysFromStates();
+    // The bulk position state already mirrors the contiguous mjData::qpos layout.
     auto m = this->spec.getMujocoModel();
-    auto d = this->spec.getMujocoData();
-    return Eigen::Map<const Eigen::VectorXd>(d->qpos, m->nq);
+    return Eigen::Map<const Eigen::VectorXd>(this->qposState->state.data(), m->nq);
 }
 
 Eigen::VectorXd
 MJScene::assembleFullQvel()
 {
-    this->updateMujocoArraysFromStates();
     auto m = this->spec.getMujocoModel();
-    auto d = this->spec.getMujocoData();
-    return Eigen::Map<const Eigen::VectorXd>(d->qvel, m->nv);
+    return Eigen::Map<const Eigen::VectorXd>(this->qvelState->state.data(), m->nv);
 }
 
 void
 MJScene::writeOutputStateMessages(uint64_t CurrentSimNanos)
 {
+    // The actuator state only exists when the model has actuator activation
+    // states; otherwise report an empty vector.
+    Eigen::MatrixXd act = this->actState ? this->actState->getState() : Eigen::MatrixXd(0, 1);
     MJSceneStateMsgPayload stateOutMsgPayload{ this->assembleFullQpos(),
                                                this->assembleFullQvel(),
-                                               this->actState->getState() };
+                                               act };
 
     stateOutMsg.write(&stateOutMsgPayload, this->moduleID, CurrentSimNanos);
 }

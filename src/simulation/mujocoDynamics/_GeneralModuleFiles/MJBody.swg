@@ -29,13 +29,9 @@
 %ignore MJBody::configure;
 %ignore MJBody::writeFwdKinematicsMessages;
 %ignore MJBody::writeStateDependentOutputMessages;
-%ignore MJBody::registerStates;
 %ignore MJBody::updateMujocoModelFromMassProps;
 %ignore MJBody::updateMassPropsDerivative;
 %ignore MJBody::updateConstrainedEqualityJoints;
-%ignore MJBody::setJointStatesInMujoco;
-%ignore MJBody::getJointStatesFromMujoco;
-%ignore MJBody::setJointDerivativesFromMujoco;
 
 %extend MJBody {
 MJScene& getScene() { return $self->getSpec().getScene(); }

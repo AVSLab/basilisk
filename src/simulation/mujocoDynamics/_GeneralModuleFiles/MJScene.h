@@ -24,6 +24,7 @@
 #include <stdexcept>
 #include <mujoco/mujoco.h>
 
+#include "MJQPosStateData.h"
 #include "MJSpec.h"
 #include "MJUtils.h"
 #include "architecture/_GeneralModuleFiles/sys_model_task.h"
@@ -568,12 +569,34 @@ public:
     mjData* getMujocoData() { return this->spec.getMujocoData(); }
 
     /**
-     * @brief Retrieves the actuation state data.
-     *
-     * @return Pointer to `StateData`.
-     * @throw std::runtime_error If the state has not been initialized.
+     * @brief Retrieves the actuation state data, or `nullptr` if the model has no
+     * actuator activation states or is not yet initialized.
      */
     StateData* getActState();
+
+    /**
+     * @brief Retrieves the bulk position state data (the entire `qpos` vector),
+     * or `nullptr` if not yet initialized.
+     *
+     * Joints address their own slice of this state through their `qposAdr`.
+     */
+    MJQPosStateData* getQposState();
+
+    /**
+     * @brief Retrieves the bulk velocity state data (the entire `qvel` vector),
+     * or `nullptr` if not yet initialized.
+     *
+     * Joints address their own slice of this state through their `qvelAdr`.
+     */
+    StateData* getQvelState();
+
+    /**
+     * @brief Retrieves the bulk mass state data (one entry per body), or
+     * `nullptr` if not yet initialized.
+     *
+     * Bodies address their own entry through their MuJoCo body id.
+     */
+    StateData* getMassState();
 
     /**
      * @brief Prints MuJoCo model debug information to a file.
@@ -598,12 +621,27 @@ public:
      */
     bool extraEoMCall = false;
 
+    /** @brief Flag to integrate free/ball-joint attitude quaternions at the full
+     * order of the chosen Runge-Kutta method.
+     *
+     * If `false` (default), each attitude quaternion is advanced by a single
+     * exponential map of the integrator's stage-averaged body rate. This is only
+     * second-order accurate on SO(3) regardless of the RK method or any adaptive
+     * tolerance (the error falls only as the task time step shrinks).
+     *
+     * If `true`, attitude quaternions are integrated as a four-component rate
+     * `qdot = 0.5 * q (x) (0, omega)` evaluated per RK stage, so the attitude
+     * inherits the method's full order (e.g. order 4 for RK4) and an adaptive
+     * integrator's tolerance controls the attitude error. The result no longer
+     * bit-matches MuJoCo's native stepper. Set before `InitializeSimulation`.
+     */
+    bool highOrderAttitudeIntegration = false;
+
     Message<MJSceneStateMsgPayload> stateOutMsg; ///< Message with all the the scene's position, velocity, and actuators states.
 
     /**
-     * @brief Returns the total qpos vector reassembled from the split states.
-     *
-     * This matches the layout of `mjData::qpos` (length `nq`).
+     * @brief Returns the full position vector, matching the layout of
+     * `mjData::qpos` (length `nq`).
      */
     Eigen::VectorXd assembleFullQpos();
 
@@ -632,7 +670,13 @@ protected:
     SysModelTask dynamicsDiffusionTask; ///< Task managing models involved in the diffusion stochastic dynamics of this scene.
     std::vector<std::unique_ptr<SysModel>> ownedSysModel; ///< System models that should be cleared on this scene destruction.
 
-    StateData* actState = nullptr; ///< Actuator state data.
+    // A MuJoCo scene integrates exactly these four bulk states regardless of the
+    // number of bodies or joints it contains.  Joints and bodies address their
+    // own slices.
+    MJQPosStateData* qposState = nullptr; ///< Bulk position state (entire `qpos`).
+    StateData* qvelState = nullptr;       ///< Bulk velocity state (entire `qvel`).
+    StateData* massState = nullptr;       ///< Bulk mass state (one entry per body).
+    StateData* actState = nullptr;        ///< Bulk actuator state (entire `act`).
 };
 
 #endif

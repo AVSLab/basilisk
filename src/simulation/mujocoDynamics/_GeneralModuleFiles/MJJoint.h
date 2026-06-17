@@ -26,7 +26,6 @@
 #include "architecture/msgPayloadDefC/ScalarJointStateMsgPayload.h"
 #include "architecture/utilities/avsEigenSupport.h"
 #include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
-#include "simulation/dynamics/_GeneralModuleFiles/quaternionStateData.h"
 #include "StatefulSysModel.h"
 
 #include "MJEquality.h"
@@ -91,34 +90,6 @@ public:
      * @param m Pointer to the MuJoCo model used for configuration.
      */
     void configure(const mjModel* m);
-
-    /**
-     * @brief Registers this joint's qpos/qvel `StateData` on the manager.
-     *
-     * Each joint type registers state objects sized for its DOFs.
-     * Names are scoped via `registerer`'s prefix so collisions across joints are
-     * impossible.
-     */
-    virtual void registerStates(DynParamRegisterer registerer) = 0;
-
-    /**
-     * @brief Sets `mjData::qpos` and `mjData::qvel` from the joint's owned
-     * state values at this joint's address.
-     */
-    virtual void setStateInMujoco(mjData* d) const = 0;
-
-    /**
-     * @brief Gets the joint's slice of `mjData::qpos`/`mjData::qvel` and
-     * stores it in the joint's owned states.  Used at initialization to seed
-     * states from the values declared in the XML.
-     */
-    virtual void getStateFromMujoco(const mjData* d) = 0;
-
-    /**
-     * @brief Sets the joint's qpos and qvel state derivatives from the
-     * current `mjData::qvel` and `mjData::qacc`.
-     */
-    virtual void setDerivativesFromMujoco(const mjData* d) = 0;
 
 protected:
     /**
@@ -239,11 +210,6 @@ public:
      */
     void writeJointStateMessage(uint64_t CurrentSimNanos);
 
-    void registerStates(DynParamRegisterer registerer) override;
-    void setStateInMujoco(mjData* d) const override;
-    void getStateFromMujoco(const mjData* d) override;
-    void setDerivativesFromMujoco(const mjData* d) override;
-
 public:
     Message<ScalarJointStateMsgPayload> stateOutMsg; ///< Message to output joint position state.
     Message<ScalarJointStateMsgPayload> stateDotOutMsg; ///< Message to output joint velocity state.
@@ -251,9 +217,6 @@ public:
     ReadFunctor<ScalarJointStateMsgPayload> constrainedStateInMsg; ///< Functor to read constrained state input.
 
 protected:
-    StateData* qposState = nullptr; ///< 1x1 joint position state.
-    StateData* qvelState = nullptr; ///< 1x1 joint velocity state.
-
     /** An equality used to enforce a specific state for the joint. */
     MJSingleJointEquality constrainedEquality;
 };
@@ -261,23 +224,15 @@ protected:
 /**
  * @brief Represents a ball joint in MuJoCo.
  *
- * Owns a 4x1 `QuaternionStateData` for the orientation and a 3x1 `StateData`
- * for the body angular velocity.  Not fully supported elsewhere yet.
+ * The joint's orientation quaternion and body angular velocity live in the
+ * scene's bulk `qpos`/`qvel` states at this joint's address.  Not fully
+ * supported elsewhere yet.
  */
 class MJBallJoint : public MJJoint
 {
 public:
     /** Use constructor from MJJoint */
     using MJJoint::MJJoint;
-
-    void registerStates(DynParamRegisterer registerer) override;
-    void setStateInMujoco(mjData* d) const override;
-    void getStateFromMujoco(const mjData* d) override;
-    void setDerivativesFromMujoco(const mjData* d) override;
-
-protected:
-    QuaternionStateData* qposState = nullptr; ///< 4x1 quaternion (w,x,y,z).
-    StateData* qvelState           = nullptr; ///< 3x1 body angular velocity.
 };
 
 /**
@@ -287,9 +242,9 @@ protected:
  * translational and three rotational degrees of freedom, including setting position,
  * velocity, attitude, and attitude rate.
  *
- * Owns four `StateData`s translation pos/vel (3x1 each) and attitude
- * quaternion + angular velocity. This is split so the adaptive integrator can
- * scale tolerances independently for orbital translation and rotation.
+ * The joint's translation, orientation quaternion, translational velocity and
+ * body angular velocity all live in the scene's bulk `qpos`/`qvel` states at
+ * this joint's address.
  */
 class MJFreeJoint : public MJJoint
 {
@@ -325,17 +280,6 @@ public:
      * @todo Verify if this matches the expected attitude rate conventions with Basilisk.
      */
     void setAttitudeRate(const Eigen::Vector3d& attitudeRate);
-
-    void registerStates(DynParamRegisterer registerer) override;
-    void setStateInMujoco(mjData* d) const override;
-    void getStateFromMujoco(const mjData* d) override;
-    void setDerivativesFromMujoco(const mjData* d) override;
-
-protected:
-    StateData*           qposTranslationState = nullptr; ///< 3x1 inertial position.
-    QuaternionStateData* qposAttitudeState    = nullptr; ///< 4x1 attitude quaternion.
-    StateData*           qvelTranslationState = nullptr; ///< 3x1 inertial velocity.
-    StateData*           qvelAttitudeState    = nullptr; ///< 3x1 body angular velocity.
 };
 
 #endif

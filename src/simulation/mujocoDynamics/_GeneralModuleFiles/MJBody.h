@@ -252,26 +252,9 @@ class MJBody : public MJObject<mjsBody>
     void writeStateDependentOutputMessages(uint64_t CurrentSimNanos);
 
     /**
-     * @brief Registers the body's mass state and the qpos/qvel states of all
-     * joints attached to this body.
+     * @brief Returns this body's mass, read from the scene's bulk mass state.
      */
-    void registerStates(DynParamRegisterer paramManager);
-
-    /** Sets `mjData` qpos/qvel values from each owned joint's state. */
-    void setJointStatesInMujoco(mjData* d) const;
-
-    /**
-     * Gets `mjData::qpos`/`mjData::qvel` values into each owned joint's state.
-     * Called once after spec compile so the user-visible state matches the
-     * values declared in the XML before any setPosition/setVelocity calls.
-     */
-    void getJointStatesFromMujoco(const mjData* d);
-
-    /**
-     * Sets each owned joint's qpos/qvel state derivatives from the current
-     * `mjData::qvel`/`mjData::qacc`.
-     */
-    void setJointDerivativesFromMujoco(const mjData* d);
+    double getMass();
 
     /**
      * @brief Updates the MuJoCo model from the mass properties of the body.
@@ -279,7 +262,7 @@ class MJBody : public MJObject<mjsBody>
      * The mass of the body is a state, which may change in time (for example,
      * when a thruster burns fuel). This change in mass must be relayed back
      * to MuJoCo. Calling this method will update the `mjModel` with the
-     * mass value stored in the mass state of this body.
+     * mass value stored in the bulk mass state for this body.
      *
      * Note that the inertia is also updated (scaled by the change in mass).
      * The center of mass remains constant.
@@ -289,8 +272,8 @@ class MJBody : public MJObject<mjsBody>
     void updateMujocoModelFromMassProps();
 
     /**
-     * @brief Updates the derivative of the mass state with the information
-     * from the connected `derivativeMassPropertiesInMsg`.
+     * @brief Updates this body's entry of the bulk mass state derivative with
+     * the information from the connected `derivativeMassPropertiesInMsg`.
      *
      * If no such message is connected, then the derivative is assumed to be zero.
      */
@@ -317,8 +300,6 @@ class MJBody : public MJObject<mjsBody>
     std::optional<MJFreeJoint> freeJoint;  ///< Optional free joint associated with the body.
     std::optional<MJBallJoint> ballJoint;  ///< Optional ball joint associated with the body.
     std::list<MJScalarJoint> scalarJoints; ///< List of scalar joints associated with the body.
-
-    StateData* massState; ///< State data representing the mass of the body.
 };
 
 #endif
