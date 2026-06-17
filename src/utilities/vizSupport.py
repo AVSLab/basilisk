@@ -587,11 +587,11 @@ def _createCustomModelsFromMJScene(viz, scene):
                 scale = [2 * sz[0], 2 * sz[0], 2 * sz[0]]
             elif geom.type == _MJGEOM_CYLINDER:
                 # MuJoCo size[0] = radius, size[1] = half-height
-                # Vizard CYLINDER default = diameter 1, height 1
-                scale = [2 * sz[0], 2 * sz[1], 2 * sz[0]]
+                # Vizard CYLINDER uses x/y for diameter and z for half-height
+                scale = [2 * sz[0], 2 * sz[0], sz[1]]
             elif geom.type == _MJGEOM_CAPSULE:
                 # Approximate as cylinder
-                scale = [2 * sz[0], 2 * sz[1], 2 * sz[0]]
+                scale = [2 * sz[0], 2 * sz[0], sz[1]]
             elif geom.type == _MJGEOM_ELLIPSOID:
                 # MuJoCo size = semi-axes
                 scale = [2 * sz[0], 2 * sz[1], 2 * sz[2]]
