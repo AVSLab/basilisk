@@ -87,10 +87,14 @@ the specific use case.
 """
 
 import os
+from typing import Any
 
 from Basilisk.simulation import mujoco
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
+from Basilisk.utilities import vizSupport
+from Basilisk.architecture import messaging
+from Basilisk.architecture import sysModel
 from Basilisk.simulation import svIntegrators
 
 import numpy as np
@@ -138,6 +142,19 @@ ACTUATOR_INTERPOLATION_POINTS = {
     ],
 }
 
+THRUSTER_VIZ_INFO = {
+    "thruster_1": {
+        "bodyName": "arm_3",
+        "location": [0.0, 0.0, 0.3],  # [m]
+        "direction": [0.0, 0.0, -1.0],  # [-]
+    },
+    "thruster_2": {
+        "bodyName": "arm_4",
+        "location": [0.0, 0.0, 0.3],  # [m]
+        "direction": [0.0, 0.0, -1.0],  # [-]
+    },
+}
+
 # These are the points that define the interpolation for the joints.
 JOINT_INTERPOLATION_POINTS = {
     "arm_1_elev": [
@@ -165,6 +182,31 @@ JOINT_INTERPOLATION_POINTS = {
 }
 
 
+def _attach_thruster_visualization(viz, thrusterVizWriters):
+    """Attach MuJoCo thruster visualization messages to Vizard body entries."""
+    from Basilisk.simulation import vizInterface
+
+    for bodyName, writer in thrusterVizWriters:
+        for scDataIndex in range(len(viz.scData)):
+            scData = viz.scData[scDataIndex]
+            if scData.spacecraftName != bodyName:
+                continue
+
+            thrInfo = vizInterface.ThrClusterMap()
+            thrInfo.thrTag = writer.ModelTag
+            thrInfo.color = vizSupport.toRGBA255("yellow")
+            scData.thrInMsgs = messaging.THROutputMsgInMsgsVector(
+                [writer.thrOutMsg.addSubscriber()]
+            )
+            scData.thrInfo = vizInterface.ThrClusterVector([thrInfo])
+            vizSupport.setActuatorGuiSetting(
+                viz,
+                spacecraftName=bodyName,
+                viewThrusterHUD=True,
+            )
+            break
+
+
 def run(showPlots: bool = False, visualize: bool = False):
     """Main function, see scenario description.
 
@@ -174,7 +216,7 @@ def run(showPlots: bool = False, visualize: bool = False):
         visualize (bool, optional): If True, the ``MJScene`` visualization tool is
             run on the simulation results. Defaults to False.
     """
-    dt = 1  # [s]
+    dt = 0.1  # [s]
 
     # Create a simulation, process, and task as usual
     scSim = SimulationBaseClass.SimBaseClass()
@@ -252,6 +294,27 @@ def run(showPlots: bool = False, visualize: bool = False):
     stateRecorder = scene.stateOutMsg.recorder()
     scSim.AddModelToTask("test", stateRecorder)
 
+    if vizSupport.vizFound:
+        thrusterVizWriters = []
+        for thrusterName, interpPoint in ACTUATOR_INTERPOLATION_POINTS.items():
+            vizInfo = THRUSTER_VIZ_INFO[thrusterName]
+            writer = ThrusterVizMessageWriter(
+                thrusterName,
+                interpPoint,
+                vizInfo["location"],
+                vizInfo["direction"],
+            )
+            scSim.AddModelToTask("test", writer)
+            thrusterVizWriters.append((vizInfo["bodyName"], writer))
+
+        viz = vizSupport.enableUnityVisualization(
+            scSim,
+            "test",
+            scene,
+            # saveFile=__file__,
+        )
+        _attach_thruster_visualization(viz, thrusterVizWriters)
+
     # Initialize the simulation and set the initial angles of the joints.
     # NOTE: the simulation MUST be initialized before setting the initial
     # state of the joints. This includes the initial position, attitude,
@@ -293,6 +356,69 @@ def run(showPlots: bool = False, visualize: bool = False):
         mujoco.visualize(
             stateRecorder.times(), np.squeeze(stateRecorder.qpos), scene, speedUp
         )
+
+
+class ThrusterVizMessageWriter(sysModel.SysModel):
+    """Publish a ``THROutputMsg`` for a MuJoCo single-actuator thruster."""
+
+    def __init__(
+        self,
+        thrusterName: str,
+        interpolationPoints,
+        thrusterLocation,
+        thrusterDirection,
+        *args: Any,
+    ):
+        """Create a Vizard thruster message writer.
+
+        Args:
+            thrusterName (str): Name of the MuJoCo actuator represented in Vizard.
+            interpolationPoints: Zero-order thrust profile points.
+            thrusterLocation: Thruster location in the attached body frame.
+            thrusterDirection: Unit thrust direction in the attached body frame.
+        """
+        super().__init__(*args)
+        self.ModelTag = thrusterName
+        self.interpolationPoints = interpolationPoints
+        self.thrusterLocation = list(thrusterLocation)
+        self.thrusterDirection = list(thrusterDirection)
+        self.maxThrust = max(abs(point[1]) for point in interpolationPoints)  # [N]
+        self.thrOutMsg = messaging.THROutputMsg()
+
+    def Reset(self, CurrentSimNanos: int):
+        """Write the initial thruster visualization payload."""
+        self._write_thruster_payload(CurrentSimNanos)
+
+    def UpdateState(self, CurrentSimNanos: int):
+        """Write the current thruster visualization payload."""
+        self._write_thruster_payload(CurrentSimNanos)
+
+    def _write_thruster_payload(self, CurrentSimNanos: int):
+        """Write the thrust profile value active at ``CurrentSimNanos``."""
+        thrustForce = self._current_thrust(CurrentSimNanos)  # [N]
+        payload = messaging.THROutputMsgPayload()
+        payload.maxThrust = self.maxThrust
+        payload.thrustForce = thrustForce
+        if self.maxThrust > 0.0:
+            payload.thrustFactor = thrustForce / self.maxThrust
+        payload.thrustBlowDownFactor = 1.0
+        payload.ispBlowDownFactor = 1.0
+        payload.thrusterLocation = self.thrusterLocation
+        payload.thrusterDirection = self.thrusterDirection
+        payload.thrustForce_B = [
+            thrustForce * directionComponent
+            for directionComponent in self.thrusterDirection
+        ]
+        self.thrOutMsg.write(payload, CurrentSimNanos, self.moduleID)
+
+    def _current_thrust(self, CurrentSimNanos: int):
+        """Return the zero-order-hold thrust command at ``CurrentSimNanos``."""
+        thrustForce = self.interpolationPoints[0][1]  # [N]
+        for point in self.interpolationPoints:
+            if CurrentSimNanos < point[0]:
+                break
+            thrustForce = point[1]
+        return thrustForce
 
 
 if __name__ == "__main__":

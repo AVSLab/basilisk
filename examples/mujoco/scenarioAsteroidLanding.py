@@ -83,6 +83,7 @@ from typing import Any, Sequence
 from Basilisk.simulation import mujoco
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
+from Basilisk.utilities import vizSupport
 from Basilisk.architecture import messaging
 from Basilisk.simulation import svIntegrators
 from Basilisk.architecture import sysModel
@@ -95,13 +96,69 @@ import matplotlib.pyplot as plt
 CURRENT_FOLDER = os.path.dirname(__file__)
 XML_PATH = f"{CURRENT_FOLDER}/sat_ast_landing.xml"
 
-AST_OBJ_PATH = os.path.join(
-    CURRENT_FOLDER,
-    "..",
-    "dataForExamples",
-    "Itokawa",
-    "ItokawaHayabusa.obj",
+AST_OBJ_PATH = os.path.abspath(
+    os.path.join(
+        CURRENT_FOLDER,
+        "..",
+        "dataForExamples",
+        "Itokawa",
+        "ItokawaHayabusa.obj",
+    )
 )
+AST_TEXTURE_PATH = os.path.abspath(
+    os.path.join(
+        CURRENT_FOLDER,
+        "..",
+        "dataForExamples",
+        "Itokawa",
+        "ItokawaGrayscale.jpg",
+    )
+)
+ASTEROID_BODY_NAME = "asteroid"
+ASTEROID_VIZ_SCALE = 1000.0  # [-]
+SPACECRAFT_BODY_NAME = "hub"
+THRUSTER_NAME = "thrust"
+THRUSTER_LOCATION = [0.0, 0.0, -1.0]  # [m]
+THRUSTER_DIRECTION = [0.0, 0.0, 1.0]  # [-]
+THRUSTER_VIZ_SCALE = 100.0  # [-]
+
+
+def _get_body_geom_info(scene: mujoco.MJScene, body_name: str):
+    """Return the first MuJoCo geom attached to a scene body."""
+    geomInfos = scene.getGeomInfos()
+    for geomIndex in range(len(geomInfos)):
+        geomInfo = geomInfos[geomIndex]
+        if geomInfo.bodyName == body_name:
+            return geomInfo
+    raise ValueError(f"Could not find a MuJoCo geom for body '{body_name}'.")
+
+
+def _attach_thruster_visualization(viz, spacecraft_name: str, writer):
+    """Attach a MuJoCo thruster visualization message to a Vizard body."""
+    from Basilisk.simulation import vizInterface
+
+    for scDataIndex in range(len(viz.scData)):
+        scData = viz.scData[scDataIndex]
+        if scData.spacecraftName != spacecraft_name:
+            continue
+
+        thrInfo = vizInterface.ThrClusterMap()
+        thrInfo.thrTag = writer.ModelTag
+        thrInfo.color = vizSupport.toRGBA255("turquoise")
+        scData.thrInMsgs = messaging.THROutputMsgInMsgsVector(
+            [writer.thrOutMsg.addSubscriber()]
+        )
+        scData.thrInfo = vizInterface.ThrClusterVector([thrInfo])
+        vizSupport.setActuatorGuiSetting(
+            viz,
+            spacecraftName=spacecraft_name,
+            viewThrusterHUD=True,
+        )
+        return
+
+    raise ValueError(
+        f"Could not find spacecraft '{spacecraft_name}' in Vizard spacecraft data."
+    )
 
 
 def run(showPlots: bool = False, visualize: bool = False):
@@ -113,10 +170,10 @@ def run(showPlots: bool = False, visualize: bool = False):
         visualize (bool, optional): If True, the ``MJScene`` visualization tool is
             run on the simulation results. Defaults to False.
     """
-    dt = 1 # s
+    dt = 0.02  # [s]
 
-    timeThrustTurnOff = 47.5 # s
-    tf = 70 # s
+    timeThrustTurnOff = 47.5  # [s]
+    tf = 70  # [s]
 
     # Create a simulation, process, and task as usual
     scSim = SimulationBaseClass.SimBaseClass()
@@ -132,15 +189,17 @@ def run(showPlots: bool = False, visualize: bool = False):
 
     # Set the integrator of the DynamicObject to RK4(5)
     integ = svIntegrators.svIntegratorRKF45(scene)
+    integ.setRelativeTolerance(1e-3)
+    integ.setAbsoluteTolerance(1e-3)
     scene.setIntegrator(integ)
 
     # Create a ConstantGravity model that imparts 200 N along
     # the negative z-axis in the inertial frame
-    gravity = ConstantGravity(force_N=[0, 0, -200])  # N
+    gravity = ConstantGravity(force_N=[0.0, 0.0, -200.0])  # [N]
     scene.AddModelToDynamicsTask(gravity)
 
     # We want to apply the gravity force at this site
-    gravityApplicationSite = scene.getBody("hub").getOrigin()
+    gravityApplicationSite = scene.getBody(SPACECRAFT_BODY_NAME).getOrigin()
 
     # We create an actuator at the site of interest of the "Force"
     # type, which allow us to apply a force vector in any direction
@@ -159,33 +218,76 @@ def run(showPlots: bool = False, visualize: bool = False):
     gravity.frameInMsg.subscribeTo(gravityApplicationSite.stateOutMsg)
 
     # Set a thruster force of 275 N trying to slowdown our descent
-    thrust = 275 # N
+    thrust = 275.0  # [N]
     thrustMsg = messaging.SingleActuatorMsg()
     thrustMsg.write(messaging.SingleActuatorMsgPayload(input=thrust))
 
-    scene.getSingleActuator("thrust").actuatorInMsg.subscribeTo(thrustMsg)
+    scene.getSingleActuator(THRUSTER_NAME).actuatorInMsg.subscribeTo(thrustMsg)
 
     # Record the state of the 'hub' body through
     # the ``stateOutMsg`` of its 'origin' site (i.e. frame).
-    bodyStateRecorder = scene.getBody("hub").getOrigin().stateOutMsg.recorder()
+    bodyStateRecorder = scene.getBody(
+        SPACECRAFT_BODY_NAME
+    ).getOrigin().stateOutMsg.recorder()
     scSim.AddModelToTask("test", bodyStateRecorder)
 
     # Record the minimal coordinates of the entire scene for visualization
     stateRecorder = scene.stateOutMsg.recorder()
     scSim.AddModelToTask("test", stateRecorder)
 
+    if vizSupport.vizFound:
+        asteroidGeom = _get_body_geom_info(scene, ASTEROID_BODY_NAME)
+        thrusterVizWriter = ThrusterVizMessageWriter(
+            THRUSTER_NAME,
+            thrustMsg,
+            thrust,
+            THRUSTER_LOCATION,
+            THRUSTER_DIRECTION,
+            THRUSTER_VIZ_SCALE,
+        )
+        scSim.AddModelToTask("test", thrusterVizWriter)
+
+        viz = vizSupport.enableUnityVisualization(
+            scSim,
+            "test",
+            scene,
+            # saveFile=__file__,
+        )
+        _attach_thruster_visualization(
+            viz,
+            SPACECRAFT_BODY_NAME,
+            thrusterVizWriter,
+        )
+        viz.settings.showSpacecraftAsSprites = -1
+        viz.settings.ambient = 0.1
+        viz.settings.spacecraftShadowBrightness = 0.07
+        vizSupport.createCustomModel(
+            viz,
+            modelPath=AST_OBJ_PATH,
+            simBodiesToModify=[ASTEROID_BODY_NAME],
+            scale=[
+                ASTEROID_VIZ_SCALE,
+                ASTEROID_VIZ_SCALE,
+                ASTEROID_VIZ_SCALE,
+            ],
+            offset=list(asteroidGeom.pos),
+            rotation=list(rbk.EP2Euler321(list(asteroidGeom.quat))),
+            customTexturePath=AST_TEXTURE_PATH,
+            shader=1,
+        )
+
     # Initialize the simulation
     scSim.InitializeSimulation()
 
     # Initial velocity of 1 m/s towards asteroid
-    scene.getBody("hub").setVelocity([0, 0, -1]) # m/s
+    scene.getBody(SPACECRAFT_BODY_NAME).setVelocity([0.0, 0.0, -1.0])  # [m/s]
 
     # Run the simulation for some time with the thruster on
     scSim.ConfigureStopTime(macros.sec2nano(timeThrustTurnOff))
     scSim.ExecuteSimulation()
 
     # Near surface, turn off thrusters and let gravity land us
-    thrustMsg.write(messaging.SingleActuatorMsgPayload(input=0)) # N
+    thrustMsg.write(messaging.SingleActuatorMsgPayload(input=0.0))  # [N]
 
     # Run until simulation completion
     scSim.ConfigureStopTime(macros.sec2nano(tf))
@@ -217,6 +319,66 @@ def run(showPlots: bool = False, visualize: bool = False):
             track="none",
             files=[AST_OBJ_PATH],
         )
+
+
+class ThrusterVizMessageWriter(sysModel.SysModel):
+    """Publish a ``THROutputMsg`` from a MuJoCo scalar thrust command."""
+
+    def __init__(
+        self,
+        thrusterName: str,
+        thrustInMsg: messaging.SingleActuatorMsg,
+        maxThrust: float,
+        thrusterLocation: Sequence[float],
+        thrusterDirection: Sequence[float],
+        visualizationScale: float,
+        *args: Any,
+    ):
+        """Create a Vizard thruster message writer.
+
+        :param thrusterName: Name of the MuJoCo actuator represented in Vizard.
+        :param thrustInMsg: Scalar thrust command message used by MuJoCo.
+        :param maxThrust: Nominal maximum thrust for Vizard scaling.
+        :param thrusterLocation: Thruster location in the attached body frame.
+        :param thrusterDirection: Unit thrust direction in the attached body frame.
+        :param visualizationScale: Scale factor applied only to the Vizard thrust.
+        """
+        super().__init__(*args)
+        self.ModelTag = thrusterName
+        self.maxThrust = abs(maxThrust)  # [N]
+        self.thrusterLocation = list(thrusterLocation)
+        self.thrusterDirection = list(thrusterDirection)
+        self.visualizationScale = visualizationScale
+        self.thrustInMsg = messaging.SingleActuatorMsgReader()
+        self.thrustInMsg.subscribeTo(thrustInMsg)
+        self.thrOutMsg = messaging.THROutputMsg()
+
+    def Reset(self, CurrentSimNanos: int):
+        """Write the initial thruster visualization payload."""
+        self._write_thruster_payload(CurrentSimNanos)
+
+    def UpdateState(self, CurrentSimNanos: int):
+        """Write the current thruster visualization payload."""
+        self._write_thruster_payload(CurrentSimNanos)
+
+    def _write_thruster_payload(self, CurrentSimNanos: int):
+        """Write the current scalar thrust command for Vizard."""
+        thrustForce = self.thrustInMsg().input  # [N]
+        vizThrustForce = self.visualizationScale * thrustForce  # [N]
+        payload = messaging.THROutputMsgPayload()
+        payload.maxThrust = self.maxThrust
+        payload.thrustForce = vizThrustForce
+        if self.maxThrust > 0.0:
+            payload.thrustFactor = vizThrustForce / self.maxThrust
+        payload.thrustBlowDownFactor = 1.0
+        payload.ispBlowDownFactor = 1.0
+        payload.thrusterLocation = self.thrusterLocation
+        payload.thrusterDirection = self.thrusterDirection
+        payload.thrustForce_B = [
+            vizThrustForce * directionComponent
+            for directionComponent in self.thrusterDirection
+        ]
+        self.thrOutMsg.write(payload, CurrentSimNanos, self.moduleID)
 
 
 class ConstantGravity(sysModel.SysModel):
@@ -260,4 +422,4 @@ class ConstantGravity(sysModel.SysModel):
 
 
 if __name__ == "__main__":
-    run(True, True)
+    run(True, False)

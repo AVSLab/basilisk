@@ -125,6 +125,7 @@ import os
 from Basilisk.simulation import mujoco
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
+from Basilisk.utilities import vizSupport
 from Basilisk.architecture import messaging
 from Basilisk.simulation import svIntegrators
 
@@ -199,6 +200,14 @@ def run(showPlots: bool = False, visualize: bool = False):
     # center of mass of the body.
     bodyStateRecorder = scene.getBody("hub").getOrigin().stateOutMsg.recorder()
     scSim.AddModelToTask("test", bodyStateRecorder)
+
+    if vizSupport.vizFound:
+        vizSupport.enableUnityVisualization(
+            scSim,
+            "test",
+            scene,
+            # saveFile=__file__,
+        )
 
     # Initialize the simulation
     scSim.InitializeSimulation()

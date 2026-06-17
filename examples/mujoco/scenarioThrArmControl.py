@@ -109,7 +109,7 @@ import sys
 import argparse
 import matplotlib.pyplot as plt
 
-from Basilisk.utilities import macros as mc, unitTestSupport
+from Basilisk.utilities import macros as mc, unitTestSupport, vizSupport
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -195,6 +195,15 @@ class scenarioThrArmControl(BSKSim, BSKScenario):
         return figureList
 
 def runScenario(scenario, runTime: float = 320.0):
+    if vizSupport.vizFound:
+        DynModel = scenario.get_DynModel()
+        vizSupport.enableUnityVisualization(
+            scenario,
+            DynModel.taskName,
+            DynModel.scene,
+            # saveFile=__file__,
+        )
+
     # initialize the scenario
     scenario.InitializeSimulation()
 
@@ -244,6 +253,5 @@ if __name__ == "__main__":
         default=500.0,
         help="Simulation run time [s]."
         )
-
         args = parser.parse_args()
         run(showPlots=args.showPlots, timeStep=args.timeStep, runTime=args.runTime)

@@ -68,6 +68,7 @@ from contextlib import contextmanager
 from Basilisk.simulation import mujoco
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
+from Basilisk.utilities import vizSupport
 from Basilisk.simulation import StatefulSysModel
 from Basilisk.architecture import messaging
 from Basilisk.simulation import svIntegrators
@@ -308,6 +309,14 @@ def run(initialSpin: bool = False, showPlots: bool = False, visualize: bool = Fa
     # Record the minimal coordinates of the entire scene for visualization
     stateRecorder = scene.stateOutMsg.recorder()
     scSim.AddModelToTask("test", stateRecorder)
+
+    if vizSupport.vizFound:
+        vizSupport.enableUnityVisualization(
+            scSim,
+            "test",
+            scene,
+            # saveFile=__file__,
+        )
 
     # Initialize the simulation and set the initial angles of the joints.
     # NOTE: the simulation MUST be initialized before setting the initial

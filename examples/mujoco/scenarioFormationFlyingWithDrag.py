@@ -102,6 +102,7 @@ from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.utilities import simSetPlanetEnvironment
+from Basilisk.utilities import vizSupport
 from Basilisk.fswAlgorithms import orbElemOffset
 from Basilisk.simulation import orbElemConvert
 
@@ -215,7 +216,10 @@ class SimulationTimeSeries:
 
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
-def run(scenarioConfig: ScenarioConfig = ScenarioConfig(), plotConfig: PlotConfig = PlotConfig(showPlots=False)) -> Dict[str, plt.Figure]:
+def run(
+    scenarioConfig: ScenarioConfig = ScenarioConfig(),
+    plotConfig: PlotConfig = PlotConfig(showPlots=False),
+) -> Dict[str, plt.Figure]:
     """
     Run the chief deputy relative motion scenario with optional drag and feedback control.
 
@@ -228,13 +232,14 @@ def run(scenarioConfig: ScenarioConfig = ScenarioConfig(), plotConfig: PlotConfi
         High level configuration toggles for drag and control.
     plotConfig
         Plot visibility and output configuration.
-
     Returns
     -------
     dict
         Mapping from figure name to matplotlib Figure instance.
     """
-    planet = simIncludeGravBody.BODY_DATA["earth"]
+    gravFactory = simIncludeGravBody.gravBodyFactory()
+    planet = gravFactory.createEarth()
+    planet.isCentralBody = True
 
     # Proportional and integral gains on classical elements (with mean anomaly)
     kProp = np.array([1e5, 1e5, 0, 0, 10, 10])
@@ -256,6 +261,7 @@ def run(scenarioConfig: ScenarioConfig = ScenarioConfig(), plotConfig: PlotConfi
     # Build all simulation models and their connections
     models = createSimulationModels(
         planet=planet,
+        gravFactory=gravFactory,
         scenarioConfig=scenarioConfig,
         targetOeDiffPayload=targetOeDiffPayload,
         kProp=kProp,
@@ -265,6 +271,14 @@ def run(scenarioConfig: ScenarioConfig = ScenarioConfig(), plotConfig: PlotConfi
 
     # Attach recorders that sample the main quantities of interest
     recorders = addRecorders(models)
+
+    if vizSupport.vizFound:
+        vizSupport.enableUnityVisualization(
+            models.scSim,
+            "test",
+            models.scene,
+            # saveFile=__file__,
+        )
 
     # Set initial chief and deputy orbits and propagate to Cartesian states
     orbitInfo = setInitialConditions(models, planet)
@@ -294,6 +308,7 @@ def run(scenarioConfig: ScenarioConfig = ScenarioConfig(), plotConfig: PlotConfi
 
 def createSimulationModels(
     planet: Any,
+    gravFactory: simIncludeGravBody.gravBodyFactory,
     scenarioConfig: ScenarioConfig,
     targetOeDiffPayload: messaging.ClassicElementsMsgPayload,
     kProp: np.ndarray,
@@ -310,6 +325,7 @@ def createSimulationModels(
     # Create the MuJoCo scene and add it as a dynamic object
     scene = mujoco.MJScene(CHIEF_DEPUTY_SCENE_XML)
     scene.extraEoMCall = True
+    scene._vizGravBodies = gravFactory.gravBodies
     scSim.AddModelToTask("test", scene, 1)
 
     # Select integrator

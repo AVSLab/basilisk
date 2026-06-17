@@ -3,8 +3,8 @@ newmtl surface
     Ka 0.01 0.01 0.01
     Kd 0.5 0.5 0.5
     Ks 0.000 0.000 0.000
+    map_Kd ItokawaGrayscale.jpg
 
     Ns 0
 
     illum 4
-

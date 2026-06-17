@@ -79,10 +79,9 @@ from Basilisk.simulation import pointMassGravityModel
 from Basilisk.simulation import saturationSingleActuator
 from Basilisk.simulation import scalarJointStatesToRWSpeed
 from Basilisk.simulation import simpleNav
-from Basilisk.utilities import SimulationBaseClass, macros, orbitalMotion, unitTestSupport
+from Basilisk.utilities import SimulationBaseClass, macros, orbitalMotion, simIncludeGravBody, unitTestSupport, vizSupport
 
 fileName = os.path.basename(os.path.splitext(__file__)[0])
-
 
 def plotAttitudeAndRateErrors(timeMin: np.ndarray, sigmaBR: np.ndarray, omegaBRB: np.ndarray):
     """Plot attitude error (MRPs) and rate error side-by-side with a shared x-axis."""
@@ -240,7 +239,12 @@ def run(showPlots: bool = False):
     gravity.ModelTag = "gravity"
     scene.AddModelToDynamicsTask(gravity)
 
-    muEarth = 0.3986004415e15  # [m^3/s^2]
+    gravFactory = simIncludeGravBody.gravBodyFactory()
+    earth = gravFactory.createEarth()
+    earth.isCentralBody = True
+    scene._vizGravBodies = gravFactory.gravBodies
+
+    muEarth = earth.mu  # [m^3/s^2]
     earthPm = pointMassGravityModel.PointMassGravityModel()
     earthPm.muBody = muEarth
     gravity.addGravitySource("earth", earthPm, isCentralBody=True)
@@ -367,6 +371,14 @@ def run(showPlots: bool = False):
     for i in range(numRw):
         sim.AddModelToTask(gncTaskName, rwCmdLogs[i])
         sim.AddModelToTask(gncTaskName, rwOmegaLogs[i])
+
+    if vizSupport.vizFound:
+        viz = vizSupport.enableUnityVisualization(
+            sim,
+            gncTaskName,
+            scene,
+            # saveFile=__file__,
+        )
 
     # -------------------------------------------------------------------------
     # 10) Initialize sim and set initial conditions (orbit, attitude, wheel speeds)
