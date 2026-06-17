@@ -535,16 +535,11 @@ def updateTargetLineList(viz):
     return
 
 
-def _createCustomModelsFromMJScene(viz, scene):
-    """Auto-create Vizard custom models from MuJoCo geom data.
-
-    Maps MuJoCo geom types to Vizard primitive shapes and creates
-    custom models with the correct size, position, orientation, and color
-    for each body in the scene.
-    """
+def _getMJSceneGeomVizInfos(scene):
+    """Return Vizard primitive data grouped by MuJoCo body name."""
     from Basilisk.utilities import RigidBodyKinematics as RBK
 
-    # MuJoCo geom type constants (from mjtGeom enum) — only types with Vizard primitives
+    # MuJoCo geom type constants (from mjtGeom enum) - only types with Vizard primitives.
     _MJGEOM_SPHERE = 2
     _MJGEOM_CAPSULE = 3
     _MJGEOM_ELLIPSOID = 4
@@ -560,63 +555,125 @@ def _createCustomModelsFromMJScene(viz, scene):
         _MJGEOM_ELLIPSOID: "SPHERE",
     }
 
-    # Group geoms by body name
-    bodyGeoms = {}
-    for geom in scene.getGeomInfos():
-        bodyGeoms.setdefault(geom.bodyName, []).append(geom)
+    def geomToVizInfo(geom):
+        """Return Vizard primitive data for one supported MuJoCo geom."""
+        modelPath = _GEOM_TYPE_MAP.get(geom.type)
+        if modelPath is None:
+            return None
 
-    for bodyName, geoms in bodyGeoms.items():
-        for geom in geoms:
-            modelPath = _GEOM_TYPE_MAP.get(geom.type)
-            if modelPath is None:
-                continue
+        # Convert SWIG vector members to plain Python lists so indexing works
+        # regardless of how the __getitem__ overload resolves across SWIG versions.
+        sz = list(geom.size)
+        pos_list = list(geom.pos)
+        quat_list = list(geom.quat)
+        rgba_list = list(geom.rgba)
 
-            # Convert SWIG vector members to plain Python lists so indexing works
-            # regardless of how the __getitem__ overload resolves across SWIG versions.
-            sz = list(geom.size)
-            pos_list = list(geom.pos)
-            quat_list = list(geom.quat)
-            rgba_list = list(geom.rgba)
+        # Compute scale from MuJoCo size.
+        if geom.type == _MJGEOM_BOX:
+            # MuJoCo size = half-extents, Vizard CUBE default = 1x1x1.
+            customScale = [2 * sz[0], 2 * sz[1], 2 * sz[2]]
+            multiShapeDimensions = customScale
+        elif geom.type == _MJGEOM_SPHERE:
+            # MuJoCo size[0] = radius, Vizard SPHERE default diameter = 1.
+            customScale = [2 * sz[0], 2 * sz[0], 2 * sz[0]]
+            multiShapeDimensions = customScale
+        elif geom.type == _MJGEOM_CYLINDER:
+            # MuJoCo size[0] = radius, size[1] = half-height.
+            # Vizard custom CYLINDER uses z for half-height.
+            customScale = [2 * sz[0], 2 * sz[0], sz[1]]
+            # Vizard MultiShape CYLINDER uses z for half-height.
+            multiShapeDimensions = customScale
+        elif geom.type == _MJGEOM_CAPSULE:
+            # Approximate as cylinder.
+            customScale = [2 * sz[0], 2 * sz[0], sz[1]]
+            multiShapeDimensions = customScale
+        elif geom.type == _MJGEOM_ELLIPSOID:
+            # MuJoCo size = semi-axes.
+            customScale = [2 * sz[0], 2 * sz[1], 2 * sz[2]]
+            multiShapeDimensions = customScale
+        else:
+            customScale = [1.0, 1.0, 1.0]
+            multiShapeDimensions = customScale
 
-            # Compute scale from MuJoCo size
-            if geom.type == _MJGEOM_BOX:
-                # MuJoCo size = half-extents, Vizard CUBE default = 1x1x1
-                scale = [2 * sz[0], 2 * sz[1], 2 * sz[2]]
-            elif geom.type == _MJGEOM_SPHERE:
-                # MuJoCo size[0] = radius, Vizard SPHERE default diameter = 1
-                scale = [2 * sz[0], 2 * sz[0], 2 * sz[0]]
-            elif geom.type == _MJGEOM_CYLINDER:
-                # MuJoCo size[0] = radius, size[1] = half-height
-                # Vizard CYLINDER uses x/y for diameter and z for half-height
-                scale = [2 * sz[0], 2 * sz[0], sz[1]]
-            elif geom.type == _MJGEOM_CAPSULE:
-                # Approximate as cylinder
-                scale = [2 * sz[0], 2 * sz[0], sz[1]]
-            elif geom.type == _MJGEOM_ELLIPSOID:
-                # MuJoCo size = semi-axes
-                scale = [2 * sz[0], 2 * sz[1], 2 * sz[2]]
-            else:
-                scale = [1, 1, 1]
+        return {
+            "modelPath": modelPath,
+            "customScale": customScale,
+            "multiShapeDimensions": multiShapeDimensions,
+            "offset": pos_list,
+            "customRotation": list(RBK.EP2Euler321(quat_list)),
+            "multiShapeRotation": list(RBK.EP2MRP(np.array(quat_list))),
+            "color": [int(c * 255) for c in rgba_list],
+        }
 
-            # Position offset in body frame
-            offset = pos_list
+    bodyGeomVizInfos = {}
+    geomInfos = scene.getGeomInfos()
+    for geomIndex in range(len(geomInfos)):
+        geom = geomInfos[geomIndex]
+        vizInfo = geomToVizInfo(geom)
+        if vizInfo is not None:
+            bodyGeomVizInfos.setdefault(geom.bodyName, []).append(vizInfo)
 
-            # Convert quaternion (w, x, y, z) to 3-2-1 Euler angles [yaw, pitch, roll]
-            rotation = list(RBK.EP2Euler321(quat_list))
-
-            color = [int(c * 255) for c in rgba_list]
-
-            createCustomModel(
-                viz,
-                modelPath=modelPath,
-                simBodiesToModify=[bodyName],
-                scale=scale,
-                offset=offset,
-                rotation=rotation,
-                color=color,
-            )
+    return bodyGeomVizInfos
 
 
+def _makeMJSceneMultiShape(vizInfo):
+    """Create one Vizard MultiShape primitive from geom visual data."""
+    global mjSceneMultiShapeList
+    multiShape = vizInterface.MultiShape()
+    multiShape.isOn = 1
+    multiShape.position = vizInfo["offset"]
+    multiShape.currentValue = 1.0  # [-]
+    multiShape.maxValue = 1.0  # [-]
+    multiShape.positiveColor = vizInterface.IntVector(vizInfo["color"])
+    multiShape.negativeColor = vizInterface.IntVector(vizInfo["color"])
+    multiShape.shape = vizInfo["modelPath"]
+    multiShape.dimensions = vizInfo["multiShapeDimensions"]
+    multiShape.rotation = vizInfo["multiShapeRotation"]
+    mjSceneMultiShapeList.append(multiShape)
+    return multiShape
+
+
+def _appendMJSceneMultiShapes(scData, vizInfos):
+    """Attach additional MuJoCo geoms to a Vizard spacecraft entry."""
+    if not vizInfos:
+        return
+
+    msmInfo = getattr(scData, "msmInfo", vizInterface.MultiShapeInfo())
+    msmList = list(getattr(msmInfo, "msmList", []))
+    msmList.extend(_makeMJSceneMultiShape(vizInfo) for vizInfo in vizInfos)
+    msmInfo.msmList = vizInterface.MultiShapeVector(msmList)
+    scData.msmInfo = msmInfo
+
+
+def _createCustomModelsFromMJScene(viz, scene, bodyGeomVizInfos=None):
+    """Auto-create Vizard custom models from MuJoCo geom data.
+
+    Maps MuJoCo geom types to Vizard primitive shapes and creates custom models
+    with the correct size, position, orientation, and color.  If a MuJoCo body
+    has multiple geoms, only the first supported geom is used as the replacement
+    model.  The caller attaches the remaining geoms as MultiShape primitives
+    before each spacecraft entry is pushed into the Vizard spacecraft vector.
+    """
+    if bodyGeomVizInfos is None:
+        bodyGeomVizInfos = _getMJSceneGeomVizInfos(scene)
+
+    for bodyName, vizInfos in bodyGeomVizInfos.items():
+        if not vizInfos:
+            continue
+
+        baseVizInfo = vizInfos[0]
+        createCustomModel(
+            viz,
+            modelPath=baseVizInfo["modelPath"],
+            simBodiesToModify=[bodyName],
+            scale=baseVizInfo["customScale"],
+            offset=baseVizInfo["offset"],
+            rotation=baseVizInfo["customRotation"],
+            color=baseVizInfo["color"],
+        )
+
+
+mjSceneMultiShapeList = []
 customModelList = []
 
 
@@ -1355,12 +1412,15 @@ def _handleMJScene(viz, sc, scSim, c, planetNameList, planetInfoList, spiceMsgLi
             msmInfoList=resolve(msmInfoList),
         )
 
+    bodyGeomVizInfos = _getMJSceneGeomVizInfos(sc)
+
     for hubName in rootBodyNames:
         scData = vizInterface.VizSpacecraftData()
         _registerVizardSpacecraftName(hubName, usedSpacecraftNames)
         scData.spacecraftName = hubName
         scData.scStateInMsg.subscribeTo(sc.getBody(hubName).getOrigin().stateOutMsg)
         _applyVisuals(scData, **_visuals(hubName, is_hub=True))
+        _appendMJSceneMultiShapes(scData, bodyGeomVizInfos.get(hubName, [])[1:])
         viz.scData.push_back(scData)
 
     for name in bodyNames:
@@ -1372,9 +1432,10 @@ def _handleMJScene(viz, sc, scSim, c, planetNameList, planetInfoList, spiceMsgLi
         scData.parentSpacecraftName = sc.getBodyParentName(name)
         scData.scStateInMsg.subscribeTo(sc.getBody(name).getOrigin().stateOutMsg)
         _applyVisuals(scData, **_visuals(name, is_hub=False))
+        _appendMJSceneMultiShapes(scData, bodyGeomVizInfos.get(name, [])[1:])
         viz.scData.push_back(scData)
 
-    _createCustomModelsFromMJScene(viz, sc)
+    _createCustomModelsFromMJScene(viz, sc, bodyGeomVizInfos)
 
 
 def _registerGravBodies(scSim, gravBodies, planetNameList, planetInfoList, spiceMsgList):
@@ -1792,6 +1853,7 @@ def enableUnityVisualization(
     planetInfoList = []
     spiceMsgList = []
     scSim.vizMessenger.scData.clear()
+    del mjSceneMultiShapeList[:]
     spacecraftParentName = ""
     usedSpacecraftNames = set()
 

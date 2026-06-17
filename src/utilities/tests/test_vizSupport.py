@@ -1,8 +1,25 @@
+from copy import copy
 from types import SimpleNamespace
 
 import pytest
 
 from Basilisk.utilities import vizSupport
+
+
+class NonIterableGeomInfos:
+    """Mimic SWIG vectors that are safe to index but unsafe to iterate."""
+
+    def __init__(self, geomInfos):
+        self.geomInfos = geomInfos
+
+    def __len__(self):
+        return len(self.geomInfos)
+
+    def __getitem__(self, index):
+        return self.geomInfos[index]
+
+    def __iter__(self):
+        raise AssertionError("MJGeomInfo vectors should be indexed, not iterated")
 
 
 def test_register_vizard_spacecraft_name_rejects_duplicates():
@@ -114,7 +131,7 @@ def test_create_custom_models_from_mjscene_scales_cylinders_on_z(monkeypatch):
 
     class FakeMJScene:
         def getGeomInfos(self):
-            return [
+            return NonIterableGeomInfos([
                 SimpleNamespace(
                     bodyName="arm",
                     type=3,
@@ -131,7 +148,7 @@ def test_create_custom_models_from_mjscene_scales_cylinders_on_z(monkeypatch):
                     quat=identity_quat,
                     rgba=red_rgba,
                 ),
-            ]
+            ])
 
     custom_models = []
 
@@ -154,3 +171,158 @@ def test_create_custom_models_from_mjscene_scales_cylinders_on_z(monkeypatch):
         2.0 * cylinder_radius,
         cylinder_half_length,
     ])
+
+
+def test_create_custom_models_from_mjscene_keeps_multi_geom_bodies(monkeypatch):
+    """Check additional MuJoCo geoms remain visible on one Vizard body."""
+
+    mj_geom_cylinder = 5  # [-]
+    mj_geom_box = 6  # [-]
+    panel_half_extents = [1.0, 0.05, 0.8]  # [m]
+    bar_radius = 0.075  # [m]
+    bar_half_length = 1.0  # [m]
+    unused_size = 0.0  # [m]
+    panel_position = [0.0, 0.0, 1.0]  # [m]
+    bar_position = [0.0, 0.0, 0.0]  # [m]
+    identity_quat = [1.0, 0.0, 0.0, 0.0]  # [-]
+    green_rgba = [0.0, 1.0, 0.0, 1.0]  # [-]
+    cyan_rgba = [0.0, 1.0, 1.0, 1.0]  # [-]
+
+    class FakeSubscriber:
+        def subscribeTo(self, message):
+            self.message = message
+
+    class FakeMultiShape:
+        pass
+
+    class FakeMultiShapeInfo:
+        def __init__(self):
+            self.msmList = []
+
+    class FakeVizSpacecraftData:
+        def __init__(self):
+            self.spacecraftName = ""
+            self.parentSpacecraftName = ""
+            self.scStateInMsg = FakeSubscriber()
+            self.msmInfo = FakeMultiShapeInfo()
+
+    class FakeVizScData(list):
+        def __iter__(self):
+            for item in list.__iter__(self):
+                yield copy(item)
+
+        def push_back(self, item):
+            self.append(copy(item))
+
+    class FakeBody:
+        def __init__(self, name):
+            self.origin = SimpleNamespace(stateOutMsg=f"{name}_state")
+
+        def getOrigin(self):
+            return self.origin
+
+    class FakeMJScene:
+        bodyNames = ["panel"]
+
+        def __init__(self):
+            self.bodies = {name: FakeBody(name) for name in self.bodyNames}
+
+        def getBodyNames(self):
+            return self.bodyNames
+
+        def getBodyParentName(self, name):
+            return "world"
+
+        def getBody(self, name):
+            return self.bodies[name]
+
+        def getGeomInfos(self):
+            return NonIterableGeomInfos([
+                SimpleNamespace(
+                    bodyName="panel",
+                    type=mj_geom_box,
+                    size=panel_half_extents,
+                    pos=panel_position,
+                    quat=identity_quat,
+                    rgba=green_rgba,
+                ),
+                SimpleNamespace(
+                    bodyName="panel",
+                    type=mj_geom_cylinder,
+                    size=[bar_radius, bar_half_length, unused_size],
+                    pos=bar_position,
+                    quat=identity_quat,
+                    rgba=cyan_rgba,
+                ),
+            ])
+
+    custom_models = []
+
+    def capture_custom_model(viz, **kwargs):
+        custom_models.append(kwargs)
+
+    monkeypatch.setattr(vizSupport, "createCustomModel", capture_custom_model)
+    monkeypatch.setattr(vizSupport, "mjSceneMultiShapeList", [])
+    monkeypatch.setattr(
+        vizSupport,
+        "vizInterface",
+        SimpleNamespace(
+            VizSpacecraftData=FakeVizSpacecraftData,
+            MultiShape=FakeMultiShape,
+            MultiShapeInfo=FakeMultiShapeInfo,
+            IntVector=list,
+            MultiShapeVector=list,
+        ),
+        raising=False,
+    )
+
+    viz = SimpleNamespace(scData=FakeVizScData())
+
+    vizSupport._handleMJScene(
+        viz,
+        FakeMJScene(),
+        SimpleNamespace(),
+        0,
+        [],
+        [],
+        [],
+        cssList=None,
+        genericSensorList=None,
+        ellipsoidList=None,
+        lightList=None,
+        genericStorageList=None,
+        transceiverList=None,
+        spriteList=None,
+        modelDictionaryKeyList=None,
+        logoTextureList=None,
+        oscOrbitColorList=None,
+        trueOrbitColorList=None,
+        trueOrbitColorInMsgList=None,
+        groundTrackColorList=None,
+        groundTrackBodyNameList=None,
+        msmInfoList=None,
+        usedSpacecraftNames=set(),
+    )
+
+    assert len(viz.scData) == 1
+    assert len(custom_models) == 1
+    assert custom_models[0]["modelPath"] == "CUBE"
+    assert custom_models[0]["simBodiesToModify"] == ["panel"]
+    assert custom_models[0]["scale"] == pytest.approx([
+        2.0 * panel_half_extents[0],
+        2.0 * panel_half_extents[1],
+        2.0 * panel_half_extents[2],
+    ])
+
+    assert len(viz.scData[0].msmInfo.msmList) == 1
+    assert len(vizSupport.mjSceneMultiShapeList) == 1
+    panel_bar = viz.scData[0].msmInfo.msmList[0]
+    assert panel_bar.shape == "CYLINDER"
+    assert panel_bar.dimensions == pytest.approx([
+        2.0 * bar_radius,
+        2.0 * bar_radius,
+        bar_half_length,
+    ])
+    assert panel_bar.position == pytest.approx(bar_position)
+    assert panel_bar.rotation == pytest.approx([0.0, 0.0, 0.0])
+    assert panel_bar.positiveColor == [0, 255, 255, 255]
