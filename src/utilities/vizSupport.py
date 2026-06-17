@@ -560,11 +560,9 @@ def _createCustomModelsFromMJScene(viz, scene):
         _MJGEOM_ELLIPSOID: "SPHERE",
     }
 
-    geomInfos = scene.getGeomInfos()
-
     # Group geoms by body name
     bodyGeoms = {}
-    for geom in geomInfos:
+    for geom in scene.getGeomInfos():
         bodyGeoms.setdefault(geom.bodyName, []).append(geom)
 
     for bodyName, geoms in bodyGeoms.items():
@@ -1186,6 +1184,20 @@ def _resolveBodyVisual(visual_entry, body_name, is_hub):
     return visual_entry if is_hub else None
 
 
+def _registerVizardSpacecraftName(spacecraftName, usedSpacecraftNames):
+    """Record one emitted Vizard spacecraft name and reject duplicates."""
+    if usedSpacecraftNames is None:
+        return
+    if spacecraftName in usedSpacecraftNames:
+        raise ValueError(
+            "Vizard spacecraft name "
+            f"'{spacecraftName}' is used more than once. "
+            "Use unique Spacecraft.ModelTag values, MJScene body names, and "
+            "tuple names in scList."
+        )
+    usedSpacecraftNames.add(spacecraftName)
+
+
 def _applyVisuals(
     scData,
     *,
@@ -1284,7 +1296,8 @@ def _handleMJScene(viz, sc, scSim, c, planetNameList, planetInfoList, spiceMsgLi
                    genericStorageList, transceiverList, spriteList,
                    modelDictionaryKeyList, logoTextureList, oscOrbitColorList,
                    trueOrbitColorList, trueOrbitColorInMsgList,
-                   groundTrackColorList, groundTrackBodyNameList, msmInfoList):
+                   groundTrackColorList, groundTrackBodyNameList, msmInfoList,
+                   usedSpacecraftNames=None):
     """Register all MJScene bodies with the vizInterface messenger.
 
     Gravity bodies are pulled from the ``_vizGravBodies`` attribute on the
@@ -1340,6 +1353,7 @@ def _handleMJScene(viz, sc, scSim, c, planetNameList, planetInfoList, spiceMsgLi
 
     for hubName in freeBodyNames:
         scData = vizInterface.VizSpacecraftData()
+        _registerVizardSpacecraftName(hubName, usedSpacecraftNames)
         scData.spacecraftName = hubName
         scData.scStateInMsg.subscribeTo(sc.getBody(hubName).getOrigin().stateOutMsg)
         _applyVisuals(scData, **_visuals(hubName, is_hub=True))
@@ -1349,6 +1363,7 @@ def _handleMJScene(viz, sc, scSim, c, planetNameList, planetInfoList, spiceMsgLi
         if name in freeBodyNames:
             continue
         scData = vizInterface.VizSpacecraftData()
+        _registerVizardSpacecraftName(name, usedSpacecraftNames)
         scData.spacecraftName = name
         scData.parentSpacecraftName = sc.getBodyParentName(name)
         scData.scStateInMsg.subscribeTo(sc.getBody(name).getOrigin().stateOutMsg)
@@ -1581,7 +1596,9 @@ def enableUnityVisualization(
         :ref:`spacecraft` objects, :ref:`MJScene` objects, or tuples of (name, stateOutMsg).
         Can be a single object or list of objects.
         When an :ref:`MJScene` is provided, all bodies are auto-discovered and their
-        parent-child hierarchy is resolved from the MuJoCo model.
+        parent-child hierarchy is resolved from the MuJoCo model.  Each
+        emitted Vizard spacecraft name must be unique across this list.  For an
+        MJScene, the emitted names are the local MuJoCo body names.
 
         **Gravity bodies** — attach a ``gravBodyFactory`` body list to the scene
         before calling this function so that planets appear in Vizard::
@@ -1769,6 +1786,7 @@ def enableUnityVisualization(
     spiceMsgList = []
     scSim.vizMessenger.scData.clear()
     spacecraftParentName = ""
+    usedSpacecraftNames = set()
 
     for c, sc in enumerate(scList):
         if mujocoFound and isinstance(sc, mujoco.MJScene):
@@ -1790,6 +1808,7 @@ def enableUnityVisualization(
                 groundTrackColorList=groundTrackColorList,
                 groundTrackBodyNameList=groundTrackBodyNameList,
                 msmInfoList=msmInfoList,
+                usedSpacecraftNames=usedSpacecraftNames,
             )
             continue
 
@@ -1802,6 +1821,7 @@ def enableUnityVisualization(
         else:
             _handleEffector(sc, scData, spacecraftParentName)
 
+        _registerVizardSpacecraftName(scData.spacecraftName, usedSpacecraftNames)
         _handleSubComponents(
             scData, c,
             rwEffectorList=rwEffectorList,
