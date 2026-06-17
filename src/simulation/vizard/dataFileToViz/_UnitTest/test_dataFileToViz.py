@@ -338,8 +338,10 @@ def run(show_plots, convertPosUnits, attType, checkThruster, checkRW, verbose):
     # create SC dummy objects to setup basic Vizard settings.  Only one has to have the Grav Bodies attached
     # to show up in Vizard
     scObject1 = spacecraft.Spacecraft()
+    scObject1.ModelTag = scNames[0]
     scObject1.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
     scObject2 = spacecraft.Spacecraft()
+    scObject2.ModelTag = scNames[1]
 
     viz = vizSupport.enableUnityVisualization(unitTestSim, unitTaskName, [scObject1, scObject2]
                                               # , saveFile=__file__
