@@ -29,6 +29,24 @@ D2R = M_PI / 180.
 R2D = 180. / M_PI
 
 
+def _safe_asin(value):
+    """Return ``asin`` with the argument clipped to its valid domain."""
+    if value > 1.0:
+        value = 1.0
+    elif value < -1.0:
+        value = -1.0
+    return math.asin(value)
+
+
+def _safe_acos(value):
+    """Return ``acos`` with the argument clipped to its valid domain."""
+    if value > 1.0:
+        value = 1.0
+    elif value < -1.0:
+        value = -1.0
+    return math.acos(value)
+
+
 def Picheck(x):
     """
         Picheck(x)
@@ -98,7 +116,7 @@ def C2Euler121(C):
     	C into the corresponding (1-2-1) euler angle set.
     """
     q0 = math.atan2(C[0, 1], -C[0, 2])
-    q1 = math.acos(C[0, 0])
+    q1 = _safe_acos(C[0, 0])
     q2 = math.atan2(C[1, 0], C[2, 0])
     q = np.array([q0, q1, q2])
 
@@ -113,7 +131,7 @@ def C2Euler123(C):
     	C into the corresponding (1-2-3) euler angle set.
     """
     q0 = np.arctan2(-C[2, 1], C[2, 2])
-    q1 = np.arcsin(C[2, 0])
+    q1 = _safe_asin(C[2, 0])
     q2 = np.arctan2(-C[1, 0], C[0, 0])
     q = np.array([q0, q1, q2])
     return q
@@ -127,7 +145,7 @@ def C2Euler131(C):
     	C into the corresponding (1-3-1) euler angle set.
     """
     q0 = math.atan2(C[0, 2], C[0, 1])
-    q1 = math.acos(C[0, 0])
+    q1 = _safe_acos(C[0, 0])
     q2 = math.atan2(C[2, 0], -C[1, 0])
     q = np.array([q0, q1, q2])
 
@@ -142,7 +160,7 @@ def C2Euler132(C):
     	C into the corresponding (1-3-2) euler angle set.
     """
     q0 = math.atan2(C[1, 2], C[1, 1])
-    q1 = math.asin(-C[1, 0])
+    q1 = _safe_asin(-C[1, 0])
     q2 = math.atan2(C[2, 0], C[0, 0])
     q = np.array([q0, q1, q2])
 
@@ -157,7 +175,7 @@ def C2Euler212(C):
     	C into the corresponding (2-1-2) euler angle set.
     """
     q0 = math.atan2(C[1, 0], C[1, 2])
-    q1 = math.acos(C[1, 1])
+    q1 = _safe_acos(C[1, 1])
     q2 = math.atan2(C[0, 1], -C[2, 1])
     q = np.array([q0, q1, q2])
 
@@ -173,7 +191,7 @@ def C2Euler213(C):
     """
 
     q0 = math.atan2(C[2, 0], C[2, 2])
-    q1 = math.asin(-C[2, 1])
+    q1 = _safe_asin(-C[2, 1])
     q2 = math.atan2(C[0, 1], C[1, 1])
     q = np.array([q0, q1, q2])
 
@@ -189,7 +207,7 @@ def C2Euler231(C):
     """
 
     q0 = math.atan2(-C[0, 2], C[0, 0])
-    q1 = math.asin(C[0, 1])
+    q1 = _safe_asin(C[0, 1])
     q2 = math.atan2(-C[2, 1], C[1, 1])
     q = np.array([q0, q1, q2])
     return q
@@ -204,7 +222,7 @@ def C2Euler232(C):
     """
 
     q0 = math.atan2(C[1, 2], -C[1, 0])
-    q1 = math.acos(C[1, 1])
+    q1 = _safe_acos(C[1, 1])
     q2 = math.atan2(C[2, 1], C[0, 1])
     q = np.array([q0, q1, q2])
     return q
@@ -219,7 +237,7 @@ def C2Euler312(C):
     """
 
     q0 = math.atan2(-C[1, 0], C[1, 1])
-    q1 = math.asin(C[1, 2])
+    q1 = _safe_asin(C[1, 2])
     q2 = math.atan2(-C[0, 2], C[2, 2])
     q = np.array([q0, q1, q2])
     return q
@@ -234,7 +252,7 @@ def C2Euler313(C):
     """
 
     q0 = math.atan2(C[2, 0], -C[2, 1])
-    q1 = math.acos(C[2, 2])
+    q1 = _safe_acos(C[2, 2])
     q2 = math.atan2(C[0, 2], C[1, 2])
     q = np.array([q0, q1, q2])
     return q
@@ -249,7 +267,7 @@ def C2Euler321(C):
     """
 
     q0 = math.atan2(C[0, 1], C[0, 0])
-    q1 = math.asin(-C[0, 2])
+    q1 = _safe_asin(-C[0, 2])
     q2 = math.atan2(C[1, 2], C[2, 2])
     q = np.array([q0, q1, q2])
     return q
@@ -264,7 +282,7 @@ def C2Euler323(C):
     """
 
     q0 = math.atan2(C[2, 1], C[2, 0])
-    q1 = math.acos(C[2, 2])
+    q1 = _safe_acos(C[2, 2])
     q2 = math.atan2(C[1, 2], -C[0, 2])
     q = np.array([q0, q1, q2])
     return q
@@ -316,7 +334,7 @@ def C2PRV(C):
     """
 
     cp = (np.trace(C) - 1) / 2
-    p = np.arccos(cp)
+    p = _safe_acos(cp)
     sp = p / 2. / np.sin(p)
     q = np.array([
         (C[1, 2] - C[2, 1]) * sp,
@@ -359,7 +377,7 @@ def addEuler121(e1, e2):
     sp2 = math.sin(e2[1])
     dum = e1[2] + e2[0]
 
-    q1 = math.acos(cp1 * cp2 - sp1 * sp2 * math.cos(dum))
+    q1 = _safe_acos(cp1 * cp2 - sp1 * sp2 * math.cos(dum))
     cp3 = math.cos(q1)
     q0 = Picheck(e1[0] + math.atan2(sp1 * sp2 * math.sin(dum), cp2 - cp3 * cp1))
     q2 = Picheck(e2[2] + math.atan2(sp1 * sp2 * math.sin(dum), cp1 - cp3 * cp2))
@@ -399,7 +417,7 @@ def addEuler131(e1, e2):
     sp2 = math.sin(e2[1])
     dum = e1[2] + e2[0]
 
-    q1 = math.acos(cp1 * cp2 - sp1 * sp2 * math.cos(dum))
+    q1 = _safe_acos(cp1 * cp2 - sp1 * sp2 * math.cos(dum))
     cp3 = math.cos(q1)
     q0 = Picheck(e1[0] + math.atan2(sp1 * sp2 * math.sin(dum), cp2 - cp3 * cp1))
     q2 = Picheck(e2[2] + math.atan2(sp1 * sp2 * math.sin(dum), cp1 - cp3 * cp2))
@@ -438,7 +456,7 @@ def addEuler212(e1, e2):
     sp2 = math.sin(e2[1])
     dum = e1[2] + e2[0]
 
-    q1 = math.acos(cp1 * cp2 - sp1 * sp2 * math.cos(dum))
+    q1 = _safe_acos(cp1 * cp2 - sp1 * sp2 * math.cos(dum))
     cp3 = math.cos(q1)
     q0 = Picheck(e1[0] + math.atan2(sp1 * sp2 * math.sin(dum), cp2 - cp3 * cp1))
     q2 = Picheck(e2[2] + math.atan2(sp1 * sp2 * math.sin(dum), cp1 - cp3 * cp2))
@@ -491,7 +509,7 @@ def addEuler232(e1, e2):
     sp2 = math.sin(e2[1])
     dum = e1[2] + e2[0]
 
-    q1 = math.acos(cp1 * cp2 - sp1 * sp2 * math.cos(dum))
+    q1 = _safe_acos(cp1 * cp2 - sp1 * sp2 * math.cos(dum))
     cp3 = math.cos(q1)
     q0 = Picheck(e1[0] + math.atan2(sp1 * sp2 * math.sin(dum), cp2 - cp3 * cp1))
     q2 = Picheck(e2[2] + math.atan2(sp1 * sp2 * math.sin(dum), cp1 - cp3 * cp2))
@@ -529,7 +547,7 @@ def addEuler313(e1, e2):
     sp2 = math.sin(e2[1])
     dum = e1[2] + e2[0]
 
-    q1 = math.acos(cp1 * cp2 - sp1 * sp2 * math.cos(dum))
+    q1 = _safe_acos(cp1 * cp2 - sp1 * sp2 * math.cos(dum))
     cp3 = math.cos(q1)
     q0 = Picheck(e1[0] + math.atan2(sp1 * sp2 * math.sin(dum), cp2 - cp3 * cp1))
     q2 = Picheck(e2[2] + math.atan2(sp1 * sp2 * math.sin(dum), cp1 - cp3 * cp2))
@@ -567,7 +585,7 @@ def addEuler323(e1, e2):
     sp2 = math.sin(e2[1])
     dum = e1[2] + e2[0]
 
-    q1 = math.acos(cp1 * cp2 - sp1 * sp2 * math.cos(dum))
+    q1 = _safe_acos(cp1 * cp2 - sp1 * sp2 * math.cos(dum))
     cp3 = math.cos(q1)
     q0 = Picheck(e1[0] + math.atan2(sp1 * sp2 * math.sin(dum), cp2 - cp3 * cp1))
     q2 = Picheck(e2[2] + math.atan2(sp1 * sp2 * math.sin(dum), cp1 - cp3 * cp2))
@@ -646,7 +664,7 @@ def addPRV(qq1, qq2):
     e1 = q1[1:4]
     e2 = q2[1:4]
 
-    p = 2. * math.acos(cp1 * cp2 - sp1 * sp2 * np.dot(e1, e2))
+    p = 2. * _safe_acos(cp1 * cp2 - sp1 * sp2 * np.dot(e1, e2))
     sp = math.sin(p / 2.)
     e = (cp1 * sp2 * e2 + cp2 * sp1 * e1 + sp1 * sp2 * np.cross(e1, e2))
     q = (p / sp) * e
@@ -2603,7 +2621,7 @@ def subEuler121(e, e1):
     dum = e[0] - e1[0]
 
     e2 = np.zeros(3)
-    e2[1] = math.acos(cp1 * cp + sp1 * sp * math.cos(dum))
+    e2[1] = _safe_acos(cp1 * cp + sp1 * sp * math.cos(dum))
     cp2 = math.cos(e2[1])
     e2[0] = Picheck(-e1[2] + math.atan2(sp1 * sp * math.sin(dum), cp2 * cp1 - cp))
     e2[2] = Picheck(e[2] - math.atan2(sp1 * sp * math.sin(dum), cp1 - cp * cp2))
@@ -2642,7 +2660,7 @@ def subEuler131(e, e1):
     dum = e[0] - e1[0]
 
     e2 = np.zeros(3)
-    e2[1] = math.acos(cp1 * cp + sp1 * sp * math.cos(dum))
+    e2[1] = _safe_acos(cp1 * cp + sp1 * sp * math.cos(dum))
     cp2 = math.cos(e2[1])
     e2[0] = Picheck(-e1[2] + math.atan2(sp1 * sp * math.sin(dum), cp2 * cp1 - cp))
     e2[2] = Picheck(e[2] - math.atan2(sp1 * sp * math.sin(dum), cp1 - cp * cp2))
@@ -2681,7 +2699,7 @@ def subEuler212(e, e1):
     dum = e[0] - e1[0]
 
     e2 = np.zeros(3)
-    e2[1] = math.acos(cp1 * cp + sp1 * sp * math.cos(dum))
+    e2[1] = _safe_acos(cp1 * cp + sp1 * sp * math.cos(dum))
     cp2 = math.cos(e2[1])
     e2[0] = Picheck(-e1[2] + math.atan2(sp1 * sp * math.sin(dum), cp2 * cp1 - cp))
     e2[2] = Picheck(e[2] - math.atan2(sp1 * sp * math.sin(dum), cp1 - cp * cp2))
@@ -2736,7 +2754,7 @@ def subEuler232(e, e1):
     dum = e[0] - e1[0]
 
     e2 = np.zeros(3)
-    e2[1] = math.acos(cp1 * cp + sp1 * sp * math.cos(dum))
+    e2[1] = _safe_acos(cp1 * cp + sp1 * sp * math.cos(dum))
     cp2 = math.cos(e2[1])
     e2[0] = Picheck(-e1[2] + math.atan2(sp1 * sp * math.sin(dum), cp2 * cp1 - cp))
     e2[2] = Picheck(e[2] - math.atan2(sp1 * sp * math.sin(dum), cp1 - cp * cp2))
@@ -2775,7 +2793,7 @@ def subEuler313(e, e1):
     dum = e[0] - e1[0]
 
     e2 = np.zeros(3)
-    e2[1] = math.acos(cp1 * cp + sp1 * sp * math.cos(dum))
+    e2[1] = _safe_acos(cp1 * cp + sp1 * sp * math.cos(dum))
     cp2 = math.cos(e2[1])
     e2[0] = Picheck(-e1[2] + math.atan2(sp1 * sp * math.sin(dum), cp2 * cp1 - cp))
     e2[2] = Picheck(e[2] - math.atan2(sp1 * sp * math.sin(dum), cp1 - cp * cp2))
@@ -2814,7 +2832,7 @@ def subEuler323(e, e1):
     dum = e[0] - e1[0]
 
     e2 = np.zeros(3)
-    e2[1] = math.acos(cp1 * cp + sp1 * sp * math.cos(dum))
+    e2[1] = _safe_acos(cp1 * cp + sp1 * sp * math.cos(dum))
     cp2 = math.cos(e2[1])
     e2[0] = Picheck(-e1[2] + math.atan2(sp1 * sp * math.sin(dum), cp2 * cp1 - cp))
     e2[2] = Picheck(e[2] - math.atan2(sp1 * sp * math.sin(dum), cp1 - cp * cp2))
@@ -2873,7 +2891,7 @@ def subPRV(q1, q2):
     e1 = q1[1:4]
     e2 = q2[1:4]
 
-    p = 2 * math.acos(cp1 * cp2 + sp1 * sp2 * np.dot(e1, e2))
+    p = 2 * _safe_acos(cp1 * cp2 + sp1 * sp2 * np.dot(e1, e2))
     sp = math.sin(p / 2)
     e = (-cp1 * sp2 * e2 + cp2 * sp1 * e1 + sp1 * sp2 * np.cross(e1, e2)) / sp
     q = p * e
@@ -2921,7 +2939,7 @@ def EP2Euler121(q):
     t2 = math.atan2(q[1], q[0])
 
     e1 = t1 + t2
-    e2 = 2 * math.acos(math.sqrt(q[0] * q[0] + q[1] * q[1]))
+    e2 = 2 * _safe_acos(math.sqrt(q[0] * q[0] + q[1] * q[1]))
     e3 = t2 - t1
 
     e = np.array([e1, e2, e3])
@@ -2942,7 +2960,7 @@ def EP2Euler123(q):
     q3 = q[3]
 
     e1 = math.atan2(-2 * (q2 * q3 - q0 * q1), q0 * q0 - q1 * q1 - q2 * q2 + q3 * q3)
-    e2 = math.asin(2 * (q1 * q3 + q0 * q2))
+    e2 = _safe_asin(2 * (q1 * q3 + q0 * q2))
     e3 = math.atan2(-2 * (q1 * q2 - q0 * q3), q0 * q0 + q1 * q1 - q2 * q2 - q3 * q3)
 
     e = np.array([e1, e2, e3])
@@ -2962,7 +2980,7 @@ def EP2Euler131(q):
     t2 = math.atan2(q[1], q[0])
 
     e1 = t2 - t1
-    e2 = 2 * math.acos(math.sqrt(q[0] * q[0] + q[1] * q[1]))
+    e2 = 2 * _safe_acos(math.sqrt(q[0] * q[0] + q[1] * q[1]))
     e3 = t2 + t1
 
     e = np.array([e1, e2, e3])
@@ -2983,7 +3001,7 @@ def EP2Euler132(q):
     q3 = q[3]
 
     e1 = math.atan2(2 * (q2 * q3 + q0 * q1), q0 * q0 - q1 * q1 + q2 * q2 - q3 * q3)
-    e2 = math.asin(-2 * (q1 * q2 - q0 * q3))
+    e2 = _safe_asin(-2 * (q1 * q2 - q0 * q3))
     e3 = math.atan2(2 * (q1 * q3 + q0 * q2), q0 * q0 + q1 * q1 - q2 * q2 - q3 * q3)
 
     e = np.array([e1, e2, e3])
@@ -3003,7 +3021,7 @@ def EP2Euler212(q):
     t2 = math.atan2(q[2], q[0])
 
     e1 = t2 - t1
-    e2 = 2 * math.acos(math.sqrt(q[0] * q[0] + q[2] * q[2]))
+    e2 = 2 * _safe_acos(math.sqrt(q[0] * q[0] + q[2] * q[2]))
     e3 = t2 + t1
 
     e = np.array([e1, e2, e3])
@@ -3024,7 +3042,7 @@ def EP2Euler213(q):
     q3 = q[3]
 
     e1 = math.atan2(2 * (q1 * q3 + q0 * q2), q0 * q0 - q1 * q1 - q2 * q2 + q3 * q3)
-    e2 = math.asin(-2 * (q2 * q3 - q0 * q1))
+    e2 = _safe_asin(-2 * (q2 * q3 - q0 * q1))
     e3 = math.atan2(2 * (q1 * q2 + q0 * q3), q0 * q0 - q1 * q1 + q2 * q2 - q3 * q3)
 
     e = np.array([e1, e2, e3])
@@ -3045,7 +3063,7 @@ def EP2Euler231(q):
     q3 = q[3]
 
     e1 = math.atan2(-2 * (q1 * q3 - q0 * q2), q0 * q0 + q1 * q1 - q2 * q2 - q3 * q3)
-    e2 = math.asin(2 * (q1 * q2 + q0 * q3))
+    e2 = _safe_asin(2 * (q1 * q2 + q0 * q3))
     e3 = math.atan2(-2 * (q2 * q3 - q0 * q1), q0 * q0 - q1 * q1 + q2 * q2 - q3 * q3)
 
     e = np.array([e1, e2, e3])
@@ -3065,7 +3083,7 @@ def EP2Euler232(q):
     t2 = math.atan2(q[2], q[0])
 
     e1 = t1 + t2
-    e2 = 2 * math.acos(math.sqrt(q[0] * q[0] + q[2] * q[2]))
+    e2 = 2 * _safe_acos(math.sqrt(q[0] * q[0] + q[2] * q[2]))
     e3 = t2 - t1
 
     e = np.array([e1, e2, e3])
@@ -3086,7 +3104,7 @@ def EP2Euler312(q):
     q3 = q[3]
 
     e1 = math.atan2(-2 * (q1 * q2 - q0 * q3), q0 * q0 - q1 * q1 + q2 * q2 - q3 * q3)
-    e2 = math.asin(2 * (q2 * q3 + q0 * q1))
+    e2 = _safe_asin(2 * (q2 * q3 + q0 * q1))
     e3 = math.atan2(-2 * (q1 * q3 - q0 * q2), q0 * q0 - q1 * q1 - q2 * q2 + q3 * q3)
 
     e = np.array([e1, e2, e3])
@@ -3106,7 +3124,7 @@ def EP2Euler313(q):
     t2 = math.atan2(q[3], q[0])
 
     e1 = t1 + t2
-    e2 = 2 * math.acos(math.sqrt(q[0] * q[0] + q[3] * q[3]))
+    e2 = 2 * _safe_acos(math.sqrt(q[0] * q[0] + q[3] * q[3]))
     e3 = t2 - t1
 
     e = np.array([e1, e2, e3])
@@ -3127,7 +3145,7 @@ def EP2Euler321(q):
     q3 = q[3]
 
     e1 = math.atan2(2 * (q1 * q2 + q0 * q3), q0 * q0 + q1 * q1 - q2 * q2 - q3 * q3)
-    e2 = math.asin(-2 * (q1 * q3 - q0 * q2))
+    e2 = _safe_asin(-2 * (q1 * q3 - q0 * q2))
     e3 = math.atan2(2 * (q2 * q3 + q0 * q1), q0 * q0 - q1 * q1 - q2 * q2 + q3 * q3)
 
     e = np.array([e1, e2, e3])
@@ -3147,7 +3165,7 @@ def EP2Euler323(q):
     t2 = math.atan2(q[3], q[0])
 
     e1 = t2 - t1
-    e2 = 2 * math.acos(math.sqrt(q[0] * q[0] + q[3] * q[3]))
+    e2 = 2 * _safe_acos(math.sqrt(q[0] * q[0] + q[3] * q[3]))
     e3 = t2 + t1
 
     e = np.array([e1, e2, e3])
@@ -3194,7 +3212,7 @@ def EP2PRV(q):
     	into the principal rotation vector Q.
     """
 
-    p = 2 * math.acos(q[0])
+    p = 2 * _safe_acos(q[0])
     sp = math.sin(p / 2)
     q1 = q[1] / sp * p
     q2 = q[2] / sp * p

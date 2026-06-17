@@ -18,6 +18,33 @@ import numpy as np
 from Basilisk.utilities import RigidBodyKinematics as rbk
 
 
+def test_ep2euler321_clips_inverse_trig_roundoff():
+    """Check ``EP2Euler321`` tolerates one-ulp inverse-trig roundoff."""
+    positive_pitch_quat = [
+        0.7071067811865476,
+        0.0,
+        0.7071067811865476,
+        0.0,
+    ]  # [-]
+    negative_pitch_quat = [
+        0.7071067811865476,
+        0.0,
+        -0.7071067811865476,
+        0.0,
+    ]  # [-]
+
+    np.testing.assert_allclose(
+        rbk.EP2Euler321(positive_pitch_quat),
+        [0.0, np.pi / 2.0, 0.0],
+        atol=1e-14,
+    )
+    np.testing.assert_allclose(
+        rbk.EP2Euler321(negative_pitch_quat),
+        [0.0, -np.pi / 2.0, 0.0],
+        atol=1e-14,
+    )
+
+
 def test_subMRP(show_plots):
     mrp_1 = np.array([1.5, 0.5, 0.5])
     mrp_2 = np.array([-0.5, 0.25, 0.15])
