@@ -30,6 +30,7 @@ import shutil
 import sys
 import traceback
 import warnings
+import ast
 
 with warnings.catch_warnings():
     warnings.simplefilter("ignore", category=DeprecationWarning)
@@ -849,7 +850,7 @@ class SimulationExecutor:
             for variable, value in list(modifications.items()):
                 if simParams.verbose:
                     print(f"Setting attribute {variable} to {value} on simInstance")
-                setattr(simInstance, variable, value)
+                cls.applyModification(simInstance, variable, value)
 
             # setup data logging
             if len(simParams.retentionPolicies) > 0:
@@ -896,6 +897,178 @@ class SimulationExecutor:
             return (False, simParams.index)  # there was an error
 
     @staticmethod
+    def _parseAttributePath(attributeString):
+        """
+        Split a nested attribute path into accessors and integer indices.
+
+        :param attributeString: Attribute path to parse.
+        :type attributeString: str
+        :return: Parsed attribute names, zero-argument method calls, and list indices.
+        :rtype: list
+        """
+        if not isinstance(attributeString, str) or attributeString == "":
+            raise ValueError("Attribute path must be a non-empty string")
+
+        pathParts = []
+        attributeName = ""
+        indexString = ""
+        parsingIndex = False
+
+        for character in attributeString:
+            if parsingIndex:
+                if character == "]":
+                    if indexString == "":
+                        raise ValueError("Attribute path contains an empty index")
+                    try:
+                        pathParts.append(int(indexString))
+                    except ValueError as err:
+                        raise ValueError("Attribute path indices must be integers") from err
+                    indexString = ""
+                    parsingIndex = False
+                else:
+                    indexString += character
+            elif character == ".":
+                if attributeName != "":
+                    pathParts.append(attributeName)
+                    attributeName = ""
+            elif character == "[":
+                if attributeName != "":
+                    pathParts.append(attributeName)
+                    attributeName = ""
+                parsingIndex = True
+            else:
+                attributeName += character
+
+        if parsingIndex:
+            raise ValueError("Attribute path contains an unterminated index")
+        if attributeName != "":
+            pathParts.append(attributeName)
+        if len(pathParts) == 0:
+            raise ValueError("Attribute path does not contain any parts")
+
+        return pathParts
+
+    @staticmethod
+    def _resolvePathPart(currentObj, pathPart):
+        """
+        Resolve one intermediate Monte Carlo path part.
+
+        :param currentObj: Object where this path part starts.
+        :param pathPart: Attribute name, zero-argument method call, or integer index.
+        :return: The object resolved by ``pathPart``.
+        """
+        if isinstance(pathPart, int):
+            return currentObj[pathPart]
+
+        if pathPart.endswith("()"):
+            methodName = pathPart[:-2]
+            if not methodName.isidentifier():
+                raise ValueError(
+                    "Only zero-argument method calls are supported in Monte Carlo paths"
+                )
+            method = getattr(currentObj, methodName)
+            if not callable(method):
+                raise ValueError("Monte Carlo path method part is not callable")
+            return method()
+
+        return getattr(currentObj, pathPart)
+
+    @staticmethod
+    def parseModificationValue(value):
+        """
+        Convert an archived Monte Carlo modification value to a Python value.
+
+        Dispersion values are commonly stored as strings so they can be written
+        to JSON.  If the value is already typed, it is returned unchanged.
+
+        :param value: The modification value to parse.
+        :return: The parsed Python value.
+        """
+        if not isinstance(value, str):
+            return value
+
+        try:
+            return ast.literal_eval(value)
+        except (SyntaxError, ValueError):
+            return value
+
+    @classmethod
+    def getNestedAttr(cls, obj, attrString):
+        """
+        Get a nested attribute or indexed item using a Monte Carlo path string.
+
+        :param obj: Object where path resolution starts.
+        :param attrString: Attribute path to get.
+        :type attrString: str
+        :return: Value found at ``attrString``.
+        """
+        currentObj = obj
+        for pathPart in cls._parseAttributePath(attrString):
+            currentObj = cls._resolvePathPart(currentObj, pathPart)
+        return currentObj
+
+    @classmethod
+    def _assignPathPart(cls, currentObj, pathPart, value):
+        """
+        Assign one final Monte Carlo path part.
+
+        :param currentObj: Object where this path part starts.
+        :param pathPart: Attribute name or integer index to assign.
+        :param value: Value to assign at ``pathPart``.
+        """
+        if isinstance(pathPart, int):
+            currentObj[pathPart] = value
+        elif pathPart.endswith("()"):
+            raise ValueError("Monte Carlo paths cannot assign to method calls")
+        else:
+            setattr(currentObj, pathPart, value)
+
+    @classmethod
+    def setNestedAttr(cls, obj, attrString, value):
+        """
+        Set a nested attribute or indexed item using a Monte Carlo path string.
+
+        :param obj: Object where path resolution starts.
+        :param attrString: Attribute path to set.
+        :type attrString: str
+        :param value: Value to set at ``attrString``.
+        """
+        pathParts = cls._parseAttributePath(attrString)
+        currentObj = obj
+
+        for pathPart in pathParts[:-1]:
+            currentObj = cls._resolvePathPart(currentObj, pathPart)
+
+        finalPathPart = pathParts[-1]
+        if isinstance(finalPathPart, int):
+            if len(pathParts) < 2:
+                raise ValueError("Indexed Monte Carlo paths require an owning attribute")
+            containerOwner = obj
+            for pathPart in pathParts[:-2]:
+                containerOwner = cls._resolvePathPart(containerOwner, pathPart)
+            containerPathPart = pathParts[-2]
+            container = cls._resolvePathPart(containerOwner, containerPathPart)
+            container[finalPathPart] = value
+            if not (
+                isinstance(containerPathPart, str) and containerPathPart.endswith("()")
+            ):
+                cls._assignPathPart(containerOwner, containerPathPart, container)
+        else:
+            cls._assignPathPart(currentObj, finalPathPart, value)
+
+    @classmethod
+    def applyModification(cls, simInstance, variable, value):
+        """
+        Apply one Monte Carlo modification to the simulation instance.
+
+        :param simInstance: Simulation object to modify.
+        :param variable: Nested attribute path to modify.
+        :type variable: str
+        :param value: Archived or typed modification value.
+        """
+        cls.setNestedAttr(simInstance, variable, cls.parseModificationValue(value))
+
+    @staticmethod
     def disperseSeeds(simInstance):
         """
         Disperses the RNG seeds of all the tasks in the sim, and returns a statement that contains the seeds.
@@ -917,17 +1090,13 @@ class SimulationExecutor:
         for i, task in enumerate(simInstance.TaskList):
             for j, model in enumerate(task.TaskModels):
                 taskVar = 'TaskList[' + str(i) + '].TaskModels' + '[' + str(j) + '].RNGSeed'
-                rand = str(random.randint(0, 1 << 32 - 1))
-                try:
-                    execStatement = "simInstance." + taskVar + "=" + str(rand)
-                    setattr(simInstance, taskVar, rand)  # if this fails don't add to the list of modification
+                if hasattr(model, "RNGSeed"):
+                    rand = str(random.randint(0, (1 << 32) - 1))
                     randomSeeds[taskVar] = rand
-                except:
-                    pass
         return randomSeeds
 
-    @staticmethod
-    def populateSeeds(simInstance, modifications):
+    @classmethod
+    def populateSeeds(cls, simInstance, modifications):
         """
         only populate the RNG seeds of all the tasks in the sim
 
@@ -938,6 +1107,5 @@ class SimulationExecutor:
                 A dictionary containing RNGSeeds to be populate for the sim, among other sim modifications.
         """
         for variable, value in modifications.items():
-            if ".RNGSeed" in variable:
-                rngStatement = "simInstance." + variable + "=" + value
-                setattr(simInstance, variable, value)
+            if variable.endswith(".RNGSeed"):
+                cls.applyModification(simInstance, variable, value)

@@ -1,6 +1,6 @@
 # MonteCarlo: Brief Guide
 
-*If you plan to use this it is highly recommended to read the documentation in the `MonteCarlo/Controller.py` source file and the example usage in `src/tests/scenarios/test_MonteCarloSimulation.py`. This guide offers only a brief overview of features*
+*If you plan to use this it is highly recommended to read the documentation in the `MonteCarlo/Controller.py` source file, the example usage in `examples/scenarioMonteCarloAttRW.py`, and the corresponding test in `src/tests/test_scenarioMonteCarloAttRW.py`. This guide offers only a brief overview of features*
 
 A MonteCarlo simulation can be created using the `MonteCarlo` module. This module is used to execute monte carlo simulations, and access retained data from previously executed MonteCarlo runs.
 
@@ -37,12 +37,13 @@ def myExecutionFunction(sim):
 monteCarlo.setExecutionFunction(myExecutionFunction)
 ```
 
-Optionally, there is a function that can be used to configure the simulation after all dispersions of random seeds and variables have been applied. This may be unused, it is only necessary to access the simulation at this time in some cases.
+Optionally, there is a function that can be used to configure the simulation after random seeds
+have been populated. Non-seed parameter dispersions are applied after this configuration step
+and before the execution function runs.
 
 ```
 def myConfigureFunction(sim):
-  # do something with the sim now that random seeds have been applied
-  # and variables are dispersed ...
+  # do something with the sim now that random seeds have been applied ...
 
 monteCarlo.setConfigureFunction(myConfigureFunction)
 ```
@@ -52,6 +53,12 @@ Statistical dispersions can be applied to initial parameters using the MonteCarl
 ```
 monteCarlo.addDispersion(UniformEulerAngleMRPDispersion("taskName.hub.sigma_BNInit"))
 ```
+
+Dispersion names can reference nested simulation attributes with dotted names, integer list
+indices, and zero-argument accessor methods. For example,
+`TaskList[0].TaskModels[0].hub.sigma_BNInit` updates the `sigma_BNInit` attribute
+on the first model's hub object, while `get_DynModel().scObject.hub.r_CN_NInit`
+resolves the object returned by `get_DynModel()` before applying the dispersion.
 
 If data is being retained, a archive directory to store retained data must be specified. This directory is later used to reload the retained data from an executed Monte Carlo simulation.
 
