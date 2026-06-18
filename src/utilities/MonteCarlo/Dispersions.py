@@ -24,6 +24,7 @@ import random
 import numpy as np
 from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.utilities import orbitalMotion
+from Basilisk.utilities.MonteCarlo.Controller import SimulationExecutor
 
 
 class SingleVariableDispersion(object):
@@ -209,7 +210,7 @@ class UniformVectorDispersion(VectorVariableDispersion):
             self.bounds = ([-1.0, 1.0])  # defines a hard floor/ceiling
 
     def generate(self, sim):
-        vector = getattr(sim, self.varName)
+        vector = SimulationExecutor.getNestedAttr(sim, self.varName)
         dispValue = self.perturbCartesianVectorUniform(vector)
         return dispValue
 
@@ -221,7 +222,7 @@ class NormalVectorDispersion(VectorVariableDispersion):
             self.bounds = ([-1.0, 1.0])  # defines a hard floor/ceiling
 
     def generate(self, sim):
-        vector = getattr(sim, self.varName)
+        vector = SimulationExecutor.getNestedAttr(sim, self.varName)
         dispValue = self.perturbCartesianVectorNormal(vector, self.mean, self.stdDeviation)
         return dispValue
 
@@ -243,7 +244,7 @@ class UniformVectorAngleDispersion(VectorVariableDispersion):
 
     def generate(self, sim=None):
         # Note this dispersion is applied off of the nominal
-        vectorCart = getattr(sim, self.varName)
+        vectorCart = SimulationExecutor.getNestedAttr(sim, self.varName)
         vectorCart = vectorCart/np.linalg.norm(vectorCart)
         vectorSphere = self.cart2Spherical(vectorCart)
 
@@ -291,7 +292,7 @@ class NormalVectorAngleDispersion(VectorVariableDispersion):
         self.magnitude = []
 
     def generate(self, sim=None):
-        vectorCart = getattr(sim, self.varName)
+        vectorCart = SimulationExecutor.getNestedAttr(sim, self.varName)
         vectorCart = vectorCart/np.linalg.norm(vectorCart)
         vectorSphere = self.cart2Spherical(vectorCart)
 
@@ -391,11 +392,7 @@ class NormalThrusterUnitDirectionVectorDispersion(VectorVariableDispersion):
                   + "()' dispersions will not be set for variable " + self.varName))
             return
         else:
-            separator = '.'
-            thrusterObject = getattr(sim, self.varNameComponents[0])
-            totalVar = separator.join(self.varNameComponents[0:-1])
-            simObject = getattr(sim, totalVar)  # sim.totalVar
-            dirVec = getattr(simObject, 'thrDir_B')  # sim.totalVar.thrDir_B
+            dirVec = SimulationExecutor.getNestedAttr(sim, self.getName())
             angle = np.random.normal(0, self.phiStd, 1)
             dirVec = np.array(dirVec).reshape(3).tolist()
             dispVec = self.perturbVectorByAngle(dirVec, angle)
@@ -477,11 +474,7 @@ class InertiaTensorDispersion:
                   + "()' dispersions will not be set for variable " + self.varName))
             return
         else:
-            vehDynObject = getattr(sim, self.varNameComponents[0])
-            parts = self.varName.split('.')
-            attr = sim
-            for part in parts:
-                attr = getattr(attr, part)
+            attr = SimulationExecutor.getNestedAttr(sim, self.varName)
             I = np.array(attr).reshape(3, 3)
 
             # generate random values for the diagonals
