@@ -88,37 +88,37 @@ The dispersions that are set are listed in the following table:
 +----------------+---------------------------+--------------------------------------------------+
 | Input          | Description of Element    | Distribution                                     |
 +================+===========================+==================================================+
-| Inertial       | Using Modified            | Uniform for all 3 rotations between [0, 2 pi]    |
-| attitude       | Rodrigues Parameters      |                                                  |
+| Inertial       | Using Modified            | Normal dispersions around the nominal MRP vector |
+| attitude       | Rodrigues Parameters      | [0.02, 0.04, -0.06] with 0.002 standard          |
+|                |                           | deviation per component                          |
 +----------------+---------------------------+--------------------------------------------------+
-| Inertial       | Using omega vector        | Normal dispersions for each of the rotation      |
-| rotation rate  |                           | components, each of mean 0 and standard          |
-|                |                           | deviation 0.25 deg/s                             |
+| Inertial       | Using omega vector        | Normal dispersions around the nominal rate with  |
+| rotation rate  |                           | standard deviation 0.01/3 deg/s                  |
 +----------------+---------------------------+--------------------------------------------------+
-| Mass of the    | Total Mass of the         | Uniform around +/-5% of expected values.         |
-| hub            | spacecraft                | Bounds are [712.5, 787.5]                        |
+| Mass of the    | Total Mass of the         | Uniform around +/-1% of expected values.         |
+| hub            | spacecraft                | Bounds are about [742.5, 757.5] kg               |
 +----------------+---------------------------+--------------------------------------------------+
-| Center of Mass | Position vector offset on | Normally around a mean [0, 0, 1], with standard  |
-| Offset         | the actual center of mass,| deviations of [0.05/3, 0.05/3, 0.1/3]            |
-|                | and its theoretical       |                                                  |
-|                | position                  |                                                  |
+| Center of Mass | Position vector offset on | Normally around a mean [0, 0, 0] m with standard |
+| Offset         | the actual center of mass,| deviations of [0.01/3, 0.01/3, 0.02/3] m         |
+|                | in body-frame components  |                                                  |
+|                |                           |                                                  |
 +----------------+---------------------------+--------------------------------------------------+
-| Inertia Tensor | 3x3 inertia tensor.       | Normally about mean value of diag(900, 800, 600).|
+| Inertia Tensor | 3x3 inertia tensor.       | Normally about mean diag(900, 800, 600) kg*m^2.  |
 |                | Dispersed by 3 rotations  | Each of the 3 rotations are normally distributed |
 |                |                           | with angles of mean 0 and standard deviation     |
-|                |                           | 0.1 deg.                                         |
+|                |                           | 0.25 deg.                                        |
 +----------------+---------------------------+--------------------------------------------------+
 | RW axes        | The rotation axis for     | Normally around a respective means [1,0,0],      |
 |                | each of the 3 wheels      | [0,1,0], and [0,0,1] with respective standard    |
-|                |                           | deviations [0.01/3, 0.005/3, 0.005/3],           |
-|                |                           | [0.005/3, 0.01/3, 0.005/3], and                  |
-|                |                           | [0.005/3, 0.005/3, 0.01/3].                      |
+|                |                           | deviations [0.002/3, 0.001/3, 0.001/3],          |
+|                |                           | [0.001/3, 0.002/3, 0.001/3], and                 |
+|                |                           | [0.001/3, 0.001/3, 0.002/3].                     |
 +----------------+---------------------------+--------------------------------------------------+
-| RW speeds      | The rotation speed for    | Uniform around  +/-5% of expected values. Bounds |
-|                | each of the 3 wheels      | are [95, 105], [190, 210], and [285, 315]        |
+| RW speeds      | The rotation speed for    | Uniform around +/-1% of expected values.         |
+|                | each of the 3 wheels      |                                                  |
 +----------------+---------------------------+--------------------------------------------------+
-| Voltage to     | The gain between the      | Uniform around  +/-5% of expected values. Bounds |
-| Torque Gain    | commanded torque and the  | are [0.019, 0.021]                               |
+| Voltage to     | The gain between the      | Uniform around +/-1% of expected values.         |
+| Torque Gain    | commanded torque and the  | Nominal value is 0.02 N*m/V                      |
 |                | actual voltage            |                                                  |
 +----------------+---------------------------+--------------------------------------------------+
 
@@ -165,6 +165,11 @@ This pattern is required for the Monte Carlo framework to:
 2. Properly retain data through the RetentionPolicy mechanism
 3. Ensure objects persist between simulation runs
 4. Allow the Controller class to track and manage simulation state
+
+Dispersion names can use nested attribute paths and integer list indices, such as
+``TaskList[0].TaskModels[0].hub.sigma_BNInit``. Each object referenced by
+these paths must exist on the simulation container before the Monte Carlo
+controller applies the run modifications.
 
 Without adding objects to scSim, the Monte Carlo framework wouldn't be able to properly manage
 the simulation across multiple runs and thus unexpected behavior will occur.
@@ -221,8 +226,8 @@ from Basilisk.fswAlgorithms import rwMotorVoltage
 from Basilisk.architecture import messaging
 
 from Basilisk.utilities.MonteCarlo.Controller import Controller, RetentionPolicy
-from Basilisk.utilities.MonteCarlo.Dispersions import (UniformEulerAngleMRPDispersion, UniformDispersion,
-                                                       NormalVectorCartDispersion, InertiaTensorDispersion)
+from Basilisk.utilities.MonteCarlo.Dispersions import (UniformDispersion, NormalVectorCartDispersion,
+                                                       InertiaTensorDispersion)
 
 # Add this import and check at the beginning of the file
 import importlib
@@ -323,20 +328,65 @@ def run(saveFigures, case, show_plots, delete_data=True, useBokeh=False):
     dispList = [dispMRPInit, dispOmegaInit, dispMass, dispCoMOff, dispInertia]
 
     # Add dispersions with their dispersion type
-    monteCarlo.addDispersion(UniformEulerAngleMRPDispersion(dispMRPInit))
-    monteCarlo.addDispersion(NormalVectorCartDispersion(dispOmegaInit, 0.0, 0.75 / 3.0 * np.pi / 180))
-    monteCarlo.addDispersion(UniformDispersion(dispMass, ([750.0 - 0.05*750, 750.0 + 0.05*750])))
-    monteCarlo.addDispersion(NormalVectorCartDispersion(dispCoMOff, [0.0, 0.0, 1.0], [0.05 / 3.0, 0.05 / 3.0, 0.1 / 3.0]))
-    monteCarlo.addDispersion(InertiaTensorDispersion(dispInertia, stdAngle=0.1))
-    monteCarlo.addDispersion(NormalVectorCartDispersion(dispRW1Axis, [1.0, 0.0, 0.0], [0.01 / 3.0, 0.005 / 3.0, 0.005 / 3.0]))
-    monteCarlo.addDispersion(NormalVectorCartDispersion(dispRW2Axis, [0.0, 1.0, 0.0], [0.005 / 3.0, 0.01 / 3.0, 0.005 / 3.0]))
-    monteCarlo.addDispersion(NormalVectorCartDispersion(dispRW3Axis, [0.0, 0.0, 1.0], [0.005 / 3.0, 0.005 / 3.0, 0.01 / 3.0]))
-    monteCarlo.addDispersion(UniformDispersion(dispRW1Omega, ([100.0 - 0.05*100, 100.0 + 0.05*100])))
-    monteCarlo.addDispersion(UniformDispersion(dispRW2Omega, ([200.0 - 0.05*200, 200.0 + 0.05*200])))
-    monteCarlo.addDispersion(UniformDispersion(dispRW3Omega, ([300.0 - 0.05*300, 300.0 + 0.05*300])))
-    monteCarlo.addDispersion(UniformDispersion(dispVoltageIO_0, ([0.2/10. - 0.05 * 0.2/10., 0.2/10. + 0.05 * 0.2/10.])))
-    monteCarlo.addDispersion(UniformDispersion(dispVoltageIO_1, ([0.2/10. - 0.05 * 0.2/10., 0.2/10. + 0.05 * 0.2/10.])))
-    monteCarlo.addDispersion(UniformDispersion(dispVoltageIO_2, ([0.2/10. - 0.05 * 0.2/10., 0.2/10. + 0.05 * 0.2/10.])))
+    sigmaMean = [0.02, 0.04, -0.06]  # [-]
+    sigmaStd = [0.002, 0.002, 0.002]  # [-]
+    omegaMean = [0.0002, -0.002, 0.006]  # [rad/s]
+    omegaStd = [0.01 / 3.0 * np.pi / 180.0] * 3  # [rad/s]
+    massNominal = 750.0  # [kg]
+    massVariation = 0.01  # [-]
+    massBounds = [
+        massNominal * (1.0 - massVariation),
+        massNominal * (1.0 + massVariation)
+    ]  # [kg]
+    comOffsetMean = [0.0, 0.0, 0.0]  # [m]
+    comOffsetStd = [0.01 / 3.0, 0.01 / 3.0, 0.02 / 3.0]  # [m]
+    inertiaAngleStd = 0.25 * np.pi / 180.0  # [rad]
+    rwAxisStdMinor = 0.001 / 3.0  # [-]
+    rwAxisStdMajor = 0.002 / 3.0  # [-]
+    rwOmegaVariation = 0.01  # [-]
+    rw1OmegaNominal = 100.0  # [RPM]
+    rw2OmegaNominal = 200.0  # [RPM]
+    rw3OmegaNominal = 300.0  # [RPM]
+    voltageToTorqueGain = 0.2 / 10.0  # [N*m/V]
+    voltageGainVariation = 0.01  # [-]
+    voltageGainBounds = [
+        voltageToTorqueGain * (1.0 - voltageGainVariation),
+        voltageToTorqueGain * (1.0 + voltageGainVariation)
+    ]  # [N*m/V]
+
+    monteCarlo.addDispersion(NormalVectorCartDispersion(dispMRPInit, sigmaMean, sigmaStd))
+    monteCarlo.addDispersion(NormalVectorCartDispersion(dispOmegaInit, omegaMean, omegaStd))
+    monteCarlo.addDispersion(UniformDispersion(dispMass, massBounds))
+    monteCarlo.addDispersion(NormalVectorCartDispersion(dispCoMOff, comOffsetMean, comOffsetStd))
+    monteCarlo.addDispersion(InertiaTensorDispersion(dispInertia, stdAngle=inertiaAngleStd))
+    monteCarlo.addDispersion(NormalVectorCartDispersion(
+        dispRW1Axis, [1.0, 0.0, 0.0], [rwAxisStdMajor, rwAxisStdMinor, rwAxisStdMinor]
+    ))
+    monteCarlo.addDispersion(NormalVectorCartDispersion(
+        dispRW2Axis, [0.0, 1.0, 0.0], [rwAxisStdMinor, rwAxisStdMajor, rwAxisStdMinor]
+    ))
+    monteCarlo.addDispersion(NormalVectorCartDispersion(
+        dispRW3Axis, [0.0, 0.0, 1.0], [rwAxisStdMinor, rwAxisStdMinor, rwAxisStdMajor]
+    ))
+    # RW factory creation accepts RPM, but the state effector stores RW*.Omega in rad/s.
+    rw1OmegaBounds = [
+        rw1OmegaNominal * (1.0 - rwOmegaVariation) * macros.RPM,
+        rw1OmegaNominal * (1.0 + rwOmegaVariation) * macros.RPM
+    ]  # [rad/s]
+    rw2OmegaBounds = [
+        rw2OmegaNominal * (1.0 - rwOmegaVariation) * macros.RPM,
+        rw2OmegaNominal * (1.0 + rwOmegaVariation) * macros.RPM
+    ]  # [rad/s]
+    rw3OmegaBounds = [
+        rw3OmegaNominal * (1.0 - rwOmegaVariation) * macros.RPM,
+        rw3OmegaNominal * (1.0 + rwOmegaVariation) * macros.RPM
+    ]  # [rad/s]
+    monteCarlo.addDispersion(UniformDispersion(dispRW1Omega, rw1OmegaBounds))
+    monteCarlo.addDispersion(UniformDispersion(dispRW2Omega, rw2OmegaBounds))
+    monteCarlo.addDispersion(UniformDispersion(dispRW3Omega, rw3OmegaBounds))
+    monteCarlo.addDispersion(UniformDispersion(dispVoltageIO_0, voltageGainBounds))
+    monteCarlo.addDispersion(UniformDispersion(dispVoltageIO_1, voltageGainBounds))
+    monteCarlo.addDispersion(UniformDispersion(dispVoltageIO_2, voltageGainBounds))
 
     # A `RetentionPolicy` is used to define what data from the simulation should be retained. A `RetentionPolicy`
     # is a list of messages and variables to log from each simulation run. It also has a callback,
@@ -350,15 +400,11 @@ def run(saveFigures, case, show_plots, delete_data=True, useBokeh=False):
     retentionPolicy.addMessageLog(voltMsgName, ["voltage"])
     for msgName in rwOutName:
         retentionPolicy.addMessageLog(msgName, ["u_current"])
-    if show_plots:
-        if useBokeh:
-            # Don't set a callback for Bokeh, we'll handle it separately
-            pass
-        else:
-            # Use matplotlib for plotting
-            retentionPolicy.setDataCallback(plotSim)
     if saveFigures:
         retentionPolicy.setDataCallback(plotSimAndSave)
+    elif show_plots and not useBokeh:
+        # Use matplotlib for plotting
+        retentionPolicy.setDataCallback(plotSim)
     monteCarlo.addRetentionPolicy(retentionPolicy)
 
     if case == 1:
@@ -406,6 +452,11 @@ def run(saveFigures, case, show_plots, delete_data=True, useBokeh=False):
             # assert two different runs had different parameters.
             assert params1[dispName] != params2[dispName], "dispersion should be different in each run"
 
+        retainedData2 = monteCarloLoaded.getRetainedData(NUMBER_OF_RUNS-2)
+        runOutput2 = retainedData2["messages"][guidMsgName + ".sigma_BR"]
+        assert not np.allclose(newOutput, runOutput2, rtol=1e-12, atol=1e-12), \
+            "Dispersed runs should produce different attitude tracking histories"
+
         if useBokeh and bokeh_available:
             # Create the Bokeh application
             plotter = MonteCarloPlotter(dirName)
@@ -419,10 +470,11 @@ def run(saveFigures, case, show_plots, delete_data=True, useBokeh=False):
                 rwOutName[2] + ".u_current"
             ])
             plotter.show_plots()
-        elif show_plots:
+        elif show_plots or saveFigures:
             # Use matplotlib for plotting
             monteCarloLoaded.executeCallbacks()
-            plt.show()
+            if show_plots:
+                plt.show()
             plt.close("all")
 
     #########################################################
@@ -450,6 +502,8 @@ def run(saveFigures, case, show_plots, delete_data=True, useBokeh=False):
         if show_plots:
             plt.show()
             # close the plots being saved off to avoid over-writing old and new figures
+            plt.close("all")
+        elif saveFigures:
             plt.close("all")
 
         # Now we clean up data from this test
@@ -782,11 +836,37 @@ def plotSimAndSave(data, retentionPolicy):
     figureList = plotSim(data, retentionPolicy)
     for pltName, plt in list(figureList.items()):
         # plt.subplots_adjust(top = 0.6, bottom = 0.4)
-        simHelpers.saveScenarioFigure(
+        saveScenarioFigureWithoutClosing(
             fileNameString + "_" + pltName
             , plt, path + "/dataForExamples")
 
     return
+
+
+def saveScenarioFigureWithoutClosing(figureName, figure, savePath, extension=".svg"):
+    """
+    Save a scenario figure while preserving accumulated Monte Carlo traces.
+
+    :param figureName: Figure file base name.
+    :type figureName: str
+    :param figure: Matplotlib figure to save.
+    :param savePath: Scenario data path used to derive the documentation image folder.
+    :type savePath: str
+    :param extension: File extension to use for the image.
+    :type extension: str
+    """
+    imgFileName = os.path.join(
+        savePath,
+        "..",
+        "..",
+        "docs",
+        "source",
+        "_images",
+        "Scenarios",
+        figureName + extension,
+    )
+    os.makedirs(os.path.dirname(imgFileName), exist_ok=True)
+    figure.savefig(imgFileName, transparent=True)
 
 
 # Modify the __main__ section
