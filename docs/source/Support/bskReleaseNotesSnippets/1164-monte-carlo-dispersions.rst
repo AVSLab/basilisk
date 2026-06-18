@@ -1,0 +1,2 @@
+- Fixed Monte Carlo nested dispersion paths and randomized ``RNGSeed`` application.
+- Tuned :ref:`scenarioMonteCarloAttRW` dispersions to show subtler run-to-run variations without saturated response.
