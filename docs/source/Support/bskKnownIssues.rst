@@ -22,6 +22,8 @@ Version |release|
   so images loaded from filename now follow the same processing and publishing pipeline as images from imageInMsg.
 - The MuJoCo dynamics wrapper now uses MuJoCo 3.7 element-name APIs, fixing builds after the MuJoCo
   3.7 upgrade.
+- Monte Carlo now applies nested dispersion paths and randomized ``RNGSeed`` modifications to the actual
+  simulation objects.
 - SWIG 4.4.0 caused Basilisk build failures in some Python 3.13+ source-build configurations.
   Basilisk now requires SWIG 4.4.1 or a newer supported 4.x release, which provides SWIG ABI 5 support
   for Basilisk and compatible plugins. If source builds fail with SWIG 4.4.0 or emit
