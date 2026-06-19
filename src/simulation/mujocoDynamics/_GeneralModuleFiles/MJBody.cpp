@@ -115,11 +115,22 @@ void MJBody::configure(const mjModel* mujocoModel)
         site.configure(mujocoModel);
     }
 
-    // Update the position of the center of mass
+    // Move the _com site to the body CoM (body_ipos, known only post-compile).
     auto& com = this->getCenterOfMass();
     auto bodyId = this->getId();
     auto siteId = com.getId();
-    std::copy_n(mujocoModel->body_ipos + 3 * bodyId, 3, mujocoModel->site_pos + 3 * siteId);
+    Eigen::Vector3d ipos =
+        Eigen::Map<const Eigen::Vector3d>(mujocoModel->body_ipos + 3 * bodyId);
+    com.setPositionRelativeToBody(ipos);
+
+    // A site created at the origin latches to SAMEFRAME_BODY, which ignores
+    // site_pos and pins site_xpos to the body origin. Force one recompile so it
+    // re-latches to SAMEFRAME_BODYROT and tracks the CoM (body frame orientation
+    // preserved). Skip when the CoM is at the origin (already correct; avoids a
+    // recompile loop, as configure() runs inside recompileIfNeeded()).
+    if (mujocoModel->site_sameframe[siteId] == mjSAMEFRAME_BODY && ipos.norm() > 1e-9) {
+        this->getSpec().markAsNeedingToRecompileModel();
+    }
 
     // Seed this body's entry of the scene's bulk mass state from the model.
     this->getSpec().getScene().getMassState()->state(this->getId()) =
@@ -250,9 +261,14 @@ void MJBody::updateMujocoModelFromMassProps()
 {
     auto m = spec.getMujocoModel();
 
+    double oldMass = m->body_mass[this->getId()];
     double newMass = this->getMass();
-    auto diff = abs(m->body_mass[this->getId()] - newMass);
+    auto diff = abs(oldMass - newMass);
     if (diff > 10 * std::numeric_limits<double>::epsilon()) {
+
+        // Compute the ratio before overwriting body_mass (else it would be 1.0).
+        // Shape is fixed, so inertia scales linearly with mass.
+        double massRatio = newMass / oldMass;
 
         // Update the mass in the mjModel AND mjsBody
         m->body_mass[this->getId()] = newMass;
@@ -260,7 +276,7 @@ void MJBody::updateMujocoModelFromMassProps()
 
         // Update the inertia in the mjModel AND mjsBody
         for (size_t i = 0; i < 3; i++) {
-            m->body_inertia[3 * this->getId() + i] *= newMass / m->body_mass[this->getId()];
+            m->body_inertia[3 * this->getId() + i] *= massRatio;
             this->mjsObject->inertia[i] = m->body_inertia[3 * this->getId() + i];
         }
 
