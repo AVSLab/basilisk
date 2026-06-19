@@ -500,7 +500,7 @@ def run(show_plots):
         # Create the science mode camera
         vizSupport.createStandardCamera(viz, setMode=1, spacecraftName=scObject.ModelTag,
                                         fieldOfView=10 * macros.D2R,
-                                        displayName="10˚ FOV Camera",
+                                        displayName="10 deg FOV Camera",
                                         pointingVector_B=[0, 1, 0], position_B=cameraLocation)
 
         # Add custom visualization elements to the scData entry created by enableUnityVisualization().

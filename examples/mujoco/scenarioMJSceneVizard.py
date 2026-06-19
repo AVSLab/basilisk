@@ -23,7 +23,7 @@ coexist in one simulation and feed :ref:`Vizard <vizard>` through a single
 ``enableUnityVisualization`` call:
 
 * **Primary hub** (MJScene, red, 6 panels): loaded from
-  ``sat_w_deployable_panels.xml`` — the same XML used by
+  ``sat_w_deployable_panels.xml`` - the same XML used by
   ``scenarioDeployPanels.py``.  Circular 500 km LEO around Earth, PID
   deployment, and a four-unit CSS pyramid on the hub.
 * **Companion hub** (MJScene, blue, 2 panels): loaded from

@@ -23,7 +23,7 @@
 #include <string>
 #include <vector>
 
-// SWIG defines the SWIG macro when parsing — guard the mujoco header so the
+// SWIG defines the SWIG macro when parsing - guard the mujoco header so the
 // simplified SWIG preprocessor never sees it.  The struct itself is visible to
 // both C++ (with the real mjGEOM_NONE default) and SWIG (with a plain 0).
 #ifndef SWIG
@@ -48,7 +48,7 @@ struct MJGeomInfo {
     std::vector<double> size = std::vector<double>(3); ///< Size parameters (3 elements).
     std::vector<double> pos  = std::vector<double>(3); ///< Position in body frame (3 elements).
     std::vector<double> quat = std::vector<double>(4); ///< Quaternion in body frame (4 elements: w, x, y, z).
-    std::vector<double> rgba = std::vector<double>(4); ///< Color (4 elements, 0–1 range).
+    std::vector<double> rgba = std::vector<double>(4); ///< Color (4 elements, 0-1 range).
 };
 
 #endif
