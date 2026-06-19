@@ -1228,10 +1228,10 @@ def _resolveBodyVisual(visual_entry, body_name, is_hub):
     *visual_entry* is the value at ``someList[c]`` when the corresponding
     entry in ``scList`` is an :ref:`MJScene`.  It may be:
 
-    * ``None``  — no visuals for any body in this scene.
-    * A ``dict`` mapping body names to their visual-element lists — used to
+    * ``None`` - no visuals for any body in this scene.
+    * A ``dict`` mapping body names to their visual-element lists - used to
       target specific bodies (hub *or* child).
-    * Any other value (e.g. a plain list) — applied to hub bodies only;
+    * Any other value (e.g. a plain list) - applied to hub bodies only;
       child bodies receive ``None``.
     """
     if visual_entry is None:
@@ -1371,9 +1371,9 @@ def _handleMJScene(viz, sc, scSim, c, planetNameList, planetInfoList, spiceMsgLi
     spacecraft convention as the rest of :func:`enableUnityVisualization`.
     The entry at index *c* for each visual-element list may be:
 
-    * ``None``  — no visuals.
-    * A plain list / object — applied to root (world-parented) bodies only.
-    * A ``dict {bodyName: list}`` — applied per named body (hub or child).
+    * ``None`` - no visuals.
+    * A plain list / object - applied to root (world-parented) bodies only.
+    * A ``dict {bodyName: list}`` - applied per named body (hub or child).
     """
     bodyNames = sc.getBodyNames()
 
@@ -1667,7 +1667,7 @@ def enableUnityVisualization(
         Vizard spacecraft name must be unique across this list.  For an
         MJScene, the emitted names are the local MuJoCo body names.
 
-        **Gravity bodies** — attach a ``gravBodyFactory`` body list to the scene
+        **Gravity bodies** - attach a ``gravBodyFactory`` body list to the scene
         before calling this function so that planets appear in Vizard::
 
             gravFactory = simIncludeGravBody.gravBodyFactory()
@@ -1675,13 +1675,13 @@ def enableUnityVisualization(
             earth.isCentralBody = True
             scene._vizGravBodies = gravFactory.gravBodies
 
-        **Visual elements** — ``cssList``, ``lightList``, etc. support an extra
+        **Visual elements** - ``cssList``, ``lightList``, etc. support an extra
         addressing mode when the corresponding ``scList`` entry is an
         :ref:`MJScene`.  Instead of a plain list (which is applied to hub bodies
         only), you may pass a ``dict`` mapping body names to their element lists
         to target specific bodies::
 
-            # CSS on the hub body only (flat list → hub bodies):
+            # CSS on the hub body only (flat list -> hub bodies):
             cssList = [[css1, css2]]
 
             # CSS on specific named bodies (dict):
