@@ -489,11 +489,6 @@ if __name__ == "__main__":
     # define the optional arguments
     parser.add_argument("--generator", help="cmake generator")
     parser.add_argument("--buildType", help="build type", default="Release", choices=["Release", "Debug"])
-    parser.add_argument("--mujocoReplay",
-                        help="Whether to build the 'replay' utility for visualizing MuJoCo results",
-                        default=False,
-                        type=lambda x: (str(x).lower() == 'true'),
-                        choices=[True, False])
     # parser.add_argument("--clean", help="make a clean distribution folder", action="store_true")
     for opt, value in bskModuleOptionsBool.items():
         parser.add_argument("--" + opt, help="build modules for " + opt + " behavior", default=value[1],
@@ -527,13 +522,6 @@ if __name__ == "__main__":
     # If we're missing MuJoCo, create the conan package
     if args.mujoco:
         conan_create_mujoco()
-
-    if args.mujocoReplay:
-        print(f"{statusColor}Building 'replay' tool, since '--mujocoReplay true' was used")
-        try:
-            subprocess.check_output([sys.executable, "-m", "conans.conan", "build", ".", "-s" ,"compiler.cppstd=17", "--build=missing"], cwd="./src/utilities/mujocoUtils" )
-        except:
-            raise RuntimeError("Failed to install MuJoCo replay! See error above.")
 
     # setup conan install command arguments
     conanInstallArgs = [sys.executable, "-m", "conans.conan", "install", ".", "--build=missing"]

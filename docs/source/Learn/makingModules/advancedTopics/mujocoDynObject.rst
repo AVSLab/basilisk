@@ -27,18 +27,13 @@ Installation
 By default, Basilisk will not build MuJoCo-related capabilities. To enable these, modify the call to
 ``conanfile.py`` during installation::
 
-    (venv) $ python conanfile.py --mujoco True --mujocoReplay True
+    (venv) $ python conanfile.py --mujoco True
 
-Only the ``--mujoco True`` option is required. ``--mujocoReplay True`` will additionally build an
-independent tool that can be used to visualize the results of :ref:`MJScene<MJScene>` simulations. When
-using ``--mujocoReplay True``, you'll be able to call:
+Only the ``--mujoco True`` option is required.
 
-.. code-block:: python
-
-    mujoco.visualize(...)
-
-Note that using ``--mujocoReplay True`` might require the installation of other graphic libraries
-in your system.
+:ref:`MJScene<MJScene>` simulations can be visualized in :ref:`Vizard<vizard>` using the standard
+``enableUnityVisualization`` call, just like any other Basilisk simulation. See :ref:`scenarioDeployPanels`
+for an example.
 
 The Multi-body System
 ---------------------

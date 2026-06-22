@@ -114,10 +114,8 @@ next 60 seconds. Based on conservation of momentum, the system should accelerate
 its rotation in the first 60 seconds and then decelerate in the next 60 seconds.
 The final angular velocity should be zero.
 
-The system states are recorded and optionally plotted and/or visualized in a 3D
-geometry visualization environment using ``mujoco.visualize``. It's possible that
-this function is not available in your system, depending on whether you chose to
-build the additional 'replay' utility when building Basilisk.
+The system states are recorded and optionally plotted. The system can also be
+visualized in :ref:`Vizard <vizard>` through the ``enableUnityVisualization`` call.
 """
 
 import os
@@ -136,14 +134,12 @@ CURRENT_FOLDER = os.path.dirname(__file__)
 XML_PATH = f"{CURRENT_FOLDER}/sat_w_wheel.xml"
 
 
-def run(showPlots: bool = False, visualize: bool = False):
+def run(showPlots: bool = False):
     """Main function, see scenario description.
 
     Args:
         showPlots (bool, optional): If True, simulation results are plotted and show.
             Defaults to False.
-        visualize (bool, optional): If True, the ``MJScene`` visualization tool is
-            run on the simulation results. Defaults to False.
     """
     dt = 1 # s
     tf = 60 # s
@@ -175,14 +171,6 @@ def run(showPlots: bool = False, visualize: bool = False):
 
     # Subscribe the actuator to the torque message.
     scene.getSingleActuator("wheel_1").actuatorInMsg.subscribeTo(torqueMsg)
-
-    # Add the state recorder to the task
-    # This recorder will print all the states of the system,
-    # which may not very useful for users, since this is an array
-    # containing the minimal-coordinates of the multi-body system.
-    # However, the data is used in ``mujoco.visualize``.
-    stateRecorder = scene.stateOutMsg.recorder()
-    scSim.AddModelToTask("test", stateRecorder)
 
     # The ``bodyStateRecorder`` is perhaps are more useful recorder
     # for users. The message being recorded is of type ``SCStatesMsgPayload``,
@@ -239,13 +227,6 @@ def run(showPlots: bool = False, visualize: bool = False):
         plt.legend()
         plt.show()
 
-    # Visualize the system in a 3D environment
-    if visualize:
-        speedUp = 5
-        mujoco.visualize(
-            stateRecorder.times(), np.squeeze(stateRecorder.qpos), scene, speedUp
-        )
-
 
 if __name__ == "__main__":
-    run(True, True)
+    run(True)

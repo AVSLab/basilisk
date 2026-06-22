@@ -59,8 +59,8 @@ freezing or releasing their motion as needed.
 The simulation is run in three legs, corresponding to the sequential
 deployment of different panel groups. The state of the system is
 recorded throughout, and the desired and achieved joint angles are plotted
-for each panel. The system can also be visualized in 3D using
-the ``mujoco.visualize`` function.
+for each panel. The system can also be visualized in :ref:`Vizard <vizard>`
+through the ``enableUnityVisualization`` call.
 
 This scenario illustrates how to model and control complex, staged
 deployment mechanisms in a spacecraft simulation, and how to
@@ -181,14 +181,12 @@ def generateProfiles(
 
     return interpolators
 
-def run(showPlots: bool = False, visualize: bool = False):
+def run(showPlots: bool = False):
     """Main function, see scenario description.
 
     Args:
         showPlots (bool, optional): If True, simulation results are plotted and show.
             Defaults to False.
-        visualize (bool, optional): If True, the ``MJScene`` visualization tool is
-            run on the simulation results. Defaults to False.
     """
 
     dt = macros.sec2nano(10)
@@ -336,10 +334,6 @@ def run(showPlots: bool = False, visualize: bool = False):
     for panelID in ["1p", "1n", "2p", "2n"]:
         lockJoint(panelID, angle=np.pi)
 
-    # Record the minimal coordinates of the entire scene for visualization
-    stateRecorder = scene.stateOutMsg.recorder()
-    scSim.AddModelToTask("test", stateRecorder)
-
     if vizSupport.vizFound:
         vizSupport.enableUnityVisualization(
             scSim,
@@ -442,13 +436,5 @@ def run(showPlots: bool = False, visualize: bool = False):
 
         plt.show()
 
-    # Visualize the simulation
-    if visualize:
-        speedUp = 120
-        qpos = np.squeeze(stateRecorder.qpos)
-        mujoco.visualize(
-            stateRecorder.times(), qpos, scene, speedUp
-        )
-
 if __name__ == "__main__":
-    run(True, True)
+    run(True)

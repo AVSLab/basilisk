@@ -56,8 +56,8 @@ PID controller, except that it uses a faster C++ model.
 
 The simulation is run for 80 minutes and the state of the system is recorded.
 The desired and achieved joint angles, as well as the torque applied to each
-joint, are plotted. The system can also be visualized in a 3D environment using
-the ``mujoco.visualize`` function.
+joint, are plotted. The system can also be visualized in :ref:`Vizard <vizard>`
+through the ``enableUnityVisualization`` call.
 """
 
 import os
@@ -174,7 +174,7 @@ def generateProfiles(
     return interpolators
 
 
-def run(initialSpin: bool = False, showPlots: bool = False, visualize: bool = False):
+def run(initialSpin: bool = False, showPlots: bool = False):
     """Main function, see scenario description.
 
     Args:
@@ -182,8 +182,6 @@ def run(initialSpin: bool = False, showPlots: bool = False, visualize: bool = Fa
             angular velocity. Defaults to False.
         showPlots (bool, optional): If True, simulation results are plotted and show.
             Defaults to False.
-        visualize (bool, optional): If True, the ``MJScene`` visualization tool is
-            run on the simulation results. Defaults to False.
     """
 
     dt = 1 # s
@@ -306,9 +304,6 @@ def run(initialSpin: bool = False, showPlots: bool = False, visualize: bool = Fa
         measuredPosRecorderModels[(side, i)] = measuredPosRecorder
         torqueRecorderModels[(side, i)] = torqueRecorder
 
-    # Record the minimal coordinates of the entire scene for visualization
-    stateRecorder = scene.stateOutMsg.recorder()
-    scSim.AddModelToTask("test", stateRecorder)
 
     if vizSupport.vizFound:
         vizSupport.enableUnityVisualization(
@@ -389,13 +384,6 @@ def run(initialSpin: bool = False, showPlots: bool = False, visualize: bool = Fa
 
         plt.show()
 
-    # Visualize the simulation
-    if visualize:
-        speedUp = 120
-        mujoco.visualize(
-            stateRecorder.times(), np.squeeze(stateRecorder.qpos), scene, speedUp
-        )
-
 
 # The following is an example of a Python-based SysModel that
 # can be added to the dynamics task of a MJScene.
@@ -458,4 +446,4 @@ class PIDController(StatefulSysModel.StatefulSysModel):
 
 
 if __name__ == "__main__":
-    run(False, True, True)
+    run(False, True)

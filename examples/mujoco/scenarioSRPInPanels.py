@@ -83,6 +83,9 @@ that reduces development effort.
 
 Note: * There are many reasons why ``C_SRP`` may not actually be constant in reality
 (distance from sun, eclipses, material degradation...). This is a simplification!
+
+The system can also be visualized in :ref:`Vizard <vizard>` through the
+``enableUnityVisualization`` call.
 """
 
 import os
@@ -130,7 +133,7 @@ def catchtime():
     toc = perf_counter()
 
 
-def run(initialSpin: bool = False, showPlots: bool = False, visualize: bool = False):
+def run(initialSpin: bool = False, showPlots: bool = False):
     """Main function, see scenario description.
 
     Args:
@@ -138,8 +141,6 @@ def run(initialSpin: bool = False, showPlots: bool = False, visualize: bool = Fa
             angular velocity. Defaults to False.
         showPlots (bool, optional): If True, simulation results are plotted and show.
             Defaults to False.
-        visualize (bool, optional): If True, the ``MJScene`` visualization tool is
-            run on the simulation results. Defaults to False.
     """
 
     # Create a simulation, process, and task as usual
@@ -252,10 +253,6 @@ def run(initialSpin: bool = False, showPlots: bool = False, visualize: bool = Fa
     scStateRecorder = hubBody.getOrigin().stateOutMsg.recorder()
     scSim.AddModelToTask("test", scStateRecorder)
 
-    # Record the minimal coordinates of the entire scene for visualization
-    stateRecorder = scene.stateOutMsg.recorder()
-    scSim.AddModelToTask("test", stateRecorder)
-
     if vizSupport.vizFound:
         vizSupport.enableUnityVisualization(
             scSim,
@@ -332,13 +329,6 @@ def run(initialSpin: bool = False, showPlots: bool = False, visualize: bool = Fa
         ax.set_ylabel("Z-axis Velocity [m/s]")
 
         plt.show()
-
-    # Visualize the simulation
-    if visualize:
-        speedUp = 1
-        mujoco.visualize(
-            stateRecorder.times(), np.squeeze(stateRecorder.qpos), scene, speedUp
-        )
 
 
 class SRPPanel(sysModel.SysModel):

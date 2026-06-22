@@ -64,7 +64,8 @@ of the others. Because of the initial symmetry of the configuration, the
 'hub' body should appear to accelerate in a straight line. However, because
 the last tank is consuming fuel at twice the rate of the others, the inertial
 properties of the system become unbalanced, and the 'hub' body should start
-to rotate.
+to rotate. The system can also be visualized in :ref:`Vizard <vizard>` through
+the ``enableUnityVisualization`` call.
 """
 
 import os
@@ -134,14 +135,12 @@ def _attach_thruster_visualization(viz, spacecraftName, thrusterVizWriters):
     )
 
 
-def run(showPlots: bool = False, visualize: bool = False):
+def run(showPlots: bool = False):
     """Main function, see scenario description.
 
     Args:
         showPlots (bool, optional): If True, simulation results are plotted and show.
             Defaults to False.
-        visualize (bool, optional): If True, the ``MJScene`` visualization tool is
-            run on the simulation results. Defaults to False.
     """
     dt = 1.0  # [s]
     tf = 2.5 * 60.0  # [s]
@@ -214,10 +213,6 @@ def run(showPlots: bool = False, visualize: bool = False):
     bodyStateRecorder = scene.getBody("hub").getOrigin().stateOutMsg.recorder()
     scSim.AddModelToTask("test", bodyStateRecorder)
 
-    # Record the minimal coordinates of the entire scene for visualization
-    stateRecorder = scene.stateOutMsg.recorder()
-    scSim.AddModelToTask("test", stateRecorder)
-
     if vizSupport.vizFound:
         thrusterVizWriters = []
         for actuatorName, thrustMsg in thrusterVizInputs:
@@ -272,12 +267,6 @@ def run(showPlots: bool = False, visualize: bool = False):
         plt.legend()
 
         plt.show()
-
-    if visualize:
-        speedUp = 5  # Run the visualization at 5x speed
-        mujoco.visualize(
-            stateRecorder.times(), np.squeeze(stateRecorder.qpos), scene, speedUp
-        )
 
 
 class ThrusterVizMessageWriter(sysModel.SysModel):
@@ -337,4 +326,4 @@ class ThrusterVizMessageWriter(sysModel.SysModel):
 
 
 if __name__ == "__main__":
-    run(True, True)
+    run(True)

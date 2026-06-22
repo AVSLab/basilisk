@@ -75,6 +75,9 @@ It is possible to add ``MJSingleActuator``, ``MJForceActuator``,
 or C++ function calls (``addSingleActuator``, ``addForceActuator``, etc.).
 These can later be retrieved with ``getSingleActuator``,
 ``getForceActuator``, etc.
+
+The system can also be visualized in :ref:`Vizard <vizard>` through the
+``enableUnityVisualization`` call.
 """
 
 import os
@@ -161,14 +164,12 @@ def _attach_thruster_visualization(viz, spacecraft_name: str, writer):
     )
 
 
-def run(showPlots: bool = False, visualize: bool = False):
+def run(showPlots: bool = False):
     """Main function, see scenario description.
 
     Args:
         showPlots (bool, optional): If True, simulation results are plotted and show.
             Defaults to False.
-        visualize (bool, optional): If True, the ``MJScene`` visualization tool is
-            run on the simulation results. Defaults to False.
     """
     dt = 0.02  # [s]
 
@@ -230,10 +231,6 @@ def run(showPlots: bool = False, visualize: bool = False):
         SPACECRAFT_BODY_NAME
     ).getOrigin().stateOutMsg.recorder()
     scSim.AddModelToTask("test", bodyStateRecorder)
-
-    # Record the minimal coordinates of the entire scene for visualization
-    stateRecorder = scene.stateOutMsg.recorder()
-    scSim.AddModelToTask("test", stateRecorder)
 
     if vizSupport.vizFound:
         asteroidGeom = _get_body_geom_info(scene, ASTEROID_BODY_NAME)
@@ -308,17 +305,6 @@ def run(showPlots: bool = False, visualize: bool = False):
         plt.ylabel("Hub Velocity (Inertial) [m/s]")
         plt.legend()
         plt.show()
-
-    if visualize:
-        speedUp = 3
-        mujoco.visualize(
-            stateRecorder.times(),
-            np.squeeze(stateRecorder.qpos),
-            scene,
-            speedUp,
-            track="none",
-            files=[AST_OBJ_PATH],
-        )
 
 
 class ThrusterVizMessageWriter(sysModel.SysModel):
@@ -422,4 +408,4 @@ class ConstantGravity(sysModel.SysModel):
 
 
 if __name__ == "__main__":
-    run(True, False)
+    run(True)

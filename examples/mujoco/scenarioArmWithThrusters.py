@@ -84,6 +84,9 @@ regular task, the interpolation would only happen at the task rate, which means
 that the thrust/joint values would only be updated at the fixed rate of 1 Hz.
 Whether you add a model to the dynamics task or the regular task depends on
 the specific use case.
+
+The system can also be visualized in :ref:`Vizard <vizard>` through the
+``enableUnityVisualization`` call.
 """
 
 import os
@@ -207,14 +210,12 @@ def _attach_thruster_visualization(viz, thrusterVizWriters):
             break
 
 
-def run(showPlots: bool = False, visualize: bool = False):
+def run(showPlots: bool = False):
     """Main function, see scenario description.
 
     Args:
         showPlots (bool, optional): If True, simulation results are plotted and show.
             Defaults to False.
-        visualize (bool, optional): If True, the ``MJScene`` visualization tool is
-            run on the simulation results. Defaults to False.
     """
     dt = 0.1  # [s]
 
@@ -290,10 +291,6 @@ def run(showPlots: bool = False, visualize: bool = False):
     bodyStateRecorder = scene.getBody("hub").getOrigin().stateOutMsg.recorder()
     scSim.AddModelToTask("test", bodyStateRecorder)
 
-    # Record the minimal coordinates of the entire scene for visualization
-    stateRecorder = scene.stateOutMsg.recorder()
-    scSim.AddModelToTask("test", stateRecorder)
-
     if vizSupport.vizFound:
         thrusterVizWriters = []
         for thrusterName, interpPoint in ACTUATOR_INTERPOLATION_POINTS.items():
@@ -349,13 +346,6 @@ def run(showPlots: bool = False, visualize: bool = False):
         plt.legend()
 
         plt.show()
-
-    # Visualize the simulation
-    if visualize:
-        speedUp = 3  # Run the visualization at 3x speed
-        mujoco.visualize(
-            stateRecorder.times(), np.squeeze(stateRecorder.qpos), scene, speedUp
-        )
 
 
 class ThrusterVizMessageWriter(sysModel.SysModel):
@@ -422,4 +412,4 @@ class ThrusterVizMessageWriter(sysModel.SysModel):
 
 
 if __name__ == "__main__":
-    run(True, True)
+    run(True)

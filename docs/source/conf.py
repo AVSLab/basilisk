@@ -356,8 +356,7 @@ class fileCrawler():
                     "msgAutoSource" in dirs_in_dir[i] or \
                     "alg_contain" in dirs_in_dir[i] or \
                     "dataForExamples" in dirs_in_dir[i] or \
-                    "tests" in dirs_in_dir[i] or \
-                    "mujocoUtils" in dirs_in_dir[i]:
+                    "tests" in dirs_in_dir[i]:
                 removeList.extend([i])
         for i in sorted(removeList, reverse=True):
             del dirs_in_dir[i]

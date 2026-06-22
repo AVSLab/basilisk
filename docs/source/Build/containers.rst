@@ -85,11 +85,10 @@ By default the build enables the following options:
 
 - ``--opNav True``
 - ``--mujoco True``
-- ``--mujocoReplay True``
 
 You can override these at build time::
 
-    docker build --build-arg CONAN_ARGS="--opNav True --mujoco False --mujocoReplay False" -t bsk:local .
+    docker build --build-arg CONAN_ARGS="--opNav True --mujoco False" -t bsk:local .
 
 To build a development image with the full toolchain (compiler, cmake, swig,
 source tree, etc.), target the ``builder`` stage::

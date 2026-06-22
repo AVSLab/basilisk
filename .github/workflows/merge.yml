@@ -27,7 +27,7 @@ jobs:
         uses: ./.github/actions/build
         with:
           python-version: 3.14
-          conan-args: --opNav True --allOptPkg --mujoco True --mujocoReplay True
+          conan-args: --opNav True --allOptPkg --mujoco True
       - name: Build docs
         uses: ./.github/actions/docs
       - name: Deploy non-develop branch merges to /
