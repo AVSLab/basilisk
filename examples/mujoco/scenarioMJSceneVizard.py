@@ -50,6 +50,7 @@ import numpy as np
 from Basilisk.architecture import messaging
 from Basilisk.simulation import coarseSunSensor
 from Basilisk.simulation import mujoco
+from Basilisk.simulation import NBodyGravity
 from Basilisk.simulation import pointMassGravityModel
 from Basilisk.simulation import spacecraft
 from Basilisk.simulation import StatefulSysModel
@@ -128,8 +129,8 @@ def generateProfiles(
 class PIDController(StatefulSysModel.StatefulSysModel):
     def __init__(self, *args: Any):
         super().__init__(*args)
-        self.K_p = 0.1
-        self.K_d = 0.002
+        self.K_p = 1.0
+        self.K_d = 0.2
         self.K_i = 0.0001
         self.measuredInMsg = messaging.ScalarJointStateMsgReader()
         self.desiredInMsg = messaging.ScalarJointStateMsgReader()
@@ -150,6 +151,9 @@ class PIDController(StatefulSysModel.StatefulSysModel):
             + self.K_d * stateDotError
             + self.K_i * stateIntegralError
         )
+        # Saturate the command to keep a transient adaptive-integrator probe
+        # from emitting a huge value that trips MuJoCo's CTRL sanity check.
+        control_output = float(np.clip(control_output, -10.0, 10.0))
         self.integralErrorState.setDerivative([[stateError]])
         self.outputOutMsg.write(
             messaging.SingleActuatorMsgPayload(input=control_output),
@@ -191,6 +195,29 @@ def setStowed(scene, panelIds, bodyPrefix):
         scene.getBody(f"{bodyPrefix}_{side}{i}").getScalarJoint(
             f"{bodyPrefix}_{side}{i}_deploy"
         ).setPosition(JOINT_START_END[i - 1][0])
+
+
+def addOrbitalGravity(scene, mu, modelCache):
+    """Apply central-body point-mass gravity to every body in ``scene``.
+
+    Uses :ref:`NBodyGravity` with one gravity target per body (hub plus each
+    deployable panel), so the field is evaluated and applied at each body's true
+    center of mass.  The whole structure is then in physical orbital freefall —
+    the appendages are weightless — while the gravity gradient across it is
+    captured.
+    """
+    gravity = NBodyGravity.NBodyGravity()
+    gravity.ModelTag = f"{scene.ModelTag}_gravity"
+    scene.AddModelToDynamicsTask(gravity)
+
+    gravityModel = pointMassGravityModel.PointMassGravityModel()
+    gravityModel.muBody = mu
+    gravity.addGravitySource("earth", gravityModel, True)
+    for name in scene.getBodyNames():
+        gravity.addGravityTarget(name, scene.getBody(name))
+
+    modelCache.extend([gravity, gravityModel])
+    return gravity
 
 
 # Main scenario
@@ -273,15 +300,14 @@ def run(showPlots: bool = False):
     addDeployment(primaryScene, primaryPanels, "panel", models)
     addDeployment(companionScene, companionPanels, "companion_panel", models)
 
-    # Gravity setup.
+    # Gravity setup.  Each MJScene gets its own NBodyGravity model that applies
+    # central-body gravity as a force at every body's center of mass (hub plus
+    # each panel), preserving the gravity gradient across the structure.
     hubBody = primaryScene.getBody("hub")
     companionBody = companionScene.getBody("companion_hub")
 
-    earthGravity = pointMassGravityModel.PointMassGravityModel()
-    earthGravity.muBody = mu
-    hubBody.addGravitySource(earthGravity)
-    companionBody.addGravitySource(earthGravity)
-    models.append(earthGravity)
+    addOrbitalGravity(primaryScene, mu, models)
+    addOrbitalGravity(companionScene, mu, models)
 
     # CSS sensors mounted on the primary hub. The MJScene body's origin state
     # message subscribes the same way a regular Spacecraft body state message
