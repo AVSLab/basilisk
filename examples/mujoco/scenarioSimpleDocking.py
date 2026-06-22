@@ -26,7 +26,8 @@ docking and constraining their movement with respect to each other.
 This illustrates the use of MuJoCo ``equality`` in :ref:`MJScene<MJScene>`.
 The single :ref:`MJScene<MJScene>` is
 sent to :ref:`Vizard <vizard>` as two individual spacecraft, ``hub_1``
-and ``hub_2``.
+and ``hub_2``. The system can also be visualized in :ref:`Vizard <vizard>`
+through the ``enableUnityVisualization`` call.
 
 The multi-body system is defined in the XML file ``sats_dock.xml``.
 The system defined in this XML file is simple, but it illustrates some
@@ -73,14 +74,12 @@ def setThrusterForce(
         msg.write(messaging.SingleActuatorMsgPayload(input=val))
 
 
-def run(showPlots: bool = False, visualize: bool = False):
+def run(showPlots: bool = False):
     """Main function, see scenario description.
 
     Args:
         showPlots (bool, optional): If True, simulation results are plotted and show.
             Defaults to False.
-        visualize (bool, optional): If True, the ``MJScene`` visualization tool is
-            run on the simulation results. Defaults to False.
     """
 
     # Create a simulation, process, and task as usual
@@ -113,10 +112,6 @@ def run(showPlots: bool = False, visualize: bool = False):
     )
     scSim.AddModelToTask("test", hub1ContantRecorder)
     scSim.AddModelToTask("test", hub2ContantRecorder)
-
-    # Record the minimal coordinates of the entire scene for visualization
-    stateRecorder = scene.stateOutMsg.recorder()
-    scSim.AddModelToTask("test", stateRecorder)
 
     if vizSupport.vizFound:
         vizSupport.enableUnityVisualization(
@@ -182,12 +177,6 @@ def run(showPlots: bool = False, visualize: bool = False):
 
         plt.show()
 
-    if visualize:
-        speedUp = 0.25
-        mujoco.visualize(
-            stateRecorder.times(), np.squeeze(stateRecorder.qpos), scene, speedUp
-        )
-
 
 if __name__ == "__main__":
-    run(True, False)
+    run(True)

@@ -15,7 +15,7 @@
 #
 # Optional build args:
 #   --build-arg PYTHON_VERSION=3.12
-#   --build-arg CONAN_ARGS="--opNav True --mujoco True --mujocoReplay True"
+#   --build-arg CONAN_ARGS="--opNav True --mujoco True"
 
 ARG PYTHON_VERSION=3.13
 
@@ -58,7 +58,7 @@ RUN mkdir -p /root/.conan2 \
 COPY . .
 
 # Build Basilisk wheel.
-ARG CONAN_ARGS="--opNav True --mujoco True --mujocoReplay True"
+ARG CONAN_ARGS="--opNav True --mujoco True"
 
 RUN --mount=type=cache,target=/root/.cache/pip \
     --mount=type=cache,target=/root/.cache/uv \

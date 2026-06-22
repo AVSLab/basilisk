@@ -26,7 +26,7 @@ jobs:
       - uses: ./.github/actions/build
         with:
           python-version: 3.14
-          conan-args: --opNav True --mujoco True --mujocoReplay True
+          conan-args: --opNav True --mujoco True
       - name: Pytest
         working-directory: src
         run: |
@@ -50,7 +50,7 @@ jobs:
       - uses: ./.github/actions/build
         with:
           python-version: 3.14
-          conan-args: --opNav True --mujoco True --mujocoReplay True --generator Ninja
+          conan-args: --opNav True --mujoco True --generator Ninja
       - name: Pytest
         shell: pwsh
         working-directory: src
@@ -80,13 +80,13 @@ jobs:
           [
             '-n auto -m "not ciSkip" -rs --error-for-skips --timeout=300 --timeout-method=thread -v',
           ]
-        conan_args: ["--opNav True --mujoco True --mujocoReplay True"]
+        conan_args: ["--opNav True --mujoco True"]
         include:
           # An extra Basilisk build to test building without visualization enabled
           - python: "3.14"
             python_label: "MAX Python"
             pytest_flags: -n auto -m "not ciSkip" -rs --timeout=300 --timeout-method=thread -v
-            conan_args: --opNav True --mujoco True --mujocoReplay True --vizInterface False
+            conan_args: --opNav True --mujoco True --vizInterface False
             job_suffix: "--vizInterface False"
 
     name: macOS (${{ matrix.python_label }}) ${{ matrix.job_suffix }}
@@ -116,6 +116,6 @@ jobs:
         uses: ./.github/actions/build
         with:
           python-version: 3.14
-          conan-args: --opNav True --allOptPkg --mujoco True --mujocoReplay True
+          conan-args: --opNav True --allOptPkg --mujoco True
       - name: Build docs
         uses: ./.github/actions/docs
