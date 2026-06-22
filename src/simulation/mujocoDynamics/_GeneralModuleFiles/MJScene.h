@@ -30,7 +30,6 @@
 #include "architecture/_GeneralModuleFiles/sys_model_task.h"
 #include "architecture/msgPayloadDefCpp/MJSceneStateMsgPayload.h"
 #include "simulation/dynamics/_GeneralModuleFiles/dynamicObject.h"
-#include "simulation/dynamics/_GeneralModuleFiles/gravityModel.h"
 
 #include <vector>
 
