@@ -28,13 +28,13 @@ FuelTank::FuelTank() {
     this->effProps.rEff_CB_B.setZero();
     this->effProps.rEffPrime_CB_B.setZero();
     this->effProps.IEffPrimePntB_B.setZero();
-    this->dcm_TB = Eigen::Matrix3d::Identity();
-    this->r_TB_B.setZero();
+    this->setDcm_TB(Eigen::Matrix3d::Identity());
+    this->setR_TB_B(Eigen::Vector3d::Zero());
     this->ITankPntT_B = Eigen::Matrix3d::Identity();
     this->r_TcB_B.setZero();
 
     this->effectorID++;
-    this->nameOfMassState = "fuelTankMass" + std::to_string(this->effectorID);
+    this->setNameOfMassState("fuelTankMass" + std::to_string(this->effectorID));
 }
 
 uint64_t FuelTank::effectorID = 1;
@@ -44,8 +44,53 @@ FuelTank::~FuelTank() {
 }
 
 /*! optionally set the name of the mass state to be used by the state manager */
-void FuelTank::setNameOfMassState(const std::string nameOfMassState) {
+void FuelTank::setNameOfMassState(const std::string &nameOfMassState) {
     this->nameOfMassState = nameOfMassState;
+}
+
+/*! get the name of the mass state used by the state manager */
+std::string FuelTank::getNameOfMassState() const {
+    return this->nameOfMassState;
+}
+
+/*! set fuel tank orientation relative to the hub frame */
+void FuelTank::setDcm_TB(const Eigen::Matrix3d &dcm_TB) {
+    this->dcm_TB = dcm_TB;
+}
+
+/*! get fuel tank orientation relative to the hub frame */
+Eigen::Matrix3d FuelTank::getDcm_TB() const {
+    return this->dcm_TB;
+}
+
+/*! set fuel tank location relative to the hub frame */
+void FuelTank::setR_TB_B(const Eigen::Vector3d &r_TB_B) {
+    this->r_TB_B = r_TB_B;
+}
+
+/*! get fuel tank location relative to the hub frame */
+Eigen::Vector3d FuelTank::getR_TB_B() const {
+    return this->r_TB_B;
+}
+
+/*! set update only mass depletion flag */
+void FuelTank::setUpdateOnly(bool updateOnly) {
+    this->updateOnly = updateOnly;
+}
+
+/*! get update only mass depletion flag */
+bool FuelTank::getUpdateOnly() const {
+    return this->updateOnly;
+}
+
+/*! set fuel leak rate */
+void FuelTank::setFuelLeakRate(double fuelLeakRate) {
+    this->fuelLeakRate = fuelLeakRate;
+}
+
+/*! get fuel leak rate */
+double FuelTank::getFuelLeakRate() const {
+    return this->fuelLeakRate;
 }
 
 /*! set fuel tank model
@@ -84,7 +129,7 @@ void FuelTank::linkInStates(DynParamManager &statesIn) {
 void FuelTank::registerStates(DynParamManager &statesIn) {
     // Register the mass state associated with the tank
     Eigen::MatrixXd massMatrix(1, 1);
-    this->massState = statesIn.registerState(1, 1, this->nameOfMassState);
+    this->massState = statesIn.registerState(1, 1, this->getNameOfMassState());
     massMatrix(0, 0) = this->fuelTankModel->propMassInit;
     this->massState->setState(massMatrix);
 }
@@ -94,9 +139,10 @@ void FuelTank::updateEffectorMassProps(double integTime) {
     // Add contributions of the mass of the tank
     double massLocal = this->massState->getState()(0, 0);
     this->fuelTankModel->computeTankProps(massLocal);
-    this->r_TcB_B = r_TB_B + this->dcm_TB.transpose() * this->fuelTankModel->r_TcT_T;
+    const Eigen::Matrix3d dcm_TBLocal = this->getDcm_TB();
+    this->r_TcB_B = this->getR_TB_B() + dcm_TBLocal.transpose() * this->fuelTankModel->r_TcT_T;
     this->effProps.mEff = massLocal;
-    this->ITankPntT_B = this->dcm_TB.transpose() * fuelTankModel->ITankPntT_T * this->dcm_TB;
+    this->ITankPntT_B = dcm_TBLocal.transpose() * fuelTankModel->ITankPntT_T * dcm_TBLocal;
     this->effProps.IEffPntB_B = ITankPntT_B + massLocal * (r_TcB_B.dot(r_TcB_B) * Eigen::Matrix3d::Identity()
                                                            - r_TcB_B * r_TcB_B.transpose());
     this->effProps.rEff_CB_B = this->r_TcB_B;
@@ -106,7 +152,7 @@ void FuelTank::updateEffectorMassProps(double integTime) {
 
     // Mass depletion (call thrusters attached to this tank to get their mDot, and contributions)
     this->fuelConsumption = 0.0;
-    this->fuelConsumption += this->fuelLeakRate;
+    this->fuelConsumption += this->getFuelLeakRate();
     for (auto &dynEffector: this->thrDynEffectors) {
         dynEffector->computeStateContribution(integTime);
         this->fuelConsumption += dynEffector->stateDerivContribution(0);
@@ -169,7 +215,7 @@ void FuelTank::updateContributions(double integTime,
     rPrime_TB_BLocal = this->fuelTankModel->rPrime_TcT_T;
     rPPrime_TB_BLocal = this->fuelTankModel->rPPrime_TcT_T;
     omega_BN_BLocal = this->omegaState->getState();
-    if (!this->updateOnly) {
+    if (!this->getUpdateOnly()) {
         backSubContr.vecRot = -this->massState->getState()(0, 0) * r_TB_BLocal.cross(rPPrime_TB_BLocal)
                               - this->massState->getState()(0, 0) * omega_BN_BLocal.cross(r_TB_BLocal.cross(rPrime_TB_BLocal))
                               - this->massState->getStateDeriv()(0, 0) * r_TB_BLocal.cross(rPrime_TB_BLocal);

@@ -261,12 +261,12 @@ def run(show_plots, damping_parameter, timeStep):
     tankModel.r_TcT_TInit = [[0.0], [0.0], [0.0]]  # m
     tankModel.radiusTankInit = 0.5  # m
     scSim.tank1.setTankModel(tankModel)
-    scSim.tank1.r_TB_B = [[0], [0], [0.1]]  # m
-    scSim.tank1.nameOfMassState = "fuelTankMass1"
+    scSim.tank1.setR_TB_B([[0], [0], [0.1]])  # [m]
+    scSim.tank1.setNameOfMassState("fuelTankMass1")
     scSim.tank1.pushFuelSloshParticle(scSim.particle1)
     scSim.tank1.pushFuelSloshParticle(scSim.particle2)
     scSim.tank1.pushFuelSloshParticle(scSim.particle3)
-    scSim.tank1.updateOnly = True
+    scSim.tank1.setUpdateOnly(True)
 
     # ACTIVATE FUEL SLOSH
     scObject.addStateEffector(scSim.tank1)

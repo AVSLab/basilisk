@@ -499,12 +499,12 @@ def set_up_additional_effectors(scSim, component_list):
         tankModel.radiusTankInit = slosh_fuel_tank_geometry.radiusTankInit
         tankModel.this.disown()
         scSim.tank1.setTankModel(tankModel)
-        scSim.tank1.r_TB_B = slosh_fuel_tank_geometry.r_TB_B
-        scSim.tank1.nameOfMassState = "fuelTankMass1"
+        scSim.tank1.setR_TB_B(slosh_fuel_tank_geometry.r_TB_B)
+        scSim.tank1.setNameOfMassState("fuelTankMass1")
         scSim.tank1.pushFuelSloshParticle(scSim.particle1)
         scSim.tank1.pushFuelSloshParticle(scSim.particle2)
         scSim.tank1.pushFuelSloshParticle(scSim.particle3)
-        scSim.tank1.updateOnly = True
+        scSim.tank1.setUpdateOnly(True)
 
         # add fuel slosh to the servicer spacecraft
         scSim.scObject1.addStateEffector(scSim.tank1)
@@ -550,12 +550,12 @@ def set_up_additional_effectors(scSim, component_list):
         tankModelT.radiusTankInit = slosh_fuel_tank_geometry.radiusTankInit
         tankModelT.this.disown()
         scSim.tank2.setTankModel(tankModelT)
-        scSim.tank2.r_TB_B = slosh_fuel_tank_geometry.r_TB_B + scSim.r_B1C - scSim.r_BcC
-        scSim.tank2.nameOfMassState = "fuelTankMass2"
+        scSim.tank2.setR_TB_B(slosh_fuel_tank_geometry.r_TB_B + scSim.r_B1C - scSim.r_BcC)
+        scSim.tank2.setNameOfMassState("fuelTankMass2")
         scSim.tank2.pushFuelSloshParticle(scSim.particle4)
         scSim.tank2.pushFuelSloshParticle(scSim.particle5)
         scSim.tank2.pushFuelSloshParticle(scSim.particle6)
-        scSim.tank2.updateOnly = True
+        scSim.tank2.setUpdateOnly(True)
 
         # add fuel slosh to the servicer spacecraft
         scSim.scObjectT.addStateEffector(scSim.tank2)
