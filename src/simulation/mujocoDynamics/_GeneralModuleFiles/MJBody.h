@@ -28,13 +28,10 @@
 #include <string>
 #include <vector>
 
-#include <memory>
-
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDefC/SCMassPropsMsgPayload.h"
 #include "architecture/utilities/avsEigenSupport.h"
 #include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
-#include "simulation/dynamics/_GeneralModuleFiles/gravityModel.h"
 
 #include "MJJoint.h"
 #include "MJObject.h"
@@ -290,37 +287,6 @@ class MJBody : public MJObject<mjsBody>
      */
     void updateConstrainedEqualityJoints();
 
-    /**
-     * @brief Adds a gravity source whose acceleration acts on this body.
-     *
-     * Gravity sources registered here are evaluated each EoM step at the
-     * body's saved (un-zeroed) inertial position and their accelerations are
-     * added to the translational `qacc` for the body's free joint.  This is
-     * the mechanism by which free-joint MuJoCo bodies experience orbital
-     * gravity in the floating reference frame while still retaining MuJoCo's
-     * local non-gravity translational effects.
-     *
-     * Multiple sources may be added; their contributions sum.  Has no effect
-     * unless the body has a free joint.  For sliding-joint translation-only
-     * bodies, use `NBodyGravity` instead.
-     *
-     * @param gravityModel The gravity model to add (e.g. `PointMassGravityModel`).
-     */
-    void addGravitySource(std::shared_ptr<GravityModel> gravityModel);
-
-    /**
-     * @brief Returns the sum of gravity accelerations from all sources at the
-     * given inertial position.  Returns the zero vector if no sources have
-     * been added.
-     *
-     * @param position_N The position at which to evaluate, in the simulation
-     *                   inertial frame.
-     */
-    Eigen::Vector3d computeGravityAt(const Eigen::Vector3d& position_N) const;
-
-    /** Returns true if at least one gravity source has been added via addGravitySource(). */
-    bool hasGravitySources() const { return !this->gravitySources.empty(); }
-
   public:
     Message<SCMassPropsMsgPayload> massPropertiesOutMsg; ///< Message to output body mass properties.
 
@@ -334,8 +300,6 @@ class MJBody : public MJObject<mjsBody>
     std::optional<MJFreeJoint> freeJoint;  ///< Optional free joint associated with the body.
     std::optional<MJBallJoint> ballJoint;  ///< Optional ball joint associated with the body.
     std::list<MJScalarJoint> scalarJoints; ///< List of scalar joints associated with the body.
-
-    std::vector<std::shared_ptr<GravityModel>> gravitySources; ///< Gravity sources that act on this body.
 };
 
 #endif

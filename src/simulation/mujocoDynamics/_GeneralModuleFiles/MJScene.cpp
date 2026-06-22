@@ -173,19 +173,20 @@ MJScene::initializeDynamics()
         registerStatesOnSysModel(sysModelPtr);
     }
 
-    // If an adaptive integrator is advancing a gravity-driven free body, zero
-    // the relative tolerance on the bulk qpos/qvel states. At orbital position
-    // and velocity scales, the default relative tolerance can permit absolute
-    // errors large enough to destabilize stiff appendage dynamics.
-    bool hasGravityDrivenFreeBody = false;
+    // If an adaptive integrator is advancing a free-joint body, zero the
+    // relative tolerance on the bulk qpos/qvel states. At orbital position and
+    // velocity scales, the default relative tolerance can permit absolute
+    // errors large enough to destabilize stiff appendage dynamics. This holds
+    // regardless of how the body's gravity is applied (e.g. NBodyGravity).
+    bool hasFreeBody = false;
     for (auto&& body : this->spec.getBodies()) {
-        if (body.isFree() && body.hasGravitySources()) {
-            hasGravityDrivenFreeBody = true;
+        if (body.isFree()) {
+            hasFreeBody = true;
             break;
         }
     }
     auto* adaptiveIntegrator = dynamic_cast<StateVecAdaptiveIntegrator*>(this->integrator);
-    if (adaptiveIntegrator && hasGravityDrivenFreeBody) {
+    if (adaptiveIntegrator && hasFreeBody) {
         adaptiveIntegrator->setRelativeTolerance("mujocoQpos", 0.0);
         adaptiveIntegrator->setRelativeTolerance("mujocoQvel", 0.0);
     }
@@ -211,35 +212,6 @@ MJScene::equationsOfMotion(double t, double timeStep)
 
     // Copy data from Basilisk state objects to MuJoCo structs
     updateMujocoArraysFromStates();
-
-    // For free bodies that use addGravitySource(), zero the translational
-    // pos/vel before ANY MuJoCo call so the entire solve runs in a co-moving
-    // frame, avoiding floating-point cancellation at orbital speeds.  Saved
-    // values are restored after the solve and the true gravitational
-    // acceleration is substituted back into qacc.
-    //
-    // Bodies that do NOT use addGravitySource() (e.g. those driven by
-    // NBodyGravity) are left at their true position so force models in the
-    // dynamics task evaluate gravity at the correct orbital location.
-    auto mujocoData = this->spec.getMujocoData();
-    struct SavedFrame
-    {
-        MJFreeJoint* fj;
-        Eigen::Vector3d r;
-        Eigen::Vector3d v;
-    };
-    std::vector<SavedFrame> savedFrames;
-    for (auto&& body : this->spec.getBodies()) {
-        if (body.isFree() && body.hasGravitySources()) {
-            auto& fj = body.getFreeJoint();
-            savedFrames.push_back(
-                { &fj,
-                  fj.getTranslationalPositionFromData(mujocoData),
-                  fj.getTranslationalVelocityFromData(mujocoData) });
-            fj.setTranslationalPositionInData(mujocoData, Eigen::Vector3d::Zero());
-            fj.setTranslationalVelocityInData(mujocoData, Eigen::Vector3d::Zero());
-        }
-    }
 
     // Keep MuJoCo's internal time in sync with the Basilisk simulation time so
     // diagnostics and MuJoCo warnings report the correct timestamp.
@@ -306,38 +278,11 @@ MJScene::equationsOfMotion(double t, double timeStep)
     mj_fwdAcceleration(this->spec.getMujocoModel(), this->spec.getMujocoData());
     mj_fwdConstraint(this->spec.getMujocoModel(), this->spec.getMujocoData());
 
-    // Restore translational velocities so mjData is consistent for any code
-    // that reads it after this call (e.g. extraEoMCall output messages).
-    for (auto& sf : savedFrames) {
-        sf.fj->setTranslationalPositionInData(mujocoData, sf.r);
-        sf.fj->setTranslationalVelocityInData(mujocoData, sf.v);
-    }
-
-    // Overwrite forward-kinematics messages in the true inertial frame so
-    // visualization/output readers do not see the temporary co-moving frame.
-    mj_fwdPosition(this->spec.getMujocoModel(), this->spec.getMujocoData());
-    mj_fwdVelocity(this->spec.getMujocoModel(), this->spec.getMujocoData());
-    this->writeFwdKinematicsMessages(nanos);
-
     // Sanity check the produced accelerations
     auto qacc = this->spec.getMujocoData()->qacc;
     if (std::any_of(qacc, qacc + this->spec.getMujocoModel()->nv, [](mjtNum v) { return std::isnan(v); })) {
         logAndThrow<std::runtime_error>("Encountered NaN acceleration at time " + std::to_string(t) +
                                         "s in MJScene with ID: " + std::to_string(moduleID));
-    }
-
-    // Add inertial gravity to each free joint that has gravity sources
-    // registered via addGravitySource().  MuJoCo still computes local
-    // non-gravity translational effects (e.g. actuators, contacts, constraints)
-    // in the co-moving frame, while these gravity sources are evaluated at the
-    // saved inertial position and added to the computed translational qacc.
-    for (auto& sf : savedFrames) {
-        if (!sf.fj->getBody().hasGravitySources()) continue;
-        size_t i = sf.fj->getQvelAdr();
-        Eigen::Vector3d gravAccel = sf.fj->getBody().computeGravityAt(sf.r);
-        mujocoData->qacc[i]     += gravAccel[0];
-        mujocoData->qacc[i + 1] += gravAccel[1];
-        mujocoData->qacc[i + 2] += gravAccel[2];
     }
 
     // The derivative of the bulk position is the bulk velocity.  The
