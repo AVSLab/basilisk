@@ -261,16 +261,16 @@ public:
 class FuelTank :
         public StateEffector, public SysModel {
 public:
-    std::string nameOfMassState{};                      //!< -- name of mass state
     std::vector<FuelSlosh *> fuelSloshParticles;        //!< -- vector of fuel slosh particles
     std::vector<ThrusterDynamicEffector *> thrDynEffectors;        //!< -- Vector of dynamic effectors for thrusters
     std::vector<ThrusterStateEffector *> thrStateEffectors;        //!< -- Vector of state effectors for thrusters
-    Eigen::Matrix3d dcm_TB;                             //!< -- DCM from body frame to tank frame
-    Eigen::Vector3d r_TB_B;                             //!< [m] position of tank in B frame
-    bool updateOnly = true;                             //!< -- Sets whether to use update only mass depletion
     Message<FuelTankMsgPayload> fuelTankOutMsg{};       //!< -- fuel tank output message name
     FuelTankMsgPayload fuelTankMassPropMsg{};           //!< instance of messaging system message struct
-    double fuelLeakRate{};                              //!< [kg/s] rate of fuel leaking from tank; does not produce force
+    std::string nameOfMassState{};                      //!< -- Legacy public mass state name; Python users should use accessors
+    Eigen::Matrix3d dcm_TB;                             //!< -- Legacy public DCM from body frame to tank frame
+    Eigen::Vector3d r_TB_B;                             //!< [m] Legacy public tank position in B frame; Python users should use accessors
+    bool updateOnly = true;                             //!< -- Legacy public update-only flag; Python users should use accessors
+    double fuelLeakRate{};                              //!< [kg/s] Legacy public leak rate; Python users should use accessors
 
 private:
     StateData *omegaState{};                            //!< -- state data for omega_BN of the hub
@@ -288,11 +288,20 @@ public:
     void writeOutputMessages(uint64_t currentClock);
     void UpdateState(uint64_t currentSimNanos) override;
     void setTankModel(FuelTankModel *model);
+    void setDcm_TB(const Eigen::Matrix3d &dcm_TB);       //!< -- Setter for the tank frame orientation
+    Eigen::Matrix3d getDcm_TB() const;                   //!< -- Getter for the tank frame orientation
+    void setR_TB_B(const Eigen::Vector3d &r_TB_B);       //!< [m] Setter for the tank location
+    Eigen::Vector3d getR_TB_B() const;                   //!< [m] Getter for the tank location
+    void setUpdateOnly(bool updateOnly);                 //!< -- Setter for update only mass depletion
+    bool getUpdateOnly() const;                          //!< -- Getter for update only mass depletion
+    void setFuelLeakRate(double fuelLeakRate);           //!< [kg/s] Setter for the fuel leak rate
+    double getFuelLeakRate() const;                      //!< [kg/s] Getter for the fuel leak rate
     void pushFuelSloshParticle(FuelSlosh *particle);            //!< -- Attach fuel slosh particle
     void registerStates(DynParamManager &states) override;      //!< -- Register mass state with state manager
     void linkInStates(DynParamManager &states) override;        //!< -- Give the tank access to other states
     void updateEffectorMassProps(double integTime) override;    //!< -- Add contribution mass props from the tank
-    void setNameOfMassState(const std::string nameOfMassState); //!< -- Setter for fuel tank mass state name
+    void setNameOfMassState(const std::string &nameOfMassState); //!< -- Setter for fuel tank mass state name
+    std::string getNameOfMassState() const;              //!< -- Getter for fuel tank mass state name
     void addThrusterSet(ThrusterDynamicEffector *dynEff);       //!< -- Add DynamicEffector thruster
     void addThrusterSet(ThrusterStateEffector *stateEff);       //!< -- Add StateEffector thruster
     void updateContributions(double integTime,
