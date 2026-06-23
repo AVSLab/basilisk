@@ -508,8 +508,12 @@ void Spacecraft::postIntegration(uint64_t integrateToThisTimeNanos) {
     this->dvAccum_CN_N += newV_CN_N - this->BcGravVelocity->getState();
 
     // - non-conservative acceleration of the body frame in the body frame
-    this->nonConservativeAccelpntB_B = (newDcm_NB.transpose()*(newV_BN_N -
-                                                               this->hubGravVelocity->getState()))/this->timeStep;
+    if (fabs(this->timeStep) > 1e-10) {
+        this->nonConservativeAccelpntB_B = (newDcm_NB.transpose()*(newV_BN_N -
+                                                                   this->hubGravVelocity->getState()))/this->timeStep;
+    } else {
+        this->nonConservativeAccelpntB_B = {0., 0., 0.};
+    }
 
     // - angular acceleration in the body frame
     Eigen::Vector3d newOmega_BN_B;

@@ -39,6 +39,10 @@ Version |release|
   double conversion set the wheel saturation speed about an order of magnitude too low, and since the
   derived wheel inertia is ``maxMomentum / Omega_max`` it came out about an order of magnitude too high.
   This is fixed in the current version.
+- BSK-968: :ref:`spacecraft` reported ``NaN`` for ``nonConservativeAccelpntB_B`` on the first integration
+  step because the accumulated velocity change was divided by a zero time step. The value is now set to
+  zero when the time step is zero, matching the existing ``omegaDot_BN_B`` guard. This is fixed in the
+  current version.
 
 
 Version 2.10.0 (April 2, 2026)
