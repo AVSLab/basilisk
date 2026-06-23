@@ -34,6 +34,27 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include <numpy/arrayobject.h>
 %}
 
+%{
+// --- issue #676: GIL-safe Python keep-alive callbacks installed on ReadFunctor ------------
+// A ReadFunctor stores an opaque owner token (the subscribed message's PyObject*) plus these
+// two callbacks. They are invoked from C++ (ReadFunctor copy/move/destruction), which can run
+// on a thread that does not hold the GIL and even during interpreter shutdown, so each guards
+// on Py_IsInitialized() and brackets the refcount op with PyGILState_Ensure/Release. This is
+// the ONLY place Python refcounting touches messaging objects; messaging.h stays Python-free.
+static void _bsk_readfunctor_acquire(void* handle) {
+    if (!Py_IsInitialized()) return;                 // interpreter gone: nothing to ref
+    PyGILState_STATE gstate = PyGILState_Ensure();
+    Py_XINCREF((PyObject*)handle);
+    PyGILState_Release(gstate);
+}
+static void _bsk_readfunctor_release(void* handle) {
+    if (!Py_IsInitialized()) return;                 // shutdown: leak rather than hang/crash
+    PyGILState_STATE gstate = PyGILState_Ensure();
+    Py_XDECREF((PyObject*)handle);
+    PyGILState_Release(gstate);
+}
+%}
+
 %init %{
 import_array();  // Required to initialize NumPy C API
 %}
@@ -88,15 +109,29 @@ pprint.PrettyPrinter._dispatch[messageTypePayload.__repr__] = _pprint_ ## messag
 
 %template(messageType ## Reader) ReadFunctor<messageTypePayload>;
 %extend ReadFunctor<messageTypePayload> {
+        // issue 676: keep the Python source object alive for as long as this reader points
+        // into its memory. Called from subscribeTo (below) while the GIL is held -- so a bare
+        // Py_INCREF is correct here -- handing setSource the one reference it adopts. The C++
+        // destructor/copy/move then balance it via the release/acquire callbacks.
+        // NOTE: keep percent and hash characters out of comments in this macro; SWIG treats
+        // them as directive/stringize operators and they corrupt the generated wrapper.
+        void _install_keepalive(PyObject* source) {
+            Py_INCREF(source);
+            $self->setSource((void*)source,
+                             &_bsk_readfunctor_acquire,
+                             &_bsk_readfunctor_release);
+        }
         %pythoncode %{
             def subscribeTo(self, source):
                 if type(source) == messageType:
                     self.__subscribe_to(source)
+                    self._install_keepalive(source)   # issue 676: prevent GC of the source message
                     return
 
                 try:
                     if type(source) == messageType ## _C:
                         self.__subscribe_to_C(source)
+                        self._install_keepalive(source)   # issue 676: C-message source via C++ reader
                         return
                 except NameError:
                     pass
