@@ -43,6 +43,11 @@ Version |release|
   step because the accumulated velocity change was divided by a zero time step. The value is now set to
   zero when the time step is zero, matching the existing ``omegaDot_BN_B`` guard. This is fixed in the
   current version.
+- BSK-1107: A standalone message created inside a Python setup or helper function (for example a
+  reference or vehicle-configuration message) can be garbage collected when that function returns,
+  before the simulation runs. Consumers then read zeros or unwritten data. Retain such messages on the
+  simulation object or another persistent scope so they survive for the life of the simulation. This
+  affected :ref:`scenarioRoboticArm` and :ref:`scenarioFlexiblePanel` and is fixed in the current version.
 
 
 Version 2.10.0 (April 2, 2026)
