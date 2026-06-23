@@ -45,6 +45,7 @@ from Basilisk.utilities import unitTestSupport              # general support fi
 from Basilisk.fswAlgorithms import attTrackingError                  # import the module that is to be tested
 from Basilisk.utilities import macros
 from Basilisk.utilities import RigidBodyKinematics as rbk
+from Basilisk.utilities import simHelpers
 from Basilisk.architecture import messaging
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -143,9 +144,9 @@ def subModuleTestFunction(show_plots):
     if not unitTestSupport.isArrayEqual(moduleOutput, trueVector, 3, accuracy):
         testFailCount += 1
         testMessages.append("FAILED: " + module.ModelTag + " Module failed sigma_BR unit test\n")
-        unitTestSupport.writeTeXSnippet("passFail_sigBR", "FAILED", path)
+        simHelpers.writeTeXSnippet("passFail_sigBR", "FAILED", path)
     else:
-        unitTestSupport.writeTeXSnippet("passFail_sigBR", "PASSED", path)
+        simHelpers.writeTeXSnippet("passFail_sigBR", "PASSED", path)
 
     #
     # check omega_BR_B
@@ -159,9 +160,9 @@ def subModuleTestFunction(show_plots):
     if not unitTestSupport.isArrayEqual(moduleOutput, trueVector, 3, accuracy):
         testFailCount += 1
         testMessages.append("FAILED: " + module.ModelTag + " Module failed omega_BR_B unit test\n")
-        unitTestSupport.writeTeXSnippet("passFail_omega_BR_B", "FAILED", path)
+        simHelpers.writeTeXSnippet("passFail_omega_BR_B", "FAILED", path)
     else:
-        unitTestSupport.writeTeXSnippet("passFail_omega_BR_B", "PASSED", path)
+        simHelpers.writeTeXSnippet("passFail_omega_BR_B", "PASSED", path)
 
     #
     # check omega_RN_B
@@ -175,9 +176,9 @@ def subModuleTestFunction(show_plots):
     if not unitTestSupport.isArrayEqual(moduleOutput,trueVector,3,accuracy):
         testFailCount += 1
         testMessages.append("FAILED: " + module.ModelTag + " Module failed omega_RN_N unit test\n")
-        unitTestSupport.writeTeXSnippet("passFail_omega_RN_B", "FAILED", path)
+        simHelpers.writeTeXSnippet("passFail_omega_RN_B", "FAILED", path)
     else:
-        unitTestSupport.writeTeXSnippet("passFail_omega_RN_B", "PASSED", path)
+        simHelpers.writeTeXSnippet("passFail_omega_RN_B", "PASSED", path)
 
     #
     # check domega_RN_B
@@ -191,9 +192,9 @@ def subModuleTestFunction(show_plots):
     if not unitTestSupport.isArrayEqual(moduleOutput,trueVector,3,accuracy):
         testFailCount += 1
         testMessages.append("FAILED: " + module.ModelTag + " Module failed domega_RN_B unit test\n")
-        unitTestSupport.writeTeXSnippet("passFail_domega_RN_B", "FAILED", path)
+        simHelpers.writeTeXSnippet("passFail_domega_RN_B", "FAILED", path)
     else:
-        unitTestSupport.writeTeXSnippet("passFail_domega_RN_B", "PASSED", path)
+        simHelpers.writeTeXSnippet("passFail_domega_RN_B", "PASSED", path)
 
     # Note that we can continue to step the simulation however we feel like.
     # Just because we stop and query data does not mean everything has to stop for good

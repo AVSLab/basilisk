@@ -27,7 +27,7 @@ from Basilisk.architecture import messaging
 from Basilisk.architecture.bskLogging import BasiliskError
 from Basilisk.simulation import simpleVoltEstimator
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport
+from Basilisk.utilities import simHelpers
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -132,7 +132,7 @@ def unitSimpleVoltEstimator(show_plots):
 
     plt.xlabel('Time (s)')
     plt.ylabel('Voltage (V)')
-    unitTestSupport.writeFigureLaTeX('SimpleVolt', 'Simple Voltage Estimator Voltage Signal', plt,
+    simHelpers.writeFigureLaTeX('SimpleVolt', 'Simple Voltage Estimator Voltage Signal', plt,
                                      r'height=0.4\textwidth, keepaspectratio', path)
     if show_plots:
         plt.show()

@@ -26,6 +26,7 @@ import pytest
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
+from Basilisk.utilities import simHelpers
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 from Basilisk.simulation import spacecraft
@@ -212,14 +213,14 @@ def fuelSloshTest(show_plots,useFlag,testCase):
     if testCase == 'MassDepletion':
         fuelMass = dataTank.fuelMass
         fuelMassDot = dataTank.fuelMassDot
-        mass1Out = unitTestSupport.addTimeColumn(stateLog.times(), stateLog.mass1)
-        mass2Out = unitTestSupport.addTimeColumn(stateLog.times(), stateLog.mass2)
-        mass3Out = unitTestSupport.addTimeColumn(stateLog.times(), stateLog.mass3)
+        mass1Out = simHelpers.addTimeColumn(stateLog.times(), stateLog.mass1)
+        mass2Out = simHelpers.addTimeColumn(stateLog.times(), stateLog.mass2)
+        mass3Out = simHelpers.addTimeColumn(stateLog.times(), stateLog.mass3)
 
-    orbEnergy = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totOrbEnergy)
-    orbAngMom_N = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totOrbAngMomPntN_N)
-    rotAngMom_N = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totRotAngMomPntC_N)
-    rotEnergy = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totRotEnergy)
+    orbEnergy = simHelpers.addTimeColumn(scObjectLog.times(), scObjectLog.totOrbEnergy)
+    orbAngMom_N = simHelpers.addTimeColumn(scObjectLog.times(), scObjectLog.totOrbAngMomPntN_N)
+    rotAngMom_N = simHelpers.addTimeColumn(scObjectLog.times(), scObjectLog.totRotAngMomPntC_N)
+    rotEnergy = simHelpers.addTimeColumn(scObjectLog.times(), scObjectLog.totRotEnergy)
 
     initialOrbAngMom_N = [
                 [orbAngMom_N[0,1], orbAngMom_N[0,2], orbAngMom_N[0,3]]
@@ -260,26 +261,26 @@ def fuelSloshTest(show_plots,useFlag,testCase):
         plt.plot(orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,1] - orbAngMom_N[0,1])/orbAngMom_N[0,1], orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,2] - orbAngMom_N[0,2])/orbAngMom_N[0,2], orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,3] - orbAngMom_N[0,3])/orbAngMom_N[0,3])
         plt.xlabel("Time (s)")
         plt.ylabel("Relative Difference")
-        unitTestSupport.writeFigureLaTeX("ChangeInOrbitalAngularMomentum" + testCase, "Change in Orbital Angular Momentum " + testCase, plt, r"width=0.8\textwidth", path)
+        simHelpers.writeFigureLaTeX("ChangeInOrbitalAngularMomentum" + testCase, "Change in Orbital Angular Momentum " + testCase, plt, r"width=0.8\textwidth", path)
         plt.figure()
         plt.clf()
         plt.plot(orbEnergy[:,0]*1e-9, (orbEnergy[:,1] - orbEnergy[0,1])/orbEnergy[0,1])
         plt.xlabel("Time (s)")
         plt.ylabel("Relative Difference")
-        unitTestSupport.writeFigureLaTeX("ChangeInOrbitalEnergy" + testCase, "Change in Orbital Energy " + testCase, plt, r"width=0.8\textwidth", path)
+        simHelpers.writeFigureLaTeX("ChangeInOrbitalEnergy" + testCase, "Change in Orbital Energy " + testCase, plt, r"width=0.8\textwidth", path)
         plt.figure()
         plt.clf()
         plt.plot(rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,1] - rotAngMom_N[0,1])/rotAngMom_N[0,1], rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,2] - rotAngMom_N[0,2])/rotAngMom_N[0,2], rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,3] - rotAngMom_N[0,3])/rotAngMom_N[0,3])
         plt.xlabel("Time (s)")
         plt.ylabel("Relative Difference")
-        unitTestSupport.writeFigureLaTeX("ChangeInRotationalAngularMomentum" + testCase, "Change in Rotational Angular Momentum " + testCase, plt, r"width=0.8\textwidth", path)
+        simHelpers.writeFigureLaTeX("ChangeInRotationalAngularMomentum" + testCase, "Change in Rotational Angular Momentum " + testCase, plt, r"width=0.8\textwidth", path)
     if testCase == 'Gravity' or testCase == 'NoGravity':
         plt.figure()
         plt.clf()
         plt.plot(rotEnergy[:,0]*1e-9, (rotEnergy[:,1] - rotEnergy[0,1])/rotEnergy[0,1])
         plt.xlabel("Time (s)")
         plt.ylabel("Relative Difference")
-        unitTestSupport.writeFigureLaTeX("ChangeInRotationalEnergy" + testCase, "Change in Rotational Energy " + testCase, plt, r"width=0.8\textwidth", path)
+        simHelpers.writeFigureLaTeX("ChangeInRotationalEnergy" + testCase, "Change in Rotational Energy " + testCase, plt, r"width=0.8\textwidth", path)
     if testCase == 'MassDepletion':
         plt.figure()
         plt.plot(dataTank.times()*1e-9, fuelMass)

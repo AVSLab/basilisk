@@ -104,7 +104,13 @@ from Basilisk import __path__
 
 bskPath = __path__[0]
 from Basilisk.simulation import spacecraft, gravityEffector
-from Basilisk.utilities import SimulationBaseClass, macros, orbitalMotion, simIncludeGravBody, unitTestSupport
+from Basilisk.utilities import simHelpers
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    macros,
+    orbitalMotion,
+    simIncludeGravBody,
+)
 from Basilisk.architecture import messaging
 from Basilisk.utilities import vizSupport
 
@@ -228,7 +234,7 @@ def run(show_plots):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = simHelpers.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
     dataLog = scObject.scStateOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(simTaskName, dataLog)
 
@@ -252,8 +258,8 @@ def run(show_plots):
     posRef = scObject.dynManager.getStateObject(scObject.hub.nameOfHubPosition)
     velRef = scObject.dynManager.getStateObject(scObject.hub.nameOfHubVelocity)
 
-    rN = unitTestSupport.EigenVector3d2np(posRef.getState())
-    vN = unitTestSupport.EigenVector3d2np(velRef.getState())
+    rN = simHelpers.EigenVector3d2np(posRef.getState())
+    vN = simHelpers.EigenVector3d2np(velRef.getState())
 
     v_S_E = vN - vel_N_Earth  # vel of s/c (S) wrt Earth (E)
 
@@ -298,8 +304,8 @@ def run(show_plots):
     # manipulated and fed back to the simulation by:
     posRef = scObject.dynManager.getStateObject(scObject.hub.nameOfHubPosition)
     velRef = scObject.dynManager.getStateObject(scObject.hub.nameOfHubVelocity)
-    rN = unitTestSupport.EigenVector3d2np(posRef.getState())
-    vN = unitTestSupport.EigenVector3d2np(velRef.getState())
+    rN = simHelpers.EigenVector3d2np(posRef.getState())
+    vN = simHelpers.EigenVector3d2np(velRef.getState())
 
     pos_N_Earth = [0.0, -149598023 * 1000, 0.0]
     depVel_N_Earth = [29.7859 * 1000, 0, 0]
@@ -369,8 +375,8 @@ def run(show_plots):
 
     posRef = scObject.dynManager.getStateObject(scObject.hub.nameOfHubPosition)
     velRef = scObject.dynManager.getStateObject(scObject.hub.nameOfHubVelocity)
-    rN = unitTestSupport.EigenVector3d2np(posRef.getState())
-    vN = unitTestSupport.EigenVector3d2np(velRef.getState())
+    rN = simHelpers.EigenVector3d2np(posRef.getState())
+    vN = simHelpers.EigenVector3d2np(velRef.getState())
 
     pos_N_Jup = [0.0, rJupiter, 0.0]
     vel_N_Jup = [-13.0697 * 1000, 0.0, 0.0]

@@ -34,6 +34,7 @@ from Basilisk.utilities import unitTestSupport                  # general suppor
 from Basilisk.fswAlgorithms import rwMotorVoltage
 from Basilisk.utilities import fswSetupRW
 from Basilisk.utilities import macros
+from Basilisk.utilities import simHelpers
 from Basilisk.architecture import messaging
 
 
@@ -167,7 +168,7 @@ def run(show_plots, useLargeVoltage, useAvailability, useTorqueLoop, testName):
         rwSpeedMessage.wheelSpeeds = [1.0, 2.0, 1.5, -3.0]      # rad/sec Omega's
         rwSpeedInMsg = messaging.RWSpeedMsg().write(rwSpeedMessage)
         module.rwSpeedInMsg.subscribeTo(rwSpeedInMsg)
-        unitTestSupport.writeTeXSnippet("Omega1", r"$\bm\Omega = " \
+        simHelpers.writeTeXSnippet("Omega1", r"$\bm\Omega = " \
                                         + str(rwSpeedMessage.wheelSpeeds[0:4]) + "$"
                                         , path)
 
@@ -228,7 +229,7 @@ def run(show_plots, useLargeVoltage, useAvailability, useTorqueLoop, testName):
     if useTorqueLoop:
         rwSpeedMessage.wheelSpeeds = [1.1, 2.1, 1.1, -4.1]  # rad/sec Omega's
         rwSpeedInMsg.write(rwSpeedMessage)
-        unitTestSupport.writeTeXSnippet("Omega2", r"$\bm\Omega = " \
+        simHelpers.writeTeXSnippet("Omega2", r"$\bm\Omega = " \
                                         + str(rwSpeedMessage.wheelSpeeds[0:4]) + "$"
                                         , path)
     unitTestSim.ConfigureStopTime(macros.sec2nano(1.5))        # seconds to stop simulation
@@ -322,7 +323,7 @@ def run(show_plots, useLargeVoltage, useAvailability, useTorqueLoop, testName):
     else:
         colorText = 'Red'
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
-    unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
+    simHelpers.writeTeXSnippet(snippentName, passedText, path)
 
     # write TeX Tables for documentation
     moduleOutput = addTimeColumn(dataLog.times(), dataLog.voltage)[:, :numRW+1]
@@ -336,13 +337,13 @@ def run(show_plots, useLargeVoltage, useAvailability, useTorqueLoop, testName):
     caption = 'RW voltage output for case {\\tt useLargeVoltage = ' + str(useLargeVoltage) \
               + ', useAvailability = ' + str(useAvailability) \
               + ', useTorqueLoop = ' + str(useTorqueLoop) + '}.'
-    unitTestSupport.writeTableLaTeX(
+    simHelpers.writeTableLaTeX(
         tableName,
         tableHeaders,
         caption,
         resultTable,
         path)
-    unitTestSupport.writeTeXSnippet("us"+ str(useLargeVoltage) + str(useAvailability) + str(useTorqueLoop)
+    simHelpers.writeTeXSnippet("us"+ str(useLargeVoltage) + str(useAvailability) + str(useTorqueLoop)
                                     , "$\\bm u_s = " + str(usMessageData.motorTorque[0:numRW]) + "$"
                                     , path)
 

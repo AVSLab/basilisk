@@ -76,8 +76,14 @@ fileName = os.path.basename(os.path.splitext(__file__)[0])
 from Basilisk.simulation import spacecraft
 # general support file with common unit test functions
 # import general simulation support files
-from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
-                                simIncludeGravBody, unitTestSupport, vizSupport)
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    macros,
+    orbitalMotion,
+    simIncludeGravBody,
+    vizSupport,
+)
+from Basilisk.utilities import simHelpers
 
 # always import the Basilisk messaging support
 
@@ -197,7 +203,7 @@ def run(show_plots):
     simulationTime = macros.sec2nano(2 * P)
 
     numDataPoints = 300
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = simHelpers.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
     dataList = []
     for sc in scList:
         dataRec = sc.scStateOutMsg.recorder(samplingTime)

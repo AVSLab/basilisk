@@ -29,7 +29,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 # import scipy.optimize
 from Basilisk.utilities import macros as mc
-from Basilisk.utilities import unitTestSupport
+from Basilisk.utilities import simHelpers
 from matplotlib.patches import Ellipse
 
 color_x = 'dodgerblue'
@@ -341,10 +341,10 @@ def nav_percentages(truth, states, covar, valid, string):
     print(RMSVelCov)
     print('------------------------')
     # RMS Errors Computed for heading and rate
-    # unitTestSupport.writeTeXSnippet('RMSPos_'+ string, str(round(RMSPos,3)), os.path.dirname(__file__))
-    # unitTestSupport.writeTeXSnippet('RMSPosCov_'+ string, str(round(RMSPosCov,3)),os.path.dirname(__file__))
-    # unitTestSupport.writeTeXSnippet('RMSVel_'+ string, str(round(RMSVel,3)), os.path.dirname(__file__))
-    # unitTestSupport.writeTeXSnippet('RMSVelCov_'+ string, str(round(RMSVelCov,3)),os.path.dirname(__file__))
+    # simHelpers.writeTeXSnippet('RMSPos_'+ string, str(round(RMSPos,3)), os.path.dirname(__file__))
+    # simHelpers.writeTeXSnippet('RMSPosCov_'+ string, str(round(RMSPosCov,3)),os.path.dirname(__file__))
+    # simHelpers.writeTeXSnippet('RMSVel_'+ string, str(round(RMSVel,3)), os.path.dirname(__file__))
+    # simHelpers.writeTeXSnippet('RMSVelCov_'+ string, str(round(RMSVelCov,3)),os.path.dirname(__file__))
     return
 
 def plot_orbit(r_BN):
@@ -406,7 +406,7 @@ def plot_attitude_error(timeLineSet, dataSigmaBR):
     plt.rcParams["font.size"] = "8"
     fig = plt.gcf()
     ax = fig.gca()
-    vectorData = unitTestSupport.pullVectorSetFromData(dataSigmaBR)
+    vectorData = simHelpers.pullVectorSetFromData(dataSigmaBR)
     sNorm = np.array([np.linalg.norm(v) for v in vectorData])
     plt.plot(timeLineSet, sNorm,
              color=colorList[0],
@@ -444,7 +444,7 @@ def plot_rw_cmd_torque(timeData, dataUsReq, numRW):
     for idx in range(1, 4):
         plt.plot(timeData, dataUsReq[:, idx],
                  '--',
-                 color=unitTestSupport.getLineColor(idx, numRW),
+                 color=simHelpers.getLineColor(idx, numRW),
                  label=r'$\hat u_{s,' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time (min)')
@@ -455,7 +455,7 @@ def plot_rw_speeds(timeData, dataOmegaRW, numRW):
     plt.figure()
     for idx in range(1, numRW + 1):
         plt.plot(timeData, dataOmegaRW[:, idx] / mc.RPM,
-                 color=unitTestSupport.getLineColor(idx, numRW),
+                 color=simHelpers.getLineColor(idx, numRW),
                  label=r'$\Omega_{' + str(idx) + '}$')
     plt.legend(loc='upper right')
     plt.xlabel('Time [min]')
@@ -1069,7 +1069,7 @@ def StateErrorCovarPlot(x, Pflat, FilterType, show_plots):
             plt.ylabel('$d_' + str(i+1) + '$ Error (-)')
             plt.ylim([-0.1,0.1])
             plt.xlabel('Time (min)')
-            unitTestSupport.saveFigurePDF('StateCovarHeading'+ FilterType + str(i) , plt, './')
+            simHelpers.saveFigurePDF('StateCovarHeading'+ FilterType + str(i) , plt, './')
             if show_plots:
                 plt.show()
             plt.close("all")
@@ -1081,7 +1081,7 @@ def StateErrorCovarPlot(x, Pflat, FilterType, show_plots):
             plt.ylabel('$d_' + str(i+1) + '$ Error (-)')
             plt.xlabel('Time (min)')
             plt.ylim([-0.1,0.1])
-            unitTestSupport.saveFigurePDF('StateCovarHeading'+ FilterType + str(i) , plt, './')
+            simHelpers.saveFigurePDF('StateCovarHeading'+ FilterType + str(i) , plt, './')
             if show_plots:
                 plt.show()
             plt.close("all")
@@ -1100,7 +1100,7 @@ def StateErrorCovarPlot(x, Pflat, FilterType, show_plots):
                 else:
                     plt.ylabel(r'$d\'_' + str(i-2) + r'$ Error (-)')
                 plt.xlabel('Time (min)')
-                unitTestSupport.saveFigurePDF('StateCovarRate' + FilterType + str(i), plt, './')
+                simHelpers.saveFigurePDF('StateCovarRate' + FilterType + str(i), plt, './')
                 if show_plots:
                     plt.show()
                 plt.close("all")
@@ -1115,7 +1115,7 @@ def StateErrorCovarPlot(x, Pflat, FilterType, show_plots):
                 else:
                     plt.ylabel(r'$d\'_' + str(i-2) + r'$ Error (-)')
                 plt.xlabel('Time (min)')
-                unitTestSupport.saveFigurePDF('StateCovarRate' + FilterType + str(i), plt, './')
+                simHelpers.saveFigurePDF('StateCovarRate' + FilterType + str(i), plt, './')
                 if show_plots:
                     plt.show()
                 plt.close("all")
@@ -1164,7 +1164,7 @@ def PostFitResiduals(Res, covar_B, FilterType, show_plots):
             plt.ylabel('$r_' + str(i + 1) + '$ (-)')
             plt.xlabel('Time (min)')
             plt.ylim([-2*MeasNoise[-1,i], 2*MeasNoise[-1,i]])
-            unitTestSupport.saveFigurePDF('PostFit' + FilterType + str(i), plt, './')
+            simHelpers.saveFigurePDF('PostFit' + FilterType + str(i), plt, './')
             if show_plots:
                 plt.show()
             plt.close("all")
@@ -1176,7 +1176,7 @@ def PostFitResiduals(Res, covar_B, FilterType, show_plots):
             plt.ylabel('$r_' + str(i + 1) + '$ (-)')
             plt.xlabel('Time min')
             plt.ylim([-2*MeasNoise[-1,i], 2*MeasNoise[-1,i]])
-            unitTestSupport.saveFigurePDF('PostFit' + FilterType + str(i), plt, './')
+            simHelpers.saveFigurePDF('PostFit' + FilterType + str(i), plt, './')
             if show_plots:
                 plt.show()
             plt.close("all")

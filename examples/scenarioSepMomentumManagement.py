@@ -109,8 +109,16 @@ from Basilisk.fswAlgorithms import (mrpFeedback, attTrackingError, oneAxisSolarA
 from Basilisk.simulation import (reactionWheelStateEffector, simpleNav, simpleMassProps, spacecraft,
                                  spinningBodyOneDOFStateEffector, spinningBodyTwoDOFStateEffector,
                                  thrusterStateEffector, facetSRPDynamicEffector, boreAngCalc)
-from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion, simIncludeGravBody, simIncludeRW,
-                                unitTestSupport, vizSupport, RigidBodyKinematics as rbk)
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    macros,
+    orbitalMotion,
+    simIncludeGravBody,
+    simIncludeRW,
+    vizSupport,
+    RigidBodyKinematics as rbk,
+)
+from Basilisk.utilities import simHelpers
 
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
@@ -213,7 +221,7 @@ def run(swirlTorque, thrMomManagement, saMomManagement, cmEstimation, showPlots)
             -12,   43,  4810]
     scObject.hub.mHub = 2500  # kg - spacecraft mass
     scObject.hub.r_BcB_B = [[0.008], [-0.010], [1.214]]  # [m] - position vector of hub CM relative to the body-fixed point B
-    scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
+    scObject.hub.IHubPntBc_B = simHelpers.np2EigenMatrix3d(I)
 
     #
     # add RW devices
@@ -698,7 +706,7 @@ def run(swirlTorque, thrMomManagement, saMomManagement, cmEstimation, showPlots)
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = simulationTime / simulationTimeStepFsw
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStepFsw, numDataPoints)
+    samplingTime = simHelpers.samplingTime(simulationTime, simulationTimeStepFsw, numDataPoints)
 
     vehConfigLog = simpleMassPropsObject.vehicleConfigOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(dynTask, vehConfigLog)
@@ -875,11 +883,11 @@ def plot_attitude(timeData, dataSigmaBN, dataSigmaRN, figID=None):
     plt.figure(figID, figsize=(5, 2.75))
     for idx in range(3):
         plt.plot(timeData, dataSigmaBN[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
+                 color=simHelpers.getLineColor(idx, 3),
                  label=r'$\sigma_{BN,' + str(idx + 1) + '}$')
     for idx in range(3):
         plt.plot(timeData, dataSigmaRN[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3), linestyle='dashed',
+                 color=simHelpers.getLineColor(idx, 3), linestyle='dashed',
                  label=r'$\sigma_{RN,' + str(idx + 1) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [hours]')
@@ -890,7 +898,7 @@ def plot_attitude_error(timeData, dataSigmaBR, figID=None):
     plt.figure(figID, figsize=(5, 2.75))
     for idx in range(3):
         plt.plot(timeData, dataSigmaBR[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
+                 color=simHelpers.getLineColor(idx, 3),
                  label=r'$\sigma_' + str(idx + 1) + '$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [hours]')
@@ -901,7 +909,7 @@ def plot_rw_speeds(timeData, dataOmegaRW, numRW, figID=None):
     plt.figure(figID, figsize=(5, 2.75))
     for idx in range(numRW):
         plt.plot(timeData, dataOmegaRW[:, idx] / macros.RPM,
-                 color=unitTestSupport.getLineColor(idx, numRW),
+                 color=simHelpers.getLineColor(idx, numRW),
                  label=r'$\Omega_{' + str(idx + 1) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [hours]')
@@ -957,7 +965,7 @@ def plot_external_torque(timeData, dataTorque, yString=None, figID=None):
     plt.figure(figID, figsize=(5, 2.75))
     for idx in range(3):
         plt.plot(timeData, dataTorque[:, idx] * 1000,
-                 color=unitTestSupport.getLineColor(idx, 3),
+                 color=simHelpers.getLineColor(idx, 3),
                  label=r'${}^BL_' + str(idx+1) + '$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [hours]')

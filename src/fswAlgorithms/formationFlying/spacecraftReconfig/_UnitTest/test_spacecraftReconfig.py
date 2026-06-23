@@ -28,6 +28,7 @@ import pytest
 from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import spacecraftReconfig  # import the module that is to be tested
 # Import all of the modules that we are going to be called in this simulation
+from Basilisk.utilities import simHelpers
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import fswSetupThrusters
 from Basilisk.utilities import macros
@@ -159,7 +160,7 @@ def spacecraftReconfigTestFunction(show_plots, useRefAttitude, accuracy):
 
     # This pulls the actual data log from the simulation run.
     attOutput = dataLog.sigma_RN
-    resetPeriod = unitTestSupport.addTimeColumn(moduleLog.times(), moduleLog.resetPeriod)
+    resetPeriod = simHelpers.addTimeColumn(moduleLog.times(), moduleLog.resetPeriod)
     # set the filtered output truth states
     if useRefAttitude:
         trueVector = [[1.0,0.0,0.0]]

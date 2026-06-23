@@ -42,7 +42,6 @@ import pytest
 
 from Basilisk import __path__
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport
 from Basilisk.architecture import messaging
 from Basilisk.utilities import macros, orbitalMotion
 from Basilisk.simulation import linkBudget

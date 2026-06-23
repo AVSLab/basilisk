@@ -33,7 +33,7 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
 from Basilisk.utilities import macros
-from Basilisk.utilities import unitTestSupport
+from Basilisk.utilities import simHelpers
 from Basilisk.simulation import reactionWheelStateEffector
 from Basilisk.architecture import messaging
 
@@ -198,7 +198,7 @@ def unitSimReactionWheel(show_plots, useFlag, testCase):
 
     # Write some snippets for AutoTex
     snippetName = testCase + 'PassFail'
-    unitTestSupport.writeTeXSnippet(snippetName, passedText, path)
+    simHelpers.writeTeXSnippet(snippetName, passedText, path)
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found

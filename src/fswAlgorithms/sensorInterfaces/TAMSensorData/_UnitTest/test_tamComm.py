@@ -38,6 +38,7 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport
 from Basilisk.fswAlgorithms import tamComm
 from Basilisk.utilities import macros
+from Basilisk.utilities import simHelpers
 from Basilisk.architecture import messaging
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
@@ -92,7 +93,7 @@ def tamCommTestFunction(show_plots):
 
     # Initialize the test module configuration data
     dcm3, _ = np.linalg.qr(np.random.normal(0, 1, (3, 3)))
-    module.dcm_BS = unitTestSupport.flattenList(dcm3)
+    module.dcm_BS = simHelpers.flattenList(dcm3)
 
     # Create input message and size it because the regular creator of that message
     # is not part of the test.

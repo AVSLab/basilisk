@@ -35,11 +35,11 @@ from Basilisk.simulation import msisAtmosphere
 # import simulation related support
 from Basilisk.simulation import spacecraft
 # import general simulation support files
+from Basilisk.utilities import simHelpers
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeGravBody
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -99,7 +99,7 @@ def run(show_plots, orbitCase, setEpoch):
     newAtmo.ModelTag = "MsisAtmo"
 
     if setEpoch == "Msg":
-        epochMsg = unitTestSupport.timeStringToGregorianUTCMsg('2019 Jan 01 00:00:00.00 (UTC)')
+        epochMsg = simHelpers.timeStringToGregorianUTCMsg('2019 Jan 01 00:00:00.00 (UTC)')
         newAtmo.epochInMsg.subscribeTo(epochMsg)
 
         # setting epoch day of year info deliberately to a false value.  The epoch msg info should be used
@@ -214,7 +214,7 @@ def run(show_plots, orbitCase, setEpoch):
 
     accuracy = 1e-8
 
-    unitTestSupport.writeTeXSnippet("unitTestToleranceValue", str(accuracy), path)
+    simHelpers.writeTeXSnippet("unitTestToleranceValue", str(accuracy), path)
 
     #   Test atmospheric density calculation; note that refAtmoData is in g/cm^3,
     #   and must be adjusted by a factor of 1e-3 to match kg/m^3
@@ -241,7 +241,7 @@ def run(show_plots, orbitCase, setEpoch):
         print("Failed: " + newAtmo.ModelTag)
         passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
         print(testMessages)
-    unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
+    simHelpers.writeTeXSnippet(snippentName, passedText, path)
 
     return [testFailCount, ''.join(testMessages)]
 

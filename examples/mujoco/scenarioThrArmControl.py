@@ -109,7 +109,11 @@ import sys
 import argparse
 import matplotlib.pyplot as plt
 
-from Basilisk.utilities import macros as mc, unitTestSupport, vizSupport
+from Basilisk.utilities import (
+    macros as mc,
+    vizSupport,
+)
+from Basilisk.utilities import simHelpers
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -166,9 +170,9 @@ class scenarioThrArmControl(BSKSim, BSKScenario):
         r_CN_N = self.posRec.r_CN_N
         sigma_BN = self.attRec.sigma_BN
 
-        color_x = unitTestSupport.getLineColor(0, 3)
-        color_y = unitTestSupport.getLineColor(1, 3)
-        color_z = unitTestSupport.getLineColor(2, 3)
+        color_x = simHelpers.getLineColor(0, 3)
+        color_y = simHelpers.getLineColor(1, 3)
+        color_z = simHelpers.getLineColor(2, 3)
 
         figureList = {}
 

@@ -42,6 +42,7 @@ splitPath = path.split(bskName)
 
 
 # Import all of the modules that we are going to be called in this simulation
+from Basilisk.utilities import simHelpers
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 import matplotlib.pyplot as plt
@@ -186,7 +187,7 @@ def cppModuleTestFunction(show_plots, param1, param2, accuracy):
 
     # This pulls the BSK module internal varialbe log from the simulation run.
     # Note, this should only be done for debugging as it is a slow process
-    variableState = unitTestSupport.addTimeColumn(moduleLog.times(), getattr(moduleLog, variableName))
+    variableState = simHelpers.addTimeColumn(moduleLog.times(), getattr(moduleLog, variableName))
 
     # set the filtered output truth states
     trueVector = []
@@ -256,7 +257,7 @@ def cppModuleTestFunction(show_plots, param1, param2, accuracy):
     plt.figure(2)
     for idx in range(3):
         plt.plot(dataLog.times() * macros.NANO2MIN, dataLog.dataVector[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
+                 color=simHelpers.getLineColor(idx, 3),
                  label=r'$s_' + str(idx) + '$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')

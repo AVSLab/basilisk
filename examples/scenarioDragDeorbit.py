@@ -174,9 +174,9 @@ from Basilisk.utilities import (
     orbitalMotion,
     simIncludeGravBody,
     simSetPlanetEnvironment,
-    unitTestSupport,
     vizSupport,
 )
+from Basilisk.utilities import simHelpers
 
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
@@ -305,7 +305,7 @@ def run(show_plots, initialAlt=250, deorbitAlt=100, model="exponential", useWind
     P = 2. * np.pi / n
     simulationTime = macros.sec2nano(100 * P)
     numDataPoints = 10000
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = simHelpers.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
 
     # Setup data logging before the simulation is initialized
     dataRec = scObject.scStateOutMsg.recorder(samplingTime)

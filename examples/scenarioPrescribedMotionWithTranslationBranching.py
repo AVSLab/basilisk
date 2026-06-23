@@ -91,7 +91,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os
 
-from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    macros,
+)
 from Basilisk.simulation import prescribedMotionStateEffector, spacecraft, linearTranslationOneDOFStateEffector
 from Basilisk.simulation import prescribedLinearTranslation
 from Basilisk.simulation import prescribedRotation1DOF

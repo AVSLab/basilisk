@@ -92,8 +92,8 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeGravBody
-from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import vizSupport
+from Basilisk.utilities import simHelpers
 from Basilisk.architecture import astroConstants
 from Basilisk.utilities.supportDataTools.dataFetcher import get_path, DataFile
 
@@ -235,7 +235,7 @@ def setup_spacecraft_plant(rN, vN, modelName):
     scObject.hub.mHub = 6.0
     scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
     I = [10.0, 0.0, 0.0, 0.0, 9.0, 0.0, 0.0, 0.0, 8.0]
-    scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
+    scObject.hub.IHubPntBc_B = simHelpers.np2EigenMatrix3d(I)
     scObject.hub.r_CN_NInit = rN
     scObject.hub.v_CN_NInit = vN
 

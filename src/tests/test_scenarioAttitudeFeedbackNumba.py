@@ -21,7 +21,7 @@ import os
 import sys
 
 import pytest
-from Basilisk.utilities import unitTestSupport
+from Basilisk.utilities import simHelpers
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path     = os.path.dirname(os.path.abspath(filename))
@@ -59,7 +59,7 @@ def test_scenarioAttitudeFeedbackNumba(show_plots,
         figureList = scenarioAttitudeFeedbackNumba.run(
             show_plots, useUnmodeledTorque, useIntGain, useKnownTorque)
         for pltName, plt in list(figureList.items()):
-            unitTestSupport.saveScenarioFigure(pltName, plt, path)
+            simHelpers.saveScenarioFigure(pltName, plt, path)
     except OSError:
         testFailCount += 1
         testMessages.append("scenarioAttitudeFeedbackNumba test failed.")

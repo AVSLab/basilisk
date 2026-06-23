@@ -82,7 +82,6 @@ from Basilisk.utilities import (
     simIncludeGravBody,
     macros,
     orbitalMotion,
-    unitTestSupport,
     RigidBodyKinematics as rbk,
 )
 from Basilisk.simulation import (
@@ -96,6 +95,7 @@ from Basilisk.fswAlgorithms import mrpFeedback, inertial3D, attTrackingError
 from Basilisk.architecture import messaging
 
 from Basilisk import __path__
+from Basilisk.utilities import simHelpers
 
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
@@ -585,7 +585,7 @@ def plotting(show_plots, thetaData, attErrorLog, scGeometry):
         plt.plot(
             timeSecFSW,
             attErrorLog.sigma_BR[:, idx],
-            color=unitTestSupport.getLineColor(idx, 3),
+            color=simHelpers.getLineColor(idx, 3),
             label=r"$\sigma_" + str(idx) + "$",
         )
     plt.legend(fontsize="14")
@@ -605,7 +605,7 @@ def plotting(show_plots, thetaData, attErrorLog, scGeometry):
         plt.plot(
             timeSecFSW,
             attErrorLog.omega_BR_B[:, idx],
-            color=unitTestSupport.getLineColor(idx, 3),
+            color=simHelpers.getLineColor(idx, 3),
             label=r"$\omega_" + str(idx) + "$",
         )
     plt.legend(fontsize="14")

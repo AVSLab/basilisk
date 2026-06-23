@@ -76,7 +76,6 @@ from Basilisk.utilities import (
     simIncludeGravBody,
     macros,
     orbitalMotion,
-    unitTestSupport,
 )
 from Basilisk.simulation import (
     spacecraft,
@@ -86,6 +85,7 @@ from Basilisk.simulation import (
 from Basilisk.architecture import messaging
 
 from Basilisk import __path__
+from Basilisk.utilities import simHelpers
 
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
@@ -515,7 +515,7 @@ def plotting(show_plots, scLog, thetaLog):
         plt.plot(
             dynTimeMin,
             sigma_BN[:, idx],
-            color=unitTestSupport.getLineColor(idx, 3),
+            color=simHelpers.getLineColor(idx, 3),
             label=r"$\sigma_" + str(idx) + "$",
         )
     plt.legend(fontsize="14")
@@ -535,7 +535,7 @@ def plotting(show_plots, scLog, thetaLog):
         plt.plot(
             dynTimeMin,
             omega_BN[:, idx],
-            color=unitTestSupport.getLineColor(idx, 3),
+            color=simHelpers.getLineColor(idx, 3),
             label=r"$\omega_" + str(idx) + "$",
         )
     plt.legend(fontsize="14")

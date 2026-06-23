@@ -36,6 +36,7 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from Basilisk.utilities import simHelpers
 from Basilisk.utilities.supportDataTools.dataFetcher import get_path, DataFile
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -112,7 +113,7 @@ def run(show_plots, decimalYear, Height, Lat, Lon, BxTrue, ByTrue, BzTrue, useDe
 
     if useMsg:
         epochMsgData = messaging.EpochMsgPayload()
-        dt = unitTestSupport.decimalYearToDateTime(decimalYear)
+        dt = simHelpers.decimalYearToDateTime(decimalYear)
         epochMsgData.year = dt.year
         epochMsgData.month = dt.month
         epochMsgData.day = dt.day
@@ -199,7 +200,7 @@ def run(show_plots, decimalYear, Height, Lat, Lon, BxTrue, ByTrue, BzTrue, useDe
         return magField_N
 
     # compare the module results to the truth values
-    unitTestSupport.writeTeXSnippet("unitTestToleranceValue", str(accuracy), path)
+    simHelpers.writeTeXSnippet("unitTestToleranceValue", str(accuracy), path)
 
     # check the exponential atmosphere results
     #
@@ -225,7 +226,7 @@ def run(show_plots, decimalYear, Height, Lat, Lon, BxTrue, ByTrue, BzTrue, useDe
         colorText = 'Red'
         print("Failed: " + testModule.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
-    unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
+    simHelpers.writeTeXSnippet(snippentName, passedText, path)
 
     return [testFailCount, ''.join(testMessages)]
 

@@ -51,7 +51,7 @@ from Basilisk.simulation import exponentialAtmosphere
 from Basilisk.simulation import facetDragDynamicEffector
 from Basilisk.simulation import simpleNav
 from Basilisk.simulation import zeroWindModel
-from Basilisk.utilities import unitTestSupport
+from Basilisk.utilities import simHelpers
 from Basilisk.utilities import simIncludeGravBody
 
 
@@ -156,8 +156,8 @@ def test_DragCalculation(scAreas, scCoeff, B_normals, B_locations):
     scSim.ExecuteSimulation()
 
     #   Retrieve logged data
-    dragDataForce_B = unitTestSupport.addTimeColumn(newDragLog.times(), newDragLog.forceExternal_B)
-    dragTorqueData = unitTestSupport.addTimeColumn(newDragLog.times(), newDragLog.torqueExternalPntB_B)
+    dragDataForce_B = simHelpers.addTimeColumn(newDragLog.times(), newDragLog.forceExternal_B)
+    dragTorqueData = simHelpers.addTimeColumn(newDragLog.times(), newDragLog.torqueExternalPntB_B)
     posData = dataLog.r_BN_N
     velData = dataLog.v_BN_N
     attData = dataLog.sigma_BN
@@ -292,8 +292,8 @@ def test_ShadowCalculation(scAreas, scCoeff, B_normals, B_locations):
     scSim.ExecuteSimulation()
 
     #   Retrieve logged data
-    dragDataForce_B = unitTestSupport.addTimeColumn(newDragLog.times(), newDragLog.forceExternal_B)
-    dragTorqueData = unitTestSupport.addTimeColumn(newDragLog.times(), newDragLog.torqueExternalPntB_B)
+    dragDataForce_B = simHelpers.addTimeColumn(newDragLog.times(), newDragLog.forceExternal_B)
+    dragTorqueData = simHelpers.addTimeColumn(newDragLog.times(), newDragLog.torqueExternalPntB_B)
     posData = dataLog.r_BN_N
     velData = dataLog.v_BN_N
     attData = dataLog.sigma_BN

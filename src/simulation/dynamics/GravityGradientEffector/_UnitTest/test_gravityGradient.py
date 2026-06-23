@@ -37,6 +37,7 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import simIncludeGravBody, orbitalMotion, RigidBodyKinematics
 from Basilisk.utilities import unitTestSupport
+from Basilisk.utilities import simHelpers
 
 bskPath = __path__[0]
 
@@ -192,7 +193,7 @@ def run(show_plots, cmOffset, planetCase, simTime):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 50
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = simHelpers.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
     dataLog = scObject.scStateOutMsg.recorder(samplingTime)
     dataLogGG = ggEff.gravityGradientOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(simTaskName, dataLog)
@@ -228,7 +229,7 @@ def run(show_plots, cmOffset, planetCase, simTime):
         plt.figure(1)
         for idx in range(0, 3):
             plt.plot(dataLog.times() * macros.NANO2MIN, attData[:, idx],
-                     color=unitTestSupport.getLineColor(idx, 3),
+                     color=simHelpers.getLineColor(idx, 3),
                      label=r'$\sigma_' + str(idx) + '$')
         plt.legend(loc='lower right')
         plt.xlabel('Time [min]')
@@ -237,7 +238,7 @@ def run(show_plots, cmOffset, planetCase, simTime):
         plt.figure(2)
         for idx in range(0, 3):
             plt.plot(dataLog.times() * macros.NANO2MIN, posData[:, idx]/1000,
-                     color=unitTestSupport.getLineColor(idx, 3),
+                     color=simHelpers.getLineColor(idx, 3),
                      label=r'$r_' + str(idx) + '$')
         plt.legend(loc='lower right')
         plt.xlabel('Time [min]')
@@ -246,7 +247,7 @@ def run(show_plots, cmOffset, planetCase, simTime):
         plt.figure(3)
         for idx in range(0, 3):
             plt.plot(dataLogGG.times() * macros.NANO2MIN, ggData[:, idx] ,
-                     color=unitTestSupport.getLineColor(idx, 3),
+                     color=simHelpers.getLineColor(idx, 3),
                      label=r'$r_' + str(idx) + '$')
         plt.legend(loc='lower right')
         plt.xlabel('Time [min]')

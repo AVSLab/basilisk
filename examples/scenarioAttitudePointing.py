@@ -102,9 +102,9 @@ from Basilisk.simulation import spacecraft
 # import general simulation support files
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 # attempt to import vizard
 from Basilisk.utilities import vizSupport
+from Basilisk.utilities import simHelpers
 
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
@@ -157,7 +157,7 @@ def run(show_plots, useLargeTumble):
          0., 0., 600.]
     scObject.hub.mHub = 750.0  # kg - spacecraft mass
     scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
-    scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
+    scObject.hub.IHubPntBc_B = simHelpers.np2EigenMatrix3d(I)
     scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B
     if useLargeTumble:
         scObject.hub.omega_BN_BInit = [[0.8], [-0.6], [0.5]]  # rad/s - omega_BN_B
@@ -208,7 +208,7 @@ def run(show_plots, useLargeTumble):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 50
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = simHelpers.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
     attErrorLog = attError.attGuidOutMsg.recorder(samplingTime)
     mrpLog = mrpControl.cmdTorqueOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(simTaskName, attErrorLog)
@@ -265,7 +265,7 @@ def run(show_plots, useLargeTumble):
     plt.figure(1)
     for idx in range(3):
         plt.plot(timeAxis * macros.NANO2MIN, dataSigmaBR[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
+                 color=simHelpers.getLineColor(idx, 3),
                  label=r'$\sigma_' + str(idx) + '$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
@@ -277,7 +277,7 @@ def run(show_plots, useLargeTumble):
     plt.figure(2)
     for idx in range(3):
         plt.plot(timeAxis * macros.NANO2MIN, dataLr[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
+                 color=simHelpers.getLineColor(idx, 3),
                  label='$L_{r,' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
@@ -288,7 +288,7 @@ def run(show_plots, useLargeTumble):
     plt.figure(3)
     for idx in range(3):
         plt.plot(timeAxis * macros.NANO2MIN, dataOmegaBR[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
+                 color=simHelpers.getLineColor(idx, 3),
                  label=r'$\omega_{BR,' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')

@@ -141,13 +141,11 @@ from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.utilities import RigidBodyKinematics
-from Basilisk.utilities import (
-    unitTestSupport,
-)  # general support file with common unit test functions
 from Basilisk.utilities.supportDataTools.dataFetcher import get_path, DataFile
 
 # attempt to import vizard
 from Basilisk.utilities import vizSupport
+from Basilisk.utilities import simHelpers
 
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
@@ -304,7 +302,7 @@ def plot_orientation(t, dcm_HP, dcm_CP):
         plt.plot(
             t / 3600,
             data[:, idx],
-            color=unitTestSupport.getLineColor(idx, 3),
+            color=simHelpers.getLineColor(idx, 3),
             label=labelStrings[idx],
         )
     ax.set_xlim([t[0] / 3600, t[-1] / 3600])
@@ -389,7 +387,7 @@ def run(show_plots, useBatch):
     I = [900.0, 0.0, 0.0, 0.0, 800.0, 0.0, 0.0, 0.0, 600.0]
     scObject.hub.mHub = 750.0
     scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
-    scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
+    scObject.hub.IHubPntBc_B = simHelpers.np2EigenMatrix3d(I)
 
     # Set spacecraft initial condition
     oe = orbitalMotion.ClassicElements()

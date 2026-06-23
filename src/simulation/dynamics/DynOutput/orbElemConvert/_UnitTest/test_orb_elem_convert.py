@@ -42,7 +42,7 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.simulation import orbElemConvert
 from Basilisk.utilities import macros
 from Basilisk.utilities import macros as mc
-from Basilisk.utilities import unitTestSupport
+from Basilisk.utilities import simHelpers
 from Basilisk.architecture import messaging
 from Basilisk.utilities.pythonVariableLogger import PythonVariableLogger
 
@@ -514,7 +514,7 @@ def orbElem(a, e, i, AN, AP, f, mu, name, DispPlot):
     plt.legend(loc='lower right')
 
     if name != 0:
-        unitTestSupport.writeFigureLaTeX(name, "$e = " + str(e) + "$ and $a = 10^" + str(int(fact)) + "$km",
+        simHelpers.writeFigureLaTeX(name, "$e = " + str(e) + "$ and $a = 10^" + str(int(fact)) + "$km",
                                          plt, 'height=0.7\\textwidth, keepaspectratio', path)
         if testFailCount2 == 0:
             colorText = 'ForestGreen'
@@ -530,11 +530,11 @@ def orbElem(a, e, i, AN, AP, f, mu, name, DispPlot):
         # Write some snippets for AutoTex
         snippetName = name + "PassedText2"
         snippetContent = passedText
-        unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)
+        simHelpers.writeTeXSnippet(snippetName, snippetContent, path)
 
         snippetName = name + "PassFailMsg2"
         snippetContent = passFailMsg
-        unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)
+        simHelpers.writeTeXSnippet(snippetName, snippetContent, path)
 
     if DispPlot:
         plt.show()

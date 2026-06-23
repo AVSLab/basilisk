@@ -38,6 +38,7 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 from Basilisk.fswAlgorithms import inertial3D                   # import the module that is to be tested
 from Basilisk.utilities import macros
+from Basilisk.utilities import simHelpers
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -129,7 +130,7 @@ def subModuleTestFunction(show_plots):
 
     # compare the module results to the truth values
     accuracy = 1e-12
-    unitTestSupport.writeTeXSnippet("toleranceValue", str(accuracy), path)
+    simHelpers.writeTeXSnippet("toleranceValue", str(accuracy), path)
 
     for i in range(0,len(trueVector)):
         # check a vector values
@@ -169,7 +170,7 @@ def subModuleTestFunction(show_plots):
         colorText = 'Red'
         print("Failed: " + module.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
-    unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
+    simHelpers.writeTeXSnippet(snippentName, passedText, path)
 
 
     # each test method requires a single assert method to be called

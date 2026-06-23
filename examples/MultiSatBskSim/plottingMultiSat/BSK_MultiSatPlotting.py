@@ -18,7 +18,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from Basilisk.utilities import macros
-from Basilisk.utilities import unitTestSupport
+from Basilisk.utilities import simHelpers
 
 # --------------------------------- COMPONENTS & SUBPLOT HANDLING ----------------------------------------------- #
 
@@ -47,7 +47,7 @@ def plot_attitude(timeData, dataSigmaBN, id=None):
     plt.figure(id)
     for idx in range(3):
         plt.plot(timeData, dataSigmaBN[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
+                 color=simHelpers.getLineColor(idx, 3),
                  label=r'$\sigma_' + str(idx+1) + '$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
@@ -59,7 +59,7 @@ def plot_attitude_error(timeData, dataSigmaBR, id=None):
     plt.figure(id)
     for idx in range(3):
         plt.plot(timeData, dataSigmaBR[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
+                 color=simHelpers.getLineColor(idx, 3),
                  label=r'$\sigma_' + str(idx+1) + '$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
@@ -71,7 +71,7 @@ def plot_attitude_reference(timeData, dataSigmaRN, id=None):
     plt.figure(id)
     for idx in range(3):
         plt.plot(timeData, dataSigmaRN[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
+                 color=simHelpers.getLineColor(idx, 3),
                  label=r'$\sigma_' + str(idx+1) + '$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
@@ -83,7 +83,7 @@ def plot_rate(timeData, dataOmegaBN, id=None):
     plt.figure(id)
     for idx in range(3):
         plt.plot(timeData, dataOmegaBN[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
+                 color=simHelpers.getLineColor(idx, 3),
                  label=r'$\omega_{BN,' + str(idx+1) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
@@ -95,7 +95,7 @@ def plot_rate_error(timeData, dataOmegaBR, id=None):
     plt.figure(id)
     for idx in range(3):
         plt.plot(timeData, dataOmegaBR[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
+                 color=simHelpers.getLineColor(idx, 3),
                  label=r'$\omega_{BR,' + str(idx+1) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
@@ -107,7 +107,7 @@ def plot_rate_reference(timeData, dataOmegaRN, id=None):
     plt.figure(id)
     for idx in range(3):
         plt.plot(timeData, dataOmegaRN[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
+                 color=simHelpers.getLineColor(idx, 3),
                  label=r'$\omega_{RN,' + str(idx+1) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
@@ -120,10 +120,10 @@ def plot_rw_motor_torque(timeData, dataUsReq, dataRW, numRW, id=None):
     for idx in range(numRW):
         plt.plot(timeData, dataUsReq[:, idx],
                  '--',
-                 color=unitTestSupport.getLineColor(idx, numRW),
+                 color=simHelpers.getLineColor(idx, numRW),
                  label=r'$\hat u_{s,' + str(idx+1) + '}$')
         plt.plot(timeData, dataRW[idx],
-                 color=unitTestSupport.getLineColor(idx, numRW),
+                 color=simHelpers.getLineColor(idx, numRW),
                  label='$u_{s,' + str(idx+1) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
@@ -135,7 +135,7 @@ def plot_rw_speeds(timeData, dataOmegaRW, numRW, id=None):
     plt.figure(id)
     for idx in range(numRW):
         plt.plot(timeData, dataOmegaRW[:, idx] / macros.RPM,
-                 color=unitTestSupport.getLineColor(idx, numRW),
+                 color=simHelpers.getLineColor(idx, numRW),
                  label=r'$\Omega_{' + str(idx+1) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
@@ -147,7 +147,7 @@ def plot_rw_voltages(timeData, dataVolt, numRW, id=None):
     plt.figure(id)
     for idx in range(numRW):
         plt.plot(timeData, dataVolt[:, idx],
-                 color=unitTestSupport.getLineColor(idx, numRW),
+                 color=simHelpers.getLineColor(idx, numRW),
                  label='$V_{' + str(idx+1) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
@@ -159,7 +159,7 @@ def plot_rw_power(timeData, dataRwPower, numRW, id=None):
     plt.figure(id)
     for idx in range(numRW):
         plt.plot(timeData, dataRwPower[idx],
-                 color=unitTestSupport.getLineColor(idx, numRW),
+                 color=simHelpers.getLineColor(idx, numRW),
                  label='$p_{rw,' + str(idx+1) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
@@ -191,7 +191,7 @@ def plot_rw_temperature(timeData, tempData, numRW, id=None):
     plt.figure(id)
     for idx in range(numRW):
         plt.plot(timeData, tempData[idx],
-                 color=unitTestSupport.getLineColor(idx, numRW),
+                 color=simHelpers.getLineColor(idx, numRW),
                  label='$T_{rw,' + str(idx+1) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
@@ -203,7 +203,7 @@ def plot_thrust(timeData, thrustData, numThr, id=None):
     plt.figure(id)
     for idx in range(numThr):
         plt.plot(timeData, thrustData[idx],
-                 color=unitTestSupport.getLineColor(idx, numThr),
+                 color=simHelpers.getLineColor(idx, numThr),
                  label='$F_{thr,' + str(idx + 1) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
@@ -215,7 +215,7 @@ def plot_thrust_percentage(timeData, thrustData, numThr, id=None):
     plt.figure(id)
     for idx in range(numThr):
         plt.plot(timeData, thrustData[idx],
-                 color=unitTestSupport.getLineColor(idx, numThr),
+                 color=simHelpers.getLineColor(idx, numThr),
                  label='$F_{thr,' + str(idx + 1) + '}$')
     plt.legend(loc='lower right')
     plt.ylim([0, 1.1])
@@ -255,7 +255,7 @@ def plot_orbits(r_BN, numberSpacecraft, id=None):
     for i in range(numberSpacecraft):
         ax.plot(r_BN[i][:, 0] * m2km, r_BN[i][:, 1] * m2km, r_BN[i][:, 2] * m2km,
                 label="Spacecraft " + str(i),
-                c=unitTestSupport.getLineColor(i, numberSpacecraft))
+                c=simHelpers.getLineColor(i, numberSpacecraft))
     ax.set_xlim3d(-8000, 8000)
     ax.set_ylim3d(-8000, 8000)
     ax.set_zlim3d(-8000, 8000)
@@ -274,7 +274,7 @@ def plot_relative_orbits(r_BN, numberSpacecraft, id=None):
     for i in range(numberSpacecraft):
         ax.plot(r_BN[i][:, 0] * m2km, r_BN[i][:, 1] * m2km, r_BN[i][:, 2] * m2km,
                 label="Spacecraft " + str(i),
-                c=unitTestSupport.getLineColor(i, numberSpacecraft))
+                c=simHelpers.getLineColor(i, numberSpacecraft))
     ax.set_box_aspect((np.ptp(r_BN[i][:, 0]), np.ptp(r_BN[i][:, 1]), np.ptp(r_BN[i][:, 2])))
     ax.scatter(0, 0, 0, c=color_x)
     ax.set_title('Spacecraft Relative Orbits in Hill Frame')
@@ -296,4 +296,3 @@ def plot_orbital_element_differences(timeData, oed, id=None):
     plt.legend()
     plt.xlabel("time [orbit]")
     plt.ylabel("Orbital Element Difference")
-

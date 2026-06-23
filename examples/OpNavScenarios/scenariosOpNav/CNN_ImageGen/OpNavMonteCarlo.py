@@ -48,7 +48,7 @@ from Basilisk.utilities.MonteCarlo.Dispersions import OrbitalElementDispersion, 
 
 # import simulation related support
 from Basilisk.utilities import RigidBodyKinematics as rbk
-from Basilisk.utilities import unitTestSupport
+from Basilisk.utilities import simHelpers
 from Basilisk.utilities import macros
 import matplotlib.pyplot as plt
 import numpy as np
@@ -132,11 +132,11 @@ def run(show_plots):
         writer.writerow(['Filename', 'Valid', 'X_p', 'Y_p', 'rho_p', 'r_BN_N_1', 'r_BN_N_2', 'r_BN_N_3'])
 
         timeAxis = monteCarloData["messages"][retainedMessageName1 + ".times"]
-        position_N = unitTestSupport.addTimeColumn(timeAxis,
+        position_N = simHelpers.addTimeColumn(timeAxis,
                                                    monteCarloData["messages"][retainedMessageName1 + "." + var1])
-        sigma_BN = unitTestSupport.addTimeColumn(timeAxis,
+        sigma_BN = simHelpers.addTimeColumn(timeAxis,
                                                  monteCarloData["messages"][retainedMessageName1 + "." + var2])
-        validCircle = unitTestSupport.addTimeColumn(timeAxis,
+        validCircle = simHelpers.addTimeColumn(timeAxis,
                                                     monteCarloData["messages"][retainedMessageName2 + "." + var3])
 
         renderRate = 60*1E9

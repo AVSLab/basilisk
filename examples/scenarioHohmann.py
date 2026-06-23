@@ -113,9 +113,9 @@ from Basilisk.utilities import (
     orbitalMotion,
     simIncludeGravBody,
     simIncludeRW,
-    unitTestSupport,
     vizSupport,
 )
+from Basilisk.utilities import simHelpers
 from mpl_toolkits import mplot3d as plt3
 
 bskPath = __path__[0]
@@ -154,7 +154,7 @@ def plotAttitudeError(timeAxis, attErrorData):
     plt.figure(2)
     for idx in range(3):
         plt.plot(timeAxis * macros.NANO2MIN, attErrorData[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
+                 color=simHelpers.getLineColor(idx, 3),
                  label=r'$\sigma_' + str(idx) + '$')
     plt.legend(loc='best')
     plt.xlabel('Time [min]')
@@ -165,7 +165,7 @@ def plotAttitude(timeAxis, attData):
     plt.figure(3)
     for idx in range(3):
         plt.plot(timeAxis * macros.NANO2MIN, attData[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
+                 color=simHelpers.getLineColor(idx, 3),
                  label=r'$\sigma_' + str(idx) + '$')
     plt.legend(loc='best')
     plt.xlabel('Time [min]')
@@ -176,7 +176,7 @@ def plotReferenceAttitude(timeAxis, attRefData):
     plt.figure(4)
     for idx in range(3):
         plt.plot(timeAxis * macros.NANO2MIN, attRefData[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
+                 color=simHelpers.getLineColor(idx, 3),
                  label=r'$\sigma_' + str(idx) + '$')
     plt.legend(loc='best')
     plt.xlabel('Time [min]')
@@ -218,7 +218,7 @@ def run(show_plots, rFirst, rSecond):
          0., 0., 600.]
     scObject.hub.mHub = 750.0  # kg - spacecraft mass
     scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
-    scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
+    scObject.hub.IHubPntBc_B = simHelpers.np2EigenMatrix3d(I)
 
     # Add spacecraft object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject, None, 1)

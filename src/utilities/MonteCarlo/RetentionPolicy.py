@@ -1,5 +1,5 @@
 import pandas as pd
-from Basilisk.utilities import unitTestSupport
+from Basilisk.utilities import simHelpers
 
 
 class VariableRetentionParameters:
@@ -110,7 +110,7 @@ class RetentionPolicy:
                 # record the message variables
                 for varName in msgParam.retainedVars:
                     msgData = getattr(simInstance.msgRecList[msgParam.msgRecName], varName)
-                    msgData = unitTestSupport.addTimeColumn(msgTimes, msgData)
+                    msgData = simHelpers.addTimeColumn(msgTimes, msgData)
                     data["messages"][msgParam.msgRecName + "." + varName] = msgData
 
             for variable in retentionPolicy.varLogList:

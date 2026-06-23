@@ -64,8 +64,14 @@ from Basilisk import __path__
 from Basilisk.architecture import messaging
 from Basilisk.architecture.numbaModel import NumbaModel
 from Basilisk.simulation import extForceTorque, spacecraft
-from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
-                                 simIncludeGravBody, unitTestSupport, vizSupport)
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    macros,
+    orbitalMotion,
+    simIncludeGravBody,
+    vizSupport,
+)
+from Basilisk.utilities import simHelpers
 from Basilisk.utilities.RigidBodyKinematicsNumba import MRP2C, addMRP, subMRP
 
 bskPath = __path__[0]
@@ -351,7 +357,7 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
          0.,  0.,  600.]
     scObject.hub.mHub        = 750.0                    # [kg]
     scObject.hub.r_BcB_B     = [[0.0], [0.0], [0.0]]   # [m]
-    scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
+    scObject.hub.IHubPntBc_B = simHelpers.np2EigenMatrix3d(I)
     scSim.AddModelToTask(simTaskName, scObject)
 
     gravFactory = simIncludeGravBody.gravBodyFactory()
@@ -402,7 +408,7 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
     # Logging
     # -------------------------------------------------------------------------
     numDataPoints = 50
-    samplingTime  = unitTestSupport.samplingTime(simulationTime, simulationTimeStep,
+    samplingTime  = simHelpers.samplingTime(simulationTime, simulationTimeStep,
                                                   numDataPoints)
     attGuidLog = attError.attGuidOutMsg.recorder(samplingTime)
     torqueLog  = mrpCtrl.cmdTorqueOutMsg.recorder(samplingTime)
@@ -464,7 +470,7 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
     plt.figure(1)
     for idx in range(3):
         plt.plot(timeAxis * macros.NANO2MIN, dataSigmaBR[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
+                 color=simHelpers.getLineColor(idx, 3),
                  label=r'$\sigma_' + str(idx) + '$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
@@ -476,7 +482,7 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
     plt.figure(2)
     for idx in range(3):
         plt.plot(timeAxis * macros.NANO2MIN, dataLr[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
+                 color=simHelpers.getLineColor(idx, 3),
                  label='$L_{r,' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')

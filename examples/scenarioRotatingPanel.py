@@ -102,10 +102,16 @@ fileName = os.path.basename(os.path.splitext(__file__)[0])
 from Basilisk.simulation import spacecraft
 # general support file with common unit test functions
 # import general simulation support files
-from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
-                                simIncludeGravBody, unitTestSupport, vizSupport)
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    macros,
+    orbitalMotion,
+    simIncludeGravBody,
+    vizSupport,
+)
 from Basilisk.simulation import hingedRigidBodyStateEffector
 from Basilisk.utilities import RigidBodyKinematics as rbk
+from Basilisk.utilities import simHelpers
 from Basilisk.architecture import messaging
 from Basilisk.simulation import simpleSolarPanel
 from Basilisk.simulation import coarseSunSensor
@@ -237,7 +243,7 @@ def run(show_plots):
 
     # Setup data logging before the simulation is initialized
     numDataPoints = 200
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = simHelpers.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
     dataLog = scObject.scStateOutMsg.recorder(samplingTime)
     pl1Log = panel1.hingedRigidBodyOutMsg.recorder(samplingTime)
     spLog = solarPanel.nodePowerOutMsg.recorder(samplingTime)
@@ -291,7 +297,7 @@ def plotOrbits(timeAxis, dataSigmaBN, panel1thetaLog, solarPowerLog, css1Log, cs
     timeData = timeAxis * macros.NANO2MIN
     for idx in range(3):
         plt.plot(timeData, dataSigmaBN[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
+                 color=simHelpers.getLineColor(idx, 3),
                  label=r'$\sigma_' + str(idx) + '$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')

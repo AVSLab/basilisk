@@ -81,9 +81,6 @@ np.set_printoptions(precision=16)
 
 # import general simulation support files
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import (
-    unitTestSupport,
-)  # general support file with common unit test functions
 import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
 from Basilisk.utilities.supportDataTools.dataFetcher import get_path, DataFile
@@ -109,6 +106,7 @@ from Basilisk.utilities import vizSupport
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
 from Basilisk import __path__
+from Basilisk.utilities import simHelpers
 
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
@@ -152,7 +150,7 @@ def run(show_plots):
     # define the simulation inertia
     I = [900.0, 0.0, 0.0, 0.0, 800.0, 0.0, 0.0, 0.0, 600.0]
     scObject.hub.mHub = 750.0  # kg - spacecraft mass
-    scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
+    scObject.hub.IHubPntBc_B = simHelpers.np2EigenMatrix3d(I)
 
     # add spacecraft object to the simulation process
 
@@ -241,7 +239,7 @@ def run(show_plots):
     # Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = unitTestSupport.samplingTime(
+    samplingTime = simHelpers.samplingTime(
         simulationTime, simulationTimeStep, numDataPoints
     )
     snLog = sNavObject.scStateInMsg.recorder(samplingTime)
@@ -290,7 +288,7 @@ def run(show_plots):
         plt.plot(
             timeAxis * macros.NANO2MIN,
             attErrorLog.sigma_BR[:, idx],
-            color=unitTestSupport.getLineColor(idx, 3),
+            color=simHelpers.getLineColor(idx, 3),
             label=r"$\sigma_" + str(idx) + "$",
         )
     plt.legend(loc="lower right")
@@ -305,7 +303,7 @@ def run(show_plots):
         plt.plot(
             timeAxis * macros.NANO2MIN,
             mrpLog.torqueRequestBody[:, idx],
-            color=unitTestSupport.getLineColor(idx, 3),
+            color=simHelpers.getLineColor(idx, 3),
             label="$L_{r," + str(idx) + "}$",
         )
     plt.legend(loc="lower right")
@@ -318,7 +316,7 @@ def run(show_plots):
         plt.plot(
             timeAxis * macros.NANO2MIN,
             attErrorLog.omega_BR_B[:, idx],
-            color=unitTestSupport.getLineColor(idx, 3),
+            color=simHelpers.getLineColor(idx, 3),
             label=r"$\omega_{BR," + str(idx) + "}$",
         )
     plt.legend(loc="lower right")
@@ -330,7 +328,7 @@ def run(show_plots):
         plt.plot(
             timeAxis * macros.NANO2MIN,
             snLog.r_BN_N[:, idx] / 1000.0,
-            color=unitTestSupport.getLineColor(idx, 3),
+            color=simHelpers.getLineColor(idx, 3),
             label="$r_{BN," + str(idx) + "}$",
         )
     plt.legend(loc="lower right")

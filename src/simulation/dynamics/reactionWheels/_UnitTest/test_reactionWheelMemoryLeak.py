@@ -1,7 +1,6 @@
 import pytest
 import numpy as np
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport
 from Basilisk.simulation import spacecraft
 from Basilisk.utilities import macros
 from Basilisk.utilities import simIncludeRW

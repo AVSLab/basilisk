@@ -149,7 +149,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # Import utilities
-from Basilisk.utilities import macros, orbitalMotion, unitTestSupport, vizSupport
+from Basilisk.utilities import (
+    macros,
+    orbitalMotion,
+    vizSupport,
+)
+from Basilisk.utilities import simHelpers
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -276,7 +281,7 @@ class scenario_AttitudeFeedbackRW(BSKSim, BSKScenario):
         )
 
         if "pytest" in sys.modules:
-            unitTestSupport.saveScenarioGraphvizFigure(
+            simHelpers.saveScenarioGraphvizFigure(
                 pltName,
                 self,
                 path,

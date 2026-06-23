@@ -43,6 +43,7 @@ from Basilisk.architecture import messaging
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simSetPlanetEnvironment
+from Basilisk.utilities import simHelpers
 
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
@@ -176,7 +177,7 @@ def run(show_plots, useDefault, useMinReach, useMaxReach, usePlanetEphemeris):
 
     # compare the module results to the truth values
     accuracy = 1e-5
-    unitTestSupport.writeTeXSnippet("unitTestToleranceValue", str(accuracy), path)
+    simHelpers.writeTeXSnippet("unitTestToleranceValue", str(accuracy), path)
 
     # check the exponential atmosphere results
     #
@@ -214,7 +215,7 @@ def run(show_plots, useDefault, useMinReach, useMaxReach, usePlanetEphemeris):
         colorText = 'Red'
         print("Failed: " + testModule.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
-    unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
+    simHelpers.writeTeXSnippet(snippentName, passedText, path)
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found

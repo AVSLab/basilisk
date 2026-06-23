@@ -11,7 +11,11 @@ import numpy as np
 from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import pixelLineConverter
 from Basilisk.utilities import RigidBodyKinematics as rbk
-from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    macros,
+)
+from Basilisk.utilities import simHelpers
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -139,8 +143,8 @@ def pixelLineConverterTestFunction():
 
     posErr = 1e-10
     covarErr = 1e-10
-    unitTestSupport.writeTeXSnippet("toleranceValuePos", str(posErr), path)
-    unitTestSupport.writeTeXSnippet("toleranceValueVel", str(covarErr), path)
+    simHelpers.writeTeXSnippet("toleranceValuePos", str(posErr), path)
+    simHelpers.writeTeXSnippet("toleranceValueVel", str(covarErr), path)
 
     outputR = dataLog.r_BN_N
     outputCovar = dataLog.covar_N
@@ -171,7 +175,7 @@ def pixelLineConverterTestFunction():
         colorText = 'Red'
         print("Failed: " + pixelLine.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
-    unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
+    simHelpers.writeTeXSnippet(snippentName, passedText, path)
 
 
     return [testFailCount, ''.join(testMessages)]

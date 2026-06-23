@@ -130,8 +130,13 @@ from Basilisk.simulation import magnetometer
 
 # general support file with common unit test functions
 # import general simulation support files
-from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
-                                simIncludeGravBody, unitTestSupport)
+from Basilisk.utilities import simHelpers
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    macros,
+    orbitalMotion,
+    simIncludeGravBody,
+)
 from Basilisk.utilities import simSetPlanetEnvironment
 from Basilisk.utilities.supportDataTools.dataFetcher import get_path, DataFile
 
@@ -224,7 +229,7 @@ def run(show_plots, orbitCase, useBias1, useBias2, useBounds1, useBounds2):
     magModule3.configureWMMFile(str(wmm_path))
 
     # set epoch date/time message
-    epochMsg = unitTestSupport.timeStringToGregorianUTCMsg('2019 June 27, 10:23:0.0 (UTC)')
+    epochMsg = simHelpers.timeStringToGregorianUTCMsg('2019 June 27, 10:23:0.0 (UTC)')
     magModule3.epochInMsg.subscribeTo(epochMsg)
     # set the minReach and maxReach values if on an elliptic orbit
     if orbitCase == 'elliptical':
@@ -331,7 +336,7 @@ def run(show_plots, orbitCase, useBias1, useBias2, useBounds1, useBounds2):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = simHelpers.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
     mag1Log = magModule1.envOutMsgs[0].recorder(samplingTime)
     mag3Log = magModule3.envOutMsgs[0].recorder(samplingTime)
     tam1Log = TAM1.tamDataOutMsg.recorder(samplingTime)
@@ -415,7 +420,7 @@ def run(show_plots, orbitCase, useBias1, useBias2, useBounds1, useBounds2):
     ax.get_yaxis().set_major_formatter(plt.FuncFormatter(lambda x, loc: "{:,}".format(int(x))))
     for idx in range(3):
         plt.plot(timeAxis * macros.NANO2SEC / P, tam1Data[:, idx] * 1e9,
-                 color=unitTestSupport.getLineColor(idx, 3),
+                 color=simHelpers.getLineColor(idx, 3),
                  label=r'$TAM_{' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [orbits]')
@@ -424,7 +429,7 @@ def run(show_plots, orbitCase, useBias1, useBias2, useBounds1, useBounds2):
     if orbitCase == 'elliptical':
         for idx in range(3):
             plt.plot(timeAxis * macros.NANO2SEC / P, tam3Data[:, idx] * 1e9, '--',
-                     color=unitTestSupport.getLineColor(idx, 3),
+                     color=simHelpers.getLineColor(idx, 3),
                      label=r'$TAM_{' + str(idx) + '}$')
     pltName = fileName + "2" + orbitCase + useBias1_str + useBounds1_str + useBias2_str + useBounds2_str
     figureList[pltName] = plt.figure(2)
@@ -437,7 +442,7 @@ def run(show_plots, orbitCase, useBias1, useBias2, useBounds1, useBounds2):
     ax.get_yaxis().set_major_formatter(plt.FuncFormatter(lambda x, loc: "{:,}".format(int(x))))
     for idx in range(3):
         plt.plot(timeAxis * macros.NANO2SEC / P, tam2Data[:, idx] * 1e9,
-                 color=unitTestSupport.getLineColor(idx, 3),
+                 color=simHelpers.getLineColor(idx, 3),
                  label=r'$TAM_{' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [orbits]')

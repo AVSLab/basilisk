@@ -75,7 +75,7 @@ import numpy as np
 from Basilisk.simulation import dataFileToViz
 from Basilisk.simulation import spacecraft
 from Basilisk.utilities import (SimulationBaseClass, macros, simIncludeGravBody, vizSupport)
-from Basilisk.utilities import unitTestSupport
+from Basilisk.utilities import simHelpers
 
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
@@ -155,7 +155,7 @@ def run(show_plots, attType):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = simHelpers.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
     dataLog = []
     for scCounter in range(2):
         dataLog.append(dataModule.scStateOutMsgs[scCounter].recorder(samplingTime))
@@ -223,12 +223,12 @@ def run(show_plots, attType):
     for idx in sigmaB1N:
         sNorm = np.linalg.norm(idx)
         s1Data.append(sNorm)
-    plt.plot(timeData, s1Data, color=unitTestSupport.getLineColor(1, 3), label=r'$|\sigma_{B1/N}|$')
+    plt.plot(timeData, s1Data, color=simHelpers.getLineColor(1, 3), label=r'$|\sigma_{B1/N}|$')
     s2Data = []
     for idx in sigmaB2N:
         sNorm = np.linalg.norm(idx)
         s2Data.append(sNorm)
-    plt.plot(timeData, s2Data, color=unitTestSupport.getLineColor(2, 3), label=r'$|\sigma_{B2/N}|$')
+    plt.plot(timeData, s2Data, color=simHelpers.getLineColor(2, 3), label=r'$|\sigma_{B2/N}|$')
     plt.xlabel('Time [h]')
     plt.ylabel(r'MRP Norm')
     plt.legend(loc='lower right')
@@ -242,7 +242,7 @@ def run(show_plots, attType):
     rhoData = np.array(rhoData)
     for idx in range(3):
         plt.plot(timeData, rhoData[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
+                 color=simHelpers.getLineColor(idx, 3),
                  label=r'$\rho_{' + str(idx+1) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [h]')

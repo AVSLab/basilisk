@@ -28,7 +28,7 @@ from Basilisk.architecture import messaging
 from Basilisk.architecture.bskLogging import BasiliskError
 from Basilisk.simulation import simpleNav
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport
+from Basilisk.utilities import simHelpers
 
 
 def listNorm(inputList):
@@ -262,7 +262,7 @@ def unitSimpleNav(show_plots):
     plt.legend(loc='upper left')
     plt.xlabel('Time (s)')
     plt.ylabel('Position (m)')
-    unitTestSupport.writeFigureLaTeX('SimpleNavPos', 'Simple Navigation Position Signal', plt, r'height=0.4\textwidth, keepaspectratio', path)
+    simHelpers.writeFigureLaTeX('SimpleNavPos', 'Simple Navigation Position Signal', plt, r'height=0.4\textwidth, keepaspectratio', path)
     if show_plots:
         plt.show()
         plt.close('all')
@@ -275,7 +275,7 @@ def unitSimpleNav(show_plots):
     plt.legend(loc='upper left')
     plt.xlabel('Time (s)')
     plt.ylabel('Attitude (rad)')
-    unitTestSupport.writeFigureLaTeX('SimpleNavAtt', 'Simple Navigation Att Signal', plt, r'height=0.4\textwidth, keepaspectratio', path)
+    simHelpers.writeFigureLaTeX('SimpleNavAtt', 'Simple Navigation Att Signal', plt, r'height=0.4\textwidth, keepaspectratio', path)
     if show_plots:
         plt.show()
     plt.close('all')

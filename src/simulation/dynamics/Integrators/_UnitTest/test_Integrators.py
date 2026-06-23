@@ -38,6 +38,7 @@ from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from Basilisk.utilities import simHelpers
 
 # @cond DOXYGEN_IGNORE
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -201,7 +202,7 @@ def run(doUnitTests, show_plots, integratorCase):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = simHelpers.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
     dataLog = scObject.scStateOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(simTaskName, dataLog)
 
@@ -250,7 +251,7 @@ def run(doUnitTests, show_plots, integratorCase):
         rData.append(oeData.rmag)
         fData.append(oeData.f + oeData.omega - oe.omega)
     plt.plot(rData * np.cos(fData) / 1000, rData * np.sin(fData) / 1000
-             # , color=unitTestSupport.getLineColor(labelStrings.index(integratorCase) + 1, len(labelStrings))
+             # , color=simHelpers.getLineColor(labelStrings.index(integratorCase) + 1, len(labelStrings))
              , label=integratorCase
              , linewidth=3.0
              )
@@ -268,14 +269,14 @@ def run(doUnitTests, show_plots, integratorCase):
     plt.legend(loc='lower right')
     plt.grid()
     if doUnitTests:  # only save off the figure if doing a unit test run
-        # unitTestSupport.saveScenarioFigure(
+        # simHelpers.saveScenarioFigure(
         #     fileNameString
         #     , plt, path)
-        # unitTestSupport.saveFigurePDF(
+        # simHelpers.saveFigurePDF(
         #     fileNameString
         #     , plt, path
         # )
-        unitTestSupport.writeFigureLaTeX(
+        simHelpers.writeFigureLaTeX(
             "scenarioIntegrators",
             "Illustration of the BSK integrated trajectories",
             plt,
@@ -358,11 +359,11 @@ def run(doUnitTests, show_plots, integratorCase):
                 snippetContent += message
             snippetContent += r"\end{verbatim}"
         snippetMsgName = fileNameString + 'Msg-' + integratorCase
-        unitTestSupport.writeTeXSnippet(snippetMsgName, snippetContent,
+        simHelpers.writeTeXSnippet(snippetMsgName, snippetContent,
                                         path)
         snippetPassFailName = fileNameString + 'TestMsg-' + integratorCase
         snippetContent = r'\textcolor{' + colorText + '}{' + passFailText + '}'
-        unitTestSupport.writeTeXSnippet(snippetPassFailName, snippetContent,
+        simHelpers.writeTeXSnippet(snippetPassFailName, snippetContent,
                                         path)
 
     # each test method requires a single assert method to be called

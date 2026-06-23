@@ -76,9 +76,9 @@ from Basilisk.utilities import (
     macros,
     orbitalMotion,
     simIncludeGravBody,
-    unitTestSupport,
     vizSupport,
 )
+from Basilisk.utilities import simHelpers
 from Basilisk.utilities.pyswice_spk_utilities import spkRead
 from Basilisk.utilities.supportDataTools.dataFetcher import (
     get_path,
@@ -192,7 +192,7 @@ def run(showPlots=True):
 
     # Setup data logging
     numDataPoints = 1000
-    samplingTime = unitTestSupport.samplingTime(
+    samplingTime = simHelpers.samplingTime(
         simulationTime, simulationTimeStep, numDataPoints
     )
 

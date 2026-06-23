@@ -43,6 +43,7 @@ splitPath = path.split('simulation')
 
 #Import all of the modules that we are going to call in this simulation
 from Basilisk.utilities import unitTestSupport
+from Basilisk.utilities import simHelpers
 import matplotlib.pyplot as plt
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.simulation import thrusterDynamicEffector
@@ -63,7 +64,7 @@ class ResultsStore:
             elif self.PassFail[i] == 'FAILED':
                 textColor = 'Red'
             texSnippet =  r'\textcolor{' + textColor + '}{'+ self.PassFail[i] + '}'
-            unitTestSupport.writeTeXSnippet(snippetName, texSnippet, path)
+            simHelpers.writeTeXSnippet(snippetName, texSnippet, path)
 
 @pytest.fixture(scope="module")
 def testFixture():
@@ -257,9 +258,9 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber, duration, long_an
         executeSimRun(TotalSim, thrusterSet, testRate, int(thrDurationTime+sparetime))
 
         # Gather the Force and Torque results
-        thrForce = unitTestSupport.addTimeColumn(thrusterSetLog.times(), thrusterSetLog.forceExternal_B)
-        thrTorque = unitTestSupport.addTimeColumn(thrusterSetLog.times(), thrusterSetLog.torqueExternalPntB_B)
-        mDotData = unitTestSupport.addTimeColumn(thrusterSetLog.times(), thrusterSetLog.mDotTotal)
+        thrForce = simHelpers.addTimeColumn(thrusterSetLog.times(), thrusterSetLog.forceExternal_B)
+        thrTorque = simHelpers.addTimeColumn(thrusterSetLog.times(), thrusterSetLog.torqueExternalPntB_B)
+        mDotData = simHelpers.addTimeColumn(thrusterSetLog.times(), thrusterSetLog.mDotTotal)
         mDotData = fixMDotData(mDotData)
 
         # Auto Generate LaTex Figures
@@ -287,7 +288,7 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber, duration, long_an
                           " thrusters for " + str(duration) + " seconds. The test rate is " +
                           str(int(1. / (testRate * macros.NANO2SEC))) + " steps per second. Swirl torque is set to " +
                           str(int(swirlTorque)) + " Newton meters and blow down effects are " + blowDown + ".")
-        unitTestSupport.writeTeXSnippet(snippetName, texSnippet, path)
+        simHelpers.writeTeXSnippet(snippetName, texSnippet, path)
 
         PlotName = ("Force_" + str(thrustNumber) + "Thrusters_" + str(int(duration)) + "s_" + str(int(long_angle)) +
                     "deg_" + "Loc" + str(int(location[2][0])) + "_Rate" + str(int(1./(testRate*macros.NANO2SEC))) +
@@ -303,7 +304,7 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber, duration, long_an
         plt.xlabel('Time(s)')
         plt.ylabel('Thrust Factor (N)')
         plt.ylim(-0.2,1)
-        unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+        simHelpers.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
         if show_plots==True:
             plt.show()
             plt.close('all')
@@ -321,7 +322,7 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber, duration, long_an
         plt.xlabel('Time(s)')
         plt.ylabel('Thrust Torque (Nm)')
         plt.ylim(-1.5, 2)
-        unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+        simHelpers.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
         if show_plots==True:
             plt.show()
             plt.close('all')
@@ -345,7 +346,7 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber, duration, long_an
         plt.xlabel('Time(s)')
         plt.ylim(-1.5, 2)
         plt.legend(loc='upper right')
-        unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+        simHelpers.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
         if show_plots==True:
             plt.show()
             plt.close('all')
@@ -433,9 +434,9 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber, duration, long_an
                 executeSimRun(TotalSim, thrusterSet, testRate, int(thrDurationTime+sparetime))
 
                 # Extract log variables and plot the results
-                thrForce = unitTestSupport.addTimeColumn(thrusterSetLog.times(), thrusterSetLog.forceExternal_B)
-                thrTorque = unitTestSupport.addTimeColumn(thrusterSetLog.times(), thrusterSetLog.torqueExternalPntB_B)
-                mDotData = unitTestSupport.addTimeColumn(thrusterSetLog.times(), thrusterSetLog.mDotTotal)
+                thrForce = simHelpers.addTimeColumn(thrusterSetLog.times(), thrusterSetLog.forceExternal_B)
+                thrTorque = simHelpers.addTimeColumn(thrusterSetLog.times(), thrusterSetLog.torqueExternalPntB_B)
+                mDotData = simHelpers.addTimeColumn(thrusterSetLog.times(), thrusterSetLog.mDotTotal)
                 mDotData = fixMDotData(mDotData)
 
                 snippetName = ("Snippet" + "Ramp_" + str(rampsteps) + "steps_" + str(int(duration)) + "s" + "_Cutoff" +
@@ -449,7 +450,7 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber, duration, long_an
                               " seconds with a test rate of " + str(int(1. / (testRate * macros.NANO2SEC))) +
                               " steps per second. The Cutoff test is " + cutoff + ", swirl torque is set to " +
                               str(int(swirlTorque)) + " Newton meters, and blow down effects are " + blowDown + ".")
-                unitTestSupport.writeTeXSnippet(snippetName, texSnippet, path)
+                simHelpers.writeTeXSnippet(snippetName, texSnippet, path)
 
                 PlotName = ("Ramp_" + str(rampsteps) + "steps_Cutoff" + cutoff + "_" + str(int(duration)) + "s" +
                             "_testRate" + str(int(1. / (testRate * macros.NANO2SEC))) + "_Swirl" + str(int(swirlTorque))
@@ -471,7 +472,7 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber, duration, long_an
                 plt.xlabel('Time(s)')
                 plt.ylim(-1.5, 2)
                 plt.legend(loc='upper left')
-                unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+                simHelpers.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
                 if show_plots == True:
                     plt.show()
                     plt.close('all')
@@ -556,9 +557,9 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber, duration, long_an
                 executeSimRun(TotalSim, thrusterSet, testRate, int(COrestart * 1.0 / macros.NANO2SEC + sparetime))
 
                 # Extract log variables and plot the results
-                thrForce = unitTestSupport.addTimeColumn(thrusterSetLog.times(), thrusterSetLog.forceExternal_B)
-                thrTorque = unitTestSupport.addTimeColumn(thrusterSetLog.times(), thrusterSetLog.torqueExternalPntB_B)
-                mDotData = unitTestSupport.addTimeColumn(thrusterSetLog.times(), thrusterSetLog.mDotTotal)
+                thrForce = simHelpers.addTimeColumn(thrusterSetLog.times(), thrusterSetLog.forceExternal_B)
+                thrTorque = simHelpers.addTimeColumn(thrusterSetLog.times(), thrusterSetLog.torqueExternalPntB_B)
+                mDotData = simHelpers.addTimeColumn(thrusterSetLog.times(), thrusterSetLog.mDotTotal)
                 mDotData = fixMDotData(mDotData)
 
                 PlotName = ("Ramp_" + str(rampsteps) + "steps_Cutoff" + cutoff + "_" + str(int(duration)) + "s" +
@@ -580,7 +581,7 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber, duration, long_an
                               " seconds with a test rate of " + str(int(1. / (testRate * macros.NANO2SEC))) +
                               " steps per second. The Cutoff test is " + cutoff + ", swirl torque is set to " +
                               str(int(swirlTorque)) + " Newton meters, and blow down effects are " + blowDown + ".")
-                unitTestSupport.writeTeXSnippet(snippetName, texSnippet, path)
+                simHelpers.writeTeXSnippet(snippetName, texSnippet, path)
 
                 plt.figure(55)
                 plt.clf()
@@ -594,7 +595,7 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber, duration, long_an
                 plt.xlabel('Time(s)')
                 plt.ylim(-1.5, 2)
                 plt.legend(loc='upper left')
-                unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+                simHelpers.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
                 if show_plots == True:
                     plt.show()
                     plt.close('all')
@@ -668,9 +669,9 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber, duration, long_an
             executeSimRun(TotalSim, thrusterSet, testRate, int(RDlength * 1.0 / macros.NANO2SEC + sparetime))
 
             # Extract log variables and plot the results
-            thrForce = unitTestSupport.addTimeColumn(thrusterSetLog.times(), thrusterSetLog.forceExternal_B)
-            thrTorque = unitTestSupport.addTimeColumn(thrusterSetLog.times(), thrusterSetLog.torqueExternalPntB_B)
-            mDotData = unitTestSupport.addTimeColumn(thrusterSetLog.times(), thrusterSetLog.mDotTotal)
+            thrForce = simHelpers.addTimeColumn(thrusterSetLog.times(), thrusterSetLog.forceExternal_B)
+            thrTorque = simHelpers.addTimeColumn(thrusterSetLog.times(), thrusterSetLog.torqueExternalPntB_B)
+            mDotData = simHelpers.addTimeColumn(thrusterSetLog.times(), thrusterSetLog.mDotTotal)
             mDotData = fixMDotData(mDotData)
 
             PlotName = ("Ramp_" + str(rampsteps) + "steps_Cutoff" + cutoff + "rampDown" + rampDown+"_testRate" +
@@ -692,7 +693,7 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber, duration, long_an
                           " steps per second. The Cutoff test is " + cutoff + ", the RampDown test is " + rampDown +
                           ", swirl torque is set to " + str(int(swirlTorque)) + " Newton meters, and blow down effects are "
                           + blowDown + ".")
-            unitTestSupport.writeTeXSnippet(snippetName, texSnippet, path)
+            simHelpers.writeTeXSnippet(snippetName, texSnippet, path)
 
             plt.figure(55)
             plt.clf()
@@ -706,7 +707,7 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber, duration, long_an
             plt.xlabel('Time(s)')
             plt.ylim(-1.5, 2)
             plt.legend(loc='upper left')
-            unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+            simHelpers.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
             if show_plots == True:
                 plt.show()
                 plt.close('all')
@@ -747,7 +748,7 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber, duration, long_an
             plt.xlabel('Time(s)')
             plt.ylabel('Ramp(-)')
             plt.ylim(-1.5, 2)
-            unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+            simHelpers.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
             if show_plots == True:
                 plt.show()
                 plt.close('all')

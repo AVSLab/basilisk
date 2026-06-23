@@ -33,7 +33,8 @@ import sys
 import time
 
 # Import utilities
-from Basilisk.utilities import orbitalMotion, macros, unitTestSupport
+from Basilisk.utilities import simHelpers
+from Basilisk.utilities import orbitalMotion, macros
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -111,14 +112,14 @@ class scenario_OpNav(BSKScenario):
 
     def pull_outputs(self, showPlots):
 
-        sigma_BR = unitTestSupport.addTimeColumn(self.attGuidRec.times(), self.attGuidRec.sigma_BR)
-        omega_BR_B = unitTestSupport.addTimeColumn(self.attGuidRec.times(), self.attGuidRec.omega_BR_B)
+        sigma_BR = simHelpers.addTimeColumn(self.attGuidRec.times(), self.attGuidRec.sigma_BR)
+        omega_BR_B = simHelpers.addTimeColumn(self.attGuidRec.times(), self.attGuidRec.omega_BR_B)
 
         numRW = 4
-        dataUsReq = unitTestSupport.addTimeColumn(self.rwMotorRec.times(), self.rwMotorRec.motorTorque)
+        dataUsReq = simHelpers.addTimeColumn(self.rwMotorRec.times(), self.rwMotorRec.motorTorque)
         dataRW = []
         for i in range(numRW):
-            dataRW.append(unitTestSupport.addTimeColumn(self.rwMotorRec.times(), self.rwLogs[i].u_current))
+            dataRW.append(simHelpers.addTimeColumn(self.rwMotorRec.times(), self.rwLogs[i].u_current))
 
         # Plot results
         BSK_plt.clear_all_plots()

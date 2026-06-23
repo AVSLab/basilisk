@@ -30,7 +30,7 @@ The script is found in the folder ``basilisk/examples`` and executed by using::
 
     python3 scenarioDeployingPanel.py
 
-The simulation includes two deploying panels that start undeployed. The first panel deploys fully, 
+The simulation includes two deploying panels that start undeployed. The first panel deploys fully,
 but the second panel deploys off-nominally (to 80%), leading to a reduced power output.
 
 
@@ -90,8 +90,14 @@ bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 from Basilisk.simulation import spacecraft
-from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
-                                simIncludeGravBody, unitTestSupport, vizSupport)
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    macros,
+    orbitalMotion,
+    simIncludeGravBody,
+    vizSupport,
+)
+from Basilisk.utilities import simHelpers
 from Basilisk.simulation import hingedRigidBodyStateEffector, simpleSolarPanel
 from Basilisk.simulation import hingedBodyLinearProfiler, hingedRigidBodyMotor
 import math
@@ -163,9 +169,9 @@ def run(show_plots):
     panel1.ModelTag = "panel1"
     panel1.mass = 100.0
     panel1.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
-    panel1.d = 1.5  
+    panel1.d = 1.5
     panel1.k = 200.
-    panel1.c = 20.  
+    panel1.c = 20.
     panel1.r_HB_B = [[-.5], [0.0], [-1.0]]
     panel1.dcm_HB = [[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]]
     panel1.thetaInit = -np.pi
@@ -175,9 +181,9 @@ def run(show_plots):
     panel2.ModelTag = "panel2"
     panel2.mass = 100.0
     panel2.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
-    panel2.d = 1.5  
+    panel2.d = 1.5
     panel2.k = 200.
-    panel2.c = 20.  
+    panel2.c = 20.
     panel2.r_HB_B = [[.5], [0.0], [-1.0]]
     panel2.dcm_HB = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
     panel2.thetaInit = -np.pi
@@ -228,7 +234,7 @@ def run(show_plots):
 
     solarPanel1 = simpleSolarPanel.SimpleSolarPanel()
     solarPanel1.ModelTag = "pwr1"
-    solarPanel1.nHat_B = [0, 0, 1]  
+    solarPanel1.nHat_B = [0, 0, 1]
     solarPanel1.panelArea = 2.0  # m^2
     solarPanel1.panelEfficiency = 0.9  # 90% efficiency in power generation
     solarPanel1.stateInMsg.subscribeTo(panel1.hingedRigidBodyConfigLogOutMsg)
@@ -236,7 +242,7 @@ def run(show_plots):
 
     solarPanel2 = simpleSolarPanel.SimpleSolarPanel()
     solarPanel2.ModelTag = "pwr2"
-    solarPanel2.nHat_B = [0, 0, 1] 
+    solarPanel2.nHat_B = [0, 0, 1]
     solarPanel2.panelArea = 2.0  # m^2
     solarPanel2.panelEfficiency = 0.9  # 90% efficiency in power generation
     solarPanel2.stateInMsg.subscribeTo(panel2.hingedRigidBodyConfigLogOutMsg)
@@ -259,7 +265,7 @@ def run(show_plots):
 
     # Setup data logging before the simulation is initialized
     numDataPoints = 1000
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = simHelpers.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
     dataLog = scObject.scStateOutMsg.recorder(samplingTime)
     p1Log = panel1.hingedRigidBodyOutMsg.recorder(samplingTime)
     prof1Log = profiler1.hingedRigidBodyReferenceOutMsg.recorder(samplingTime)
@@ -316,9 +322,9 @@ def run(show_plots):
 
     np.set_printoptions(precision=16)
 
-    figureList = plotOrbits(dataLog.times(), dataSigmaBN, dataOmegaBN_B, 
+    figureList = plotOrbits(dataLog.times(), dataSigmaBN, dataOmegaBN_B,
                             panel1thetaLog, panel1thetaDotLog,
-                            panel2thetaLog, panel2thetaDotLog, 
+                            panel2thetaLog, panel2thetaDotLog,
                             pwrLog1, pwrLog2)
 
     if show_plots:
@@ -345,7 +351,7 @@ def plotOrbits(timeAxis, dataSigmaBN, dataOmegaBN,
     timeData = timeAxis * macros.NANO2SEC
     for idx in range(3):
         plt.plot(timeData, dataSigmaBN[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
+                 color=simHelpers.getLineColor(idx, 3),
                  label=r'$\sigma_' + str(idx) + '$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [s]')
@@ -362,7 +368,7 @@ def plotOrbits(timeAxis, dataSigmaBN, dataOmegaBN,
     ax.ticklabel_format(useOffset=False, style='plain')
     for idx in range(3):
         plt.plot(timeData, dataOmegaBN[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
+                 color=simHelpers.getLineColor(idx, 3),
                  label=r'$\omega_' + str(idx) + '$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [s]')

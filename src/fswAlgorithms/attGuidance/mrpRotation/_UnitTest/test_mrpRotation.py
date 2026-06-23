@@ -39,6 +39,7 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 from Basilisk.fswAlgorithms import mrpRotation                    # import the module that is to be tested
 from Basilisk.utilities import macros as mc
+from Basilisk.utilities import simHelpers
 from Basilisk.architecture import messaging
 
 
@@ -96,8 +97,8 @@ def run(show_plots, cmdStateFlag, testReset):
     module.mrpSet = sigma_RR0
     omega_RR0_R = np.array([0.1, 0.0, 0.0]) * mc.D2R
     module.omega_RR0_R = omega_RR0_R
-    unitTestSupport.writeTeXSnippet("sigma_RR0", str(sigma_RR0), path)
-    unitTestSupport.writeTeXSnippet("omega_RR0_R", str(omega_RR0_R*mc.R2D) + "deg/sec", path)
+    simHelpers.writeTeXSnippet("sigma_RR0", str(sigma_RR0), path)
+    simHelpers.writeTeXSnippet("omega_RR0_R", str(omega_RR0_R*mc.R2D) + "deg/sec", path)
 
 
     if cmdStateFlag:
@@ -109,8 +110,8 @@ def run(show_plots, cmdStateFlag, testReset):
         desInMsg = messaging.AttStateMsg().write(desiredAtt)
         module.desiredAttInMsg.subscribeTo(desInMsg)
 
-        unitTestSupport.writeTeXSnippet("sigma_RR0Cmd", str(sigma_RR0), path)
-        unitTestSupport.writeTeXSnippet("omega_RR0_RCmd", str(omega_RR0_R * mc.R2D) + "deg/sec", path)
+        simHelpers.writeTeXSnippet("sigma_RR0Cmd", str(sigma_RR0), path)
+        simHelpers.writeTeXSnippet("omega_RR0_RCmd", str(omega_RR0_R * mc.R2D) + "deg/sec", path)
 
 
     #
@@ -151,7 +152,7 @@ def run(show_plots, cmdStateFlag, testReset):
     # This pulls the actual data log from the simulation run.
     # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
     accuracy = 1e-12
-    unitTestSupport.writeTeXSnippet("toleranceValue", str(accuracy), path)
+    simHelpers.writeTeXSnippet("toleranceValue", str(accuracy), path)
     trueSigma, trueOmega, truedOmega, \
         = truth.results(sigma_RR0,omega_RR0_R,RefStateInData,updateTime, cmdStateFlag, testReset)
 
@@ -185,7 +186,7 @@ def run(show_plots, cmdStateFlag, testReset):
         colorText = 'Red'
         print("Failed: " + module.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
-    unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
+    simHelpers.writeTeXSnippet(snippentName, passedText, path)
 
 
     # each test method requires a single assert method to be called

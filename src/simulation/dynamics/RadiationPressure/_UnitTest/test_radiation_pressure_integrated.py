@@ -34,6 +34,7 @@ bskPath = __path__[0]
 from Basilisk.simulation import spacecraft, radiationPressure
 from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
                                 unitTestSupport)
+from Basilisk.utilities import simHelpers
 from Basilisk.utilities.simIncludeGravBody import gravBodyFactory
 
 
@@ -185,7 +186,7 @@ def radiationPressureIntegratedTest(show_plots):
     ax.ticklabel_format(useOffset=False, style='plain')
     for idx in range(0, 3):
         plt.plot(dataLog.times() * macros.NANO2SEC / P, pos_rel_earth[:, idx] / 1000.,
-                 color=unitTestSupport.getLineColor(idx, 3),
+                 color=simHelpers.getLineColor(idx, 3),
                  label='$r_{BN,' + str(idx) + '}$')
 
     plt.legend(loc='lower right')

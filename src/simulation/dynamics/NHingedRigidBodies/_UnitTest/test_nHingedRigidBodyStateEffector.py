@@ -32,6 +32,7 @@ sys.path.append(splitPath[0] + '/PythonModules')
 
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport
+from Basilisk.utilities import simHelpers
 from Basilisk.simulation import spacecraft
 from Basilisk.simulation import nHingedRigidBodyStateEffector
 from Basilisk.simulation import gravityEffector
@@ -185,13 +186,13 @@ def nHingedRigidBody(show_plots, testCase):
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
     unitTestSim.ExecuteSimulation()
 
-    nHingedRigidBody1ThetasOut = unitTestSupport.addTimeColumn(stateLog.times(), stateLog.theta1)
-    nHingedRigidBody2ThetasOut = unitTestSupport.addTimeColumn(stateLog.times(), stateLog.theta2)
+    nHingedRigidBody1ThetasOut = simHelpers.addTimeColumn(stateLog.times(), stateLog.theta1)
+    nHingedRigidBody2ThetasOut = simHelpers.addTimeColumn(stateLog.times(), stateLog.theta2)
 
-    orbEnergy = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totOrbEnergy)
-    orbAngMom_N = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totOrbAngMomPntN_N)
-    rotAngMom_N = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totRotAngMomPntC_N)
-    rotEnergy = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totRotEnergy)
+    orbEnergy = simHelpers.addTimeColumn(scObjectLog.times(), scObjectLog.totOrbEnergy)
+    orbAngMom_N = simHelpers.addTimeColumn(scObjectLog.times(), scObjectLog.totOrbAngMomPntN_N)
+    rotAngMom_N = simHelpers.addTimeColumn(scObjectLog.times(), scObjectLog.totRotAngMomPntC_N)
+    rotEnergy = simHelpers.addTimeColumn(scObjectLog.times(), scObjectLog.totRotEnergy)
 
     initialOrbAngMom_N = [[orbAngMom_N[0, 1], orbAngMom_N[0, 2], orbAngMom_N[0, 3]]]
 

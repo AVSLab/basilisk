@@ -95,8 +95,13 @@ much smaller than the initial excitation introduced in the servicer's slosh part
 #
 
 # Basilisk imports
-from Basilisk.utilities import (SimulationBaseClass, macros, RigidBodyKinematics, vizSupport,
-                                pythonVariableLogger, unitTestSupport)
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    macros,
+    RigidBodyKinematics,
+    vizSupport,
+    pythonVariableLogger,
+)
 from Basilisk.simulation import (spacecraft, constraintDynamicEffector, svIntegrators,
                                  linearSpringMassDamper, hingedRigidBodyStateEffector, fuelTank)
 # plotting imports
@@ -104,6 +109,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from Basilisk import __path__
+from Basilisk.utilities import simHelpers
 import os
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
@@ -171,9 +177,9 @@ def plot_direction_violations(timeData, psi_B1):
     plt.figure(1)
     for i in range(3):
         plt.semilogy(timeData, np.abs(psi_B1[:, i]), alpha=0.8,
-                     color=unitTestSupport.getLineColor(i, 4))
+                     color=simHelpers.getLineColor(i, 4))
     plt.semilogy(timeData, np.linalg.norm(psi_B1, axis=1),
-                 color=unitTestSupport.getLineColor(3, 4))
+                 color=simHelpers.getLineColor(3, 4))
     plt.legend([r'$\psi_1$', r'$\psi_2$', r'$\psi_3$', r'$|\mathbf{\psi}|$'], loc='best')
     plt.xlabel('Time [sec]')
     plt.ylabel('Direction Constraint \nViolation ' r'$\psi$ [m]')
@@ -185,10 +191,10 @@ def plot_attitude_violations(timeData, sigma_B2B1):
     for i in range(3):
         plt.semilogy(timeData,
                      np.abs(4 * np.arctan(sigma_B2B1[:, i]) * macros.R2D), alpha=0.8,
-                     color=unitTestSupport.getLineColor(i, 4))
+                     color=simHelpers.getLineColor(i, 4))
     plt.semilogy(timeData,
                  np.linalg.norm(4 * np.arctan(sigma_B2B1) * macros.R2D, axis=1),
-                 color=unitTestSupport.getLineColor(3, 4))
+                 color=simHelpers.getLineColor(3, 4))
     plt.legend([r'$\phi_1$', r'$\phi_2$', r'$\phi_3$', r'$|\mathbf{\phi}|$'], loc='best')
     plt.xlabel('Time [sec]')
     plt.ylabel('Attitude Constraint \nViolation ' r'$\phi$ [deg]')
@@ -198,9 +204,9 @@ def plot_attitude_violations(timeData, sigma_B2B1):
 def plot_panel_angle_error(timeData, sp1ThetaLog, sp2ThetaLog, sp3ThetaLog, sp4ThetaLog):
     plt.figure(3)
     plt.plot(timeData, (sp1ThetaLog - sp3ThetaLog) * macros.R2D,
-             color=unitTestSupport.getLineColor(0, 2), label=r'$\Delta\theta_1$')
+             color=simHelpers.getLineColor(0, 2), label=r'$\Delta\theta_1$')
     plt.plot(timeData, (sp2ThetaLog - sp4ThetaLog) * macros.R2D,
-             color=unitTestSupport.getLineColor(1, 2), label=r'$\Delta\theta_2$')
+             color=simHelpers.getLineColor(1, 2), label=r'$\Delta\theta_2$')
     plt.legend(loc='best')
     plt.xlabel('Time [sec]')
     plt.ylabel('Panel Angle Error [deg]')
@@ -210,7 +216,7 @@ def plot_slosh_displacement_error(timeData, rhoLog, rhoTLog):
     plt.figure(3)
     for idx in range(3):
         plt.plot(timeData, rhoLog[idx] - rhoTLog[idx],
-                 color=unitTestSupport.getLineColor(idx, 3), label=r'$\Delta\rho_' + str(idx + 1) + '$')
+                 color=simHelpers.getLineColor(idx, 3), label=r'$\Delta\rho_' + str(idx + 1) + '$')
     plt.legend(loc='best')
     plt.xlabel('Time [sec]')
     plt.ylabel('Mass Displacement Error [m]')

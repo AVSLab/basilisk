@@ -97,10 +97,10 @@ from Basilisk.utilities import (
     macros,
     orbitalMotion,
     simIncludeGravBody,
-    unitTestSupport,
     vizSupport,
     simIncludeThruster,
 )
+from Basilisk.utilities import simHelpers
 from Basilisk.simulation import simSynch
 from Basilisk.architecture import messaging
 from Basilisk.simulation import thrusterDynamicEffector
@@ -169,7 +169,7 @@ def run(
     scObject.ModelTag = "bskSat"
     I = [60.0, 0.0, 0.0, 0.0, 30.0, 0.0, 0.0, 0.0, 40.0]
     scObject.hub.mHub = 50.0  # kg - spacecraft mass
-    scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
+    scObject.hub.IHubPntBc_B = simHelpers.np2EigenMatrix3d(I)
 
     # add spacecraft object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
@@ -259,7 +259,7 @@ def run(
         numDataPoints = 400
     else:
         numDataPoints = 100
-    samplingTime = unitTestSupport.samplingTime(
+    samplingTime = simHelpers.samplingTime(
         simulationTime, simulationTimeStep, numDataPoints
     )
     dataLog = scObject.scStateOutMsg.recorder(samplingTime)
@@ -449,7 +449,7 @@ Press 'p' to pause the simulation, 'z' to stop the simulation, 'q' to stop the s
         plt.plot(
             dataLog.times() * macros.NANO2SEC / P,
             posData[:, idx] / 1000.0,
-            color=unitTestSupport.getLineColor(idx, 3),
+            color=simHelpers.getLineColor(idx, 3),
             label="$r_{BN," + str(idx) + "}$",
         )
     plt.legend(loc="lower right")

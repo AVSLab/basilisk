@@ -46,6 +46,7 @@ from Basilisk.utilities import unitTestSupport                  # general suppor
 from Basilisk.fswAlgorithms import thrFiringRemainder            # import the module that is to be tested
 from Basilisk.utilities import macros
 from Basilisk.utilities import fswSetupThrusters
+from Basilisk.utilities import simHelpers
 from Basilisk.architecture import messaging
 
 
@@ -225,7 +226,7 @@ def thrFiringRemainderTestFunction(show_plots, resetCheck, dvOn):
 
     # compare the module results to the truth values
     accuracy = 1e-12
-    unitTestSupport.writeTeXSnippet("toleranceValue", str(accuracy), path)
+    simHelpers.writeTeXSnippet("toleranceValue", str(accuracy), path)
 
     testFailCount, testMessages = unitTestSupport.compareArray(trueVector, moduleOutput, accuracy,
                                                                "OnTimeRequest", testFailCount, testMessages)
@@ -239,7 +240,7 @@ def thrFiringRemainderTestFunction(show_plots, resetCheck, dvOn):
         colorText = 'Red'
         print("Failed: " + module.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
-    unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
+    simHelpers.writeTeXSnippet(snippentName, passedText, path)
 
     # First set a non-zero thruster force request
     thrMessageData.thrForce = [0.5, 0.05, 0.1, 0.15, 0.19, 0.0, 0.2, 0.49]

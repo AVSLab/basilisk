@@ -141,9 +141,9 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeGravBody
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 # attempt to import vizard
 from Basilisk.utilities import vizSupport
+from Basilisk.utilities import simHelpers
 
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
@@ -197,7 +197,7 @@ def run(show_plots, useUnmodeledTorque, useIntGain):
          0., 0., 600.]
     scObject.hub.mHub = 750.0  # kg - spacecraft mass
     scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
-    scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
+    scObject.hub.IHubPntBc_B = simHelpers.np2EigenMatrix3d(I)
 
     # add spacecraft object to the simulation process
     scSim.AddModelToTask(dynTaskName, scObject)
@@ -263,10 +263,10 @@ def run(show_plots, useUnmodeledTorque, useIntGain):
     #
     #   Add logging object to a task group, this controls the logging rate
     numDataPoints = 100
-    dataLog = scObject.scStateOutMsg.recorder(unitTestSupport.samplingTime(simulationTime, simTimeStep, numDataPoints))
-    attErrorLog = attError.attGuidOutMsg.recorder(unitTestSupport.samplingTime(simulationTime,
+    dataLog = scObject.scStateOutMsg.recorder(simHelpers.samplingTime(simulationTime, simTimeStep, numDataPoints))
+    attErrorLog = attError.attGuidOutMsg.recorder(simHelpers.samplingTime(simulationTime,
                                                                                      fswTimeStep, numDataPoints))
-    mrpLog = mrpControl.cmdTorqueOutMsg.recorder(unitTestSupport.samplingTime(simulationTime,
+    mrpLog = mrpControl.cmdTorqueOutMsg.recorder(simHelpers.samplingTime(simulationTime,
                                                                                     fswTimeStep, numDataPoints))
 
     scSim.AddModelToTask(dynTaskName, dataLog)
@@ -346,7 +346,7 @@ def run(show_plots, useUnmodeledTorque, useIntGain):
     plt.figure(1)
     for idx in range(3):
         plt.plot(timeAxis * macros.NANO2MIN, dataSigmaBR[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
+                 color=simHelpers.getLineColor(idx, 3),
                  label=r'$\sigma_' + str(idx) + '$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
@@ -358,7 +358,7 @@ def run(show_plots, useUnmodeledTorque, useIntGain):
     plt.figure(2)
     for idx in range(3):
         plt.plot(timeAxis * macros.NANO2MIN, dataLr[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
+                 color=simHelpers.getLineColor(idx, 3),
                  label='$L_{r,' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
@@ -369,7 +369,7 @@ def run(show_plots, useUnmodeledTorque, useIntGain):
     plt.figure(3)
     for idx in range(3):
         plt.plot(timeAxis * macros.NANO2MIN, dataOmegaBR[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
+                 color=simHelpers.getLineColor(idx, 3),
                  label=r'$\omega_{BR,' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
@@ -378,7 +378,7 @@ def run(show_plots, useUnmodeledTorque, useIntGain):
     plt.figure(4)
     for idx in range(3):
         plt.plot(timeAxis * macros.NANO2MIN, dataPos[:, idx] / 1000,
-                 color=unitTestSupport.getLineColor(idx, 3),
+                 color=simHelpers.getLineColor(idx, 3),
                  label='$r_{BN,' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
@@ -387,7 +387,7 @@ def run(show_plots, useUnmodeledTorque, useIntGain):
     plt.figure(5)
     for idx in range(3):
         plt.plot(timeAxis * macros.NANO2MIN, dataSigmaBN[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
+                 color=simHelpers.getLineColor(idx, 3),
                  label=r'$\sigma_{BN,' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')

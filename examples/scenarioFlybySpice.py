@@ -248,9 +248,14 @@ bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 from Basilisk.simulation import spacecraft, gravityEffector, extForceTorque, simpleNav, ephemerisConverter
-from Basilisk.utilities import SimulationBaseClass, macros, simIncludeGravBody, unitTestSupport
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    macros,
+    simIncludeGravBody,
+)
 from Basilisk.architecture import messaging
 from Basilisk.utilities import vizSupport
+from Basilisk.utilities import simHelpers
 
 # import general simulation support files
 try:
@@ -359,7 +364,7 @@ def run(planetCase):
          0., 0., 600.]
     scObject.hub.mHub = 750.0  # kg - spacecraft mass
     scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
-    scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
+    scObject.hub.IHubPntBc_B = simHelpers.np2EigenMatrix3d(I)
 
     # To set the spacecraft initial conditions, the following initial position and velocity variables are set:
     scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B

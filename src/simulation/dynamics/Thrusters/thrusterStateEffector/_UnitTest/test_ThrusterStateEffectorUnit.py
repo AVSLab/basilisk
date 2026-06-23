@@ -25,6 +25,7 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('simulation')
 
+from Basilisk.utilities import simHelpers
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros, RigidBodyKinematics as rbk
 from Basilisk.simulation import spacecraft, thrusterStateEffector
 from Basilisk.architecture import messaging
@@ -44,7 +45,7 @@ class ResultsStore:
             elif self.PassFail[i] == 'FAILED':
                 textColor = 'Red'
             texSnippet = r'\textcolor{' + textColor + '}{' + self.PassFail[i] + '}'
-            unitTestSupport.writeTeXSnippet(snippetName, texSnippet, path)
+            simHelpers.writeTeXSnippet(snippetName, texSnippet, path)
 
 
 @pytest.fixture(scope="module")
@@ -284,9 +285,9 @@ def unitThrusters(testFixture, show_plots, thrustNumber, initialConditions, dura
         plt.show()
 
     # Gather the Force, Torque and Mass Rate results
-    thrForce = unitTestSupport.addTimeColumn(thrusterSetLog.times(), thrusterSetLog.forceOnBody_B)
-    thrTorque = unitTestSupport.addTimeColumn(thrusterSetLog.times(), thrusterSetLog.torqueOnBodyPntB_B)
-    mDot = unitTestSupport.addTimeColumn(thrusterSetLog.times(), thrusterSetLog.mDotTotal)
+    thrForce = simHelpers.addTimeColumn(thrusterSetLog.times(), thrusterSetLog.forceOnBody_B)
+    thrTorque = simHelpers.addTimeColumn(thrusterSetLog.times(), thrusterSetLog.torqueOnBodyPntB_B)
+    mDot = simHelpers.addTimeColumn(thrusterSetLog.times(), thrusterSetLog.mDotTotal)
 
     # Save the time vector
     timeSec = dataRec.times() * macros.NANO2SEC

@@ -15,6 +15,7 @@ path = os.path.dirname(os.path.abspath(filename))
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
 from Basilisk.fswAlgorithms import ephemDifference
 from Basilisk.utilities import astroFunctions
+from Basilisk.utilities import simHelpers
 from Basilisk.architecture import messaging
 
 @pytest.mark.parametrize("ephBdyCount", [3, 0])
@@ -108,8 +109,8 @@ def ephemDifferenceTestFunction(ephBdyCount):
 
         posAcc = 1e1
         velAcc = 1e-4
-        unitTestSupport.writeTeXSnippet("toleranceValuePos", str(posAcc), path)
-        unitTestSupport.writeTeXSnippet("toleranceValueVel", str(velAcc), path)
+        simHelpers.writeTeXSnippet("toleranceValuePos", str(posAcc), path)
+        simHelpers.writeTeXSnippet("toleranceValueVel", str(velAcc), path)
 
         for i in range(ephBdyCount):
 
@@ -145,7 +146,7 @@ def ephemDifferenceTestFunction(ephBdyCount):
         colorText = 'Red'
         print("Failed: " + ephemDiff.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
-    unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
+    simHelpers.writeTeXSnippet(snippentName, passedText, path)
 
     return [testFailCount, ''.join(testMessages)]
 

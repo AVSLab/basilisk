@@ -19,7 +19,7 @@ import inspect
 import os
 
 import numpy as np
-from Basilisk.utilities import unitTestSupport
+from Basilisk.utilities import simHelpers
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -75,7 +75,7 @@ def StatePlot(x, testName, show_plots):
     plt.title('Third rate component (m/s)')
     plt.grid()
 
-    unitTestSupport.writeFigureLaTeX('StatesPlot' + testName, 'State error', plt, 'height=0.9\\textwidth, keepaspectratio', path)
+    simHelpers.writeFigureLaTeX('StatesPlot' + testName, 'State error', plt, 'height=0.9\\textwidth, keepaspectratio', path)
     if show_plots:
         plt.show()
     plt.close()
@@ -93,7 +93,7 @@ def EnergyPlot(t, energy, testName, show_plots):
     plt.grid()
 
 
-    unitTestSupport.writeFigureLaTeX('Energy' + testName, 'Orbital Energy', plt, 'height=0.9\\textwidth, keepaspectratio', path)
+    simHelpers.writeFigureLaTeX('Energy' + testName, 'Orbital Energy', plt, 'height=0.9\\textwidth, keepaspectratio', path)
     if show_plots:
         plt.show()
     plt.close()
@@ -157,7 +157,7 @@ def StateCovarPlot(x, Pflat, testName, show_plots):
     plt.title('Third rate component (m/s)')
     plt.grid()
 
-    unitTestSupport.writeFigureLaTeX('StatesPlot' + testName, 'State error and covariance', plt, 'height=0.9\\textwidth, keepaspectratio', path)
+    simHelpers.writeFigureLaTeX('StatesPlot' + testName, 'State error and covariance', plt, 'height=0.9\\textwidth, keepaspectratio', path)
     if show_plots:
         plt.show()
     plt.close()
@@ -203,7 +203,7 @@ def PostFitResiduals(Res, noise, testName, show_plots):
     plt.grid()
 
 
-    unitTestSupport.writeFigureLaTeX('PostFit' + testName, 'Post Fit Residuals', plt, 'height=0.9\\textwidth, keepaspectratio', path)
+    simHelpers.writeFigureLaTeX('PostFit' + testName, 'Post Fit Residuals', plt, 'height=0.9\\textwidth, keepaspectratio', path)
 
     if show_plots:
         plt.show()

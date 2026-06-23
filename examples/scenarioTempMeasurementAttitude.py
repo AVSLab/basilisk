@@ -71,9 +71,16 @@ from Basilisk.fswAlgorithms import (mrpFeedback, attTrackingError,
                                     inertial3D, rwMotorTorque)
 from Basilisk.simulation import (reactionWheelStateEffector, simpleNav,
                                  spacecraft, motorThermal, tempMeasurement)
-from Basilisk.utilities import (SimulationBaseClass, fswSetupRW, macros,
-                                orbitalMotion, simIncludeGravBody,
-                                simIncludeRW, unitTestSupport, vizSupport)
+from Basilisk.utilities import simHelpers
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    fswSetupRW,
+    macros,
+    orbitalMotion,
+    simIncludeGravBody,
+    simIncludeRW,
+    vizSupport,
+)
 
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
@@ -85,7 +92,7 @@ def plot_rw_temperature(timeData, dataTemp, numRW, id=None):
     plt.figure(id)
     for idx in range(numRW):
         plt.plot(timeData, dataTemp[:,idx],
-                 color=unitTestSupport.getLineColor(idx, numRW),
+                 color=simHelpers.getLineColor(idx, numRW),
                  label='$T_{rw,' + str(idx+1) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
@@ -97,7 +104,7 @@ def plot_rw_temp_measurement(timeData, dataTemp, numRW, id=None):
     plt.figure(id)
     for idx in range(numRW):
         plt.plot(timeData, dataTemp[:,idx],
-                 color=unitTestSupport.getLineColor(idx, numRW),
+                 color=simHelpers.getLineColor(idx, numRW),
                  label='$T_{rw,' + str(idx+1) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
@@ -144,7 +151,7 @@ def run(show_plots):
          0., 0., 600.]
     scObject.hub.mHub = 750.0  # kg - spacecraft mass
     scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
-    scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
+    scObject.hub.IHubPntBc_B = simHelpers.np2EigenMatrix3d(I)
 
     # add spacecraft object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject, 1)
@@ -271,7 +278,7 @@ def run(show_plots):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = simHelpers.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
 
     # A message is created that stores an array of the true temperature and temperature measurement.
     # This is logged here to be plotted later on.
@@ -296,7 +303,7 @@ def run(show_plots):
     # set up the FSW RW configuration message.
     fswSetupRW.clearSetup()
     for key, rw in rwFactory.rwList.items():
-        fswSetupRW.create(unitTestSupport.EigenVector3d2np(rw.gsHat_B), rw.Js, 0.2)
+        fswSetupRW.create(simHelpers.EigenVector3d2np(rw.gsHat_B), rw.Js, 0.2)
     fswRwParamMsg = fswSetupRW.writeConfigMessage()
 
     #

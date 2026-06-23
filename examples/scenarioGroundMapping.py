@@ -90,9 +90,6 @@ from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import planetStates
 from Basilisk.utilities import simIncludeGravBody
-from Basilisk.utilities import (
-    unitTestSupport,
-)  # general support file with common unit test functions
 from Basilisk.architecture import astroConstants
 
 # attempt to import vizard
@@ -107,6 +104,7 @@ except ImportError:
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
 from Basilisk import __path__
+from Basilisk.utilities import simHelpers
 
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
@@ -123,7 +121,7 @@ def plot_attitude_error(timeLineSet, dataSigmaBR):
     plt.plot(
         timeLineSet,
         sNorm,
-        color=unitTestSupport.getLineColor(1, 3),
+        color=simHelpers.getLineColor(1, 3),
     )
     plt.xlabel("Time [min]")
     plt.ylabel(r"Attitude Error Norm $|\sigma_{B/R}|$")
@@ -221,7 +219,7 @@ def run(show_plots, useCentral):
         [0.0],
         [0.0],
     ]  # m - position vector of body-fixed point B relative to CM
-    scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
+    scObject.hub.IHubPntBc_B = simHelpers.np2EigenMatrix3d(I)
 
     # Add spacecraft object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)

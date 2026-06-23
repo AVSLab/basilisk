@@ -12,6 +12,7 @@ from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import dvAccumulation
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport
 from Basilisk.utilities import macros
+from Basilisk.utilities import simHelpers
 from numpy import random
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -137,7 +138,7 @@ def dvAccumulationTestFunction():
     trueTime = np.array([7.2123026e+07, 7.2123026e+07, 7.2123026e+07, 7.6667436e+07, 7.6667436e+07]) * macros.NANO2SEC
 
     accuracy = 1e-6
-    unitTestSupport.writeTeXSnippet("toleranceValue", str(accuracy), path)
+    simHelpers.writeTeXSnippet("toleranceValue", str(accuracy), path)
 
     # At each timestep, make sure the vehicleConfig values haven't changed from the initial values
     testFailCount, testMessages = unitTestSupport.compareArrayND(trueDVVector, outputNavMsgData,
@@ -157,7 +158,7 @@ def dvAccumulationTestFunction():
         colorText = 'Red'
         print("Failed: " + module.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
-    unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
+    simHelpers.writeTeXSnippet(snippentName, passedText, path)
 
     return [testFailCount, ''.join(testMessages)]
 

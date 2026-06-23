@@ -23,7 +23,6 @@ from Basilisk.simulation import thrusterDynamicEffector
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import simIncludeThruster
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 import numpy
 
 

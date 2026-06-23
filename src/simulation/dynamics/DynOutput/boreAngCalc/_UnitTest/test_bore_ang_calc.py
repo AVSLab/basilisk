@@ -37,6 +37,7 @@ from Basilisk.utilities import RigidBodyKinematics
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import unitTestSupport
+from Basilisk.utilities import simHelpers
 
 path = os.path.dirname(os.path.abspath(__file__))
 
@@ -51,7 +52,7 @@ class ResultsStore:
             elif self.PassFail[i] == 'FAILED':
                 textColor = 'Red'
             texSnippet =  r'\textcolor{' + textColor + '}{'+ self.PassFail[i] + '}'
-            unitTestSupport.writeTeXSnippet(snippetName, texSnippet, path)
+            simHelpers.writeTeXSnippet(snippetName, texSnippet, path)
 
 @pytest.fixture(scope="module")
 def testFixture():

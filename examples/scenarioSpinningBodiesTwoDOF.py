@@ -100,9 +100,13 @@ import numpy as np
 
 from Basilisk.utilities import SimulationBaseClass, vizSupport, simIncludeGravBody
 from Basilisk.simulation import spacecraft, spinningBodyTwoDOFStateEffector
-from Basilisk.utilities import macros, orbitalMotion, unitTestSupport
+from Basilisk.utilities import (
+    macros,
+    orbitalMotion,
+)
 
 from Basilisk import __path__
+from Basilisk.utilities import simHelpers
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
@@ -330,7 +334,7 @@ def run(show_plots, numberPanels):
     plt.clf()
     for idx in range(3):
         plt.plot(theta1Data.times() * macros.NANO2SEC, v_BN_N[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
+                 color=simHelpers.getLineColor(idx, 3),
                  label='$v_{BN,' + str(idx) + '}$')
     plt.legend()
     plt.xlabel('time [s]')
@@ -342,7 +346,7 @@ def run(show_plots, numberPanels):
     plt.clf()
     for idx in range(3):
         plt.plot(theta1Data.times() * macros.NANO2SEC, omega_BN_B[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
+                 color=simHelpers.getLineColor(idx, 3),
                  label=r'$\omega_{BN,' + str(idx) + '}$')
     plt.legend()
     plt.xlabel('time [s]')

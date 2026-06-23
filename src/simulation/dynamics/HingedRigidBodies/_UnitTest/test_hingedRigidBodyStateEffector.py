@@ -28,6 +28,7 @@ splitPath = path.split('simulation')
 
 
 
+from Basilisk.utilities import simHelpers
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 import matplotlib.pyplot as plt
@@ -184,7 +185,7 @@ def hingedRigidBodyMotorTorque(show_plots, useScPlus):
     sB2N = dataPanel2Log.sigma_BN[0]
     oB2N = dataPanel2Log.omega_BN_B[0]
 
-    rotAngMom_N = unitTestSupport.addTimeColumn(scLog.times(), scLog.totRotAngMomPntC_N)
+    rotAngMom_N = simHelpers.addTimeColumn(scLog.times(), scLog.totRotAngMomPntC_N)
 
     # Get the last sigma and position
     dataPos = [rOut_CN_N[-1]]
@@ -216,13 +217,13 @@ def hingedRigidBodyMotorTorque(show_plots, useScPlus):
     plt.figure()
     plt.clf()
     plt.plot(dataLog.times() * macros.NANO2SEC, sigma_BN[:, 0],
-             color=unitTestSupport.getLineColor(0, 3),
+             color=simHelpers.getLineColor(0, 3),
              label=r'$\sigma_{1}$')
     plt.plot(dataLog.times() * macros.NANO2SEC, sigma_BN[:, 1],
-             color=unitTestSupport.getLineColor(1, 3),
+             color=simHelpers.getLineColor(1, 3),
              label=r'$\sigma_{2}$')
     plt.plot(dataLog.times() * macros.NANO2SEC, sigma_BN[:, 2],
-             color=unitTestSupport.getLineColor(2, 3),
+             color=simHelpers.getLineColor(2, 3),
              label=r'$\sigma_{3}$')
     plt.legend(loc='lower right')
     plt.xlabel('time (s)')
@@ -231,10 +232,10 @@ def hingedRigidBodyMotorTorque(show_plots, useScPlus):
     plt.figure()
     plt.clf()
     plt.plot(dataPanel1.times() * macros.NANO2SEC, theta1*macros.R2D,
-             color=unitTestSupport.getLineColor(0, 3),
+             color=simHelpers.getLineColor(0, 3),
              label=r'$\theta_{1}$')
     plt.plot(dataPanel2.times() * macros.NANO2SEC, theta2*macros.R2D,
-             color=unitTestSupport.getLineColor(1, 3),
+             color=simHelpers.getLineColor(1, 3),
              label=r'$\theta_{2}$')
     plt.legend(loc='lower right')
     plt.xlabel('time (s)')
@@ -421,8 +422,8 @@ def hingedRigidBodyLagrangVsBasilisk(show_plots):
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
     unitTestSim.ExecuteSimulation()
 
-    theta1Out = unitTestSupport.addTimeColumn(stateLog.times(), stateLog.theta1)
-    theta2Out = unitTestSupport.addTimeColumn(stateLog.times(), stateLog.theta2)
+    theta1Out = simHelpers.addTimeColumn(stateLog.times(), stateLog.theta1)
+    theta2Out = simHelpers.addTimeColumn(stateLog.times(), stateLog.theta2)
 
     rOut_BN_N = dataLog.r_BN_N
     sigmaOut_BN = dataLog.sigma_BN
@@ -486,7 +487,7 @@ def hingedRigidBodyLagrangVsBasilisk(show_plots):
     PlotName = "XPositionLagrangianVsBasilisk"
     PlotTitle = "X Position Lagrangian Vs Basilisk"
     format = r"width=0.8\textwidth"
-    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+    simHelpers.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
 
     plt.figure()
     plt.clf()
@@ -499,7 +500,7 @@ def hingedRigidBodyLagrangVsBasilisk(show_plots):
     PlotName = "YPositionLagrangianVsBasilisk"
     PlotTitle = "Y Position Lagrangian Vs Basilisk"
     format = r"width=0.8\textwidth"
-    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+    simHelpers.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
 
     plt.figure()
     plt.clf()
@@ -512,7 +513,7 @@ def hingedRigidBodyLagrangVsBasilisk(show_plots):
     PlotName = "ThetaLagrangianVsBasilisk"
     PlotTitle = "Theta Lagrangian Vs Basilisk"
     format = r"width=0.8\textwidth"
-    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+    simHelpers.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
 
     plt.figure()
     plt.clf()
@@ -525,7 +526,7 @@ def hingedRigidBodyLagrangVsBasilisk(show_plots):
     PlotName = "Theta1LagrangianVsBasilisk"
     PlotTitle = "Theta 1 Position Lagrangian Vs Basilisk"
     format = r"width=0.8\textwidth"
-    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+    simHelpers.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
 
     plt.figure()
     plt.clf()
@@ -538,7 +539,7 @@ def hingedRigidBodyLagrangVsBasilisk(show_plots):
     PlotName = "Theta2LagrangianVsBasilisk"
     PlotTitle = "Theta 2 Lagrangian Vs Basilisk"
     format = r"width=0.8\textwidth"
-    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+    simHelpers.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
 
     if show_plots:
         plt.show()

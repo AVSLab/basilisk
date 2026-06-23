@@ -21,7 +21,7 @@ r"""
 Overview
 --------
 
-This scenario demonstrates how to set up a Walker-Delta constellation of satellites. Note that this scenario 
+This scenario demonstrates how to set up a Walker-Delta constellation of satellites. Note that this scenario
 uses the stand-alone Basilisk architecture rather than using the ''examples/FormationBskSim`` or ``examples/MultiSatBskSim``
 architectures for simultaneously simulating multiple spacecraft.
 
@@ -29,8 +29,8 @@ The script is found in the folder ``basilisk/examples`` and executed by using::
 
     python3 scenarioSatelliteConstellation.py
 
-When designing a satellite constellation, symmetry provides repeatable performance and makes design and operations simpler. One 
-such symmetric constellation design methodology is the Walker constellation which consists of circular orbits in evenly spaced 
+When designing a satellite constellation, symmetry provides repeatable performance and makes design and operations simpler. One
+such symmetric constellation design methodology is the Walker constellation which consists of circular orbits in evenly spaced
 planes at a chosen inclination. Walker constellation layouts are fully specified by four parameters written as "i:T/P/F" where:
 
     * i = inclination angle
@@ -38,7 +38,7 @@ planes at a chosen inclination. Walker constellation layouts are fully specified
     * P = numer of orbit planes evenly spaced in node angle
     * F = relative spacing between satellites in adjacent orbit planes
 
-In order to simulate the constellation a semi-major axis 'a' is also specified as an input. The total number of satellites T must 
+In order to simulate the constellation a semi-major axis 'a' is also specified as an input. The total number of satellites T must
 be specified as an integer multiple of the number of planes P. The relative spacing F must be an integer between 0 and (P-1).
 
 Illustration of Simulation Results
@@ -53,7 +53,7 @@ The default scenario is modelled after the Galileo constellation with Walker num
 .. image:: /_images/Scenarios/scenarioSatelliteConstellation.svg
    :align: center
 
-Each line color corresponds to a different orbital plane, in this case 3 planes. Green circles mark the start of each of the 24 
+Each line color corresponds to a different orbital plane, in this case 3 planes. Green circles mark the start of each of the 24
 individual satellite's ground tracks and a red circle marks their end.
 
 Simulation Visualization In Vizard
@@ -75,7 +75,7 @@ is created through the ``vizInterface``::
 #
 # Basilisk Scenario Script and Integrated Test
 #
-# Purpose:  Demonstrates how to use the stand alone Basilisk architecture to automate 
+# Purpose:  Demonstrates how to use the stand alone Basilisk architecture to automate
 #           the setup of a Walker constellation.
 # Author:   Andrew Morell
 # Creation Date:  Dec. 13, 2023
@@ -91,8 +91,14 @@ bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 from Basilisk.simulation import (spacecraft, ephemerisConverter)
-from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
-                                simIncludeGravBody, unitTestSupport, vizSupport)
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    macros,
+    orbitalMotion,
+    simIncludeGravBody,
+    vizSupport,
+)
+from Basilisk.utilities import simHelpers
 from Basilisk.fswAlgorithms import locationPointing
 from Basilisk.simulation import (simpleNav, planetEphemeris)
 
@@ -156,10 +162,10 @@ def run(show_plots, a, i, T, P, F):
     n = np.sqrt(mu / a / a / a)
     Pr = 2. * np.pi / n
     simulationTime = macros.sec2nano(1.5 * Pr)
-    
+
     # create a logging task object of the spacecraft output message at the desired down sampling ratio
     numDataPoints = 500
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = simHelpers.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
 
     if (np.mod(T,1) !=0 or np.mod(P,1) !=0 or np.mod(F,1) != 0 or T < 1 or P < 1 or F < 1):
         raise Exception('number of satellites T, number of planes P, and relative spaceing F must be positive integer numbers')
@@ -201,7 +207,7 @@ def run(show_plots, a, i, T, P, F):
 
         # set the spacecraft mass and inertia
         scList[i].hub.mHub = 750.0  # kg - spacecraft mass
-        scList[i].hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
+        scList[i].hub.IHubPntBc_B = simHelpers.np2EigenMatrix3d(I)
 
         # set up prescribed attitude guidance
         navList.append(simpleNav.SimpleNav())
@@ -248,7 +254,7 @@ def run(show_plots, a, i, T, P, F):
     for n in range(T):
         # calculate latitude and longitude
         [lon, lat] = rv2latlon(dataRec[n])
-        color = unitTestSupport.getLineColor(int(np.floor(n/S)), 3)
+        color = simHelpers.getLineColor(int(np.floor(n/S)), 3)
         plt.scatter(lat, lon, s=5, c=[color])
         plt.scatter(lat[0], lon[0], s=20, c='#00A300')
         plt.scatter(lat[-1], lon[-1], s=20, c='#A30000')

@@ -12,7 +12,8 @@ import matplotlib.pyplot as plt
 from Basilisk.architecture import messaging
 from Basilisk.moduleTemplates import cModuleTemplate, cppModuleTemplate
 from Basilisk.simulation import simpleNav
-from Basilisk.utilities import SimulationBaseClass, macros, unitTestSupport
+from Basilisk.utilities import SimulationBaseClass, macros
+from Basilisk.utilities import simHelpers
 
 
 @pytest.mark.parametrize("stopTime1", [0.0, 8.0, 10.0, 12.0])
@@ -321,8 +322,8 @@ def test_saveScenarioGraphvizFigure_uses_documentation_image_path(tmp_path):
     scSim = MagicMock()
     scSim.ShowMessageConnectionFigure.return_value = str(expectedPath)
 
-    with patch("Basilisk.utilities.unitTestSupport.shutil.which", return_value="dot"):
-        renderedPath = unitTestSupport.saveScenarioGraphvizFigure(
+    with patch("Basilisk.utilities.simHelpers.shutil.which", return_value="dot"):
+        renderedPath = simHelpers.saveScenarioGraphvizFigure(
             "messageFlow",
             scSim,
             str(scenarioPath),
@@ -348,8 +349,8 @@ def test_saveScenarioGraphvizFigure_returns_none_without_graphviz(tmp_path):
     scenarioPath.mkdir()
     scSim = MagicMock()
 
-    with patch("Basilisk.utilities.unitTestSupport.shutil.which", return_value=None):
-        renderedPath = unitTestSupport.saveScenarioGraphvizFigure(
+    with patch("Basilisk.utilities.simHelpers.shutil.which", return_value=None):
+        renderedPath = simHelpers.saveScenarioGraphvizFigure(
             "messageFlow",
             scSim,
             str(scenarioPath),

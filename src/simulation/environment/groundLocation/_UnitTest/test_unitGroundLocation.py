@@ -28,7 +28,7 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeGravBody
-from Basilisk.utilities import unitTestSupport
+from Basilisk.utilities import simHelpers
 from matplotlib import pyplot as plt
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -89,7 +89,7 @@ def test_range(show_plots):
 
     # Log the access indicator
     numDataPoints = 2
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = simHelpers.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
     dataLog0 = groundTarget.accessOutMsgs[0].recorder(samplingTime)
     dataLog1 = groundTarget.accessOutMsgs[1].recorder(samplingTime)
     dataLog2 = groundTarget.accessOutMsgs[2].recorder(samplingTime)
@@ -173,7 +173,7 @@ def test_rotation(show_plots):
 
     # Log the access indicator
     numDataPoints = 2
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = simHelpers.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
     dataLog = groundTarget.accessOutMsgs[0].recorder(samplingTime)
     scSim.AddModelToTask(simTaskName, dataLog)
 
@@ -253,7 +253,7 @@ def test_AzElR_rates():
 
     # Log the Az,El,R and rates info
     numDataPoints = 2
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = simHelpers.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
     dataLog = groundStation.accessOutMsgs[0].recorder(samplingTime)
     scSim.AddModelToTask(simTaskName, dataLog)
 

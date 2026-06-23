@@ -19,7 +19,7 @@ import inspect
 import os
 
 import numpy as np
-from Basilisk.utilities import unitTestSupport
+from Basilisk.utilities import simHelpers
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -185,7 +185,7 @@ def StateErrorCovarPlot(x, Pflat, FilterType, show_plots, saveFigures):
         plt.grid()
 
     if saveFigures:
-        unitTestSupport.saveScenarioFigure('scenario_Filters_StatesPlot'+FilterType,  plt,  path)
+        simHelpers.saveScenarioFigure('scenario_Filters_StatesPlot'+FilterType,  plt,  path)
     if show_plots:
         plt.show()
     plt.close('all')
@@ -387,7 +387,7 @@ def StatesPlotCompare(x, x2, Pflat, Pflat2, FilterType, show_plots, saveFigures)
         plt.grid()
 
     if saveFigures:
-        unitTestSupport.saveScenarioFigure('scenario_Filters_StatesCompare'+FilterType, plt, path)
+        simHelpers.saveScenarioFigure('scenario_Filters_StatesCompare'+FilterType, plt, path)
 
     if show_plots:
         plt.show()
@@ -401,7 +401,7 @@ def numMeasurements(numObs, FilterType, show_plots, saveFigures):
     plt.title('Number of Activated CSS')
 
     if saveFigures:
-        unitTestSupport.saveScenarioFigure('scenario_Filters_Obs'+ FilterType, plt,  path)
+        simHelpers.saveScenarioFigure('scenario_Filters_Obs'+ FilterType, plt,  path)
 
     if show_plots:
         plt.show()
@@ -461,7 +461,7 @@ def PostFitResiduals(Res, noise, FilterType, show_plots, saveFigures):
     plt.title('Fourth CSS')
 
     if saveFigures:
-        unitTestSupport.saveScenarioFigure('scenario_Filters_PostFit'+ FilterType, plt,  path)
+        simHelpers.saveScenarioFigure('scenario_Filters_PostFit'+ FilterType, plt,  path)
 
     if show_plots:
         plt.show()
@@ -619,7 +619,7 @@ def StatesVsExpected(stateLog, Pflat, expectedStateArray, FilterType, show_plots
 
 
     if saveFigures:
-        unitTestSupport.saveScenarioFigure('scenario_Filters_StatesExpected' + FilterType , plt, path)
+        simHelpers.saveScenarioFigure('scenario_Filters_StatesExpected' + FilterType , plt, path)
 
     if show_plots:
         plt.show()
@@ -698,7 +698,7 @@ def StatesVsTargets(target1, target2, stateLog, FilterType, show_plots, saveFigu
         plt.grid()
 
     if saveFigures:
-        unitTestSupport.saveScenarioFigure('scenario_Filters_StatesTarget' + FilterType,  plt,  path)
+        simHelpers.saveScenarioFigure('scenario_Filters_StatesTarget' + FilterType,  plt,  path)
 
     if show_plots:
         plt.show()

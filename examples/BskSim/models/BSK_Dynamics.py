@@ -33,7 +33,7 @@ from Basilisk.simulation import (
 from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.utilities import macros as mc
 from Basilisk.utilities import simIncludeGravBody, simIncludeRW, simIncludeThruster
-from Basilisk.utilities import unitTestSupport as sp
+from Basilisk.utilities import simHelpers
 from Basilisk.utilities.supportDataTools.dataFetcher import get_path, DataFile
 
 bskPath = __path__[0]
@@ -135,7 +135,7 @@ class BSKDynamicModels():
                      0., 0., 600.]
         self.scObject.hub.mHub = 750.0  # kg - spacecraft mass
         self.scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
-        self.scObject.hub.IHubPntBc_B = sp.np2EigenMatrix3d(self.I_sc)
+        self.scObject.hub.IHubPntBc_B = simHelpers.np2EigenMatrix3d(self.I_sc)
 
     def SetGravityBodies(self):
         """

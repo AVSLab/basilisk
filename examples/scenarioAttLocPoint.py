@@ -81,11 +81,11 @@ from Basilisk.simulation import simpleNav
 # import simulation related support
 from Basilisk.simulation import spacecraft
 # import general simulation support files
+from Basilisk.utilities import simHelpers
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeGravBody
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 from Basilisk.architecture import astroConstants
 # attempt to import vizard
 from Basilisk.utilities import vizSupport
@@ -103,7 +103,7 @@ def plot_attitude_error(timeLineSet, dataSigmaBR):
     vectorData = dataSigmaBR
     sNorm = np.array([np.linalg.norm(v) for v in vectorData])
     plt.plot(timeLineSet, sNorm,
-             color=unitTestSupport.getLineColor(1, 3),
+             color=simHelpers.getLineColor(1, 3),
              )
     plt.xlabel('Time [min]')
     plt.ylabel(r'Attitude Error Norm $|\sigma_{B/R}|$')
@@ -114,7 +114,7 @@ def plot_control_torque(timeLineSet, dataLr):
     plt.figure(2)
     for idx in range(3):
         plt.plot(timeLineSet, dataLr[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
+                 color=simHelpers.getLineColor(idx, 3),
                  label='$L_{r,' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
@@ -126,7 +126,7 @@ def plot_rate_error(timeLineSet, dataOmegaBR):
     plt.figure(3)
     for idx in range(3):
         plt.plot(timeLineSet, dataOmegaBR[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
+                 color=simHelpers.getLineColor(idx, 3),
                  label=r'$\omega_{BR,' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
@@ -175,7 +175,7 @@ def run(show_plots):
          0., 0., 600.]
     scObject.hub.mHub = 750.0  # kg - spacecraft mass
     scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
-    scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
+    scObject.hub.IHubPntBc_B = simHelpers.np2EigenMatrix3d(I)
 
     # add spacecraft object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
@@ -269,7 +269,7 @@ def run(show_plots):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = simHelpers.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
     mrpLog = mrpControl.cmdTorqueOutMsg.recorder(samplingTime)
     attErrLog = locPoint.attGuidOutMsg.recorder(samplingTime)
     snAttLog = sNavObject.attOutMsg.recorder(samplingTime)
@@ -296,7 +296,7 @@ def run(show_plots):
                                                   )
         vizSupport.addLocation(viz, stationName="Boulder Station"
                                , parentBodyName=earth.displayName
-                               , r_GP_P=unitTestSupport.EigenVector3d2list(groundStation.r_LP_P_Init)
+                               , r_GP_P=simHelpers.EigenVector3d2list(groundStation.r_LP_P_Init)
                                , fieldOfView=np.radians(160.)
                                , color='pink'
                                , range=2000.0*1000  # meters

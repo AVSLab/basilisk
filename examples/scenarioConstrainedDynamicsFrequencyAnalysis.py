@@ -66,7 +66,12 @@ the fictitious frequency does not appear in the truth model.
 #
 
 # Basilisk imports
-from Basilisk.utilities import (SimulationBaseClass, macros, RigidBodyKinematics, vizSupport, unitTestSupport)
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    macros,
+    RigidBodyKinematics,
+    vizSupport,
+)
 from Basilisk.simulation import (spacecraft, constraintDynamicEffector, svIntegrators, hingedRigidBodyStateEffector)
 # plotting imports
 import matplotlib.pyplot as plt
@@ -75,6 +80,7 @@ import numpy as np
 import time
 
 from Basilisk import __path__
+from Basilisk.utilities import simHelpers
 import os
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
@@ -120,7 +126,7 @@ def plot_panel_angles_error(timeData, sp1ThetaLog, sp3ThetaLog, gain_list):
     plt.figure(1)
     for idx, gain in enumerate(gain_list):
         plt.semilogy(timeData[idx], abs((sp1ThetaLog[idx] - sp3ThetaLog[idx])) * macros.R2D,
-                     color=unitTestSupport.getLineColor(idx, len(gain_list)), label=r'$\alpha=$' f'{gain:.0e}')
+                     color=simHelpers.getLineColor(idx, len(gain_list)), label=r'$\alpha=$' f'{gain:.0e}')
     plt.legend(loc='best')
     plt.xlabel('Time [sec]')
     plt.ylabel('Angle Error ' r'$\Delta \theta$ [deg]')
@@ -145,7 +151,7 @@ def plot_fft_panels(sampling_rate, sigma_B2B1_list, gain_list):
 
     plt.figure(2)
     for idx, gain in enumerate(gain_list):
-        plt.loglog(f, X[idx], label=r'$\alpha=$' f'{gain:.0e}', color=unitTestSupport.getLineColor(idx, len(gain_list)))
+        plt.loglog(f, X[idx], label=r'$\alpha=$' f'{gain:.0e}', color=simHelpers.getLineColor(idx, len(gain_list)))
         print(f'Frequency of highest amplitude for gain={gain} is {np.unravel_index(X[idx].argmax(), N // 2)[0] / T} Hz.')
     plt.legend(loc='best')
     plt.xlabel('Freq [Hz]')

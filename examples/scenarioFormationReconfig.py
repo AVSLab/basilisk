@@ -91,8 +91,8 @@ from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.utilities import simIncludeThruster
-from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import vizSupport
+from Basilisk.utilities import simHelpers
 
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
@@ -127,10 +127,10 @@ def run(show_plots, useRefAttitude):
          0., 0., 600.]
     scObject.hub.mHub = 500.0
     scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
-    scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
+    scObject.hub.IHubPntBc_B = simHelpers.np2EigenMatrix3d(I)
     scObject2.hub.mHub = 500.0
     scObject2.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
-    scObject2.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
+    scObject2.hub.IHubPntBc_B = simHelpers.np2EigenMatrix3d(I)
 
     scSim.AddModelToTask(dynTaskName, scObject, 2)
     scSim.AddModelToTask(dynTaskName, scObject2, 2)
@@ -266,7 +266,7 @@ def run(show_plots, useRefAttitude):
     simulationTime = orbit_period*1.1
     simulationTime = macros.sec2nano(simulationTime)
     numDataPoints = 1000
-    samplingTime = unitTestSupport.samplingTime(simulationTime, dynTimeStep, numDataPoints)
+    samplingTime = simHelpers.samplingTime(simulationTime, dynTimeStep, numDataPoints)
     dataLog = scObject.scStateOutMsg.recorder(samplingTime)
     dataLog2 = scObject2.scStateOutMsg.recorder(samplingTime)
     attRefLog = spacecraftReconfigModule.attRefOutMsg.recorder(samplingTime)

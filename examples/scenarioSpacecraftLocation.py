@@ -53,14 +53,19 @@ from Basilisk.fswAlgorithms import (mrpFeedback, attTrackingError, hillPoint)
 from Basilisk.simulation import extForceTorque
 from Basilisk.simulation import simpleNav, spacecraft
 from Basilisk.simulation import spacecraftLocation
-from Basilisk.utilities import (SimulationBaseClass, macros,
-                                orbitalMotion, simIncludeGravBody,
-                                unitTestSupport, vizSupport)
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    macros,
+    orbitalMotion,
+    simIncludeGravBody,
+    vizSupport,
+)
 
 
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
 from Basilisk import __path__
+from Basilisk.utilities import simHelpers
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
@@ -104,7 +109,7 @@ def run(show_plots):
          0., 800., 0.,
          0., 0., 600.]
     scObject.hub.mHub = 750.0  # kg - spacecraft mass
-    scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
+    scObject.hub.IHubPntBc_B = simHelpers.np2EigenMatrix3d(I)
 
     # create the debris object states
     scObject2 = spacecraft.Spacecraft()
@@ -113,7 +118,7 @@ def run(show_plots):
           0., 650., 0.,
           0., 0, 450.]
     scObject2.hub.mHub = 350.0  # kg
-    scObject2.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I2)
+    scObject2.hub.IHubPntBc_B = simHelpers.np2EigenMatrix3d(I2)
 
     # add spacecraft object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)

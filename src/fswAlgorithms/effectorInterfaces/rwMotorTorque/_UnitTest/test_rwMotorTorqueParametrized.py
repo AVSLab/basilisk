@@ -40,6 +40,7 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport
 from Basilisk.fswAlgorithms import rwMotorTorque
 from Basilisk.utilities import macros
+from Basilisk.utilities import simHelpers
 from Basilisk.architecture import messaging
 from Support import results_rwMotorTorque
 
@@ -253,10 +254,10 @@ def rwMotorTorqueTest(show_plots, numControlAxes, numWheels, RWAvailMsg):
     snippetTex = "Requested:\t" + requestedTex + "\n"
     snippetTex += "Received:\t" + receivedTex + "\n"
 
-    unitTestSupport.writeTeXSnippet(snippetName, snippetTex, path)
+    simHelpers.writeTeXSnippet(snippetName, snippetTex, path)
 
     #   print out success message if no error were found
-    unitTestSupport.writeTeXSnippet('toleranceValue', str(accuracy), path)
+    simHelpers.writeTeXSnippet('toleranceValue', str(accuracy), path)
 
     snippentName = "passFail_"+str(numControlAxes) + str(numWheels) + RWAvailMsg
     if testFailCount == 0:
@@ -267,7 +268,7 @@ def rwMotorTorqueTest(show_plots, numControlAxes, numWheels, RWAvailMsg):
         colorText = 'Red'
         print("Failed: " + module.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
-    unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
+    simHelpers.writeTeXSnippet(snippentName, passedText, path)
 
 
     # each test method requires a single assert method to be called

@@ -98,12 +98,12 @@ from Basilisk.simulation import spacecraft
 from Basilisk.simulation import svIntegrators
 from Basilisk.simulation import thrusterStateEffector
 # import general simulation support files
+from Basilisk.utilities import simHelpers
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.utilities import simIncludeThruster
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 # attempt to import vizard
 from Basilisk.utilities import vizSupport
 
@@ -147,7 +147,7 @@ def run(show_plots):
          0., 800., 0.,
          0., 0., 600.]
     scObject.hub.mHub = 750.0  # kg - spacecraft mass
-    scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
+    scObject.hub.IHubPntBc_B = simHelpers.np2EigenMatrix3d(I)
 
     # add spacecraft object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
@@ -268,7 +268,7 @@ def run(show_plots):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = simHelpers.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
     mrpLog = mrpControl.cmdTorqueOutMsg.recorder(samplingTime)
     attErrLog = attError.attGuidOutMsg.recorder(samplingTime)
     snAttLog = sNavObject.attOutMsg.recorder(samplingTime)
@@ -328,8 +328,8 @@ def run(show_plots):
 
     # Next, the state manager objects are called to retrieve the latest inertial position and
     # velocity vector components:
-    rVt = unitTestSupport.EigenVector3d2np(posRef.getState())
-    vVt = unitTestSupport.EigenVector3d2np(velRef.getState())
+    rVt = simHelpers.EigenVector3d2np(posRef.getState())
+    vVt = simHelpers.EigenVector3d2np(velRef.getState())
 
     # Hohmann Transfer to GEO
     v0 = np.linalg.norm(vVt)
@@ -353,8 +353,8 @@ def run(show_plots):
     scSim.ExecuteSimulation()
 
     # get the current spacecraft states
-    rVt = unitTestSupport.EigenVector3d2np(posRef.getState())
-    vVt = unitTestSupport.EigenVector3d2np(velRef.getState())
+    rVt = simHelpers.EigenVector3d2np(posRef.getState())
+    vVt = simHelpers.EigenVector3d2np(velRef.getState())
 
     # Find the time from current orbital position to apogee
     oe1 = orbitalMotion.rv2elem(mu, rVt, vVt)
@@ -369,8 +369,8 @@ def run(show_plots):
     scSim.ExecuteSimulation()
 
     # get the current spacecraft states
-    rVt = unitTestSupport.EigenVector3d2np(posRef.getState())
-    vVt = unitTestSupport.EigenVector3d2np(velRef.getState())
+    rVt = simHelpers.EigenVector3d2np(posRef.getState())
+    vVt = simHelpers.EigenVector3d2np(velRef.getState())
 
     # Compute second Delta-v maneuver
     v1 = np.linalg.norm(vVt)
@@ -413,7 +413,7 @@ def run(show_plots):
     ax.ticklabel_format(useOffset=False, style='plain')
     for idx in range(3):
         plt.plot(dataRec.times() * macros.NANO2HOUR, posData[:, idx] / 1000.,
-                 color=unitTestSupport.getLineColor(idx, 3),
+                 color=simHelpers.getLineColor(idx, 3),
                  label='$r_{BN,' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [h]')

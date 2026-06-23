@@ -72,9 +72,13 @@ import numpy as np
 from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import etSphericalControl
 from Basilisk.simulation import simpleNav, spacecraft, extForceTorque, msmForceTorque
-from Basilisk.utilities import (SimulationBaseClass, macros,
-                                orbitalMotion, simIncludeGravBody,
-                                unitTestSupport, vizSupport)
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    macros,
+    orbitalMotion,
+    simIncludeGravBody,
+    vizSupport,
+)
 
 try:
     from Basilisk.simulation import vizInterface
@@ -85,6 +89,7 @@ except ImportError:
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
 from Basilisk import __path__
+from Basilisk.utilities import simHelpers
 
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
@@ -174,9 +179,9 @@ def run(show_plots):
 
     # add spacecraft to state
     MSMmodule.addSpacecraftToModel(scObjectServicer.scStateOutMsg, messaging.DoubleVector(rListServicer),
-                                   unitTestSupport.npList2EigenXdVector(spPosListServicer))
+                                   simHelpers.npList2EigenXdVector(spPosListServicer))
     MSMmodule.addSpacecraftToModel(scObjectDebris.scStateOutMsg, messaging.DoubleVector(rListDebris),
-                                   unitTestSupport.npList2EigenXdVector(spPosListDebris))
+                                   simHelpers.npList2EigenXdVector(spPosListDebris))
 
     # subscribe input messages to module
     MSMmodule.voltInMsgs[0].subscribeTo(voltServicerInMsg)

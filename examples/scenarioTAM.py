@@ -119,8 +119,13 @@ from Basilisk.simulation import magnetometer
 
 # general support file with common unit test functions
 # import general simulation support files
-from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
-                                simIncludeGravBody, unitTestSupport)
+from Basilisk.utilities import simHelpers
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    macros,
+    orbitalMotion,
+    simIncludeGravBody,
+)
 from Basilisk.utilities import simSetPlanetEnvironment
 from Basilisk.utilities.supportDataTools.dataFetcher import get_path, DataFile
 
@@ -197,7 +202,7 @@ def run(show_plots, orbitCase, planetCase, useBias, useBounds):
         wmm_path = get_path(DataFile.MagneticFieldData.WMM)
         magModule.configureWMMFile(str(wmm_path))
         # set epoch date/time message
-        epochMsg = unitTestSupport.timeStringToGregorianUTCMsg('2019 June 27, 10:23:0.0 (UTC)')
+        epochMsg = simHelpers.timeStringToGregorianUTCMsg('2019 June 27, 10:23:0.0 (UTC)')
         magModule.epochInMsg.subscribeTo(epochMsg)
         if orbitCase == 'elliptical':
             magModule.envMinReach = 10000 * 1000.
@@ -263,7 +268,7 @@ def run(show_plots, orbitCase, planetCase, useBias, useBounds):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = simHelpers.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
     magLog = magModule.envOutMsgs[0].recorder(samplingTime)
     tamLog = TAM.tamDataOutMsg.recorder(samplingTime)
     dataLog = scObject.scStateOutMsg.recorder(samplingTime)
@@ -330,7 +335,7 @@ def run(show_plots, orbitCase, planetCase, useBias, useBounds):
     ax.get_yaxis().set_major_formatter(plt.FuncFormatter(lambda x, loc: "{:,}".format(int(x))))
     for idx in range(3):
         plt.plot(timeAxis * macros.NANO2SEC / P, tamData[:, idx] * 1e9,
-                 color=unitTestSupport.getLineColor(idx, 3),
+                 color=simHelpers.getLineColor(idx, 3),
                  label=r'$TAM_{' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [orbits]')

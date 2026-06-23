@@ -27,8 +27,8 @@ from Basilisk.utilities import simIncludeGravBody
 from Basilisk.architecture import messaging
 from Basilisk.simulation import pinholeCamera
 from Basilisk.simulation import spacecraft
-from Basilisk.utilities import unitTestSupport
 from Basilisk import __path__
+from Basilisk.utilities import simHelpers
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -135,7 +135,7 @@ def test_visibility():
 
     # Log the landmark messages
     numDataPoints = 2
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = simHelpers.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
     dataLog = []
     for i in range(len(pos_lmk)):
         dataLog.append(camera.landmarkOutMsgs[i].recorder(samplingTime))

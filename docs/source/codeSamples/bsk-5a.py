@@ -24,7 +24,7 @@ from Basilisk.architecture import messaging
 from Basilisk.moduleTemplates import cppModuleTemplate
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
-from Basilisk.utilities import unitTestSupport
+from Basilisk.utilities import simHelpers
 
 
 def make_graphviz_figure(scSim, inputMsg, show_plots=False):
@@ -32,7 +32,7 @@ def make_graphviz_figure(scSim, inputMsg, show_plots=False):
     if shutil.which("dot") is None:
         return None
 
-    return unitTestSupport.saveScenarioGraphvizFigure(
+    return simHelpers.saveScenarioGraphvizFigure(
         "bsk-5a-graphviz",
         scSim,
         os.path.dirname(os.path.abspath(__file__)),

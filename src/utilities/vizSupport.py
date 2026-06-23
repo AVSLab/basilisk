@@ -24,7 +24,7 @@ from Basilisk.architecture import messaging
 from Basilisk.simulation import spacecraft
 from Basilisk.utilities import deprecated
 from Basilisk.utilities import quadMapSupport as qms
-from Basilisk.utilities import unitTestSupport
+from Basilisk.utilities import simHelpers
 from matplotlib import colors
 from matplotlib.colors import is_color_like
 from typing import Optional, Sequence
@@ -268,7 +268,7 @@ def addLocation(
         try:
             vizElement.r_GP_P = r_GP_P
         except TypeError:
-            vizElement.r_GP_P = unitTestSupport.EigenVector3d2np(r_GP_P).tolist()
+            vizElement.r_GP_P = simHelpers.EigenVector3d2np(r_GP_P).tolist()
     if lla_GP is not None:
         # find gravity body
         gravBody = next(
@@ -370,7 +370,7 @@ def changeLocation(
         try:
             vizElement.r_GP_P = r_GP_P
         except TypeError:
-            vizElement.r_GP_P = unitTestSupport.EigenVector3d2np(r_GP_P).tolist()
+            vizElement.r_GP_P = simHelpers.EigenVector3d2np(r_GP_P).tolist()
     if lla_GP is not None:
         # find gravity body
         gravBody = next(

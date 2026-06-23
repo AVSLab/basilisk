@@ -12,7 +12,11 @@ import numpy as np
 from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import horizonOpNav
 from Basilisk.utilities import RigidBodyKinematics as rbk
-from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    macros,
+)
+from Basilisk.utilities import simHelpers
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -367,8 +371,8 @@ def horizonOpNav_update():
 
     posErr = 1e-3 #(m)
     covarErr = 1e-5
-    unitTestSupport.writeTeXSnippet("toleranceValuePos", str(posErr), path)
-    unitTestSupport.writeTeXSnippet("toleranceValueVel", str(covarErr), path)
+    simHelpers.writeTeXSnippet("toleranceValuePos", str(posErr), path)
+    simHelpers.writeTeXSnippet("toleranceValueVel", str(covarErr), path)
 
     outputR = dataLog.r_BN_C
     outputCovar = dataLog.covar_C
@@ -394,7 +398,7 @@ def horizonOpNav_update():
         print("Failed: " + opNav.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
         print(testMessages)
-    unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
+    simHelpers.writeTeXSnippet(snippentName, passedText, path)
 
 
     return [testFailCount, ''.join(testMessages)]

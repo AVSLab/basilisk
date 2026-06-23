@@ -87,14 +87,19 @@ bskPath = __path__[0]
 from Basilisk.simulation import spacecraft
 # general support file with common unit test functions
 # import general simulation support files
-from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
-                                simIncludeGravBody, unitTestSupport)
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    macros,
+    orbitalMotion,
+    simIncludeGravBody,
+)
 from Basilisk.utilities import planetStates
 from numpy import array
 from numpy.linalg import norm
 
 # attempt to import vizard
 from Basilisk.utilities import vizSupport
+from Basilisk.utilities import simHelpers
 
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
@@ -212,7 +217,7 @@ def run(show_plots, useCentral):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = simHelpers.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
     dataLog = scObject.scStateOutMsg.recorder(samplingTime)
     plLog = spiceObject.planetStateOutMsgs[0].recorder(samplingTime)
     scSim.AddModelToTask(simTaskName, dataLog)
@@ -273,7 +278,7 @@ def run(show_plots, useCentral):
     ax.ticklabel_format(useOffset=False, style='plain')
     for idx in range(3):
         plt.plot(dataLog.times() * macros.NANO2SEC / P, posData[:, idx] / 1000.,
-                 color=unitTestSupport.getLineColor(idx, 3),
+                 color=simHelpers.getLineColor(idx, 3),
                  label='$r_{BN,' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [orbits]')

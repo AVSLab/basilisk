@@ -152,12 +152,10 @@ from Basilisk.simulation import eclipse
 from Basilisk.simulation import spacecraft
 
 # import general simulation support files
+from Basilisk.utilities import simHelpers
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros, simIncludeGravBody
 from Basilisk.utilities import orbitalMotion as om
-from Basilisk.utilities import (
-    unitTestSupport,
-)  # general support file with common unit test functions
 from Basilisk.utilities.supportDataTools.dataFetcher import DataFile, get_path
 
 bskPath = __path__[0]
@@ -241,7 +239,7 @@ def run(
         [0.0],
         [0.0],
     ]  # m - position vector of body-fixed point B relative to CM
-    scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
+    scObject.hub.IHubPntBc_B = simHelpers.np2EigenMatrix3d(I)
     if multiplePlanet:
         # Set initial spacecraft states
         scObject.hub.r_CN_NInit = [[0.0], [rLEO], [0.0]]  # m - r_CN_N
@@ -389,7 +387,7 @@ def run(
         scSim.ConfigureStopTime(T1)
         scSim.ExecuteSimulation()
         # get the current spacecraft states
-        vVt = unitTestSupport.EigenVector3d2np(velRef.getState())
+        vVt = simHelpers.EigenVector3d2np(velRef.getState())
         T2 = macros.sec2nano(1000.0)
         # Set second spacecraft states for decrease in altitude
         vVt = vVt + [0.0, 375300, 0.0]  # m - v_CN_N
@@ -441,7 +439,7 @@ def run(
                 dataAlb[:, idx],
                 linewidth=2,
                 alpha=0.7,
-                color=unitTestSupport.getLineColor(idx, 3),
+                color=simHelpers.getLineColor(idx, 3),
                 label="Albedo$_{" + str(idx) + "}$",
             )
             if not multiplePlanet:
@@ -450,7 +448,7 @@ def run(
                     dataCSS[:, idx],
                     "--",
                     linewidth=1.5,
-                    color=unitTestSupport.getLineColor(idx, 3),
+                    color=simHelpers.getLineColor(idx, 3),
                     label="CSS$_{" + str(idx) + "}$",
                 )
     else:
@@ -459,7 +457,7 @@ def run(
             dataAlb,
             linewidth=2,
             alpha=0.7,
-            color=unitTestSupport.getLineColor(0, 2),
+            color=simHelpers.getLineColor(0, 2),
             label="Alb$_{1}$",
         )
         if not multiplePlanet:
@@ -468,7 +466,7 @@ def run(
                 dataCSS,
                 "--",
                 linewidth=1.5,
-                color=unitTestSupport.getLineColor(1, 2),
+                color=simHelpers.getLineColor(1, 2),
                 label="CSS$_{1}$",
             )
     if multiplePlanet:

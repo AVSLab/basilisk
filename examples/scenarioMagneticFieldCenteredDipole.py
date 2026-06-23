@@ -161,12 +161,17 @@ from Basilisk.simulation import spacecraft
 from Basilisk.simulation import magneticFieldCenteredDipole
 # general support file with common unit test functions
 # import general simulation support files
-from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
-                                simIncludeGravBody, unitTestSupport)
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    macros,
+    orbitalMotion,
+    simIncludeGravBody,
+)
 from Basilisk.utilities import simSetPlanetEnvironment
 
 #attempt to import vizard
 from Basilisk.utilities import vizSupport
+from Basilisk.utilities import simHelpers
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 
@@ -296,7 +301,7 @@ def run(show_plots, orbitCase, planetCase):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = simHelpers.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
     magLog = magModule.envOutMsgs[0].recorder(samplingTime)
     dataLog = scObject.scStateOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(simTaskName, magLog)
@@ -342,7 +347,7 @@ def run(show_plots, orbitCase, planetCase):
     timeAxis = dataLog.times() * macros.NANO2SEC
     for idx in range(3):
         plt.plot(timeAxis / P, posData[:, idx] / 1000.,
-                 color=unitTestSupport.getLineColor(idx, 3),
+                 color=simHelpers.getLineColor(idx, 3),
                  label='$r_{BN,' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [orbits]')
@@ -358,7 +363,7 @@ def run(show_plots, orbitCase, planetCase):
     ax.get_yaxis().set_major_formatter(plt.FuncFormatter(lambda x, loc: "{:,}".format(int(x))))
     for idx in range(3):
         plt.plot(timeAxis / P, magData[:, idx] *1e9,
-                 color=unitTestSupport.getLineColor(idx, 3),
+                 color=simHelpers.getLineColor(idx, 3),
                  label=r'$B\_N_{' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [orbits]')
@@ -366,7 +371,7 @@ def run(show_plots, orbitCase, planetCase):
     if planetCase == 'Earth' and orbitCase == 'elliptical':
         for idx in range(3):
             plt.plot(timeAxis / P, magData2[:, idx] * 1e9, '--',
-                     color=unitTestSupport.getLineColor(idx, 3),
+                     color=simHelpers.getLineColor(idx, 3),
                      label=r'$B\_N_{' + str(idx) + '}$')
     pltName = fileName + "2" + orbitCase + planetCase
     figureList[pltName] = plt.figure(2)

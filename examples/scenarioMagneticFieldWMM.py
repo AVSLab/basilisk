@@ -142,12 +142,12 @@ from Basilisk.simulation import magneticFieldWMM
 
 # general support file with common unit test functions
 # import general simulation support files
+from Basilisk.utilities import simHelpers
 from Basilisk.utilities import (
     SimulationBaseClass,
     macros,
     orbitalMotion,
     simIncludeGravBody,
-    unitTestSupport,
 )
 from Basilisk.utilities.supportDataTools.dataFetcher import get_path, DataFile
 
@@ -214,7 +214,7 @@ def run(show_plots, orbitCase):
         magModule.envMaxReach = 20000 * 1000.0
 
     # set epoch date/time message
-    epochMsg = unitTestSupport.timeStringToGregorianUTCMsg(
+    epochMsg = simHelpers.timeStringToGregorianUTCMsg(
         "2019 June 27, 10:23:0.0 (UTC)"
     )
 
@@ -269,7 +269,7 @@ def run(show_plots, orbitCase):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = unitTestSupport.samplingTime(
+    samplingTime = simHelpers.samplingTime(
         simulationTime, simulationTimeStep, numDataPoints
     )
     dataLog = scObject.scStateOutMsg.recorder(samplingTime)
@@ -357,7 +357,7 @@ def run(show_plots, orbitCase):
         plt.plot(
             timeAxis / P,
             magData[:, idx] * 1e9,
-            color=unitTestSupport.getLineColor(idx, 3),
+            color=simHelpers.getLineColor(idx, 3),
             label=r"$B\_N_{" + str(idx) + "}$",
         )
     plt.legend(loc="lower right")

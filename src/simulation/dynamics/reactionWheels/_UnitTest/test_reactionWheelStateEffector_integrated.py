@@ -26,6 +26,7 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('simulation')
 
+from Basilisk.utilities import simHelpers
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 import matplotlib as mpl
@@ -264,10 +265,10 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
     unitTestSim.ExecuteSimulation()
 
-    orbAngMom_N = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totOrbAngMomPntN_N)
-    rotAngMom_N = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totRotAngMomPntC_N)
-    rotEnergy = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totRotEnergy)
-    orbEnergy = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totOrbEnergy)
+    orbAngMom_N = simHelpers.addTimeColumn(scObjectLog.times(), scObjectLog.totOrbAngMomPntN_N)
+    rotAngMom_N = simHelpers.addTimeColumn(scObjectLog.times(), scObjectLog.totRotAngMomPntC_N)
+    rotEnergy = simHelpers.addTimeColumn(scObjectLog.times(), scObjectLog.totRotEnergy)
+    orbEnergy = simHelpers.addTimeColumn(scObjectLog.times(), scObjectLog.totOrbEnergy)
 
     posData = scDataLog.r_BN_N
     sigmaData = scDataLog.sigma_BN
@@ -366,25 +367,25 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
         plt.plot(orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,1] - orbAngMom_N[0,1])/orbAngMom_N[0,1], orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,2] - orbAngMom_N[0,2])/orbAngMom_N[0,2], orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,3] - orbAngMom_N[0,3])/orbAngMom_N[0,3])
         plt.xlabel("Time (s)")
         plt.ylabel("Relative Difference")
-        unitTestSupport.writeFigureLaTeX("ChangeInOrbitalAngularMomentum" + testCase, "Change in Orbital Angular Momentum " + testCase, plt, r"width=0.8\textwidth", path)
+        simHelpers.writeFigureLaTeX("ChangeInOrbitalAngularMomentum" + testCase, "Change in Orbital Angular Momentum " + testCase, plt, r"width=0.8\textwidth", path)
         plt.figure()
         plt.clf()
         plt.plot(orbEnergy[:,0]*1e-9, (orbEnergy[:,1] - orbEnergy[0,1])/orbEnergy[0,1])
         plt.xlabel("Time (s)")
         plt.ylabel("Relative Difference")
-        unitTestSupport.writeFigureLaTeX("ChangeInOrbitalEnergy" + testCase, "Change in Orbital Energy " + testCase, plt, r"width=0.8\textwidth", path)
+        simHelpers.writeFigureLaTeX("ChangeInOrbitalEnergy" + testCase, "Change in Orbital Energy " + testCase, plt, r"width=0.8\textwidth", path)
         plt.figure()
         plt.clf()
         plt.plot(rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,1] - rotAngMom_N[0,1])/rotAngMom_N[0,1], rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,2] - rotAngMom_N[0,2])/rotAngMom_N[0,2], rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,3] - rotAngMom_N[0,3])/rotAngMom_N[0,3])
         plt.xlabel("Time (s)")
         plt.ylabel("Relative Difference")
-        unitTestSupport.writeFigureLaTeX("ChangeInRotationalAngularMomentum" + testCase, "Change in Rotational Angular Momentum " + testCase, plt, r"width=0.8\textwidth", path)
+        simHelpers.writeFigureLaTeX("ChangeInRotationalAngularMomentum" + testCase, "Change in Rotational Angular Momentum " + testCase, plt, r"width=0.8\textwidth", path)
         plt.figure()
         plt.clf()
         plt.plot(rotEnergy[int(len(rotEnergy)/2)+1:,0]*1e-9, (rotEnergy[int(len(rotEnergy)/2)+1:,1] - rotEnergy[int(len(rotEnergy)/2)+1,1])/rotEnergy[int(len(rotEnergy)/2)+1,1])
         plt.xlabel("Time (s)")
         plt.ylabel("Relative Difference")
-        unitTestSupport.writeFigureLaTeX("ChangeInRotationalEnergy" + testCase, "Change in Rotational Energy " + testCase, plt, r"width=0.8\textwidth", path)
+        simHelpers.writeFigureLaTeX("ChangeInRotationalEnergy" + testCase, "Change in Rotational Energy " + testCase, plt, r"width=0.8\textwidth", path)
         if show_plots:
             plt.show()
             plt.close('all')
@@ -397,7 +398,7 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
         plt.legend(loc='upper left', numpoints=1)
         plt.xlabel("Time (s)")
         plt.ylabel("Theta (rad)")
-        unitTestSupport.writeFigureLaTeX("ReactionWheelBOETheta", "Reaction Wheel BOE Theta", plt, r"width=0.8\textwidth", path)
+        simHelpers.writeFigureLaTeX("ReactionWheelBOETheta", "Reaction Wheel BOE Theta", plt, r"width=0.8\textwidth", path)
 
         plt.figure()
         plt.clf()
@@ -406,7 +407,7 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
         plt.legend(loc='upper right', numpoints=1)
         plt.xlabel("Time (s)")
         plt.ylabel("Body Rate (rad/s)")
-        unitTestSupport.writeFigureLaTeX("ReactionWheelBOEBodyRate", "Reaction Wheel BOE Body Rate", plt, r"width=0.8\textwidth", path)
+        simHelpers.writeFigureLaTeX("ReactionWheelBOEBodyRate", "Reaction Wheel BOE Body Rate", plt, r"width=0.8\textwidth", path)
 
         plt.figure()
         plt.clf()
@@ -415,7 +416,7 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
         plt.legend(loc ='upper left', numpoints=1)
         plt.xlabel("Time (s)")
         plt.ylabel("Wheel Speed (rad/s)")
-        unitTestSupport.writeFigureLaTeX("ReactionWheelBOERWRate", "Reaction Wheel BOE RW Rate", plt, r"width=0.8\textwidth", path)
+        simHelpers.writeFigureLaTeX("ReactionWheelBOERWRate", "Reaction Wheel BOE RW Rate", plt, r"width=0.8\textwidth", path)
         if show_plots:
             plt.show()
             plt.close('all')
@@ -426,7 +427,7 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
         plt.plot(scDataLog.times()*1e-9, omegaData[:,2], label='Basilisk')
         plt.xlabel("Time (s)")
         plt.ylabel("Body Rate (rad/s)")
-        unitTestSupport.writeFigureLaTeX("ReactionWheel" + testCase + "TestBodyRates", "Reaction Wheel " + testCase + " Test Body Rates", plt, r"width=0.8\textwidth", path)
+        simHelpers.writeFigureLaTeX("ReactionWheel" + testCase + "TestBodyRates", "Reaction Wheel " + testCase + " Test Body Rates", plt, r"width=0.8\textwidth", path)
 
         plt.figure()
         plt.clf()
@@ -435,7 +436,7 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
         plt.legend(loc='upper right')
         plt.xlabel("Time (s)")
         plt.ylabel("Wheel Speed (rad/s)")
-        unitTestSupport.writeFigureLaTeX("ReactionWheel" + testCase + "TestWheelSpeed", "Reaction Wheel " + testCase + " Test Wheel Speed", plt, r"width=0.8\textwidth", path)
+        simHelpers.writeFigureLaTeX("ReactionWheel" + testCase + "TestWheelSpeed", "Reaction Wheel " + testCase + " Test Wheel Speed", plt, r"width=0.8\textwidth", path)
 
         print(wheelSpeedBeforeInteg1)
         print(frictionTorque1)
@@ -448,7 +449,7 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
         plt.ylabel("Friction Torque (N-m)")
         axes = plt.gca()
         plt.xlim([-15, 15])
-        unitTestSupport.writeFigureLaTeX("ReactionWheel" + testCase + "TestFrictionTorque", "Reaction Wheel " + testCase + " Test Friction Torque", plt, r"width=0.8\textwidth", path)
+        simHelpers.writeFigureLaTeX("ReactionWheel" + testCase + "TestFrictionTorque", "Reaction Wheel " + testCase + " Test Friction Torque", plt, r"width=0.8\textwidth", path)
         if show_plots:
             plt.show()
             plt.close('all')
@@ -516,13 +517,13 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
         passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
         # Write some snippets for AutoTex
         snippetName = testCase + 'PassFail'
-        unitTestSupport.writeTeXSnippet(snippetName, passedText, path)
+        simHelpers.writeTeXSnippet(snippetName, passedText, path)
     elif testCase == 'JitterSimple' and testFailCount > 0:
         colorText = 'Red'
         passedText = r'\textcolor{' + colorText + '}{' + "FAILED" + '}'
         # Write some snippets for AutoTex
         snippetName = testCase + 'PassFail'
-        unitTestSupport.writeTeXSnippet(snippetName, passedText, path)
+        simHelpers.writeTeXSnippet(snippetName, passedText, path)
 
     assert testFailCount < 1, testMessages
 

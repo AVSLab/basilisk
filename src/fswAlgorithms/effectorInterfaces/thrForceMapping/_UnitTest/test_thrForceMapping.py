@@ -36,6 +36,7 @@ from Basilisk.utilities import unitTestSupport                  # general suppor
 from Basilisk.fswAlgorithms import thrForceMapping
 from Basilisk.utilities import macros
 from Basilisk.utilities import fswSetupThrusters
+from Basilisk.utilities import simHelpers
 from Basilisk.architecture import messaging
 
 import numpy as np
@@ -360,17 +361,17 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
     # Any solutions that dont have the correct torque, but do have the correct unit direction are called successful.
 
     if testFailCount > 0:
-        unitTestSupport.writeTeXSnippet(directory+"Failed/"+snippetName, snippetTex, path)
+        simHelpers.writeTeXSnippet(directory+"Failed/"+snippetName, snippetTex, path)
         print("FAILED: " + module.ModelTag)
         testMessages.append("FAILED: " + module.ModelTag + " Module failed  unit test at t=" +
                             str(dataLog.times()[0] * macros.NANO2SEC) +
                             "sec\n")
     else:
-        unitTestSupport.writeTeXSnippet(directory+"/Passed/" + snippetName, snippetTex, path)
+        simHelpers.writeTeXSnippet(directory+"/Passed/" + snippetName, snippetTex, path)
         print("PASSED: " + module.ModelTag)
 
 
-    unitTestSupport.writeTeXSnippet('toleranceValue', str(accuracy), path)
+    simHelpers.writeTeXSnippet('toleranceValue', str(accuracy), path)
 
     snippentName = "passFail_" + str(useDVThruster) + "_" + str(useCOMOffset) + "_" + str(dropThruster) + "_" + str(
         numControlAxis) + "_" + str(saturateThrusters) + "_" + str(misconfigThruster)
@@ -382,7 +383,7 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
         colorText = 'Red'
         print("Failed: " + module.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
-    unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
+    simHelpers.writeTeXSnippet(snippentName, passedText, path)
 
     if testFailCount > 0:
         print("Python:\t " + str(F))

@@ -20,7 +20,7 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from Basilisk.utilities import simHelpers
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -59,7 +59,7 @@ def StatesPlot(time, x, Pflat, show_plots):
 
 
 
-    unitTestSupport.writeFigureLaTeX('StatesPlot', 'State error and covariance', plt, 'height=0.9\\textwidth, keepaspectratio', path)
+    simHelpers.writeFigureLaTeX('StatesPlot', 'State error and covariance', plt, 'height=0.9\\textwidth, keepaspectratio', path)
     if show_plots:
         plt.show()
     plt.close('all')
@@ -110,7 +110,7 @@ def StatesPlotCompare(x, x2, Pflat, Pflat2, show_plots):
 
 
 
-    unitTestSupport.writeFigureLaTeX('StatesCompare', 'State error and covariance vs expected Values', plt, 'height=0.9\\textwidth, keepaspectratio', path)
+    simHelpers.writeFigureLaTeX('StatesCompare', 'State error and covariance vs expected Values', plt, 'height=0.9\\textwidth, keepaspectratio', path)
 
     if show_plots:
         plt.show()
@@ -196,7 +196,7 @@ def PostFitResiduals(time, Res, noise, show_plots):
     plt.title('Eight CSS')
     plt.grid()
 
-    unitTestSupport.writeFigureLaTeX('PostFit', 'Post Fit Residuals', plt, 'height=0.9\\textwidth, keepaspectratio', path)
+    simHelpers.writeFigureLaTeX('PostFit', 'Post Fit Residuals', plt, 'height=0.9\\textwidth, keepaspectratio', path)
 
     if show_plots:
         plt.show()
@@ -223,7 +223,7 @@ def StatesVsExpected(stateLog, expectedStateArray, show_plots):
     plt.title('Second LOS component')
     plt.grid()
 
-    unitTestSupport.writeFigureLaTeX('StatesExpected', 'States vs true states in static case', plt, 'height=0.9\\textwidth, keepaspectratio', path)
+    simHelpers.writeFigureLaTeX('StatesExpected', 'States vs true states in static case', plt, 'height=0.9\\textwidth, keepaspectratio', path)
 
     if show_plots:
         plt.show()
@@ -260,7 +260,7 @@ def StatesVsTargets(time, target1, target2, stateLog, show_plots):
 
 
 
-    unitTestSupport.writeFigureLaTeX('StatesTarget', 'States tracking target values', plt, 'height=0.9\\textwidth, keepaspectratio', path)
+    simHelpers.writeFigureLaTeX('StatesTarget', 'States tracking target values', plt, 'height=0.9\\textwidth, keepaspectratio', path)
 
     if show_plots:
         plt.show()
@@ -290,7 +290,7 @@ def OmegaVsExpected(omegaExp, omegaSim, show_plots):
 
 
 
-    unitTestSupport.writeFigureLaTeX('StatesTarget', 'States tracking target values', plt, 'height=0.9\\textwidth, keepaspectratio', path)
+    simHelpers.writeFigureLaTeX('StatesTarget', 'States tracking target values', plt, 'height=0.9\\textwidth, keepaspectratio', path)
 
     if show_plots:
         plt.show()

@@ -231,9 +231,9 @@ from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.utilities import simIncludeThruster
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 # attempt to import vizard
 from Basilisk.utilities import vizSupport
+from Basilisk.utilities import simHelpers
 
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
@@ -244,7 +244,7 @@ def plot_attitude_error(timeDataFSW, dataSigmaBR):
     plt.figure(1)
     for idx in range(3):
         plt.plot(timeDataFSW, dataSigmaBR[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
+                 color=simHelpers.getLineColor(idx, 3),
                  label=r'$\sigma_' + str(idx) + '$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
@@ -255,7 +255,7 @@ def plot_rate_error(timeDataFSW, dataOmegaBR):
     plt.figure(2)
     for idx in range(3):
         plt.plot(timeDataFSW, dataOmegaBR[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
+                 color=simHelpers.getLineColor(idx, 3),
                  label=r'$\omega_{BR,' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
@@ -266,7 +266,7 @@ def plot_requested_torque(timeDataFSW, dataLr):
     plt.figure(3)
     for idx in range(3):
         plt.plot(timeDataFSW, dataLr[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
+                 color=simHelpers.getLineColor(idx, 3),
                  label=r'$L_{r,' + str(idx) + r'}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
@@ -277,7 +277,7 @@ def plot_thrForce(timeDataFSW, dataMap, numTh):
     plt.figure(4)
     for idx in range(numTh):
         plt.plot(timeDataFSW, dataMap[:, idx],
-                 color=unitTestSupport.getLineColor(idx, numTh),
+                 color=simHelpers.getLineColor(idx, numTh),
                  label=r'$thrForce_{' + str(idx) + r'}$'
                  )
     plt.legend(loc='lower right')
@@ -289,7 +289,7 @@ def plot_OnTimeRequest(timeDataFSW, dataSchm, numTh):
     plt.figure(5)
     for idx in range(numTh):
         plt.plot(timeDataFSW, dataSchm[:, idx],
-                 color=unitTestSupport.getLineColor(idx, numTh),
+                 color=simHelpers.getLineColor(idx, numTh),
                  label=r'$OnTimeRequest_{' + str(idx) + r'}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
@@ -344,7 +344,7 @@ def run(show_plots, useDVThrusters):
          0., 0., 600.]
     scObject.hub.mHub = 750.0  # kg - spacecraft mass
     scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
-    scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
+    scObject.hub.IHubPntBc_B = simHelpers.np2EigenMatrix3d(I)
 
     # add spacecraft object to the simulation process
     scSim.AddModelToTask(dynTaskName, scObject)
@@ -581,7 +581,7 @@ def run(show_plots, useDVThrusters):
     #
 
     numDataPoints = 100
-    samplingTime = unitTestSupport.samplingTime(simulationTime, fswTimeStep, numDataPoints)
+    samplingTime = simHelpers.samplingTime(simulationTime, fswTimeStep, numDataPoints)
     mrpTorqueLog = mrpControl.cmdTorqueOutMsg.recorder(samplingTime)
     attErrorLog = attError.attGuidOutMsg.recorder(samplingTime)
     snTransLog = sNavObject.transOutMsg.recorder(samplingTime)

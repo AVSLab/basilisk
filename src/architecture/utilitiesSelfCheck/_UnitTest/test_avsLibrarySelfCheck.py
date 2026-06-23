@@ -26,7 +26,7 @@ import os
 
 import pytest
 from Basilisk.architecture import avsLibrarySelfCheck
-from Basilisk.utilities import unitTestSupport
+from Basilisk.utilities import simHelpers
 
 
 @pytest.mark.parametrize("testName",
@@ -87,11 +87,11 @@ def unitAVSLibrarySelfCheck(testName):
     path = os.path.dirname(os.path.abspath(__file__))
 
     snippetMsgName = fileName + 'Msg-' + testName
-    unitTestSupport.writeTeXSnippet(snippetMsgName, snippetContent, path + "/../_Documentation/")
+    simHelpers.writeTeXSnippet(snippetMsgName, snippetContent, path + "/../_Documentation/")
 
     snippetPassFailName = fileName + 'TestMsg-' + testName
     snippetContent = r'\textcolor{' + colorText + '}{' + passFailText + '}'
-    unitTestSupport.writeTeXSnippet(snippetPassFailName, snippetContent, path + "/../_Documentation/")
+    simHelpers.writeTeXSnippet(snippetPassFailName, snippetContent, path + "/../_Documentation/")
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found

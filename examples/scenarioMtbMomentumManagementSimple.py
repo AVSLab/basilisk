@@ -100,9 +100,15 @@ from Basilisk.simulation import (reactionWheelStateEffector,
                                  simpleNav,
                                  magneticFieldWMM, magnetometer, MtbEffector,
                                  spacecraft)
-from Basilisk.utilities import (SimulationBaseClass, macros,
-                                orbitalMotion, simIncludeGravBody,
-                                simIncludeRW, unitTestSupport, vizSupport)
+from Basilisk.utilities import simHelpers
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    macros,
+    orbitalMotion,
+    simIncludeGravBody,
+    simIncludeRW,
+    vizSupport,
+)
 from Basilisk.utilities.supportDataTools.dataFetcher import get_path, DataFile
 
 bskPath = __path__[0]
@@ -115,7 +121,7 @@ def plot_attitude_error(timeData, dataSigmaBR):
     plt.figure(1)
     for idx in range(3):
         plt.plot(timeData, dataSigmaBR[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
+                 color=simHelpers.getLineColor(idx, 3),
                  label=r'$\sigma_' + str(idx) + '$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
@@ -128,7 +134,7 @@ def plot_rw_cmd_torque(timeData, dataUsReq, numRW):
     for idx in range(3):
         plt.plot(timeData, dataUsReq[:, idx],
                  '--',
-                 color=unitTestSupport.getLineColor(idx, numRW),
+                 color=simHelpers.getLineColor(idx, numRW),
                  label=r'$\hat u_{s,' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
@@ -141,10 +147,10 @@ def plot_rw_motor_torque(timeData, dataUsReq, dataRW, numRW):
     for idx in range(numRW):
         plt.plot(timeData, dataUsReq[:, idx],
                  '--',
-                 color=unitTestSupport.getLineColor(idx, numRW),
+                 color=simHelpers.getLineColor(idx, numRW),
                  label=r'$\hat u_{s,' + str(idx) + '}$')
         plt.plot(timeData, dataRW[idx],
-                 color=unitTestSupport.getLineColor(idx, numRW),
+                 color=simHelpers.getLineColor(idx, numRW),
                  label='$u_{s,' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
@@ -156,7 +162,7 @@ def plot_rate_error(timeData, dataOmegaBR):
     plt.figure(3)
     for idx in range(3):
         plt.plot(timeData, dataOmegaBR[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
+                 color=simHelpers.getLineColor(idx, 3),
                  label=r'$\omega_{BR,' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
@@ -168,7 +174,7 @@ def plot_rw_speeds(timeData, dataOmegaRW, numRW):
     plt.figure(4)
     for idx in range(numRW):
         plt.plot(timeData, dataOmegaRW[:, idx] / macros.RPM,
-                 color=unitTestSupport.getLineColor(idx, numRW),
+                 color=simHelpers.getLineColor(idx, numRW),
                  label=r'$\Omega_{' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
@@ -180,7 +186,7 @@ def plot_magnetic_field(timeData, dataMagField):
     plt.figure(5)
     for idx in range(3):
         plt.plot(timeData, dataMagField[:, idx] * 1e9,
-                 color=unitTestSupport.getLineColor(idx, 3),
+                 color=simHelpers.getLineColor(idx, 3),
                  label=r'$B\_N_{' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
@@ -192,7 +198,7 @@ def plot_data_tam(timeData, dataTam):
     plt.figure(6)
     for idx in range(3):
         plt.plot(timeData, dataTam[:, idx] * 1e9,
-                 color=unitTestSupport.getLineColor(idx, 3),
+                 color=simHelpers.getLineColor(idx, 3),
                  label=r'$TAM\_S_{' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
@@ -204,7 +210,7 @@ def plot_data_tam_comm(timeData, dataTamComm):
     plt.figure(7)
     for idx in range(3):
         plt.plot(timeData, dataTamComm[:, idx] * 1e9,
-                 color=unitTestSupport.getLineColor(idx, 3),
+                 color=simHelpers.getLineColor(idx, 3),
                  label=r'$TAM\_B_{' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
@@ -216,7 +222,7 @@ def plot_data_mtb_momentum_management(timeData, dataMtbMomentumManegement, numMT
     plt.figure(8)
     for idx in range(numMTB):
         plt.plot(timeData, dataMtbMomentumManegement[:, idx],
-                 color=unitTestSupport.getLineColor(idx, numMTB),
+                 color=simHelpers.getLineColor(idx, numMTB),
                  label=r'$MTB\_T_{' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
@@ -229,7 +235,7 @@ def plot_data_rw_motor_torque_desired(dataUsReq, tauRequested_W, numRW):
     plt.figure(9)
     for idx in range(numRW):
         plt.plot(tauRequested_W[idx],
-                 color=unitTestSupport.getLineColor(idx, numRW),
+                 color=simHelpers.getLineColor(idx, numRW),
                  label='$u_{s,' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
@@ -277,7 +283,7 @@ def run(show_plots):
          0., 0., 0.1256 / 3]
     scObject.hub.mHub = 10.0  # kg - spacecraft mass
     scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
-    scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
+    scObject.hub.IHubPntBc_B = simHelpers.np2EigenMatrix3d(I)
 
     # add spacecraft object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject, 1)
@@ -350,7 +356,7 @@ def run(show_plots):
     magModule.ModelTag = "WMM"
     wmm_path = get_path(DataFile.MagneticFieldData.WMM)
     magModule.configureWMMFile(str(wmm_path))
-    epochMsg = unitTestSupport.timeStringToGregorianUTCMsg('2019 June 27, 10:23:0.0 (UTC)')
+    epochMsg = simHelpers.timeStringToGregorianUTCMsg('2019 June 27, 10:23:0.0 (UTC)')
     magModule.epochInMsg.subscribeTo(epochMsg)
     magModule.addSpacecraftToModel(scObject.scStateOutMsg)  # this command can be repeated if multiple
     scSim.AddModelToTask(simTaskName, magModule)
@@ -483,7 +489,7 @@ def run(show_plots):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 200
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = simHelpers.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
     rwMotorLog = rwMotorTorqueObj.rwMotorTorqueOutMsg.recorder(samplingTime)
     attErrorLog = attError.attGuidOutMsg.recorder(samplingTime)
     magLog = magModule.envOutMsgs[0].recorder(samplingTime)

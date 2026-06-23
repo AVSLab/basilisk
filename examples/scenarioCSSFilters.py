@@ -265,10 +265,14 @@ import numpy as np
 from Basilisk import __path__
 bskPath = __path__[0]
 
-from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    macros,
+)
 import matplotlib.pyplot as plt
 from Basilisk.utilities import orbitalMotion as om
 from Basilisk.utilities import RigidBodyKinematics as rbk
+from Basilisk.utilities import simHelpers
 
 from Basilisk.simulation import spacecraft, coarseSunSensor
 from Basilisk.fswAlgorithms import sunlineUKF, sunlineEKF, okeefeEKF, sunlineSEKF, sunlineSuKF
@@ -419,7 +423,7 @@ def run(saveFigures, show_plots, FilterType, simTime):
          0., 0., 600.]
     scObject.hub.mHub = 750.0                   # kg - spacecraft mass
     scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]] # m - position vector of body-fixed point B relative to CM
-    scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
+    scObject.hub.IHubPntBc_B = simHelpers.np2EigenMatrix3d(I)
 
     #
     # set initial spacecraft states

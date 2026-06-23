@@ -21,7 +21,8 @@ import pytest
 
 from Basilisk.architecture import bskLogging
 from Basilisk.simulation import spaceWeatherData
-from Basilisk.utilities import SimulationBaseClass, macros, unitTestSupport
+from Basilisk.utilities import simHelpers
+from Basilisk.utilities import SimulationBaseClass, macros
 from Basilisk.architecture.bskLogging import BasiliskError
 
 
@@ -67,7 +68,7 @@ def test_space_weather_data_celestrak_example_columns():
         module.loadSpaceWeatherFile(str(file_path))
 
         timeInitString = "2026 March 04 21:48:00.000000"
-        epochMsg = unitTestSupport.timeStringToGregorianUTCMsg(timeInitString)
+        epochMsg = simHelpers.timeStringToGregorianUTCMsg(timeInitString)
         module.epochInMsg.subscribeTo(epochMsg)
 
         sim.AddModelToTask(unit_task_name, module)
@@ -133,7 +134,7 @@ def test_space_weather_data_stops_at_first_invalid_row():
         module.loadSpaceWeatherFile(str(file_path))
 
         timeInitString = "2026 March 04 21:48:00.000000"
-        epochMsg = unitTestSupport.timeStringToGregorianUTCMsg(timeInitString)
+        epochMsg = simHelpers.timeStringToGregorianUTCMsg(timeInitString)
         module.epochInMsg.subscribeTo(epochMsg)
 
         sim.AddModelToTask(unit_task_name, module)
@@ -291,7 +292,7 @@ def test_reset_error_when_epoch_before_table():
         module.loadSpaceWeatherFile(str(file_path))
 
         # epoch one day before the table start — D0 = 2026-02-27, not in table
-        epochMsg = unitTestSupport.timeStringToGregorianUTCMsg("2026 February 27 00:00:00.000000")
+        epochMsg = simHelpers.timeStringToGregorianUTCMsg("2026 February 27 00:00:00.000000")
         module.epochInMsg.subscribeTo(epochMsg)
         sim.AddModelToTask(unit_task_name, module)
 
@@ -333,7 +334,7 @@ def test_stale_output_retained_on_missing_day():
         module.loadSpaceWeatherFile(str(file_path))
 
         # epoch on the last day in the table; after 24 h D0 = 2026-03-05 (absent)
-        epochMsg = unitTestSupport.timeStringToGregorianUTCMsg("2026 March 04 00:00:00.000000")
+        epochMsg = simHelpers.timeStringToGregorianUTCMsg("2026 March 04 00:00:00.000000")
         module.epochInMsg.subscribeTo(epochMsg)
         sim.AddModelToTask(unit_task_name, module)
 
@@ -390,7 +391,7 @@ def test_space_weather_data_epoch_update():
         module.loadSpaceWeatherFile(str(file_path))
 
         timeInitString = "2026 March 03 18:48:00.000000"
-        epochMsg = unitTestSupport.timeStringToGregorianUTCMsg(timeInitString)
+        epochMsg = simHelpers.timeStringToGregorianUTCMsg(timeInitString)
         module.epochInMsg.subscribeTo(epochMsg)
 
         sim.AddModelToTask(unit_task_name, module)
@@ -618,7 +619,7 @@ def test_valid_date_feb_29_leap_accepted():
         file_path.write_text(csv_text)
         module.loadSpaceWeatherFile(str(file_path))
 
-        epochMsg = unitTestSupport.timeStringToGregorianUTCMsg("2024 March 02 12:00:00.000000")
+        epochMsg = simHelpers.timeStringToGregorianUTCMsg("2024 March 02 12:00:00.000000")
         module.epochInMsg.subscribeTo(epochMsg)
         sim.AddModelToTask(unit_task_name, module)
 
@@ -761,7 +762,7 @@ def test_failed_reload_preserves_previous_table():
             module.loadSpaceWeatherFile(str(bad_path))
 
         # Table from the good file must still be intact
-        epochMsg = unitTestSupport.timeStringToGregorianUTCMsg("2026 March 04 21:48:00.000000")
+        epochMsg = simHelpers.timeStringToGregorianUTCMsg("2026 March 04 21:48:00.000000")
         module.epochInMsg.subscribeTo(epochMsg)
         sim.AddModelToTask(unit_task_name, module)
         recorder = module.swDataOutMsgs[0].recorder()

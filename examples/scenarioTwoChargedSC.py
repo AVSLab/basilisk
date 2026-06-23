@@ -72,13 +72,20 @@ import matplotlib.pyplot as plt
 import numpy as np
 from Basilisk.architecture import messaging
 from Basilisk.simulation import spacecraft, extForceTorque, msmForceTorque
-from Basilisk.utilities import (SimulationBaseClass, macros,
-                                orbitalMotion, simIncludeGravBody,
-                                unitTestSupport, RigidBodyKinematics, vizSupport, SpherePlot)
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    macros,
+    orbitalMotion,
+    simIncludeGravBody,
+    RigidBodyKinematics,
+    vizSupport,
+    SpherePlot,
+)
 
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
 from Basilisk import __path__
+from Basilisk.utilities import simHelpers
 
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
@@ -184,9 +191,9 @@ def run(show_plots):
 
     # add spacecraft to state
     MSMmodule.addSpacecraftToModel(scObjectLeader.scStateOutMsg, messaging.DoubleVector(rListLeader),
-                                   unitTestSupport.npList2EigenXdVector(spPosListLeader_H))
+                                   simHelpers.npList2EigenXdVector(spPosListLeader_H))
     MSMmodule.addSpacecraftToModel(scObjectFollower.scStateOutMsg, messaging.DoubleVector(rListFollower),
-                                   unitTestSupport.npList2EigenXdVector(spPosListFollower_H))
+                                   simHelpers.npList2EigenXdVector(spPosListFollower_H))
 
     # subscribe input messages to module
     MSMmodule.voltInMsgs[0].subscribeTo(voltLeaderInMsg)
@@ -264,8 +271,8 @@ def run(show_plots):
     scSim.ExecuteSimulation()
 
     # Retrieve the charge data of the spheres
-    LeaderSpCharges = unitTestSupport.columnToRowList(MSMmodule.chargeMsmOutMsgs[0].read().q)
-    FollowerSpCharges = unitTestSupport.columnToRowList(MSMmodule.chargeMsmOutMsgs[1].read().q)
+    LeaderSpCharges = simHelpers.columnToRowList(MSMmodule.chargeMsmOutMsgs[0].read().q)
+    FollowerSpCharges = simHelpers.columnToRowList(MSMmodule.chargeMsmOutMsgs[1].read().q)
 
     # retrieve the logged data from the recorders
     posDataL_N = dataRecL.r_BN_N
