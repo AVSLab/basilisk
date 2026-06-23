@@ -32,6 +32,7 @@ from Basilisk.simulation import motorThermal
 from Basilisk.simulation import reactionWheelStateEffector
 from Basilisk.simulation import spacecraft
 from Basilisk.architecture import messaging
+from Basilisk.architecture.bskLogging import BasiliskError
 from Basilisk.utilities import macros
 from Basilisk.utilities import simIncludeRW
 
@@ -319,8 +320,72 @@ def test_motorThermal_integration(show_plots):
     assert temperatures[-1] > temperatures[0], "a spinning, loaded wheel should heat the motor"
 
 
+def _baseConfiguredModel(unitTestSim, linkInput=True):
+    """A motorThermal module with every Reset() precondition satisfied."""
+    thermalModel = motorThermal.MotorThermal()
+    thermalModel.ModelTag = "rwThermals"
+    thermalModel.currentTemperature = 20.  # [Celsius]
+    thermalModel.efficiency = 0.5
+    thermalModel.ambientThermalResistance = THERMAL_RESISTANCE
+    thermalModel.motorHeatCapacity = HEAT_CAPACITY
+    if linkInput:
+        rwStateMsg = messaging.RWConfigLogMsg().write(messaging.RWConfigLogMsgPayload())
+        thermalModel.rwStateInMsg.subscribeTo(rwStateMsg)
+    unitTestSim.AddModelToTask("unitTask", thermalModel)
+    return thermalModel
+
+
+# (break, match) pairs covering each guard in MotorThermal::Reset. Each case
+# starts from a valid configuration and breaks exactly one precondition, so the
+# matched message confirms the intended guard fired.
+RESET_ERROR_CASES = [
+    ("rwStateInMsg not linked", "not linked"),
+    ("currentTemperature below absolute zero", "absolute zero"),
+    ("efficiency at or above one", "efficiency"),
+    ("efficiency at or below zero", "efficiency"),
+    ("ambientThermalResistance not positive", "thermal resistance"),
+    ("motorHeatCapacity not positive", "motor heat capacity"),
+]
+
+
+@pytest.mark.parametrize("brokenPrecondition, expectedMessage", RESET_ERROR_CASES,
+                         ids=[c[0] for c in RESET_ERROR_CASES])
+def test_motorThermal_resetErrors(show_plots, brokenPrecondition, expectedMessage):
+    r"""
+    **Validation Test Description**
+
+    Checks that :ref:`motorThermal` rejects an invalid configuration at
+    ``Reset()`` instead of running with it. Each case starts from a valid module
+    and breaks one precondition, then asserts that initialization raises a
+    ``BasiliskError`` naming the offending quantity. These guards were previously
+    untested.
+    """
+    unitTestSim = SimulationBaseClass.SimBaseClass()
+    process = unitTestSim.CreateNewProcess("TestProcess")
+    process.addTask(unitTestSim.CreateNewTask("unitTask", macros.sec2nano(DT)))
+
+    linkInput = brokenPrecondition != "rwStateInMsg not linked"
+    thermalModel = _baseConfiguredModel(unitTestSim, linkInput=linkInput)
+
+    if brokenPrecondition == "currentTemperature below absolute zero":
+        thermalModel.currentTemperature = -300.  # [Celsius]
+    elif brokenPrecondition == "efficiency at or above one":
+        thermalModel.efficiency = 1.0
+    elif brokenPrecondition == "efficiency at or below zero":
+        thermalModel.efficiency = 0.0
+    elif brokenPrecondition == "ambientThermalResistance not positive":
+        thermalModel.ambientThermalResistance = 0.  # [Celsius/W]
+    elif brokenPrecondition == "motorHeatCapacity not positive":
+        thermalModel.motorHeatCapacity = 0.  # [J/Celsius]
+
+    with pytest.raises(BasiliskError, match=expectedMessage):
+        unitTestSim.InitializeSimulation()
+
+
 if __name__ == "__main__":
     for s in SCENARIOS:
         test_motorThermal(False, s, 1e-8)
     test_motorThermal_integration(False)
+    for brokenPrecondition, expectedMessage in RESET_ERROR_CASES:
+        test_motorThermal_resetErrors(False, brokenPrecondition, expectedMessage)
     print("PASSED")
