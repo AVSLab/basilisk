@@ -71,6 +71,8 @@ from Basilisk.architecture.swig_common_model import *
 
 %include "architecture/msgPayloadDefC/FuelTankMsgPayload.h"
 struct FuelTankMsg_C;
+%include "architecture/msgPayloadDefC/MassFlowRateMsgPayload.h"
+struct MassFlowRateMsg_C;
 
 %pythoncode %{
 import sys

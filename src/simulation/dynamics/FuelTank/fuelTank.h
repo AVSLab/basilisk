@@ -21,6 +21,7 @@
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/msgPayloadDefC/FuelTankMsgPayload.h"
+#include "architecture/msgPayloadDefC/MassFlowRateMsgPayload.h"
 #include "architecture/messaging/messaging.h"
 #include "simulation/dynamics/Thrusters/thrusterDynamicEffector/thrusterDynamicEffector.h"
 #include "simulation/dynamics/_GeneralModuleFiles/fuelSlosh.h"
@@ -264,6 +265,7 @@ public:
     std::vector<FuelSlosh *> fuelSloshParticles;        //!< -- vector of fuel slosh particles
     std::vector<ThrusterDynamicEffector *> thrDynEffectors;        //!< -- Vector of dynamic effectors for thrusters
     std::vector<ThrusterStateEffector *> thrStateEffectors;        //!< -- Vector of state effectors for thrusters
+    ReadFunctor<MassFlowRateMsgPayload> fuelLeakRateInMsg; //!< (optional) fuel leak mass flow rate input message
     Message<FuelTankMsgPayload> fuelTankOutMsg{};       //!< -- fuel tank output message name
     FuelTankMsgPayload fuelTankMassPropMsg{};           //!< instance of messaging system message struct
     std::string nameOfMassState{};                      //!< -- Legacy public mass state name; Python users should use accessors
