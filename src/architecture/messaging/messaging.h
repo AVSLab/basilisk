@@ -24,6 +24,7 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 #include "architecture/utilities/bskLogging.h"
 #include <typeinfo>
 #include <stdlib.h>
+#include <utility>
 #include "architecture/messaging/payloadEqualityTraits.h"
 
 /*! forward-declare sim message for use by read functor */
@@ -41,6 +42,37 @@ private:
     MsgHeader *headerPointer;      //!< -- pointer to the incoming msg header
     bool initialized;               //!< -- flag indicating if the input message is connect to another message
 
+    // --- issue #676 keep-alive bridge -------------------------------------------------------
+    // When a Python-created stand-alone message is subscribed to, the SWIG layer installs an
+    // opaque owner token (a PyObject*) plus acquire/release callbacks here so that the source
+    // message cannot be garbage-collected while this reader still points into its memory.
+    // These are plain C types so messaging.h stays free of <Python.h>: a no-Python build sees
+    // null callbacks and pays nothing. The callbacks (set only from SWIG) do the GIL-safe
+    // Py_INCREF/Py_DECREF; this header never touches Python.
+    void* sourceHandle = nullptr;            //!< -- opaque owner token (a PyObject* in practice)
+    void  (*acquireSource)(void*) = nullptr; //!< -- +1 the owner (Py_INCREF under the GIL)
+    void  (*releaseSource)(void*) = nullptr; //!< -- -1 the owner (Py_DECREF under the GIL)
+
+    //! release our hold on the current source (if any), then forget it
+    void releaseHandle_() {
+        if (this->sourceHandle && this->releaseSource) {
+            this->releaseSource(this->sourceHandle);
+        }
+        this->sourceHandle = nullptr;
+        this->acquireSource = nullptr;
+        this->releaseSource = nullptr;
+    }
+
+    //! copy the keep-alive trio from another reader and take an additional reference to it
+    void adoptHandleFrom_(const ReadFunctor& other) {
+        this->sourceHandle = other.sourceHandle;
+        this->acquireSource = other.acquireSource;
+        this->releaseSource = other.releaseSource;
+        if (this->sourceHandle && this->acquireSource) {
+            this->acquireSource(this->sourceHandle);  // now two independent owners
+        }
+    }
+
 public:
     //!< -- BSK Logging
     BSKLogger bskLogger;            //!< -- bsk logging instance
@@ -52,6 +84,87 @@ public:
 
     //! constructor
     ReadFunctor(messageType* payloadPtr, MsgHeader *headerPtr) : payloadPointer(payloadPtr), headerPointer(headerPtr), initialized(true){};
+
+    //! destructor -- REQUIRED for the #676 keep-alive: a ReadFunctor is usually a C++ member
+    //! of a module, so SWIG %extend destructors never run for it; only this real C++
+    //! destructor does, and it must drop the Python reference held via releaseSource.
+    ~ReadFunctor() {
+        this->releaseHandle_();
+    }
+
+    //! copy constructor -- take an additional reference to the source
+    ReadFunctor(const ReadFunctor& other)
+        : payloadPointer(other.payloadPointer),
+          headerPointer(other.headerPointer),
+          initialized(other.initialized),
+          bskLogger(other.bskLogger),
+          zeroMsgPayload(other.zeroMsgPayload) {
+        this->adoptHandleFrom_(other);
+    }
+
+    //! copy assignment -- release the outgoing source and acquire the incoming one.
+    //! Guards: self-assignment, and pointer-equality on the owner token so that a
+    //! re-subscribe to the same source (or the common null-handle case from
+    //! ``*this = source->addSubscriber()``) does no redundant Py_INCREF/Py_DECREF churn.
+    ReadFunctor& operator=(const ReadFunctor& other) {
+        if (this == &other) { return *this; }
+        bool sameSource = (this->sourceHandle == other.sourceHandle);
+        this->payloadPointer = other.payloadPointer;
+        this->headerPointer = other.headerPointer;
+        this->initialized = other.initialized;
+        this->bskLogger = other.bskLogger;
+        this->zeroMsgPayload = other.zeroMsgPayload;
+        if (!sameSource) {
+            this->releaseHandle_();
+            this->adoptHandleFrom_(other);
+        }
+        return *this;
+    }
+
+    //! move constructor -- steal the source token; null out the moved-from reader (noexcept so
+    //! std::vector<ReadFunctor> reallocation moves rather than copies, avoiding refcount churn).
+    ReadFunctor(ReadFunctor&& other) noexcept
+        : payloadPointer(other.payloadPointer),
+          headerPointer(other.headerPointer),
+          initialized(other.initialized),
+          sourceHandle(other.sourceHandle),
+          acquireSource(other.acquireSource),
+          releaseSource(other.releaseSource),
+          bskLogger(std::move(other.bskLogger)),
+          zeroMsgPayload(std::move(other.zeroMsgPayload)) {
+        other.sourceHandle = nullptr;   // moved-from reader no longer owns the reference
+        other.acquireSource = nullptr;
+        other.releaseSource = nullptr;
+    }
+
+    //! move assignment -- release ours, steal theirs, null out the moved-from reader
+    ReadFunctor& operator=(ReadFunctor&& other) noexcept {
+        if (this == &other) { return *this; }
+        this->releaseHandle_();
+        this->payloadPointer = other.payloadPointer;
+        this->headerPointer = other.headerPointer;
+        this->initialized = other.initialized;
+        this->bskLogger = std::move(other.bskLogger);
+        this->zeroMsgPayload = std::move(other.zeroMsgPayload);
+        this->sourceHandle = other.sourceHandle;
+        this->acquireSource = other.acquireSource;
+        this->releaseSource = other.releaseSource;
+        other.sourceHandle = nullptr;
+        other.acquireSource = nullptr;
+        other.releaseSource = nullptr;
+        return *this;
+    }
+
+    //! Install (or replace) the opaque keep-alive source. Called only from the SWIG layer
+    //! after a subscribe completes. The caller has already taken the one reference we adopt
+    //! here (so we do NOT call acquire); subsequent C++ copies acquire, destructors release.
+    void setSource(void* handle, void(*acquire)(void*), void(*release)(void*)) {
+        if (handle == this->sourceHandle) { return; }
+        this->releaseHandle_();   // drop any prior owner
+        this->sourceHandle = handle;
+        this->acquireSource = acquire;
+        this->releaseSource = release;
+    }
 
     //! constructor
     const messageType& operator()(){
@@ -136,6 +249,7 @@ public:
 
     //! Unsubscribe to the connected message, noop if no message was connected
     void unsubscribe(){
+        this->releaseHandle_();   // #676: drop the Python keep-alive reference, if any
         this->payloadPointer = nullptr;
         this->headerPointer = nullptr;
         this->initialized = false;
