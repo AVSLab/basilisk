@@ -54,7 +54,7 @@ The configurable values are:
   Set this to ``False`` to include the additional mass-depletion back-substitution contributions.
 - ``setFuelLeakRate()`` / ``getFuelLeakRate()``: positive fuel mass flow rate leaving the tank in kg/s. This leak rate is
   added to any attached thruster fuel consumption and reduces the reported fuel mass without applying force or torque to
-  the spacecraft.
+  the spacecraft. The leak stops when the available tank propellant reaches zero.
 
 .. code-block:: python
 
