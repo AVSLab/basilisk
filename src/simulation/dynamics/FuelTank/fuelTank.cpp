@@ -138,6 +138,13 @@ void FuelTank::registerStates(DynParamManager &statesIn) {
 void FuelTank::updateEffectorMassProps(double integTime) {
     // Add contributions of the mass of the tank
     double massLocal = this->massState->getState()(0, 0);
+    if (massLocal < 0.0) {
+        // Clamp integration overshoot at empty before tank models compute mass properties.
+        massLocal = 0.0;  // [kg]
+        Eigen::MatrixXd massMatrix(1, 1);
+        massMatrix(0, 0) = massLocal;
+        this->massState->setState(massMatrix);
+    }
     this->fuelTankModel->computeTankProps(massLocal);
     const Eigen::Matrix3d dcm_TBLocal = this->getDcm_TB();
     this->r_TcB_B = this->getR_TB_B() + dcm_TBLocal.transpose() * this->fuelTankModel->r_TcT_T;
@@ -172,6 +179,21 @@ void FuelTank::updateEffectorMassProps(double integTime) {
         (*fuelSloshInt)->retrieveMassValue(integTime);
         // Add fuelSlosh mass to total mass of tank
         totalMass += (*fuelSloshInt)->fuelMass;
+    }
+    if (totalMass <= 0.0) {
+        this->fuelConsumption = 0.0;  // [kg/s]
+        for (auto fuelSloshInt = this->fuelSloshParticles.begin();
+             fuelSloshInt < this->fuelSloshParticles.end();
+             fuelSloshInt++) {
+            (*fuelSloshInt)->massToTotalTankMassRatio = 0.0;
+            (*fuelSloshInt)->fuelMassDot = 0.0;  // [kg/s]
+        }
+        for (auto &dynEffector: this->thrDynEffectors) {
+            dynEffector->fuelMass = 0.0;  // [kg]
+        }
+        this->tankFuelConsumption = 0.0;  // [kg/s]
+        this->effProps.mEffDot = 0.0;  // [kg/s]
+        return;
     }
     // Set mass depletion rate of fuelSloshParticles
     for (auto fuelSloshInt = this->fuelSloshParticles.begin();
@@ -209,15 +231,23 @@ void FuelTank::updateContributions(double integTime,
     backSubContr.vecTrans = backSubContr.vecRot = Eigen::Vector3d::Zero();
 
     // Calculate the fuel consumption properties for the tank
-    this->tankFuelConsumption = this->fuelConsumption * this->massState->getState()(0, 0) / this->effProps.mEff;
-    this->fuelTankModel->computeTankPropDerivs(this->massState->getState()(0, 0), -this->tankFuelConsumption);
+    double massLocal = this->massState->getState()(0, 0);
+    if (massLocal < 0.0) {
+        massLocal = 0.0;  // [kg]
+    }
+    if (this->effProps.mEff > 0.0) {
+        this->tankFuelConsumption = this->fuelConsumption * massLocal / this->effProps.mEff;
+    } else {
+        this->tankFuelConsumption = 0.0;  // [kg/s]
+    }
+    this->fuelTankModel->computeTankPropDerivs(massLocal, -this->tankFuelConsumption);
     r_TB_BLocal = this->fuelTankModel->r_TcT_T;
     rPrime_TB_BLocal = this->fuelTankModel->rPrime_TcT_T;
     rPPrime_TB_BLocal = this->fuelTankModel->rPPrime_TcT_T;
     omega_BN_BLocal = this->omegaState->getState();
     if (!this->getUpdateOnly()) {
-        backSubContr.vecRot = -this->massState->getState()(0, 0) * r_TB_BLocal.cross(rPPrime_TB_BLocal)
-                              - this->massState->getState()(0, 0) * omega_BN_BLocal.cross(r_TB_BLocal.cross(rPrime_TB_BLocal))
+        backSubContr.vecRot = -massLocal * r_TB_BLocal.cross(rPPrime_TB_BLocal)
+                              - massLocal * omega_BN_BLocal.cross(r_TB_BLocal.cross(rPrime_TB_BLocal))
                               - this->massState->getStateDeriv()(0, 0) * r_TB_BLocal.cross(rPrime_TB_BLocal);
         backSubContr.vecRot -= this->fuelTankModel->IPrimeTankPntT_T * omega_BN_BLocal;
     }
@@ -230,7 +260,12 @@ void FuelTank::computeDerivatives(double integTime,
                                   Eigen::Vector3d omegaDot_BN_B,
                                   Eigen::Vector3d sigma_BN) {
     Eigen::MatrixXd conv(1, 1);
-    conv(0, 0) = -this->tankFuelConsumption;
+    double massLocal = this->massState->getState()(0, 0);
+    double tankFuelConsumptionLocal = this->tankFuelConsumption;
+    if (massLocal <= 0.0 && tankFuelConsumptionLocal > 0.0) {
+        tankFuelConsumptionLocal = 0.0;  // [kg/s]
+    }
+    conv(0, 0) = -tankFuelConsumptionLocal;
     this->massState->setDerivative(conv);
 }
 
