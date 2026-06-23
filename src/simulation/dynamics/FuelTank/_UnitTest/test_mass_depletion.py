@@ -261,6 +261,59 @@ def test_leakyTank():
     assert np.isclose(fuelMass[-1], initialFuelMass - stopTime * leakRate, rtol=1e-6)
 
 
+def test_leakyTankInputMessageOverridesSetter():
+    """Module Unit Test"""
+    scObject = spacecraft.Spacecraft()
+    scObject.ModelTag = "spacecraftBody"
+    unitTaskName = "unitTask"
+    unitProcessName = "TestProcess"
+
+    #   Create a sim module as an empty container
+    unitTestSim = SimulationBaseClass.SimBaseClass()
+
+    # Create test thread
+    testProcessRate = macros.sec2nano(0.1)  # [s]
+    testProc = unitTestSim.CreateNewProcess(unitProcessName)
+    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+
+    # Make Fuel Tank
+    unitTestSim.fuelTankStateEffector = fuelTank.FuelTank()
+    tankModel = fuelTank.FuelTankModelConstantVolume()
+    unitTestSim.fuelTankStateEffector.setTankModel(tankModel)
+    initialFuelMass = 40.0  # [kg]
+    tankModel.propMassInit = initialFuelMass
+
+    # Add tank
+    scObject.addStateEffector(unitTestSim.fuelTankStateEffector)
+
+    # Make the tank leaky using the input message to override the configured value
+    configuredLeakRate = 1.0e-5  # [kg/s]
+    messageLeakRate = 2.0e-5  # [kg/s]
+    unitTestSim.fuelTankStateEffector.setFuelLeakRate(configuredLeakRate)
+    leakRateMsgPayload = messaging.MassFlowRateMsgPayload()
+    leakRateMsgPayload.massFlowRate = messageLeakRate
+    leakRateMsg = messaging.MassFlowRateMsg().write(leakRateMsgPayload)
+    unitTestSim.fuelTankStateEffector.fuelLeakRateInMsg.subscribeTo(leakRateMsg)
+
+    # Add test module to runtime call list
+    unitTestSim.AddModelToTask(unitTaskName, unitTestSim.fuelTankStateEffector)
+    unitTestSim.AddModelToTask(unitTaskName, scObject)
+
+    fuelLog = unitTestSim.fuelTankStateEffector.fuelTankOutMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, fuelLog)
+    unitTestSim.InitializeSimulation()
+
+    stopTime = 1000.0  # [s]
+    unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
+    unitTestSim.ExecuteSimulation()
+
+    fuelMass = fuelLog.fuelMass
+    fuelMassDot = fuelLog.fuelMassDot
+
+    assert np.allclose(fuelMassDot, -messageLeakRate, rtol=1e-6)
+    assert np.isclose(fuelMass[-1], initialFuelMass - stopTime * messageLeakRate, rtol=1e-6)
+
+
 @pytest.mark.parametrize("tankModelConstructor", [fuelTank.FuelTankModelConstantVolume,
                                                   fuelTank.FuelTankModelConstantDensity,
                                                   fuelTank.FuelTankModelEmptying,

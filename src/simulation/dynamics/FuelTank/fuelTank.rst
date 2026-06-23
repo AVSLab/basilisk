@@ -28,6 +28,8 @@ provides information on what this message is used for.
 
     output fuelTankOutMsg FuelTankMsgPayload
         fuel tank output message name
+    input fuelLeakRateInMsg MassFlowRateMsgPayload
+        optional fuel leak mass flow rate input message that overrides ``setFuelLeakRate()``
 
 User Guide
 ----------
@@ -57,6 +59,9 @@ The configurable values are:
   the spacecraft. The leak stops when the available tank propellant reaches zero, and the module logs a ``BSK_WARNING``
   the first time depletion reaches an empty tank.
 
+The leak rate can also be supplied through the optional ``fuelLeakRateInMsg`` input message. If this message is
+connected, the message ``massFlowRate`` value overrides the value configured with ``setFuelLeakRate()``.
+
 .. code-block:: python
 
     fuelTankEffector.setNameOfMassState("fuelTankMass1")
@@ -66,6 +71,11 @@ The configurable values are:
     fuelTankEffector.setR_TB_B([[0.0], [0.0], [0.1]])  # [m]
     fuelTankEffector.setUpdateOnly(True)
     fuelTankEffector.setFuelLeakRate(1.0e-5)  # [kg/s]
+
+    fuelLeakRateMsgData = messaging.MassFlowRateMsgPayload()
+    fuelLeakRateMsgData.massFlowRate = 2.0e-5  # [kg/s]
+    fuelLeakRateMsg = messaging.MassFlowRateMsg().write(fuelLeakRateMsgData)
+    fuelTankEffector.fuelLeakRateInMsg.subscribeTo(fuelLeakRateMsg)
 
 A thruster effector can be attached to a tank effector to simulate fuel mass depletion by thruster operation.
 
