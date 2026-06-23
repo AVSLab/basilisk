@@ -24,242 +24,234 @@
 #   Creation Date:      March 4, 2021
 #
 
-import inspect
-import os
-
 import numpy as np
 import pytest
 
-filename = inspect.getframeinfo(inspect.currentframe()).filename
-path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
-splitPath = path.split(bskName)
-
-
-# Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
-from Basilisk.simulation import motorThermal                    # import the module that is to be tested
-from Basilisk.architecture import messaging                      # import the message definitions
-from Basilisk.simulation import spacecraft
+from Basilisk.simulation import motorThermal
+from Basilisk.architecture import messaging
 from Basilisk.utilities import macros
-from Basilisk.utilities import simIncludeRW
-from Basilisk.simulation import reactionWheelStateEffector
 
 
-# Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
-# @pytest.mark.skipif(conditionstring)
-# Uncomment this line if this test has an expected failure, adjust message as needed.
-# @pytest.mark.xfail(conditionstring)
-# Provide a unique test method name, starting with 'test_'.
-# The following 'parametrize' function decorator provides the parameters and expected results for each
-# of the multiple test runs for this test.  Note that the order in that you add the parametrize method
-# matters for the documentation in that it impacts the order in which the test arguments are shown.
-# The first parametrize arguments are shown last in the pytest argument list
+# Fixed module configuration shared by the scenarios below.  Each value is held
+# constant so the expected temperature can be derived analytically from the
+# module's heat-balance equations rather than from a stored regression vector.
+DT = 0.1                 # [s] task update period
+N_STEPS = 10             # number of update steps simulated per scenario
+THERMAL_RESISTANCE = 10.0  # [Celsius/W] ambient thermal resistance
+HEAT_CAPACITY = 10.0       # [J/Celsius] motor heat capacity
+
+
+def referenceTemperatures(scenario, times):
+    r"""Reproduce the module heat balance step-by-step for the given log times.
+
+    This mirrors ``MotorThermal::computeTemperature``:
+
+    - ``wheelPower    = Omega * u_current``
+    - ``frictionHeat  = Omega * frictionTorque``
+    - ``heatGeneration = dt * (|wheelPower| / eff * (1 - eff) + |frictionHeat|)``
+    - ``heatDissipation = dt * (T - T_ambient) / R``
+    - ``T <- T + (heatGeneration - heatDissipation) / C``
+
+    ``dt`` is taken from the spacing of the recorder time stamps so the reference
+    uses exactly the same time step the module saw (the module computes
+    ``dt = CurrentSimNanos - prevTime`` and starts with ``prevTime`` at the
+    simulation start time).
+    """
+    temperature = scenario["currentTemperature"]
+    previousNanos = 0
+    expected = []
+    for currentNanos in times:
+        dt = (currentNanos - previousNanos) * 1.0e-9
+        wheelPower = scenario["Omega"] * scenario["u_current"]
+        frictionHeat = scenario["Omega"] * scenario["frictionTorque"]
+        heatGeneration = dt * (
+            abs(wheelPower) / scenario["efficiency"] * (1.0 - scenario["efficiency"])
+            + abs(frictionHeat)
+        )
+        heatDissipation = dt * (temperature - scenario["ambientTemperature"]) / THERMAL_RESISTANCE
+        temperature = temperature + (heatGeneration - heatDissipation) / HEAT_CAPACITY
+        expected.append(temperature)
+        previousNanos = currentNanos
+    return np.array(expected)
+
+
+def runScenario(scenario):
+    """Drive the motorThermal module with a standalone reaction wheel state
+    message holding constant, fully-controlled inputs.  Returns the recorded
+    log times (in nanoseconds) and the temperature history."""
+    unitTestSim = SimulationBaseClass.SimBaseClass()
+    process = unitTestSim.CreateNewProcess("TestProcess")
+    process.addTask(unitTestSim.CreateNewTask("unitTask", macros.sec2nano(DT)))
+
+    thermalModel = motorThermal.MotorThermal()
+    thermalModel.ModelTag = "rwThermals"
+    thermalModel.currentTemperature = scenario["currentTemperature"]
+    thermalModel.ambientTemperature = scenario["ambientTemperature"]
+    thermalModel.efficiency = scenario["efficiency"]
+    thermalModel.ambientThermalResistance = THERMAL_RESISTANCE
+    thermalModel.motorHeatCapacity = HEAT_CAPACITY
+
+    # Feed the module a stand-alone reaction wheel state message so the wheel
+    # speed, motor torque and friction torque are known exactly.  This isolates
+    # the thermal model from the reaction wheel dynamics.
+    rwStatePayload = messaging.RWConfigLogMsgPayload()
+    rwStatePayload.Omega = scenario["Omega"]                    # [rad/s]
+    rwStatePayload.u_current = scenario["u_current"]            # [N*m]
+    rwStatePayload.frictionTorque = scenario["frictionTorque"]  # [N*m]
+    rwStateMsg = messaging.RWConfigLogMsg().write(rwStatePayload)
+    thermalModel.rwStateInMsg.subscribeTo(rwStateMsg)
+
+    unitTestSim.AddModelToTask("unitTask", thermalModel)
+    tempLog = thermalModel.temperatureOutMsg.recorder()
+    unitTestSim.AddModelToTask("unitTask", tempLog)
+
+    unitTestSim.InitializeSimulation()
+    unitTestSim.ConfigureStopTime(macros.sec2nano(DT * N_STEPS))
+    unitTestSim.ExecuteSimulation()
+
+    return np.array(tempLog.times()), np.array(tempLog.temperature)
+
+
+# Each scenario isolates a single physical mechanism of the heat balance so that
+# a failure points at the responsible term rather than at an opaque truth value.
+# Units per scenario field: Omega [rad/s], u_current [N*m], frictionTorque [N*m],
+# efficiency [-] (dimensionless), currentTemperature [Celsius],
+# ambientTemperature [Celsius].
+SCENARIOS = [
+    # Pure dissipation, motor hotter than ambient: no power and no friction means
+    # no heat is generated, so the temperature must decay monotonically toward
+    # the (lower) ambient temperature.
+    dict(name="dissipation_cooling",
+         Omega=0.0, u_current=0.0, frictionTorque=0.0,     # [rad/s], [N*m], [N*m]
+         efficiency=0.5,                                   # [-]
+         currentTemperature=20.0, ambientTemperature=0.0,  # [Celsius], [Celsius]
+         mechanism="dissipation", direction="cooling"),
+    # Pure dissipation, motor colder than ambient: temperature must rise
+    # monotonically toward the (higher) ambient temperature.
+    dict(name="dissipation_warming",
+         Omega=0.0, u_current=0.0, frictionTorque=0.0,     # [rad/s], [N*m], [N*m]
+         efficiency=0.5,                                   # [-]
+         currentTemperature=0.0, ambientTemperature=20.0,  # [Celsius], [Celsius]
+         mechanism="dissipation", direction="warming"),
+    # Pure inefficiency heating: friction is off and the motor starts at ambient
+    # temperature, so on the first step there is no dissipation and all heating
+    # comes from the motor power inefficiency term.
+    dict(name="inefficiency_only",
+         Omega=100.0, u_current=0.2, frictionTorque=0.0,   # [rad/s], [N*m], [N*m]
+         efficiency=0.5,                                   # [-]
+         currentTemperature=20.0, ambientTemperature=20.0, # [Celsius], [Celsius]
+         mechanism="inefficiency", direction="heating"),
+    # Pure friction heating: the motor torque is zero (so the inefficiency term
+    # vanishes regardless of efficiency) and the motor starts at ambient
+    # temperature, so the first-step heating comes solely from friction.
+    dict(name="friction_only",
+         Omega=100.0, u_current=0.0, frictionTorque=0.01,  # [rad/s], [N*m], [N*m]
+         efficiency=0.5,                                   # [-]
+         currentTemperature=20.0, ambientTemperature=20.0, # [Celsius], [Celsius]
+         mechanism="friction", direction="heating"),
+    # All three mechanisms active at once with the motor hotter than ambient.
+    dict(name="combined",
+         Omega=100.0, u_current=0.2, frictionTorque=0.01,  # [rad/s], [N*m], [N*m]
+         efficiency=0.5,                                   # [-]
+         currentTemperature=20.0, ambientTemperature=0.0,  # [Celsius], [Celsius]
+         mechanism="combined", direction="heating"),
+]
+
+
+@pytest.mark.parametrize("scenario", SCENARIOS, ids=[s["name"] for s in SCENARIOS])
 @pytest.mark.parametrize("accuracy", [1e-8])
-
-def test_motorThermal(show_plots, accuracy):
+def test_motorThermal(show_plots, scenario, accuracy):
     r"""
     **Validation Test Description**
 
-    This unit test script tests the temperature modelling of a general motor (in this case a reaction wheel). It sets up
-    the reaction wheel and runs 4 test scenarios:
+    This unit test validates the :ref:`motorThermal` heat-balance model by
+    feeding it a stand-alone reaction wheel state message with fully controlled
+    wheel speed, motor torque and friction torque.  Because the inputs are known
+    exactly, the expected temperature history is derived analytically from the
+    module equations instead of being compared against a stored regression
+    vector of "magic" truth numbers.
 
-    - Nominal: the motor starts at the same temperature as the air surrounding it (20 degrees Celsius).
-    - Motor is colder: the motor starts at a lower temperature (0 degrees Celsius) than the ambient temperature (20
-      degrees Celsius).
-    - Motor is hotter: the motor starts at a higher temperature (20 degrees Celsius) than the ambient temperature (0
-      degrees Celsius).
-    - Motor is hotter and friction is accounted for: the motor starts at a higher temperature (20 degrees Celsius) than
-      the ambient temperature (0 degrees Celsius) and friction is modelled.
+    Five scenarios each isolate one part of the model:
 
-    The sole reaction wheel is set up using the reaction wheel state effector, while taking advantage of the ability to
-    change the reaction wheel's properties on the fly. For simplicity, the torque is constant and set to the maximum
-    value that the reaction wheel can handle. Finally, the temperature modelling comes from this motorThermal module.
+    - ``dissipation_cooling`` / ``dissipation_warming``: with no wheel power and
+      no friction the only active term is heat dissipation, so the temperature
+      must move monotonically toward the ambient temperature (down when the motor
+      is hotter, up when it is colder).
+    - ``inefficiency_only``: with friction disabled and the motor starting at the
+      ambient temperature, the first-step temperature rise must equal the motor
+      power inefficiency contribution ``dt * |Omega * u_current| / eff * (1 - eff) / C``.
+    - ``friction_only``: with the motor torque set to zero (which removes the
+      inefficiency term for any efficiency) and the motor starting at ambient,
+      the first-step temperature rise must equal the friction contribution
+      ``dt * |Omega * frictionTorque| / C``.
+    - ``combined``: all three terms active at once, checked against the full
+      analytic heat-balance recurrence.
 
-    The limitations of this test are the same as the ones discussed on the module's .rst file. also, the value of the
-    accuracy used is the limit for the test to pass.
+    Every scenario also checks the complete temperature history against the
+    step-by-step analytic recurrence to the supplied accuracy.
 
     **Test Parameters**
 
     Args:
-        accuracy (float): absolute accuracy value used in the validation tests
+        accuracy (float): absolute accuracy used to compare the module output to
+            the analytic reference temperatures.
 
     **Description of Variables Being Tested**
 
-    In this file we are checking the values of the variables
-
-    - ``rwTemp``
-
-    which represents the array of motor temperatures. This array is compared to the ``truthTemp`` array, which contains
-    the true values of the temperature.
+    The recorded ``temperature`` history is compared element-by-element against
+    ``referenceTemperatures``, and the first-step temperature change is compared
+    against the closed-form contribution of the mechanism isolated by each
+    scenario.
     """
-    [testResults, testMessage] = motorThermalTest(show_plots, accuracy)
-    assert testResults < 1, testMessage
+    times, temperatures = runScenario(scenario)
+    expected = referenceTemperatures(scenario, times)
 
-
-def motorThermalTest(show_plots, accuracy):
-    testFailCount = 0  # zero unit test result counter
-    testMessages = []  # create empty list to store test log messages
-
-    # Create simulation variable names
-    unitTaskName = "unitTask"  # arbitrary name (don't change)
-    unitProcessName = "TestProcess"  # arbitrary name (don't change)
-
-    #   Create a sim module as an empty container
-    unitTestSim = SimulationBaseClass.SimBaseClass()
-
-    # set the simulation time variable used later on
-    simulationTime = macros.sec2nano(1.)
-
-    #
-    #  create the simulation process
-    #
-
-    testProcessRate = macros.sec2nano(0.1)  # update process rate update time
-    testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
-
-    #
-    #   setup the simulation tasks/objects
-    #
-
-    # create the spacecraft object
-    scObject = spacecraft.Spacecraft()
-    scObject.ModelTag = "spacecraftBody"
-
-    #
-    # add RW devices
-    #
-
-    # make a fresh RW factory instance, this is critical to run multiple times
-    rwFactory = simIncludeRW.rwFactory()
-
-    # store the RW dynamical model type
-    varRWModel = messaging.BalancedWheels
-
-    # create the reaction wheels
-    RW = rwFactory.create('Honeywell_HR16',
-                          [1, 0, 0],  # gsHat_B
-                          Omega=4000.,  # RPM
-                          maxMomentum=50.,
-                          RWModel=varRWModel,
-                          useRWfriction=True
-                          )
-    numRW = rwFactory.getNumOfDevices()
-
-    # set maximum values for RW speed
-    # RW1.Omega_max = 500 * macros.RPM
-
-    # create RW object container and tie to spacecraft object
-    rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
-    rwStateEffector.ModelTag = "ReactionWheel"
-    rwFactory.addToSpacecraft(rwStateEffector.ModelTag, rwStateEffector, scObject)
-
-    # set RW torque command
-    cmdArray = messaging.ArrayMotorTorqueMsgPayload()
-    cmdArray.motorTorque = [50, 0, 0]  # [Nm]
-    cmdMsg = messaging.ArrayMotorTorqueMsg().write(cmdArray)
-    rwStateEffector.rwMotorCmdInMsg.subscribeTo(cmdMsg)
-
-    #
-    #   Setup the temperature modelling
-    #
-
-    thermalModel = motorThermal.MotorThermal()
-    thermalModel.ModelTag = 'rwThermals'
-    thermalModel.currentTemperature = 0  # [ºC]
-    thermalModel.efficiency = 0.5
-    thermalModel.ambientThermalResistance = 10
-    thermalModel.motorHeatCapacity = 10
-    thermalModel.rwStateInMsg.subscribeTo(rwStateEffector.rwOutMsgs[0])
-
-
-    # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, rwStateEffector)
-    unitTestSim.AddModelToTask(unitTaskName, scObject)
-    unitTestSim.AddModelToTask(unitTaskName, thermalModel)
-
-    #
-    # log data
-    #
-
-    # log the RW temperature
-    tempLog = thermalModel.temperatureOutMsg.recorder()
-    unitTestSim.AddModelToTask(unitTaskName, tempLog)
-
-    #
-    #   initialize Simulation
-    #
-
-    unitTestSim.InitializeSimulation()
-    numTests = 0
-
-    # run the first test (nominal)
-    unitTestSim.ConfigureStopTime(simulationTime)
-    unitTestSim.ExecuteSimulation()
-    numTests += 1
-
-    # change the test conditions
-    thermalModel.currentTemperature = 0
-    thermalModel.ambientTemperature = 20
-
-    # run the second test (motor is colder than ambient)
-    unitTestSim.ConfigureStopTime(2*simulationTime)
-    unitTestSim.ExecuteSimulation()
-    numTests += 1
-
-    # change the test conditions
-    thermalModel.currentTemperature = 20
-    thermalModel.ambientTemperature = 0
-
-    # run the second test (motor is hotter than ambient)
-    unitTestSim.ConfigureStopTime(3*simulationTime)
-    unitTestSim.ExecuteSimulation()
-    numTests += 1
-
-    #
-    # retrieve the logged data
-    #
-
-    rwTemp = np.array(tempLog.temperature)
-
-    #
-    # set the truth vectors
-    #
-
-    trueTemp = np.array([0.83985244, 1.67941113, 2.51867637, 3.35764846, 4.19632769, 5.03471435, 5.87280873,
-                         6.71061112, 7.54812182, 8.38534113,
-                         0.86531353, 1.73030786, 2.59498331, 3.45934019, 4.32337882, 5.18709952, 6.05050261,
-                         6.91358841, 7.77635723, 8.6388094,
-                         20.83077463, 21.6612646, 22.49147018, 23.32139167, 24.15102935, 24.9803835, 25.8094544,
-                         26.63824235, 27.46674761, 28.29497048])
-
-    #
-    # compare the module results to the true values
-    #
-
-    # do the comparison
-
-    for i in range(numTests):
-        # check a vector values
-        if not unitTestSupport.isArrayEqual(rwTemp[10*i+1:10*i+11], trueTemp[10*i:10*i+10], 10, accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: Motor Temperature Test failed test " + str(i+1) + "\n")
-
-    if not testFailCount:
-        print("PASSED")
-
-    # each test method requires a single assert method to be called
-    # this check below just makes sure no sub-test failures were found
-    return [testFailCount, ''.join(testMessages)]
-
-
-#
-# Run this unitTest as a stand-along python script
-#
-if __name__ == "__main__":
-    test_motorThermal(
-        False,  # show_plots
-        1e-8    # accuracy
+    # The recorded history must match the analytic heat-balance recurrence.
+    # rtol=0.0 so the supplied accuracy is enforced as a pure absolute tolerance
+    # (NumPy otherwise applies a default rtol=1e-7).
+    np.testing.assert_allclose(
+        temperatures, expected, atol=accuracy, rtol=0.0,
+        err_msg=f"motorThermal temperature history mismatch for scenario '{scenario['name']}'",
     )
+
+    # There must be at least one full update step (the sample at t = 0 uses
+    # dt = 0 and leaves the temperature unchanged at its initial value).
+    assert len(temperatures) > 1
+    assert temperatures[0] == pytest.approx(scenario["currentTemperature"], abs=accuracy)
+    firstStep = temperatures[1] - scenario["currentTemperature"]
+
+    # Independent, closed-form check of the mechanism isolated by each scenario.
+    if scenario["mechanism"] == "dissipation":
+        # No heat is generated, so the temperature relaxes toward ambient.
+        expectedFirstStep = -DT * (scenario["currentTemperature"] - scenario["ambientTemperature"]) / THERMAL_RESISTANCE / HEAT_CAPACITY
+        assert firstStep == pytest.approx(expectedFirstStep, abs=accuracy)
+        differences = np.diff(temperatures[1:])
+        if scenario["direction"] == "cooling":
+            assert np.all(differences < 0.0)   # monotonically cooling
+            assert np.all(temperatures[1:] >= scenario["ambientTemperature"])
+        else:
+            assert np.all(differences > 0.0)   # monotonically warming
+            assert np.all(temperatures[1:] <= scenario["ambientTemperature"])
+
+    elif scenario["mechanism"] == "inefficiency":
+        # First step starts at ambient, so dissipation is zero and the rise is
+        # entirely from the power inefficiency term.
+        wheelPower = scenario["Omega"] * scenario["u_current"]
+        expectedFirstStep = DT * abs(wheelPower) / scenario["efficiency"] * (1.0 - scenario["efficiency"]) / HEAT_CAPACITY
+        assert firstStep == pytest.approx(expectedFirstStep, abs=accuracy)
+        assert firstStep > 0.0
+
+    elif scenario["mechanism"] == "friction":
+        # Motor torque is zero, so the inefficiency term vanishes and the rise is
+        # entirely from friction.
+        frictionHeat = scenario["Omega"] * scenario["frictionTorque"]
+        expectedFirstStep = DT * abs(frictionHeat) / HEAT_CAPACITY
+        assert firstStep == pytest.approx(expectedFirstStep, abs=accuracy)
+        assert firstStep > 0.0
+
+
+if __name__ == "__main__":
+    for s in SCENARIOS:
+        test_motorThermal(False, s, 1e-8)
+    print("PASSED")
