@@ -20,6 +20,16 @@ Version |release| (July 7, 2026)
 - The :ref:`sphericalPendulum` fuel-slosh effector applied its viscous damping force without the pendulum
   moment arm, so an isotropic damping matrix ``D`` dissipated no rotational energy and an anisotropic ``D``
   could add energy to the spacecraft. This is fixed in the current version.
+- BSK-676: A stand-alone message that went out of scope in Python could be garbage collected while a
+  C++ module input message or recorder still pointed into it, causing the reader to silently access
+  freed memory. Subscribing a C++ ``ReadFunctor`` input message, calling ``Message.addSubscriber()``,
+  or calling ``Message.recorder()`` now keeps the source alive for the life of the reader or recorder,
+  so messages created inside Python setup or helper functions no longer need to be manually retained.
+  This is fixed in the current version. Note: C-module input messages (``Msg_C`` readers, e.g. a C
+  module's ``dataInMsg``) are not yet covered by this automatic keep-alive and still require retaining
+  the source message in a persistent scope (see BSK-1107); this case is tracked in pull request
+  #1442.
+
 
 Version 2.11.0 (July 7, 2026)
 -----------------------------
