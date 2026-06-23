@@ -29,7 +29,7 @@ import os
 import sys
 
 import pytest
-from Basilisk.utilities import unitTestSupport
+from Basilisk.utilities import simHelpers
 
 # Get current file path
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -62,7 +62,7 @@ def test_scenarioAerocapture(show_plots, planetCase):
         figureList = scenarioAerocapture.run(show_plots, planetCase)
         # save the figures to the Doxygen scenario images folder
         for pltName, plt in list(figureList.items()):
-            unitTestSupport.saveScenarioFigure(pltName, plt, path)
+            simHelpers.saveScenarioFigure(pltName, plt, path)
 
     except OSError as err:
         testFailCount += 1

@@ -30,7 +30,7 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import deprecated
 from Basilisk.utilities import macros
 from Basilisk.utilities import simIncludeThruster
-from Basilisk.utilities import unitTestSupport
+from Basilisk.utilities import simHelpers
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -143,9 +143,9 @@ def test_massDepletionTest(show_plots, thrusterConstructor):
     stopTime = 60.0 * 10.0
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
     unitTestSim.ExecuteSimulation()
-    orbAngMom_N = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totOrbAngMomPntN_N)
-    rotAngMom_N = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totRotAngMomPntC_N)
-    rotEnergy = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totRotEnergy)
+    orbAngMom_N = simHelpers.addTimeColumn(scObjectLog.times(), scObjectLog.totOrbAngMomPntN_N)
+    rotAngMom_N = simHelpers.addTimeColumn(scObjectLog.times(), scObjectLog.totRotAngMomPntC_N)
+    rotEnergy = simHelpers.addTimeColumn(scObjectLog.times(), scObjectLog.totRotEnergy)
 
     thrust = thrLog.thrustForce_B
     thrustPercentage = thrLog.thrustFactor

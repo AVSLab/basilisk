@@ -66,9 +66,13 @@ import numpy as np
 from Basilisk.architecture import messaging
 from Basilisk.utilities import SimulationBaseClass, vizSupport, simIncludeGravBody
 from Basilisk.simulation import spacecraft, linearTranslationNDOFStateEffector, prescribedLinearTranslation
-from Basilisk.utilities import macros, orbitalMotion, unitTestSupport
+from Basilisk.utilities import (
+    macros,
+    orbitalMotion,
+)
 
 from Basilisk import __path__
+from Basilisk.utilities import simHelpers
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
@@ -368,7 +372,7 @@ def plotSCStates(timeData, attLog, omegaLog, figureList):
     ax = plt.axes()
     for idx in range(3):
         plt.plot(timeData, attLog[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
+                 color=simHelpers.getLineColor(idx, 3),
                  label=r'$\sigma_' + str(idx) + '$')
     plt.legend(fontsize='14')
     # plt.title('Attitude', fontsize='22')
@@ -384,10 +388,10 @@ def plotSCStates(timeData, attLog, omegaLog, figureList):
     ax = plt.axes()
     for idx in range(3):
         plt.plot(timeData, omegaLog[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 4),
+                 color=simHelpers.getLineColor(idx, 4),
                  label=r'$\omega_' + str(idx) + '$')
     plt.plot(timeData, np.linalg.norm(omegaLog, axis=1),
-             color=unitTestSupport.getLineColor(3, 4),
+             color=simHelpers.getLineColor(3, 4),
              label=r'$|\mathbf{\omega}|$',
              linestyle='dashed')
     plt.legend(fontsize='14')

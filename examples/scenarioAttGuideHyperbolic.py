@@ -126,8 +126,14 @@ from Basilisk import __path__
 from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import mrpFeedback, attTrackingError, velocityPoint
 from Basilisk.simulation import extForceTorque, simpleNav, spacecraft
-from Basilisk.utilities import SimulationBaseClass, macros, orbitalMotion, simIncludeGravBody, unitTestSupport
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    macros,
+    orbitalMotion,
+    simIncludeGravBody,
+)
 from Basilisk.utilities import vizSupport
+from Basilisk.utilities import simHelpers
 
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
@@ -140,7 +146,7 @@ def plot_track_error_norm(timeLineSet, dataSigmaBR):
     vectorData = dataSigmaBR
     sNorm = np.array([np.linalg.norm(v) for v in vectorData])
     plt.plot(timeLineSet, sNorm,
-             color=unitTestSupport.getLineColor(1, 3),
+             color=simHelpers.getLineColor(1, 3),
              )
     plt.xlabel('Time [min]')
     plt.ylabel(r'Attitude Error Norm $|\sigma_{B/R}|$')
@@ -151,7 +157,7 @@ def plot_control_torque(timeLineSet, dataLr):
     plt.figure(2)
     for idx in range(3):
         plt.plot(timeLineSet, dataLr[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
+                 color=simHelpers.getLineColor(idx, 3),
                  label='$L_{r,' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
@@ -162,7 +168,7 @@ def plot_rate_error(timeLineSet, dataOmegaBR):
     plt.figure(3)
     for idx in range(3):
         plt.plot(timeLineSet, dataOmegaBR[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
+                 color=simHelpers.getLineColor(idx, 3),
                  label=r'$\omega_{BR,' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
@@ -248,7 +254,7 @@ def run(show_plots, useAltBodyFrame):
          0., 0., 600.]
     scObject.hub.mHub = 750.0  # kg - spacecraft mass
     scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
-    scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
+    scObject.hub.IHubPntBc_B = simHelpers.np2EigenMatrix3d(I)
 
     # add spacecraft object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
@@ -344,7 +350,7 @@ def run(show_plots, useAltBodyFrame):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = simHelpers.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
     mrpLog = mrpControl.cmdTorqueOutMsg.recorder(samplingTime)
     attErrLog = attError.attGuidOutMsg.recorder(samplingTime)
     snAttLog = sNavObject.attOutMsg.recorder(samplingTime)

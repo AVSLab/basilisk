@@ -108,7 +108,7 @@ from Basilisk.simulation import simpleNav
 from Basilisk.simulation import spacecraft
 from Basilisk.utilities import (SimulationBaseClass, macros, simIncludeGravBody, vizSupport)
 from Basilisk.utilities import orbitalMotion
-from Basilisk.utilities import unitTestSupport
+from Basilisk.utilities import simHelpers
 
 try:
     from Basilisk.simulation import vizInterface
@@ -298,12 +298,12 @@ def run(show_plots):
 
     # Next, the state manager objects are called to retrieve the latest inertial position and
     # velocity vector components:
-    vm_N = unitTestSupport.EigenVector3d2np(velRef.getState())
+    vm_N = simHelpers.EigenVector3d2np(velRef.getState())
 
     dv_N = dvCmd_recorder.dvInrtlCmd[-1, :]
 
     # After reading the Delta-V command, the state managers velocity is updated through
-    velRef.setState(unitTestSupport.np2EigenVectorXd(vm_N + dv_N))
+    velRef.setState(simHelpers.np2EigenVectorXd(vm_N + dv_N))
     # disable flight software after maneuver
     fswProcess.disableAllTasks()
 

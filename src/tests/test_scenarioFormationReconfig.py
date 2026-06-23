@@ -22,6 +22,7 @@ import sys
 
 import pytest
 from Basilisk.utilities import unitTestSupport
+from Basilisk.utilities import simHelpers
 
 # Get current file path
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -150,14 +151,14 @@ def test_scenarioFormationReconfig(show_plots, useRefAttitude):
     testFailCount, testMessages = unitTestSupport.compareArrayRelative(
         trueVel2, dataVel2, accuracy, "deputy v2_BN_N Vector",
         testFailCount, testMessages)
-    
+
     testFailCount, testMessages = unitTestSupport.compareArray(
         trueAttErr, dataAttErr, accuracy, "deputy attitude Error",
         testFailCount, testMessages)
 
     # save the figures to the Doxygen scenario images folder
     for pltName, plt in list(figureList.items()):
-        unitTestSupport.saveScenarioFigure(pltName, plt, path)
+        simHelpers.saveScenarioFigure(pltName, plt, path)
 
     #   print out success message if no error were found
     if testFailCount == 0:

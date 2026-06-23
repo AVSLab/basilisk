@@ -24,7 +24,10 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('simulation')
 
-from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    macros,
+)
 from Basilisk.simulation import spacecraft
 from Basilisk.simulation import gravityEffector
 from Basilisk.simulation import prescribedMotionStateEffector

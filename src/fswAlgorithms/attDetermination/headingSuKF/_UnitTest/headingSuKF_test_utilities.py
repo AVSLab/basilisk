@@ -19,7 +19,7 @@ import inspect
 import os
 
 import numpy as np
-from Basilisk.utilities import unitTestSupport
+from Basilisk.utilities import simHelpers
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -81,7 +81,7 @@ def StateCovarPlot(time, x, Pflat, string, show_plots):
     plt.title('Third rate component')
     plt.grid()
 
-    unitTestSupport.writeFigureLaTeX('StatesPlot' + string, 'State error and covariance', plt, 'height=0.9\\textwidth, keepaspectratio', path)
+    simHelpers.writeFigureLaTeX('StatesPlot' + string, 'State error and covariance', plt, 'height=0.9\\textwidth, keepaspectratio', path)
     if show_plots:
         plt.show()
     plt.close()
@@ -132,7 +132,7 @@ def PostFitResiduals(time, Res, noise, string, show_plots):
 
 
 
-    unitTestSupport.writeFigureLaTeX('PostFit' +string , 'Post Fit Residuals', plt, 'height=0.9\\textwidth, keepaspectratio', path)
+    simHelpers.writeFigureLaTeX('PostFit' +string , 'Post Fit Residuals', plt, 'height=0.9\\textwidth, keepaspectratio', path)
 
     if show_plots:
         plt.show()

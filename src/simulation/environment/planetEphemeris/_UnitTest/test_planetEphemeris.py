@@ -41,6 +41,7 @@ from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 from Basilisk.simulation import planetEphemeris
 from Basilisk.utilities import macros
+from Basilisk.utilities import simHelpers
 from Basilisk.architecture import bskLogging
 from Basilisk.architecture.bskLogging import BasiliskError
 
@@ -166,7 +167,7 @@ def planetEphemerisTest(show_plots, setRAN, setDEC, setLST, setRate):
     unitTestSim.ExecuteSimulation()
 
     accuracy = 1e-3
-    unitTestSupport.writeTeXSnippet("toleranceValue", str(accuracy), path)
+    simHelpers.writeTeXSnippet("toleranceValue", str(accuracy), path)
 
     # This pulls the actual data log from the simulation run.
     # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
@@ -261,7 +262,7 @@ def planetEphemerisTest(show_plots, setRAN, setDEC, setLST, setRate):
         colorText = 'Red'
         print("Failed: " + module.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
-    unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
+    simHelpers.writeTeXSnippet(snippentName, passedText, path)
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found

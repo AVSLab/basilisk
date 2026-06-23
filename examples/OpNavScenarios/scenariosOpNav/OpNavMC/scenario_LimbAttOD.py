@@ -29,10 +29,11 @@ import os
 import subprocess
 import sys
 
+from Basilisk.utilities import simHelpers
 from Basilisk.utilities import RigidBodyKinematics as rbk
 
 # Import utilities
-from Basilisk.utilities import orbitalMotion, macros, unitTestSupport
+from Basilisk.utilities import orbitalMotion, macros
 from Basilisk.utilities.supportDataTools.dataFetcher import get_path, DataFile
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -150,33 +151,33 @@ class scenario_OpNav(BSKSim):
         # Dynamics process outputs: pull log messages below if any
         ## Spacecraft true states
         scRec = self.msgRecList[self.retainedMessageNameSc]
-        position_N = unitTestSupport.addTimeColumn(scRec.times(), scRec.r_BN_N)
-        velocity_N = unitTestSupport.addTimeColumn(scRec.times(), scRec.v_BN_N)
+        position_N = simHelpers.addTimeColumn(scRec.times(), scRec.r_BN_N)
+        velocity_N = simHelpers.addTimeColumn(scRec.times(), scRec.v_BN_N)
 
         ## Attitude
-        sigma_BN = unitTestSupport.addTimeColumn(scRec.times(), scRec.sigma_BN)
+        sigma_BN = simHelpers.addTimeColumn(scRec.times(), scRec.sigma_BN)
 
         ## Image processing
         limbRec = self.msgRecList[self.retainedMessageNameLimb]
-        limb = unitTestSupport.addTimeColumn(limbRec.times(), limbRec.limbPoints)
-        numLimbPoints = unitTestSupport.addTimeColumn(
+        limb = simHelpers.addTimeColumn(limbRec.times(), limbRec.limbPoints)
+        numLimbPoints = simHelpers.addTimeColumn(
             limbRec.times(), limbRec.numLimbPoints
         )
-        validLimb = unitTestSupport.addTimeColumn(limbRec.times(), limbRec.valid)
+        validLimb = simHelpers.addTimeColumn(limbRec.times(), limbRec.valid)
 
         ## OpNav Out
         opNavRec = self.msgRecList[self.retainedMessageNameOpNav]
-        measPos = unitTestSupport.addTimeColumn(opNavRec.times(), opNavRec.r_BN_N)
-        r_C = unitTestSupport.addTimeColumn(opNavRec.times(), opNavRec.r_BN_C)
-        measCovar = unitTestSupport.addTimeColumn(opNavRec.times(), opNavRec.covar_N)
-        covar_C = unitTestSupport.addTimeColumn(opNavRec.times(), opNavRec.covar_C)
+        measPos = simHelpers.addTimeColumn(opNavRec.times(), opNavRec.r_BN_N)
+        r_C = simHelpers.addTimeColumn(opNavRec.times(), opNavRec.r_BN_C)
+        measCovar = simHelpers.addTimeColumn(opNavRec.times(), opNavRec.covar_N)
+        covar_C = simHelpers.addTimeColumn(opNavRec.times(), opNavRec.covar_C)
 
         NUM_STATES = 6
         ## Navigation results
         filtRec = self.msgRecList[self.retainedMessageNameFilt]
-        navState = unitTestSupport.addTimeColumn(filtRec.times(), filtRec.state)
-        navCovar = unitTestSupport.addTimeColumn(filtRec.times(), filtRec.covar)
-        navPostFits = unitTestSupport.addTimeColumn(filtRec.times(), filtRec.postFitRes)
+        navState = simHelpers.addTimeColumn(filtRec.times(), filtRec.state)
+        navCovar = simHelpers.addTimeColumn(filtRec.times(), filtRec.covar)
+        navPostFits = simHelpers.addTimeColumn(filtRec.times(), filtRec.postFitRes)
 
         sigma_CB = self.get_DynModel().cameraMRP_CB
         sizeMM = self.get_DynModel().cameraSize

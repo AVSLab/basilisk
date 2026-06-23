@@ -194,7 +194,14 @@ bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 
-from Basilisk.utilities import (SimulationBaseClass, macros, simIncludeGravBody, vizSupport, unitTestSupport, orbitalMotion)
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    macros,
+    simIncludeGravBody,
+    vizSupport,
+    orbitalMotion,
+)
+from Basilisk.utilities import simHelpers
 from Basilisk.simulation import spacecraft, extForceTorque, simpleNav, ephemerisConverter, planetEphemeris
 from Basilisk.fswAlgorithms import mrpFeedback, attTrackingError, velocityPoint, locationPointing
 from Basilisk.architecture import messaging, astroConstants
@@ -328,7 +335,7 @@ def run(show_plots):
          0., 0., 600.]
     scObject.hub.mHub = 750.0  # kg - spacecraft mass
     scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
-    scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
+    scObject.hub.IHubPntBc_B = simHelpers.np2EigenMatrix3d(I)
 
     # Define the initial spacecraft orbit about the asteroid
     oe = orbitalMotion.ClassicElements()

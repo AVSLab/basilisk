@@ -84,7 +84,7 @@ from Basilisk.simulation import spacecraft
 from Basilisk.utilities import (SimulationBaseClass, macros, simIncludeGravBody, vizSupport)
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeRW
-from Basilisk.utilities import unitTestSupport
+from Basilisk.utilities import simHelpers
 
 try:
     from Basilisk.simulation import vizInterface
@@ -308,7 +308,7 @@ def run(show_plots):
 
     mass = 330.  # kg
     scObject.hub.mHub = mass
-    scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
+    scObject.hub.IHubPntBc_B = simHelpers.np2EigenMatrix3d(I)
 
     # Set the truth ICs for the spacecraft attitude and rate
     scObject.hub.sigma_BNInit = np.array([0.1, 0.0, 0.0])  # rad
@@ -446,7 +446,7 @@ def run(show_plots):
     waypointFeedback.navTransInMsg.subscribeTo(simpleNavMeas.transOutMsg)
     waypointFeedback.A_sc = 1.  # Surface area of the spacecraft, m^2
     waypointFeedback.M_sc = mass  # Mass of the spacecraft, kg
-    waypointFeedback.IHubPntC_B = unitTestSupport.np2EigenMatrix3d(I)  # sc inertia
+    waypointFeedback.IHubPntC_B = simHelpers.np2EigenMatrix3d(I)  # sc inertia
     waypointFeedback.mu_ast = mu  # Gravitational constant of the asteroid
     waypointFeedback.x1_ref = [-2000., 0., 0.]
     waypointFeedback.x2_ref = [0.0, 0.0, 0.0]
@@ -505,8 +505,8 @@ def run(show_plots):
 
     simulationTime_1 = macros.sec2nano(15000.0)
 
-    waypointFeedback.K1 = unitTestSupport.np2EigenMatrix3d([5e-4, 0e-5, 0e-5, 0e-5, 5e-4, 0e-5, 0e-5, 0e-5, 5e-4])
-    waypointFeedback.K2 = unitTestSupport.np2EigenMatrix3d([1., 0., 0., 0., 1., 0., 0., 0., 1.])
+    waypointFeedback.K1 = simHelpers.np2EigenMatrix3d([5e-4, 0e-5, 0e-5, 0e-5, 5e-4, 0e-5, 0e-5, 0e-5, 5e-4])
+    waypointFeedback.K2 = simHelpers.np2EigenMatrix3d([1., 0., 0., 0., 1., 0., 0., 0., 1.])
 
     # configure a simulation stop time and execute the simulation run
     scSim.ConfigureStopTime(simulationTime_1)

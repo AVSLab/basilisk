@@ -11,6 +11,7 @@ from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import ephemNavConverter
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
 from Basilisk.utilities import astroFunctions
+from Basilisk.utilities import simHelpers
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -102,7 +103,7 @@ def ephemNavConverterTestFunction():
         colorText = 'Red'
         print("Failed: " + ephemNav.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
-    unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
+    simHelpers.writeTeXSnippet(snippentName, passedText, path)
 
 
     return [testFailCount, ''.join(testMessages)]

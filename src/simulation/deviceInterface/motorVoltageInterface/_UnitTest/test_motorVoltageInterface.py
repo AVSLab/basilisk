@@ -39,6 +39,7 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 from Basilisk.simulation import motorVoltageInterface           # import the module that is to be tested
 from Basilisk.utilities import macros
+from Basilisk.utilities import simHelpers
 from Basilisk.architecture import messaging
 
 
@@ -167,7 +168,7 @@ def run(show_plots, voltage):
     tableName = "baseVoltage" + str(voltage)
     tableHeaders = ["time [s]", "$u_{s,1}$ (Nm)", "Error", "$u_{s,2}$ (Nm)", "Error", "$u_{u,3}$ (Nm)", "Error"]
     caption = 'RW motoor torque output for Base Voltaget = ' + str(voltage) + 'V.'
-    unitTestSupport.writeTableLaTeX(
+    simHelpers.writeTableLaTeX(
         tableName,
         tableHeaders,
         caption,
@@ -184,7 +185,7 @@ def run(show_plots, voltage):
     else:
         colorText = "Red"
         passedText = r'\textcolor{' + colorText + '}{' + "FAILED" + '}'
-    unitTestSupport.writeTeXSnippet(snippetName, passedText, path)
+    simHelpers.writeTeXSnippet(snippetName, passedText, path)
 
 
     # each test method requires a single assert method to be called

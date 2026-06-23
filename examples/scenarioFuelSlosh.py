@@ -183,8 +183,8 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeGravBody
-from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import pythonVariableLogger
+from Basilisk.utilities import simHelpers
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -316,7 +316,7 @@ def run(show_plots, damping_parameter, timeStep):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = simHelpers.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
     dataLog = scObject.scStateOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(simTaskName, dataLog)
 

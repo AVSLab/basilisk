@@ -41,6 +41,7 @@ from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.utilities import unitTestSupport, RigidBodyKinematics
+from Basilisk.utilities import simHelpers
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -296,7 +297,7 @@ def run(show_plots, orbitCase, planetCase):
     #
 
     numDataPoints = 100
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = simHelpers.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
     dataLog = scObject.scStateOutMsg.recorder(samplingTime)
     dataNewAtmoLog = newAtmo.envOutMsgs[0].recorder(samplingTime)
     scSim.AddModelToTask(simTaskName, dataLog)
@@ -370,7 +371,7 @@ def run(show_plots, orbitCase, planetCase):
         ax.ticklabel_format(useOffset=False, style='plain')
         for idx in range(0,3):
             plt.plot(dataLog.times()*macros.NANO2SEC/P, posData[:, idx]/1000.,
-                     color=unitTestSupport.getLineColor(idx,3),
+                     color=simHelpers.getLineColor(idx,3),
                      label='$r_{BN,'+str(idx)+'}$')
         plt.legend(loc='lower right')
         plt.xlabel('Time [orbits]')

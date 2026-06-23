@@ -38,6 +38,7 @@ from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import macros
 from Basilisk.simulation import imuSensor
 from Basilisk.utilities import RigidBodyKinematics as rbk
+from Basilisk.utilities import simHelpers
 from Basilisk.architecture import messaging
 
 def addTimeColumn(time, data):
@@ -356,7 +357,7 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       procRate, gyroLSBIn
     plt.title("PRV Comparison")
     myLegend = plt.legend()
     myLegend.get_frame().set_facecolor('#909090')
-    unitTestSupport.writeFigureLaTeX(testCase + "PRVcomparison",
+    simHelpers.writeFigureLaTeX(testCase + "PRVcomparison",
                                      'Plot Comparing Time Step PRV Truth and Output for test: ' + testCase +'. Note that 1, 2, and 3 indicate the components of the principal rotation vector.', plt,
                                      'height=0.7\\textwidth, keepaspectratio', path)
     plt.figure(4,figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
@@ -372,7 +373,7 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       procRate, gyroLSBIn
     plt.title("Angular Rate Comparison")
     myLegend = plt.legend()
     myLegend.get_frame().set_facecolor('#909090')
-    unitTestSupport.writeFigureLaTeX(testCase + "omegaComparison",
+    simHelpers.writeFigureLaTeX(testCase + "omegaComparison",
                                      'Plot Comparing Angular Rate Truth and Output for test: ' + testCase +'. Note that 1, 2, and 3 indicate the components of the angular rate.', plt,
                                      'height=0.7\\textwidth, keepaspectratio', path)
     plt.figure(7,figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
@@ -388,7 +389,7 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       procRate, gyroLSBIn
     plt.title("Acceleration Comparison")
     myLegend = plt.legend()
     myLegend.get_frame().set_facecolor('#909090')
-    unitTestSupport.writeFigureLaTeX(testCase + "accelComparison",
+    simHelpers.writeFigureLaTeX(testCase + "accelComparison",
                                      'Plot Comparing Sensor Linear Accelertaion Truth and Output for test: ' + testCase +'. Note that 1, 2, and 3 indicate the components of the acceleration.', plt,
                                      'height=0.7\\textwidth, keepaspectratio', path)
 
@@ -405,7 +406,7 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       procRate, gyroLSBIn
     plt.title("DV Comparison")
     myLegend = plt.legend()
     myLegend.get_frame().set_facecolor('#909090')
-    unitTestSupport.writeFigureLaTeX(testCase + "DVcomparison",
+    simHelpers.writeFigureLaTeX(testCase + "DVcomparison",
                                      'Plot Comparing Time Step DV Truth and Output for test: ' + testCase +'. Note that 1, 2, and 3 indicate the components of the velocity delta.', plt,
                                      'height=0.7\\textwidth, keepaspectratio', path)
 
@@ -490,7 +491,7 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       procRate, gyroLSBIn
         plt.xlabel("Time[s]")
         plt.ylabel("DV Noise [um/s]")
         plt.title("DV Noise")
-        unitTestSupport.writeFigureLaTeX("DVnoise",
+        simHelpers.writeFigureLaTeX("DVnoise",
                                          'Plot of DeltaV noise along each component for the noise test.',
                                          plt,
                                          'height=0.7\\textwidth, keepaspectratio', path)
@@ -500,7 +501,7 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       procRate, gyroLSBIn
         plt.xlabel("Time[s]")
         plt.ylabel("Acceleration Noise [m/s/s]")
         plt.title("Acceleration Noise")
-        unitTestSupport.writeFigureLaTeX("AccelNoise",
+        simHelpers.writeFigureLaTeX("AccelNoise",
                                          'Plot of acceleration noise along each component for the noise test.',
                                          plt,
                                          'height=0.7\\textwidth, keepaspectratio', path)
@@ -510,7 +511,7 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       procRate, gyroLSBIn
         plt.xlabel("Time[s]")
         plt.ylabel("DR Noise [rad]")
         plt.title("DR Noise")
-        unitTestSupport.writeFigureLaTeX("DRnoise",
+        simHelpers.writeFigureLaTeX("DRnoise",
                                          'Plot of PRV noise along each component for the noise test.',
                                          plt,
                                          'height=0.7\\textwidth, keepaspectratio', path)
@@ -520,7 +521,7 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       procRate, gyroLSBIn
         plt.xlabel("Time[s]")
         plt.ylabel("Angular Rate Noise [rad/s]")
         plt.title("Angular Rate Noise")
-        unitTestSupport.writeFigureLaTeX("omegaNoise",
+        simHelpers.writeFigureLaTeX("omegaNoise",
                                          'Plot of Angular Rate noise along each component for the noise test.',
                                          plt,
                                          'height=0.7\\textwidth, keepaspectratio', path)
@@ -533,7 +534,7 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       procRate, gyroLSBIn
     #
     accuracySnippetName = testCase+"accuracy"
     accuracySnippetContent = '{:1.0e}'.format(accuracy)
-    unitTestSupport.writeTeXSnippet(accuracySnippetName, accuracySnippetContent, path)
+    simHelpers.writeTeXSnippet(accuracySnippetName, accuracySnippetContent, path)
 
     if testFailCount == 0:
         colorText = 'ForestGreen'
@@ -544,32 +545,32 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       procRate, gyroLSBIn
 
     passFailSnippetName = testCase+"passFail"
     passFailSnippetContent = passedText
-    unitTestSupport.writeTeXSnippet(passFailSnippetName, passFailSnippetContent, path)
+    simHelpers.writeTeXSnippet(passFailSnippetName, passFailSnippetContent, path)
 
     snippetName = testCase + "gyroLSB"
     snippetContent = '{:1.0e}'.format(gyroLSBIn)
-    unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)
+    simHelpers.writeTeXSnippet(snippetName, snippetContent, path)
     snippetName = testCase + "accelLSB"
     snippetContent = '{:1.0e}'.format(accelLSBIn)
-    unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)
+    simHelpers.writeTeXSnippet(snippetName, snippetContent, path)
     snippetName = testCase + "rotMax"
     snippetContent = '{:1.1e}'.format(senRotMaxIn)
-    unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)
+    simHelpers.writeTeXSnippet(snippetName, snippetContent, path)
     snippetName = testCase + "transMax"
     snippetContent = '{:1.1e}'.format(senTransMaxIn)
-    unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)
+    simHelpers.writeTeXSnippet(snippetName, snippetContent, path)
     snippetName = testCase + "rotNoise"
     snippetContent = '{:0.1f}'.format(senRotNoiseStd)
-    unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)
+    simHelpers.writeTeXSnippet(snippetName, snippetContent, path)
     snippetName = testCase + "transNoise"
     snippetContent = '{:0.1f}'.format(senTransNoiseStd)
-    unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)
+    simHelpers.writeTeXSnippet(snippetName, snippetContent, path)
     snippetName = testCase + "rotBias"
     snippetContent = '{:1.1e}'.format(senRotBiasIn)
-    unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)
+    simHelpers.writeTeXSnippet(snippetName, snippetContent, path)
     snippetName = testCase + "transBias"
     snippetContent = '{:1.1e}'.format(senTransBiasIn)
-    unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)
+    simHelpers.writeTeXSnippet(snippetName, snippetContent, path)
 
     if testFailCount:
         print(testMessages)

@@ -28,7 +28,7 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeGravBody
-from Basilisk.utilities import unitTestSupport
+from Basilisk.utilities import simHelpers
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -92,7 +92,7 @@ def test_range_degenerate_strip(show_plots):
 
     # Log the access indicator
     numDataPoints = 2
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = simHelpers.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
     dataLog0 = stripTarget.accessOutMsgs[0].recorder(samplingTime)
     dataLog1 = stripTarget.accessOutMsgs[1].recorder(samplingTime)
     dataLog2 = stripTarget.accessOutMsgs[2].recorder(samplingTime)
@@ -184,7 +184,7 @@ def test_rotation_degenerate_strip(show_plots):
 
     # Log the access indicator
     numDataPoints = 2
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = simHelpers.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
     dataLog = stripTarget.accessOutMsgs[0].recorder(samplingTime)
     scSim.AddModelToTask(simTaskName, dataLog)
 
@@ -658,7 +658,7 @@ def test_AzElR_rates():
 
     # Log the Az, El, R and rates info
     numDataPoints = 2
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = simHelpers.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
     dataLog = stripStation.accessOutMsgs[0].recorder(samplingTime)
     scSim.AddModelToTask(simTaskName, dataLog)
 

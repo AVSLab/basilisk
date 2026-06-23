@@ -113,7 +113,7 @@ from Basilisk.utilities import fswSetupRW
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.utilities import simIncludeRW
-from Basilisk.utilities import unitTestSupport
+from Basilisk.utilities import simHelpers
 
 # attempt to import vizard
 from Basilisk.utilities import vizSupport
@@ -437,7 +437,7 @@ def run(show_plots=True):
          0., 0., 100.]
     scObject.hub.mHub = 330.0
     scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
-    scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
+    scObject.hub.IHubPntBc_B = simHelpers.np2EigenMatrix3d(I)
 
     # ------------------------------------------------------------------
     # Gravity
@@ -561,7 +561,7 @@ def run(show_plots=True):
 
     fswSetupRW.clearSetup()
     for key, rw in rwFactory.rwList.items():
-        fswSetupRW.create(unitTestSupport.EigenVector3d2np(rw.gsHat_B),
+        fswSetupRW.create(simHelpers.EigenVector3d2np(rw.gsHat_B),
                           rw.Js, 0.2)
     fswRwParamMsg = fswSetupRW.writeConfigMessage()
     fswSetupRW.clearSetup()  # release SWIG-owned objects before shutdown
@@ -664,9 +664,9 @@ def run(show_plots=True):
             tile_id = id_base
             img_start_ns, img_end_ns = strip_phase_ns[si]
             while t_tile < (img_end_ns - img_start_ns + pre_imaging_ns):
-                r_s = unitTestSupport.EigenVector3d2list(
+                r_s = simHelpers.EigenVector3d2list(
                     get_target_position(t_tile, r_start_ext, r_end, speed=3e-6))
-                r_e = unitTestSupport.EigenVector3d2list(
+                r_e = simHelpers.EigenVector3d2list(
                     get_target_position(t_tile + dt_viz, r_start_ext, r_end, speed=3e-6))
                 verts = compute_strip_vertices(r_s, r_e, width=200e3)
                 # Default grey – will be updated green/red during simulation
@@ -686,9 +686,9 @@ def run(show_plots=True):
         r_e0 = lat_lon_to_surface(
             strip_configs[0]["end"][0], strip_configs[0]["end"][1], astroConstants.REQ_EARTH * 1e3)
         r_s0_ext = compute_extended_start(r_s0, r_e0, pre_imaging_ns, speed=3e-6)
-        r_init = unitTestSupport.EigenVector3d2list(
+        r_init = simHelpers.EigenVector3d2list(
             get_target_position(0, r_s0_ext, r_e0, speed=3e-6))
-        r_init_next = unitTestSupport.EigenVector3d2list(
+        r_init_next = simHelpers.EigenVector3d2list(
             get_target_position(dt_viz, r_s0_ext, r_e0, speed=3e-6))
         r_left_init, r_right_init = compute_scan_line_extremities(
             r_init, r_init_next, width=200e3)
@@ -764,9 +764,9 @@ def run(show_plots=True):
             if viz is not None:
                 # Time within the strip's own timeline
                 elapsed = t_cur - img_start_ns + pre_imaging_ns
-                r_s = unitTestSupport.EigenVector3d2list(
+                r_s = simHelpers.EigenVector3d2list(
                     get_target_position(elapsed, r_start_ext, r_end, speed=3e-6))
-                r_e = unitTestSupport.EigenVector3d2list(
+                r_e = simHelpers.EigenVector3d2list(
                     get_target_position(elapsed + dt_step, r_start_ext, r_end, speed=3e-6))
                 verts = compute_strip_vertices(r_s, r_e, width=200e3)
 

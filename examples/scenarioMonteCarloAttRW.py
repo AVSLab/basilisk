@@ -197,7 +197,7 @@ bskPath = __path__[0]
 
 # import general simulation support files
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport
+from Basilisk.utilities import simHelpers
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 
@@ -505,7 +505,7 @@ def createScenarioAttitudeFeedbackRW():
          0., 0., 600.]
     scSim.scObject.hub.mHub = 750.0  # kg - spacecraft mass
     scSim.scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
-    scSim.scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
+    scSim.scObject.hub.IHubPntBc_B = simHelpers.np2EigenMatrix3d(I)
     scSim.hubref = scSim.scObject.hub
 
     # add spacecraft object to the simulation process
@@ -588,7 +588,7 @@ def createScenarioAttitudeFeedbackRW():
     # use the same RW states in the FSW algorithm as in the simulation
     fswSetupRW.clearSetup()
     for key, rw in scSim.rwFactory.rwList.items():
-        fswSetupRW.create(unitTestSupport.EigenVector3d2np(rw.gsHat_B), rw.Js, 0.2)
+        fswSetupRW.create(simHelpers.EigenVector3d2np(rw.gsHat_B), rw.Js, 0.2)
     scSim.fswRwConfMsg = fswSetupRW.writeConfigMessage()
 
     # setup inertial3D guidance module
@@ -782,7 +782,7 @@ def plotSimAndSave(data, retentionPolicy):
     figureList = plotSim(data, retentionPolicy)
     for pltName, plt in list(figureList.items()):
         # plt.subplots_adjust(top = 0.6, bottom = 0.4)
-        unitTestSupport.saveScenarioFigure(
+        simHelpers.saveScenarioFigure(
             fileNameString + "_" + pltName
             , plt, path + "/dataForExamples")
 

@@ -29,6 +29,7 @@ splitPath = path.split('simulation')
 
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport
+from Basilisk.utilities import simHelpers
 from Basilisk.simulation import spacecraft
 from Basilisk.simulation import dualHingedRigidBodyStateEffector
 from Basilisk.simulation import gravityEffector
@@ -159,10 +160,10 @@ def dualHingedRigidBodyTest(show_plots, useFlag, testCase):
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
     unitTestSim.ExecuteSimulation()
 
-    orbEnergy = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totOrbEnergy)
-    orbAngMom_N = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totOrbAngMomPntN_N)
-    rotAngMom_N = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totRotAngMomPntC_N)
-    rotEnergy = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totRotEnergy)
+    orbEnergy = simHelpers.addTimeColumn(scObjectLog.times(), scObjectLog.totOrbEnergy)
+    orbAngMom_N = simHelpers.addTimeColumn(scObjectLog.times(), scObjectLog.totOrbAngMomPntN_N)
+    rotAngMom_N = simHelpers.addTimeColumn(scObjectLog.times(), scObjectLog.totRotAngMomPntC_N)
+    rotEnergy = simHelpers.addTimeColumn(scObjectLog.times(), scObjectLog.totRotEnergy)
 
     initialOrbAngMom_N = [
                 [orbAngMom_N[0, 1], orbAngMom_N[0, 2], orbAngMom_N[0, 3]]
@@ -202,25 +203,25 @@ def dualHingedRigidBodyTest(show_plots, useFlag, testCase):
     plt.plot(orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,1] - orbAngMom_N[0,1])/orbAngMom_N[0,1], orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,2] - orbAngMom_N[0,2])/orbAngMom_N[0,2], orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,3] - orbAngMom_N[0,3])/orbAngMom_N[0,3])
     plt.xlabel("Time (s)")
     plt.ylabel("Relative Difference")
-    unitTestSupport.writeFigureLaTeX("ChangeInOrbitalAngularMomentum" + testCase, "Change in Orbital Angular Momentum " + testCase, plt, r"width=0.8\textwidth", path)
+    simHelpers.writeFigureLaTeX("ChangeInOrbitalAngularMomentum" + testCase, "Change in Orbital Angular Momentum " + testCase, plt, r"width=0.8\textwidth", path)
     plt.figure()
     plt.clf()
     plt.plot(orbEnergy[:,0]*1e-9, (orbEnergy[:,1] - orbEnergy[0,1])/orbEnergy[0,1])
     plt.xlabel("Time (s)")
     plt.ylabel("Relative Difference")
-    unitTestSupport.writeFigureLaTeX("ChangeInOrbitalEnergy" + testCase, "Change in Orbital Energy " + testCase, plt, r"width=0.8\textwidth", path)
+    simHelpers.writeFigureLaTeX("ChangeInOrbitalEnergy" + testCase, "Change in Orbital Energy " + testCase, plt, r"width=0.8\textwidth", path)
     plt.figure()
     plt.clf()
     plt.plot(rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,1] - rotAngMom_N[0,1])/rotAngMom_N[0,1], rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,2] - rotAngMom_N[0,2])/rotAngMom_N[0,2], rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,3] - rotAngMom_N[0,3])/rotAngMom_N[0,3])
     plt.xlabel("Time (s)")
     plt.ylabel("Relative Difference")
-    unitTestSupport.writeFigureLaTeX("ChangeInRotationalAngularMomentum" + testCase, "Change in Rotational Angular Momentum " + testCase, plt, r"width=0.8\textwidth", path)
+    simHelpers.writeFigureLaTeX("ChangeInRotationalAngularMomentum" + testCase, "Change in Rotational Angular Momentum " + testCase, plt, r"width=0.8\textwidth", path)
     plt.figure()
     plt.clf()
     plt.plot(rotEnergy[:,0]*1e-9, (rotEnergy[:,1] - rotEnergy[0,1])/rotEnergy[0,1])
     plt.xlabel("Time (s)")
     plt.ylabel("Relative Difference")
-    unitTestSupport.writeFigureLaTeX("ChangeInRotationalEnergy" + testCase, "Change in Rotational Energy " + testCase, plt, r"width=0.8\textwidth", path)
+    simHelpers.writeFigureLaTeX("ChangeInRotationalEnergy" + testCase, "Change in Rotational Energy " + testCase, plt, r"width=0.8\textwidth", path)
     if show_plots:
         plt.show()
         plt.close("all")
@@ -418,7 +419,7 @@ def dualHingedRigidBodyMotorTorque(show_plots, useScPlus):
     sB2N = data21Log.sigma_BN[0]
     oB2N = data21Log.omega_BN_B[0]
 
-    rotAngMom_N = unitTestSupport.addTimeColumn(scLog.times(), scLog.totRotAngMomPntC_N)
+    rotAngMom_N = simHelpers.addTimeColumn(scLog.times(), scLog.totRotAngMomPntC_N)
 
     # Get the last sigma and position
     dataPos = [rOut_CN_N[-1]]
@@ -449,13 +450,13 @@ def dualHingedRigidBodyMotorTorque(show_plots, useScPlus):
     plt.figure()
     plt.clf()
     plt.plot(dataLog.times() * macros.NANO2SEC, sigma_BN[:, 0],
-             color=unitTestSupport.getLineColor(0, 3),
+             color=simHelpers.getLineColor(0, 3),
              label=r'$\sigma_{1}$')
     plt.plot(dataLog.times() * macros.NANO2SEC, sigma_BN[:, 1],
-             color=unitTestSupport.getLineColor(1, 3),
+             color=simHelpers.getLineColor(1, 3),
              label=r'$\sigma_{2}$')
     plt.plot(dataLog.times() * macros.NANO2SEC, sigma_BN[:, 2],
-             color=unitTestSupport.getLineColor(2, 3),
+             color=simHelpers.getLineColor(2, 3),
              label=r'$\sigma_{3}$')
     plt.legend(loc='lower right')
     plt.xlabel('time (s)')
@@ -464,16 +465,16 @@ def dualHingedRigidBodyMotorTorque(show_plots, useScPlus):
     plt.figure()
     plt.clf()
     plt.plot(dataPanel10Log.times() * macros.NANO2SEC, thetaP1A1*macros.R2D,
-             color=unitTestSupport.getLineColor(0, 4),
+             color=simHelpers.getLineColor(0, 4),
              label=r'Panel 1 $\theta_{1}$')
     plt.plot(dataPanel10Log.times() * macros.NANO2SEC, thetaP1A2*macros.R2D,
-             color=unitTestSupport.getLineColor(1, 4),
+             color=simHelpers.getLineColor(1, 4),
              label=r'Panel 1 $\theta_{2}$')
     plt.plot(dataPanel10Log.times() * macros.NANO2SEC, thetaP2A1 * macros.R2D,
-             color=unitTestSupport.getLineColor(2, 4),
+             color=simHelpers.getLineColor(2, 4),
              label=r'Panel 2 $\theta_{1}$')
     plt.plot(dataPanel10Log.times() * macros.NANO2SEC, thetaP2A2 * macros.R2D,
-             color=unitTestSupport.getLineColor(3, 4),
+             color=simHelpers.getLineColor(3, 4),
              label=r'Panel 2 $\theta_{2}$')
     plt.legend(loc='lower right')
     plt.xlabel('time (s)')

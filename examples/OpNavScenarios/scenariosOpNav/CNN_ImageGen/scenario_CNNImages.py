@@ -29,10 +29,11 @@ import os
 import subprocess
 import sys
 
+from Basilisk.utilities import simHelpers
 from Basilisk.utilities import RigidBodyKinematics as rbk
 
 # Import utilities
-from Basilisk.utilities import orbitalMotion, macros, unitTestSupport
+from Basilisk.utilities import orbitalMotion, macros
 from Basilisk.utilities.supportDataTools.dataFetcher import get_path, DataFile
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -133,12 +134,12 @@ class scenario_OpNav(BSKSim):
     def pull_outputs(self, showPlots):
         ## Spacecraft true states
         scStates = self.msgRecList[self.retainedMessageName1]
-        position_N = unitTestSupport.addTimeColumn(scStates.times(), scStates.r_BN_N)
-        sigma_BN = unitTestSupport.addTimeColumn(scStates.times(), scStates.sigma_BN)
+        position_N = simHelpers.addTimeColumn(scStates.times(), scStates.r_BN_N)
+        sigma_BN = simHelpers.addTimeColumn(scStates.times(), scStates.sigma_BN)
 
         ## Image processing
         circleStates = self.scRecmsgRecList[self.retainedMessageName2]
-        validCircle = unitTestSupport.addTimeColumn(
+        validCircle = simHelpers.addTimeColumn(
             circleStates.times(), circleStates.valid
         )
 

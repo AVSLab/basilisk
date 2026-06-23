@@ -12,6 +12,7 @@ import pytest
 from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import rwNullSpace
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
+from Basilisk.utilities import simHelpers
 from numpy.linalg import inv
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -170,7 +171,7 @@ def rwNullSpaceTestFunction(numWheels, defaultDesired):
 
 
     accuracy = 1e-6
-    unitTestSupport.writeTeXSnippet("toleranceValue", str(accuracy), path)
+    simHelpers.writeTeXSnippet("toleranceValue", str(accuracy), path)
 
     # At each timestep, make sure the vehicleConfig values haven't changed from the initial values
     testFailCount, testMessages = unitTestSupport.compareArrayND(trueVector, outputCrtlData,
@@ -188,7 +189,7 @@ def rwNullSpaceTestFunction(numWheels, defaultDesired):
         colorText = 'Red'
         print("Failed: " + module.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
-    unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
+    simHelpers.writeTeXSnippet(snippentName, passedText, path)
 
 
     return [testFailCount, ''.join(testMessages)]

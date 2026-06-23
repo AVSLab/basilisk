@@ -23,9 +23,9 @@ import matplotlib.pyplot as plt
 import numpy
 from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import inertialUKF  # import the module that is to be tested
+from Basilisk.utilities import simHelpers
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -194,18 +194,18 @@ def filterMethods():
     unitTestSim.ConfigureStopTime(1E9)
     unitTestSim.ExecuteSimulation()
 
-    stOrdered = unitTestSupport.addTimeColumn(inertialUKFLog.times(), inertialUKFLog.stSensorOrder)
+    stOrdered = simHelpers.addTimeColumn(inertialUKFLog.times(), inertialUKFLog.stSensorOrder)
     if numpy.linalg.norm(numpy.array(stOrdered[0]) - numpy.array([0., 2, 1, 0, 0])) > accuracy:
         testFailCount += 1
         testMessages.append("ST order test failed")
 
-    unitTestSupport.writeTeXSnippet("toleranceValue00", str(accuracy), path)
+    simHelpers.writeTeXSnippet("toleranceValue00", str(accuracy), path)
     if testFailCount == 0:
         print('Passed: test_FilterMethods')
-        unitTestSupport.writeTeXSnippet("passFail00", textSnippetPassed, path)
+        simHelpers.writeTeXSnippet("passFail00", textSnippetPassed, path)
     else:
         print('Failed: test_FilterMethods')
-        unitTestSupport.writeTeXSnippet("passFail00", textSnippetFailed, path)
+        simHelpers.writeTeXSnippet("passFail00", textSnippetFailed, path)
 
     return [testFailCount, ''.join(testMessages)]
 
@@ -288,24 +288,24 @@ def stateUpdateInertialAttitude(show_plots):
         unitTestSim.ConfigureStopTime(macros.sec2nano((i+1)*0.5))
         unitTestSim.ExecuteSimulation()
 
-    covarLog = unitTestSupport.addTimeColumn(inertialUKFLog.times(), inertialUKFLog.covar)
-    stateLog = unitTestSupport.addTimeColumn(inertialUKFLog.times(), inertialUKFLog.state)
+    covarLog = simHelpers.addTimeColumn(inertialUKFLog.times(), inertialUKFLog.covar)
+    stateLog = simHelpers.addTimeColumn(inertialUKFLog.times(), inertialUKFLog.state)
     accuracy = 1.0E-5
-    unitTestSupport.writeTeXSnippet("toleranceValue11", str(accuracy), path)
+    simHelpers.writeTeXSnippet("toleranceValue11", str(accuracy), path)
     for i in range(3):
         if(covarLog[-1, i*6+1+i] > covarLog[0, i*6+1+i]):
             testFailCount += 1
             testMessages.append("Covariance update failure")
-            unitTestSupport.writeTeXSnippet('passFail11', textSnippetFailed, path)
+            simHelpers.writeTeXSnippet('passFail11', textSnippetFailed, path)
         else:
-            unitTestSupport.writeTeXSnippet('passFail11', textSnippetPassed, path)
+            simHelpers.writeTeXSnippet('passFail11', textSnippetPassed, path)
         if(abs(stateLog[-1, i+1] - stMessage1.MRP_BdyInrtl[i]) > accuracy):
             print(abs(stateLog[-1, i+1] - stMessage1.MRP_BdyInrtl[i]))
             testFailCount += 1
             testMessages.append("State update failure")
-            unitTestSupport.writeTeXSnippet('passFail11', textSnippetFailed, path)
+            simHelpers.writeTeXSnippet('passFail11', textSnippetFailed, path)
         else:
-            unitTestSupport.writeTeXSnippet('passFail11', textSnippetPassed, path)
+            simHelpers.writeTeXSnippet('passFail11', textSnippetPassed, path)
 
     stMessage1.MRP_BdyInrtl = [1.2, 0.0, 0.0]
     stMessage2.MRP_BdyInrtl = [1.2, 0.0, 0.0]
@@ -320,29 +320,29 @@ def stateUpdateInertialAttitude(show_plots):
         unitTestSim.ExecuteSimulation()
 
 
-    covarLog = unitTestSupport.addTimeColumn(inertialUKFLog.times(), inertialUKFLog.covar)
-    stateLog = unitTestSupport.addTimeColumn(inertialUKFLog.times(), inertialUKFLog.state)
+    covarLog = simHelpers.addTimeColumn(inertialUKFLog.times(), inertialUKFLog.covar)
+    stateLog = simHelpers.addTimeColumn(inertialUKFLog.times(), inertialUKFLog.state)
     for i in range(3):
         if(covarLog[-1, i*6+1+i] > covarLog[0, i*6+1+i]):
             testFailCount += 1
             testMessages.append("Covariance update large failure")
-            unitTestSupport.writeTeXSnippet('passFail11', textSnippetFailed, path)
+            simHelpers.writeTeXSnippet('passFail11', textSnippetFailed, path)
         else:
-            unitTestSupport.writeTeXSnippet('passFail11', textSnippetPassed, path)
+            simHelpers.writeTeXSnippet('passFail11', textSnippetPassed, path)
     plt.figure()
     for i in range(module.numStates):
         plt.plot(stateLog[:,0]*1.0E-9, stateLog[:,i+1], label='State_' +str(i))
         plt.legend()
         plt.ylim([-1, 1])
 
-    unitTestSupport.writeFigureLaTeX('Test11', 'Test 1 State convergence', plt, 'width=0.9\\textwidth, keepaspectratio', path)
+    simHelpers.writeFigureLaTeX('Test11', 'Test 1 State convergence', plt, 'width=0.9\\textwidth, keepaspectratio', path)
     plt.figure()
     for i in range(module.numStates):
         plt.plot(covarLog[:,0]*1.0E-9, covarLog[:,i*module.numStates+i+1], label='Covar_' +str(i))
         plt.legend()
         plt.ylim([0, 2.E-7])
 
-    unitTestSupport.writeFigureLaTeX('Test12', 'Test 1 Covariance convergence', plt, 'width=0.9\\textwidth, keepaspectratio', path)
+    simHelpers.writeFigureLaTeX('Test12', 'Test 1 Covariance convergence', plt, 'width=0.9\\textwidth, keepaspectratio', path)
     if(show_plots):
         plt.show()
         plt.close('all')
@@ -420,18 +420,18 @@ def statePropInertialAttitude(show_plots):
     unitTestSim.ConfigureStopTime(macros.sec2nano(8000.0))
     unitTestSim.ExecuteSimulation()
 
-    covarLog = unitTestSupport.addTimeColumn(inertialUKFLog.times(), inertialUKFLog.covar)
-    stateLog = unitTestSupport.addTimeColumn(inertialUKFLog.times(), inertialUKFLog.state)
+    covarLog = simHelpers.addTimeColumn(inertialUKFLog.times(), inertialUKFLog.covar)
+    stateLog = simHelpers.addTimeColumn(inertialUKFLog.times(), inertialUKFLog.state)
 
     accuracy = 1.0E-10
-    unitTestSupport.writeTeXSnippet("toleranceValue22", str(accuracy), path)
+    simHelpers.writeTeXSnippet("toleranceValue22", str(accuracy), path)
     for i in range(6):
         if(abs(stateLog[-1, i+1] - stateLog[0, i+1]) > accuracy):
             testFailCount += 1
             testMessages.append("State propagation failure")
-            unitTestSupport.writeTeXSnippet('passFail22', textSnippetFailed, path)
+            simHelpers.writeTeXSnippet('passFail22', textSnippetFailed, path)
         else:
-            unitTestSupport.writeTeXSnippet('passFail22', textSnippetPassed, path)
+            simHelpers.writeTeXSnippet('passFail22', textSnippetPassed, path)
 
     for i in range(6):
        if(covarLog[-1, i*6+i+1] <= covarLog[0, i*6+i+1]):
@@ -540,12 +540,12 @@ def stateUpdateRWInertialAttitude(show_plots):
         unitTestSim.ConfigureStopTime(macros.sec2nano((i + 1) * 0.5))
         unitTestSim.ExecuteSimulation()
 
-    covarLog = unitTestSupport.addTimeColumn(inertialUKFLog.times(), inertialUKFLog.covar)
-    stateLog = unitTestSupport.addTimeColumn(inertialUKFLog.times(), inertialUKFLog.state)
+    covarLog = simHelpers.addTimeColumn(inertialUKFLog.times(), inertialUKFLog.covar)
+    stateLog = simHelpers.addTimeColumn(inertialUKFLog.times(), inertialUKFLog.state)
     print(inertialUKFLog.covar, covarLog)
 
     accuracy = 1.0E-5
-    unitTestSupport.writeTeXSnippet("toleranceValue33", str(accuracy), path)
+    simHelpers.writeTeXSnippet("toleranceValue33", str(accuracy), path)
     for i in range(3):
         if (covarLog[-1, i * 6 + 1 + i] > covarLog[0, i * 6 + 1 + i]):
             testFailCount += 1
@@ -554,9 +554,9 @@ def stateUpdateRWInertialAttitude(show_plots):
             print(abs(stateLog[-1, i + 1] - stMessage1.MRP_BdyInrtl[i]))
             testFailCount += 1
             testMessages.append("State update with RW failure")
-            unitTestSupport.writeTeXSnippet('passFail33', textSnippetFailed, path)
+            simHelpers.writeTeXSnippet('passFail33', textSnippetFailed, path)
         else:
-            unitTestSupport.writeTeXSnippet('passFail33', textSnippetPassed, path)
+            simHelpers.writeTeXSnippet('passFail33', textSnippetPassed, path)
 
     stMessage1.MRP_BdyInrtl = [1.2, 0.0, 0.0]
     stMessage2.MRP_BdyInrtl = [1.2, 0.0, 0.0]
@@ -571,29 +571,29 @@ def stateUpdateRWInertialAttitude(show_plots):
         unitTestSim.ConfigureStopTime(macros.sec2nano((i + 20000 + 1) * 0.5))
         unitTestSim.ExecuteSimulation()
 
-    covarLog = unitTestSupport.addTimeColumn(inertialUKFLog.times(), inertialUKFLog.covar)
-    stateLog = unitTestSupport.addTimeColumn(inertialUKFLog.times(), inertialUKFLog.state)
+    covarLog = simHelpers.addTimeColumn(inertialUKFLog.times(), inertialUKFLog.covar)
+    stateLog = simHelpers.addTimeColumn(inertialUKFLog.times(), inertialUKFLog.state)
     for i in range(3):
         if (covarLog[-1, i * 6 + 1 + i] > covarLog[0, i * 6 + 1 + i]):
             testFailCount += 1
             testMessages.append("Covariance update large failure")
-            unitTestSupport.writeTeXSnippet('passFail33', textSnippetFailed, path)
+            simHelpers.writeTeXSnippet('passFail33', textSnippetFailed, path)
         else:
-            unitTestSupport.writeTeXSnippet('passFail33', textSnippetPassed, path)
+            simHelpers.writeTeXSnippet('passFail33', textSnippetPassed, path)
     plt.figure()
     for i in range(module.numStates):
         plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:, i + 1], label='State_' +str(i))
         plt.legend()
         plt.ylim([-1, 1])
 
-    unitTestSupport.writeFigureLaTeX('Test31', 'Test 3 State convergence', plt, 'width=0.7\\textwidth, keepaspectratio', path)
+    simHelpers.writeFigureLaTeX('Test31', 'Test 3 State convergence', plt, 'width=0.7\\textwidth, keepaspectratio', path)
     plt.figure()
     for i in range(module.numStates):
         plt.plot(covarLog[:, 0] * 1.0E-9, covarLog[:, i * module.numStates + i + 1], label='Covar_' +str(i))
         plt.legend()
         plt.ylim([0., 2E-7])
 
-    unitTestSupport.writeFigureLaTeX('Test32', 'Test 3 Covariance convergence', plt, 'width=0.7\\textwidth, keepaspectratio', path)
+    simHelpers.writeFigureLaTeX('Test32', 'Test 3 Covariance convergence', plt, 'width=0.7\\textwidth, keepaspectratio', path)
     if (show_plots):
         plt.show()
         plt.close('all')
@@ -708,19 +708,19 @@ def statePropRateInertialAttitude(show_plots):
         unitTestSim.ConfigureStopTime(macros.sec2nano((i+1)*0.5))
         unitTestSim.ExecuteSimulation()
 
-    covarLog = unitTestSupport.addTimeColumn(inertialUKFLog.times(), inertialUKFLog.covar)
-    sigmaLog = unitTestSupport.addTimeColumn(inertialUKFLog.times(), inertialUKFLog.sigma_BNOut)
-    omegaLog = unitTestSupport.addTimeColumn(inertialUKFLog.times(), inertialUKFLog.omega_BN_BOut)
+    covarLog = simHelpers.addTimeColumn(inertialUKFLog.times(), inertialUKFLog.covar)
+    sigmaLog = simHelpers.addTimeColumn(inertialUKFLog.times(), inertialUKFLog.sigma_BNOut)
+    omegaLog = simHelpers.addTimeColumn(inertialUKFLog.times(), inertialUKFLog.omega_BN_BOut)
     accuracy = 1.0E-3
-    unitTestSupport.writeTeXSnippet("toleranceValue44", str(accuracy), path)
+    simHelpers.writeTeXSnippet("toleranceValue44", str(accuracy), path)
     for i in range(3):
         if(abs(omegaLog[-1, i+1] - stateInit[i+3]) > accuracy):
             print(abs(omegaLog[-1, i+1] - stateInit[i+3]))
             testFailCount += 1
             testMessages.append("State omega propagation failure")
-            unitTestSupport.writeTeXSnippet('passFail44', textSnippetFailed, path)
+            simHelpers.writeTeXSnippet('passFail44', textSnippetFailed, path)
         else:
-            unitTestSupport.writeTeXSnippet('passFail44', textSnippetPassed, path)
+            simHelpers.writeTeXSnippet('passFail44', textSnippetPassed, path)
 
     for i in range(6):
        if(covarLog[-1, i*6+i+1] <= covarLog[0, i*6+i+1]):

@@ -44,8 +44,15 @@ splitPath = path.split(bskName)
 
 
 # Import all modules that are going to be called in this simulation
-from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion, simIncludeGravBody, unitTestSupport,
-                                vizSupport, simIncludeThruster)
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    macros,
+    orbitalMotion,
+    simIncludeGravBody,
+    vizSupport,
+    simIncludeThruster,
+)
+from Basilisk.utilities import simHelpers
 from Basilisk.simulation import spacecraft
 from Basilisk.architecture import messaging, bskLogging
 from Basilisk.simulation import thrusterDynamicEffector
@@ -178,7 +185,7 @@ def vizInterfaceTest(show_plots, accuracy):
     scData.spacecraftName = scObject.ModelTag
     scData.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
 
-    samplingTime = unitTestSupport.samplingTime(simulationTime, testProcessRate, 100)
+    samplingTime = simHelpers.samplingTime(simulationTime, testProcessRate, 100)
 
     # Create data recorders
     scState_dataRec = scObject.scStateOutMsg.recorder(samplingTime)

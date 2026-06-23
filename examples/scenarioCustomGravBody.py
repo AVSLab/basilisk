@@ -86,7 +86,7 @@ from Basilisk.simulation import planetEphemeris
 from Basilisk.simulation import spacecraft
 from Basilisk.utilities import (SimulationBaseClass, macros, simIncludeGravBody, vizSupport)
 from Basilisk.utilities import orbitalMotion
-from Basilisk.utilities import unitTestSupport
+from Basilisk.utilities import simHelpers
 
 
 # The path to the location of Basilisk
@@ -194,7 +194,7 @@ def run(show_plots):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = simHelpers.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
     scRec = scObject.scStateOutMsg.recorder(samplingTime)
     astRec = gravBodyEphem.planetOutMsgs[0].recorder(samplingTime)
     scSim.AddModelToTask(simTaskName, scRec)
@@ -240,7 +240,7 @@ def run(show_plots):
     ax.ticklabel_format(useOffset=False, style='plain')
     for idx in range(3):
         plt.plot(timeAxis, posData[:, idx] ,
-                 color=unitTestSupport.getLineColor(idx, 3),
+                 color=simHelpers.getLineColor(idx, 3),
                  label='$r_{BI,' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [h]')

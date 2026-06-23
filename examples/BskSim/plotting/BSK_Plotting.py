@@ -20,8 +20,8 @@ import numpy as np
 from Basilisk.utilities import RigidBodyKinematics
 from Basilisk.utilities import macros as mc
 from Basilisk.utilities import orbitalMotion
-from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import vizSupport
+from Basilisk.utilities import simHelpers
 
 # --------------------------------- COMPONENTS & SUBPLOT HANDLING ----------------------------------------------- #
 color_x = 'dodgerblue'
@@ -167,10 +167,10 @@ def plot_attitude_error(timeLineSet, dataSigmaBR, id=None):
     plt.figure(id)
     fig = plt.gcf()
     ax = fig.gca()
-    vectorData = unitTestSupport.pullVectorSetFromData(dataSigmaBR)
+    vectorData = simHelpers.pullVectorSetFromData(dataSigmaBR)
     sNorm = np.array([np.linalg.norm(v) for v in vectorData])
     plt.plot(timeLineSet, sNorm,
-             color=unitTestSupport.getLineColor(1, 3),
+             color=simHelpers.getLineColor(1, 3),
              )
     plt.xlabel('Time [min]')
     plt.ylabel(r'Attitude Error Norm $|\sigma_{B/R}|$')
@@ -181,7 +181,7 @@ def plot_control_torque(timeLineSet, dataLr, id=None, livePlot=False):
     plt.figure(id)
     for idx in range(3):
         plt.plot(timeLineSet, dataLr[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
+                 color=simHelpers.getLineColor(idx, 3),
                  label='$L_{r,' + str(idx) + '}$')
     if not livePlot:
         plt.legend(loc='lower right')
@@ -193,7 +193,7 @@ def plot_rate_error(timeLineSet, dataOmegaBR, id=None, livePlot=False):
     plt.figure(id)
     for idx in range(3):
         plt.plot(timeLineSet, dataOmegaBR[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
+                 color=simHelpers.getLineColor(idx, 3),
                  label=r'$\omega_{BR,' + str(idx) + '}$')
     if not livePlot:
         plt.legend(loc='lower right')
@@ -217,7 +217,7 @@ def plot_orientation(timeLineSet, vectorPosData, vectorVelData, vectorMRPData, i
                     , r'$\hat\imath_h\cdot \hat b_3$')
     for idx in range(0, 3):
         plt.plot(timeLineSet, data[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
+                 color=simHelpers.getLineColor(idx, 3),
                  label=labelStrings[idx])
     if not livePlot:
         plt.legend(loc='lower right')
@@ -230,7 +230,7 @@ def plot_rw_cmd_torque(timeData, dataUsReq, numRW, id=None, livePlot=False):
     for idx in range(3):
         plt.plot(timeData, dataUsReq[:, idx],
                  '--',
-                 color=unitTestSupport.getLineColor(idx, numRW),
+                 color=simHelpers.getLineColor(idx, numRW),
                  label=r'$\hat u_{s,' + str(idx) + '}$')
     if not livePlot:
         plt.legend(loc='lower right')
@@ -244,10 +244,10 @@ def plot_rw_cmd_actual_torque(timeData, dataUsReq, dataRW, numRW, id=None, liveP
     for idx in range(numRW):
         plt.plot(timeData, dataUsReq[:, idx],
                  '--',
-                 color=unitTestSupport.getLineColor(idx, numRW),
+                 color=simHelpers.getLineColor(idx, numRW),
                  label=r'$\hat u_{s,' + str(idx) + '}$')
         plt.plot(timeData, dataRW[idx],
-                 color=unitTestSupport.getLineColor(idx, numRW),
+                 color=simHelpers.getLineColor(idx, numRW),
                  label='$u_{s,' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
@@ -258,7 +258,7 @@ def plot_rw_speeds(timeData, dataOmegaRW, numRW, id=None, livePlot=False):
     plt.figure(id)
     for idx in range(numRW):
         plt.plot(timeData, dataOmegaRW[:, idx] / mc.RPM,
-                 color=unitTestSupport.getLineColor(idx, numRW),
+                 color=simHelpers.getLineColor(idx, numRW),
                  label=r'$\Omega_{' + str(idx) + '}$')
     if not livePlot:
         plt.legend(loc='upper right')
@@ -269,7 +269,7 @@ def plot_rw_friction(timeData, dataFrictionRW, numRW, dataFaultLog=[],  id=None,
     plt.figure(id)
     for idx in range(numRW):
         plt.plot(timeData, dataFrictionRW[idx],
-                 color=unitTestSupport.getLineColor(idx, numRW),
+                 color=simHelpers.getLineColor(idx, numRW),
                  label=r'$RW_{' + str(idx+1) + '} Friction$')
     if dataFaultLog:
         # fourth column of dataFaultLog is the fault times
@@ -413,7 +413,7 @@ def plot_magnetic_field(timeData, dataMagField, id=None):
         plt.plot(
             timeData,
             dataMagField[:, idx] * 1e9,
-            color=unitTestSupport.getLineColor(idx, 3),
+            color=simHelpers.getLineColor(idx, 3),
             label=r"$B\_N_{" + str(idx) + "}$",
         )
     plt.legend(loc="lower right")
@@ -428,7 +428,7 @@ def plot_data_tam(timeData, dataTam, id=None):
         plt.plot(
             timeData,
             dataTam[:, idx] * 1e9,
-            color=unitTestSupport.getLineColor(idx, 3),
+            color=simHelpers.getLineColor(idx, 3),
             label=r"$TAM\_S_{" + str(idx) + "}$",
         )
     plt.legend(loc="lower right")

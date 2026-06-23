@@ -19,7 +19,7 @@ import inspect
 import os
 
 import numpy as np
-from Basilisk.utilities import unitTestSupport
+from Basilisk.utilities import simHelpers
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -88,7 +88,7 @@ def StateCovarPlot(x, Pflat, show_plots):
     plt.title('Solar Intensity')
     plt.grid()
 
-    unitTestSupport.writeFigureLaTeX('StatesPlot', 'State error and covariance', plt, 'height=0.9\\textwidth, keepaspectratio', path)
+    simHelpers.writeFigureLaTeX('StatesPlot', 'State error and covariance', plt, 'height=0.9\\textwidth, keepaspectratio', path)
     if show_plots:
         plt.show()
     plt.close()
@@ -175,7 +175,7 @@ def PostFitResiduals(Res, noise, show_plots):
     plt.title('Eight CSS')
     plt.grid()
 
-    unitTestSupport.writeFigureLaTeX('PostFit' , 'Post Fit Residuals', plt, 'height=0.9\\textwidth, keepaspectratio', path)
+    simHelpers.writeFigureLaTeX('PostFit' , 'Post Fit Residuals', plt, 'height=0.9\\textwidth, keepaspectratio', path)
 
     if show_plots:
         plt.show()

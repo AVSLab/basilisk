@@ -82,8 +82,8 @@ from Basilisk.simulation import spacecraft
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import simIncludeGravBody
-from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import vizSupport
+from Basilisk.utilities import simHelpers
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -150,7 +150,7 @@ def run():
          0., 0., 600.]
     scObject.hub.mHub = 750.0  # kg - spacecraft mass
     scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
-    scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
+    scObject.hub.IHubPntBc_B = simHelpers.np2EigenMatrix3d(I)
 
     # To set the spacecraft initial conditions, the following initial position and velocity variables are set:
     scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B

@@ -105,7 +105,7 @@ from Basilisk.simulation import spacecraft
 from Basilisk.utilities import (SimulationBaseClass, macros, simIncludeGravBody, vizSupport)
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeRW
-from Basilisk.utilities import unitTestSupport
+from Basilisk.utilities import simHelpers
 
 
 # The path to the location of Basilisk
@@ -516,7 +516,7 @@ def run(show_plots):
 
     mass = 330.  # kg
     scObject.hub.mHub = mass
-    scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
+    scObject.hub.IHubPntBc_B = simHelpers.np2EigenMatrix3d(I)
 
     # Set the truth ICs for the spacecraft attitude and rate
     scObject.hub.sigma_BNInit = np.array([0.1, 0.0, 0.0])  # rad
@@ -658,7 +658,7 @@ def run(show_plots):
     waypointFeedback.navAttInMsg.subscribeTo(simpleNavMeas2.attOutMsg)
     waypointFeedback.A_sc = 1.  # Surface area of the spacecraft, m^2
     waypointFeedback.M_sc = mass  # Mass of the spacecraft, kg
-    waypointFeedback.IHubPntC_B = unitTestSupport.np2EigenMatrix3d(I)  # sc inertia
+    waypointFeedback.IHubPntC_B = simHelpers.np2EigenMatrix3d(I)  # sc inertia
     waypointFeedback.mu_ast = mu  # Gravitational constant of the asteroid
     waypointFeedback.x1_ref = [-2000., 0., 0.]
     waypointFeedback.x2_ref = [0.0, 0.0, 0.0]
@@ -716,8 +716,8 @@ def run(show_plots):
     waypointFeedback.navTransInMsg.subscribeTo(smallBodyNav.navTransOutMsg)
 
     # Set the waypoint feedback gains
-    waypointFeedback.K1 = unitTestSupport.np2EigenMatrix3d([5e-4, 0e-5, 0e-5, 0e-5, 5e-4, 0e-5, 0e-5, 0e-5, 5e-4])
-    waypointFeedback.K2 = unitTestSupport.np2EigenMatrix3d([1., 0., 0., 0., 1., 0., 0., 0., 1.])
+    waypointFeedback.K1 = simHelpers.np2EigenMatrix3d([5e-4, 0e-5, 0e-5, 0e-5, 5e-4, 0e-5, 0e-5, 0e-5, 5e-4])
+    waypointFeedback.K2 = simHelpers.np2EigenMatrix3d([1., 0., 0., 0., 1., 0., 0., 0., 1.])
 
     # Add all models to the task
     scSim.AddModelToTask(simTaskName, scObject, 100)

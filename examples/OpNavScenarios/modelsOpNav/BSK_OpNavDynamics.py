@@ -48,8 +48,8 @@ from Basilisk.topLevelModules import pyswice
 from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.utilities import macros as mc
 from Basilisk.utilities import simIncludeThruster, simIncludeRW, simIncludeGravBody
-from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import vizSupport
+from Basilisk.utilities import simHelpers
 from Basilisk.utilities.supportDataTools.dataFetcher import get_path, DataFile
 
 bskPath = __path__[0]
@@ -232,7 +232,7 @@ class BSKDynamicModels:
             [0.0],
             [0.0],
         ]  # m - position vector of body-fixed point B relative to CM
-        self.scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(self.I_sc)
+        self.scObject.hub.IHubPntBc_B = simHelpers.np2EigenMatrix3d(self.I_sc)
 
     def SetGravityEffector(self):
         """

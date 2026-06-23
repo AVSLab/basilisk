@@ -24,7 +24,10 @@ import pytest
 from Basilisk import __path__
 from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import thrustCMEstimation
-from Basilisk.utilities import SimulationBaseClass, macros, unitTestSupport
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    macros,
+)
 
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])

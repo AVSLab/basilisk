@@ -40,6 +40,7 @@ from Basilisk.utilities import unitTestSupport                  # general suppor
 from Basilisk.fswAlgorithms import opNavPoint                   # import the module that is to be tested
 from Basilisk.architecture import messaging
 from Basilisk.utilities import macros as mc
+from Basilisk.utilities import simHelpers
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -159,7 +160,7 @@ def opNavPointTestFunction(show_plots, case):
         ]
     # compare the module results to the truth values
     accuracy = 1e-12
-    unitTestSupport.writeTeXSnippet("toleranceValue", str(accuracy), path)
+    simHelpers.writeTeXSnippet("toleranceValue", str(accuracy), path)
 
     for i in range(0,len(trueVector)):
         # check a vector values
@@ -245,7 +246,7 @@ def opNavPointTestFunction(show_plots, case):
         colorText = 'Red'
         print("FAILED: " + module.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
-    unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
+    simHelpers.writeTeXSnippet(snippentName, passedText, path)
 
 
 

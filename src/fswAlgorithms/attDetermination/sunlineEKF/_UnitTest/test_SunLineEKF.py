@@ -24,9 +24,9 @@ import numpy as np
 import pytest
 from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import sunlineEKF
+from Basilisk.utilities import simHelpers
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 
 import SunLineEKF_test_utilities as FilterPlots
 
@@ -448,7 +448,7 @@ def StatePropStatic():
     unitTestSim.ConfigureStopTime(macros.sec2nano(8000.0))
     unitTestSim.ExecuteSimulation()
 
-    stateLog = unitTestSupport.addTimeColumn(kfLog.times(), kfLog.state)
+    stateLog = simHelpers.addTimeColumn(kfLog.times(), kfLog.state)
 
     for i in range(6):
         if (abs(stateLog[-1, i + 1] - stateLog[0, i + 1]) > 1.0E-10):
@@ -520,10 +520,10 @@ def StatePropVariable(show_plots):
     unitTestSim.ExecuteSimulation()
 
 
-    covarLog = unitTestSupport.addTimeColumn(kfLog.times(), kfLog.covar)
-    stateLog = unitTestSupport.addTimeColumn(kfLog.times(), kfLog.state)
-    stateErrorLog = unitTestSupport.addTimeColumn(kfLog.times(), kfLog.x)
-    stmLog = unitTestSupport.addTimeColumn(kfLog.times(), kfLog.stateTransition)
+    covarLog = simHelpers.addTimeColumn(kfLog.times(), kfLog.covar)
+    stateLog = simHelpers.addTimeColumn(kfLog.times(), kfLog.state)
+    stateErrorLog = simHelpers.addTimeColumn(kfLog.times(), kfLog.x)
+    stmLog = simHelpers.addTimeColumn(kfLog.times(), kfLog.stateTransition)
 
 
     dt = 0.5
@@ -725,7 +725,7 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
         unitTestSim.ConfigureStopTime(macros.sec2nano((i + SimHalfLength+1) * 0.5))
         unitTestSim.ExecuteSimulation()
 
-    stateErrorLog = unitTestSupport.addTimeColumn(kfLog.times(), kfLog.x)
+    stateErrorLog = simHelpers.addTimeColumn(kfLog.times(), kfLog.x)
     stateLog = addTimeColumn(dataLog.times(), dataLog.state)
     postFitLog = addTimeColumn(dataLog.times(), dataLog.postFitRes)
     covarLog = addTimeColumn(dataLog.times(), dataLog.covar)

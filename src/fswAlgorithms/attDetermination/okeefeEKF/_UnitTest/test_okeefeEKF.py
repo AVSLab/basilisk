@@ -30,9 +30,9 @@ sys.path.append(splitPath[0] + '/PythonModules')
 
 import SunLineOEKF_test_utilities as FilterPlots
 from Basilisk.fswAlgorithms import okeefeEKF
+from Basilisk.utilities import simHelpers
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 from Basilisk.architecture import messaging
 
 
@@ -467,7 +467,7 @@ def StatePropStatic():
     unitTestSim.ConfigureStopTime(macros.sec2nano(8000.0))
     unitTestSim.ExecuteSimulation()
 
-    stateLog = unitTestSupport.addTimeColumn(kfLog.times(), kfLog.state)
+    stateLog = simHelpers.addTimeColumn(kfLog.times(), kfLog.state)
 
     for i in range(NUMSTATES):
         if (abs(stateLog[-1, i + 1] - stateLog[0, i + 1]) > 1.0E-10):
@@ -538,11 +538,11 @@ def StatePropVariable(show_plots):
     unitTestSim.ExecuteSimulation()
 
 
-    covarLog = unitTestSupport.addTimeColumn(kfLog.times(), kfLog.covar)
-    stateLog = unitTestSupport.addTimeColumn(kfLog.times(), kfLog.state)
-    stateErrorLog = unitTestSupport.addTimeColumn(kfLog.times(), kfLog.x)
-    stmLog = unitTestSupport.addTimeColumn(kfLog.times(), kfLog.stateTransition)
-    omegaLog = unitTestSupport.addTimeColumn(kfLog.times(), kfLog.omega)
+    covarLog = simHelpers.addTimeColumn(kfLog.times(), kfLog.covar)
+    stateLog = simHelpers.addTimeColumn(kfLog.times(), kfLog.state)
+    stateErrorLog = simHelpers.addTimeColumn(kfLog.times(), kfLog.x)
+    stmLog = simHelpers.addTimeColumn(kfLog.times(), kfLog.stateTransition)
+    omegaLog = simHelpers.addTimeColumn(kfLog.times(), kfLog.omega)
 
     dt = 0.5
     expectedOmega = np.zeros([2001, (NUMSTATES + 1)])
@@ -767,7 +767,7 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
         unitTestSim.ConfigureStopTime(macros.sec2nano((i + SimHalfLength+1) * 0.5))
         unitTestSim.ExecuteSimulation()
 
-    stateErrorLog = unitTestSupport.addTimeColumn(kfLog.times(), kfLog.x)
+    stateErrorLog = simHelpers.addTimeColumn(kfLog.times(), kfLog.x)
     stateLog = dataLog.state
     postFitLog = dataLog.postFitRes
     covarLog = dataLog.covar

@@ -36,6 +36,7 @@ from Basilisk.utilities import orbitalMotion
 from Basilisk.simulation import spacecraft
 from Basilisk.simulation import exponentialAtmosphere
 from Basilisk.utilities import simIncludeGravBody
+from Basilisk.utilities import simHelpers
 
 
 def test_unitExponentialAtmosphere():
@@ -65,7 +66,7 @@ def test_unitExponentialAtmosphere():
     else:
         colorText = 'Red'
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
-    unitTestSupport.writeTeXSnippet(snippetName, passedText, path)
+    simHelpers.writeTeXSnippet(snippetName, passedText, path)
 
     if testSum == 0:
         print("Passed")
@@ -188,7 +189,7 @@ def TestExponentialAtmosphere():
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 10
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = simHelpers.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
     dataLog = scObject.scStateOutMsg.recorder(samplingTime)
     denLog = newAtmo.envOutMsgs[0].recorder(samplingTime)
 
@@ -218,7 +219,7 @@ def TestExponentialAtmosphere():
 
     #   Compare to expected values
     accuracy = 1e-5
-    unitTestSupport.writeTeXSnippet("toleranceValue", str(accuracy), path)
+    simHelpers.writeTeXSnippet("toleranceValue", str(accuracy), path)
 
     if len(densData) > 0:
         for ind in range(0,len(densData)):

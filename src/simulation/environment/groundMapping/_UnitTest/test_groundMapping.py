@@ -24,7 +24,6 @@ from Basilisk.architecture import messaging
 from Basilisk.simulation import groundMapping
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
-from Basilisk.utilities import unitTestSupport
 
 import pytest
 

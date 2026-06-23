@@ -100,9 +100,15 @@ from Basilisk import __path__
 from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import (mrpFeedback, attTrackingError, constrainedAttitudeManeuver, rwMotorTorque)
 from Basilisk.simulation import (reactionWheelStateEffector, simpleNav, spacecraft, boreAngCalc)
-from Basilisk.utilities import (SimulationBaseClass, macros,
-                                orbitalMotion, simIncludeGravBody,
-                                simIncludeRW, unitTestSupport, vizSupport)
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    macros,
+    orbitalMotion,
+    simIncludeGravBody,
+    simIncludeRW,
+    vizSupport,
+)
+from Basilisk.utilities import simHelpers
 
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
@@ -194,7 +200,7 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
          0.,        0.,         0.1256 / 3]
     scObject.hub.mHub = 4.0  # kg - spacecraft mass
     scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
-    scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
+    scObject.hub.IHubPntBc_B = simHelpers.np2EigenMatrix3d(I)
 
     #
     # add RW devices
@@ -308,7 +314,7 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 500
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = simHelpers.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
     sNavRec = sNavObject.attOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(simTaskName, sNavRec)
     CAMRec = CAM.attRefOutMsg.recorder(samplingTime)
@@ -466,7 +472,7 @@ def plot_attitude_error(timeData, dataSigmaBR):
     plt.figure(1)
     for idx in range(3):
         plt.plot(timeData, dataSigmaBR[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
+                 color=simHelpers.getLineColor(idx, 3),
                  label=r'$\sigma_' + str(idx) + '$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
@@ -478,7 +484,7 @@ def plot_rw_cmd_torque(timeData, dataUsReq, numRW):
     for idx in range(3):
         plt.plot(timeData, dataUsReq[:, idx],
                  '--',
-                 color=unitTestSupport.getLineColor(idx, numRW),
+                 color=simHelpers.getLineColor(idx, numRW),
                  label=r'$\hat u_{s,' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
@@ -490,10 +496,10 @@ def plot_rw_motor_torque(timeData, dataUsReq, dataRW, numRW):
     for idx in range(3):
         plt.plot(timeData, dataUsReq[:, idx],
                  '--',
-                 color=unitTestSupport.getLineColor(idx, numRW),
+                 color=simHelpers.getLineColor(idx, numRW),
                  label=r'$\hat u_{s,' + str(idx) + '}$')
         plt.plot(timeData, dataRW[idx],
-                 color=unitTestSupport.getLineColor(idx, numRW),
+                 color=simHelpers.getLineColor(idx, numRW),
                  label='$u_{s,' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
@@ -504,7 +510,7 @@ def plot_rate_error(timeData, dataOmegaBR):
     plt.figure(3)
     for idx in range(3):
         plt.plot(timeData, dataOmegaBR[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
+                 color=simHelpers.getLineColor(idx, 3),
                  label=r'$\omega_{BR,' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
@@ -515,7 +521,7 @@ def plot_rw_speeds(timeData, dataOmegaRW, numRW):
     plt.figure(4)
     for idx in range(numRW):
         plt.plot(timeData, dataOmegaRW[:, idx] / macros.RPM,
-                 color=unitTestSupport.getLineColor(idx, numRW),
+                 color=simHelpers.getLineColor(idx, numRW),
                  label=r'$\Omega_{' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
@@ -531,7 +537,7 @@ def plot_st_miss_angle(timeData, dataMissAngle, Fov):
     data = dataMissAngle*macros.R2D
     for idx in range(1):
         plt.plot(timeData, data,
-                 color=unitTestSupport.getLineColor(idx, 3),
+                 color=simHelpers.getLineColor(idx, 3),
                  label=r'$\alpha $')
     plt.fill_between(timeData, 0, 1, where=dataFov >= data, facecolor='red',
                   alpha = 0.4, interpolate=True, transform = trans)
@@ -551,7 +557,7 @@ def plot_ss_miss_angle(timeData, dataMissAngle, Fov):
         data.append(d*macros.R2D)
     for idx in range(len(data)):
         plt.plot(timeData, data[idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
+                 color=simHelpers.getLineColor(idx, 3),
                  label=r'$\beta_{' + str(idx+1) + '}$')
     dataMinAngle = 180*np.ones(len(timeData))
     for i in range(len(timeData)):

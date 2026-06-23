@@ -102,11 +102,11 @@ import numpy as np
 # Used to get the location of supporting data.
 from Basilisk import __path__
 from Basilisk.simulation import spacecraft
+from Basilisk.utilities import simHelpers
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeGravBody
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 # attempt to import vizard
 from Basilisk.utilities import vizSupport
 
@@ -200,7 +200,7 @@ def run(show_plots, maneuverCase):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = simHelpers.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
     dataRec = scObject.scStateOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(simTaskName, dataRec)
 
@@ -237,8 +237,8 @@ def run(show_plots, maneuverCase):
 
     # Next, the state manager objects are called to retrieve the latest inertial position and
     # velocity vector components:
-    rVt = unitTestSupport.EigenVector3d2np(posRef.getState())
-    vVt = unitTestSupport.EigenVector3d2np(velRef.getState())
+    rVt = simHelpers.EigenVector3d2np(posRef.getState())
+    vVt = simHelpers.EigenVector3d2np(velRef.getState())
 
     # compute maneuver Delta_v's
     if maneuverCase == 1:
@@ -274,8 +274,8 @@ def run(show_plots, maneuverCase):
     # This process is then repeated for the second maneuver.
 
     # get the current spacecraft states
-    rVt = unitTestSupport.EigenVector3d2np(posRef.getState())
-    vVt = unitTestSupport.EigenVector3d2np(velRef.getState())
+    rVt = simHelpers.EigenVector3d2np(posRef.getState())
+    vVt = simHelpers.EigenVector3d2np(velRef.getState())
     # compute maneuver Delta_v's
     if maneuverCase == 1:
         # inclination change
@@ -324,7 +324,7 @@ def run(show_plots, maneuverCase):
     ax.ticklabel_format(useOffset=False, style='plain')
     for idx in range(3):
         plt.plot(dataRec.times() * macros.NANO2HOUR, posData[:, idx] / 1000.,
-                 color=unitTestSupport.getLineColor(idx, 3),
+                 color=simHelpers.getLineColor(idx, 3),
                  label='$r_{BN,' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [h]')

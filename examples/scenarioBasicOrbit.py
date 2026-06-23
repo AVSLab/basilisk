@@ -227,9 +227,9 @@ from Basilisk.utilities import (
     macros,
     orbitalMotion,
     simIncludeGravBody,
-    unitTestSupport,
     vizSupport,
 )
+from Basilisk.utilities import simHelpers
 # import the pooch python package data fetching tools
 from Basilisk.utilities.supportDataTools.dataFetcher import get_path, DataFile
 
@@ -399,7 +399,7 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
     # The recorder can be put onto a separate task with its own update rate.  However, this can be
     # trickier to do as the recording timing must be carefully balanced with the module msg writing
     # to avoid recording an older message.
-    samplingTime = unitTestSupport.samplingTime(
+    samplingTime = simHelpers.samplingTime(
         simulationTime, simulationTimeStep, numDataPoints
     )
     # create a logging task object of the spacecraft output message at the desired down sampling ratio
@@ -518,7 +518,7 @@ def plotOrbits(
         plt.plot(
             timeAxis * macros.NANO2SEC / P,
             posData[:, idx] / 1000.0,
-            color=unitTestSupport.getLineColor(idx, 3),
+            color=simHelpers.getLineColor(idx, 3),
             label="$r_{BN," + str(idx) + "}$",
         )
     plt.legend(loc="lower right")
@@ -590,7 +590,7 @@ def plotOrbits(
             plt.plot(
                 timeAxis * macros.NANO2SEC / P,
                 Deltar[:, idx],
-                color=unitTestSupport.getLineColor(idx, 3),
+                color=simHelpers.getLineColor(idx, 3),
                 label=r"$\Delta r_{BN," + str(idx) + "}$",
             )
         plt.legend(loc="lower right")

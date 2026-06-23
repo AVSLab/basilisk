@@ -35,7 +35,7 @@ import sys
 
 import pytest
 from Basilisk.architecture import bskLogging
-from Basilisk.utilities import unitTestSupport
+from Basilisk.utilities import simHelpers
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -71,7 +71,7 @@ def test_scenarioBskPrinciples(show_plots, bskScript):
         # save the figures to the RST scenario images folder
         if(figureList and figureList != {}):
             for pltName, plt in list(figureList.items()):
-                unitTestSupport.saveScenarioFigure(pltName, plt, path)
+                simHelpers.saveScenarioFigure(pltName, plt, path)
     except OSError as err:
         testFailCount = testFailCount + 1
         testMessages.append("OS error: {0}".format(err))

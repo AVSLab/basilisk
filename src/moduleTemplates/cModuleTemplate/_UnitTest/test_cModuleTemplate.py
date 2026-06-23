@@ -32,6 +32,7 @@ from Basilisk.architecture import bskLogging
 from Basilisk.architecture import messaging  # import the message definitions
 from Basilisk.moduleTemplates import cModuleTemplate  # import the module that is to be tested
 # Import all of the modules that we are going to be called in this simulation
+from Basilisk.utilities import simHelpers
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
@@ -59,7 +60,7 @@ def test_module(show_plots):     # update "module" in this function name to refl
     - ``dataVector[3]``
 
     **General Documentation Comments**
-    
+
     If the script generates figures, these figures will be automatically pulled from ``matplotlib`` and included below.
     Make sure that the figures have appropriate axes labels and a figure title if needed.  The figures content
     should be understood by just looking at the figure.
@@ -142,7 +143,7 @@ def fswModuleTestFunction(show_plots):
 
     # This pulls the actual data log from the simulation run.
     # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
-    variableState = unitTestSupport.addTimeColumn(moduleLog.times(), getattr(moduleLog, variableName))
+    variableState = simHelpers.addTimeColumn(moduleLog.times(), getattr(moduleLog, variableName))
 
     # set the filtered output truth states
     trueVector = [
@@ -197,7 +198,7 @@ def fswModuleTestFunction(show_plots):
     plt.figure(2)
     for idx in range(3):
         plt.plot(dataLog.times() * macros.NANO2MIN, dataLog.dataVector[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
+                 color=simHelpers.getLineColor(idx, 3),
                  label=r'$s_' + str(idx) + '$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')

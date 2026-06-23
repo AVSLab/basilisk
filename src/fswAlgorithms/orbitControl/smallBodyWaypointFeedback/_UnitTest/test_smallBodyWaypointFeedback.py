@@ -23,7 +23,7 @@ from Basilisk.fswAlgorithms import smallBodyWaypointFeedback
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
-from Basilisk.utilities import unitTestSupport
+from Basilisk.utilities import simHelpers
 
 
 # @pytest.mark.parametrize("accuracy", [1e-12])
@@ -75,12 +75,12 @@ def smallBodyWaypointFeedbackTestFunction1():
 
     module.A_sc = 1.  # Surface area of the spacecraft, m^2
     module.M_sc = 300  # Mass of the spacecraft, kg
-    module.IHubPntC_B = unitTestSupport.np2EigenMatrix3d([82.12, 0.0, 0.0, 0.0, 98.40, 0.0, 0.0, 0.0, 121.0])  # sc inertia
+    module.IHubPntC_B = simHelpers.np2EigenMatrix3d([82.12, 0.0, 0.0, 0.0, 98.40, 0.0, 0.0, 0.0, 121.0])  # sc inertia
     module.mu_ast = 4.892  # Gravitational constant of the asteroid
     module.x1_ref = [-2000., 0., 0.]
     module.x2_ref = [0.0, 0.0, 0.0]
-    module.K1 = unitTestSupport.np2EigenMatrix3d([5e-4, 0e-5, 0e-5, 0e-5, 5e-4, 0e-5, 0e-5, 0e-5, 5e-4])
-    module.K2 = unitTestSupport.np2EigenMatrix3d([1., 0., 0., 0., 1., 0., 0., 0., 1.])
+    module.K1 = simHelpers.np2EigenMatrix3d([5e-4, 0e-5, 0e-5, 0e-5, 5e-4, 0e-5, 0e-5, 0e-5, 5e-4])
+    module.K2 = simHelpers.np2EigenMatrix3d([1., 0., 0., 0., 1., 0., 0., 0., 1.])
 
     # Set the orbital parameters of the asteroid
     oeAsteroid = orbitalMotion.ClassicElements()
@@ -163,12 +163,12 @@ def smallBodyWaypointFeedbackTestFunction2():
 
     module.A_sc = 1.  # Surface area of the spacecraft, m^2
     module.M_sc = 300  # Mass of the spacecraft, kg
-    module.IHubPntC_B = unitTestSupport.np2EigenMatrix3d([82.12, 0.0, 0.0, 0.0, 98.40, 0.0, 0.0, 0.0, 121.0])  # sc inertia
+    module.IHubPntC_B = simHelpers.np2EigenMatrix3d([82.12, 0.0, 0.0, 0.0, 98.40, 0.0, 0.0, 0.0, 121.0])  # sc inertia
     module.mu_ast = 4.892  # Gravitational constant of the asteroid
     module.x1_ref = [-2000., 0., 0.]
     module.x2_ref = [0.0, 0.0, 0.0]
-    module.K1 = unitTestSupport.np2EigenMatrix3d([5e-4, 0e-5, 0e-5, 0e-5, 5e-4, 0e-5, 0e-5, 0e-5, 5e-4])
-    module.K2 = unitTestSupport.np2EigenMatrix3d([1., 0., 0., 0., 1., 0., 0., 0., 1.])
+    module.K1 = simHelpers.np2EigenMatrix3d([5e-4, 0e-5, 0e-5, 0e-5, 5e-4, 0e-5, 0e-5, 0e-5, 5e-4])
+    module.K2 = simHelpers.np2EigenMatrix3d([1., 0., 0., 0., 1., 0., 0., 0., 1.])
 
     # Set the orbital parameters of the asteroid
     oeAsteroid = orbitalMotion.ClassicElements()

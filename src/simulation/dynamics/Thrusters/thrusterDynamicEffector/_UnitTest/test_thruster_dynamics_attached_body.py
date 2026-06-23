@@ -25,6 +25,7 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('simulation')
 
+from Basilisk.utilities import simHelpers
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros, RigidBodyKinematics as rbk
 from Basilisk.simulation import spacecraft, thrusterDynamicEffector
 from Basilisk.architecture import messaging
@@ -180,8 +181,8 @@ def unitThrusters(show_plots, long_angle, lat_angle, location, rate):
     TotalSim.ExecuteSimulation()
 
     # Gather the Force, Torque and Mass Rate results
-    thrForce = unitTestSupport.addTimeColumn(thrusterSetLog.times(), thrusterSetLog.forceExternal_B)
-    thrTorque = unitTestSupport.addTimeColumn(thrusterSetLog.times(), thrusterSetLog.torqueExternalPntB_B)
+    thrForce = simHelpers.addTimeColumn(thrusterSetLog.times(), thrusterSetLog.forceExternal_B)
+    thrTorque = simHelpers.addTimeColumn(thrusterSetLog.times(), thrusterSetLog.torqueExternalPntB_B)
 
     # Generate the truth data (force, torque and mass rate)
     expectedThrustData = np.zeros([3, np.shape(thrForce)[0]])

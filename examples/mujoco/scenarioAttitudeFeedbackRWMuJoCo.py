@@ -79,7 +79,14 @@ from Basilisk.simulation import pointMassGravityModel
 from Basilisk.simulation import saturationSingleActuator
 from Basilisk.simulation import scalarJointStatesToRWSpeed
 from Basilisk.simulation import simpleNav
-from Basilisk.utilities import SimulationBaseClass, macros, orbitalMotion, simIncludeGravBody, unitTestSupport, vizSupport
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    macros,
+    orbitalMotion,
+    simIncludeGravBody,
+    vizSupport,
+)
+from Basilisk.utilities import simHelpers
 
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
@@ -88,13 +95,13 @@ def plotAttitudeAndRateErrors(timeMin: np.ndarray, sigmaBR: np.ndarray, omegaBRB
     fig, (ax1, ax2) = plt.subplots(1, 2, sharex=True, num=1, clear=True)
 
     for i in range(3):
-        ax1.plot(timeMin, sigmaBR[:, i], color=unitTestSupport.getLineColor(i, 3), label=rf"$\sigma_{i}$")
+        ax1.plot(timeMin, sigmaBR[:, i], color=simHelpers.getLineColor(i, 3), label=rf"$\sigma_{i}$")
     ax1.set_xlabel("Time [min]")
     ax1.set_ylabel(r"Attitude Error $[\mathbf{\sigma}]$")
     ax1.legend(loc="lower right")
 
     for i in range(3):
-        ax2.plot(timeMin, omegaBRB[:, i], color=unitTestSupport.getLineColor(i, 3), label=rf"$\omega_{{BR,{i}}}$")
+        ax2.plot(timeMin, omegaBRB[:, i], color=simHelpers.getLineColor(i, 3), label=rf"$\omega_{{BR,{i}}}$")
     ax2.set_xlabel("Time [min]")
     ax2.set_ylabel("Rate Tracking Error [rad/s]")
     ax2.legend(loc="lower right")
@@ -109,13 +116,13 @@ def plotCmdTorquesAndRwSpeeds(timeMin: np.ndarray, motorTorque: np.ndarray, rwOm
     fig, (ax1, ax2) = plt.subplots(1, 2, sharex=True, num=2, clear=True)
 
     for i in range(numRw):
-        ax1.plot(timeMin, motorTorque[:, i], color=unitTestSupport.getLineColor(i, 3), label=rf"$\hat u_{{s,{i}}}$")
+        ax1.plot(timeMin, motorTorque[:, i], color=simHelpers.getLineColor(i, 3), label=rf"$\hat u_{{s,{i}}}$")
     ax1.set_xlabel("Time [min]")
     ax1.set_ylabel("Commanded RW Motor Torque [Nm]")
     ax1.legend(loc="lower right")
 
     for i in range(numRw):
-        ax2.plot(timeMin, rwOmega[:, i] / macros.RPM, color=unitTestSupport.getLineColor(i, 3), label=rf"$\Omega_{i}$")
+        ax2.plot(timeMin, rwOmega[:, i] / macros.RPM, color=simHelpers.getLineColor(i, 3), label=rf"$\Omega_{i}$")
     ax2.set_xlabel("Time [min]")
     ax2.set_ylabel("RW Speed [RPM]")
     ax2.legend(loc="lower right")
@@ -357,7 +364,7 @@ def run(showPlots: bool = False):
     # 9) Data logging setup
     # -------------------------------------------------------------------------
     numDataPoints = 100
-    samplingTime = unitTestSupport.samplingTime(simulationTime, timeStep, numDataPoints)
+    samplingTime = simHelpers.samplingTime(simulationTime, timeStep, numDataPoints)
 
     attErrorLog = attError.attGuidOutMsg.recorder(samplingTime)
 

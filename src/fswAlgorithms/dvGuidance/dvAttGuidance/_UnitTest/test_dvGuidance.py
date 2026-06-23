@@ -13,6 +13,7 @@ from Basilisk.fswAlgorithms import dvGuidance
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from Basilisk.utilities import simHelpers
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -97,7 +98,7 @@ def dvGuidanceTestFunction(show_plots):
                  [0.00000000e+00, 0.00000000e+00, 0.00000000e+00]]
 
     accuracy = 1e-9
-    unitTestSupport.writeTeXSnippet("toleranceValue", str(accuracy), path)
+    simHelpers.writeTeXSnippet("toleranceValue", str(accuracy), path)
 
     for i in range(len(trueSigma)):
         # check a vector values
@@ -157,7 +158,7 @@ def dvGuidanceTestFunction(show_plots):
         colorText = 'Red'
         print("Failed: " + module.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
-    unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
+    simHelpers.writeTeXSnippet(snippentName, passedText, path)
 
     return [testFailCount, ''.join(testMessages)]
 

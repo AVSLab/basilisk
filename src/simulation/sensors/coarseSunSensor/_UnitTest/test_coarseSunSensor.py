@@ -38,6 +38,7 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion as om
 from Basilisk.utilities import unitTestSupport
+from Basilisk.utilities import simHelpers
 from matplotlib import pyplot as plt
 
 path = os.path.dirname(os.path.abspath(__file__))
@@ -282,7 +283,7 @@ def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor,
         plt.xlabel('Time [min]')
         plt.ylabel('P2 Output Values [-]')
         plt.legend(loc='upper center')
-        unitTestSupport.writeFigureLaTeX('constellationPlots',
+        simHelpers.writeFigureLaTeX('constellationPlots',
                                          'Plot of first and second constellation outputs for comparision.\
                                           Note that the constellation starts pointing directly at the sun\
                                            and linearly rotates in time until it returns to a direct view.',
@@ -300,7 +301,7 @@ def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor,
         plt.xlabel('Time [min]')
         plt.ylabel('Output Value [-]')
         if name == "combined":
-            unitTestSupport.writeFigureLaTeX('combinedPlot',
+            simHelpers.writeFigureLaTeX('combinedPlot',
                                              'Plot of all cases of individual coarse sun sensor in comparison to\
                                               each other. Note that the incidence angle starts at direct and linearly\
                                                rotates in time until it returns to a direct view.',
@@ -350,62 +351,62 @@ def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor,
     # Write some snippets for AutoTex
     snippetName = name + "PassedText"
     snippetContent = passedText
-    unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)
+    simHelpers.writeTeXSnippet(snippetName, snippetContent, path)
 
     snippetName = name + "PassFailMsg"
     snippetContent = passFailMsg
-    unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)
+    simHelpers.writeTeXSnippet(snippetName, snippetContent, path)
     print("\n", passFailMsg)
 
     # write pytest parameters to AutoTex folder
     # "useConstellation, visibilityFactor, fov, kelly, scaleFactor, bias, noiseStd, albedoValue, errTol, name, zLevel, lineWide"
     useConstellationSnippetName = name + "UseConstellation"
     useConstellationSnippetContent = str(useConstellation)
-    unitTestSupport.writeTeXSnippet(useConstellationSnippetName, useConstellationSnippetContent, path)
+    simHelpers.writeTeXSnippet(useConstellationSnippetName, useConstellationSnippetContent, path)
 
     visibilityFactorSnippetName = name + "VisibilityFactor"
     visibilityFactorSnippetContent = '{:1.2f}'.format(visibilityFactor)
-    unitTestSupport.writeTeXSnippet(visibilityFactorSnippetName, visibilityFactorSnippetContent, path)
+    simHelpers.writeTeXSnippet(visibilityFactorSnippetName, visibilityFactorSnippetContent, path)
 
     fovSnippetName = name + "Fov"
     fovSnippetContent = '{:1.4f}'.format(fov)
-    unitTestSupport.writeTeXSnippet(fovSnippetName, fovSnippetContent, path)
+    simHelpers.writeTeXSnippet(fovSnippetName, fovSnippetContent, path)
 
     kellySnippetName = name + "Kelly"
     kellySnippetContent = '{:1.2f}'.format(kelly)
-    unitTestSupport.writeTeXSnippet(kellySnippetName, kellySnippetContent, path)
+    simHelpers.writeTeXSnippet(kellySnippetName, kellySnippetContent, path)
 
     scaleFactorSnippetName = name + "ScaleFactor"
     scaleFactorSnippetContent = '{:1.2f}'.format(scaleFactor)
-    unitTestSupport.writeTeXSnippet(scaleFactorSnippetName, scaleFactorSnippetContent, path)
+    simHelpers.writeTeXSnippet(scaleFactorSnippetName, scaleFactorSnippetContent, path)
 
     biasSnippetName = name + "Bias"
     biasSnippetContent = '{:1.2f}'.format(bias)
-    unitTestSupport.writeTeXSnippet(biasSnippetName, biasSnippetContent, path)
+    simHelpers.writeTeXSnippet(biasSnippetName, biasSnippetContent, path)
 
     noiseStdSnippetName = name + "NoiseStd"
     noiseStdSnippetContent = '{:1.3f}'.format(noiseStd)
-    unitTestSupport.writeTeXSnippet(noiseStdSnippetName, noiseStdSnippetContent, path)
+    simHelpers.writeTeXSnippet(noiseStdSnippetName, noiseStdSnippetContent, path)
 
     albedoValueSnippetName = name + "AlbedoValue"
     albedoValueSnippetContent = '{:1.1f}'.format(albedoValue)
-    unitTestSupport.writeTeXSnippet(albedoValueSnippetName, albedoValueSnippetContent, path)
+    simHelpers.writeTeXSnippet(albedoValueSnippetName, albedoValueSnippetContent, path)
 
     locationSnippetName = name + "Location"
     locationSnippetContent = '{:1.1f}'.format(sunDistInput)
-    unitTestSupport.writeTeXSnippet(locationSnippetName, locationSnippetContent, path)
+    simHelpers.writeTeXSnippet(locationSnippetName, locationSnippetContent, path)
 
     saturationMaxSnippetName = name + "MaxSaturation"
     saturationMaxSnippetContent = '{:2.2f}'.format(maxIn)
-    unitTestSupport.writeTeXSnippet(saturationMaxSnippetName, saturationMaxSnippetContent, path)
+    simHelpers.writeTeXSnippet(saturationMaxSnippetName, saturationMaxSnippetContent, path)
 
     saturationMinSnippetName = name + "MinSaturation"
     saturationMinSnippetContent = '{:2.2f}'.format(minIn)
-    unitTestSupport.writeTeXSnippet(saturationMinSnippetName, saturationMinSnippetContent, path)
+    simHelpers.writeTeXSnippet(saturationMinSnippetName, saturationMinSnippetContent, path)
 
     errTolSnippetName = name + "ErrTol"
     errTolSnippetContent = '{:1.1e}'.format(errTol)
-    unitTestSupport.writeTeXSnippet(errTolSnippetName, errTolSnippetContent, path)
+    simHelpers.writeTeXSnippet(errTolSnippetName, errTolSnippetContent, path)
 
     if testFailCount == 0:
         print("PASSED")

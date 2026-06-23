@@ -33,6 +33,7 @@ import pytest
 from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import cssWlsEst
 # Import all of the modules that we are going to be called in this simulation
+from Basilisk.utilities import simHelpers
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
@@ -260,7 +261,7 @@ def cssWlsEstTestFunction(show_plots):
         # Pull logged data out into workspace for analysis
         sHatEst = navData.vehSunPntBdy
 
-        numActive = unitTestSupport.addTimeColumn(numActiveData.times(), numActiveData.numActiveCss) 
+        numActive = simHelpers.addTimeColumn(numActiveData.times(), numActiveData.numActiveCss)
         sHatEstUse = sHatEst[logLengthPrev:, :]  # Only data for this subtest
         numActiveUse = numActive[logLengthPrev + 1:, :]  # Only data for this subtest
 
@@ -297,7 +298,7 @@ def cssWlsEstTestFunction(show_plots):
     unitTestSim.ExecuteSimulation()
     stepCount += 1
     sHatEst = navData.vehSunPntBdy
-    numActive = unitTestSupport.addTimeColumn(numActiveData.times(), numActiveData.numActiveCss)
+    numActive = simHelpers.addTimeColumn(numActiveData.times(), numActiveData.numActiveCss)
     sHatEstUse = sHatEst[logLengthPrev:, :]
     numActiveUse = numActive[logLengthPrev + 1:, :]
     logLengthPrev = sHatEst.shape[0]
@@ -321,7 +322,7 @@ def cssWlsEstTestFunction(show_plots):
     unitTestSim.ConfigureStopTime(int((stepCount + 1) * 1E9))
     unitTestSim.ExecuteSimulation()
     stepCount += 1
-    numActive = unitTestSupport.addTimeColumn(numActiveData.times(), numActiveData.numActiveCss)
+    numActive = simHelpers.addTimeColumn(numActiveData.times(), numActiveData.numActiveCss)
     numActiveUse = numActive[logLengthPrev + 1:, :]
     sHatEst = navData.vehSunPntBdy
     sHatEstUse = sHatEst[logLengthPrev + 1:, :]
@@ -342,7 +343,7 @@ def cssWlsEstTestFunction(show_plots):
 
     unitTestSim.ConfigureStopTime(int((stepCount + 1) * 1E9))
     unitTestSim.ExecuteSimulation()
-    numActive = unitTestSupport.addTimeColumn(numActiveData.times(), numActiveData.numActiveCss)
+    numActive = simHelpers.addTimeColumn(numActiveData.times(), numActiveData.numActiveCss)
     numActiveUse = numActive[logLengthPrev:, :]
     logLengthPrev = numActive.shape[0]
     testFailCount += checkNumActiveAccuracy(cssDataMsg, numActiveUse,
@@ -351,7 +352,7 @@ def cssWlsEstTestFunction(show_plots):
     # Format data for plotting
     truthData = numpy.array(truthData)
     sHatEst = navData.vehSunPntBdy
-    numActive = unitTestSupport.addTimeColumn(numActiveData.times(), numActiveData.numActiveCss)
+    numActive = simHelpers.addTimeColumn(numActiveData.times(), numActiveData.numActiveCss)
 
 
     #
@@ -525,7 +526,7 @@ def cssRateTestFunction(show_plots):
         colorText = 'Red'
         print("Failed: " + module.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
-    unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
+    simHelpers.writeTeXSnippet(snippentName, passedText, path)
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found

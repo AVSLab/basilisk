@@ -28,6 +28,7 @@ import pytest
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
+from Basilisk.utilities import simHelpers
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 from Basilisk.simulation import spacecraft
@@ -191,7 +192,7 @@ def sphericalPendulumTest(show_plots, useFlag,testCase):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = simHelpers.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
     dataLog = scObject.scStateOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(simTaskName, dataLog)
 
@@ -221,15 +222,15 @@ def sphericalPendulumTest(show_plots, useFlag,testCase):
     if testCase == 3:
         fuelMass = fuelLog.fuelMass
         fuelMassDot = fuelLog.fuelMassDot
-        mass1Out = unitTestSupport.addTimeColumn(stateLog.times(), stateLog.sphericalPendulumMass1)
-        mass2Out = unitTestSupport.addTimeColumn(stateLog.times(), stateLog.sphericalPendulumMass2)
+        mass1Out = simHelpers.addTimeColumn(stateLog.times(), stateLog.sphericalPendulumMass1)
+        mass2Out = simHelpers.addTimeColumn(stateLog.times(), stateLog.sphericalPendulumMass2)
 
 
     # request energy and momentum
-    orbAngMom_N = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totOrbAngMomPntN_N)
-    rotAngMom_N = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totRotAngMomPntC_N)
-    rotEnergy = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totRotEnergy)
-    orbEnergy = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totOrbEnergy)
+    orbAngMom_N = simHelpers.addTimeColumn(scObjectLog.times(), scObjectLog.totOrbAngMomPntN_N)
+    rotAngMom_N = simHelpers.addTimeColumn(scObjectLog.times(), scObjectLog.totRotAngMomPntC_N)
+    rotEnergy = simHelpers.addTimeColumn(scObjectLog.times(), scObjectLog.totRotEnergy)
+    orbEnergy = simHelpers.addTimeColumn(scObjectLog.times(), scObjectLog.totOrbEnergy)
 
     if timeStep == 0.01:
         testCaseName = "OneHundredth"
@@ -243,25 +244,25 @@ def sphericalPendulumTest(show_plots, useFlag,testCase):
         plt.plot(orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,1] - orbAngMom_N[0,1])/orbAngMom_N[0,1], orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,2] - orbAngMom_N[0,2])/orbAngMom_N[0,2], orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,3] - orbAngMom_N[0,3])/orbAngMom_N[0,3])
         plt.xlabel('Time (s)')
         plt.ylabel('Relative Orbital Angular Momentum Variation')
-        unitTestSupport.writeFigureLaTeX("ChangeInOrbitalAngularMomentum" + testCaseName, "Change in Orbital Angular Momentum " + testCaseName, plt, r"width=0.8\textwidth", path)
+        simHelpers.writeFigureLaTeX("ChangeInOrbitalAngularMomentum" + testCaseName, "Change in Orbital Angular Momentum " + testCaseName, plt, r"width=0.8\textwidth", path)
 
         plt.figure(2,figsize=(5,4))
         plt.plot(orbEnergy[:,0]*1e-9, (orbEnergy[:,1] - orbEnergy[0,1])/orbEnergy[0,1])
         plt.xlabel('Time (s)')
         plt.ylabel('Relative Orbital Energy Variation')
-        unitTestSupport.writeFigureLaTeX("ChangeInOrbitalEnergy" + testCaseName, "Change in Orbital Energy " + testCaseName, plt, r"width=0.8\textwidth", path)
+        simHelpers.writeFigureLaTeX("ChangeInOrbitalEnergy" + testCaseName, "Change in Orbital Energy " + testCaseName, plt, r"width=0.8\textwidth", path)
 
         plt.figure(3,figsize=(5,4))
         plt.plot(rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,1] - rotAngMom_N[0,1])/rotAngMom_N[0,1], rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,2] - rotAngMom_N[0,2])/rotAngMom_N[0,2], rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,3] - rotAngMom_N[0,3])/rotAngMom_N[0,3])
         plt.xlabel('Time (s)')
         plt.ylabel('Relative Rotational Angular Momentum Variation')
-        unitTestSupport.writeFigureLaTeX("ChangeInRotationalAngularMomentum" + testCaseName, "Change in Rotational Angular Momentum " + testCaseName, plt, r"width=0.8\textwidth", path)
+        simHelpers.writeFigureLaTeX("ChangeInRotationalAngularMomentum" + testCaseName, "Change in Rotational Angular Momentum " + testCaseName, plt, r"width=0.8\textwidth", path)
 
         plt.figure(4,figsize=(5,4))
         plt.plot(rotEnergy[:,0]*1e-9, (rotEnergy[:,1] - rotEnergy[0,1])/rotEnergy[0,1])
         plt.xlabel('Time (s)')
         plt.ylabel('Relative Rotational Energy Variation')
-        unitTestSupport.writeFigureLaTeX("ChangeInRotationalEnergy" + testCaseName, "Change in Rotational Energy " + testCaseName, plt, r"width=0.8\textwidth", path)
+        simHelpers.writeFigureLaTeX("ChangeInRotationalEnergy" + testCaseName, "Change in Rotational Energy " + testCaseName, plt, r"width=0.8\textwidth", path)
     if testCase == 3:
         plt.figure()
         plt.plot(fuelLog.times()*1e-9, fuelMass)

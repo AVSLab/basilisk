@@ -47,7 +47,11 @@ Indexing conventions:
 
 import numpy as np
 from Basilisk.simulation import encoder, tempMeasurement, magnetometer
-from Basilisk.utilities import macros, unitTestSupport, orbitalMotion, vizSupport
+from Basilisk.utilities import (
+    macros,
+    orbitalMotion,
+    vizSupport,
+)
 
 
 def faultTypeInList(faultList, faultType):

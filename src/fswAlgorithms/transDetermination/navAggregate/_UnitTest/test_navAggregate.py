@@ -45,6 +45,7 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport
 from Basilisk.fswAlgorithms import navAggregate
 from Basilisk.utilities import macros
+from Basilisk.utilities import simHelpers
 from Basilisk.architecture import messaging
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
@@ -181,22 +182,22 @@ def navAggregateTestFunction(show_plots, numAttNav, numTransNav):
         module.dvIdx = numTransNav-1
 
     # write TeX snippets for the message values
-    unitTestSupport.writeTeXSnippet("navAtt1Msg.timeTag", str(navAtt1Msg.timeTag), path)
-    unitTestSupport.writeTeXSnippet("navAtt1Msg.sigma_BN", str(navAtt1Msg.sigma_BN), path)
-    unitTestSupport.writeTeXSnippet("navAtt1Msg.omega_BN_B", str(navAtt1Msg.omega_BN_B), path)
-    unitTestSupport.writeTeXSnippet("navAtt1Msg.vehSunPntBdy", str(navAtt1Msg.vehSunPntBdy), path)
-    unitTestSupport.writeTeXSnippet("navAtt2Msg.timeTag", str(navAtt2Msg.timeTag), path)
-    unitTestSupport.writeTeXSnippet("navAtt2Msg.sigma_BN", str(navAtt2Msg.sigma_BN), path)
-    unitTestSupport.writeTeXSnippet("navAtt2Msg.omega_BN_B", str(navAtt2Msg.omega_BN_B), path)
-    unitTestSupport.writeTeXSnippet("navAtt2Msg.vehSunPntBdy", str(navAtt2Msg.vehSunPntBdy), path)
-    unitTestSupport.writeTeXSnippet("navTrans1Msg.timeTag", str(navTrans1Msg.timeTag), path)
-    unitTestSupport.writeTeXSnippet("navTrans1Msg.r_BN_N", str(navTrans1Msg.r_BN_N), path)
-    unitTestSupport.writeTeXSnippet("navTrans1Msg.v_BN_N", str(navTrans1Msg.v_BN_N), path)
-    unitTestSupport.writeTeXSnippet("navTrans1Msg.vehAccumDV", str(navTrans1Msg.vehAccumDV), path)
-    unitTestSupport.writeTeXSnippet("navTrans2Msg.timeTag", str(navTrans2Msg.timeTag), path)
-    unitTestSupport.writeTeXSnippet("navTrans2Msg.r_BN_N", str(navTrans2Msg.r_BN_N), path)
-    unitTestSupport.writeTeXSnippet("navTrans2Msg.v_BN_N", str(navTrans2Msg.v_BN_N), path)
-    unitTestSupport.writeTeXSnippet("navTrans2Msg.vehAccumDV", str(navTrans2Msg.vehAccumDV), path)
+    simHelpers.writeTeXSnippet("navAtt1Msg.timeTag", str(navAtt1Msg.timeTag), path)
+    simHelpers.writeTeXSnippet("navAtt1Msg.sigma_BN", str(navAtt1Msg.sigma_BN), path)
+    simHelpers.writeTeXSnippet("navAtt1Msg.omega_BN_B", str(navAtt1Msg.omega_BN_B), path)
+    simHelpers.writeTeXSnippet("navAtt1Msg.vehSunPntBdy", str(navAtt1Msg.vehSunPntBdy), path)
+    simHelpers.writeTeXSnippet("navAtt2Msg.timeTag", str(navAtt2Msg.timeTag), path)
+    simHelpers.writeTeXSnippet("navAtt2Msg.sigma_BN", str(navAtt2Msg.sigma_BN), path)
+    simHelpers.writeTeXSnippet("navAtt2Msg.omega_BN_B", str(navAtt2Msg.omega_BN_B), path)
+    simHelpers.writeTeXSnippet("navAtt2Msg.vehSunPntBdy", str(navAtt2Msg.vehSunPntBdy), path)
+    simHelpers.writeTeXSnippet("navTrans1Msg.timeTag", str(navTrans1Msg.timeTag), path)
+    simHelpers.writeTeXSnippet("navTrans1Msg.r_BN_N", str(navTrans1Msg.r_BN_N), path)
+    simHelpers.writeTeXSnippet("navTrans1Msg.v_BN_N", str(navTrans1Msg.v_BN_N), path)
+    simHelpers.writeTeXSnippet("navTrans1Msg.vehAccumDV", str(navTrans1Msg.vehAccumDV), path)
+    simHelpers.writeTeXSnippet("navTrans2Msg.timeTag", str(navTrans2Msg.timeTag), path)
+    simHelpers.writeTeXSnippet("navTrans2Msg.r_BN_N", str(navTrans2Msg.r_BN_N), path)
+    simHelpers.writeTeXSnippet("navTrans2Msg.v_BN_N", str(navTrans2Msg.v_BN_N), path)
+    simHelpers.writeTeXSnippet("navTrans2Msg.vehAccumDV", str(navTrans2Msg.vehAccumDV), path)
 
     # Setup logging on the test module output message so that we get all the writes to it
     dataAttLog = module.navAttOutMsg.recorder()
@@ -266,7 +267,7 @@ def navAggregateTestFunction(show_plots, numAttNav, numTransNav):
 
     # compare the module results to the truth values
     accuracy = 1e-12
-    unitTestSupport.writeTeXSnippet("toleranceValue", str(accuracy), path)
+    simHelpers.writeTeXSnippet("toleranceValue", str(accuracy), path)
 
     # check if the module output matches the truth data
     testFailCount, testMessages = unitTestSupport.compareArrayND(trueAttTimeTag, attTimeTag,
@@ -336,7 +337,7 @@ def navAggregateTestFunction(show_plots, numAttNav, numTransNav):
         colorText = 'Red'
         print("Failed: " + module.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
-    unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
+    simHelpers.writeTeXSnippet(snippentName, passedText, path)
 
     return [testFailCount, ''.join(testMessages)]
 

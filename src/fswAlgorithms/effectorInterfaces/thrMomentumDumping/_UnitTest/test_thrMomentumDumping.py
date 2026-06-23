@@ -37,6 +37,7 @@ from Basilisk.utilities import unitTestSupport                  # general suppor
 from Basilisk.fswAlgorithms import thrMomentumDumping            # import the module that is to be tested
 from Basilisk.utilities import macros
 from Basilisk.utilities import fswSetupThrusters
+from Basilisk.utilities import simHelpers
 from Basilisk.architecture import messaging
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
@@ -210,7 +211,7 @@ def thrMomentumDumpingTestFunction(show_plots, resetCheck, largeMinFireTime):
 
     # compare the module results to the truth values
     accuracy = 1e-12
-    unitTestSupport.writeTeXSnippet("toleranceValue", str(accuracy), path)
+    simHelpers.writeTeXSnippet("toleranceValue", str(accuracy), path)
 
     testFailCount, testMessages = unitTestSupport.compareArray(trueVector, moduleOutput, accuracy,
                                                                "OnTimeRequest", testFailCount, testMessages)
@@ -224,7 +225,7 @@ def thrMomentumDumpingTestFunction(show_plots, resetCheck, largeMinFireTime):
         colorText = 'Red'
         print("Failed: " + module.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
-    unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
+    simHelpers.writeTeXSnippet(snippentName, passedText, path)
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found

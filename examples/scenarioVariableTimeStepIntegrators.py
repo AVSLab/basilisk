@@ -82,9 +82,9 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeGravBody
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 # attempt to import vizard
 from Basilisk.utilities import vizSupport
+from Basilisk.utilities import simHelpers
 
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
@@ -194,7 +194,7 @@ def run(show_plots, integratorCase, relTol, absTol):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = simHelpers.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
     dataLog = scObject.scStateOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(simTaskName, dataLog)
 
@@ -248,7 +248,7 @@ def run(show_plots, integratorCase, relTol, absTol):
         rData.append(oeData.rmag/earth.radEquator)
         fData.append(oeData.f + oeData.omega - oe.omega)
     plt.plot(rData * np.cos(fData), rData * np.sin(fData)
-             , color=unitTestSupport.getLineColor(labelStrings.index(integratorCase), len(labelStrings))
+             , color=simHelpers.getLineColor(labelStrings.index(integratorCase), len(labelStrings))
              , label=integratorCase
              , linewidth=3.0
              )

@@ -13,7 +13,8 @@ import pathlib
 import sys
 
 import pytest
-from Basilisk.utilities import tleHandling, unitTestSupport
+from Basilisk.utilities import tleHandling
+from Basilisk.utilities import simHelpers
 
 # Get current file path
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -37,7 +38,7 @@ def test_scenarioConstellationFromTle(show_plots, tleFile, numThreads):
         tleData = tleHandling.satTle2elem(DATA_DIR / tleFile)
         figureList = scenario_constellationFromTle.run(show_plots, tleData, numThreads)
         for pltName, plt in list(figureList.items()):
-            unitTestSupport.saveScenarioFigure(pltName, plt, path)
+            simHelpers.saveScenarioFigure(pltName, plt, path)
     except OSError:
         testFailCount += 1
         testMessages.append("scenario_constellationFromTle test failed.")

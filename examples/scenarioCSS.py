@@ -175,8 +175,8 @@ from Basilisk.simulation import spacecraft
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion as om
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 from Basilisk.utilities import vizSupport
+from Basilisk.utilities import simHelpers
 
 bskPath = __path__[0]
 
@@ -226,7 +226,7 @@ def run(show_plots, useCSSConstellation, usePlatform, useEclipse, useKelly):
          0., 0., 600.]
     scObject.hub.mHub = 750.0                     # kg - spacecraft mass
     scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
-    scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
+    scObject.hub.IHubPntBc_B = simHelpers.np2EigenMatrix3d(I)
 
     #
     # set initial spacecraft states
@@ -379,18 +379,18 @@ def run(show_plots, useCSSConstellation, usePlatform, useEclipse, useKelly):
     if useCSSConstellation:
         for idx in range(len(cssList)):
             plt.plot(cssConstLog.times()*macros.NANO2SEC, dataCSSArray[:, idx],
-                         color=unitTestSupport.getLineColor(idx,3),
+                         color=simHelpers.getLineColor(idx,3),
                          label='CSS$_{'+str(idx)+'}$')
     else:
         timeAxis = css1Log.times()
         plt.plot(timeAxis * macros.NANO2SEC, dataCSS1,
-                 color=unitTestSupport.getLineColor(0, 3),
+                 color=simHelpers.getLineColor(0, 3),
                  label='CSS$_{1}$')
         plt.plot(timeAxis * macros.NANO2SEC, dataCSS2,
-                 color=unitTestSupport.getLineColor(1, 3),
+                 color=simHelpers.getLineColor(1, 3),
                  label='CSS$_{2}$')
         plt.plot(timeAxis * macros.NANO2SEC, dataCSS3,
-                 color=unitTestSupport.getLineColor(2, 3),
+                 color=simHelpers.getLineColor(2, 3),
                  label='CSS$_{3}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [sec]')

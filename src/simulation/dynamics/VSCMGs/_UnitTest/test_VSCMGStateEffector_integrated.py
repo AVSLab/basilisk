@@ -26,6 +26,7 @@ import pytest
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
+from Basilisk.utilities import simHelpers
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 import matplotlib as mpl
@@ -255,10 +256,10 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
 
     unitTestSim.ExecuteSimulation()
 
-    orbAngMom_N = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totOrbAngMomPntN_N)
-    rotAngMom_N = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totRotAngMomPntC_N)
-    rotEnergy = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totRotEnergy)
-    orbEnergy = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totOrbEnergy)
+    orbAngMom_N = simHelpers.addTimeColumn(scObjectLog.times(), scObjectLog.totOrbAngMomPntN_N)
+    rotAngMom_N = simHelpers.addTimeColumn(scObjectLog.times(), scObjectLog.totRotAngMomPntC_N)
+    rotEnergy = simHelpers.addTimeColumn(scObjectLog.times(), scObjectLog.totRotEnergy)
+    orbEnergy = simHelpers.addTimeColumn(scObjectLog.times(), scObjectLog.totOrbEnergy)
 
     wheelSpeeds = speedLog.wheelSpeeds
     gimbalAngles = speedLog.gimbalAngles
@@ -343,27 +344,27 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     plt.figure()
     plt.plot(orbAngMom_N[:,0]*1e-9, orbAngMom_N[:,1] - orbAngMom_N[0,1], orbAngMom_N[:,0]*1e-9, orbAngMom_N[:,2] - orbAngMom_N[0,2], orbAngMom_N[:,0]*1e-9, orbAngMom_N[:,3] - orbAngMom_N[0,3])
     plt.title("Change in Orbital Angular Momentum")
-    unitTestSupport.writeFigureLaTeX("ChangeInOrbitalAngularMomentum" + testCase,
+    simHelpers.writeFigureLaTeX("ChangeInOrbitalAngularMomentum" + testCase,
                                      "Change in Orbital Angular Momentum " + testCase, plt, "width=0.80\\textwidth",
                                      path)
 
     plt.figure()
     plt.plot(rotAngMom_N[:,0]*1e-9, rotAngMom_N[:,1] - rotAngMom_N[0,1], rotAngMom_N[:,0]*1e-9, rotAngMom_N[:,2] - rotAngMom_N[0,2], rotAngMom_N[:,0]*1e-9, rotAngMom_N[:,3] - rotAngMom_N[0,3])
     plt.title("Change in Rotational Angular Momentum")
-    unitTestSupport.writeFigureLaTeX("ChangeInOrbitalEnergy" + testCase, "Change in Orbital Energy " + testCase, plt,
+    simHelpers.writeFigureLaTeX("ChangeInOrbitalEnergy" + testCase, "Change in Orbital Energy " + testCase, plt,
                                      "width=0.80\\textwidth", path)
 
     plt.figure()
     plt.plot(orbEnergy[:,0]*1e-9, orbEnergy[:,1] - orbEnergy[0,1])
     plt.title("Change in Orbital Energy")
-    unitTestSupport.writeFigureLaTeX("ChangeInRotationalAngularMomentum" + testCase,
+    simHelpers.writeFigureLaTeX("ChangeInRotationalAngularMomentum" + testCase,
                                      "Change in Rotational Angular Momentum " + testCase, plt, "width=0.80\\textwidth",
                                      path)
 
     plt.figure()
     plt.plot(rotEnergy[:,0]*1e-9, rotEnergy[:,1] - rotEnergy[0,1])
     plt.title("Change in Rotational Energy")
-    unitTestSupport.writeFigureLaTeX("ChangeInRotationalEnergy" + testCase, "Change in Rotational Energy " + testCase,
+    simHelpers.writeFigureLaTeX("ChangeInRotationalEnergy" + testCase, "Change in Rotational Energy " + testCase,
                                      plt, "width=0.80\\textwidth", path)
 
     plt.figure()
@@ -504,13 +505,13 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
         passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
         # Write some snippets for AutoTex
         snippetName = testCase + 'PassFail'
-        unitTestSupport.writeTeXSnippet(snippetName, passedText, path)
+        simHelpers.writeTeXSnippet(snippetName, passedText, path)
     elif testFailCount > 0:
         colorText = 'Red'
         passedText = r'\textcolor{' + colorText + '}{' + "FAILED" + '}'
         # Write some snippets for AutoTex
         snippetName = testCase + 'PassFail'
-        unitTestSupport.writeTeXSnippet(snippetName, passedText, path)
+        simHelpers.writeTeXSnippet(snippetName, passedText, path)
 
     if testFailCount == 0:
         print("PASSED: " + " VSCMG Integrated Sim Test")

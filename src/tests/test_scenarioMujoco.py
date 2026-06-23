@@ -23,13 +23,12 @@ import sys
 import os
 import inspect
 import importlib
-from Basilisk.utilities import unitTestSupport
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
 import pytest
-from Basilisk.utilities import unitTestSupport
+from Basilisk.utilities import simHelpers
 
 try:
     from Basilisk.simulation import mujoco
@@ -76,7 +75,7 @@ def test_scenarios(scenario: str):
 
     for pltName, plt in figureList.items():
         print(f"Saving MuJoCo scenario figure: {pltName} (from '{scenario}')")
-        unitTestSupport.saveScenarioFigure(pltName, plt, path)
+        simHelpers.saveScenarioFigure(pltName, plt, path)
 
 if __name__ == "__main__":
     pytest.main([__file__])

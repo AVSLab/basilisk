@@ -27,7 +27,12 @@ import pytest
 import matplotlib.pyplot as plt
 import numpy as np
 
-from Basilisk.utilities import SimulationBaseClass, unitTestSupport, orbitalMotion, macros, RigidBodyKinematics
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    orbitalMotion,
+    macros,
+    RigidBodyKinematics,
+)
 from Basilisk.simulation import spacecraft, constraintDynamicEffector, gravityEffector, svIntegrators
 
 # uncomment this line if this test is to be skipped in the global unit test run, adjust message as needed

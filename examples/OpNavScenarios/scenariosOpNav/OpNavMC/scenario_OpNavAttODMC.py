@@ -30,7 +30,10 @@ import subprocess
 import sys
 
 # Import utilities
-from Basilisk.utilities import orbitalMotion, macros, unitTestSupport
+from Basilisk.utilities import (
+    orbitalMotion,
+    macros,
+)
 from Basilisk.utilities.supportDataTools.dataFetcher import get_path, DataFile
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename

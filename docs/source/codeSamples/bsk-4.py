@@ -22,7 +22,7 @@ import matplotlib.pyplot as plt
 from Basilisk.moduleTemplates import cModuleTemplate
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
-from Basilisk.utilities import unitTestSupport
+from Basilisk.utilities import simHelpers
 
 
 def run():
@@ -64,11 +64,11 @@ def run():
     figureList = {}
     for idx in range(3):
         plt.plot(msgRec.times() * macros.NANO2SEC, msgRec.dataVector[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
+                 color=simHelpers.getLineColor(idx, 3),
                  label='$x_{' + str(idx) + '}$')
         plt.plot(msgRec2.times() * macros.NANO2SEC, msgRec2.dataVector[:, idx],
                  '--',
-                 color=unitTestSupport.getLineColor(idx, 3),
+                 color=simHelpers.getLineColor(idx, 3),
                  label=r'$\hat x_{' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [sec]')

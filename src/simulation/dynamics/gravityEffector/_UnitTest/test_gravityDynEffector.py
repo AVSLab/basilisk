@@ -39,6 +39,7 @@ from Basilisk.topLevelModules import pyswice
 from Basilisk.utilities.pyswice_spk_utilities import spkRead
 from Basilisk.simulation import stateArchitecture
 from Basilisk.utilities import orbitalMotion as om
+from Basilisk.utilities import simHelpers
 from Basilisk.architecture import messaging
 from Basilisk.simulation.gravityEffector import loadGravFromFileToList
 from Basilisk.architecture.bskLogging import BasiliskError
@@ -217,7 +218,7 @@ def independentSphericalHarmonics(show_plots):
     snippetContent = "{:1.1e}".format(
         accuracy
     )  # write formatted LATEX string to file to be used by auto-documentation.
-    unitTestSupport.writeTeXSnippet(
+    simHelpers.writeTeXSnippet(
         snippetName, snippetContent, path
     )  # write formatted LATEX string to file to be used by auto-documentation.
 
@@ -227,7 +228,7 @@ def independentSphericalHarmonics(show_plots):
         colorText = "ForestGreen"  # color to write auto-documented "PASSED" message in in LATEX.
         snippetName = testCase + "FailMsg"
         snippetContent = ""
-        unitTestSupport.writeTeXSnippet(
+        simHelpers.writeTeXSnippet(
             snippetName, snippetContent, path
         )  # write formatted LATEX string to file to be used by auto-documentation.
     else:
@@ -238,7 +239,7 @@ def independentSphericalHarmonics(show_plots):
         for message in testMessages:
             snippetContent += ". " + message
         snippetContent += "."
-        unitTestSupport.writeTeXSnippet(
+        simHelpers.writeTeXSnippet(
             snippetName, snippetContent, path
         )  # write formatted LATEX string to file to be used by auto-documentation.
     snippetName = (
@@ -247,7 +248,7 @@ def independentSphericalHarmonics(show_plots):
     snippetContent = (
         r"\textcolor{" + colorText + "}{" + passFailText + "}"
     )  # write formatted LATEX string to file to be used by auto-documentation.
-    unitTestSupport.writeTeXSnippet(
+    simHelpers.writeTeXSnippet(
         snippetName, snippetContent, path
     )  # write formatted LATEX string to file to be used by auto-documentation.
 
@@ -297,7 +298,7 @@ def sphericalHarmonics(show_plots):
     snippetContent = "{:1.1e}".format(
         accuracy
     )  # write formatted LATEX string to file to be used by auto-documentation.
-    unitTestSupport.writeTeXSnippet(
+    simHelpers.writeTeXSnippet(
         snippetName, snippetContent, path
     )  # write formatted LATEX string to file to be used by auto-documentation.
 
@@ -314,7 +315,7 @@ def sphericalHarmonics(show_plots):
         colorText = "ForestGreen"  # color to write auto-documented "PASSED" message in in LATEX.
         snippetName = testCase + "FailMsg"
         snippetContent = ""
-        unitTestSupport.writeTeXSnippet(
+        simHelpers.writeTeXSnippet(
             snippetName, snippetContent, path
         )  # write formatted LATEX string to file to be used by auto-documentation.
     else:
@@ -325,7 +326,7 @@ def sphericalHarmonics(show_plots):
         for message in testMessages:
             snippetContent += ". " + message
         snippetContent += "."
-        unitTestSupport.writeTeXSnippet(
+        simHelpers.writeTeXSnippet(
             snippetName, snippetContent, path
         )  # write formatted LATEX string to file to be used by auto-documentation.
     snippetName = (
@@ -334,7 +335,7 @@ def sphericalHarmonics(show_plots):
     snippetContent = (
         r"\textcolor{" + colorText + "}{" + passFailText + "}"
     )  # write formatted LATEX string to file to be used by auto-documentation.
-    unitTestSupport.writeTeXSnippet(
+    simHelpers.writeTeXSnippet(
         snippetName, snippetContent, path
     )  # write formatted LATEX string to file to be used by auto-documentation.
 
@@ -454,7 +455,7 @@ def singleGravityBody(show_plots):
     snippetContent = "{:1.1e}".format(
         accuracy
     )  # write formatted LATEX string to file to be used by auto-documentation.
-    unitTestSupport.writeTeXSnippet(
+    simHelpers.writeTeXSnippet(
         snippetName, snippetContent, path
     )  # write formatted LATEX string to file to be used by auto-documentation.
 
@@ -477,7 +478,7 @@ def singleGravityBody(show_plots):
         )
         snippetName = testCase + "FailMsg"
         snippetContent = ""
-        unitTestSupport.writeTeXSnippet(
+        simHelpers.writeTeXSnippet(
             snippetName, snippetContent, path
         )  # write formatted LATEX string to file to be used by auto-documentation.
     else:
@@ -488,7 +489,7 @@ def singleGravityBody(show_plots):
         for message in testMessages:
             snippetContent += ". " + message
         snippetContent += "."
-        unitTestSupport.writeTeXSnippet(
+        simHelpers.writeTeXSnippet(
             snippetName, snippetContent, path
         )  # write formatted LATEX string to file to be used by auto-documentation.
     snippetName = (
@@ -497,7 +498,7 @@ def singleGravityBody(show_plots):
     snippetContent = (
         r"\textcolor{" + colorText + "}{" + passFailText + "}"
     )  # write formatted LATEX string to file to be used by auto-documentation.
-    unitTestSupport.writeTeXSnippet(
+    simHelpers.writeTeXSnippet(
         snippetName, snippetContent, path
     )  # write formatted LATEX string to file to be used by auto-documentation.
 
@@ -660,7 +661,7 @@ def multiBodyGravity(show_plots):
     snippetContent = "{:1.1e}".format(
         accuracy
     )  # write formatted LATEX string to file to be used by auto-documentation.
-    unitTestSupport.writeTeXSnippet(
+    simHelpers.writeTeXSnippet(
         snippetName, snippetContent, path
     )  # write formatted LATEX string to file to be used by auto-documentation.
     if not unitTestSupport.isDoubleEqualRelative(
@@ -685,7 +686,7 @@ def multiBodyGravity(show_plots):
         )
         snippetName = testCase + "FailMsg"
         snippetContent = ""
-        unitTestSupport.writeTeXSnippet(
+        simHelpers.writeTeXSnippet(
             snippetName, snippetContent, path
         )  # write formatted LATEX string to file to be used by auto-documentation.
     else:
@@ -696,7 +697,7 @@ def multiBodyGravity(show_plots):
         for message in testMessages:
             snippetContent += ". " + message
         snippetContent += "."
-        unitTestSupport.writeTeXSnippet(
+        simHelpers.writeTeXSnippet(
             snippetName, snippetContent, path
         )  # write formatted LATEX string to file to be used by auto-documentation.
     snippetName = (
@@ -705,7 +706,7 @@ def multiBodyGravity(show_plots):
     snippetContent = (
         r"\textcolor{" + colorText + "}{" + passFailText + "}"
     )  # write formatted LATEX string to file to be used by auto-documentation.
-    unitTestSupport.writeTeXSnippet(
+    simHelpers.writeTeXSnippet(
         snippetName, snippetContent, path
     )  # write formatted LATEX string to file to be used by auto-documentation.
 

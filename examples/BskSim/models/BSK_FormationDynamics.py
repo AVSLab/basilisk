@@ -23,7 +23,7 @@ from Basilisk.simulation import (spacecraft, extForceTorque, simpleNav,
 from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.utilities import macros as mc
 from Basilisk.utilities import simIncludeRW, simIncludeGravBody
-from Basilisk.utilities import unitTestSupport as sp
+from Basilisk.utilities import simHelpers
 
 bskPath = __path__[0]
 
@@ -83,7 +83,7 @@ class BSKDynamicModels():
                      0., 0., 600.]
         self.scObject.hub.mHub = 750.0  # kg - spacecraft mass
         self.scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
-        self.scObject.hub.IHubPntBc_B = sp.np2EigenMatrix3d(self.I_sc)
+        self.scObject.hub.IHubPntBc_B = simHelpers.np2EigenMatrix3d(self.I_sc)
 
         self.scObject2.ModelTag = "deputy"
         self.I_sc2 = [900., 0., 0.,
@@ -91,7 +91,7 @@ class BSKDynamicModels():
                       0., 0., 600.]
         self.scObject2.hub.mHub = 750.0  # kg - spacecraft mass
         self.scObject2.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
-        self.scObject2.hub.IHubPntBc_B = sp.np2EigenMatrix3d(self.I_sc2)
+        self.scObject2.hub.IHubPntBc_B = simHelpers.np2EigenMatrix3d(self.I_sc2)
 
     def SetSimpleNavObject(self):
         self.simpleNavObject.ModelTag = "SimpleNavigation_chief"
@@ -140,4 +140,3 @@ class BSKDynamicModels():
         self.SetSimpleNavObject()
         self.SetReactionWheelDynEffector()
         self.SetExternalForceTorqueObject()
-

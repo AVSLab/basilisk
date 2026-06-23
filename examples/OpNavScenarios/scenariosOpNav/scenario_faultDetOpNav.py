@@ -37,9 +37,10 @@ import os
 import sys
 import time
 
+from Basilisk.utilities import simHelpers
 from Basilisk.utilities import RigidBodyKinematics as rbk
 # Import utilities
-from Basilisk.utilities import orbitalMotion, macros, unitTestSupport
+from Basilisk.utilities import orbitalMotion, macros
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -142,26 +143,26 @@ class scenario_OpNav(BSKScenario):
         NUM_STATES = 6
 
         ## Spacecraft true states
-        position_N = unitTestSupport.addTimeColumn(self.scRec.times(), self.scRec.r_BN_N)
-        velocity_N = unitTestSupport.addTimeColumn(self.scRec.times(), self.scRec.v_BN_N)
+        position_N = simHelpers.addTimeColumn(self.scRec.times(), self.scRec.r_BN_N)
+        velocity_N = simHelpers.addTimeColumn(self.scRec.times(), self.scRec.v_BN_N)
 
         ## Attitude
-        sigma_BN = unitTestSupport.addTimeColumn(self.scRec.times(), self.scRec.sigma_BN)
+        sigma_BN = simHelpers.addTimeColumn(self.scRec.times(), self.scRec.sigma_BN)
 
         ## Navigation results
-        navState = unitTestSupport.addTimeColumn(self.filtRec.times(), self.filtRec.state)
-        navCovar = unitTestSupport.addTimeColumn(self.filtRec.times(), self.filtRec.covar)
+        navState = simHelpers.addTimeColumn(self.filtRec.times(), self.filtRec.state)
+        navCovar = simHelpers.addTimeColumn(self.filtRec.times(), self.filtRec.covar)
 
-        validLimb = unitTestSupport.addTimeColumn(self.opNavPrimRec.times(), self.opNavPrimRec.valid)
-        validHough = unitTestSupport.addTimeColumn(self.opNavSecRec.times(), self.opNavSecRec.valid)
+        validLimb = simHelpers.addTimeColumn(self.opNavPrimRec.times(), self.opNavPrimRec.valid)
+        validHough = simHelpers.addTimeColumn(self.opNavSecRec.times(), self.opNavSecRec.valid)
 
         ## Fault Detection
-        measPos = unitTestSupport.addTimeColumn(self.opNavRec.times(), self.opNavRec.r_BN_N)
-        valid = unitTestSupport.addTimeColumn(self.opNavRec.times(), self.opNavRec.valid)
-        faults = unitTestSupport.addTimeColumn(self.opNavRec.times(), self.opNavRec.faultDetected)
-        r_C = unitTestSupport.addTimeColumn(self.opNavRec.times(), self.opNavRec.r_BN_C)
-        measCovar = unitTestSupport.addTimeColumn(self.opNavRec.times(), self.opNavRec.covar_N)
-        covar_C = unitTestSupport.addTimeColumn(self.opNavRec.times(), self.opNavRec.covar_C)
+        measPos = simHelpers.addTimeColumn(self.opNavRec.times(), self.opNavRec.r_BN_N)
+        valid = simHelpers.addTimeColumn(self.opNavRec.times(), self.opNavRec.valid)
+        faults = simHelpers.addTimeColumn(self.opNavRec.times(), self.opNavRec.faultDetected)
+        r_C = simHelpers.addTimeColumn(self.opNavRec.times(), self.opNavRec.r_BN_C)
+        measCovar = simHelpers.addTimeColumn(self.opNavRec.times(), self.opNavRec.covar_N)
+        covar_C = simHelpers.addTimeColumn(self.opNavRec.times(), self.opNavRec.covar_C)
 
         sigma_CB = self.masterSim.get_DynModel().cameraMRP_CB
         sizeMM = self.masterSim.get_DynModel().cameraSize

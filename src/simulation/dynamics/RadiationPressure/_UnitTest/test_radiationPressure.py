@@ -42,6 +42,7 @@ splitPath = path.split('simulation')
 #Import all of the modules that we are going to call in this simulation
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport
+from Basilisk.utilities import simHelpers
 from Basilisk.simulation import radiationPressure
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion as om
@@ -159,13 +160,13 @@ def unitRadiationPressure(show_plots, modelType, eclipseOn):
     srpDynEffector2.computeForceTorque(unitTestSim.TotalSim.CurrentNanos, testTaskRate)
     unitTestSim.TotalSim.SingleStepProcesses()
 
-    srpDataForce_B = unitTestSupport.addTimeColumn(srpDynEffectorLog[0].times(), srpDynEffectorLog[0].forceExternal_B)
-    srpDataForce_N = unitTestSupport.addTimeColumn(srpDynEffectorLog[0].times(), srpDynEffectorLog[0].forceExternal_N)
-    srpTorqueData = unitTestSupport.addTimeColumn(srpDynEffectorLog[0].times(), srpDynEffectorLog[0].torqueExternalPntB_B)
+    srpDataForce_B = simHelpers.addTimeColumn(srpDynEffectorLog[0].times(), srpDynEffectorLog[0].forceExternal_B)
+    srpDataForce_N = simHelpers.addTimeColumn(srpDynEffectorLog[0].times(), srpDynEffectorLog[0].forceExternal_N)
+    srpTorqueData = simHelpers.addTimeColumn(srpDynEffectorLog[0].times(), srpDynEffectorLog[0].torqueExternalPntB_B)
 
-    srp2DataForce_B = unitTestSupport.addTimeColumn(srpDynEffectorLog[1].times(), srpDynEffectorLog[1].forceExternal_B)
-    srp2DataForce_N = unitTestSupport.addTimeColumn(srpDynEffectorLog[1].times(), srpDynEffectorLog[1].forceExternal_N)
-    srp2TorqueData = unitTestSupport.addTimeColumn(srpDynEffectorLog[1].times(), srpDynEffectorLog[1].torqueExternalPntB_B)
+    srp2DataForce_B = simHelpers.addTimeColumn(srpDynEffectorLog[1].times(), srpDynEffectorLog[1].forceExternal_B)
+    srp2DataForce_N = simHelpers.addTimeColumn(srpDynEffectorLog[1].times(), srpDynEffectorLog[1].forceExternal_N)
+    srp2TorqueData = simHelpers.addTimeColumn(srpDynEffectorLog[1].times(), srpDynEffectorLog[1].torqueExternalPntB_B)
 
     errTol = 1E-12
     if modelType == "cannonball":
@@ -247,7 +248,7 @@ def unitRadiationPressure(show_plots, modelType, eclipseOn):
         colorText = 'ForestGreen'  # color to write auto-documented "PASSED" message in in LATEX
         snippetName = modelType + 'FailMsg'
         snippetContent = ""
-        unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)  # write formatted LATEX string to file to be used by auto-documentation.
+        simHelpers.writeTeXSnippet(snippetName, snippetContent, path)  # write formatted LATEX string to file to be used by auto-documentation.
     else:
         passFailText = 'FAILED'
         colorText = 'Red'  # color to write auto-documented "FAILED" message in in LATEX
@@ -256,19 +257,19 @@ def unitRadiationPressure(show_plots, modelType, eclipseOn):
         for message in testMessages:
             snippetContent += ". " + message
         snippetContent += "."
-        unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)  # write formatted LATEX string to file to be used by auto-documentation.
+        simHelpers.writeTeXSnippet(snippetName, snippetContent, path)  # write formatted LATEX string to file to be used by auto-documentation.
     snippetName = modelType + 'PassFail'  # name of file to be written for auto-documentation which specifies if this test was passed or failed.
     snippetContent = r'\textcolor{' + colorText + '}{' + passFailText + '}' #write formatted LATEX string to file to be used by auto-documentation.
-    unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path) #write formatted LATEX string to file to be used by auto-documentation.
+    simHelpers.writeTeXSnippet(snippetName, snippetContent, path) #write formatted LATEX string to file to be used by auto-documentation.
 
     # write test accuracy to LATEX file for AutoTex
     snippetName = modelType + 'Accuracy'
     snippetContent = '{:1.1e}'.format(errTol)#write formatted LATEX string to file to be used by auto-documentation.
-    unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path) #write formatted LATEX string to file to be used by auto-documentation.
+    simHelpers.writeTeXSnippet(snippetName, snippetContent, path) #write formatted LATEX string to file to be used by auto-documentation.
     if modelType == 'lookupWithEclipse' or modelType == 'lookup' or modelType == 'cannonballLookup':
         snippetName = modelType + 'TorqueAccuracy'
         snippetContent = '{:1.1e}'.format(errTolTorque)  # write formatted LATEX string to file to be used by auto-documentation.
-        unitTestSupport.writeTeXSnippet(snippetName, snippetContent,
+        simHelpers.writeTeXSnippet(snippetName, snippetContent,
                                         path)  # write formatted LATEX string to file to be used by auto-documentation.
 
     if testFailCount:

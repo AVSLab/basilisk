@@ -38,7 +38,7 @@ bskPath = __path__[0]
 
 
 import datetime
-from Basilisk.utilities import unitTestSupport
+from Basilisk.utilities import simHelpers
 from Basilisk.utilities import SimulationBaseClass
 import numpy
 from Basilisk.simulation import spiceInterface
@@ -96,11 +96,11 @@ def testPlottingFixture(show_plots):
     yield dataStore
 
     plt = dataStore.giveData()
-    unitTestSupport.writeFigureLaTeX('EphemMars', 'Ephemeris Error on Mars', plt, 'height=0.7\\textwidth, keepaspectratio', path)
+    simHelpers.writeFigureLaTeX('EphemMars', 'Ephemeris Error on Mars', plt, 'height=0.7\\textwidth, keepaspectratio', path)
     plt.ylim(0, 2E-2)
-    unitTestSupport.writeFigureLaTeX('EphemEarth', 'Ephemeris Error on Earth', plt, 'height=0.7\\textwidth, keepaspectratio', path)
+    simHelpers.writeFigureLaTeX('EphemEarth', 'Ephemeris Error on Earth', plt, 'height=0.7\\textwidth, keepaspectratio', path)
     plt.ylim(0, 5E-6)
-    unitTestSupport.writeFigureLaTeX('EphemSun', 'Ephemeris Error on Sun', plt, 'height=0.7\\textwidth, keepaspectratio', path)
+    simHelpers.writeFigureLaTeX('EphemSun', 'Ephemeris Error on Sun', plt, 'height=0.7\\textwidth, keepaspectratio', path)
     if show_plots:
         dataStore.plotData()
 
@@ -185,7 +185,7 @@ def unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot, MarsTruthPos
     TotalSim.AddModelToTask(unitTaskName, SpiceObject)
 
     if useMsg:
-        epochMsg = unitTestSupport.timeStringToGregorianUTCMsg(DateSpice)
+        epochMsg = simHelpers.timeStringToGregorianUTCMsg(DateSpice)
         SpiceObject.epochInMsg.subscribeTo(epochMsg)
 
         # The following value is set, but should not be used by the module.  This checks that the above
@@ -203,8 +203,8 @@ def unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot, MarsTruthPos
     TotalSim.ExecuteSimulation()
 
     # Get the logged variables (GPS seconds, Julian Date)
-    DataGPSSec = unitTestSupport.addTimeColumn(spiceObjectLog.times(), spiceObjectLog.GPSSeconds)
-    DataJD = unitTestSupport.addTimeColumn(spiceObjectLog.times(), spiceObjectLog.julianDateCurrent)
+    DataGPSSec = simHelpers.addTimeColumn(spiceObjectLog.times(), spiceObjectLog.GPSSeconds)
+    DataJD = simHelpers.addTimeColumn(spiceObjectLog.times(), spiceObjectLog.julianDateCurrent)
 
     # Get parametrized date from DatePlot
     year = "".join(("20", DatePlot[6:8]))
@@ -400,7 +400,7 @@ def test_59_999999_second_epoch():
 
     TotalSim.AddModelToTask(unitTaskName, SpiceObject)
 
-    epochMsg = unitTestSupport.timeStringToGregorianUTCMsg(DateSpice)
+    epochMsg = simHelpers.timeStringToGregorianUTCMsg(DateSpice)
     SpiceObject.epochInMsg.subscribeTo(epochMsg)
 
     # Configure simulation

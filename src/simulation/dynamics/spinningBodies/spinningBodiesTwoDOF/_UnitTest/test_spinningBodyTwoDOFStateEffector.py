@@ -32,6 +32,7 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('simulation')
 
+from Basilisk.utilities import simHelpers
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
 from Basilisk.simulation import spacecraft, spinningBodyTwoDOFStateEffector, gravityEffector
 from Basilisk.architecture import messaging
@@ -208,10 +209,10 @@ def spinningBody(show_plots, cmdTorque1, lock1, theta1Ref, cmdTorque2, lock2, th
     unitTestSim.ExecuteSimulation()
 
     # Extract the logged variables
-    orbAngMom_N = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totOrbAngMomPntN_N)
-    rotAngMom_N = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totRotAngMomPntC_N)
-    rotEnergy = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totRotEnergy)
-    orbEnergy = unitTestSupport.addTimeColumn(scObjectLog.times(), scObjectLog.totOrbEnergy)
+    orbAngMom_N = simHelpers.addTimeColumn(scObjectLog.times(), scObjectLog.totOrbAngMomPntN_N)
+    rotAngMom_N = simHelpers.addTimeColumn(scObjectLog.times(), scObjectLog.totRotAngMomPntC_N)
+    rotEnergy = simHelpers.addTimeColumn(scObjectLog.times(), scObjectLog.totRotEnergy)
+    orbEnergy = simHelpers.addTimeColumn(scObjectLog.times(), scObjectLog.totOrbEnergy)
     theta1 = theta1Data.theta
     theta1Dot = theta1Data.thetaDot
     theta2 = theta2Data.theta

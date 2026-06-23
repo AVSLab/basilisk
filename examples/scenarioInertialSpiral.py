@@ -85,7 +85,6 @@ np.set_printoptions(precision=16)
 
 # import general simulation support files
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
@@ -109,6 +108,7 @@ from Basilisk.architecture import messaging
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
 from Basilisk import __path__
+from Basilisk.utilities import simHelpers
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
@@ -145,7 +145,7 @@ def run(show_plots):
          0., 0., 600.]
     scObject.hub.mHub = 750.0  # kg - spacecraft mass
     scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
-    scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
+    scObject.hub.IHubPntBc_B = simHelpers.np2EigenMatrix3d(I)
 
     # add spacecraft object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
@@ -234,7 +234,7 @@ def run(show_plots):
     # Set up data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = simHelpers.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
     snAttLog = sNavObject.attOutMsg.recorder(samplingTime)
     snLog = sNavObject.scStateInMsg.recorder(samplingTime)
     attErrorLog = attError.attGuidOutMsg.recorder(samplingTime)
@@ -292,7 +292,7 @@ def run(show_plots):
     plt.figure(1)
     for idx in range(3):
         plt.plot(timeAxis * macros.NANO2MIN, attErrorLog.sigma_BR[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
+                 color=simHelpers.getLineColor(idx, 3),
                  label=r'$\sigma_' + str(idx) + '$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
@@ -304,7 +304,7 @@ def run(show_plots):
     plt.figure(2)
     for idx in range(3):
         plt.plot(timeAxis * macros.NANO2MIN, mrpLog.torqueRequestBody[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
+                 color=simHelpers.getLineColor(idx, 3),
                  label='$L_{r,' + str(idx) + '}$')
     plt.legend(loc='upper right')
     plt.xlabel('Time [min]')
@@ -315,7 +315,7 @@ def run(show_plots):
     plt.figure(3)
     for idx in range(3):
         plt.plot(timeAxis * macros.NANO2MIN, attErrorLog.omega_BR_B[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
+                 color=simHelpers.getLineColor(idx, 3),
                  label=r'$\omega_{BR,' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
@@ -325,9 +325,9 @@ def run(show_plots):
 
     plt.figure(4)
     plt.plot(timeLineSet, dataEulerAnglesYaw,
-                 color=unitTestSupport.getLineColor(0, 3),label=r'Yaw')
+                 color=simHelpers.getLineColor(0, 3),label=r'Yaw')
     plt.plot(timeLineSet, dataEulerAnglesPitch,
-                 color=unitTestSupport.getLineColor(1, 3),label=r'Pitch')
+                 color=simHelpers.getLineColor(1, 3),label=r'Pitch')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('Euler Angles [rad]')

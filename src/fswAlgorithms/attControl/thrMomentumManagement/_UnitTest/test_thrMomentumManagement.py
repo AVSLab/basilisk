@@ -43,6 +43,7 @@ from Basilisk.utilities import unitTestSupport                  # general suppor
 from Basilisk.fswAlgorithms import thrMomentumManagement            # import the module that is to be tested
 from Basilisk.utilities import macros
 from Basilisk.utilities import fswSetupRW
+from Basilisk.utilities import simHelpers
 from Basilisk.architecture import messaging
 
 
@@ -144,7 +145,7 @@ def thrMomentumManagementTestFunction(show_plots, hsMinCheck):
 
     # compare the module results to the truth values
     accuracy = 1e-12
-    unitTestSupport.writeTeXSnippet("toleranceValue", str(accuracy), path)
+    simHelpers.writeTeXSnippet("toleranceValue", str(accuracy), path)
     testFailCount, testMessages = unitTestSupport.compareArray(trueVector, dataLog.torqueRequestBody, accuracy,
                                                                "torqueRequestBody", testFailCount, testMessages)
 
@@ -157,7 +158,7 @@ def thrMomentumManagementTestFunction(show_plots, hsMinCheck):
         colorText = 'Red'
         print("Failed: " + module.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
-    unitTestSupport.writeTeXSnippet(snippetName, passedText, path)
+    simHelpers.writeTeXSnippet(snippetName, passedText, path)
 
 
     # each test method requires a single assert method to be called

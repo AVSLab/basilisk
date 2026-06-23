@@ -38,7 +38,7 @@ from Basilisk.simulation.gravityEffector import (
 from Basilisk.simulation.gravityEffector import (
     loadPolyFromFile as loadPolyFromFile_python,
 )
-from Basilisk.utilities import unitTestSupport
+from Basilisk.utilities import simHelpers
 
 from Basilisk.utilities.deprecated import deprecationWarn
 from Basilisk.utilities.supportDataTools.dataFetcher import get_path, DataFile, POOCH
@@ -584,7 +584,7 @@ class gravBodyFactory:
             )
 
         if epochInMsg:
-            self.epochMsg = unitTestSupport.timeStringToGregorianUTCMsg(
+            self.epochMsg = simHelpers.timeStringToGregorianUTCMsg(
                 time, dataPath=str(path)
             )
             self.spiceObject.epochInMsg.subscribeTo(self.epochMsg)

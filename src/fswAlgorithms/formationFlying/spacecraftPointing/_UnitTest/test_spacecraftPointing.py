@@ -42,6 +42,7 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 from Basilisk.fswAlgorithms import spacecraftPointing           # import the module that is to be tested
 from Basilisk.utilities import macros
+from Basilisk.utilities import simHelpers
 import numpy as np
 from Basilisk.architecture import messaging
 
@@ -198,7 +199,7 @@ def spacecraftPointingTestFunction(show_plots, case):
                    ]
         # compare the module results to the truth values
         accuracy = 1e-12
-        unitTestSupport.writeTeXSnippet("toleranceValue1", str(accuracy), path)
+        simHelpers.writeTeXSnippet("toleranceValue1", str(accuracy), path)
         for i in range(0,len(trueVector)):
             # check a vector values
             if not unitTestSupport.isArrayEqual(moduleOutput[i],trueVector[i],3,accuracy):
@@ -225,7 +226,7 @@ def spacecraftPointingTestFunction(show_plots, case):
         # compare the module results to the truth values
         # The first three values of the simulation have to be ignored for omega_RN_N. For this reason, comparing from index 3.
         accuracy = 1e-9
-        unitTestSupport.writeTeXSnippet("toleranceValue2", str(accuracy), path)
+        simHelpers.writeTeXSnippet("toleranceValue2", str(accuracy), path)
         for i in range(0,len(trueVector)):
             # check a vector values
             if not unitTestSupport.isArrayEqual(moduleOutput[i],trueVector[i],3,accuracy):
@@ -251,7 +252,7 @@ def spacecraftPointingTestFunction(show_plots, case):
         # compare the module results to the truth values
         # The first three values of the simulation have to be ignored for domega_RN_N. For this reason, comparing from index 3.
         accuracy = 1e-12
-        unitTestSupport.writeTeXSnippet("toleranceValue3", str(accuracy), path)
+        simHelpers.writeTeXSnippet("toleranceValue3", str(accuracy), path)
         for i in range(0,len(trueVector)):
             # check a vector values
             if not unitTestSupport.isArrayEqual(moduleOutput[i],trueVector[i],3,accuracy):
@@ -263,7 +264,7 @@ def spacecraftPointingTestFunction(show_plots, case):
         trueVector = [-1.0/3.0, 1.0/3.0, -1.0/3.0]
         # compare the module results to the truth values
         accuracy = 1e-12
-        unitTestSupport.writeTeXSnippet("toleranceValue4", str(accuracy), path)
+        simHelpers.writeTeXSnippet("toleranceValue4", str(accuracy), path)
         # check a vector values
         if not unitTestSupport.isVectorEqual(np.array(module.sigma_BA), np.array(trueVector), accuracy):
             testFailCount += 1
@@ -279,7 +280,7 @@ def spacecraftPointingTestFunction(show_plots, case):
         colorText = 'Red'
         print("FAILED: " + module.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
-    unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
+    simHelpers.writeTeXSnippet(snippentName, passedText, path)
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found

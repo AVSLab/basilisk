@@ -90,9 +90,16 @@ from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import (mrpFeedback, attTrackingError, inertial3D, rwMotorTorque,
                                     thrMomentumManagement, thrForceMapping, thrMomentumDumping)
 from Basilisk.simulation import (reactionWheelStateEffector, thrusterDynamicEffector, simpleNav, spacecraft)
-from Basilisk.utilities import (SimulationBaseClass, macros,
-                                orbitalMotion, simIncludeGravBody,
-                                simIncludeRW, simIncludeThruster, unitTestSupport, vizSupport)
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    macros,
+    orbitalMotion,
+    simIncludeGravBody,
+    simIncludeRW,
+    simIncludeThruster,
+    vizSupport,
+)
+from Basilisk.utilities import simHelpers
 
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
@@ -181,7 +188,7 @@ def run(show_plots):
          0.,    0.,    1800]
     scObject.hub.mHub = 2500  # kg - spacecraft mass
     scObject.hub.r_BcB_B = [[0.0], [0.0], [1.28]]  # m - position vector of body-fixed point B relative to CM
-    scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
+    scObject.hub.IHubPntBc_B = simHelpers.np2EigenMatrix3d(I)
 
     #
     # add RW devices
@@ -372,7 +379,7 @@ def run(show_plots):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 5000
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStepDyn, numDataPoints)
+    samplingTime = simHelpers.samplingTime(simulationTime, simulationTimeStepDyn, numDataPoints)
     sNavRec = sNavObject.attOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(dynTask, sNavRec)
     dataRec = scObject.scStateOutMsg.recorder(samplingTime)
@@ -490,7 +497,7 @@ def plot_attitude_error(timeData, dataSigmaBR):
     plt.figure(1)
     for idx in range(3):
         plt.plot(timeData, dataSigmaBR[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
+                 color=simHelpers.getLineColor(idx, 3),
                  label=r'$\sigma_' + str(idx) + r'$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
@@ -501,7 +508,7 @@ def plot_rate_error(timeData, dataOmegaBR):
     plt.figure(2)
     for idx in range(3):
         plt.plot(timeData, dataOmegaBR[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
+                 color=simHelpers.getLineColor(idx, 3),
                  label=r'$\omega_{BR,' + str(idx+1) + r'}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
@@ -519,7 +526,7 @@ def plot_rw_momenta(timeData, dataOmegaRw, RW, numRW):
     plt.figure(3)
     for idx in range(numRW):
         plt.plot(timeData, dataOmegaRw[:, idx] * RW[idx].Js,
-                 color=unitTestSupport.getLineColor(idx, numRW),
+                 color=simHelpers.getLineColor(idx, numRW),
                  label=r'$H_{' + str(idx+1) + r'}$')
     plt.plot(timeData, totMomentumNorm, '--',
              label=r'$\|H\|$')
@@ -532,7 +539,7 @@ def plot_DH(timeData, dataDH):
     plt.figure(4)
     for idx in range(3):
         plt.plot(timeData, dataDH[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
+                 color=simHelpers.getLineColor(idx, 3),
                  label=r'$\Delta H_{' + str(idx+1) + r'}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
@@ -543,7 +550,7 @@ def plot_rw_speeds(timeData, dataOmegaRW, numRW):
     plt.figure(5)
     for idx in range(numRW):
         plt.plot(timeData, dataOmegaRW[:, idx] / macros.RPM,
-                 color=unitTestSupport.getLineColor(idx, numRW),
+                 color=simHelpers.getLineColor(idx, numRW),
                  label=r'$\Omega_{' + str(idx+1) + r'}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
@@ -554,7 +561,7 @@ def plot_thrImpulse(timeDataFSW, dataMap, numTh):
     plt.figure(5)
     for idx in range(numTh):
         plt.plot(timeDataFSW, dataMap[:, idx],
-                 color=unitTestSupport.getLineColor(idx, numTh),
+                 color=simHelpers.getLineColor(idx, numTh),
                  label=r'$thrImpulse_{' + str(idx+1) + r'}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
@@ -565,7 +572,7 @@ def plot_OnTimeRequest(timeData, dataOnTime, numTh):
     plt.figure(6)
     for idx in range(numTh):
         plt.plot(timeData, dataOnTime[:, idx],
-                 color=unitTestSupport.getLineColor(idx, numTh),
+                 color=simHelpers.getLineColor(idx, numTh),
                  label=r'$OnTimeRequest_{' + str(idx+1) + r'}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
@@ -576,7 +583,7 @@ def plot_thrForce(timeDataFSW, dataThr, numTh):
     plt.figure(7)
     for idx in range(numTh):
         plt.plot(timeDataFSW, dataThr[idx],
-                 color=unitTestSupport.getLineColor(idx, numTh),
+                 color=simHelpers.getLineColor(idx, numTh),
                  label=r'$thrForce_{' + str(idx+1) + r'}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')

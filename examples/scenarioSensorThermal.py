@@ -63,9 +63,6 @@ import numpy as np
 
 # import general simulation support files
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import (
-    unitTestSupport,
-)  # general support file with common unit test functions
 import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
@@ -91,6 +88,7 @@ from Basilisk.utilities import vizSupport
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
 from Basilisk import __path__
+from Basilisk.utilities import simHelpers
 
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
@@ -134,7 +132,7 @@ def run(show_plots):
         [0.0],
         [0.0],
     ]  # m - position vector of body-fixed point B relative to CM
-    scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
+    scObject.hub.IHubPntBc_B = simHelpers.np2EigenMatrix3d(I)
 
     # Add spacecraft object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)

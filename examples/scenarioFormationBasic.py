@@ -110,9 +110,14 @@ from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import (mrpFeedback, attTrackingError,
                                     rwMotorTorque, hillPoint)
 from Basilisk.simulation import reactionWheelStateEffector, simpleNav, spacecraft, svIntegrators
-from Basilisk.utilities import (SimulationBaseClass, macros,
-                                orbitalMotion, simIncludeGravBody,
-                                simIncludeRW, unitTestSupport, vizSupport)
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    macros,
+    orbitalMotion,
+    simIncludeGravBody,
+    simIncludeRW,
+    vizSupport,
+)
 
 try:
     from Basilisk.simulation import vizInterface
@@ -122,6 +127,7 @@ except ImportError:
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
 from Basilisk import __path__
+from Basilisk.utilities import simHelpers
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
@@ -132,7 +138,7 @@ def plot_attitude_error(timeData, dataSigmaBR):
     plt.figure(1)
     for idx in range(3):
         plt.plot(timeData, dataSigmaBR[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
+                 color=simHelpers.getLineColor(idx, 3),
                  label=r'$\sigma_' + str(idx) + '$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
@@ -145,7 +151,7 @@ def plot_rw_cmd_torque(timeData, dataUsReq, numRW):
     for idx in range(3):
         plt.plot(timeData, dataUsReq[:, idx],
                  '--',
-                 color=unitTestSupport.getLineColor(idx, numRW),
+                 color=simHelpers.getLineColor(idx, numRW),
                  label=r'$\hat u_{s,' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
@@ -158,10 +164,10 @@ def plot_rw_motor_torque(timeData, dataUsReq, dataRW, numRW):
     for idx in range(3):
         plt.plot(timeData, dataUsReq[:, idx],
                  '--',
-                 color=unitTestSupport.getLineColor(idx, numRW),
+                 color=simHelpers.getLineColor(idx, numRW),
                  label=r'$\hat u_{s,' + str(idx) + '}$')
         plt.plot(timeData, dataRW[idx],
-                 color=unitTestSupport.getLineColor(idx, numRW),
+                 color=simHelpers.getLineColor(idx, numRW),
                  label='$u_{s,' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
@@ -173,7 +179,7 @@ def plot_rate_error(timeData, dataOmegaBR):
     plt.figure(3)
     for idx in range(3):
         plt.plot(timeData, dataOmegaBR[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
+                 color=simHelpers.getLineColor(idx, 3),
                  label=r'$\omega_{BR,' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
@@ -185,7 +191,7 @@ def plot_rw_speeds(timeData, dataOmegaRW, numRW):
     plt.figure(4)
     for idx in range(numRW):
         plt.plot(timeData, dataOmegaRW[:, idx] / macros.RPM,
-                 color=unitTestSupport.getLineColor(idx, numRW),
+                 color=simHelpers.getLineColor(idx, numRW),
                  label=r'$\Omega_{' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
@@ -233,7 +239,7 @@ def run(show_plots):
          0., 800., 0.,
          0., 0., 600.]
     scObject.hub.mHub = 750.0  # kg - spacecraft mass
-    scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
+    scObject.hub.IHubPntBc_B = simHelpers.np2EigenMatrix3d(I)
 
     # create the debris object states
     scObject2 = spacecraft.Spacecraft()
@@ -242,7 +248,7 @@ def run(show_plots):
           0., 650., 0.,
           0., 0, 450.]
     scObject2.hub.mHub = 350.0  # kg
-    scObject2.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I2)
+    scObject2.hub.IHubPntBc_B = simHelpers.np2EigenMatrix3d(I2)
     # this next step is not required, just a demonstration how we can ensure that
     # the Servicer and Debris differential equations are integrated simultaneously
     scObject.syncDynamicsIntegration(scObject2)
@@ -261,7 +267,7 @@ def run(show_plots):
           0., 650., 0.,
           0., 0, 450.]
     scObject3.hub.mHub = 350.0  # kg
-    scObject3.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I3)
+    scObject3.hub.IHubPntBc_B = simHelpers.np2EigenMatrix3d(I3)
 
     # add spacecraft object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
@@ -385,7 +391,7 @@ def run(show_plots):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = simHelpers.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
     rwCmdLog = rwMotorTorqueObj.rwMotorTorqueOutMsg.recorder(samplingTime)
     attErrLog = attError.attGuidOutMsg.recorder(samplingTime)
     sNavLog = sNavObject.transOutMsg.recorder(samplingTime)
@@ -516,7 +522,7 @@ def run(show_plots):
     plt.figure(5)
     for idx in range(numRW2):
         plt.plot(timeData, omegaRW2[idx]*60/(2*3.14159),
-                 color=unitTestSupport.getLineColor(idx, numRW2),
+                 color=simHelpers.getLineColor(idx, numRW2),
                  label=r'$\Omega_{s,' + str(idx) + '}$')
     plt.xlabel('Time [min]')
     plt.ylabel('RW2 Omega (rpm)')

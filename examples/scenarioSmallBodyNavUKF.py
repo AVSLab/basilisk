@@ -95,7 +95,6 @@ from Basilisk.simulation import spacecraft
 from Basilisk.utilities import RigidBodyKinematics
 from Basilisk.utilities import SimulationBaseClass, macros, simIncludeGravBody
 from Basilisk.utilities import orbitalMotion
-from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities.supportDataTools.dataFetcher import get_path, DataFile
 
 # The path to the location of Basilisk

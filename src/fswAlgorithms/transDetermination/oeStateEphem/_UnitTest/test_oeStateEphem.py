@@ -28,7 +28,6 @@ from Basilisk.topLevelModules import pyswice
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
-from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities.pyswice_spk_utilities import spkRead
 from Basilisk.utilities.supportDataTools.dataFetcher import get_path, DataFile
 
@@ -36,13 +35,14 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split("fswAlgorithms")
 from Basilisk import __path__
+from Basilisk.utilities import simHelpers
 
 bskPath = __path__[0]
 
 orbitPosAccuracy = 10000.0
 orbitVelAccuracy = 1.0
-unitTestSupport.writeTeXSnippet("tolerancePosValue", str(orbitPosAccuracy), path)
-unitTestSupport.writeTeXSnippet("toleranceVelValue", str(orbitVelAccuracy), path)
+simHelpers.writeTeXSnippet("tolerancePosValue", str(orbitPosAccuracy), path)
+simHelpers.writeTeXSnippet("toleranceVelValue", str(orbitVelAccuracy), path)
 
 
 @pytest.mark.parametrize(
@@ -257,14 +257,14 @@ def chebyPosFitAllTest(show_plots, validChebyCurveTime, anomFlag):
             plt.plot(
                 dataLog.times() * macros.NANO2HOUR,
                 posChebData[:, idx] / 1000,
-                color=unitTestSupport.getLineColor(idx, 3),
+                color=simHelpers.getLineColor(idx, 3),
                 linewidth=0.5,
                 label="$r_{fit," + str(idx) + "}$",
             )
             plt.plot(
                 dataLog.times() * macros.NANO2HOUR,
                 tdrssPosList[:, idx] / 1000,
-                color=unitTestSupport.getLineColor(idx, 3),
+                color=simHelpers.getLineColor(idx, 3),
                 linestyle="dashed",
                 linewidth=2,
                 label="$r_{true," + str(idx) + "}$",
@@ -279,14 +279,14 @@ def chebyPosFitAllTest(show_plots, validChebyCurveTime, anomFlag):
             plt.plot(
                 dataLog.times() * macros.NANO2HOUR,
                 velChebData[:, idx] / 1000,
-                color=unitTestSupport.getLineColor(idx, 3),
+                color=simHelpers.getLineColor(idx, 3),
                 linewidth=0.5,
                 label="$v_{fit," + str(idx) + "}$",
             )
             plt.plot(
                 dataLog.times() * macros.NANO2HOUR,
                 tdrssVelList[:, idx] / 1000,
-                color=unitTestSupport.getLineColor(idx, 3),
+                color=simHelpers.getLineColor(idx, 3),
                 linestyle="dashed",
                 linewidth=2,
                 label="$v_{true," + str(idx) + "}$",
@@ -302,7 +302,7 @@ def chebyPosFitAllTest(show_plots, validChebyCurveTime, anomFlag):
             plt.plot(
                 dataLog.times() * macros.NANO2HOUR,
                 posChebData[:, idx] - tdrssPosList[:, idx],
-                color=unitTestSupport.getLineColor(idx, 3),
+                color=simHelpers.getLineColor(idx, 3),
                 linewidth=0.5,
                 label=r"$\Delta r_{" + str(idx) + "}$",
             )
@@ -329,7 +329,7 @@ def chebyPosFitAllTest(show_plots, validChebyCurveTime, anomFlag):
             plt.plot(
                 dataLog.times() * macros.NANO2HOUR,
                 velChebData[:, idx] - tdrssVelList[:, idx],
-                color=unitTestSupport.getLineColor(idx, 3),
+                color=simHelpers.getLineColor(idx, 3),
                 linewidth=0.5,
                 label=r"$\Delta v_{" + str(idx) + "}$",
             )
@@ -362,7 +362,7 @@ def chebyPosFitAllTest(show_plots, validChebyCurveTime, anomFlag):
         colorText = "Red"
         print("Failed: " + oeStateModel.ModelTag)
         passedText = r"\textcolor{" + colorText + "}{" + "Failed" + "}"
-    unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
+    simHelpers.writeTeXSnippet(snippentName, passedText, path)
 
     # return fail count and join into a single string all messages in the list
     # testMessage

@@ -89,7 +89,12 @@ import sys
 
 import numpy as np
 # Import utilities
-from Basilisk.utilities import orbitalMotion, macros, vizSupport, unitTestSupport
+from Basilisk.utilities import simHelpers
+from Basilisk.utilities import (
+    orbitalMotion,
+    macros,
+    vizSupport,
+)
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -249,12 +254,12 @@ def runScenario(scenario):
 
     # Next, the state manager objects are called to retrieve the latest inertial position and
     # velocity vector components:
-    vm_N = unitTestSupport.EigenVector3d2np(velRef.getState())
+    vm_N = simHelpers.EigenVector3d2np(velRef.getState())
 
     dv_N = scenario.dv1Cmd_recorder.dvInrtlCmd[-1, :]
 
     # After reading the Delta-V command, the state managers velocity is updated through
-    velRef.setState(unitTestSupport.np2EigenVectorXd(vm_N + dv_N))
+    velRef.setState(simHelpers.np2EigenVectorXd(vm_N + dv_N))
     # Configure FSW mode for second Lambert maneuver
     scenario.modeRequest = 'lambertSecondDV'
 
@@ -266,12 +271,12 @@ def runScenario(scenario):
 
     # Next, the state manager objects are called to retrieve the latest inertial position and
     # velocity vector components:
-    vm_N = unitTestSupport.EigenVector3d2np(velRef.getState())
+    vm_N = simHelpers.EigenVector3d2np(velRef.getState())
 
     dv_N = scenario.dv2Cmd_recorder.dvInrtlCmd[-1, :]
 
     # After reading the Delta-V command, the state managers velocity is updated through
-    velRef.setState(unitTestSupport.np2EigenVectorXd(vm_N + dv_N))
+    velRef.setState(simHelpers.np2EigenVectorXd(vm_N + dv_N))
     # disable flight software after maneuver
     scenario.modeRequest = 'standby'
 

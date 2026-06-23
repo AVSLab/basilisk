@@ -63,9 +63,10 @@ import matplotlib.pyplot as plt
 
 from Basilisk.utilities import SimulationBaseClass, vizSupport, simIncludeGravBody, orbitalMotion
 from Basilisk.simulation import spacecraft, spinningBodyTwoDOFStateEffector, spinningBodyNDOFStateEffector, extForceTorque
-from Basilisk.utilities import macros, unitTestSupport
+from Basilisk.utilities import macros
 
 from Basilisk import __path__
+from Basilisk.utilities import simHelpers
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
@@ -300,7 +301,7 @@ def run(show_plots):
     plt.clf()
     for idx in range(3):
         plt.plot(theta1Data.times() * macros.NANO2SEC, omega_BN_B[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
+                 color=simHelpers.getLineColor(idx, 3),
                  label=r'$\omega_{BN,' + str(idx) + '}$')
     plt.xlabel('time [s]')
     plt.ylabel(r'Angular Velocity [rad/s]')

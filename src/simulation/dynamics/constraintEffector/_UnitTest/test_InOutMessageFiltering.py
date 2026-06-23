@@ -28,7 +28,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 from contextlib import nullcontext
 
-from Basilisk.utilities import SimulationBaseClass, unitTestSupport, orbitalMotion, macros, RigidBodyKinematics
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    orbitalMotion,
+    macros,
+    RigidBodyKinematics,
+)
 from Basilisk.simulation import spacecraft, constraintDynamicEffector, gravityEffector, svIntegrators
 from Basilisk.architecture import messaging
 from Basilisk.architecture.bskLogging import BasiliskError

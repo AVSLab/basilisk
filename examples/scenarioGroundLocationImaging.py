@@ -96,14 +96,12 @@ from Basilisk.simulation import spaceToGroundTransmitter
 from Basilisk.simulation import spacecraft
 
 # import general simulation support files
+from Basilisk.utilities import simHelpers
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.architecture import astroConstants
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeGravBody
-from Basilisk.utilities import (
-    unitTestSupport,
-)  # general support file with common unit test functions
 
 # attempt to import vizard
 from Basilisk.utilities import vizSupport
@@ -133,7 +131,7 @@ def plot_attitude_error(timeLineSet, dataSigmaBR):
     plt.plot(
         timeLineSet,
         sNorm,
-        color=unitTestSupport.getLineColor(1, 3),
+        color=simHelpers.getLineColor(1, 3),
     )
     plt.xlabel("Time [min]")
     plt.ylabel(r"Attitude Error Norm $|\sigma_{B/R}|$")
@@ -218,7 +216,7 @@ def run(show_plots):
         [0.0],
         [0.0],
     ]  # m - position vector of body-fixed point B relative to CM
-    scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
+    scObject.hub.IHubPntBc_B = simHelpers.np2EigenMatrix3d(I)
 
     # add spacecraft object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject, ModelPriority=100)
@@ -445,7 +443,7 @@ def run(show_plots):
             viz,
             stationName="Boulder Target",
             parentBodyName=earth.displayName,
-            r_GP_P=unitTestSupport.EigenVector3d2list(imagingTarget.r_LP_P_Init),
+            r_GP_P=simHelpers.EigenVector3d2list(imagingTarget.r_LP_P_Init),
             fieldOfView=np.radians(160.0),
             color="pink",
             range=2000.0 * 1000,  # meters
@@ -470,7 +468,7 @@ def run(show_plots):
             viz,
             stationName="Singapore Station",
             parentBodyName=earth.displayName,
-            r_GP_P=unitTestSupport.EigenVector3d2list(singaporeStation.r_LP_P_Init),
+            r_GP_P=simHelpers.EigenVector3d2list(singaporeStation.r_LP_P_Init),
             fieldOfView=np.radians(160.0),
             color="green",
             range=2000.0 * 1000,  # meters

@@ -154,6 +154,7 @@ from Basilisk.simulation import reactionWheelStateEffector
 from Basilisk.simulation import simpleNav
 # import simulation related support
 from Basilisk.simulation import spacecraft
+from Basilisk.utilities import simHelpers
 from Basilisk.utilities import RigidBodyKinematics as rb
 # import general simulation support files
 from Basilisk.utilities import SimulationBaseClass
@@ -162,7 +163,6 @@ from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion as om
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.utilities import simIncludeRW
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 # attempt to import vizard
 from Basilisk.utilities import vizSupport
 
@@ -175,7 +175,7 @@ def plot_attitude_error(timeData, dataSigmaBR):
     plt.figure(1)
     for idx in range(3):
         plt.semilogy(timeData, np.abs(dataSigmaBR[:, idx]),
-                     color=unitTestSupport.getLineColor(idx, 3),
+                     color=simHelpers.getLineColor(idx, 3),
                      label=r'$|\sigma_' + str(idx) + '|$')
     plt.legend(loc='upper right')
     plt.xlabel('Time [min]')
@@ -187,7 +187,7 @@ def plot_rw_cmd_torque(timeData, dataUsReq, numRW):
     for idx in range(3):
         plt.plot(timeData, dataUsReq[:, idx],
                  '--',
-                 color=unitTestSupport.getLineColor(idx, numRW),
+                 color=simHelpers.getLineColor(idx, numRW),
                  label=r'$\hat u_{s,' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
@@ -198,7 +198,7 @@ def plot_rw_motor_torque(timeData, dataRW, numRW):
     plt.figure(2)
     for idx in range(3):
         plt.semilogy(timeData, np.abs(dataRW[idx]),
-                     color=unitTestSupport.getLineColor(idx, numRW),
+                     color=simHelpers.getLineColor(idx, numRW),
                      label='$|u_{s,' + str(idx) + '}|$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
@@ -209,12 +209,12 @@ def plot_rate_error(timeData, dataOmegaBR, dataOmegaBRAst):
     plt.figure(3)
     for idx in range(3):
         plt.semilogy(timeData, np.abs(dataOmegaBR[:, idx]) / macros.D2R,
-                     color=unitTestSupport.getLineColor(idx, 3),
+                     color=simHelpers.getLineColor(idx, 3),
                      label=r'$|\omega_{BR,' + str(idx) + '}|$')
     for idx in range(3):
         plt.semilogy(timeData, np.abs(dataOmegaBRAst[:, idx]) / macros.D2R,
                      '--',
-                     color=unitTestSupport.getLineColor(idx, 3)
+                     color=simHelpers.getLineColor(idx, 3)
                      )
     plt.legend(loc='upper right')
     plt.xlabel('Time [min]')
@@ -226,7 +226,7 @@ def plot_rw_speeds(timeData, dataOmegaRW, numRW):
     plt.figure(4)
     for idx in range(numRW):
         plt.plot(timeData, dataOmegaRW[:, idx] / macros.RPM,
-                 color=unitTestSupport.getLineColor(idx, numRW),
+                 color=simHelpers.getLineColor(idx, numRW),
                  label=r'$\Omega_{' + str(idx) + '}$')
     plt.legend(loc='upper right')
     plt.xlabel('Time [min]')
@@ -298,7 +298,7 @@ def run(show_plots, simCase):
          0., 0., 200.]
     scObject.hub.mHub = 750.0                   # kg - spacecraft mass
     scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]] # m - position vector of body-fixed point B relative to CM
-    scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
+    scObject.hub.IHubPntBc_B = simHelpers.np2EigenMatrix3d(I)
 
     # clear prior gravitational body and SPICE setup definitions
     gravFactory = simIncludeGravBody.gravBodyFactory()
@@ -424,7 +424,7 @@ def run(show_plots, simCase):
     # use the same RW states in the FSW algorithm as in the simulation
     fswSetupRW.clearSetup()
     for key, rw in rwFactory.rwList.items():
-        fswSetupRW.create(unitTestSupport.EigenVector3d2np(rw.gsHat_B), rw.Js, 0.2)
+        fswSetupRW.create(simHelpers.EigenVector3d2np(rw.gsHat_B), rw.Js, 0.2)
     fswRwParamMsg = fswSetupRW.writeConfigMessage()
 
     # setup message connections
@@ -446,7 +446,7 @@ def run(show_plots, simCase):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 200
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = simHelpers.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
     rwMotorLog = rwMotorTorqueObj.rwMotorTorqueOutMsg.recorder(samplingTime)
     attErrorLog = attError.attGuidOutMsg.recorder(samplingTime)
     snTransLog = sNavObject.transOutMsg.recorder(samplingTime)

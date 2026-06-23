@@ -39,6 +39,7 @@ from Basilisk.utilities import (
     unitTestSupport,  # general support file with common unit test functions
 )
 from Basilisk.utilities import SimulationBaseClass, fswSetupThrusters, macros
+from Basilisk.utilities import simHelpers
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -271,7 +272,7 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
                                                                  numThrusters, testFailCount, testMessages)
 
 
-    unitTestSupport.writeTeXSnippet('toleranceValue', str(accuracy), path)
+    simHelpers.writeTeXSnippet('toleranceValue', str(accuracy), path)
 
     snippentName = "passFail_" + str(useDVThruster) + "_" + str(useCOMOffset) + "_" + str(dropThruster) + "_" + str(
         numControlAxis) + "_" + str(saturateThrusters) + "_" + str(misconfigThruster)
@@ -283,7 +284,7 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
         colorText = 'Red'
         print("Failed: " + module.ModelTag)
         passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
-    unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
+    simHelpers.writeTeXSnippet(snippentName, passedText, path)
 
     return [testFailCount, ''.join(testMessages)]
 

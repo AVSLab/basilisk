@@ -31,9 +31,10 @@ import os
 import sys
 import time
 
+from Basilisk.utilities import simHelpers
 from Basilisk.utilities import RigidBodyKinematics as rbk
 # Import utilities
-from Basilisk.utilities import orbitalMotion, macros, unitTestSupport
+from Basilisk.utilities import orbitalMotion, macros
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -121,25 +122,25 @@ class scenario_OpNav(BSKScenario):
     def pull_outputs(self, showPlots):
 
         ## Spacecraft true states
-        position_N = unitTestSupport.addTimeColumn(self.scRec.times(), self.scRec.r_BN_N)
+        position_N = simHelpers.addTimeColumn(self.scRec.times(), self.scRec.r_BN_N)
 
         ## Attitude
-        sigma_BN = unitTestSupport.addTimeColumn(self.scRec.times(), self.scRec.sigma_BN)
+        sigma_BN = simHelpers.addTimeColumn(self.scRec.times(), self.scRec.sigma_BN)
 
         ## Image processing
-        circleCenters = unitTestSupport.addTimeColumn(self.circlesRec.times(), self.circlesRec.circlesCenters)
-        circleRadii = unitTestSupport.addTimeColumn(self.circlesRec.times(), self.circlesRec.circlesRadii)
+        circleCenters = simHelpers.addTimeColumn(self.circlesRec.times(), self.circlesRec.circlesCenters)
+        circleRadii = simHelpers.addTimeColumn(self.circlesRec.times(), self.circlesRec.circlesRadii)
 
         numRW = 4
-        dataUsReq = unitTestSupport.addTimeColumn(self.rwMotorRec.times(), self.rwMotorRec.motorTorque)
+        dataUsReq = simHelpers.addTimeColumn(self.rwMotorRec.times(), self.rwMotorRec.motorTorque)
         dataRW = []
         for i in range(numRW):
-            dataRW.append(unitTestSupport.addTimeColumn(self.rwMotorRec.times(), self.rwLogs[i].u_current))
+            dataRW.append(simHelpers.addTimeColumn(self.rwMotorRec.times(), self.rwLogs[i].u_current))
 
-        measPos = unitTestSupport.addTimeColumn(self.opNavRec.times(), self.opNavRec.r_BN_N)
-        r_C = unitTestSupport.addTimeColumn(self.opNavRec.times(), self.opNavRec.r_BN_C)
-        measCovar = unitTestSupport.addTimeColumn(self.opNavRec.times(), self.opNavRec.covar_N)
-        covar_C = unitTestSupport.addTimeColumn(self.opNavRec.times(), self.opNavRec.covar_C)
+        measPos = simHelpers.addTimeColumn(self.opNavRec.times(), self.opNavRec.r_BN_N)
+        r_C = simHelpers.addTimeColumn(self.opNavRec.times(), self.opNavRec.r_BN_C)
+        measCovar = simHelpers.addTimeColumn(self.opNavRec.times(), self.opNavRec.covar_N)
+        covar_C = simHelpers.addTimeColumn(self.opNavRec.times(), self.opNavRec.covar_C)
 
         sigma_CB = self.masterSim.get_DynModel().cameraMRP_CB
         sizeMM = self.masterSim.get_DynModel().cameraSize

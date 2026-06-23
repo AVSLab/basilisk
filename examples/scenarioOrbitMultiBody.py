@@ -121,13 +121,11 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeGravBody
-from Basilisk.utilities import (
-    unitTestSupport,
-)  # general support file with common unit test functions
 from Basilisk.architecture import astroConstants
 
 # attempt to import vizard
 from Basilisk.utilities import vizSupport
+from Basilisk.utilities import simHelpers
 from Basilisk.utilities.pyswice_spk_utilities import spkRead
 from Basilisk.utilities.supportDataTools.dataFetcher import get_path, DataFile
 
@@ -290,7 +288,7 @@ def run(show_plots, scCase):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 50
-    samplingTime = unitTestSupport.samplingTime(
+    samplingTime = simHelpers.samplingTime(
         simulationTime, simulationTimeStep, numDataPoints
     )
     dataRec = scObject.scStateOutMsg.recorder(samplingTime)
@@ -347,7 +345,7 @@ def run(show_plots, scCase):
         plt.plot(
             timeAxis * timeScale,
             posData[:, idx] / axesScale,
-            color=unitTestSupport.getLineColor(idx, 3),
+            color=simHelpers.getLineColor(idx, 3),
             label="$r_{BN," + str(idx) + "}$",
         )
     plt.legend(loc="lower right")
@@ -451,7 +449,7 @@ def run(show_plots, scCase):
         plt.plot(
             dataRec.times() * macros.NANO2MIN,
             np.array(posError)[:, idx],
-            color=unitTestSupport.getLineColor(idx, 3),
+            color=simHelpers.getLineColor(idx, 3),
             label=r"$\Delta r_{" + str(idx) + "}$",
         )
     plt.legend(loc="lower right")
@@ -472,7 +470,7 @@ def run(show_plots, scCase):
     )
 
     if "pytest" in sys.modules:
-        unitTestSupport.saveScenarioGraphvizFigure(
+        simHelpers.saveScenarioGraphvizFigure(
             pltName,
             scSim,
             os.path.dirname(os.path.abspath(__file__)),

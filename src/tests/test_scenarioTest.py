@@ -33,7 +33,7 @@ import os
 import sys
 
 import pytest
-from Basilisk.utilities import unitTestSupport
+from Basilisk.utilities import simHelpers
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -94,7 +94,7 @@ def test_scenarioBskScenarios(show_plots, scenarioCase):
 
         if figureList != {}:
             for pltName, plt in list(figureList.items()):
-                unitTestSupport.saveScenarioFigure(pltName, plt, path)
+                simHelpers.saveScenarioFigure(pltName, plt, path)
 
     except OSError as err:
         testFailCount = testFailCount + 1

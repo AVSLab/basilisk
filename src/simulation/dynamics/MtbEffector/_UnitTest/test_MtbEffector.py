@@ -31,6 +31,7 @@ from Basilisk.simulation import spacecraft, magneticFieldWMM
 from Basilisk.utilities import SimulationBaseClass, simIncludeGravBody, orbitalMotion, RigidBodyKinematics
 from Basilisk.utilities import macros
 from Basilisk.utilities import unitTestSupport
+from Basilisk.utilities import simHelpers
 from Basilisk.utilities.supportDataTools.dataFetcher import get_path, DataFile
 
 bskPath = __path__[0]
@@ -120,7 +121,7 @@ def MtbEffectorTestFunction(show_plots, accuracy, maxDipole):
          0., 0., 6.75]
     scObject.hub.mHub = 10.0  # kg - spacecraft mass (arbitrary)
     scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
-    scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
+    scObject.hub.IHubPntBc_B = simHelpers.np2EigenMatrix3d(I)
 
     oe = orbitalMotion.ClassicElements()
     oe.a = 6778.14 * 1000.  # meters
@@ -145,7 +146,7 @@ def MtbEffectorTestFunction(show_plots, accuracy, maxDipole):
     magModule.ModelTag = "WMM"
     wmm_path = get_path(DataFile.MagneticFieldData.WMM)
     magModule.configureWMMFile(str(wmm_path))
-    epochMsg = unitTestSupport.timeStringToGregorianUTCMsg('2020 May 12, 00:00:0.0 (UTC)')
+    epochMsg = simHelpers.timeStringToGregorianUTCMsg('2020 May 12, 00:00:0.0 (UTC)')
     magModule.epochInMsg.subscribeTo(epochMsg)
     magModule.addSpacecraftToModel(scObject.scStateOutMsg)  # this command can be repeated if multiple
     scSim.AddModelToTask(simTaskName, magModule)
@@ -184,7 +185,7 @@ def MtbEffectorTestFunction(show_plots, accuracy, maxDipole):
 
     # Setup data logging before the simulation is initialized
     numDataPoints = 3600
-    samplingTime = unitTestSupport.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
+    samplingTime = simHelpers.samplingTime(simulationTime, simulationTimeStep, numDataPoints)
     dataLog = scObject.scStateOutMsg.recorder(samplingTime)
     dataLogMag = magModule.envOutMsgs[0].recorder(samplingTime)
     dataLogMTB = mtbEff.mtbOutMsg.recorder(samplingTime)
@@ -213,7 +214,7 @@ def MtbEffectorTestFunction(show_plots, accuracy, maxDipole):
         plt.figure(1)
         for idx in range(0, 3):
             plt.plot(dataLogMTB.times() * macros.NANO2SEC, mtbData[:, idx],
-                     color=unitTestSupport.getLineColor(idx, 3),
+                     color=simHelpers.getLineColor(idx, 3),
                      label=r'$\tau_' + str(idx) + '$')
         plt.legend(loc='lower right')
         plt.xlabel('Time [s]')
@@ -223,7 +224,7 @@ def MtbEffectorTestFunction(show_plots, accuracy, maxDipole):
         plt.figure(2)
         for idx in range(3):
             plt.plot(dataLogMag.times() * macros.NANO2SEC, dataMagField[:, idx] * 1e9,
-                     color=unitTestSupport.getLineColor(idx, 3),
+                     color=simHelpers.getLineColor(idx, 3),
                      label=r'$B\_N_{' + str(idx) + '}$')
         plt.legend(loc='lower right')
         plt.xlabel('Time [s]')
@@ -233,7 +234,7 @@ def MtbEffectorTestFunction(show_plots, accuracy, maxDipole):
         plt.figure(3)
         for idx in range(0, 3):
             plt.plot(dataLog.times() * macros.NANO2SEC, attData[:, idx],
-                     color=unitTestSupport.getLineColor(idx, 3),
+                     color=simHelpers.getLineColor(idx, 3),
                      label=r'$\sigma_' + str(idx) + '$')
         plt.legend(loc='lower right')
         plt.xlabel('Time [s]')

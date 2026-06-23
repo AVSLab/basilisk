@@ -37,9 +37,10 @@ import os
 import sys
 import time
 
+from Basilisk.utilities import simHelpers
 from Basilisk.utilities import RigidBodyKinematics as rbk
 # Import utilities
-from Basilisk.utilities import orbitalMotion, macros, unitTestSupport
+from Basilisk.utilities import orbitalMotion, macros
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -156,37 +157,37 @@ class scenario_OpNav(BSKScenario):
         # Dynamics process outputs: pull log messages below if any
 
         ## Spacecraft true states
-        position_N = unitTestSupport.addTimeColumn(self.scRec.times(), self.scRec.r_BN_N)
+        position_N = simHelpers.addTimeColumn(self.scRec.times(), self.scRec.r_BN_N)
 
         ## Attitude
-        sigma_BN = unitTestSupport.addTimeColumn(self.scRec.times(), self.scRec.sigma_BN)
-        Outomega_BN = unitTestSupport.addTimeColumn(self.scRec.times(), self.scRec.omega_BN_B)
+        sigma_BN = simHelpers.addTimeColumn(self.scRec.times(), self.scRec.sigma_BN)
+        Outomega_BN = simHelpers.addTimeColumn(self.scRec.times(), self.scRec.omega_BN_B)
 
         ## Image processing
-        circleCenters = unitTestSupport.addTimeColumn(self.circlesRec.times(), self.circlesRec.circlesCenters)
-        circleRadii = unitTestSupport.addTimeColumn(self.circlesRec.times(), self.circlesRec.circlesRadii)
-        validCircle = unitTestSupport.addTimeColumn(self.circlesRec.times(), self.circlesRec.valid)
+        circleCenters = simHelpers.addTimeColumn(self.circlesRec.times(), self.circlesRec.circlesCenters)
+        circleRadii = simHelpers.addTimeColumn(self.circlesRec.times(), self.circlesRec.circlesRadii)
+        validCircle = simHelpers.addTimeColumn(self.circlesRec.times(), self.circlesRec.valid)
 
-        frame = unitTestSupport.addTimeColumn(self.headingBVecLog.times(), self.headingBVecLog.bVec_B)
+        frame = simHelpers.addTimeColumn(self.headingBVecLog.times(), self.headingBVecLog.bVec_B)
 
         numRW = 4
         dataRW = []
         for i in range(numRW):
-            dataRW.append(unitTestSupport.addTimeColumn(self.rwMotorRec.times(), self.rwLogs[i].u_current))
+            dataRW.append(simHelpers.addTimeColumn(self.rwMotorRec.times(), self.rwLogs[i].u_current))
 
-        measPos = unitTestSupport.addTimeColumn(self.opNavRec.times(), self.opNavRec.r_BN_N)
-        r_C = unitTestSupport.addTimeColumn(self.opNavRec.times(), self.opNavRec.r_BN_C)
-        measCovar = unitTestSupport.addTimeColumn(self.opNavRec.times(), self.opNavRec.covar_N)
-        covar_C = unitTestSupport.addTimeColumn(self.opNavRec.times(), self.opNavRec.covar_C)
-        covar_B = unitTestSupport.addTimeColumn(self.opNavRec.times(), self.opNavRec.covar_B)
+        measPos = simHelpers.addTimeColumn(self.opNavRec.times(), self.opNavRec.r_BN_N)
+        r_C = simHelpers.addTimeColumn(self.opNavRec.times(), self.opNavRec.r_BN_C)
+        measCovar = simHelpers.addTimeColumn(self.opNavRec.times(), self.opNavRec.covar_N)
+        covar_C = simHelpers.addTimeColumn(self.opNavRec.times(), self.opNavRec.covar_C)
+        covar_B = simHelpers.addTimeColumn(self.opNavRec.times(), self.opNavRec.covar_B)
 
         FilterType = "Switch-SRuKF"
         numStates = 5
         # Get the filter outputs through the messages
-        stateLog = unitTestSupport.addTimeColumn(self.filtRec.times(), self.filtRec.state)
-        r_BN_C = unitTestSupport.addTimeColumn(self.opNavFiltRec.times(), self.opNavFiltRec.r_BN_C)
-        postFitLog = unitTestSupport.addTimeColumn(self.filtRec.times(), self.filtRec.postFitRes)
-        covarLog = unitTestSupport.addTimeColumn(self.filtRec.times(), self.filtRec.covar)
+        stateLog = simHelpers.addTimeColumn(self.filtRec.times(), self.filtRec.state)
+        r_BN_C = simHelpers.addTimeColumn(self.opNavFiltRec.times(), self.opNavFiltRec.r_BN_C)
+        postFitLog = simHelpers.addTimeColumn(self.filtRec.times(), self.filtRec.postFitRes)
+        covarLog = simHelpers.addTimeColumn(self.filtRec.times(), self.filtRec.covar)
         stateLog[0, 3] = 1.0  # adjust first measurement to be non-zero
         for i in range(len(stateLog[:, 0])):
             stateLog[i, 1:4] = stateLog[i, 1:4] / np.linalg.norm(stateLog[i, 1:4])
