@@ -33,6 +33,11 @@ Version |release|
 - BSK-1416 : :ref:`jointThrAllocation` was using a static value for the vector between the hub center of
   mass (CoM) and system CoM. This caused the resulting thruster mapping to be incorrect for a given
   set of joint angles. This is fixed in the current version.
+- BSK-1410: :ref:`unitTestSupport` imported ``pytest`` at module load time, so importing it (directly or
+  through utilities such as ``simIncludeGravBody`` and ``vizSupport``) failed when using the Basilisk
+  wheels, which do not ship the test-only ``pytest`` dependency. ``pytest`` is now imported optionally and
+  is only required if the ``compareList`` or ``compareListRelative`` helpers are actually called. This is
+  fixed in the current version.
 
 
 Version 2.10.0 (April 2, 2026)

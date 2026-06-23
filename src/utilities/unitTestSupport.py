@@ -24,7 +24,15 @@ from datetime import datetime, timedelta
 import matplotlib as mpl
 import matplotlib.pyplot as pyplot
 import numpy as np
-import pytest
+
+try:
+    import pytest
+except ModuleNotFoundError:
+    # pytest is a test-only dependency and is not shipped with the Basilisk
+    # wheels. Importing this module (e.g. indirectly via simIncludeGravBody or
+    # vizSupport) must not require pytest. The two comparison helpers that use
+    # pytest.approx guard for its absence and raise a clear error if called.
+    pytest = None
 from Basilisk.architecture import bskUtilities
 from Basilisk.architecture import messaging
 from Basilisk.topLevelModules import pyswice
@@ -320,10 +328,20 @@ def compareDoubleArray(
     return testFailCount, testMessages
 
 
+def _requirePytest(funcName):
+    """Raise a clear error if an optional pytest-backed helper is used without pytest."""
+    if pytest is None:
+        raise ModuleNotFoundError(
+            funcName + "() requires the optional 'pytest' package, which is not "
+            "installed. Install it with 'pip install pytest' to use this comparison helper."
+        )
+
+
 def compareListRelative(
     trueStates, dataStates, accuracy, msg, testFailCount, testMessages
 ):
     """Compare two row lists of values and check relative accuracy"""
+    _requirePytest("compareListRelative")
     if len(trueStates) != len(dataStates):
         testFailCount += 1
         testMessages.append("FAILED: " + msg + r" unequal data array sizes\n")
@@ -339,6 +357,7 @@ def compareListRelative(
 
 def compareList(trueStates, dataStates, accuracy, msg, testFailCount, testMessages):
     """Compare two row lists of values and check relative accuracy"""
+    _requirePytest("compareList")
     if len(trueStates) != len(dataStates):
         testFailCount += 1
         testMessages.append("FAILED: " + msg + r" unequal data array sizes\n")
