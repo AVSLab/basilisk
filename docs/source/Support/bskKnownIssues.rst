@@ -33,6 +33,12 @@ Version |release|
 - BSK-1416 : :ref:`jointThrAllocation` was using a static value for the vector between the hub center of
   mass (CoM) and system CoM. This caused the resulting thruster mapping to be incorrect for a given
   set of joint angles. This is fixed in the current version.
+- BSK-1395: :ref:`scenarioAttitudeConstrainedManeuver` and :ref:`scenarioAttitudeConstraintViolation`
+  pre-converted the reaction wheel ``maxSpeed`` to rad/s before passing it to ``rwFactory.create()``,
+  which expects ``Omega_max`` in RPM and applies the RPM-to-rad/s conversion internally. The resulting
+  double conversion set the wheel saturation speed about an order of magnitude too low, and since the
+  derived wheel inertia is ``maxMomentum / Omega_max`` it came out about an order of magnitude too high.
+  This is fixed in the current version.
 
 
 Version 2.10.0 (April 2, 2026)

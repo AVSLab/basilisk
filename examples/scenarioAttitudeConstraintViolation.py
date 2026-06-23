@@ -256,7 +256,7 @@ def run(show_plots, use2SunSensors, starTrackerFov, sunSensorFov, attitudeSetCas
 
     # create each RW by specifying the RW type, the spin axis gsHat, plus optional arguments
     maxMomentum = 0.01
-    maxSpeed = 6000 * macros.RPM
+    maxSpeed = 6000.  # [RPM]  rwFactory.create() expects Omega_max in RPM and converts internally
     RW1 = rwFactory.create('custom', [1, 0, 0], Omega=0.  # RPM
                            , Omega_max=maxSpeed
                            , maxMomentum=maxMomentum
