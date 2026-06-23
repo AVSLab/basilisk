@@ -132,6 +132,7 @@ void FuelTank::registerStates(DynParamManager &statesIn) {
     this->massState = statesIn.registerState(1, 1, this->getNameOfMassState());
     massMatrix(0, 0) = this->fuelTankModel->propMassInit;
     this->massState->setState(massMatrix);
+    this->emptyTankWarningPrinted = false;
 }
 
 /*! Fuel tank add its contributions the mass of the vehicle. */
@@ -181,6 +182,11 @@ void FuelTank::updateEffectorMassProps(double integTime) {
         totalMass += (*fuelSloshInt)->fuelMass;
     }
     if (totalMass <= 0.0) {
+        if (this->fuelConsumption > 0.0 && !this->emptyTankWarningPrinted) {
+            this->bskLogger.bskLog(BSK_WARNING,
+                                   "FuelTank: available propellant has reached zero. Fuel mass depletion is stopped.");
+            this->emptyTankWarningPrinted = true;
+        }
         this->fuelConsumption = 0.0;  // [kg/s]
         for (auto fuelSloshInt = this->fuelSloshParticles.begin();
              fuelSloshInt < this->fuelSloshParticles.end();

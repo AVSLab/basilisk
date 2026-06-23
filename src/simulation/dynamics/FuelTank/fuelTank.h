@@ -281,6 +281,7 @@ private:
     Eigen::Matrix3d ITankPntT_B;
     Eigen::Vector3d r_TcB_B;
     static uint64_t effectorID;                         //!< [] ID number of this fuel tank effector
+    bool emptyTankWarningPrinted = false;               //!< -- flag indicating if the empty tank warning has been logged
 
 public:
     FuelTank();

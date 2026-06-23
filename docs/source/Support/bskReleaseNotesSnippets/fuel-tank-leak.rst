@@ -1,3 +1,3 @@
 - Add the ``fuelLeakRate`` parameter to the :ref:`FuelTank` module to simulate fuel leaks that cause a loss of fuel mass without imparting momentum.
-- Stop :ref:`FuelTank` leak depletion when the available tank propellant reaches zero.
+- Stop :ref:`FuelTank` leak depletion when the available tank propellant reaches zero and log a ``BSK_WARNING``.
 - Added setter and getter methods for :ref:`FuelTank` configuration variables and deprecated direct Python access to ``nameOfMassState``, ``dcm_TB``, ``r_TB_B``, ``updateOnly``, and ``fuelLeakRate``.
