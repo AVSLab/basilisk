@@ -124,7 +124,7 @@ def sphericalPendulumTest(show_plots, useFlag,testCase):
         scSim.fuelTankStateEffector.setTankModel(tankModel)
         tankModel.propMassInit = 40.0
         tankModel.r_TcT_TInit = [[0.0],[0.0],[0.0]]
-        scSim.fuelTankStateEffector.r_TB_B = [[0.0],[0.0],[0.0]]
+        scSim.fuelTankStateEffector.setR_TB_B([[0.0],[0.0],[0.0]])  # [m]
         tankModel.radiusTankInit = 46.0 / 2.0 / 3.2808399 / 12.0
 
         # Add tank and thruster

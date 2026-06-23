@@ -82,7 +82,7 @@ def thrusterIntegratedTest(show_plots):
     unitTestSim.fuelTankStateEffector.setTankModel(tankModel)
     tankModel.propMassInit = 40.0
     tankModel.r_TcT_TInit = [[0.0],[0.0],[0.0]]
-    unitTestSim.fuelTankStateEffector.r_TB_B = [[0.0],[0.0],[0.0]]
+    unitTestSim.fuelTankStateEffector.setR_TB_B([[0.0],[0.0],[0.0]])  # [m]
     tankModel.radiusTankInit = 46.0 / 2.0 / 3.2808399 / 12.0
 
     unitTestSim.fuelTankStateEffector.addThrusterSet(thrustersDynamicEffector)
