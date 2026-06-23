@@ -15,60 +15,39 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 
-import errno
 import math
-import os
-import shutil
-from datetime import datetime, timedelta
 
-import matplotlib as mpl
-import matplotlib.pyplot as pyplot
 import numpy as np
 import pytest
-from Basilisk.architecture import bskUtilities
-from Basilisk.architecture import messaging
-from Basilisk.topLevelModules import pyswice
-from Basilisk.utilities.supportDataTools.dataFetcher import get_path, DataFile
-
-
-mpl.rc("figure", facecolor="white")
-mpl.rc("xtick", labelsize=9)
-mpl.rc("ytick", labelsize=9)
-mpl.rc("figure", figsize=(5.75, 2.5))
-mpl.rc("axes", labelsize=10)
-mpl.rc("legend", fontsize=9)
-mpl.rc("figure", autolayout=True)
-mpl.rc("figure", max_open_warning=30)
-mpl.rc("legend", loc="lower right")
-
-import matplotlib.colors as colors
-import matplotlib.cm as cmx
-
-from Basilisk.utilities import macros
 
 from Basilisk import __path__
+from Basilisk.utilities import macros
+from Basilisk.utilities.simHelpers import (
+    EigenVector3d2list,
+    EigenVector3d2np,
+    addTimeColumn,
+    checkMethodKeyword,
+    columnToRowList,
+    decimalYearToDateTime,
+    flattenList,
+    getLineColor,
+    getScenarioFigureFileName,
+    np2EigenMatrix3d,
+    np2EigenVectorXd,
+    npList2EigenXdVector,
+    pullVectorSetFromData,
+    removeTimeFromData,
+    samplingTime,
+    saveFigurePDF,
+    saveScenarioFigure,
+    saveScenarioGraphvizFigure,
+    timeStringToGregorianUTCMsg,
+    writeFigureLaTeX,
+    writeTableLaTeX,
+    writeTeXSnippet,
+)
 
 bskPath = __path__[0]
-
-try:
-    from Basilisk.utilities import tabulate as T
-
-    # '''
-    # del(T.LATEX_ESCAPE_RULES['$'])
-    # del(T.LATEX_ESCAPE_RULES['\\'])
-    # del(T.LATEX_ESCAPE_RULES['_'])
-    # del(T.LATEX_ESCAPE_RULES['{'])
-    # del(T.LATEX_ESCAPE_RULES['}'])
-    # '''
-
-    del T.LATEX_ESCAPE_RULES["$"]
-    del T.LATEX_ESCAPE_RULES["\\"]
-    del T.LATEX_ESCAPE_RULES["_"]
-    del T.LATEX_ESCAPE_RULES["{"]
-    del T.LATEX_ESCAPE_RULES["}"]
-    from Basilisk.utilities.tabulate import *
-except:
-    pass
 
 
 def isVectorEqual(result, truth, accuracy):
@@ -352,358 +331,9 @@ def compareList(trueStates, dataStates, accuracy, msg, testFailCount, testMessag
     return testFailCount, testMessages
 
 
-def writeTableLaTeX(tableName, tableHeaders, caption, array, path):
-    """Take a list and return equivalent LaTeX table code"""
-
-    texFileName = path + "/../_Documentation/AutoTeX/" + tableName + ".tex"
-
-    if not os.path.exists(os.path.dirname(texFileName)):
-        try:
-            os.makedirs(os.path.dirname(texFileName))
-        except OSError as exc:  # Guard against race condition
-            if exc.errno != errno.EEXIST:
-                raise
-    with open(texFileName, "w") as texTable:
-        table = tabulate(array, tableHeaders, tablefmt="latex", numalign="center")
-
-        texTable.write(r"\begin{table}[htbp]")
-        texTable.write(r"\caption{" + caption + "}")
-        texTable.write(r"\label{tbl:" + tableName + "}")
-        texTable.write(r"\centering")
-        texTable.write(table)
-        texTable.write(r"\end{table}")
-        texTable.close()
-
-    return
-
-
-def writeTeXSnippet(snippetName, texSnippet, path):
-    """Write a LaTeX snippet to a file"""
-
-    texFileName = path + "/../_Documentation/AutoTeX/" + snippetName + ".tex"
-
-    if not os.path.exists(os.path.dirname(texFileName)):
-        try:
-            os.makedirs(os.path.dirname(texFileName))
-        except OSError as exc:  # Guard against race condition
-            if exc.errno != errno.EEXIST:
-                raise
-    with open(texFileName, "w") as fileHandler:
-        fileHandler.write(texSnippet)
-        fileHandler.close()
-
-    return
-
-
-def getScenarioFigureFileName(figureName, path, extension=".svg"):
-    """Return the documentation image path for a scenario figure."""
-    if not extension.startswith("."):
-        extension = "." + extension
-
-    searchPath = os.path.abspath(path)
-    if os.path.isfile(searchPath):
-        searchPath = os.path.dirname(searchPath)
-
-    while True:
-        if os.path.isdir(os.path.join(searchPath, "docs", "source")):
-            scenarioFigurePath = os.path.join(
-                searchPath,
-                "docs",
-                "source",
-                "_images",
-                "Scenarios",
-            )
-            return os.path.join(scenarioFigurePath, figureName + extension)
-
-        parentPath = os.path.dirname(searchPath)
-        if parentPath == searchPath:
-            scenarioFigurePath = os.path.join(
-                path,
-                "..",
-                "..",
-                "docs",
-                "source",
-                "_images",
-                "Scenarios",
-            )
-            return os.path.abspath(
-                os.path.join(scenarioFigurePath, figureName + extension)
-            )
-
-        searchPath = parentPath
-
-
-def _createScenarioFigurePath(imgFileName):
-    """Create the documentation image folder if needed."""
-    if not os.path.exists(os.path.dirname(imgFileName)):
-        try:
-            os.makedirs(os.path.dirname(imgFileName))
-        except OSError as exc:  # Guard against race condition
-            if exc.errno != errno.EEXIST:
-                raise
-
-
-def saveScenarioFigure(figureName, plt, path, extension=".svg"):
-    """save a python scenario result into the documentation image folder"""
-    imgFileName = getScenarioFigureFileName(figureName, path, extension)
-    _createScenarioFigurePath(imgFileName)
-    plt.savefig(imgFileName, transparent=True)
-    # Close the saved figure to avoid accumulating open figures during CI.
-    try:
-        pyplot.close(plt)
-    except Exception:
-        try:
-            plt.close()
-        except Exception:
-            pass
-
-
-def saveScenarioGraphvizFigure(
-    figureName,
-    simulationBase,
-    path,
-    extension=".svg",
-    show_plots=False,
-    **kwargs
-):
-    """Save a Graphviz message flow figure into the documentation image folder."""
-    if shutil.which("dot") is None:
-        return None
-
-    imgFileName = getScenarioFigureFileName(figureName, path, extension)
-    graphvizFormat = extension.lstrip(".")
-    _createScenarioFigurePath(imgFileName)
-    return simulationBase.ShowMessageConnectionFigure(
-        renderer="graphviz",
-        fileName=imgFileName,
-        show_plots=show_plots,
-        graphvizFormat=graphvizFormat,
-        **kwargs
-    )
-
-
-def saveFigurePDF(figureName, plt, path):
-    """Save a Figure as a PDF"""
-    figFileName = os.path.join(path, figureName + ".pdf")
-    if not os.path.exists(os.path.dirname(figFileName)):
-        try:
-            os.makedirs(os.path.dirname(figFileName))
-        except OSError as exc:  # Guard against race condition
-            if exc.errno != errno.EEXIST:
-                raise
-    plt.savefig(figFileName, transparent=True, pad_inches=0.05)
-
-
-def writeFigureLaTeX(figureName, caption, plt, format, path):
-    """Save a figure and associated TeX code snippet"""
-    texFileName = os.path.join(
-        path, "..", "_Documentation", "AutoTeX", figureName + ".tex"
-    )
-    if not os.path.exists(os.path.dirname(texFileName)):
-        try:
-            os.makedirs(os.path.dirname(texFileName))
-        except OSError as exc:  # Guard against race condition
-            if exc.errno != errno.EEXIST:
-                raise
-    with open(texFileName, "w") as texFigure:
-        texFigure.write(r"\begin{figure}[htbp]")
-        texFigure.write(r"\centerline{")
-        texFigure.write(
-            r"\includegraphics[" + format + "]{AutoTeX/" + figureName + r"}}"
-        )
-        texFigure.write(r"\caption{" + caption + r"}")
-        texFigure.write(r"\label{fig:" + figureName + r"}")
-        texFigure.write(r"\end{figure}")
-        texFigure.close()
-
-        texFileName = path + "/../_Documentation/AutoTeX/" + figureName + ".pdf"
-        plt.savefig(texFileName, transparent=True)
-
-    return
-
-
 def foundNAN(array):
     """check if an array contains NAN values"""
     if np.isnan(np.sum(array)):
         print("Warning: found NaN value.")
         return 1  # return 1 to indicate a NaN value was found
     return 0
-
-
-def getLineColor(idx, maxNum):
-    """pick a nicer color pattern to plot 3 vector components"""
-    values = list(range(0, maxNum + 2))
-    colorMap = mpl.pyplot.get_cmap("gist_earth")
-    cNorm = colors.Normalize(vmin=0, vmax=values[-1])
-    scalarMap = cmx.ScalarMappable(norm=cNorm, cmap=colorMap)
-    return scalarMap.to_rgba(values[idx + 1])
-
-
-def np2EigenMatrix3d(mat):
-    """convert 3D numpy matrix to Eigen matrix"""
-    return [
-        [mat[0], mat[1], mat[2]],
-        [mat[3], mat[4], mat[5]],
-        [mat[6], mat[7], mat[8]],
-    ]
-
-
-def np2EigenVectorXd(vec):
-    """Convert numpy to Eigen vector"""
-    npVec = []
-    for item in vec:
-        npVec.extend([[item]])
-
-    return npVec
-
-
-def npList2EigenXdVector(list):
-    """Conver a list of arrays to a list of eigen values"""
-    eigenList = bskUtilities.Eigen3dVector()
-    for pos in list:
-        eigenList.push_back(pos)
-    return eigenList
-
-
-def EigenVector3d2np(eig):
-    """convert Eigen vector3d to numpy"""
-    return np.array([eig[0][0], eig[1][0], eig[2][0]])
-
-
-def flattenList(matrix):
-    """
-    returns a flattened list
-    Args:
-        matrix: list of list
-
-    Returns: flattened list
-
-    """
-    flat_list = []
-    for row in matrix:
-        flat_list.extend(row)
-    return flat_list
-
-
-def EigenVector3d2list(eig):
-    """convert Eigen vector3d to list"""
-    return EigenVector3d2np(eig).tolist()
-
-
-def pullVectorSetFromData(inpMat):
-    """extract the vector data set from a data matrix where the 1st column is the time information"""
-    outMat = np.array(inpMat).transpose()
-    return outMat[1:].transpose()
-
-
-def addTimeColumn(time, data):
-    """Add a time column to the data set"""
-    return np.transpose(np.vstack([[time], np.transpose(data)]))
-
-
-def decimalYearToDateTime(start):
-    """convert a decimal Year format to a regular dataTime object"""
-    year = int(start)
-    rem = start - year
-
-    base = datetime(year, 1, 1)
-    return base + timedelta(
-        seconds=(base.replace(year=base.year + 1) - base).total_seconds() * rem
-    )
-
-
-def timeStringToGregorianUTCMsg(DateSpice, **kwargs):
-    """convert a general time/date string to a gregoarian UTC msg object"""
-    # set the data path
-    if "dataPath" in kwargs:
-        dataPath = kwargs["dataPath"]
-        if not isinstance(dataPath, str):
-            print("ERROR: dataPath must be a string argument")
-            exit(1)
-    else:
-        dataPath = bskPath + "/supportData/EphemerisData/"  # default value
-
-    # load spice kernel and convert the string into a UTC date/time string
-    naif0012_path = get_path(DataFile.EphemerisData.naif0012)
-    pyswice.furnsh_c(str(naif0012_path))
-    et = pyswice.new_doubleArray(1)
-    pyswice.str2et_c(DateSpice, et)
-    etEpoch = pyswice.doubleArray_getitem(et, 0)
-    ep1 = pyswice.et2utc_c(etEpoch, "C", 6, 255, "Yo")
-    pyswice.unload_c(str(naif0012_path))
-
-    try:
-        # convert UTC string to datetime object
-        datetime_object = datetime.strptime(ep1, "%Y %b %d %H:%M:%S.%f")
-
-        # Validate month is in range 1-12
-        if datetime_object.month < 1 or datetime_object.month > 12:
-            raise ValueError(f"Invalid month value: {datetime_object.month}")
-
-        # populate the epochMsg with the gregorian UTC date/time information
-        epochMsgStructure = messaging.EpochMsgPayload()
-        epochMsgStructure.year = datetime_object.year
-        epochMsgStructure.month = datetime_object.month
-        epochMsgStructure.day = datetime_object.day
-        epochMsgStructure.hours = datetime_object.hour
-        epochMsgStructure.minutes = datetime_object.minute
-        epochMsgStructure.seconds = (
-            datetime_object.second + datetime_object.microsecond / 1e6
-        )
-
-        epochMsg = messaging.EpochMsg().write(epochMsgStructure)
-
-        # Store the message in a global registry to prevent garbage collection
-        if not hasattr(timeStringToGregorianUTCMsg, "_msg_registry"):
-            timeStringToGregorianUTCMsg._msg_registry = []
-        timeStringToGregorianUTCMsg._msg_registry.append(epochMsg)
-
-        return epochMsg
-
-    except Exception as e:
-        print(f"Error processing date string '{ep1}': {str(e)}")
-        print(f"Original input string was: {DateSpice}")
-        raise
-
-
-def columnToRowList(set):
-    """Loop through a column list and return a row list"""
-    ans = []
-    for item in set:
-        ans.append(item[0])
-    return ans
-
-
-def checkMethodKeyword(karglist, kwargs):
-    """loop through list of method keyword arguments and make sure that an approved keyword is used."""
-    for key in kwargs:
-        if key not in karglist:
-            print(
-                "ERROR: you tried to use an incorrect keyword "
-                + key
-                + ". Options include:"
-            )
-            print(karglist)
-            exit(1)
-
-
-def removeTimeFromData(dataList):
-    """pull out the time column out of a 4xN data list"""
-    return (dataList.transpose()[1 : len(dataList[0])]).transpose()
-
-
-def samplingTime(simTime, baseTimeStep, numDataPoints):
-    """
-    Given a simulation duration, this routine returns
-    a sampling time that yields the closest integer match to a desired number of sampling points
-
-    Args:
-        simTime: [ns] total simulation duration
-        baseTimeStep: [ns] baseline sampling period
-        numDataPoints: nominal desired number of data points over the simulation duration
-
-    """
-    deltaTime = math.floor(simTime / baseTimeStep / (numDataPoints - 1)) * baseTimeStep
-    if deltaTime < 1:
-        deltaTime = 1
-    return deltaTime
