@@ -1,0 +1,1 @@
+- Scenario simulation, plotting, data-shaping, and Eigen conversion helpers now live in the pytest-free :ref:`simHelpers` module while remaining available from ``unitTestSupport`` as deprecated compatibility wrappers, so example scenarios no longer require the ``pytest`` package just to import or run.

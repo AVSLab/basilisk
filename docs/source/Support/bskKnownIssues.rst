@@ -48,6 +48,12 @@ Version |release|
   before the simulation runs. Consumers then read zeros or unwritten data. Retain such messages on the
   simulation object or another persistent scope so they survive for the life of the simulation. This
   affected :ref:`scenarioRoboticArm` and :ref:`scenarioFlexiblePanel` and is fixed in the current version.
+- BSK-1410: user-facing utilities such as :ref:`simIncludeGravBody` and :ref:`vizSupport` imported the
+  test-support module :ref:`unitTestSupport`, which imports the test-only ``pytest`` package at module
+  load time. Scripts run against the Basilisk wheels (which do not ship ``pytest``) therefore failed to
+  import these utilities. The few general-purpose helpers those utilities needed have been moved into a
+  new :ref:`simHelpers` module, so user-facing code no longer depends on ``unitTestSupport`` (or ``pytest``)
+  at all. This is fixed in the current version.
 
 
 Version 2.10.0 (April 2, 2026)
