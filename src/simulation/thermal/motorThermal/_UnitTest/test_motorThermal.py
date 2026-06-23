@@ -29,8 +29,11 @@ import pytest
 
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.simulation import motorThermal
+from Basilisk.simulation import reactionWheelStateEffector
+from Basilisk.simulation import spacecraft
 from Basilisk.architecture import messaging
 from Basilisk.utilities import macros
+from Basilisk.utilities import simIncludeRW
 
 
 # Fixed module configuration shared by the scenarios below.  Each value is held
@@ -251,7 +254,73 @@ def test_motorThermal(show_plots, scenario, accuracy):
         assert firstStep > 0.0
 
 
+def test_motorThermal_integration(show_plots):
+    r"""
+    **Validation Test Description**
+
+    Integration check that :ref:`motorThermal` works when wired to a live
+    :ref:`ReactionWheelStateEffector` (the connection used in real scenarios such
+    as :ref:`scenarioTempMeasurementAttitude`), rather than to a stand-alone
+    message. A single reaction wheel is spun under a constant motor torque with
+    friction enabled and the motor starts at the ambient temperature.
+
+    Because the wheel speed, motor torque and friction torque evolve with the
+    reaction wheel dynamics, this scenario does not assert exact temperatures
+    (those are covered analytically in ``test_motorThermal``). It verifies the
+    end-to-end message path instead: the temperatures must stay finite (no
+    ``NaN`` from an unconnected or mis-typed message) and the motor must heat up,
+    since a spinning, loaded wheel generates heat and there is no dissipation at
+    the starting ambient temperature.
+    """
+    unitTestSim = SimulationBaseClass.SimBaseClass()
+    process = unitTestSim.CreateNewProcess("TestProcess")
+    process.addTask(unitTestSim.CreateNewTask("unitTask", macros.sec2nano(DT)))
+
+    scObject = spacecraft.Spacecraft()
+    scObject.ModelTag = "spacecraftBody"
+
+    rwFactory = simIncludeRW.rwFactory()
+    rwFactory.create("Honeywell_HR16", [1, 0, 0], Omega=300.,  # [RPM]
+                     maxMomentum=50.,  # [N*m*s]
+                     useRWfriction=True)
+    rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
+    rwStateEffector.ModelTag = "ReactionWheel"
+    rwFactory.addToSpacecraft(rwStateEffector.ModelTag, rwStateEffector, scObject)
+
+    cmdArray = messaging.ArrayMotorTorqueMsgPayload()
+    cmdArray.motorTorque = [0.2, 0., 0.]  # [N*m]
+    cmdMsg = messaging.ArrayMotorTorqueMsg().write(cmdArray)
+    rwStateEffector.rwMotorCmdInMsg.subscribeTo(cmdMsg)
+
+    thermalModel = motorThermal.MotorThermal()
+    thermalModel.ModelTag = "rwThermals"
+    thermalModel.currentTemperature = 20.  # [Celsius]
+    thermalModel.ambientTemperature = 20.  # [Celsius]
+    thermalModel.efficiency = 0.5
+    thermalModel.ambientThermalResistance = THERMAL_RESISTANCE
+    thermalModel.motorHeatCapacity = HEAT_CAPACITY
+    thermalModel.rwStateInMsg.subscribeTo(rwStateEffector.rwOutMsgs[0])
+
+    # Order matters: the reaction wheel effector must update (and publish its
+    # state message) before motorThermal reads it within the same task step.
+    unitTestSim.AddModelToTask("unitTask", rwStateEffector)
+    unitTestSim.AddModelToTask("unitTask", scObject)
+    unitTestSim.AddModelToTask("unitTask", thermalModel)
+    tempLog = thermalModel.temperatureOutMsg.recorder()
+    unitTestSim.AddModelToTask("unitTask", tempLog)
+
+    unitTestSim.InitializeSimulation()
+    unitTestSim.ConfigureStopTime(macros.sec2nano(DT * N_STEPS))
+    unitTestSim.ExecuteSimulation()
+
+    temperatures = np.array(tempLog.temperature)
+    assert np.all(np.isfinite(temperatures)), "motorThermal produced non-finite temperatures"
+    assert temperatures[0] == pytest.approx(20., abs=1e-8)
+    assert temperatures[-1] > temperatures[0], "a spinning, loaded wheel should heat the motor"
+
+
 if __name__ == "__main__":
     for s in SCENARIOS:
         test_motorThermal(False, s, 1e-8)
+    test_motorThermal_integration(False)
     print("PASSED")
