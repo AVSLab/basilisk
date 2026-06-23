@@ -62,7 +62,7 @@ void MotorThermal::Reset(uint64_t CurrentSimNanos)
             this->efficiency);
     }
 
-    // if the ambient heat capacity is at or below zero, it means either the value wasn't set properly
+    // if the ambient thermal resistance is at or below zero, it means either the value wasn't set properly
     if (this->ambientThermalResistance <= 0)
     {
         bskLogger.bskError("motorThermal: current ambient thermal resistance is at or below zero, must be a positive number. The value has either not been set, or has not been set properly.");
@@ -71,7 +71,7 @@ void MotorThermal::Reset(uint64_t CurrentSimNanos)
     // if the motor heat capacity is at or below zero, it means either the value wasn't set properly
     if (this->motorHeatCapacity <= 0)
     {
-        bskLogger.bskError("Current ambient heat capacity is at or below zero, must be a positive number. The value has either not been set, or has not been set properly.");
+        bskLogger.bskError("motorThermal: motor heat capacity is at or below zero, must be a positive number. The value has either not been set, or has not been set properly.");
     }
 
     // reset the previous time
