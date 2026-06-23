@@ -16,6 +16,7 @@
 
 import inspect
 import os
+import warnings
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -26,12 +27,28 @@ from Basilisk.simulation import gravityEffector
 from Basilisk.simulation import spacecraft
 from Basilisk.simulation import thrusterDynamicEffector, thrusterStateEffector
 from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import deprecated
 from Basilisk.utilities import macros
 from Basilisk.utilities import simIncludeThruster
 from Basilisk.utilities import unitTestSupport
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
+
+
+def _usesExpiredDeprecation(accessor, message):
+    """Return true if deprecated public access has reached the urgent warning phase."""
+    expectedWarnings = (deprecated.BSKDeprecationWarning, deprecated.BSKUrgentDeprecationWarning)
+    with pytest.warns(expectedWarnings, match=message) as warningList:
+        accessor()
+    return any(issubclass(w.category, deprecated.BSKUrgentDeprecationWarning) for w in warningList)
+
+
+def _configureTankGeometry(tankModel):
+    if hasattr(tankModel, "radiusTankInit"):
+        tankModel.radiusTankInit = 1.0  # [m]
+    if hasattr(tankModel, "lengthTank"):
+        tankModel.lengthTank = 1.0  # [m]
 
 
 @pytest.mark.parametrize("thrusterConstructor", [thrusterDynamicEffector.ThrusterDynamicEffector,
@@ -53,7 +70,7 @@ def test_massDepletionTest(show_plots, thrusterConstructor):
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
     # Create test thread
-    testProcessRate = macros.sec2nano(0.1)
+    testProcessRate = macros.sec2nano(0.1)  # [s]
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
@@ -72,9 +89,10 @@ def test_massDepletionTest(show_plots, thrusterConstructor):
     unitTestSim.fuelTankStateEffector = fuelTank.FuelTank()
     tankModel = fuelTank.FuelTankModelConstantVolume()
     unitTestSim.fuelTankStateEffector.setTankModel(tankModel)
-    tankModel.propMassInit = 40.0
+    initialFuelMass = 40.0  # [kg]
+    tankModel.propMassInit = initialFuelMass
     tankModel.r_TcT_TInit = [[0.0], [0.0], [0.0]]
-    unitTestSim.fuelTankStateEffector.r_TB_B = [[0.0], [0.0], [0.0]]
+    unitTestSim.fuelTankStateEffector.setR_TB_B([[0.0], [0.0], [0.0]])  # [m]
     tankModel.radiusTankInit = 46.0 / 2.0 / 3.2808399 / 12.0
 
     # Add tank
@@ -192,7 +210,216 @@ def test_massDepletionTest(show_plots, thrusterConstructor):
     # target value computed from MaxThrust / (EARTH_GRAV * steadyIsp)
     np.testing.assert_allclose(fuelMassDot[100], -0.000403404216123, rtol=1e-3,
                                err_msg="Thruster mass depletion not ramped up")
-    np.testing.assert_allclose(fuelMassDot[-1],0, rtol=1e-12, err_msg="Thruster mass depletion not ramped down")
+    np.testing.assert_allclose(fuelMassDot[-1], 0, rtol=1e-12, err_msg="Thruster mass depletion not ramped down")
+
+
+def test_leakyTank():
+    """Module Unit Test"""
+    scObject = spacecraft.Spacecraft()
+    scObject.ModelTag = "spacecraftBody"
+    unitTaskName = "unitTask"
+    unitProcessName = "TestProcess"
+
+    #   Create a sim module as an empty container
+    unitTestSim = SimulationBaseClass.SimBaseClass()
+
+    # Create test thread
+    testProcessRate = macros.sec2nano(0.1)  # [s]
+    testProc = unitTestSim.CreateNewProcess(unitProcessName)
+    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+
+    # Make Fuel Tank
+    unitTestSim.fuelTankStateEffector = fuelTank.FuelTank()
+    tankModel = fuelTank.FuelTankModelConstantVolume()
+    unitTestSim.fuelTankStateEffector.setTankModel(tankModel)
+    initialFuelMass = 40.0  # [kg]
+    tankModel.propMassInit = initialFuelMass
+
+    # Add tank
+    scObject.addStateEffector(unitTestSim.fuelTankStateEffector)
+
+    # Make the tank leaky
+    leakRate = 1e-5  # [kg/s]
+    unitTestSim.fuelTankStateEffector.setFuelLeakRate(leakRate)
+
+    # Add test module to runtime call list
+    unitTestSim.AddModelToTask(unitTaskName, unitTestSim.fuelTankStateEffector)
+    unitTestSim.AddModelToTask(unitTaskName, scObject)
+
+    fuelLog = unitTestSim.fuelTankStateEffector.fuelTankOutMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, fuelLog)
+    unitTestSim.InitializeSimulation()
+
+    stopTime = 1000.0  # [s]
+    unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
+    unitTestSim.ExecuteSimulation()
+
+    fuelMass = fuelLog.fuelMass
+    fuelMassDot = fuelLog.fuelMassDot
+
+    assert np.allclose(fuelMassDot, -leakRate, rtol=1e-6)
+    assert np.isclose(fuelMass[-1], initialFuelMass - stopTime * leakRate, rtol=1e-6)
+
+
+def test_leakyTankInputMessageOverridesSetter():
+    """Module Unit Test"""
+    scObject = spacecraft.Spacecraft()
+    scObject.ModelTag = "spacecraftBody"
+    unitTaskName = "unitTask"
+    unitProcessName = "TestProcess"
+
+    #   Create a sim module as an empty container
+    unitTestSim = SimulationBaseClass.SimBaseClass()
+
+    # Create test thread
+    testProcessRate = macros.sec2nano(0.1)  # [s]
+    testProc = unitTestSim.CreateNewProcess(unitProcessName)
+    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+
+    # Make Fuel Tank
+    unitTestSim.fuelTankStateEffector = fuelTank.FuelTank()
+    tankModel = fuelTank.FuelTankModelConstantVolume()
+    unitTestSim.fuelTankStateEffector.setTankModel(tankModel)
+    initialFuelMass = 40.0  # [kg]
+    tankModel.propMassInit = initialFuelMass
+
+    # Add tank
+    scObject.addStateEffector(unitTestSim.fuelTankStateEffector)
+
+    # Make the tank leaky using the input message to override the configured value
+    configuredLeakRate = 1.0e-5  # [kg/s]
+    messageLeakRate = 2.0e-5  # [kg/s]
+    unitTestSim.fuelTankStateEffector.setFuelLeakRate(configuredLeakRate)
+    leakRateMsgPayload = messaging.MassFlowRateMsgPayload()
+    leakRateMsgPayload.massFlowRate = messageLeakRate
+    leakRateMsg = messaging.MassFlowRateMsg().write(leakRateMsgPayload)
+    unitTestSim.fuelTankStateEffector.fuelLeakRateInMsg.subscribeTo(leakRateMsg)
+
+    # Add test module to runtime call list
+    unitTestSim.AddModelToTask(unitTaskName, unitTestSim.fuelTankStateEffector)
+    unitTestSim.AddModelToTask(unitTaskName, scObject)
+
+    fuelLog = unitTestSim.fuelTankStateEffector.fuelTankOutMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, fuelLog)
+    unitTestSim.InitializeSimulation()
+
+    stopTime = 1000.0  # [s]
+    unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
+    unitTestSim.ExecuteSimulation()
+
+    fuelMass = fuelLog.fuelMass
+    fuelMassDot = fuelLog.fuelMassDot
+
+    assert np.allclose(fuelMassDot, -messageLeakRate, rtol=1e-6)
+    assert np.isclose(fuelMass[-1], initialFuelMass - stopTime * messageLeakRate, rtol=1e-6)
+
+
+@pytest.mark.parametrize("tankModelConstructor", [fuelTank.FuelTankModelConstantVolume,
+                                                  fuelTank.FuelTankModelConstantDensity,
+                                                  fuelTank.FuelTankModelEmptying,
+                                                  fuelTank.FuelTankModelUniformBurn,
+                                                  fuelTank.FuelTankModelCentrifugalBurn])
+def test_leakyTankRunsOutOfFuel(tankModelConstructor):
+    """Module Unit Test"""
+    scObject = spacecraft.Spacecraft()
+    scObject.ModelTag = "spacecraftBody"
+    unitTaskName = "unitTask"
+    unitProcessName = "TestProcess"
+
+    #   Create a sim module as an empty container
+    unitTestSim = SimulationBaseClass.SimBaseClass()
+
+    # Create test thread
+    testProcessRate = macros.sec2nano(0.1)  # [s]
+    testProc = unitTestSim.CreateNewProcess(unitProcessName)
+    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+
+    # Make Fuel Tank
+    unitTestSim.fuelTankStateEffector = fuelTank.FuelTank()
+    tankModel = tankModelConstructor()
+    _configureTankGeometry(tankModel)
+    unitTestSim.fuelTankStateEffector.setTankModel(tankModel)
+    initialFuelMass = 1.0e-4  # [kg]
+    tankModel.propMassInit = initialFuelMass
+
+    # Add tank
+    scObject.addStateEffector(unitTestSim.fuelTankStateEffector)
+
+    # Make the tank leaky
+    leakRate = 1.0e-5  # [kg/s]
+    unitTestSim.fuelTankStateEffector.setFuelLeakRate(leakRate)
+
+    # Add test module to runtime call list
+    unitTestSim.AddModelToTask(unitTaskName, unitTestSim.fuelTankStateEffector)
+    unitTestSim.AddModelToTask(unitTaskName, scObject)
+
+    fuelLog = unitTestSim.fuelTankStateEffector.fuelTankOutMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, fuelLog)
+    unitTestSim.InitializeSimulation()
+
+    stopTime = 20.0  # [s]
+    unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
+    unitTestSim.ExecuteSimulation()
+
+    fuelMass = fuelLog.fuelMass
+    fuelMassDot = fuelLog.fuelMassDot
+    fuelMassTolerance = 1e-14  # [kg]
+    fuelMassDotTolerance = 1e-14  # [kg/s]
+
+    assert np.all(np.isfinite(fuelMass))
+    assert np.all(np.isfinite(fuelMassDot))
+    assert np.all(fuelMass >= -fuelMassTolerance)
+    assert np.isclose(fuelMass[-1], 0.0, atol=fuelMassTolerance)
+    assert np.isclose(fuelMassDot[-1], 0.0, atol=fuelMassDotTolerance)
+    assert np.any(np.isclose(fuelMassDot, -leakRate, rtol=1e-6))
+
+
+def test_deprecatedPublicVariables():
+    """Module Unit Test"""
+    tank = fuelTank.FuelTank()
+
+    dcm_TB = np.eye(3)
+    r_TB_B = [[1.0], [2.0], [3.0]]  # [m]
+    fuelLeakRate = 2.0e-5  # [kg/s]
+    nameOfMassState = "fuelTankMassDeprecated"
+    expiredDeprecation = False
+
+    expiredDeprecation |= _usesExpiredDeprecation(
+        lambda: setattr(tank, "nameOfMassState", nameOfMassState),
+        "setNameOfMassState"
+    )
+    assert tank.getNameOfMassState() == nameOfMassState
+    expiredDeprecation |= _usesExpiredDeprecation(lambda: getattr(tank, "nameOfMassState"), "getNameOfMassState")
+
+    expiredDeprecation |= _usesExpiredDeprecation(lambda: setattr(tank, "dcm_TB", dcm_TB), "setDcm_TB")
+    np.testing.assert_allclose(tank.getDcm_TB(), dcm_TB, rtol=1e-15)
+    expiredDeprecation |= _usesExpiredDeprecation(lambda: getattr(tank, "dcm_TB"), "getDcm_TB")
+
+    expiredDeprecation |= _usesExpiredDeprecation(lambda: setattr(tank, "r_TB_B", r_TB_B), "setR_TB_B")
+    np.testing.assert_allclose(tank.getR_TB_B(), r_TB_B, rtol=1e-15)
+    expiredDeprecation |= _usesExpiredDeprecation(lambda: getattr(tank, "r_TB_B"), "getR_TB_B")
+
+    expiredDeprecation |= _usesExpiredDeprecation(lambda: setattr(tank, "updateOnly", False), "setUpdateOnly")
+    assert tank.getUpdateOnly() is False
+    expiredDeprecation |= _usesExpiredDeprecation(lambda: getattr(tank, "updateOnly"), "getUpdateOnly")
+
+    expiredDeprecation |= _usesExpiredDeprecation(
+        lambda: setattr(tank, "fuelLeakRate", fuelLeakRate),
+        "setFuelLeakRate"
+    )
+    assert tank.getFuelLeakRate() == pytest.approx(fuelLeakRate)
+    expiredDeprecation |= _usesExpiredDeprecation(lambda: getattr(tank, "fuelLeakRate"), "getFuelLeakRate")
+
+    if expiredDeprecation:
+        warnings.warn(
+            "The cutoff date for deprecated FuelTank public variable access has passed. "
+            "Remove the deprecated direct Python access to nameOfMassState, dcm_TB, r_TB_B, "
+            "updateOnly, and fuelLeakRate from fuelTank.i and update this compatibility test.",
+            UserWarning,
+            stacklevel=1
+        )
+
 
 if __name__ == "__main__":
     test_massDepletionTest(True, thrusterDynamicEffector.ThrusterDynamicEffector)
+    test_deprecatedPublicVariables()
