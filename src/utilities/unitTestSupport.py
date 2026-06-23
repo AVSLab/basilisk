@@ -21,33 +21,128 @@ import numpy as np
 import pytest
 
 from Basilisk import __path__
-from Basilisk.utilities import macros
-from Basilisk.utilities.simHelpers import (
-    EigenVector3d2list,
-    EigenVector3d2np,
-    addTimeColumn,
-    checkMethodKeyword,
-    columnToRowList,
-    decimalYearToDateTime,
-    flattenList,
-    getLineColor,
-    getScenarioFigureFileName,
-    np2EigenMatrix3d,
-    np2EigenVectorXd,
-    npList2EigenXdVector,
-    pullVectorSetFromData,
-    removeTimeFromData,
-    samplingTime,
-    saveFigurePDF,
-    saveScenarioFigure,
-    saveScenarioGraphvizFigure,
-    timeStringToGregorianUTCMsg,
-    writeFigureLaTeX,
-    writeTableLaTeX,
-    writeTeXSnippet,
-)
+from Basilisk.utilities import deprecated, macros
+from Basilisk.utilities import simHelpers as _simHelpers
 
 bskPath = __path__[0]
+_SIM_HELPER_REMOVAL_DATE = "2027/06/23"
+
+
+def _deprecatedSimHelper(func):
+    """Apply standard Basilisk deprecation behavior to a moved helper."""
+    return deprecated.deprecated(
+        _SIM_HELPER_REMOVAL_DATE, f"Use simHelpers.{func.__name__} instead."
+    )(func)
+
+
+@_deprecatedSimHelper
+def EigenVector3d2list(*args, **kwargs):
+    return _simHelpers.EigenVector3d2list(*args, **kwargs)
+
+
+@_deprecatedSimHelper
+def EigenVector3d2np(*args, **kwargs):
+    return _simHelpers.EigenVector3d2np(*args, **kwargs)
+
+
+@_deprecatedSimHelper
+def addTimeColumn(*args, **kwargs):
+    return _simHelpers.addTimeColumn(*args, **kwargs)
+
+
+@_deprecatedSimHelper
+def checkMethodKeyword(*args, **kwargs):
+    return _simHelpers.checkMethodKeyword(*args, **kwargs)
+
+
+@_deprecatedSimHelper
+def columnToRowList(*args, **kwargs):
+    return _simHelpers.columnToRowList(*args, **kwargs)
+
+
+@_deprecatedSimHelper
+def decimalYearToDateTime(*args, **kwargs):
+    return _simHelpers.decimalYearToDateTime(*args, **kwargs)
+
+
+@_deprecatedSimHelper
+def flattenList(*args, **kwargs):
+    return _simHelpers.flattenList(*args, **kwargs)
+
+
+@_deprecatedSimHelper
+def getLineColor(*args, **kwargs):
+    return _simHelpers.getLineColor(*args, **kwargs)
+
+
+@_deprecatedSimHelper
+def getScenarioFigureFileName(*args, **kwargs):
+    return _simHelpers.getScenarioFigureFileName(*args, **kwargs)
+
+
+@_deprecatedSimHelper
+def np2EigenMatrix3d(*args, **kwargs):
+    return _simHelpers.np2EigenMatrix3d(*args, **kwargs)
+
+
+@_deprecatedSimHelper
+def np2EigenVectorXd(*args, **kwargs):
+    return _simHelpers.np2EigenVectorXd(*args, **kwargs)
+
+
+@_deprecatedSimHelper
+def npList2EigenXdVector(*args, **kwargs):
+    return _simHelpers.npList2EigenXdVector(*args, **kwargs)
+
+
+@_deprecatedSimHelper
+def pullVectorSetFromData(*args, **kwargs):
+    return _simHelpers.pullVectorSetFromData(*args, **kwargs)
+
+
+@_deprecatedSimHelper
+def removeTimeFromData(*args, **kwargs):
+    return _simHelpers.removeTimeFromData(*args, **kwargs)
+
+
+@_deprecatedSimHelper
+def samplingTime(*args, **kwargs):
+    return _simHelpers.samplingTime(*args, **kwargs)
+
+
+@_deprecatedSimHelper
+def saveFigurePDF(*args, **kwargs):
+    return _simHelpers.saveFigurePDF(*args, **kwargs)
+
+
+@_deprecatedSimHelper
+def saveScenarioFigure(*args, **kwargs):
+    return _simHelpers.saveScenarioFigure(*args, **kwargs)
+
+
+@_deprecatedSimHelper
+def saveScenarioGraphvizFigure(*args, **kwargs):
+    return _simHelpers.saveScenarioGraphvizFigure(*args, **kwargs)
+
+
+@_deprecatedSimHelper
+def timeStringToGregorianUTCMsg(*args, **kwargs):
+    return _simHelpers.timeStringToGregorianUTCMsg(*args, **kwargs)
+
+
+@_deprecatedSimHelper
+def writeFigureLaTeX(*args, **kwargs):
+    return _simHelpers.writeFigureLaTeX(*args, **kwargs)
+
+
+@_deprecatedSimHelper
+def writeTableLaTeX(*args, **kwargs):
+    return _simHelpers.writeTableLaTeX(*args, **kwargs)
+
+
+@_deprecatedSimHelper
+def writeTeXSnippet(*args, **kwargs):
+    return _simHelpers.writeTeXSnippet(*args, **kwargs)
 
 
 def isVectorEqual(result, truth, accuracy):
