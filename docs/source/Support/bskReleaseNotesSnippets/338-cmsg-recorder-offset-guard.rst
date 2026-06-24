@@ -1,0 +1,1 @@
+- Added a compile-time guard to the generated C message structs ensuring the payload immediately follows the message header with no padding. The C message read path (used by message recorders and C-to-C subscriptions) relies on this layout via pointer arithmetic; the guard turns any future layout change into a build error instead of a silent mis-read (issue #338).
