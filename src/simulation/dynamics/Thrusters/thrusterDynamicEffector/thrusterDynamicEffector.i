@@ -38,7 +38,7 @@ from Basilisk.architecture.swig_common_model import *
 %include "std_vector.i"
 namespace std {
     %template(ThrusterTimeVector) vector<THRTimePair, std::allocator<THRTimePair>>;
-    %template(ThrusterConfigVector) vector<THRSimConfig, std::allocator<THRSimConfig>>;
+    %template(ThrusterConfigVector) vector<std::shared_ptr<THRSimConfig>>;
 }
 
 %include "sys_model.i"

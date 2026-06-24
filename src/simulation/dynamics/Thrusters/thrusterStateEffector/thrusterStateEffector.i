@@ -35,6 +35,12 @@ from Basilisk.architecture.swig_common_model import *
 %include "swig_eigen.i"
 %include "swig_conly_data.i"
 
+// Instantiate templates used by example
+%include "std_vector.i"
+namespace std {
+    %template(ThrusterConfigVector) vector<std::shared_ptr<THRSimConfig>>;
+}
+
 %include "sys_model.i"
 %include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.i"
 %include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
