@@ -18,7 +18,8 @@
 
 import numpy as np
 
-from Basilisk.simulation import motorVoltageInterface
+from Basilisk.simulation import motorVoltageInterface, spacecraft
+from Basilisk.utilities import simHelpers
 from Basilisk.utilities.MonteCarlo.Controller import SimulationExecutor, SimulationParameters
 from Basilisk.utilities.MonteCarlo.Dispersions import UniformDispersion, UniformVectorAngleDispersion
 
@@ -107,6 +108,27 @@ def test_indexed_modification_updates_swig_copy_on_read_container():
     )
 
     assert sim.rwVoltageIO.voltage2TorqueGain[0][0] == new_gain
+
+
+def test_double_indexed_modification_updates_swig_matrix3d():
+    """Verify double-indexed paths write back SWIG Matrix3d attributes."""
+    sim = DummySimulation()
+    sim.scObject = spacecraft.Spacecraft()
+    inertia = [
+        900.0, 0.0, 0.0,
+        0.0, 800.0, 0.0,
+        0.0, 0.0, 600.0
+    ]  # [kg*m^2]
+    new_cross_inertia = 12.5  # [kg*m^2]
+
+    sim.scObject.hub.IHubPntBc_B = simHelpers.np2EigenMatrix3d(inertia)
+    SimulationExecutor.applyModification(
+        sim,
+        "scObject.hub.IHubPntBc_B[0][1]",
+        str(new_cross_inertia)
+    )
+
+    assert sim.scObject.hub.IHubPntBc_B[0][1] == new_cross_inertia
 
 
 def test_vector_angle_dispersion_reads_nested_method_path():
@@ -268,6 +290,7 @@ def test_disperse_seeds_only_records_seeded_models():
 if __name__ == "__main__":
     test_apply_modification_updates_nested_attributes()
     test_indexed_modification_updates_swig_copy_on_read_container()
+    test_double_indexed_modification_updates_swig_matrix3d()
     test_vector_angle_dispersion_reads_nested_method_path()
     test_populate_seeds_applies_before_configure_function()
     test_uniform_dispersion_randomizes_nested_sim_parameter()
