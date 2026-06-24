@@ -22,6 +22,7 @@ from Basilisk.simulation import motorVoltageInterface, spacecraft
 from Basilisk.utilities import simHelpers
 from Basilisk.utilities.MonteCarlo.Controller import SimulationExecutor, SimulationParameters
 from Basilisk.utilities.MonteCarlo.Dispersions import (
+    NormalVectorAngleDispersion,
     NormalVectorDispersion,
     UniformDispersion,
     UniformVectorAngleDispersion
@@ -191,6 +192,42 @@ def test_uniform_vector_angle_dispersion_uses_bounds_off_nominal(monkeypatch):
 
     assert np.allclose(uniform_calls[0], expected_phi_bounds)
     assert np.allclose(uniform_calls[1], expected_theta_bounds)
+
+
+def test_normal_vector_angle_dispersion_uses_scalar_angle_samples(monkeypatch):
+    """Verify normal angle dispersions draw scalar angle samples."""
+    sim = DummySimulation()
+    vector_path = "get_DynModel().scObject.hub.unitVector"
+    sim.get_DynModel().scObject.hub.unitVector = np.array([
+        [1.0], [1.0], [1.0]
+    ])  # [-]
+    phi_std = 0.02  # [rad]
+    theta_std = 0.03  # [rad]
+    normal_calls = []
+
+    def record_normal(mean, standard_deviation):
+        normal_calls.append((mean, standard_deviation))
+        return mean
+
+    monkeypatch.setattr(np.random, "normal", record_normal)
+
+    dispersion = NormalVectorAngleDispersion(
+        vector_path,
+        phiStd=phi_std,
+        thetaStd=theta_std,
+        phiBoundsOffNom=[-0.1, 0.1],
+        thetaBoundsOffNom=[-0.1, 0.1]
+    )
+    dispersed_vector = dispersion.generate(sim)
+
+    nominal_vector = sim.get_DynModel().scObject.hub.unitVector
+    nominal_vector = nominal_vector / np.linalg.norm(nominal_vector)
+    nominal_spherical = dispersion.cart2Spherical(nominal_vector)
+
+    assert np.isclose(np.linalg.norm(dispersed_vector), 1.0)
+    assert np.allclose(normal_calls[0], [nominal_spherical[1], phi_std])
+    assert np.allclose(normal_calls[1], [nominal_spherical[2], theta_std])
+    assert dispersion.getDispersionMag() == [r"0.0 $\sigma$", r"0.0 $\sigma$"]
 
 
 def test_normal_vector_dispersion_uses_configured_statistics():
