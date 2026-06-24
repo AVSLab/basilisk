@@ -218,12 +218,14 @@ class UniformVectorDispersion(VectorVariableDispersion):
 class NormalVectorDispersion(VectorVariableDispersion):
     def __init__(self, varName, mean=0.0, stdDeviation=0.5, bounds=None):
         VectorVariableDispersion.__init__(self, varName, bounds)
+        self.mean = mean
+        self.stdDeviation = stdDeviation
         if self.bounds is None:
             self.bounds = ([-1.0, 1.0])  # defines a hard floor/ceiling
 
     def generate(self, sim):
         vector = SimulationExecutor.getNestedAttr(sim, self.varName)
-        dispValue = self.perturbCartesianVectorNormal(vector, self.mean, self.stdDeviation)
+        dispValue = self.perturbCartesianVectorNormal(vector)
         return dispValue
 
 
