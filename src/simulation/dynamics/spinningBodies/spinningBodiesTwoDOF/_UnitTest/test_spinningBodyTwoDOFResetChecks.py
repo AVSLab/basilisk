@@ -62,6 +62,10 @@ RESET_ERROR_CASES = [
      lambda sb: setattr(sb, "IS1PntSc1_S1", [[100.0, 5.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]])),
     ("IS2PntSc2_S2 not positive definite", "IS2PntSc2_S2",
      lambda sb: setattr(sb, "IS2PntSc2_S2", [[-50.0, 0.0, 0.0], [0.0, 30.0, 0.0], [0.0, 0.0, 40.0]])),
+    ("mass1 negative", "mass1",
+     lambda sb: setattr(sb, "mass1", -1.0)),
+    ("mass2 negative", "mass2",
+     lambda sb: setattr(sb, "mass2", -1.0)),
 ]
 
 
