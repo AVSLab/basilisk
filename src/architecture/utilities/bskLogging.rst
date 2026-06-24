@@ -44,8 +44,8 @@ If the verbosity level is to be changed for a particular Basilisk script, then t
 Log Level Constants
 ^^^^^^^^^^^^^^^^^^^
 Log levels can be referenced using either the original ``BSK_``-prefixed
-constants or shorter aliases that mirror Python's standard ``logging`` module
-naming:
+constants or shorter aliases that use Python's standard ``logging`` module
+level names:
 
 .. code-block:: python
 
@@ -90,8 +90,8 @@ python script as the corresponding module is created and configured.
 
 Logging from Python Module Code
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Python-side module code can use convenience methods on ``bskLogger`` that mirror
-Python's standard ``logging`` API:
+Python-side module code can use convenience methods on ``bskLogger`` that use
+Python standard logging method names:
 
 .. code-block:: python
 
@@ -103,6 +103,10 @@ Python's standard ``logging`` API:
 These are equivalent to calling ``bskLog`` with the corresponding level and are
 the preferred form for Python call sites. ``error()`` is equivalent to
 ``bskError()`` and raises ``BasiliskError`` immediately.
+
+These convenience methods accept one complete message string.  They do not
+implement the full ``logging.Logger`` call signature with additional formatting
+arguments.  Compose values into the message first, for example with an f-string.
 
 Using ``bskLog`` and ``bskError`` in C++ Basilisk Modules
 ---------------------------------------------------------
