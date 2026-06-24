@@ -76,7 +76,7 @@ import numpy as np
 import numba as nb
 from numba.experimental import jitclass as _nbJitclass
 
-from Basilisk.architecture import messaging
+from Basilisk.architecture import bskLogging, messaging
 from Basilisk.architecture.sysModel import SysModelMixin
 
 _NBMODEL_CFUNC_CACHE: dict = {} # idHash -> cfunc; keeps cfunc alive (prevents GC)
@@ -123,9 +123,9 @@ class BskLoggerProxy:
         self._t0 = t0; self._t1 = t1; self._t2 = t2; self._t3 = t3
 
     def _tag(self, level):
-        if   level == 0: return self._t0
-        elif level == 1: return self._t1
-        elif level == 2: return self._t2
+        if   level == bskLogging.DEBUG: return self._t0
+        elif level == bskLogging.INFO: return self._t1
+        elif level == bskLogging.WARNING: return self._t2
         else:            return self._t3
 
     def bskLog(self, level, msg):
@@ -133,17 +133,17 @@ class BskLoggerProxy:
             print(self._tag(level), msg)
 
     def debug(self, msg):
-        self.bskLog(0, msg)
+        self.bskLog(bskLogging.DEBUG, msg)
 
     def info(self, msg):
-        self.bskLog(1, msg)
+        self.bskLog(bskLogging.INFO, msg)
 
     def warning(self, msg):
-        self.bskLog(2, msg)
+        self.bskLog(bskLogging.WARNING, msg)
 
     def error(self, msg):
         # prints at BSK_ERROR level but does not throw — use bskError() outside numba context
-        self.bskLog(3, msg)
+        self.bskLog(bskLogging.ERROR, msg)
 
     def bskLog1(self, level, msg, v0):
         if level >= self._level:
