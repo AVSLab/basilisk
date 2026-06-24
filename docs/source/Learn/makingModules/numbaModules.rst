@@ -249,9 +249,22 @@ Available methods:
    * - ``bskLog3(level, msg, v0, v1, v2)``
      - ``[TAG] msg v0 v1 v2``
 
-Level constants (``bskLogging.BSK_DEBUG``, ``BSK_INFORMATION``,
-``BSK_WARNING``, ``BSK_ERROR``) work inside ``UpdateStateImpl`` because Numba
-resolves module-level integer attributes at compile time.
+The ``debug(msg)``, ``info(msg)``, ``warning(msg)``, and ``error(msg)``
+convenience methods accept one complete message string.  Use ``bskLog1``,
+``bskLog2``, or ``bskLog3`` when a Numba module needs to log numeric values
+along with the message.
+
+.. note::
+
+   In Numba modules, ``bskLogger.error(msg)`` prints at the ``ERROR`` level but
+   does not raise ``BasiliskError`` or stop simulation execution.  This differs
+   from Python ``SysModel`` modules, where ``self.bskLogger.error(msg)`` is
+   equivalent to ``bskError()`` and raises immediately.
+
+Short level aliases (``bskLogging.DEBUG``, ``bskLogging.INFO``,
+``bskLogging.WARNING``, and ``bskLogging.ERROR``) work inside
+``UpdateStateImpl`` because Numba resolves module-level integer attributes at
+compile time.  The original ``BSK_``-prefixed constants remain supported.
 
 ``msg`` must be a **string literal** - variables of string type are not
 supported in nopython mode.  Values ``v0``–``v2`` can be any numeric type
