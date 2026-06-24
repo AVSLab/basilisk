@@ -1034,26 +1034,42 @@ class SimulationExecutor:
         :param value: Value to set at ``attrString``.
         """
         pathParts = cls._parseAttributePath(attrString)
-        currentObj = obj
-
-        for pathPart in pathParts[:-1]:
-            currentObj = cls._resolvePathPart(currentObj, pathPart)
-
         finalPathPart = pathParts[-1]
         if isinstance(finalPathPart, int):
-            if len(pathParts) < 2:
+            trailingIndexStart = len(pathParts) - 1
+            while (
+                trailingIndexStart > 0
+                and isinstance(pathParts[trailingIndexStart - 1], int)
+            ):
+                trailingIndexStart -= 1
+            if trailingIndexStart == 0:
                 raise ValueError("Indexed Monte Carlo paths require an owning attribute")
+
             containerOwner = obj
-            for pathPart in pathParts[:-2]:
+            for pathPart in pathParts[:trailingIndexStart - 1]:
                 containerOwner = cls._resolvePathPart(containerOwner, pathPart)
-            containerPathPart = pathParts[-2]
+
+            containerPathPart = pathParts[trailingIndexStart - 1]
             container = cls._resolvePathPart(containerOwner, containerPathPart)
-            container[finalPathPart] = value
+            indexedOwners = []
+            indexedObj = container
+            for indexPathPart in pathParts[trailingIndexStart:-1]:
+                indexedOwners.append((indexedObj, indexPathPart))
+                indexedObj = cls._resolvePathPart(indexedObj, indexPathPart)
+
+            indexedObj[finalPathPart] = value
+            for indexedOwner, indexPathPart in reversed(indexedOwners):
+                indexedOwner[indexPathPart] = indexedObj
+                indexedObj = indexedOwner
+
             if not (
                 isinstance(containerPathPart, str) and containerPathPart.endswith("()")
             ):
                 cls._assignPathPart(containerOwner, containerPathPart, container)
         else:
+            currentObj = obj
+            for pathPart in pathParts[:-1]:
+                currentObj = cls._resolvePathPart(currentObj, pathPart)
             cls._assignPathPart(currentObj, finalPathPart, value)
 
     @classmethod

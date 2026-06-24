@@ -58,7 +58,9 @@ Dispersion names can reference nested simulation attributes with dotted names, i
 indices, and zero-argument accessor methods. For example,
 `TaskList[0].TaskModels[0].hub.sigma_BNInit` updates the `sigma_BNInit` attribute
 on the first model's hub object, while `get_DynModel().scObject.hub.r_CN_NInit`
-resolves the object returned by `get_DynModel()` before applying the dispersion.
+resolves the object returned by `get_DynModel()` before applying the dispersion. Repeated
+indices can be used for matrix-like attributes, such as
+`scObject.hub.IHubPntBc_B[0][1]`.
 
 If data is being retained, a archive directory to store retained data must be specified. This directory is later used to reload the retained data from an executed Monte Carlo simulation.
 
