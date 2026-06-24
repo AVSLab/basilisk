@@ -21,7 +21,11 @@ import numpy as np
 from Basilisk.simulation import motorVoltageInterface, spacecraft
 from Basilisk.utilities import simHelpers
 from Basilisk.utilities.MonteCarlo.Controller import SimulationExecutor, SimulationParameters
-from Basilisk.utilities.MonteCarlo.Dispersions import UniformDispersion, UniformVectorAngleDispersion
+from Basilisk.utilities.MonteCarlo.Dispersions import (
+    NormalVectorDispersion,
+    UniformDispersion,
+    UniformVectorAngleDispersion
+)
 
 
 class DummyHub:
@@ -147,6 +151,23 @@ def test_vector_angle_dispersion_reads_nested_method_path():
     dispersed_vector = dispersion.generate(sim)
 
     assert np.isclose(np.linalg.norm(dispersed_vector), 1.0)
+
+
+def test_normal_vector_dispersion_uses_configured_statistics():
+    """Verify normal vector dispersions retain mean and standard deviation."""
+    sim = DummySimulation()
+    vector_path = "TaskList[0].TaskModels[0].hub.r_BcB_B"
+    mean = 2.5  # [m]
+    std_deviation = 0.0  # [m]
+
+    dispersion = NormalVectorDispersion(
+        vector_path,
+        mean=mean,
+        stdDeviation=std_deviation
+    )
+    dispersed_vector = dispersion.generate(sim)
+
+    assert np.allclose(dispersed_vector, [mean, mean, mean])
 
 
 def test_populate_seeds_applies_before_configure_function():
@@ -292,6 +313,7 @@ if __name__ == "__main__":
     test_indexed_modification_updates_swig_copy_on_read_container()
     test_double_indexed_modification_updates_swig_matrix3d()
     test_vector_angle_dispersion_reads_nested_method_path()
+    test_normal_vector_dispersion_uses_configured_statistics()
     test_populate_seeds_applies_before_configure_function()
     test_uniform_dispersion_randomizes_nested_sim_parameter()
     test_uniform_dispersion_randomizes_method_path_parameter()
