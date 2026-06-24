@@ -57,6 +57,13 @@ Eigen::Vector3d eigenMRPd2Vector3d(Eigen::MRPd vec);
 //!@brief maps the DCM to MRPs using Eigen variables
 Eigen::MRPd eigenC2MRP(Eigen::Matrix3d);
 
+//!@brief returns true if the 3x3 matrix is a proper rotation matrix (orthonormal with determinant +1, i.e. orthogonal and right-handed) within the given tolerance
+bool eigenIsRotationMatrix(const Eigen::Matrix3d& dcm, double tolerance = 1e-9);
+//!@brief returns true if the 3-vector has unit norm within the given tolerance
+bool eigenIsUnitVector(const Eigen::Vector3d& vec, double tolerance = 1e-9);
+//!@brief returns true if the 3x3 matrix is a valid inertia tensor (symmetric within tolerance and positive definite)
+bool eigenIsValidInertiaMatrix(const Eigen::Matrix3d& inertia, double tolerance = 1e-9);
+
 //!@brief solves for the zero of the provided function
 double newtonRaphsonSolve(const double& initialEstimate, const double& accuracy, const std::function<double(double)>& f, const std::function<double(double)>& fPrime);
 
