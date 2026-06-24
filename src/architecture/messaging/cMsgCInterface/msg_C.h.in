@@ -9,6 +9,7 @@
 #define @MSG_AUTOSOURCE_TYPE@_C_H
 
 #include <stdint.h>
+#include <stddef.h>
 #include "@MSG_AUTOSOURCE_HEADER@"
 #include "architecture/messaging/msgHeader.h"
 
@@ -19,6 +20,17 @@ typedef struct {
     @MSG_AUTOSOURCE_TYPE@Payload *payloadPointer;	    //!< pointer to message
     MsgHeader *headerPointer;      //!< pointer to message header
 } @MSG_AUTOSOURCE_TYPE@_C;
+
+/* The C++ message read path (Recorder and ReadFunctor::subscribeToC) reaches the
+ * payload by advancing one MsgHeader past the start of this struct, which assumes
+ * the payload immediately follows the header with no padding. Guarantee that
+ * invariant at compile time so any future layout change (e.g. a wider MsgHeader or
+ * a payload requiring stricter alignment) fails the build rather than silently
+ * reading the wrong address. See issue #338. */
+#ifdef __cplusplus
+static_assert(offsetof(@MSG_AUTOSOURCE_TYPE@_C, payload) == sizeof(MsgHeader),
+    "@MSG_AUTOSOURCE_TYPE@_C: payload must immediately follow the header with no padding");
+#endif
 
 #ifdef __cplusplus
 extern "C" {
