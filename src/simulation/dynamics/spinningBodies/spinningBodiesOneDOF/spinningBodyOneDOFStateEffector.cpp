@@ -72,6 +72,17 @@ void SpinningBodyOneDOFStateEffector::Reset(uint64_t CurrentClock)
     else {
         bskLogger.bskError("Norm of sHat must be greater than 0. sHat may not have been set by the user.");
     }
+
+    // Verify that the user-provided S0B DCM is a proper rotation (orthogonal and right-handed)
+    if (!eigenIsRotationMatrix(this->dcm_S0B)) {
+        bskLogger.bskError("spinningBodyOneDOFStateEffector: dcm_S0B is not a valid rotation matrix; it must be orthogonal and right-handed. It may not have been set properly by the user.");
+    }
+
+    // Verify that the inertia tensor is physically valid (symmetric and positive definite).
+    // A massless body legitimately carries a zero inertia tensor, so only check when mass > 0.
+    if (this->mass > 0.0 && !eigenIsValidInertiaMatrix(this->IPntSc_S)) {
+        bskLogger.bskError("spinningBodyOneDOFStateEffector: IPntSc_S is not a valid inertia tensor; it must be symmetric and positive definite. It may not have been set properly by the user.");
+    }
 }
 
 

@@ -48,6 +48,17 @@ void SpinningBodyNDOFStateEffector::Reset(uint64_t CurrentClock)
 {
     if (this->spinningBodyVec.back()->mass <= 0.0)
         bskLogger.bskError("The mass of the last element must be greater than 0.");
+
+    // Verify each spinning body's configuration is physically consistent
+    for (const auto& body : this->spinningBodyVec) {
+        if (!eigenIsRotationMatrix(body->dcm_S0P)) {
+            bskLogger.bskError("spinningBodyNDOFStateEffector: a spinning body's dcm_S0P is not a valid rotation matrix; it must be orthogonal and right-handed. It may not have been set properly by the user.");
+        }
+        // A massless body legitimately carries a zero inertia tensor, so only check when its mass > 0.
+        if (body->mass > 0.0 && !eigenIsValidInertiaMatrix(body->ISPntSc_S)) {
+            bskLogger.bskError("spinningBodyNDOFStateEffector: a spinning body's ISPntSc_S is not a valid inertia tensor; it must be symmetric and positive definite. It may not have been set properly by the user.");
+        }
+    }
 }
 
 void SpinningBody::setMass(double mass) {

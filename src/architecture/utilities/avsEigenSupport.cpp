@@ -19,6 +19,7 @@
 
 #include <iostream>
 #include <math.h>
+#include <cmath>
 #include "avsEigenSupport.h"
 #include "rigidBodyKinematics.h"
 #include "architecture/utilities/macroDefinitions.h"
@@ -356,4 +357,52 @@ double bisectionSolve(double *interval, double accuracy, std::function< double(d
         }
     }
     return currentEstimate;
+}
+
+/*! This function returns true if the provided 3x3 matrix is a proper rotation
+    matrix, i.e. it is orthonormal (DCM^T * DCM == identity) and right-handed
+    (determinant == +1), within the given tolerance.
+    @param dcm matrix to test
+    @param tolerance allowed deviation from orthonormality and from a +1 determinant
+    @return bool
+ */
+bool eigenIsRotationMatrix(const Eigen::Matrix3d& dcm, double tolerance)
+{
+    Eigen::Matrix3d shouldBeIdentity = dcm.transpose() * dcm;
+    bool orthonormal = (shouldBeIdentity - Eigen::Matrix3d::Identity()).norm() <= tolerance;
+    bool rightHanded = std::abs(dcm.determinant() - 1.0) <= tolerance;
+    return orthonormal && rightHanded;
+}
+
+/*! This function returns true if the provided 3-vector has unit norm within the
+    given tolerance.
+    @param vec vector to test
+    @param tolerance allowed deviation of the norm from 1.0
+    @return bool
+ */
+bool eigenIsUnitVector(const Eigen::Vector3d& vec, double tolerance)
+{
+    return std::abs(vec.norm() - 1.0) <= tolerance;
+}
+
+/*! This function returns true if the provided 3x3 matrix is a valid inertia
+    tensor, i.e. it is symmetric (within tolerance) and positive definite (all
+    eigenvalues strictly greater than zero).
+    @param inertia matrix to test
+    @param tolerance allowed deviation from symmetry
+    @return bool
+ */
+bool eigenIsValidInertiaMatrix(const Eigen::Matrix3d& inertia, double tolerance)
+{
+    // an inertia tensor must be symmetric
+    if ((inertia - inertia.transpose()).norm() > tolerance) {
+        return false;
+    }
+    // an inertia tensor must be positive definite; all eigenvalues of the
+    // (symmetric) matrix must be strictly positive
+    Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> solver(inertia);
+    if (solver.info() != Eigen::Success) {
+        return false;
+    }
+    return solver.eigenvalues().minCoeff() > 0.0;
 }

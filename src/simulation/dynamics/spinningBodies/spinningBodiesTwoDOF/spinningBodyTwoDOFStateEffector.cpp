@@ -92,6 +92,23 @@ void SpinningBodyTwoDOFStateEffector::Reset(uint64_t CurrentClock)
     else {
         bskLogger.bskError("Norm of s2Hat must be greater than 0. s1Hat may not have been set by the user.");
     }
+
+    // Verify the user-provided DCMs are proper rotations (orthogonal and right-handed)
+    if (!eigenIsRotationMatrix(this->dcm_S10B)) {
+        bskLogger.bskError("spinningBodyTwoDOFStateEffector: dcm_S10B is not a valid rotation matrix; it must be orthogonal and right-handed. It may not have been set properly by the user.");
+    }
+    if (!eigenIsRotationMatrix(this->dcm_S20S1)) {
+        bskLogger.bskError("spinningBodyTwoDOFStateEffector: dcm_S20S1 is not a valid rotation matrix; it must be orthogonal and right-handed. It may not have been set properly by the user.");
+    }
+
+    // Verify the inertia tensors are physically valid (symmetric and positive definite).
+    // A massless body legitimately carries a zero inertia tensor, so only check when its mass > 0.
+    if (this->mass1 > 0.0 && !eigenIsValidInertiaMatrix(this->IS1PntSc1_S1)) {
+        bskLogger.bskError("spinningBodyTwoDOFStateEffector: IS1PntSc1_S1 is not a valid inertia tensor; it must be symmetric and positive definite. It may not have been set properly by the user.");
+    }
+    if (this->mass2 > 0.0 && !eigenIsValidInertiaMatrix(this->IS2PntSc2_S2)) {
+        bskLogger.bskError("spinningBodyTwoDOFStateEffector: IS2PntSc2_S2 is not a valid inertia tensor; it must be symmetric and positive definite. It may not have been set properly by the user.");
+    }
 }
 
 
