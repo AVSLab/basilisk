@@ -63,6 +63,8 @@ RESET_ERROR_CASES = [
      lambda sb: setattr(sb, "IPntSc_S", [[-50.0, 0.0, 0.0], [0.0, 30.0, 0.0], [0.0, 0.0, 40.0]])),
     ("sHat_S not set", "sHat",
      lambda sb: setattr(sb, "sHat_S", [[0.0], [0.0], [0.0]])),
+    ("mass negative", "mass",
+     lambda sb: setattr(sb, "mass", -1.0)),
 ]
 
 
