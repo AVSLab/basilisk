@@ -153,6 +153,46 @@ def test_vector_angle_dispersion_reads_nested_method_path():
     assert np.isclose(np.linalg.norm(dispersed_vector), 1.0)
 
 
+def test_uniform_vector_angle_dispersion_uses_bounds_off_nominal(monkeypatch):
+    """Verify angle dispersions use bounds centered on the nominal vector."""
+    sim = DummySimulation()
+    vector_path = "get_DynModel().scObject.hub.unitVector"
+    sim.get_DynModel().scObject.hub.unitVector = np.array([
+        [1.0], [1.0], [1.0]
+    ])  # [-]
+    phi_bounds = [-0.02, 0.03]  # [rad]
+    theta_bounds = [-0.04, 0.05]  # [rad]
+    uniform_calls = []
+
+    def record_uniform(lower_bound, upper_bound):
+        uniform_calls.append((lower_bound, upper_bound))
+        return (lower_bound + upper_bound) / 2.0
+
+    monkeypatch.setattr(np.random, "uniform", record_uniform)
+
+    dispersion = UniformVectorAngleDispersion(
+        vector_path,
+        phiBoundsOffNom=phi_bounds,
+        thetaBoundsOffNom=theta_bounds
+    )
+    dispersion.generate(sim)
+
+    nominal_vector = sim.get_DynModel().scObject.hub.unitVector
+    nominal_vector = nominal_vector / np.linalg.norm(nominal_vector)
+    nominal_spherical = dispersion.cart2Spherical(nominal_vector)
+    expected_phi_bounds = [
+        nominal_spherical[1] + phi_bounds[0],
+        nominal_spherical[1] + phi_bounds[1]
+    ]
+    expected_theta_bounds = [
+        nominal_spherical[2] + theta_bounds[0],
+        nominal_spherical[2] + theta_bounds[1]
+    ]
+
+    assert np.allclose(uniform_calls[0], expected_phi_bounds)
+    assert np.allclose(uniform_calls[1], expected_theta_bounds)
+
+
 def test_normal_vector_dispersion_uses_configured_statistics():
     """Verify normal vector dispersions retain mean and standard deviation."""
     sim = DummySimulation()
