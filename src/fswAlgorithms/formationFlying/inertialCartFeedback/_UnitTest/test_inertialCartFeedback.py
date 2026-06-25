@@ -89,6 +89,15 @@ def test_inertialCartFeedback(useMu, nonNaturalMotion, accuracy):
          0.0, 6.0e-2, 0.0,
          0.0, 0.0, 7.0e-2]
     module.setP(P)
+
+    # Regression for the Eigen SWIG typemap leak (bsk-499/bsk-422): the getters
+    # return Eigen::Matrix3d by value, which leaked a raw pointer wrapper when the
+    # Eigen typemaps were not included. They should now round-trip as plain lists.
+    assert isinstance(module.getK(), list)
+    assert isinstance(module.getP(), list)
+    np.testing.assert_allclose(module.getK(), np.array(K).reshape((3, 3)))
+    np.testing.assert_allclose(module.getP(), np.array(P).reshape((3, 3)))
+
     unitTestSim.AddModelToTask(unitTaskName, module)
 
     deputyData = messaging.NavTransMsgPayload()

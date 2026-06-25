@@ -36,6 +36,7 @@
 %include "swig_conly_data.i"
 
 %include "sys_model.i"
+%include "swig_eigen.i"
 %include "hingedJointArrayMotor.h"
 
 %include "architecture/msgPayloadDefCpp/MJSysMassMatrixMsgPayload.h"
