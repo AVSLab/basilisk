@@ -150,6 +150,64 @@ def run(showplots, defaultPolarRadius, defaultPlanet, latitude, maxRange, cone):
     return [testFailCount, ''.join(testMessages)]
 
 
+def test_spacecraftLocationColinearAccess(show_plots):
+    """
+    Regression test for issues #644 / #946.
+
+    Two spacecraft that are radially aligned (on the same ray from the planet
+    center) at different altitudes have an unobstructed line of sight, so
+    ``hasAccess`` must be 1.
+
+    Before the #946 fix (commit ``d432682135``), ``rClose`` -- the closest point
+    on the inter-spacecraft segment to the planet center -- was computed from the
+    *unclamped* line parameter. For a radial alignment that parameter is negative,
+    placing the "closest point" at the planet center (``rClose`` ~ 0), so the
+    ``rClose.norm() > rEquator`` gate failed and access was wrongly denied.
+
+    This geometry keeps every other access pathway neutral -- no planet message
+    (identity orientation at the origin), a spherical planet so ``zScale == 1``,
+    no range cap, no boresight cone, and no sun message -- which isolates the
+    ``rClose`` computation. The existing :func:`test_spacecraftLocation` cases
+    cannot catch this regression: their equal-radius geometry holds the line
+    parameter at ~0.5, inside ``[0, 1]``, where the clamp is a no-op.
+    """
+    scSim = SimulationBaseClass.SimBaseClass()
+    dynProcess = scSim.CreateNewProcess("simProcess")
+    dynProcess.addTask(scSim.CreateNewTask("simTask", macros.sec2nano(1.)))
+
+    module = spacecraftLocation.SpacecraftLocation()
+    module.ModelTag = "scLocationColinear"
+    module.rEquator = orbitalMotion.REQ_EARTH * 1000.  # [m]
+    # rPolar left unset -> spherical planet (zScale = 1); no range cap, cone, or sun.
+    scSim.AddModelToTask("simTask", module)
+
+    # primary spacecraft on the +x axis, 1000 km altitude
+    rPrimary = orbitalMotion.REQ_EARTH * 1000. + 1000.0e3  # [m]
+    primaryMsgData = messaging.SCStatesMsgPayload()
+    primaryMsgData.r_BN_N = [rPrimary, 0.0, 0.0]  # [m]
+    primaryMsg = messaging.SCStatesMsg().write(primaryMsgData)
+    module.primaryScStateInMsg.subscribeTo(primaryMsg)
+
+    # other spacecraft farther out on the SAME ray -> unobstructed line of sight
+    rOther = orbitalMotion.REQ_EARTH * 1000. + 2000.0e3  # [m]
+    otherMsgData = messaging.SCStatesMsgPayload()
+    otherMsgData.r_BN_N = [rOther, 0.0, 0.0]  # [m]
+    otherMsg = messaging.SCStatesMsg().write(otherMsgData)
+    module.addSpacecraftToModel(otherMsg)
+
+    scSim.InitializeSimulation()
+    scSim.TotalSim.SingleStepProcesses()
+
+    accessMsg = module.accessOutMsgs[0].read()
+
+    assert accessMsg.hasAccess == 1, (
+        "radially-aligned spacecraft must have line-of-sight access (issues #644/#946); "
+        "hasAccess=0 indicates the rClose clamp-ordering regression"
+    )
+    # for a pure radial separation the slant range is just the altitude difference
+    np.testing.assert_allclose(accessMsg.slantRange, rOther - rPrimary, rtol=1e-6)
+
+
 if __name__ == '__main__':
     run(False
         , False      # defaultPolarRadius
@@ -158,3 +216,4 @@ if __name__ == '__main__':
         , -7000.*1000 # max range
         , 1            # cone case, 0-> no cone, 1 -> [0, 1, 0], -1 -> [0, -1, 0]
         )
+    test_spacecraftLocationColinearAccess(False)
