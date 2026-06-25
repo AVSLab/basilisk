@@ -97,7 +97,7 @@ double FuelTank::getFuelLeakRate() const {
 
  @param model fuel tank model type
  */
-void FuelTank::setTankModel(FuelTankModel *model) {
+void FuelTank::setTankModel(std::shared_ptr<FuelTankModel> model) {
     this->fuelTankModel = model;
 }
 

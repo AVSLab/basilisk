@@ -29,6 +29,7 @@
 #include "simulation/dynamics/Thrusters/thrusterStateEffector/thrusterStateEffector.h"
 
 #include <math.h>
+#include <memory>
 #include <vector>
 #include "architecture/utilities/avsEigenMRP.h"
 #include "architecture/utilities/avsEigenSupport.h"
@@ -279,7 +280,7 @@ private:
     StateData *massState{};                             //!< -- state data for mass state
     double fuelConsumption{};                           //!< [kg/s] rate of fuel being consumed
     double tankFuelConsumption{};                       //!< [kg/s] rate of fuel being consumed from tank
-    FuelTankModel *fuelTankModel{};                     //!< -- style of tank to simulate
+    std::shared_ptr<FuelTankModel> fuelTankModel;       //!< -- style of tank to simulate
     Eigen::Matrix3d ITankPntT_B;
     Eigen::Vector3d r_TcB_B;
     static uint64_t effectorID;                         //!< [] ID number of this fuel tank effector
@@ -290,7 +291,7 @@ public:
     ~FuelTank();
     void writeOutputMessages(uint64_t currentClock);
     void UpdateState(uint64_t currentSimNanos) override;
-    void setTankModel(FuelTankModel *model);
+    void setTankModel(std::shared_ptr<FuelTankModel> model);
     void setDcm_TB(const Eigen::Matrix3d &dcm_TB);       //!< -- Setter for the tank frame orientation
     Eigen::Matrix3d getDcm_TB() const;                   //!< -- Getter for the tank frame orientation
     void setR_TB_B(const Eigen::Vector3d &r_TB_B);       //!< [m] Setter for the tank location

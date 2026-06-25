@@ -24,6 +24,7 @@
 
 %{
    #include "fuelTank.h"
+   #include <memory>
 %}
 
 %pythoncode %{
@@ -67,6 +68,19 @@ from Basilisk.architecture.swig_common_model import *
     "2027/06/22",
     "Direct access to fuelLeakRate is deprecated. Use setFuelLeakRate() and getFuelLeakRate() instead."
 )
+// The FuelTankModel hierarchy is owned jointly by Python and C++: the model is
+// created in Python and handed to the tank via setTankModel(). Wrapping it as a
+// shared_ptr keeps the C++ object alive even after the Python reference is
+// dropped, preventing a dangling pointer (see issue #282). Declarations must
+// precede the %include of fuelTank.h, base before derived.
+%include <std_shared_ptr.i>
+%shared_ptr(FuelTankModel)
+%shared_ptr(FuelTankModelConstantVolume)
+%shared_ptr(FuelTankModelConstantDensity)
+%shared_ptr(FuelTankModelEmptying)
+%shared_ptr(FuelTankModelUniformBurn)
+%shared_ptr(FuelTankModelCentrifugalBurn)
+
 %include "fuelTank.h"
 
 %include "architecture/msgPayloadDefC/FuelTankMsgPayload.h"

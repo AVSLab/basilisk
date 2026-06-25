@@ -14,6 +14,7 @@
 # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
+import gc
 import inspect
 import os
 import warnings
@@ -371,6 +372,67 @@ def test_leakyTankRunsOutOfFuel(tankModelConstructor):
     assert np.all(fuelMass >= -fuelMassTolerance)
     assert np.isclose(fuelMass[-1], 0.0, atol=fuelMassTolerance)
     assert np.isclose(fuelMassDot[-1], 0.0, atol=fuelMassDotTolerance)
+    assert np.any(np.isclose(fuelMassDot, -leakRate, rtol=1e-6))
+
+
+@pytest.mark.parametrize("tankModelConstructor", [fuelTank.FuelTankModelConstantVolume,
+                                                  fuelTank.FuelTankModelConstantDensity,
+                                                  fuelTank.FuelTankModelEmptying,
+                                                  fuelTank.FuelTankModelUniformBurn,
+                                                  fuelTank.FuelTankModelCentrifugalBurn])
+def test_tankModelOutlivesPythonReference(tankModelConstructor):
+    """Regression test for issue #282.
+
+    The tank model is created in Python and handed to the FuelTank via
+    setTankModel(). Because the model is now held by a std::shared_ptr, dropping
+    the only Python reference must NOT free the underlying C++ object: the tank
+    co-owns it. Before the shared_ptr conversion the C++ member was a raw pointer,
+    so this sequence left a dangling pointer (undefined behaviour). Here we drop
+    the Python reference (del + gc.collect()) before the simulation runs and
+    assert the model still drives correct, finite depletion results.
+    """
+    scObject = spacecraft.Spacecraft()
+    scObject.ModelTag = "spacecraftBody"
+    unitTaskName = "unitTask"
+    unitProcessName = "TestProcess"
+
+    unitTestSim = SimulationBaseClass.SimBaseClass()
+    testProcessRate = macros.sec2nano(0.1)  # [s]
+    testProc = unitTestSim.CreateNewProcess(unitProcessName)
+    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+
+    unitTestSim.fuelTankStateEffector = fuelTank.FuelTank()
+    tankModel = tankModelConstructor()
+    _configureTankGeometry(tankModel)
+    tankModel.propMassInit = 1.0e-4  # [kg]
+    unitTestSim.fuelTankStateEffector.setTankModel(tankModel)
+
+    # Drop the only Python reference to the model before the sim runs. With a
+    # raw pointer this orphaned the C++ object; with shared_ptr the tank keeps it.
+    del tankModel
+    gc.collect()
+
+    scObject.addStateEffector(unitTestSim.fuelTankStateEffector)
+    leakRate = 1.0e-5  # [kg/s]
+    unitTestSim.fuelTankStateEffector.setFuelLeakRate(leakRate)
+
+    unitTestSim.AddModelToTask(unitTaskName, unitTestSim.fuelTankStateEffector)
+    unitTestSim.AddModelToTask(unitTaskName, scObject)
+
+    fuelLog = unitTestSim.fuelTankStateEffector.fuelTankOutMsg.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, fuelLog)
+    unitTestSim.InitializeSimulation()
+
+    stopTime = 20.0  # [s]
+    unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
+    unitTestSim.ExecuteSimulation()
+
+    fuelMass = fuelLog.fuelMass
+    fuelMassDot = fuelLog.fuelMassDot
+
+    # If the model had been freed, these would be garbage / NaN or the sim would crash.
+    assert np.all(np.isfinite(fuelMass))
+    assert np.all(np.isfinite(fuelMassDot))
     assert np.any(np.isclose(fuelMassDot, -leakRate, rtol=1e-6))
 
 
