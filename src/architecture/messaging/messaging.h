@@ -159,7 +159,14 @@ public:
     //! after a subscribe completes. The caller has already taken the one reference we adopt
     //! here (so we do NOT call acquire); subsequent C++ copies acquire, destructors release.
     void setSource(void* handle, void(*acquire)(void*), void(*release)(void*)) {
-        if (handle == this->sourceHandle) { return; }
+        if (handle == this->sourceHandle) {
+            // Already holding this exact source (e.g. a re-subscribe to the same message).
+            // The caller still took one reference we are contractually obliged to consume, so
+            // drop it here rather than adopt a redundant one -- otherwise each re-subscribe
+            // would leak a Py_INCREF that unsubscribe/destruction never balances (issue #676).
+            if (handle && release) { release(handle); }
+            return;
+        }
         this->releaseHandle_();   // drop any prior owner
         this->sourceHandle = handle;
         this->acquireSource = acquire;
