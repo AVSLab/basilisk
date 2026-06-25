@@ -103,6 +103,14 @@ def test_hingedJointArrayMotor(nonActForces, maxTorque, numJoints, numSpacecraft
     Ptheta = 2.0 * np.sqrt(10.0) * np.eye(numJoints * numSpacecraft)
     module.setKtheta(Ktheta.flatten().tolist())
     module.setPtheta(Ptheta.flatten().tolist())
+
+    # Regression for the Eigen SWIG typemap leak (bsk-499/bsk-422): the getters
+    # return Eigen::MatrixXd by value, which leaked a raw pointer wrapper when the
+    # Eigen typemaps were not included. They should now round-trip as plain lists.
+    assert isinstance(module.getKtheta(), list)
+    assert isinstance(module.getPtheta(), list)
+    np.testing.assert_allclose(module.getKtheta(), Ktheta)
+    np.testing.assert_allclose(module.getPtheta(), Ptheta)
     if maxTorque:
         uMax = [0.03] * (numJoints * numSpacecraft)
         module.setUMax(uMax)

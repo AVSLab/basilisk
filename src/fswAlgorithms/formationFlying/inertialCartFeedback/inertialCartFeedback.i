@@ -35,6 +35,7 @@
 %template(DoubleVector) std::vector<double>;
 
 %include "sys_model.i"
+%include "swig_eigen.i"
 %include "inertialCartFeedback.h"
 
 %include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
