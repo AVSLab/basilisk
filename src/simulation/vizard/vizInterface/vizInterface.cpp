@@ -65,6 +65,11 @@ VizInterface::~VizInterface()
         delete this->opnavImageOutMsgs.at(c);
     }
 
+    for (size_t c=0; c<this->bskImagePtrs.size(); c++) {
+        free(this->bskImagePtrs.at(c));
+        this->bskImagePtrs.at(c) = NULL;
+    }
+
     return;
 }
 

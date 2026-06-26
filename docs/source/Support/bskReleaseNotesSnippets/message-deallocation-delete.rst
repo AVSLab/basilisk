@@ -1,2 +1,3 @@
 - Fixed several BSK modules to deallocate dynamically allocated output message objects with C++ ``delete``.
 - Fixed the camera module to release its retained image output buffer on destruction.
+- Fixed the Vizard interface to release retained image output buffers on destruction.
