@@ -181,7 +181,8 @@ def run(
         planet.isCentralBody = True  # ensure this is the central gravitational body
         if useSphericalHarmonics:
             ggm2b_path = get_path(DataFile.LocalGravData.GGM2BData)
-            planet.useSphericalHarmonicsGravityModel(str(ggm2b_path), 100)
+            # 80 is the maximum degree/order available in the GGM2B data file.
+            planet.useSphericalHarmonicsGravityModel(str(ggm2b_path), 80)
 
     else:  # Earth
         planet = gravFactory.createEarth()
@@ -193,6 +194,20 @@ def run(
 
     # attach gravity model to spacecraft
     gravFactory.addBodiesTo(scObject)
+
+    # A spherical-harmonic field with tesseral terms (e.g. the Mars GGM2B
+    # degree/order 80 field above) is evaluated in the planet-fixed frame and so
+    # requires the planet orientation.  Attach a SPICE interface to supply the
+    # central body's full position and orientation; without it the planet is
+    # treated as non-rotating and the longitude-dependent terms produce spurious
+    # secular orbit drift (see issue #1352).  ``zeroBase`` keeps the central
+    # planet at the inertial origin, consistent with the planet-centered orbit
+    # elements set below.
+    if useSphericalHarmonics:
+        spiceTimeInit = "2012 MAY 1 00:28:30.0"
+        spiceObject = gravFactory.createSpiceInterface(time=spiceTimeInit)
+        spiceObject.zeroBase = "earth" if planetCase == "Earth" else "mars barycenter"
+        scSim.AddModelToTask(simTaskName, spiceObject, 100)
 
     #
     #   setup orbit and simulation time
@@ -427,6 +442,9 @@ Press 'p' to pause the simulation, 'z' to stop the simulation, 'q' to stop the s
             if continueBurn:
                 thrMsgData.OnTimeRequest = [100, 100, 100]
                 thrMsg.write(thrMsgData, incrementalStopTime)
+
+    if useSphericalHarmonics:
+        gravFactory.unloadSpiceKernels()
 
     #
     #   retrieve the logged data
