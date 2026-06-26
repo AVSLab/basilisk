@@ -22,6 +22,7 @@ typedef struct {type};
             {type}_cpp_subscribe(self, source)
         elif type(source) == int: #Note that is assumes it is a uint64_t address in memory
             {type}_addr_subscribe(self, source)
+            _msgKeepAlive.releaseSource(self)
             return  # a raw address: the caller owns the source, nothing to keep alive
         else:
             raise Exception('tried to subscribe {type} to another message type')
