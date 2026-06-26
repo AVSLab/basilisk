@@ -44,7 +44,13 @@ Camera::Camera()
 }
 
 /*! This is the destructor */
-Camera::~Camera() = default;
+Camera::~Camera()
+{
+    if (this->pointImageOut != nullptr) {
+        free(this->pointImageOut);
+        this->pointImageOut = nullptr;
+    }
+}
 
 /*! This method performs a complete reset of the module.  Local module variables that retain time varying states
  * between function calls are reset to their default values.
