@@ -110,6 +110,20 @@ endfunction(generate_messages)
 # TODO: Deprecate this!
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cMsgCInterfacePy/__init__.py ${CMAKE_BINARY_DIR}/Basilisk/architecture/cMsgCInterfacePy/__init__.py COPYONLY)
 
+# issue #1433: Python-side keep-alive helpers for Msg_C subscribers. Copy at
+# build time so this helper does not make the messaging package directory exist
+# during configure, before generatePackageInit.py writes messaging/__init__.py.
+set(MSG_KEEP_ALIVE_PY "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/_msgKeepAlive.py")
+add_custom_command(
+  OUTPUT ${MSG_KEEP_ALIVE_PY}
+  COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging"
+  COMMAND ${CMAKE_COMMAND} -E copy_if_different
+          "${CMAKE_CURRENT_SOURCE_DIR}/_msgKeepAlive.py"
+          "${MSG_KEEP_ALIVE_PY}"
+  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/_msgKeepAlive.py
+  VERBATIM)
+add_custom_target(msgKeepAlivePy DEPENDS ${MSG_KEEP_ALIVE_PY})
+
 # Track payload headers so the generated Python message package is rebuilt when message definitions change.
 file(GLOB_RECURSE package_init_payload_files CONFIGURE_DEPENDS
   "${CMAKE_CURRENT_SOURCE_DIR}/../msgPayloadDefC/*Payload.h"
@@ -142,6 +156,7 @@ endif(NOT "${EXTERNAL_MODULES_PATH}" STREQUAL "")
 
 # Custom target for establishing dependency
 add_custom_target(swigtrick DEPENDS ${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/__init__.py)
+add_dependencies(swigtrick msgKeepAlivePy)
 
 # Generate per-payload equality headers. Each "<Payload>_equality.h" is included
 # only by that payload's own SWIG module.

@@ -15,17 +15,24 @@ typedef struct {type};
 
     def subscribeTo(self, source):
         """subscribe to another message source"""
+        from Basilisk.architecture.messaging import {type}, _msgKeepAlive
         if type(source) == type(self):
             {type}_C_subscribe(self, source)
         elif type(source) == {type}:
             {type}_cpp_subscribe(self, source)
         elif type(source) == int: #Note that is assumes it is a uint64_t address in memory
             {type}_addr_subscribe(self, source)
+            return  # a raw address: the caller owns the source, nothing to keep alive
         else:
             raise Exception('tried to subscribe {type} to another message type')
+        # issue #1433: this Msg_C reader now holds raw pointers into `source`; keep the
+        # (otherwise garbage-collectable) source object alive for as long as we read it
+        _msgKeepAlive.retainSource(self, source)
 
     def unsubscribe(self):
         """Unsubscribe to the connected message, noop if no message was connected"""
+        from Basilisk.architecture.messaging import _msgKeepAlive
+        _msgKeepAlive.releaseSource(self)  # issue #1433: drop the keep-alive, if any
         {type}_unsubscribe(self)
 
     def isSubscribedTo(self, source):
