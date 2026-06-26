@@ -201,3 +201,23 @@ double SphericalHarmonicsGravityModel::computePotentialEnergy(
 {
     return -this->muBody / positionWrtPlanet_N.norm();
 }
+
+bool SphericalHarmonicsGravityModel::dependsOnOrientation() const
+{
+    // Only terms of order m >= 1 (tesseral/sectoral) vary with the body's
+    // longitude; zonal terms (m == 0) depend on latitude alone. Scan the
+    // retained coefficients for any non-zero term of order >= 1.
+    for (size_t degree = 1; degree <= this->maxDeg; degree++) {
+        for (size_t order = 1; order <= degree; order++) {
+            if (degree < this->cBar.size() && order < this->cBar[degree].size() &&
+                this->cBar[degree][order] != 0.0) {
+                return true;
+            }
+            if (degree < this->sBar.size() && order < this->sBar[degree].size() &&
+                this->sBar[degree][order] != 0.0) {
+                return true;
+            }
+        }
+    }
+    return false;
+}

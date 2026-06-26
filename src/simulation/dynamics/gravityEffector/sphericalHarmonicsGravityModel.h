@@ -82,6 +82,13 @@ class SphericalHarmonicsGravityModel : public GravityModel {
      */
     double computePotentialEnergy(const Eigen::Vector3d& positionWrtPlanet_N) const override;
 
+    /** Returns true if any retained coefficient of order >= 1 (a tesseral or
+     * sectoral term) is non-zero. Such terms vary with the body's longitude, so
+     * the body orientation must be known to evaluate them correctly. A purely
+     * zonal field (only order-0 terms, e.g. a J2-only model) returns false.
+     */
+    bool dependsOnOrientation() const override;
+
   public:
     double radEquator = 0;  /**< [m] Reference radius for the planet */
     double muBody = 0;      /**< [m^3/s^2] Gravitation parameter for the planet */

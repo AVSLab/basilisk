@@ -64,6 +64,16 @@ class PolyhedralGravityModel : public GravityModel {
      */
     double computePotentialEnergy(const Eigen::Vector3d& pos_BP_P) const override;
 
+    /** Always returns true: the field is evaluated from the body's facet geometry
+     * in the body-centred rotating frame, so it depends on the body orientation.
+     *
+     * A polyhedral model represents an irregular (generally non-axisymmetric)
+     * shape, so the body orientation must be known to evaluate the field
+     * correctly. Without a planet-orientation message the body is treated as
+     * non-rotating, which produces spurious results (issue #1352).
+     */
+    bool dependsOnOrientation() const override { return true; }
+
   private:
     void initializeFacets();
     void initializeEdges();

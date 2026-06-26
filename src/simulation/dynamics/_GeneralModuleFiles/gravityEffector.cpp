@@ -117,6 +117,28 @@ void GravityEffector::Reset(uint64_t currentSimNanos)
     // Initializes the bodies
     for (auto&& body : this->gravBodies) {
         body->initBody(this->moduleID);
+
+        // Warn if a body's gravity field depends on its orientation (e.g. it has
+        // tesseral/sectoral spherical-harmonic terms, or a polyhedral shape) but
+        // no planet-orientation message is connected. Without it the body is
+        // treated as non-rotating, which makes the orientation-dependent terms
+        // produce spurious orbital drift (see issue #1352). Note: a message that
+        // is linked but only supplies position (leaving J20002Pfix zero) triggers
+        // the same identity fallback at runtime; at reset time only message
+        // linkage can be checked.
+        if (body->gravityModel && body->gravityModel->dependsOnOrientation() &&
+            !body->planetBodyInMsg.isLinked()) {
+            this->bskLogger.bskLog(
+                BSK_WARNING,
+                "Gravity body '%s' uses an orientation-dependent gravity model "
+                "(e.g. spherical-harmonic tesseral/sectoral terms of order >= 1, "
+                "or a polyhedral shape model), but no planet-orientation message "
+                "is connected to planetBodyInMsg. The body will be treated as "
+                "non-rotating, which produces spurious orbital drift. Connect a "
+                "planet ephemeris/orientation message, e.g. via "
+                "gravBodyFactory.createSpiceInterface().",
+                body->planetName.c_str());
+        }
     }
 }
 

@@ -83,6 +83,19 @@ class GravityModel {
      */
     virtual double computePotentialEnergy(const Eigen::Vector3d& positionWrtPlanet_N) const = 0;
 
+    /** Returns true if the gravity field depends on the orientation of the body.
+     *
+     * This is true when the field has terms that vary with the body's longitude
+     * (e.g. the tesseral/sectoral spherical-harmonic terms of order >= 1). When
+     * it returns true, a planet-orientation message must be connected to the
+     * gravity body; otherwise the body is treated as non-rotating and those
+     * longitude-dependent terms produce spurious results.
+     *
+     * The default implementation returns false (e.g. point-mass gravity is
+     * orientation-independent).
+     */
+    virtual bool dependsOnOrientation() const { return false; }
+
   public:
     BSKLogger *bskLogger;  /*!< pointer to bsk logging instance */
 };
