@@ -332,6 +332,16 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
     # If time varying planet ephemeris messages are to be included use the Spice module.  For non-zero messages
     # the planet's default ephemeris would be replaced with the desired custom values.
 
+    # A note on spherical harmonics and planet rotation: the spherical-harmonic gravity model evaluates the
+    # field in the planet-fixed frame.  Tesseral/sectoral terms (spherical-harmonic order >= 1) therefore vary
+    # with the planet's longitude, so the planet orientation must be supplied via a planet-orientation message
+    # (e.g. `gravFactory.createSpiceInterface()`).  Without it the planet is treated as non-rotating and those
+    # longitude-dependent terms no longer average out, producing spurious secular drift in the orbit (see issue
+    # #1352).  The Earth case above deliberately uses a J2-only (purely zonal) field, which depends only on
+    # latitude and is unaffected by planet rotation, which is why no SPICE interface is needed here.  For a
+    # high-fidelity field with tesseral terms, attach the planet rotation -- see ``scenarioOrbitMultiBody`` and
+    # ``scenarioOrbitConsistencyVerification``.
+
     #
     #   setup orbit and simulation time
     #
