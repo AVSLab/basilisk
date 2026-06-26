@@ -134,6 +134,18 @@ def run(show_plots, useClassicElem, numOrbits):
     gravFactory.addBodiesTo(scObject)
     gravFactory.addBodiesTo(scObject2)
 
+    # Attach a SPICE interface so the Earth's full position and orientation feed
+    # the gravity model.  The GGM03S field retains tesseral terms (spherical-
+    # harmonic order >= 1) that are evaluated in the planet-fixed frame; without
+    # the planet orientation the body would be treated as non-rotating and those
+    # longitude-dependent terms would no longer average out, producing spurious
+    # secular orbit drift (see issue #1352).  ``zeroBase`` keeps Earth at the
+    # inertial origin, consistent with the Earth-centered orbit elements below.
+    spiceTimeInit = "2012 MAY 1 00:28:30.0"
+    spiceObject = gravFactory.createSpiceInterface(time=spiceTimeInit)
+    spiceObject.zeroBase = "Earth"
+    scSim.AddModelToTask(dynTaskName, spiceObject, 100)
+
     # extObj
     extFTObject2 = extForceTorque.ExtForceTorque()
     extFTObject2.ModelTag = "externalDisturbance2"
@@ -263,6 +275,8 @@ def run(show_plots, useClassicElem, numOrbits):
     scSim.InitializeSimulation()
     scSim.ConfigureStopTime(simulationTime)
     scSim.ExecuteSimulation()
+
+    gravFactory.unloadSpiceKernels()
 
     # ----- pull ----- #
     pos = dataLog.r_BN_N
