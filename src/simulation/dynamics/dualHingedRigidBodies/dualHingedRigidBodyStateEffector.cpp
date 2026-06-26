@@ -80,8 +80,8 @@ uint64_t DualHingedRigidBodyStateEffector::effectorID = 1;
 DualHingedRigidBodyStateEffector::~DualHingedRigidBodyStateEffector()
 {
     for (int c=0; c<2; c++) {
-        free(this->dualHingedRigidBodyOutMsgs.at(c));
-        free(this->dualHingedRigidBodyConfigLogOutMsgs.at(c));
+        delete this->dualHingedRigidBodyOutMsgs.at(c);
+        delete this->dualHingedRigidBodyConfigLogOutMsgs.at(c);
     }
 
     this->effectorID = 1;    /* reset the panel ID*/
