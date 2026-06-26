@@ -121,6 +121,16 @@ void BSKLogger::bskLog(logLevel_t targetLevel, const char* info, ...)
     if(targetLevel >= this->_logLevel)
     {
         printf("%s: %s\n", targetLevelStr, formatMessage.c_str());
+        if(targetLevel >= BSK_WARNING)
+        {
+            // Warnings (and above) are alerts, so flush immediately. When stdout
+            // is not a terminal (redirected to a file or pipe, or captured by a
+            // test harness) it is fully buffered, so a warning would otherwise sit
+            // in the C runtime buffer until the buffer fills or the process exits
+            // -- it could be lost on a crash or appear far out of order. Flushing
+            // here keeps warnings visible and makes them observable to tests.
+            fflush(stdout);
+        }
     }
 }
 
