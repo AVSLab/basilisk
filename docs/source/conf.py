@@ -514,9 +514,14 @@ class fileCrawler():
 
         except: # Auto-generate the index.rst file
             # add page tag
+            normalizedIndexPath = index_path.replace(os.sep, "/").rstrip("/")
             if name.startswith("_"):
                 pathToFolder = index_path.split("/"+name)[0]
                 lines += ".. " + name + pathToFolder.split("/")[-1] + ":\n\n"
+            elif "/benchmarks/" in normalizedIndexPath:
+                benchmarkPath = normalizedIndexPath.split("/benchmarks/", 1)[1]
+                benchmarkLabel = benchmarkPath.replace("/", "_")
+                lines += ".. _Folder_benchmarks_" + benchmarkLabel + ":\n\n"
             elif name == 'utilities':
                 pathToFolder = index_path.split("/" + name)[0]
                 lines += ".. _Folder_" + name + pathToFolder.split("/")[-1] + ":\n\n"
