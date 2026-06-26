@@ -16,7 +16,7 @@
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
-"""Keep-alive registry for C-message (``Msg_C``) subscribers -- issue #1433.
+"""Keep-alive helpers for C-message (``Msg_C``) subscribers -- issue #1433.
 
 When a ``Msg_C`` reader (for example a C module's ``dataInMsg``) subscribes to a
 stand-alone source, it stores *raw pointers* into that source's memory. If the
@@ -27,36 +27,68 @@ Issue #676 fixed the C++ ``ReadFunctor`` direction by hanging the keep-alive on
 that reader's C++ destructor. A ``Msg_C`` is a plain C struct with no destructor,
 so this module keeps the source alive from the Python side instead.
 
-How the source reference is *released* depends on how the subscriber is owned:
+The retention target is the Python object that owns the source storage:
 
-* **Stand-alone ``Msg_C`` subscriber** -- its SWIG proxy owns the underlying
-  struct (``thisown`` is true) and is a single persistent object, so the source is
-  simply pinned as an attribute on that proxy and dies with it.
-* **Module-embedded ``Msg_C`` subscriber** (the common case, e.g. ``mod.dataInMsg``)
-  -- its proxy is *transient*: SWIG hands out a fresh, non-owning proxy on every
-  attribute access, so an attribute pinned on it is immediately lost and the proxy
-  has no usable destruction hook. The source is therefore pinned in a process-wide
-  registry keyed by the subscriber struct's stable C-address, and released when the
-  owning C module is garbage-collected (its wrapper *does* have a real destructor;
-  :func:`armModuleCleanup` arms a finalizer over the module config's address range).
+* a stand-alone message source retains the source proxy itself;
+* a module-embedded ``Msg_C`` source retains the owning module wrapper, because
+  the embedded proxy is transient and does not own the source storage.
+
+Where the reference is stored depends on how the subscriber is owned:
+
+* a stand-alone ``Msg_C`` subscriber pins the source on its own persistent proxy;
+* a module-embedded ``Msg_C`` subscriber pins the source in a hidden dictionary on
+  the owning C-module wrapper.
 
 In both cases the reference is also released on an explicit ``unsubscribe()`` or
 when the subscriber re-subscribes to a different source.
 
-All access happens on the Python side under the GIL (subscribe/unsubscribe calls
-and ``weakref`` finalizers all run in the interpreter thread), so the registry
-needs no additional locking.
+All access happens on the Python side under the GIL (module construction,
+subscribe/unsubscribe calls, and ``weakref`` finalizers all run in the interpreter
+thread), so the registries need no additional locking.
 """
 
 import weakref
 
-#: subscriber ``Msg_C`` C-address (``int``) -> retained source Python object.
-#: Holds only *module-embedded* subscribers; stand-alone subscribers pin their
-#: source as an attribute on their own proxy instead.
-_registry = {}
+#: Embedded ``Msg_C`` C-address (``int``) -> (weak module owner, owner token).
+_owner_by_address = {}
 
 #: Attribute name used to pin a source on a stand-alone subscriber proxy.
 _PIN_ATTR = "_bskKeepAliveSource"
+
+#: Attribute name used for the module-owned keep-alive dictionary.
+_MODULE_PIN_ATTR = "_bskMsgKeepAlive"
+
+#: Attribute names used to make module registration idempotent and finalizable.
+_MODULE_ADDRS_ATTR = "_bskMsgKeepAliveAddrs"
+_MODULE_TOKEN_ATTR = "_bskMsgKeepAliveToken"
+
+
+def registerModule(module):
+    """Register the embedded ``Msg_C`` fields owned by ``module``.
+
+    The C-module SWIG wrapper calls this once from its Python constructor. SWIG
+    returns fresh non-owning proxies for embedded C messages on each attribute
+    access, so this registry lets later ``subscribeTo()`` calls recover the owning
+    module from an embedded message's stable C address.
+    """
+    if hasattr(module, _MODULE_ADDRS_ATTR):
+        return
+
+    token = object()
+    pins = {}
+    addresses = []
+
+    object.__setattr__(module, _MODULE_TOKEN_ATTR, token)
+    object.__setattr__(module, _MODULE_PIN_ATTR, pins)
+
+    module_ref = weakref.ref(module)
+    for msg in _embedded_c_msgs(module):
+        addr = int(msg.this)
+        _owner_by_address[addr] = (module_ref, token)
+        addresses.append(addr)
+
+    object.__setattr__(module, _MODULE_ADDRS_ATTR, tuple(addresses))
+    weakref.finalize(module, _release_module_owner, tuple(addresses), token)
 
 
 def retainSource(subscriber, source):
@@ -65,41 +97,83 @@ def retainSource(subscriber, source):
     Replaces any previously retained source for the same subscriber, dropping the
     old reference.
     """
-    if getattr(subscriber, "thisown", False):
+    releaseSource(subscriber)
+
+    target = _retention_target(source)
+    owner = _owner_of(subscriber)
+    if owner is not None:
+        getattr(owner, _MODULE_PIN_ATTR)[int(subscriber.this)] = target
+    elif getattr(subscriber, "thisown", False):
         # Stand-alone subscriber: persistent, owning proxy -- pin on the proxy.
-        setattr(subscriber, _PIN_ATTR, source)
+        object.__setattr__(subscriber, _PIN_ATTR, target)
     else:
-        # Module-embedded subscriber: transient proxy -- pin in the registry by
-        # the subscriber struct's stable address.
-        _registry[int(subscriber.this)] = source
+        # Unknown non-owning subscriber. This is unusual, but retaining on the
+        # proxy is still the least surprising fallback for Python-created objects.
+        object.__setattr__(subscriber, _PIN_ATTR, target)
 
 
 def releaseSource(subscriber):
     """Drop the retained source for ``subscriber`` (no-op if none is held)."""
-    if getattr(subscriber, "thisown", False):
+    owner = _owner_of(subscriber)
+    if owner is not None:
+        pins = getattr(owner, _MODULE_PIN_ATTR, None)
+        if pins is not None:
+            pins.pop(int(subscriber.this), None)
+    else:
         try:
             delattr(subscriber, _PIN_ATTR)
         except AttributeError:
             pass
-    else:
-        _registry.pop(int(subscriber.this), None)
 
 
-def armModuleCleanup(module):
-    """Arm a finalizer that releases every embedded subscriber's source when
-    ``module`` (a C-module wrapper) is garbage-collected.
-
-    ``module`` must expose ``getConfigAddress()`` / ``getConfigSize()`` (provided by
-    the ``CWrapper`` SWIG template). All of the module's embedded ``Msg_C`` members
-    live within ``[address, address + size)``, so releasing that address range frees
-    exactly this module's registered sources and no others.
-    """
-    lo = int(module.getConfigAddress())
-    hi = lo + int(module.getConfigSize())
-    weakref.finalize(module, _releaseRange, lo, hi)
+def _retention_target(source):
+    """Return the Python owner that must stay alive for ``source`` to be valid."""
+    owner = _owner_of(source)
+    return owner if owner is not None else source
 
 
-def _releaseRange(lo, hi):
-    """Release all registry entries whose subscriber address is in ``[lo, hi)``."""
-    for addr in [a for a in _registry if lo <= a < hi]:
-        _registry.pop(addr, None)
+def _owner_of(msg):
+    """Return the owning C-module wrapper for embedded ``Msg_C`` ``msg``."""
+    if not _looks_like_c_msg(msg) or getattr(msg, "thisown", False):
+        return None
+
+    entry = _owner_by_address.get(int(msg.this))
+    if entry is None:
+        return None
+
+    owner_ref, _ = entry
+    return owner_ref()
+
+
+def _embedded_c_msgs(module):
+    """Yield embedded ``Msg_C`` proxies exposed as SWIG properties on ``module``."""
+    seen = set()
+    for cls in type(module).mro():
+        for name, attr in cls.__dict__.items():
+            if name in seen or not isinstance(attr, property):
+                continue
+            seen.add(name)
+            try:
+                value = getattr(module, name)
+            except Exception:
+                continue
+            if _looks_like_c_msg(value) and not getattr(value, "thisown", False):
+                yield value
+
+
+def _looks_like_c_msg(value):
+    """Return ``True`` for generated ``*Msg_C`` SWIG proxy objects."""
+    return (
+        type(value).__name__.endswith("Msg_C")
+        and hasattr(value, "this")
+        and hasattr(value, "header")
+        and hasattr(value, "payload")
+    )
+
+
+def _release_module_owner(addresses, token):
+    """Forget module ownership entries that still belong to the finalized module."""
+    for addr in addresses:
+        entry = _owner_by_address.get(addr)
+        if entry is not None and entry[1] is token:
+            _owner_by_address.pop(addr, None)

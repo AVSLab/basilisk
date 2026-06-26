@@ -26,12 +26,12 @@
 """
 Regression test for issue #1433 (follow-up to #676 / #1432).
 
-A ``Msg_C`` reader (e.g. a C module's ``dataInMsg``) that subscribes to a
-stand-alone source stores raw pointers into that source's memory. If the only
-Python reference to the source then goes out of scope, the source must *not* be
-garbage-collected while the subscription is live, otherwise the reader points into
-freed memory. The keep-alive added for #1433 retains the source and releases it
-again on ``unsubscribe()``, on re-subscribe, when a stand-alone subscriber proxy is
+A ``Msg_C`` reader (e.g. a C module's ``dataInMsg``) that subscribes to a Python
+source stores raw pointers into that source's memory. If the only Python reference
+to the source then goes out of scope, the source must *not* be garbage-collected
+while the subscription is live, otherwise the reader points into freed memory. The
+keep-alive added for #1433 retains the source owner and releases it again on
+``unsubscribe()``, on re-subscribe, when a stand-alone subscriber proxy is
 collected, and when the C module that embeds the subscriber is collected.
 
 These tests assert the lifetime contract directly with ``weakref`` (deterministic,
@@ -108,6 +108,33 @@ def test_moduleEmbeddedCMsgSourceSurvivesGC():
     assert wr() is not None, "Msg_C source was garbage-collected despite a subscription (#1433)"
 
 
+def test_moduleEmbeddedCMsgSourceOwnerSurvivesGC():
+    """A C module's Msg_C reader keeps the owning module alive when subscribing
+    to another module's embedded Msg_C source."""
+    consumer = cModuleTemplate.cModuleTemplate()
+    producer = cModuleTemplate.cModuleTemplate()
+
+    payload = messaging.CModuleTemplateMsgPayload()
+    payload.dataVector = [14.0, 15.0, 16.0]
+    producer.dataOutMsg.write(payload)
+
+    source = producer.dataOutMsg
+    producer_ref = weakref.ref(producer)
+    source_ref = weakref.ref(source)
+
+    consumer.dataInMsg.subscribeTo(source)
+    del producer, source
+    gc.collect()
+
+    assert producer_ref() is not None, "embedded Msg_C source owner was not retained (#1433)"
+    assert source_ref() is None, "embedded Msg_C proxy was retained instead of its owner (#1433)"
+    assert list(consumer.dataInMsg.read().dataVector) == [14.0, 15.0, 16.0]
+
+    consumer.dataInMsg.unsubscribe()
+    gc.collect()
+    assert producer_ref() is None, "unsubscribe() did not release embedded Msg_C source owner (#1433)"
+
+
 def test_unsubscribeReleasesKeepAlive():
     """unsubscribe() drops the keep-alive so the source can be collected."""
     mod = cModuleTemplate.cModuleTemplate()
@@ -135,7 +162,7 @@ def test_resubscribeReplacesKeepAlive():
 
 def test_moduleDeathReleasesSources():
     """When the owning C module is collected, its subscribed sources are released
-    (no leak); this exercises the module config address-range finalizer."""
+    (no leak); this exercises the module-owned keep-alive dictionary."""
     mod = cModuleTemplate.cModuleTemplate()
     wr = _cppSourceInScope(mod.dataInMsg, [1.0, 2.0, 3.0])
     gc.collect()
@@ -173,12 +200,31 @@ def test_rawAddressSubscriptionStillWorks():
     assert list(mod.dataInMsg.read().dataVector) == [3.0, 6.0, 9.0]
 
 
+def test_rawAddressResubscribeReleasesPreviousKeepAlive():
+    """Re-subscribing by raw integer address releases any previous Python source."""
+    payload = messaging.CModuleTemplateMsgPayload()
+    payload.dataVector = [9.0, 8.0, 7.0]
+    persistent = messaging.CModuleTemplateMsg().write(payload)
+
+    mod = cModuleTemplate.cModuleTemplate()
+    wr = _cppSourceInScope(mod.dataInMsg, [1.0, 2.0, 3.0])
+    gc.collect()
+    assert wr() is not None
+
+    mod.dataInMsg.subscribeTo(int(persistent.this))
+    gc.collect()
+    assert wr() is None, "raw-address re-subscribe did not release the previous source (#1433)"
+    assert list(mod.dataInMsg.read().dataVector) == [9.0, 8.0, 7.0]
+
+
 if __name__ == "__main__":
     test_moduleEmbeddedCppSourceSurvivesGC()
     test_moduleEmbeddedCMsgSourceSurvivesGC()
+    test_moduleEmbeddedCMsgSourceOwnerSurvivesGC()
     test_unsubscribeReleasesKeepAlive()
     test_resubscribeReplacesKeepAlive()
     test_moduleDeathReleasesSources()
     test_standaloneSubscriberSurvivesGCAndReleasesOnDeath()
     test_rawAddressSubscriptionStillWorks()
+    test_rawAddressResubscribeReleasesPreviousKeepAlive()
     print("All #1433 keep-alive tests passed.")

@@ -63,14 +63,6 @@ class CWrapper : public SysModel {
 
     TConfig& getConfig() { return *this->config.get(); }
 
-    // Address and size of the owned config struct. Used by the Python keep-alive
-    // layer (issue #1433): a C module's input messages are embedded Msg_C members
-    // of this config, so [getConfigAddress(), getConfigAddress()+getConfigSize())
-    // bounds them all and lets the module's garbage collection release the sources
-    // those Msg_C readers point into.
-    uint64_t getConfigAddress() const { return reinterpret_cast<uint64_t>(this->config.get()); }
-    uint64_t getConfigSize() const { return static_cast<uint64_t>(sizeof(TConfig)); }
-
   private:
     std::unique_ptr<TConfig> config; //!< class variable
 };
@@ -111,15 +103,15 @@ class CWrapper : public SysModel {
 
     // The constructor CWrapper(TConfig* config) takes ownership of the given pointer
     // We don't want the Python object for this config to also think it owns the memory
-    // armModuleCleanup arms the issue 1433 keep-alive finalizer (see _msgKeepAlive.py)
-    // so that stand-alone messages this modules embedded Msg_C readers subscribe to are
-    // released when the module is garbage-collected. Keep this pythonappend body free of
-    // apostrophes and of hash comment lines, which SWIG macro expansion mis-parses.
+    // registerModule records the embedded Msg_C fields owned by this wrapper so
+    // subscribeTo can retain sources on the owning module. Keep this pythonappend
+    // body free of apostrophes and of hash comment lines, which SWIG macro
+    // expansion mis-parses.
     %pythonappend CWrapper::CWrapper %{
         if (len(args)) > 0:
             args[0].thisown = False
         from Basilisk.architecture.messaging import _msgKeepAlive
-        _msgKeepAlive.armModuleCleanup(self)
+        _msgKeepAlive.registerModule(self)
     %}
 
     %include "moduleName.h"
