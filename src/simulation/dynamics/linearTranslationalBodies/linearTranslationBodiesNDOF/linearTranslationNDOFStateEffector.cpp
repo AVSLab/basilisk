@@ -310,9 +310,10 @@ void LinearTranslationNDOFStateEffector::updateContributions(double integTime, B
     this->computeBRhoStar(BRhoStar);
     this->computeCRhoStar(CRhoStar, g_N);
 
-    this->ARho = MRho.inverse() * ARhoStar;
-    this->BRho = MRho.inverse() * BRhoStar;
-    this->CRho = MRho.inverse() * CRhoStar;
+    Eigen::MatrixXd MRhoInv = MRho.inverse();
+    this->ARho = MRhoInv * ARhoStar;
+    this->BRho = MRhoInv * BRhoStar;
+    this->CRho = MRhoInv * CRhoStar;
 
     this->computeBackSubContributions(backSubContr);
 }

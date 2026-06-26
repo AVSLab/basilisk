@@ -358,9 +358,10 @@ void SpinningBodyNDOFStateEffector::updateContributions(double integTime,
     this->computeBThetaStar(BThetaStar);
     this->computeCThetaStar(CThetaStar, g_N);
 
-    this->ATheta = MTheta.inverse() * AThetaStar;
-    this->BTheta = MTheta.inverse() * BThetaStar;
-    this->CTheta = MTheta.inverse() * CThetaStar;
+    Eigen::MatrixXd MThetaInv = MTheta.inverse();
+    this->ATheta = MThetaInv * AThetaStar;
+    this->BTheta = MThetaInv * BThetaStar;
+    this->CTheta = MThetaInv * CThetaStar;
 
     this->computeBackSubMatrices(backSubContr);
     this->computeBackSubVectors(backSubContr);
