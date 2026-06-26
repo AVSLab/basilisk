@@ -1,0 +1,1 @@
+- Fixed several BSK modules to deallocate dynamically allocated output message objects with C++ ``delete``.

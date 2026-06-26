@@ -28,7 +28,7 @@ EphemerisConverter::EphemerisConverter()
 EphemerisConverter::~EphemerisConverter()
 {
     for (long unsigned int c=0; c<this->ephemOutMsgs.size(); c++) {
-        free(this->ephemOutMsgs.at(c));
+        delete this->ephemOutMsgs.at(c);
     }
 }
 
