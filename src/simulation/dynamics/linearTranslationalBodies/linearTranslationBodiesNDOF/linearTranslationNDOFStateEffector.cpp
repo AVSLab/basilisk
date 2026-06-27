@@ -354,9 +354,9 @@ void LinearTranslationNDOFStateEffector::computeBRhoStar(Eigen::MatrixXd& BRhoSt
             continue;
         for (int i = n; i<this->N; i++) {
             Eigen::Vector3d r_FciB_B = this->translatingBodyVec[i]->r_FcB_B;
-            Eigen::Matrix3d rTilde_FciB_B = eigenTilde(r_FciB_B);
 
-            BRhoStar.row(n) += this->translatingBodyVec[n]->fHat_B.transpose() * this->translatingBodyVec[i]->mass * rTilde_FciB_B;
+            BRhoStar.row(n) += this->translatingBodyVec[i]->mass
+                                * this->translatingBodyVec[n]->fHat_B.cross(r_FciB_B).transpose();
         }
     }
 }
@@ -365,8 +365,6 @@ void LinearTranslationNDOFStateEffector::computeBRhoStar(Eigen::MatrixXd& BRhoSt
 void LinearTranslationNDOFStateEffector::computeCRhoStar(Eigen::VectorXd& CRhoStar,
                                                       const Eigen::Vector3d& g_N)
 {
-    Eigen::Matrix3d omegaTilde_BN_B = eigenTilde(this->omega_BN_B);
-
     // Map gravity to body frame
     Eigen::Vector3d g_B;
     g_B = this->dcm_BN * g_N;
@@ -385,7 +383,8 @@ void LinearTranslationNDOFStateEffector::computeCRhoStar(Eigen::VectorXd& CRhoSt
 
             F_g = this->translatingBodyVec[i]->mass * g_B;
             CRhoStar(n, 0) += this->translatingBodyVec[n]->fHat_B.transpose() * (F_g - this->translatingBodyVec[i]->mass *
-                              (omegaTilde_BN_B * omegaTilde_BN_B * r_FciB_B + 2 * omegaTilde_BN_B * rPrime_FciB_B));
+                              (this->omega_BN_B.cross(this->omega_BN_B.cross(r_FciB_B))
+                               + 2 * this->omega_BN_B.cross(rPrime_FciB_B)));
         }
     }
 }
@@ -393,14 +392,14 @@ void LinearTranslationNDOFStateEffector::computeCRhoStar(Eigen::VectorXd& CRhoSt
 /*! This method computes the back-sub contributions of the system */
 void LinearTranslationNDOFStateEffector::computeBackSubContributions(BackSubMatrices& backSubContr) const
 {
-    Eigen::Matrix3d omegaTilde_BN_B = eigenTilde(this->omega_BN_B);
-
     for (int i = 0; i<this->N; i++) {
-    Eigen::Matrix3d rTilde_FciB_B = eigenTilde(this->translatingBodyVec[i]->r_FcB_B);
-    Eigen::Vector3d rPrime_FciB_B = this->translatingBodyVec[i]->rPrime_FcB_B;
-    backSubContr.vecRot -= this->translatingBodyVec[i]->mass * omegaTilde_BN_B * rTilde_FciB_B * rPrime_FciB_B;
+        Eigen::Vector3d r_FciB_B = this->translatingBodyVec[i]->r_FcB_B;
+        Eigen::Vector3d rPrime_FciB_B = this->translatingBodyVec[i]->rPrime_FcB_B;
+        backSubContr.vecRot -= this->translatingBodyVec[i]->mass
+                               * this->omega_BN_B.cross(r_FciB_B.cross(rPrime_FciB_B));
         for (int j = i; j < this->N; j++) {
-            Eigen::Matrix3d rTilde_FcjB_B = eigenTilde(this->translatingBodyVec[j]->r_FcB_B);
+            Eigen::Vector3d rCrossFHat_B = this->translatingBodyVec[j]->r_FcB_B.cross(
+                this->translatingBodyVec[i]->fHat_B);
 
             // Translation contributions
             backSubContr.matrixA += this->translatingBodyVec[j]->mass *  this->translatingBodyVec[i]->fHat_B * this->ARho.row(i);
@@ -408,9 +407,9 @@ void LinearTranslationNDOFStateEffector::computeBackSubContributions(BackSubMatr
             backSubContr.vecTrans -= this->translatingBodyVec[j]->mass * this->translatingBodyVec[i]->fHat_B * this->CRho.row(i);
 
             // Rotation contributions
-            backSubContr.matrixC += this->translatingBodyVec[j]->mass * rTilde_FcjB_B * this->translatingBodyVec[i]->fHat_B * this->ARho.row(i);
-            backSubContr.matrixD += this->translatingBodyVec[j]->mass * rTilde_FcjB_B * this->translatingBodyVec[i]->fHat_B * this->BRho.row(i);
-            backSubContr.vecRot -= this->translatingBodyVec[j]->mass * rTilde_FcjB_B * this->translatingBodyVec[i]->fHat_B * this->CRho.row(i);
+            backSubContr.matrixC += this->translatingBodyVec[j]->mass * rCrossFHat_B * this->ARho.row(i);
+            backSubContr.matrixD += this->translatingBodyVec[j]->mass * rCrossFHat_B * this->BRho.row(i);
+            backSubContr.vecRot -= this->translatingBodyVec[j]->mass * rCrossFHat_B * this->CRho.row(i);
         }
     }
 }
@@ -435,7 +434,6 @@ void LinearTranslationNDOFStateEffector::updateEnergyMomContributions(double int
                                                                       Eigen::Vector3d omega_BN_B)
 {
     this->omega_BN_B = omega_BN_B;
-    Eigen::Matrix3d omegaTilde_BN_B = eigenTilde(this->omega_BN_B);
 
     rotAngMomPntCContr_B = Eigen::Vector3d::Zero();
     rotEnergyContr = 0.0;
@@ -445,10 +443,12 @@ void LinearTranslationNDOFStateEffector::updateEnergyMomContributions(double int
         translatingBody->omega_FN_B = this->omega_BN_B;
 
         // Compute rDot_FcB_B
-        translatingBody->rDot_FcB_B = translatingBody->rPrime_FcB_B + omegaTilde_BN_B * translatingBody->r_FcB_B;
+        translatingBody->rDot_FcB_B = translatingBody->rPrime_FcB_B
+                                      + this->omega_BN_B.cross(translatingBody->r_FcB_B);
 
         // Find rotational angular momentum contribution from hub
-        rotAngMomPntCContr_B += translatingBody->IPntFc_B * translatingBody->omega_FN_B + translatingBody->mass * translatingBody->rTilde_FcB_B * translatingBody->rDot_FcB_B;
+        rotAngMomPntCContr_B += translatingBody->IPntFc_B * translatingBody->omega_FN_B
+                                + translatingBody->mass * translatingBody->r_FcB_B.cross(translatingBody->rDot_FcB_B);
 
         // Find rotational energy contribution from the hub
         rotEnergyContr += 1.0 / 2.0 * translatingBody->omega_FN_B.dot(translatingBody->IPntFc_B * translatingBody->omega_FN_B)

@@ -227,7 +227,6 @@ void LinearTranslationOneDOFStateEffector::updateContributions(double integTime,
     sigmaLocal_BN = sigma_BN;
     this->dcm_BN = sigmaLocal_BN.toRotationMatrix().transpose();
     this->omega_BN_B = omega_BN_B;
-    this->omegaTilde_BN_B = eigenTilde(omega_BN_B);
 
     Eigen::Vector3d gLocal_N = *this->g_N;
     Eigen::Vector3d g_B = dcm_BN * gLocal_N;
@@ -261,29 +260,31 @@ void LinearTranslationOneDOFStateEffector::computeBackSubContributions(BackSubMa
 
         backSubContr.vecTrans = this->dcm_FB.transpose() * attBodyForce_F;
         backSubContr.vecRot = this->dcm_FB.transpose() * attBodyTorquePntF_F +
-                              eigenTilde(this->r_F0B_B + this->rho * this->fHat_B) *
-                              (this->dcm_FB.transpose() * attBodyForce_F);
+                              (this->r_F0B_B + this->rho * this->fHat_B).cross(
+                                  this->dcm_FB.transpose() * attBodyForce_F);
         return;
     }
 
     this->aRho = -this->fHat_B.transpose();
-    this->bRho = this->fHat_B.transpose() * this->rTilde_FcB_B;
+    this->bRho = this->fHat_B.cross(this->r_FcB_B);
     this->cRho = 1.0 / this->mass * (this->motorForce - this->k * (this->rho - this->rhoRef)
                  - this->c * (this->rhoDot - this->rhoDotRef)
                  + this->fHat_B.transpose() * (F_g + this->dcm_FB.transpose() * attBodyForce_F
-                 - this->mass * (2 * this->omegaTilde_BN_B * this->rPrime_FcB_B
-                 + this->omegaTilde_BN_B*this->omegaTilde_BN_B*this->r_FcB_B)));
+                 - this->mass * (2 * this->omega_BN_B.cross(this->rPrime_FcB_B)
+                 + this->omega_BN_B.cross(this->omega_BN_B.cross(this->r_FcB_B)))));
 
+    Eigen::Vector3d rCrossFHat_B = this->r_FcB_B.cross(this->fHat_B);
     backSubContr.matrixA = this->mass * this->fHat_B * this->aRho.transpose();
     backSubContr.matrixB = this->mass * this->fHat_B * this->bRho.transpose();
-    backSubContr.matrixC = this->mass * this->rTilde_FcB_B * this->fHat_B * this->aRho.transpose();
-	backSubContr.matrixD = this->mass * this->rTilde_FcB_B * this->fHat_B * this->bRho.transpose();
+    backSubContr.matrixC = this->mass * rCrossFHat_B * this->aRho.transpose();
+	backSubContr.matrixD = this->mass * rCrossFHat_B * this->bRho.transpose();
 	backSubContr.vecTrans = - this->mass * this->cRho * this->fHat_B
                             + this->dcm_FB.transpose() * attBodyForce_F;
-	backSubContr.vecRot = - this->mass * this->omegaTilde_BN_B * this->rTilde_FcB_B * this->rPrime_FcB_B
-                          - this->mass * this->cRho * this->rTilde_FcB_B * this->fHat_B
-                          + this->dcm_FB.transpose() * attBodyTorquePntF_F + eigenTilde(this->r_F0B_B +
-                          this->rho * this->fHat_B) * (this->dcm_FB.transpose() * attBodyForce_F);
+	backSubContr.vecRot = - this->mass * this->omega_BN_B.cross(this->r_FcB_B.cross(this->rPrime_FcB_B))
+                          - this->mass * this->cRho * rCrossFHat_B
+                          + this->dcm_FB.transpose() * attBodyTorquePntF_F
+                          + (this->r_F0B_B + this->rho * this->fHat_B).cross(
+                              this->dcm_FB.transpose() * attBodyForce_F);
 }
 
 void LinearTranslationOneDOFStateEffector::addPrescribedMotionCouplingContributions(BackSubMatrices & backSubContr) {
@@ -376,11 +377,10 @@ void LinearTranslationOneDOFStateEffector::updateEnergyMomContributions(double i
 {
     // Update omega_BN_B and omega_FN_B
     this->omega_BN_B = omega_BN_B;
-    this->omegaTilde_BN_B = eigenTilde(this->omega_BN_B);
     Eigen::Vector3d omega_FN_B = this->omega_BN_B;
 
     // Compute rDot_FcB_B
-    Eigen::Vector3d rDot_FcB_B = this->rPrime_FcB_B + this->omegaTilde_BN_B * this->r_FcB_B;
+    Eigen::Vector3d rDot_FcB_B = this->rPrime_FcB_B + this->omega_BN_B.cross(this->r_FcB_B);
 
     // Find rotational angular momentum contribution
     rotAngMomPntCContr_B = this->IPntFc_B * omega_FN_B + this->mass * this->r_FcB_B.cross(rDot_FcB_B);
@@ -399,10 +399,10 @@ void LinearTranslationOneDOFStateEffector::computeTranslatingBodyInertialStates(
 
     this->r_FcN_N = (Eigen::Vector3d)*this->inertialPositionProperty + this->dcm_BN.transpose() * this->r_FcB_B;
     *this->r_FN_N = this->r_FcN_N - dcm_FN.transpose() * this->r_FcF_F;
-    Eigen::Vector3d rDot_FcB_B = this->rPrime_FcB_B + this->omegaTilde_BN_B * this->r_FcB_B;
+    Eigen::Vector3d rDot_FcB_B = this->rPrime_FcB_B + this->omega_BN_B.cross(this->r_FcB_B);
     this->v_FcN_N = (Eigen::Vector3d)*this->inertialVelocityProperty + this->dcm_BN.transpose() * rDot_FcB_B;
-    *this->v_FN_N = this->dcm_BN.transpose() * (this->rPrime_FcB_B + this->omegaTilde_BN_B *
-                    (this->r_FcB_B - this->dcm_FB.transpose() * this->r_FcF_F));
+    *this->v_FN_N = this->dcm_BN.transpose() * (this->rPrime_FcB_B + this->omega_BN_B.cross(
+                    this->r_FcB_B - this->dcm_FB.transpose() * this->r_FcF_F));
 }
 
 void LinearTranslationOneDOFStateEffector::UpdateState(uint64_t currentSimNanos)

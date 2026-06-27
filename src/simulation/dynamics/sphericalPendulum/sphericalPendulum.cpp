@@ -208,15 +208,15 @@ void SphericalPendulum::updateContributions(double integTime, BackSubMatrices & 
     dcm_NB = sigmaLocal_BN.toRotationMatrix();
     dcm_BN = dcm_NB.transpose();
 
-    Eigen::Matrix3d dTilde;
-    Eigen::Matrix3d lTilde;
-    dTilde = eigenTilde(this->d);
-	lTilde = eigenTilde(this->l_B);
+    double radiusSquared = this->pendulumRadius*this->pendulumRadius;
+    double cosTheta = cos(this->theta);
+    Eigen::Vector3d pHat03CrossL_B = this->pHat_03.cross(this->l_B);
 
 	// - Define aPhi.transpose()
-    this->aPhi = -(this->pHat_03.transpose()*lTilde)/(this->pendulumRadius*this->pendulumRadius*cos(this->theta)*cos(this->theta));
+    this->aPhi = -pHat03CrossL_B/(radiusSquared*cosTheta*cosTheta);
     // - Define bPhi.transpose()
-    this->bPhi = this->pHat_03.transpose()*lTilde*(lTilde+dTilde)/(this->pendulumRadius*this->pendulumRadius*cos(this->theta)*cos(this->theta));
+    this->bPhi = pHat03CrossL_B.cross(this->l_B + this->d) /
+                 (radiusSquared*cosTheta*cosTheta);
 
 
       // - Map gravity to body frame
@@ -229,13 +229,12 @@ void SphericalPendulum::updateContributions(double integTime, BackSubMatrices & 
 
     // - Define cPhi
     Eigen::Vector3d omega_BN_B_local = omega_BN_B;
-    Eigen::Matrix3d omegaTilde_BN_B_local;
-    omegaTilde_BN_B_local = eigenTilde(omega_BN_B_local);
 	this->cPhi = 1.0/(this->massFSP*this->pendulumRadius*this->pendulumRadius*cos(this->theta)*cos(this->theta))*
-			(-this->massFSP*this->pHat_03.transpose().dot(lTilde*omegaTilde_BN_B_local*omegaTilde_BN_B_local*this->d)
+			(-this->massFSP*this->pHat_03.dot(this->l_B.cross(omega_BN_B_local.cross(omega_BN_B_local.cross(this->d))))
 			+this->pHat_03.transpose()*(L_T) +
 			2*this->massFSP*this->pendulumRadius*this->pendulumRadius*this->phiDot*this->thetaDot*cos(this->theta)*sin(this->theta)
-			-this->massFSP*this->pHat_03.transpose().dot(lTilde*(2*omegaTilde_BN_B_local*this->lPrime_B+omegaTilde_BN_B_local*omegaTilde_BN_B_local*this->l_B)));
+			-this->massFSP*this->pHat_03.dot(this->l_B.cross(2*omega_BN_B_local.cross(this->lPrime_B)
+            + omega_BN_B_local.cross(omega_BN_B_local.cross(this->l_B)))));
 
 	// Define pHat_02_Prime axes of rotation of theta in P0 frame
 	Eigen::Vector3d pHat_02_Prime_P0;
@@ -243,51 +242,47 @@ void SphericalPendulum::updateContributions(double integTime, BackSubMatrices & 
 	// Rotate pHat_02_Prime axes in B frame components
 	Eigen::Vector3d pHat_02_Prime;
 	pHat_02_Prime = dcm_B_P0*pHat_02_Prime_P0;
+    Eigen::Vector3d pHat02PrimeCrossL_B = pHat_02_Prime.cross(this->l_B);
 
 	// Define aTheta.transpose()
-	this->aTheta = -(pHat_02_Prime.transpose()*lTilde)/(this->pendulumRadius*this->pendulumRadius);
+	this->aTheta = -pHat02PrimeCrossL_B/radiusSquared;
 	// Define bTheta.transpose()
-	this->bTheta = pHat_02_Prime.transpose()*lTilde*(lTilde+dTilde)/(this->pendulumRadius*this->pendulumRadius);
+	this->bTheta = pHat02PrimeCrossL_B.cross(this->l_B + this->d)/radiusSquared;
 	// Define cTheta
 	this->cTheta =  1.0/(this->massFSP*this->pendulumRadius*this->pendulumRadius)*
-			(-this->massFSP*pHat_02_Prime.transpose().dot(lTilde*omegaTilde_BN_B_local*omegaTilde_BN_B_local*this->d)
+			(-this->massFSP*pHat_02_Prime.dot(this->l_B.cross(omega_BN_B_local.cross(omega_BN_B_local.cross(this->d))))
 			+pHat_02_Prime.transpose()*(L_T)
 			-this->massFSP*this->pendulumRadius*this->pendulumRadius*this->phiDot*this->phiDot*cos(this->theta)*sin(this->theta)
-			-this->massFSP*pHat_02_Prime.transpose().dot(lTilde*(2*omegaTilde_BN_B_local*this->lPrime_B+omegaTilde_BN_B_local*omegaTilde_BN_B_local*this->l_B)));
+			-this->massFSP*pHat_02_Prime.dot(this->l_B.cross(2*omega_BN_B_local.cross(this->lPrime_B)
+            + omega_BN_B_local.cross(omega_BN_B_local.cross(this->l_B)))));
 
 	// - Compute matrix/vector contributions
-	backSubContr.matrixA = -this->massFSP*this->pendulumRadius*((sin(this->phi)*cos(this->theta)*this->pHat_01
-	 - cos(this->phi)*cos(this->theta)*this->pHat_02)*this->aPhi.transpose()+(cos(this->phi)*sin(this->theta)*this->pHat_01
-	 +sin(this->phi)*sin(this->theta)*this->pHat_02+cos(this->theta)*this->pHat_03)*this->aTheta.transpose());
+    Eigen::Vector3d phiBasis_B = sin(this->phi)*cos(this->theta)*this->pHat_01
+	 - cos(this->phi)*cos(this->theta)*this->pHat_02;
+    Eigen::Vector3d thetaBasis_B = cos(this->phi)*sin(this->theta)*this->pHat_01
+	 +sin(this->phi)*sin(this->theta)*this->pHat_02+cos(this->theta)*this->pHat_03;
+	backSubContr.matrixA = -this->massFSP*this->pendulumRadius*(phiBasis_B*this->aPhi.transpose()
+        + thetaBasis_B*this->aTheta.transpose());
 
-    backSubContr.matrixB = -this->massFSP*this->pendulumRadius*((sin(this->phi)*cos(this->theta)*this->pHat_01
-	 - cos(this->phi)*cos(this->theta)*this->pHat_02)*this->bPhi.transpose() + (cos(this->phi)*sin(this->theta)*this->pHat_01
-	 +sin(this->phi)*sin(this->theta)*this->pHat_02+cos(this->theta)*this->pHat_03)*this->bTheta.transpose());
+    backSubContr.matrixB = -this->massFSP*this->pendulumRadius*(phiBasis_B*this->bPhi.transpose()
+        + thetaBasis_B*this->bTheta.transpose());
 
-    backSubContr.matrixC = -this->massFSP*this->pendulumRadius*this->rTilde_PcB_B*((sin(this->phi)*cos(this->theta)*this->pHat_01
-	 - cos(this->phi)*cos(this->theta)*this->pHat_02)*this->aPhi.transpose()+(cos(this->phi)*sin(this->theta)*this->pHat_01
-	 +sin(this->phi)*sin(this->theta)*this->pHat_02+cos(this->theta)*this->pHat_03)*this->aTheta.transpose());
+    backSubContr.matrixC = -this->massFSP*this->pendulumRadius*(this->r_PcB_B.cross(phiBasis_B)*this->aPhi.transpose()
+        + this->r_PcB_B.cross(thetaBasis_B)*this->aTheta.transpose());
 
-	backSubContr.matrixD = -this->massFSP*this->pendulumRadius*this->rTilde_PcB_B*((sin(this->phi)*cos(this->theta)*this->pHat_01
-	 - cos(this->phi)*cos(this->theta)*this->pHat_02)*this->bPhi.transpose()+(cos(this->phi)*sin(this->theta)*this->pHat_01
-	 +sin(this->phi)*sin(this->theta)*this->pHat_02+cos(this->theta)*this->pHat_03)*this->bTheta.transpose());
+	backSubContr.matrixD = -this->massFSP*this->pendulumRadius*(this->r_PcB_B.cross(phiBasis_B)*this->bPhi.transpose()
+        + this->r_PcB_B.cross(thetaBasis_B)*this->bTheta.transpose());
 
-	backSubContr.vecTrans = -this->massFSP*this->pendulumRadius*((-cos(this->phi)*cos(this->theta)*this->pHat_01
+    Eigen::Vector3d pendulumAccelerationTerm_B = (-cos(this->phi)*cos(this->theta)*this->pHat_01
 	-sin(this->phi)*cos(this->theta)*this->pHat_02)*this->phiDot*this->phiDot
 	+(-cos(this->phi)*cos(this->theta)*this->pHat_01-sin(this->phi)*cos(this->theta)*this->pHat_02+sin(this->theta)*this->pHat_03)*this->thetaDot*this->thetaDot
 	+(2*sin(this->phi)*sin(this->theta)*this->pHat_01-2*cos(this->phi)*sin(this->theta)*this->pHat_02)*this->phiDot*this->thetaDot
-	-(sin(this->phi)*cos(this->theta)*this->pHat_01-cos(this->phi)*cos(this->theta)*this->pHat_02)*this->cPhi
-	-(cos(this->phi)*sin(this->theta)*this->pHat_01+sin(this->phi)*sin(this->theta)*this->pHat_02+cos(theta)*this->pHat_03)*this->cTheta);
+	-phiBasis_B*this->cPhi
+	-thetaBasis_B*this->cTheta;
+	backSubContr.vecTrans = -this->massFSP*this->pendulumRadius*pendulumAccelerationTerm_B;
 
-	backSubContr.vecRot = -this->massFSP*(omegaTilde_BN_B_local*this->rTilde_PcB_B*this->rPrime_PcB_B
-		+this->pendulumRadius*rTilde_PcB_B*(
-	(-cos(this->phi)*cos(this->theta)*this->pHat_01-sin(this->phi)*cos(this->theta)*this->pHat_02)*this->phiDot*this->phiDot
-	+(-cos(this->phi)*cos(this->theta)*this->pHat_01-sin(this->phi)*cos(this->theta)*this->pHat_02+sin(this->theta)*this->pHat_03)*this->thetaDot*this->thetaDot
-	+(2*sin(this->phi)*sin(this->theta)*this->pHat_01-2*cos(this->phi)*sin(this->theta)*this->pHat_02)*this->phiDot*this->thetaDot
-	-(sin(this->phi)*cos(this->theta)*this->pHat_01-cos(this->phi)*cos(this->theta)*this->pHat_02)*this->cPhi
-	-(cos(this->phi)*sin(this->theta)*this->pHat_01+sin(this->phi)*sin(this->theta)*this->pHat_02+cos(theta)*this->pHat_03)*this->cTheta
-			)
-		);
+	backSubContr.vecRot = -this->massFSP*(omega_BN_B_local.cross(this->r_PcB_B.cross(this->rPrime_PcB_B))
+		+ this->pendulumRadius*this->r_PcB_B.cross(pendulumAccelerationTerm_B));
 
     return;
 }
