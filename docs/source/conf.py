@@ -422,6 +422,7 @@ class fileCrawler():
         removeList = []
         for i in range(len(files_in_dir)):
             if "__init__" in files_in_dir[i] or \
+                    (files_in_dir[i].endswith(".py") and os.path.basename(files_in_dir[i]).startswith("_")) or \
                     "conftest.py" in files_in_dir[i] or \
                     "*.xml" in files_in_dir[i] or \
                     "vizMessage.pb.cc" in files_in_dir[i] or \
