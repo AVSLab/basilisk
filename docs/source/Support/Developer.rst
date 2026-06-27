@@ -18,6 +18,7 @@ The following support files help with writing Basilisk modules.
    Developer/UnderstandingBasilisk
    Developer/migratingBskModuleToBsk2
    Developer/MigratingToPython3
+   Developer/performanceBenchmarks
    Developer/addSupportData
    Developer/bskReleaseGuide
    Developer/bskSdkReleaseGuide
