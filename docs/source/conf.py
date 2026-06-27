@@ -18,6 +18,12 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath("_ext"))
 
+benchmarkSourceRoot = os.path.abspath("../../benchmarks")
+if os.path.isdir(benchmarkSourceRoot):
+    for dirPath, _, fileNames in os.walk(benchmarkSourceRoot):
+        if any(fileName.endswith(".py") for fileName in fileNames):
+            sys.path.insert(0, dirPath)
+
 import numpy as np
 
 from docutils import nodes
@@ -401,6 +407,7 @@ class fileCrawler():
                     "_VizFiles" in dirs_in_dir[i] or \
                     "Support" in dirs_in_dir[i] or \
                     "cmake" in dirs_in_dir[i] or \
+                    "benchmarks" in dirs_in_dir[i] or \
                     "topLevelModules" in dirs_in_dir[i] or \
                     "outputFiles" in dirs_in_dir[i] or \
                     "msgAutoSource" in dirs_in_dir[i] or \
@@ -518,10 +525,6 @@ class fileCrawler():
             if name.startswith("_"):
                 pathToFolder = index_path.split("/"+name)[0]
                 lines += ".. " + name + pathToFolder.split("/")[-1] + ":\n\n"
-            elif "/benchmarks/" in normalizedIndexPath:
-                benchmarkPath = normalizedIndexPath.split("/benchmarks/", 1)[1]
-                benchmarkLabel = benchmarkPath.replace("/", "_")
-                lines += ".. _Folder_benchmarks_" + benchmarkLabel + ":\n\n"
             elif name == 'utilities':
                 pathToFolder = index_path.split("/" + name)[0]
                 lines += ".. _Folder_" + name + pathToFolder.split("/")[-1] + ":\n\n"
