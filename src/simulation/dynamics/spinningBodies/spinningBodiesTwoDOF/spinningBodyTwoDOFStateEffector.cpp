@@ -390,19 +390,12 @@ void SpinningBodyTwoDOFStateEffector::updateContributions(double integTime, Back
 
     // Define auxiliary rtilde matrices
     Eigen::Matrix3d rTilde_Sc1S1_B = eigenTilde(this->r_Sc1S1_B);
-    Eigen::Matrix3d rTilde_S1B_B = eigenTilde(this->r_S1B_B);
     Eigen::Matrix3d rTilde_Sc2S1_B = eigenTilde(r_Sc2S1_B);
     Eigen::Matrix3d rTilde_Sc2S2_B = eigenTilde(this->r_Sc2S2_B);
     Eigen::Matrix3d rTilde_S2S1_B = eigenTilde(this->r_S2S1_B);
-    Eigen::Matrix3d rTilde_S2B_B = eigenTilde(r_S2B_B);
-    Eigen::Matrix3d rTilde_ScS1_B = eigenTilde(r_ScS1_B);
     Eigen::Matrix3d rPrimeTilde_Sc1S1_B = eigenTilde(this->rPrime_Sc1S1_B);
     Eigen::Matrix3d rPrimeTilde_Sc2S1_B = eigenTilde(this->rPrime_Sc2S1_B);
     Eigen::Matrix3d rPrimeTilde_Sc2S2_B = eigenTilde(this->rPrime_Sc2S2_B);
-
-    // Define auxiliary omegaTilde matrices
-    Eigen::Matrix3d omegaTilde_S2S1_B = eigenTilde(this->omega_S2S1_B);
-    Eigen::Matrix3d omegaTilde_S1N_B = eigenTilde(this->omega_S1N_B);
 
     // Define auxiliary inertia matrices
     Eigen::Matrix3d IS2PntS2_B = this->IS2PntSc2_B - this->mass2 * rTilde_Sc2S2_B * rTilde_Sc2S2_B;
@@ -418,38 +411,52 @@ void SpinningBodyTwoDOFStateEffector::updateContributions(double integTime, Back
 
     // Define AThetaStar matrix
     Eigen::Matrix<double, 2, 3> AThetaStar;
-    AThetaStar.row(0) = - this->mass * this->s1Hat_B.transpose() * rTilde_ScS1_B;
-    AThetaStar.row(1) = - this->mass2 * this->s2Hat_B.transpose() * rTilde_Sc2S2_B;
+    const Eigen::Vector3d rScS1CrossS1Hat_B = r_ScS1_B.cross(this->s1Hat_B);
+    const Eigen::Vector3d rSc2S2CrossS2Hat_B = this->r_Sc2S2_B.cross(this->s2Hat_B);
+    AThetaStar.row(0) = this->mass * rScS1CrossS1Hat_B.transpose();
+    AThetaStar.row(1) = this->mass2 * rSc2S2CrossS2Hat_B.transpose();
 
     // Define BThetaStar matrix
     Eigen::Matrix<double, 2, 3> BThetaStar;
-    BThetaStar.row(0) = - this->s1Hat_B.transpose() * (ISPntS1_B - this->mass * rTilde_ScS1_B * rTilde_S1B_B);
-    BThetaStar.row(1) = - this->s2Hat_B.transpose() * (IS2PntS2_B - this->mass2 * rTilde_Sc2S2_B * rTilde_S2B_B);
+    BThetaStar.row(0) = (-ISPntS1_B * this->s1Hat_B
+                         + this->mass * this->r_S1B_B.cross(r_ScS1_B.cross(this->s1Hat_B))).transpose();
+    BThetaStar.row(1) = (-IS2PntS2_B * this->s2Hat_B
+                         + this->mass2 * r_S2B_B.cross(this->r_Sc2S2_B.cross(this->s2Hat_B))).transpose();
 
     // Define CThetaStar vector
-    Eigen::Vector3d rDot_S1B_B = this->omegaTilde_BN_B * this->r_S1B_B;
-    Eigen::Vector3d rDot_S2S1_B = this->rPrime_S2S1_B + this->omegaTilde_BN_B * this->r_S2S1_B;
-    Eigen::Vector3d gravityTorquePntS1_B = rTilde_ScS1_B * this->mass * g_B;
-    Eigen::Vector3d gravityTorquePntS2_B = rTilde_Sc2S2_B * this->mass2 * g_B;
+    Eigen::Vector3d rDot_S1B_B = this->omega_BN_B.cross(this->r_S1B_B);
+    Eigen::Vector3d rDot_S2S1_B = this->rPrime_S2S1_B + this->omega_BN_B.cross(this->r_S2S1_B);
+    Eigen::Vector3d gravityTorquePntS1_B = r_ScS1_B.cross(this->mass * g_B);
+    Eigen::Vector3d gravityTorquePntS2_B = this->r_Sc2S2_B.cross(this->mass2 * g_B);
+    Eigen::Vector3d cThetaTerm0_B = IPrimeSPntS1_B * this->omega_BN_B
+        + this->omega_BN_B.cross(ISPntS1_B * this->omega_BN_B)
+        + this->IPrimeS1PntSc1_B * this->omega_S1B_B
+        + this->omega_BN_B.cross(this->IS1PntSc1_B * this->omega_S1B_B)
+        + this->IPrimeS2PntSc2_B * this->omega_S2B_B
+        + this->omega_BN_B.cross(this->IS2PntSc2_B * this->omega_S2B_B)
+        + this->IS2PntSc2_B * this->omega_S1B_B.cross(this->omega_S2S1_B)
+        - this->mass2 * r_Sc2S1_B.cross(this->r_Sc2S2_B.cross(this->omega_S1B_B.cross(this->omega_S2S1_B)))
+        + this->mass1 * (this->r_Sc1S1_B.cross(this->omega_S1B_B.cross(this->rPrime_Sc1S1_B))
+        + this->omega_BN_B.cross(this->r_Sc1S1_B.cross(this->rPrime_Sc1S1_B)))
+        + this->mass2 * (r_Sc2S1_B.cross(this->omega_S1B_B.cross(this->rPrime_Sc2S1_B))
+        + this->omega_BN_B.cross(r_Sc2S1_B.cross(this->rPrime_Sc2S1_B)))
+        + this->mass2 * r_Sc2S1_B.cross(this->omega_S2S1_B.cross(this->rPrime_Sc2S2_B))
+        + this->mass * r_ScS1_B.cross(this->omega_BN_B.cross(rDot_S1B_B))
+        - this->dcm_BS1 * attBodyTorquePntS1_S1 + this->dcm_BS2 * attBodyTorquePntS2_S2
+        - this->r_S2S1_B.cross(this->dcm_BS2 * attBodyForce_S2);
+    Eigen::Vector3d cThetaTerm1_B = IPrimeS2PntS2_B * this->omega_S2N_B
+        + this->omega_BN_B.cross(IS2PntS2_B * this->omega_S2N_B)
+        + IS2PntS2_B * this->omega_S1B_B.cross(this->omega_S2S1_B)
+        + this->mass2 * this->r_Sc2S2_B.cross(this->omega_S1N_B.cross(this->rPrime_S2S1_B))
+        + this->mass2 * this->r_Sc2S2_B.cross(this->omega_BN_B.cross(rDot_S2S1_B + rDot_S1B_B))
+        - this->dcm_BS2 * attBodyTorquePntS2_S2;
     Eigen::Vector2d CThetaStar;
     CThetaStar(0,0) = this->u1 - this->k1 * (this->theta1 - this->theta1Ref)
-        - this->c1 * (this->theta1Dot - this->theta1DotRef) + this->s1Hat_B.transpose() * gravityTorquePntS1_B
-        - this->s1Hat_B.transpose() * ((IPrimeSPntS1_B + this->omegaTilde_BN_B * ISPntS1_B) * this->omega_BN_B
-        + (this->IPrimeS1PntSc1_B + this->omegaTilde_BN_B * this->IS1PntSc1_B) * this->omega_S1B_B
-        + (this->IPrimeS2PntSc2_B + this->omegaTilde_BN_B * this->IS2PntSc2_B) * this->omega_S2B_B
-        + (this->IS2PntSc2_B - this->mass2 * rTilde_Sc2S1_B * rTilde_Sc2S2_B) * this->omegaTilde_S1B_B * this->omega_S2S1_B
-        + this->mass1 * (rTilde_Sc1S1_B * this->omegaTilde_S1B_B + this->omegaTilde_BN_B * rTilde_Sc1S1_B) * this->rPrime_Sc1S1_B
-        + this->mass2 * (rTilde_Sc2S1_B * this->omegaTilde_S1B_B + this->omegaTilde_BN_B * rTilde_Sc2S1_B) * this->rPrime_Sc2S1_B
-        + this->mass2 * rTilde_Sc2S1_B * omegaTilde_S2S1_B * this->rPrime_Sc2S2_B
-        + this->mass * rTilde_ScS1_B * this->omegaTilde_BN_B * rDot_S1B_B
-        - this->dcm_BS1 * attBodyTorquePntS1_S1 + this->dcm_BS2 * attBodyTorquePntS2_S2
-        - eigenTilde(this->r_S2S1_B) * (this->dcm_BS2 * attBodyForce_S2));
+        - this->c1 * (this->theta1Dot - this->theta1DotRef) + this->s1Hat_B.dot(gravityTorquePntS1_B)
+        - this->s1Hat_B.dot(cThetaTerm0_B);
     CThetaStar(1, 0) = this->u2 - this->k2 * (this->theta2 - this->theta2Ref)
-        - this->c2 * (this->theta2Dot - this->theta2DotRef) + this->s2Hat_B.transpose() * gravityTorquePntS2_B
-        - this->s2Hat_B.transpose() * ((IPrimeS2PntS2_B + this->omegaTilde_BN_B * IS2PntS2_B) * this->omega_S2N_B
-        + IS2PntS2_B * this->omegaTilde_S1B_B * this->omega_S2S1_B + this->mass2 * rTilde_Sc2S2_B * omegaTilde_S1N_B * this->rPrime_S2S1_B
-        + this->mass2 * rTilde_Sc2S2_B * this->omegaTilde_BN_B * (rDot_S2S1_B + rDot_S1B_B)
-        - this->dcm_BS2 * attBodyTorquePntS2_S2);
+        - this->c2 * (this->theta2Dot - this->theta2DotRef) + this->s2Hat_B.dot(gravityTorquePntS2_B)
+        - this->s2Hat_B.dot(cThetaTerm1_B);
 
     // Check if any of the axis are locked and change dynamics accordingly
     if (this->lockFlag1 == 1 || this->lockFlag2 == 1)
@@ -480,27 +487,32 @@ void SpinningBodyTwoDOFStateEffector::updateContributions(double integTime, Back
 
     // For documentation on contributions see Vaz Carneiro, Allard, Schaub spinning body paper
     // Translation contributions
-    backSubContr.matrixA = - this->mass * rTilde_ScS1_B * this->s1Hat_B * this->ATheta.row(0) - this->mass2 * rTilde_Sc2S2_B * this->s2Hat_B * this->ATheta.row(1);
-    backSubContr.matrixB = - this->mass * rTilde_ScS1_B * this->s1Hat_B * this->BTheta.row(0) - this->mass2 * rTilde_Sc2S2_B * this->s2Hat_B * this->BTheta.row(1);
-    backSubContr.vecTrans = - this->mass * this->omegaTilde_S1B_B * this->rPrime_ScB_B - this->mass2 * (omegaTilde_S2S1_B * this->rPrime_Sc2S2_B - rTilde_Sc2S2_B * this->omegaTilde_S1B_B * this->omega_S2S1_B)
-        + this->mass * rTilde_ScS1_B * this->s1Hat_B * this->CTheta.row(0) + this->mass2 * rTilde_Sc2S2_B * this->s2Hat_B * this->CTheta.row(1)
+    backSubContr.matrixA = - this->mass * rScS1CrossS1Hat_B * this->ATheta.row(0) - this->mass2 * rSc2S2CrossS2Hat_B * this->ATheta.row(1);
+    backSubContr.matrixB = - this->mass * rScS1CrossS1Hat_B * this->BTheta.row(0) - this->mass2 * rSc2S2CrossS2Hat_B * this->BTheta.row(1);
+    backSubContr.vecTrans = - this->mass * this->omega_S1B_B.cross(this->rPrime_ScB_B) - this->mass2 * (this->omega_S2S1_B.cross(this->rPrime_Sc2S2_B) - this->r_Sc2S2_B.cross(this->omega_S1B_B.cross(this->omega_S2S1_B)))
+        + this->mass * rScS1CrossS1Hat_B * this->CTheta(0, 0) + this->mass2 * rSc2S2CrossS2Hat_B * this->CTheta(1, 0)
         + this->dcm_BS1 * attBodyForce_S1 + this->dcm_BS2 * attBodyForce_S2;
 
     // Rotation contributions
-    backSubContr.matrixC = (this->IS1PntSc1_B + this->IS2PntSc2_B - this->mass1 * this->rTilde_Sc1B_B * rTilde_Sc1S1_B - this->mass2 * this->rTilde_Sc2B_B * rTilde_Sc2S1_B) * this->s1Hat_B * this->ATheta.row(0)
-        + (this->IS2PntSc2_B - this->mass2 * this->rTilde_Sc2B_B * rTilde_Sc2S2_B) * this->s2Hat_B * this->ATheta.row(1);
-    backSubContr.matrixD = (this->IS1PntSc1_B + this->IS2PntSc2_B - this->mass1 * this->rTilde_Sc1B_B * rTilde_Sc1S1_B - this->mass2 * this->rTilde_Sc2B_B * rTilde_Sc2S1_B) * this->s1Hat_B * this->BTheta.row(0)
-        + (this->IS2PntSc2_B - this->mass2 * this->rTilde_Sc2B_B * rTilde_Sc2S2_B) * this->s2Hat_B * this->BTheta.row(1);
-    backSubContr.vecRot = - (this->IPrimeS1PntSc1_B + this->omegaTilde_BN_B * this->IS1PntSc1_B) * this->omega_S1B_B - (this->IPrimeS2PntSc2_B + this->omegaTilde_BN_B * this->IS2PntSc2_B) * this->omega_S2B_B
-        - (this->IS2PntSc2_B - this->mass2 * this->rTilde_Sc2B_B * rTilde_Sc2S2_B) * this->omegaTilde_S1B_B * this->omega_S2S1_B
-        - this->mass1 * (this->rTilde_Sc1B_B * this->omegaTilde_S1B_B + this->omegaTilde_BN_B * this->rTilde_Sc1B_B) * this->rPrime_Sc1B_B
-        - this->mass2 * (this->rTilde_Sc2B_B * this->omegaTilde_S1B_B + this->omegaTilde_BN_B * this->rTilde_Sc2B_B) * this->rPrime_Sc2B_B
-        - this->mass2 * this->rTilde_Sc2B_B * omegaTilde_S2S1_B * this->rPrime_Sc2S2_B
-        - (this->IS1PntSc1_B + this->IS2PntSc2_B - this->mass1 * this->rTilde_Sc1B_B * rTilde_Sc1S1_B - this->mass2 * this->rTilde_Sc2B_B * rTilde_Sc2S1_B) * this->s1Hat_B * this->CTheta.row(0)
-        - (this->IS2PntSc2_B - this->mass2 * this->rTilde_Sc2B_B * rTilde_Sc2S2_B) * this->s2Hat_B * this->CTheta.row(1)
+    Eigen::Vector3d rotFactor0_B = (this->IS1PntSc1_B + this->IS2PntSc2_B) * this->s1Hat_B
+        - this->mass1 * this->r_Sc1B_B.cross(this->r_Sc1S1_B.cross(this->s1Hat_B))
+        - this->mass2 * this->r_Sc2B_B.cross(r_Sc2S1_B.cross(this->s1Hat_B));
+    Eigen::Vector3d rotFactor1_B = this->IS2PntSc2_B * this->s2Hat_B
+        - this->mass2 * this->r_Sc2B_B.cross(this->r_Sc2S2_B.cross(this->s2Hat_B));
+    backSubContr.matrixC = rotFactor0_B * this->ATheta.row(0) + rotFactor1_B * this->ATheta.row(1);
+    backSubContr.matrixD = rotFactor0_B * this->BTheta.row(0) + rotFactor1_B * this->BTheta.row(1);
+    backSubContr.vecRot = - this->IPrimeS1PntSc1_B * this->omega_S1B_B - this->omega_BN_B.cross(this->IS1PntSc1_B * this->omega_S1B_B)
+        - this->IPrimeS2PntSc2_B * this->omega_S2B_B - this->omega_BN_B.cross(this->IS2PntSc2_B * this->omega_S2B_B)
+        - this->IS2PntSc2_B * this->omega_S1B_B.cross(this->omega_S2S1_B)
+        + this->mass2 * this->r_Sc2B_B.cross(this->r_Sc2S2_B.cross(this->omega_S1B_B.cross(this->omega_S2S1_B)))
+        - this->mass1 * (this->r_Sc1B_B.cross(this->omega_S1B_B.cross(this->rPrime_Sc1B_B)) + this->omega_BN_B.cross(this->r_Sc1B_B.cross(this->rPrime_Sc1B_B)))
+        - this->mass2 * (this->r_Sc2B_B.cross(this->omega_S1B_B.cross(this->rPrime_Sc2B_B)) + this->omega_BN_B.cross(this->r_Sc2B_B.cross(this->rPrime_Sc2B_B)))
+        - this->mass2 * this->r_Sc2B_B.cross(this->omega_S2S1_B.cross(this->rPrime_Sc2S2_B))
+        - rotFactor0_B * this->CTheta(0, 0)
+        - rotFactor1_B * this->CTheta(1, 0)
         + this->dcm_BS1 * attBodyTorquePntS1_S1 + this->dcm_BS2 * attBodyTorquePntS2_S2
-        + eigenTilde(this->r_S1B_B) * (this->dcm_BS1 * attBodyForce_S1)
-        + eigenTilde(this->r_S2S1_B + this->r_S1B_B) * (this->dcm_BS2 * attBodyForce_S2);
+        + this->r_S1B_B.cross(this->dcm_BS1 * attBodyForce_S1)
+        + (this->r_S2S1_B + this->r_S1B_B).cross(this->dcm_BS2 * attBodyForce_S2);
 }
 
 void SpinningBodyTwoDOFStateEffector::addPrescribedMotionCouplingContributions(BackSubMatrices & backSubContr) {
