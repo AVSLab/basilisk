@@ -1,0 +1,2 @@
+- Added optional performance benchmarks for Eigen versus ``linearAlgebra`` and dynamics effectors, with smoke tests to keep benchmark entry points fresh.
+- Improved selected dynamics effector performance by replacing hot-path skew-matrix vector products with equivalent Eigen ``cross()`` operations.
