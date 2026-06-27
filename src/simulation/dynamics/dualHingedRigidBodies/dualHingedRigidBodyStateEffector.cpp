@@ -235,8 +235,7 @@ void DualHingedRigidBodyStateEffector::updateContributions(double integTime, Bac
     this->omega_PNLoc_P = this->omega_BN_B;
     this->omega_PN_S1 = this->dcm_S1P*this->omega_PNLoc_P;
     this->omega_PN_S2 = this->dcm_S2P*this->omega_PNLoc_P;
-    // - Define omegaTildeBNLoc_B
-    this->omegaTildePNLoc_P = eigenTilde(this->omega_PNLoc_P);
+
     // - Define matrices needed for back substitution
     //gravityTorquePntH1_B = -this->d1*this->sHat11_B.cross(this->mass1*g_B); //Need to review these equations and implement them - SJKC
     //gravityTorquePntH2_B = -this->d2*this->sHat21_B.cross(this->mass2*g_B); //Need to review these equations and implement them - SJKC
@@ -248,16 +247,24 @@ void DualHingedRigidBodyStateEffector::updateContributions(double integTime, Bac
     this->matrixFDHRB.row(0) = -(this->mass2*this->l1 + this->mass1*this->d1)*this->sHat13_P.transpose();
     this->matrixFDHRB.row(1) = -this->mass2*this->d2*this->sHat23_P.transpose();
 
-    this->matrixGDHRB.row(0) = -(this->IPntS1_S1(1,1)*this->sHat12_P.transpose() - this->mass1*this->d1*this->sHat13_P.transpose()*this->rTildeS1P_P - this->mass2*this->l1*this->sHat13_P.transpose()*this->rTildeS2P_P);
-    this->matrixGDHRB.row(1) = -(this->IPntS2_S2(1,1)*this->sHat22_P.transpose() - this->mass2*this->d2*this->sHat23_P.transpose()*this->rTildeS2P_P);
+    this->matrixGDHRB.row(0) = -(this->IPntS1_S1(1,1)*this->sHat12_P.transpose()
+                                 - this->mass1*this->d1*this->sHat13_P.cross(this->r_S1P_P).transpose()
+                                 - this->mass2*this->l1*this->sHat13_P.cross(this->r_S2P_P).transpose());
+    this->matrixGDHRB.row(1) = -(this->IPntS2_S2(1,1)*this->sHat22_P.transpose()
+                                 - this->mass2*this->d2*this->sHat23_P.cross(this->r_S2P_P).transpose());
 
     this->vectorVDHRB(0) =  -(this->IPntS1_S1(0,0) - this->IPntS1_S1(2,2))*this->omega_PN_S1(2)*this->omega_PN_S1(0)
                             + this->u1 - this->k1*this->theta1 - this->c1*this->theta1Dot + this->k2*this->theta2 + this->c2*this->theta2Dot + this->sHat12_P.dot(gravTorquePan1PntH1) + this->l1*this->sHat13_P.dot(gravForcePan2) -
-                            this->mass1*this->d1*this->sHat13_P.transpose()*(2*this->omegaTildePNLoc_P*this->rPrimeS1P_P + this->omegaTildePNLoc_P*this->omegaTildePNLoc_P*this->r_S1P_P)
-                            - this->mass2*this->l1*this->sHat13_P.transpose()*(2*this->omegaTildePNLoc_P*this->rPrimeS2P_P + this->omegaTildePNLoc_P*this->omegaTildePNLoc_P*this->r_S2P_P + this->l1*this->theta1Dot*this->theta1Dot*this->sHat11_P + this->d2*(this->theta1Dot + this->theta2Dot)*(this->theta1Dot + this->theta2Dot)*this->sHat21_P); //still missing torque and force terms - SJKC
+                            this->mass1*this->d1*this->sHat13_P.dot(2*this->omega_PNLoc_P.cross(this->rPrimeS1P_P)
+                            + this->omega_PNLoc_P.cross(this->omega_PNLoc_P.cross(this->r_S1P_P)))
+                            - this->mass2*this->l1*this->sHat13_P.dot(2*this->omega_PNLoc_P.cross(this->rPrimeS2P_P)
+                            + this->omega_PNLoc_P.cross(this->omega_PNLoc_P.cross(this->r_S2P_P))
+                            + this->l1*this->theta1Dot*this->theta1Dot*this->sHat11_P
+                            + this->d2*(this->theta1Dot + this->theta2Dot)*(this->theta1Dot + this->theta2Dot)*this->sHat21_P); //still missing torque and force terms - SJKC
 
     this->vectorVDHRB(1) =  -(this->IPntS2_S2(0,0) - this->IPntS2_S2(2,2))*this->omega_PN_S2(2)*this->omega_PN_S2(0)
-                            + this->u2 - this->k2*this->theta2 - this->c2*this->theta2Dot + this->sHat22_P.dot(gravTorquePan2PntH2) - this->mass2*this->d2*this->sHat23_P.transpose()*(2*this->omegaTildePNLoc_P*this->rPrimeS2P_P + this->omegaTildePNLoc_P*this->omegaTildePNLoc_P*this->r_S2P_P + this->l1*this->theta1Dot*this->theta1Dot*this->sHat11_P); // still missing torque term. - SJKC
+                            + this->u2 - this->k2*this->theta2 - this->c2*this->theta2Dot + this->sHat22_P.dot(gravTorquePan2PntH2) - this->mass2*this->d2*this->sHat23_P.dot(2*this->omega_PNLoc_P.cross(this->rPrimeS2P_P)
+                            + this->omega_PNLoc_P.cross(this->omega_PNLoc_P.cross(this->r_S2P_P)) + this->l1*this->theta1Dot*this->theta1Dot*this->sHat11_P); // still missing torque term. - SJKC
 
     // - Start defining them good old contributions - start with translation
     // - For documentation on contributions see Allard, Diaz, Schaub flex/slosh paper
@@ -268,16 +275,28 @@ void DualHingedRigidBodyStateEffector::updateContributions(double integTime, Bac
 
     // - Define rotational matrice contributions (Eq 96 in paper)
 
-    backSubContr.matrixC = (this->IPntS1_S1(1,1)*this->sHat12_P + this->mass1*this->d1*this->rTildeS1P_P*this->sHat13_P + this->IPntS2_S2(1,1)*this->sHat22_P + this->mass2*this->l1*this->rTildeS2P_P*this->sHat13_P + this->mass2*this->d2*this->rTildeS2P_P*this->sHat23_P)*this->matrixEDHRB.row(0)*this->matrixFDHRB
-                    + (this->IPntS2_S2(1,1)*this->sHat22_P + this->mass2*this->d2*this->rTildeS2P_P*this->sHat23_P)*this->matrixEDHRB.row(1)*this->matrixFDHRB;
+    Eigen::Vector3d rotFactor0_P = this->IPntS1_S1(1,1)*this->sHat12_P
+                                   + this->mass1*this->d1*this->r_S1P_P.cross(this->sHat13_P)
+                                   + this->IPntS2_S2(1,1)*this->sHat22_P
+                                   + this->mass2*this->l1*this->r_S2P_P.cross(this->sHat13_P)
+                                   + this->mass2*this->d2*this->r_S2P_P.cross(this->sHat23_P);
+    Eigen::Vector3d rotFactor1_P = this->IPntS2_S2(1,1)*this->sHat22_P
+                                   + this->mass2*this->d2*this->r_S2P_P.cross(this->sHat23_P);
+    backSubContr.matrixC = rotFactor0_P*this->matrixEDHRB.row(0)*this->matrixFDHRB
+                    + rotFactor1_P*this->matrixEDHRB.row(1)*this->matrixFDHRB;
 
-    backSubContr.matrixD = (this->IPntS1_S1(1,1)*this->sHat12_P + this->mass1*this->d1*this->rTildeS1P_P*this->sHat13_P + this->IPntS2_S2(1,1)*this->sHat22_P + this->mass2*this->l1*this->rTildeS2P_P*this->sHat13_P + this->mass2*this->d2*this->rTildeS2P_P*this->sHat23_P)*this->matrixEDHRB.row(0)*this->matrixGDHRB
-                    +(this->IPntS2_S2(1,1)*this->sHat22_P + this->mass2*this->d2*this->rTildeS2P_P*this->sHat23_P)*this->matrixEDHRB.row(1)*this->matrixGDHRB;
+    backSubContr.matrixD = rotFactor0_P*this->matrixEDHRB.row(0)*this->matrixGDHRB
+                    + rotFactor1_P*this->matrixEDHRB.row(1)*this->matrixGDHRB;
 
-    backSubContr.vecRot = -(this->theta1Dot*this->IPntS1_S1(1,1)*this->omegaTildePNLoc_P*this->sHat12_P
-                    + this->mass1*this->omegaTildePNLoc_P*this->rTildeS1P_P*this->rPrimeS1P_P + this->mass1*this->d1*this->theta1Dot*this->theta1Dot*this->rTildeS1P_P*this->sHat11_P + (this->theta1Dot+this->theta2Dot)*this->IPntS2_S2(1,1)*this->omegaTildePNLoc_P*this->sHat22_P + this->mass2*this->omegaTildePNLoc_P*this->rTildeS2P_P*this->rPrimeS2P_P
-                    + this->mass2*this->rTildeS2P_P*(this->l1*this->theta1Dot*this->theta1Dot*this->sHat11_P + this->d2*(this->theta1Dot+this->theta2Dot)*(this->theta1Dot+this->theta2Dot)*this->sHat21_P) + (this->IPntS1_S1(1,1)*this->sHat12_P + this->mass1*this->d1*this->rTildeS1P_P*this->sHat13_P + this->IPntS2_S2(1,1)*this->sHat22_P
-                    + this->mass2*this->l1*this->rTildeS2P_P*this->sHat13_P + this->mass2*this->d2*this->rTildeS2P_P*this->sHat23_P)*this->matrixEDHRB.row(0)*this->vectorVDHRB + (this->IPntS2_S2(1,1)*this->sHat22_P + this->mass2*this->d2*this->rTildeS2P_P*this->sHat23_P)*this->matrixEDHRB.row(1)*this->vectorVDHRB);
+    backSubContr.vecRot = -(this->theta1Dot*this->IPntS1_S1(1,1)*this->omega_PNLoc_P.cross(this->sHat12_P)
+                    + this->mass1*this->omega_PNLoc_P.cross(this->r_S1P_P.cross(this->rPrimeS1P_P))
+                    + this->mass1*this->d1*this->theta1Dot*this->theta1Dot*this->r_S1P_P.cross(this->sHat11_P)
+                    + (this->theta1Dot+this->theta2Dot)*this->IPntS2_S2(1,1)*this->omega_PNLoc_P.cross(this->sHat22_P)
+                    + this->mass2*this->omega_PNLoc_P.cross(this->r_S2P_P.cross(this->rPrimeS2P_P))
+                    + this->mass2*this->r_S2P_P.cross(this->l1*this->theta1Dot*this->theta1Dot*this->sHat11_P
+                    + this->d2*(this->theta1Dot+this->theta2Dot)*(this->theta1Dot+this->theta2Dot)*this->sHat21_P)
+                    + rotFactor0_P*this->matrixEDHRB.row(0)*this->vectorVDHRB
+                    + rotFactor1_P*this->matrixEDHRB.row(1)*this->vectorVDHRB);
 
     return;
 }

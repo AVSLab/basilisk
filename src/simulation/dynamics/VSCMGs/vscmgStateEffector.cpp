@@ -262,7 +262,6 @@ void VSCMGStateEffector::updateContributions(double integTime, BackSubMatrices &
 	double omegas;
 	double omegat;
 	double OmegaSquared;
-	Eigen::Matrix3d omegaTilde;
     Eigen::MRPd sigmaBNLocal;
     Eigen::Matrix3d dcm_BN;                        /* direction cosine matrix from N to B */
     Eigen::Matrix3d dcm_NB;                        /* direction cosine matrix from B to N */
@@ -294,7 +293,6 @@ void VSCMGStateEffector::updateContributions(double integTime, BackSubMatrices &
 	for(it=VSCMGData.begin(); it!=VSCMGData.end(); it++)
 	{
 		OmegaSquared = it->Omega * it->Omega;
-		omegaTilde = eigenTilde(omegaLoc_BN_B);
 		omega_WB_B = it->gammaDot*it->ggHat_B+it->Omega*it->gsHat_B;
 		omegas = it->gsHat_B.transpose()*omegaLoc_BN_B;
 		omegat = it->gtHat_B.transpose()*omegaLoc_BN_B;
@@ -302,7 +300,7 @@ void VSCMGStateEffector::updateContributions(double integTime, BackSubMatrices &
 		if (it->VSCMGModel == vscmgBalancedWheels || it->VSCMGModel == vscmgJitterSimple) {
 			backSubContr.matrixD -= it->IV3 * it->ggHat_B * it->ggHat_B.transpose() + it->IW1 * it->gsHat_B * it->gsHat_B.transpose();
 			backSubContr.vecRot -= (it->u_s_current-it->IW1*omegat*it->gammaDot)*it->gsHat_B + it->IW1*it->Omega*it->gammaDot*it->gtHat_B + (it->u_g_current+(it->IV1-it->IV2)*omegas*omegat+it->IW1*it->Omega*omegat)*it->ggHat_B
-			+ omegaTilde*it->IGPntGc_B*it->gammaDot*it->ggHat_B + omegaTilde*it->IWPntWc_B*omega_WB_B;
+			+ omegaLoc_BN_B.cross(it->IGPntGc_B*it->gammaDot*it->ggHat_B) + omegaLoc_BN_B.cross(it->IWPntWc_B*omega_WB_B);
 			if (it->VSCMGModel == vscmgJitterSimple) {
 				/* static imbalance force: Fs = Us * Omega^2 */
 				tempF = it->U_s * OmegaSquared * it->w2Hat_B;
@@ -320,16 +318,12 @@ void VSCMGStateEffector::updateContributions(double integTime, BackSubMatrices &
 
 			double dSquared = it->d * it->d;
 			double gammaDotSquared = it->gammaDot * it->gammaDot;
-			Eigen::Matrix3d omegaTildeSquared = omegaTilde*omegaTilde;
-			Eigen::Matrix3d ggHatTilde_B = eigenTilde(it->ggHat_B);
-			Eigen::Matrix3d w2HatTilde_B = eigenTilde(it->w2Hat_B);
 			Eigen::Vector3d omega_GN_B = omegaLoc_BN_B + it->gammaDot*it->ggHat_B;
 			Eigen::Vector3d omega_WN_B = omega_GN_B + it->Omega*it->gsHat_B;
 
 			Eigen::Vector3d rVcG_B = 1.0/it->massV*(it->massG*it->rGcG_B + it->massW*it->rWcG_B);
 			Eigen::Vector3d rVcB_B = rVcG_B + it->rGB_B;
 			Eigen::Matrix3d rTildeVcG_B = eigenTilde(rVcG_B);
-			Eigen::Matrix3d rTildeVcB_B = eigenTilde(rVcG_B + it->rGB_B);
 			Eigen::Vector3d rGcVc_B = it->rGcG_B - rVcG_B;
 			Eigen::Vector3d rWcVc_B = it->rWcG_B - rVcG_B;
 			Eigen::Matrix3d rTildeGcVc_B = eigenTilde(rGcVc_B);
@@ -346,38 +340,38 @@ void VSCMGStateEffector::updateContributions(double integTime, BackSubMatrices &
 			Eigen::Matrix3d P = it->massW*it->rhoG*rTildeWcVc_B - it->massG*it->rhoW*rTildeGcVc_B + it->massW*rTildeVcG_B;
 			Eigen::Matrix3d Q = it->massG*it->rhoW*rTildeGcVc_B - it->massW*it->rhoG*rTildeWcVc_B + it->massG*rTildeVcG_B;
 
-			it->egamma = it->ggHat_B.dot(it->IGPntGc_B*it->ggHat_B+it->IWPntWc_B*it->ggHat_B+P*(it->l*it->gtHat_B-it->d*cos(it->theta)*it->gsHat_B)+Q*ggHatTilde_B*it->rGcG_B);
-			it->agamma = 1.0/it->egamma*it->massV*rTildeVcG_B*it->ggHat_B;
-			it->bgamma = -1.0/it->egamma*(IVPntVc_B.transpose()*it->ggHat_B-it->massV*rTildeVcB_B*rTildeVcG_B*it->ggHat_B);
+			it->egamma = it->ggHat_B.dot(it->IGPntGc_B*it->ggHat_B+it->IWPntWc_B*it->ggHat_B+P*(it->l*it->gtHat_B-it->d*cos(it->theta)*it->gsHat_B)+Q*it->ggHat_B.cross(it->rGcG_B));
+			it->agamma = 1.0/it->egamma*it->massV*rVcG_B.cross(it->ggHat_B);
+			it->bgamma = -1.0/it->egamma*(IVPntVc_B*it->ggHat_B-it->massV*rVcB_B.cross(rVcG_B.cross(it->ggHat_B)));
 			it->cgamma = -1.0/it->egamma*(it->ggHat_B.dot(it->IWPntWc_B*it->gsHat_B) + it->d*it->ggHat_B.dot(P*it->w3Hat_B));
-			it->dgamma = -1.0/it->egamma*it->ggHat_B.dot( it->gammaDot*Q*ggHatTilde_B*rPrimeGcG_B + P*((2.0*it->d*it->gammaDot*it->Omega*sin(it->theta)-it->l*gammaDotSquared)*it->gsHat_B-it->d*gammaDotSquared*cos(it->theta)*it->gtHat_B-it->d*OmegaSquared*it->w2Hat_B)
-							+ it->IPrimeGPntGc_B*omega_GN_B + omegaTilde*it->IGPntGc_B*omega_GN_B + it->IWPntWc_B*it->Omega*it->gammaDot*it->gtHat_B + it->IPrimeWPntWc_B*omega_WN_B + omegaTilde*it->IWPntWc_B*omega_WN_B
-							+ it->massG*rTildeGcVc_B*(2.0*omegaTilde*rPrimeGcVc_B+omegaTilde*omegaTilde*rGcVc_B) + it->massW*rTildeWcVc_B*(2.0*omegaTilde*rPrimeWcVc_B+omegaTildeSquared*rWcVc_B)
-							+ it->massV*rTildeVcG_B*(2.0*omegaTilde*rPrimeVcB_B+omegaTildeSquared*rVcB_B) )
+			it->dgamma = -1.0/it->egamma*it->ggHat_B.dot( it->gammaDot*Q*it->ggHat_B.cross(rPrimeGcG_B) + P*((2.0*it->d*it->gammaDot*it->Omega*sin(it->theta)-it->l*gammaDotSquared)*it->gsHat_B-it->d*gammaDotSquared*cos(it->theta)*it->gtHat_B-it->d*OmegaSquared*it->w2Hat_B)
+							+ it->IPrimeGPntGc_B*omega_GN_B + omegaLoc_BN_B.cross(it->IGPntGc_B*omega_GN_B) + it->IWPntWc_B*it->Omega*it->gammaDot*it->gtHat_B + it->IPrimeWPntWc_B*omega_WN_B + omegaLoc_BN_B.cross(it->IWPntWc_B*omega_WN_B)
+							+ it->massG*rGcVc_B.cross(2.0*omegaLoc_BN_B.cross(rPrimeGcVc_B)+omegaLoc_BN_B.cross(omegaLoc_BN_B.cross(rGcVc_B))) + it->massW*rWcVc_B.cross(2.0*omegaLoc_BN_B.cross(rPrimeWcVc_B)+omegaLoc_BN_B.cross(omegaLoc_BN_B.cross(rWcVc_B)))
+							+ it->massV*rVcG_B.cross(2.0*omegaLoc_BN_B.cross(rPrimeVcB_B)+omegaLoc_BN_B.cross(omegaLoc_BN_B.cross(rVcB_B))) )
 							+ 1.0/it->egamma*(it->u_g_current + it->gravityTorqueGimbal_g);
 
 			it->eOmega = it->IW1 + it->massW*dSquared;
 			it->aOmega = -1.0/it->eOmega*it->massW*it->d*it->w3Hat_B;
-			it->bOmega = -1.0/it->eOmega*(it->IWPntWc_B.transpose()*it->gsHat_B - it->massW*it->d*it->rTildeWcB_B*w2HatTilde_B*it->gsHat_B);
+			it->bOmega = -1.0/it->eOmega*(it->IWPntWc_B*it->gsHat_B - it->massW*it->d*it->rWcB_B.cross(it->w2Hat_B.cross(it->gsHat_B)));
 			it->cOmega = -1.0/it->eOmega*(it->IW13*cos(it->theta)-it->massW*it->d*it->l*sin(it->theta));
 			it->dOmega = -1.0/it->eOmega*(it->gsHat_B.dot(it->IPrimeWPntWc_B*omega_WN_B)
-										  + it->gsHat_B.transpose()*omegaTilde*it->IWPntWc_B*omega_WN_B
-										  + it->massW*it->d*it->gsHat_B.transpose()*w2HatTilde_B*(2.0*it->rPrimeTildeWcB_B.transpose()*omegaLoc_BN_B+omegaTilde*omegaTilde*it->rWcB_B))
+										  + it->gsHat_B.dot(omegaLoc_BN_B.cross(it->IWPntWc_B*omega_WN_B))
+										  + it->massW*it->d*it->gsHat_B.dot(it->w2Hat_B.cross(2.0*omegaLoc_BN_B.cross(it->rPrimeWcB_B)+omegaLoc_BN_B.cross(omegaLoc_BN_B.cross(it->rWcB_B)))))
 										  + (1.0/it->eOmega)*(it->IW13*sin(it->theta)*it->Omega*it->gammaDot - it->massW*dSquared*gammaDotSquared*cos(it->theta)*sin(it->theta) + it->u_s_current + it->gravityTorqueWheel_s);
 
 			it->p = (it->aOmega+it->cOmega*it->agamma)/(1.0-it->cOmega*it->cgamma);
 			it->q = (it->bOmega+it->cOmega*it->bgamma)/(1.0-it->cOmega*it->cgamma);
 			it->s = (it->dOmega+it->cOmega*it->dgamma)/(1.0-it->cOmega*it->cgamma);
 
-			ur = it->massG*ggHatTilde_B*it->rGcG_B - it->massW*it->d*cos(it->theta)*it->gsHat_B + it->massW*it->l*it->gtHat_B;
+			ur = it->massG*it->ggHat_B.cross(it->rGcG_B) - it->massW*it->d*cos(it->theta)*it->gsHat_B + it->massW*it->l*it->gtHat_B;
 			vr = it->massW*it->d*it->w3Hat_B;
-			kr = it->massG*it->gammaDot*ggHatTilde_B*it->rPrimeGcB_B + it->massW*((2.0*it->d*it->gammaDot*it->Omega*sin(it->theta)-it->l*gammaDotSquared)*it->gsHat_B-it->d*gammaDotSquared*cos(it->theta)*it->gtHat_B-it->d*OmegaSquared*it->w2Hat_B);
+			kr = it->massG*it->gammaDot*it->ggHat_B.cross(it->rPrimeGcB_B) + it->massW*((2.0*it->d*it->gammaDot*it->Omega*sin(it->theta)-it->l*gammaDotSquared)*it->gsHat_B-it->d*gammaDotSquared*cos(it->theta)*it->gtHat_B-it->d*OmegaSquared*it->w2Hat_B);
 
-			uomega = it->IGPntGc_B*it->ggHat_B + it->massG*it->rTildeGcB_B*ggHatTilde_B*it->rGcG_B + it->IWPntWc_B*it->ggHat_B + it->massW*it->rTildeWcB_B*(it->l*it->gtHat_B-it->d*cos(it->theta)*it->gsHat_B);
-			vomega = it->IWPntWc_B*it->gsHat_B + it->massW*it->d*it->rTildeWcB_B*it->w3Hat_B;
-			komega = it->IPrimeGPntGc_B*it->gammaDot*it->ggHat_B + omegaTilde*it->IGPntGc_B*it->gammaDot*it->ggHat_B + it->massG*omegaTilde*it->rTildeGcB_B*it->rPrimeGcB_B + it->massG*it->gammaDot*it->rTildeGcB_B*ggHatTilde_B*rPrimeGcG_B
-						+ it->IWPntWc_B*it->Omega*it->gammaDot*it->gtHat_B + it->IPrimeWPntWc_B*omega_WB_B + omegaTilde*it->IWPntWc_B*omega_WB_B + it->massW*omegaTilde*it->rTildeWcB_B*it->rPrimeWcB_B
-						+ it->massW*it->rTildeWcB_B*((2.0*it->d*it->gammaDot*it->Omega*sin(it->theta)-it->l*gammaDotSquared)*it->gsHat_B-it->d*gammaDotSquared*cos(it->theta)*it->gtHat_B-it->d*OmegaSquared*it->w2Hat_B);
+			uomega = it->IGPntGc_B*it->ggHat_B + it->massG*it->rGcB_B.cross(it->ggHat_B.cross(it->rGcG_B)) + it->IWPntWc_B*it->ggHat_B + it->massW*it->rWcB_B.cross(it->l*it->gtHat_B-it->d*cos(it->theta)*it->gsHat_B);
+			vomega = it->IWPntWc_B*it->gsHat_B + it->massW*it->d*it->rWcB_B.cross(it->w3Hat_B);
+			komega = it->IPrimeGPntGc_B*it->gammaDot*it->ggHat_B + omegaLoc_BN_B.cross(it->IGPntGc_B*it->gammaDot*it->ggHat_B) + it->massG*omegaLoc_BN_B.cross(it->rGcB_B.cross(it->rPrimeGcB_B)) + it->massG*it->gammaDot*it->rGcB_B.cross(it->ggHat_B.cross(rPrimeGcG_B))
+						+ it->IWPntWc_B*it->Omega*it->gammaDot*it->gtHat_B + it->IPrimeWPntWc_B*omega_WB_B + omegaLoc_BN_B.cross(it->IWPntWc_B*omega_WB_B) + it->massW*omegaLoc_BN_B.cross(it->rWcB_B.cross(it->rPrimeWcB_B))
+						+ it->massW*it->rWcB_B.cross((2.0*it->d*it->gammaDot*it->Omega*sin(it->theta)-it->l*gammaDotSquared)*it->gsHat_B-it->d*gammaDotSquared*cos(it->theta)*it->gtHat_B-it->d*OmegaSquared*it->w2Hat_B);
 
 			backSubContr.matrixA += ur*it->agamma.transpose() + (vr+ur*it->cgamma)*it->p.transpose();
 			backSubContr.matrixB += ur*it->bgamma.transpose() + (vr+ur*it->cgamma)*it->q.transpose();

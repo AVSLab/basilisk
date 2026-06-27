@@ -244,7 +244,7 @@ void PrescribedMotionStateEffector::updateEffectorMassProps(double integTime)
     this->effProps.IEffPntB_B = this->IPntPc_B - this->mass * this->rTilde_PcB_B * this->rTilde_PcB_B;
 
     // Find the B frame time derivative of r_PcB_B
-    this->rPrime_PcB_B = this->omegaTilde_PB_B * this->r_PcP_B + this->rPrime_PM_B;
+    this->rPrime_PcB_B = this->omega_PB_B.cross(this->r_PcP_B) + this->rPrime_PM_B;
 
     if (this->stateEffectors.empty()) {
         this->effProps.rEff_CB_B = this->r_PcB_B;
@@ -276,7 +276,7 @@ void PrescribedMotionStateEffector::updateEffectorMassProps(double integTime)
         this->effProps.rEff_CB_B += (*it)->effProps.mEff * r_EcB_B;
 
         Eigen::Vector3d rPPrime_EcP_P = (*it)->effProps.rEffPrime_CB_B;
-        Eigen::Vector3d rPrime_EcP_B = this->dcm_BP * rPPrime_EcP_P + this->omegaTilde_PB_B * r_EcP_B;
+        Eigen::Vector3d rPrime_EcP_B = this->dcm_BP * rPPrime_EcP_P + this->omega_PB_B.cross(r_EcP_B);
         *this->rPrime_PB_B = this->rPrime_PM_B;
         Eigen::Vector3d rPrime_EcB_B = rPrime_EcP_B + *this->rPrime_PB_B;
         this->effProps.rEffPrime_CB_B += (*it)->effProps.mEff * rPrime_EcB_B;
@@ -381,18 +381,19 @@ void PrescribedMotionStateEffector::updateContributions(double integTime,
     backSubContr.vecRot = totVecRot;
 
     // Prescribed motion translation contributions
-    Eigen::Matrix3d omegaPrimeTilde_PB_B = eigenTilde(this->omegaPrime_PB_B);
-    this->rPrimePrime_PcB_B = (omegaPrimeTilde_PB_B + this->omegaTilde_PB_B * this->omegaTilde_PB_B) * this->r_PcP_B +
-                              this->rPrimePrime_PM_B;
+    this->rPrimePrime_PcB_B = this->omegaPrime_PB_B.cross(this->r_PcP_B)
+                              + this->omega_PB_B.cross(this->omega_PB_B.cross(this->r_PcP_B))
+                              + this->rPrimePrime_PM_B;
     backSubContr.vecTrans += -this->mass * this->rPrimePrime_PcB_B;
 
     // Prescribed motion rotation contributions
     Eigen::Matrix3d IPrimePntPc_B;
     IPrimePntPc_B = this->omegaTilde_PB_B * this->IPntPc_B - this->IPntPc_B * this->omegaTilde_PB_B;
-    backSubContr.vecRot += -(this->mass * this->rTilde_PcB_B * this->rPrimePrime_PcB_B)
-                          - (IPrimePntPc_B + this->omegaTilde_BN_B * this->IPntPc_B) * this->omega_PB_B
+    backSubContr.vecRot += -(this->mass * this->r_PcB_B.cross(this->rPrimePrime_PcB_B))
+                          - IPrimePntPc_B * this->omega_PB_B
+                          - this->omega_BN_B.cross(this->IPntPc_B * this->omega_PB_B)
                           - this->IPntPc_B * this->omegaPrime_PB_B
-                          - this->mass * this->omegaTilde_BN_B * rTilde_PcB_B * this->rPrime_PcB_B;
+                          - this->mass * this->omega_BN_B.cross(this->r_PcB_B.cross(this->rPrime_PcB_B));
 }
 
 /*! This method is for defining the state effector's MRP state derivative
@@ -424,14 +425,14 @@ void PrescribedMotionStateEffector::computeDerivatives(double integTime,
         *this->sigma_PN = eigenMRPd2Vector3d(eigenC2MRP(dcm_PN));
 
         // Compute omegaDot_PN_P
-        Eigen::Vector3d omegaDot_PN_B = this->omegaPrime_PM_B + this->omegaTilde_BN_B * this->omega_PM_B + omegaDot_BN_B;
+        Eigen::Vector3d omegaDot_PN_B = this->omegaPrime_PM_B + this->omega_BN_B.cross(this->omega_PM_B) + omegaDot_BN_B;
         Eigen::Vector3d omegaDot_PN_P = this->dcm_BP.transpose() * omegaDot_PN_B;
 
         // Compute rDDot_PN_N
-        Eigen::Matrix3d omegaDotTilde_BN_B = eigenTilde(omegaDot_BN_B);
-        Eigen::Vector3d rDDot_PB_B = this->rPrimePrime_PM_B + 2 * this->omegaTilde_BN_B * this->rPrime_PM_B
-                                     + omegaDotTilde_BN_B * (*this->r_PB_B)
-                                     + this->omegaTilde_BN_B * this->omegaTilde_BN_B * (*this->r_PB_B);
+        Eigen::Vector3d r_PB_B = *this->r_PB_B;
+        Eigen::Vector3d rDDot_PB_B = this->rPrimePrime_PM_B + 2 * this->omega_BN_B.cross(this->rPrime_PM_B)
+                                     + omegaDot_BN_B.cross(r_PB_B)
+                                     + this->omega_BN_B.cross(this->omega_BN_B.cross(r_PB_B));
         Eigen::Vector3d rDDot_PN_N = this->dcm_BN.transpose() * rDDot_PB_B + rDDot_BN_N;
 
         std::vector<StateEffector*>::iterator it;
@@ -474,15 +475,13 @@ void PrescribedMotionStateEffector::updateEnergyMomContributions(double integTim
 
         // Additional terms for rotational angular momentum
         Eigen::Vector3d r_EcP_B = this->dcm_BP * (*it)->effProps.rEff_CB_B;
-        Eigen::Matrix3d rTilde_EcP_B = eigenTilde(r_EcP_B);
-        Eigen::Vector3d rDot_PB_B = *this->rPrime_PB_B + this->omegaTilde_BN_B * *this->r_PB_B;
-        Eigen::Matrix3d rTilde_PB_B = eigenTilde(*this->r_PB_B);
-        Eigen::Matrix3d omegaTilde_PN_B = eigenTilde(this->omega_PN_B);
-        Eigen::Vector3d rDot_EcP_B = this->dcm_BP * (*it)->effProps.rEffPrime_CB_B + omegaTilde_PN_B * r_EcP_B;
+        Eigen::Vector3d r_PB_B = *this->r_PB_B;
+        Eigen::Vector3d rDot_PB_B = (Eigen::Vector3d)*this->rPrime_PB_B + this->omega_BN_B.cross(r_PB_B);
+        Eigen::Vector3d rDot_EcP_B = this->dcm_BP * (*it)->effProps.rEffPrime_CB_B + this->omega_PN_B.cross(r_EcP_B);
         totRotAngMomPntC_B += this->dcm_BP * rotAngMomPntCContr_B
-                                + (*it)->effProps.mEff * rTilde_EcP_B * rDot_PB_B
-                                + (*it)->effProps.mEff * rTilde_PB_B * rDot_EcP_B
-                                + (*it)->effProps.mEff * rTilde_PB_B * rDot_PB_B;
+                                + (*it)->effProps.mEff * r_EcP_B.cross(rDot_PB_B)
+                                + (*it)->effProps.mEff * r_PB_B.cross(rDot_EcP_B)
+                                + (*it)->effProps.mEff * r_PB_B.cross(rDot_PB_B);
 
         // Additional terms for rotational energy
         totRotEnergy += rotEnergyContr
@@ -494,8 +493,8 @@ void PrescribedMotionStateEffector::updateEnergyMomContributions(double integTim
     rotEnergyContr = totRotEnergy;
 
     // Prescribed motion rotational angular momentum contribution
-    this->rDot_PcB_B = this->rPrime_PcB_B + this->omegaTilde_BN_B * this->r_PcB_B;
-    rotAngMomPntCContr_B += this->IPntPc_B * this->omega_PN_B + this->mass * this->rTilde_PcB_B * this->rDot_PcB_B;
+    this->rDot_PcB_B = this->rPrime_PcB_B + this->omega_BN_B.cross(this->r_PcB_B);
+    rotAngMomPntCContr_B += this->IPntPc_B * this->omega_PN_B + this->mass * this->r_PcB_B.cross(this->rDot_PcB_B);
 
     // Prescribed motion rotational energy contribution
     rotEnergyContr += 0.5 * this->omega_PN_B.dot(this->IPntPc_B * this->omega_PN_B)
@@ -520,8 +519,8 @@ void PrescribedMotionStateEffector::computePrescribedMotionInertialStates()
 
     // Compute the effector's inertial velocity vectors
     this->v_PcN_N = (Eigen::Vector3d)*this->inertialVelocityProperty + this->dcm_BN.transpose() * this->rDot_PcB_B;
-    *this->v_PN_N = (Eigen::Vector3d)*this->inertialVelocityProperty + this->dcm_BN.transpose() * (*this->rPrime_PB_B +
-            this->omegaTilde_BN_B * *this->r_PB_B);
+    *this->v_PN_N = (Eigen::Vector3d)*this->inertialVelocityProperty + this->dcm_BN.transpose() * (
+            (Eigen::Vector3d)*this->rPrime_PB_B + this->omega_BN_B.cross((Eigen::Vector3d)*this->r_PB_B));
 }
 
 /*! This method updates the effector state at the dynamics frequency.
