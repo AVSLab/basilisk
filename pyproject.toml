@@ -113,6 +113,10 @@ manylinux-aarch64-image = "manylinux_2_28"
 environment-pass = ["CONAN_ARGS", "CMAKE_C_COMPILER_LAUNCHER", "CMAKE_CXX_COMPILER_LAUNCHER"]
 
 [tool.pytest.ini_options]
+testpaths = [
+  "src",
+  "benchmarks/tests",
+]
 markers = [
   "slowtest: mark a test as a slow unit test.",
   "scenarioTest: mark a test as a tutorial scenario test.",

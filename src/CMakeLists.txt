@@ -759,5 +759,8 @@ file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/supportData")
 file(GLOB dataFiles "${CMAKE_SOURCE_DIR}/../supportData/*")
 create_symlinks("${CMAKE_BINARY_DIR}/Basilisk/supportData" ${dataFiles})
 
+# Optional performance benchmark targets
+add_subdirectory("${CMAKE_SOURCE_DIR}/../benchmarks" "${CMAKE_BINARY_DIR}/benchmarks")
+
 # Tests targets
 add_subdirectory("architecture/utilities/tests")
