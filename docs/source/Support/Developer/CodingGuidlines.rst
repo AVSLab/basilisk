@@ -248,6 +248,12 @@ This will execute ``pytest`` and ``gtest`` checks.  All tests should pass.  If n
 Basilisk modules are built (i.e. the build process turned off ``opNav`` option), then
 some tests will show up as skipped.
 
+Optional developer performance benchmarks are documented separately in
+:ref:`performanceBenchmarks`.  Benchmark timing runs are opt-in speed
+investigations.  The lightweight benchmark smoke tests only check that benchmark
+entry points still execute, and may be included in the default ``pytest``
+collection paths.
+
 If you want to use ``pytest`` to generate a validation HTML report,
 then the ``pytest-html`` package is used. In a terminal window, make your
 working directory ``basilisk/src``.  Next, run ``pytest`` by adding the ``--html`` argument
