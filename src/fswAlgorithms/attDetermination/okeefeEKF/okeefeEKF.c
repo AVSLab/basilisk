@@ -144,8 +144,11 @@ void Update_okeefeEKF(okeefeEKFConfig *configData, uint64_t callTime,
         mCopy(configData->covarBar, SKF_N_STATES_HALF, SKF_N_STATES_HALF, configData->covar);
     }
 
-    /* Compute post fit residuals once that data has been processed */
-    mMultM(configData->measMat, (size_t) configData->numObs, SKF_N_STATES, configData->x, SKF_N_STATES, 1, Hx);
+    /* Compute post fit residuals once that data has been processed.
+       The okeefe filter carries SKF_N_STATES_HALF states, so the measurement matrix and
+       state-error vector are that wide; using SKF_N_STATES here strode mMultM across the
+       wrong row width and over-read x, corrupting postFits (issue #1353). */
+    mMultM(configData->measMat, (size_t) configData->numObs, SKF_N_STATES_HALF, configData->x, SKF_N_STATES_HALF, 1, Hx);
     mSubtract(configData->yMeas, (size_t) configData->numObs, 1, Hx, configData->postFits);
 
     /*! - Write the sunline estimate into the copy of the navigation message structure*/

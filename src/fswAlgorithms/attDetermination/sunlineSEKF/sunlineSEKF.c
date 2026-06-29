@@ -158,8 +158,11 @@ void Update_sunlineSEKF(sunlineSEKFConfig *configData, uint64_t callTime,
         mCopy(configData->covarBar, EKF_N_STATES_SWITCH, EKF_N_STATES_SWITCH, configData->covar);
     }
 
-    /* Compute post fit residuals once that data has been processed */
-    mMultM(configData->measMat, configData->numObs, SKF_N_STATES, configData->x, SKF_N_STATES, 1, Hx);
+    /* Compute post fit residuals once that data has been processed.
+       The SEKF carries EKF_N_STATES_SWITCH states, so the measurement matrix and
+       state-error vector are that wide; using SKF_N_STATES here strode mMultM across
+       the wrong row width and over-read x, corrupting postFits (issue #1353). */
+    mMultM(configData->measMat, configData->numObs, EKF_N_STATES_SWITCH, configData->x, EKF_N_STATES_SWITCH, 1, Hx);
     mSubtract(configData->yMeas, configData->numObs, 1, Hx, configData->postFits);
 
     /* Switch the rates back to omega_BN instead of oemga_SB */
