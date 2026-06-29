@@ -27,3 +27,21 @@ def test_bsk_error_treats_python_message_as_text():
 
     with pytest.raises(bskLogging.BasiliskError, match="preformatted %s message"):
         bsk_logger.bskError("preformatted %s message")
+
+
+def test_warning_level_output_is_flushed(capfd):
+    """A ``BSK_WARNING`` must reach stdout at log time (issue #1444).
+
+    ``bskLog`` flushes warning-level (and higher) output, so it is observable to
+    ``capfd`` before the process exits. Without that flush the C runtime fully
+    buffers the line when stdout is not a TTY (pytest capture, pipes, redirection)
+    and it would be lost on a crash and invisible to this assertion. The log level
+    is set on the instance so the test does not depend on the global default level
+    left behind by other tests."""
+    bsk_logger = bskLogging.BSKLogger()
+    bsk_logger.setLogLevel(bskLogging.BSK_WARNING)
+
+    bsk_logger.bskLog(bskLogging.BSK_WARNING, "flush regression marker")
+
+    out, _ = capfd.readouterr()
+    assert "flush regression marker" in out
