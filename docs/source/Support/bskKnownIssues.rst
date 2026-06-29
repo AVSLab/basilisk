@@ -76,6 +76,11 @@ Version |release|
   across the wrong row width and over-reading the state-error vector. This corrupted the reported post-fit
   residuals during the convergence transient (the state and covariance estimates were unaffected). This is
   fixed in the current version.
+- BSK-643: several simulation modules own dynamically-allocated output messages that are freed in their
+  destructors but inherited the compiler-generated copy operations, so copying such a module shallow-copied
+  the raw message pointers and both instances would free the same messages (double free). ``SysModel``-derived
+  modules are now non-copyable by default, while message recorders keep explicit copy-construction support.
+  This is fixed in the current version.
 
 
 Version 2.10.0 (April 2, 2026)

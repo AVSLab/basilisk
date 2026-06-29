@@ -23,9 +23,3 @@
 SysModel::SysModel()
     : moduleID(ModuleIdGenerator::GetInstance()->checkoutModuleID())
 {}
-
-SysModel::SysModel(const SysModel &obj)
-    : ModelTag{obj.ModelTag},
-    RNGSeed{obj.RNGSeed},
-    moduleID{ModuleIdGenerator::GetInstance()->checkoutModuleID()}
-{}

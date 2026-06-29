@@ -36,5 +36,7 @@ namespace std {
    %template(StringVector) vector<string, allocator<string> >;
    %template(ConstCharVector) vector<const char*, allocator<const char*> >;
 }
+%ignore SysModel::SysModel(const SysModel &);
+%ignore SysModel::operator=(const SysModel &);
 %include "sys_model.h"
 %include "sys_model_task.h"

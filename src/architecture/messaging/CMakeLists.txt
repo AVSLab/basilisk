@@ -111,13 +111,24 @@ endfunction(generate_messages)
 # TODO: Deprecate this!
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cMsgCInterfacePy/__init__.py ${CMAKE_BINARY_DIR}/Basilisk/architecture/cMsgCInterfacePy/__init__.py COPYONLY)
 
+# Track payload headers so the generated Python message package is rebuilt when message definitions change.
+file(GLOB_RECURSE package_init_payload_files CONFIGURE_DEPENDS
+  "${CMAKE_CURRENT_SOURCE_DIR}/../msgPayloadDefC/*Payload.h"
+  "${CMAKE_CURRENT_SOURCE_DIR}/../msgPayloadDefCpp/*Payload.h")
+
 if(NOT "${EXTERNAL_MODULES_PATH}" STREQUAL "")
+  file(GLOB_RECURSE package_init_external_payload_files CONFIGURE_DEPENDS
+    "${EXTERNAL_MODULES_PATH}/msgPayloadDefC/*Payload.h"
+    "${EXTERNAL_MODULES_PATH}/msgPayloadDefCpp/*Payload.h")
+  list(APPEND package_init_payload_files ${package_init_external_payload_files})
+
   add_custom_command(
     OUTPUT ${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/__init__.py
     COMMAND
       ${Python3_EXECUTABLE} generatePackageInit.py "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/"
       "../../msgPayloadDefC/" "../../msgPayloadDefCpp/" "${EXTERNAL_MODULES_PATH}/msgPayloadDefC/"
       "${EXTERNAL_MODULES_PATH}/msgPayloadDefCpp/"
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/msgAutoSource/generatePackageInit.py ${package_init_payload_files}
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/msgAutoSource
     VERBATIM)
 else()
@@ -125,6 +136,7 @@ else()
     OUTPUT ${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/__init__.py
     COMMAND ${Python3_EXECUTABLE} generatePackageInit.py "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/"
             "../../msgPayloadDefC/" "../../msgPayloadDefCpp/"
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/msgAutoSource/generatePackageInit.py ${package_init_payload_files}
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/msgAutoSource
     VERBATIM)
 endif(NOT "${EXTERNAL_MODULES_PATH}" STREQUAL "")
@@ -141,3 +153,12 @@ file(WRITE  ${UMBRELLA} "// AUTO-GENERATED — DO NOT EDIT\n#pragma once\n")
 foreach(eqHeader ${cpp_equality_headers} ${c_equality_headers})
   file(APPEND ${UMBRELLA} "#if __has_include(\"${eqHeader}\")\n#  include \"${eqHeader}\"\n#endif\n")
 endforeach()
+
+# Verify the central SysModel copy restriction while keeping Recorder explicitly copyable.
+add_executable(test_recorder_copy_contract _UnitTest/test_recorder_copy_contract.cpp)
+target_sources(test_recorder_copy_contract PRIVATE ${CMAKE_SOURCE_DIR}/architecture/_GeneralModuleFiles/sys_model.cpp)
+target_link_libraries(test_recorder_copy_contract GTest::gtest_main)
+target_link_libraries(test_recorder_copy_contract ArchitectureUtilities)
+target_link_libraries(test_recorder_copy_contract ModuleIdGenerator)
+
+gtest_discover_tests(test_recorder_copy_contract)
