@@ -35,6 +35,8 @@ STRUCTASLIST(AccPktDataMsgPayload)
 STRUCTASLIST(RWConfigElementMsgPayload)
 STRUCTASLIST(CSSArraySensorMsgPayload)
 
+%ignore SysModel::SysModel(const SysModel &);
+%ignore SysModel::operator=(const SysModel &);
 %include "messaging/messaging.h"
 %include "_GeneralModuleFiles/sys_model.h"
 

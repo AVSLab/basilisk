@@ -315,6 +315,19 @@ public:
         }
         this->ModelTag = "Rec:" + findMsgName(std::string(typeid(*messageReader).name()));
     }
+    //! -- Copy recorder state while keeping a unique SysModel module ID
+    Recorder(const Recorder& obj) : SysModel() {
+        this->copyRecorderState(obj);
+    }
+#ifndef SWIG
+    //! -- Copy recorder state while preserving this recorder's module ID
+    Recorder& operator=(const Recorder& obj) {
+        if (this != &obj) {
+            this->copyRecorderState(obj);
+        }
+        return *this;
+    }
+#endif
     ~Recorder(){};
 
     //! -- self initialization
@@ -415,7 +428,7 @@ private:
     std::deque<uint64_t> msgRecordTimes;          //!< deque of times at which messages are recorded
     std::deque<uint64_t> msgWrittenTimes;         //!< deque of times at which messages are written
     uint64_t nextUpdateTime = 0;                  //!< [ns] earliest time at which the msg is recorded again
-    uint64_t timeInterval;                        //!< [ns] recording time interval
+    uint64_t timeInterval = 0;                    //!< [ns] recording time interval
     uint64_t lastUpdateTime = 0;                  //!< [ns] last time the msg was checked for recording
     bool hasLastUpdateTime = false;               //!< flag indicating whether the msg was checked
     bool recordOnlyOnChange = false;              //!< flag to record only changed message payloads
@@ -451,6 +464,22 @@ private:
     };
 
     ReadFunctor<messageType> readMessage;   //!< method description
+
+    //! -- Copy recorder-owned state without copying the SysModel identity
+    void copyRecorderState(const Recorder& obj){
+        this->ModelTag = obj.ModelTag;
+        this->RNGSeed = obj.RNGSeed;
+        this->bskLogger = obj.bskLogger;
+        this->msgRecord = obj.msgRecord;
+        this->msgRecordTimes = obj.msgRecordTimes;
+        this->msgWrittenTimes = obj.msgWrittenTimes;
+        this->nextUpdateTime = obj.nextUpdateTime;
+        this->timeInterval = obj.timeInterval;
+        this->lastUpdateTime = obj.lastUpdateTime;
+        this->hasLastUpdateTime = obj.hasLastUpdateTime;
+        this->recordOnlyOnChange = obj.recordOnlyOnChange;
+        this->readMessage = obj.readMessage;
+    };
 };
 
 #endif

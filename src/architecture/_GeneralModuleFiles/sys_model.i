@@ -29,6 +29,8 @@ from Basilisk.architecture.swig_common_model import *
 
 %include "architecture/utilities/bskLogging.h"
 
+%ignore SysModel::SysModel(const SysModel &);
+%ignore SysModel::operator=(const SysModel &);
 %include "sys_model.h"
 
 %pythonbegin %{

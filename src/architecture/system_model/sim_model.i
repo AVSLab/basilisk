@@ -75,6 +75,8 @@ namespace std {
 );
 
 %include "architecture/_GeneralModuleFiles/sys_model_task.h"
+%ignore SysModel::SysModel(const SysModel &);
+%ignore SysModel::operator=(const SysModel &);
 %include "sys_model.h"
 %include "sys_process.h"
 %include "sim_model.h"
