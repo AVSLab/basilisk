@@ -59,6 +59,11 @@ Version |release|
 - BSK-548: :ref:`simHelpers` ``timeStringToGregorianUTCMsg`` leaked the SWIG-allocated ``doubleArray``
   scratch buffer used to receive the ``str2et_c`` result (about 32 bytes per call). The buffer is now
   freed with ``delete_doubleArray``. This is fixed in the current version.
+- BSK-1353: :ref:`sunlineSEKF` and :ref:`okeefeEKF` computed the post-fit residual ``measMat * x`` using the
+  full ``SKF_N_STATES`` width rather than each filter's reduced state width, striding the measurement matrix
+  across the wrong row width and over-reading the state-error vector. This corrupted the reported post-fit
+  residuals during the convergence transient (the state and covariance estimates were unaffected). This is
+  fixed in the current version.
 
 
 Version 2.10.0 (April 2, 2026)

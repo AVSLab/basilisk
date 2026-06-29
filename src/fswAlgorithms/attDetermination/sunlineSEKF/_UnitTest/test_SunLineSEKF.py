@@ -853,9 +853,17 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
     module.x = (np.array(stateTarget1) - np.array(stateGuess)).tolist()
 
     kfLog = module.logger("x", testProcessRate)
+    # Log the internal measurement matrix, measurement vector, post-fit residuals,
+    # and observation count so the residual dimensioning can be checked (issue #1353).
+    measMatLog = module.logger("measMat", testProcessRate)
+    yMeasLog = module.logger("yMeas", testProcessRate)
+    postFitsLog = module.logger("postFits", testProcessRate)
+    numObsLog = module.logger("numObs", testProcessRate)
     dataLog = module.filtDataOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
     unitTestSim.AddModelToTask(unitTaskName, kfLog)
+    for extraLog in (measMatLog, yMeasLog, postFitsLog, numObsLog):
+        unitTestSim.AddModelToTask(unitTaskName, extraLog)
 
     unitTestSim.InitializeSimulation()
 
@@ -911,7 +919,27 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
     postFitLog = addTimeColumn(dataLog.times(), dataLog.postFitRes)
     covarLog = addTimeColumn(dataLog.times(), dataLog.covar)
 
-
+    # Post-fit residuals must equal yMeas - H @ x, with H the (numObs x numStates)
+    # measurement matrix (issue #1353). Recompute them independently from the module's
+    # own logged H, x, and yMeas. Using the wrong column count makes the residual
+    # multiply stride across the wrong row width and over-read x; the corruption is
+    # largest during the convergence transient and vanishes as x -> 0, so it is checked
+    # every step rather than only at the end.
+    measMatHist = np.array(measMatLog.measMat)
+    yMeasHist = np.array(yMeasLog.yMeas)
+    xHist = np.array(kfLog.x)
+    numObsHist = np.array(numObsLog.numObs)
+    postFitHist = np.array(postFitsLog.postFits)
+    for step in range(len(numObsHist)):
+        numObsStep = int(numObsHist[step])
+        if numObsStep <= 0:
+            continue
+        hMat = measMatHist[step].reshape(-1, numStates)[:numObsStep, :]
+        expectedRes = yMeasHist[step, :numObsStep] - hMat @ xHist[step]
+        if np.linalg.norm(postFitHist[step, :numObsStep] - expectedRes) > 1.0E-9:
+            testFailCount += 1
+            testMessages.append("Post-fit residual dimension mismatch (issue #1353)")
+            break
 
     for i in range(numStates):
         if (abs(covarLog[-1, i * numStates + 1 + i] - covarLog[0, i * numStates + 1 + i] / 100.) > 1E-1):
