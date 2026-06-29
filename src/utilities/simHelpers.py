@@ -115,6 +115,7 @@ def timeStringToGregorianUTCMsg(DateSpice, **kwargs):
     et = pyswice.new_doubleArray(1)
     pyswice.str2et_c(DateSpice, et)
     etEpoch = pyswice.doubleArray_getitem(et, 0)
+    pyswice.delete_doubleArray(et)  # free the SWIG-allocated array (leaked otherwise)
     ep1 = pyswice.et2utc_c(etEpoch, "C", 6, 255, "Yo")
     pyswice.unload_c(str(naif0012_path))
 
