@@ -76,11 +76,19 @@ void MJSite::writeFwdKinematicsMessage(mjModel* model, mjData* data, uint64_t Cu
     Eigen::Map<Eigen::MRPd> mrpd{payload.sigma_BN};
     mrpd = rot;
 
-    double res_N[6], res_B[6];
+    // mj_objectVelocity returns the site's 6D spatial velocity [angular; linear].
+    // The local-frame result (flg_local = 1) is just the global-frame result with
+    // both 3-vectors rotated by the site orientation, so a single global-frame call
+    // plus one rotation of the angular part yields everything we need: the global
+    // linear velocity v_BN_N and the body-frame angular velocity omega_BN_B. This
+    // avoids a second full spatial-velocity traversal of the kinematic tree.
+    double res_N[6];
     mj_objectVelocity(model, data, mjOBJ_SITE, static_cast<int>(this->getId()), res_N, 0);
-    mj_objectVelocity(model, data, mjOBJ_SITE, static_cast<int>(this->getId()), res_B, 1);
 
-    std::copy_n(res_B, 3, payload.omega_BN_B);
+    Eigen::Map<const Eigen::Vector3d> omega_N{res_N};
+    Eigen::Vector3d omega_B = rot.transpose() * omega_N;
+
+    std::copy_n(omega_B.data(), 3, payload.omega_BN_B);
     std::copy_n(res_N + 3, 3, payload.v_BN_N);
 
     this->stateOutMsg.write(&payload, this->body.getSpec().getScene().moduleID, CurrentSimNanos);
