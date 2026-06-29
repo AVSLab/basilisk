@@ -56,6 +56,9 @@ Version |release|
   import these utilities. The few general-purpose helpers those utilities needed have been moved into a
   new :ref:`simHelpers` module, so user-facing code no longer depends on ``unitTestSupport`` (or ``pytest``)
   at all. This is fixed in the current version.
+- BSK-548: :ref:`simHelpers` ``timeStringToGregorianUTCMsg`` leaked the SWIG-allocated ``doubleArray``
+  scratch buffer used to receive the ``str2et_c`` result (about 32 bytes per call). The buffer is now
+  freed with ``delete_doubleArray``. This is fixed in the current version.
 
 
 Version 2.10.0 (April 2, 2026)
