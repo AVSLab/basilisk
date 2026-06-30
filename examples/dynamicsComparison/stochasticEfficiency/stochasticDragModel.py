@@ -58,21 +58,49 @@ from typing import Callable, Literal, Optional
 
 import numpy as np
 
-from Basilisk.architecture import messaging
-from Basilisk.architecture import sysModel
-from Basilisk.architecture.numbaModel import NumbaModel
-from Basilisk.simulation import mujoco
-from Basilisk.simulation import svIntegrators
-from Basilisk.simulation import pointMassGravityModel
-from Basilisk.simulation import NBodyGravity
-from Basilisk.simulation import exponentialAtmosphere
-from Basilisk.simulation import cannonballDrag
-from Basilisk.simulation import MJStochasticAtmDensity
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import macros
-from Basilisk.utilities import orbitalMotion
-from Basilisk.utilities import simIncludeGravBody
-from Basilisk.utilities import simSetPlanetEnvironment
+# Basilisk is imported lazily/guarded so that this module can be imported WITHOUT
+# a working Basilisk install -- e.g. on a Slurm login node, where compiled .so
+# files may fail to load (missing GLIBCXX, blocked compiler module). That lets
+# metadata-only operations (config grid, ScenarioParams, --printTaskCount used by
+# run_study.sh to size the array, the OU path generator) work on the login node.
+# Anything that actually runs a realization needs Basilisk and is only ever
+# called inside a Slurm job (compute node), where the import succeeds.
+try:
+    from Basilisk.architecture import messaging
+    from Basilisk.architecture import sysModel
+    from Basilisk.architecture.numbaModel import NumbaModel
+    from Basilisk.simulation import mujoco
+    from Basilisk.simulation import svIntegrators
+    from Basilisk.simulation import pointMassGravityModel
+    from Basilisk.simulation import NBodyGravity
+    from Basilisk.simulation import exponentialAtmosphere
+    from Basilisk.simulation import cannonballDrag
+    from Basilisk.simulation import MJStochasticAtmDensity
+    from Basilisk.utilities import SimulationBaseClass
+    from Basilisk.utilities import macros
+    from Basilisk.utilities import orbitalMotion
+    from Basilisk.utilities import simIncludeGravBody
+    from Basilisk.utilities import simSetPlanetEnvironment
+    _BASILISK_AVAILABLE = True
+    _BASILISK_IMPORT_ERROR = None
+    _NumbaModelBase = NumbaModel
+    _SysModelBase = sysModel.SysModel
+except Exception as _exc:  # ImportError, or .so load failure
+    _BASILISK_AVAILABLE = False
+    _BASILISK_IMPORT_ERROR = _exc
+    # Dummy bases so the class statements below are still valid Python; these
+    # classes are only ever *instantiated* inside a realization (compute node).
+    _NumbaModelBase = object
+    _SysModelBase = object
+
+
+def _requireBasilisk():
+    """Raise a clear error if a realization is attempted without Basilisk."""
+    if not _BASILISK_AVAILABLE:
+        raise RuntimeError(
+            "Basilisk could not be imported in this process, so a simulation "
+            "cannot run here (this is expected on a login node). Original error: "
+            f"{_BASILISK_IMPORT_ERROR!r}")
 
 
 # Arm identifiers
@@ -210,7 +238,7 @@ def generateOUPath(
     return x
 
 
-class ProfileAtmDensityPy(sysModel.SysModel):
+class ProfileAtmDensityPy(_SysModelBase):
     """Pure-Python reference implementation of the profile replay module.
 
     Kept for clarity and cross-checking only.  **Do not use it for timing**: a
@@ -244,7 +272,7 @@ class ProfileAtmDensityPy(sysModel.SysModel):
         self.atmoDensOutMsg.write(out, CurrentSimNanos, self.moduleID)
 
 
-class ProfileAtmDensity(NumbaModel):
+class ProfileAtmDensity(_NumbaModelBase):
     """Replays a pre-generated OU density-correction path ``x(t)`` at C speed.
 
     This is the deterministic-arm counterpart of
@@ -442,6 +470,7 @@ def runRealization(
         RealizationResult with the final semi-major axis (FoM), altitude, and
         the wall time spent *only* inside ExecuteSimulation.
     """
+    _requireBasilisk()
     h = _buildCommonScene(params, dt)
     scSim, scene, body, dragPoint, drag = (
         h["scSim"], h["scene"], h["body"], h["dragPoint"], h["drag"])
