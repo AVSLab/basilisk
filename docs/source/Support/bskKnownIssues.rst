@@ -10,6 +10,11 @@ Basilisk Known Issues
 
 Version |release|
 -----------------
+- BSK-1446: Several BSK modules deallocated output message objects created with C++ ``new`` by calling
+  ``free()``, and retained image buffers in :ref:`camera` and :ref:`vizInterface` were not released during
+  module destruction. This could cause invalid deallocation behavior or memory leaks when these modules were
+  destroyed. These cleanup paths now use C++ ``delete`` for the message objects and release the retained image
+  buffers. This is fixed in the current version.
 - BSK-2026-001, BSK-2026-002, BSK-2026-003, and related fixed-buffer string handling and format-string
   logging issues are fixed in the current version.
 - Additional build-helper command execution, temporary file cleanup, remote example download, and image buffer
