@@ -78,17 +78,24 @@ if [[ "$STOCHEFF_PYMODE" == "conda" ]]; then
     conda activate "$STOCHEFF_CONDA_ENV" || true
     export PY=python
 else
-    # venv mode: load the SAME gcc + python modules the venv was built against
-    # (the venv's interpreter and Basilisk's .so files depend on them), THEN
-    # activate the prebuilt virtualenv which carries compiled MuJoCo + Basilisk.
-    if ! load_mod "$STOCHEFF_GCC_MODULE" "$STOCHEFF_PY_MODULE"; then
+    # venv mode: the ONLY runtime requirement is the gcc module -- not the
+    # compiler, but its libstdc++.so.6. Basilisk's .so files were built with
+    # gcc/13.2.0 and need GLIBCXX_3.4.32, which Alpine's system libstdc++ lacks;
+    # loading the gcc module puts the newer libstdc++ on the library path.
+    # (Verified by diag_modules.sbatch: gcc-only imports OK; no-modules fails
+    # with the GLIBCXX error.) The .venv carries its own Python, so the python
+    # module is NOT needed and is loaded only best-effort.
+    if ! load_mod "$STOCHEFF_GCC_MODULE"; then
         if [[ "$STRICT" == "1" ]]; then
-            echo "ERROR: could not load $STOCHEFF_GCC_MODULE / $STOCHEFF_PY_MODULE on the compute node." >&2
+            echo "ERROR: could not load $STOCHEFF_GCC_MODULE on the compute node" \
+                 "(needed for libstdc++/GLIBCXX_3.4.32)." >&2
             exit 1
         fi
-        echo "WARN: could not load $STOCHEFF_GCC_MODULE / $STOCHEFF_PY_MODULE here" \
-             "(expected on a login node; compute-node jobs will load them)." >&2
+        echo "WARN: could not load $STOCHEFF_GCC_MODULE here" \
+             "(expected on a login node; compute-node jobs will load it)." >&2
     fi
+    # Python module is optional (the venv has its own interpreter); ignore failure.
+    load_mod "$STOCHEFF_PY_MODULE" || true
     if [[ -f "$BASILISK_ROOT/.venv/bin/activate" ]]; then
         # shellcheck disable=SC1091
         source "$BASILISK_ROOT/.venv/bin/activate"
