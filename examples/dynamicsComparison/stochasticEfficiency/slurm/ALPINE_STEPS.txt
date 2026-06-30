@@ -1,0 +1,79 @@
+ALPINE: BUILD BASILISK, THEN RUN THE STUDY
+==========================================
+(View this on Alpine with:  less ALPINE_STEPS.txt   or   cat ALPINE_STEPS.txt)
+You should be in:  /projects/$USER/stochastic_mc/basilisk/examples/dynamicsComparison/stochasticEfficiency/slurm
+
+------------------------------------------------------------------
+STEP 0 — get this file + the build script (on a LOGIN node)
+------------------------------------------------------------------
+  cd /projects/$USER/stochastic_mc/basilisk
+  git fetch --depth=1 origin feature/stochastic-anlysis
+  git reset --hard FETCH_HEAD
+  cd examples/dynamicsComparison/stochasticEfficiency/slurm
+
+------------------------------------------------------------------
+STEP 1 — build Basilisk (submit ONE batch job; no babysitting)
+------------------------------------------------------------------
+Before submitting, open build_basilisk.sbatch and check BSK_ROOT, GCC_MODULE,
+PY_MODULE near the top match your setup (defaults: /projects/$USER/stochastic_mc/basilisk,
+gcc/13.2.0, python/3.10.2). Then:
+
+  sbatch build_basilisk.sbatch
+
+Watch it (replace JOBID with the number sbatch prints):
+
+  squeue --me
+  tail -f bsk-build-JOBID.out
+
+The job builds with mujoco ON and vizInterface OFF (avoids the protobuf GLIBC
+error) and throttles compiling to 4 parallel jobs with 32 GB (avoids the OOM
+"Killed cc1plus" error). It ends by printing either "Basilisk OK" or a failure
+hint. The build is incremental: if it is killed, just `sbatch build_basilisk.sbatch`
+again and it resumes.
+
+If it STILL OOMs (you see "Killed ... cc1plus"), resubmit with fewer parallel
+compiles:
+
+  sbatch --export=BUILD_JOBS=2 build_basilisk.sbatch
+
+------------------------------------------------------------------
+STEP 2 — point the study at this build (one-time edit)
+------------------------------------------------------------------
+Open env.sh and set:
+  STOCHEFF_ACCOUNT="ucb-general"
+  BASILISK_ROOT="/projects/$USER/stochastic_mc/basilisk"
+  STOCHEFF_PYMODE="venv"
+Also: env.sh loads the SAME modules the build used. Confirm its module line
+loads gcc/13.2.0 and python/3.10.2 (the venv was built against them).
+
+------------------------------------------------------------------
+STEP 3 — dry-run the study (submits nothing; on a LOGIN node)
+------------------------------------------------------------------
+  ./run_study.sh --dry-run
+
+This re-checks the Basilisk import and prints the chain of jobs it would submit.
+
+------------------------------------------------------------------
+STEP 4 — launch the full staged study
+------------------------------------------------------------------
+  ./run_study.sh
+
+It auto-chains: pilot -> plan -> production (per-config N, reference sharded)
+-> final analyze. Monitor:
+
+  squeue --me
+
+Refresh figures live as data lands (light; runs on the login node):
+
+  ./watch_analyze.sh 300
+
+Headline figure when done:
+  $STOCHEFF_RESULTS_DIR/stochasticEfficiency_biasPareto.svg
+(default $STOCHEFF_RESULTS_DIR = /scratch/alpine/$USER/stocheff/results)
+
+------------------------------------------------------------------
+STEP 5 — copy results off scratch (scratch is purged ~90 days)
+------------------------------------------------------------------
+  cp -r /scratch/alpine/$USER/stocheff/results /projects/$USER/stocheff_results_$(date +%Y%m%d)
+
+For full detail see README_ALPINE.md in this directory.
