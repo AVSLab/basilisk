@@ -16,9 +16,11 @@ set -euo pipefail
 #   sacctmgr -p show assoc user=$USER format=account
 export STOCHEFF_ACCOUNT="${STOCHEFF_ACCOUNT:-ucb-general}"
 
-# Absolute path to the Basilisk checkout on Alpine (contains the built .venv or
-# the dist3 install).  EDIT to where you cloned/built Basilisk.
-export BASILISK_ROOT="${BASILISK_ROOT:-/projects/$USER/stochastic_mc/basilisk}"
+# Absolute path to the Basilisk checkout (contains the built .venv / dist3).
+# Derived automatically from this script's location (slurm/ is 4 levels below the
+# repo root: <root>/examples/dynamicsComparison/stochasticEfficiency/slurm), so it
+# is correct wherever you cloned Basilisk. Override by exporting BASILISK_ROOT.
+export BASILISK_ROOT="${BASILISK_ROOT:-$( cd "$( dirname "${BASH_SOURCE[0]}" )/../../../.." && pwd )}"
 
 # How to make Basilisk importable. Two supported modes:
 #   "venv"  -> activate $BASILISK_ROOT/.venv (a prebuilt virtualenv with MuJoCo)
