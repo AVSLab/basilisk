@@ -78,24 +78,30 @@ if [[ "$STOCHEFF_PYMODE" == "conda" ]]; then
     conda activate "$STOCHEFF_CONDA_ENV" || true
     export PY=python
 else
-    # venv mode: the ONLY runtime requirement is the gcc module -- not the
-    # compiler, but its libstdc++.so.6. Basilisk's .so files were built with
-    # gcc/13.2.0 and need GLIBCXX_3.4.32, which Alpine's system libstdc++ lacks;
-    # loading the gcc module puts the newer libstdc++ on the library path.
-    # (Verified by diag_modules.sbatch: gcc-only imports OK; no-modules fails
-    # with the GLIBCXX error.) The .venv carries its own Python, so the python
-    # module is NOT needed and is loaded only best-effort.
-    if ! load_mod "$STOCHEFF_GCC_MODULE"; then
-        if [[ "$STRICT" == "1" ]]; then
-            echo "ERROR: could not load $STOCHEFF_GCC_MODULE on the compute node" \
-                 "(needed for libstdc++/GLIBCXX_3.4.32)." >&2
-            exit 1
-        fi
-        echo "WARN: could not load $STOCHEFF_GCC_MODULE here" \
-             "(expected on a login node; compute-node jobs will load it)." >&2
-    fi
+    # venv mode: the ONLY runtime requirement is gcc's libstdc++.so.6 (NOT the
+    # compiler). Basilisk's .so files were built with gcc/13.2.0 and need
+    # GLIBCXX_3.4.32, which Alpine's system libstdc++ lacks. We satisfy this two
+    # ways, belt-and-suspenders, because the `module` function is not always
+    # usable inside a non-interactive sbatch shell:
+    #   (1) try `module load gcc` (works on acompile / interactive), and
+    #   (2) ALWAYS also prepend gcc's lib dir to LD_LIBRARY_PATH directly, which
+    #       needs no module system at all.
+    # (Verified by diag_modules.sbatch: gcc lib on the path -> import OK.)
+    load_mod "$STOCHEFF_GCC_MODULE" || true
     # Python module is optional (the venv has its own interpreter); ignore failure.
     load_mod "$STOCHEFF_PY_MODULE" || true
+
+    # Direct fallback: point at gcc's runtime libs without relying on `module`.
+    # STOCHEFF_GCC_LIBDIR can override; default derives from the module version.
+    _gccver="${STOCHEFF_GCC_MODULE#gcc/}"
+    for _libdir in "${STOCHEFF_GCC_LIBDIR:-}" \
+                   "/curc/sw/install/gcc/${_gccver}/lib64" \
+                   "/curc/sw/install/gcc/${_gccver}/lib"; do
+        if [[ -n "$_libdir" && -e "$_libdir/libstdc++.so.6" ]]; then
+            export LD_LIBRARY_PATH="$_libdir:${LD_LIBRARY_PATH:-}"
+            break
+        fi
+    done
     if [[ -f "$BASILISK_ROOT/.venv/bin/activate" ]]; then
         # shellcheck disable=SC1091
         source "$BASILISK_ROOT/.venv/bin/activate"
