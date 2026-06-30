@@ -54,25 +54,65 @@ export NUMBA_CACHE_DIR="${NUMBA_CACHE_DIR:-$STOCHEFF_RESULTS_DIR/.numba_cache}"
 mkdir -p "$NUMBA_CACHE_DIR"
 
 # --- module + interpreter setup ---
-module purge
-module load slurm/alpine
+# We run env.sh in two contexts:
+#   * inside a Slurm job (compute node)  -> modules MUST load; be strict.
+#   * on the submit/login node (dry-run, run_study.sh sizing) -> CURC often
+#     blocks compiler modules on login nodes, so be soft: warn and continue, the
+#     real jobs load them fine on compute nodes (the build proved this).
+if [[ -n "${SLURM_JOB_ID:-}" ]]; then
+    STRICT=1            # on a compute node
+else
+    STRICT=0            # on the login/submit node
+fi
+
+# module commands shouldn't abort the (set -e) script on the login node.
+load_mod() {  # load_mod <module>...; returns nonzero instead of exiting on failure
+    module load "$@" 2>/dev/null
+}
+
+module purge 2>/dev/null || true
+load_mod slurm/alpine || true
 
 if [[ "$STOCHEFF_PYMODE" == "conda" ]]; then
-    module load miniforge
-    conda activate "$STOCHEFF_CONDA_ENV"
+    load_mod miniforge || true
+    conda activate "$STOCHEFF_CONDA_ENV" || true
     export PY=python
 else
     # venv mode: load the SAME gcc + python modules the venv was built against
     # (the venv's interpreter and Basilisk's .so files depend on them), THEN
     # activate the prebuilt virtualenv which carries compiled MuJoCo + Basilisk.
-    module load "$STOCHEFF_GCC_MODULE" "$STOCHEFF_PY_MODULE"
-    # shellcheck disable=SC1091
-    source "$BASILISK_ROOT/.venv/bin/activate"
+    if ! load_mod "$STOCHEFF_GCC_MODULE" "$STOCHEFF_PY_MODULE"; then
+        if [[ "$STRICT" == "1" ]]; then
+            echo "ERROR: could not load $STOCHEFF_GCC_MODULE / $STOCHEFF_PY_MODULE on the compute node." >&2
+            exit 1
+        fi
+        echo "WARN: could not load $STOCHEFF_GCC_MODULE / $STOCHEFF_PY_MODULE here" \
+             "(expected on a login node; compute-node jobs will load them)." >&2
+    fi
+    if [[ -f "$BASILISK_ROOT/.venv/bin/activate" ]]; then
+        # shellcheck disable=SC1091
+        source "$BASILISK_ROOT/.venv/bin/activate"
+    elif [[ "$STRICT" == "1" ]]; then
+        echo "ERROR: no venv at $BASILISK_ROOT/.venv (BASILISK_ROOT wrong?)." >&2
+        exit 1
+    else
+        echo "WARN: no venv at $BASILISK_ROOT/.venv -- check BASILISK_ROOT." >&2
+    fi
     export PY="$BASILISK_ROOT/.venv/bin/python"
 fi
 
-# Sanity: confirm Basilisk imports before burning a job.
-"$PY" -c "from Basilisk.simulation import svIntegrators, mujoco; print('Basilisk import OK')"
+# Sanity: confirm Basilisk imports. Strict (fail) inside a job; best-effort on
+# the login node, where the compiler module may be unavailable.
+if "$PY" -c "from Basilisk.simulation import svIntegrators, mujoco; print('Basilisk import OK')"; then
+    :
+else
+    if [[ "$STRICT" == "1" ]]; then
+        echo "ERROR: Basilisk import failed on the compute node." >&2
+        exit 1
+    fi
+    echo "WARN: Basilisk import not verified on this login node (likely the gcc" \
+         "module can't load here). It will be verified inside each job." >&2
+fi
 
 echo "STOCHEFF_DIR=$STOCHEFF_DIR"
 echo "STOCHEFF_RESULTS_DIR=$STOCHEFF_RESULTS_DIR"
