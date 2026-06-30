@@ -13,7 +13,10 @@
 # x bias) and the reference N (precise enough to resolve the smallest bias), and
 # writes PLAN_FILE. Cheap; no simulation.
 set -euo pipefail
-HERE="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+# Slurm copies this script to a spool dir, so ${BASH_SOURCE[0]} is NOT the
+# slurm/ folder. Use the dir exported by run_study.sh / SLURM_SUBMIT_DIR, with
+# BASH_SOURCE as a last resort.
+HERE="${STOCHEFF_SLURM_DIR:-${SLURM_SUBMIT_DIR:-$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )}}"
 source "$HERE/env.sh"
 source "$HERE/config.sh"
 

@@ -26,6 +26,10 @@
 
 set -euo pipefail
 HERE="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+# Exported so submitted sbatch scripts (which Slurm copies to a spool dir, losing
+# their own location) can find env.sh/config.sh in the real slurm/ dir. Inherited
+# by jobs via --export=ALL, and by the launch_production bridge job too.
+export STOCHEFF_SLURM_DIR="$HERE"
 
 MODE="full"
 [[ "${1:-}" == "--dry-run" ]] && MODE="dry"
