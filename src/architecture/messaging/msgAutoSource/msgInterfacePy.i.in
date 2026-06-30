@@ -8,6 +8,7 @@
     #include "simulation/dynamics/reactionWheels/reactionWheelSupport.h"
     #include <stdint.h>
     #include <vector>
+    #include <deque>
     #include <string>
 %}}
 %include "messaging/newMessaging.ih"
@@ -47,7 +48,12 @@ STRUCTASLIST(CSSArraySensorMsgPayload)
 %rename(__is_subscribed_to_C) isSubscribedToC;  // we want the users to have a unified "isSubscribedTo" interface
 %rename(__time_vector) times;  // It's not really useful to give the user back a time vector
 %rename(__timeWritten_vector) timesWritten;
-%rename(__record_vector) record;
+// record() returns the internal std::deque by reference for the C++ recorder typemaps; it is not
+// wrapped for Python. Python instead uses recordList(), which returns a randomly-indexable std::vector
+// copy (see issue #788). std::deque is intentionally not exposed to Python: SWIG's std_deque.i does not
+// provide integer __getitem__ for value-type elements, which would break recorder[i] indexing.
+%ignore Recorder::record;
+%rename(__record_vector) recordList;
 
 %pythoncode %{{
 import numpy as np

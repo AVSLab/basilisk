@@ -19,6 +19,7 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 #define MESSAGING_H
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include <vector>
+#include <deque>
 #include "architecture/messaging/msgHeader.h"
 #include "architecture/utilities/bskLogging.h"
 #include <typeinfo>
@@ -344,14 +345,18 @@ public:
         this->nextUpdateTime = CurrentSimNanos;
         this->hasLastUpdateTime = false;
     };
-    //! time recorded method
-    std::vector<uint64_t>& times(){return this->msgRecordTimes;}
-    //! time written method
-    std::vector<uint64_t>& timesWritten(){return this->msgWrittenTimes;}
-    //! record method
-    std::vector<messageType>& record(){return this->msgRecord;};
+    //! recorded times, copied out as a std::vector so the Python interface is unchanged. The element
+    //! type is "unsigned long long" (not uint64_t) to match the SWIG TimeVector template exactly; on
+    //! LP64 platforms uint64_t is "unsigned long", a distinct type that would fail to copy-construct.
+    std::vector<unsigned long long> times(){return std::vector<unsigned long long>(this->msgRecordTimes.begin(), this->msgRecordTimes.end());}
+    //! message-written times, copied out as a std::vector (see times() for the element-type rationale)
+    std::vector<unsigned long long> timesWritten(){return std::vector<unsigned long long>(this->msgWrittenTimes.begin(), this->msgWrittenTimes.end());}
+    //! internal accessor: the recorded-payload deque by reference, used by the SWIG recorder typemaps
+    std::deque<messageType>& record(){return this->msgRecord;};
+    //! recorded payloads copied out as a std::vector, exposed to Python so the result is randomly indexable
+    std::vector<messageType> recordList(){return std::vector<messageType>(this->msgRecord.begin(), this->msgRecord.end());}
     //! size of the record so far
-    size_t size(){return this->record().size();}
+    size_t size(){return this->msgRecord.size();}
 
     //! determine message name
     std::string findMsgName(std::string msgName) {
@@ -405,9 +410,10 @@ public:
     };
 
 private:
-    std::vector<messageType> msgRecord;           //!< vector of recorded messages
-    std::vector<uint64_t> msgRecordTimes;         //!< vector of times at which messages are recorded
-    std::vector<uint64_t> msgWrittenTimes;        //!< vector of times at which messages are written
+    std::deque<messageType> msgRecord;            //!< deque of recorded messages (deque avoids the geometric
+                                                  //!< reallocation spikes a vector incurs as the history grows; see issue #788)
+    std::deque<uint64_t> msgRecordTimes;          //!< deque of times at which messages are recorded
+    std::deque<uint64_t> msgWrittenTimes;         //!< deque of times at which messages are written
     uint64_t nextUpdateTime = 0;                  //!< [ns] earliest time at which the msg is recorded again
     uint64_t timeInterval;                        //!< [ns] recording time interval
     uint64_t lastUpdateTime = 0;                  //!< [ns] last time the msg was checked for recording
