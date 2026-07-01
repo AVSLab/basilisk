@@ -161,4 +161,14 @@ target_link_libraries(test_recorder_copy_contract GTest::gtest_main)
 target_link_libraries(test_recorder_copy_contract ArchitectureUtilities)
 target_link_libraries(test_recorder_copy_contract ModuleIdGenerator)
 
+# Windows test discovery runs the executable from this folder, so copy the required DLL beside it first.
+if(WIN32)
+  add_custom_command(
+    TARGET test_recorder_copy_contract
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_FILE:ModuleIdGenerator>
+            $<TARGET_FILE_DIR:test_recorder_copy_contract>)
+endif()
+
 gtest_discover_tests(test_recorder_copy_contract)
