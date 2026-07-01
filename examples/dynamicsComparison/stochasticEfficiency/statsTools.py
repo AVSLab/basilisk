@@ -152,9 +152,23 @@ def momentCI(samples: np.ndarray, moment: str, nBoot: int = 4000,
     return Interval(point, float(lo), float(hi), float(np.std(stats, ddof=1)))
 
 
+def referenceReplicates(refSamples: np.ndarray, moment: str, nBoot: int = 4000,
+                        seed: int = 23456) -> np.ndarray:
+    """Bootstrap replicates of the reference moment (compute once, reuse).
+
+    The reference's bootstrap distribution is identical for every config, so
+    computing it once and passing it to ``biasUnpaired`` avoids re-bootstrapping
+    the (huge, ~3.3M-sample) reference per config -- the dominant analyze cost.
+    """
+    refSamples = np.asarray(refSamples, dtype=float)
+    return _bootReplicates(refSamples, None, moment, nBoot,
+                           np.random.default_rng(seed))
+
+
 def biasUnpaired(samples: np.ndarray, refSamples: np.ndarray, moment: str,
                  nBoot: int = 4000, alpha: float = 0.05,
-                 seed: int = 23456) -> Interval:
+                 seed: int = 23456,
+                 refReplicates: Optional[np.ndarray] = None) -> Interval:
     """Bias of a config's moment vs the reference, with NO common random numbers.
 
     Used for the SDE arm.  The bias point estimate is ``moment(config) -
@@ -171,7 +185,12 @@ def biasUnpaired(samples: np.ndarray, refSamples: np.ndarray, moment: str,
     # Config and reference are resampled independently (no shared randomness),
     # each memory-bounded; their MC errors add in quadrature via the difference.
     bi = _bootReplicates(samples, None, moment, nBoot, rng)
-    br = _bootReplicates(refSamples, None, moment, nBoot, rng)
+    # Reuse precomputed reference replicates if given (avoids re-bootstrapping the
+    # huge reference for every config); otherwise compute them here.
+    if refReplicates is not None:
+        br = np.asarray(refReplicates, dtype=float)
+    else:
+        br = _bootReplicates(refSamples, None, moment, nBoot, rng)
     diffs = bi - br
     lo, hi = np.percentile(diffs, [100 * alpha / 2, 100 * (1 - alpha / 2)])
     return Interval(point, float(lo), float(hi), float(np.std(diffs, ddof=1)))

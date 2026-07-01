@@ -126,6 +126,7 @@ def analyze(moment: str = "std", fom: str = "fomA",
     refMoment = None
     refInfo = None
     refRec = None
+    refReps = None
     if refHash is not None:
         refRec = loadRecord(refHash)
         refCI = st.momentCI(refRec[fom], moment)
@@ -133,6 +134,10 @@ def analyze(moment: str = "std", fom: str = "fomA",
         refInfo = {"hash": refHash, "key": manifest[refHash]["key"],
                    "nSamples": int(refRec[fom].size), "moment": refMoment,
                    "momentSE": refCI.se, "momentLo": refCI.lo, "momentHi": refCI.hi}
+        # Bootstrap the (huge) reference moment ONCE and reuse across all configs'
+        # unpaired bias estimates -- otherwise each config re-bootstraps the full
+        # ~3.3M-sample reference, which dominates analyze runtime.
+        refReps = st.referenceReplicates(refRec[fom], moment)
 
     configs = []
     for cfgHash, info in manifest.items():
@@ -162,7 +167,8 @@ def analyze(moment: str = "std", fom: str = "fomA",
                                              refRec[fom], refRec["seeds"], moment)
                 biasMethod = "paired-crn"
             if biasInterval is None:   # SDE arm, or too few shared seeds
-                biasInterval = st.biasUnpaired(samples, refRec[fom], moment)
+                biasInterval = st.biasUnpaired(samples, refRec[fom], moment,
+                                               refReplicates=refReps)
                 biasMethod = "unpaired"
 
         # --- per-run wall time + its margin of error ---
