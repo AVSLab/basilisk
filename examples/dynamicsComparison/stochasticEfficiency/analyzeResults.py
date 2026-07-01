@@ -57,7 +57,14 @@ import argparse
 import json
 import os
 import sys
+import time
 from typing import Dict, List, Optional
+
+
+def _log(msg: str):
+    """Progress line, timestamped, flushed immediately so it shows up live in
+    the Slurm .out file (which is otherwise block-buffered for a long job)."""
+    print(f"[analyze {time.strftime('%H:%M:%S')}] {msg}", flush=True)
 
 import numpy as np
 
@@ -115,6 +122,10 @@ def analyze(moment: str = "std", fom: str = "fomA",
     if nGrid is None:
         nGrid = [int(round(x)) for x in np.geomspace(5, 200000, 40)]
 
+    nConfigs = sum(1 for v in manifest.values()
+                   if not (v.get("arm") == "reference" or v.get("isReference")))
+    _log(f"moment={moment} fom={fom}: {nConfigs} configs to process (+reference)")
+
     # Identify the reference config: the independent scipy ground truth
     # (arm == "reference", or the explicit isReference flag).  Match on parsed
     # fields, never a string prefix.
@@ -129,17 +140,27 @@ def analyze(moment: str = "std", fom: str = "fomA",
     refReps = None
     if refHash is not None:
         refRec = loadRecord(refHash)
+        nRef = int(refRec[fom].size)
+        _log(f"reference {manifest[refHash]['key']}: {nRef:,} samples "
+             f"-- bootstrapping moment (this is the slowest step)...")
+        t0 = time.perf_counter()
         refCI = st.momentCI(refRec[fom], moment)
         refMoment = refCI.value
         refInfo = {"hash": refHash, "key": manifest[refHash]["key"],
-                   "nSamples": int(refRec[fom].size), "moment": refMoment,
+                   "nSamples": nRef, "moment": refMoment,
                    "momentSE": refCI.se, "momentLo": refCI.lo, "momentHi": refCI.hi}
+        _log(f"  reference momentCI done in {time.perf_counter()-t0:.0f}s "
+             f"(moment={refMoment:.3f} +/- {refCI.se:.4f})")
         # Bootstrap the (huge) reference moment ONCE and reuse across all configs'
         # unpaired bias estimates -- otherwise each config re-bootstraps the full
         # ~3.3M-sample reference, which dominates analyze runtime.
+        t0 = time.perf_counter()
         refReps = st.referenceReplicates(refRec[fom], moment)
+        _log(f"  reference bootstrap replicates done in {time.perf_counter()-t0:.0f}s")
 
     configs = []
+    tStart = time.perf_counter()
+    processed = 0
     for cfgHash, info in manifest.items():
         # The reference is the truth, not a competitor; keep it out of the
         # per-config curves and Pareto fronts (it is reported via refInfo).
@@ -150,6 +171,8 @@ def analyze(moment: str = "std", fom: str = "fomA",
         nPilot = samples.size
         if nPilot < 2:
             continue
+
+        tCfg = time.perf_counter()
 
         # --- moment estimate + Monte-Carlo margin of error ---
         momCI = st.momentCI(samples, moment)
@@ -205,6 +228,18 @@ def analyze(moment: str = "std", fom: str = "fomA",
             "perRunWallLo": wCI.lo, "perRunWallHi": wCI.hi,
             "curve": curve,
         })
+
+        processed += 1
+        dtCfg = time.perf_counter() - tCfg
+        avg = (time.perf_counter() - tStart) / processed
+        remaining = nConfigs - processed
+        eta = avg * remaining
+        _log(f"[{processed}/{nConfigs}] {info['key']} "
+             f"(n={nPilot:,}, {biasMethod}) {dtCfg:.0f}s "
+             f"| avg {avg:.0f}s/cfg, ~{eta/60:.1f} min left")
+
+    _log(f"all {processed} configs done in "
+         f"{(time.perf_counter()-tStart)/60:.1f} min; building Pareto fronts")
 
     # Pareto frontier per arm: pool all (wall, error) points across the arm's
     # configs and keep the lower-left envelope (min error achievable at or below
