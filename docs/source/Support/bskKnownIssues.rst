@@ -15,6 +15,10 @@ Version |release|
   module destruction. This could cause invalid deallocation behavior or memory leaks when these modules were
   destroyed. These cleanup paths now use C++ ``delete`` for the message objects and release the retained image
   buffers. This is fixed in the current version.
+- BSK-788: Message recorders stored their recorded-message and time history in ``std::vector``, so the
+  recorder's ``UpdateState`` incurred periodic reallocation-and-copy timing spikes at power-of-two record
+  counts that grew with recording length, disrupting soft real-time and hardware-in-the-loop simulations.
+  Recorders now store this history in ``std::deque``. This is fixed in the current version.
 - BSK-2026-001, BSK-2026-002, BSK-2026-003, and related fixed-buffer string handling and format-string
   logging issues are fixed in the current version.
 - Additional build-helper command execution, temporary file cleanup, remote example download, and image buffer
