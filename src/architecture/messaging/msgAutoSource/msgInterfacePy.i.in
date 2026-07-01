@@ -2,6 +2,8 @@
 %{{
     #include "{baseDir}/{type}Payload.h"
     #include "architecture/messaging/messaging.h"
+    // Per-payload PayloadEqualityTraits<{type}Payload> specialization (auto-generated).
+    #include "{type}Payload_equality.h"
     #include "architecture/msgPayloadDefC/ReconfigBurnInfoMsgPayload.h"
     #include "architecture/msgPayloadDefC/RWConfigElementMsgPayload.h"
     #include "architecture/msgPayloadDefC/THRConfigMsgPayload.h"
