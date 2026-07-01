@@ -1,6 +1,6 @@
 cmake_policy(SET CMP0078 NEW)
 
-function(generate_messages searchDir generateCCode outEqualityHeaders)
+function(generate_messages searchDir generateCCode)
   file(
     GLOB_RECURSE message_files
     RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/"
@@ -14,8 +14,6 @@ function(generate_messages searchDir generateCCode outEqualityHeaders)
   else()
     set(CLANG_LANG_FLAG "c++")
   endif()
-
-  set(local_equality_headers "")
 
   foreach(msgFile ${message_files})
     get_filename_component(TARGET_NAME ${msgFile} NAME_WE)
@@ -52,7 +50,6 @@ function(generate_messages searchDir generateCCode outEqualityHeaders)
       COMMENT "Generating payload equality header for ${TARGET_NAME}"
       VERBATIM
     )
-    list(APPEND local_equality_headers "${TARGET_NAME}_equality.h")
 
     get_filename_component(TARGET_DIR ${msgFile} DIRECTORY)
     set(COMP_OUT_NAME "${CMAKE_BINARY_DIR}/autoSource/${TARGET_NAME}.i")
@@ -107,8 +104,6 @@ function(generate_messages searchDir generateCCode outEqualityHeaders)
                                                          "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging")
     target_link_libraries(${SWIG_MODULE_${TARGET_NAME}_REAL_NAME} PUBLIC architectureLib)
   endforeach()
-
-  set(${outEqualityHeaders} ${local_equality_headers} PARENT_SCOPE)
 endfunction(generate_messages)
 
 # Copy the cMsgCInterfacePy wrapper module to support backwards-compatibility.
@@ -148,15 +143,10 @@ endif(NOT "${EXTERNAL_MODULES_PATH}" STREQUAL "")
 # Custom target for establishing dependency
 add_custom_target(swigtrick DEPENDS ${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/__init__.py)
 
-# Generate per-payload equality headers and aggregate into a single umbrella.
-generate_messages(msgPayloadDefCpp "False" cpp_equality_headers)
-generate_messages(msgPayloadDefC "True" c_equality_headers)
-
-set(UMBRELLA "${CMAKE_BINARY_DIR}/autoSource/payloadEquality_generated.h")
-file(WRITE  ${UMBRELLA} "// AUTO-GENERATED — DO NOT EDIT\n#pragma once\n")
-foreach(eqHeader ${cpp_equality_headers} ${c_equality_headers})
-  file(APPEND ${UMBRELLA} "#if __has_include(\"${eqHeader}\")\n#  include \"${eqHeader}\"\n#endif\n")
-endforeach()
+# Generate per-payload equality headers. Each "<Payload>_equality.h" is included
+# only by that payload's own SWIG module.
+generate_messages(msgPayloadDefCpp "False")
+generate_messages(msgPayloadDefC "True")
 
 # Verify the central SysModel copy restriction while keeping Recorder explicitly copyable.
 add_executable(test_recorder_copy_contract _UnitTest/test_recorder_copy_contract.cpp)

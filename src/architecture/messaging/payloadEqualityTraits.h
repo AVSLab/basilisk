@@ -55,11 +55,4 @@ bool payloadsAreEqual(const T& lhs, const T& rhs) {
     return PayloadEqualityTraits<T>::equal(lhs, rhs);
 }
 
-// Auto-generated specializations, produced by generatePayloadEqualityHeader.py for each
-// fully-supported payload type, and aggregated into payloadEquality_generated.h at build time.
-// The __has_include guard prevents a hard failure during IDE indexing before the first build.
-#if __has_include("payloadEquality_generated.h")
-#  include "payloadEquality_generated.h"
-#endif
-
 #endif /* PAYLOAD_EQUALITY_TRAITS_H */
