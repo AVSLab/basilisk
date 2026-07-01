@@ -68,6 +68,55 @@ def _momentFn(moment: str):
     raise ValueError(f"Unknown moment '{moment}'")
 
 
+# Peak memory cap for the bootstrap index array. A monolithic (nBoot, n) int64
+# resample is n*nBoot*8 bytes -- for the n~3.3M reference that is ~100 GB and
+# OOM-kills the analyze job. We instead draw the nBoot replicates in row-batches
+# small enough to stay under this cap, which is EXACT (not an approximation):
+# each replicate's statistic is computed independently, so batching the replicate
+# dimension changes nothing but peak memory.
+_BOOT_MAX_BYTES = 256 * 1024 * 1024   # 256 MB per index batch
+
+
+def _batchRows(nBoot: int, n: int) -> int:
+    """How many bootstrap replicates to process at once under the memory cap."""
+    per_row_bytes = max(n, 1) * 8              # one int64 index per sample
+    rows = max(1, int(_BOOT_MAX_BYTES // per_row_bytes))
+    return min(rows, nBoot)
+
+
+def _bootReplicates(source: np.ndarray, refSource, moment: str, nBoot: int,
+                    rng: np.random.Generator, statFn=None) -> np.ndarray:
+    """Memory-bounded bootstrap replicates of a statistic.
+
+    Resamples ``source`` (n samples) with replacement, nBoot times, computing a
+    per-replicate statistic, in row-batches capped at ``_BOOT_MAX_BYTES``. If
+    ``refSource`` is given it is resampled with the SAME indices per replicate
+    (paired / common-random-numbers bootstrap) and ``statFn`` receives both
+    resampled arrays; otherwise ``moment`` selects mean/std of the single source.
+
+    Returns a 1-D array of length nBoot.
+    """
+    n = source.shape[0]
+    batch = _batchRows(nBoot, n)
+    out = np.empty(nBoot, dtype=float)
+    done = 0
+    while done < nBoot:
+        rows = min(batch, nBoot - done)
+        idx = rng.integers(0, n, size=(rows, n))
+        a = source[idx]
+        if refSource is not None:
+            r = refSource[idx]
+            out[done:done + rows] = statFn(a, r)
+        elif statFn is not None:
+            out[done:done + rows] = statFn(a)
+        elif moment == "mean":
+            out[done:done + rows] = a.mean(axis=1)
+        else:
+            out[done:done + rows] = a.std(axis=1, ddof=1)
+        done += rows
+    return out
+
+
 @dataclass
 class Interval:
     """A point estimate with a (percentile) confidence interval and its SE."""
@@ -98,18 +147,9 @@ def momentCI(samples: np.ndarray, moment: str, nBoot: int = 4000,
     if n < 2:
         return Interval(point, float("nan"), float("nan"), float("inf"))
     rng = np.random.default_rng(seed)
-    idx = rng.integers(0, n, size=(nBoot, n))
-    stats = _bootStats(samples, idx, moment)
+    stats = _bootReplicates(samples, None, moment, nBoot, rng)
     lo, hi = np.percentile(stats, [100 * alpha / 2, 100 * (1 - alpha / 2)])
     return Interval(point, float(lo), float(hi), float(np.std(stats, ddof=1)))
-
-
-def _bootStats(samples: np.ndarray, idx: np.ndarray, moment: str) -> np.ndarray:
-    """Vectorized bootstrap statistic over resample-index rows."""
-    resampled = samples[idx]            # (nBoot, n)
-    if moment == "mean":
-        return resampled.mean(axis=1)
-    return resampled.std(axis=1, ddof=1)
 
 
 def biasUnpaired(samples: np.ndarray, refSamples: np.ndarray, moment: str,
@@ -128,8 +168,10 @@ def biasUnpaired(samples: np.ndarray, refSamples: np.ndarray, moment: str,
     fn = _momentFn(moment)
     point = float(fn(samples) - fn(refSamples))
     rng = np.random.default_rng(seed)
-    bi = _bootStats(samples, rng.integers(0, samples.size, (nBoot, samples.size)), moment)
-    br = _bootStats(refSamples, rng.integers(0, refSamples.size, (nBoot, refSamples.size)), moment)
+    # Config and reference are resampled independently (no shared randomness),
+    # each memory-bounded; their MC errors add in quadrature via the difference.
+    bi = _bootReplicates(samples, None, moment, nBoot, rng)
+    br = _bootReplicates(refSamples, None, moment, nBoot, rng)
     diffs = bi - br
     lo, hi = np.percentile(diffs, [100 * alpha / 2, 100 * (1 - alpha / 2)])
     return Interval(point, float(lo), float(hi), float(np.std(diffs, ddof=1)))
@@ -167,9 +209,13 @@ def biasPaired(samples: np.ndarray, seeds: np.ndarray,
     fn = _momentFn(moment)
     point = float(fn(a) - fn(r))
     rng = np.random.default_rng(seed)
-    m = a.size
-    idx = rng.integers(0, m, size=(nBoot, m))       # SAME indices for a and r
-    diffs = _bootStats(a, idx, moment) - _bootStats(r, idx, moment)
+    # Paired (CRN): the SAME resample indices apply to both a and r each
+    # replicate, so the shared path-to-path variance cancels in the difference.
+    if moment == "mean":
+        pairStat = lambda aa, rr: aa.mean(axis=1) - rr.mean(axis=1)
+    else:
+        pairStat = lambda aa, rr: aa.std(axis=1, ddof=1) - rr.std(axis=1, ddof=1)
+    diffs = _bootReplicates(a, r, moment, nBoot, rng, statFn=pairStat)
     lo, hi = np.percentile(diffs, [100 * alpha / 2, 100 * (1 - alpha / 2)])
     return Interval(point, float(lo), float(hi), float(np.std(diffs, ddof=1)))
 
@@ -187,8 +233,8 @@ def wallCI(wallSamples: np.ndarray, nBoot: int = 4000, alpha: float = 0.05,
     if n < 2:
         return Interval(point, float("nan"), float("nan"), float("inf"))
     rng = np.random.default_rng(seed)
-    idx = rng.integers(0, n, size=(nBoot, n))
-    meds = np.median(wallSamples[idx], axis=1)
+    meds = _bootReplicates(wallSamples, None, "median", nBoot, rng,
+                           statFn=lambda a: np.median(a, axis=1))
     lo, hi = np.percentile(meds, [100 * alpha / 2, 100 * (1 - alpha / 2)])
     return Interval(point, float(lo), float(hi), float(np.std(meds, ddof=1)))
 
