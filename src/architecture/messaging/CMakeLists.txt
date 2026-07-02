@@ -171,4 +171,9 @@ if(WIN32)
             $<TARGET_FILE_DIR:test_recorder_copy_contract>)
 endif()
 
-gtest_discover_tests(test_recorder_copy_contract)
+# Apple-silicon Xcode builds cannot reliably run the test during the build, so defer discovery to CTest.
+if(CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "arm64" AND CMAKE_GENERATOR STREQUAL "Xcode")
+  gtest_discover_tests(test_recorder_copy_contract DISCOVERY_MODE PRE_TEST)
+else()
+  gtest_discover_tests(test_recorder_copy_contract)
+endif()
