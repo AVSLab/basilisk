@@ -95,11 +95,10 @@ pprint.PrettyPrinter._dispatch[messageTypePayload.__repr__] = _pprint_ ## messag
                     return
 
                 try:
-                    from Basilisk.architecture.messaging.messageType ## Payload import messageType ## _C
                     if type(source) == messageType ## _C:
                         self.__subscribe_to_C(source)
                         return
-                except ImportError:
+                except NameError:
                     pass
 
                 raise Exception('tried to subscribe ReadFunctor<messageTypePayload> to output message type'
@@ -111,13 +110,10 @@ pprint.PrettyPrinter._dispatch[messageTypePayload.__repr__] = _pprint_ ## messag
                     return self.__is_subscribed_to(source)
 
                 try:
-                    from Basilisk.architecture.messaging.messageType ## Payload import messageType ## _C
-                except ImportError:
+                    if type(source) == messageType ## _C:
+                        return self.__is_subscribed_to_C(source)
                     return 0
-
-                if type(source) == messageType ## _C:
-                    return self.__is_subscribed_to_C(source)
-                else:
+                except NameError:
                     return 0
         %}
 };
