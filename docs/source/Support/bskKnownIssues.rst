@@ -24,6 +24,10 @@ Version |release|
   translational response to applied forces. :ref:`spacecraft` and :ref:`spacecraftSystem` now verify
   on reset that ``mHub`` is strictly positive and ``IHubPntBc_B`` is symmetric positive definite.
   This is fixed in the current version.
+- Plugin-generated custom messages using ``bsk_generate_messages(GENERATE_C_INTERFACE)`` could fail to subscribe
+  Python readers to C-interface output messages because generated bindings imported the built-in
+  ``Basilisk.architecture.messaging`` package. Generated bindings now resolve peer message classes from their own
+  module. This is fixed in the current version.
 - BSK-1446: Several BSK modules deallocated output message objects created with C++ ``new`` by calling
   ``free()``, and retained image buffers in :ref:`camera` and :ref:`vizInterface` were not released during
   module destruction. This could cause invalid deallocation behavior or memory leaks when these modules were
