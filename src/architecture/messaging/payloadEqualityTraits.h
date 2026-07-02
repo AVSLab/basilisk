@@ -19,12 +19,13 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 #ifndef PAYLOAD_EQUALITY_TRAITS_H
 #define PAYLOAD_EQUALITY_TRAITS_H
 
-/*! Primary template: equality comparison not supported for this payload type by default.
+/*! Primary template: equality comparison is not supported for this payload type by default.
  *
- *  To enable recordOnChange() for a payload type, provide a specialization either:
- *   - automatically, via generatePayloadEqualityHeader.py (for fully-supported struct fields), or
- *   - manually, as a PayloadEqualityTraits<T> specialization in the payload header file
- *     (guarded by \#ifdef __cplusplus) when the comparison semantics can be defined safely.
+ *  Native C++ code that calls ``recordOnChange()`` or ``payloadsAreEqual()`` must
+ *  provide a visible ``PayloadEqualityTraits<T>`` specialization when comparison
+ *  semantics can be defined safely.  The generated per-payload specializations
+ *  used by Python SWIG message modules are intentionally not included through
+ *  ``messaging.h`` and are not part of the native C++ messaging API.
  */
 template<typename T>
 struct PayloadEqualityTraits {
@@ -48,9 +49,8 @@ bool payloadsAreEqual(const T& lhs, const T& rhs) {
     static_assert(
         PayloadEqualityTraits<T>::supported,
         "payloadsAreEqual: no equality comparison is defined for this payload type. "
-        "Add a PayloadEqualityTraits<T> specialization in the payload header file "
-        "(guarded by #ifdef __cplusplus), or check whether generatePayloadEqualityHeader.py "
-        "can cover all fields automatically."
+        "Add a visible PayloadEqualityTraits<T> specialization when the payload "
+        "comparison semantics can be defined safely."
     );
     return PayloadEqualityTraits<T>::equal(lhs, rhs);
 }
