@@ -1,0 +1,1 @@
+- Generated message bindings now resolve peer message classes from their own module, fixing custom plugin messages built with ``bsk_generate_messages(GENERATE_C_INTERFACE)`` outside ``Basilisk.architecture.messaging``.
