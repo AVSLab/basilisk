@@ -15,15 +15,78 @@
 #  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
-"""Unit tests for ``generatePayloadEqualityHeader.py``."""
+"""Unit tests for message auto-source generators."""
 
 from __future__ import annotations
 
+import json
+import subprocess
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent.parent / "msgAutoSource"))
+MSG_AUTO_SOURCE_DIR = Path(__file__).parent.parent / "msgAutoSource"
+NEW_MESSAGING_TEMPLATE = Path(__file__).parent.parent / "newMessaging.ih"
+
+sys.path.insert(0, str(MSG_AUTO_SOURCE_DIR))
 from generatePayloadEqualityHeader import generateEqualityHeader
+
+
+def _generate_swig_interface(tmp_path, generate_c_info):
+    """Generate a SWIG interface file for a simple test message payload."""
+
+    # The generator normally consumes metadata emitted by libclang.  This test
+    # only needs enough metadata to exercise the Python binding templates, so a
+    # single scalar field keeps the fixture small while still producing a valid
+    # payload extension block.
+    meta = {
+        "complete": True,
+        "size_bytes": 8,  # [byte]
+        "fields": [
+            {
+                "name": "value",
+                "kind": "primitive",
+                "ctype": "double",
+                "offset_bytes": 0,  # [byte]
+                "size_bytes": 8,  # [byte]
+            },
+        ],
+    }
+    meta_path = tmp_path / "CustomMsgPayload.json"
+    output_path = tmp_path / "CustomMsgPayload.i"
+    meta_path.write_text(json.dumps(meta), encoding="utf-8")
+
+    # Run the real generator instead of duplicating its formatting logic in the
+    # test.  The header path does not need to exist because generateSWIGModules.py
+    # only splices the path into the SWIG template.
+    subprocess.run(
+        [
+            sys.executable,
+            "generateSWIGModules.py",
+            str(output_path),
+            str(tmp_path / "CustomMsgPayload.h"),
+            "CustomMsgPayload",
+            str(tmp_path),
+            str(generate_c_info),
+            str(meta_path),
+            "0",
+        ],
+        cwd=MSG_AUTO_SOURCE_DIR,
+        check=True,
+    )
+
+    return output_path.read_text(encoding="utf-8")
+
+
+def test_generated_message_bindings_use_module_local_classes(tmp_path):
+    """Generated subscription helpers do not assume the Basilisk package path."""
+
+    generated = _generate_swig_interface(tmp_path, True)
+    new_messaging_template = NEW_MESSAGING_TEMPLATE.read_text(encoding="utf-8")
+
+    assert "from Basilisk.architecture.messaging.messageType" not in new_messaging_template
+    assert "if type(source) == messageType ## _C:" in new_messaging_template
+    assert "from Basilisk.architecture.messaging import {type}" not in generated
+    assert "elif type(source) == CustomMsg:" in generated
 
 
 def test_payload_equality_generates_fixed_array_comparison():
