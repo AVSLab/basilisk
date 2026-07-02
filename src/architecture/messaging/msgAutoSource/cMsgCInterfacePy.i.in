@@ -15,7 +15,6 @@ typedef struct {type};
 
     def subscribeTo(self, source):
         """subscribe to another message source"""
-        from Basilisk.architecture.messaging import {type}
         if type(source) == type(self):
             {type}_C_subscribe(self, source)
         elif type(source) == {type}:
@@ -31,7 +30,6 @@ typedef struct {type};
 
     def isSubscribedTo(self, source):
         """check if self is subscribed to another message source"""
-        from Basilisk.architecture.messaging import {type}
         if type(source) == type(self):
             return ({type}_C_isSubscribedTo(self, source))
         elif type(source) == {type}:
