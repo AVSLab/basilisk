@@ -61,7 +61,9 @@ function(generate_messages searchDir generateCCode outEqualityHeaders)
       COMMAND ${Python3_EXECUTABLE} generateSWIGModules.py ${COMP_OUT_NAME} ${msgFile} ${TARGET_NAME} ${searchDir}
               ${generateCCode} ${MSG_META_OUTPUT} ${RECORDER_PROPERTY_ROLLBACK}
       DEPENDS ${msgFile} ${MSG_META_OUTPUT} ${EQUALITY_OUT_NAME}
-              msgAutoSource/generateSWIGModules.py msgAutoSource/msgInterfacePy.i.in
+              msgAutoSource/generateSWIGModules.py
+              msgAutoSource/msgInterfacePy.i.in
+              msgAutoSource/cMsgCInterfacePy.i.in
       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/msgAutoSource/)
     set_property(SOURCE ${COMP_OUT_NAME} PROPERTY CPLUSPLUS ON)
 
@@ -91,6 +93,8 @@ function(generate_messages searchDir generateCCode outEqualityHeaders)
       SOURCES ${COMP_OUT_NAME} OUTFILE_DIR "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/"
               OUTPUT_DIR "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/")
 
+    set_property(TARGET ${TARGET_NAME} APPEND PROPERTY SWIG_DEPENDS
+                 "${CMAKE_CURRENT_SOURCE_DIR}/newMessaging.ih")
     add_dependencies(${TARGET_NAME} swigtrick)
     set_target_properties(${TARGET_NAME} PROPERTIES FOLDER "architecture/messaging/derivedCode")
     set_target_properties(${SWIG_MODULE_${TARGET_NAME}_REAL_NAME}
