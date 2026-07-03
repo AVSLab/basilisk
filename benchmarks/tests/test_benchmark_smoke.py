@@ -34,16 +34,19 @@ SUBPROCESS_TIMEOUT_SEC = 180  # [s]
 def _run(command, env=None):
     """Run ``command`` from the repository root and require success."""
 
+    uses_shell = isinstance(command, str)
     completed = subprocess.run(
         command,
         cwd=REPO_ROOT,
         env=env,
         text=True,
         capture_output=True,
+        shell=uses_shell,
         timeout=SUBPROCESS_TIMEOUT_SEC,
     )
+    command_text = command if uses_shell else " ".join(str(item) for item in command)
     assert completed.returncode == 0, (
-        f"Command failed: {' '.join(str(item) for item in command)}\n"
+        f"Command failed: {command_text}\n"
         f"stdout:\n{completed.stdout}\n"
         f"stderr:\n{completed.stderr}"
     )
@@ -77,6 +80,70 @@ def _cmake_command():
     if cmake_path is None:
         pytest.skip("CMake is not available")
     return cmake_path
+
+
+def _visual_studio_dev_command():
+    """Return ``VsDevCmd.bat`` if Visual Studio can be found on Windows."""
+
+    if os.name != "nt":
+        return None
+
+    configured_path = os.environ.get("BASILISK_VSDEVCMD")
+    if configured_path and Path(configured_path).exists():
+        return configured_path
+
+    program_files_x86 = os.environ.get("ProgramFiles(x86)")
+    if program_files_x86 is None:
+        return None
+
+    vswhere_path = Path(program_files_x86) / "Microsoft Visual Studio" / "Installer" / "vswhere.exe"
+    if not vswhere_path.exists():
+        return None
+
+    completed = subprocess.run(
+        [
+            str(vswhere_path),
+            "-latest",
+            "-products",
+            "*",
+            "-requires",
+            "Microsoft.VisualStudio.Component.VC.Tools.x86.x64",
+            "-property",
+            "installationPath",
+        ],
+        cwd=REPO_ROOT,
+        text=True,
+        capture_output=True,
+        timeout=SUBPROCESS_TIMEOUT_SEC,
+    )
+    if completed.returncode != 0:
+        return None
+
+    install_paths = [line.strip() for line in completed.stdout.splitlines() if line.strip()]
+    if not install_paths:
+        return None
+
+    vsdevcmd_path = Path(install_paths[0]) / "Common7" / "Tools" / "VsDevCmd.bat"
+    if not vsdevcmd_path.exists():
+        return None
+
+    return str(vsdevcmd_path)
+
+
+def _build_environment_command(command):
+    """Return ``command`` wrapped in a compiler environment when needed."""
+
+    if os.name != "nt":
+        return command
+    if os.environ.get("VCINSTALLDIR") and os.environ.get("INCLUDE"):
+        return command
+
+    vsdevcmd_path = _visual_studio_dev_command()
+    if vsdevcmd_path is None:
+        return command
+
+    command_text = subprocess.list2cmdline(command)
+    return f'call "{vsdevcmd_path}" -arch=amd64 -host_arch=amd64 >nul && {command_text}'
 
 
 def _cmake_target_is_available(cmake_command, build_directory, target_name):
@@ -151,15 +218,17 @@ def test_eigen_linear_algebra_benchmark_smoke():
         )
 
     completed = _run(
-        [
-            cmake_command,
-            "--build",
-            str(build_directory),
-            "--target",
-            target_name,
-            "--config",
-            "Release",
-        ]
+        _build_environment_command(
+            [
+                cmake_command,
+                "--build",
+                str(build_directory),
+                "--target",
+                target_name,
+                "--config",
+                "Release",
+            ]
+        )
     )
 
     assert "Smoke mode:" in completed.stdout
