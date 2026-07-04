@@ -58,6 +58,7 @@ public:
     void modifyStates(double integTime); //!< -- Method to switch MRPs
     void prependSpacecraftNameToStates(); //!< class method
     void matchGravitytoVelocityState(Eigen::Vector3d v_CN_N); //!< method to set the gravity velocity to base velocity
+    void validateConfiguration();        //!< -- Verify the user-set hub mass and inertia are physically valid
 
 private:
     Eigen::Vector3d r_BcP_P;             //!< [m] vector from point B to CoM of hub in B frame components

@@ -58,6 +58,9 @@ Spacecraft::~Spacecraft()
  */
 void Spacecraft::Reset(uint64_t CurrentSimNanos)
 {
+    // - Verify the user-supplied hub configuration before the dynamics are initialized
+    this->hub.validateConfiguration();
+
     this->gravField.Reset(CurrentSimNanos);
     // - Call method for initializing the dynamics of spacecraft
     this->initializeDynamics();

@@ -76,6 +76,9 @@ void SpacecraftUnit::SelfInitSC(int64_t moduleID)
  */
 void SpacecraftUnit::ResetSC(uint64_t CurrentSimNanos)
 {
+    // - Verify the user-supplied hub configuration before the dynamics are initialized
+    this->hub.validateConfiguration();
+
     this->gravField.Reset(CurrentSimNanos);
 }
 
