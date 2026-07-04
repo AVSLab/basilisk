@@ -15,6 +15,11 @@ Version |release|
   visible destructors. Internal-only members are now private or hidden from Python, and public value-type
   members now include the required Eigen, STL, enum, and BSpline wrapper support. This is fixed in the
   current version.
+- BSK-469: The :ref:`hingedRigidBodyStateEffector` and :ref:`nHingedRigidBodyStateEffector` constructors
+  called ``Eigen``'s static ``Identity()`` factory as a statement and discarded the result, so the default
+  ``dcm_HB`` (and ``IPntS_S`` for the single hinged effector) held uninitialized memory instead of identity.
+  Configurations that set these members explicitly (all shipped examples and tests do) were unaffected.
+  This is fixed in the current version.
 - BSK-1446: Several BSK modules deallocated output message objects created with C++ ``new`` by calling
   ``free()``, and retained image buffers in :ref:`camera` and :ref:`vizInterface` were not released during
   module destruction. This could cause invalid deallocation behavior or memory leaks when these modules were
