@@ -57,6 +57,21 @@ HubEffector::~HubEffector()
     return;
 }
 
+/*! This method verifies the user-supplied hub properties are physically valid. The hub mass
+ must be strictly positive and the hub inertia tensor must be symmetric positive definite.
+ It is intended to be called by the owning spacecraft at reset time, before the dynamics
+ are initialized. */
+void HubEffector::validateConfiguration()
+{
+    if (this->mHub <= 0.0) {
+        bskLogger.bskError("hubEffector: mHub must be greater than 0. It may not have been set properly by the user.");
+    }
+    if (!eigenIsValidInertiaMatrix(this->IHubPntBc_B)) {
+        bskLogger.bskError("hubEffector: IHubPntBc_B is not a valid inertia tensor; it must be symmetric and positive"
+                           " definite. It may not have been set properly by the user.");
+    }
+}
+
 /*! This method allows the hub access to gravity and also gets access to the properties in the dyn Manager because uses
  these values in the computeDerivatives method call */
 void HubEffector::linkInStates(DynParamManager& statesIn)
@@ -185,7 +200,7 @@ void HubEffector::updateEnergyMomContributions(double integTime, Eigen::Vector3d
 
     // - Find rotational energy contribution from the hub
     rotEnergyContr = 1.0/2.0*omegaLocal_BN_B.dot(IHubPntBc_P*omegaLocal_BN_B) + 1.0/2.0*mHub*rDot_BcB_B.dot(rDot_BcB_B);
-    
+
     return;
 }
 
