@@ -32,4 +32,8 @@
 %include <std_shared_ptr.i>
 %shared_ptr(THRSimConfig)
 
+// Internal thruster operating state, not intended for Python use. Wrapping it
+// made SWIG emit an un-destructed proxy on attribute access (memory leak, issue #422).
+%ignore THRSimConfig::ThrustOps;
+
 %include "simulation/dynamics/_GeneralModuleFiles/THRSimConfig.h"

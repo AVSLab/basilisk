@@ -47,6 +47,10 @@
 %naturalvar SphericalHarmonicsGravityModel::cBar;
 %naturalvar SphericalHarmonicsGravityModel::sBar;
 
+// Internal logger, not intended for Python use. Wrapping it made SWIG emit an
+// un-destructed proxy on attribute access (memory leak, issue #422).
+%ignore SphericalHarmonicsGravityModel::bskLogger;
+
 %include "simulation/dynamics/gravityEffector/sphericalHarmonicsGravityModel.h"
 
 %extend SphericalHarmonicsGravityModel {
