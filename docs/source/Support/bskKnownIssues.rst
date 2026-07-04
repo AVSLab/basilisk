@@ -19,6 +19,10 @@ Version |release|
   called ``Eigen``'s static ``Identity()`` factory as a statement and discarded the result, so the default
   ``dcm_HB`` (and ``IPntS_S`` for the single hinged effector) held uninitialized memory instead of identity.
   Configurations that set these members explicitly (all shipped examples and tests do) were unaffected.
+- BSK-469: The spacecraft hub properties were not validated, so a zero hub mass or a singular hub
+  inertia tensor silently produced ``NaN`` states, and a negative hub mass silently reversed the
+  translational response to applied forces. :ref:`spacecraft` and :ref:`spacecraftSystem` now verify
+  on reset that ``mHub`` is strictly positive and ``IHubPntBc_B`` is symmetric positive definite.
   This is fixed in the current version.
 - BSK-1446: Several BSK modules deallocated output message objects created with C++ ``new`` by calling
   ``free()``, and retained image buffers in :ref:`camera` and :ref:`vizInterface` were not released during
