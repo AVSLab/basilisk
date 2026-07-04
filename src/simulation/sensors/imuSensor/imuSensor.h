@@ -133,14 +133,14 @@ public:
     Eigen::Vector3d accelScale;         //!< (-) scale factor for acceleration axes
     Eigen::Vector3d gyroScale;          //!< (-) scale factors for acceleration axes
 
-    Discretize aDisc;                  //!<  (-) instance of discretization utility for linear acceleration
-    Discretize oDisc;                  //!<  (-) instance of idscretization utility for angular rate
-    Saturate aSat;                     //!<  (-) instance of saturate utility for linear acceleration
-    Saturate oSat;                     //!<  (-) instance of saturate utility for angular rate
-
     BSKLogger bskLogger;                      //!< -- BSK Logging
 
 private:
+    Discretize aDisc;                  //!<  (-) instance of discretization utility for linear acceleration
+    Discretize oDisc;                  //!<  (-) instance of discretization utility for angular rate
+    Saturate aSat;                     //!<  (-) instance of saturate utility for linear acceleration
+    Saturate oSat;                     //!<  (-) instance of saturate utility for angular rate
+
     uint64_t PreviousTime;              //!< -- Timestamp from previous frame
     int64_t numStates;                  //!< -- Number of States for Gauss Markov Models
     SCStatesMsgPayload StatePrevious;   //!< -- Previous state to delta in IMU
