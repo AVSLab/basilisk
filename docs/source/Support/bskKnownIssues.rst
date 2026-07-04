@@ -10,6 +10,11 @@ Basilisk Known Issues
 
 Version |release|
 -----------------
+- BSK-422: Several SWIG-wrapped C++ members in simulation and FSW modules could emit
+  ``swig/python detected a memory leak`` warnings when read from Python because their wrappers lacked
+  visible destructors. Internal-only members are now private or hidden from Python, and public value-type
+  members now include the required Eigen, STL, enum, and BSpline wrapper support. This is fixed in the
+  current version.
 - BSK-1446: Several BSK modules deallocated output message objects created with C++ ``new`` by calling
   ``free()``, and retained image buffers in :ref:`camera` and :ref:`vizInterface` were not released during
   module destruction. This could cause invalid deallocation behavior or memory leaks when these modules were
