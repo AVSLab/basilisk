@@ -31,6 +31,12 @@ from Basilisk.architecture.swig_common_model import *
 %include "std_string.i"
 %include "swig_conly_data.i"
 %include "sys_model.i"
+// The module exposes public InputDataSet/OutputDataSet members (read from Python,
+// e.g. testModule.Output.X1). Wrap the BSpline types here, with the Eigen typemaps,
+// so SWIG has their destructors instead of emitting an un-destructed proxy on
+// access (memory leak, issue #422).
+%include "swig_eigen.i"
+%include "architecture/utilities/BSpline.h"
 %include "constrainedAttitudeManeuver.h"
 
 %include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
