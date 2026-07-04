@@ -23,6 +23,13 @@
 %ignore StateVector::stateMap;
 %ignore DynParamManager::dynProperties;
 
+// Internal bookkeeping not intended for Python use. Wrapping these made SWIG
+// emit an un-destructed proxy on attribute access (memory leak, issue #422):
+//   - sharedNoiseMap has a std::pair key SWIG cannot wrap without leaking
+//   - bskLogger has no destructor visible in this module's wrap
+%ignore DynParamManager::sharedNoiseMap;
+%ignore DynParamManager::bskLogger;
+
 // Uses unique_ptr, don't need it at the Python level
 %ignore StateData::clone;
 
