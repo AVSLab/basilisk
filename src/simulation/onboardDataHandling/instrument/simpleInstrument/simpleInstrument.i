@@ -39,6 +39,11 @@ from Basilisk.architecture.swig_common_model import *
 struct DataNodeUsageMsg_C;
 %include "architecture/msgPayloadDefC/DeviceCmdMsgPayload.h"
 struct DeviceCmdMsg_C;
+// DataStorageStatusMsgPayload has a public std::vector<double> storedData member;
+// without the std::vector<double> typemap SWIG emits an un-destructed proxy on
+// access (memory leak, issue #422).
+%include "std_vector.i"
+%template() std::vector<double>;
 %include "architecture/msgPayloadDefCpp/DataStorageStatusMsgPayload.h"
 
 %pythoncode %{
