@@ -37,6 +37,9 @@ from Basilisk.architecture.swig_common_model import *
 %include "architecture/msgPayloadDefC/TemperatureMsgPayload.h"
 struct TemperatureMsg_C;
 
+// RWConfigLogMsgPayload exposes the RWModels enum; include its definition so SWIG
+// has a destructor for it instead of leaking a proxy (memory leak, issue #422).
+%include "simulation/dynamics/reactionWheels/reactionWheelSupport.h"
 %include "architecture/msgPayloadDefC/RWConfigLogMsgPayload.h"
 struct RWConfigLogMsg_C;
 

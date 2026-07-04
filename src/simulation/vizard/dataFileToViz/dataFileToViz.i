@@ -33,12 +33,19 @@ from Basilisk.architecture.swig_common_model import *
 %include "std_string.i"
 %include "sys_model.i"
 %include "std_vector.i"
+// vizStructures.h exposes Eigen members (e.g. ThrClusterMap::thrOffset); without
+// the Eigen typemaps SWIG emits an un-destructed Eigen proxy on access
+// (memory leak, issue #422).
+%include "swig_eigen.i"
 
 %include "dataFileToViz.h"
 %include "simulation/vizard/_GeneralModuleFiles/vizStructures.h"
 
 %include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 struct SCStatesMsg_C;
+// RWConfigLogMsgPayload exposes the RWModels enum; include its definition so SWIG
+// has a destructor for it instead of leaking a proxy (memory leak, issue #422).
+%include "simulation/dynamics/reactionWheels/reactionWheelSupport.h"
 %include "architecture/msgPayloadDefC/RWConfigLogMsgPayload.h"
 struct RWConfigLogMsg_C;
 %include "architecture/msgPayloadDefCpp/THROutputMsgPayload.h"

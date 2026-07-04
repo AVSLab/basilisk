@@ -42,6 +42,9 @@ from Basilisk.architecture.swig_common_model import *
 struct PowerNodeUsageMsg_C;
 %include "architecture/msgPayloadDefC/DeviceStatusMsgPayload.h"
 struct DeviceStatusMsg_C;
+// RWConfigLogMsgPayload exposes the RWModels enum; include its definition so SWIG
+// has a destructor for it instead of leaking a proxy (memory leak, issue #422).
+%include "simulation/dynamics/reactionWheels/reactionWheelSupport.h"
 %include "architecture/msgPayloadDefC/RWConfigLogMsgPayload.h"
 struct RWConfigLogMsg_C;
 

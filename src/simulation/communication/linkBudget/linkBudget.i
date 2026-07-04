@@ -33,6 +33,11 @@
 %include "swig_conly_data.i"
 
 %include "sys_model.i"
+// linkBudget.h defines LookupTable / AttenuationLookupTable structs with public
+// std::vector<double> members; without the std::vector typemap SWIG emits an
+// un-destructed proxy on access (memory leak, issue #422).
+%include "std_vector.i"
+%template() std::vector<double>;
 %include "linkBudget.h"
 
 %include "architecture/msgPayloadDefC/AntennaLogMsgPayload.h"
