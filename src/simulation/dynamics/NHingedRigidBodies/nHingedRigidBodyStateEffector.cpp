@@ -31,7 +31,7 @@ NHingedRigidBodyStateEffector::NHingedRigidBodyStateEffector()
     this->effProps.rEffPrime_CB_B.fill(0.0);
     this->effProps.IEffPrimePntB_B.fill(0.0);
     this->r_HB_B.setZero();
-    this->dcm_HB.Identity();
+    this->dcm_HB.setIdentity();
     this->nameOfThetaState ="nHingedRigidBody" + std::to_string(this->effectorID) + "Theta";
     this->nameOfThetaDotState = "nHingedRigidBody" + std::to_string(this->effectorID) + "ThetaDot";
     this->effectorID++;

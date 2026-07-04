@@ -41,9 +41,9 @@ HingedRigidBodyStateEffector::HingedRigidBodyStateEffector()
     this->thetaDotRef = 0.0;
     this->thetaInit = 0.00;
     this->thetaDotInit = 0.0;
-    this->IPntS_S.Identity();
+    this->IPntS_S.setIdentity();
     this->r_HB_B.setZero();
-    this->dcm_HB.Identity();
+    this->dcm_HB.setIdentity();
 
     this->nameOfThetaState = "hingedRigidBodyTheta" + std::to_string(this->effectorID);
     this->nameOfThetaDotState = "hingedRigidBodyThetaDot" + std::to_string(this->effectorID);
