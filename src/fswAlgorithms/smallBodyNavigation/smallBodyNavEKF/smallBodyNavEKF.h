@@ -62,7 +62,6 @@ public:
     ReadFunctor<EphemerisMsgPayload> asteroidEphemerisInMsg;  //!< Small body ephemeris input message
     ReadFunctor<EphemerisMsgPayload> sunEphemerisInMsg;  //!< Sun ephemeris input message
     ReadFunctor<CmdForceBodyMsgPayload> cmdForceBodyInMsg;  //!< Command force body in message
-    std::vector<ReadFunctor<THROutputMsgPayload>> thrusterInMsgs;  //!< thruster input msg vector
 
     Message<NavTransMsgPayload> navTransOutMsg;  //!< Translational nav output message
     Message<SmallBodyNavMsgPayload> smallBodyNavOutMsg;  //!< Small body nav output msg - states and covariances
@@ -91,6 +90,7 @@ private:
     NavAttMsgPayload navAttInMsgBuffer;  //!< Message buffer for input attitude nav message
     EphemerisMsgPayload asteroidEphemerisInMsgBuffer;  //!< Message buffer for asteroid ephemeris
     EphemerisMsgPayload sunEphemerisInMsgBuffer;  //!< Message buffer for sun ephemeris
+    std::vector<ReadFunctor<THROutputMsgPayload>> thrusterInMsgs;  //!< thruster input msg vector
     std::vector<THROutputMsgPayload> thrusterInMsgBuffer; //!< Buffer for thruster force and torques
     CmdForceBodyMsgPayload cmdForceBodyInMsgBuffer; //!< Buffer for the commanded force input
 
