@@ -79,7 +79,7 @@ public:
     void computeDerivatives(double integTime,
                             Eigen::Vector3d rDDot_BN_N,
                             Eigen::Vector3d omegaDot_BN_B,
-                            Eigen::Vector3d sigma_BN) override;
+                            Eigen::MRPd sigma_BN) override;
 
     /*!
      * @brief Set the mean level @f$\mu@f$ of the multiplicative factor @f$(1+\delta)@f$.

@@ -54,7 +54,7 @@ public:
     void registerTranslationalStates(DynParamManager& states);  //!< -- Register only translational hub states
     void registerAttitudeStates(DynParamManager& states);       //!< -- Register constant attitude hub states
     void updateEffectorMassProps(double integTime);  //!< -- Method for the hub to update its mass props for the s/c
-    void computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::Vector3d sigma_BN);  //!< -- Method for the hub to compute it's derivatives
+    void computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN);  //!< -- Method for the hub to compute it's derivatives
     void computeHubOnlyDerivatives(const Eigen::Vector3d& forceExternal_N,
                                    const Eigen::Vector3d& forceExternal_B,
                                    const Eigen::Vector3d& torquePntB_B);  //!< -- Compute direct hub derivatives

@@ -67,13 +67,13 @@ public:
     void registerProperties(DynParamManager& states) override;       //!< Method for registering the prescribed motion properties
     void updateContributions(double integTime,
                              BackSubMatrices & backSubContr,
-                             Eigen::Vector3d sigma_BN,
+                             Eigen::MRPd sigma_BN,
                              Eigen::Vector3d omega_BN_B,
                              Eigen::Vector3d g_N) override;          //!< Method for computing the effector's back-substitution contributions
     void computeDerivatives(double integTime,
                             Eigen::Vector3d rDDot_BN_N,
                             Eigen::Vector3d omegaDot_BN_B,
-                            Eigen::Vector3d sigma_BN) override;      //!< Method for effector to compute its state derivatives
+                            Eigen::MRPd sigma_BN) override;      //!< Method for effector to compute its state derivatives
     void updateEffectorMassProps(double integTime) override;         //!< Method for calculating the effector mass props and prop rates
     void updateEnergyMomContributions(double integTime,
                                       Eigen::Vector3d & rotAngMomPntCContr_B,

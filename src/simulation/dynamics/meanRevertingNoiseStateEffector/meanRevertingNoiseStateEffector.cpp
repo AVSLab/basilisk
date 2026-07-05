@@ -83,10 +83,10 @@ void MeanRevertingNoiseStateEffector::linkInStates(DynParamManager& /** states *
 {
 }
 
-void MeanRevertingNoiseStateEffector::computeDerivatives(double /** integTime */,
-                                                         Eigen::Vector3d /** rDDot_BN_N */,
-                                                         Eigen::Vector3d /** omegaDot_BN_B */,
-                                                         Eigen::Vector3d /** sigma_BN */)
+void MeanRevertingNoiseStateEffector::computeDerivatives(double,
+                                                         Eigen::Vector3d,
+                                                         Eigen::Vector3d,
+                                                         Eigen::MRPd)
 {
     if (this->state == nullptr) {
         this->bskLogger.bskError("MeanRevertingNoiseStateEffector::computeDerivatives called before registerStates.");

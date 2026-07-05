@@ -188,11 +188,11 @@ void ThrusterDynamicEffector::UpdateThrusterProperties()
     Eigen::Vector3d omega_BN_B;
     if (!this->stateNameOfSigma.empty()) {
         omega_BN_B = this->hubOmega->getState();
-        sigma_BN = (Eigen::Vector3d)this->hubSigma->getState();
+        sigma_BN = Eigen::MRPd(this->hubSigma->getState().data());
     }
     else {
         omega_BN_B = *this->inertialAngVelocityProperty;
-        sigma_BN = (Eigen::Vector3d)*this->inertialAttitudeProperty;
+        sigma_BN = Eigen::MRPd(this->inertialAttitudeProperty->data());
     }
 
     Eigen::Matrix3d dcm_BN = (sigma_BN.toRotationMatrix()).transpose();
