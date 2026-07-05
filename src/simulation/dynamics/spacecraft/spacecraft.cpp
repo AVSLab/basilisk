@@ -119,9 +119,9 @@ void Spacecraft::writeOutputStateMessages(uint64_t clockTime)
     eigenMatrixXd2CArray(*this->inertialVelocityProperty, stateOut.v_BN_N);
     Eigen::MRPd sigmaLocal_BN;
     if (this->pointMassTranslationalOnly && this->hubSigma == nullptr) {
-        sigmaLocal_BN = this->hub.sigma_BNInit;
+        sigmaLocal_BN = Eigen::MRPd(this->hub.sigma_BNInit);
     } else {
-        sigmaLocal_BN = (Eigen::Vector3d) this->hubSigma->getStateReference();
+        sigmaLocal_BN = Eigen::MRPd(this->hubSigma->getStateReference().data());
     }
     Eigen::Matrix3d dcm_NB = sigmaLocal_BN.toRotationMatrix();
     Eigen::Vector3d rLocal_CN_N = (*this->inertialPositionProperty) + dcm_NB*(*this->c_B);
@@ -168,7 +168,7 @@ void Spacecraft::readOptionalRefMsg()
         Eigen::Matrix3d dcm_BN = sigma_BN.toRotationMatrix().transpose();
         omega_BN_B = dcm_BN * omega_BN_N;
 
-        this->hubSigma->setState(eigenMRPd2Vector3d(sigma_BN));
+        this->hubSigma->setState(sigma_BN.coeffs());
         this->hubOmega_BN_B->setState(omega_BN_B);
     }
 
@@ -312,8 +312,7 @@ void Spacecraft::initializeDynamics()
         // - Edit r_BN_N and v_BN_N to take into account that point B and point C are not coincident
         // - Pulling the state from the hub at this time gives us r_CN_N
         Eigen::Vector3d rInit_BN_N = this->hubR_N->getStateReference();
-        Eigen::MRPd sigma_BN;
-        sigma_BN = (Eigen::Vector3d) this->hubSigma->getStateReference();
+        Eigen::MRPd sigma_BN(this->hubSigma->getStateReference().data());
         Eigen::Matrix3d dcm_NB = sigma_BN.toRotationMatrix();
         // - Substract off the center mass to leave r_BN_N
         rInit_BN_N -= dcm_NB*(*this->c_B);
@@ -479,14 +478,11 @@ void Spacecraft::equationsOfMotion(double integTimeSeconds, double timeStep)
     this->updateSCMassProps(integTimeSeconds);
 
     // - This is where gravity is computed (gravity needs to know c_B to calculated gravity about r_CN_N)
-    Eigen::MRPd sigmaBNLoc;
+    Eigen::MRPd sigmaBNLoc(this->hubSigma->getStateReference().data());
     Eigen::Matrix3d dcm_NB;
     Eigen::Vector3d cLocal_N;
 
-    Eigen::Vector3d sigmaState = this->hubSigma->getStateReference();
     Eigen::Vector3d omegaState = this->hubOmega_BN_B->getStateReference();
-
-    sigmaBNLoc = sigmaState;
     dcm_NB = sigmaBNLoc.toRotationMatrix();
     cLocal_N = dcm_NB*(*this->c_B);
     Eigen::Vector3d rLocal_CN_N = this->hubR_N->getStateReference() + dcm_NB*(*this->c_B);
@@ -519,7 +515,7 @@ void Spacecraft::equationsOfMotion(double integTimeSeconds, double timeStep)
         this->backSubContributions.vecRot.setZero();
 
         // - Call the update contributions method for the stateEffectors and add in contributions to the hub matrices
-        (*it)->updateContributions(integTimeSeconds, this->backSubContributions, sigmaState, omegaState, *this->g_N);
+        (*it)->updateContributions(integTimeSeconds, this->backSubContributions, sigmaBNLoc, omegaState, *this->g_N);
         this->hub.hubBackSubMatrices.matrixA += this->backSubContributions.matrixA;
         this->hub.hubBackSubMatrices.matrixB += this->backSubContributions.matrixB;
         this->hub.hubBackSubMatrices.matrixC += this->backSubContributions.matrixC;
@@ -570,7 +566,7 @@ void Spacecraft::equationsOfMotion(double integTimeSeconds, double timeStep)
     this->hub.computeDerivatives(integTimeSeconds,
                                  this->hubV_N->getStateDerivReference(),
                                  this->hubOmega_BN_B->getStateDerivReference(),
-                                 sigmaState);
+                                 sigmaBNLoc);
 
     Eigen::Vector3d hubVDeriv = this->hubV_N->getStateDerivReference();
     Eigen::Vector3d hubOmegaDeriv = this->hubOmega_BN_B->getStateDerivReference();
@@ -578,7 +574,7 @@ void Spacecraft::equationsOfMotion(double integTimeSeconds, double timeStep)
     // - Loop through state effectors for compute derivatives
     for(it = states.begin(); it != states.end(); it++)
     {
-        (*it)->computeDerivatives(integTimeSeconds, hubVDeriv, hubOmegaDeriv, sigmaState);
+        (*it)->computeDerivatives(integTimeSeconds, hubVDeriv, hubOmegaDeriv, sigmaBNLoc);
     }
 }
 
@@ -604,7 +600,7 @@ void Spacecraft::preIntegration(uint64_t integrateToThisTimeNanos) {
     // - Get the angular rate, oldOmega_BN_B from the dyn manager
     this->oldOmega_BN_B = this->hubOmega_BN_B->getStateReference();
     // - Get center of mass, v_BN_N and dcm_NB from the dyn manager
-    oldSigma_BN = (Eigen::Vector3d) this->hubSigma->getStateReference();
+    oldSigma_BN = Eigen::MRPd(this->hubSigma->getStateReference().data());
     // - Finally find v_CN_N
     Eigen::Matrix3d oldDcm_NB = oldSigma_BN.toRotationMatrix(); // - dcm_NB before integration
     oldV_CN_N = oldV_BN_N + oldDcm_NB*(*this->cDot_B);
@@ -631,11 +627,8 @@ void Spacecraft::postIntegration(uint64_t integrateToThisTimeNanos) {
     // - Find v_CN_N after the integration for accumulated DV
     Eigen::Vector3d newV_BN_N = this->hubV_N->getStateReference(); // - V_BN_N after integration
     Eigen::Vector3d newV_CN_N;  // - V_CN_N after integration
-    Eigen::MRPd newSigma_BN;    // - Sigma_BN after integration
+    Eigen::MRPd newSigma_BN(this->hubSigma->getStateReference().data());    // - Sigma_BN after integration
     // - Get center of mass, v_BN_N and dcm_NB
-    Eigen::Vector3d sigmaBNLoc;
-    sigmaBNLoc = (Eigen::Vector3d) this->hubSigma->getStateReference();
-    newSigma_BN = sigmaBNLoc;
     Eigen::Matrix3d newDcm_NB = newSigma_BN.toRotationMatrix();  // - dcm_NB after integration
     newV_CN_N = newV_BN_N + newDcm_NB*(*this->cDot_B);
 
@@ -692,8 +685,7 @@ void Spacecraft::computeEnergyMomentum(double time)
     // - Grab values from state Manager
     Eigen::Vector3d rLocal_BN_N = hubR_N->getStateReference();
     Eigen::Vector3d rDotLocal_BN_N = hubV_N->getStateReference();
-    Eigen::MRPd sigmaLocal_BN;
-    sigmaLocal_BN = (Eigen::Vector3d ) hubSigma->getStateReference();
+    Eigen::MRPd sigmaLocal_BN(hubSigma->getStateReference().data());
 
     // - Find DCM's
     Eigen::Matrix3d dcmLocal_NB = sigmaLocal_BN.toRotationMatrix();

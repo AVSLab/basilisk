@@ -106,7 +106,7 @@ void IgbmNoiseStateEffector::linkInStates(DynParamManager& /** states */)
 void IgbmNoiseStateEffector::computeDerivatives(double /** integTime */,
                                                 Eigen::Vector3d /** rDDot_BN_N */,
                                                 Eigen::Vector3d /** omegaDot_BN_B */,
-                                                Eigen::Vector3d /** sigma_BN */)
+                                                Eigen::MRPd /** sigma_BN */)
 {
     if (this->state == nullptr) {
         this->bskLogger.bskError("IgbmNoiseStateEffector::computeDerivatives called before registerStates.");
