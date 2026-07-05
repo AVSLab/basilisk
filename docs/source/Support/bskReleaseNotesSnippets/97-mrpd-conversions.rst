@@ -1,0 +1,1 @@
+- Refactored MRP conversion helpers and selected attitude reads to use ``Eigen::MRPd`` directly; ``eigenMRPd2CArray()`` now takes ``const Eigen::MRPd&`` instead of ``Eigen::Vector3d&``.
