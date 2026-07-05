@@ -22,7 +22,10 @@ from __future__ import annotations
 import json
 import subprocess
 import sys
+import textwrap
 from pathlib import Path
+
+import pytest
 
 MSG_AUTO_SOURCE_DIR = Path(__file__).parent.parent / "msgAutoSource"
 NEW_MESSAGING_TEMPLATE = Path(__file__).parent.parent / "newMessaging.ih"
@@ -77,6 +80,43 @@ def _generate_swig_interface(tmp_path, generate_c_info):
     return output_path.read_text(encoding="utf-8")
 
 
+def _render_read_functor_namespace():
+    """Render the generated ``ReadFunctor`` Python helpers for execution."""
+
+    template = NEW_MESSAGING_TEMPLATE.read_text(encoding="utf-8")
+    start = template.index("            def subscribeTo(self, source):")
+    end = template.index("        %}", start)
+    read_functor_methods = template[start:end]
+    read_functor_methods = read_functor_methods.replace("messageType ## _C", "CustomMsg_C")
+    read_functor_methods = read_functor_methods.replace("messageTypePayload", "CustomMsgPayload")
+    read_functor_methods = read_functor_methods.replace("messageType", "CustomMsg")
+    read_functor_methods = textwrap.indent(textwrap.dedent(read_functor_methods).strip(), "    ")
+
+    namespace = {}
+    class_source = "\n".join([
+        "class CustomMsg:",
+        "    pass",
+        "",
+        "class OtherMsg:",
+        "    pass",
+        "",
+        "class CustomMsgReader:",
+        "    def __init__(self):",
+        "        self.subscribed_to = None",
+        "",
+        "    def __subscribe_to(self, source):",
+        "        self.subscribed_to = source",
+        "",
+        "    def __is_subscribed_to(self, source):",
+        "        return source is self.subscribed_to",
+        "",
+        read_functor_methods,
+    ])
+    exec(class_source, namespace)
+
+    return namespace
+
+
 def test_generated_message_bindings_use_module_local_classes(tmp_path):
     """Generated subscription helpers do not assume the Basilisk package path."""
 
@@ -87,6 +127,31 @@ def test_generated_message_bindings_use_module_local_classes(tmp_path):
     assert "if type(source) == messageType ## _C:" in new_messaging_template
     assert "from Basilisk.architecture.messaging import {type}" not in generated
     assert "elif type(source) == CustomMsg:" in generated
+
+
+def test_generated_read_functor_without_c_interface_uses_cpp_message(tmp_path):
+    """Generated helpers still work when no C-interface symbol exists."""
+
+    generated = _generate_swig_interface(tmp_path, False)
+
+    assert "cMsgCInterface/CustomMsg_C.h" not in generated
+    assert "%extend CustomMsg_C" not in generated
+    assert "CustomMsg_C" not in generated
+
+    namespace = _render_read_functor_namespace()
+    assert "CustomMsg_C" not in namespace
+
+    reader = namespace["CustomMsgReader"]()
+    source = namespace["CustomMsg"]()
+    reader.subscribeTo(source)
+
+    assert reader.subscribed_to is source
+    assert reader.isSubscribedTo(source) is True
+
+    other_source = namespace["OtherMsg"]()
+    assert reader.isSubscribedTo(other_source) == 0
+    with pytest.raises(Exception, match="tried to subscribe ReadFunctor<CustomMsgPayload>"):
+        reader.subscribeTo(other_source)
 
 
 def test_payload_equality_generates_fixed_array_comparison():
