@@ -151,7 +151,7 @@ void ImuSensor::readInputMessages()
     {
         this->StateCurrent = this->scStateInMsg();
     }
-    this->current_sigma_BN = cArray2EigenVector3d(this->StateCurrent.sigma_BN);
+    this->current_sigma_BN = cArray2EigenMRPd(this->StateCurrent.sigma_BN);
     this->current_omega_BN_B = cArray2EigenVector3d(this->StateCurrent.omega_BN_B);
     this->current_nonConservativeAccelpntB_B = cArray2EigenVector3d(this->StateCurrent.nonConservativeAccelpntB_B);
     this->current_omegaDot_BN_B = cArray2EigenVector3d(this->StateCurrent.omegaDot_BN_B);

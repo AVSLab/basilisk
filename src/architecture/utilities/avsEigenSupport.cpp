@@ -78,9 +78,9 @@ and the transpose that would have been performed by the general case.
 @param inMat The source Eigen MRP that we are converting
 @param outArray The destination array we copy into
 */
-void eigenMRPd2CArray(Eigen::Vector3d& inMat, double* outArray)
+void eigenMRPd2CArray(const Eigen::MRPd& inMat, double* outArray)
 {
-    memcpy(outArray, inMat.data(), 3 * sizeof(double));
+    memcpy(outArray, inMat.coeffs().data(), 3 * sizeof(double));
 }
 
 /*! This function provides a direct conversion between a 3x3 matrix and an
@@ -130,12 +130,9 @@ in order to save an unnecessary conversion between types.
 @return Eigen::MRPd
 @param inArray The input array (row-major)
 */
-Eigen::MRPd cArray2EigenMRPd(double* inArray)
+Eigen::MRPd cArray2EigenMRPd(const double* inArray)
 {
-    Eigen::MRPd sigma_Eigen;
-    sigma_Eigen = cArray2EigenVector3d(inArray);
-
-    return sigma_Eigen;
+    return Eigen::MRPd(inArray);
 }
 
 /*! This function performs the conversion between an input C array
@@ -261,7 +258,7 @@ Eigen::MRPd eigenC2MRP(Eigen::Matrix3d dcm_Eigen)
 
     eigenMatrix3d2CArray(dcm_Eigen, dcm_Array);
     C2MRP(RECAST3X3 dcm_Array, sigma_Array);
-    sigma_Eigen = cArray2EigenVector3d(sigma_Array);
+    sigma_Eigen = cArray2EigenMRPd(sigma_Array);
 
     return sigma_Eigen;
 }
