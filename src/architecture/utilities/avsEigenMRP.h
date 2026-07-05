@@ -838,6 +838,16 @@ namespace Eigen {
 
     namespace internal {
 
+        template<typename Other, int OtherRows, int OtherCols>
+        struct MRPbase_assign_impl
+        {
+            template<class Derived> static inline void run(MRPBase<Derived>&, const Other&)
+            {
+                static_assert(OtherRows == 3 && (OtherCols == 1 || OtherCols == 3),
+                              "Eigen::MRP assignment expects a 3x1 coefficient vector or 3x3 rotation matrix.");
+            }
+        };
+
         // set from a rotation matrix
         // this maps the [NB] DCM to the equivalent sigma_B/N set
         template<typename Other>
