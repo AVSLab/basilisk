@@ -348,6 +348,19 @@ TEST(eigenMRP, testMapAliasesAndMappedOperations) {
     expectMatrixNear((sigmaMap*sigmaMap.inverse()).toRotationMatrix(), Eigen::Matrix3d::Identity(), kTolerance);
 }
 
+TEST(eigenMRP, testMapCastConvertsScalarType) {
+    double coeffs[3] = {0.2, -0.3, 0.1};
+    Eigen::MRPMapd sigmaMap(coeffs);
+
+    const Eigen::MRPMapd& sigmaDouble = sigmaMap.cast<double>();
+    Eigen::MRPf sigmaFloat = sigmaMap.cast<float>();
+
+    EXPECT_EQ(&sigmaDouble, &sigmaMap);
+    EXPECT_NEAR(sigmaFloat.x(), 0.20F, kLooseTolerance);
+    EXPECT_NEAR(sigmaFloat.y(), -0.30F, kLooseTolerance);
+    EXPECT_NEAR(sigmaFloat.z(), 0.10F, kLooseTolerance);
+}
+
 TEST(eigenMRP, testAlignedMapAlias) {
     EIGEN_ALIGN16 double coeffs[4] = {0.1, -0.2, 0.3, 0.0};
     Eigen::MRPMapAlignedd sigmaMap(coeffs);
