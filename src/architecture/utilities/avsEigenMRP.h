@@ -465,6 +465,17 @@ namespace Eigen {
     // Generic MRP * MRP product
     // This product can be specialized for a given architecture via the Arch template argument.
     namespace internal {
+        template<class Derived, typename QuaternionType>
+        EIGEN_STRONG_INLINE void assign_mrp_from_quaternion_short(MRPBase<Derived>& sig, QuaternionType q)
+        {
+            typedef typename internal::traits<Derived>::Scalar Scalar;
+
+            if (q.w() < Scalar(0)) {
+                q.coeffs() = -q.coeffs();
+            }
+            sig.vec() = q.vec()/(Scalar(1) + q.w());
+        }
+
         /*! template definition */
         template<int Arch, class Derived1, class Derived2, typename Scalar, int _Options> struct mrp_product
         {
@@ -565,9 +576,8 @@ namespace Eigen {
     template<class Derived>
     EIGEN_STRONG_INLINE Derived& MRPBase<Derived>::operator=(const AngleAxisType& aa)
     {
-        using std::tan;
-        Scalar tanPhi = tan(Scalar(0.25)*aa.angle()); // Scalar(0.25) suppresses precision loss warnings
-        this->vec() = tanPhi * aa.axis();
+        Quaternion<Scalar> q(aa);
+        internal::assign_mrp_from_quaternion_short(*this, q);
         return derived();
     }
 
@@ -646,11 +656,7 @@ namespace Eigen {
 
         Quaternion<Scalar> q;
         q.setFromTwoVectors(a, b);
-        if (q.w() < Scalar(0)) {
-            q.coeffs() = -q.coeffs();
-        }
-
-        this->vec() = q.vec()/(Scalar(1) + q.w());
+        internal::assign_mrp_from_quaternion_short(*this, q);
         return derived();
     }
 
@@ -815,19 +821,10 @@ namespace Eigen {
             template<class Derived> static inline void run(MRPBase<Derived>& sig, const Other& mat)
             {
                 Quaternion<Scalar> q;
-                Scalar num;
 
                 /* convert DCM to quaternions */
                 q = mat;
-                if (q.w() < Scalar(0)) {
-                    q.coeffs() = -q.coeffs();
-                }
-                num = Scalar(1) + q.w();
-
-                /* convert quaternions to MRP */
-                sig.x() = q.x()/num;
-                sig.y() = q.y()/num;
-                sig.z() = q.z()/num;
+                internal::assign_mrp_from_quaternion_short(sig, q);
             }
         };
 

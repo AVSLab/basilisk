@@ -114,6 +114,16 @@ TEST(eigenMRP, testAngleAxisConversionUsesTangentQuarterAngle) {
     expectMatrixNear(sigma.toRotationMatrix(), angleAxis.toRotationMatrix(), kTolerance);
 }
 
+TEST(eigenMRP, testAngleAxisConversionChoosesEquivalentInnerSet) {
+    const double angle = 1.5*kPi;  // [rad]
+    Eigen::AngleAxisd angleAxis(angle, Eigen::Vector3d::UnitZ());
+
+    Eigen::MRPd sigma(angleAxis);
+
+    EXPECT_LT(sigma.norm(), 1.0);
+    expectMatrixNear(sigma.toRotationMatrix(), angleAxis.toRotationMatrix(), kTolerance);
+}
+
 TEST(eigenMRP, testRotationMatrixConversionChoosesEquivalentInnerSet) {
     const double angle = 1.5*kPi;  // [rad]
     Eigen::AngleAxisd angleAxis(angle, Eigen::Vector3d::UnitZ());
