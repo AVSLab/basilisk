@@ -41,6 +41,14 @@ XML_PATH = f"{TEST_FOLDER}/test_sat.xml"
 REFERENCE_DATA = f"{TEST_FOLDER}/test_sat_qpos_reference.txt"
 
 
+def _shortRotationQuaternion(quat):
+    """Return an equivalent quaternion with a nonnegative scalar component."""
+    quat = np.array(quat)
+    if quat[0] < 0.0:
+        quat = -quat
+    return quat
+
+
 def test_integration(showPlots: bool = False):
     """Tests that integration with RK4 in Basilisk is equal to integration
     with RK4 in MuJoCo.
@@ -118,7 +126,11 @@ def test_integration(showPlots: bool = False):
 
     # Assert that the final position absolute error is < 1e-14
     # Which is essentially floating point noise
-    assert result[check, 1:] == pytest.approx(ref[check, 1:], 0, 1e-14)
+    assert result[check, 1:4] == pytest.approx(ref[check, 1:4], 0, 1e-14)
+    assert _shortRotationQuaternion(result[check, 4:8]) == pytest.approx(
+        _shortRotationQuaternion(ref[check, 4:8]), 0, 1e-14
+    )
+    assert result[check, 8:] == pytest.approx(ref[check, 8:], 0, 1e-14)
 
     # Check the same as above, but use the message cube origin message
     cubeState = scene.getBody("cube").getOrigin().stateOutMsg.read()
@@ -127,7 +139,7 @@ def test_integration(showPlots: bool = False):
         cubeState.r_BN_N,
     )
     quat = rbk.MRP2EP(cubeState.sigma_BN)
-    assert ref[check, 4:8] == pytest.approx(quat)
+    assert _shortRotationQuaternion(ref[check, 4:8]) == pytest.approx(_shortRotationQuaternion(quat))
 
 
 # A torque-free single rigid body. With no external moment and a symmetric
@@ -183,7 +195,7 @@ def test_highOrderQuaternionConvergesFasterThanDefault():
     roughly 2^2 = 4.
     """
     omega = [0.4, -0.3, 0.8]  # rad/s, constant for a torque-free symmetric body
-    tf = 5.0
+    tf = 5.0  # [s]
 
     def attError(highOrder, dt, ref):
         q = _runFreeSpin(highOrder, dt, tf, omega)
