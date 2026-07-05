@@ -67,9 +67,9 @@ namespace Eigen {
         using Base::operator*;
         using Base::derived;
 
-        typedef typename internal::traits<Derived>::Scalar Scalar;              //!< variable
-        typedef typename NumTraits<Scalar>::Real RealScalar;                    //!< variable
-        typedef typename internal::traits<Derived>::Coefficients Coefficients;  //!< variable
+        typedef typename internal::traits<Derived>::Scalar Scalar;
+        typedef typename NumTraits<Scalar>::Real RealScalar;
+        typedef typename internal::traits<Derived>::Coefficients Coefficients;
         enum {
             Flags = Eigen::internal::traits<Derived>::Flags
         };
@@ -113,8 +113,8 @@ namespace Eigen {
         /** \returns a vector expression of the coefficients (x,y,z) */
         inline typename internal::traits<Derived>::Coefficients& coeffs() { return derived().coeffs(); }
 
-        EIGEN_STRONG_INLINE MRPBase<Derived>& operator=(const MRPBase<Derived>& other); //!< method
-        template<class OtherDerived> EIGEN_STRONG_INLINE Derived& operator=(const MRPBase<OtherDerived>& other); //!< method
+        EIGEN_STRONG_INLINE MRPBase<Derived>& operator=(const MRPBase<Derived>& other);
+        template<class OtherDerived> EIGEN_STRONG_INLINE Derived& operator=(const MRPBase<OtherDerived>& other);
 
         // disabled this copy operator as it is giving very strange compilation errors when compiling
         // test_stdvector with GCC 4.4.2. This looks like a GCC bug though, so feel free to re-enable it if it's
@@ -124,7 +124,7 @@ namespace Eigen {
         //  { return operator=<Derived>(other); }
 
         Derived& operator=(const AngleAxisType& aa);
-        template<class OtherDerived> Derived& operator=(const MatrixBase<OtherDerived>& m); //!< method
+        template<class OtherDerived> Derived& operator=(const MatrixBase<OtherDerived>& m);
 
         /** \returns a MRP representing an identity mapping or zero rotation
          * \sa MatrixBase::Identity()
@@ -172,7 +172,7 @@ namespace Eigen {
          */
         template<class OtherDerived> inline Scalar dot(const MRPBase<OtherDerived>& other) const { return coeffs().dot(other.coeffs()); }
 
-        template<class OtherDerived> Scalar angularDistance(const MRPBase<OtherDerived>& other) const; //!< method
+        template<class OtherDerived> Scalar angularDistance(const MRPBase<OtherDerived>& other) const;
 
         /** \returns an equivalent 3x3 rotation matrix */
         Matrix3 toRotationMatrix() const;
@@ -181,7 +181,8 @@ namespace Eigen {
         template<typename Derived1, typename Derived2>
         Derived& setFromTwoVectors(const MatrixBase<Derived1>& a, const MatrixBase<Derived2>& b);
 
-        template<class OtherDerived> EIGEN_STRONG_INLINE MRP<Scalar> operator* (const MRPBase<OtherDerived>& q) const; //!< method
+        /** \returns the attitude composition of \c *this and \a q. */
+        template<class OtherDerived> EIGEN_STRONG_INLINE MRP<Scalar> operator* (const MRPBase<OtherDerived>& q) const;
         /** Right-composes \c *this with another MRP attitude. */
         template<class OtherDerived> EIGEN_STRONG_INLINE Derived& operator*= (const MRPBase<OtherDerived>& q);
         /** Adds MRP coefficients component-wise.
@@ -272,14 +273,10 @@ namespace Eigen {
 
     namespace internal {
         template<typename _Scalar,int _Options>
-        /*! structure definition */
         struct traits<MRP<_Scalar,_Options> >
         {
-            /** struct definition */
             typedef MRP<_Scalar,_Options> PlainObject;
-            /** struct definition */
             typedef _Scalar Scalar;
-            /** struct definition */
             typedef Matrix<_Scalar,3,1,_Options> Coefficients;
             enum{
                 IsAligned = internal::traits<Coefficients>::Flags & PacketAccessBit,
@@ -295,13 +292,13 @@ namespace Eigen {
         enum { IsAligned = internal::traits<MRP>::IsAligned };
 
     public:
-        typedef _Scalar Scalar; //!< variable
+        typedef _Scalar Scalar;
 
         EIGEN_INHERIT_ASSIGNMENT_OPERATORS(MRP)
         using Base::operator*=;
 
-        typedef typename internal::traits<MRP>::Coefficients Coefficients;  //!< variable
-        typedef typename Base::AngleAxisType AngleAxisType;                 //!< variable
+        typedef typename internal::traits<MRP>::Coefficients Coefficients;
+        typedef typename Base::AngleAxisType AngleAxisType;
 
         /** Default constructor leaving the MRP uninitialized. */
         inline MRP() {}
@@ -335,19 +332,19 @@ namespace Eigen {
         template<typename Derived1, typename Derived2>
         static MRP FromTwoVectors(const MatrixBase<Derived1>& a, const MatrixBase<Derived2>& b);
 
-        inline Coefficients& coeffs() { return m_coeffs;} //!< method
-        inline const Coefficients& coeffs() const { return m_coeffs;} //!< method
+        inline Coefficients& coeffs() { return m_coeffs;}
+        inline const Coefficients& coeffs() const { return m_coeffs;}
 
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW_IF(bool(IsAligned))
 
     protected:
-        Coefficients m_coeffs; //!< variable
+        Coefficients m_coeffs; //!< MRP coefficient storage
 
 #ifndef EIGEN_PARSED_BY_DOXYGEN
         /**
          Check template parameters
          */
-        static EIGEN_STRONG_INLINE void _check_template_params()         //!< method
+        static EIGEN_STRONG_INLINE void _check_template_params()
         {
             EIGEN_STATIC_ASSERT( (_Options & DontAlign) == _Options,
                                 INVALID_MATRIX_TEMPLATE_PARAMETERS)
@@ -387,24 +384,18 @@ namespace Eigen {
      ***************************************************************************/
 
     namespace internal {
-        /** struct definition */
         template<typename _Scalar, int _Options>
-        /** struct definition */
         struct traits<Map<MRP<_Scalar>, _Options> > : traits<MRP<_Scalar, (int(_Options)&Aligned)==Aligned ? AutoAlign : DontAlign> >
         {
-            /** struct definition */
             typedef Map<Matrix<_Scalar,3,1>, _Options> Coefficients;
         };
     }
 
     namespace internal {
         template<typename _Scalar, int _Options>
-        /** struct definition */
         struct traits<Map<const MRP<_Scalar>, _Options> > : traits<MRP<_Scalar, (int(_Options)&Aligned)==Aligned ? AutoAlign : DontAlign> >
         {
-            /** struct definition */
             typedef Map<const Matrix<_Scalar,3,1>, _Options> Coefficients;
-            /** struct definition */
             typedef traits<MRP<_Scalar, (int(_Options)&Aligned)==Aligned ? AutoAlign : DontAlign> > TraitsBase;
             enum {
                 Flags = TraitsBase::Flags & ~LvalueBit
@@ -430,8 +421,8 @@ namespace Eigen {
         typedef MRPBase<Map<const MRP<_Scalar>, _Options> > Base;
 
     public:
-        typedef _Scalar Scalar;     //!< variable
-        typedef typename internal::traits<Map>::Coefficients Coefficients; //!< variable
+        typedef _Scalar Scalar;
+        typedef typename internal::traits<Map>::Coefficients Coefficients;
         EIGEN_INHERIT_ASSIGNMENT_OPERATORS(Map)
         using Base::operator*=;
 
@@ -443,10 +434,10 @@ namespace Eigen {
          * If the template parameter _Options is set to Aligned, then the pointer coeffs must be aligned. */
         EIGEN_STRONG_INLINE Map(const Scalar* coeffs) : m_coeffs(coeffs) {}
 
-        inline const Coefficients& coeffs() const { return m_coeffs;} //!< method
+        inline const Coefficients& coeffs() const { return m_coeffs;}
 
     protected:
-        const Coefficients m_coeffs; //!< variable
+        const Coefficients m_coeffs; //!< mapped MRP coefficient storage
     };
 
     /**
@@ -467,8 +458,8 @@ namespace Eigen {
         typedef MRPBase<Map<MRP<_Scalar>, _Options> > Base;
 
     public:
-        typedef _Scalar Scalar; //!< variable
-        typedef typename internal::traits<Map>::Coefficients Coefficients; //!< variable
+        typedef _Scalar Scalar;
+        typedef typename internal::traits<Map>::Coefficients Coefficients;
         EIGEN_INHERIT_ASSIGNMENT_OPERATORS(Map)
         using Base::operator*=;
 
@@ -480,11 +471,11 @@ namespace Eigen {
          * If the template parameter _Options is set to Aligned, then the pointer coeffs must be aligned. */
         EIGEN_STRONG_INLINE Map(Scalar* coeffs) : m_coeffs(coeffs) {}
 
-        inline Coefficients& coeffs() { return m_coeffs; } //!< method
-        inline const Coefficients& coeffs() const { return m_coeffs; } //!< method
+        inline Coefficients& coeffs() { return m_coeffs; }
+        inline const Coefficients& coeffs() const { return m_coeffs; }
 
     protected:
-        Coefficients m_coeffs; //!< variable
+        Coefficients m_coeffs; //!< mapped MRP coefficient storage
     };
 
     /**
@@ -518,14 +509,13 @@ namespace Eigen {
             sig.vec() = q.vec()/(Scalar(1) + q.w());
         }
 
-        /*! template definition */
         template<int Arch, class Derived1, class Derived2, typename Scalar, int _Options> struct mrp_product
         {
             static EIGEN_STRONG_INLINE MRP<Scalar> run(const MRPBase<Derived1>& a, const MRPBase<Derived2>& b){
                 using std::abs;
-                Scalar det;     //!< variable
-                Scalar s1N2;    //!< variable
-                Scalar s2N2;    //!< variable
+                Scalar det;
+                Scalar s1N2;
+                Scalar s2N2;
                 MRP<Scalar> s2 = b;
                 MRP<Scalar> answer;
                 s1N2 = a.squaredNorm();
@@ -864,12 +854,9 @@ namespace Eigen {
         // set from a rotation matrix
         // this maps the [NB] DCM to the equivalent sigma_B/N set
         template<typename Other>
-        /*! struct definition */
         struct MRPbase_assign_impl<Other,3,3>
         {
-            typedef typename Other::Scalar Scalar; //!< variable
-            typedef DenseIndex Index; //!< variable
-            /** Class Definition */
+            typedef typename Other::Scalar Scalar;
             template<class Derived> static inline void run(MRPBase<Derived>& sig, const Other& mat)
             {
                 Quaternion<Scalar> q;
@@ -882,13 +869,8 @@ namespace Eigen {
 
         // set from a vector of coefficients assumed to be a MRP
         template<typename Other>
-        /**
-         structure definition
-         */
         struct MRPbase_assign_impl<Other,3,1>
         {
-            typedef typename Other::Scalar Scalar; //!< variable
-            /** Class definition */
             template<class Derived> static inline void run(MRPBase<Derived>& q, const Other& vec)
             {
                 q.coeffs() = vec;
