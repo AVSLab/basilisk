@@ -1,0 +1,4 @@
+- Refactored MRP conversion helpers and selected attitude reads to use ``Eigen::MRPd`` directly; ``eigenMRPd2CArray()`` now takes ``const Eigen::MRPd&`` instead of ``Eigen::Vector3d&``.
+- Updated the C++ ``StateEffector`` attitude interfaces to pass ``sigma_BN`` as ``Eigen::MRPd`` for ``updateContributions()`` and ``computeDerivatives()``; custom state effectors must update matching overrides.
+- Updated ``Eigen::MRPd`` DCM and angle-axis conversions to return the equivalent short-rotation MRP set.
+- Documented that ``Eigen::MRPd::FromTwoVectors()`` returns the identity MRP when either input vector has zero or underflow-level norm.
