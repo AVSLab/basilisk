@@ -655,7 +655,7 @@ void SpacecraftChargingEquilibrium::readMessages()
     for (unsigned int c = 0; c < this->numSat; c++) {
         scStateInMsgsBuffer = this->scStateInMsgs.at(c)();
         this->r_BN_NList.at(c) = cArray2EigenVector3d(scStateInMsgsBuffer.r_BN_N);
-        this->sigma_BNList.at(c) = cArray2EigenVector3d(scStateInMsgsBuffer.sigma_BN);
+        this->sigma_BNList.at(c) = cArray2EigenMRPd(scStateInMsgsBuffer.sigma_BN);
     }
 }
 

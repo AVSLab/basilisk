@@ -60,7 +60,7 @@ void eigenMatrixXi2CArray(const Eigen::MatrixBase<Derived>& inMat, int *outArray
 //! Rapid conversion between 3-vector and output array.
 void eigenVector3d2CArray(const Eigen::Vector3d& inMat, double *outArray);
 //! Rapid conversion between MRP and output array.
-void eigenMRPd2CArray(const Eigen::Vector3d& inMat, double* outArray);
+void eigenMRPd2CArray(const Eigen::MRPd& inMat, double* outArray);
 //! Rapid conversion between 3x3 matrix and output array.
 void eigenMatrix3d2CArray(const Eigen::Matrix3d& inMat, double *outArray);
 //! General conversion between a C array and an Eigen matrix.
@@ -68,7 +68,7 @@ Eigen::MatrixXd cArray2EigenMatrixXd(double *inArray, int nRows, int nCols);
 //! Specific conversion between a C array and an Eigen 3-vector.
 Eigen::Vector3d cArray2EigenVector3d(double *inArray);
 //! Specific conversion between a C array and an Eigen MRP.
-Eigen::MRPd cArray2EigenMRPd(double* inArray);
+Eigen::MRPd cArray2EigenMRPd(const double* inArray);
 //! Specific conversion between a C array and an Eigen 3x3 matrix.
 Eigen::Matrix3d cArray2EigenMatrix3d(double *inArray);
 //! Specific conversion between a C 2D array and an Eigen 3x3 matrix.

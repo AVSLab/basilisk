@@ -73,10 +73,10 @@ void eigenVector3d2CArray(const Eigen::Vector3d& inMat, double *outArray)
     @param inMat Source Eigen MRP vector.
     @param outArray Destination three-element array.
 */
-void eigenMRPd2CArray(const Eigen::Vector3d& inMat, double* outArray)
+void eigenMRPd2CArray(const Eigen::MRPd& inMat, double* outArray)
 {
     Eigen::Map<Eigen::Vector3d> outVector(outArray);
-    outVector = inMat;
+    outVector = inMat.coeffs();
 }
 
 /*! Copy an Eigen 3x3 matrix into a row-major C array.
@@ -118,9 +118,9 @@ Eigen::Vector3d cArray2EigenVector3d(double *inArray)
     @param inArray Source three-element array.
     @return Eigen MRP containing the source values.
 */
-Eigen::MRPd cArray2EigenMRPd(double* inArray)
+Eigen::MRPd cArray2EigenMRPd(const double* inArray)
 {
-    return Eigen::MRPd(cArray2EigenVector3d(inArray));
+    return Eigen::MRPd(inArray);
 }
 
 /*! Convert a row-major C array into an Eigen 3x3 matrix.
@@ -239,7 +239,7 @@ Eigen::MRPd eigenC2MRP(Eigen::Matrix3d dcm_Eigen)
 
     eigenMatrix3d2CArray(dcm_Eigen, dcm_Array);
     C2MRP(RECAST3X3 dcm_Array, sigma_Array);
-    sigma_Eigen = cArray2EigenVector3d(sigma_Array);
+    sigma_Eigen = cArray2EigenMRPd(sigma_Array);
 
     return sigma_Eigen;
 }
