@@ -42,6 +42,15 @@ namespace Eigen {
         int OtherRows=Other::RowsAtCompileTime,
         int OtherCols=Other::ColsAtCompileTime>
         struct MRPbase_assign_impl;
+
+        // Helper for MRPBase::cast().  Same-scalar casts should behave like
+        // Eigen and return a const reference to the existing expression, while
+        // cross-scalar casts must explicitly cast the coefficient vector.  The
+        // explicit coefficient cast avoids Eigen's mixed-scalar assignment path,
+        // which rejects cases such as MRPMapd::cast<float>().
+        template<class Derived, typename NewScalarType,
+        bool IsSame = is_same<typename traits<Derived>::Scalar, NewScalarType>::value>
+        struct mrp_cast_impl;
     }
 
     /**
@@ -210,7 +219,7 @@ namespace Eigen {
         template<typename NewScalarType>
         inline typename internal::cast_return_type<Derived, MRP<NewScalarType> >::type cast() const
         {
-            return typename internal::cast_return_type<Derived,MRP<NewScalarType> >::type(derived());
+            return internal::mrp_cast_impl<Derived, NewScalarType>::run(derived());
         }
 
     };
@@ -332,6 +341,26 @@ namespace Eigen {
         }
 #endif
     };
+
+    namespace internal {
+        template<class Derived, typename NewScalarType>
+        struct mrp_cast_impl<Derived, NewScalarType, true>
+        {
+            static EIGEN_STRONG_INLINE const Derived& run(const Derived& sig)
+            {
+                return sig;
+            }
+        };
+
+        template<class Derived, typename NewScalarType>
+        struct mrp_cast_impl<Derived, NewScalarType, false>
+        {
+            static EIGEN_STRONG_INLINE MRP<NewScalarType> run(const Derived& sig)
+            {
+                return MRP<NewScalarType>(sig.coeffs().template cast<NewScalarType>());
+            }
+        };
+    }
 
     /**
      * single precision MRP type */
