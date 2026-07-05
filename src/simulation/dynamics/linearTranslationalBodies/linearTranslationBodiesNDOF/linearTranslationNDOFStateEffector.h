@@ -192,7 +192,7 @@ private:
     void linkInStates(DynParamManager& states) final;
     void updateContributions(double integTime,
                              BackSubMatrices& backSubContr,
-                             Eigen::Vector3d sigma_BN,
+                             Eigen::MRPd sigma_BN,
                              Eigen::Vector3d omega_BN_B,
                              Eigen::Vector3d g_N) final;
     void computeMRho(Eigen::MatrixXd& MRho);
@@ -203,7 +203,7 @@ private:
     void computeDerivatives(double integTime,
                             Eigen::Vector3d rDDot_BN_N,
                             Eigen::Vector3d omegaDot_BN_B,
-                            Eigen::Vector3d sigma_BN) final;
+                            Eigen::MRPd sigma_BN) final;
     void updateEffectorMassProps(double integTime) final;
     void updateEnergyMomContributions(double integTime,
                                       Eigen::Vector3d& rotAngMomPntCContr_B,

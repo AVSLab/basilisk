@@ -219,7 +219,7 @@ void LinearTranslationOneDOFStateEffector::updateEffectorMassProps(double integT
 }
 
 void LinearTranslationOneDOFStateEffector::updateContributions(double integTime, BackSubMatrices & backSubContr,
-                                                               Eigen::Vector3d sigma_BN,
+                                                               Eigen::MRPd sigma_BN,
                                                                Eigen::Vector3d omega_BN_B,
                                                                Eigen::Vector3d g_N)
 {
@@ -356,7 +356,7 @@ void LinearTranslationOneDOFStateEffector::addPrescribedMotionCouplingContributi
 void LinearTranslationOneDOFStateEffector::computeDerivatives(double integTime,
                                                               Eigen::Vector3d rDDot_BN_N,
                                                               Eigen::Vector3d omegaDot_BN_B,
-                                                              Eigen::Vector3d sigma_BN)
+                                                              Eigen::MRPd sigma_BN)
 {
 	Eigen::MRPd sigmaLocal_BN;
 	sigmaLocal_BN = sigma_BN;

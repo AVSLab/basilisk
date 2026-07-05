@@ -197,14 +197,14 @@ void SphericalPendulum::retrieveMassValue(double integTime)
 }
 
 /*! This method is for the FSP to add its contributions to the back-sub method */
-void SphericalPendulum::updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::Vector3d sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N)
+void SphericalPendulum::updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::MRPd sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N)
 {
 
     // - Find dcm_BN
     Eigen::MRPd sigmaLocal_BN;
     Eigen::Matrix3d dcm_BN;
     Eigen::Matrix3d dcm_NB;
-    sigmaLocal_BN = (Eigen::Vector3d ) sigma_BN;
+    sigmaLocal_BN = sigma_BN;
     dcm_NB = sigmaLocal_BN.toRotationMatrix();
     dcm_BN = dcm_NB.transpose();
 
@@ -294,13 +294,13 @@ void SphericalPendulum::updateContributions(double integTime, BackSubMatrices & 
 
 /*! This method is used to define the derivatives of the FSP. One is the trivial kinematic derivative and the other is
  derived using the back-sub method */
-void SphericalPendulum::computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::Vector3d sigma_BN)
+void SphericalPendulum::computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN)
 {
 
 	// - Find DCM
 	Eigen::MRPd sigmaLocal_BN;
 	Eigen::Matrix3d dcm_BN;
-	sigmaLocal_BN = (Eigen::Vector3d) sigma_BN;
+	sigmaLocal_BN = sigma_BN;
 	dcm_BN = (sigmaLocal_BN.toRotationMatrix()).transpose();
 
 	// - Set the derivative of l to lDot

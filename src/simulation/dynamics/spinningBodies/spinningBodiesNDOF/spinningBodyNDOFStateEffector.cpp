@@ -338,7 +338,7 @@ void SpinningBodyNDOFStateEffector::computeInertiaProperties(std::shared_ptr<Spi
 
 void SpinningBodyNDOFStateEffector::updateContributions(double integTime,
                                                         BackSubMatrices& backSubContr,
-                                                        Eigen::Vector3d sigma_BN,
+                                                        Eigen::MRPd sigma_BN,
                                                         Eigen::Vector3d omega_BN_B,
                                                         Eigen::Vector3d g_N)
 {
@@ -555,7 +555,7 @@ void SpinningBodyNDOFStateEffector::computeBackSubVectors(BackSubMatrices &backS
     }
 }
 
-void SpinningBodyNDOFStateEffector::computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::Vector3d sigma_BN)
+void SpinningBodyNDOFStateEffector::computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN)
 {
     Eigen::Vector3d rDDotLocal_BN_B = this->dcm_BN * rDDot_BN_N;
 

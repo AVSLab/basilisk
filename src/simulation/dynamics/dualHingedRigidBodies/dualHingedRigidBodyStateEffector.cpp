@@ -206,7 +206,7 @@ void DualHingedRigidBodyStateEffector::updateEffectorMassProps(double integTime)
     return;
 }
 
-void DualHingedRigidBodyStateEffector::updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::Vector3d sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N)
+void DualHingedRigidBodyStateEffector::updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::MRPd sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N)
 {
     Eigen::MRPd sigmaPNLocal;
     Eigen::Matrix3d dcmPN;                        /* direction cosine matrix from N to B */
@@ -282,7 +282,7 @@ void DualHingedRigidBodyStateEffector::updateContributions(double integTime, Bac
     return;
 }
 
-void DualHingedRigidBodyStateEffector::computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::Vector3d sigma_BN)
+void DualHingedRigidBodyStateEffector::computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN)
 {
     // - Define necessarry variables
     Eigen::MRPd sigmaBNLocal;

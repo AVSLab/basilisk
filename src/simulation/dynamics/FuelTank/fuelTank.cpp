@@ -229,7 +229,7 @@ void FuelTank::updateEffectorMassProps(double integTime) {
 /*! Fuel tank adds its contributions to the matrices for the back-sub method. */
 void FuelTank::updateContributions(double integTime,
                                    BackSubMatrices &backSubContr,
-                                   Eigen::Vector3d sigma_BN,
+                                   Eigen::MRPd sigma_BN,
                                    Eigen::Vector3d omega_BN_B,
                                    Eigen::Vector3d g_N) {
     Eigen::Vector3d r_TB_BLocal;
@@ -269,7 +269,7 @@ void FuelTank::updateContributions(double integTime,
 void FuelTank::computeDerivatives(double integTime,
                                   Eigen::Vector3d rDDot_BN_N,
                                   Eigen::Vector3d omegaDot_BN_B,
-                                  Eigen::Vector3d sigma_BN) {
+                                  Eigen::MRPd sigma_BN) {
     Eigen::MatrixXd conv(1, 1);
     double massLocal = this->massState->getState()(0, 0);
     double tankFuelConsumptionLocal = this->tankFuelConsumption;

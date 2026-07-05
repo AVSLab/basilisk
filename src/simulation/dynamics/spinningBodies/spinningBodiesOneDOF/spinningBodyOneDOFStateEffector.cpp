@@ -251,7 +251,7 @@ void SpinningBodyOneDOFStateEffector::updateEffectorMassProps(double integTime)
  method */
 void SpinningBodyOneDOFStateEffector::updateContributions(double integTime,
                                                           BackSubMatrices & backSubContr,
-                                                          Eigen::Vector3d sigma_BN,
+                                                          Eigen::MRPd sigma_BN,
                                                           Eigen::Vector3d omega_BN_B,
                                                           Eigen::Vector3d g_N)
 {
@@ -414,7 +414,7 @@ void SpinningBodyOneDOFStateEffector::addPrescribedMotionCouplingContributions(B
 void SpinningBodyOneDOFStateEffector::computeDerivatives(double integTime,
                                                          Eigen::Vector3d rDDot_BN_N,
                                                          Eigen::Vector3d omegaDot_BN_B,
-                                                         Eigen::Vector3d sigma_BN)
+                                                         Eigen::MRPd sigma_BN)
 {
     // Update dcm_BN
     this->sigma_BN = sigma_BN;

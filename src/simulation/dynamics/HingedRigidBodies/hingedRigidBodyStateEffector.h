@@ -134,8 +134,8 @@ public:
     void linkInStates(DynParamManager& states) override;  //!< -- Method for getting access to other states
     void addDynamicEffector(DynamicEffector *newDynamicEffector, int segment = 1) override;  //!< -- Method for adding attached dynamic effector
     void registerProperties(DynParamManager& states) override;       //!< -- Method for registering the HRB inertial properties
-    void updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::Vector3d sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N) override;  //!< -- Method for back-sub contributions
-    void computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::Vector3d sigma_BN) override;  //!< -- Method for HRB to compute its derivatives
+    void updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::MRPd sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N) override;  //!< -- Method for back-sub contributions
+    void computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN) override;  //!< -- Method for HRB to compute its derivatives
     void updateEffectorMassProps(double integTime) override;  //!< -- Method for giving the s/c the HRB mass props and prop rates
     void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B, double & rotEnergyContr, Eigen::Vector3d omega_BN_B) override; //!< -- Computing energy and momentum for HRBs
     void calcForceTorqueOnBody(double integTime, Eigen::Vector3d omega_BN_B) override;  //!< -- Force and torque on s/c due to HRBs

@@ -92,13 +92,13 @@ public:
     void linkInPrescribedMotionProperties(DynParamManager& states) override;         //!< -- Method for getting access to prescribed motion properties
     void updateContributions(double integTime,
                              BackSubMatrices& backSubContr,
-                             Eigen::Vector3d sigma_BN,
+                             Eigen::MRPd sigma_BN,
                              Eigen::Vector3d omega_BN_B,
                              Eigen::Vector3d g_N) override;  //!< -- Method for back-substitution contributions
     void computeDerivatives(double integTime,
                             Eigen::Vector3d rDDot_BN_N,
                             Eigen::Vector3d omegaDot_BN_B,
-                            Eigen::Vector3d sigma_BN) override;                         //!< -- Method for SB to compute its derivatives
+                            Eigen::MRPd sigma_BN) override;                         //!< -- Method for SB to compute its derivatives
     void updateEffectorMassProps(double integTime) override;         //!< -- Method for giving the s/c the HRB mass props and prop rates
     void updateEnergyMomContributions(double integTime,
                                       Eigen::Vector3d& rotAngMomPntCContr_B,
