@@ -86,7 +86,7 @@ void ThrustCMEstimation::UpdateState(uint64_t CurrentSimNanos)
 
     /*! compute error w.r.t. target attitude */
     AttGuidMsgPayload attGuidBuffer = this->attGuidInMsg();
-    Eigen::Vector3d sigma_BR   = cArray2EigenVector3d(attGuidBuffer.sigma_BR);
+    Eigen::MRPd sigma_BR = cArray2EigenMRPd(attGuidBuffer.sigma_BR);
     Eigen::Vector3d omega_BR_B = cArray2EigenVector3d(attGuidBuffer.omega_BR_B);
     double attError = pow(sigma_BR.squaredNorm() + omega_BR_B.squaredNorm(), 0.5);
 

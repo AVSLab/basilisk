@@ -71,7 +71,7 @@ void EphemerisConverter::addSpiceInputMsg(Message<SpicePlanetStateMsgPayload> *t
 void EphemerisConverter::convertEphemData(uint64_t clockNow)
 {
     Eigen::Matrix3d dcm_BN;
-    Eigen::Vector3d sigma_BN;
+    Eigen::MRPd sigma_BN;
     Eigen::Matrix3d dcm_BN_dot;
     Eigen::Matrix3d omega_tilde_BN_B_eigen;
     double omega_tilde_BN_B[3][3];
@@ -88,8 +88,8 @@ void EphemerisConverter::convertEphemData(uint64_t clockNow)
 
         /* Compute sigma_BN */
         dcm_BN = cArray2EigenMatrix3d(*this->spiceInBuffers.at(c).J20002Pfix);
-        sigma_BN = eigenMRPd2Vector3d(eigenC2MRP(dcm_BN));
-        eigenVector3d2CArray(sigma_BN, this->ephemOutBuffers.at(c).sigma_BN); //sigma_BN
+        sigma_BN = eigenC2MRP(dcm_BN);
+        eigenMRPd2CArray(sigma_BN, this->ephemOutBuffers.at(c).sigma_BN); //sigma_BN
 
         /* Compute omega_BN_B */
         dcm_BN_dot = cArray2EigenMatrix3d(*this->spiceInBuffers.at(c).J20002Pfix_dot);
