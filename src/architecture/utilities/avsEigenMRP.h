@@ -182,8 +182,21 @@ namespace Eigen {
         Derived& setFromTwoVectors(const MatrixBase<Derived1>& a, const MatrixBase<Derived2>& b);
 
         template<class OtherDerived> EIGEN_STRONG_INLINE MRP<Scalar> operator* (const MRPBase<OtherDerived>& q) const; //!< method
+        /** Right-composes \c *this with another MRP attitude. */
         template<class OtherDerived> EIGEN_STRONG_INLINE Derived& operator*= (const MRPBase<OtherDerived>& q);
+        /** Adds MRP coefficients component-wise.
+         *
+         * This is coefficient arithmetic, not attitude composition. It is useful
+         * for estimation, filtering, and linearized updates where the MRP
+         * coefficients are manipulated as a vector.
+         */
         template<class OtherDerived> EIGEN_STRONG_INLINE Derived& operator+= (const MRPBase<OtherDerived>& q);
+        /** Subtracts MRP coefficients component-wise.
+         *
+         * This is coefficient arithmetic, not attitude composition. It is useful
+         * for estimation, filtering, and linearized updates where the MRP
+         * coefficients are manipulated as a vector.
+         */
         template<class OtherDerived> EIGEN_STRONG_INLINE Derived& operator-= (const MRPBase<OtherDerived>& q);
 
         /** \returns the MRP describing the shadow set */
@@ -555,7 +568,7 @@ namespace Eigen {
         return derived();
     }
 
-    /** \sa operator*(MRP) */
+    /** Coefficient-wise MRP addition; this is not attitude composition. */
     template <class Derived>
     template <class OtherDerived>
     EIGEN_STRONG_INLINE Derived& MRPBase<Derived>::operator+= (const MRPBase<OtherDerived>& other)
@@ -563,7 +576,7 @@ namespace Eigen {
         derived().coeffs() = derived().coeffs() + other.derived().coeffs();
         return derived();
     }
-    /** \sa operator*(MRP) */
+    /** Coefficient-wise MRP subtraction; this is not attitude composition. */
     template <class Derived>
     template <class OtherDerived>
     EIGEN_STRONG_INLINE Derived& MRPBase<Derived>::operator-= (const MRPBase<OtherDerived>& other)
