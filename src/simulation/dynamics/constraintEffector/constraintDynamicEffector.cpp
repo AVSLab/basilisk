@@ -316,24 +316,24 @@ void ConstraintDynamicEffector::computeForceTorque(double integTime, double time
                 r_B1N_N = this->hubPosition[parent1.idx]->getState();
                 rDot_B1N_N = this->hubVelocity[parent1.idx]->getState();
                 omega_B1N_B1 = this->hubOmega[parent1.idx]->getState();
-                sigma_B1N = (Eigen::Vector3d)this->hubSigma[parent1.idx]->getState();
+                sigma_B1N = Eigen::MRPd(this->hubSigma[parent1.idx]->getState().data());
             } else if (this->parent1.parentType == "effector") {
                 // - Collect properties from parent effector
                 r_B1N_N = *this->inertialPositionProperty[parent1.idx];
                 rDot_B1N_N = *this->inertialVelocityProperty[parent1.idx];
                 omega_B1N_B1 = *this->inertialAngVelocityProperty[parent1.idx];
-                sigma_B1N = (Eigen::Vector3d)*this->inertialAttitudeProperty[parent1.idx];
+                sigma_B1N = Eigen::MRPd(this->inertialAttitudeProperty[parent1.idx]->data());
             }
             if (this->parent2.parentType == "hub") {
                 r_B2N_N = this->hubPosition[parent2.idx]->getState();
                 rDot_B2N_N = this->hubVelocity[parent2.idx]->getState();
                 omega_B2N_B2 = this->hubOmega[parent2.idx]->getState();
-                sigma_B2N = (Eigen::Vector3d)this->hubSigma[parent2.idx]->getState();
+                sigma_B2N = Eigen::MRPd(this->hubSigma[parent2.idx]->getState().data());
             } else if (this->parent2.parentType == "effector") {
                 r_B2N_N = *this->inertialPositionProperty[parent2.idx];
                 rDot_B2N_N = *this->inertialVelocityProperty[parent2.idx];
                 omega_B2N_B2 = *this->inertialAngVelocityProperty[parent2.idx];
-                sigma_B2N = (Eigen::Vector3d)*this->inertialAttitudeProperty[parent2.idx];
+                sigma_B2N = Eigen::MRPd(this->inertialAttitudeProperty[parent2.idx]->data());
             }
 
             // computing direction constraint psi in the N frame
@@ -372,7 +372,7 @@ void ConstraintDynamicEffector::computeForceTorque(double integTime, double time
 
             // calculate the constraint torque imparted on each spacecraft from the attitude constraint
             Eigen::Matrix3d dcm_B1B2 = dcm_B1N * dcm_B2N.transpose();
-            Eigen::Vector3d L_B2_att = -this->k_a * eigenMRPd2Vector3d(this->phi) - this->c_a * 0.25 * this->phi.Bmat() * omega_B2B1_B2;
+            Eigen::Vector3d L_B2_att = -this->k_a * this->phi.coeffs() - this->c_a * 0.25 * this->phi.Bmat() * omega_B2B1_B2;
             Eigen::Vector3d L_B1_att = - dcm_B1B2 * L_B2_att;
             this->T_B2 = L_B2_len + L_B2_att; // store the constraint torque for spacecraft 2
 

@@ -173,7 +173,7 @@ void LinearTranslationNDOFStateEffector::writeOutputStateMessages(uint64_t Curre
             // Logging the F frame is the body frame B of that object
             eigenVector3d2CArray(translatingBody->r_FcN_N, configLogMsg.r_BN_N);
             eigenVector3d2CArray(translatingBody->v_FcN_N, configLogMsg.v_BN_N);
-            eigenVector3d2CArray(translatingBody->sigma_FN, configLogMsg.sigma_BN);
+            eigenMRPd2CArray(translatingBody->sigma_FN, configLogMsg.sigma_BN);
             eigenVector3d2CArray(translatingBody->omega_FN_F, configLogMsg.omega_BN_B);
             this->translatingBodyConfigLogOutMsgs[i]->write(&configLogMsg, this->moduleID, CurrentClock);
         }
@@ -465,7 +465,7 @@ void LinearTranslationNDOFStateEffector::computeTranslatingBodyInertialStates()
         // Compute the rotational properties
         Eigen::Matrix3d dcm_FN;
         dcm_FN = translatingBody->dcm_FB * this->dcm_BN;
-        translatingBody->sigma_FN = eigenMRPd2Vector3d(eigenC2MRP(dcm_FN));
+        translatingBody->sigma_FN = eigenC2MRP(dcm_FN);
         translatingBody->omega_FN_F = translatingBody->dcm_FB.transpose().transpose() * translatingBody->omega_FN_B;
 
         // Compute the translation properties

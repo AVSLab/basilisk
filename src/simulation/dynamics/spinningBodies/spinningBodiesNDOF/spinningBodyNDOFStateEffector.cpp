@@ -588,7 +588,8 @@ void SpinningBodyNDOFStateEffector::computeSpinningBodyInertialStates()
     for(auto& spinningBody: this->spinningBodyVec) {
         // Compute the rotational properties
         Eigen::Matrix3d dcm_SN = spinningBody->dcm_BS.transpose() * this->dcm_BN;
-        *spinningBody->sigma_SN = eigenMRPd2Vector3d(eigenC2MRP(dcm_SN));
+        const Eigen::MRPd sigma_SN = eigenC2MRP(dcm_SN);
+        *spinningBody->sigma_SN = sigma_SN.coeffs();
         *spinningBody->omega_SN_S = spinningBody->dcm_BS.transpose() * spinningBody->omega_SN_B;
 
         // Compute the translation properties

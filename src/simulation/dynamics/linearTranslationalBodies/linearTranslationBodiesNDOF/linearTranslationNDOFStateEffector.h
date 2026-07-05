@@ -128,7 +128,7 @@ private:
     // Inertial properties
     Eigen::Vector3d r_FcN_N;            //!< [m] position vector of translating body's center of mass Fc relative to the inertial frame origin N
     Eigen::Vector3d v_FcN_N;            //!< [m/s] inertial velocity vector of Fc relative to inertial frame
-    Eigen::Vector3d sigma_FN;           //!< -- MRP attitude of frame S relative to inertial frame
+    Eigen::MRPd sigma_FN;               //!< -- MRP attitude of frame S relative to inertial frame
     Eigen::Vector3d omega_FN_F;         //!< [rad/s] inertial translating body frame angular velocity vector
 
     BSKLogger bskLogger;

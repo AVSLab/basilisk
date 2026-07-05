@@ -142,7 +142,7 @@ void Spacecraft::readOptionalRefMsg()
         Eigen::Matrix3d dcm_BN = sigma_BN.toRotationMatrix().transpose();
         omega_BN_B = dcm_BN * omega_BN_N;
 
-        this->hubSigma->setState(eigenMRPd2Vector3d(sigma_BN));
+        this->hubSigma->setState(sigma_BN.coeffs());
         this->hubOmega_BN_B->setState(omega_BN_B);
     }
 

@@ -101,8 +101,7 @@ void DragDynamicEffector::linkInStates(DynParamManager& states){
  * It accounts for wind velocity if the wind message is linked.
 */
 void DragDynamicEffector::updateDragDir(){
-    Eigen::MRPd sigmaBN;
-    sigmaBN = (Eigen::Vector3d)this->hubSigma->getState();
+    Eigen::MRPd sigmaBN(this->hubSigma->getState().data());
     Eigen::Matrix3d dcm_BN = sigmaBN.toRotationMatrix().transpose();
 
     Eigen::Vector3d v_BN_N = this->hubVelocity->getState();

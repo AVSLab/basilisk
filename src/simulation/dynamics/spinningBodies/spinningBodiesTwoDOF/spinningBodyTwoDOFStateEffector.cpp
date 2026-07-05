@@ -509,8 +509,7 @@ void SpinningBodyTwoDOFStateEffector::addPrescribedMotionCouplingContributions(B
     Eigen::Vector3d r_PB_B = (Eigen::Vector3d)*this->prescribedPositionProperty;
     Eigen::Vector3d rPrime_PB_B = (Eigen::Vector3d)*this->prescribedVelocityProperty;
     Eigen::Vector3d rPrimePrime_PB_B = (Eigen::Vector3d)*this->prescribedAccelerationProperty;
-    Eigen::MRPd sigma_PB;
-    sigma_PB = (Eigen::Vector3d)*this->prescribedAttitudeProperty;
+    Eigen::MRPd sigma_PB(this->prescribedAttitudeProperty->data());
     Eigen::Vector3d omega_PB_P = (Eigen::Vector3d)*this->prescribedAngVelocityProperty;
     Eigen::Vector3d omegaPrime_PB_P = (Eigen::Vector3d)*this->prescribedAngAccelerationProperty;
     Eigen::Matrix3d dcm_PB = sigma_PB.toRotationMatrix().transpose();
@@ -681,8 +680,10 @@ void SpinningBodyTwoDOFStateEffector::computeSpinningBodyInertialStates()
     Eigen::Matrix3d dcm_S2N;
     dcm_S1N = (this->dcm_BS1).transpose() * this->dcm_BN;
     dcm_S2N = (this->dcm_BS2).transpose() * this->dcm_BN;
-    *this->sigma_S1N = eigenMRPd2Vector3d(eigenC2MRP(dcm_S1N));
-    *this->sigma_S2N = eigenMRPd2Vector3d(eigenC2MRP(dcm_S2N));
+    const Eigen::MRPd sigma_S1N = eigenC2MRP(dcm_S1N);
+    const Eigen::MRPd sigma_S2N = eigenC2MRP(dcm_S2N);
+    *this->sigma_S1N = sigma_S1N.coeffs();
+    *this->sigma_S2N = sigma_S2N.coeffs();
 
     // Convert the angular velocity to the corresponding frame
     *this->omega_S1N_S1 = dcm_BS1.transpose() * this->omega_S1N_B;

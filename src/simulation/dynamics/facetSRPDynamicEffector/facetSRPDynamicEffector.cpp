@@ -131,8 +131,7 @@ void FacetSRPDynamicEffector::computeForceTorque(double callTime, double timeSte
     ReadMessages();
 
     // Compute dcm_BN
-    Eigen::MRPd sigma_BN;
-    sigma_BN = (Eigen::Vector3d)this->hubSigma->getState();
+    Eigen::MRPd sigma_BN(this->hubSigma->getState().data());
     Eigen::Matrix3d dcm_BN = sigma_BN.toRotationMatrix().transpose();
 
     // Grab the current spacecraft inertial position

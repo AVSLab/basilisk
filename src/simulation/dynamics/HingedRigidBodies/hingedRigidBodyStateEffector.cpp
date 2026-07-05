@@ -425,7 +425,8 @@ void HingedRigidBodyStateEffector::computePanelInertialStates()
     Eigen::Matrix3d dcm_NP = sigmaBN.toRotationMatrix();  // assumes P and B are idential
     Eigen::Matrix3d dcm_SN;
     dcm_SN = this->dcm_SP*dcm_NP.transpose();
-    *this->sigma_SN = eigenMRPd2Vector3d(eigenC2MRP(dcm_SN));
+    const Eigen::MRPd sigma_SN = eigenC2MRP(dcm_SN);
+    *this->sigma_SN = sigma_SN.coeffs();
 
 
     // inertial angular velocity

@@ -21,6 +21,7 @@
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
+#include "architecture/utilities/avsEigenMRP.h"
 #include "architecture/utilities/bskLogging.h"
 #include "cMsgCInterface/HingedRigidBodyMsg_C.h"
 #include "cMsgCInterface/PrescribedRotationMsg_C.h"
@@ -91,7 +92,7 @@ private:
     void computeRotationComplete();                                        //!< Method for computing the scalar rotational states when the rotation is complete
 
     void writeOutputMessages(uint64_t CurrentSimNanos);                    //!< Method for writing the module output messages and computing the output message data
-    Eigen::Vector3d computeSigma_PM();                                     //!< Method for computing the current spinning body MRP attitude relative to the mount frame: sigma_PM
+    Eigen::MRPd computeSigma_PM();                                         //!< Method for computing the current spinning body MRP attitude relative to the mount frame: sigma_PM
 
     /* User-configurable variables */
     double rhoInit{};                                                      //!< [m] Initial displacement from frame M to frame P along rotHat_M
