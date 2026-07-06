@@ -8,8 +8,8 @@ Basilisk Known Issues
 
     The use of ``cMsgCInterfacePy`` is deprecated.  Use ``messaging`` instead.
 
-Version |release|
------------------
+Version |release| (July 7, 2026)
+--------------------------------
 - BSK-422: Several SWIG-wrapped C++ members in simulation and FSW modules could emit
   ``swig/python detected a memory leak`` warnings when read from Python because their wrappers lacked
   visible destructors. Internal-only members are now private or hidden from Python, and public value-type

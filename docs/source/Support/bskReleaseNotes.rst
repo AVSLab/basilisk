@@ -23,8 +23,8 @@ Basilisk Release Notes
     - `pip`-based installation and pre-compiled releases
     - integrating the `MuJoCo <https://mujoco.org>`_ library as an alternate dynamics engine
 
-Version |release|
------------------
+Version |release| (July 7, 2026)
+--------------------------------
 .. include:: bskReleaseNotesSnippets/_compiled_latest.rst
 
 
