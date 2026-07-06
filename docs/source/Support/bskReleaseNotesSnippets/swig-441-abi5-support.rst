@@ -1,1 +1,0 @@
-- Raised the supported SWIG 4.x build requirement to 4.4.1, providing SWIG ABI 5 support between BSK and BSK plugins.

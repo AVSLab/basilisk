@@ -1,2 +1,0 @@
-- Fixed the ``Nightly Wheels`` GitHub Actions workflow so gh-pages history trimming uses a full ``gh-pages`` checkout and no longer fails after sparse ``develop`` checkout.
-- Added release-guide instructions to manually run ``Nightly Wheels`` via ``workflow_dispatch`` after merging the next beta branch to republish the nightly package index.

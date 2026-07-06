@@ -1,1 +1,0 @@
-- Updated the :ref:`hingedJointArrayMotor` module to perform full tracking control.

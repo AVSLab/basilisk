@@ -1,5 +1,0 @@
-- Added ``NumbaModel`` to support Basilisk modules written in Python whose ``UpdateStateImpl`` methods are JIT-compiled with Numba for near-C execution speed.
-- Added zero-copy payload dtype metadata and raw message-pointer accessors to support efficient NumPy and Numba views of Basilisk message data.
-- Added ``StatefulNumbaModel`` to combine Numba-compiled Python modules with ``StatefulSysModel`` continuous-time state registration and integration in MuJoCo ``MJScene`` dynamics.
-- Added ``RigidBodyKinematicsNumba`` as an ``njit``-compatible rigid-body kinematics utility library for use inside compiled Numba kernels.
-- Added the :ref:`numbaModules` user guide together with :ref:`scenarioAttitudePointingNumba`, :ref:`scenarioAttitudeFeedbackNumba`, and :ref:`scenarioBenchmarkNumba` examples to demonstrate the new Numba-based module workflow.

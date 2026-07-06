@@ -1,1 +1,0 @@
-- Fixed camera module to properly process and publish images loaded from the filename parameter, ensuring they follow the same processing pipeline as images from imageInMsg.

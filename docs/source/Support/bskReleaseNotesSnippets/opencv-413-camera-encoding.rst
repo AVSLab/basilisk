@@ -1,1 +1,0 @@
-- Fixed camera PNG encoding option handling for OpenCV 4.13 compatibility in OpNav image processing.

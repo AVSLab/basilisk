@@ -1,1 +1,0 @@
-- Fixed :ref:`spacecraft` reporting ``NaN`` for ``nonConservativeAccelpntB_B`` on the first integration step. The body-frame non-conservative acceleration divides the accumulated velocity change by the integration time step, which is zero on the first step; it is now set to zero when the time step is zero, matching the existing guard used for ``omegaDot_BN_B``.

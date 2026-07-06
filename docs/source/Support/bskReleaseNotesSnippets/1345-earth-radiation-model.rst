@@ -1,4 +1,0 @@
-- Added Earth Radiation Pressure model with :ref:`earthRadiationModel` module.
-- Added :ref:`planetRadiationBase` base class for planet radiation models and albedo.
-- Updated :ref:`albedo` module to use new planetRadiationBase.
-- Added regression coverage for albedo and eclipse in ``test_albedo.py``.

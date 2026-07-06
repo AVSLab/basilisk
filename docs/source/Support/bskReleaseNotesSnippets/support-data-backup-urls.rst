@@ -1,1 +1,0 @@
-- Added support-data backup URLs and shorter retries for externally hosted downloads used by CI.

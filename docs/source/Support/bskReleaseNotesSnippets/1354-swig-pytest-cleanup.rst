@@ -1,2 +1,0 @@
-- Updated SWIG dependency support to allow compatible latest SWIG releases while excluding SWIG 4.4.0 due to compile regressions observed during testing.  If you are getting lots of ``builtin type swigvarlink has no __module__ attribute`` warnings upgrade to SWIG 4.4.1
-- Cleaned up pytest resource handling so parallel test runs with pytest-xdist and pytest-rerunfailures no longer report unclosed socket warnings.
