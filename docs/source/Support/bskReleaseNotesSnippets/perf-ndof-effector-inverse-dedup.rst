@@ -1,1 +1,0 @@
-- Improved the runtime performance of :ref:`spinningBodyNDOFStateEffector` and :ref:`linearTranslationNDOFStateEffector` by computing the degree-of-freedom mass-matrix inverse once per ``updateContributions`` call instead of three times. Results are numerically identical; the speedup grows with the number of degrees of freedom.

@@ -1,1 +1,0 @@
-- Updated the :ref:`thrFiringRound` module to include an optional minimum fire time setting.

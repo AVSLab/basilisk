@@ -1,2 +1,0 @@
-- Hardened Basilisk module string handling and logging against fixed-buffer overflow and format-string misuse.
-- Hardened build and helper utilities against shell command injection, unsafe temporary file cleanup, unbounded downloads, and malformed image buffer lengths.

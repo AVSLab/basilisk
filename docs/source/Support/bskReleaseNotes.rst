@@ -25,8 +25,163 @@ Basilisk Release Notes
 
 Version |release| (July 7, 2026)
 --------------------------------
-.. include:: bskReleaseNotesSnippets/_compiled_latest.rst
 
+..
+   .. include:: bskReleaseNotesSnippets/_compiled_latest.rst
+
+- Refactored the :ref:`motorThermal` unit test to validate the module against analytically derived temperatures instead of a stored vector of regression "truth" values. The test now drives the module with a stand-alone reaction wheel state message and isolates each term of the heat balance (dissipation, motor power inefficiency, and friction) in separate scenarios, comparing the recorded temperatures to the closed-form heat-balance recurrence.
+- Fixed Monte Carlo nested dispersion paths and randomized ``RNGSeed`` application.
+- Tuned :ref:`scenarioMonteCarloAttRW` dispersions to show subtler run-to-run variations without saturated response.
+- Fixed the ``thrusterData`` attribute of :ref:`thrusterDynamicEffector` and :ref:`thrusterStateEffector` being returned to Python as an opaque object. After ``THRSimConfig`` became a shared pointer, the SWIG interface no longer wrapped ``std::vector<std::shared_ptr<THRSimConfig>>``, so ``thrusterData`` could not be indexed or iterated. It is now exposed as an iterable list of ``THRSimConfig`` objects.
+- Added a new :ref:`facetedSRPEffector` module to compute the aggregate force and torque acting on the spacecraft due to impinging photons from the Sun. Unlike the original :ref:`facetSRPDynamicEffector` module, this new module (1) requires the facet data to be externally projected into the spacecraft body frame, (2) expects the facet sunlit projected areas to be provided externally; it does not compute projected area internally, and (3) does not read facet articulation-angle messages directly.
+- Replaced SWIG XML-based message payload struct parsing with a libclang-backed metadata pipeline that generates JSON for `*Payload.h` definitions.
+- Improved generated payload Python bindings with typed keyword-only constructors, typed properties, and a `__fields__` classmethod derived from header metadata.
+- Added Earth Radiation Pressure model with :ref:`earthRadiationModel` module.
+- Added :ref:`planetRadiationBase` base class for planet radiation models and albedo.
+- Updated :ref:`albedo` module to use new planetRadiationBase.
+- Added regression coverage for albedo and eclipse in ``test_albedo.py``.
+- Added ``NumbaModel`` to support Basilisk modules written in Python whose ``UpdateStateImpl`` methods are JIT-compiled with Numba for near-C execution speed.
+- Added zero-copy payload dtype metadata and raw message-pointer accessors to support efficient NumPy and Numba views of Basilisk message data.
+- Added ``StatefulNumbaModel`` to combine Numba-compiled Python modules with ``StatefulSysModel`` continuous-time state registration and integration in MuJoCo ``MJScene`` dynamics.
+- Added ``RigidBodyKinematicsNumba`` as an ``njit``-compatible rigid-body kinematics utility library for use inside compiled Numba kernels.
+- Added the :ref:`numbaModules` user guide together with :ref:`scenarioAttitudePointingNumba`, :ref:`scenarioAttitudeFeedbackNumba`, and :ref:`scenarioBenchmarkNumba` examples to demonstrate the new Numba-based module workflow.
+- :ref:`gravityEffector` now logs a ``BSK_WARNING`` in ``Reset()`` when a gravity body uses an orientation-dependent gravity model -- a spherical-harmonic field with tesseral/sectoral terms (order :math:`\ge 1`), or a polyhedral shape model -- but has no planet-orientation message connected. Without one the planet is silently treated as non-rotating, so the orientation-dependent terms no longer average out and produce spurious secular drift in eccentricity and inclination (issue #1352).
+- Added ``GravityModel::dependsOnOrientation()``, overridden by ``SphericalHarmonicsGravityModel`` (true when any retained coefficient of order :math:`\ge 1` is non-zero) and by ``PolyhedralGravityModel`` (always true).
+- Added :ref:`scenarioOrbitConsistencyVerification`, which propagates a sun-synchronous LEO orbit under the GGM03S field with and without a connected planet-orientation message and shows that supplying Earth rotation keeps the eccentricity and inclination bounded, recovering consistency with external propagators (Orekit, GMAT, SpOCK).
+- Documented in :ref:`scenarioBasicOrbit` that spherical-harmonic fields with tesseral terms require a planet-orientation message to be physically correct.
+- ``BSKLogger`` now flushes ``stdout`` after emitting warning-level (and higher) messages, so warnings are not lost or reordered when output is redirected to a file or pipe (and are observable to test harnesses).
+- Fixed the post-fit residual dimension in :ref:`sunlineSEKF` and :ref:`okeefeEKF`. The residual term
+  ``Hx = measMat * x`` used the full ``SKF_N_STATES`` width instead of the reduced state width each filter
+  actually carries (``EKF_N_STATES_SWITCH`` for the SEKF, ``SKF_N_STATES_HALF`` for okeefe), so the multiply
+  strode the measurement matrix across the wrong row width and over-read the state-error vector, corrupting
+  the reported ``postFitRes`` during the convergence transient. The state and covariance estimates were
+  unaffected (issue #1353).
+- Added a new :ref:`spacecraftChargingDynamics` module which integrates the electric potential of two spacecraft (a servicer and a target) in a plasma environment using a first order ordinary differential equation for each spacecraft. The charging model includes plasma electron current, plasma ion current, photoelectric current, and an optional electron beam current.
+- Fixed the ``Nightly Wheels`` GitHub Actions workflow so gh-pages history trimming uses a full ``gh-pages`` checkout and no longer fails after sparse ``develop`` checkout.
+- Added release-guide instructions to manually run ``Nightly Wheels`` via ``workflow_dispatch`` after merging the next beta branch to republish the nightly package index.
+- Deprecated `AU2KM` in favor of `AU` and added `AU2M` for astronomical unit in meters in `astroConstants.h`.
+- Updated the :ref:`thrFiringRound` module to include an optional minimum fire time setting.
+- Fixed camera module to properly process and publish images loaded from the filename parameter, ensuring they follow the same processing pipeline as images from imageInMsg.
+- ``MeanRevertingNoise`` abstract base class moved to ``mujocoDynamics/_GeneralModuleFiles``; importable as ``MJMeanRevertingNoise`` for Python subclassing
+- ``StochasticAtmDensity`` is now a standalone BSK module (``MJStochasticAtmDensity``) in its own folder
+- ``StochasticDragCoeff`` is now a standalone BSK module (``MJStochasticDragCoeff``) in its own folder
+- ``PIDControllers`` folder renamed to ``JointPIDController``; SWIG module renamed to ``MJJointPIDController``
+- Added ``.rst`` documentation pages for ``NBodyGravity``, ``JointPIDController``, ``StochasticAtmDensity``, and ``StochasticDragCoeff``
+- Updated the :ref:`hingedJointArrayMotor` module to perform full tracking control.
+- Fixed :ref:`dataFileToViz` and :ref:`vizInterface` SWIG wrapper compatibility so shared Vizard thruster configuration types work regardless of import order.
+- Added the :ref:`jointArrayRefProfiler` device-interface module to generate low-pass or time-profiled joint angle, rate, and acceleration references from scalar joint state inputs and a desired joint-array command.
+- Fixed a reaction wheel unit error in :ref:`scenarioAttitudeConstrainedManeuver` and :ref:`scenarioAttitudeConstraintViolation`. The ``maxSpeed`` value was pre-converted to rad/s before being passed to ``rwFactory.create()``, which already expects ``Omega_max`` in RPM and converts internally. The double conversion set the wheel saturation speed about an order of magnitude too low, and since the derived wheel inertia is ``maxMomentum / Omega_max`` it came out about an order of magnitude too high; ``maxSpeed`` is now passed in RPM as expected.
+- Fixed Linux wheels to include the MuJoCo runtime and SWIG bindings. ``CONAN_ARGS`` was set in the wheel build workflow but never reached the manylinux container, so MuJoCo was silently disabled on Linux while macOS and Windows shipped the full payload. Added ``environment-pass`` to the cibuildwheel Linux configuration so the option propagates.
+- Fixed nightly wheel builds on ``macos-26`` and ``windows-2025-vs2026`` runners. Conan 2.23.0 did not recognise apple-clang 21 or Visual Studio 2026. This would cause macOS builds to abort and Windows builds to fall back to MinGW gcc.
+- Aligned the ``cmake``, ``setuptools``, ``setuptools-scm``, and ``packaging`` upper bounds in ``pyproject.toml`` with ``requirements_dev.txt``.
+- Removed ``--mujocoReplay True`` from wheel build ``CONAN_ARGS`` in ``publish-wheels.yml`` and ``nightly-wheels.yml``. The replay binary is not packaged into wheels and building it inside the manylinux container requires X11 devel packages that are not present there.
+- Scenario simulation, plotting, data-shaping, and Eigen conversion helpers now live in the pytest-free :ref:`simHelpers` module while remaining available from ``unitTestSupport`` as deprecated compatibility wrappers, so example scenarios no longer require the ``pytest`` package just to import or run.
+- Fixed variable semantic mismatch in InertialUKF where ``wheelAccel`` stored torque units; renamed
+  to ``wheelTorque`` to correctly reflect the stored physical quantity.
+- Fixed the use of a static vector between the hub center of mass and the system center of mass in :ref:`jointThrAllocation`. The vector is now computed from the current articulated-arm configuration, which corrects the thruster mapping and resulting optimization solution for a given set of joint angles.
+- Fixed a build issue where modifying a single message payload header triggered a near-full recompile of unrelated translation units. The auto-generated payload equality used by ``recordOnChange()`` is no longer aggregated into a global umbrella header pulled in through ``messaging.h``. Now, each payload's ``PayloadEqualityTraits`` is included only in that payload's own SWIG module.
+- Changed :ref:`fuelTank` to hold its tank model via a ``std::shared_ptr`` instead of a raw pointer (issue #282). The model is created in Python and handed to the tank through ``setTankModel()``; previously, dropping the Python reference left a dangling C++ pointer (undefined behaviour). The tank now co-owns the model, so it stays valid for the life of the simulation. C++ code calling ``FuelTank::setTankModel()`` must now pass a ``std::shared_ptr<FuelTankModel>``; Python usage is unchanged.
+- Added a compile-time guard to the generated C message structs ensuring the payload immediately follows the message header with no padding. The C message read path (used by message recorders and C-to-C subscriptions) relies on this layout via pointer arithmetic; the guard turns any future layout change into a build error instead of a silent mis-read (issue #338).
+- Fixed SWIG memory leaks (issue #422) where several modules exposed C++ members without a destructor visible to SWIG, so reading them from Python leaked an un-destructed proxy (``swig/python detected a memory leak of type ...``). Internal-only members are now private or hidden with ``%ignore``, and public value-type members now include the required Eigen, STL, enum, and BSpline wrapper support. This clears the leak on ``dynParamManager`` and its dependent modules (``spacecraft`` and the state/dynamic effectors), the thruster modules, ``imuSensor``, ``smallBodyNavEKF``, ``sphericalHarmonicsGravityModel``, ``dataFileToViz``, ``constrainedAttitudeManeuver``, ``linkBudget``, ``ReactionWheelPower``, ``motorThermal`` and ``simpleInstrument``.
+- Added a regression test that instantiates affected modules and wrapped data classes, and fails if SWIG reports a member leak.
+- Added reusable Eigen validation helpers ``eigenIsRotationMatrix``, ``eigenIsUnitVector``, and ``eigenIsValidInertiaMatrix`` in ``avsEigenSupport`` for use in module configuration checks.
+- :ref:`spinningBodyOneDOFStateEffector`, :ref:`spinningBodyTwoDOFStateEffector`, and :ref:`spinningBodyNDOFStateEffector` now validate in ``Reset()`` that each user-provided DCM is a proper rotation matrix and that each inertia tensor is symmetric and positive definite (the inertia check is skipped for massless bodies), raising a descriptive error when the configuration is inconsistent (issue #469).
+- Fixed :ref:`hingedRigidBodyStateEffector` and :ref:`nHingedRigidBodyStateEffector` constructors that
+  called ``Eigen``'s static ``Identity()`` factory as a statement and discarded the result, leaving the
+  default ``dcm_HB`` (and ``IPntS_S`` for the single hinged effector) uninitialized instead of identity
+  (issue #469).
+- :ref:`spacecraft` and :ref:`spacecraftSystem` now validate the user-supplied hub configuration on
+  reset: the hub mass ``mHub`` must be strictly positive and the hub inertia tensor ``IHubPntBc_B``
+  must be symmetric and positive definite, raising a descriptive error when the configuration is
+  inconsistent (issue #469). Previously a zero hub mass or singular hub inertia silently produced
+  ``NaN`` states, and a negative hub mass silently reversed the translational response to applied
+  forces.
+- Fixed a memory leak in :ref:`simHelpers` ``timeStringToGregorianUTCMsg``. The SWIG-allocated scratch
+  ``doubleArray`` used to receive the ``str2et_c`` result was never released (about 32 bytes leaked per
+  call); it is now freed with ``delete_doubleArray`` once the value has been read (issue #548).
+- Fixed a latent double-free (issue #643). Several simulation modules own dynamically-allocated output messages that are freed in their destructors, but inherited the compiler-generated copy operations. Copying such a module shallow-copied the raw message pointers, so two instances would each free the same messages. ``SysModel``-derived modules are now non-copyable by default, while message recorders keep explicit copy-construction support for value-returning recorder APIs.
+- Changed message recorders to store their recorded message and time history in ``std::deque`` rather than ``std::vector``. This removes the periodic ``UpdateState`` timing spikes that previously occurred at power-of-two record counts and grew with recording length, which could disrupt soft real-time and hardware-in-the-loop simulations. The Python recorder interface is unchanged. As a consequence, the C++ ``Recorder`` accessors changed: ``times()`` and ``timesWritten()`` now return a copied ``std::vector<unsigned long long>`` (previously a ``std::vector<uint64_t>&`` reference), and ``record()`` now returns a ``std::deque<messageType>&``. C++ callers relying on the old reference return types must adapt; a new ``recordList()`` accessor returns the recorded-payload history as a copied ``std::vector``.
+- Fixed :ref:`spacecraft` reporting ``NaN`` for ``nonConservativeAccelpntB_B`` on the first integration step. The body-frame non-conservative acceleration divides the accumulated velocity change by the integration time step, which is zero on the first step; it is now set to zero when the time step is zero, matching the existing guard used for ``omegaDot_BN_B``.
+- Added ``BSKLogger::bskError()`` as a non-returning C++ fatal logging method, with safe Python and C fatal logging wrappers, while preserving existing ``bskLog(BSK_ERROR, ...)`` behavior.
+- Added Pythonic ``BSKLogger`` convenience methods ``debug()``, ``info()``, ``warning()``, and ``error()`` to ``bskLogging``.
+- Added a ``setLevel()`` alias for ``setLogLevel()``.
+- Added a ``LogLevel`` ``IntEnum``, and short log-level aliases (ex. ``bskLogging.WARNING``) that mirror Python's standard ``logging`` module naming.
+- Updated the development requirements to allow Conan 2.28.1.
+- Hardened CI builds by configuring short Conan network retries for third-party source downloads.
+- Added a Conan source backup URL so CI can fall back to mirrored third-party source archives.
+- Updated Python requirement version caps to include the latest dependency releases.
+- Pinned pull request and wheel CI runners to macOS 26, Ubuntu 24.04, and Windows 2025 with Visual Studio 2026.
+- Updated CI sccache setup to use a Node.js 24-compatible GitHub Action release.
+- Made CI builds continue without ``sccache`` when compiler-cache setup is unavailable.
+- Added :ref:`downlinkHandling` with a validated configuration interface (setters/getters), finite-value guards, and bounded outputs to prevent non-physical downlink rates.
+- Added :ref:`DownlinkHandlingMsgPayload` diagnostics and dedicated unit-test coverage for equation parity, receiver-path selection, storage-limited behavior, and invalid-input handling.
+- Improved storage-target selection robustness across connected storage status messages and aligned module documentation with implemented behavior and validation interface.
+- Fixed ``fswDefinitions.h`` so it can be included on macOS without a ``boolean_t`` typedef redefinition error. On Apple platforms, ``boolean_t`` is now sourced from ``<mach/boolean.h>`` (which defines it idempotently) instead of redefining it as an enum that conflicts with the system type.
+- Add the ``fuelLeakRate`` parameter to the :ref:`FuelTank` module to simulate fuel leaks that cause a loss of fuel mass without imparting momentum.
+- Add the ``MassFlowRateMsgPayload`` C message type and optional :ref:`FuelTank` ``fuelLeakRateInMsg`` input to override the configured leak rate.
+- Stop :ref:`FuelTank` leak depletion when the available tank propellant reaches zero and log a ``BSK_WARNING``.
+- Added setter and getter methods for :ref:`FuelTank` configuration variables and deprecated direct Python access to ``nameOfMassState``, ``dcm_TB``, ``r_TB_B``, ``updateOnly``, and ``fuelLeakRate``.
+- Fixed N-DoF getter assertions in :ref:`linearTranslationNDOFStateEffector` and :ref:`spinningBodyNDOFStateEffector`.
+- Added ``SimulationBaseClass`` helpers to extract and visualize Basilisk module message connections, including stand-alone source messages supplied through ``extraMessages``, optional recorder module filtering, and Matplotlib or Graphviz rendering.  The Graphviz renderer supports compact vertical or horizontal layouts.  The new :ref:`bskPrinciples-5a` tutorial explains the available options.
+- Fixed several BSK modules to deallocate dynamically allocated output message objects with C++ ``delete``.
+- Fixed the camera module to release its retained image output buffer on destruction.
+- Fixed the Vizard interface to release retained image output buffers on destruction.
+- Fixed the ``<body>_com`` site in :ref:`MJScene` bodies reporting the body frame origin instead of the true center of mass. MuJoCo latches a site's frame alignment at compile time, so the center-of-mass site (created at the body origin) ignored the later center-of-mass offset, producing incorrect ``_com`` state messages and an off-center-of-mass gravity force that spuriously torqued hinge-rooted bodies such as deploying panels.
+- Fixed :ref:`MJScene` body inertia not rescaling when the body mass changes. The mass-proportional inertia update divided by the already-updated mass, making the scale factor always one, so the inertia tensor never tracked mass changes.
+- Improved MuJoCo adaptive-integration error control without growing the integrated state count. A :ref:`MJScene<MJScene>` integrates exactly four bulk states regardless of how many bodies or joints it contains: the whole position vector (``qpos``), the whole velocity vector (``qvel``), the actuator state, and one mass entry per body. The bulk position and velocity states opt into per-component adaptive error control (see ``StateData::perComponentErrorControl``), so each degree of freedom is scaled by its own magnitude. This fixes cases where orbital translation magnitudes dominated the unified state norm and let stiff hinge dynamics drift unflagged, while keeping the per-stage integrator bookkeeping independent of model size.
+- Added the ``MJScene.highOrderAttitudeIntegration`` flag (default ``False``). When enabled, free- and ball-joint orientation quaternions are integrated as a four-component quaternion rate evaluated per integrator substep, so the attitude inherits the integrator's full order (for example fourth order with RK4) and an adaptive integrator's tolerance controls the attitude error. By default the quaternion is still advanced by a single exponential map of the stage-averaged body rate, which is second-order accurate on SO(3) regardless of the integrator and reproduces MuJoCo's own native RK4 attitude stepping.
+- Made ``StateData::setDerivative`` virtual and added a ``StateData::perComponentErrorControl`` flag, so a state can both customize how its derivative is interpreted and request that an adaptive integrator measure its truncation error per scalar component (used by the MuJoCo bulk position and velocity states).
+- Updated the MuJoCo dynamics wrapper to use MuJoCo 3.7 element-name APIs when reading and writing spec object names.
+- Added :ref:`MJScene` Vizard support to :ref:`vizSupport`, including Python body and geom introspection, MuJoCo body hierarchy discovery, multiple spacecraft roots, and automatic Vizard model generation from supported MuJoCo geoms.
+- Expanded MuJoCo example Vizard coverage with a new :ref:`scenarioMJSceneVizard` example and visualization support for planets, thruster plumes, asteroid custom models, textured geometry, and deployed multi-body spacecraft.
+- Improved MuJoCo orbital free-body propagation and adaptive integrator handling for gravity-driven scenes, including reusable state-specific tolerance controls and safer Python/C++ integrator ownership transfer.
+- Removed the standalone MuJoCo ``replay`` visualization tool, the ``mujoco.visualize`` helper, and the ``--mujocoReplay`` build option. MuJoCo :ref:`MJScene` simulations are now visualized through :ref:`Vizard <vizard>` via ``enableUnityVisualization``, so the separate replay utility is no longer needed.
+- Fixed Linux and Windows wheel builds by configuring Conan system package installation inside cibuildwheel's manylinux containers, disabling unused OpenCV Wayland support, and matching the PR Windows build's Ninja generator.
+- Distributed Linux and Windows wheels now have OpenCV and MuJoCo support included as well.
+- Fixed ``libclang`` not being available to cmake on macOS and Windows CI runners by installing it via ``CIBW_BEFORE_BUILD`` in the shared setup action, resolving nightly and release wheel build failures on those platforms.
+- Added Slack failure notifications for the Nightly Wheels workflow.
+- Fixed camera PNG encoding option handling for OpenCV 4.13 compatibility in OpNav image processing.
+- Improved the runtime performance of :ref:`spinningBodyNDOFStateEffector` and :ref:`linearTranslationNDOFStateEffector` by computing the degree-of-freedom mass-matrix inverse once per ``updateContributions`` call instead of three times. Results are numerically identical; the speedup grows with the number of degrees of freedom.
+- Generated message bindings now resolve peer message classes from their own module, fixing custom plugin messages built with ``bsk_generate_messages(GENERATE_C_INTERFACE)`` outside ``Basilisk.architecture.messaging``.
+- Updated ``publish-wheels`` CI workflow to route release candidate tags (``v*rc*``) to TestPyPI instead of PyPI.
+- Added a manual ``workflow_dispatch`` trigger so wheels can be published from the GitHub UI without requiring a tag push.
+- Added packaging support for pure Python BSK modules under ``src/fswAlgorithms`` and ``src/simulation``, and for Python support files under ``src/architecture``.
+- Moved ``jointThrAllocation`` into the standard ``Basilisk.fswAlgorithms`` import path.
+- Moved ``stateMerge`` into the standard ``Basilisk.simulation`` import path.
+- Moved ``thrFiringRound`` into the standard ``Basilisk.fswAlgorithms`` import path.
+- Added the ``bsk-module-io`` Sphinx directive to generate module I/O diagrams and tables from RST.
+- Added C, C++, and Python type labels to generated BSK module documentation pages.
+- Updated the C and C++ module templates and draft module generator to use generated module I/O diagrams and tables.
+- Updated message recorders so ``updateTimeInterval()`` reschedules the next recording opportunity when the minimum update time is changed between simulation runs.
+- Added a message recorder mode to record only when message payload content changes after the minimum update time has elapsed.
+- Added explicit errors when change-only recording is requested for payload types without supported equality comparison.
+- Added shallow metadata comparison support for ``CameraImageMsgPayload`` without comparing pointed-to image bytes.
+- Fixed :ref:`scenarioRoboticArm` and :ref:`scenarioFlexiblePanel` where standalone reference messages created inside setup helper functions were garbage collected before the simulation ran. In :ref:`scenarioRoboticArm` this left every robotic-arm joint stuck at zero; in :ref:`scenarioFlexiblePanel` the attitude controller read an unwritten vehicle-configuration message. The messages are now retained on the simulation object, following the guidance in :ref:`bskKnownIssues` (issue #1107).
+- Added an integrated test for :ref:`scenarioRoboticArm` that verifies each joint reaches its commanded angle.
+- Added a new :ref:`spaceWeatherData` C++ module that loads CelesTrak space-weather CSV data and publishes the 23-message weather set required by :ref:`msisAtmosphere`.
+- Added support-data backup URLs and shorter retries for externally hosted downloads used by CI.
+- Added retry hardening for Basilisk support data downloads.
+- Raised the supported SWIG 4.x build requirement to 4.4.1, providing SWIG ABI 5 support between BSK and BSK plugins.
+- Added Vizard plume placement for thrusters mounted on a non-hub body. :ref:`thrusterDynamicEffector` and :ref:`thrusterStateEffector` now expose a ``r_PcP_P`` member, and :ref:`simIncludeThruster`'s ``addToSpacecraftSubcomponent`` accepts a ``r_PcP_P`` argument.
+- Added support for Vizard 2.4.0 features
+- Added instructions on how to build Vizard from source code
+- Fixed typo in :ref:`attTrackingError` documentation
+
+Version 2.10.2 (May 7, 2026)
+----------------------------
+- Fixed :ref:`linkBudget` pointing-loss frame handling so ``AntennaLogMsgPayload.sigma_AN`` antenna orientations are interpreted consistently with :ref:`simpleAntenna`.
+- Fixed a :ref:`vizInterface` ``noDisplay`` image request regression that could stop OpNav scenarios when communicating with Vizard.
+
+
+Version 2.10.1 (April 26, 2026)
+-------------------------------
+- Updated SWIG dependency support to allow compatible latest SWIG releases while excluding SWIG 4.4.0 due to compile regressions observed during testing.  If you are getting lots of ``builtin type swigvarlink has no __module__ attribute`` warnings upgrade to SWIG 4.4.1
+- Cleaned up pytest resource handling so parallel test runs with pytest-xdist and pytest-rerunfailures no longer report unclosed socket warnings.
+- Fixed a potential stack buffer overflow in :ref:`vizInterface` by rejecting default celestial body names that exceed the fixed SPICE payload name storage.
+- Fixed a potential heap buffer overflow in :ref:`mappingInstrument` by rejecting mapping point names that exceed the fixed data node name storage.
+- Fixed a potential format string vulnerability in :ref:`dentonFluxModel` when reporting missing Denton data files.
+- Hardened Basilisk module string handling and logging against fixed-buffer overflow and format-string misuse.
+- Hardened build and helper utilities against shell command injection, unsafe temporary file cleanup, unbounded downloads, and malformed image buffer lengths.
 
 Version 2.10.0 (April 2, 2026)
 ------------------------------

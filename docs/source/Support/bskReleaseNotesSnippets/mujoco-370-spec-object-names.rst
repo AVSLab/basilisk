@@ -1,1 +1,0 @@
-- Updated the MuJoCo dynamics wrapper to use MuJoCo 3.7 element-name APIs when reading and writing spec object names.

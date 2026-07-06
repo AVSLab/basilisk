@@ -1,7 +1,0 @@
-- Added packaging support for pure Python BSK modules under ``src/fswAlgorithms`` and ``src/simulation``, and for Python support files under ``src/architecture``.
-- Moved ``jointThrAllocation`` into the standard ``Basilisk.fswAlgorithms`` import path.
-- Moved ``stateMerge`` into the standard ``Basilisk.simulation`` import path.
-- Moved ``thrFiringRound`` into the standard ``Basilisk.fswAlgorithms`` import path.
-- Added the ``bsk-module-io`` Sphinx directive to generate module I/O diagrams and tables from RST.
-- Added C, C++, and Python type labels to generated BSK module documentation pages.
-- Updated the C and C++ module templates and draft module generator to use generated module I/O diagrams and tables.

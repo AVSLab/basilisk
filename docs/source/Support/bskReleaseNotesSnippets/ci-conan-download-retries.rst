@@ -1,1 +1,0 @@
-- Hardened CI builds by configuring short Conan network retries for third-party source downloads.

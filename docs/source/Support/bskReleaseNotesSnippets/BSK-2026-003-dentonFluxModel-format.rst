@@ -1,1 +1,0 @@
-- Fixed a potential format string vulnerability in :ref:`dentonFluxModel` when reporting missing Denton data files.

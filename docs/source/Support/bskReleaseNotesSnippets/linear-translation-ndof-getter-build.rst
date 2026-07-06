@@ -1,1 +1,0 @@
-- Fixed N-DoF getter assertions in :ref:`linearTranslationNDOFStateEffector` and :ref:`spinningBodyNDOFStateEffector`.

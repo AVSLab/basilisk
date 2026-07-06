@@ -1,1 +1,0 @@
-- Fixed ``libclang`` not being available to cmake on macOS and Windows CI runners by installing it via ``CIBW_BEFORE_BUILD`` in the shared setup action, resolving nightly and release wheel build failures on those platforms.

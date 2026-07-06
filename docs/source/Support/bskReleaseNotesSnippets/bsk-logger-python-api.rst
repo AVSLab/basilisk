@@ -1,3 +1,0 @@
-- Added Pythonic ``BSKLogger`` convenience methods ``debug()``, ``info()``, ``warning()``, and ``error()`` to ``bskLogging``.
-- Added a ``setLevel()`` alias for ``setLogLevel()``.
-- Added a ``LogLevel`` ``IntEnum``, and short log-level aliases (ex. ``bskLogging.WARNING``) that mirror Python's standard ``logging`` module naming.

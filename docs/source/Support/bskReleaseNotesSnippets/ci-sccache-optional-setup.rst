@@ -1,1 +1,0 @@
-- Made CI builds continue without ``sccache`` when compiler-cache setup is unavailable.

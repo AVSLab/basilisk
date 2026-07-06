@@ -1,5 +1,0 @@
-- ``MeanRevertingNoise`` abstract base class moved to ``mujocoDynamics/_GeneralModuleFiles``; importable as ``MJMeanRevertingNoise`` for Python subclassing
-- ``StochasticAtmDensity`` is now a standalone BSK module (``MJStochasticAtmDensity``) in its own folder
-- ``StochasticDragCoeff`` is now a standalone BSK module (``MJStochasticDragCoeff``) in its own folder
-- ``PIDControllers`` folder renamed to ``JointPIDController``; SWIG module renamed to ``MJJointPIDController``
-- Added ``.rst`` documentation pages for ``NBodyGravity``, ``JointPIDController``, ``StochasticAtmDensity``, and ``StochasticDragCoeff``
