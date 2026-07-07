@@ -201,6 +201,10 @@ class EventHandlerClass:
         """Check the condition and execute the action if condition is met."""
         if self.conditionFunction(parentSim):
             self.eventActive = False
+            # This event just deactivated; the parent's active-event cache is now
+            # stale. Invalidate it before the action runs so that an action which
+            # re-activates events rebuilds a correct list on the next query.
+            parentSim._invalidateActiveEventCache()
             self.actionFunction(parentSim)
             self.occurCounter += 1
             if self.terminal:
@@ -568,6 +572,7 @@ class SimBaseClass:
         self.nextEventTime = 0
         self.terminate = False
         self.eventMap = {}
+        self._activeEventCache = None
         self.simBasePath = os.path.dirname(os.path.realpath(__file__)) + "/../"
         self.dataStructIndex = self.simBasePath + "/xml/index.xml"
         self.indexParsed = False
@@ -2024,15 +2029,42 @@ class SimBaseClass:
             return
         newEvent = EventHandlerClass(eventName, *args, **kwargs)
         self.eventMap[eventName] = newEvent
+        self._invalidateActiveEventCache()
+
+    def _invalidateActiveEventCache(self):
+        """Mark the cached active-event list stale. Must be called whenever event
+        membership (``eventMap``) or any event's ``eventActive`` flag changes."""
+        self._activeEventCache = None
 
     def activeEvents(self):
-        return (event for event in self.eventMap.values() if event.eventActive)
+        """Return the list of currently active events.
+
+        The result is cached and only recomputed when the cache has been
+        invalidated (an event was added, its activity was toggled through the
+        public API, or an event triggered). This keeps the per-check-cycle cost
+        proportional to the number of *active* events rather than the total
+        number of events (see issue #455)."""
+        if self._activeEventCache is None:
+            self._activeEventCache = [
+                event for event in self.eventMap.values() if event.eventActive
+            ]
+        return self._activeEventCache
 
     def setEventActivity(self, eventName, activityCommand):
+        """Enable or disable the named event.
+
+        ``activityCommand`` is the boolean value assigned to the event's
+        ``eventActive`` flag. The cached active-event list (see
+        :meth:`activeEvents`) is invalidated only when the flag actually
+        changes, so setting an event to the activity state it already has does
+        not force an unnecessary rebuild."""
         if eventName not in list(self.eventMap.keys()):
             print("You asked me to set the status of an event that I don't have.")
             return
-        self.eventMap[eventName].eventActive = activityCommand
+        event = self.eventMap[eventName]
+        if event.eventActive != activityCommand:
+            event.eventActive = activityCommand
+            self._invalidateActiveEventCache()
 
     def setAllButCurrentEventActivity(
         self, currentEventName, activityCommand, useIndex=False
@@ -2045,13 +2077,22 @@ class SimBaseClass:
         if useIndex:
             index = currentEventName.partition("_")[2]  # save the current event's index
 
+        # Invalidate the active-event cache only if at least one event's activity
+        # actually changed, so a no-op blanket set does not force a rebuild.
+        activityChanged = False
         for eventName in list(self.eventMap.keys()):
             if currentEventName != eventName:
                 if useIndex:
                     if eventName.partition("_")[2] == index:
-                        self.eventMap[eventName].eventActive = activityCommand
+                        if self.eventMap[eventName].eventActive != activityCommand:
+                            self.eventMap[eventName].eventActive = activityCommand
+                            activityChanged = True
                 else:
-                    self.eventMap[eventName].eventActive = activityCommand
+                    if self.eventMap[eventName].eventActive != activityCommand:
+                        self.eventMap[eventName].eventActive = activityCommand
+                        activityChanged = True
+        if activityChanged:
+            self._invalidateActiveEventCache()
 
 
 def SetCArray(InputList, VarType, ArrayPointer):
