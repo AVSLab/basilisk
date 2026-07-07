@@ -10,6 +10,14 @@ Basilisk Known Issues
 
 Version |release| (July 7, 2026)
 --------------------------------
+- SWIG 4.4.0 caused Basilisk build failures in some Python 3.13+ source-build configurations.
+  Basilisk now requires SWIG 4.4.1 or a newer supported 4.x release, which provides SWIG ABI 5 support
+  for Basilisk and compatible plugins. If source builds fail with SWIG 4.4.0 or emit
+  ``builtin type swigvarlink has no __module__ attribute`` warnings, upgrade to SWIG 4.4.1 or a newer
+  supported 4.x release.
+
+Version 2.11.0 (July 7, 2026)
+-----------------------------
 - BSK-422: Several SWIG-wrapped C++ members in simulation and FSW modules could emit
   ``swig/python detected a memory leak`` warnings when read from Python because their wrappers lacked
   visible destructors. Internal-only members are now private or hidden from Python, and public value-type

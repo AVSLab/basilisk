@@ -25,8 +25,11 @@ Basilisk Release Notes
 Version |release| (July 7, 2026)
 --------------------------------
 
-..
-   .. include:: bskReleaseNotesSnippets/_compiled_latest.rst
+.. include:: bskReleaseNotesSnippets/_compiled_latest.rst
+
+
+Version 2.11.0 (July 7, 2026)
+-----------------------------
 
 - Split off the ``opNav`` build from the core BSK distribution wheels to reduce the wheel file size to be less than 100Mb.
   Updated documentation to discuss how to use ``pip`` install with ``opNav`` modules.
