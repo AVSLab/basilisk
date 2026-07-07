@@ -1,0 +1,1 @@
+- Improved event-checking performance in ``SimulationBaseClass`` by caching the list of active events and rebuilding it only when event activity changes. Simulations that register many inactive event handlers while checking an active event frequently no longer pay an ``O(total events)`` rescan on every check cycle (issue #455).
