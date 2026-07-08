@@ -167,8 +167,8 @@ def plotParetoWhisker(data: dict, fileName: str) -> plt.Figure:
 # Colour/marker per (arm, method); shared by the bias-centric figures.
 _METHOD_STYLE = {
     ("sde", "W2Ito2"): ("#aa0000", "o", "SDE W2Ito2"),
-    ("sde", "W2Ito1"): ("#dd6600", "s", "SDE W2Ito1"),
-    ("sde", "EulerMayurama"): ("#dd0088", "^", "SDE Euler-Maruyama"),
+    ("sde", "SOSRA"): ("#dd6600", "s", "SDE SOSRA"),
+    ("sde", "SRA1"): ("#dd0088", "^", "SDE SRA1"),
     ("profile", "RK4"): ("#0044aa", "o", "profile RK4"),
     ("profile", "RK2"): ("#00aaaa", "s", "profile RK2"),
 }

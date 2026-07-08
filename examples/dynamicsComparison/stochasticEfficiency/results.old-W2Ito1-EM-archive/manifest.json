@@ -1,0 +1,648 @@
+{
+  "0d8a4e4eb66c61f8": {
+    "arm": "sde",
+    "dt": 1.0,
+    "isReference": false,
+    "key": "sde:EulerMayurama:dt=1",
+    "method": "EulerMayurama",
+    "nSamples": 300,
+    "params": {
+      "dragCoeff": 2.2,
+      "inclination": 33.3,
+      "initialAlt": 250.0,
+      "mass": 1.0,
+      "orbits": 2.0,
+      "projectedArea": 10.0,
+      "stationaryStd": 0.3,
+      "timeConstant": 108.0
+    },
+    "relTol": null
+  },
+  "27715f4855019554": {
+    "arm": "profile",
+    "dt": 8.0,
+    "isReference": false,
+    "key": "profile:RK4:dt=8",
+    "method": "RK4",
+    "nSamples": 3000,
+    "params": {
+      "dragCoeff": 2.2,
+      "inclination": 33.3,
+      "initialAlt": 250.0,
+      "mass": 1.0,
+      "orbits": 2.0,
+      "projectedArea": 10.0,
+      "stationaryStd": 0.3,
+      "timeConstant": 108.0
+    },
+    "relTol": null
+  },
+  "2f9694eb76ef6af3": {
+    "arm": "sde",
+    "dt": 10.0,
+    "isReference": false,
+    "key": "sde:W2Ito1:dt=10",
+    "method": "W2Ito1",
+    "nSamples": 1813821,
+    "params": {
+      "dragCoeff": 2.2,
+      "inclination": 33.3,
+      "initialAlt": 250.0,
+      "mass": 1.0,
+      "orbits": 2.0,
+      "projectedArea": 10.0,
+      "stationaryStd": 0.3,
+      "timeConstant": 108.0
+    },
+    "relTol": null
+  },
+  "34e89dae9ad6f2ff": {
+    "arm": "profile",
+    "dt": 4.0,
+    "isReference": false,
+    "key": "profile:RK2:dt=4",
+    "method": "RK2",
+    "nSamples": 3000,
+    "params": {
+      "dragCoeff": 2.2,
+      "inclination": 33.3,
+      "initialAlt": 250.0,
+      "mass": 1.0,
+      "orbits": 2.0,
+      "projectedArea": 10.0,
+      "stationaryStd": 0.3,
+      "timeConstant": 108.0
+    },
+    "relTol": null
+  },
+  "3e7a0749dfe902cd": {
+    "arm": "sde",
+    "dt": 2.0,
+    "isReference": false,
+    "key": "sde:W2Ito2:dt=2",
+    "method": "W2Ito2",
+    "nSamples": 129563,
+    "params": {
+      "dragCoeff": 2.2,
+      "inclination": 33.3,
+      "initialAlt": 250.0,
+      "mass": 1.0,
+      "orbits": 2.0,
+      "projectedArea": 10.0,
+      "stationaryStd": 0.3,
+      "timeConstant": 108.0
+    },
+    "relTol": null
+  },
+  "45cc41b05f199b64": {
+    "arm": "profile",
+    "dt": 4.0,
+    "isReference": false,
+    "key": "profile:RK4:dt=4",
+    "method": "RK4",
+    "nSamples": 3000,
+    "params": {
+      "dragCoeff": 2.2,
+      "inclination": 33.3,
+      "initialAlt": 250.0,
+      "mass": 1.0,
+      "orbits": 2.0,
+      "projectedArea": 10.0,
+      "stationaryStd": 0.3,
+      "timeConstant": 108.0
+    },
+    "relTol": null
+  },
+  "490008e57b4df34a": {
+    "arm": "sde",
+    "dt": 0.5,
+    "isReference": false,
+    "key": "sde:W2Ito1:dt=0.5",
+    "method": "W2Ito1",
+    "nSamples": 292649,
+    "params": {
+      "dragCoeff": 2.2,
+      "inclination": 33.3,
+      "initialAlt": 250.0,
+      "mass": 1.0,
+      "orbits": 2.0,
+      "projectedArea": 10.0,
+      "stationaryStd": 0.3,
+      "timeConstant": 108.0
+    },
+    "relTol": null
+  },
+  "51dbd9f0c5921acc": {
+    "arm": "sde",
+    "dt": 40.0,
+    "isReference": false,
+    "key": "sde:W2Ito1:dt=40",
+    "method": "W2Ito1",
+    "nSamples": 837,
+    "params": {
+      "dragCoeff": 2.2,
+      "inclination": 33.3,
+      "initialAlt": 250.0,
+      "mass": 1.0,
+      "orbits": 2.0,
+      "projectedArea": 10.0,
+      "stationaryStd": 0.3,
+      "timeConstant": 108.0
+    },
+    "relTol": null
+  },
+  "5618c45e2aeb2fae": {
+    "arm": "profile",
+    "dt": 2.0,
+    "isReference": false,
+    "key": "profile:RK4:dt=2",
+    "method": "RK4",
+    "nSamples": 3000,
+    "params": {
+      "dragCoeff": 2.2,
+      "inclination": 33.3,
+      "initialAlt": 250.0,
+      "mass": 1.0,
+      "orbits": 2.0,
+      "projectedArea": 10.0,
+      "stationaryStd": 0.3,
+      "timeConstant": 108.0
+    },
+    "relTol": null
+  },
+  "68d82d0e55c7e55a": {
+    "arm": "sde",
+    "dt": 40.0,
+    "isReference": false,
+    "key": "sde:EulerMayurama:dt=40",
+    "method": "EulerMayurama",
+    "nSamples": 300,
+    "params": {
+      "dragCoeff": 2.2,
+      "inclination": 33.3,
+      "initialAlt": 250.0,
+      "mass": 1.0,
+      "orbits": 2.0,
+      "projectedArea": 10.0,
+      "stationaryStd": 0.3,
+      "timeConstant": 108.0
+    },
+    "relTol": null
+  },
+  "692235a953c6e7fa": {
+    "arm": "sde",
+    "dt": 0.5,
+    "isReference": false,
+    "key": "sde:W2Ito2:dt=0.5",
+    "method": "W2Ito2",
+    "nSamples": 259106,
+    "params": {
+      "dragCoeff": 2.2,
+      "inclination": 33.3,
+      "initialAlt": 250.0,
+      "mass": 1.0,
+      "orbits": 2.0,
+      "projectedArea": 10.0,
+      "stationaryStd": 0.3,
+      "timeConstant": 108.0
+    },
+    "relTol": null
+  },
+  "6dc988d133f13459": {
+    "arm": "sde",
+    "dt": 1.0,
+    "isReference": false,
+    "key": "sde:W2Ito2:dt=1",
+    "method": "W2Ito2",
+    "nSamples": 790001,
+    "params": {
+      "dragCoeff": 2.2,
+      "inclination": 33.3,
+      "initialAlt": 250.0,
+      "mass": 1.0,
+      "orbits": 2.0,
+      "projectedArea": 10.0,
+      "stationaryStd": 0.3,
+      "timeConstant": 108.0
+    },
+    "relTol": null
+  },
+  "75a2fc2f2f749af4": {
+    "arm": "profile",
+    "dt": 8.0,
+    "isReference": false,
+    "key": "profile:RK2:dt=8",
+    "method": "RK2",
+    "nSamples": 3000,
+    "params": {
+      "dragCoeff": 2.2,
+      "inclination": 33.3,
+      "initialAlt": 250.0,
+      "mass": 1.0,
+      "orbits": 2.0,
+      "projectedArea": 10.0,
+      "stationaryStd": 0.3,
+      "timeConstant": 108.0
+    },
+    "relTol": null
+  },
+  "863e92b264f0fc76": {
+    "arm": "sde",
+    "dt": 10.0,
+    "isReference": false,
+    "key": "sde:W2Ito2:dt=10",
+    "method": "W2Ito2",
+    "nSamples": 113759,
+    "params": {
+      "dragCoeff": 2.2,
+      "inclination": 33.3,
+      "initialAlt": 250.0,
+      "mass": 1.0,
+      "orbits": 2.0,
+      "projectedArea": 10.0,
+      "stationaryStd": 0.3,
+      "timeConstant": 108.0
+    },
+    "relTol": null
+  },
+  "8dde2b3ff1e795ed": {
+    "arm": "sde",
+    "dt": 2.0,
+    "isReference": false,
+    "key": "sde:EulerMayurama:dt=2",
+    "method": "EulerMayurama",
+    "nSamples": 300,
+    "params": {
+      "dragCoeff": 2.2,
+      "inclination": 33.3,
+      "initialAlt": 250.0,
+      "mass": 1.0,
+      "orbits": 2.0,
+      "projectedArea": 10.0,
+      "stationaryStd": 0.3,
+      "timeConstant": 108.0
+    },
+    "relTol": null
+  },
+  "9476fb2a9a4b7349": {
+    "arm": "sde",
+    "dt": 10.0,
+    "isReference": false,
+    "key": "sde:EulerMayurama:dt=10",
+    "method": "EulerMayurama",
+    "nSamples": 300,
+    "params": {
+      "dragCoeff": 2.2,
+      "inclination": 33.3,
+      "initialAlt": 250.0,
+      "mass": 1.0,
+      "orbits": 2.0,
+      "projectedArea": 10.0,
+      "stationaryStd": 0.3,
+      "timeConstant": 108.0
+    },
+    "relTol": null
+  },
+  "a13e7ee313be8784": {
+    "arm": "profile",
+    "dt": 0.25,
+    "isReference": false,
+    "key": "profile:RK2:dt=0.25",
+    "method": "RK2",
+    "nSamples": 3000,
+    "params": {
+      "dragCoeff": 2.2,
+      "inclination": 33.3,
+      "initialAlt": 250.0,
+      "mass": 1.0,
+      "orbits": 2.0,
+      "projectedArea": 10.0,
+      "stationaryStd": 0.3,
+      "timeConstant": 108.0
+    },
+    "relTol": null
+  },
+  "a5374f12023cc93b": {
+    "arm": "sde",
+    "dt": 2.0,
+    "isReference": false,
+    "key": "sde:W2Ito1:dt=2",
+    "method": "W2Ito1",
+    "nSamples": 192428,
+    "params": {
+      "dragCoeff": 2.2,
+      "inclination": 33.3,
+      "initialAlt": 250.0,
+      "mass": 1.0,
+      "orbits": 2.0,
+      "projectedArea": 10.0,
+      "stationaryStd": 0.3,
+      "timeConstant": 108.0
+    },
+    "relTol": null
+  },
+  "b0f1085bde80b239": {
+    "arm": "sde",
+    "dt": 5.0,
+    "isReference": false,
+    "key": "sde:EulerMayurama:dt=5",
+    "method": "EulerMayurama",
+    "nSamples": 300,
+    "params": {
+      "dragCoeff": 2.2,
+      "inclination": 33.3,
+      "initialAlt": 250.0,
+      "mass": 1.0,
+      "orbits": 2.0,
+      "projectedArea": 10.0,
+      "stationaryStd": 0.3,
+      "timeConstant": 108.0
+    },
+    "relTol": null
+  },
+  "b56d4733e181acae": {
+    "arm": "reference",
+    "dt": 2.0,
+    "isReference": true,
+    "key": "reference:scipy:dt=2",
+    "method": "scipy",
+    "nSamples": 3269532,
+    "params": {
+      "dragCoeff": 2.2,
+      "inclination": 33.3,
+      "initialAlt": 250.0,
+      "mass": 1.0,
+      "orbits": 2.0,
+      "projectedArea": 10.0,
+      "stationaryStd": 0.3,
+      "timeConstant": 108.0
+    },
+    "relTol": null
+  },
+  "b9ead51ed7f79a21": {
+    "arm": "sde",
+    "dt": 20.0,
+    "isReference": false,
+    "key": "sde:EulerMayurama:dt=20",
+    "method": "EulerMayurama",
+    "nSamples": 300,
+    "params": {
+      "dragCoeff": 2.2,
+      "inclination": 33.3,
+      "initialAlt": 250.0,
+      "mass": 1.0,
+      "orbits": 2.0,
+      "projectedArea": 10.0,
+      "stationaryStd": 0.3,
+      "timeConstant": 108.0
+    },
+    "relTol": null
+  },
+  "bb851a0df78005d3": {
+    "arm": "profile",
+    "dt": 0.5,
+    "isReference": false,
+    "key": "profile:RK2:dt=0.5",
+    "method": "RK2",
+    "nSamples": 3000,
+    "params": {
+      "dragCoeff": 2.2,
+      "inclination": 33.3,
+      "initialAlt": 250.0,
+      "mass": 1.0,
+      "orbits": 2.0,
+      "projectedArea": 10.0,
+      "stationaryStd": 0.3,
+      "timeConstant": 108.0
+    },
+    "relTol": null
+  },
+  "bbcc405157c50fbd": {
+    "arm": "profile",
+    "dt": 2.0,
+    "isReference": false,
+    "key": "profile:RK2:dt=2",
+    "method": "RK2",
+    "nSamples": 3000,
+    "params": {
+      "dragCoeff": 2.2,
+      "inclination": 33.3,
+      "initialAlt": 250.0,
+      "mass": 1.0,
+      "orbits": 2.0,
+      "projectedArea": 10.0,
+      "stationaryStd": 0.3,
+      "timeConstant": 108.0
+    },
+    "relTol": null
+  },
+  "c47985201d59bbba": {
+    "arm": "sde",
+    "dt": 0.5,
+    "isReference": false,
+    "key": "sde:EulerMayurama:dt=0.5",
+    "method": "EulerMayurama",
+    "nSamples": 300,
+    "params": {
+      "dragCoeff": 2.2,
+      "inclination": 33.3,
+      "initialAlt": 250.0,
+      "mass": 1.0,
+      "orbits": 2.0,
+      "projectedArea": 10.0,
+      "stationaryStd": 0.3,
+      "timeConstant": 108.0
+    },
+    "relTol": null
+  },
+  "c6b773ce07f27dc4": {
+    "arm": "sde",
+    "dt": 40.0,
+    "isReference": false,
+    "key": "sde:W2Ito2:dt=40",
+    "method": "W2Ito2",
+    "nSamples": 3115,
+    "params": {
+      "dragCoeff": 2.2,
+      "inclination": 33.3,
+      "initialAlt": 250.0,
+      "mass": 1.0,
+      "orbits": 2.0,
+      "projectedArea": 10.0,
+      "stationaryStd": 0.3,
+      "timeConstant": 108.0
+    },
+    "relTol": null
+  },
+  "d0d951d6122ab513": {
+    "arm": "profile",
+    "dt": 0.5,
+    "isReference": false,
+    "key": "profile:RK4:dt=0.5",
+    "method": "RK4",
+    "nSamples": 3000,
+    "params": {
+      "dragCoeff": 2.2,
+      "inclination": 33.3,
+      "initialAlt": 250.0,
+      "mass": 1.0,
+      "orbits": 2.0,
+      "projectedArea": 10.0,
+      "stationaryStd": 0.3,
+      "timeConstant": 108.0
+    },
+    "relTol": null
+  },
+  "d38aa4f7c9ff9b58": {
+    "arm": "sde",
+    "dt": 1.0,
+    "isReference": false,
+    "key": "sde:W2Ito1:dt=1",
+    "method": "W2Ito1",
+    "nSamples": 532498,
+    "params": {
+      "dragCoeff": 2.2,
+      "inclination": 33.3,
+      "initialAlt": 250.0,
+      "mass": 1.0,
+      "orbits": 2.0,
+      "projectedArea": 10.0,
+      "stationaryStd": 0.3,
+      "timeConstant": 108.0
+    },
+    "relTol": null
+  },
+  "d44c10e741adc471": {
+    "arm": "sde",
+    "dt": 20.0,
+    "isReference": false,
+    "key": "sde:W2Ito2:dt=20",
+    "method": "W2Ito2",
+    "nSamples": 12935,
+    "params": {
+      "dragCoeff": 2.2,
+      "inclination": 33.3,
+      "initialAlt": 250.0,
+      "mass": 1.0,
+      "orbits": 2.0,
+      "projectedArea": 10.0,
+      "stationaryStd": 0.3,
+      "timeConstant": 108.0
+    },
+    "relTol": null
+  },
+  "dde95734b0e37fb4": {
+    "arm": "sde",
+    "dt": 20.0,
+    "isReference": false,
+    "key": "sde:W2Ito1:dt=20",
+    "method": "W2Ito1",
+    "nSamples": 201882,
+    "params": {
+      "dragCoeff": 2.2,
+      "inclination": 33.3,
+      "initialAlt": 250.0,
+      "mass": 1.0,
+      "orbits": 2.0,
+      "projectedArea": 10.0,
+      "stationaryStd": 0.3,
+      "timeConstant": 108.0
+    },
+    "relTol": null
+  },
+  "e0a6f852e0ae7608": {
+    "arm": "profile",
+    "dt": 1.0,
+    "isReference": false,
+    "key": "profile:RK2:dt=1",
+    "method": "RK2",
+    "nSamples": 3000,
+    "params": {
+      "dragCoeff": 2.2,
+      "inclination": 33.3,
+      "initialAlt": 250.0,
+      "mass": 1.0,
+      "orbits": 2.0,
+      "projectedArea": 10.0,
+      "stationaryStd": 0.3,
+      "timeConstant": 108.0
+    },
+    "relTol": null
+  },
+  "e386a6c36d8484e2": {
+    "arm": "profile",
+    "dt": 1.0,
+    "isReference": false,
+    "key": "profile:RK4:dt=1",
+    "method": "RK4",
+    "nSamples": 3000,
+    "params": {
+      "dragCoeff": 2.2,
+      "inclination": 33.3,
+      "initialAlt": 250.0,
+      "mass": 1.0,
+      "orbits": 2.0,
+      "projectedArea": 10.0,
+      "stationaryStd": 0.3,
+      "timeConstant": 108.0
+    },
+    "relTol": null
+  },
+  "e889b1a0d3fbfd79": {
+    "arm": "sde",
+    "dt": 5.0,
+    "isReference": false,
+    "key": "sde:W2Ito1:dt=5",
+    "method": "W2Ito1",
+    "nSamples": 3269532,
+    "params": {
+      "dragCoeff": 2.2,
+      "inclination": 33.3,
+      "initialAlt": 250.0,
+      "mass": 1.0,
+      "orbits": 2.0,
+      "projectedArea": 10.0,
+      "stationaryStd": 0.3,
+      "timeConstant": 108.0
+    },
+    "relTol": null
+  },
+  "f37a57bf112130dd": {
+    "arm": "sde",
+    "dt": 5.0,
+    "isReference": false,
+    "key": "sde:W2Ito2:dt=5",
+    "method": "W2Ito2",
+    "nSamples": 245187,
+    "params": {
+      "dragCoeff": 2.2,
+      "inclination": 33.3,
+      "initialAlt": 250.0,
+      "mass": 1.0,
+      "orbits": 2.0,
+      "projectedArea": 10.0,
+      "stationaryStd": 0.3,
+      "timeConstant": 108.0
+    },
+    "relTol": null
+  },
+  "f4873a62166b56ce": {
+    "arm": "profile",
+    "dt": 0.25,
+    "isReference": false,
+    "key": "profile:RK4:dt=0.25",
+    "method": "RK4",
+    "nSamples": 3000,
+    "params": {
+      "dragCoeff": 2.2,
+      "inclination": 33.3,
+      "initialAlt": 250.0,
+      "mass": 1.0,
+      "orbits": 2.0,
+      "projectedArea": 10.0,
+      "stationaryStd": 0.3,
+      "timeConstant": 108.0
+    },
+    "relTol": null
+  }
+}

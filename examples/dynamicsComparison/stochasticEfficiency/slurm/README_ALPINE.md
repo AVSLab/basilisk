@@ -53,9 +53,12 @@ spread, ≈146 m here). The bias is `σ̂_cfg − σ̂_ref`, so its error is
 each config `N ≈ σ²/(REL_TARGET·|bias|)²` and the reference enough to match the
 **smallest** resolved bias. Consequences, all handled automatically:
 
-- **Per-config N spans ~100 → ~millions.** Huge-bias configs (coarse `dt`,
-  Euler-Maruyama) need almost nothing; the near-converged weak-SRK configs at the
-  smallest `dt` dominate. A uniform N would be absurd — hence the plan.
+- **Per-config N spans ~100 → ~millions.** Huge-bias configs (coarse `dt`, or a
+  method past its stability limit) need almost nothing; the near-converged SDE
+  configs at the smallest `dt` dominate. A uniform N would be absurd — hence the
+  plan. (For the strong methods SRA1/SOSRA this cost can be collapsed by
+  CRN-pairing — see the study README's "Weak vs strong convergence" — but the
+  shipped plan/analyze use the conservative unpaired estimator.)
 - **The reference needs ~10⁶ samples** to resolve a ~1 m bias, so it is
   **sharded** across array tasks (the earlier single-job reference could not fit
   the walltime).
@@ -68,10 +71,11 @@ each config `N ≈ σ²/(REL_TARGET·|bias|)²` and the reference enough to matc
   `upper-bound`. Lower `NEGLIGIBLE_FRAC` to chase smaller biases at higher cost.
 
 Representative plan for the default scenario (`REL_TARGET=0.10`,
-`PER_TASK_SECONDS=36000`): reference ≈1.2 M samples in ~6 shards, ~51 array
-tasks, **≈205 core-hours total (~3 h on 64 cores)** — dominated by the two
-W2Ito1/W2Ito2 `dt=1` configs (biases ≈1.3–1.7 m). Inspect your own plan before
-launching production:
+`PER_TASK_SECONDS=36000`): the reference plus the small-`dt` SDE configs
+(SRA1/SOSRA/W2Ito2) dominate the budget, since their near-zero bias must be
+pinned against the σ≈80–150 m unpaired floor. `planBudget.py` sizes each config
+from its own pilot bias; always regenerate and inspect your plan before
+launching production (exact N/shards depend on the pilot):
 
 ```bash
 # after the pilot+plan stages (or locally on a pilot cache):

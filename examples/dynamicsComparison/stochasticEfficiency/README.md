@@ -23,8 +23,21 @@ dominated by deterministic drag).
 
 | Arm | What it does | Cost characteristic |
 |-----|--------------|---------------------|
-| `sde` | Stochastic integrator (Euler–Maruyama, W2Ito1, W2Ito2) evolves the OU density state **inline**. One run = one realization. | Large `dt` allowed (weak order 2) → cheap per sample |
+| `sde` | Stochastic integrator (SRA1, SOSRA, W2Ito2) evolves the OU density state **inline**. One run = one realization. | Large `dt` allowed (order 1.5–2) → cheap per sample |
 | `profile` | OU path generated **in advance** (exact sampling), replayed by `ProfileAtmDensity` and integrated with a deterministic RK (RK2/RK4). | Needs small `dt` to resolve the rough forcing → many stage evaluations |
+
+The three SDE methods are (see `SDE_METHODS` in `stochasticDragModel.py`):
+
+* **SRA1** and **SOSRA** — Roessler stochastic Runge–Kutta methods for
+  **additive** noise, **strong order 1.5 / weak order 2**. They advance the OU
+  state with the *continuous* Wiener increments `dW`, `dZ`, so they track a
+  Brownian path (strong sense). SOSRA is the stability-optimised variant of the
+  same order. These are valid here because the OU density correction is additive
+  (its diffusion `σ_st·√(2/τ)` does not depend on the state).
+* **W2Ito2** — Tang & Xiao **weak-order-2** method for general Itô noise. It
+  drives the step with discrete three-point random variables
+  (`Iₖ ∈ {±√(3h), 0}`, quantised from `dW`), so it reproduces the *moments* of
+  the SDE solution without tracking any individual Brownian path.
 
 ### Fair-speed requirement: the profile replay module is a Numba module
 
@@ -38,6 +51,22 @@ the implementation language. A pure-Python version is retained as
 `ProfileAtmDensityPy` for cross-checking (bit-identical results) but **must not
 be used for timing** — measured ~2.7× slower purely from interpreter overhead,
 which would unfairly inflate the stochastic arm's apparent speedup.
+
+**The profile arm is also charged for generating its OU path.** The SDE arm
+draws its noise *inline*, inside the timed `ExecuteSimulation`; the profile arm
+must pre-generate a full OU path per realization, a cost it would otherwise dodge
+if only integration were timed. So `runRealization` times the OU-path generation
+and adds it to the profile arm's reported wall (the SDE arm's stays untouched).
+To keep that charge fair, the generation's sequential recurrence is
+**numba-compiled** (`_ouRecurrence` in `stochasticDragModel.py`) — a production
+noise generator would be compiled, just as the SDE arm's is C++ — and the JIT is
+warmed up once outside the timed region so no realization pays the compile cost.
+The compiled charge is small (sub-millisecond for a ~20 k-node path); timing the
+*interpreted* loop instead would over-penalise the profile arm ~100×. **numba is
+required** for any timed profile-arm run: if it is unavailable, `_ouRecurrence`
+raises rather than silently fall back to the slow interpreted loop (which would
+corrupt the comparison). The numpy `default_rng(seed)` draws are unchanged, so
+the generated path stays bit-identical and shareable with the reference for CRN.
 
 A third arm, `reference`, is an **independent scipy `solve_ivp`** integration of
 the same planar problem with the same prescribed OU path. It shares none of
@@ -72,7 +101,7 @@ $PY plotResults.py --moment std
 ```
 
 `--list` prints the config grid and cache hashes. `--only <key>` runs a single
-config (e.g. `--only sde:W2Ito2:dt=20`) — ideal for a cluster task array, since
+config (e.g. `--only sde:SRA1:dt=20`) — ideal for a cluster task array, since
 each config writes its own `results/samples/<hash>.npz` and the manifest update
 is atomic. Re-invoking with a larger `--nSamples` only simulates the missing
 realizations (seed = `baseSeed + i`, so the sequence continues).
@@ -91,45 +120,66 @@ collide.
 
 ## Weak vs strong convergence (why the comparison is set up this way)
 
-The stochastic integrators here (Euler-Maruyama, W2Ito1, W2Ito2) are
-**weak-convergent**: they reproduce the *moments / distribution* of the SDE
-solution, not any individual Brownian sample path. They even drive the step with
-discrete three-point random variables (`Iₖ ∈ {±√(3h), 0}`), so there is no
-continuous Wiener path to refine in the first place. This is not a limitation
-to be worked around — it is the right and only relevant notion of accuracy for
-this study, because **the figure of merit is a moment** (the standard deviation
-of the final semi-major axis), i.e. a distributional functional. Weak order 2
-means the error in `E[g(a)]` shrinks like `O(h²)`.
+The SDE arm now mixes **two kinds** of stochastic integrator, and the
+distinction matters throughout:
 
-This single fact explains three design choices:
+* **SRA1 / SOSRA are strong-order-1.5 methods.** They advance the OU state with
+  the *continuous* Wiener increments and converge *pathwise* — given a Brownian
+  path, they approximate that specific realization, not just its distribution.
+* **W2Ito2 is a weak-order-2 method.** It reproduces the *moments / distribution*
+  of the SDE solution and drives the step with discrete three-point random
+  variables (`Iₖ ∈ {±√(3h), 0}`, quantised from the Gaussian increment), so it
+  tracks no individual Brownian path.
 
-1. **Why the SDE arm cannot use common random numbers.** CRN pairs the profile
-   arm with the reference because both integrate the *same* OU path (a strong,
-   pathwise object). A weak method tracks no path, so there is fundamentally no
-   "same path" to pair against — the SDE bias is intrinsically only an *unpaired*
-   moment difference, with the wider CI that implies. This is a property of weak
-   methods, not of the implementation.
+Because **the figure of merit is a moment** (the standard deviation of the final
+semi-major axis, a distributional functional), weak convergence is already the
+*relevant* notion of accuracy: weak order 2 means the error in `E[g(a)]` shrinks
+like `O(h²)`, and both strong and weak methods here are weak order 2 or better.
+The strong methods simply give *more* — pathwise tracking — which turns out to
+matter for how cheaply their bias can be measured (next point).
 
-2. **Why the stochastic arm can be cheaper.** A weak method deliberately does
-   *not* spend effort getting each trajectory right (which the strong / profile
-   arm must, to integrate its prescribed path accurately). That is exactly what
-   lets it take large steps and use cheap discrete increments — the source of the
-   efficiency advantage. The win is "less work per realization for the same
-   distributional accuracy", not "fewer realizations".
+This explains the study's design choices:
 
-3. **Why this result is figure-of-merit-specific.** For a *pathwise* quantity
-   (an actual trajectory, a worst-case excursion, a collision check against a
-   specific realization) a weak SDE method would be inappropriate, and only the
-   strong / profile arm would qualify. The efficiency conclusion here applies to
-   *moment* estimation; it does not transfer to strong-sense goals.
+1. **Common random numbers (CRN) — available for the strong methods, not the
+   weak one.** CRN pairs the profile arm with the reference because both
+   integrate the *same* OU path, so the huge path-to-path variance cancels and a
+   sub-metre bias is resolvable at only ~3000 samples.
+   - **SRA1/SOSRA** track a path, so they *can* be paired the same way: driven by
+     the same Brownian increments as the reference, their per-realization FoM
+     tracks it to ~0.1 m out of a ~50–150 m spread (measured correlation
+     ≈ 0.99999, ≈700× smaller bias-estimate variance than unpaired). See
+     `PrescribedGaussianNoiseGenerator` in
+     `src/simulation/dynamics/_GeneralModuleFiles/stochasticNoiseGenerator.h`,
+     which lets a caller feed the integrator a prescribed increment sequence.
+     **This is a genuine option to slash the SDE arm's bias-resolution cost**;
+     the shipped analysis still routes the SDE arm through the *unpaired*
+     estimator (see below), so exploiting it is a concrete next step, not yet
+     wired into `statsTools`/`analyzeResults`.
+   - **W2Ito2** quantises `dW` to a three-point RV before using it, so even a
+     prescribed same-path increment is collapsed and the pairing correlation
+     drops to ≈ 0.85 (≈2.5× reduction only). For the weak method there is
+     genuinely no shared path to pair against, so its bias remains an *unpaired*
+     moment difference with the wider CI that implies — a property of the weak
+     scheme, not of the implementation.
 
-Caveat on the measured order: weak order 2 implies the std bias should fall
-`O(h²)` asymptotically, but on the coarse grid it looks closer to order 1
-(dt = 40 → 20 → 10 gives ≈ 24 → 11 → 6 m). The order cannot be cleanly extracted
-here because for dt ≤ 10 the bias already sits at the Monte-Carlo noise floor,
-and dt ≥ 20 may not be in the asymptotic regime. A dedicated weak-order study
-(large N at a few large dt) is a good cluster task; it is out of scope for the
-efficiency Pareto.
+2. **Why the stochastic arm can be cheaper.** A large-`dt` SDE step still
+   captures the distribution (weak order 2) or the path (strong order 1.5) of the
+   forcing, whereas the profile arm must resolve the piecewise-linear replayed
+   path with a *small* `dt` (many stage evaluations). The win is "less work per
+   realization for the same accuracy", not "fewer realizations".
+
+3. **Why this result is figure-of-merit-specific.** For a *pathwise* quantity (an
+   actual trajectory, a worst-case excursion, a collision check against a
+   specific realization) the weak method (W2Ito2) would be inappropriate; the
+   strong SDE methods (SRA1/SOSRA) and the profile arm would qualify. The
+   efficiency conclusion here is stated for *moment* estimation.
+
+Note on the measured order: for the strong methods the std bias should fall as a
+high power of `dt`, but on the coarse grid the bias for `dt ≤ 5–10` already sits
+at the Monte-Carlo noise floor of the *unpaired* estimator, so the order cannot
+be cleanly extracted from an unpaired sweep. CRN-pairing the strong methods (per
+point 1) would resolve the sub-floor biases and make a clean order fit possible —
+a good dedicated cluster task, out of scope for the efficiency Pareto itself.
 
 ## Statistical estimators and margins of error
 
@@ -181,8 +231,8 @@ rather than a point value. Each config's JSON therefore carries `momentLo/Hi`,
 - `*_paretoWhisker.svg` — **each config at its measured budget (N = nPilot) with
   95% error bars on both axes**: horizontal = wall-time CI, vertical = total-error
   band (bias ⊕ MC). This is the statistically honest view, since both
-  coordinates are measured rather than extrapolated. Coloured by method so
-  Euler-Maruyama (large bias) is distinct from the weak-order-2 SRK methods.
+  coordinates are measured rather than extrapolated. Coloured by method so the
+  strong additive methods (SRA1/SOSRA) are distinct from the weak-order-2 W2Ito2.
 - `*_bias.svg` — signed discretization bias vs dt with 95% CI whiskers on a
   symlog axis (profile CIs are tight via CRN; SDE CIs are wide and often cross
   zero).
@@ -211,15 +261,21 @@ negligibility floor — a tight, honest "bias < X" statement that is **cheaper**
 than over-resolving a negligible number, and a stronger accuracy claim than a
 noisy point value.
 
-Representative result (this pilot, on 32 cores): the **profile arm is free**
-(~seconds total — its bias SE is sub-metre via CRN), while the **SDE arm needs
-~3.9 h** total, dominated by configs whose bias lands in the awkward 1–4% band
-(e.g. W2Ito2 dt=1, bias 0.9% of truth → ~2.3 h). 10% relative accuracy on every
-ranking-relevant integrator is thus a few cluster-hours — entirely affordable;
-only sub-0.5%-of-truth biases are reported as upper bounds. No variance-reduction
-trick (CRN-across-dt, control variates, Richardson, MLMC) lowers the SDE cost:
-all are floored by the (non-CRN-pairable) reference's own MC error, so the one
-real lever is a larger reference `N`, amortised once across all SDE configs.
+Representative result (with the *unpaired* SDE estimator the shipped analysis
+uses): the **profile arm is essentially free** (~seconds total — its bias SE is
+sub-metre via CRN), while the **SDE arm costs core-days**, dominated by configs
+whose small bias must be pinned against the σ≈80–150 m unpaired floor. 10%
+relative accuracy on the larger-bias configs is a few cluster-hours; sub-0.5%-of-
+truth biases are reported as tight upper bounds rather than over-resolved.
+
+Two levers reduce the SDE cost, both floored today by the *unpaired* estimator:
+a larger reference `N` (amortised once across all SDE configs), and — new with
+this integrator set — **CRN-pairing the strong methods (SRA1/SOSRA)** via a
+prescribed same-path increment sequence, which the prototype shows cuts their
+bias-estimate variance ~700× (see "Weak vs strong convergence"). Wiring the
+strong-method CRN estimator into `statsTools`/`analyzeResults` would move
+SRA1/SOSRA from core-days to the same ~seconds regime as the profile arm; it is
+not yet implemented. W2Ito2 (weak) cannot be paired and stays unpaired.
 
 ## How the Pareto front is built (numerically efficient)
 
@@ -245,11 +301,14 @@ These were established while building the study and are baked into the defaults:
 2. **The OU profile uses a fixed fine master grid** (`profileGridDt`, default
    0.25 s) independent of `dt`, so refining `dt` is a genuine integrator
    convergence study, not a moving noise target.
-3. **Euler–Maruyama is a poor performer here**: explicit-Euler drift is only
-   first order, so it gets even the *deterministic* orbit wrong by ~370 km at
-   `dt=2 s`. The weak SRK methods (W2Ito1/W2Ito2) are exact on the deterministic
-   orbit at `dt=2 s` (embedded RK3/RK4) and match the truth to MC noise. EM is
-   kept in the grid for completeness but is not competitive.
+3. **The SDE methods must have a high-order deterministic core to be viable at
+   large `dt`.** A first-order-drift scheme (e.g. plain Euler–Maruyama, which
+   this study no longer includes) gets even the *deterministic* orbit wrong by
+   hundreds of km at `dt=2 s`. SRA1/SOSRA/W2Ito2 embed high-order deterministic
+   Runge–Kutta stages, so they are accurate on the deterministic orbit at large
+   `dt` and match the truth to MC noise. (Observed exception at the extreme: at
+   `dt=40 s` SOSRA can leave its stability region for this problem and the FoM
+   blows up — a large-`dt` stability limit, not a bias floor.)
 4. Adaptive deterministic RK (RKF45/RKF78) is excluded from the default profile
    grid: its embedded error controller misbehaves on the piecewise-linear
    (kinked) replayed forcing.

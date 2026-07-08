@@ -24,10 +24,14 @@ density correction -- but exposes it through two interchangeable "arms" so the
 two ways of capturing the noise can be compared head-to-head:
 
 * **Arm "sde"** (stochastic integrator): the OU density-correction state is
-  evolved *inline* by a stochastic integrator (Euler-Maruyama or one of the
-  weak second-order Tang & Xiao SRK methods).  One simulation = one realization
-  of the noisy trajectory.  The macro time step ``dt`` can be large because the
-  stochastic integrator is designed to capture the weak statistics of the noise.
+  evolved *inline* by a stochastic integrator -- one of the Roessler additive
+  strong-order-1.5 methods (SRA1, SOSRA) or the Tang & Xiao weak-order-2 method
+  (W2Ito2).  One simulation = one realization of the noisy trajectory.  The
+  macro time step ``dt`` can be large because these methods are designed to
+  capture the trajectory (SRA1/SOSRA) or the weak statistics (W2Ito2) of the
+  noise with high order.  The OU density correction is *additive* noise (its
+  diffusion ``sigma_st*sqrt(2/tau)`` is state-independent), which is exactly the
+  regime the SRA family is built for.
 
 * **Arm "profile"** (pre-generated noise + deterministic integrator): the OU
   density-correction path ``x(t)`` is generated *in advance* (sampled exactly on
@@ -57,6 +61,40 @@ from dataclasses import dataclass, field
 from typing import Callable, Literal, Optional
 
 import numpy as np
+
+# Numba is used to compile the OU-path recurrence (Arm "profile") to C speed, so
+# the cost of generating the noise -- which is now *timed* and charged to the
+# profile arm for a fair comparison against the SDE arm's inline C++ noise draws
+# -- reflects a compiled generator, not Python-interpreter overhead. Imported
+# independently of Basilisk (it is also what backs the ProfileAtmDensity
+# NumbaModel).
+#
+# We deliberately do NOT provide a pure-Python fallback for the recurrence: if
+# numba is missing, running the profile arm would time an interpreted loop that
+# is ~100-150x slower than the compiled one, silently and unfairly inflating the
+# profile arm's wall time and corrupting the whole comparison. So the module
+# stays importable without numba (login-node metadata ops still work), but the
+# recurrence itself RAISES if it is ever *called* without numba -- see
+# ``_ouRecurrence``. ``_njit`` below is only a decorator placeholder for that
+# no-numba import case; it is never actually run as the loop.
+try:
+    from numba import njit as _njit
+    _NUMBA_AVAILABLE = True
+except Exception:  # numba missing (e.g. login node): import OK, but no timed run
+    _NUMBA_AVAILABLE = False
+
+    def _njit(*args, **kwargs):
+        """Placeholder so the ``@_njit`` decorator parses when numba is absent.
+
+        It intentionally leaves the decorated function as-is; that function
+        (``_ouRecurrence``) guards its own body and raises if invoked without
+        numba, so no interpreted recurrence is ever timed.
+        """
+        if len(args) == 1 and callable(args[0]) and not kwargs:
+            return args[0]
+        def _decorator(func):
+            return func
+        return _decorator
 
 # Basilisk is imported lazily/guarded so that this module can be imported WITHOUT
 # a working Basilisk install -- e.g. on a Slurm login node, where compiled .so
@@ -106,8 +144,13 @@ def _requireBasilisk():
 # Arm identifiers
 Arm = Literal["sde", "profile"]
 
-# Stochastic-integrator method names (Arm "sde")
-SDE_METHODS = ("EulerMayurama", "W2Ito1", "W2Ito2")
+# Stochastic-integrator method names (Arm "sde").
+#   * SRA1   -- Roessler SRA, strong order 1.5 / weak order 2, ADDITIVE noise
+#   * SOSRA  -- stability-optimized SRA1 (same orders), ADDITIVE noise
+#   * W2Ito2 -- Tang & Xiao, weak order 2 (general Ito noise)
+# SRA1/SOSRA are valid here because the OU density correction is additive (its
+# diffusion sigma_st*sqrt(2/tau) does not depend on the state).
+SDE_METHODS = ("SRA1", "SOSRA", "W2Ito2")
 
 # Deterministic-integrator method names (Arm "profile")
 DET_METHODS = ("RK4", "RK2", "RKF45", "RKF78")
@@ -181,13 +224,56 @@ class RealizationResult:
     """Outcome of a single realization."""
     fomSemiMajorAxis: float            # [m] final semi-major axis a(tf)
     fomAltitude: float                 # [km] final altitude
-    wallSeconds: float                 # [s] ExecuteSimulation wall time only
+    wallSeconds: float                 # [s] integration wall; profile arm also
+                                       #     includes its (numba) OU-path gen
     nSteps: int                        # number of macro steps taken
 
 
 # ---------------------------------------------------------------------------
 # Exact OU path generation (Arm "profile")
 # ---------------------------------------------------------------------------
+def _ouRecurrenceGuard():
+    """Raise if the OU recurrence is invoked without numba (never fall back).
+
+    Kept as a separate helper so it stays pure Python: it must run even in the
+    no-numba build, where ``_ouRecurrence`` is the raw (uncompiled) function.
+    """
+    raise RuntimeError(
+        "numba is required to generate the OU noise path but could not be "
+        "imported. The profile arm times its noise generation, so running it "
+        "with an interpreted (uncompiled) recurrence -- ~100x slower -- would "
+        "silently and unfairly inflate the profile arm's wall time and corrupt "
+        "the comparison. Install numba in this environment (it is also needed by "
+        "the ProfileAtmDensity NumbaModel) before running any timed profile-arm "
+        "realization.")
+
+
+@_njit(cache=True, fastmath=False)
+def _ouRecurrence(decay, noiseStd, z, x0):
+    """OU exact-transition recurrence, compiled to C speed by numba.
+
+    This is the sequential (non-vectorizable) hot loop of :func:`generateOUPath`.
+    It is isolated so it can be JIT-compiled: the interpreted cost of this loop
+    (~100x slower) would otherwise unfairly penalise the profile arm now that OU
+    generation is *timed* and charged to that arm.  The Gaussian draws ``z`` are
+    supplied by the caller (from numpy's ``default_rng``) so the produced path is
+    bit-identical to the pure-Python version and stays shareable with the scipy
+    reference for CRN.
+
+    When numba is present this whole guard folds away at compile time (the global
+    ``_NUMBA_AVAILABLE`` is a constant ``True``); when numba is absent the
+    function is plain Python and the guard raises rather than run interpreted.
+    """
+    if not _NUMBA_AVAILABLE:
+        _ouRecurrenceGuard()
+    n = z.shape[0]
+    x = np.empty(n + 1, dtype=np.float64)
+    x[0] = x0
+    for k in range(n):
+        x[k + 1] = x[k] * decay[k] + noiseStd[k] * z[k]
+    return x
+
+
 def generateOUPath(
     times: np.ndarray,
     stationaryStd: float,
@@ -226,16 +312,43 @@ def generateOUPath(
         Array of x(t) values with the same length as ``times``.
     """
     theta = 1.0 / timeConstant
-    x = np.empty_like(times, dtype=float)
-    x[0] = x0
+    times = np.asarray(times, dtype=float)
     dts = np.diff(times)
-    # Vectorized per-step transition constants
+    # Vectorized per-step transition constants.
     decay = np.exp(-theta * dts)
     noiseStd = stationaryStd * np.sqrt(np.maximum(1.0 - np.exp(-2.0 * theta * dts), 0.0))
+    # Draw the standard normals with numpy (NOT numba) so the path is
+    # bit-identical to the reference's and shareable for CRN; run the sequential
+    # recurrence in the compiled kernel.
     z = rng.standard_normal(dts.size)
-    for n in range(dts.size):
-        x[n + 1] = x[n] * decay[n] + noiseStd[n] * z[n]
-    return x
+    if times.size == 1:
+        return np.array([x0], dtype=float)
+    return _ouRecurrence(decay, noiseStd, z, float(x0))
+
+
+# Process-wide guard so the numba JIT of _ouRecurrence is triggered at most once.
+_OU_WARMED_UP = False
+
+
+def _warmUpOUPath(params: "ScenarioParams", profileTimes: np.ndarray) -> None:
+    """Trigger numba's one-time JIT compile of the OU recurrence, untimed.
+
+    Called once per process before the first *timed* profile realization so the
+    compile latency is never charged to any realization's wall.  Uses tiny dummy
+    inputs of the SAME dtype/shape-signature as the real call, which is all numba
+    needs to specialise the kernel; the real path is generated normally afterward.
+    A no-op after the first call and harmless if numba is absent (``_ouRecurrence``
+    is then a plain Python function).
+    """
+    global _OU_WARMED_UP
+    if _OU_WARMED_UP or not _NUMBA_AVAILABLE:
+        _OU_WARMED_UP = True
+        return
+    decay = np.ones(2, dtype=float)
+    noiseStd = np.zeros(2, dtype=float)
+    z = np.zeros(2, dtype=float)
+    _ouRecurrence(decay, noiseStd, z, 0.0)
+    _OU_WARMED_UP = True
 
 
 class ProfileAtmDensityPy(_SysModelBase):
@@ -282,7 +395,10 @@ class ProfileAtmDensity(_NumbaModelBase):
     stage with zero per-tick Python overhead.  This is essential for a fair
     speed comparison: the C++ stochastic arm and this profile arm then differ in
     wall time only because of their *algorithms* (step size, number of stage
-    evaluations), not the implementation language.
+    evaluations), not the implementation language.  The one-time OU-path
+    *generation* charged to the profile arm is likewise compiled (see
+    :func:`_ouRecurrence`), so the fairness holds for the whole timed cost, not
+    just the per-stage replay.
 
     It reads the unperturbed (exponential) atmospheric density, multiplies it by
     ``(1 + x(t))`` where ``x(t)`` is linearly interpolated from the pre-generated
@@ -336,15 +452,20 @@ class ProfileAtmDensity(_NumbaModelBase):
 # Integrator factories
 # ---------------------------------------------------------------------------
 def makeStochasticIntegrator(scene, method: str, seed: int):
-    """Build a stochastic integrator for Arm 'sde' and seed its RNG."""
-    if method == "EulerMayurama":
-        integ = svIntegrators.svStochasticIntegratorMayurama(scene)
-    elif method == "W2Ito1":
-        integ = svIntegrators.svStochasticIntegratorW2Ito1(scene)
-    elif method == "W2Ito2":
-        integ = svIntegrators.svStochasticIntegratorW2Ito2(scene)
-    else:
-        raise ValueError(f"Unknown stochastic method: {method}")
+    """Build a stochastic integrator for Arm 'sde' and seed its RNG.
+
+    The concrete integrator classes all live in ``svIntegrators`` and follow the
+    ``svStochasticIntegrator<Method>`` naming, take the scene (``DynamicObject``)
+    as their sole constructor argument, and expose ``setRNGSeed`` (inherited from
+    ``StochasticRKIntegratorBase``, which forwards the seed to the integrator's
+    default ``RandomGaussianNoiseGenerator``).  Reseeding per realization gives
+    each run an independent, reproducible Wiener stream.
+    """
+    className = f"svStochasticIntegrator{method}"
+    if not hasattr(svIntegrators, className):
+        raise ValueError(f"Unknown stochastic method: {method} "
+                         f"(no {className} in svIntegrators)")
+    integ = getattr(svIntegrators, className)(scene)
     integ.setRNGSeed(seed)
     return integ
 
@@ -467,8 +588,13 @@ def runRealization(
             must be <= the smallest ``dt`` used by the profile arm.
 
     Returns:
-        RealizationResult with the final semi-major axis (FoM), altitude, and
-        the wall time spent *only* inside ExecuteSimulation.
+        RealizationResult with the final semi-major axis (FoM), altitude, and the
+        per-realization wall time.  For the SDE arm this is the time inside
+        ExecuteSimulation (which already includes drawing the noise inline).  For
+        the profile arm it is ExecuteSimulation PLUS the time to generate the OU
+        noise path (numba-compiled), so both arms are charged for producing their
+        noise -- otherwise the profile arm would look artificially cheaper.  Build
+        and InitializeSimulation are excluded from both.
     """
     _requireBasilisk()
     h = _buildCommonScene(params, dt)
@@ -480,6 +606,10 @@ def runRealization(
     integ = None
     densityModel = None
     profile = None
+    # Extra wall charged to the profile arm for generating its OU noise path; the
+    # SDE arm draws its noise inline (already inside the timed region), so this
+    # stays zero for it.
+    ouGenWall = 0.0
 
     if arm == "sde":
         integ = makeStochasticIntegrator(scene, method, seed)
@@ -501,11 +631,23 @@ def runRealization(
         # Pre-generate the exact OU profile on a FIXED fine master grid (spacing
         # profileGridDt, independent of dt) so the noisy trajectory is well
         # defined and refining dt is a genuine integrator-convergence study.
+        #
+        # The GENERATION of this path is a real cost the profile arm pays that
+        # the SDE arm does not (the SDE arm draws its noise inline, inside the
+        # timed ExecuteSimulation). To compare the two arms fairly we TIME the
+        # generation and add it to this realization's wall (below). To keep that
+        # charge fair, the recurrence is numba-compiled (a production noise
+        # generator would be compiled, just as the SDE arm's noise is C++), and
+        # the JIT is warmed up ONCE outside the timed region so no realization
+        # pays the one-time compile cost.
         nNodes = int(np.ceil(tf / profileGridDt)) + 1
         profileTimes = np.linspace(0.0, tf, nNodes)
+        _warmUpOUPath(params, profileTimes)
         rng = np.random.default_rng(seed)
+        tOU = time.perf_counter()
         profileValues = generateOUPath(
             profileTimes, params.stationaryStd, params.timeConstant, rng)
+        ouGenWall = time.perf_counter() - tOU
         profile = (profileTimes, profileValues)
 
         densityModel = ProfileAtmDensity(profileTimes, profileValues)
@@ -525,11 +667,14 @@ def runRealization(
 
     scSim.ConfigureStopTime(macros.sec2nano(tf))
 
-    # Time ONLY the integration, not the build / InitializeSimulation, so the
-    # comparison reflects per-step integrator cost.
+    # Time the integration.  For the SDE arm this already includes the cost of
+    # drawing the noise inline; for the profile arm we ADD the (separately timed,
+    # numba-compiled) OU-path generation so both arms are charged for producing
+    # their noise -- see the comment where ouGenWall is measured.
     t0 = time.perf_counter()
     scSim.ExecuteSimulation()
     wall = time.perf_counter() - t0
+    wall += ouGenWall
 
     # Read final state directly from the body's origin site.
     state = body.getOrigin().stateOutMsg.read()

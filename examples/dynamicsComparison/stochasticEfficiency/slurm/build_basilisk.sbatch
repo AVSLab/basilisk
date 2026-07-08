@@ -72,7 +72,16 @@ date
 
 if [[ $status -eq 0 ]]; then
     echo "=== build OK; verifying the import the study needs ==="
-    python -c "from Basilisk.simulation import svIntegrators, mujoco; print('Basilisk OK')"
+    # Also assert the specific stochastic integrators the study's SDE arm uses
+    # (SRA1/SOSRA/W2Ito2) are present, so a build against stale integrator
+    # sources is caught here rather than at run time.
+    python -c "
+from Basilisk.simulation import svIntegrators, mujoco
+missing = [n for n in ('svStochasticIntegratorSRA1','svStochasticIntegratorSOSRA','svStochasticIntegratorW2Ito2')
+           if not hasattr(svIntegrators, n)]
+assert not missing, 'missing integrators: %s' % missing
+print('Basilisk OK')
+"
 else
     echo "=== build FAILED (exit $status). If it was OOM (Killed cc1plus), resubmit"
     echo "    with a smaller parallelism, e.g.:  sbatch --export=BUILD_JOBS=2 build_basilisk.sbatch"

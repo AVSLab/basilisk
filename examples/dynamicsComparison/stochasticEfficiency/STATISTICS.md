@@ -166,9 +166,12 @@ separately and difference the bootstrap statistics. We report a **signed** value
 with a CI, so the interval can **straddle zero** — that is how we say "this bias
 is too small to distinguish from zero at this sample size."
 
-**Worked example (SDE W2Ito2, `dt = 5`):** `b̂ = −3.5 m`, 95% CI `[−16.4, +9.4]`.
+**Worked example (SDE W2Ito2, `dt = 5`):** `b̂ ≈ +4 m`, 95% CI `[−8, +16]`.
 The interval contains 0, so the bias is *consistent with zero* — undetectable
-beneath the Monte-Carlo noise.
+beneath the Monte-Carlo noise. This unpaired estimator is the one the shipped
+analysis uses for **all** SDE methods; for the strong methods (SRA1/SOSRA) it is
+conservative — they *can* be CRN-paired (see the callout in §3b), which would
+shrink the interval by ~700×.
 
 ### 3b. Paired estimate with Common Random Numbers (used for the profile arm)
 
@@ -198,14 +201,27 @@ The paired CI is about **370× narrower** (0.073 m wide vs 27 m wide). Same
 estimand, same samples — the only difference is exploiting the shared randomness. CRN is what lets us resolve a
 sub-metre bias that is otherwise invisible.
 
-> **Why can't the SDE arm use CRN?** This is not a coding limitation — it is
-> mathematical. The SDE integrators are **weak-convergent**: they reproduce the
-> *distribution* of the solution, not any specific noise path (they even use
-> discrete jumps instead of a continuous path). With no shared path to align
-> against the reference, there is nothing to pair, so the SDE bias is stuck with
-> the wide unpaired interval. The profile arm is **strong/pathwise**, so pairing
-> is possible. The whisker sizes in the plots are a direct fingerprint of this
-> weak-vs-strong distinction, not of which integrator is "better."
+> **Can the SDE arm use CRN?** It depends on the method, and this is the one
+> place the two kinds of SDE integrator diverge sharply:
+> - **W2Ito2 (weak): no.** A weak method reproduces the *distribution*, not any
+>   specific noise path — W2Ito2 even quantises the Gaussian increment to a
+>   discrete three-point jump before using it. There is no continuous shared path
+>   to align against the reference, so its bias is stuck with the wide unpaired
+>   interval. (Measured pairing correlation ≈ 0.85 even when fed a prescribed
+>   same-path increment → only ~2.5× narrower, not worth it.)
+> - **SRA1 / SOSRA (strong): yes.** These advance the state with the *continuous*
+>   Wiener increments and converge pathwise. Driving them with the **same**
+>   Brownian increments as the reference (via
+>   `PrescribedGaussianNoiseGenerator`) makes their per-realization FoM track the
+>   reference to ~0.1 m out of a ~50–150 m spread (measured correlation
+>   ≈ 0.99999), i.e. the same CRN cancellation the profile arm enjoys — a ~700×
+>   narrower bias interval at the same sample count.
+>
+> The shipped `analyzeResults`/`statsTools` still routes **all** SDE methods
+> through the unpaired estimator, so today the whisker sizes reflect that choice.
+> Adding a strong-method CRN estimator (build a shared-path realization in
+> `stochasticDragModel`, route SRA1/SOSRA through `biasPaired`) is a concrete,
+> high-value upgrade the new integrator set makes possible.
 
 ---
 
