@@ -299,8 +299,8 @@ def gauss_markov_test():
 
     # Create the ephemeris message
     ephemerisInMsgData = messaging.EphemerisMsgPayload()
-    ephemerisInMsgData.r_BN_N = [10000.0, 0.0, 0.0]
-    ephemerisInMsgData.v_BN_N = [0.0, 0.0, 0.0]
+    ephemerisInMsgData.r_BdyZero_N = [10000.0, 0.0, 0.0]  # [m]
+    ephemerisInMsgData.v_BdyZero_N = [0.0, 0.0, 0.0]  # [m/s]
     ephemerisInMsgData.sigma_BN = [0.0, 0.0, 0.0]
     ephemerisInMsgData.omega_BN_B = [0.0, 0.0, 0.0]
 
