@@ -162,7 +162,7 @@ def torque2DipoleModuleTestFunction():
     '''
     # First set a non-zero torque request
     torqueMessageData = messaging.CmdTorqueBodyMsgPayload()
-    torqueMessageData.torqueRequest = [1.0, 0.5, 0.7]
+    torqueMessageData.torqueRequestBody = [1.0, 0.5, 0.7]  # [N-m]
     torqueMsg = messaging.CmdTorqueBodyMsg().write(torqueMessageData)
     module.tauRequestInMsg.subscribeTo(torqueMsg)
 
