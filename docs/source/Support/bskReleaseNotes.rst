@@ -20,7 +20,6 @@ Basilisk Release Notes
     - spacecraft charging related modules
     - support effector branching for additional state and dynamic effectors
     - More effector and sensor fault modeling
-    - `pip`-based installation and pre-compiled releases
     - integrating the `MuJoCo <https://mujoco.org>`_ library as an alternate dynamics engine
 
 Version |release| (July 7, 2026)
@@ -29,6 +28,8 @@ Version |release| (July 7, 2026)
 ..
    .. include:: bskReleaseNotesSnippets/_compiled_latest.rst
 
+- Split off the ``opNav`` build from the core BSK distribution wheels to reduce the wheel file size to be less than 100Mb.
+  Updated documentation to discuss how to use ``pip`` install with ``opNav`` modules.
 - Refactored the :ref:`motorThermal` unit test to validate the module against analytically derived temperatures instead of a stored vector of regression "truth" values. The test now drives the module with a stand-alone reaction wheel state message and isolates each term of the heat balance (dissipation, motor power inefficiency, and friction) in separate scenarios, comparing the recorded temperatures to the closed-form heat-balance recurrence.
 - Fixed Monte Carlo nested dispersion paths and randomized ``RNGSeed`` application.
 - Tuned :ref:`scenarioMonteCarloAttRW` dispersions to show subtler run-to-run variations without saturated response.
