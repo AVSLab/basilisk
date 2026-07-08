@@ -148,26 +148,30 @@ add_custom_target(swigtrick DEPENDS ${CMAKE_BINARY_DIR}/Basilisk/architecture/me
 generate_messages(msgPayloadDefCpp "False")
 generate_messages(msgPayloadDefC "True")
 
-# Verify the central SysModel copy restriction while keeping Recorder explicitly copyable.
-add_executable(test_recorder_copy_contract _UnitTest/test_recorder_copy_contract.cpp)
-target_sources(test_recorder_copy_contract PRIVATE ${CMAKE_SOURCE_DIR}/architecture/_GeneralModuleFiles/sys_model.cpp)
-target_link_libraries(test_recorder_copy_contract GTest::gtest_main)
-target_link_libraries(test_recorder_copy_contract ArchitectureUtilities)
-target_link_libraries(test_recorder_copy_contract ModuleIdGenerator)
+set(recorder_copy_contract_test_source
+    "${CMAKE_CURRENT_SOURCE_DIR}/_UnitTest/test_recorder_copy_contract.cpp")
+if(EXISTS "${recorder_copy_contract_test_source}")
+  # Verify the central SysModel copy restriction while keeping Recorder explicitly copyable.
+  add_executable(test_recorder_copy_contract "${recorder_copy_contract_test_source}")
+  target_sources(test_recorder_copy_contract PRIVATE ${CMAKE_SOURCE_DIR}/architecture/_GeneralModuleFiles/sys_model.cpp)
+  target_link_libraries(test_recorder_copy_contract GTest::gtest_main)
+  target_link_libraries(test_recorder_copy_contract ArchitectureUtilities)
+  target_link_libraries(test_recorder_copy_contract ModuleIdGenerator)
 
-# Windows test discovery runs the executable from this folder, so copy the required DLL beside it first.
-if(WIN32)
-  add_custom_command(
-    TARGET test_recorder_copy_contract
-    POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            $<TARGET_FILE:ModuleIdGenerator>
-            $<TARGET_FILE_DIR:test_recorder_copy_contract>)
-endif()
+  # Windows test discovery runs the executable from this folder, so copy the required DLL beside it first.
+  if(WIN32)
+    add_custom_command(
+      TARGET test_recorder_copy_contract
+      POST_BUILD
+      COMMAND ${CMAKE_COMMAND} -E copy_if_different
+              $<TARGET_FILE:ModuleIdGenerator>
+              $<TARGET_FILE_DIR:test_recorder_copy_contract>)
+  endif()
 
-# Apple-silicon Xcode builds cannot reliably run the test during the build, so defer discovery to CTest.
-if(CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "arm64" AND CMAKE_GENERATOR STREQUAL "Xcode")
-  gtest_discover_tests(test_recorder_copy_contract DISCOVERY_MODE PRE_TEST)
-else()
-  gtest_discover_tests(test_recorder_copy_contract)
+  # Apple-silicon Xcode builds cannot reliably run the test during the build, so defer discovery to CTest.
+  if(CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "arm64" AND CMAKE_GENERATOR STREQUAL "Xcode")
+    gtest_discover_tests(test_recorder_copy_contract DISCOVERY_MODE PRE_TEST)
+  else()
+    gtest_discover_tests(test_recorder_copy_contract)
+  endif()
 endif()
