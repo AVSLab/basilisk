@@ -48,10 +48,28 @@ export OMP_NUM_THREADS=1
 export OPENBLAS_NUM_THREADS=1
 export MKL_NUM_THREADS=1
 export NUMEXPR_NUM_THREADS=1
-# Numba caches compiled kernels (the profile arm's NumbaModel); give it a stable,
-# node-local-or-scratch cache dir so the JIT compile happens once, not per task.
-export NUMBA_CACHE_DIR="${NUMBA_CACHE_DIR:-$STOCHEFF_RESULTS_DIR/.numba_cache}"
-mkdir -p "$NUMBA_CACHE_DIR"
+# Numba caches compiled kernels in TWO places, both of which MUST be node-local
+# and per-task, or concurrent array tasks corrupt/lock-contend on them and stall
+# for hours (numba's on-disk cache is not safe for concurrent writers):
+#   1. NUMBA_CACHE_DIR      -> the @njit OU recurrence (_ouRecurrence).
+#   2. XDG_CACHE_HOME        -> the ProfileAtmDensity NumbaModel, which caches to
+#      platformdirs' user_cache_dir('basilisk') == $XDG_CACHE_HOME/basilisk (else
+#      ~/.cache/basilisk on the 10 GB-capped, SHARED, networked $HOME). It ignores
+#      NUMBA_CACHE_DIR, so we must steer it via the standard XDG var.
+# A single shared dir for either -- especially on /scratch/alpine or $HOME, both
+# networked -- is what makes a subset of profile tasks run for hours while the
+# rest finish in minutes. Node-local $SLURM_TMPDIR (or /tmp), unique per array
+# task, gives each task its own fast local cache: it compiles once (a few seconds,
+# negligible) and never contends. Outside Slurm (local runs) fall back to scratch.
+if [[ -n "${SLURM_JOB_ID:-}" ]]; then
+    _nb_base="${SLURM_TMPDIR:-/tmp}"
+    _nb_tag="${SLURM_ARRAY_JOB_ID:-$SLURM_JOB_ID}_${SLURM_ARRAY_TASK_ID:-0}"
+    export NUMBA_CACHE_DIR="${NUMBA_CACHE_DIR:-$_nb_base/numba_cache_$USER/$_nb_tag}"
+    export XDG_CACHE_HOME="${XDG_CACHE_HOME:-$_nb_base/xdg_cache_$USER/$_nb_tag}"
+else
+    export NUMBA_CACHE_DIR="${NUMBA_CACHE_DIR:-$STOCHEFF_RESULTS_DIR/.numba_cache}"
+fi
+mkdir -p "$NUMBA_CACHE_DIR" "${XDG_CACHE_HOME:-$NUMBA_CACHE_DIR}"
 
 # --- module + interpreter setup ---
 # We run env.sh in two contexts:
