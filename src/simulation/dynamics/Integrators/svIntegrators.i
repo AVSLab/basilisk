@@ -24,17 +24,34 @@
 
 %{
    #include <vector>
+   #include <memory>
    #include "../_GeneralModuleFiles/stateVecIntegrator.h"
    #include "../_GeneralModuleFiles/stateVecStochasticIntegrator.h"
+   #include "../_GeneralModuleFiles/stochasticNoiseGenerator.h"
+   #include "../_GeneralModuleFiles/stochasticRKIntegratorBase.h"
    #include "../_GeneralModuleFiles/svIntegratorRungeKutta.h"
    #include "../_GeneralModuleFiles/svIntegratorRK4.h"
+   #include "../_GeneralModuleFiles/svIntegratorStrongStochasticRungeKuttaSRI.h"
+   #include "../_GeneralModuleFiles/svIntegratorStrongStochasticRungeKuttaSRA.h"
+   #include "../_GeneralModuleFiles/svIntegratorWeakSIESME.h"
    #include "svIntegratorEuler.h"
    #include "svIntegratorRK2.h"
    #include "svIntegratorRKF45.h"
    #include "svIntegratorRKF78.h"
    #include "svStochasticIntegratorMayurama.h"
+   #include "svStochasticIntegratorW2Ito.h"
    #include "svStochasticIntegratorW2Ito1.h"
    #include "svStochasticIntegratorW2Ito2.h"
+   #include "svStochasticIntegratorSRIW1.h"
+   #include "svStochasticIntegratorSOSRI.h"
+   #include "svStochasticIntegratorSRA1.h"
+   #include "svStochasticIntegratorSOSRA.h"
+   #include "svStochasticIntegratorEulerHeun.h"
+   #include "svStochasticIntegratorRKMil.h"
+   #include "svStochasticIntegratorSIESME.h"
+   #include "svStochasticIntegratorRDI1WM.h"
+   #include "svStochasticIntegratorDRI1.h"
+   #include "svStochasticIntegratorRS.h"
    #include "architecture/_GeneralModuleFiles/sys_model.h"
    #include "../_GeneralModuleFiles/dynamicObject.h"
 %}
@@ -45,7 +62,6 @@ from Basilisk.architecture.swig_common_model import *
 # The following maps store the RK base classes w.r.t their stage number
 _rk_base_classes = {}
 _rk_adaptive_base_classes = {}
-_rk_stochastic_base_classes = {}
 %}
 
 %include <std_vector.i>
@@ -67,9 +83,26 @@ _rk_stochastic_base_classes = {}
 %include "../_GeneralModuleFiles/stateVecIntegrator.h"
 %include "../_GeneralModuleFiles/stateVecStochasticIntegrator.h"
 
+// The GaussianNoiseGenerator hierarchy is jointly owned by Python and C++: a
+// generator can be created in Python and handed to an integrator via
+// setNoiseGenerator(). Wrapping it as a shared_ptr keeps the C++ object alive even
+// after the Python reference is dropped. Declarations must precede the %include of
+// stochasticNoiseGenerator.h, base before derived.
+%include <std_shared_ptr.i>
+%shared_ptr(GaussianNoiseGenerator)
+%shared_ptr(RandomGaussianNoiseGenerator)
+%shared_ptr(PrescribedGaussianNoiseGenerator)
+%include "../_GeneralModuleFiles/stochasticNoiseGenerator.h"
+
+// Shared base for the stochastic Runge-Kutta integrators (must precede the concrete
+// integrator %includes below, which derive from it).
+%include "../_GeneralModuleFiles/stochasticRKIntegratorBase.h"
+
 %include "../_GeneralModuleFiles/svIntegratorRungeKutta.h"
 %include "../_GeneralModuleFiles/svIntegratorAdaptiveRungeKutta.h"
-%include "../_GeneralModuleFiles/svIntegratorWeakStochasticRungeKutta.h"
+%include "../_GeneralModuleFiles/svIntegratorStrongStochasticRungeKuttaSRI.h"
+%include "../_GeneralModuleFiles/svIntegratorStrongStochasticRungeKuttaSRA.h"
+%include "../_GeneralModuleFiles/svIntegratorWeakSIESME.h"
 
 // We add a constructor for svIntegratorRungeKutta and svIntegratorAdaptiveRungeKutta
 // These are useful for us to build these classes on the Python side without having
@@ -117,50 +150,13 @@ _rk_stochastic_base_classes = {}
   }
 }
 
-%extend svIntegratorWeakStochasticRungeKutta {
-   svIntegratorWeakStochasticRungeKutta(
-      DynamicObject* dynIn,
-      std::vector<double> alpha,
-      std::vector<double> beta0,
-      std::vector<double> beta1,
-      std::vector<std::vector<double>> A0,
-      std::vector<std::vector<double>> B0,
-      std::vector<std::vector<double>> A1,
-      std::vector<std::vector<double>> B1,
-      std::vector<std::vector<double>> B2,
-      std::vector<double> c0,
-      std::vector<double> c1
-   )
-   {
-      SRKCoefficients<numberStages> coefficients;
-
-      std::copy_n(alpha.begin(), numberStages, coefficients.alpha.begin());
-      std::copy_n(beta0.begin(), numberStages, coefficients.beta0.begin());
-      std::copy_n(beta1.begin(), numberStages, coefficients.beta1.begin());
-      std::copy_n(c0.begin(), numberStages, coefficients.c0.begin());
-      std::copy_n(c1.begin(), numberStages, coefficients.c1.begin());
-
-      for (size_t i = 0; i < numberStages; i++) {
-          std::copy_n(A0.at(i).begin(), numberStages, coefficients.A0.at(i).begin());
-          std::copy_n(B0.at(i).begin(), numberStages, coefficients.B0.at(i).begin());
-          std::copy_n(A1.at(i).begin(), numberStages, coefficients.A1.at(i).begin());
-          std::copy_n(B1.at(i).begin(), numberStages, coefficients.B1.at(i).begin());
-          std::copy_n(B2.at(i).begin(), numberStages, coefficients.B2.at(i).begin());
-      }
-
-      return new svIntegratorWeakStochasticRungeKutta<numberStages>(dynIn, coefficients);
-  }
-}
-
 %define TEMPLATE_HELPER(stageNumber)
 %template(svIntegratorRungeKutta ## stageNumber) svIntegratorRungeKutta< ## stageNumber>;
 %template(svIntegratorAdaptiveRungeKutta ## stageNumber) svIntegratorAdaptiveRungeKutta< ## stageNumber>;
-%template(svIntegratorWeakStochasticRungeKutta ## stageNumber) svIntegratorWeakStochasticRungeKutta< ## stageNumber>;
 
 %pythoncode %{
 _rk_base_classes[## stageNumber] = svIntegratorRungeKutta ## stageNumber
 _rk_adaptive_base_classes[## stageNumber] = svIntegratorAdaptiveRungeKutta ## stageNumber
-_rk_stochastic_base_classes[## stageNumber] = svIntegratorWeakStochasticRungeKutta ## stageNumber
 %}
 %enddef
 
@@ -173,6 +169,13 @@ TEMPLATE_HELPER(7)
 TEMPLATE_HELPER(9)
 TEMPLATE_HELPER(13)
 
+// Base-class template instantiations for the strong SRK integrators. The concrete
+// SRI/SRA integrators below derive from these, so the templates must be instantiated
+// with the appropriate stage counts first (SRI: 4 stages; SRA: 2 and 3 stages).
+%template(svIntegratorStrongStochasticRungeKuttaSRI4) svIntegratorStrongStochasticRungeKuttaSRI<4>;
+%template(svIntegratorStrongStochasticRungeKuttaSRA2) svIntegratorStrongStochasticRungeKuttaSRA<2>;
+%template(svIntegratorStrongStochasticRungeKuttaSRA3) svIntegratorStrongStochasticRungeKuttaSRA<3>;
+
 %include "../_GeneralModuleFiles/svIntegratorRK4.h"
 
 %include "svIntegratorEuler.h"
@@ -180,8 +183,19 @@ TEMPLATE_HELPER(13)
 %include "svIntegratorRKF45.h"
 %include "svIntegratorRKF78.h"
 %include "svStochasticIntegratorMayurama.h"
+%include "svStochasticIntegratorW2Ito.h"
 %include "svStochasticIntegratorW2Ito1.h"
 %include "svStochasticIntegratorW2Ito2.h"
+%include "svStochasticIntegratorSRIW1.h"
+%include "svStochasticIntegratorSOSRI.h"
+%include "svStochasticIntegratorSRA1.h"
+%include "svStochasticIntegratorSOSRA.h"
+%include "svStochasticIntegratorEulerHeun.h"
+%include "svStochasticIntegratorRKMil.h"
+%include "svStochasticIntegratorSIESME.h"
+%include "svStochasticIntegratorRDI1WM.h"
+%include "svStochasticIntegratorDRI1.h"
+%include "svStochasticIntegratorRS.h"
 
 // The following methods allow users to create new Runge-Kutta
 // methods simply by providing their coefficients on the Python side
@@ -279,60 +293,6 @@ def svIntegratorAdaptiveRungeKutta(
     stages = len(b_coefficients)
 
     return _rk_adaptive_base_classes[stages](dynamic_object, a_coefficients, b_coefficients, b_star_coefficients, c_coefficients, largest_order)
-
-def _validate_srk_coefficients(array_coefficients, matrix_coefficients):
-    stages = len(next(iter(array_coefficients.values())))
-
-    for input_name, array_coefficient in array_coefficients.items():
-        if stages != len(array_coefficient):
-            raise ValueError(
-                f"All arrays must have length {stages}, but {input_name} has length {len(array_coefficient)}.")
-
-    for matrix_name, matrix in matrix_coefficients.items():
-        if len(matrix) != stages or any(len(row) != stages for row in matrix):
-            raise ValueError(
-                f"Matrix {matrix_name} must have dimensions {stages}x{stages}, but has dimensions {len(matrix)}x{len(matrix[0]) if matrix else 0}.")
-
-def svIntegratorWeakStochasticRungeKutta(
-    dynamic_object,
-    alpha: Union[Sequence[float], np.ndarray],
-    beta0: Union[Sequence[float], np.ndarray],
-    beta1: Union[Sequence[float], np.ndarray],
-    A0: Union[Sequence[Sequence[float]], np.ndarray],
-    B0: Union[Sequence[Sequence[float]], np.ndarray],
-    A1: Union[Sequence[Sequence[float]], np.ndarray],
-    B1: Union[Sequence[Sequence[float]], np.ndarray],
-    B2: Union[Sequence[Sequence[float]], np.ndarray],
-    c0: Union[Sequence[float], np.ndarray],
-    c1: Union[Sequence[float], np.ndarray],
-) -> StateVecStochasticIntegrator:
-    """Generates an explicit, weak stochastic Runge-Kutta integrator from the given coefficients.
-
-    Args:
-        alpha, beta0, beta1, c0, c1: Arrays with length equal to the number of stages.
-        A0, B0, A1, B1, B2: Matrices with dimensions stages x stages.
-
-    Returns:
-        StateVecStochasticIntegrator: A weak stochastic Runge-Kutta integrator object.
-    """
-    _validate_srk_coefficients(
-        array_coefficients={'alpha': alpha, 'beta0': beta0, 'beta1': beta1, 'c0': c0, 'c1': c1},
-        matrix_coefficients={'A0': A0, 'B0': B0, 'A1': A1, 'B1': B1, 'B2': B2}
-    )
-    stages = len(alpha)
-    return _rk_stochastic_base_classes[stages](
-        dynamic_object,
-        alpha,
-        beta0,
-        beta1,
-        A0,
-        B0,
-        A1,
-        B1,
-        B2,
-        c0,
-        c1
-    )
 
 import sys
 protectAllClasses(sys.modules[__name__])
