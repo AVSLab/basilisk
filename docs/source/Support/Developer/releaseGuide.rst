@@ -23,18 +23,18 @@ The high level steps to release a new version of Basilisk are as follows:
 #. Push branch to origin and do a PR.
 #. Merge ``develop`` into ``master``
 #. Add release tag ``v2.X.Y`` to ``master``
-#. Create a Release on GitHub
+#. When BSK wheels are successfully deployed, create a Release on GitHub
 
 To prepare ``develop`` for the next beta cycle:
 
 #. Create ``beta_X_Y`` branch
 #. Modify the version number in ``docs/source/bskVersion.txt``
-   to reflect the new beta cycle such as ``v2_X_Y_beta``.
+   to reflect the new beta cycle such as ``v2.X.Y.beta``.
 #. Update ``docs/source/Support/bskReleaseNotes.rst``
    and ``docs/source/Support/bskKnownIssues.rst`` files to next beta cycle
 #. Make PR and push to ``develop``
 #. Manually run the ``Nightly Wheels`` workflow using the ``workflow_dispatch``
-   trigger after merging the beta branch so the nightly package index is
+   trigger after merging the beta branch so the nightly wheels are
    republished on GitHub Pages.
 
 
@@ -145,8 +145,8 @@ After pushing the release tag, create a new release on GitHub:
 #. Select “Draft new Release”
 #. Select correct tag ``v2.X.Y`` on ``master``
 #. Add title “Basilisk v2.X.Y”
-#. Add release notes
-#. Remove all ``:ref:`` statements from release notes
+#. Add release notes manually or using the auto-generation option
+#. Remove all ``:ref:`` statements, if needed, from release notes
 #. Bottom of page, press “Publish Release” button
 
 This will make the release official and provide users with information about the new version.

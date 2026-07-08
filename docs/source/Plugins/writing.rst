@@ -22,7 +22,7 @@ A complete working example is in the
 Prerequisites
 -------------
 
-- Basilisk installed: ``pip install bsk``
+- Basilisk installed: ``pip install "bsk[all]"``
 - The SDK: ``pip install bsk-sdk``
 - CMake ≥ 3.26 and a C++17 compiler (same requirement as Basilisk itself)
 - ``scikit-build-core`` and ``build``: ``pip install scikit-build-core build``

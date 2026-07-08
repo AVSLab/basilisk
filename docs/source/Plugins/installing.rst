@@ -24,7 +24,14 @@ For example, if a plugin is published to PyPI as ``my-atm-plugin``:
     pip install my-atm-plugin
 
 This installs the plugin and pulls in Basilisk as a dependency
-automatically.  Once installed, use it like any built-in Basilisk module:
+automatically.  To ensure optional Basilisk components are available, install
+the recommended Basilisk extra explicitly:
+
+.. code-block:: bash
+
+    pip install "bsk[all]" <plugin-name>
+
+Once installed, use the plugin like any built-in Basilisk module:
 
 .. code-block:: python
 
@@ -48,7 +55,7 @@ The plugin's documentation should state which Basilisk version it targets:
 
 .. code-block:: bash
 
-    pip install "bsk==2.9.1" "my-plugin"
+    pip install "bsk[all]==2.11.0" "my-plugin"
 
 If the installed Basilisk version does not match what the plugin was compiled
 against, CMake will error at configure time with an error message.
@@ -69,6 +76,6 @@ If you want to **build** a plugin rather than just use one, you also need
 
     pip install bsk-sdk
 
-``bsk-sdk`` version numbers track Basilisk — ``bsk-sdk==2.9.1`` contains
-headers from Basilisk ``v2.9.1``.  See :ref:`writingPlugins` to get
+``bsk-sdk`` version numbers track Basilisk — ``bsk-sdk==2.11.0`` contains
+headers from Basilisk ``v2.11.0``.  See :ref:`writingPlugins` to get
 started building your own plugin.

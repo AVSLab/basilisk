@@ -43,7 +43,7 @@ all of Basilisk every time you make a change.
    * - Distributable via ``pip install``
      - **Yes**
      - No
-   * - Works with ``pip install bsk``
+   * - Works with ``pip install "bsk[all]"``
      - **Yes**
      - No
    * - Portable across machines/environments
@@ -65,12 +65,12 @@ Why Write a Plugin?
 
 .. tip::
 
-    ``pip install bsk`` + ``pip install bsk-sdk`` is all you need.
+    ``pip install "bsk[all]"`` + ``pip install bsk-sdk`` is all you need.
     No cloning. No building Basilisk from source. Ever.
 
 - **No Basilisk source checkout required.** Install Basilisk and the SDK
   from PyPI and start writing your module immediately.  Upgrading Basilisk
-  is a single ``pip install --upgrade bsk``.
+  is a single ``pip install --upgrade "bsk[all]"``.
 
 - **Compile only your code.** Plugin builds take seconds, not minutes.
   You never wait on a full Basilisk recompile to test a one-line change.
@@ -106,7 +106,7 @@ CMake helpers needed to compile out-of-tree modules.
               fillcolor="#dce8fb"]
       sdk    [label="bsk-sdk\n(BSK headers · SWIG interfaces · CMake helpers)",
               fillcolor="#d4edda"]
-      bsk    [label="Basilisk: pip install bsk",
+      bsk    [label="Basilisk: pip install bsk[all]",
               fillcolor="#fff3cd"]
 
       plugin -> sdk [label="  compiles against  "]
@@ -192,12 +192,12 @@ Version Compatibility
 ---------------------
 
 A plugin wheel is compiled against a specific version of the BSK headers.
-``bsk-sdk`` version numbers track Basilisk:  ``bsk-sdk==2.9.1`` contains
-headers from Basilisk ``v2.9.1``.  If the installed Basilisk version does
+``bsk-sdk`` version numbers track Basilisk:  ``bsk-sdk==2.11.0`` contains
+headers from Basilisk ``v2.11.0``.  If the installed Basilisk version does
 not match, CMake will error at configure time with a clear message.
 
 Always install matching versions:
 
 .. code-block:: bash
 
-    pip install "bsk==2.9.1" "bsk-sdk==2.9.1"
+    pip install "bsk[all]==2.11.0" "bsk-sdk==2.11.0"

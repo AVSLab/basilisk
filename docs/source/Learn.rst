@@ -19,7 +19,7 @@ Finally, there is the source-code itself.  That is always the ultimate guide to 
 
 .. note::
 
-    If you downloaded Basilisk through ``pip install bsk``, then you can download all examples
+    If you downloaded Basilisk through ``pip install "bsk[all]"``, then you can download all examples
     to the local folder using the command line ``bskExamples``.
 
 
