@@ -20,24 +20,27 @@
 #ifndef svStochasticIntegratorW2Ito2_h
 #define svStochasticIntegratorW2Ito2_h
 
-#include "../_GeneralModuleFiles/svIntegratorWeakStochasticRungeKutta.h"
+#include "svStochasticIntegratorW2Ito.h"
 
-/** @brief Weak-order 2, ODE-order 4 stochastic integrator
+/**
+ * @brief W2Ito2: Tang & Xiao efficient weak-order-2 method for Ito SDEs (4-stage tableau).
+ *
+ * Weak order 2, deterministic order 4, for Ito SDEs of any noise structure (scalar,
+ * diagonal, non-diagonal / non-commutative). Shares the Tang & Xiao step of
+ * svStochasticIntegratorW2Ito; differs only in its coefficient tableau (Table 3 of the
+ * reference below).
+ *
+ *     Tang, X., Xiao, A. "Efficient weak second-order stochastic Runge-Kutta methods
+ *     for Ito stochastic differential equations", BIT Numer. Math. 57, 241-260 (2017).
+ *     https://doi.org/10.1007/s10543-016-0618-9
  *
  * @warning Stochastic integration is in beta.
- *
- * Method is described in the following paper, coefficients according to
- * Table 3:
- *
- *     Tang, X., Xiao, A. Efficient weak second-order stochastic Runge–Kutta methods
- *     for Itô stochastic differential equations. Bit Numer Math 57, 241–260 (2017).
- *     https://doi.org/10.1007/s10543-016-0618-9
  */
-class svStochasticIntegratorW2Ito2 : public svIntegratorWeakStochasticRungeKutta<4> {
+class svStochasticIntegratorW2Ito2 : public svStochasticIntegratorW2Ito {
 public:
     svStochasticIntegratorW2Ito2(DynamicObject* dyn); //!< Constructor
 private:
-    static SRKCoefficients<4> getCoefficients();
+    static W2ItoCoefficients getCoefficients();
 };
 
 #endif /* svStochasticIntegratorW2Ito2_h */
