@@ -101,7 +101,7 @@ def thrustCMEstimationTestFunction(show_plots, dT, accuracy):
 
     # Write attitude guidance msg
     vehConfig = messaging.VehicleConfigMsgPayload()
-    vehConfig.CoM = r_CB_B
+    vehConfig.CoM_B = r_CB_B
     vehConfigMsg = messaging.VehicleConfigMsg().write(vehConfig)
     cmEstimation.vehConfigInMsg.subscribeTo(vehConfigMsg)
 
@@ -136,13 +136,11 @@ def thrustCMEstimationTestFunction(show_plots, dT, accuracy):
     unitTestSim.InitializeSimulation()
     unitTestSim.ConfigureStopTime(macros.sec2nano(t-0.1))
     for i in range(len(r_TB_B)):
-        thrBConfig.timeTag = macros.sec2nano(t)
         thrBConfig.rThrust_B = r_TB_B[i]
         thrBConfig.maxThrust = np.linalg.norm(T_B[i])
         thrBConfig.tHatThrust_B = T_B[i] / thrBConfig.maxThrust
         thrConfigBMsg.write(thrBConfig)
 
-        intTorque.timeTag = macros.sec2nano(t)
         uMeasNoise = np.random.multivariate_normal([0,0,0], R0, size=1)
         intTorque.torqueRequestBody = -np.cross(r_TB_B[i], T_B[i]) + uMeasNoise[0]
         intFeedbackTorqueMsg.write(intTorque)
