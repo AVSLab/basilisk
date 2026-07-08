@@ -16,28 +16,49 @@
 #
 
 import argparse
+import re
 from pathlib import Path
 
 
-def _package_index(wheels: list[Path]) -> str:
+def _normalize_project_name(project_name: str) -> str:
+    return re.sub(r"[-_.]+", "-", project_name).lower()
+
+
+def _wheel_project_name(wheel: Path) -> str:
+    parts = wheel.name.removesuffix(".whl").split("-")
+    if len(parts) < 5:
+        raise ValueError(f"Unexpected wheel filename: {wheel.name}")
+    return _normalize_project_name(parts[0])
+
+
+def _package_index(project_name: str, wheels: list[Path]) -> str:
     links = "\n".join(f'  <a href="{w.name}">{w.name}</a><br/>' for w in wheels)
     return (
         "<!DOCTYPE html>\n"
-        "<html><head><title>Links for bsk</title></head><body>\n"
-        "<h1>Links for bsk</h1>\n"
+        f"<html><head><title>Links for {project_name}</title></head><body>\n"
+        f"<h1>Links for {project_name}</h1>\n"
         f"{links}\n"
         "</body></html>\n"
     )
 
 
-def _root_index() -> str:
+def _root_index(project_names: list[str]) -> str:
+    links = "\n".join(f'  <a href="{name}/">{name}</a><br/>' for name in project_names)
     return (
         "<!DOCTYPE html>\n"
         "<html><head><title>Simple Index</title></head><body>\n"
         "<h1>Simple Index</h1>\n"
-        '  <a href="bsk/">bsk</a><br/>\n'
+        f"{links}\n"
         "</body></html>\n"
     )
+
+
+def _group_wheels_by_project(wheels: list[Path]) -> dict[str, list[Path]]:
+    grouped_wheels: dict[str, list[Path]] = {}
+    for wheel in wheels:
+        project_name = _wheel_project_name(wheel)
+        grouped_wheels.setdefault(project_name, []).append(wheel)
+    return grouped_wheels
 
 
 def main() -> None:
@@ -50,16 +71,24 @@ def main() -> None:
     if not wheels:
         raise SystemExit(f"No wheels found in {args.wheels_dir}")
 
-    pkg_dir = args.output_dir / "bsk"
-    pkg_dir.mkdir(parents=True, exist_ok=True)
+    grouped_wheels = _group_wheels_by_project(wheels)
+    project_names = sorted(grouped_wheels)
 
-    (pkg_dir / "index.html").write_text(_package_index(wheels))
-    (args.output_dir / "index.html").write_text(_root_index())
+    args.output_dir.mkdir(parents=True, exist_ok=True)
+    (args.output_dir / "index.html").write_text(_root_index(project_names))
 
-    for whl in wheels:
-        (pkg_dir / whl.name).write_bytes(whl.read_bytes())
+    for project_name in project_names:
+        pkg_dir = args.output_dir / project_name
+        pkg_dir.mkdir(parents=True, exist_ok=True)
+        project_wheels = sorted(grouped_wheels[project_name])
+        (pkg_dir / "index.html").write_text(_package_index(project_name, project_wheels))
+        for wheel in project_wheels:
+            (pkg_dir / wheel.name).write_bytes(wheel.read_bytes())
 
-    print(f"Index generated with {len(wheels)} wheel(s) in {args.output_dir}")
+    print(
+        f"Index generated with {len(wheels)} wheel(s) across "
+        f"{len(project_names)} package(s) in {args.output_dir}"
+    )
 
 
 if __name__ == "__main__":
