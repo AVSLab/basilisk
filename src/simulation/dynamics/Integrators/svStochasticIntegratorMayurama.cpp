@@ -18,33 +18,26 @@
  */
 #include "svStochasticIntegratorMayurama.h"
 
-Eigen::VectorXd EulerMayuramaRandomVariableGenerator::generate(size_t m, double h)
-{
-    // purge any hidden states on the rv
-    this->normal_rv.reset();
-
-    // Generate m standard normal rv samples scaled by sqrt(h)
-    Eigen::VectorXd pseudoTimeSteps = std::sqrt(h)*Eigen::VectorXd::Ones(m);
-    for (size_t i = 0; i < m; i++)
-    {
-        pseudoTimeSteps[i] *= this->normal_rv(this->rng);
-    }
-    return pseudoTimeSteps;
-}
-
 void svStochasticIntegratorMayurama::integrate(double currentTime, double timeStep)
 {
-    // Compute the derivatives and diffusions
-    for (auto dynPtr : this->dynPtrs) {
-        dynPtr->equationsOfMotion(currentTime, timeStep);
-        dynPtr->equationsOfMotionDiffusion(currentTime, timeStep);
+    // A zero-duration step advances nothing and must not consume a noise sample.
+    // (Basilisk issues an integrate() call with timeStep == 0 at initialization.)
+    if (timeStep == 0) return;
+
+    const std::vector<StateIdToIndexMap>& maps = noiseIndexMaps();
+    const size_t m = maps.size();
+
+    // Euler-Mayurama uses only the Wiener increment dW as the per-source pseudo-step.
+    const GaussianNoiseSample sample = this->rvGenerator->generate(m, timeStep);
+
+    // f and g are evaluated at the current state x_n (the dynPtrs already hold it), then
+    // x_{n+1} = x_n + f*h + sum_k g_k * dW_k.
+    computeDerivatives(currentTime, timeStep).setDerivatives(dynPtrs);
+    std::vector<ExtendedStateVector> g = computeDiffusions(currentTime, timeStep, maps);
+    for (size_t k = 0; k < m; k++) {
+        g.at(k).setDiffusions(dynPtrs, maps.at(k));
     }
+    propagateState(timeStep, sample.dW, maps);
 
-    // this is a map (ExtendedStateId -> noise index) for each of the noise sources
-    // (so the length of this vector should be m)
-    std::vector<StateIdToIndexMap> stateIdToNoiseIndexMaps = getStateIdToNoiseIndexMaps();
-
-    auto pseudoTimeSteps = this->rvGenerator.generate(stateIdToNoiseIndexMaps.size(), timeStep);
-
-    this->propagateState(timeStep, pseudoTimeSteps, stateIdToNoiseIndexMaps);
+    // The dynPtrs now hold x_{n+1}.
 }
