@@ -73,6 +73,12 @@ examples = [
   'scipy==1.17.1; python_version >= "3.11"',
   'numba',
 ]
+opnav = [
+  "bsk-opnav",
+]
+all = [
+  "bsk-opnav",
+]
 
 [tool.cibuildwheel]
 build = ["cp39-*", "cp310-*", "cp311-*", "cp312-*", "cp313-*", "cp314-*"]
