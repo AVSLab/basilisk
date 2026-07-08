@@ -1,9 +1,6 @@
 name: Test Optional Wheels
 
 on:
-  push:
-    branches:
-      - feature/fix_v2_11_0
   workflow_dispatch:
 
 jobs:
