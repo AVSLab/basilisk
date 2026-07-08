@@ -8,10 +8,13 @@ most users the precompiled version available on PyPI is sufficient. See the
 :ref:`Install Instructions <bskInstall>` for more information.
 
 .. note::
-   To use custom C++ modules, Basilisk must be built from source.
-   The prebuilt PyPI wheels are designed for most users and include all standard
-   features, but they do not yet support linking external C++ modules.
-   We're actively exploring ways to enable this in future releases.
+   To use the legacy ``ExternalModules`` path that compiles custom modules into
+   the Basilisk package, Basilisk must be built from source with
+   ``pathToExternalModules``.
+   The recommended prebuilt PyPI install, ``pip install "bsk[all]"``, is designed
+   for most users and includes all optional Basilisk component wheels. For
+   out-of-tree C++ modules that do not need to live inside
+   ``Basilisk.ExternalModules``, use :ref:`Basilisk plugins <writingPlugins>`.
 
 .. toctree::
    :maxdepth: 1

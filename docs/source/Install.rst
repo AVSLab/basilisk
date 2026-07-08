@@ -5,17 +5,19 @@ Install
 
 Basilisk can be installed either from `PyPI <https://pypi.org/project/bsk/>`_ as
 a prebuilt wheel or built locally from source.
-The prebuilt wheels include all build options, such as optical navigation
-and MuJoCo dynamics, but do **not** support linking external C++ modules, as
-this requires rebuilding Basilisk.
+The recommended prebuilt installation uses the ``all`` extra so ``pip`` installs
+the core Basilisk wheel plus all optional Basilisk component wheels. MuJoCo
+dynamics are included in the core wheel, while optical navigation is provided by
+the optional ``bsk-opnav`` package. Prebuilt wheels can be used with
+:ref:`Basilisk plugins <writingPlugins>` for out-of-tree C++ modules, but they
+cannot be modified in place to include legacy ``ExternalModules`` through the
+``pathToExternalModules`` build option.
 
-If you want to use custom C++ modules, or prefer smaller install sizes by
-excluding unused features, you must build Basilisk from source.
-See the :ref:`Building from Source <bskInstall-build>` for more information.
-
-.. note::
-   We are currently investigating ways to allow users to link external C++
-   modules while using the prebuilt PyPI wheel. Stay tuned!
+If you want to use legacy ``ExternalModules`` or native build options not
+covered by the published package extras, you must build Basilisk from source. If
+you prefer a smaller prebuilt install and do not need optional Basilisk
+components, use the core ``bsk`` package variant described below. See the
+:ref:`Building from Source <bskInstall-build>` for more information.
 
 
 The easiest way to install Basilisk is using ``pip`` to install the prebuilt
@@ -23,28 +25,35 @@ package from PyPI. Run:
 
 .. code-block:: bash
 
-   pip install bsk
+   pip install "bsk[all]"
+
+The most common install variants are:
+
+- ``bsk``: core Basilisk wheel only
+- ``bsk[opnav]``: core Basilisk plus optical navigation components
+- ``bsk[all]``: recommended install with all optional Basilisk components
 
 If you also want the optional Python packages used by example scripts, install:
 
 .. code-block:: bash
 
-   pip install "bsk[examples]"
+   pip install "bsk[all,examples]"
 
 Or, if using `uv <https://docs.astral.sh/uv/>`_ (a modern Python package manager):
 
 .. code-block:: bash
 
-   uv pip install bsk
+   uv pip install "bsk[all]"
 
-This installs the latest stable version of Basilisk and all dependencies.
+This installs the latest stable version of Basilisk and all recommended
+dependencies.
 To install a specific version, run:
 
 .. code-block:: bash
 
-   pip install bsk==<version>
+   pip install "bsk[all]==<version>"
 
-Replace ``<version>`` with the desired release number, e.g. ``2.9.0``.
+Replace ``<version>`` with the desired release number, e.g. ``2.11.0``.
 
 Container images are also available for users who prefer Docker-based
 workflows. See :ref:`bskContainers` for registry locations, tags, and
@@ -85,7 +94,7 @@ nightly wheels are pre-release versions:
      --index-url https://avslab.github.io/basilisk/nightly/ \
      --extra-index-url https://pypi.org/simple/ \
      --pre \
-     bsk
+     "bsk[all]"
 
 Because nightly wheels are built from the ``develop`` branch and carry the same
 version string until ``bskVersion.txt`` changes, pip may report
@@ -100,7 +109,7 @@ force an overwrite of whatever is currently installed, add
      --extra-index-url https://pypi.org/simple/ \
      --pre \
      --upgrade --force-reinstall --no-cache-dir \
-     bsk
+     "bsk[all]"
 
 .. warning::
 

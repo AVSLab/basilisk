@@ -20,17 +20,26 @@ The easiest way to get started with Basilisk is to install the prebuilt wheel
 from [PyPI](https://pypi.org/project/bsk/):
 
 ```bash
-pip install bsk
+pip install "bsk[all]"
 ```
 
-This installs the latest stable version with all standard features
-(e.g. optical navigation and MuJoCo). See the [install](docs/source/Install.rst)
-docs for supported platforms and additional details about the wheels.
+This installs the latest stable version with the core Basilisk wheel and all
+optional Basilisk component wheels. MuJoCo is included in the core wheel, while
+optical navigation is installed through the optional component package. See the
+[install](docs/source/Install.rst) docs for supported platforms and additional
+details about the wheels.
+
+If you need a smaller installation and do not use optional Basilisk components,
+install only the core wheel:
+
+```bash
+pip install bsk
+```
 
 If you also want the optional Python dependencies used by example scripts, install:
 
 ```bash
-pip install "bsk[examples]"
+pip install "bsk[all,examples]"
 ```
 
 #### Build from Source
@@ -80,7 +89,7 @@ web page documentation site, they are listed and discussed in the [integrated ex
 The documentation lists the scenarios in an order that facilitates learning basic BSK features. The python scripts
 are stored in the repository under `basilisk/examples`. A good start would be to run `scenarioBasicOrbit.py`.
 
-If you downloaded Basilisk through `pip install bsk`, then you can download all examples to the local folder using the command line `bskExamples`.
+If you downloaded Basilisk through `pip install "bsk[all]"`, then you can download all examples to the local folder using the command line `bskExamples`.
 
 To play with the tutorials, it is suggested the user makes a copy of these tutorial files, and use the copies in order
 to learn, test and experiment. Copy the folder `basilisk/examples` into a
