@@ -134,3 +134,13 @@ if "{type}" == "EclipseMsg":
     except Exception:
         pass
 %}}
+
+%pythoncode %{{
+# Freeze the payload data struct so that assigning a field name that does not
+# already exist raises instead of silently succeeding (issue #305). Only the
+# {type}Payload data class is protected: the Msg/Reader/Recorder/Writer and the
+# std::vector wrapper classes are intentionally left untouched, because their
+# custom __getattr__ has side effects that protectSetAttr's hasattr() probe would
+# trigger on partially constructed objects (e.g. a Recorder mid-construction).
+{type}Payload.__setattr__ = protectSetAttr
+%}}
