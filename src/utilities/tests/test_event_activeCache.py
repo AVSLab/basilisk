@@ -130,6 +130,48 @@ def test_cache_handles_self_reactivating_event():
     assert sim.eventMap["loop"].occurCounter == 1
 
 
+def test_event_action_checks_later_due_event_in_same_cycle():
+    # If one event activates a later event that is already due, the newly
+    # active event should be checked before the current event-check pass ends.
+    sim = SimulationBaseClass.SimBaseClass()
+    simulationStep = 1.0  # [s]
+    stopTime = 2.0  # [s]
+    firstCheckTime = 0  # [ns]
+    eventRate = macros.sec2nano(simulationStep)  # [ns]
+    fired = []
+
+    proc = sim.CreateNewProcess("p")
+    proc.addTask(sim.CreateNewTask("t", eventRate))
+
+    def activateLaterEvent(s):
+        fired.append(("a", s.TotalSim.CurrentNanos))
+        s.setEventActivity("b", True)
+
+    def recordLaterEvent(s):
+        fired.append(("b", s.TotalSim.CurrentNanos))
+
+    sim.createNewEvent(
+        "a",
+        eventRate,
+        True,
+        conditionFunction=(lambda s: True),
+        actionFunction=activateLaterEvent,
+    )
+    sim.createNewEvent(
+        "b",
+        eventRate,
+        False,
+        conditionFunction=(lambda s: True),
+        actionFunction=recordLaterEvent,
+    )
+    sim.InitializeSimulation()
+    sim.showProgressBar = False
+    sim.ConfigureStopTime(macros.sec2nano(stopTime))
+    sim.ExecuteSimulation()
+
+    assert fired[:2] == [("a", firstCheckTime), ("b", firstCheckTime)]
+
+
 def test_returned_list_not_corrupted_by_later_mutation():
     # A snapshot taken before a mutation may legitimately be stale, but a fresh
     # query after invalidation must be correct (no aliasing bug).
