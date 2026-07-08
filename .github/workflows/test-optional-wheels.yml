@@ -1,0 +1,198 @@
+name: Test Optional Wheels
+
+on:
+  push:
+    branches:
+      - feature/fix_v2_11_0
+  workflow_dispatch:
+
+jobs:
+  test-opnav-wheels:
+    name: Test opNav Wheels (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - macos-26
+          - ubuntu-24.04-arm
+          - windows-2025-vs2026
+        include:
+          - os: windows-2025-vs2026
+            extra-conan-args: --generator Ninja
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v5
+
+      - name: Remove runner-provided Microsoft apt sources
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          sudo rm -f /etc/apt/sources.list.d/azure-cli.list
+          sudo rm -f /etc/apt/sources.list.d/azure-cli.sources
+          sudo rm -f /etc/apt/sources.list.d/microsoft-prod.list
+          sudo rm -f /etc/apt/sources.list.d/microsoft-prod.sources
+
+      - name: Setup system dependencies
+        uses: ./.github/actions/setup
+
+      - name: Build core bsk wheel
+        uses: pypa/cibuildwheel@v3.1.4
+        with:
+          output-dir: wheelhouse-core
+        env:
+          CIBW_BUILD: "cp314-*"
+          CIBW_TEST_SKIP: "*"
+          CONAN_ARGS: "--opNav False --mujoco True --clean ${{ matrix.extra-conan-args }}"
+
+      - name: Build opNav-enabled bsk wheel
+        uses: pypa/cibuildwheel@v3.1.4
+        with:
+          output-dir: wheelhouse-opnav-full
+        env:
+          CIBW_BUILD: "cp314-*"
+          CIBW_TEST_SKIP: "*"
+          CONAN_ARGS: "--opNav True --mujoco True --clean ${{ matrix.extra-conan-args }}"
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.14"
+
+      - name: Generate and test optional wheel installs
+        shell: bash
+        run: >
+          python .github/scripts/run_optional_bsk_wheel_test.py
+          --component opnav
+          --base-wheel-dir wheelhouse-core
+          --component-wheel-dir wheelhouse-opnav-full
+          --optional-wheel-dir wheelhouse-optional
+          --test-wheelhouse wheelhouse-test
+
+      - name: Upload wheel artifacts
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v6
+        with:
+          name: optional-wheel-test-${{ matrix.os }}
+          path: |
+            wheelhouse-core/*.whl
+            wheelhouse-opnav-full/*.whl
+            wheelhouse-optional/*.whl
+
+  build-opnav-linux-x64-wheels:
+    name: Build opNav Wheel Input (${{ matrix.wheel-kind }}, ubuntu-24.04)
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - wheel-kind: core
+            output-dir: wheelhouse-core
+            conan-args: --opNav False --mujoco True --clean
+            needs_disk_cleanup: false
+          - wheel-kind: opnav-full
+            output-dir: wheelhouse-opnav-full
+            conan-args: --opNav True --mujoco True --clean
+            needs_disk_cleanup: true
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v5
+
+      - name: Remove runner-provided Microsoft apt sources
+        shell: bash
+        run: |
+          sudo rm -f /etc/apt/sources.list.d/azure-cli.list
+          sudo rm -f /etc/apt/sources.list.d/azure-cli.sources
+          sudo rm -f /etc/apt/sources.list.d/microsoft-prod.list
+          sudo rm -f /etc/apt/sources.list.d/microsoft-prod.sources
+
+      - name: Setup system dependencies
+        uses: ./.github/actions/setup
+
+      - name: Free runner disk for heavy optional Linux wheel
+        if: ${{ runner.os == 'Linux' && matrix.needs_disk_cleanup }}
+        shell: bash
+        run: |
+          echo "Disk space before cleanup:"
+          df -h
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /opt/hostedtoolcache/CodeQL
+          docker system prune -af || true
+          echo "Disk space after cleanup:"
+          df -h
+
+      - name: Build ${{ matrix.wheel-kind }} bsk wheel
+        uses: pypa/cibuildwheel@v3.1.4
+        with:
+          output-dir: ${{ matrix.output-dir }}
+        env:
+          CIBW_BUILD: "cp314-*"
+          CIBW_TEST_SKIP: "*"
+          CONAN_ARGS: "${{ matrix.conan-args }}"
+
+      - name: Upload wheel input
+        uses: actions/upload-artifact@v6
+        with:
+          name: optional-wheel-test-ubuntu-24.04-${{ matrix.wheel-kind }}
+          path: ${{ matrix.output-dir }}/*.whl
+
+  test-opnav-wheels-linux-x64:
+    name: Test opNav Wheels (ubuntu-24.04)
+    runs-on: ubuntu-24.04
+    needs: build-opnav-linux-x64-wheels
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v5
+
+      - name: Remove runner-provided Microsoft apt sources
+        shell: bash
+        run: |
+          sudo rm -f /etc/apt/sources.list.d/azure-cli.list
+          sudo rm -f /etc/apt/sources.list.d/azure-cli.sources
+          sudo rm -f /etc/apt/sources.list.d/microsoft-prod.list
+          sudo rm -f /etc/apt/sources.list.d/microsoft-prod.sources
+
+      - name: Setup system dependencies
+        uses: ./.github/actions/setup
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.14"
+
+      - name: Download core wheel input
+        uses: actions/download-artifact@v6
+        with:
+          name: optional-wheel-test-ubuntu-24.04-core
+          path: wheelhouse-core
+
+      - name: Download opNav-enabled wheel input
+        uses: actions/download-artifact@v6
+        with:
+          name: optional-wheel-test-ubuntu-24.04-opnav-full
+          path: wheelhouse-opnav-full
+
+      - name: Generate and test optional wheel installs
+        shell: bash
+        run: >
+          python .github/scripts/run_optional_bsk_wheel_test.py
+          --component opnav
+          --base-wheel-dir wheelhouse-core
+          --component-wheel-dir wheelhouse-opnav-full
+          --optional-wheel-dir wheelhouse-optional
+          --test-wheelhouse wheelhouse-test
+
+      - name: Upload wheel artifacts
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v6
+        with:
+          name: optional-wheel-test-ubuntu-24.04
+          path: |
+            wheelhouse-core/*.whl
+            wheelhouse-opnav-full/*.whl
+            wheelhouse-optional/*.whl
