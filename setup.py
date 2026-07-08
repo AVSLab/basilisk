@@ -51,6 +51,7 @@ if _parse_version_prefix(setuptools_version) < (77, 0, 3):
 # See https://github.com/pypa/setuptools/issues/3896
 import shlex
 import os
+import shutil
 USER_CONAN_ARGS = shlex.split(os.getenv("CONAN_ARGS") or "")
 #-------------------------------------------------------------------------------
 
@@ -128,8 +129,12 @@ class BuildConanExtCommand(Command, SubCommand):
                             "Please install via `python conanfile.py` instead!")
 
         # Refresh `build_py` to ensure it can find the newly generated packages.
+        # Remove stale package output from previous wheel variants before build_py
+        # copies the current Conan build into place.
         build_py = self.reinitialize_command("build_py")
         build_py.ensure_finalized()
+        for package_root in {pkg.split(".")[0] for pkg in self.distribution.packages}:
+            shutil.rmtree(Path(build_py.build_lib, package_root), ignore_errors=True)
 
 
 # XXX: Forcibly override build to run ConanExtension builder before build_py.
