@@ -18,7 +18,7 @@ on:
 
 jobs:
   build-wheels:
-    name: Build Basilisk Wheels
+    name: Build Basilisk Wheels (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -57,17 +57,62 @@ jobs:
       - name: Setup system dependencies
         uses: ./.github/actions/setup
 
-      - name: Build wheels
+      - name: Build core bsk wheel
         uses: pypa/cibuildwheel@v3.1.4
+        with:
+          output-dir: wheelhouse-core
         env:
-          CONAN_ARGS: "--opNav True --mujoco True ${{ matrix.extra-conan-args }}"
+          CONAN_ARGS: "--opNav False --mujoco True --clean ${{ matrix.extra-conan-args }}"
           CIBW_TEST_SKIP: "*"
+
+      - name: Free runner disk before opNav Linux wheel
+        if: ${{ matrix.os == 'ubuntu-24.04' }}
+        shell: bash
+        run: |
+          echo "Disk space before cleanup:"
+          df -h
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /opt/hostedtoolcache/CodeQL
+          docker system prune -af || true
+          echo "Disk space after cleanup:"
+          df -h
+
+      - name: Build opNav-enabled bsk wheel
+        uses: pypa/cibuildwheel@v3.1.4
+        with:
+          output-dir: wheelhouse-opnav-full
+        env:
+          CONAN_ARGS: "--opNav True --mujoco True --clean ${{ matrix.extra-conan-args }}"
+          CIBW_TEST_SKIP: "*"
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: 3.14
+
+      - name: Generate and test optional wheel installs
+        shell: bash
+        run: >
+          python .github/scripts/run_optional_bsk_wheel_test.py
+          --component opnav
+          --base-wheel-dir wheelhouse-core
+          --component-wheel-dir wheelhouse-opnav-full
+          --optional-wheel-dir wheelhouse-optional
+          --test-wheelhouse wheelhouse-test
+
+      - name: Prepare publish wheels
+        shell: bash
+        run: |
+          mkdir -p wheelhouse-publish
+          cp wheelhouse-core/*.whl wheelhouse-publish/
+          cp wheelhouse-optional/*.whl wheelhouse-publish/
 
       - name: Upload wheels
         uses: actions/upload-artifact@v6
         with:
           name: cibw-wheels-${{ matrix.os }}-${{ strategy.job-index }}
-          path: ./wheelhouse/*.whl
+          path: ./wheelhouse-publish/*.whl
 
   make_sdist:
     name: Make SDist
@@ -103,7 +148,7 @@ jobs:
           python-version: 3.14
 
       - name: Download sdist
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           name: cibw-sdist
           path: dist
@@ -119,14 +164,14 @@ jobs:
       id-token: write
     steps:
       - name: Download wheels
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           pattern: cibw-wheels-*
           merge-multiple: true
           path: dist
 
       - name: Download sdist
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           name: cibw-sdist
           path: dist

@@ -30,22 +30,67 @@ jobs:
       - name: Setup system dependencies
         uses: ./.github/actions/setup
 
-      - name: Build wheels
+      - name: Build core bsk wheel
         uses: pypa/cibuildwheel@v3.1.4
+        with:
+          output-dir: wheelhouse-core
         env:
-          CONAN_ARGS: "--opNav True --mujoco True ${{ matrix.extra-conan-args }}"
+          CONAN_ARGS: "--opNav False --mujoco True --clean ${{ matrix.extra-conan-args }}"
           CIBW_TEST_SKIP: "*"
+
+      - name: Free runner disk before opNav Linux wheel
+        if: ${{ matrix.os == 'ubuntu-24.04' }}
+        shell: bash
+        run: |
+          echo "Disk space before cleanup:"
+          df -h
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /opt/hostedtoolcache/CodeQL
+          docker system prune -af || true
+          echo "Disk space after cleanup:"
+          df -h
+
+      - name: Build opNav-enabled bsk wheel
+        uses: pypa/cibuildwheel@v3.1.4
+        with:
+          output-dir: wheelhouse-opnav-full
+        env:
+          CONAN_ARGS: "--opNav True --mujoco True --clean ${{ matrix.extra-conan-args }}"
+          CIBW_TEST_SKIP: "*"
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: 3.14
+
+      - name: Generate and test optional wheel installs
+        shell: bash
+        run: >
+          python .github/scripts/run_optional_bsk_wheel_test.py
+          --component opnav
+          --base-wheel-dir wheelhouse-core
+          --component-wheel-dir wheelhouse-opnav-full
+          --optional-wheel-dir wheelhouse-optional
+          --test-wheelhouse wheelhouse-test
+
+      - name: Prepare nightly wheels
+        shell: bash
+        run: |
+          mkdir -p wheelhouse-nightly
+          cp wheelhouse-core/*.whl wheelhouse-nightly/
+          cp wheelhouse-optional/*.whl wheelhouse-nightly/
 
       - name: Upload wheels
         uses: actions/upload-artifact@v6
         with:
           name: nightly-wheels-${{ matrix.os }}
-          path: ./wheelhouse/*.whl
+          path: ./wheelhouse-nightly/*.whl
 
   notify-failure:
     name: Notify Slack on Failure
-    needs: build-wheels
-    if: ${{ always() && needs.build-wheels.result == 'failure' }}
+    needs: [build-wheels, publish-index]
+    if: ${{ always() && (needs.build-wheels.result == 'failure' || needs.publish-index.result == 'failure') }}
     runs-on: ubuntu-24.04
     permissions: {}
 
@@ -92,8 +137,8 @@ jobs:
 
   publish-index:
     name: Publish Nightly Index
-    needs: build-wheels
-    if: ${{ github.ref_name == 'develop' }}
+    needs: [build-wheels]
+    if: ${{ (github.ref_name == 'develop' || github.event_name == 'workflow_dispatch') && needs.build-wheels.result == 'success' }}
     runs-on: ubuntu-24.04
     permissions:
       contents: write
@@ -106,7 +151,7 @@ jobs:
           sparse-checkout: .github/scripts
 
       - name: Download all wheels
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           pattern: nightly-wheels-*
           merge-multiple: true
@@ -124,6 +169,7 @@ jobs:
           keep_files: false
 
       - name: Checkout gh-pages branch
+        if: ${{ github.ref_name == 'develop' }}
         uses: actions/checkout@v5
         with:
           ref: gh-pages
@@ -131,6 +177,7 @@ jobs:
           path: gh-pages-site
 
       - name: Trim gh-pages history
+        if: ${{ github.ref_name == 'develop' }}
         shell: bash
         working-directory: gh-pages-site
         run: |
