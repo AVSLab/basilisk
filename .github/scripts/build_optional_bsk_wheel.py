@@ -39,6 +39,21 @@ DEFAULT_VERSION_FILE = REPO_ROOT / "docs/source/bskVersion.txt"
 BASE_DISTRIBUTION = "bsk"
 NATIVE_PAYLOAD_SUFFIXES = (".a", ".dll", ".dylib", ".lib", ".pyd", ".so")
 NATIVE_PAYLOAD_PREFIXES = ("bsk.libs/",)
+PRE_RELEASE_ALIASES = {
+    "a": "a",
+    "alpha": "a",
+    "b": "b",
+    "beta": "b",
+    "c": "rc",
+    "pre": "rc",
+    "preview": "rc",
+    "rc": "rc",
+}
+PRE_RELEASE_VERSION_PATTERN = re.compile(
+    r"^(?P<release>\d+(?:\.\d+)*)(?:[-_.]?"
+    r"(?P<label>a|alpha|b|beta|c|pre|preview|rc)(?P<number>\d*))$",
+    re.IGNORECASE,
+)
 
 
 @dataclass(frozen=True)
@@ -76,11 +91,23 @@ def normalize_distribution_name(name: str) -> str:
     return re.sub(r"[-_.]+", "_", name).lower()
 
 
+def canonicalize_version(version: str) -> str:
+    """Return the canonical spelling for supported PEP 440 prereleases."""
+    stripped = version.strip()
+    match = PRE_RELEASE_VERSION_PATTERN.fullmatch(stripped)
+    if match is None:
+        return stripped
+
+    label = PRE_RELEASE_ALIASES[match.group("label").lower()]
+    number = int(match.group("number") or "0")
+    return f"{match.group('release')}{label}{number}"
+
+
 def read_version(version_file: Path) -> str:
     version = version_file.read_text(encoding="utf-8").strip()
     if not version:
         raise ValueError(f"Version file is empty: {version_file}")
-    return version
+    return canonicalize_version(version)
 
 
 def package_root_for_module(module_dir: Path) -> str:
@@ -411,7 +438,10 @@ def build_optional_wheel(
             ("component", component_metadata),
         ):
             wheel_version = first_metadata_value(metadata, "Version")
-            if wheel_version != version:
+            canonical_wheel_version = (
+                canonicalize_version(wheel_version) if wheel_version is not None else None
+            )
+            if canonical_wheel_version != version:
                 raise ValueError(
                     f"The {metadata_name} wheel version {wheel_version!r} does not match "
                     f"{version_file}: {version!r}."

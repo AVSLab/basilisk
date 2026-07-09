@@ -29,7 +29,7 @@ To prepare ``develop`` for the next beta cycle:
 
 #. Create ``beta_X_Y`` branch
 #. Modify the version number in ``docs/source/bskVersion.txt``
-   to reflect the new beta cycle such as ``v2.X.Y.beta``.
+   to reflect the new beta cycle such as ``v2.X.Yb0``.
 #. Update ``docs/source/Support/bskReleaseNotes.rst``
    and ``docs/source/Support/bskKnownIssues.rst`` files to next beta cycle
 #. Make PR and push to ``develop``
