@@ -89,6 +89,12 @@ accuracy for the least wall-clock cost.
 .. image:: /_images/Scenarios/scenarioCompareParetoRwPanels_frontier.svg
    :align: center
 
+The same work-precision analysis is repeated for the hub inertial position error, giving
+a companion view of the translational coupling alongside the attitude result.
+
+.. image:: /_images/Scenarios/scenarioCompareParetoRwPanels_frontierPosition.svg
+   :align: center
+
 """
 
 import os
@@ -395,8 +401,8 @@ def buildMujoco(integratorName, dt, tol):
     return scSim, recorder, [scene, integrator, hub] + actuatorMsgs
 
 
-def finalAttitude(builder, integratorName, dt, tol):
-    """Propagate one configuration and return its final attitude MRP.
+def finalState(builder, integratorName, dt, tol):
+    """Propagate one configuration and return its final hub attitude and position.
 
     Args:
         builder (callable): ``buildBSM`` or ``buildMujoco``.
@@ -405,15 +411,18 @@ def finalAttitude(builder, integratorName, dt, tol):
         tol (float): adaptive tolerance, or None.
 
     Returns:
-        numpy.ndarray: final ``sigma_BN`` (shape ``(3,)``), or None if the run diverged.
+        tuple: ``(sigma_BN, r_BN_N)`` at the final time -- the attitude MRP (shape
+        ``(3,)``) and the hub inertial position [m] (shape ``(3,)``) -- or ``(None, None)``
+        if the run diverged.
     """
     scSim, recorder, _ = builder(integratorName, dt, tol)
     scSim.ConfigureStopTime(macros.sec2nano(SIM_DURATION))
     scSim.ExecuteSimulation()
     sigma = np.array(recorder.sigma_BN)[-1]
-    if not np.all(np.isfinite(sigma)):
-        return None
-    return sigma
+    r = np.array(recorder.r_BN_N)[-1]  # [m] hub inertial position
+    if not (np.all(np.isfinite(sigma)) and np.all(np.isfinite(r))):
+        return None, None
+    return sigma, r
 
 
 def timedRun(builder, integratorName, dt, tol):
@@ -469,56 +478,61 @@ def sweepEngine(builder, reference=REFERENCE, referenceCheck=REFERENCE_CHECK):
             accuracy floor.
 
     Returns:
-        tuple: ``(rows, referenceFloor)`` where ``rows`` holds one dict per successful
-        configuration (integrator, error, wall-clock) and ``referenceFloor`` is the
-        estimated accuracy of the reference itself [rad]. Errors at or below the floor
-        only show agreement with the reference to within its own uncertainty.
+        tuple: ``(rows, attitudeFloor, positionFloor)`` where ``rows`` holds one dict per
+        successful configuration (integrator, attitude error, position error, wall-clock)
+        and ``attitudeFloor`` [rad] and ``positionFloor`` [m] are the estimated accuracies
+        of the reference itself. Errors at or below a floor only show agreement with the
+        reference to within its own uncertainty.
     """
-    referenceSigma = finalAttitude(builder, reference["integrator"],
-                                   reference["dt"], reference["tol"])
-    checkSigma = finalAttitude(builder, referenceCheck["integrator"],
-                               referenceCheck["dt"], referenceCheck["tol"])
-    referenceFloor = (principalAngle(checkSigma, referenceSigma)
-                      if checkSigma is not None else 0.0)
+    referenceSigma, referenceR = finalState(builder, reference["integrator"],
+                                            reference["dt"], reference["tol"])
+    checkSigma, checkR = finalState(builder, referenceCheck["integrator"],
+                                    referenceCheck["dt"], referenceCheck["tol"])
+    attitudeFloor = (principalAngle(checkSigma, referenceSigma)
+                     if checkSigma is not None else 0.0)
+    positionFloor = (float(np.linalg.norm(np.asarray(checkR) - np.asarray(referenceR)))
+                     if checkR is not None else 0.0)
     rows = []
     for integratorName, dt, tol in SWEEP_CONFIGS:
-        sigma = finalAttitude(builder, integratorName, dt, tol)
+        sigma, r = finalState(builder, integratorName, dt, tol)
         if sigma is None:
             # Diverged (unstable for this step/tolerance) -> not on the front.
             continue
-        error = principalAngle(sigma, referenceSigma)
         wall = timedRun(builder, integratorName, dt, tol)
         rows.append({
             "integrator": integratorName,
             "dt": dt,
             "tol": tol,
-            "error": error,
+            "error": principalAngle(sigma, referenceSigma),
+            "positionError": float(np.linalg.norm(np.asarray(r) - np.asarray(referenceR))),
             "wall": wall["median"],
             "wallMin": wall["min"],
             "wallStd": wall["std"],
         })
-    return rows, referenceFloor
+    return rows, attitudeFloor, positionFloor
 
 
-def paretoFrontier(rows):
+def paretoFrontier(rows, errorKey="error"):
     """Return the non-dominated subset (lowest error for a given or lower cost).
 
     A point is Pareto-optimal if no other point has both lower wall-clock time and lower
     error. The returned list is sorted by increasing wall-clock time.
 
     Args:
-        rows (list): per-configuration dicts with ``error`` and ``wall``.
+        rows (list): per-configuration dicts with ``wall`` and the metric ``errorKey``.
+        errorKey (str): row key of the error metric to build the frontier over
+            (``"error"`` for attitude, ``"positionError"`` for hub position).
 
     Returns:
         list: the non-dominated configurations, sorted by wall-clock time.
     """
-    ordered = sorted(rows, key=lambda r: (r["wall"], r["error"]))
+    ordered = sorted(rows, key=lambda r: (r["wall"], r[errorKey]))
     frontier = []
     bestError = np.inf
     for row in ordered:
-        if row["error"] < bestError:
+        if row[errorKey] < bestError:
             frontier.append(row)
-            bestError = row["error"]
+            bestError = row[errorKey]
     return frontier
 
 
@@ -547,24 +561,27 @@ def run(showPlots=False, saveJson=False, sweepConfigs=None, reference=None,
     referenceConfig = reference if reference is not None else REFERENCE
     referenceCheckConfig = referenceCheck if referenceCheck is not None else REFERENCE_CHECK
 
-    bsmRows, bsmFloor = sweepEngine(buildBSM, referenceConfig,
-                                            referenceCheckConfig)
+    bsmRows, bsmFloor, bsmPosFloor = sweepEngine(
+        buildBSM, referenceConfig, referenceCheckConfig)
     if couldImportMujoco:
-        mujocoRows, mujocoFloor = sweepEngine(buildMujoco, referenceConfig,
-                                              referenceCheckConfig)
+        mujocoRows, mujocoFloor, mujocoPosFloor = sweepEngine(
+            buildMujoco, referenceConfig, referenceCheckConfig)
     else:
-        mujocoRows, mujocoFloor = [], 0.0
+        mujocoRows, mujocoFloor, mujocoPosFloor = [], 0.0, 0.0
     # The accuracy of the study is limited by the least accurate engine reference.
-    referenceFloor = max(bsmFloor, mujocoFloor)
+    referenceFloor = max(bsmFloor, mujocoFloor)  # [rad]
+    positionReferenceFloor = max(bsmPosFloor, mujocoPosFloor)  # [m]
 
     if saveJson:
         import json
         os.makedirs(resultsPath, exist_ok=True)
         with open(os.path.join(resultsPath, fileName+".json"), "w") as f:
             json.dump({"scenario": fileName, "referenceFloor": referenceFloor,
+                       "positionReferenceFloor": positionReferenceFloor,
                        "bsm": bsmRows, "mujoco": mujocoRows}, f, indent=2)
 
-    figureList = plotResults(bsmRows, mujocoRows, referenceFloor)
+    figureList = plotResults(bsmRows, mujocoRows, referenceFloor,
+                             positionReferenceFloor)
 
     if showPlots:
         plt.show()
@@ -573,24 +590,20 @@ def run(showPlots=False, saveJson=False, sweepConfigs=None, reference=None,
     return figureList
 
 
-def plotResults(bsmRows, mujocoRows, referenceFloor=0.0):
-    """Build the Pareto and frontier figures.
+def _paretoScatter(bsmRows, mujocoRows, errorKey, ylabel):
+    """Scatter every configuration: color = integrator, filled = BSM, open = MuJoCo.
 
     Args:
         bsmRows (list): BSM-engine sweep results.
         mujocoRows (list): MuJoCo-engine sweep results (possibly empty).
-        referenceFloor (float): estimated reference accuracy [rad] (recorded in the JSON
-            summary; not drawn on the figures).
+        errorKey (str): row key of the error metric to plot on the y-axis.
+        ylabel (str): y-axis label.
 
     Returns:
-        dict: mapping from figure name to matplotlib figure.
+        matplotlib.figure.Figure: the scatter figure.
     """
-    figureList = {}
-
-    # --- Figure 1: all configurations, colored by integrator, shaped by engine. ---
     # Legend outside the axes so it does not overlap the data.
     fig, ax = plt.subplots(figsize=(8, 4))
-    figureList[fileName+"_pareto"] = fig
     seenLabels = set()
     for rows, engineLabel, facecolor in (
             (bsmRows, "BSM", True), (mujocoRows, "mujoco", False)):
@@ -601,39 +614,75 @@ def plotResults(bsmRows, mujocoRows, referenceFloor=0.0):
             if key not in seenLabels:
                 label = f"{intLabel} ({engineLabel})"
                 seenLabels.add(key)
-            ax.scatter(row["wall"], row["error"],
+            ax.scatter(row["wall"], row[errorKey],
                        marker=marker, s=45,
                        facecolors=color if facecolor else "none",
                        edgecolors=color, label=label)
     ax.set_xscale("log")
     ax.set_yscale("log")
     ax.set_xlabel("Wall-clock time [s]")
-    ax.set_ylabel("Final attitude error [rad]")
+    ax.set_ylabel(ylabel)
     ax.grid(True, which="both", alpha=0.3)
     ax.legend(fontsize=7, ncol=1, loc="center left", bbox_to_anchor=(1.02, 0.5))
     fig.tight_layout()
+    return fig
 
-    # --- Figure 2: the non-dominated frontier of each engine. ---
+
+def _paretoFrontierPlot(bsmRows, mujocoRows, errorKey, ylabel):
+    """Plot the non-dominated frontier of each engine for one error metric.
+
+    Args:
+        bsmRows (list): BSM-engine sweep results.
+        mujocoRows (list): MuJoCo-engine sweep results (possibly empty).
+        errorKey (str): row key of the error metric to build the frontier over.
+        ylabel (str): y-axis label.
+
+    Returns:
+        matplotlib.figure.Figure: the frontier figure.
+    """
     fig, ax = plt.subplots(figsize=(8, 4))
-    figureList[fileName+"_frontier"] = fig
     for rows, engineLabel, color in (
             (bsmRows, "Back-substitution (BSM)", unitTestSupport.getLineColor(0, 3)),
             (mujocoRows, "MuJoCo", unitTestSupport.getLineColor(1, 3))):
         if not rows:
             continue
-        frontier = paretoFrontier(rows)
-        walls = [r["wall"] for r in frontier]
-        errors = [r["error"] for r in frontier]
-        ax.plot(walls, errors, "-o", color=color, label=engineLabel)
+        frontier = paretoFrontier(rows, errorKey)
+        ax.plot([r["wall"] for r in frontier], [r[errorKey] for r in frontier],
+                "-o", color=color, label=engineLabel)
     ax.set_xscale("log")
     ax.set_yscale("log")
     ax.set_xlabel("Wall-clock time [s]")
-    ax.set_ylabel("Final attitude error [rad]")
+    ax.set_ylabel(ylabel)
     ax.grid(True, which="both", alpha=0.3)
     ax.legend(loc="center left", bbox_to_anchor=(1.02, 0.5))
     fig.tight_layout()
+    return fig
 
-    return figureList
+
+def plotResults(bsmRows, mujocoRows, referenceFloor=0.0, positionReferenceFloor=0.0):
+    """Build the Pareto and frontier figures for both attitude and hub-position error.
+
+    Args:
+        bsmRows (list): BSM-engine sweep results.
+        mujocoRows (list): MuJoCo-engine sweep results (possibly empty).
+        referenceFloor (float): estimated attitude reference accuracy [rad] (recorded in
+            the JSON summary; not drawn on the figures).
+        positionReferenceFloor (float): estimated position reference accuracy [m] (recorded
+            in the JSON summary; not drawn on the figures).
+
+    Returns:
+        dict: mapping from figure name to matplotlib figure.
+    """
+    attLabel = "Final attitude error [rad]"
+    posLabel = "Final hub position error [m]"
+    return {
+        fileName+"_pareto": _paretoScatter(bsmRows, mujocoRows, "error", attLabel),
+        fileName+"_frontier": _paretoFrontierPlot(bsmRows, mujocoRows, "error", attLabel),
+        fileName+"_paretoPosition": _paretoScatter(
+            bsmRows, mujocoRows, "positionError", posLabel),
+        fileName+"_frontierPosition": _paretoFrontierPlot(
+            bsmRows, mujocoRows, "positionError", posLabel),
+    }
 
 
 if __name__ == "__main__":
