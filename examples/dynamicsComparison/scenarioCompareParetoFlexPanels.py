@@ -60,6 +60,13 @@ As in :ref:`scenarioCompareParetoRwPanels`, the :ref:`MJScene<MJScene>` runs ena
 integrator's full order. The adaptive ladders therefore hold the task (macro) time step
 fixed and vary only the tolerance, which controls the error down to machine precision.
 
+.. note::
+
+    **What the reference "truth" is, and what it is not.** The reference is *per-engine*:
+    each engine's error is measured against its own tight solution, not against the other
+    engine or a shared truth, so these plots rank each engine's integrator work-precision
+    rather than absolute cross-engine accuracy.
+
 The script is found in the folder ``basilisk/examples/dynamicsComparison`` and executed
 by using::
 

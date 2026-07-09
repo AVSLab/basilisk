@@ -39,6 +39,15 @@ same engine at a tight tolerance. A per-engine reference isolates the integrator
 work-precision behavior from the formulation difference between the engines, which the
 other scenarios already characterize.
 
+.. note::
+
+    **What the reference "truth" is, and what it is not.** The reference is *per-engine*:
+    each engine's error is measured against its own tight solution, not against the other
+    engine or a shared analytic truth. These plots therefore rank each engine's integrator
+    work-precision; they are not a statement of absolute cross-engine accuracy (that is
+    established separately by the fixed-step agreement scenarios and, for the Keplerian
+    case, by the analytic reference in :ref:`scenarioCompareOrbit`).
+
 Plotting error against wall-clock time produces a Pareto front: the lower-left envelope
 of points is the set of non-dominated (most efficient) configurations. Higher-order
 integrators occupy the high-accuracy end, while low-order or adaptive integrators with
