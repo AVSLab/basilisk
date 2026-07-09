@@ -91,12 +91,5 @@ See the :ref:`FAQ <FAQ>` on how to run generate an html validation report using 
 
 Update Release Notes
 --------------------
-Ensure that a release note snippet for the PR is in:
-``docs/source/Support/bskReleaseNotesSnippets``
-
-- Add one ``.rst`` file per PR (any filename is acceptable).
-- Add one release-note bullet per line.
-- Use valid RST formatting for links/references when needed.
-- Do not edit ``docs/source/Support/bskReleaseNotes.rst`` directly for normal PR contributions.
-
-See ``docs/source/Support/bskReleaseNotesSnippets/README.md`` for detailed instructions.
+Follow ``docs/source/Support/bskReleaseNotesSnippets/README.md`` for when a
+release-note snippet is required and how snippet files should be formatted.

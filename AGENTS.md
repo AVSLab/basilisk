@@ -2,12 +2,31 @@
 
 ## Codex PR Review Rules
 
-Apply these rules to all **new or modified code** in this repository.
+Apply these rules to all **new or materially modified code and documentation** in
+this repository.
+Do not churn unrelated legacy lines solely to satisfy this file; keep legacy style unless
+the surrounding work is already touching that area.
 
 1. **Units on numeric literals**
-   - Add a trailing inline unit comment to each numeric literal assignment/definition when the quantity has physical meaning.
-   - Format: `value = 1.2  # [s]`.
-   - Use SI-style bracketed units (examples: `[s]`, `[m]`, `[kg]`, `[rad]`, `[m/s]`, `[N*m]`).
+   - Add a trailing inline unit comment to each numeric literal assignment/definition
+     when the quantity has physical meaning.
+   - Physical quantities include time, length, mass, angle, rate, force, torque,
+     voltage/current, inertia, and similar engineering values.
+   - Keep the unit immediately adjacent to the value, typically as an inline comment
+     such as `value = 1.2  # [s]`.
+   - The exact unit spelling is not important if the unit is clear. Accept common
+     forms such as `[N*m]`, `[Nm]`, `Nm`, `[kg*m^2]`, `[kg m^2]`, `[m/s^2]`, and
+     `[rad/s]`.
+   - Do not flag reasonable unit spellings solely for formatting differences; focus
+     on whether units are present and understandable.
+   - Use `[-]` for dimensionless physical values when it improves clarity, but do
+     not require unit comments for obvious pure math literals or all-zero/identity
+     initializers.
+   - Unit comments are not required for indexes, counters, array sizes/shapes, loop
+     ranges, flags, enum/status values, random seeds, test case identifiers,
+     non-physical plotting/layout constants, or other clearly non-physical values.
+   - For dense arrays, tables, or function calls, document units once on the variable,
+     column, or argument when per-element comments would hurt readability.
 
 2. **Doc comment format**
    - All new/updated Python docstrings and Doxygen comments must be valid, well-formed reStructuredText (`.rst`) markup.
@@ -31,12 +50,10 @@ Apply these rules to all **new or modified code** in this repository.
    - When a PR fixes one instance of a buffer-write or format-string issue, search nearby BSK modules and related payload paths for the same pattern and flag or fix matching issues.
 
 6. **PR metadata requirements**
-   - For normal PRs, include one release-note snippet in:
-     `docs/source/Support/bskReleaseNotesSnippets/`.
-   - Ensure snippet content follows:
-     `docs/source/Support/bskReleaseNotesSnippets/README.md`.
-   - Do not edit `docs/source/Support/bskReleaseNotes.rst` directly for normal PRs.
-   - If there is a BSK fix, make sure it is mentioned in the `docs/source/Support/bskKnownIssues.rst` file.
+   - Follow `docs/source/Support/bskReleaseNotesSnippets/README.md` for when a
+     release-note snippet is required and how snippet files should be formatted.
+   - Update `docs/source/Support/bskKnownIssues.rst` when a PR fixes, changes, or
+     documents a known user-visible issue or workaround.
 
 7. **SysModel documentation requirement**
    - Every new SysModel must include a corresponding `.rst` documentation file.
