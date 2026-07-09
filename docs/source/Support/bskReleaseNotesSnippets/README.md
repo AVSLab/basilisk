@@ -3,12 +3,24 @@ Release Notes Snippets
 
 Purpose
 -------
-Each pull request should contribute release notes by adding a snippet file in this folder
-instead of editing ``docs/source/Support/bskReleaseNotes.rst`` directly.
+This file is the source of truth for release-note snippet requirements.
+
+Pull requests with user- or developer-facing changes should contribute release notes by
+adding a snippet file in this folder instead of editing
+``docs/source/Support/bskReleaseNotes.rst`` directly.
+
+User- or developer-facing changes include public APIs, modules, examples,
+documentation, build/install behavior, packaging, validation semantics, performance,
+and bug fixes users may care about.
+
+A snippet is not required for internal-only refactors, test-only maintenance,
+formatting/lint-only changes, comment-only changes, generated-file cleanup, or small
+internal plumbing changes with no user/developer-facing behavior, API, documentation,
+build/install, packaging, performance, or validation impact.
 
 What to add
 -----------
-1. Add a new .rst file in this folder.
+1. Add a new .rst file in this folder when a release-note snippet is required.
 2. The filename can be anything meaningful (for example: 1255-tle-osculating.rst).
 3. Put one release-note item per line.
 4. Each line should be written exactly as it should appear in the release notes.
