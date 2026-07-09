@@ -2063,29 +2063,30 @@ class SimBaseClass:
         self._activeEventCache = None
 
     def _ensureActiveEventCache(self):
-        """Return the internal cached list of active events, rebuilding it from
+        """Return the cached tuple of active events, rebuilding it from
         ``eventMap`` if it has been invalidated.
 
-        This is the hot path used by the simulation loop. It returns the actual
-        cached list (not a copy); external callers must use :meth:`activeEvents`
-        instead, which hands out an immutable snapshot. The cache is only rebuilt
-        when it has been invalidated (an event was added, its activity was
-        toggled, or an event triggered), so the per-check-cycle cost stays
-        proportional to the number of *active* events rather than the total
-        number of events (see issue #455)."""
+        This is the hot path used by the simulation loop. The cache is an
+        immutable tuple, so it can be handed straight to external callers by
+        :meth:`activeEvents` without copying. It is only rebuilt when it has
+        been invalidated (an event was added, its activity was toggled, or an
+        event triggered), so the per-check-cycle cost stays proportional to the
+        number of *active* events rather than the total number of events (see
+        issue #455)."""
         if self._activeEventCache is None:
-            self._activeEventCache = [
+            self._activeEventCache = tuple(
                 event for event in self.eventMap.values() if event.eventActive
-            ]
+            )
         return self._activeEventCache
 
     def activeEvents(self):
         """Return an immutable snapshot of the currently active events.
 
-        A tuple, not the internal cache list, is returned so that external
-        callers cannot mutate the cache and silently change which events fire.
-        See :meth:`_ensureActiveEventCache` for the caching behaviour."""
-        return tuple(self._ensureActiveEventCache())
+        The cache is itself an immutable tuple, so it is returned directly:
+        external callers cannot mutate it to silently change which events fire,
+        and no per-call copy is allocated. See :meth:`_ensureActiveEventCache`
+        for the caching behaviour."""
+        return self._ensureActiveEventCache()
 
     def setEventActivity(self, eventName, activityCommand):
         """Enable or disable the named event.
