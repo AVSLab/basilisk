@@ -65,7 +65,8 @@ The script accepts the following options to customize this process.
     * - ``clean``
       -
       - None
-      - If flag is set, this forces the distribution folder ``dist3`` to be deleted to create a fresh setup and build
+      - If flag is set, this deletes the distribution folder ``dist3`` and Basilisk Numba cache
+        artifacts to create a fresh setup and build
     * - ``buildProject``
       - Boolean
       - True
