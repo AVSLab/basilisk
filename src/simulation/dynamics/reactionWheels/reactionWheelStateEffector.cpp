@@ -164,7 +164,7 @@ void ReactionWheelStateEffector::updateEffectorMassProps(double integTime)
     }
 }
 
-void ReactionWheelStateEffector::updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::Vector3d sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N)
+void ReactionWheelStateEffector::updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::MRPd sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N)
 {
 	Eigen::Vector3d omegaLoc_BN_B;
 	Eigen::Vector3d tempF;
@@ -182,7 +182,7 @@ void ReactionWheelStateEffector::updateContributions(double integTime, BackSubMa
     gLocal_N = *this->g_N;
 
     //! - Find dcm_BN
-    sigmaBNLocal = (Eigen::Vector3d ) sigma_BN;
+    sigmaBNLocal = sigma_BN;
     dcm_NB = sigmaBNLocal.toRotationMatrix();
     dcm_BN = dcm_NB.transpose();
     //! - Map gravity to body frame
@@ -266,7 +266,7 @@ void ReactionWheelStateEffector::updateContributions(double integTime, BackSubMa
 	}
 }
 
-void ReactionWheelStateEffector::computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::Vector3d sigma_BN)
+void ReactionWheelStateEffector::computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN)
 {
 	Eigen::MatrixXd OmegasDot(this->numRW,1);
     Eigen::MatrixXd thetasDot(this->numRWJitter,1);
@@ -281,7 +281,7 @@ void ReactionWheelStateEffector::computeDerivatives(double integTime, Eigen::Vec
 	//! Grab necessarry values from manager
 	omegaDotBNLoc_B = omegaDot_BN_B;
 	rDDotBNLoc_N = rDDot_BN_N;
-	sigmaBNLocal = (Eigen::Vector3d ) sigma_BN;
+	sigmaBNLocal = sigma_BN;
 	dcm_NB = sigmaBNLocal.toRotationMatrix();
 	dcm_BN = dcm_NB.transpose();
 	rDDotBNLoc_B = dcm_BN*rDDotBNLoc_N;

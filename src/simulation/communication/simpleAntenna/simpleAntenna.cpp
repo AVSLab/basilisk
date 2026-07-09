@@ -518,7 +518,7 @@ void SimpleAntenna::calculateAntennaPositionAndOrientation()
 
         // Calculate the antenna orientation in {N} frame
         dcm_NA                    = dcm_NB * this->sigma_AB.toRotationMatrix();               // DCM from {A} frame to {N} frame:   dcm_NA = dcm_NB * dcm_BA
-        this->sigma_AN            = eigenMRPd2Vector3d(eigenC2MRP(dcm_NA.transpose()));       // Convert DCM to MRP
+        this->sigma_AN            = eigenC2MRP(dcm_NA.transpose());                           // Convert DCM to MRP
 
         // Calculate the antenna velocity in the {N} frame
         this->v_AN_N = cArray2EigenVector3d(this->scState.v_BN_N);                            // Antenna velocity in {N} frame (assumed same as spacecraft velocity)

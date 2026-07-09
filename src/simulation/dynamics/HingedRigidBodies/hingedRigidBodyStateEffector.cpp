@@ -217,7 +217,7 @@ void HingedRigidBodyStateEffector::updateEffectorMassProps(double integTime)
 
 /*! This method allows the HRB state effector to give its contributions to the matrices needed for the back-sub
  method */
-void HingedRigidBodyStateEffector::updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::Vector3d sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N)
+void HingedRigidBodyStateEffector::updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::MRPd sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N)
 {
     // - Find dcm_BN
     Eigen::MRPd sigmaLocal_PN;
@@ -292,7 +292,7 @@ void HingedRigidBodyStateEffector::updateContributions(double integTime, BackSub
 }
 
 /*! This method is used to find the derivatives for the HRB stateEffector: thetaDDot and the kinematic derivative */
-void HingedRigidBodyStateEffector::computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::Vector3d sigma_BN)
+void HingedRigidBodyStateEffector::computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN)
 {
     // - Grab necessarry values from manager (these have been previously computed in hubEffector)
     Eigen::Vector3d rDDotLoc_PN_N = rDDot_BN_N;
@@ -425,7 +425,8 @@ void HingedRigidBodyStateEffector::computePanelInertialStates()
     Eigen::Matrix3d dcm_NP = sigmaBN.toRotationMatrix();  // assumes P and B are idential
     Eigen::Matrix3d dcm_SN;
     dcm_SN = this->dcm_SP*dcm_NP.transpose();
-    *this->sigma_SN = eigenMRPd2Vector3d(eigenC2MRP(dcm_SN));
+    const Eigen::MRPd sigma_SN = eigenC2MRP(dcm_SN);
+    *this->sigma_SN = sigma_SN.coeffs();
 
 
     // inertial angular velocity

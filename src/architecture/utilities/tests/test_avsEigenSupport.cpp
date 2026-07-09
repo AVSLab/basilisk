@@ -102,15 +102,15 @@ TEST(avsEigenSupport, TildeMatrix) {
 
 // Test MRP conversions
 TEST(avsEigenSupport, MRPConversions) {
-    Eigen::Vector3d mrp(0.1, 0.2, 0.3);
+    Eigen::MRPd mrp(0.1, 0.2, 0.3);  // [-]
     double array[3];
 
     eigenMRPd2CArray(mrp, array);
     Eigen::MRPd result = cArray2EigenMRPd(array);
 
-    EXPECT_NEAR(mrp[0], result.x(), 1e-10);
-    EXPECT_NEAR(mrp[1], result.y(), 1e-10);
-    EXPECT_NEAR(mrp[2], result.z(), 1e-10);
+    EXPECT_NEAR(mrp.x(), result.x(), 1e-10);
+    EXPECT_NEAR(mrp.y(), result.y(), 1e-10);
+    EXPECT_NEAR(mrp.z(), result.z(), 1e-10);
 }
 
 // Test Newton-Raphson solver

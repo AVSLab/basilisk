@@ -650,14 +650,14 @@ void PrescribedRotation1DOF::writeOutputMessages(uint64_t callTime) {
     Eigen::Vector3d omegaPrime_PM_P = this->thetaDDot * this->rotHat_M;  // [rad/s^2]
 
     // Compute the MRP attitude of spinning body frame P with respect to frame M
-    Eigen::Vector3d sigma_PM = this->computeSigma_PM();
+    Eigen::MRPd sigma_PM = this->computeSigma_PM();
 
     // Copy the module variables to the output buffer messages
     spinningBodyOut.theta = this->theta;
     spinningBodyOut.thetaDot = this->thetaDot;
     eigenVector3d2CArray(omega_PM_P, prescribedRotationOut.omega_PM_P);
     eigenVector3d2CArray(omegaPrime_PM_P, prescribedRotationOut.omegaPrime_PM_P);
-    eigenVector3d2CArray(sigma_PM, prescribedRotationOut.sigma_PM);
+    eigenMRPd2CArray(sigma_PM, prescribedRotationOut.sigma_PM);
 
     // Write the output messages
     this->spinningBodyOutMsg.write(&spinningBodyOut, moduleID, callTime);
@@ -681,7 +681,7 @@ void PrescribedRotation1DOF::writeOutputMessages(uint64_t callTime) {
 /*! This method computes the current spinning body MRP attitude relative to the mount frame: sigma_PM
 
 */
-Eigen::Vector3d PrescribedRotation1DOF::computeSigma_PM() {
+Eigen::MRPd PrescribedRotation1DOF::computeSigma_PM() {
     // Determine dcm_PP0 for the current spinning body attitude relative to the initial attitude
     double dcm_PP0[3][3];
     double prv_PP0_array[3];
@@ -704,7 +704,7 @@ Eigen::Vector3d PrescribedRotation1DOF::computeSigma_PM() {
     // Compute the MRP sigma_PM representing the current spinning body attitude relative to the mount frame
     double sigma_PM_array[3];
     C2MRP(dcm_PM, sigma_PM_array);
-    return cArray2EigenVector3d(sigma_PM_array);
+    return cArray2EigenMRPd(sigma_PM_array);
 }
 
 /*! Setter method for the coast option bang duration.

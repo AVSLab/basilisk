@@ -310,7 +310,7 @@ public:
     void addThrusterSet(ThrusterStateEffector *stateEff);       //!< -- Add StateEffector thruster
     void updateContributions(double integTime,
                              BackSubMatrices &backSubContr,
-                             Eigen::Vector3d sigma_BN,
+                             Eigen::MRPd sigma_BN,
                              Eigen::Vector3d omega_BN_B,
                              Eigen::Vector3d g_N) override;     //!< -- Back-sub contributions
     void updateEnergyMomContributions(double integTime,
@@ -320,7 +320,7 @@ public:
     void computeDerivatives(double integTime,
                             Eigen::Vector3d rDDot_BN_N,
                             Eigen::Vector3d omegaDot_BN_B,
-                            Eigen::Vector3d sigma_BN) override; //!< -- Calculate stateEffector's derivatives
+                            Eigen::MRPd sigma_BN) override; //!< -- Calculate stateEffector's derivatives
 };
 
 

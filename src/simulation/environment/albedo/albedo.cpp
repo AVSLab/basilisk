@@ -206,7 +206,7 @@ void Albedo::onUpdateBegin(const SCStatesMsgPayload&         scMsg,
                            uint64_t                          nanos)
 {
     this->r_BN_N       = Eigen::Vector3d(scMsg.r_BN_N);  // [m]
-    const Eigen::MRPd sigma_BN(Eigen::Vector3d(scMsg.sigma_BN));
+    const Eigen::MRPd sigma_BN(scMsg.sigma_BN);
     this->dcm_BN       = sigma_BN.toRotationMatrix().transpose(); // dcm_BN: rows are B axes expressed in N
     this->r_SN_N       = Eigen::Vector3d(sunMsg.PositionVector);  // [m]
     this->currentNanos = nanos;  // [ns]

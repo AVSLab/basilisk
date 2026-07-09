@@ -206,7 +206,7 @@ void DualHingedRigidBodyStateEffector::updateEffectorMassProps(double integTime)
     return;
 }
 
-void DualHingedRigidBodyStateEffector::updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::Vector3d sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N)
+void DualHingedRigidBodyStateEffector::updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::MRPd sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N)
 {
     Eigen::MRPd sigmaPNLocal;
     Eigen::Matrix3d dcmPN;                        /* direction cosine matrix from N to B */
@@ -282,7 +282,7 @@ void DualHingedRigidBodyStateEffector::updateContributions(double integTime, Bac
     return;
 }
 
-void DualHingedRigidBodyStateEffector::computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::Vector3d sigma_BN)
+void DualHingedRigidBodyStateEffector::computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN)
 {
     // - Define necessarry variables
     Eigen::MRPd sigmaBNLocal;
@@ -384,7 +384,7 @@ void DualHingedRigidBodyStateEffector::writeOutputStateMessages(uint64_t Current
         configLogMsg = this->dualHingedRigidBodyConfigLogOutMsgs[i]->zeroMsgPayload;
         eigenVector3d2CArray(this->r_SN_N[i], configLogMsg.r_BN_N);
         eigenVector3d2CArray(this->v_SN_N[i], configLogMsg.v_BN_N);
-        eigenVector3d2CArray(this->sigma_SN[i], configLogMsg.sigma_BN);
+        eigenMRPd2CArray(this->sigma_SN[i], configLogMsg.sigma_BN);
         eigenVector3d2CArray(this->omega_SN_S[i], configLogMsg.omega_BN_B);
         this->dualHingedRigidBodyConfigLogOutMsgs[i]->write(&configLogMsg, this->moduleID, CurrentClock);
     }
@@ -422,8 +422,8 @@ void DualHingedRigidBodyStateEffector::computePanelInertialStates()
     Eigen::MRPd sigmaPN;
     sigmaPN = this->sigma_BN;
     Eigen::Matrix3d dcm_NP = sigmaPN.toRotationMatrix();
-    this->sigma_SN[0] = eigenMRPd2Vector3d(eigenC2MRP(this->dcm_S1P*dcm_NP.transpose()));
-    this->sigma_SN[1] = eigenMRPd2Vector3d(eigenC2MRP(this->dcm_S2P*dcm_NP.transpose()));
+    this->sigma_SN[0] = eigenC2MRP(this->dcm_S1P*dcm_NP.transpose());
+    this->sigma_SN[1] = eigenC2MRP(this->dcm_S2P*dcm_NP.transpose());
 
     // inertial angular velocities
     Eigen::Vector3d omega_PN_P;

@@ -173,7 +173,7 @@ void LinearTranslationNDOFStateEffector::writeOutputStateMessages(uint64_t Curre
             // Logging the F frame is the body frame B of that object
             eigenVector3d2CArray(translatingBody->r_FcN_N, configLogMsg.r_BN_N);
             eigenVector3d2CArray(translatingBody->v_FcN_N, configLogMsg.v_BN_N);
-            eigenVector3d2CArray(translatingBody->sigma_FN, configLogMsg.sigma_BN);
+            eigenMRPd2CArray(translatingBody->sigma_FN, configLogMsg.sigma_BN);
             eigenVector3d2CArray(translatingBody->omega_FN_F, configLogMsg.omega_BN_B);
             this->translatingBodyConfigLogOutMsgs[i]->write(&configLogMsg, this->moduleID, CurrentClock);
         }
@@ -293,7 +293,7 @@ void LinearTranslationNDOFStateEffector::updateEffectorMassProps(double integTim
 
 /*! This method allows the TB state effector to give its contributions to the matrices needed for the back-sub
  method */
-void LinearTranslationNDOFStateEffector::updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::Vector3d sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N)
+void LinearTranslationNDOFStateEffector::updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::MRPd sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N)
 {
     // Find the DCM from N to B frames
     this->sigma_BN = sigma_BN;
@@ -416,7 +416,7 @@ void LinearTranslationNDOFStateEffector::computeBackSubContributions(BackSubMatr
 }
 
 /*! This method is used to find the derivatives for the TB stateEffector: rhoDDot and the kinematic derivative */
-void LinearTranslationNDOFStateEffector::computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::Vector3d sigma_BN)
+void LinearTranslationNDOFStateEffector::computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN)
 {
     // Find rDDotLoc_BN_B
     const Eigen::Vector3d& rDDotLocal_BN_N = rDDot_BN_N;
@@ -465,7 +465,7 @@ void LinearTranslationNDOFStateEffector::computeTranslatingBodyInertialStates()
         // Compute the rotational properties
         Eigen::Matrix3d dcm_FN;
         dcm_FN = translatingBody->dcm_FB * this->dcm_BN;
-        translatingBody->sigma_FN = eigenMRPd2Vector3d(eigenC2MRP(dcm_FN));
+        translatingBody->sigma_FN = eigenC2MRP(dcm_FN);
         translatingBody->omega_FN_F = translatingBody->dcm_FB.transpose().transpose() * translatingBody->omega_FN_B;
 
         // Compute the translation properties

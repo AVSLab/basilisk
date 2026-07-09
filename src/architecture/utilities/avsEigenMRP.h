@@ -23,17 +23,15 @@
 #ifndef EIGEN_MRP_H
 #define EIGEN_MRP_H
 
-//#include <Eigen/Core>
-//#include <Eigen/src/Core//util//DisableStupidWarnings.h>
-//#include <Eigen/SVD>
-//#include <Eigen/LU>
-//#include "Eigen/src/Geometry/Quaternion.h"
+#include <cmath>
+#include <limits>
+#include <Eigen/Geometry>
 
 namespace Eigen {
     template<typename Scalar, int Options = AutoAlign> class MRP;
 
 
-    
+
     /***************************************************************************
      * Definition of MRPBase<Derived>
      * The implementation is at the end of the file
@@ -44,6 +42,15 @@ namespace Eigen {
         int OtherRows=Other::RowsAtCompileTime,
         int OtherCols=Other::ColsAtCompileTime>
         struct MRPbase_assign_impl;
+
+        // Helper for MRPBase::cast().  Same-scalar casts should behave like
+        // Eigen and return a const reference to the existing expression, while
+        // cross-scalar casts must explicitly cast the coefficient vector.  The
+        // explicit coefficient cast avoids Eigen's mixed-scalar assignment path,
+        // which rejects cases such as MRPMapd::cast<float>().
+        template<class Derived, typename NewScalarType,
+        bool IsSame = is_same<typename traits<Derived>::Scalar, NewScalarType>::value>
+        struct mrp_cast_impl;
     }
 
     /**
@@ -60,9 +67,9 @@ namespace Eigen {
         using Base::operator*;
         using Base::derived;
 
-        typedef typename internal::traits<Derived>::Scalar Scalar;              //!< variable
-        typedef typename NumTraits<Scalar>::Real RealScalar;                    //!< variable
-        typedef typename internal::traits<Derived>::Coefficients Coefficients;  //!< variable
+        typedef typename internal::traits<Derived>::Scalar Scalar;
+        typedef typename NumTraits<Scalar>::Real RealScalar;
+        typedef typename internal::traits<Derived>::Coefficients Coefficients;
         enum {
             Flags = Eigen::internal::traits<Derived>::Flags
         };
@@ -106,8 +113,8 @@ namespace Eigen {
         /** \returns a vector expression of the coefficients (x,y,z) */
         inline typename internal::traits<Derived>::Coefficients& coeffs() { return derived().coeffs(); }
 
-        EIGEN_STRONG_INLINE MRPBase<Derived>& operator=(const MRPBase<Derived>& other); //!< method
-        template<class OtherDerived> EIGEN_STRONG_INLINE Derived& operator=(const MRPBase<OtherDerived>& other); //!< method
+        EIGEN_STRONG_INLINE MRPBase<Derived>& operator=(const MRPBase<Derived>& other);
+        template<class OtherDerived> EIGEN_STRONG_INLINE Derived& operator=(const MRPBase<OtherDerived>& other);
 
         // disabled this copy operator as it is giving very strange compilation errors when compiling
         // test_stdvector with GCC 4.4.2. This looks like a GCC bug though, so feel free to re-enable it if it's
@@ -117,7 +124,7 @@ namespace Eigen {
         //  { return operator=<Derived>(other); }
 
         Derived& operator=(const AngleAxisType& aa);
-        template<class OtherDerived> Derived& operator=(const MatrixBase<OtherDerived>& m); //!< method
+        template<class OtherDerived> Derived& operator=(const MatrixBase<OtherDerived>& m);
 
         /** \returns a MRP representing an identity mapping or zero rotation
          * \sa MatrixBase::Identity()
@@ -133,37 +140,64 @@ namespace Eigen {
          */
         inline Scalar squaredNorm() const { return coeffs().squaredNorm(); }
 
-        /** \returns the norm of the MRP's coefficients
+        /** \returns the norm of the MRP's coefficients.
+         *
+         * For a nonzero MRP, \c coeffs()/norm() is the principal rotation axis
+         * and \c norm() is \f$\tan(\phi/4)\f$, where \f$\phi\f$ is the principal
+         * rotation angle.
+         *
          * \sa MRPBase::squaredNorm(), MatrixBase::norm()
          */
         inline Scalar norm() const { return coeffs().norm(); }
 
-        /** Normalizes the MRP \c *this
+        /** Normalizes the coefficient vector of \c *this.
+         *
+         * This is useful to recover the principal rotation axis direction for a
+         * nonzero MRP. It changes the attitude represented by the MRP and should
+         * not be used as an attitude normalization operation.
+         *
          * \sa normalized(), MatrixBase::normalize() */
         inline void normalize() { coeffs().normalize(); }
-        /** \returns a normalized copy of \c *this
+        /** \returns a copy of \c *this with a normalized coefficient vector.
+         *
+         * For a nonzero MRP, this returns the principal rotation axis direction
+         * stored as MRP coefficients. It changes the represented attitude.
+         *
          * \sa normalize(), MatrixBase::normalized() */
         inline MRP<Scalar> normalized() const { return MRP<Scalar>(coeffs().normalized()); }
 
-        /** \returns the dot product of \c *this and \a other
-         * Geometrically speaking, the dot product of two unit MRPs
-         * corresponds to the cosine of half the angle between the two rotations.
-         * \sa angularDistance()
+        /** \returns the Euclidean dot product of this MRP coefficient vector and \a other.
+         *
+         * \sa MatrixBase::dot()
          */
         template<class OtherDerived> inline Scalar dot(const MRPBase<OtherDerived>& other) const { return coeffs().dot(other.coeffs()); }
 
-        template<class OtherDerived> Scalar angularDistance(const MRPBase<OtherDerived>& other) const; //!< method
+        template<class OtherDerived> Scalar angularDistance(const MRPBase<OtherDerived>& other) const;
 
         /** \returns an equivalent 3x3 rotation matrix */
         Matrix3 toRotationMatrix() const;
 
-        /** \returns the MRP which transform \a a into \a b through a rotation */
+        /** \returns the MRP which transforms \a a into \a b through a rotation */
         template<typename Derived1, typename Derived2>
         Derived& setFromTwoVectors(const MatrixBase<Derived1>& a, const MatrixBase<Derived2>& b);
 
-        template<class OtherDerived> EIGEN_STRONG_INLINE MRP<Scalar> operator* (const MRPBase<OtherDerived>& q) const; //!< method
+        /** \returns the attitude composition of \c *this and \a q. */
+        template<class OtherDerived> EIGEN_STRONG_INLINE MRP<Scalar> operator* (const MRPBase<OtherDerived>& q) const;
+        /** Right-composes \c *this with another MRP attitude. */
         template<class OtherDerived> EIGEN_STRONG_INLINE Derived& operator*= (const MRPBase<OtherDerived>& q);
+        /** Adds MRP coefficients component-wise.
+         *
+         * This is coefficient arithmetic, not attitude composition. It is useful
+         * for estimation, filtering, and linearized updates where the MRP
+         * coefficients are manipulated as a vector.
+         */
         template<class OtherDerived> EIGEN_STRONG_INLINE Derived& operator+= (const MRPBase<OtherDerived>& q);
+        /** Subtracts MRP coefficients component-wise.
+         *
+         * This is coefficient arithmetic, not attitude composition. It is useful
+         * for estimation, filtering, and linearized updates where the MRP
+         * coefficients are manipulated as a vector.
+         */
         template<class OtherDerived> EIGEN_STRONG_INLINE Derived& operator-= (const MRPBase<OtherDerived>& q);
 
         /** \returns the MRP describing the shadow set */
@@ -199,7 +233,7 @@ namespace Eigen {
         template<typename NewScalarType>
         inline typename internal::cast_return_type<Derived, MRP<NewScalarType> >::type cast() const
         {
-            return typename internal::cast_return_type<Derived,MRP<NewScalarType> >::type(derived());
+            return internal::mrp_cast_impl<Derived, NewScalarType>::run(derived());
         }
 
     };
@@ -227,21 +261,22 @@ namespace Eigen {
      * \li \c MRPf for \c float
      * \li \c MRPd for \c double
      *
-     * \warning Operations interpreting the MRP as rotation have undefined behavior if the MRP is not normalized.
+     * The coefficient norm is \f$\tan(\phi/4)\f$, where \f$\phi\f$ is the principal
+     * rotation angle. MRPs do not require unit-norm coefficients to represent a
+     * rotation.
+     *
+     * \warning MRPs are singular for rotations of \f$2\pi\f$. Use \c shadow()
+     * to map large-norm MRPs to the equivalent shadow set when needed.
      *
      * \sa  class AngleAxis, class Transform
      */
 
     namespace internal {
         template<typename _Scalar,int _Options>
-        /*! structure definition */
         struct traits<MRP<_Scalar,_Options> >
         {
-            /** struct definition */
             typedef MRP<_Scalar,_Options> PlainObject;
-            /** struct definition */
             typedef _Scalar Scalar;
-            /** struct definition */
             typedef Matrix<_Scalar,3,1,_Options> Coefficients;
             enum{
                 IsAligned = internal::traits<Coefficients>::Flags & PacketAccessBit,
@@ -257,24 +292,29 @@ namespace Eigen {
         enum { IsAligned = internal::traits<MRP>::IsAligned };
 
     public:
-        typedef _Scalar Scalar; //!< variable
+        typedef _Scalar Scalar;
 
         EIGEN_INHERIT_ASSIGNMENT_OPERATORS(MRP)
         using Base::operator*=;
 
-        typedef typename internal::traits<MRP>::Coefficients Coefficients;  //!< variable
-        typedef typename Base::AngleAxisType AngleAxisType;                 //!< variable
+        typedef typename internal::traits<MRP>::Coefficients Coefficients;
+        typedef typename Base::AngleAxisType AngleAxisType;
 
         /** Default constructor leaving the MRP uninitialized. */
         inline MRP() {}
 
         /** Constructs and initializes the MRP \f$ (x,y,z) \f$ from
-         * its four coefficients \a x, \a y and \a z.
+         * its three coefficients \a x, \a y and \a z.
          */
         inline MRP(const Scalar& x, const Scalar& y, const Scalar& z) : m_coeffs(x, y, z){}
 
         /** Constructs and initialize a MRP from the array data */
         inline MRP(const Scalar* data) : m_coeffs(data) {}
+
+        /** Explicit copy constructor with scalar conversion */
+        template<typename OtherScalar, int OtherOptions>
+        explicit inline MRP(const MRP<OtherScalar, OtherOptions>& other)
+            : m_coeffs(other.coeffs().template cast<Scalar>()) {}
 
         /** Copy constructor */
         template<class Derived> EIGEN_STRONG_INLINE MRP(const MRPBase<Derived>& other) { this->Base::operator=(other); }
@@ -289,33 +329,48 @@ namespace Eigen {
         template<typename Derived>
         explicit inline MRP(const MatrixBase<Derived>& other) { *this = other; }
 
-        /** Explicit copy constructor with scalar conversion */
-        //        template<typename OtherScalar, int OtherOptions>
-        //        explicit inline MRP(const MRP<OtherScalar, OtherOptions>& other)
-        //        { m_coeffs = other.coeffs().template cast<Scalar>(); }
-
         template<typename Derived1, typename Derived2>
         static MRP FromTwoVectors(const MatrixBase<Derived1>& a, const MatrixBase<Derived2>& b);
 
-        inline Coefficients& coeffs() { return m_coeffs;} //!< method
-        inline const Coefficients& coeffs() const { return m_coeffs;} //!< method
+        inline Coefficients& coeffs() { return m_coeffs;}
+        inline const Coefficients& coeffs() const { return m_coeffs;}
 
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW_IF(bool(IsAligned))
 
     protected:
-        Coefficients m_coeffs; //!< variable
+        Coefficients m_coeffs; //!< MRP coefficient storage
 
 #ifndef EIGEN_PARSED_BY_DOXYGEN
         /**
          Check template parameters
          */
-        static EIGEN_STRONG_INLINE void _check_template_params()         //!< method
+        static EIGEN_STRONG_INLINE void _check_template_params()
         {
             EIGEN_STATIC_ASSERT( (_Options & DontAlign) == _Options,
                                 INVALID_MATRIX_TEMPLATE_PARAMETERS)
         }
 #endif
     };
+
+    namespace internal {
+        template<class Derived, typename NewScalarType>
+        struct mrp_cast_impl<Derived, NewScalarType, true>
+        {
+            static EIGEN_STRONG_INLINE const Derived& run(const Derived& sig)
+            {
+                return sig;
+            }
+        };
+
+        template<class Derived, typename NewScalarType>
+        struct mrp_cast_impl<Derived, NewScalarType, false>
+        {
+            static EIGEN_STRONG_INLINE MRP<NewScalarType> run(const Derived& sig)
+            {
+                return MRP<NewScalarType>(sig.coeffs().template cast<NewScalarType>());
+            }
+        };
+    }
 
     /**
      * single precision MRP type */
@@ -329,24 +384,18 @@ namespace Eigen {
      ***************************************************************************/
 
     namespace internal {
-        /** struct definition */
         template<typename _Scalar, int _Options>
-        /** struct definition */
         struct traits<Map<MRP<_Scalar>, _Options> > : traits<MRP<_Scalar, (int(_Options)&Aligned)==Aligned ? AutoAlign : DontAlign> >
         {
-            /** struct definition */
             typedef Map<Matrix<_Scalar,3,1>, _Options> Coefficients;
         };
     }
 
     namespace internal {
         template<typename _Scalar, int _Options>
-        /** struct definition */
         struct traits<Map<const MRP<_Scalar>, _Options> > : traits<MRP<_Scalar, (int(_Options)&Aligned)==Aligned ? AutoAlign : DontAlign> >
         {
-            /** struct definition */
             typedef Map<const Matrix<_Scalar,3,1>, _Options> Coefficients;
-            /** struct definition */
             typedef traits<MRP<_Scalar, (int(_Options)&Aligned)==Aligned ? AutoAlign : DontAlign> > TraitsBase;
             enum {
                 Flags = TraitsBase::Flags & ~LvalueBit
@@ -372,8 +421,8 @@ namespace Eigen {
         typedef MRPBase<Map<const MRP<_Scalar>, _Options> > Base;
 
     public:
-        typedef _Scalar Scalar;     //!< variable
-        typedef typename internal::traits<Map>::Coefficients Coefficients; //!< variable
+        typedef _Scalar Scalar;
+        typedef typename internal::traits<Map>::Coefficients Coefficients;
         EIGEN_INHERIT_ASSIGNMENT_OPERATORS(Map)
         using Base::operator*=;
 
@@ -385,10 +434,10 @@ namespace Eigen {
          * If the template parameter _Options is set to Aligned, then the pointer coeffs must be aligned. */
         EIGEN_STRONG_INLINE Map(const Scalar* coeffs) : m_coeffs(coeffs) {}
 
-        inline const Coefficients& coeffs() const { return m_coeffs;} //!< method
+        inline const Coefficients& coeffs() const { return m_coeffs;}
 
     protected:
-        const Coefficients m_coeffs; //!< variable
+        const Coefficients m_coeffs; //!< mapped MRP coefficient storage
     };
 
     /**
@@ -409,8 +458,8 @@ namespace Eigen {
         typedef MRPBase<Map<MRP<_Scalar>, _Options> > Base;
 
     public:
-        typedef _Scalar Scalar; //!< variable
-        typedef typename internal::traits<Map>::Coefficients Coefficients; //!< variable
+        typedef _Scalar Scalar;
+        typedef typename internal::traits<Map>::Coefficients Coefficients;
         EIGEN_INHERIT_ASSIGNMENT_OPERATORS(Map)
         using Base::operator*=;
 
@@ -422,11 +471,11 @@ namespace Eigen {
          * If the template parameter _Options is set to Aligned, then the pointer coeffs must be aligned. */
         EIGEN_STRONG_INLINE Map(Scalar* coeffs) : m_coeffs(coeffs) {}
 
-        inline Coefficients& coeffs() { return m_coeffs; } //!< method
-        inline const Coefficients& coeffs() const { return m_coeffs; } //!< method
+        inline Coefficients& coeffs() { return m_coeffs; }
+        inline const Coefficients& coeffs() const { return m_coeffs; }
 
     protected:
-        Coefficients m_coeffs; //!< variable
+        Coefficients m_coeffs; //!< mapped MRP coefficient storage
     };
 
     /**
@@ -449,25 +498,38 @@ namespace Eigen {
     // Generic MRP * MRP product
     // This product can be specialized for a given architecture via the Arch template argument.
     namespace internal {
-        /*! template definition */
+        template<class Derived, typename QuaternionType>
+        EIGEN_STRONG_INLINE void assign_mrp_from_quaternion_short(MRPBase<Derived>& sig, QuaternionType q)
+        {
+            typedef typename internal::traits<Derived>::Scalar Scalar;
+
+            if (q.w() < Scalar(0)) {
+                q.coeffs() = -q.coeffs();
+            }
+            sig.vec() = q.vec()/(Scalar(1) + q.w());
+        }
+
         template<int Arch, class Derived1, class Derived2, typename Scalar, int _Options> struct mrp_product
         {
             static EIGEN_STRONG_INLINE MRP<Scalar> run(const MRPBase<Derived1>& a, const MRPBase<Derived2>& b){
-                Scalar det;     //!< variable
-                Scalar s1N2;    //!< variable
-                Scalar s2N2;    //!< variable
+                using std::abs;
+                Scalar det;
+                Scalar s1N2;
+                Scalar s2N2;
                 MRP<Scalar> s2 = b;
                 MRP<Scalar> answer;
                 s1N2 = a.squaredNorm();
                 s2N2 = s2.squaredNorm();
-                det = Scalar(1.0) + s1N2*s2N2 - 2*a.dot(b);
-                if (det < 0.01) {
+                det = Scalar(1) + s1N2*s2N2 - Scalar(2)*a.dot(s2);
+                if (abs(det) < Scalar(0.01)) {
                     s2 = s2.shadow();
                     s2N2 = s2.squaredNorm();
-                    det = Scalar(1.0) + s1N2*s2N2 - 2*a.dot(b);
+                    det = Scalar(1) + s1N2*s2N2 - Scalar(2)*a.dot(s2);
                 }
-                answer = MRP<Scalar> (((1-s1N2)*s2.vec() + (1-s2N2)*a.vec() - 2*b.vec().cross(a.vec()))/det);
-                if (answer.squaredNorm() > 1)
+                answer = MRP<Scalar>(((Scalar(1) - s1N2)*s2.vec()
+                                      + (Scalar(1) - s2N2)*a.vec()
+                                      - Scalar(2)*s2.vec().cross(a.vec()))/det);
+                if (answer.squaredNorm() > Scalar(1))
                     answer = answer.shadow();
                 return answer;
             }
@@ -496,7 +558,7 @@ namespace Eigen {
         return derived();
     }
 
-    /** \sa operator*(MRP) */
+    /** Coefficient-wise MRP addition; this is not attitude composition. */
     template <class Derived>
     template <class OtherDerived>
     EIGEN_STRONG_INLINE Derived& MRPBase<Derived>::operator+= (const MRPBase<OtherDerived>& other)
@@ -504,7 +566,7 @@ namespace Eigen {
         derived().coeffs() = derived().coeffs() + other.derived().coeffs();
         return derived();
     }
-    /** \sa operator*(MRP) */
+    /** Coefficient-wise MRP subtraction; this is not attitude composition. */
     template <class Derived>
     template <class OtherDerived>
     EIGEN_STRONG_INLINE Derived& MRPBase<Derived>::operator-= (const MRPBase<OtherDerived>& other)
@@ -514,25 +576,16 @@ namespace Eigen {
     }
 
 
-    /** Rotation of a vector by a MRP.
-     * \remarks If the MRP is used to rotate several points (>1)
-     * then it is much more efficient to first convert it to a 3x3 Matrix.
-     * Comparison of the operation cost for n transformations:
-     *   - MRP2:    30n
-     *   - Via a Matrix3: 24 + 15n
+    /** Rotation of a vector by an MRP.
+     *
+     * \remarks If the MRP is used to rotate several points, it is more efficient
+     * to compute the 3x3 rotation matrix once and reuse it.
      */
     template <class Derived>
     EIGEN_STRONG_INLINE typename MRPBase<Derived>::Vector3
     MRPBase<Derived>::_transformVector(const Vector3& v) const
     {
-        // Note that this algorithm comes from the optimization by hand
-        // of the conversion to a Matrix followed by a Matrix/Vector product.
-        // It appears to be much faster than the common algorithm found
-        // in the literature (30 versus 39 flops). It also requires two
-        // Vector3 as temporaries.
-        Vector3 uv = this->vec().cross(v);
-        uv += uv;
-        return v + this->w() * uv + this->vec().cross(uv);
+        return this->toRotationMatrix()*v;
     }
 
     template<class Derived>
@@ -555,9 +608,8 @@ namespace Eigen {
     template<class Derived>
     EIGEN_STRONG_INLINE Derived& MRPBase<Derived>::operator=(const AngleAxisType& aa)
     {
-        using std::tan;
-        Scalar tanPhi = Scalar(0.25)*aa.angle(); // Scalar(0.25) to suppress precision loss warnings
-        this->vec() = tanPhi * aa.axis();
+        Quaternion<Scalar> q(aa);
+        internal::assign_mrp_from_quaternion_short(*this, q);
         return derived();
     }
 
@@ -609,13 +661,13 @@ namespace Eigen {
         res.coeffRef(2,1) = s2s3 + Scalar(4)*this->x()*ms2;
         res.coeffRef(2,2) = Scalar(4)*(-s1Sq - s2Sq + s3Sq)+ms2Sq;
         res = res / ps2 / ps2;
-        
+
         return res;
     }
 
     /** Sets \c *this to be a MRP representing a rotation between
      * the two arbitrary vectors \a a and \a b. In other words, the built
-     * rotation represent a rotation sending the line of direction \a a
+     * rotation represents a rotation sending the line of direction \a a
      * to the line of direction \a b, both lines passing through the origin.
      *
      * \returns a reference to \c *this.
@@ -627,28 +679,23 @@ namespace Eigen {
     template<typename Derived1, typename Derived2>
     inline Derived& MRPBase<Derived>::setFromTwoVectors(const MatrixBase<Derived1>& a, const MatrixBase<Derived2>& b)
     {
-        using std::acos;
-        using std::tan;
-
-        Vector3 v0 = a.normalized();
-        Vector3 v1 = b.normalized();
-        Scalar c = v1.dot(v0);
-
-        if (c <= 1 && c >= -1) {
-            Vector3 axis = v0.cross(v1);
-            axis.normalize();
-
-            this->vec() = axis*tan(acos(c)/Scalar(4.0));
-        } else {
-            this->vec() << 0., 0., 0.;
+        const RealScalar minimumUsableSquaredNorm = std::numeric_limits<RealScalar>::min();
+        if (a.squaredNorm() <= minimumUsableSquaredNorm
+            || b.squaredNorm() <= minimumUsableSquaredNorm) {
+            this->setIdentity();
+            return derived();
         }
+
+        Quaternion<Scalar> q;
+        q.setFromTwoVectors(a, b);
+        internal::assign_mrp_from_quaternion_short(*this, q);
         return derived();
     }
 
 
     /** Returns a MRP representing a rotation between
      * the two arbitrary vectors \a a and \a b. In other words, the built
-     * rotation represent a rotation sending the line of direction \a a
+     * rotation represents a rotation sending the line of direction \a a
      * to the line of direction \a b, both lines passing through the origin.
      *
      * \returns resulting MRP
@@ -683,7 +730,7 @@ namespace Eigen {
     /** \returns the MRP [B] matrix of \c *this
      * This is used in
      *
-     *  d(sigmda_B/N) = 1/4 [B(sigma_B/N)] omega_BN_B
+     *  d(sigma_B/N) = 1/4 [B(sigma_B/N)] omega_BN_B
      *
      * \sa MRPBase::shadow()
      */
@@ -712,8 +759,7 @@ namespace Eigen {
     }
 
     /** \returns the multiplicative inverse of \c *this
-     * Note that in most cases, i.e., if you simply want the opposite rotation,
-     * and/or the MRP is normalized, then it is enough to use the conjugate.
+     * For MRPs, the inverse rotation is represented by \f$-\sigma\f$.
      *
      * \sa MRPBase::conjugate()
      */
@@ -723,11 +769,12 @@ namespace Eigen {
         return MRP<Scalar>(-this->coeffs());
     }
 
-    /** \returns the conjugate of the \c *this which is equal to the multiplicative inverse
-     * if the MRP is normalized.
-     * The conjugate of a MRP represents the opposite rotation.
+    /** \returns the conjugate of \c *this.
      *
-     * \sa MRP2::inverse()
+     * For MRPs, the conjugate represents the opposite rotation and is equal to
+     * the multiplicative inverse.
+     *
+     * \sa MRPBase::inverse()
      */
     template <class Derived>
     inline MRP<typename internal::traits<Derived>::Scalar>
@@ -794,48 +841,44 @@ namespace Eigen {
 
     namespace internal {
 
+        template<typename Other, int OtherRows, int OtherCols>
+        struct MRPbase_assign_impl
+        {
+            template<class Derived> static inline void run(MRPBase<Derived>&, const Other&)
+            {
+                static_assert(OtherRows == 3 && (OtherCols == 1 || OtherCols == 3),
+                              "Eigen::MRP assignment expects a 3x1 coefficient vector or 3x3 rotation matrix.");
+            }
+        };
+
         // set from a rotation matrix
         // this maps the [NB] DCM to the equivalent sigma_B/N set
         template<typename Other>
-        /*! struct definition */
         struct MRPbase_assign_impl<Other,3,3>
         {
-            typedef typename Other::Scalar Scalar; //!< variable
-            typedef DenseIndex Index; //!< variable
-            /** Class Definition */
+            typedef typename Other::Scalar Scalar;
             template<class Derived> static inline void run(MRPBase<Derived>& sig, const Other& mat)
             {
                 Quaternion<Scalar> q;
-                Scalar num;
 
                 /* convert DCM to quaternions */
                 q = mat;
-                num = Scalar(1) + q.w();
-
-                /* convert quaternions to MRP */
-                sig.x() = q.x()/num;
-                sig.y() = q.y()/num;
-                sig.z() = q.z()/num;
+                internal::assign_mrp_from_quaternion_short(sig, q);
             }
         };
-        
+
         // set from a vector of coefficients assumed to be a MRP
         template<typename Other>
-        /**
-         structure definition
-         */
         struct MRPbase_assign_impl<Other,3,1>
         {
-            typedef typename Other::Scalar Scalar; //!< variable
-            /** Class definition */
             template<class Derived> static inline void run(MRPBase<Derived>& q, const Other& vec)
             {
                 q.coeffs() = vec;
             }
         };
-        
+
     } // end namespace internal
-    
+
 } // end namespace Eigen
 
 #endif // EIGEN_MRP_H

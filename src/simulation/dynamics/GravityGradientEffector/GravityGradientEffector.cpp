@@ -103,8 +103,7 @@ void GravityGradientEffector::computeForceTorque(double integTime, double timeSt
     this->torqueExternalPntB_B.setZero();
 
     /* compute DCN [BN] */
-    Eigen::MRPd sigmaBN;
-    sigmaBN = (Eigen::Vector3d)this->hubSigma->getState();
+    Eigen::MRPd sigmaBN(this->hubSigma->getState().data());
     Eigen::Matrix3d dcm_BN = sigmaBN.toRotationMatrix().transpose();
 
     /* evaluate inertia tensor about center of mass */

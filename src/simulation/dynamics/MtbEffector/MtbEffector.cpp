@@ -123,7 +123,7 @@ void MtbEffector::computeForceTorque(double integTime, double timeStep)
     /*
      * Construct bTilde matrix.
      */
-    sigmaBN = (Eigen::Vector3d)this->hubSigma->getState();
+    sigmaBN = Eigen::MRPd(this->hubSigma->getState().data());
     dcm_BN = sigmaBN.toRotationMatrix().transpose();
     magField_N = cArray2EigenVector3d(this->magInMsgBuffer.magField_N);
     magField_B = dcm_BN * magField_N;

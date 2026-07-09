@@ -40,8 +40,7 @@ CannonballDrag::UpdateState(uint64_t CurrentSimNanos)
 
     // 'S' denotes the 'site' reference frame
     const auto siteStatePayload = this->referenceFrameStateInMsg();
-    Eigen::MRPd sigma_SN;
-    sigma_SN = Eigen::Map<const Eigen::Vector3d>(siteStatePayload.sigma_BN);
+    Eigen::MRPd sigma_SN(siteStatePayload.sigma_BN);
     const Eigen::Matrix3d dcm_SN = sigma_SN.toRotationMatrix().transpose();
 
     Eigen::Map<const Eigen::Vector3d> v_BN_N(siteStatePayload.v_BN_N);

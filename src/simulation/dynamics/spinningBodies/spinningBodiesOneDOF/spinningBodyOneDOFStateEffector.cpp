@@ -251,7 +251,7 @@ void SpinningBodyOneDOFStateEffector::updateEffectorMassProps(double integTime)
  method */
 void SpinningBodyOneDOFStateEffector::updateContributions(double integTime,
                                                           BackSubMatrices & backSubContr,
-                                                          Eigen::Vector3d sigma_BN,
+                                                          Eigen::MRPd sigma_BN,
                                                           Eigen::Vector3d omega_BN_B,
                                                           Eigen::Vector3d g_N)
 {
@@ -338,8 +338,7 @@ void SpinningBodyOneDOFStateEffector::addPrescribedMotionCouplingContributions(B
     Eigen::Vector3d r_PB_B = (Eigen::Vector3d)*this->prescribedPositionProperty;
     Eigen::Vector3d rPrime_PB_B = (Eigen::Vector3d)*this->prescribedVelocityProperty;
     Eigen::Vector3d rPrimePrime_PB_B = (Eigen::Vector3d)*this->prescribedAccelerationProperty;
-    Eigen::MRPd sigma_PB;
-    sigma_PB = (Eigen::Vector3d)*this->prescribedAttitudeProperty;
+    Eigen::MRPd sigma_PB(this->prescribedAttitudeProperty->data());
     Eigen::Vector3d omega_PB_P = (Eigen::Vector3d)*this->prescribedAngVelocityProperty;
     Eigen::Vector3d omegaPrime_PB_P = (Eigen::Vector3d)*this->prescribedAngAccelerationProperty;
     Eigen::Matrix3d dcm_PB = sigma_PB.toRotationMatrix().transpose();
@@ -414,7 +413,7 @@ void SpinningBodyOneDOFStateEffector::addPrescribedMotionCouplingContributions(B
 void SpinningBodyOneDOFStateEffector::computeDerivatives(double integTime,
                                                          Eigen::Vector3d rDDot_BN_N,
                                                          Eigen::Vector3d omegaDot_BN_B,
-                                                         Eigen::Vector3d sigma_BN)
+                                                         Eigen::MRPd sigma_BN)
 {
     // Update dcm_BN
     this->sigma_BN = sigma_BN;
@@ -466,7 +465,8 @@ void SpinningBodyOneDOFStateEffector::computeSpinningBodyInertialStates()
     // inertial attitude
     Eigen::Matrix3d dcm_SN;
     dcm_SN = (this->dcm_BS).transpose() * this->dcm_BN;
-    *this->sigma_SN = eigenMRPd2Vector3d(eigenC2MRP(dcm_SN));
+    const Eigen::MRPd sigma_SN = eigenC2MRP(dcm_SN);
+    *this->sigma_SN = sigma_SN.coeffs();
     *this->omega_SN_S = (this->dcm_BS).transpose() * this->omega_SN_B;
 
     // inertial position vector

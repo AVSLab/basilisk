@@ -145,7 +145,7 @@ void SensorThermal::computeSunData()
     //! - Read Message data to eigen
     r_BN_N = cArray2EigenVector3d(this->stateCurrent.r_BN_N);
     r_SN_N = cArray2EigenVector3d(this->sunData.PositionVector);
-    sigma_BN = cArray2EigenVector3d(this->stateCurrent.sigma_BN);
+    sigma_BN = cArray2EigenMRPd(this->stateCurrent.sigma_BN);
 
     //! - Find sun heading unit vector
     r_SB_N = r_SN_N - r_BN_N;

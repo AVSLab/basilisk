@@ -140,17 +140,16 @@ void HubEffector::updateEffectorMassProps(double integTime)
 
 /*! This method is for computing the derivatives of the hub: rDDot_BN_N and omegaDot_BN_B, along with the kinematic
  derivatives */
-void HubEffector::computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::Vector3d sigma_BN)
+void HubEffector::computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN)
 {
     // - Get variables from state manager
     Eigen::Vector3d rDotLocal_BN_N;
-    Eigen::MRPd sigmaLocal_BN;
+    Eigen::MRPd sigmaLocal_BN(this->sigmaState->getState().data());
     Eigen::Vector3d omegaLocal_BN_B;
     Eigen::Vector3d cLocal_B;
     Eigen::Vector3d cPrimeLocal_B;
     Eigen::Vector3d gLocal_N;
     rDotLocal_BN_N = velocityState->getState();
-    sigmaLocal_BN = (Eigen::Vector3d )sigmaState->getState();
     omegaLocal_BN_B = omegaState->getState();
     gLocal_N = *this->g_N;
 
@@ -208,11 +207,10 @@ void HubEffector::updateEnergyMomContributions(double integTime, Eigen::Vector3d
 void HubEffector::modifyStates(double integTime)
 {
     // Lets switch those MRPs!!
-    Eigen::Vector3d sigmaBNLoc;
-    sigmaBNLoc = (Eigen::Vector3d) this->sigmaState->getState();
+    Eigen::MRPd sigmaBNLoc(this->sigmaState->getState().data());
     if (sigmaBNLoc.norm() > 1) {
-        sigmaBNLoc = -sigmaBNLoc/(sigmaBNLoc.dot(sigmaBNLoc));
-        this->sigmaState->setState(sigmaBNLoc);
+        sigmaBNLoc = sigmaBNLoc.shadow();
+        this->sigmaState->setState(sigmaBNLoc.coeffs());
         this->MRPSwitchCount++;
     }
     return;
