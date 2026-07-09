@@ -1951,7 +1951,7 @@ class SimBaseClass:
             # ``checkedEvents`` guarantees each event is checked at most once per
             # cycle, even when a triggered event rebuilds the cache mid-pass.
             checkedEvents = set()
-            activeEvents = self.activeEvents()
+            activeEvents = self._ensureActiveEventCache()
             i = 0
             while i < len(activeEvents):
                 event = activeEvents[i]
@@ -1966,7 +1966,7 @@ class SimBaseClass:
                         # (and may have activated further events). Continue from
                         # the fresh list; ``checkedEvents`` prevents re-checking
                         # anything already handled this cycle.
-                        activeEvents = self.activeEvents()
+                        activeEvents = self._ensureActiveEventCache()
                         i = 0
 
             if self.terminate:
@@ -1975,7 +1975,7 @@ class SimBaseClass:
             # Find the next time to stop the sim
             eventCheckTimes = [
                 event.nextCheckTime(self.TotalSim.CurrentNanos)
-                for event in self.activeEvents()
+                for event in self._ensureActiveEventCache()
             ]
             if len(eventCheckTimes) > 0:
                 # Stop at next event, if any
@@ -2056,12 +2056,15 @@ class SimBaseClass:
         membership (``eventMap``) or any event's ``eventActive`` flag changes."""
         self._activeEventCache = None
 
-    def activeEvents(self):
-        """Return the list of currently active events.
+    def _ensureActiveEventCache(self):
+        """Return the internal cached list of active events, rebuilding it from
+        ``eventMap`` if it has been invalidated.
 
-        The result is cached and only recomputed when the cache has been
-        invalidated (an event was added, its activity was toggled through the
-        public API, or an event triggered). This keeps the per-check-cycle cost
+        This is the hot path used by the simulation loop. It returns the actual
+        cached list (not a copy); external callers must use :meth:`activeEvents`
+        instead, which hands out an immutable snapshot. The cache is only rebuilt
+        when it has been invalidated (an event was added, its activity was
+        toggled, or an event triggered), so the per-check-cycle cost stays
         proportional to the number of *active* events rather than the total
         number of events (see issue #455)."""
         if self._activeEventCache is None:
@@ -2069,6 +2072,14 @@ class SimBaseClass:
                 event for event in self.eventMap.values() if event.eventActive
             ]
         return self._activeEventCache
+
+    def activeEvents(self):
+        """Return an immutable snapshot of the currently active events.
+
+        A tuple, not the internal cache list, is returned so that external
+        callers cannot mutate the cache and silently change which events fire.
+        See :meth:`_ensureActiveEventCache` for the caching behaviour."""
+        return tuple(self._ensureActiveEventCache())
 
     def setEventActivity(self, eventName, activityCommand):
         """Enable or disable the named event.
