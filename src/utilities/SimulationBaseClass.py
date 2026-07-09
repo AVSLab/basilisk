@@ -1944,10 +1944,30 @@ class SimBaseClass:
         if progressUpdateInterval is not None:
             nextProgressUpdateTime = self.TotalSim.CurrentNanos + progressUpdateInterval
         while self.CheckStopCondition():
-            # Check events
-            for event in self.activeEvents():
+            # Check events. Iterate by index rather than over a snapshot so that
+            # an event action which activates another event that is already due
+            # this cycle still gets that event checked before the pass ends
+            # (matching the historical lazy-generator behaviour, see issue #455).
+            # ``checkedEvents`` guarantees each event is checked at most once per
+            # cycle, even when a triggered event rebuilds the cache mid-pass.
+            checkedEvents = set()
+            activeEvents = self.activeEvents()
+            i = 0
+            while i < len(activeEvents):
+                event = activeEvents[i]
+                i += 1
+                if id(event) in checkedEvents:
+                    continue
                 if event.shouldBeChecked(self.TotalSim.CurrentNanos):
+                    checkedEvents.add(id(event))
                     event.checkEvent(self)
+                    if self._activeEventCache is not activeEvents:
+                        # A triggered event invalidated and rebuilt the cache
+                        # (and may have activated further events). Continue from
+                        # the fresh list; ``checkedEvents`` prevents re-checking
+                        # anything already handled this cycle.
+                        activeEvents = self.activeEvents()
+                        i = 0
 
             if self.terminate:
                 break
