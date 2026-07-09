@@ -1,0 +1,1 @@
+- Reused Conan retry and source-backup configuration in the release container build to reduce transient external source download failures.

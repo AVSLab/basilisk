@@ -1,5 +1,9 @@
 .git
-.github
+# Keep the Conan retry/source-backup helper available to the Dockerfile.
+.github/*
+!.github/scripts/
+.github/scripts/*
+!.github/scripts/configure_conan_retries.py
 .venv
 __pycache__
 *.pyc

@@ -49,10 +49,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 RUN python -m pip install --upgrade pip uv
 
-# Configure Conan to allow system package manager usage.
+COPY .github/scripts/configure_conan_retries.py /tmp/configure_conan_retries.py
+
+# Configure Conan to allow system package manager usage and resilient source downloads.
 RUN mkdir -p /root/.conan2 \
     && printf "tools.system.package_manager:mode=install\n" >> /root/.conan2/global.conf \
-    && printf "tools.system.package_manager:sudo=False\n" >> /root/.conan2/global.conf
+    && printf "tools.system.package_manager:sudo=False\n" >> /root/.conan2/global.conf \
+    && python /tmp/configure_conan_retries.py
 
 # Copy source
 COPY . .
