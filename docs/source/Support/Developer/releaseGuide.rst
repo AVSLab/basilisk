@@ -196,6 +196,94 @@ Basilisk, so a new BSK release requires a corresponding SDK release.
 The following steps are to be done after the Basilisk ``v2.X.Y`` release is fully completed.
 This ensures that the Basilisk release is completed and available on the expected Basilisk branch.
 
+.. _bsk-sdk-local-testing:
+
+Testing the SDK Locally
+^^^^^^^^^^^^^^^^^^^^^^^
+Before pushing the ``bsk-sdk`` release branch to GitHub, test the SDK against
+the matching Basilisk release locally.  This reproduces the important parts of
+the GitHub Actions workflow: syncing the vendored SDK files, building the SDK
+wheel, installing the matching Basilisk wheel, and building the example plugin.
+
+Create a clean Python test environment inside your ``bsk_sdk`` folder using:
+
+.. code-block:: bash
+
+   python3 -m venv .venv
+   source .venv/bin/activate
+   python -m pip install --upgrade pip
+   python -m pip install build pytest scikit-build-core "cmake>=3.26" "ninja>=1.5"
+
+In the ``bsk-sdk`` repository, check out the matching Basilisk release in the
+local ``external/basilisk`` checkout and sync the SDK payload:
+
+.. code-block:: bash
+
+   git -C external/basilisk fetch --tags
+   git -C external/basilisk checkout v2.X.Y
+   python tools/sync_all.py
+
+Verify that the SDK now records the expected Basilisk version:
+
+.. code-block:: bash
+
+   cat external/basilisk/docs/source/bskVersion.txt
+   cat src/bsk_sdk/_bsk_version.txt
+   grep '^version =' pyproject.toml
+
+All three should refer to the same release version, e.g. ``2.X.Y``.  The
+``pyproject.toml`` value is the published ``bsk-sdk`` version, while
+``src/bsk_sdk/_bsk_version.txt`` is the Basilisk version the SDK was synced
+from and the version CI will use to clone Basilisk.
+
+Build and install the SDK wheel in the clean Python environment.  With no
+output directory specified, ``python -m build`` writes wheels to the default
+``dist/`` directory:
+
+.. code-block:: bash
+
+   python -m build --wheel
+   python -m pip install --force-reinstall dist/bsk_sdk-*.whl
+   python -m pytest tests/test_smoke.py -v
+
+Install the matching Basilisk package set.  For a final release already
+published to PyPI, use:
+
+.. code-block:: bash
+
+   python -m pip install --force-reinstall "bsk[all]==2.X.Y"
+
+For a release candidate published to TestPyPI, use:
+
+.. code-block:: bash
+
+   python -m pip install --pre --force-reinstall \
+     --index-url https://test.pypi.org/simple/ \
+     --extra-index-url https://pypi.org/simple/ \
+     "bsk[all]==2.X.YrcN"
+
+Finally, build and test the example plugin against the locally installed SDK
+wheel and matching Basilisk package.  The plugin wheel is written to the
+example plugin project's default ``dist/`` directory:
+
+.. code-block:: bash
+
+   python -m build --wheel --no-isolation examples/custom-atm-plugin
+   python -m pip install --force-reinstall examples/custom-atm-plugin/dist/*.whl
+   python -m pytest examples/custom-atm-plugin/customExponentialAtmosphere/_UnitTest/test_customExponentialAtmosphere.py -v
+
+.. note::
+
+   The ``external/basilisk`` checkout is the local source input for
+   ``tools/sync_all.py``.  Checking out a tag there does not affect published
+   wheels by itself; CI and publishing use the committed ``bsk-sdk`` state.
+   For a release-prep PR, commit the updated ``external/basilisk`` submodule
+   pointer along with the synced files so the repository records which Basilisk
+   source tree the SDK was synced from.  The release-relevant files are
+   especially ``src/bsk_sdk/_bsk_version.txt``, the vendored files under
+   ``src/bsk_sdk/``, and the SDK version in ``pyproject.toml``.
+
+
 Major SDK Release
 ^^^^^^^^^^^^^^^^^
 To release a major version ``2.X.0`` the following steps are used:
