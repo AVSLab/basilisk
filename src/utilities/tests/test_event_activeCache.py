@@ -20,6 +20,8 @@ can change which events are active. The central test asserts the invariant
 plus the end-to-end behaviour (trigger times, counts, self-reactivation) that a
 running simulation depends on.
 """
+import pytest
+
 from Basilisk.utilities import SimulationBaseClass, macros
 
 
@@ -79,15 +81,18 @@ def test_cache_reflects_setAllButCurrent():
 def test_noop_setEventActivity_does_not_rebuild_cache():
     # Setting an event to the activity state it already has must not invalidate
     # the cache (no unnecessary O(total events) rebuild), while a real change must.
+    # The internal cache object is inspected directly because the public
+    # activeEvents() now returns a fresh immutable snapshot on every call.
     sim = SimulationBaseClass.SimBaseClass()
     _addEvent(sim, "a", True); _addEvent(sim, "b", False)
-    cached = sim.activeEvents()  # prime
+    _ = sim.activeEvents()  # prime
+    cached = sim._activeEventCache
     sim.setEventActivity("a", True)   # already active -> no-op
-    assert sim.activeEvents() is cached
+    assert sim._activeEventCache is cached
     sim.setEventActivity("b", False)  # already inactive -> no-op
-    assert sim.activeEvents() is cached
-    sim.setEventActivity("b", True)   # real change -> rebuild
-    assert sim.activeEvents() is not cached
+    assert sim._activeEventCache is cached
+    sim.setEventActivity("b", True)   # real change -> invalidated
+    assert sim._activeEventCache is None
     _assertConsistent(sim); assert _cachedActive(sim) == {"a", "b"}
 
 
@@ -97,11 +102,12 @@ def test_noop_setAllButCurrent_does_not_rebuild_cache():
     sim = SimulationBaseClass.SimBaseClass()
     for n in ("a", "b", "c"):
         _addEvent(sim, n, True)
-    cached = sim.activeEvents()  # prime, all active
+    _ = sim.activeEvents()  # prime, all active
+    cached = sim._activeEventCache
     sim.setAllButCurrentEventActivity("b", True)   # a, c already active -> no-op
-    assert sim.activeEvents() is cached
-    sim.setAllButCurrentEventActivity("b", False)  # real change -> rebuild
-    assert sim.activeEvents() is not cached
+    assert sim._activeEventCache is cached
+    sim.setAllButCurrentEventActivity("b", False)  # real change -> invalidated
+    assert sim._activeEventCache is None
     _assertConsistent(sim); assert _cachedActive(sim) == {"b"}
 
 
@@ -172,16 +178,29 @@ def test_event_action_checks_later_due_event_in_same_cycle():
     assert fired[:2] == [("a", firstCheckTime), ("b", firstCheckTime)]
 
 
-def test_returned_list_not_corrupted_by_later_mutation():
-    # A snapshot taken before a mutation may legitimately be stale, but a fresh
-    # query after invalidation must be correct (no aliasing bug).
+def test_returned_snapshot_is_stable_across_later_mutation():
+    # A snapshot returned before a mutation must not be retroactively changed by
+    # that mutation, and a fresh query after invalidation must be correct.
     sim = SimulationBaseClass.SimBaseClass()
     _addEvent(sim, "a", True)
     first = sim.activeEvents()
     _addEvent(sim, "b", True)
     second = sim.activeEvents()
-    assert {e.eventName for e in second} == {"a", "b"}
-    assert first is not second  # cache was rebuilt, not mutated in place
+    assert {e.eventName for e in first} == {"a"}         # snapshot unchanged
+    assert {e.eventName for e in second} == {"a", "b"}   # fresh query correct
+
+
+def test_activeEvents_return_is_immutable_snapshot():
+    # The public accessor must not hand out the internal mutable cache: external
+    # code that mutates the returned object must not be able to silently change
+    # which events fire (issue #455 review). Reproduces sim.activeEvents().clear().
+    sim = SimulationBaseClass.SimBaseClass()
+    _addEvent(sim, "a", True)
+    result = sim.activeEvents()
+    with pytest.raises(AttributeError):
+        result.clear()  # a tuple has no clear(); the cache cannot be emptied
+    # the internal cache is untouched, so the event is still reported active
+    assert {e.eventName for e in sim.activeEvents()} == {"a"}
 
 
 def test_end_to_end_trigger_times_and_counts():
