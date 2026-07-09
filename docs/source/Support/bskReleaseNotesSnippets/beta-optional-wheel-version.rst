@@ -1,0 +1,1 @@
+- Fixed optional wheel generation for beta versions whose Python package metadata uses canonical prerelease version spelling.
