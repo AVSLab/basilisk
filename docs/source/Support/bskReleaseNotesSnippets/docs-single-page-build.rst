@@ -1,0 +1,3 @@
+- Added a Sphinx single-page documentation build mode for targeted local HTML previews.
+- Updated the BSK and BSK-SDK release guide pages.
+- Clarified contributor guidance for unit comments, release-note snippets, and known-issue updates.
