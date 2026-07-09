@@ -72,7 +72,7 @@ To quickly preview one documentation page while editing it, run ``make`` with
 the page path from the ``docs`` folder. For example, to render the release guide
 page use::
 
-    make source/Support/Developer/releaseGuide.rst
+    make source/Support/Developer/bskKnownIssues.rst
 
 This builds only the requested source page into ``docs/build/html`` and avoids
 regenerating the auto-created module documentation source files. This mode is
