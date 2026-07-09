@@ -122,7 +122,8 @@ ROOT_THETA0 = 8.0*macros.D2R  # [rad] initial deflection of the root segment
 OMEGA0_B = (0.010, -0.020, 0.015)  # [rad/s] initial hub rate
 
 SIM_DURATION = 10.0  # [s] propagation horizon for every configuration
-TIMING_REPEATS = 1  # this system is expensive; a single timed run is used
+TIMING_TRIALS = 5  # number of trials for median/min/std reporting
+TIMING_WARMUP_SEC = 1.0  # [s] discarded warmup sim time absorbing one-time process costs
 
 # Macro (task) time step shared by every adaptive-integrator configuration. With
 # high-order attitude integration the macro step is not a separate accuracy knob, so the
@@ -379,7 +380,7 @@ def finalAttitude(builder, integratorName, dt, tol):
 
 
 def timedRun(builder, integratorName, dt, tol):
-    """Best-of-``TIMING_REPEATS`` wall-clock time for one configuration [s].
+    """Wall-clock timing for one configuration: median/min/std over the trials.
 
     Args:
         builder (callable): ``buildBSM`` or ``buildMujoco``.
@@ -388,16 +389,24 @@ def timedRun(builder, integratorName, dt, tol):
         tol (float): adaptive tolerance, or None.
 
     Returns:
-        float: minimum wall-clock time over the repeats [s].
+        dict: ``{"median", "min", "std"}`` wall-clock over the trials [s].
     """
-    best = np.inf
-    for _ in range(TIMING_REPEATS):
+    stopNs = macros.sec2nano(SIM_DURATION)
+    # Warmup (discarded): absorbs one-time process costs (cold code/data caches, first
+    # allocations, bytecode) so the measured trials reflect steady-state cost.
+    if TIMING_WARMUP_SEC > 0:
+        warm, _, _ = builder(integratorName, dt, tol)
+        warm.ConfigureStopTime(macros.sec2nano(min(SIM_DURATION, TIMING_WARMUP_SEC)))
+        warm.ExecuteSimulation()
+    times = []
+    for _ in range(TIMING_TRIALS):
         scSim, _, _ = builder(integratorName, dt, tol)
+        scSim.ConfigureStopTime(stopNs)  # set the stop time outside the timed region
         start = time.perf_counter()
-        scSim.ConfigureStopTime(macros.sec2nano(SIM_DURATION))
         scSim.ExecuteSimulation()
-        best = min(best, time.perf_counter()-start)
-    return best
+        times.append(time.perf_counter() - start)
+    return {"median": float(np.median(times)), "min": float(np.min(times)),
+            "std": float(np.std(times))}
 
 
 def principalAngle(sigmaA, sigmaB):
@@ -448,7 +457,9 @@ def sweepEngine(builder, reference=REFERENCE, referenceCheck=None):
             "dt": dt,
             "tol": tol,
             "error": error,
-            "wall": wall,
+            "wall": wall["median"],
+            "wallMin": wall["min"],
+            "wallStd": wall["std"],
         })
     return rows, referenceFloor
 

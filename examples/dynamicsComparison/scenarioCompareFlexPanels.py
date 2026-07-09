@@ -99,6 +99,8 @@ ROOT_THETA0 = 8.0*macros.D2R  # [rad] initial deflection of the root segment
 OMEGA0_B = (0.010, -0.020, 0.015)  # [rad/s] initial hub rate
 STEPS_PER_PERIOD = 200.0  # target RK4 steps per stiffest segment oscillation
 TIMING_STEPS = 600  # integrator steps used for the wall-clock measurement
+TIMING_TRIALS = 5  # number of trials for median/min/std reporting
+TIMING_WARMUP_STEPS = 100  # discarded warmup steps that absorb first-time process costs
 
 
 def segmentMass(nSegments):
@@ -314,16 +316,24 @@ def measureWallClock(buildFunc, nSegments, dt):
         dt (float): integrator time step [s]
 
     Returns:
-        float: best-of-two wall-clock time for ``TIMING_STEPS`` steps [s].
+        dict: ``{"median", "min", "std"}`` wall-clock over the trials [s].
     """
-    best = np.inf
-    for _ in range(2):
+    stopNs = macros.sec2nano(TIMING_STEPS*dt)
+    # Warmup (discarded): absorbs one-time process costs (cold code/data caches, first
+    # allocations, bytecode) so the measured trials reflect steady-state per-step cost.
+    if TIMING_WARMUP_STEPS > 0:
+        warm, _, _ = buildFunc(nSegments, dt, False)
+        warm.ConfigureStopTime(macros.sec2nano(TIMING_WARMUP_STEPS*dt))
+        warm.ExecuteSimulation()
+    times = []
+    for _ in range(TIMING_TRIALS):
         scSim, _, _ = buildFunc(nSegments, dt, False)
+        scSim.ConfigureStopTime(stopNs)
         start = time.perf_counter()
-        scSim.ConfigureStopTime(macros.sec2nano(TIMING_STEPS*dt))
         scSim.ExecuteSimulation()
-        best = min(best, time.perf_counter()-start)
-    return best
+        times.append(time.perf_counter() - start)
+    return {"median": float(np.median(times)), "min": float(np.min(times)),
+            "std": float(np.std(times))}
 
 
 def runOne(nSegments, accuracyWindow):
@@ -344,7 +354,9 @@ def runOne(nSegments, accuracyWindow):
     sigmaBSM = np.array(bsmRec.sigma_BN)
 
     row = {"nSegments": nSegments, "dof": 6 + 2*2*nSegments, "timeStep": dt}
-    row["bsmWall"] = measureWallClock(buildBSM, nSegments, dt)
+    stats = measureWallClock(buildBSM, nSegments, dt)
+    row["bsmWall"], row["bsmWallMin"], row["bsmWallStd"] = (
+        stats["median"], stats["min"], stats["std"])
 
     if couldImportMujoco:
         mujocoSim, mujocoRec, _ = buildMujoco(nSegments, dt, True)
@@ -353,7 +365,9 @@ def runOne(nSegments, accuracyWindow):
         sigmaMujoco = np.array(mujocoRec.sigma_BN)
         attError = relativePrincipalAngle(sigmaBSM, sigmaMujoco)
         row["attitudeErrorMax"] = float(np.max(attError))
-        row["mujocoWall"] = measureWallClock(buildMujoco, nSegments, dt)
+        stats = measureWallClock(buildMujoco, nSegments, dt)
+        row["mujocoWall"], row["mujocoWallMin"], row["mujocoWallStd"] = (
+            stats["median"], stats["min"], stats["std"])
     return row
 
 

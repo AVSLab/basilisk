@@ -32,9 +32,10 @@ runs. The path is module-relative because Sphinx ``autodoc`` resolves the ``csv-
 Timing methodology
 ------------------
 Each configuration is run ``repeats`` times and the minimum wall-clock time is kept
-(best-of-N), as in the timing scenarios (:ref:`scenarioCompareFlexPanels`,
-:ref:`scenarioCompareParetoRwPanels`). Absolute times are machine-dependent; the speedup
-ratio (BSM / MuJoCo) is the portable figure and is reported alongside.
+(best-of-N). The dedicated timing scenarios (:ref:`scenarioCompareFlexPanels`,
+:ref:`scenarioCompareParetoRwPanels`) instead report the median over warmed trials.
+Absolute times are machine-dependent; the speedup ratio (BSM / MuJoCo) is the portable
+figure and is reported alongside.
 """
 
 import csv
