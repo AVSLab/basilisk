@@ -395,3 +395,88 @@ No ``ci.yml`` edit is needed for a normal SDK patch release. CI reads
    Basilisk patch release is tagged and its ``bsk[all]`` wheels are available.
    This lets local testing and CI install ``bsk[all]==2.X.Y`` without using
    temporary branch-specific workflow edits.
+
+
+Testing SDK Changes Against a Basilisk Development Branch
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Use this workflow when developing or reviewing ``bsk-sdk`` changes against a
+Basilisk branch that has not been released yet, such as ``develop`` or a
+``feature/branch_name`` branch.  This is a local developer validation workflow
+only.  Release SDK wheels should still be synced from tagged Basilisk releases.
+
+The important rule is that the installed Basilisk Python package and the
+Basilisk source tree used by ``tools/sync_all.py`` must come from the same
+branch or commit.
+
+Create a clean Python test environment in the ``bsk_sdk`` repository:
+
+.. code-block:: bash
+
+   python3 -m venv .venv
+   source .venv/bin/activate
+   python -m pip install --upgrade pip
+   python -m pip install build pytest scikit-build-core "cmake>=3.26" "ninja>=1.5"
+
+Check out the Basilisk branch you want to test.  This can be either the
+``external/basilisk`` checkout or a separate Basilisk clone.  A separate clone is
+often cleaner for exploratory testing because it does not move the SDK
+submodule pointer.
+
+.. code-block:: bash
+
+   git -C ../basilisk fetch origin
+   git -C ../basilisk checkout feature/branch_name
+   git -C ../basilisk pull --ff-only
+
+Build and install a local Basilisk wheel from that branch into the SDK test
+environment:
+
+.. code-block:: bash
+
+   python -m pip wheel --no-deps -v -w /tmp/bsk-dev-wheel ../basilisk
+   python -m pip install --force-reinstall /tmp/bsk-dev-wheel/bsk-*.whl
+
+If the plugin being tested needs optional Basilisk components such as OpNav,
+build Basilisk with the matching ``CONAN_ARGS`` or install matching optional
+component wheels from the same Basilisk branch.
+
+Sync ``bsk-sdk`` from the same Basilisk source tree:
+
+.. code-block:: bash
+
+   python tools/sync_all.py --basilisk-root ../basilisk
+
+Verify that the installed Basilisk package and the synced SDK version agree:
+
+.. code-block:: bash
+
+   python -c "import Basilisk, bsk_sdk; print('Basilisk:', Basilisk.__version__); print('SDK synced from:', bsk_sdk.bsk_version())"
+   cat ../basilisk/docs/source/bskVersion.txt
+   cat src/bsk_sdk/_bsk_version.txt
+
+Build and test the SDK wheel:
+
+.. code-block:: bash
+
+   python -m build --wheel
+   python -m pip install --force-reinstall dist/bsk_sdk-*.whl
+   python -m pytest tests/test_smoke.py -v
+
+Finally, build and test the example plugin against the locally installed
+Basilisk and SDK wheels:
+
+.. code-block:: bash
+
+   python -m build --wheel --no-isolation examples/custom-atm-plugin
+   python -m pip install --force-reinstall examples/custom-atm-plugin/dist/*.whl
+   python -m pytest examples/custom-atm-plugin/customExponentialAtmosphere/_UnitTest/test_customExponentialAtmosphere.py -v
+
+For a real plugin under development, replace ``examples/custom-atm-plugin`` with
+the plugin repository path and run that plugin's own test suite.
+
+.. note::
+
+   If this was only an exploratory compatibility test, do not commit the synced
+   SDK artifacts or submodule pointer.  Commit those changes only when preparing
+   an intentional SDK branch that should track the tested Basilisk branch or
+   release.
