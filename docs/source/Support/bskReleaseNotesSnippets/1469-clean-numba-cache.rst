@@ -1,0 +1,1 @@
+- ``python conanfile.py --clean`` now removes Basilisk Numba cache artifacts in addition to ``dist3``, preventing stale compiled Numba objects from surviving clean source builds.
