@@ -24,9 +24,13 @@ arrays into a serial chain of ``N`` rigid segments connected by torsional spring
 hinges. Sweeping ``N`` varies the model dimensionality (the state size grows with the
 number of hinges) and shows how each engine's wall-clock cost scales with complexity.
 
-On the BSM side each array is a :ref:`nHingedRigidBodyStateEffector` with ``N``
-panels added through ``addHingedPanel``. On the MuJoCo side each array is a serial chain
-of ``N`` ``hinge``-jointed child bodies. To match the BSM chain geometry, each
+The same physical chain is built three ways so the two back-substitution effector
+implementations can be timed head to head against the recursive engine. On the BSM
+side each array is either a :ref:`nHingedRigidBodyStateEffector` (panels added through
+``addHingedPanel``) or a :ref:`spinningBodyNDOFStateEffector` (an ``N``-link chain of
+``SpinningBody`` objects); both are advanced by the same back-substitution hub solve but
+differ in implementation maturity. On the MuJoCo side each array is a serial chain of
+``N`` ``hinge``-jointed child bodies. To match the chain geometry across all three, each
 segment's center of mass is offset by ``-d`` along its local x-axis and the next hinge
 attaches at the segment's far end (``-2d``); the spring stiffness and damping are applied
 on each joint.
@@ -71,6 +75,7 @@ from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.simulation import spacecraft
 from Basilisk.simulation import nHingedRigidBodyStateEffector
+from Basilisk.simulation import spinningBodyNDOFStateEffector
 from Basilisk.simulation import svIntegrators
 
 try:
@@ -82,6 +87,7 @@ except Exception:
 # Standard Basilisk plotting colors.
 COLOR_BSM = unitTestSupport.getLineColor(0, 3)
 COLOR_MUJOCO = unitTestSupport.getLineColor(1, 3)
+COLOR_NDOF = unitTestSupport.getLineColor(2, 3)
 
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
@@ -246,6 +252,77 @@ def buildBSM(nSegments, dt, record):
     return scSim, recorder, [scObject, integrator] + chains
 
 
+def buildBsmNDOF(nSegments, dt, record):
+    """Build the BSM chained-panel simulation with the N-DOF spinning-body effector.
+
+    Models the identical flexible chain as :func:`buildBSM` (same segment mass,
+    inertia, hinge stiffness/damping, geometry, and root deflection) but expressed with
+    :ref:`spinningBodyNDOFStateEffector` instead of :ref:`nHingedRigidBodyStateEffector`,
+    so the two back-substitution effector implementations can be timed head to head. Both
+    ride the same back-substitution hub solve; only the appendage effector differs.
+
+    Args:
+        nSegments (int): number of segments per chain
+        dt (float): integrator time step [s]
+        record (bool): if True, attach a hub-state recorder
+
+    Returns:
+        tuple: ``(scSim, recorder, handles)``.
+    """
+    scSim = SimulationBaseClass.SimBaseClass()
+    process = scSim.CreateNewProcess("dyn")
+    process.addTask(scSim.CreateNewTask("dynTask", macros.sec2nano(dt)))
+
+    scObject = spacecraft.Spacecraft()
+    scObject.ModelTag = "hub"
+    scObject.hub.mHub = HUB_MASS  # [kg]
+    scObject.hub.IHubPntBc_B = np.diag(HUB_INERTIA).tolist()  # [kg*m^2]
+    scObject.hub.omega_BN_BInit = [[w] for w in OMEGA0_B]  # [rad/s]
+    scSim.AddModelToTask("dynTask", scObject)
+
+    integrator = svIntegrators.svIntegratorRK4(scObject)
+    scObject.setIntegrator(integrator)
+
+    mass = segmentMass(nSegments)  # [kg]
+    halfLen = segmentHalfLength(nSegments)  # [m] the segment half-length d
+    inertia = segmentInertia(nSegments).tolist()  # [kg*m^2] about the segment center of mass
+    identity = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+
+    chains = []
+    for sign in (+1, -1):
+        effector = spinningBodyNDOFStateEffector.SpinningBodyNDOFStateEffector()
+        effector.ModelTag = f"ndofChain{'P' if sign > 0 else 'M'}"
+        for i in range(nSegments):
+            link = spinningBodyNDOFStateEffector.SpinningBody()
+            link.setMass(mass)  # [kg]
+            link.setISPntSc_S(inertia)  # [kg*m^2]
+            link.setSHat_S([[0.0], [1.0], [0.0]])  # hinge about +y, matching MuJoCo axis
+            link.setDCM_S0P(identity)  # link frame aligned with parent at rest
+            # Link 0 hinges on the hub at the root offset; each later link hinges at the
+            # previous segment's far end (-2d). The center of mass sits at -d along the
+            # link x-axis. These match the MuJoCo chain built in mujocoModel().
+            if i == 0:
+                link.setR_SP_P([[sign*PANEL_HINGE_X], [0.0], [0.0]])  # [m] hinge on the hub
+            else:
+                link.setR_SP_P([[-2.0*halfLen], [0.0], [0.0]])  # [m] previous segment far end
+            link.setR_ScS_S([[-halfLen], [0.0], [0.0]])  # [m] center of mass at -d
+            link.setK(PANEL_K)  # [N*m/rad]
+            link.setC(PANEL_C)  # [N*m*s/rad]
+            link.setThetaInit(ROOT_THETA0 if i == 0 else 0.0)  # [rad]
+            effector.addSpinningBody(link)
+        scObject.addStateEffector(effector)
+        scSim.AddModelToTask("dynTask", effector)
+        chains.append(effector)
+
+    recorder = None
+    if record:
+        recorder = scObject.scStateOutMsg.recorder(macros.sec2nano(dt))
+        scSim.AddModelToTask("dynTask", recorder)
+
+    scSim.InitializeSimulation()
+    return scSim, recorder, [scObject, integrator] + chains
+
+
 def buildMujoco(nSegments, dt, record):
     """Build (and initialize) the MuJoCo chained-panel simulation.
 
@@ -311,7 +388,7 @@ def measureWallClock(buildFunc, nSegments, dt):
     """Time a fixed step budget for one engine at the given dimensionality.
 
     Args:
-        buildFunc (callable): ``buildBSM`` or ``buildMujoco``
+        buildFunc (callable): ``buildBSM``, ``buildBsmNDOF`` or ``buildMujoco``
         nSegments (int): number of segments per chain
         dt (float): integrator time step [s]
 
@@ -353,18 +430,27 @@ def runOne(nSegments, accuracyWindow):
     bsmSim.ExecuteSimulation()
     sigmaBSM = np.array(bsmRec.sigma_BN)
 
+    ndofSim, ndofRec, _ = buildBsmNDOF(nSegments, dt, True)
+    ndofSim.ConfigureStopTime(macros.sec2nano(accuracyWindow))
+    ndofSim.ExecuteSimulation()
+    sigmaNDOF = np.array(ndofRec.sigma_BN)
+
     row = {"nSegments": nSegments, "dof": 6 + 2*2*nSegments, "timeStep": dt}
-    stats = measureWallClock(buildBSM, nSegments, dt)
-    row["bsmWall"], row["bsmWallMin"], row["bsmWallStd"] = (
-        stats["median"], stats["min"], stats["std"])
+    for tag, buildFunc in (("bsm", buildBSM), ("ndof", buildBsmNDOF)):
+        stats = measureWallClock(buildFunc, nSegments, dt)
+        row[tag+"Wall"], row[tag+"WallMin"], row[tag+"WallStd"] = (
+            stats["median"], stats["min"], stats["std"])
+    row["ndofVsNHingedMax"] = float(np.max(relativePrincipalAngle(sigmaBSM, sigmaNDOF)))
 
     if couldImportMujoco:
         mujocoSim, mujocoRec, _ = buildMujoco(nSegments, dt, True)
         mujocoSim.ConfigureStopTime(macros.sec2nano(accuracyWindow))
         mujocoSim.ExecuteSimulation()
         sigmaMujoco = np.array(mujocoRec.sigma_BN)
-        attError = relativePrincipalAngle(sigmaBSM, sigmaMujoco)
-        row["attitudeErrorMax"] = float(np.max(attError))
+        row["attitudeErrorMax"] = float(
+            np.max(relativePrincipalAngle(sigmaBSM, sigmaMujoco)))
+        row["ndofAttitudeErrorMax"] = float(
+            np.max(relativePrincipalAngle(sigmaNDOF, sigmaMujoco)))
         stats = measureWallClock(buildMujoco, nSegments, dt)
         row["mujocoWall"], row["mujocoWallMin"], row["mujocoWallStd"] = (
             stats["median"], stats["min"], stats["std"])
@@ -418,16 +504,24 @@ def plotResults(rows):
 
     figureList[fileName+"_validity"], ax = plt.subplots()
     if "attitudeErrorMax" in rows[0]:
-        attError = np.array([row["attitudeErrorMax"] for row in rows])
-        ax.semilogy(dof, np.maximum(attError, 1e-16), "o-", color=COLOR_MUJOCO)
+        nHingedErr = np.array([row["attitudeErrorMax"] for row in rows])
+        ndofErr = np.array([row["ndofAttitudeErrorMax"] for row in rows])
+        ax.semilogy(dof, np.maximum(nHingedErr, 1e-16), "o-", color=COLOR_BSM,
+                    label="nHinged vs MuJoCo")
+        ax.semilogy(dof, np.maximum(ndofErr, 1e-16), "^-", color=COLOR_NDOF,
+                    label="spinningBodyNDOF vs MuJoCo")
+        ax.legend(loc="best")
     ax.set_xlabel("System degrees of freedom")
     ax.set_ylabel("Max cross-engine attitude error [rad]")
 
-    # Draw BSM as a thick translucent underlay and MuJoCo as a thin line on top, with
-    # distinct markers, so the two stay distinguishable even where the curves coincide.
+    # Draw the older nHinged effector as a thick translucent underlay, the newer NDOF
+    # effector and MuJoCo as thin lines on top, with distinct markers, so all three stay
+    # distinguishable even where curves coincide.
     figureList[fileName+"_runtime"], ax = plt.subplots()
     ax.loglog(dof, [row["bsmWall"] for row in rows], "o-", lw=4, alpha=0.4, ms=8,
-              color=COLOR_BSM, label="Back-substitution (BSM)")
+              color=COLOR_BSM, label="BSM — nHingedRigidBody")
+    ax.loglog(dof, [row["ndofWall"] for row in rows], "^-", lw=2, ms=6,
+              color=COLOR_NDOF, label="BSM — spinningBodyNDOF")
     if "mujocoWall" in rows[0]:
         ax.loglog(dof, [row["mujocoWall"] for row in rows], "s-", lw=1.3, ms=5,
                   color=COLOR_MUJOCO, label="MuJoCo")
