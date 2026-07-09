@@ -6,10 +6,9 @@ import shlex
 import subprocess
 import sys
 from datetime import datetime
-from typing import Optional, Callable
 from glob import glob
 from pathlib import Path
-from typing import Optional
+from typing import Callable, Optional
 
 import importlib.metadata
 from packaging.requirements import Requirement
@@ -18,7 +17,6 @@ from conan import ConanFile
 from conan.tools.cmake import CMakeToolchain, CMake, cmake_layout, CMakeDeps
 from conan.tools.microsoft import is_msvc
 from conan.tools.files import copy
-from pathlib import Path
 
 sys.path.insert(1, './src/utilities/')
 import makeDraftModule
@@ -69,6 +67,67 @@ def is_running_virtual_env():
 required_conan_version = ">=2.0.5"
 
 PY_LIMITED_API_PY39  = "0x03090000"  # cp39-abi3
+NUMBA_CACHE_SEARCH_DIRS = ("src", "docs/source", "examples")
+NUMBA_CACHE_DIR_NAME = "__pycache__"
+NUMBA_CACHE_FILE_PATTERNS = ("*.nbc", "*.nbi")
+
+
+def get_basilisk_numba_model_cache_dir() -> Optional[Path]:
+    """Return Basilisk's generated Numba model cache directory."""
+    try:
+        from platformdirs import user_cache_dir
+    except ImportError:
+        return None
+    return Path(user_cache_dir("basilisk")) / "numba_model"
+
+
+def clean_numba_cache_artifacts(root: Optional[Path] = None,
+                                user_cache_dir: Optional[Path] = None,
+                                print_fn: Optional[Callable[[str], None]] = print) -> tuple[int, bool]:
+    """Remove Numba disk-cache artifacts that can outlive a clean build."""
+    root_path = Path.cwd() if root is None else Path(root)
+    removed_cache_files = 0
+
+    for search_dir in NUMBA_CACHE_SEARCH_DIRS:
+        search_path = root_path / search_dir
+        if not search_path.exists():
+            continue
+        for cache_dir in search_path.rglob(NUMBA_CACHE_DIR_NAME):
+            if not cache_dir.is_dir():
+                continue
+            for pattern in NUMBA_CACHE_FILE_PATTERNS:
+                for cache_file in cache_dir.glob(pattern):
+                    try:
+                        cache_file.unlink()
+                        removed_cache_files += 1
+                    except FileNotFoundError:
+                        continue
+
+    cache_dir = (
+        get_basilisk_numba_model_cache_dir()
+        if user_cache_dir is None
+        else Path(user_cache_dir)
+    )
+    cache_dir_existed = False
+    removed_user_cache = False
+    if cache_dir is not None and cache_dir.exists():
+        cache_dir_existed = True
+        shutil.rmtree(cache_dir, ignore_errors=True)
+        removed_user_cache = not cache_dir.exists()
+
+    if print_fn is not None:
+        print_fn(f"Removed {removed_cache_files} in-repo Numba cache file(s).")
+        if cache_dir is None:
+            print_fn("Basilisk Numba model cache path unavailable; platformdirs is not installed.")
+        elif removed_user_cache:
+            print_fn(f"Removed Basilisk Numba model cache: {cache_dir}")
+        elif cache_dir_existed:
+            print_fn(f"Unable to fully remove Basilisk Numba model cache: {cache_dir}")
+        else:
+            print_fn(f"No Basilisk Numba model cache found at: {cache_dir}")
+
+    return removed_cache_files, removed_user_cache
+
 
 def resolve_py_limited_api(opt_value: Optional[str]) -> str:
     """Use explicit --pyLimitedAPI if provided, else cp39."""
@@ -230,6 +289,7 @@ class BasiliskConan(ConanFile):
             distPath = os.path.join(root, "dist3")
             if os.path.exists(distPath):
                 shutil.rmtree(distPath, ignore_errors=True)
+            clean_numba_cache_artifacts(Path(root))
         if self.settings.get_safe("build_type") == "Debug":
             print(warningColor + "Build type is set to Debug. Performance will be significantly lower." + endColor)
 
