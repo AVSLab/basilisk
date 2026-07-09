@@ -338,14 +338,60 @@ Patch Release
 ^^^^^^^^^^^^^
 To release a patch version ``2.X.Y`` the following steps are used:
 
-#. If this is the first patch since ``v2.X``, create a branch off the ``v2.X.0`` tagged release on ``master``
-   and call it ``patch/v2_X_x``.  Pull this ``patch/v2_X_x`` branch.
-#. Cherry pick over the commits from ``develop`` for this patch release.
-#. Update the ``version`` field in ``pyproject.toml`` to match the patch BSK release (e.g. ``2.X.Y``).
-#. Update ``.github/workflows/ci.yml``, section ``Install bsk-sdk wheel and Basilisk``, to pull the matching
-   Basilisk branch ``--branch patch/v2_X_x``
-#. Commit edits and push to ``origin``
-#. Manually run the ``CI`` action on https://github.com/AVSLab/bsk_sdk/actions. Wait for tests to complete.
-#. Add the tag ``v2.X.Y`` to ``patch/v2_X_x`` and push tag to origin to trigger the wheel build
-   and PyPI publish via GitHub Actions.
-#. Create a Release on GitHub
+#. If this is the first SDK patch since ``v2.X.0``, create a
+   ``patch/v2_X_x`` branch in the ``bsk-sdk`` repository from the
+   ``v2.X.0`` SDK tag.  For later patches, use the existing
+   ``patch/v2_X_x`` branch or branch from the latest ``v2.X.Y`` SDK tag.
+
+#. Cherry-pick any SDK-specific fixes from ``develop`` that are required for
+   this patch release.
+
+#. Check out the matching Basilisk patch release tag in the local
+   ``external/basilisk`` checkout and sync the SDK artifacts:
+
+   .. code-block:: bash
+
+      git -C external/basilisk fetch --tags
+      git -C external/basilisk checkout v2.X.Y
+      python tools/sync_all.py
+
+#. Update the ``version`` field in ``pyproject.toml`` to match the patch BSK
+   release, e.g. ``2.X.Y``.
+
+#. Verify that the synced Basilisk version, SDK package version, and submodule
+   pointer all refer to the same release:
+
+   .. code-block:: bash
+
+      cat external/basilisk/docs/source/bskVersion.txt
+      cat src/bsk_sdk/_bsk_version.txt
+      grep '^version =' pyproject.toml
+      git -C external/basilisk describe --tags --exact-match
+
+   These should all report ``2.X.Y`` / ``v2.X.Y``.
+
+#. Run the :ref:`Testing the SDK Locally <bsk-sdk-local-testing>` steps before
+   pushing the branch.
+
+#. Commit the patch-release changes.  This normally includes the
+   ``external/basilisk`` submodule pointer, ``pyproject.toml``,
+   ``src/bsk_sdk/_bsk_version.txt``, and any tracked synced SDK artifacts
+   updated by ``tools/sync_all.py``.
+
+#. Push the branch to ``origin`` and manually run the ``CI`` action on
+   https://github.com/AVSLab/bsk_sdk/actions. Wait for tests to complete.
+
+#. Add the tag ``v2.X.Y`` to ``patch/v2_X_x`` and push the tag to ``origin`` to
+   trigger the wheel build and PyPI publish via GitHub Actions.
+
+#. Create a Release on GitHub.
+
+No ``ci.yml`` edit is needed for a normal SDK patch release. CI reads
+``src/bsk_sdk/_bsk_version.txt`` to select the matching Basilisk release.
+
+.. note::
+
+   The BSK SDK patch release should be prepared after the corresponding
+   Basilisk patch release is tagged and its ``bsk[all]`` wheels are available.
+   This lets local testing and CI install ``bsk[all]==2.X.Y`` without using
+   temporary branch-specific workflow edits.
