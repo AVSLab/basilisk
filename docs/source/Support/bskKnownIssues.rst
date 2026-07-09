@@ -15,6 +15,8 @@ Version |release| (July 7, 2026)
   for Basilisk and compatible plugins. If source builds fail with SWIG 4.4.0 or emit
   ``builtin type swigvarlink has no __module__ attribute`` warnings, upgrade to SWIG 4.4.1 or a newer
   supported 4.x release.
+- ``python conanfile.py --clean`` now removes Basilisk Numba cache artifacts in addition to ``dist3``,
+  preventing clean source builds from reusing stale compiled Numba objects after API changes.
 
 Version 2.11.0 (July 7, 2026)
 -----------------------------

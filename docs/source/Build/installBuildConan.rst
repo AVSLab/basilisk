@@ -55,7 +55,8 @@ Note that the option names for groupings of Basilisk modules are the same as wit
     * - ``-o clean``
       - Boolean
       - False
-      - Delete the distribution folder before configuring to yield a fresh build
+      - Delete the distribution folder and Basilisk Numba cache artifacts before configuring to yield
+        a fresh build
     * - ``-o buildProject``
       - Boolean
       - True
