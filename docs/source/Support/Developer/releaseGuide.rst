@@ -288,14 +288,51 @@ Major SDK Release
 ^^^^^^^^^^^^^^^^^
 To release a major version ``2.X.0`` the following steps are used:
 
-#. On a branch of develop, update the ``version`` field in ``pyproject.toml``
-   to match the new major BSK release (e.g. ``2.X.0``).
-#. Push branch to ``origin`` and create a PR to trigger the CI workflow to test the SDK wheel.
+#. Create a release branch from ``develop`` in the ``bsk-sdk`` repository.
+
+#. Check out the matching Basilisk release tag in the local
+   ``external/basilisk`` checkout and sync the SDK artifacts:
+
+   .. code-block:: bash
+
+      git -C external/basilisk fetch --tags
+      git -C external/basilisk checkout v2.X.0
+      python tools/sync_all.py
+
+#. Update the ``version`` field in ``pyproject.toml`` to match the new
+   major BSK release, e.g. ``2.X.0``.
+
+#. Verify that the synced Basilisk version, SDK package version, and submodule
+   pointer all refer to the same release:
+
+   .. code-block:: bash
+
+      cat external/basilisk/docs/source/bskVersion.txt
+      cat src/bsk_sdk/_bsk_version.txt
+      grep '^version =' pyproject.toml
+      git -C external/basilisk describe --tags --exact-match
+
+   These should all report ``2.X.0`` / ``v2.X.0``.
+
+#. Run the :ref:`Testing the SDK Locally <bsk-sdk-local-testing>` steps before pushing the branch.
+
+#. Commit the release-prep changes.  This normally includes the
+   ``external/basilisk`` submodule pointer, ``pyproject.toml``,
+   ``src/bsk_sdk/_bsk_version.txt``, and any tracked synced SDK artifacts
+   updated by ``tools/sync_all.py``.
+
+#. Push the branch to ``origin`` and create a PR to trigger the CI workflow.
+   CI reads ``src/bsk_sdk/_bsk_version.txt`` to select the matching Basilisk
+   release, so no ``ci.yml`` edit is needed for a normal major release.
+
 #. Merge the PR to ``develop`` once CI tests pass.
+
 #. Merge ``develop`` into ``master``.
-#. Add the tag ``v2.X.0`` to ``master`` and push tag to origin to trigger the wheel build
-   and PyPI publish via GitHub Actions.
-#. Create a Release on GitHub
+
+#. Add the tag ``v2.X.0`` to ``master`` and push the tag to ``origin`` to
+   trigger the wheel build and PyPI publish via GitHub Actions.
+
+#. Create a Release on GitHub.
 
 Patch Release
 ^^^^^^^^^^^^^
