@@ -100,29 +100,23 @@ void Update_simpleInstrumentController(simpleInstrumentControllerConfig *configD
     sigma_BR_norm = v3Norm(attGuidInMsgBuffer.sigma_BR);
     omega_BR_norm = v3Norm(attGuidInMsgBuffer.omega_BR_B);
 
-    // If the controller is active
-    int time_control = 0;
-    if (configData->timeTolerance > 0) {
-        if ((callTime < configData->imagingTime + configData->timeTolerance) && (callTime > configData->imagingTime - configData->timeTolerance))
+    // If non-zero time tolerances are provided, require callTime to fall inside
+    // [imagingTime - timeToleranceLower, imagingTime + timeToleranceUpper].
+    int time_control = 1;
+    if (configData->timeToleranceLower > 0) {
+        if (callTime < configData->imagingTime
+            && configData->imagingTime - callTime > configData->timeToleranceLower)
         {
-            time_control = 1;
+            time_control = 0;
         }
     }
-    // float callTime_seconds = callTime*1e-9;
-    // float imagingTime_seconds = configData->imagingTime*1e-9;
-    // float time_tolerance_seconds = configData->timeTolerance*1e-9;
-    // printf("callTime: %f\n", callTime_seconds);
-    // printf("imagingTime: %f\n", imagingTime_seconds);
-    // // printf("callTime: %llu\n", (unsigned long long)callTime);
-    // printf("time_control: %d\n", time_control);
-    // printf("Time tolerance: %f\n", time_tolerance_seconds);
-    // if (time_control) {
-    //     printf("Within time window\n");
-    // } else {
-    //     printf("Outside time window\n");
-    // }
-    // printf("Controller status: %d\n", (unsigned int)configData->controllerStatus);
-
+    if (configData->timeToleranceUpper > 0) {
+        if (callTime > configData->imagingTime
+            && callTime - configData->imagingTime > configData->timeToleranceUpper)
+        {
+            time_control = 0;
+        }
+    }
     if (configData->controllerStatus && time_control) {
         // If the target has not been imaged
         if (!configData->imaged) {
