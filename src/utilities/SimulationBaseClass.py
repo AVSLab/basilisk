@@ -1944,30 +1944,36 @@ class SimBaseClass:
         if progressUpdateInterval is not None:
             nextProgressUpdateTime = self.TotalSim.CurrentNanos + progressUpdateInterval
         while self.CheckStopCondition():
-            # Check events. Iterate by index rather than over a snapshot so that
-            # an event action which activates another event that is already due
-            # this cycle still gets that event checked before the pass ends
-            # (matching the historical lazy-generator behaviour, see issue #455).
-            # ``checkedEvents`` guarantees each event is checked at most once per
-            # cycle, even when a triggered event rebuilds the cache mid-pass.
-            checkedEvents = set()
+            # Check events. Iterate the cached active-event list by index so the
+            # O(active) fast path is unchanged on cycles where nothing triggers.
+            # When a triggered event's action changes which events are active,
+            # the cache is rebuilt mid-pass and we resume at the first event
+            # positioned after the triggering event in ``eventMap``. This
+            # reproduces the historical lazy-generator behaviour (issue #455):
+            # an event activated *later* in ``eventMap`` than the trigger is
+            # still checked this cycle, while one activated *earlier* waits for
+            # the next cycle. Resuming strictly past the trigger position also
+            # guarantees each event is checked at most once per cycle.
             activeEvents = self._ensureActiveEventCache()
             i = 0
             while i < len(activeEvents):
                 event = activeEvents[i]
                 i += 1
-                if id(event) in checkedEvents:
+                if not event.shouldBeChecked(self.TotalSim.CurrentNanos):
                     continue
-                if event.shouldBeChecked(self.TotalSim.CurrentNanos):
-                    checkedEvents.add(id(event))
-                    event.checkEvent(self)
-                    if self._activeEventCache is not activeEvents:
-                        # A triggered event invalidated and rebuilt the cache
-                        # (and may have activated further events). Continue from
-                        # the fresh list; ``checkedEvents`` prevents re-checking
-                        # anything already handled this cycle.
-                        activeEvents = self._ensureActiveEventCache()
-                        i = 0
+                event.checkEvent(self)
+                if self._activeEventCache is not activeEvents:
+                    activeEvents = self._ensureActiveEventCache()
+                    eventOrder = {
+                        id(evt): position
+                        for position, evt in enumerate(self.eventMap.values())
+                    }
+                    triggerPosition = eventOrder.get(id(event), -1)
+                    i = 0
+                    while i < len(activeEvents) and (
+                        eventOrder[id(activeEvents[i])] <= triggerPosition
+                    ):
+                        i += 1
 
             if self.terminate:
                 break

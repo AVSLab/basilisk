@@ -178,6 +178,53 @@ def test_event_action_checks_later_due_event_in_same_cycle():
     assert fired[:2] == [("a", firstCheckTime), ("b", firstCheckTime)]
 
 
+def test_event_activated_earlier_in_eventMap_waits_for_next_cycle():
+    # Mirror of the later-due-event case: if an event activates another event
+    # that appears *earlier* in eventMap, that earlier event must NOT be checked
+    # in the same pass -- the historical lazy generator had already walked past
+    # it, so it fires one eventRate later instead (issue #455 review).
+    sim = SimulationBaseClass.SimBaseClass()
+    simulationStep = 1.0  # [s]
+    stopTime = 2.0  # [s]
+    firstCheckTime = 0  # [ns]
+    eventRate = macros.sec2nano(simulationStep)  # [ns]
+    fired = []
+
+    proc = sim.CreateNewProcess("p")
+    proc.addTask(sim.CreateNewTask("t", eventRate))
+
+    def recordEarlierEvent(s):
+        fired.append(("b", s.TotalSim.CurrentNanos))
+
+    def activateEarlierEvent(s):
+        fired.append(("a", s.TotalSim.CurrentNanos))
+        s.setEventActivity("b", True)
+
+    # "b" is created first, so it sits earlier in eventMap than its activator "a".
+    sim.createNewEvent(
+        "b",
+        eventRate,
+        False,
+        conditionFunction=(lambda s: True),
+        actionFunction=recordEarlierEvent,
+    )
+    sim.createNewEvent(
+        "a",
+        eventRate,
+        True,
+        conditionFunction=(lambda s: True),
+        actionFunction=activateEarlierEvent,
+    )
+    sim.InitializeSimulation()
+    sim.showProgressBar = False
+    sim.ConfigureStopTime(macros.sec2nano(stopTime))
+    sim.ExecuteSimulation()
+
+    # "a" fires at t=0 and activates "b"; because "b" precedes "a" in eventMap it
+    # is only checked on the next cycle, one eventRate later.
+    assert fired[:2] == [("a", firstCheckTime), ("b", eventRate)]
+
+
 def test_returned_snapshot_is_stable_across_later_mutation():
     # A snapshot returned before a mutation must not be retroactively changed by
     # that mutation, and a fresh query after invalidation must be correct.
