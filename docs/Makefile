@@ -35,7 +35,11 @@ view:
 	    # works on macOS
 		open build/html/index.html
 
-.PHONY: help Makefile
+$(SOURCEDIR)/%.rst: FORCE
+	@$(SPHINXBUILD) -b html $(SPHINXOPTS) $(O) "$(SOURCEDIR)" "$(BUILDDIR)/html" "$@"
+
+.PHONY: help Makefile FORCE
+FORCE:
 
 # Catch-all target: route all unknown targets to Sphinx using the new
 # "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
