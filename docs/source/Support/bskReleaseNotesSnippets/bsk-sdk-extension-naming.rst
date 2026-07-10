@@ -1,0 +1,3 @@
+- Updated the BSK-SDK documentation to call out-of-tree BSK-SDK wheels extensions.
+- Updated the BSK and BSK-SDK release guides.
+- Updated documentation on BSK-SDK extension overview, installing and writing
