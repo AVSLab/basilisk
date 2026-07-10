@@ -16,9 +16,9 @@ Motivation
 
 .. note::
 
-    The recommended modern approach for custom modules is :ref:`Plugins<bskPlugins>`.
-    Plugins compile independently as their own Python wheels so no Basilisk
-    source checkout or full recompile is required. Additionally, plugins
+    The recommended modern approach for custom modules is :ref:`Extensions<bskExtensions>`.
+    Extensions compile independently as their own Python wheels so no Basilisk
+    source checkout or full recompile is required. Additionally, extensions
     can be distributed as wheels making distribution via ``pip install`` easier.
     External modules are still supported for users who want custom code folded
     directly into a from-source Basilisk build.

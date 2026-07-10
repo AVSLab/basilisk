@@ -4,7 +4,7 @@ BSK-SDK Release Guide
 =====================
 
 The `bsk-sdk <https://github.com/AVSLab/bsk_sdk>`_ package vendors the Basilisk
-SDK headers and runtime for plugin authors. Its version is kept in sync with
+SDK headers and runtime for extension authors. Its version is kept in sync with
 Basilisk, so a new BSK release requires a corresponding SDK release.
 
 The following steps are to be done after the Basilisk ``v2.X.Y`` release is fully completed.
@@ -17,7 +17,7 @@ Testing the SDK Locally
 Before pushing the ``bsk-sdk`` release branch to GitHub, test the SDK against
 the matching Basilisk release locally.  This reproduces the important parts of
 the GitHub Actions workflow: syncing the vendored SDK files, building the SDK
-wheel, installing the matching Basilisk wheel, and building the example plugin.
+wheel, installing the matching Basilisk wheel, and building the example extension.
 
 Create a clean Python test environment inside your ``bsk_sdk`` folder using:
 
@@ -76,15 +76,15 @@ For a release candidate published to TestPyPI, use:
      --extra-index-url https://pypi.org/simple/ \
      "bsk[all]==2.X.YrcN"
 
-Finally, build and test the example plugin against the locally installed SDK
-wheel and matching Basilisk package.  The plugin wheel is written to the
-example plugin project's default ``dist/`` directory:
+Finally, build and test the example extension against the locally installed SDK
+wheel and matching Basilisk package.  The extension wheel is written to the
+example extension project's default ``dist/`` directory:
 
 .. code-block:: bash
 
-   python -m build --wheel --no-isolation examples/custom-atm-plugin
-   python -m pip install --force-reinstall examples/custom-atm-plugin/dist/*.whl
-   python -m pytest examples/custom-atm-plugin/customExponentialAtmosphere/_UnitTest/test_customExponentialAtmosphere.py -v
+   python -m build --wheel --no-isolation examples/custom-atm-extension
+   python -m pip install --force-reinstall examples/custom-atm-extension/dist/*.whl
+   python -m pytest examples/custom-atm-extension/customExponentialAtmosphere/_UnitTest/test_customExponentialAtmosphere.py -v
 
 .. note::
 
@@ -250,7 +250,7 @@ environment:
    python -m pip wheel --no-deps -v -w /tmp/bsk-dev-wheel ../basilisk
    python -m pip install --force-reinstall /tmp/bsk-dev-wheel/bsk-*.whl
 
-If the plugin being tested needs optional Basilisk components such as OpNav,
+If the extension being tested needs optional Basilisk components such as OpNav,
 build Basilisk with the matching ``CONAN_ARGS`` or install matching optional
 component wheels from the same Basilisk branch.
 
@@ -276,17 +276,17 @@ Build and test the SDK wheel:
    python -m pip install --force-reinstall dist/bsk_sdk-*.whl
    python -m pytest tests/test_smoke.py -v
 
-Finally, build and test the example plugin against the locally installed
+Finally, build and test the example extension against the locally installed
 Basilisk and SDK wheels:
 
 .. code-block:: bash
 
-   python -m build --wheel --no-isolation examples/custom-atm-plugin
-   python -m pip install --force-reinstall examples/custom-atm-plugin/dist/*.whl
-   python -m pytest examples/custom-atm-plugin/customExponentialAtmosphere/_UnitTest/test_customExponentialAtmosphere.py -v
+   python -m build --wheel --no-isolation examples/custom-atm-extension
+   python -m pip install --force-reinstall examples/custom-atm-extension/dist/*.whl
+   python -m pytest examples/custom-atm-extension/customExponentialAtmosphere/_UnitTest/test_customExponentialAtmosphere.py -v
 
-For a real plugin under development, replace ``examples/custom-atm-plugin`` with
-the plugin repository path and run that plugin's own test suite.
+For a real extension under development, replace ``examples/custom-atm-extension``
+with the extension repository path and run that extension's own test suite.
 
 .. note::
 

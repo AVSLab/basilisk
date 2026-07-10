@@ -2,27 +2,27 @@
    :maxdepth: 1
    :hidden:
 
-.. _bskPlugins:
+.. _bskExtensions:
 
-About Plugins
+About Extensions
 ================
 
-.. sidebar:: What is a Plugin?
+.. sidebar:: What is an Extension?
 
-    A plugin is a Basilisk-compatible C++/SWIG module compiled outside of
+    An extension is a Basilisk-compatible C++/SWIG module compiled outside of
     the Basilisk source tree.  It links against the same Basilisk runtime
     your simulation uses, so it behaves identically to any built-in module.
 
 Basilisk ships a curated set of simulation modules covering common
-astrodynamics tasks.  **Plugins** let you extend Basilisk with your own
+astrodynamics tasks.  **Extensions** let you extend Basilisk with your own
 C++ modules—new dynamics models, custom environment models, proprietary
 algorithms, or research prototypes—without modifying or recompiling
 Basilisk itself.
 
-Plugins vs. External Modules
------------------------------
+Extensions vs. External Modules
+-------------------------------
 
-Plugins are the recommended way to write custom Basilisk modules.  Basilisk
+Extensions are the recommended way to write custom Basilisk modules.  Basilisk
 also supports an older :ref:`buildExtModules` mechanism that folds modules
 into a from-source Basilisk build, but it requires cloning and recompiling
 all of Basilisk every time you make a change.
@@ -32,7 +32,7 @@ all of Basilisk every time you make a change.
    :widths: 40 30 30
 
    * - Feature
-     - Plugin ✓ **recommended**
+     - Extension ✓ **recommended**
      - External module
    * - Requires cloning BSK source
      - **No**
@@ -60,8 +60,8 @@ Only use external modules if you specifically need your code compiled into
 the same build as Basilisk (i.e. available as
 ``Basilisk.ExternalModules.myModule``).
 
-Why Write a Plugin?
--------------------
+Why Write an Extension?
+-----------------------
 
 .. tip::
 
@@ -72,48 +72,48 @@ Why Write a Plugin?
   from PyPI and start writing your module immediately.  Upgrading Basilisk
   is a single ``pip install --upgrade "bsk[all]"``.
 
-- **Compile only your code.** Plugin builds take seconds, not minutes.
+- **Compile only your code.** Extension builds take seconds, not minutes.
   You never wait on a full Basilisk recompile to test a one-line change.
 
-- **Fully portable.** A plugin is a standard Python wheel.  Check it into
+- **Fully portable.** An extension is a standard Python wheel.  Check it into
   your own repo, build it in CI, and install it anywhere with
   ``pip install``.  No build environment setup required on the target machine.
 
 - **Share with the community.** Publish to PyPI and anyone can install
-  your module with ``pip install my-plugin`` alongside their existing
+  your module with ``pip install my-extension`` alongside their existing
   Basilisk installation.
 
 - **Keep proprietary code private.** Your module lives in its own
   repository.  Nothing about the Basilisk source is exposed or required.
 
 
-How Plugins Work
-----------------
+How Extensions Work
+-------------------
 
-Basilisk plugins are built with `bsk-sdk <https://pypi.org/project/bsk-sdk/>`_,
+Basilisk extensions are built with `bsk-sdk <https://pypi.org/project/bsk-sdk/>`_,
 a companion Python package that ships the headers, SWIG interface files, and
 CMake helpers needed to compile out-of-tree modules.
 
 .. graphviz::
 
-   digraph plugin_arch {
+   digraph extension_arch {
       graph [rankdir=TB, splines=ortho, bgcolor=transparent, nodesep=0.5]
       node  [shape=box, style="rounded,filled", fontname="Helvetica",
              fontsize=13, margin="0.4,0.2", width=4, fixedsize=false]
       edge  [fontname="Helvetica", fontsize=11, minlen=2]
 
-      plugin [label="Your plugin\n(separate repo / wheel)",
+      extension [label="Your extension\n(separate repo / wheel)",
               fillcolor="#dce8fb"]
       sdk    [label="bsk-sdk\n(BSK headers · SWIG interfaces · CMake helpers)",
               fillcolor="#d4edda"]
       bsk    [label="Basilisk: pip install bsk[all]",
               fillcolor="#fff3cd"]
 
-      plugin -> sdk [label="  compiles against  "]
+      extension -> sdk [label="  compiles against  "]
       sdk    -> bsk [label="  compatible with  "]
    }
 
-The plugin compiles against the same BSK headers and SWIG runtime that
+The extension compiles against the same BSK headers and SWIG runtime that
 Basilisk uses, so message types, base classes, and the module API are
 all fully compatible.
 
@@ -126,14 +126,14 @@ Quick Start
 
     pip install bsk-sdk
 
-**2. Create your plugin layout**
+**2. Create your extension layout**
 
 .. code-block:: text
 
-    my-plugin/
+    my-extension/
     ├── pyproject.toml
     ├── CMakeLists.txt
-    ├── my_plugin/                  # importable Python package
+    ├── my_extension/               # importable Python package
     │   └── __init__.py
     └── exampleCppModule/           # C++/SWIG source
         ├── exampleCppModule.h
@@ -147,7 +147,7 @@ Quick Start
 .. code-block:: cmake
 
     cmake_minimum_required(VERSION 3.26)
-    project(my_plugin LANGUAGES C CXX)
+    project(my_extension LANGUAGES C CXX)
 
     find_package(Python3 REQUIRED COMPONENTS Interpreter Development.Module NumPy)
 
@@ -163,7 +163,7 @@ Quick Start
       TARGET exampleCppModule
       INTERFACE exampleCppModule/exampleCppModule.i
       SOURCES   exampleCppModule/exampleCppModule.cpp
-      OUTPUT_DIR "${SKBUILD_PLATLIB_DIR}/my_plugin"
+      OUTPUT_DIR "${SKBUILD_PLATLIB_DIR}/my_extension"
     )
 
 **4. Build and install**
@@ -178,7 +178,7 @@ Quick Start
 
 .. code-block:: python
 
-    from my_plugin import exampleCppModule
+    from my_extension import exampleCppModule
     from Basilisk.utilities import SimulationBaseClass
 
     sim = SimulationBaseClass.SimBaseClass()
@@ -186,12 +186,12 @@ Quick Start
     sim.AddModelToTask("task", mod)
 
 A complete working example is provided in the
-`bsk-sdk repository <https://github.com/AVSLab/bsk_sdk/tree/master/examples/custom-atm-plugin>`_.
+`bsk-sdk repository <https://github.com/AVSLab/bsk_sdk/tree/master/examples/custom-atm-extension>`_.
 
 Version Compatibility
 ---------------------
 
-A plugin wheel is compiled against a specific version of the BSK headers.
+An extension wheel is compiled against a specific version of the BSK headers.
 ``bsk-sdk`` version numbers track Basilisk:  ``bsk-sdk==2.11.0`` contains
 headers from Basilisk ``v2.11.0``.  If the installed Basilisk version does
 not match, CMake will error at configure time with a clear message.

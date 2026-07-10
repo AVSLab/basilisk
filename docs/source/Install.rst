@@ -9,7 +9,7 @@ The recommended prebuilt installation uses the ``all`` extra so ``pip`` installs
 the core Basilisk wheel plus all optional Basilisk component wheels. MuJoCo
 dynamics are included in the core wheel, while optical navigation is provided by
 the optional ``bsk-opnav`` package. Prebuilt wheels can be used with
-:ref:`Basilisk plugins <writingPlugins>` for out-of-tree C++ modules, but they
+:ref:`Basilisk extensions <writingExtensions>` for out-of-tree C++ modules, but they
 cannot be modified in place to include legacy ``ExternalModules`` through the
 ``pathToExternalModules`` build option.
 
