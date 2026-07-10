@@ -380,6 +380,16 @@ class BasiliskConan(ConanFile):
         tc.cache_variables["BUILD_OPNAV"] = bool(self.options.get_safe("opNav"))
         tc.cache_variables["BUILD_VIZINTERFACE"] = bool(self.options.get_safe("vizInterface"))
         tc.cache_variables["BUILD_MUJOCO"] = bool(self.options.get_safe("mujoco"))
+        tc.cache_variables["BSK_CONAN_BUILD_TYPE"] = str(self.settings.build_type)
+        tc.cache_variables["BSK_VERSION"] = str(self.version).strip()
+        tc.cache_variables["BSK_CONAN_VERSION"] = importlib.metadata.version("conan")
+        tc.cache_variables["BSK_CONAN_CXX_STANDARD"] = str(self.settings.get_safe("compiler.cppstd") or "")
+        tc.cache_variables["BSK_CONAN_CXX_STANDARD_LIBRARY"] = str(self.settings.get_safe("compiler.libcxx") or "")
+        tc.cache_variables["BSK_CONAN_COMPILER_RUNTIME"] = str(self.settings.get_safe("compiler.runtime") or "")
+        tc.cache_variables["BSK_CONAN_COMPILER_RUNTIME_TYPE"] = str(
+            self.settings.get_safe("compiler.runtime_type") or ""
+        )
+        tc.cache_variables["Python3_EXECUTABLE"] = Path(sys.executable).as_posix()
         if self.options.get_safe("pathToExternalModules"):
             tc.cache_variables["EXTERNAL_MODULES_PATH"] = Path(str(self.options.pathToExternalModules)).resolve().as_posix()
         tc.cache_variables["PYTHON_VERSION"] = f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}"
