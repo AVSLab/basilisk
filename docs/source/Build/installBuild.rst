@@ -131,6 +131,88 @@ To skip the optional example Python packages during the clone-based install, use
     example, if you do a regular build you are building for debug, not for release.  Thus, be mindful of how
     you are building the code.
 
+Inspecting the Build Toolchain
+------------------------------
+Every Basilisk build records the C and C++ compilers, build configuration, CMake generator, and versions of the
+principal build tools in the installed Python package.  This information can be inspected when diagnosing a binary
+or build issue.
+
+For a concise, human-readable summary, use ``printBuildInfo()``::
+
+    from Basilisk import printBuildInfo
+
+    printBuildInfo()
+
+This produces output similar to::
+
+    Basilisk Build Information
+      Version:        2.12.0 (plugin ABI 1)
+      Target:         macOS arm64, 64-bit
+      Build:          Release, Unix Makefiles
+      C compiler:     AppleClang 21.0.0.21000101 (cc)
+      C++ compiler:   AppleClang 21.0.0.21000101 (c++)
+      C standard:     C17
+      C++ standard:   C++17
+      C++ ABI:        libc++ (210106, ABI 1), Itanium ABI
+      C++ runtime:    system, exceptions, RTTI
+      Python API:     0x03090000
+      Eigen:          3.4.0, 16-byte max alignment, NEON
+      SWIG runtime:   5
+      Conan profile:  Release, C++17, libc++
+
+    Build Tools
+      CMake:          4.2.0
+      Conan:          2.23.0
+      SWIG:           4.4.1
+      Python:         3.14.6
+
+For programmatic inspection or custom formatting, use ``getBuildInfo()``.  It returns a copy of a versioned nested
+dictionary with three principal sections::
+
+    from Basilisk import getBuildInfo
+
+    buildInfo = getBuildInfo()
+    pluginAbiVersion = buildInfo["artifact"]["pluginAbiVersion"]
+    standardLibrary = buildInfo["abi"]["cxx"]["standardLibrary"]["family"]
+    compilerVersion = buildInfo["diagnostics"]["compilers"]["cxx"]["version"]
+
+``artifact`` identifies the Basilisk version, source revision when available, and plugin ABI epoch.  The epoch is
+incremented when Basilisk intentionally changes the C/C++ object contract exposed to SDK plugins.  It does not
+promise compatibility between different Basilisk versions; the SDK's exact-version check remains required unless a
+future compatibility policy explicitly relaxes it.
+
+``abi`` is captured by C and C++ translation units compiled with the selected Basilisk build configuration.  It
+records the actual target architecture, endianness, C and C++ language modes, compiler ABI, standard-library ABI and
+debug modes, runtime linkage, exceptions, RTTI, Python ABI, SWIG runtime epoch, and Eigen alignment and vectorization
+settings.  It also contains size, alignment, and field-offset canaries for important C, C++, messaging, and Eigen
+types.  These values are suitable inputs to a future BSK-SDK compatibility policy.  Layout canaries detect common
+binary mismatches but do not prove semantic compatibility.
+
+The public ``architecture/utilities/bskAbiDescriptor.h`` header is the single source of truth for the descriptor and
+plugin ABI versions, canary types, and compiler-side extraction rules.  It is included by the existing BSK-SDK
+``architecture`` header synchronization, allowing Basilisk and an SDK plugin to compile the same contract rather
+than maintaining parallel implementations.
+
+``diagnostics`` contains values observed by CMake, requested Conan settings, and build-tool versions.  These remain
+useful when reproducing a build, but they are not all binary-compatibility requirements.  For example, CMake and
+Conan versions should not be compared as part of an SDK compatibility decision.  For Xcode and Visual Studio,
+``diagnostics["build"]`` describes the multi-config generator while ``abi["build"]["configuration"]`` records the
+configuration that actually compiled the installed descriptor.
+
+The standard-library ``pprint`` module provides an indented view when all recorded fields should be displayed::
+
+    from pprint import pprint
+    from Basilisk import getBuildInfo
+
+    pprint(getBuildInfo(), sort_dicts=False, width=100)
+
+Absolute build paths and timestamps are intentionally omitted from this metadata.  Source revision is empty and
+dirty state is reported as ``None`` when the source was built without Git metadata.  Source revision and dirty state
+are captured when CMake configures the package metadata.  Local incremental module-only builds refresh the compiled
+ABI descriptor, but they do not recapture Git provenance.  Reconfigure or do a clean package build before relying on
+these fields for release provenance.
+
+
 Doing Incremental Builds
 ------------------------
 If you are developing new Basilisk capabilities you will be looking to do incremental builds.  Note that running
@@ -144,6 +226,13 @@ such as Xcode projeect file on macOS, MS Visual Studio project file on Windows, 
 open the project file in your IDE and compile Basilisk there.  The initial build is a clean build and will take a
 similar amount of time to compile the messaging related files.  However, after making changes to a particular module,
 only this Basilisk module will need to be compiled and the compile times are drastically reduced.
+
+Every loadable BSK module target depends on ABI metadata generation, so an incremental module-only build refreshes the
+compiled descriptor for the selected configuration.  This refreshes the ABI details under ``getBuildInfo()["abi"]``;
+the Git provenance fields under ``getBuildInfo()["artifact"]`` remain configure-time package metadata.  Internal
+libraries consume the same ABI settings but do not carry this dependency because multi-configuration generators share
+some of their generated sources.  Do not mix Debug and Release module binaries in one Basilisk package; switching
+configurations requires rebuilding the complete package.
 
 
 Speeding Up Builds with ``sccache``
