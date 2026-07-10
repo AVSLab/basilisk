@@ -1,0 +1,84 @@
+#
+# ISC License
+#
+# Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+#
+
+buildInfoData = {
+    "schemaVersion": 2,
+    "artifact": {
+        "basiliskVersion": @BSK_INFO_BASILISK_VERSION@,
+        "sourceRevision": @BSK_INFO_SOURCE_REVISION@,
+        "sourceDirty": @BSK_INFO_SOURCE_DIRTY@,
+        "pluginAbiVersion": @BSK_INFO_PLUGIN_ABI_VERSION@,
+    },
+    "diagnostics": {
+        "target": {
+            "system": @BSK_INFO_SYSTEM@,
+            "processor": @BSK_INFO_PROCESSOR@,
+            "pointerSizeBytes": @CMAKE_SIZEOF_VOID_P@,
+            "osxArchitectures": @BSK_INFO_OSX_ARCHITECTURES@,
+            "osxDeploymentTarget": @BSK_INFO_OSX_DEPLOYMENT_TARGET@,
+        },
+        "build": {
+            "configuration": @BSK_INFO_CONFIGURATION@,
+            "multiConfig": @_multi_config@,
+            "availableConfigurations": @BSK_INFO_AVAILABLE_CONFIGURATIONS@,
+            "generator": @BSK_INFO_GENERATOR@,
+            "generatorPlatform": @BSK_INFO_GENERATOR_PLATFORM@,
+            "generatorToolset": @BSK_INFO_GENERATOR_TOOLSET@,
+            "pythonLimitedApi": @BSK_INFO_PY_LIMITED_API@,
+        },
+        "compilers": {
+            "c": {
+                "id": @BSK_INFO_C_COMPILER_ID@,
+                "version": @BSK_INFO_C_COMPILER_VERSION@,
+                "executable": @BSK_INFO_C_COMPILER_EXECUTABLE@,
+                "launcher": @BSK_INFO_C_COMPILER_LAUNCHER@,
+                "frontendVariant": @BSK_INFO_C_FRONTEND_VARIANT@,
+                "simulatedId": @BSK_INFO_C_SIMULATE_ID@,
+                "simulatedVersion": @BSK_INFO_C_SIMULATE_VERSION@,
+                "target": @BSK_INFO_C_COMPILER_TARGET@,
+                "standard": @BSK_INFO_C_STANDARD@,
+                "extensions": @BSK_INFO_C_EXTENSIONS@,
+            },
+            "cxx": {
+                "id": @BSK_INFO_CXX_COMPILER_ID@,
+                "version": @BSK_INFO_CXX_COMPILER_VERSION@,
+                "executable": @BSK_INFO_CXX_COMPILER_EXECUTABLE@,
+                "launcher": @BSK_INFO_CXX_COMPILER_LAUNCHER@,
+                "frontendVariant": @BSK_INFO_CXX_FRONTEND_VARIANT@,
+                "simulatedId": @BSK_INFO_CXX_SIMULATE_ID@,
+                "simulatedVersion": @BSK_INFO_CXX_SIMULATE_VERSION@,
+                "target": @BSK_INFO_CXX_COMPILER_TARGET@,
+                "standard": @BSK_INFO_CXX_STANDARD@,
+                "extensions": @BSK_INFO_CXX_EXTENSIONS@,
+            },
+        },
+        "conanSettings": {
+            "buildType": @BSK_INFO_CONAN_BUILD_TYPE@,
+            "cxxStandard": @BSK_INFO_CONAN_CXX_STANDARD@,
+            "cxxStandardLibrary": @BSK_INFO_CONAN_CXX_STANDARD_LIBRARY@,
+            "compilerRuntime": @BSK_INFO_CONAN_COMPILER_RUNTIME@,
+            "compilerRuntimeType": @BSK_INFO_CONAN_COMPILER_RUNTIME_TYPE@,
+        },
+        "tools": {
+            "cmake": @BSK_INFO_CMAKE_VERSION@,
+            "conan": @BSK_INFO_CONAN_VERSION@,
+            "swig": @BSK_INFO_SWIG_VERSION@,
+            "python": @BSK_INFO_PYTHON_VERSION@,
+        },
+    },
+}

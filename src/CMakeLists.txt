@@ -22,6 +22,7 @@ list(APPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 list(APPEND CMAKE_PREFIX_PATH "${CMAKE_BINARY_DIR}/conan")
 
 include(bskTargetExcludeBuildOptions)
+include(bskBuildInfo)
 
 # Find necessary packages
 find_package(Python3 ${PYTHON_VERSION} EXACT REQUIRED COMPONENTS Interpreter Development.Module OPTIONAL_COMPONENTS Development.SABIModule)
@@ -695,10 +696,13 @@ file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/moduleTemplates")
 file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/topLevelModules")
 file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/ExternalModules")
 
+bsk_generate_build_info("${CMAKE_BINARY_DIR}/Basilisk")
+
 if(WIN32)
   file(WRITE "${CMAKE_BINARY_DIR}/Basilisk/__init__.py"
        "#init file written by the build\n" "import sys, os\n" "from Basilisk import __path__\n"
        "bskPath = __path__[0]\n" "os.add_dll_directory(bskPath)\n"
+       "from Basilisk._buildInfo import getBuildInfo, printBuildInfo\n"
        "from Basilisk.architecture import messaging\n"
        "try:\n"
        "    from importlib.metadata import version as _pkg_version\n"
@@ -707,6 +711,7 @@ if(WIN32)
        "    __version__ = '0.0.0'\n")
 else()
   file(WRITE "${CMAKE_BINARY_DIR}/Basilisk/__init__.py"
+      "from Basilisk._buildInfo import getBuildInfo, printBuildInfo\n"
       "from Basilisk.architecture import messaging # ensure recorders() work without first importing messaging\n"
       "try:\n"
       "    from importlib.metadata import version as _pkg_version\n"
