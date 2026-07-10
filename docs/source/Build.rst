@@ -14,7 +14,7 @@ most users the precompiled version available on PyPI is sufficient. See the
    The recommended prebuilt PyPI install, ``pip install "bsk[all]"``, is designed
    for most users and includes all optional Basilisk component wheels. For
    out-of-tree C++ modules that do not need to live inside
-   ``Basilisk.ExternalModules``, use :ref:`Basilisk plugins <writingPlugins>`.
+   ``Basilisk.ExternalModules``, use :ref:`Basilisk extensions <writingExtensions>`.
 
 .. toctree::
    :maxdepth: 1

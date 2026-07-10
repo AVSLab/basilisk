@@ -226,9 +226,9 @@ Related Publications
    :caption: BSK_SDK:
    :includehidden:
 
-   Overview <Plugins/overview>
-   Install <Plugins/installing>
-   Writing a Plugin <Plugins/writing>
+   Overview <Extensions/overview>
+   Install <Extensions/installing>
+   Writing an Extension <Extensions/writing>
 
 .. toctree::
    :caption: BSK_RL:

@@ -2,22 +2,22 @@
    :maxdepth: 1
    :hidden:
 
-.. _writingPlugins:
+.. _writingExtensions:
 
-Writing a Basilisk Plugin
-=========================
+Writing a Basilisk Extension
+============================
 
 .. sidebar:: BSK-SDK Repo
 
-    The plugin source code is found on GitHub at `bsk-sdk <https://github.com/AVSLab/bsk_sdk>`_.
+    The BSK-SDK source code is found on GitHub at `bsk-sdk <https://github.com/AVSLab/bsk_sdk>`_.
 
-A plugin uses exactly the same C++ or C module structure as built-in
+An extension uses exactly the same C++ or C module structure as built-in
 Basilisk modules — see :ref:`cppModules` and :ref:`cModules` for how to
-write the module itself.  This page covers only the plugin-specific
+write the module itself.  This page covers only the extension-specific
 packaging: the project layout, ``CMakeLists.txt``, and ``pyproject.toml``.
 
 A complete working example is in the
-`bsk-sdk repository <https://github.com/AVSLab/bsk_sdk/tree/master/examples/custom-atm-plugin>`_.
+`bsk-sdk repository <https://github.com/AVSLab/bsk_sdk/tree/master/examples/custom-atm-extension>`_.
 
 Prerequisites
 -------------
@@ -27,10 +27,10 @@ Prerequisites
 - CMake ≥ 3.26 and a C++17 compiler (same requirement as Basilisk itself)
 - ``scikit-build-core`` and ``build``: ``pip install scikit-build-core build``
 
-Plugin Layout
--------------
+Extension Layout
+----------------
 
-Every plugin needs a Python package directory (``my_plugin/`` below). This
+Every extension needs a Python package directory (``my_extension/`` below). This
 is the importable namespace your users will ``import`` from, and where both
 compiled SWIG extensions and pure-Python modules are installed.  C++/SWIG
 source trees live alongside it at the repo root and get compiled into that
@@ -39,10 +39,10 @@ package directory with no extra build steps:
 
 .. code-block:: text
 
-    my-plugin/
+    my-extension/
     ├── pyproject.toml
     ├── CMakeLists.txt
-    ├── my_plugin/                      # Python package (SWIG outputs install here too)
+    ├── my_extension/                   # Python package (SWIG outputs install here too)
     │   ├── __init__.py
     │   └── examplePythonModule.py      # (optional) pure-Python modules
     ├── messages/                       # (optional) custom message definitions
@@ -82,8 +82,8 @@ If subclassing a BSK base class, ``%include`` its ``.i`` file before yours:
 CMakeLists.txt
 --------------
 
-The ``CMakeLists.txt`` has a boilerplate section (copy as-is) and a
-plugin-specific section:
+The ``CMakeLists.txt`` has a boilerplate section (copy as-is) and an
+extension-specific section:
 
 .. code-block:: cmake
 
@@ -91,7 +91,7 @@ plugin-specific section:
     # Boilerplate: copy as-is
     # ==========================================================================
     cmake_minimum_required(VERSION 3.26)
-    project(my_plugin LANGUAGES C CXX)
+    project(my_extension LANGUAGES C CXX)
 
     find_package(Python3 REQUIRED COMPONENTS Interpreter Development.Module NumPy)
 
@@ -108,21 +108,21 @@ plugin-specific section:
     set(bsk-sdk_DIR "${bsk_sdk_dir}")
     find_package(bsk-sdk CONFIG REQUIRED)
 
-    set(PKG_DIR "${SKBUILD_PLATLIB_DIR}/my_plugin")
+    set(PKG_DIR "${SKBUILD_PLATLIB_DIR}/my_extension")
 
     # ==========================================================================
-    # Plugin-specific configuration
+    # Extension-specific configuration
     # ==========================================================================
 
-    file(GLOB PLUGIN_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/exampleCppModule/*.cpp")
+    file(GLOB EXTENSION_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/exampleCppModule/*.cpp")
 
     # If subclassing a BSK base class (AtmosphereBase, DynamicEffector, etc.),
     # bsk_add_swig_module automatically links the required SDK runtime sources —
-    # no manual list(APPEND) is needed.  See the `custom-atm-plugin` example.
+    # no manual list(APPEND) is needed.  See the bsk-sdk example.
     bsk_add_swig_module(
       TARGET exampleCppModule
       INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/exampleCppModule/exampleCppModule.i"
-      SOURCES   ${PLUGIN_SOURCES}
+      SOURCES   ${EXTENSION_SOURCES}
       INCLUDE_DIRS
         "${CMAKE_CURRENT_SOURCE_DIR}/exampleCppModule"
         "${CMAKE_CURRENT_SOURCE_DIR}/messages"
@@ -146,19 +146,19 @@ pyproject.toml
     build-backend = "scikit_build_core.build"
 
     [project]
-    name = "my-plugin"
+    name = "my-extension"
     version = "1.0.0"
     requires-python = ">=3.9"
     dependencies = ["bsk==2.X.Y"]
 
     [tool.scikit-build]
-    wheel.packages = ["my_plugin"]
+    wheel.packages = ["my_extension"]
 
 .. note::
 
    ``bsk-sdk``, ``bsk``, and the runtime ``dependencies`` entry must all be
    **pinned to the same version**.  The SDK compiles BSK sources into your
-   plugin at build time, so mismatched versions will produce a CMake error.
+   extension at build time, so mismatched versions will produce a CMake error.
    Replace ``2.X.Y`` with the Basilisk version you are targeting.
 
 Building and Installing
@@ -179,7 +179,7 @@ Building and Installing
 Publishing to PyPI
 ------------------
 
-A plugin is a standard Python wheel.  Declare ``bsk`` as a runtime
-dependency so end users get Basilisk with ``pip install my-plugin``.
+An extension is a standard Python wheel.  Declare ``bsk`` as a runtime
+dependency so end users get Basilisk with ``pip install my-extension``.
 ``bsk-sdk`` is only needed at build time and does not need to be
 declared as a runtime dependency.
