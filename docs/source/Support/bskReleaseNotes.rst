@@ -146,7 +146,7 @@ Version 2.11.0 (July 7, 2026)
 - Added Slack failure notifications for the Nightly Wheels workflow.
 - Fixed camera PNG encoding option handling for OpenCV 4.13 compatibility in OpNav image processing.
 - Improved the runtime performance of :ref:`spinningBodyNDOFStateEffector` and :ref:`linearTranslationNDOFStateEffector` by computing the degree-of-freedom mass-matrix inverse once per ``updateContributions`` call instead of three times. Results are numerically identical; the speedup grows with the number of degrees of freedom.
-- Generated message bindings now resolve peer message classes from their own module, fixing custom plugin messages built with ``bsk_generate_messages(GENERATE_C_INTERFACE)`` outside ``Basilisk.architecture.messaging``.
+- Generated message bindings now resolve peer message classes from their own module, fixing custom extension messages built with ``bsk_generate_messages(GENERATE_C_INTERFACE)`` outside ``Basilisk.architecture.messaging``.
 - Updated ``publish-wheels`` CI workflow to route release candidate tags (``v*rc*``) to TestPyPI instead of PyPI.
 - Added a manual ``workflow_dispatch`` trigger so wheels can be published from the GitHub UI without requiring a tag push.
 - Added packaging support for pure Python BSK modules under ``src/fswAlgorithms`` and ``src/simulation``, and for Python support files under ``src/architecture``.
@@ -165,7 +165,7 @@ Version 2.11.0 (July 7, 2026)
 - Added a new :ref:`spaceWeatherData` C++ module that loads CelesTrak space-weather CSV data and publishes the 23-message weather set required by :ref:`msisAtmosphere`.
 - Added support-data backup URLs and shorter retries for externally hosted downloads used by CI.
 - Added retry hardening for Basilisk support data downloads.
-- Raised the supported SWIG 4.x build requirement to 4.4.1, providing SWIG ABI 5 support between BSK and BSK plugins.
+- Raised the supported SWIG 4.x build requirement to 4.4.1, providing SWIG ABI 5 support between BSK and BSK extensions.
 - Added Vizard plume placement for thrusters mounted on a non-hub body. :ref:`thrusterDynamicEffector` and :ref:`thrusterStateEffector` now expose a ``r_PcP_P`` member, and :ref:`simIncludeThruster`'s ``addToSpacecraftSubcomponent`` accepts a ``r_PcP_P`` argument.
 - Added support for Vizard 2.4.0 features
 - Added instructions on how to build Vizard from source code
@@ -239,8 +239,8 @@ Version 2.10.0 (April 2, 2026)
 - Added the scenario :ref:`scenarioStripImaging` showing how to perform strip imaging tasks.
 - Updated Python packaging metadata to use the PEP 639 license fields and require a newer setuptools version that supports them.
 - Added optional ``sunEclipseInMsg`` input to :ref:`facetSRPDynamicEffector` so that eclipse shadow conditions scale the SRP force and torque by the illumination factor.
-- Added documentation for the ``bsk-sdk`` plugin system, covering how to install,
-  write, and distribute out-of-tree Basilisk plugins as standard Python wheels.
+- Added documentation for the ``bsk-sdk`` extension system, covering how to install,
+  write, and distribute out-of-tree Basilisk extensions as standard Python wheels.
 - Added ``BSK_SUPPORT_DATA_CACHE`` environment variable to ``dataFetcher.py`` to allow overriding the default Pooch cache directory for support data files.  See :ref:`addSupportData` for details.
 - Added missing docstring to ``gravBodyFactory.createSpiceInterface()`` that prevented it from being built.
 - Added a detailed note for ``spicePlanetFrames`` describing default ``IAU_*`` behavior, supported alternatives such as ``ITRF93`` and ``J2000``, and how frame-association FK kernels interact with this setting.
