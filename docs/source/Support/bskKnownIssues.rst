@@ -12,7 +12,7 @@ Version |release| (July 7, 2026)
 --------------------------------
 - SWIG 4.4.0 caused Basilisk build failures in some Python 3.13+ source-build configurations.
   Basilisk now requires SWIG 4.4.1 or a newer supported 4.x release, which provides SWIG ABI 5 support
-  for Basilisk and compatible plugins. If source builds fail with SWIG 4.4.0 or emit
+  for Basilisk and compatible extensions. If source builds fail with SWIG 4.4.0 or emit
   ``builtin type swigvarlink has no __module__ attribute`` warnings, upgrade to SWIG 4.4.1 or a newer
   supported 4.x release.
 - ``python conanfile.py --clean`` now removes Basilisk Numba cache artifacts in addition to ``dist3``,
@@ -34,7 +34,7 @@ Version 2.11.0 (July 7, 2026)
   translational response to applied forces. :ref:`spacecraft` and :ref:`spacecraftSystem` now verify
   on reset that ``mHub`` is strictly positive and ``IHubPntBc_B`` is symmetric positive definite.
   This is fixed in the current version.
-- Plugin-generated custom messages using ``bsk_generate_messages(GENERATE_C_INTERFACE)`` could fail to subscribe
+- Extension-generated custom messages using ``bsk_generate_messages(GENERATE_C_INTERFACE)`` could fail to subscribe
   Python readers to C-interface output messages because generated bindings imported the built-in
   ``Basilisk.architecture.messaging`` package. Generated bindings now resolve peer message classes from their own
   module. This is fixed in the current version.
@@ -66,7 +66,7 @@ Version 2.11.0 (July 7, 2026)
   :ref:`spinningBodyNDOFStateEffector` getter assertion now rejects the first out-of-range index.
 - SWIG 4.4.0 caused Basilisk build failures in some Python 3.13+ source-build configurations.
   Basilisk now requires SWIG 4.4.1 or a newer supported 4.x release, which provides SWIG ABI 5 support
-  for Basilisk and compatible plugins. If source builds fail with SWIG 4.4.0 or emit
+  for Basilisk and compatible extensions. If source builds fail with SWIG 4.4.0 or emit
   ``builtin type swigvarlink has no __module__ attribute`` warnings, upgrade to SWIG 4.4.1 or a newer
   supported 4.x release.
 - BSK-1387: :ref:`linkBudget` could compute excessive pointing loss for non-identity antenna attitudes
