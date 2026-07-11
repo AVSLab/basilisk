@@ -5,24 +5,180 @@ BSK-SDK Release Guide
 
 The `bsk-sdk <https://github.com/AVSLab/bsk_sdk>`_ package vendors the Basilisk
 SDK headers and runtime for extension authors. Its version is kept in sync with
-Basilisk, so a new BSK release requires a corresponding SDK release.
+Basilisk, so a new Basilisk release requires a corresponding SDK release.
 
-The final and patch release steps are to be done after the Basilisk
-``v2.X.Y`` release is fully completed. This ensures that the Basilisk release
-is completed and available on the expected Basilisk branch. During a beta
-cycle, the SDK may instead be synced from Basilisk ``develop`` or a matching
-feature branch using a pre-release version such as ``2.X.0bN``.
+This guide separates the release workflows from the common build and test
+tasks. Start with the appropriate workflow, then follow its links to the
+detailed task procedures.
+
+Release Model
+-------------
+
+An SDK build involves three related versions:
+
+* the Basilisk source used by ``tools/sync_all.py``;
+* the versions recorded in ``src/bsk_sdk/_bsk_version.txt`` and
+  ``pyproject.toml``; and
+* the Basilisk Python package installed while testing the SDK and example
+  extension.
+
+These versions must describe the same Basilisk release, branch, or commit. The
+source checkout is only an input to ``tools/sync_all.py``. CI and publishing
+use the synced files committed to the ``bsk-sdk`` repository, not the
+developer's local Basilisk checkout.
+
+Use the following table to select a workflow.
+
+.. list-table:: SDK workflows
+   :header-rows: 1
+   :widths: 20 23 27 30
+
+   * - Workflow
+     - Basilisk source
+     - Installed Basilisk
+     - SDK branch and tag
+   * - Major release
+     - ``v2.X.0`` tag
+     - PyPI ``2.X.0``
+     - Release branch, then ``v2.X.0``
+   * - Patch release
+     - ``v2.X.Y`` tag
+     - PyPI ``2.X.Y``
+     - ``patch/v2_X_x``, then ``v2.X.Y``
+   * - Beta-cycle validation
+     - ``develop`` or matching beta branch
+     - Matching local or nightly build
+     - Beta SDK branch
+   * - Feature-branch validation
+     - Exact feature branch or commit
+     - Locally built from the same source
+     - Temporary SDK test branch
+
+Final and patch SDK releases must be prepared after the corresponding Basilisk
+release is tagged and its ``bsk[all]`` wheels are available. During a beta
+cycle, the SDK can instead be synced from Basilisk ``develop`` or a matching
+feature branch using a PEP 440 pre-release version such as ``2.X.0bN``.
+
+Release Workflows
+-----------------
+
+.. _bsk-sdk-major-release:
+
+Major SDK Release
+~~~~~~~~~~~~~~~~~
+
+Use this workflow to release ``2.X.0`` after the corresponding Basilisk
+release is complete.
+
+#. Create an SDK release branch from ``develop``.
+#. :ref:`Create a clean test environment <bsk-sdk-task-environment>`.
+#. :ref:`Select the Basilisk source <bsk-sdk-task-select-source>` and check out
+   the ``v2.X.0`` tag.
+#. :ref:`Sync the SDK payload <bsk-sdk-task-sync>` from that checkout.
+#. :ref:`Verify versions and provenance <bsk-sdk-task-verify>`. All version
+   values must report ``2.X.0``, and the source checkout must report
+   ``v2.X.0``.
+#. :ref:`Install Basilisk from PyPI <bsk-sdk-install-final>` using
+   ``bsk[all]==2.X.0``.
+#. :ref:`Build and test the SDK wheel <bsk-sdk-task-build-sdk>`.
+#. :ref:`Build and test the example extension <bsk-sdk-task-test-extension>`.
+#. :ref:`Commit the synced payload <bsk-sdk-task-commit>` and open a PR to
+   ``develop``. Wait for CI to pass before merging.
+#. Merge ``develop`` into ``master``.
+#. Tag ``master`` with ``v2.X.0`` and push the tag. The tag triggers the wheel
+   build and PyPI publication through GitHub Actions.
+#. Create the corresponding GitHub Release.
+
+.. _bsk-sdk-patch-release:
+
+Patch SDK Release
+~~~~~~~~~~~~~~~~~
+
+Use this workflow to release ``2.X.Y`` after the corresponding Basilisk patch
+release is complete.
+
+#. For the first SDK patch after ``v2.X.0``, create ``patch/v2_X_x`` from the
+   ``v2.X.0`` SDK tag. For later patches, use the existing patch branch or
+   branch from the latest ``v2.X.Y`` SDK tag.
+#. Cherry-pick any required SDK-specific fixes from ``develop``.
+#. :ref:`Create a clean test environment <bsk-sdk-task-environment>`.
+#. :ref:`Select the Basilisk source <bsk-sdk-task-select-source>` and check out
+   the ``v2.X.Y`` tag.
+#. :ref:`Sync the SDK payload <bsk-sdk-task-sync>` from that checkout.
+#. :ref:`Verify versions and provenance <bsk-sdk-task-verify>`. All version
+   values must report ``2.X.Y``, and the source checkout must report
+   ``v2.X.Y``.
+#. :ref:`Install Basilisk from PyPI <bsk-sdk-install-final>` using
+   ``bsk[all]==2.X.Y``.
+#. :ref:`Build and test the SDK wheel <bsk-sdk-task-build-sdk>`.
+#. :ref:`Build and test the example extension <bsk-sdk-task-test-extension>`.
+#. :ref:`Commit the synced payload <bsk-sdk-task-commit>` and push the patch
+   branch.
+#. Manually run the ``CI`` action from the
+   `bsk-sdk Actions page <https://github.com/AVSLab/bsk_sdk/actions>`_ and wait
+   for it to pass.
+#. Tag ``patch/v2_X_x`` with ``v2.X.Y`` and push the tag. The tag triggers the
+   wheel build and PyPI publication through GitHub Actions.
+#. Create the corresponding GitHub Release.
+
+.. _bsk-sdk-beta-validation:
+
+Beta and Branch Validation
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Beta-cycle and feature-branch testing share the same local tasks but have
+different goals.
+
+**Beta-cycle validation** prepares an SDK branch from Basilisk ``develop`` or
+a matching beta branch. The Basilisk version file must contain a PEP 440
+pre-release version such as ``2.X.0bN``. CI recognizes ``aN`` and ``bN`` as
+development versions, checks out Basilisk ``develop``, and installs the
+nightly ``bsk[all]`` package set.
+
+**Feature-branch validation** checks compatibility with an unreleased Basilisk
+change. The installed Basilisk wheel and the source passed to
+``tools/sync_all.py`` must come from the same branch or commit. This is a local
+validation workflow; it does not prepare a release wheel.
+
+For either mode:
+
+#. Create or check out the appropriate SDK test branch.
+#. :ref:`Create a clean test environment <bsk-sdk-task-environment>`.
+#. :ref:`Select the Basilisk source <bsk-sdk-task-select-source>` and check out
+   ``develop``, the beta branch, or the feature branch being tested.
+#. For feature-branch testing, record the exact Basilisk commit so the result
+   can be reproduced.
+#. :ref:`Build and install Basilisk from the local checkout
+   <bsk-sdk-install-local>`.
+#. :ref:`Sync the SDK payload <bsk-sdk-task-sync>` from the same checkout.
+#. :ref:`Verify versions and provenance <bsk-sdk-task-verify>`.
+#. :ref:`Build and test the SDK wheel <bsk-sdk-task-build-sdk>`.
+#. :ref:`Build and test the example extension
+   <bsk-sdk-task-test-extension>`, or substitute the extension under
+   development and run its test suite.
+#. For a beta SDK branch, :ref:`commit the synced payload
+   <bsk-sdk-task-commit>` and open a PR. For exploratory feature-branch
+   testing, do not commit the synced payload or moved submodule pointer.
+
+When Basilisk reaches a release candidate or final release, sync the SDK again
+from the corresponding Basilisk tag and repeat the applicable release
+workflow.
 
 .. _bsk-sdk-local-testing:
 
-Testing the SDK Locally
------------------------
-Before pushing the ``bsk-sdk`` release branch to GitHub, test the SDK against
-the matching Basilisk release locally.  This reproduces the important parts of
-the GitHub Actions workflow: syncing the vendored SDK files, building the SDK
-wheel, installing the matching Basilisk wheel, and building the example extension.
+Common Tasks
+------------
 
-Create a clean Python test environment inside your ``bsk_sdk`` folder using:
+The following procedures are shared by the release and validation workflows.
+Run all commands from the root of the ``bsk_sdk`` repository unless noted
+otherwise.
+
+.. _bsk-sdk-task-environment:
+
+Create a Clean Test Environment
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Create the environment inside the ``bsk_sdk`` repository:
 
 .. code-block:: bash
 
@@ -31,40 +187,75 @@ Create a clean Python test environment inside your ``bsk_sdk`` folder using:
    python -m pip install --upgrade pip
    python -m pip install build pytest scikit-build-core "cmake>=3.26" "ninja>=1.5"
 
-Choose the Basilisk source tree to sync from. If you want to use the
-``bsk-sdk`` repository's submodule checkout, initialize it if needed, check out
-the matching Basilisk release, and run the default sync.  For a fresh
-``bsk-sdk`` clone, initialize the submodule once before running the default
-sync:
+Use a newly created environment for each release validation so previously
+installed Basilisk or SDK packages cannot mask missing dependencies.
+
+.. _bsk-sdk-task-select-source:
+
+Select the Basilisk Source
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Set ``BSK_ROOT`` to either the SDK repository's Basilisk submodule or an
+existing local Basilisk checkout.
+
+To use the submodule, initialize it once after cloning ``bsk-sdk``:
 
 .. code-block:: bash
 
-   # Only needed once in a fresh clone:
    git submodule update --init --recursive external/basilisk
+   BSK_ROOT=external/basilisk
 
-   git -C external/basilisk fetch --tags
-   git -C external/basilisk checkout v2.X.Y
-   python tools/sync_all.py
-
-If you already have a local Basilisk checkout, point the sync script at it
-instead of moving the SDK submodule checkout:
+To use an existing checkout without moving the SDK submodule pointer:
 
 .. code-block:: bash
 
    BSK_ROOT=~/Repos/basilisk
-   git -C "$BSK_ROOT" fetch --tags
-   git -C "$BSK_ROOT" checkout v2.X.Y
-   python tools/sync_all.py --basilisk-root "$BSK_ROOT"
 
-Verify that the SDK now records the expected Basilisk version.  If you synced
-from an existing checkout, replace ``external/basilisk`` below with
-``$BSK_ROOT``.  The ``tools/sync_all.py`` command updates both
-``src/bsk_sdk/_bsk_version.txt`` and the ``[project].version`` field in
-``pyproject.toml``:
+For a tagged release, fetch tags and check out the required tag:
 
 .. code-block:: bash
 
-   cat external/basilisk/docs/source/bskVersion.txt
+   git -C "$BSK_ROOT" fetch --tags
+   git -C "$BSK_ROOT" checkout v2.X.Y
+
+For beta-cycle or feature-branch testing, fetch and check out the required
+branch:
+
+.. code-block:: bash
+
+   git -C "$BSK_ROOT" fetch origin
+   git -C "$BSK_ROOT" checkout feature/branch_name
+   git -C "$BSK_ROOT" pull --ff-only
+   git -C "$BSK_ROOT" rev-parse HEAD
+
+Use ``develop`` in place of ``feature/branch_name`` for a normal beta cycle.
+
+.. _bsk-sdk-task-sync:
+
+Sync the SDK Payload
+~~~~~~~~~~~~~~~~~~~~
+
+Sync the vendored headers, runtime support, and version metadata from the
+selected Basilisk source:
+
+.. code-block:: bash
+
+   python tools/sync_all.py --basilisk-root "$BSK_ROOT"
+
+The script updates the vendored files under ``src/bsk_sdk/``, including
+``src/bsk_sdk/_bsk_version.txt``, and the ``[project].version`` field in
+``pyproject.toml``.
+
+.. _bsk-sdk-task-verify:
+
+Verify Versions and Provenance
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Compare the Basilisk source version with both SDK version records:
+
+.. code-block:: bash
+
+   cat "$BSK_ROOT/docs/source/bskVersion.txt"
    cat src/bsk_sdk/_bsk_version.txt
    python - <<'PY'
    from pathlib import Path
@@ -73,29 +264,34 @@ from an existing checkout, replace ``external/basilisk`` below with
    print(re.search(r'(?ms)^\[project\].*?^version = "([^"]+)"', text).group(1))
    PY
 
-All three should refer to the same release version, e.g. ``2.X.Y``.  The
-``pyproject.toml`` value is the published ``bsk-sdk`` version, while
-``src/bsk_sdk/_bsk_version.txt`` is the Basilisk version the SDK was synced
-from and the version CI will use to clone Basilisk.
-
-Build and install the SDK wheel in the clean Python environment.  With no
-output directory specified, ``python -m build`` writes wheels to the default
-``dist/`` directory:
+All three values must match. For a release, also confirm that the checkout is
+at the expected tag:
 
 .. code-block:: bash
 
-   python -m build --wheel
-   python -m pip install --force-reinstall dist/bsk_sdk-*.whl
-   python -m pytest tests/test_smoke.py -v
+   git -C "$BSK_ROOT" describe --tags --exact-match
 
-Install the matching Basilisk package set.  For a final release already
-published to PyPI, use:
+.. _bsk-sdk-task-install-basilisk:
+
+Install the Matching Basilisk Package
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Choose one installation method based on the workflow. The installed package
+must correspond to the source used to sync the SDK.
+
+.. _bsk-sdk-install-final:
+
+Final Release from PyPI
+^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: bash
 
    python -m pip install --force-reinstall "bsk[all]==2.X.Y"
 
-For a release candidate published to TestPyPI, use:
+.. _bsk-sdk-install-candidate:
+
+Release Candidate from TestPyPI
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: bash
 
@@ -104,286 +300,44 @@ For a release candidate published to TestPyPI, use:
      --extra-index-url https://pypi.org/simple/ \
      "bsk[all]==2.X.YrcN"
 
-Finally, build and test the example extension against the locally installed SDK
-wheel and matching Basilisk package.  The extension wheel is written to the
-example extension project's default ``dist/`` directory:
+.. _bsk-sdk-install-local:
 
-.. code-block:: bash
+Local Beta or Feature Branch
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-   python -m build --wheel --no-isolation examples/custom-atm-extension
-   python -m pip install --force-reinstall examples/custom-atm-extension/dist/*.whl
-   python -m pytest examples/custom-atm-extension/customExponentialAtmosphere/_UnitTest/test_customExponentialAtmosphere.py -v
-
-.. note::
-
-   The checkout passed with ``--basilisk-root`` is the local source input for
-   ``tools/sync_all.py``.  Checking out a tag or branch there does not affect
-   published wheels by itself; CI and publishing use the committed
-   ``bsk-sdk`` state.  For a release-prep PR, commit the synced files so the
-   repository records the SDK payload produced from that Basilisk source tree.
-   The release-relevant files are especially ``src/bsk_sdk/_bsk_version.txt``,
-   the vendored files under ``src/bsk_sdk/``, and the SDK version in
-   ``pyproject.toml``.  Both version files are stamped by ``tools/sync_all.py``.
-   If the PR intentionally updates the tracked ``external/basilisk`` submodule,
-   commit that pointer too.
-
-
-Beta SDK Cycle
---------------
-During the Basilisk beta cycle, prepare ``bsk-sdk`` from ``develop`` or the
-matching Basilisk feature branch rather than from a final release tag.  The
-Basilisk version file should contain a PEP 440 pre-release version such as
-``2.X.0bN``.  Running ``tools/sync_all.py`` copies that value into both SDK
-version locations:
-
-.. code-block:: bash
-
-   git -C external/basilisk fetch origin
-   git -C external/basilisk checkout develop
-   git -C external/basilisk pull --ff-only
-   python tools/sync_all.py
-
-If you want to sync from an existing Basilisk checkout instead, use the same
-branch commands there and pass it explicitly:
-
-.. code-block:: bash
-
-   BSK_ROOT=~/Repos/basilisk
-   git -C "$BSK_ROOT" fetch origin
-   git -C "$BSK_ROOT" checkout develop
-   git -C "$BSK_ROOT" pull --ff-only
-   python tools/sync_all.py --basilisk-root "$BSK_ROOT"
-
-For a beta SDK branch, CI reads ``src/bsk_sdk/_bsk_version.txt`` and treats
-``aN`` and ``bN`` versions as development builds.  The CI setup action checks
-out Basilisk ``develop`` and installs the nightly ``bsk[all]`` package set, so
-no temporary ``ci.yml`` edit is needed for normal beta-cycle PRs.
-
-Run the :ref:`Testing the SDK Locally <bsk-sdk-local-testing>` steps before
-pushing the SDK branch.  When Basilisk reaches a release candidate or final
-release, re-sync the SDK from the corresponding Basilisk tag and verify that
-the SDK package version, ``src/bsk_sdk/_bsk_version.txt``, and the Basilisk tag
-all refer to the same release.
-
-
-Major SDK Release
------------------
-To release a major version ``2.X.0`` the following steps are used:
-
-#. Create a release branch from ``develop`` in the ``bsk-sdk`` repository.
-
-#. Check out the matching Basilisk release tag in the local
-   ``external/basilisk`` checkout and sync the SDK artifacts:
-
-   .. code-block:: bash
-
-      # Only needed once in a fresh clone:
-      git submodule update --init --recursive external/basilisk
-
-      git -C external/basilisk fetch --tags
-      git -C external/basilisk checkout v2.X.0
-      python tools/sync_all.py
-
-   If you already have a local Basilisk checkout, use it directly instead:
-
-   .. code-block:: bash
-
-      BSK_ROOT=~/Repos/basilisk
-      git -C "$BSK_ROOT" fetch --tags
-      git -C "$BSK_ROOT" checkout v2.X.0
-      python tools/sync_all.py --basilisk-root "$BSK_ROOT"
-
-#. Verify that the synced Basilisk version, SDK package version, and Basilisk
-   checkout all refer to the same release.  If you synced from an existing
-   checkout, replace ``external/basilisk`` below with ``$BSK_ROOT``:
-
-   .. code-block:: bash
-
-      cat external/basilisk/docs/source/bskVersion.txt
-      cat src/bsk_sdk/_bsk_version.txt
-      python - <<'PY'
-      from pathlib import Path
-      import re
-      text = Path("pyproject.toml").read_text()
-      print(re.search(r'(?ms)^\[project\].*?^version = "([^"]+)"', text).group(1))
-      PY
-      git -C external/basilisk describe --tags --exact-match
-
-   These should all report ``2.X.0`` / ``v2.X.0``.
-
-#. Run the :ref:`Testing the SDK Locally <bsk-sdk-local-testing>` steps before pushing the branch.
-
-#. Commit the release-prep changes.  This normally includes the
-   ``pyproject.toml``, ``src/bsk_sdk/_bsk_version.txt``, and any tracked
-   synced SDK artifacts updated by ``tools/sync_all.py``.  If the release branch
-   intentionally records Basilisk provenance through ``external/basilisk``,
-   commit the updated submodule pointer too.
-
-#. Push the branch to ``origin`` and create a PR to trigger the CI workflow.
-   CI reads ``src/bsk_sdk/_bsk_version.txt`` to select the matching Basilisk
-   release, so no ``ci.yml`` edit is needed for a normal major release.
-
-#. Merge the PR to ``develop`` once CI tests pass.
-
-#. Merge ``develop`` into ``master``.
-
-#. Add the tag ``v2.X.0`` to ``master`` and push the tag to ``origin`` to
-   trigger the wheel build and PyPI publish via GitHub Actions.
-
-#. Create a Release on GitHub.
-
-Patch Release
--------------
-To release a patch version ``2.X.Y`` the following steps are used:
-
-#. If this is the first SDK patch since ``v2.X.0``, create a
-   ``patch/v2_X_x`` branch in the ``bsk-sdk`` repository from the
-   ``v2.X.0`` SDK tag.  For later patches, use the existing
-   ``patch/v2_X_x`` branch or branch from the latest ``v2.X.Y`` SDK tag.
-
-#. Cherry-pick any SDK-specific fixes from ``develop`` that are required for
-   this patch release.
-
-#. Check out the matching Basilisk patch release tag in the local
-   ``external/basilisk`` checkout and sync the SDK artifacts:
-
-   .. code-block:: bash
-
-      # Only needed once in a fresh clone:
-      git submodule update --init --recursive external/basilisk
-
-      git -C external/basilisk fetch --tags
-      git -C external/basilisk checkout v2.X.Y
-      python tools/sync_all.py
-
-   If you already have a local Basilisk checkout, use it directly instead:
-
-   .. code-block:: bash
-
-      BSK_ROOT=~/Repos/basilisk
-      git -C "$BSK_ROOT" fetch --tags
-      git -C "$BSK_ROOT" checkout v2.X.Y
-      python tools/sync_all.py --basilisk-root "$BSK_ROOT"
-
-#. Verify that the synced Basilisk version, SDK package version, and Basilisk
-   checkout all refer to the same release.  If you synced from an existing
-   checkout, replace ``external/basilisk`` below with ``$BSK_ROOT``:
-
-   .. code-block:: bash
-
-      cat external/basilisk/docs/source/bskVersion.txt
-      cat src/bsk_sdk/_bsk_version.txt
-      python - <<'PY'
-      from pathlib import Path
-      import re
-      text = Path("pyproject.toml").read_text()
-      print(re.search(r'(?ms)^\[project\].*?^version = "([^"]+)"', text).group(1))
-      PY
-      git -C external/basilisk describe --tags --exact-match
-
-   These should all report ``2.X.Y`` / ``v2.X.Y``.
-
-#. Run the :ref:`Testing the SDK Locally <bsk-sdk-local-testing>` steps before
-   pushing the branch.
-
-#. Commit the patch-release changes.  This normally includes the
-   ``pyproject.toml``, ``src/bsk_sdk/_bsk_version.txt``, and any tracked
-   synced SDK artifacts updated by ``tools/sync_all.py``.  If the patch branch
-   intentionally records Basilisk provenance through ``external/basilisk``,
-   commit the updated submodule pointer too.
-
-#. Push the branch to ``origin`` and manually run the ``CI`` action on
-   https://github.com/AVSLab/bsk_sdk/actions. Wait for tests to complete.
-
-#. Add the tag ``v2.X.Y`` to ``patch/v2_X_x`` and push the tag to ``origin`` to
-   trigger the wheel build and PyPI publish via GitHub Actions.
-
-#. Create a Release on GitHub.
-
-No ``ci.yml`` edit is needed for a normal SDK patch release. CI reads
-``src/bsk_sdk/_bsk_version.txt`` to select the matching Basilisk release.
-
-.. note::
-
-   The BSK SDK patch release should be prepared after the corresponding
-   Basilisk patch release is tagged and its ``bsk[all]`` wheels are available.
-   This lets local testing and CI install ``bsk[all]==2.X.Y`` without using
-   temporary branch-specific workflow edits.
-
-
-Testing SDK Changes Against a Basilisk Development Branch
----------------------------------------------------------
-Use this workflow when developing or reviewing ``bsk-sdk`` changes against a
-Basilisk branch that has not been released yet, such as ``develop`` or a
-``feature/branch_name`` branch.  This is a local developer validation workflow
-only.  Release SDK wheels should still be synced from tagged Basilisk releases.
-
-The important rule is that the installed Basilisk Python package and the
-Basilisk source tree used by ``tools/sync_all.py`` must come from the same
-branch or commit.
-
-Create a clean Python test environment in the ``bsk_sdk`` repository:
-
-.. code-block:: bash
-
-   python3 -m venv .venv
-   source .venv/bin/activate
-   python -m pip install --upgrade pip
-   python -m pip install build pytest scikit-build-core "cmake>=3.26" "ninja>=1.5"
-
-Check out the Basilisk branch you want to test.  This can be either the
-``external/basilisk`` checkout or a separate Basilisk clone.  A separate clone is
-often cleaner for exploratory testing because it does not move the SDK
-submodule pointer.
-
-.. code-block:: bash
-
-   git -C ../basilisk fetch origin
-   git -C ../basilisk checkout feature/branch_name
-   git -C ../basilisk pull --ff-only
-
-Build and install a local Basilisk wheel from that branch into the SDK test
+Build Basilisk from ``BSK_ROOT`` and install that wheel into the SDK test
 environment:
 
 .. code-block:: bash
 
-   python -m pip wheel --no-deps -v -w /tmp/bsk-dev-wheel ../basilisk
+   python -m pip wheel --no-deps -v -w /tmp/bsk-dev-wheel "$BSK_ROOT"
    python -m pip install --force-reinstall /tmp/bsk-dev-wheel/bsk-*.whl
 
-If the extension being tested needs optional Basilisk components such as OpNav,
-build Basilisk with the matching ``CONAN_ARGS`` or install matching optional
-component wheels from the same Basilisk branch.
+If the extension needs optional Basilisk components such as OpNav, build
+Basilisk with matching ``CONAN_ARGS`` or install matching optional-component
+wheels produced from the same Basilisk source.
 
-Sync ``bsk-sdk`` from the same Basilisk source tree:
+.. _bsk-sdk-task-build-sdk:
 
-.. code-block:: bash
+Build and Test the SDK Wheel
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-   python tools/sync_all.py --basilisk-root ../basilisk
-
-Verify that the installed Basilisk package and the synced SDK version agree:
-
-.. code-block:: bash
-
-   python -c "import Basilisk, bsk_sdk; print('Basilisk:', Basilisk.__version__); print('SDK synced from:', bsk_sdk.bsk_version())"
-   cat ../basilisk/docs/source/bskVersion.txt
-   cat src/bsk_sdk/_bsk_version.txt
-   python - <<'PY'
-   from pathlib import Path
-   import re
-   text = Path("pyproject.toml").read_text()
-   print(re.search(r'(?ms)^\[project\].*?^version = "([^"]+)"', text).group(1))
-   PY
-
-Build and test the SDK wheel:
+Build and install the SDK wheel, then run its smoke test:
 
 .. code-block:: bash
 
    python -m build --wheel
    python -m pip install --force-reinstall dist/bsk_sdk-*.whl
    python -m pytest tests/test_smoke.py -v
+   python -c "import Basilisk, bsk_sdk; print('Basilisk:', Basilisk.__version__); print('SDK synced from:', bsk_sdk.bsk_version())"
 
-Finally, build and test the example extension against the locally installed
-Basilisk and SDK wheels:
+.. _bsk-sdk-task-test-extension:
+
+Build and Test the Example Extension
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Build the example against the installed SDK and Basilisk wheels, install it,
+and run its unit test:
 
 .. code-block:: bash
 
@@ -391,12 +345,35 @@ Basilisk and SDK wheels:
    python -m pip install --force-reinstall examples/custom-atm-extension/dist/*.whl
    python -m pytest examples/custom-atm-extension/customExponentialAtmosphere/_UnitTest/test_customExponentialAtmosphere.py -v
 
-For a real extension under development, replace ``examples/custom-atm-extension``
-with the extension repository path and run that extension's own test suite.
+For an extension under development, replace ``examples/custom-atm-extension``
+with that extension's repository path and run its own test suite.
 
-.. note::
+.. _bsk-sdk-task-commit:
 
-   If this was only an exploratory compatibility test, do not commit the synced
-   SDK artifacts or submodule pointer.  Commit those changes only when preparing
-   an intentional SDK branch that should track the tested Basilisk branch or
-   release.
+Commit the Synced Payload
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Review and commit the release-preparation changes produced by
+``tools/sync_all.py``. These normally include:
+
+* ``pyproject.toml``;
+* ``src/bsk_sdk/_bsk_version.txt``; and
+* updated vendored SDK artifacts under ``src/bsk_sdk/``.
+
+If the release branch intentionally records Basilisk provenance through
+``external/basilisk``, commit the updated submodule pointer as well. A checkout
+selected with ``--basilisk-root`` does not otherwise alter the published SDK.
+
+CI and Publishing Behavior
+--------------------------
+
+CI reads ``src/bsk_sdk/_bsk_version.txt`` to select the matching Basilisk
+build. Versions containing ``aN`` or ``bN`` are treated as development builds;
+CI checks out Basilisk ``develop`` and installs the nightly ``bsk[all]``
+package set. Final and patch versions select the corresponding published
+Basilisk release.
+
+No temporary ``ci.yml`` edit is needed for normal beta, major, or patch SDK
+workflows. A pushed SDK version tag triggers the GitHub Actions wheel build and
+PyPI publication. Always wait for the corresponding Basilisk release and
+package publication before preparing a final or patch SDK tag.
