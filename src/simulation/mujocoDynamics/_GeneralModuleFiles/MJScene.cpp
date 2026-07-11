@@ -242,6 +242,11 @@ MJScene::equationsOfMotion(double t, double timeStep)
     // we need to alter some of them, in which case we need to update the 'constants'.
     if (areMujocoModelConstStale()) {
         mj_setConst(this->spec.getMujocoModel(), this->spec.getMujocoData());
+
+        // mj_setConst overwrites qpos with the reference pose; restore the integrator
+        // state (and re-flag kinematics stale) before anything downstream reads qpos.
+        updateMujocoArraysFromStates();
+        this->mjModelConstStale = false;
     }
 
     // Execute the dynamics task!
@@ -250,10 +255,6 @@ MJScene::equationsOfMotion(double t, double timeStep)
     // do the fwd kinematics, and update the state messages.
     // These messages can then be read by the rest of modules.
     this->dynamicsTask.ExecuteTaskList(nanos);
-
-    // TODO: When allowing to prescribe the mass, remember to mj_setConst.
-    // This is similar to how prescribing joint states should be followed
-    // by running forward kinematics.
 
     // If the kinematics became stale while running dynamics modules, refresh
     // MuJoCo's cached position/velocity quantities before actuator, equality,

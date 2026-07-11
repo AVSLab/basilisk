@@ -59,8 +59,13 @@ def test_continuouslyChangingMass(showPlots: bool = False):
 
         v(t) = log(m_0) - log(m_0 - 100t)
 
+    Integrating once more gives the position (with x(0) = 0):
+
+        x(t) = t + (m_0 - 100t)/100 * log((m_0 - 100t)/m_0)
+
     In this function we run this scenario in MuJoCo to check that simulation with
-    variable mass returns the same as the analytical solution of the velocity.
+    variable mass returns the same as the analytical solution of the velocity and
+    position.
     """
 
     dt = 1 # s
@@ -71,6 +76,9 @@ def test_continuouslyChangingMass(showPlots: bool = False):
     dynProcess.addTask(scSim.CreateNewTask("test", macros.sec2nano(dt)))
 
     scene = mujoco.MJScene.fromFile(XML_PATH_BALL)
+    # With extraEoMCall the final message is written inside equationsOfMotion, so
+    # the recorded position reflects the mid-step mj_setConst qpos state directly.
+    scene.extraEoMCall = True
     scSim.AddModelToTask("test", scene)
 
     actPayload = messaging.SingleActuatorMsgPayload()
@@ -80,8 +88,10 @@ def test_continuouslyChangingMass(showPlots: bool = False):
 
     scene.getSingleActuator("ball").actuatorInMsg.subscribeTo(actMsg)
 
+    massDepletionRate = 100 # kg/s
+
     mDotPayload = messaging.SCMassPropsMsgPayload()
-    mDotPayload.massSC = -100 # kg/s
+    mDotPayload.massSC = -massDepletionRate # kg/s
     mDotMsg = messaging.SCMassPropsMsg()
     mDotMsg.write(mDotPayload)
 
@@ -101,8 +111,11 @@ def test_continuouslyChangingMass(showPlots: bool = False):
     scSim.ConfigureStopTime(macros.sec2nano(tf))
     scSim.ExecuteSimulation()
 
-    m_0 = massRec.massSC[0]
-    expected_v = np.log(m_0) - np.log(m_0 - 100 * macros.NANO2SEC * massRec.times())
+    m_0 = massRec.massSC[0] # kg
+    t = macros.NANO2SEC * massRec.times() # s
+    m = m_0 - massDepletionRate * t # kg
+    expected_v = np.log(m_0) - np.log(m) # m/s
+    expected_x = t + m / massDepletionRate * np.log(m / m_0) # m
 
     if showPlots:
         plt.plot(massRec.times() * macros.NANO2SEC, massRec.massSC)
@@ -119,9 +132,24 @@ def test_continuouslyChangingMass(showPlots: bool = False):
         plt.legend()
         plt.xlabel("Time [s]")
         plt.ylabel("Velocity [m/s]")
+
+        plt.figure()
+        plt.plot(
+            posRec.times() * macros.NANO2SEC, posRec.r_BN_N[:, 0], label="Simulated"
+        )
+        plt.plot(
+            posRec.times() * macros.NANO2SEC, expected_x, "k--", label="Analytical"
+        )
+        plt.legend()
+        plt.xlabel("Time [s]")
+        plt.ylabel("Position [m]")
         plt.show()
 
     assert expected_v[-1] == pytest.approx(posRec.v_BN_N[-1, 0])
+
+    # The position catches mj_setConst leaving qpos at the reference pose
+    # (velocity alone integrates correctly even then).
+    assert expected_x[-1] == pytest.approx(posRec.r_BN_N[-1, 0], rel=1e-3)
 
 
 if __name__ == "__main__":
