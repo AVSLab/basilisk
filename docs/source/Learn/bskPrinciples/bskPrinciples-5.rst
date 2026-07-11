@@ -63,121 +63,50 @@ Next, the simulation stop time is extended for an additional 10s to 20s total an
 Retaining Message Objects in Memory
 -----------------------------------
 
-When creating stand-alone message objects in Python, it's crucial to understand that these objects must be retained in memory to function properly. If a message object is created locally within a function or method and not stored in a persistent variable, Python's garbage collector may remove it from memory once the function exits, even if C++ components still need to access it.
+Before Basilisk 2.12, a stand-alone message created inside a Python helper had to
+be stored in a persistent variable. Otherwise, Python could garbage-collect the
+message after the helper returned while a module still held pointers to its data.
 
-This is particularly important when:
+Starting with Basilisk 2.12, object-based message subscriptions automatically
+retain their source for the lifetime of the subscription. A stand-alone message
+may therefore leave Python scope safely while an input message remains subscribed
+to it. This applies whether the input reader is embedded in a C or C++ module. If
+the source is embedded in another module or C-module config, Basilisk retains that
+owning object rather than the temporary Python message proxy.
 
-1. Creating message objects in subroutines or helper functions
-2. Dynamically generating messages based on runtime conditions
-3. Setting up message interfaces that will be used throughout simulation
+For example, this helper does not need to return or otherwise retain ``inputMsg``:
 
-**Example: Using a Class-Level Registry to Retain Objects**
+.. code-block:: python
 
-A common pattern in Basilisk to ensure message objects remain in memory is to use a
-class-level registry or list that persists for the lifetime of your simulation.
-Here's how this is implemented in Basilisk's own code:
+    def connectInput(module):
+        """Create and connect a stand-alone input message."""
+        payload = messaging.CModuleTemplateMsgPayload(dataVector=[1.0, 2.0, 3.0])
+        inputMsg = messaging.CModuleTemplateMsg().write(payload)
+        module.dataInMsg.subscribeTo(inputMsg)
+
+
+Keeping an explicit Python reference remains valid and can make ownership clearer.
+It is also useful when the caller needs to write new data, inspect the message,
+unsubscribe and reconnect it, or otherwise access it later:
 
 .. code-block:: python
 
     class BskSimulation:
         def __init__(self):
-            # Create class-level registry if it doesn't exist
-            if not hasattr(self, '_message_registry'):
-                self._message_registry = []
+            self.inputMsg = messaging.CModuleTemplateMsg()
 
-        def setup_sensors(self):
-            """Set up sensor messages and devices."""
-
-            # Create a message
-            sensor_msg = messaging.SensorMsg()
-
-            # Store message in class-level registry to prevent garbage collection
-            self._message_registry.append(sensor_msg)
-
-            # Create the sensor module that will use this message
-            self.sensor_module = sensorModule.SensorModule()
-            self.sensor_module.sensorOutMsg.subscribeTo(sensor_msg)
-
-            return
+        def connectInput(self, module, payload):
+            """Write and connect the retained input message."""
+            self.inputMsg.write(payload)
+            module.dataInMsg.subscribeTo(self.inputMsg)
 
 
-This pattern is used in Basilisk's own implementation for components like Coarse
-Sun Sensors (CSS):
+The automatic lifetime guarantee has the following boundaries:
 
-.. code-block:: python
-
-    def SetCSSConstellation(self):
-        """Set the CSS sensors"""
-        self.CSSConstellationObject.ModelTag = "cssConstellation"
-
-        # Create class-level registry if it doesn't exist
-        if not hasattr(self, '_css_registry'):
-            self._css_registry = []
-
-        def setupCSS(cssDevice):
-            cssDevice = coarseSunSensor.CoarseSunSensor()
-            cssDevice.fov = 80. * mc.D2R
-            cssDevice.scaleFactor = 2.0
-            cssDevice.sunInMsg.subscribeTo(self.gravFactory.spiceObject.planetStateOutMsgs[self.sun])
-            cssDevice.stateInMsg.subscribeTo(self.scObject.scStateOutMsg)
-            # Store CSS in class-level registry to prevent garbage collection
-            self._css_registry.append(cssDevice)
-
-        # Create CSS devices and add them to the registry...
-
-**Alternative Approach: Using a Dictionary Registry**
-
-For more complex simulations where you need to retrieve specific messages later,
-you can use a dictionary-based registry:
-
-.. code-block:: python
-
-    class BskSimulation:
-        """A registry to keep message objects alive in Python memory."""
-
-        def __init__(self):
-            self.messages = {}
-
-        def make_message(self, name):
-            """Make a message object with a unique name."""
-            msg_obj = messaging.SensorMsg()
-            self.messages[name] = msg_obj
-            return msg_obj
-
-        def get_message(self, name):
-            """Retrieve a message object by name."""
-            return self.messages.get(name)
-
-**Have Parent Method Retain the Msg Object in memory**
-
-If the message setup method returns in instance of the message, then the parent method
-could be responsible for retaining this message object in memory
-
-.. code-block:: python
-
-    class BskSimulation:
-        """A registry to keep message objects alive in Python memory."""
-
-        def make_message(self):
-            """Make a message object and return it."""
-            msg = messaging.SensorMsg()
-            msg.fov = 2.0
-            return msg
-
-        def parent_method(self, name):
-            """Retrieve a message object by name."""
-            self.sensorMsg = self.make_message()
-            return
-
-
-**Common Pitfalls**
-
-Without proper retention, you might encounter issues like:
-
-- Messages that appear to be properly connected but don't transmit data
-- Simulation components that can't communicate as expected
-- Mysterious segmentation faults or access violations in C++ code
-
-By using a registry pattern or ensuring message objects are stored in long-lived
-variables, you can avoid these issues and create more modular, maintainable
-simulation code.
+* Calling ``unsubscribe()`` releases the subscription's reference. Retain the
+  message explicitly if it must be available for a later reconnection.
+* Subscribing by a raw integer address is caller-owned and does not retain a
+  Python source object.
+* This guarantee applies to message sources connected through ``subscribeTo()``.
+  Modules, sensors, effectors, and other wrapped simulation objects can have
+  separate ownership requirements and may still need persistent Python references.
