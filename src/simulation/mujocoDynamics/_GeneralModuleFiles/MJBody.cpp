@@ -257,10 +257,8 @@ double MJBody::getMass()
     return this->getSpec().getScene().getMassState()->state(this->getId());
 }
 
-void MJBody::updateMujocoModelFromMassProps()
+void MJBody::updateMujocoModelFromMassProps(mjModel* m)
 {
-    auto m = spec.getMujocoModel();
-
     double oldMass = m->body_mass[this->getId()];
     double newMass = this->getMass();
     auto diff = abs(oldMass - newMass);
