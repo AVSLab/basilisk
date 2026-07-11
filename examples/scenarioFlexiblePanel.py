@@ -131,12 +131,6 @@ def createSimBaseClass():
     fswTimeStep = macros.sec2nano(0.5)
     scSim.fswProcess.addTask(scSim.CreateNewTask(scSim.fswTaskName, fswTimeStep))
 
-    # Keep standalone reference messages alive for the run. They are created in
-    # setup helpers that return before the simulation runs; without a Python
-    # reference their C++ backing is garbage collected and the subscriber reads a
-    # dead message (a fallout of the .disown() removal in #918).
-    scSim.refMessages = []
-
     return scSim
 
 
@@ -430,7 +424,6 @@ def setUpControl(scSim, extFTObject, attError, scGeometry):
 
     mrpControl.guidInMsg.subscribeTo(attError.attGuidOutMsg)
     mrpControl.vehConfigInMsg.subscribeTo(configDataMsg)
-    scSim.refMessages.append(configDataMsg)
     extFTObject.cmdTorqueInMsg.subscribeTo(mrpControl.cmdTorqueOutMsg)
 
 

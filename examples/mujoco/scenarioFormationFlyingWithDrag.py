@@ -37,7 +37,7 @@ For each spacecraft, the drag model uses:
 * A constant drag geometry message (projected area, drag coefficient, center of pressure)
 
 The aerodynamic drag model outputs a force vector in the body-fixed site used by MuJoCo.
-Each spacecraft is given different drag coefficients, thus caussing differential drag
+Each spacecraft is given different drag coefficients, thus causing differential drag
 between them that makes formation flying harder.
 
 Feedback control is implemented using the
@@ -58,9 +58,10 @@ This scenario demonstrates:
 * How to record and visualize inertial trajectories, orbital-element histories,
   and Hill-frame relative motion
 
-All simulation models, messages, and recorders are kept alive by storing them in
-dataclasses defined in this script. This ensures that Python's garbage collector
-does not delete any objects that are still needed during the simulation.
+Simulation models needed after setup and recorders used for post-processing are
+stored in dataclasses defined in this script. Stand-alone configuration messages
+remain local to their setup helpers because subscribed input readers retain their
+sources automatically.
 
 Illustration of Simulation Results
 ----------------------------------
@@ -154,7 +155,7 @@ class PlotConfig:
 
 @dataclass
 class SimulationModels:
-    """Handles to all models and messages that must remain in scope."""
+    """Handles to simulation objects used after setup."""
     scSim: SimulationBaseClass.SimBaseClass
     integrator: svIntegrators.StateVecIntegrator
     scene: mujoco.MJScene
@@ -176,11 +177,6 @@ class SimulationModels:
 
     # Force actuators kept alive explicitly
     controlActuatorDeputy: Optional[mujoco.MJForceActuator] = None
-
-    # Messages that must not be garbage collected
-    dragGeomChiefMsg: Optional[messaging.DragGeometryMsg] = None
-    dragGeomDeputyMsg: Optional[messaging.DragGeometryMsg] = None
-    offsetElementsMsg: Optional[messaging.ClassicElementsMsg] = None
 
 
 @dataclass
@@ -420,11 +416,9 @@ def configureDragModels(models: SimulationModels) -> None:
     dragDeputy.atmoDensInMsg.subscribeTo(atmo.envOutMsgs[1])
     dragDeputy.dragGeometryInMsg.subscribeTo(dragGeomDeputyMsg)
 
-    # Store references in models to prevent garbage collection
+    # Store drag-model handles with the scenario
     models.dragChief = dragChief
     models.dragDeputy = dragDeputy
-    models.dragGeomChiefMsg = dragGeomChiefMsg
-    models.dragGeomDeputyMsg = dragGeomDeputyMsg
 
 
 def configureControlModels(
@@ -486,11 +480,10 @@ def configureControlModels(
     controlActuatorDeputy.forceInMsg.subscribeTo(inertialToSiteForce.forceOutMsg)
     scene.AddModelToDynamicsTask(inertialToSiteForce)
 
-    # Keep references alive
+    # Store model and actuator handles with the scenario
     models.orbElemConvertChief = orbElemConvertChief
     models.orbElemConvertDeputy = orbElemConvertDeputy
     models.orbElemTarget = orbElemTarget
-    models.offsetElementsMsg = offsetElementsMsg
     models.oeFeedback = oeFeedback
     models.inertialToSiteForce = inertialToSiteForce
     models.controlActuatorDeputy = controlActuatorDeputy
