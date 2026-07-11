@@ -15,11 +15,14 @@
 #  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 """
-Tests the Euler-Mayurama and SRK integrator described in:
+Tests the Euler-Maruyama stochastic integrator (svStochasticIntegratorMayurama).
 
-Tang, X., Xiao, A. Efficient weak second-order stochastic Runge-Kutta methods
-for Itô stochastic differential equations. Bit Numer Math 57, 241-260 (2017).
-https://doi.org/10.1007/s10543-016-0618-9
+This module covers the deterministic (zero-noise) limit, single-realization agreement
+with a Python Euler-Maruyama reference, and Monte-Carlo weak-convergence of the mean and
+variance for the Ornstein-Uhlenbeck process. The higher-order weak Runge-Kutta methods
+(W2Ito1, W2Ito2, and the Roessler families) are verified separately by exact numerical
+equivalence to committed reference trajectories (test_stochasticIntegratorsJulia.py and
+test_stochasticIntegratorsPaper.py).
 """
 from __future__ import annotations
 
@@ -45,190 +48,37 @@ try:
 except:
     couldImportMujoco = False
 
-SRKMethod = Literal["W2Ito1", "W2Ito2"]
-Method = Literal["W2Ito1", "W2Ito2", "EulerMayurama"]
+# This module provides the Euler-Maruyama coverage (single-path Ornstein-Uhlenbeck
+# agreement and Monte-Carlo weak-convergence checks) plus the DETERMINISTIC-LIMIT check
+# run across every stochastic integrator. The weak/strong-order Runge-Kutta methods are
+# additionally verified by exact numerical equivalence to committed references in
+# test_stochasticIntegratorsJulia.py and test_stochasticIntegratorsPaper.py.
+Method = Literal["EulerMayurama"]
 METHODS = get_args(Method)
+
+# Every concrete stochastic integrator, exercised on a zero-noise (deterministic) system
+# by test_deterministic. This both checks each integrator's drift tableau against the
+# analytic ODE solution (an oracle-INDEPENDENT check) and guards the m==0 code path: a
+# weak/strong method that indexes a per-source noise vector outside its k<m loop would
+# read an empty Eigen vector here (see the W2Ito m==0 regression). Keep in sync with the
+# classes exposed in svIntegrators.i.
+ALL_INTEGRATORS = [
+    "svStochasticIntegratorMayurama",
+    "svStochasticIntegratorSRIW1", "svStochasticIntegratorSOSRI",
+    "svStochasticIntegratorSRA1", "svStochasticIntegratorSOSRA",
+    "svStochasticIntegratorEulerHeun", "svStochasticIntegratorRKMil",
+    "svStochasticIntegratorW2Ito1", "svStochasticIntegratorW2Ito2",
+    "svStochasticIntegratorDRI1", "svStochasticIntegratorDRI1NM",
+    "svStochasticIntegratorRI1", "svStochasticIntegratorRI3",
+    "svStochasticIntegratorRI5", "svStochasticIntegratorRI6",
+    "svStochasticIntegratorRS1", "svStochasticIntegratorRS2",
+    "svStochasticIntegratorSIEA", "svStochasticIntegratorSMEA",
+    "svStochasticIntegratorSIEB", "svStochasticIntegratorSMEB",
+    "svStochasticIntegratorRDI1WM",
+]
 
 # Function of the form y = f(t,x) where x and y are vectors of the same size
 DynFunc = Callable[[float, npt.NDArray[np.float64]], npt.NDArray[np.float64]]
-
-# Coefficient sets (from Tang & Xiao Table 2, W2-Ito1 & W2-Ito2)
-W2Ito1Coefficients = {
-    'alpha':  np.array([1/6, 2/3, 1/6]),
-    'beta0':  np.array([-1, 1, 1]),
-    'beta1':  np.array([2, 0, -2]),
-
-    'A0':     np.array([[0.0, 0.0, 0.0],
-                        [1/2, 0.0, 0.0],
-                        [-1, 2, 0]]),
-
-    'B0':     np.array([[0.0, 0.0, 0.0],
-                        [(6-np.sqrt(6))/10, 0.0, 0.0],
-                        [(3+2*np.sqrt(6))/5, 0.0, 0.0]]),
-
-    'A1':     np.array([[0.0, 0.0, 0.0],
-                        [1/4, 0.0, 0.0],
-                        [1/4, 0.0, 0.0]]),
-
-    'B1':     np.array([[0.0, 0.0, 0.0],
-                        [1/2, 0.0, 0.0],
-                        [-1/2, 0.0, 0.0]]),
-
-    'B2':     np.array([[0.0, 0.0, 0.0],
-                        [1.0, 0.0, 0.0],
-                        [0.0, 0.0, 0.0]]),
-}
-
-W2Ito2Coefficients = {
-    'alpha':  np.array([1/6, 1/3, 1/3, 1/6]),
-    'beta0':  np.array([0, -1, 1, 1]),
-    'beta1':  np.array([0, 2, 0, -2]),
-
-    'A0':     np.array([[0.0, 0.0, 0.0, 0.0],
-                        [1/2, 0.0, 0.0, 0.0],
-                        [0.0, 1/2, 0.0, 0.0],
-                        [0.0, 0.0, 1.0, 0.0]]),
-
-    'B0':     np.array([[0.0, 0.0, 0.0, 0.0],
-                        [0.0, 0.0, 0.0, 0.0],
-                        [0.0, 1.0, 0.0, 0.0],
-                        [0.0, 1.0, 0.0, 0.0]]),
-
-    'A1':     np.array([[0.0, 0.0, 0.0, 0.0],
-                        [1/2, 0.0, 0.0, 0.0],
-                        [1/2, 0.0, 0.0, 0.0],
-                        [1/2, 0.0, 0.0, 0.0]]),
-
-    'B1':     np.array([[0.0, 0.0,  0.0, 0.0],
-                        [0.0, 0.0,  0.0, 0.0],
-                        [0.0, 1/2,  0.0, 0.0],
-                        [0.0, -1/2, 0.0, 0.0]]),
-
-    'B2':     np.array([[0.0, 0.0, 0.0, 0.0],
-                        [0.0, 0.0, 0.0, 0.0],
-                        [0.0, 1.0, 0.0, 0.0],
-                        [0.0, 0.0, 0.0, 0.0]]),
-}
-
-SRK_COEFFICIENTS: dict[SRKMethod, dict[str, npt.NDArray[Any]]] = {
-    "W2Ito1": W2Ito1Coefficients,
-    "W2Ito2": W2Ito2Coefficients
-}
-
-def srk2Integrate(
-        f: DynFunc,
-        g_list: List[DynFunc],
-        x0: npt.NDArray[np.float64],
-        dt: float,
-        tf: float,
-        rng_seed: int,
-        alpha: npt.NDArray[np.float64],
-        beta0: npt.NDArray[np.float64],
-        beta1: npt.NDArray[np.float64],
-        A0: npt.NDArray[np.float64],
-        B0: npt.NDArray[np.float64],
-        A1: npt.NDArray[np.float64],
-        B1: npt.NDArray[np.float64],
-        B2: npt.NDArray[np.float64],
-    ):
-    """
-    Generic s-stage SRK integrator for vector SDE:
-        dX = f(t,X) dt + sum_k g_list[k](t,X) dW_k
-
-    Method described in Tang & Xiao.
-    Args:
-        f: Drift function.
-        g_list: List of diffusion functions.
-        x0: Initial state.
-        dt: Time step.
-        tf: Final time.
-        rng_seed: Random seed.
-        alpha, beta0, beta1, A0, B0, A1, B1, B2: SRK coefficients.
-    Returns:
-        Array of state trajectories, including time as the first column.
-    """
-
-    def wrapped_f(full_state: npt.NDArray[Any]):
-        t = full_state[0]
-        x = full_state[1:]
-        return np.concatenate([[1], f(t, x)])
-
-    wrapped_g_list = []
-    for g in g_list:
-        def wrapped_g(full_state: npt.NDArray[Any], g: DynFunc = g):
-            t = full_state[0]
-            x = full_state[1:]
-            return np.concatenate([[0], g(t, x)])
-        wrapped_g_list.append(wrapped_g)
-
-    s = alpha.size
-    n = x0.size
-    m = len(g_list)
-
-    nsteps = int(np.floor(tf / dt))
-
-    x = np.zeros([nsteps+1, n+1], dtype=float)
-    x[0,0] = 0
-    x[0,1:] = x0
-
-    rng = svIntegrators.SRKRandomVariableGenerator()
-    rng.setSeed(rng_seed)
-
-    # throw the first away, similar to how Basilisk
-    # calls the equationsOfMotion once at the beginning
-    rng.generate(m, 0)
-
-    for step in range(nsteps):
-        X = x[step,:].copy()
-
-        # generate random variables
-        rvs: svIntegrators.SRKRandomVariables = rng.generate(m, dt)
-        Ik: List[List[float]] = rvs.Ik
-        Ikl: List[List[float]] = rvs.Ikl
-        xi: float = rvs.xi
-
-        # allocate stage arrays
-        H0 = [X.copy() for _ in range(s)]
-        Hk = [[X.copy() for _ in range(s)] for _ in range(m)]
-
-        for i in range(s):
-
-            # compute H0 stages
-            sumA = np.zeros(n+1)
-            sumB = np.zeros(n+1)
-            for j in range(s):
-                sumA += A0[i, j] * wrapped_f(H0[j]) * dt
-                for k in range(m):
-                    sumB += B0[i, j] * wrapped_g_list[k](Hk[k][j]) * Ik[k]
-            H0[i] = X + sumA + sumB
-
-            # compute Hk stages
-            for k in range(m):
-                sumA = np.zeros(n+1)
-                sumB1 = np.zeros(n+1)
-                sumB2 = np.zeros(n+1)
-                for j in range(s):
-                    sumA += A1[i, j] * wrapped_f(H0[j]) * dt
-                    sumB1 += B1[i, j] * wrapped_g_list[k](Hk[k][j]) * xi
-                    for l in range(m):
-                        if l != k:
-                            sumB2 += B2[i, j] * wrapped_g_list[l](Hk[k][j]) * Ikl[k][l]
-                Hk[k][i] = X + sumA + sumB1 + sumB2
-
-        # combine increments
-        drift = np.zeros(n+1)
-        for i in range(s):
-            drift += alpha[i] * wrapped_f(H0[i]) * dt
-
-        diffusion = np.zeros(n+1)
-        for k in range(m):
-            for i in range(s):
-                diffusion += beta0[i] * wrapped_g_list[k](Hk[k][i]) * Ik[k]
-                diffusion += beta1[i] * wrapped_g_list[k](Hk[k][i]) * Ikl[k][k]
-
-        x[step+1,:] = X + drift + diffusion
-
-    return x
 
 def eulerMayuramaIntegrate(
         f: DynFunc,
@@ -412,7 +262,7 @@ def getBasiliskSim(method: Method, dt: float, x0: npt.NDArray[np.float64], f: Dy
     Set up and return a Basilisk simulation for a given SDE and integrator method.
 
     Args:
-        method: Integration method ("W2Ito1", "W2Ito2", or "EulerMayurama").
+        method: Integration method (only "EulerMayurama").
         dt: Time step.
         x0: Initial state.
         f: Drift function.
@@ -481,12 +331,13 @@ def getBasiliskSim(method: Method, dt: float, x0: npt.NDArray[np.float64], f: Dy
     scene = mujoco.MJScene("<mujoco/>") # empty scene, no multi-body dynamics
     scSim.AddModelToTask("test", scene)
 
-    if method == "W2Ito1":
-        integratorClass = svIntegrators.svStochasticIntegratorW2Ito1
-    elif method == "W2Ito2":
-        integratorClass = svIntegrators.svStochasticIntegratorW2Ito2
-    elif method == "EulerMayurama":
+    # ``method`` is either one of the Method literals (e.g. "EulerMayurama") or the exact
+    # class name of any stochastic integrator (used by test_deterministic to sweep all of
+    # ALL_INTEGRATORS). Map the friendly literal, otherwise resolve the class by name.
+    if method == "EulerMayurama":
         integratorClass = svIntegrators.svStochasticIntegratorMayurama
+    elif hasattr(svIntegrators, method):
+        integratorClass = getattr(svIntegrators, method)
     else:
         raise NotImplementedError(method)
 
@@ -556,12 +407,12 @@ def estimateErrorAndEmpiricalVariance(
 @pytest.mark.parametrize("method", METHODS)
 def test_deterministic(method: Method, plot: bool = False):
     """
-    Test deterministic integration (no diffusion) for all integrator methods.
+    Test deterministic integration (no diffusion) for Euler-Maruyama.
     Compares Basilisk and Python implementations against the analytical solution
     for the exponential system dx/dt = x*t.
 
     Args:
-        method: Integration method ("W2Ito1", "W2Ito2", or "EulerMayurama").
+        method: Integration method (only "EulerMayurama").
         plot: If True, plot the relative error.
     """
 
@@ -578,10 +429,7 @@ def test_deterministic(method: Method, plot: bool = False):
     tBasilisk = macros.NANO2SEC* stateLogger.times()
     xBasilisk = stateLogger.x
 
-    if method == "EulerMayurama":
-        txPython = eulerMayuramaIntegrate(system.f, system.g, system.x0, dt, tf, seed)
-    else:
-        txPython = srk2Integrate(system.f, system.g, system.x0, dt, tf, seed, **SRK_COEFFICIENTS[method])
+    txPython = eulerMayuramaIntegrate(system.f, system.g, system.x0, dt, tf, seed)
     tPython = txPython[:,0]
     xPython = txPython[:,1]
 
@@ -603,12 +451,7 @@ def test_deterministic(method: Method, plot: bool = False):
         rtol=0
     )
 
-    if method == "EulerMayurama":
-        expectedIntegrationError = .05
-    elif method == "W2Ito1":
-        expectedIntegrationError = 1e-6
-    elif method == "W2Ito2":
-        expectedIntegrationError = 1e-8
+    expectedIntegrationError = .05
 
     # The Basilisk should have some integration error w.r.t analytical solution
     numpy.testing.assert_allclose(
@@ -616,6 +459,56 @@ def test_deterministic(method: Method, plot: bool = False):
         xExpected[-1],
         atol=expectedIntegrationError,
         rtol=0
+    )
+
+
+@pytest.mark.skipif(not couldImportMujoco, reason="Compiled Basilisk without --mujoco")
+@pytest.mark.parametrize("integratorClassName", ALL_INTEGRATORS)
+def test_deterministicLimitAllIntegrators(integratorClassName: str):
+    """Every stochastic integrator must reduce to a correct ODE solver when there is no
+    noise. This runs each integrator on a ZERO-NOISE (m==0) system and checks it against
+    the analytic solution.
+
+    This check is deliberately oracle-INDEPENDENT: unlike the Julia/paper equivalence
+    tests (which replay prescribed increments through the same recurrence the reference
+    used), the exponential system has a known closed-form solution, so a wrong drift
+    tableau (alpha / A0 / c0) or a broken deterministic step is caught here even if the
+    committed reference happened to share the same mistake.
+
+    It also guards the m==0 code path: an integrator that reads a per-source noise entry
+    (dW/dZ) outside its ``k < m`` loop reads an empty Eigen vector when there are no noise
+    sources, which this test exercises directly.
+
+    The system is dx/dt = -x (with g = []), exact solution x(t) = x0 * exp(-t). A decaying
+    linear drift is used (rather than the growing dx/dt = x*t) so that a mis-scaled drift
+    weight produces a clearly bounded, easily-diagnosed error.
+    """
+    dt = 1.0 / 32.0
+    tf = 1.0
+    x0 = np.array([2.0])
+
+    f = lambda t, x: np.array([-x[0]])   # dx/dt = -x
+    g: List[DynFunc] = []                # zero noise sources => m == 0 (deterministic)
+
+    scSim, stateModel, integratorObject, stateLogger = getBasiliskSim(
+        integratorClassName, dt, x0, f, g, seed=None)
+    scSim.ConfigureStopTime(macros.sec2nano(tf))
+    scSim.ExecuteSimulation()
+
+    xBasilisk = np.array(stateLogger.x, dtype=float).reshape(-1)
+    xExpected = x0[0] * np.exp(-tf)
+
+    # Tolerance is set by the method's DETERMINISTIC (zero-noise) order, which is the
+    # order of its drift step, not its stochastic order:
+    #   - Euler-Maruyama and RKMil take a plain forward-Euler drift step (order 1), so at
+    #     dt = 1/32 the analytic error is ~1.2e-2 (matches hand-computed Euler exactly).
+    #   - every other method here has a higher-order (>=2) drift tableau, error <~1e-3.
+    # A mis-scaled or mis-placed drift weight pushes the error well past these bounds.
+    orderOneMethods = {"svStochasticIntegratorMayurama", "svStochasticIntegratorRKMil"}
+    tol = 2e-2 if integratorClassName in orderOneMethods else 2e-3
+    numpy.testing.assert_allclose(
+        xBasilisk[-1], xExpected, atol=tol, rtol=0,
+        err_msg=f"{integratorClassName}: deterministic-limit solution is wrong",
     )
 
 
@@ -644,10 +537,7 @@ def test_ou(method: Method, plot: bool = False):
     tBasilisk = macros.NANO2SEC* stateLogger.times()
     xBasilisk = stateLogger.x
 
-    if method == "EulerMayurama":
-        txPython = eulerMayuramaIntegrate(system.f, system.g, system.x0, dt, tf, seed)
-    else:
-        txPython = srk2Integrate(system.f, system.g, system.x0, dt, tf, seed, **SRK_COEFFICIENTS[method])
+    txPython = eulerMayuramaIntegrate(system.f, system.g, system.x0, dt, tf, seed)
     tPython = txPython[:,0]
     xPython = txPython[:,1]
 
@@ -693,10 +583,7 @@ def test_ouComplex(method: Method, plot: bool = False):
     tBasilisk = macros.NANO2SEC* stateLogger.times()
     xBasilisk = stateLogger.x
 
-    if method == "EulerMayurama":
-        txPython = eulerMayuramaIntegrate(system.f, system.g, system.x0, dt, tf, seed)
-    else:
-        txPython = srk2Integrate(system.f, system.g, system.x0, dt, tf, seed, **SRK_COEFFICIENTS[method])
+    txPython = eulerMayuramaIntegrate(system.f, system.g, system.x0, dt, tf, seed)
     tPython = txPython[:,0]
     xPython = txPython[:,1:]
 
@@ -743,10 +630,7 @@ def test_example1(method: Method, plot: bool = False):
     tBasilisk = macros.NANO2SEC* stateLogger.times()
     xBasilisk = stateLogger.x
 
-    if method == "EulerMayurama":
-        txPython = eulerMayuramaIntegrate(system.f, system.g, system.x0, dt, tf, seed)
-    else:
-        txPython = srk2Integrate(system.f, system.g, system.x0, dt, tf, seed, **SRK_COEFFICIENTS[method])
+    txPython = eulerMayuramaIntegrate(system.f, system.g, system.x0, dt, tf, seed)
     tPython = txPython[:,0]
     xPython = txPython[:,1:]
 
