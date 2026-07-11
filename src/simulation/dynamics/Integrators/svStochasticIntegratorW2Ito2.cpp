@@ -19,38 +19,43 @@
 #include "svStochasticIntegratorW2Ito2.h"
 
 svStochasticIntegratorW2Ito2::svStochasticIntegratorW2Ito2(DynamicObject* dyn)
-    : svIntegratorWeakStochasticRungeKutta(dyn, svStochasticIntegratorW2Ito2::getCoefficients())
-{}
-
-SRKCoefficients<4> svStochasticIntegratorW2Ito2::getCoefficients()
+    : svStochasticIntegratorW2Ito(dyn, svStochasticIntegratorW2Ito2::getCoefficients())
 {
-    SRKCoefficients<4> coefficients;
+}
 
-    coefficients.A0[1][0] = .5;
-    coefficients.A0[2][1] = .5;
-    coefficients.A0[3][2] = 1;
+// Coefficients for the W2Ito2 tableau (Tang & Xiao, Table 3). 4-stage explicit method.
+W2ItoCoefficients svStochasticIntegratorW2Ito2::getCoefficients()
+{
+    W2ItoCoefficients c;
 
-    coefficients.A1[1][0] = .5;
-    coefficients.A1[2][0] = .5;
-    coefficients.A1[3][0] = .5;
+    c.alpha = {1.0 / 6.0, 1.0 / 3.0, 1.0 / 3.0, 1.0 / 6.0};
+    c.beta0 = {0.0, -1.0, 1.0, 1.0};
+    c.beta1 = {0.0, 2.0, 0.0, -2.0};
 
-    coefficients.B0[2][1] = 1;
-    coefficients.B0[3][1] = 1;
+    c.A0 = {{0.0, 0.0, 0.0, 0.0},
+            {1.0 / 2.0, 0.0, 0.0, 0.0},
+            {0.0, 1.0 / 2.0, 0.0, 0.0},
+            {0.0, 0.0, 1.0, 0.0}};
 
-    coefficients.B1[2][1] = .5;
-    coefficients.B1[3][1] = -.5;
+    c.B0 = {{0.0, 0.0, 0.0, 0.0},
+            {0.0, 0.0, 0.0, 0.0},
+            {0.0, 1.0, 0.0, 0.0},
+            {0.0, 1.0, 0.0, 0.0}};
 
-    coefficients.B2[2][1] = 1;
+    c.A1 = {{0.0, 0.0, 0.0, 0.0},
+            {1.0 / 2.0, 0.0, 0.0, 0.0},
+            {1.0 / 2.0, 0.0, 0.0, 0.0},
+            {1.0 / 2.0, 0.0, 0.0, 0.0}};
 
-    coefficients.alpha = {1./6., 1./3., 1./3., 1./6.};
-    coefficients.beta0 = {0, -1, 1, 1};
-    coefficients.beta1 = {0,  2, 0, -2};
+    c.B1 = {{0.0, 0.0, 0.0, 0.0},
+            {0.0, 0.0, 0.0, 0.0},
+            {0.0, 1.0 / 2.0, 0.0, 0.0},
+            {0.0, -1.0 / 2.0, 0.0, 0.0}};
 
-    // c0[j] = sum_{p=1..s}( a0[j][p] )
-    coefficients.c0 = {0, .5, .5, 1};
+    c.B2 = {{0.0, 0.0, 0.0, 0.0},
+            {0.0, 0.0, 0.0, 0.0},
+            {0.0, 1.0, 0.0, 0.0},
+            {0.0, 0.0, 0.0, 0.0}};
 
-    // c1[j] = sum_{p=1..s}( a1[j][p] )
-    coefficients.c1 = {0, .5, .5, .5};
-
-    return coefficients;
+    return c;
 }

@@ -18,38 +18,42 @@
  */
 #include "svStochasticIntegratorW2Ito1.h"
 
+#include <cmath>
+
 svStochasticIntegratorW2Ito1::svStochasticIntegratorW2Ito1(DynamicObject* dyn)
-    : svIntegratorWeakStochasticRungeKutta(dyn, svStochasticIntegratorW2Ito1::getCoefficients())
-{}
-
-SRKCoefficients<3> svStochasticIntegratorW2Ito1::getCoefficients()
+    : svStochasticIntegratorW2Ito(dyn, svStochasticIntegratorW2Ito1::getCoefficients())
 {
-    SRKCoefficients<3> coefficients;
+}
 
-    coefficients.A0[1][0] = .5;
-    coefficients.A0[2][0] = -1;
-    coefficients.A0[2][1] = 2;
+// Coefficients for the W2Ito1 tableau (Tang & Xiao, Table 2). 3-stage explicit method.
+W2ItoCoefficients svStochasticIntegratorW2Ito1::getCoefficients()
+{
+    const double sqrt6 = std::sqrt(6.0);
+    W2ItoCoefficients c;
 
-    coefficients.A1[1][0] = .25;
-    coefficients.A1[2][0] = .25;
+    c.alpha = {1.0 / 6.0, 2.0 / 3.0, 1.0 / 6.0};
+    c.beta0 = {-1.0, 1.0, 1.0};
+    c.beta1 = {2.0, 0.0, -2.0};
 
-    coefficients.B0[1][0] = (6 - std::sqrt(6))/10.;
-    coefficients.B0[2][0] = (3 + 2*std::sqrt(6))/5.;
+    c.A0 = {{0.0, 0.0, 0.0},
+            {1.0 / 2.0, 0.0, 0.0},
+            {-1.0, 2.0, 0.0}};
 
-    coefficients.B1[1][0] = .5;
-    coefficients.B1[2][0] = -.5;
+    c.B0 = {{0.0, 0.0, 0.0},
+            {(6.0 - sqrt6) / 10.0, 0.0, 0.0},
+            {(3.0 + 2.0 * sqrt6) / 5.0, 0.0, 0.0}};
 
-    coefficients.B2[1][0] = 1;
+    c.A1 = {{0.0, 0.0, 0.0},
+            {1.0 / 4.0, 0.0, 0.0},
+            {1.0 / 4.0, 0.0, 0.0}};
 
-    coefficients.alpha = {1./6., 2./3., 1./6.};
-    coefficients.beta0 = {-1, 1, 1};
-    coefficients.beta1 = { 2, 0, -2};
+    c.B1 = {{0.0, 0.0, 0.0},
+            {1.0 / 2.0, 0.0, 0.0},
+            {-1.0 / 2.0, 0.0, 0.0}};
 
-    // c0[j] = sum_{p=1..s}( a0[j][p] )
-    coefficients.c0 = {0, .5, 1};
+    c.B2 = {{0.0, 0.0, 0.0},
+            {1.0, 0.0, 0.0},
+            {0.0, 0.0, 0.0}};
 
-    // c1[j] = sum_{p=1..s}( a1[j][p] )
-    coefficients.c1 = {0, .25, .25};
-
-    return coefficients;
+    return c;
 }
