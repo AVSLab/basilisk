@@ -70,14 +70,23 @@ runs:
           echo "CMAKE_BUILD_PARALLEL_LEVEL=$(python -c 'import os; print(os.cpu_count() or 1)')" >> $GITHUB_ENV
         fi
 
-    - name: Cache Conan
-      uses: actions/cache@v5
+    - name: Reset sccache statistics
+      continue-on-error: true
+      shell: bash
+      run: |
+        if command -v sccache >/dev/null 2>&1; then
+          sccache --zero-stats
+        fi
+
+    - name: Restore Conan cache
+      id: conan-cache
+      uses: actions/cache/restore@v5
       with:
         path: ~/.conan2
-        key: >-
-          conan-${{ runner.os }}-py${{ inputs.python-version }}-
-          ${{ hashFiles('conan.lock','conanfile.*','**/conanfile.*','CMakeLists.txt','**/*.cmake') }}
+        key: conan-v2-${{ runner.os }}-py${{ inputs.python-version }}-${{ github.job }}-${{ hashFiles('conan.lock', 'conanfile.py', 'libs/**') }}
         restore-keys: |
+          conan-v2-${{ runner.os }}-py${{ inputs.python-version }}-${{ github.job }}-
+          conan-v2-${{ runner.os }}-py${{ inputs.python-version }}-
           conan-${{ runner.os }}-py${{ inputs.python-version }}-
 
     - name: Configure Conan network retries
@@ -107,3 +116,19 @@ runs:
           pip install --no-build-isolation -e ".[examples]" -v
         fi
         bskLargeData
+
+    - name: Save Conan cache
+      if: ${{ success() && inputs.skip-build == 'false' && steps.conan-cache.outputs.cache-hit != 'true' }}
+      uses: actions/cache/save@v5
+      with:
+        path: ~/.conan2
+        key: ${{ steps.conan-cache.outputs.cache-primary-key }}
+
+    - name: Show sccache statistics
+      if: ${{ always() }}
+      continue-on-error: true
+      shell: bash
+      run: |
+        if command -v sccache >/dev/null 2>&1; then
+          sccache --show-stats
+        fi
