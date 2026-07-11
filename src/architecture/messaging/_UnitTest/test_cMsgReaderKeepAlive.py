@@ -188,6 +188,80 @@ def test_resubscribeToEmbeddedSourcePreservesOwner():
     assert producer_ref() is None
 
 
+def test_configReaderKeepAliveTransfersToWrapper():
+    """A config reader transfers its active source keep-alive to its wrapper."""
+    config = cModuleTemplate.cModuleTemplateConfig()
+    source_ref = _cppSourceInScope(config.dataInMsg, [31.0, 32.0, 33.0])
+    gc.collect()
+    assert source_ref() is not None
+
+    config_ref = weakref.ref(config)
+    module = config.createWrapper()
+    del config
+    gc.collect()
+
+    assert config_ref() is None
+    assert source_ref() is not None, "config-to-wrapper transfer released the source (#1433)"
+    assert list(module.dataInMsg.read().dataVector) == [31.0, 32.0, 33.0]
+
+    del module
+    gc.collect()
+    assert source_ref() is None
+
+
+def test_configEmbeddedSourceOwnerSurvivesGC():
+    """A wrapper reader retains the config that owns an embedded source."""
+    consumer = cModuleTemplate.cModuleTemplate()
+    producer_config = cModuleTemplate.cModuleTemplateConfig()
+
+    payload = messaging.CModuleTemplateMsgPayload()
+    payload.dataVector = [41.0, 42.0, 43.0]
+    producer_config.dataOutMsg.write(payload)
+
+    source = producer_config.dataOutMsg
+    config_ref = weakref.ref(producer_config)
+    source_ref = weakref.ref(source)
+    consumer.dataInMsg.subscribeTo(source)
+
+    del producer_config, source
+    gc.collect()
+
+    assert config_ref() is not None, "embedded source config owner was not retained (#1433)"
+    assert source_ref() is None, "embedded config message proxy was retained instead of its owner (#1433)"
+    assert list(consumer.dataInMsg.read().dataVector) == [41.0, 42.0, 43.0]
+
+    consumer.dataInMsg.unsubscribe()
+    gc.collect()
+    assert config_ref() is None
+
+
+def test_configSourceOwnerLeaseTransfersToWrapper():
+    """An existing source lease follows config storage into its new wrapper."""
+    consumer = cModuleTemplate.cModuleTemplate()
+    producer_config = cModuleTemplate.cModuleTemplateConfig()
+
+    payload = messaging.CModuleTemplateMsgPayload()
+    payload.dataVector = [51.0, 52.0, 53.0]
+    producer_config.dataOutMsg.write(payload)
+
+    source = producer_config.dataOutMsg
+    config_ref = weakref.ref(producer_config)
+    consumer.dataInMsg.subscribeTo(source)
+
+    producer = producer_config.createWrapper()
+    producer_ref = weakref.ref(producer)
+    del producer_config, producer, source
+    gc.collect()
+
+    assert config_ref() is None
+    assert producer_ref() is not None, "source lease did not follow config ownership transfer (#1433)"
+    assert list(consumer.dataInMsg.read().dataVector) == [51.0, 52.0, 53.0]
+
+    consumer.dataInMsg.unsubscribe()
+    gc.collect()
+    assert producer_ref() is None
+
+
 def test_moduleDeathReleasesSources():
     """When the owning C module is collected, its subscribed sources are released
     (no leak); this exercises the module-owned keep-alive dictionary."""
@@ -252,6 +326,9 @@ if __name__ == "__main__":
     test_unsubscribeReleasesKeepAlive()
     test_resubscribeReplacesKeepAlive()
     test_resubscribeToEmbeddedSourcePreservesOwner()
+    test_configReaderKeepAliveTransfersToWrapper()
+    test_configEmbeddedSourceOwnerSurvivesGC()
+    test_configSourceOwnerLeaseTransfersToWrapper()
     test_moduleDeathReleasesSources()
     test_standaloneSubscriberSurvivesGCAndReleasesOnDeath()
     test_rawAddressSubscriptionStillWorks()
