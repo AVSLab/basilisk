@@ -97,9 +97,9 @@ def retainSource(subscriber, source):
     Replaces any previously retained source for the same subscriber, dropping the
     old reference.
     """
+    target = _retention_target(source)
     releaseSource(subscriber)
 
-    target = _retention_target(source)
     owner = _owner_of(subscriber)
     if owner is not None:
         getattr(owner, _MODULE_PIN_ATTR)[int(subscriber.this)] = target

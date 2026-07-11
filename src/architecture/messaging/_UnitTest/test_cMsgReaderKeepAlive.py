@@ -160,6 +160,34 @@ def test_resubscribeReplacesKeepAlive():
     assert wrB() is not None, "re-subscribe did not retain the new source (#1433)"
 
 
+def test_resubscribeToEmbeddedSourcePreservesOwner():
+    """Re-subscribing through a non-owning ``Msg_C`` proxy preserves its owner."""
+    consumer = cModuleTemplate.cModuleTemplate()
+    producer = cModuleTemplate.cModuleTemplate()
+
+    payload = messaging.CModuleTemplateMsgPayload()
+    payload.dataVector = [21.0, 22.0, 23.0]
+    producer.dataOutMsg.write(payload)
+
+    source = producer.dataOutMsg
+    producer_ref = weakref.ref(producer)
+    consumer.dataInMsg.subscribeTo(source)
+
+    del producer
+    gc.collect()
+    assert producer_ref() is not None
+
+    consumer.dataInMsg.subscribeTo(source)
+    gc.collect()
+
+    assert producer_ref() is not None, "re-subscribe released the embedded source owner (#1433)"
+    assert list(consumer.dataInMsg.read().dataVector) == [21.0, 22.0, 23.0]
+
+    consumer.dataInMsg.unsubscribe()
+    gc.collect()
+    assert producer_ref() is None
+
+
 def test_moduleDeathReleasesSources():
     """When the owning C module is collected, its subscribed sources are released
     (no leak); this exercises the module-owned keep-alive dictionary."""
@@ -223,6 +251,7 @@ if __name__ == "__main__":
     test_moduleEmbeddedCMsgSourceOwnerSurvivesGC()
     test_unsubscribeReleasesKeepAlive()
     test_resubscribeReplacesKeepAlive()
+    test_resubscribeToEmbeddedSourcePreservesOwner()
     test_moduleDeathReleasesSources()
     test_standaloneSubscriberSurvivesGCAndReleasesOnDeath()
     test_rawAddressSubscriptionStillWorks()
