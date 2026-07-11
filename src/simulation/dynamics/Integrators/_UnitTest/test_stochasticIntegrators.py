@@ -111,20 +111,19 @@ def eulerMayuramaIntegrate(
     x = np.zeros([nsteps+1, n], dtype=float)
     x[0,:] = x0
 
-    rng = svIntegrators.EulerMayuramaRandomVariableGenerator()
+    # Mirror the Basilisk integrator's noise source: the shared RandomGaussianNoiseGenerator.
+    # Euler-Mayurama uses only the Wiener increment dW (the generator also draws dZ, which
+    # this method ignores, exactly as the C++ integrator does). Basilisk's timeStep == 0
+    # init call is skipped by the integrator's guard, so no throw-away sample here.
+    rng = svIntegrators.RandomGaussianNoiseGenerator()
     rng.setSeed(rng_seed)
 
-    # throw the first away, similar to how Basilisk
-    # calls the equationsOfMotion once at the beginning
-    rng.generate(m, 0)
-
     for step in range(nsteps):
-        # generate random variables
-        pseudoTimeSteps = rng.generate(m, dt)
+        dW = rng.generate(m, dt).dW
 
         x[step+1,:] = x[step,:] + f(t[step], x[step,:])*dt
         for k, g in enumerate(g_list):
-            x[step+1,:] += g(t[step], x[step,:])*pseudoTimeSteps[k]
+            x[step+1,:] += g(t[step], x[step,:])*dW[k]
 
     return np.column_stack([t, x])
 

@@ -22,34 +22,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 #include "../_GeneralModuleFiles/dynamicObject.h"
 #include "../_GeneralModuleFiles/dynParamManager.h"
-#include "../_GeneralModuleFiles/stateVecStochasticIntegrator.h"
+#include "../_GeneralModuleFiles/stochasticRKIntegratorBase.h"
 #include "../_GeneralModuleFiles/extendedStateVector.h"
-
-#include <random>
-
-
-/** Random Number Generator for the Euler-Mayurama integrator
- *
- * @warning Stochastic integration is in beta.
-*/
-class EulerMayuramaRandomVariableGenerator
-{
-public:
-    /** Sets the seed for the RNG */
-    inline void setSeed(size_t seed) {rng.seed(seed);}
-
-    /** Generates m normally distributed RV samples, with mean
-     * zero and standard deviation equal to sqrt(h)
-     */
-    Eigen::VectorXd generate(size_t m, double h);
-
-protected:
-    /** Random Number Generator */
-    std::mt19937 rng{std::random_device{}()};
-
-    /** Standard normally distributed random variable */
-    std::normal_distribution<double> normal_rv{0., 1.};
-};
 
 /** The 1-weak 1-strong order Euler-Mayurama stochastic integrator.
  *
@@ -62,34 +36,24 @@ protected:
  * The integrator, with timestep h, computes:
  *
  * \f[
- *   x_{n+1} = x_n + f(t,x)\,h + \sum_i g_i(t,x)\,\sqrt{h}\,N_i
+ *   x_{n+1} = x_n + f(t,x)\,h + \sum_i g_i(t,x)\,\Delta W_i
  * \f]
  *
- * where \f$N_i\f$ are independent and identically distributed standard normal
- * random variables.
+ * where the Wiener increments \f$\Delta W_i \sim N(0,h)\f$ are supplied by the shared
+ * pluggable noise generator (see StochasticRKIntegratorBase). Euler-Mayurama uses only
+ * the Wiener increment ``dW``; the second increment ``dZ`` drawn for the higher-order
+ * methods is ignored.
+ *
+ * @warning Stochastic integration is in beta.
  */
-class svStochasticIntegratorMayurama : public StateVecStochasticIntegrator {
+class svStochasticIntegratorMayurama : public StochasticRKIntegratorBase {
 public:
 
-    /** Uses same constructor as StateVecStochasticIntegrator */
-    using StateVecStochasticIntegrator::StateVecStochasticIntegrator;
-
-    /** Sets the seed for the Random Number Generator used by this integrator.
-     *
-     * As a stochastic integrator, random numbers are drawn during each time step.
-     * By default, a randomly generated seed is used each time.
-     *
-     * If the seed is set, the integrator will always draw the same numbers
-     * during time-stepping.
-     */
-    inline void setRNGSeed(size_t seed) {rvGenerator.setSeed(seed);};
+    /** Uses same constructor as StochasticRKIntegratorBase */
+    using StochasticRKIntegratorBase::StochasticRKIntegratorBase;
 
     /** Performs the integration of the associated dynamic objects up to time currentTime+timeStep */
     virtual void integrate(double currentTime, double timeStep) override;
-
-public:
-    /** Random Number Generator for the integrator */
-    EulerMayuramaRandomVariableGenerator rvGenerator;
 };
 
 #endif // svStochasticIntegratorMayurama_h
