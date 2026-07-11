@@ -57,6 +57,8 @@ STRUCTASLIST(CSSArraySensorMsgPayload)
 // copy (see issue #788). std::deque is intentionally not exposed to Python: SWIG's std_deque.i does not
 // provide integer __getitem__ for value-type elements, which would break recorder[i] indexing.
 %ignore Recorder::record;
+// Internal callback bridge used by Message.recorder(); not part of the Python API.
+%ignore Recorder::setSource;
 %rename(__record_vector) recordList;
 
 %pythoncode %{{
