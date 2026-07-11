@@ -1,0 +1,2 @@
+- Fixed :ref:`MJScene<MJScene>` reporting a body's position pinned at the model reference pose when its mass changed (for example a depleting fuel tank); the integrator state is now restored after the per-step ``mj_setConst`` refresh.
+- Sped up :ref:`MJScene<MJScene>` equations-of-motion evaluation by caching the ``mjModel``/``mjData`` pointers for the duration of the call instead of re-fetching them through the recompile-checking accessor on every access.
