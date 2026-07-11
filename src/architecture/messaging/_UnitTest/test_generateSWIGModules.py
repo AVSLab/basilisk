@@ -129,7 +129,8 @@ def test_generated_message_bindings_use_module_local_classes(tmp_path):
 
     assert "from Basilisk.architecture.messaging.messageType" not in new_messaging_template
     assert "if type(source) == messageType ## _C:" in new_messaging_template
-    assert "from Basilisk.architecture.messaging import {type}" not in generated
+    assert "from Basilisk.architecture.messaging import CustomMsg" not in generated
+    assert "from Basilisk.architecture.messaging import _msgKeepAlive" in generated
     assert "elif type(source) == CustomMsg:" in generated
 
 
