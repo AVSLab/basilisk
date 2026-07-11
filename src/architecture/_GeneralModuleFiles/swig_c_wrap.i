@@ -101,17 +101,22 @@ class CWrapper : public SysModel {
       template <typename T> inline void Reset_ ## functionSuffix(T, uint64_t, int64_t) {}
     %}
 
-    // The constructor CWrapper(TConfig* config) takes ownership of the given pointer
-    // We don't want the Python object for this config to also think it owns the memory
-    // registerModule records the embedded Msg_C fields owned by this wrapper so
-    // subscribeTo can retain sources on the owning module. Keep this pythonappend
-    // body free of apostrophes and of hash comment lines, which SWIG macro
-    // expansion mis-parses.
-    %pythonappend CWrapper::CWrapper %{
-        if (len(args)) > 0:
-            args[0].thisown = False
+    // Config and CWrapper constructors register embedded Msg_C storage owners.
+    // When a wrapper takes a config pointer, transferModuleOwner moves existing
+    // keep-alives to the wrapper. Keep these pythonappend bodies free of apostrophes
+    // and hash comment lines because SWIG macro expansion mis-parses them.
+    %pythonappend configName::configName() %{
         from Basilisk.architecture.messaging import _msgKeepAlive
         _msgKeepAlive.registerModule(self)
+    %}
+
+    %pythonappend CWrapper::CWrapper %{
+        from Basilisk.architecture.messaging import _msgKeepAlive
+        if (len(args)) > 0:
+            args[0].thisown = False
+            _msgKeepAlive.transferModuleOwner(args[0], self)
+        else:
+            _msgKeepAlive.registerModule(self)
     %}
 
     %include "moduleName.h"
