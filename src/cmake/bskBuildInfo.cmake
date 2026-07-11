@@ -250,7 +250,7 @@ function(bsk_generate_build_info package_directory)
     "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/bskBuildInfoProbe.cpp"
     "${_BSK_ABI_DESCRIPTOR_HEADER}"
   )
-  target_link_libraries(bskBuildInfoProbe PRIVATE bskPluginAbiSettings)
+  target_link_libraries(bskBuildInfoProbe PRIVATE bskPluginAbiSettings ${PYTHON3_MODULE})
   target_compile_definitions(
     bskBuildInfoProbe
     PRIVATE
