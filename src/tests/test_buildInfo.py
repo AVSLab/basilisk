@@ -339,6 +339,8 @@ def test_print_build_info(capsys):
     """Verify that the human-readable summary is concise and complete."""
     buildInfo = Basilisk.getBuildInfo()
     diagnostics = buildInfo["diagnostics"]
+    standardLibraryFamily = buildInfo["abi"]["cxx"]["standardLibrary"]["family"]
+    standardLibraryLabel = {"msvc": "MSVC STL"}.get(standardLibraryFamily, standardLibraryFamily)
 
     Basilisk.printBuildInfo()
     output = capsys.readouterr().out
@@ -349,7 +351,7 @@ def test_print_build_info(capsys):
     assert diagnostics["compilers"]["c"]["id"] in output
     assert diagnostics["compilers"]["cxx"]["id"] in output
     assert "C++17" in output
-    assert buildInfo["abi"]["cxx"]["standardLibrary"]["family"] in output
+    assert standardLibraryLabel in output
     assert buildInfo["abi"]["dependencies"]["eigen"]["version"] in output
     assert buildInfo["abi"]["dependencies"]["swig"]["runtimeVersion"] in output
     for toolVersion in diagnostics["tools"].values():
