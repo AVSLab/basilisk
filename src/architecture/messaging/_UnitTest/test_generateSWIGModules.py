@@ -133,6 +133,21 @@ def test_generated_message_bindings_use_module_local_classes(tmp_path):
     assert "elif type(source) == CustomMsg:" in generated
 
 
+def test_keepalive_callbacks_skip_python_finalization():
+    """Keep-alive callbacks do not acquire the GIL while Python is finalizing."""
+
+    template = NEW_MESSAGING_TEMPLATE.read_text(encoding="utf-8")
+
+    finalizing_guard = (
+        "#if PY_VERSION_HEX >= 0x030D0000 && "
+        "(!defined(Py_LIMITED_API) || Py_LIMITED_API+0 >= 0x030D0000)"
+    )
+    assert finalizing_guard in template
+    assert "if (Py_IsFinalizing()) return false;" in template
+    assert template.count("if (!_bsk_python_runtime_is_usable()) return;") == 2
+    assert "_bsk_readfunctor_acquire(source);" in template
+
+
 def test_generated_read_functor_without_c_interface_uses_cpp_message(tmp_path):
     """Generated helpers still work when no C-interface symbol exists."""
 

@@ -38,17 +38,26 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 // --- issue #676: GIL-safe Python keep-alive callbacks installed on ReadFunctor ------------
 // A ReadFunctor stores an opaque owner token (the subscribed message's PyObject*) plus these
 // two callbacks. They are invoked from C++ (ReadFunctor copy/move/destruction), which can run
-// on a thread that does not hold the GIL and even during interpreter shutdown, so each guards
-// on Py_IsInitialized() and brackets the refcount op with PyGILState_Ensure/Release. This is
-// the ONLY place Python refcounting touches messaging objects; messaging.h stays Python-free.
+// on a thread that does not hold the GIL and even during interpreter shutdown. Check that the
+// runtime can safely acquire the GIL before adjusting a reference count. Py_IsFinalizing() is
+// public in Python 3.13 and later, including in the limited API when targeting 3.13 or later;
+// older supported API levels only provide Py_IsInitialized(). This is the ONLY place Python
+// refcounting touches messaging objects; messaging.h stays Python-free.
+static bool _bsk_python_runtime_is_usable() {
+    if (!Py_IsInitialized()) return false;
+#if PY_VERSION_HEX >= 0x030D0000 && (!defined(Py_LIMITED_API) || Py_LIMITED_API+0 >= 0x030D0000)
+    if (Py_IsFinalizing()) return false;
+#endif
+    return true;
+}
 static void _bsk_readfunctor_acquire(void* handle) {
-    if (!Py_IsInitialized()) return;                 // interpreter gone: nothing to ref
+    if (!_bsk_python_runtime_is_usable()) return;
     PyGILState_STATE gstate = PyGILState_Ensure();
     Py_XINCREF((PyObject*)handle);
     PyGILState_Release(gstate);
 }
 static void _bsk_readfunctor_release(void* handle) {
-    if (!Py_IsInitialized()) return;                 // shutdown: leak rather than hang/crash
+    if (!_bsk_python_runtime_is_usable()) return;
     PyGILState_STATE gstate = PyGILState_Ensure();
     Py_XDECREF((PyObject*)handle);
     PyGILState_Release(gstate);
@@ -110,13 +119,13 @@ pprint.PrettyPrinter._dispatch[messageTypePayload.__repr__] = _pprint_ ## messag
 %template(messageType ## Reader) ReadFunctor<messageTypePayload>;
 %extend ReadFunctor<messageTypePayload> {
         // issue 676: keep the Python source object alive for as long as this reader points
-        // into its memory. Called from subscribeTo (below) while the GIL is held -- so a bare
-        // Py_INCREF is correct here -- handing setSource the one reference it adopts. The C++
-        // destructor/copy/move then balance it via the release/acquire callbacks.
+        // into its memory. SWIG may release the GIL around this call, so acquire through the
+        // callback before handing setSource the one reference it adopts. The C++ destructor,
+        // copy, and move operations then balance it via the release/acquire callbacks.
         // NOTE: keep percent and hash characters out of comments in this macro; SWIG treats
         // them as directive/stringize operators and they corrupt the generated wrapper.
         void _install_keepalive(PyObject* source) {
-            Py_INCREF(source);
+            _bsk_readfunctor_acquire(source);
             $self->setSource((void*)source,
                              &_bsk_readfunctor_acquire,
                              &_bsk_readfunctor_release);
