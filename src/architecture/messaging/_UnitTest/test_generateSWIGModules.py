@@ -103,9 +103,13 @@ def _render_read_functor_namespace():
         "class CustomMsgReader:",
         "    def __init__(self):",
         "        self.subscribed_to = None",
+        "        self.keepalive_source = None",
         "",
         "    def __subscribe_to(self, source):",
         "        self.subscribed_to = source",
+        "",
+        "    def _install_keepalive(self, source):",
+        "        self.keepalive_source = source",
         "",
         "    def __is_subscribed_to(self, source):",
         "        return source is self.subscribed_to",
@@ -146,6 +150,7 @@ def test_generated_read_functor_without_c_interface_uses_cpp_message(tmp_path):
     reader.subscribeTo(source)
 
     assert reader.subscribed_to is source
+    assert reader.keepalive_source is source
     assert reader.isSubscribedTo(source) is True
 
     other_source = namespace["OtherMsg"]()
