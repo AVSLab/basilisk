@@ -157,6 +157,15 @@ pprint.PrettyPrinter._dispatch[messageTypePayload.__repr__] = _pprint_ ## messag
 
 %template(messageType) Message<messageTypePayload>;
 %extend Message<messageTypePayload>{
+    Recorder<messageTypePayload> _recorder_with_keepalive(PyObject* source,
+                                                          uint64_t timeDiff = 0) {
+        Recorder<messageTypePayload> recorder = $self->recorder(timeDiff);
+        _bsk_readfunctor_acquire(source);
+        recorder.setSource((void*)source,
+                           &_bsk_readfunctor_acquire,
+                           &_bsk_readfunctor_release);
+        return recorder;
+    }
     %pythoncode %{
         def write(self, payload, time=0, moduleID=0):
             """Write the message payload.
@@ -171,6 +180,10 @@ pprint.PrettyPrinter._dispatch[messageTypePayload.__repr__] = _pprint_ ## messag
             """Read the message payload."""
             readMsg = self.addSubscriber()
             return readMsg()
+
+        def recorder(self, timeDiff=0):
+            """Create a recorder that keeps this message alive."""
+            return self._recorder_with_keepalive(self, timeDiff)
     %}
 };
 

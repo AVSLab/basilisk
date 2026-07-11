@@ -451,6 +451,11 @@ public:
 #endif
     ~Recorder(){};
 
+    //! Install an opaque owner on the recorder's reader for the SWIG keep-alive bridge.
+    void setSource(void* handle, void(*acquire)(void*), void(*release)(void*)) {
+        this->readMessage.setSource(handle, acquire, release);
+    }
+
     //! -- self initialization
     void SelfInit(){};
     //! -- cross initialization

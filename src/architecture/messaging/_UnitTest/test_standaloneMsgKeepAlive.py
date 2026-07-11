@@ -21,6 +21,7 @@
 #
 
 import gc
+import weakref
 
 from Basilisk.architecture import bskLogging
 from Basilisk.architecture import messaging
@@ -40,6 +41,16 @@ def _subscribeInLocalScope(module, dataVector):
     standaloneMsg = messaging.CModuleTemplateMsg().write(payload)
     module.dataInMsg.subscribeTo(standaloneMsg)
     # standaloneMsg goes out of scope here; no other Python reference to it remains
+
+
+def _recordInLocalScope(dataVector):
+    """Create a recorder whose source has no other strong Python reference."""
+    payload = messaging.CModuleTemplateMsgPayload()
+    payload.dataVector = dataVector
+    standaloneMsg = messaging.CModuleTemplateMsg().write(payload)
+    sourceReference = weakref.ref(standaloneMsg)
+    recorder = standaloneMsg.recorder()
+    return recorder, sourceReference
 
 
 def test_standaloneMsgSurvivesGarbageCollection():
@@ -100,6 +111,24 @@ def test_unsubscribeReleasesKeepAlive():
     gc.collect()
 
 
+def test_messageRecorderKeepsSourceAlive():
+    """A recorder keeps its stand-alone C++ source alive until the recorder is destroyed."""
+    inputVector = [4., 5., 6.]
+    recorder, sourceReference = _recordInLocalScope(inputVector)
+
+    gc.collect()
+    assert sourceReference() is not None
+
+    recorder.UpdateState(0)
+    assert recorder.size() == 1
+    assert list(recorder.dataVector[0]) == inputVector
+
+    del recorder
+    gc.collect()
+    assert sourceReference() is None
+
+
 if __name__ == "__main__":
     test_standaloneMsgSurvivesGarbageCollection()
     test_unsubscribeReleasesKeepAlive()
+    test_messageRecorderKeepsSourceAlive()
