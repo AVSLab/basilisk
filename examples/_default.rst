@@ -132,7 +132,6 @@ Atmospheric Drag
 
    Satellite Drag Deorbit about Earth <scenarioDragDeorbit>
    Satellite Drag with Stochastic (Random) Density using Spacecraft <scenarioStochasticDragSpacecraft>
-   Satellite Drag with Stochastic (Random) Density using MuJoCo <mujoco/scenarioStochasticDrag>
 
 Access to Communication Locations
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -301,7 +300,6 @@ Spacecraft Formation Flying
    Attitude-Driven differential drag control <scenarioDragRendezvous>
    Servicer approaching a debris object with 3 flight modes <scenarioRendezVous>
    Walker-Delta Satellite Constellation <scenarioSatelliteConstellation>
-   Translation-only formation flying under differential drag using MuJoCo <mujoco/scenarioFormationFlyingWithDrag>
 
 Small Body Navigation Simulations
 ---------------------------------
