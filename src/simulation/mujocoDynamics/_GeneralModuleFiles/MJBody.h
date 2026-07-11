@@ -268,8 +268,10 @@ class MJBody : public MJObject<mjsBody>
      * The center of mass remains constant.
      *
      * This method will also mark the kinematics and mujoco model 'const' as stale.
+     *
+     * @param m The compiled MuJoCo model.
      */
-    void updateMujocoModelFromMassProps();
+    void updateMujocoModelFromMassProps(mjModel* m);
 
     /**
      * @brief Updates this body's entry of the bulk mass state derivative with

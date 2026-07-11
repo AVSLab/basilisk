@@ -210,6 +210,11 @@ MJScene::equationsOfMotion(double t, double timeStep)
     // Make sure the model is compiled
     this->spec.recompileIfNeeded();
 
+    // recompileIfNeeded() above is the only thing that can invalidate these, so cache
+    // them for the rest of the call rather than re-fetching through the accessors.
+    mjModel* model = this->spec.getMujocoModel();
+    mjData* data = this->spec.getMujocoData();
+
     // Copy data from Basilisk state objects to MuJoCo structs
     updateMujocoArraysFromStates();
 
@@ -232,7 +237,7 @@ MJScene::equationsOfMotion(double t, double timeStep)
         // The mass of bodies is stored as a state, which may evolve in time.
         // Mujoco expects mass properties to be stored in mjModel, so we need
         // to update the mjModel with the mass properties of the bodies.
-        body.updateMujocoModelFromMassProps();
+        body.updateMujocoModelFromMassProps(model);
 
         body.writeStateDependentOutputMessages(nanos);
     }
@@ -241,7 +246,7 @@ MJScene::equationsOfMotion(double t, double timeStep)
     // supposed to be constant during mujoco simulations (like body mass). However,
     // we need to alter some of them, in which case we need to update the 'constants'.
     if (areMujocoModelConstStale()) {
-        mj_setConst(this->spec.getMujocoModel(), this->spec.getMujocoData());
+        mj_setConst(model, data);
 
         // mj_setConst overwrites qpos with the reference pose; restore the integrator
         // state (and re-flag kinematics stale) before anything downstream reads qpos.
@@ -260,13 +265,13 @@ MJScene::equationsOfMotion(double t, double timeStep)
     // MuJoCo's cached position/velocity quantities before actuator, equality,
     // and acceleration calculations read them.
     if (areKinematicsStale()) {
-        mj_fwdPosition(this->spec.getMujocoModel(), this->spec.getMujocoData());
-        mj_fwdVelocity(this->spec.getMujocoModel(), this->spec.getMujocoData());
+        mj_fwdPosition(model, data);
+        mj_fwdVelocity(model, data);
     }
 
     // Update the ctrl array in mjData from the inputs in the actuators
     for (auto&& actuator : this->spec.getActuators()) {
-        actuator->updateCtrl(this->spec.getMujocoData());
+        actuator->updateCtrl(data);
     }
 
     // Update the prescribed joints equalities
@@ -275,13 +280,13 @@ MJScene::equationsOfMotion(double t, double timeStep)
     }
 
     // These methods will compute the accelerations
-    mj_fwdActuation(this->spec.getMujocoModel(), this->spec.getMujocoData());
-    mj_fwdAcceleration(this->spec.getMujocoModel(), this->spec.getMujocoData());
-    mj_fwdConstraint(this->spec.getMujocoModel(), this->spec.getMujocoData());
+    mj_fwdActuation(model, data);
+    mj_fwdAcceleration(model, data);
+    mj_fwdConstraint(model, data);
 
     // Sanity check the produced accelerations
-    auto qacc = this->spec.getMujocoData()->qacc;
-    if (std::any_of(qacc, qacc + this->spec.getMujocoModel()->nv, [](mjtNum v) { return std::isnan(v); })) {
+    auto qacc = data->qacc;
+    if (std::any_of(qacc, qacc + model->nv, [](mjtNum v) { return std::isnan(v); })) {
         logAndThrow<std::runtime_error>("Encountered NaN acceleration at time " + std::to_string(t) +
                                         "s in MJScene with ID: " + std::to_string(moduleID));
     }
@@ -294,13 +299,13 @@ MJScene::equationsOfMotion(double t, double timeStep)
     // The derivative of the bulk velocity is the computed acceleration.
     {
         auto qvelDeriv = this->qvelState->stateDeriv.data();
-        std::copy_n(this->spec.getMujocoData()->qacc, this->spec.getMujocoModel()->nv, qvelDeriv);
+        std::copy_n(data->qacc, model->nv, qvelDeriv);
     }
 
     // Also copy the derivative of the actuator states, if we have them
-    if (this->spec.getMujocoModel()->na > 0) {
+    if (model->na > 0) {
         auto actDeriv = this->actState->stateDeriv.data();
-        std::copy_n(this->spec.getMujocoData()->act_dot, this->spec.getMujocoModel()->na, actDeriv);
+        std::copy_n(data->act_dot, model->na, actDeriv);
     }
 
     // Update the derivative of the body mass property states (into the bulk
