@@ -29,6 +29,10 @@ with spherical joints that can rotate
 about two different axis. Each joint degree of freedom is controlled through a profiler that moves the arm
 from the nominal position to a final desired angle.
 
+The stand-alone profiler command messages are created inside setup helpers. Once
+subscribed, the profiler input readers retain these messages automatically, so no
+scenario-level message registry is required.
+
 The script is found in the folder ``basilisk/examples`` and executed by using::
 
     python3 scenarioRoboticArm.py
@@ -129,12 +133,6 @@ def createSimBaseClass():
     dynTimeStep = macros.sec2nano(0.2)
     scSim.dynProcess.addTask(scSim.CreateNewTask(scSim.dynTaskName, dynTimeStep))
 
-    # Keep standalone reference messages alive for the run. They are created in
-    # setup helpers that return before the simulation runs; without a Python
-    # reference their C++ backing is garbage collected and the profilers read a
-    # dead message (issue #1107, a fallout of the .disown() removal in #918).
-    scSim.refMessages = []
-
     return scSim
 
 
@@ -220,7 +218,6 @@ def createFirstLink(scSim, spinningBodyEffector, scGeometry):
         hingedRigidBodyMessageData
     )
     profiler.spinningBodyInMsg.subscribeTo(hingedRigidBodyMessage1)
-    scSim.refMessages.append(hingedRigidBodyMessage1)
 
     spinningBody = spinningBodyNDOFStateEffector.SpinningBody()
     spinningBody.setMass(scGeometry.massLink)
@@ -275,7 +272,6 @@ def createFirstLink(scSim, spinningBodyEffector, scGeometry):
         hingedRigidBodyMessageData
     )
     profiler.spinningBodyInMsg.subscribeTo(hingedRigidBodyMessage2)
-    scSim.refMessages.append(hingedRigidBodyMessage2)
 
 
 def createSecondLink(scSim, spinningBodyEffector, scGeometry):
@@ -310,7 +306,6 @@ def createSecondLink(scSim, spinningBodyEffector, scGeometry):
         hingedRigidBodyMessageData
     )
     profiler.spinningBodyInMsg.subscribeTo(hingedRigidBodyMessage1)
-    scSim.refMessages.append(hingedRigidBodyMessage1)
 
     spinningBody = spinningBodyNDOFStateEffector.SpinningBody()
     spinningBody.setMass(scGeometry.massLink)
@@ -365,7 +360,6 @@ def createSecondLink(scSim, spinningBodyEffector, scGeometry):
         hingedRigidBodyMessageData
     )
     profiler.spinningBodyInMsg.subscribeTo(hingedRigidBodyMessage2)
-    scSim.refMessages.append(hingedRigidBodyMessage2)
 
 
 def setUpGravity(scSim, scObject):
