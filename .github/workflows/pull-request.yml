@@ -9,6 +9,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # One full job per platform publishes Conan dependencies. Other jobs restore only.
   pre-commit:
     runs-on: ubuntu-24.04
     steps:
@@ -27,6 +28,7 @@ jobs:
         with:
           python-version: 3.14
           conan-args: --opNav True --mujoco True
+          save-conan-cache: true
       - name: Pytest
         working-directory: src
         run: |
@@ -51,6 +53,7 @@ jobs:
         with:
           python-version: 3.14
           conan-args: --opNav True --mujoco True --generator Ninja
+          save-conan-cache: true
       - name: Pytest
         shell: pwsh
         working-directory: src
@@ -117,5 +120,6 @@ jobs:
         with:
           python-version: 3.14
           conan-args: --opNav True --allOptPkg --mujoco True
+          save-conan-cache: true
       - name: Build docs
         uses: ./.github/actions/docs

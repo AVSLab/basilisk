@@ -14,6 +14,33 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  # The documentation job below is the macOS cache producer.
+  warm_build_caches:
+    name: ${{ matrix.name }} Build Cache
+    timeout-minutes: 105
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Linux
+            os: ubuntu-24.04
+            conan-args: --opNav True --mujoco True
+          - name: Windows
+            os: windows-2025-vs2026
+            conan-args: --opNav True --mujoco True --generator Ninja
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.ref }}
+      - uses: ./.github/actions/data-cache
+      - name: Build Basilisk
+        uses: ./.github/actions/build
+        with:
+          python-version: 3.14
+          conan-args: ${{ matrix.conan-args }}
+          save-conan-cache: true
+
   build_documentation:
     name: macOS Docs Deployment
     runs-on: macos-latest
@@ -28,6 +55,7 @@ jobs:
         with:
           python-version: 3.14
           conan-args: --opNav True --allOptPkg --mujoco True
+          save-conan-cache: true
       - name: Build docs
         uses: ./.github/actions/docs
       - name: Deploy non-develop branch merges to /
