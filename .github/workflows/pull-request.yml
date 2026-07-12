@@ -31,7 +31,7 @@ jobs:
         working-directory: src
         run: |
           pip install pytest-error-for-skips pytest-timeout
-          pytest -n auto -m "not ciSkip" -rs --error-for-skips --timeout=300 --timeout-method=thread -v
+          pytest -n auto -m "not ciSkip" -rs --error-for-skips --timeout=300 --timeout-method=thread --durations=25 -v
       - name: CTest
         if: ${{ always() && hashFiles('dist3/CTestTestfile.cmake') != '' }}
         working-directory: dist3
@@ -56,7 +56,7 @@ jobs:
         working-directory: src
         run: |
           pip install pytest-error-for-skips pytest-timeout
-          pytest -n auto -m "not ciSkip" -rs --error-for-skips --timeout=300 --timeout-method=thread -v
+          pytest -n auto -m "not ciSkip" -rs --error-for-skips --timeout=300 --timeout-method=thread --durations=25 -v
           if(($LastExitCode -ne 0) -and ($LastExitCode -ne 5)) {exit 1}
       - name: CTest
         if: ${{ always() && hashFiles('dist3/CTestTestfile.cmake') != '' }}
@@ -78,14 +78,14 @@ jobs:
         python: ["3.9"]
         pytest_flags:
           [
-            '-n auto -m "not ciSkip" -rs --error-for-skips --timeout=300 --timeout-method=thread -v',
+            '-n auto -m "not ciSkip" -rs --error-for-skips --timeout=300 --timeout-method=thread --durations=25 -v',
           ]
         conan_args: ["--opNav True --mujoco True"]
         include:
           # An extra Basilisk build to test building without visualization enabled
           - python: "3.14"
             python_label: "MAX Python"
-            pytest_flags: -n auto -m "not ciSkip" -rs --timeout=300 --timeout-method=thread -v
+            pytest_flags: -n auto -m "not ciSkip" -rs --timeout=300 --timeout-method=thread --durations=25 -v
             conan_args: --opNav True --mujoco True --vizInterface False
             job_suffix: "--vizInterface False"
 

@@ -25,7 +25,7 @@ runs:
       env:
         MPLBACKEND: agg
       working-directory: src
-      run: pytest -n auto -m "not ciSkip" -rs --dist=loadscope -v
+      run: pytest -n auto -m "not ciSkip" -rs --dist=loadscope --durations=25 -v
     - name: Compile docs
       shell: bash
       run: |

@@ -78,31 +78,33 @@ runs:
           sccache --zero-stats
         fi
 
+    - name: Prepare Conan cache context
+      id: conan-context
+      shell: bash
+      env:
+        CONAN_ARGS: ${{ inputs.conan-args }}
+        RUNNER_ARCH: ${{ runner.arch }}
+      run: python .github/scripts/configure_conan_profile.py --emit-cache-fingerprint
+
     - name: Restore Conan cache
       id: conan-cache
+      continue-on-error: true
       uses: actions/cache/restore@v5
       with:
         path: ~/.conan2
-        key: conan-v2-${{ runner.os }}-py${{ inputs.python-version }}-${{ github.job }}-${{ hashFiles('conan.lock', 'conanfile.py', 'libs/**') }}
+        key: conan-v3-${{ runner.os }}-${{ runner.arch }}-py${{ inputs.python-version }}-${{ steps.conan-context.outputs.fingerprint }}-${{ hashFiles('conan.lock', 'conanfile.py', 'libs/**') }}
         restore-keys: |
+          conan-v3-${{ runner.os }}-${{ runner.arch }}-py${{ inputs.python-version }}-${{ steps.conan-context.outputs.fingerprint }}-
+          conan-v3-${{ runner.os }}-${{ runner.arch }}-py${{ inputs.python-version }}-
           conan-v2-${{ runner.os }}-py${{ inputs.python-version }}-${{ github.job }}-
           conan-v2-${{ runner.os }}-py${{ inputs.python-version }}-
           conan-${{ runner.os }}-py${{ inputs.python-version }}-
 
-    - name: Configure Conan network retries
-      shell: bash
-      run: python .github/scripts/configure_conan_retries.py
-
-    - name: Configure Conan profile
+    - name: Refresh Conan configuration
       shell: bash
       run: |
-        python -m conans.conan profile detect --exist-ok
-        prof_path="$(python -m conans.conan profile path default)"
-        grep -q '^\[conf\]' "$prof_path" || printf "\n[conf]\n" >> "$prof_path"
-        grep -q '^tools.system.package_manager:mode=install$' "$prof_path" || \
-           printf "tools.system.package_manager:mode=install\n" >> "$prof_path"
-        grep -q '^tools.system.package_manager:sudo=True$' "$prof_path" || \
-          printf "tools.system.package_manager:sudo=True\n" >> "$prof_path"
+        python .github/scripts/configure_conan_profile.py
+        python .github/scripts/configure_conan_retries.py
 
     - name: Build Basilisk
       shell: bash
@@ -118,7 +120,8 @@ runs:
         bskLargeData
 
     - name: Save Conan cache
-      if: ${{ success() && inputs.skip-build == 'false' && steps.conan-cache.outputs.cache-hit != 'true' }}
+      if: ${{ success() && inputs.skip-build == 'false' && steps.conan-cache.outcome == 'success' && steps.conan-cache.outputs.cache-hit != 'true' }}
+      continue-on-error: true
       uses: actions/cache/save@v5
       with:
         path: ~/.conan2
