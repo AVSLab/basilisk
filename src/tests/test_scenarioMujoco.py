@@ -49,6 +49,9 @@ SCENARIO_FILES = [
 
 SCENARIO_RUN_KWARGS = {
     "scenarioThrArmControl": {"showPlots": False, "timeStep": 0.08, "runTime": 240.0},
+    # Run the stochastic-drag scenario in both the default (Ornstein-Uhlenbeck) and the
+    # IGBM density-noise modes, so both sets of documentation figures are generated.
+    "scenarioStochasticDrag": [{}, {"useIgbm": True}],
 }
 OPTIONAL_EXAMPLE_DEPENDENCIES = {"scipy"}
 
@@ -68,14 +71,20 @@ def test_scenarios(scenario: str):
                 f"'{exc.name}'. Install Basilisk with `pip install -e .[examples]`."
             )
         raise
-    kwargs = SCENARIO_RUN_KWARGS.get(scenario, {})
-    figureList = module.run(**kwargs)  # Every mujoco scenario should have a run function
-    if figureList is None:
-        return
+    # An entry may be a single kwargs dict or a list of dicts (the scenario is run once
+    # per variant, e.g. to generate documentation figures for each mode).
+    kwargsVariants = SCENARIO_RUN_KWARGS.get(scenario, {})
+    if not isinstance(kwargsVariants, list):
+        kwargsVariants = [kwargsVariants]
 
-    for pltName, plt in figureList.items():
-        print(f"Saving MuJoCo scenario figure: {pltName} (from '{scenario}')")
-        simHelpers.saveScenarioFigure(pltName, plt, path)
+    for kwargs in kwargsVariants:
+        figureList = module.run(**kwargs)  # Every mujoco scenario should have a run function
+        if figureList is None:
+            continue
+
+        for pltName, plt in figureList.items():
+            print(f"Saving MuJoCo scenario figure: {pltName} (from '{scenario}')")
+            simHelpers.saveScenarioFigure(pltName, plt, path)
 
 if __name__ == "__main__":
     pytest.main([__file__])

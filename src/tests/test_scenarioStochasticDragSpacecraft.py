@@ -39,11 +39,14 @@ def test_scenarioStochasticDragSpacecraft(show_plots):
     testMessages = []
 
     try:
-        figureList = scenarioStochasticDragSpacecraft.run(False)
+        # Run in both the default (Ornstein-Uhlenbeck) and the IGBM density-noise modes,
+        # so both sets of documentation figures are generated.
+        for kwargs in ({}, {"useIgbm": True}):
+            figureList = scenarioStochasticDragSpacecraft.run(False, **kwargs)
 
-        # save the figures to the Doxygen scenario images folder
-        for pltName, plt in list(figureList.items()):
-            simHelpers.saveScenarioFigure(pltName, plt, path)
+            # save the figures to the Doxygen scenario images folder
+            for pltName, plt in list(figureList.items()):
+                simHelpers.saveScenarioFigure(pltName, plt, path)
 
     except OSError:
         testFailCount += 1
