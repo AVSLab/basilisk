@@ -53,6 +53,16 @@ def _recordInLocalScope(dataVector):
     return recorder, sourceReference
 
 
+def _addSubscriberInLocalScope(dataVector):
+    """Create a reader whose source has no other strong Python reference."""
+    payload = messaging.CModuleTemplateMsgPayload()
+    payload.dataVector = dataVector
+    standaloneMsg = messaging.CModuleTemplateMsg().write(payload)
+    sourceReference = weakref.ref(standaloneMsg)
+    reader = standaloneMsg.addSubscriber()
+    return reader, sourceReference
+
+
 def test_standaloneMsgSurvivesGarbageCollection():
     """A C++ reader subscribed to a stand-alone C++ message keeps that message alive across GC."""
     bskLogging.setDefaultLogLevel(bskLogging.BSK_WARNING)
@@ -128,7 +138,22 @@ def test_messageRecorderKeepsSourceAlive():
     assert sourceReference() is None
 
 
+def test_addSubscriberKeepsSourceAlive():
+    """A reader returned by addSubscriber() keeps its C++ source alive."""
+    inputVector = [7., 8., 9.]
+    reader, sourceReference = _addSubscriberInLocalScope(inputVector)
+
+    gc.collect()
+    assert sourceReference() is not None
+    assert list(reader().dataVector) == inputVector
+
+    del reader
+    gc.collect()
+    assert sourceReference() is None
+
+
 if __name__ == "__main__":
     test_standaloneMsgSurvivesGarbageCollection()
     test_unsubscribeReleasesKeepAlive()
     test_messageRecorderKeepsSourceAlive()
+    test_addSubscriberKeepsSourceAlive()
