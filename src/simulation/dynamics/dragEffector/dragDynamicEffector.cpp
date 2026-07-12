@@ -19,6 +19,8 @@
 
 #include "dragDynamicEffector.h"
 
+#include <algorithm>
+
 DragDynamicEffector::DragDynamicEffector()
 {
 	this->coreParams.projectedArea = 0.0;
@@ -133,7 +135,10 @@ double DragDynamicEffector::getDensity()
 	double density = this->atmoInData.neutralDensity;
 	if (this->densityCorrection)
 	{
-		density *= 1 + this->densityCorrection->getState()(0,0);
+		// A multiplicative density-correction state (e.g. an IGBM factor) can, under an
+		// explicit stochastic integrator, occasionally make (1 + correction) negative for
+		// a large step/increment; clamp so the density used for drag is never negative.
+		density = std::max(0.0, density * (1 + this->densityCorrection->getState()(0,0)));
 	}
 	return density;
 }
