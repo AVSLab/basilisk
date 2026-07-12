@@ -144,6 +144,8 @@ def test_keepalive_callbacks_skip_python_finalization():
     )
     assert finalizing_guard in template
     assert "if (Py_IsFinalizing()) return false;" in template
+    assert "_bsk_python_shutting_down.load(std::memory_order_acquire)" in template
+    assert "_bsk_atexit.register(_bsk_mark_python_shutting_down)" in template
     assert template.count("if (!_bsk_python_runtime_is_usable()) return;") == 2
     assert "_bsk_readfunctor_acquire(source);" in template
 
