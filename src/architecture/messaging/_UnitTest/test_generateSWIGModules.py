@@ -150,6 +150,16 @@ def test_keepalive_callbacks_skip_python_finalization():
     assert "_bsk_readfunctor_acquire(source);" in template
 
 
+def test_generated_interface_hides_read_functor_ownership_operations(tmp_path):
+    """Generated bindings omit C++-only reader ownership operations."""
+
+    generated = _generate_swig_interface(tmp_path, False)
+
+    assert "%ignore ReadFunctor::ReadFunctor(ReadFunctor &&);" in generated
+    assert "%ignore ReadFunctor::operator=(const ReadFunctor &);" in generated
+    assert "%ignore ReadFunctor::operator=(ReadFunctor &&);" in generated
+
+
 def test_generated_read_functor_without_c_interface_uses_cpp_message(tmp_path):
     """Generated helpers still work when no C-interface symbol exists."""
 
