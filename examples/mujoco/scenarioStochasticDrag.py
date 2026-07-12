@@ -58,6 +58,23 @@ The ``densityStochastic`` and ``densityCorrection`` are computed in
 :ref:`StochasticAtmDensity<stochasticAtmDensity>`, which is based on
 :ref:`MeanRevertingNoise<meanRevertingNoise>`.
 
+Alternatively, running with ``useIgbm=True`` models the density factor with an
+inhomogeneous geometric Brownian motion (IGBM) instead, using
+:ref:`IgbmAtmDensity<igbmAtmDensity>` (based on
+:ref:`InhomogeneousGeometricBrownianMotion<inhomogeneousGeometricBrownianMotion>`):
+
+.. math::
+
+    \rho_{\text{stoch}} = \rho_{\text{exp}}\,x, \qquad
+    dx = \frac{1}{\tau}(\mu - x)\,dt + \sigma x\,dW
+
+with mean level :math:`\mu = 1`. The IGBM noise is multiplicative and its exact process
+is a positive, mean-reverting factor :math:`x`; :ref:`IgbmAtmDensity<igbmAtmDensity>`
+clamps the corrected density to be non-negative to guard against the rare non-positive
+:math:`x` an explicit integrator can produce. Both models are configured with the same
+stationary standard deviation and time constant, so the two runs are statistically
+comparable.
+
 Illustration of Simulation Results
 ----------------------------------
 The following images illustrate a possible simulation result.
@@ -90,6 +107,30 @@ The magnitude of drag force over time is plotted in lin-log space.
 .. image:: /_images/Scenarios/scenarioStochasticDrag_drag.svg
    :align: center
 
+Illustration of Simulation Results with IGBM
+--------------------------------------------
+The following images illustrate a possible simulation result with ``useIgbm=True``
+(figure names gain an ``igbm`` tag). The overall trajectory is statistically similar to
+the OU case since both processes share the same stationary standard deviation and time
+constant; the qualitative difference is in the density factor, which is strictly
+positive under IGBM.
+
+The atmospheric density as a function of altitude:
+
+.. image:: /_images/Scenarios/scenarioStochasticDrag_igbm_density.svg
+   :align: center
+
+The atmospheric density correction :math:`x - 1`, which should have a standard
+deviation of 0.15 about a positive mean-reverting factor :math:`x`:
+
+.. image:: /_images/Scenarios/scenarioStochasticDrag_igbm_densityDiff.svg
+   :align: center
+
+The magnitude of drag force over time:
+
+.. image:: /_images/Scenarios/scenarioStochasticDrag_igbm_drag.svg
+   :align: center
+
 """
 import os
 
@@ -101,6 +142,7 @@ from Basilisk.simulation import NBodyGravity
 from Basilisk.simulation import exponentialAtmosphere
 from Basilisk.simulation import cannonballDrag
 from Basilisk.simulation import MJStochasticAtmDensity
+from Basilisk.simulation import MJIgbmAtmDensity
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
@@ -130,11 +172,15 @@ CANNONBALL_SCENE_XML = r"""
 
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
-def run(showPlots: bool = False):
+def run(showPlots: bool = False, useIgbm: bool = False):
     """Main function, see scenario description.
 
     Args:
         showPlots (bool, optional): If True, simulation results are plotted and show.
+            Defaults to False.
+        useIgbm (bool, optional): If True, model the stochastic density factor with an
+            inhomogeneous geometric Brownian motion (multiplicative noise, strictly
+            positive) instead of the additive Ornstein-Uhlenbeck correction.
             Defaults to False.
     """
     initialAlt = 250 # [km]
@@ -168,11 +214,17 @@ def run(showPlots: bool = False):
     scene._vizGravBodies = gravFactory.gravBodies
     scSim.AddModelToTask("test", scene)
 
-    # Set the integrator of the DynamicObject to W2Ito2
-    # This is a stochastic integrator, necessary since we have
-    # states (related to density) that are driven by stochastic
-    # dynamics
-    integ = svIntegrators.svStochasticIntegratorW2Ito2(scene)
+    # Set a stochastic integrator on the DynamicObject, necessary since we have
+    # states (related to density) that are driven by stochastic dynamics.
+    # This scenario looks at a single sample trajectory, so a STRONG integrator is used
+    # (strong order = pathwise accuracy; weak order only controls statistics across many
+    # samples). SOSRA is the recommended strong method for the OU correction (additive
+    # noise); the IGBM factor has multiplicative noise, which SOSRA does not support, so
+    # it uses SRIW1 (strong order 1.5 for diagonal/scalar noise).
+    if useIgbm:
+        integ = svIntegrators.svStochasticIntegratorSRIW1(scene)
+    else:
+        integ = svIntegrators.svStochasticIntegratorSOSRA(scene)
     scene.setIntegrator(integ)
 
     ### Get mujoco body and site (point, frame) of interest
@@ -201,7 +253,15 @@ def run(showPlots: bool = False):
     # Will be updated with the task period
     scSim.AddModelToTask("test", atmo)
 
-    stochasticAtmo = MJStochasticAtmDensity.StochasticAtmDensity()
+    if useIgbm:
+        # Multiplicative IGBM factor reverting to 1 (IgbmAtmDensity clamps the corrected
+        # density to be non-negative)
+        stochasticAtmo = MJIgbmAtmDensity.IgbmAtmDensity()
+        stochasticAtmo.setMean(1.0)
+    else:
+        # Additive Ornstein-Uhlenbeck correction centered at zero
+        stochasticAtmo = MJStochasticAtmDensity.StochasticAtmDensity()
+    # Both models are configured in stationary form with the same statistics
     stochasticAtmo.setStationaryStd(0.15)
     stochasticAtmo.setTimeConstant(1.8 * 60)  # [s]
     stochasticAtmo.ModelTag = "StochasticExpAtmo"
@@ -279,7 +339,8 @@ def run(showPlots: bool = False):
         denseData=densityRecorder.neutralDensity,
         oe=oe,
         mu=planet.mu,
-        planetRadius=planet.radEquator
+        planetRadius=planet.radEquator,
+        figureTag="igbm" if useIgbm else "",
     )
 
     if showPlots:
@@ -287,7 +348,8 @@ def run(showPlots: bool = False):
 
     return figures
 
-def plotOrbits(timeAxis, posData, velData, dragForce, deterministicDenseData, denseData, oe, mu, planetRadius):
+def plotOrbits(timeAxis, posData, velData, dragForce, deterministicDenseData, denseData, oe, mu, planetRadius,
+               figureTag=""):
     """
     Plot the results of the stochastic drag simulation, including orbit, altitude,
     density, density difference, and drag force over time.
@@ -302,13 +364,16 @@ def plotOrbits(timeAxis, posData, velData, dragForce, deterministicDenseData, de
         oe: Classical orbital elements object.
         mu: Gravitational parameter.
         planetRadius: Radius of the planet.
+        figureTag: Optional tag inserted into figure names (e.g. "igbm"), so the
+            variants get their own documentation images.
     Returns:
         Dictionary of matplotlib figure objects.
     """
     # draw the inertial position vector components
     figureList = {}
+    baseName = fileName + (f"_{figureTag}" if figureTag else "")
 
-    figureList[fileName + "_orbit"], ax = plt.subplots()
+    figureList[baseName + "_orbit"], ax = plt.subplots()
     ax.axis('equal')
     planetColor = '#008800'
     ax.add_artist(plt.Circle((0, 0), planetRadius / 1000, color=planetColor))
@@ -325,7 +390,7 @@ def plotOrbits(timeAxis, posData, velData, dragForce, deterministicDenseData, de
     ax.set_ylabel('$i_p$ Cord. [km]')
 
     # draw altitude as a function of time
-    figureList[fileName + "_altitude"], ax = plt.subplots()
+    figureList[baseName + "_altitude"], ax = plt.subplots()
     ax.ticklabel_format(useOffset=False, style='plain')
     alt = (np.array(rData) - planetRadius) / 1000
     ax.plot(timeAxis * macros.NANO2HOUR, alt)
@@ -333,7 +398,7 @@ def plotOrbits(timeAxis, posData, velData, dragForce, deterministicDenseData, de
     ax.set_ylabel('Altitude [km]')
 
     # draw density as a function of altitude
-    figureList[fileName + "_density"], ax = plt.subplots()
+    figureList[baseName + "_density"], ax = plt.subplots()
     ax.semilogy(alt, denseData, label="Stochastic")
     ax.semilogy(alt, deterministicDenseData, label="Exponential")
     ax.legend(loc="upper right")
@@ -341,13 +406,13 @@ def plotOrbits(timeAxis, posData, velData, dragForce, deterministicDenseData, de
     ax.set_ylabel('$\\rho$ [kg/m$^3$]')
 
     # draw density as a function of altitude
-    figureList[fileName + "_densityDiff"], ax = plt.subplots()
+    figureList[baseName + "_densityDiff"], ax = plt.subplots()
     ax.plot(timeAxis * macros.NANO2HOUR, (denseData / deterministicDenseData) - 1)
     ax.set_xlabel('Time [hr]')
     ax.set_ylabel(r'$(\rho_{stoch} / \rho_{exp}) - 1$ [-]')
 
     # draw drag as a function of time
-    figureList[fileName + "_drag"], ax = plt.subplots()
+    figureList[baseName + "_drag"], ax = plt.subplots()
     ax.semilogy(timeAxis * macros.NANO2HOUR, np.linalg.norm(dragForce, 2, 1))
     ax.set_xlabel('$t$ [hr]')
     ax.set_ylabel('$|F_drag|$ [N]')
