@@ -18,6 +18,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %pythoncode %{
     import numpy as np
     import pprint
+    import atexit as _bsk_atexit
     from typing import List, Sequence
     from Basilisk.utilities import deprecated
 %};
@@ -32,6 +33,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %{
 #define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
 #include <numpy/arrayobject.h>
+#include <atomic>
 %}
 
 %{
@@ -39,12 +41,14 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 // A ReadFunctor stores an opaque owner token (the subscribed message's PyObject*) plus these
 // two callbacks. They are invoked from C++ (ReadFunctor copy/move/destruction), which can run
 // on a thread that does not hold the GIL and even during interpreter shutdown. Check that the
-// runtime can safely acquire the GIL before adjusting a reference count. Py_IsFinalizing() is
-// public in Python 3.13 and later, including in the limited API when targeting 3.13 or later;
-// older supported API levels only provide Py_IsInitialized(). This is the ONLY place Python
-// refcounting touches messaging objects; messaging.h stays Python-free.
+// runtime can safely acquire the GIL before adjusting a reference count. The atexit callback
+// covers every supported Stable ABI level; Py_IsFinalizing() adds a direct check when exposed
+// by the active C API. This is the ONLY place Python refcounting touches messaging objects;
+// messaging.h stays Python-free.
+static std::atomic<bool> _bsk_python_shutting_down{false};
 static bool _bsk_python_runtime_is_usable() {
     if (!Py_IsInitialized()) return false;
+    if (_bsk_python_shutting_down.load(std::memory_order_acquire)) return false;
 #if PY_VERSION_HEX >= 0x030D0000 && (!defined(Py_LIMITED_API) || Py_LIMITED_API+0 >= 0x030D0000)
     if (Py_IsFinalizing()) return false;
 #endif
@@ -62,6 +66,16 @@ static void _bsk_readfunctor_release(void* handle) {
     Py_XDECREF((PyObject*)handle);
     PyGILState_Release(gstate);
 }
+%}
+
+%inline %{
+static void _bsk_mark_python_shutting_down() {
+    _bsk_python_shutting_down.store(true, std::memory_order_release);
+}
+%}
+
+%pythoncode %{
+_bsk_atexit.register(_bsk_mark_python_shutting_down)
 %}
 
 %init %{
