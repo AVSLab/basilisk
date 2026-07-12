@@ -158,6 +158,7 @@ def test_generated_interface_hides_read_functor_ownership_operations(tmp_path):
     assert "%ignore ReadFunctor::ReadFunctor(ReadFunctor &&);" in generated
     assert "%ignore ReadFunctor::operator=(const ReadFunctor &);" in generated
     assert "%ignore ReadFunctor::operator=(ReadFunctor &&);" in generated
+    assert "%ignore ReadFunctor::setSource;" in generated
 
 
 def test_generated_read_functor_without_c_interface_uses_cpp_message(tmp_path):

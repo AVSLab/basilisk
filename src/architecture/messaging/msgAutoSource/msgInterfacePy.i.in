@@ -39,10 +39,11 @@ STRUCTASLIST(CSSArraySensorMsgPayload)
 
 %ignore SysModel::SysModel(const SysModel &);
 %ignore SysModel::operator=(const SysModel &);
-// Python has no move or assignment call shape for these C++ ownership operations.
+// Keep C++-only ownership operations out of the public Python API.
 %ignore ReadFunctor::ReadFunctor(ReadFunctor &&);
 %ignore ReadFunctor::operator=(const ReadFunctor &);
 %ignore ReadFunctor::operator=(ReadFunctor &&);
+%ignore ReadFunctor::setSource;
 %include "messaging/messaging.h"
 %include "_GeneralModuleFiles/sys_model.h"
 
