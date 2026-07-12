@@ -55,12 +55,14 @@ private:
 
     //! release our hold on the current source (if any), then forget it
     void releaseHandle_() {
-        if (this->sourceHandle && this->releaseSource) {
-            this->releaseSource(this->sourceHandle);
-        }
+        void* handle = this->sourceHandle;
+        void (*release)(void*) = this->releaseSource;
         this->sourceHandle = nullptr;
         this->acquireSource = nullptr;
         this->releaseSource = nullptr;
+        if (handle && release) {
+            release(handle);
+        }
     }
 
     //! copy the keep-alive trio from another reader and take an additional reference to it
@@ -121,9 +123,8 @@ public:
         return *this;
     }
 
-    //! move constructor -- steal the source token; null out the moved-from reader (noexcept so
-    //! std::vector<ReadFunctor> reallocation moves rather than copies, avoiding refcount churn).
-    ReadFunctor(ReadFunctor&& other) noexcept
+    //! move constructor -- steal the source token and null out the moved-from reader
+    ReadFunctor(ReadFunctor&& other)
         : payloadPointer(other.payloadPointer),
           headerPointer(other.headerPointer),
           initialized(other.initialized),
@@ -138,7 +139,7 @@ public:
     }
 
     //! move assignment -- release ours, steal theirs, null out the moved-from reader
-    ReadFunctor& operator=(ReadFunctor&& other) noexcept {
+    ReadFunctor& operator=(ReadFunctor&& other) {
         if (this == &other) { return *this; }
         this->releaseHandle_();
         this->payloadPointer = other.payloadPointer;

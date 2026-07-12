@@ -152,8 +152,31 @@ def test_addSubscriberKeepsSourceAlive():
     assert sourceReference() is None
 
 
+def test_releaseKeepAliveIsReentrantSafe():
+    """A source weakref callback may safely re-enter unsubscribe()."""
+    module = cppModuleTemplate.CppModuleTemplate()
+    standaloneMsg = messaging.CModuleTemplateMsg()
+    module.dataInMsg.subscribeTo(standaloneMsg)
+
+    callbackCount = 0
+
+    def unsubscribeAgain(_):
+        nonlocal callbackCount
+        callbackCount += 1
+        module.dataInMsg.unsubscribe()
+
+    sourceReference = weakref.ref(standaloneMsg, unsubscribeAgain)
+    del standaloneMsg
+    module.dataInMsg.unsubscribe()
+
+    assert sourceReference() is None
+    assert callbackCount == 1
+    assert not module.dataInMsg.isLinked()
+
+
 if __name__ == "__main__":
     test_standaloneMsgSurvivesGarbageCollection()
     test_unsubscribeReleasesKeepAlive()
     test_messageRecorderKeepsSourceAlive()
     test_addSubscriberKeepsSourceAlive()
+    test_releaseKeepAliveIsReentrantSafe()
