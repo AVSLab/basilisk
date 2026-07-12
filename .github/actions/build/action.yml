@@ -9,6 +9,10 @@ inputs:
   conan-args:
     required: false
     default: ""
+  save-conan-cache:
+    description: Save the shared platform cache; enable only for a full dependency producer.
+    required: false
+    default: false
   is-canary:
     description: If a canary build is being performed.
     required: false
@@ -82,7 +86,6 @@ runs:
       id: conan-context
       shell: bash
       env:
-        CONAN_ARGS: ${{ inputs.conan-args }}
         RUNNER_ARCH: ${{ runner.arch }}
       run: python .github/scripts/configure_conan_profile.py --emit-cache-fingerprint
 
@@ -92,8 +95,9 @@ runs:
       uses: actions/cache/restore@v5
       with:
         path: ~/.conan2
-        key: conan-v3-${{ runner.os }}-${{ runner.arch }}-py${{ inputs.python-version }}-${{ steps.conan-context.outputs.fingerprint }}-${{ hashFiles('conan.lock', 'conanfile.py', 'libs/**') }}
+        key: conan-v4-${{ runner.os }}-${{ runner.arch }}-${{ steps.conan-context.outputs.fingerprint }}-${{ hashFiles('conan.lock', 'conanfile.py', 'libs/**') }}
         restore-keys: |
+          conan-v4-${{ runner.os }}-${{ runner.arch }}-${{ steps.conan-context.outputs.fingerprint }}-
           conan-v3-${{ runner.os }}-${{ runner.arch }}-py${{ inputs.python-version }}-${{ steps.conan-context.outputs.fingerprint }}-
           conan-v3-${{ runner.os }}-${{ runner.arch }}-py${{ inputs.python-version }}-
           conan-v2-${{ runner.os }}-py${{ inputs.python-version }}-${{ github.job }}-
@@ -120,7 +124,7 @@ runs:
         bskLargeData
 
     - name: Save Conan cache
-      if: ${{ success() && inputs.skip-build == 'false' && steps.conan-cache.outcome == 'success' && steps.conan-cache.outputs.cache-hit != 'true' }}
+      if: ${{ success() && inputs.skip-build == 'false' && inputs.save-conan-cache == 'true' && steps.conan-cache.outcome == 'success' && steps.conan-cache.outputs.cache-hit != 'true' }}
       continue-on-error: true
       uses: actions/cache/save@v5
       with:

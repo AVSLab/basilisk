@@ -20,7 +20,6 @@ import hashlib
 import json
 import os
 from pathlib import Path
-import shlex
 import subprocess
 import sys
 from typing import Optional
@@ -110,12 +109,10 @@ def configure_default_profile() -> Path:
 def cache_fingerprint(
     profile_text: str,
     conan_version: str,
-    conan_args: str,
     runner_arch: str,
 ) -> str:
-    """Return a stable cache fingerprint for a Conan build configuration."""
+    """Return a stable cache fingerprint for a Conan toolchain."""
     context = {
-        "conanArgs": shlex.split(conan_args),
         "conanProfile": profile_text,
         "conanVersion": conan_version,
         "runnerArch": runner_arch,
@@ -151,7 +148,6 @@ def main() -> None:
         fingerprint = cache_fingerprint(
             profile_path.read_text(encoding="utf-8"),
             _conan_version(),
-            os.environ.get("CONAN_ARGS", ""),
             os.environ.get("RUNNER_ARCH", ""),
         )
         _write_github_output("fingerprint", fingerprint)
