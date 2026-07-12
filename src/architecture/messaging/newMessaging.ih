@@ -166,6 +166,14 @@ pprint.PrettyPrinter._dispatch[messageTypePayload.__repr__] = _pprint_ ## messag
 
 %template(messageType) Message<messageTypePayload>;
 %extend Message<messageTypePayload>{
+    ReadFunctor<messageTypePayload> _add_subscriber_with_keepalive(PyObject* source) {
+        ReadFunctor<messageTypePayload> reader = $self->addSubscriber();
+        _bsk_readfunctor_acquire(source);
+        reader.setSource((void*)source,
+                         &_bsk_readfunctor_acquire,
+                         &_bsk_readfunctor_release);
+        return reader;
+    }
     Recorder<messageTypePayload> _recorder_with_keepalive(PyObject* source,
                                                           uint64_t timeDiff = 0) {
         Recorder<messageTypePayload> recorder = $self->recorder(timeDiff);
@@ -176,6 +184,10 @@ pprint.PrettyPrinter._dispatch[messageTypePayload.__repr__] = _pprint_ ## messag
         return recorder;
     }
     %pythoncode %{
+        def addSubscriber(self):
+            """Create a reader that keeps this message alive."""
+            return self._add_subscriber_with_keepalive(self)
+
         def write(self, payload, time=0, moduleID=0):
             """Write the message payload.
             The 2nd argument is time in nanoseconds.  It is optional and defaults to 0.
