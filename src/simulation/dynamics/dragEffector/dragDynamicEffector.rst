@@ -10,10 +10,13 @@ If ``densityCorrectionStateName`` is set, the drag model uses
 
 .. math::
 
-    \rho = \rho_{\text{in}} \left(1 + \delta_\rho\right)
+    \rho = \max\!\left(0,\; \rho_{\text{in}} \left(1 + \delta_\rho\right)\right)
 
 where :math:`\rho_{\text{in}}` is read from ``atmoDensInMsg`` and :math:`\delta_\rho` is the scalar
-state referenced by ``densityCorrectionStateName``.
+state referenced by ``densityCorrectionStateName``. The :math:`\max(0,\cdot)` guards against a
+non-positive correction: a stochastic correction state (e.g. an :ref:`igbmNoiseStateEffector` factor)
+can, under an explicit integrator, occasionally make :math:`1+\delta_\rho` negative, and a negative
+density is unphysical.
 
 If ``densityCorrectionStateName`` is left empty (default), no correction is applied and
 ``atmoDensInMsg.neutralDensity`` is used directly.
