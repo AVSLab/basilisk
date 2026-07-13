@@ -234,6 +234,24 @@ Support Files
    Master File <mujoco/BSK_mujocoMasters>
    Models Folder <mujoco/mujocoModels/index>
 
+Comparing the Back-Substitution and MuJoCo Dynamics Engines
+-----------------------------------------------------------
+These scenarios validate and benchmark the back-substitution :ref:`spacecraft`
+against the MuJoCo-based :ref:`MJScene<MJScene>` on equivalent problems of increasing
+complexity, best studied in order.
+
+.. toctree::
+  :maxdepth: 1
+
+  Keplerian Orbit Baseline <dynamicsComparison/scenarioCompareOrbit>
+  Rigid Body with Constant Torque <dynamicsComparison/scenarioCompareTorque>
+  Hub with Reaction Wheels and Hinged Panels <dynamicsComparison/scenarioCompareRwPanels>
+  Lumped-Mass Flexible Panels and Runtime Scaling <dynamicsComparison/scenarioCompareFlexPanels>
+  Multi-Body in Orbit with Gravity-Gradient Torque <dynamicsComparison/scenarioCompareOrbitMultibody>
+  Accuracy vs Runtime Pareto Front (Reaction Wheels and Panels) <dynamicsComparison/scenarioCompareParetoRwPanels>
+  Accuracy vs Runtime Pareto Front (Stiff Flexible Panels) <dynamicsComparison/scenarioCompareParetoFlexPanels>
+  Convenience Runner for All Comparisons <dynamicsComparison/runAllComparisons>
+
 Constrained Spacecraft Dynamics Simulations
 -------------------------------------------
 
