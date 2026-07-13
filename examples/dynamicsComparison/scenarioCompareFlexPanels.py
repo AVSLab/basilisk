@@ -1,0 +1,588 @@
+#
+#  ISC License
+#
+#  Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+#  Permission to use, copy, modify, and/or distribute this software for any
+#  purpose with or without fee is hereby granted, provided that the above
+#  copyright notice and this permission notice appear in all copies.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+r"""
+Fourth scenario in the dynamics-engine comparison series (see
+:ref:`scenarioCompareOrbit` for the introduction).
+
+This scenario approximates structural flexibility by discretizing each of two solar
+arrays into a serial chain of ``N`` rigid segments connected by torsional spring-damper
+hinges. Sweeping ``N`` varies the model dimensionality (the state size grows with the
+number of hinges) and shows how each engine's wall-clock cost scales with complexity.
+
+The same physical chain is built three ways so the two back-substitution effector
+implementations can be timed head to head against the recursive engine. On the BSM
+side each array is either a :ref:`nHingedRigidBodyStateEffector` (panels added through
+``addHingedPanel``) or a :ref:`spinningBodyNDOFStateEffector` (an ``N``-link chain of
+``SpinningBody`` objects); both are advanced by the same back-substitution hub solve but
+differ in implementation maturity. On the MuJoCo side each array is a serial chain of
+``N`` ``hinge``-jointed child bodies. To match the chain geometry across all three, each
+segment's center of mass is offset by ``-d`` along its local x-axis and the next hinge
+attaches at the segment's far end (``-2d``); the spring stiffness and damping are applied
+on each joint.
+
+The default sweep is ``N = 1, 2, 4, 8, 16, 32``. The integration time step scales with
+``N`` because segment stiffness grows as the segments shrink, so a fixed step adequate
+for a few large segments would under-resolve the many-segment cases. The timing
+measurement uses a fixed step budget at each ``N`` so the wall-clock reflects per-step
+cost as a function of model size. Pass a smaller ``nSegmentsList`` (as the unit test
+does) to keep the runtime short.
+
+The script is found in the folder ``basilisk/examples/dynamicsComparison`` and executed
+by using::
+
+    python3 scenarioCompareFlexPanels.py
+
+Illustration of Simulation Results
+----------------------------------
+
+The two engines agree to round-off at every dimensionality in the sweep.
+
+.. image:: /_images/Scenarios/scenarioCompareFlexPanels_validity.svg
+   :align: center
+
+The wall-clock cost of both engines grows with the number of flexible degrees of
+freedom, with the MuJoCo recursive solver scaling more favorably.
+
+.. image:: /_images/Scenarios/scenarioCompareFlexPanels_runtime.svg
+   :align: center
+
+Next comparison: :ref:`scenarioCompareOrbitMultibody` returns the articulated model
+to orbit and examines differential point-gravity forces.
+
+"""
+
+import os
+import time
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+import _comparePlots
+import _comparisonValidation
+
+from Basilisk import hasBuildFeature
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import macros
+from Basilisk.utilities import RigidBodyKinematics as rbk
+from Basilisk.simulation import spacecraft
+from Basilisk.simulation import nHingedRigidBodyStateEffector
+from Basilisk.simulation import spinningBodyNDOFStateEffector
+from Basilisk.simulation import svIntegrators
+
+couldImportMujoco = hasBuildFeature("mujoco")
+if couldImportMujoco:
+    from Basilisk.simulation import mujoco
+
+# Paul Tol high-contrast palette shared by the comparison figures.
+COLOR_BSM = _comparePlots.COLOR_BSM
+COLOR_MUJOCO = _comparePlots.COLOR_MUJOCO
+COLOR_NDOF = _comparePlots.COLOR_DIFF
+
+fileName = os.path.basename(os.path.splitext(__file__)[0])
+
+# Folder this scenario writes its JSON summary into.
+resultsPath = os.path.join(os.path.dirname(__file__), "results")
+
+HUB_MASS = 600.0  # [kg]
+HUB_INERTIA = (400.0, 380.0, 360.0)  # [kg*m^2]
+PANEL_TOTAL_MASS = 60.0  # [kg] total mass of one array, split across its segments
+PANEL_TOTAL_LEN = 3.0  # [m] total length of one array
+PANEL_K = 600.0  # [N*m/rad] per-hinge torsional stiffness
+PANEL_C = 5.0  # [N*m*s/rad] per-hinge damping
+PANEL_HINGE_X = 0.8  # [m] root-hinge offset from hub origin along x
+ROOT_THETA0 = 8.0*macros.D2R  # [rad] initial deflection of the root segment
+OMEGA0_B = (0.010, -0.020, 0.015)  # [rad/s] initial hub rate
+STEPS_PER_PERIOD = 200.0  # target RK4 steps per stiffest segment oscillation
+TIMING_STEPS = 600  # integrator steps used for the wall-clock measurement
+TIMING_TRIALS = 5  # number of trials for median/min/std reporting
+TIMING_WARMUP_STEPS = 100  # discarded warmup steps that absorb first-time process costs
+
+
+def segmentMass(nSegments):
+    """Mass of one chain segment [kg]."""
+    return PANEL_TOTAL_MASS/nSegments
+
+
+def segmentHalfLength(nSegments):
+    """Half-length ``d`` of one chain segment [m]."""
+    return PANEL_TOTAL_LEN/(2.0*nSegments)
+
+
+def segmentInertia(nSegments):
+    """Slender-bar inertia tensor of one chain segment about its center of mass.
+
+    Args:
+        nSegments (int): number of segments per chain
+
+    Returns:
+        numpy.ndarray: 3x3 inertia tensor [kg*m^2].
+    """
+    mass = segmentMass(nSegments)
+    length = 2.0*segmentHalfLength(nSegments)  # [m]
+    iBar = mass*length**2/12.0  # [kg*m^2]
+    iAxial = max(iBar*0.05, 1.0e-4)  # [kg*m^2] small but nonzero axial inertia for a well-posed tensor
+    return np.diag([iAxial, iBar, iBar])
+
+
+def timeStep(nSegments):
+    """Integrator step that resolves the stiffest segment oscillation [s].
+
+    Args:
+        nSegments (int): number of segments per chain
+
+    Returns:
+        float: integrator time step [s].
+    """
+    halfLen = segmentHalfLength(nSegments)
+    effInertia = segmentInertia(nSegments)[1, 1] + segmentMass(nSegments)*halfLen**2
+    naturalPeriod = 2.0*np.pi*np.sqrt(effInertia/PANEL_K)  # [s]
+    return min(0.01, naturalPeriod/STEPS_PER_PERIOD)
+
+
+def panelRootDcm(sign):
+    """Return the root-frame DCM that makes both panel chains extend outward."""
+    if sign > 0:
+        return [[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]]
+    return [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+
+
+def mujocoModel(nSegments):
+    """Return the MJCF model: hub with two ``N``-segment hinged chains.
+
+    Args:
+        nSegments (int): number of segments per chain
+
+    Returns:
+        str: MJCF XML string.
+    """
+    ix, iy, iz = HUB_INERTIA
+    halfLen = segmentHalfLength(nSegments)
+    mass = segmentMass(nSegments)
+    inertia = segmentInertia(nSegments)
+
+    def chain(sign, tag):
+        body = ""
+        for i in reversed(range(nSegments)):
+            jointName = f"{tag}_{i}"
+            # The root segment is offset from the hub origin; each subsequent segment
+            # attaches at the previous segment's far end (-2d), matching the BSM
+            # nHingedRigidBody convention where the center of mass sits at -d.
+            pos = f"{sign*PANEL_HINGE_X} 0 0" if i == 0 else f"{-2*halfLen} 0 0"
+            rootQuat = ' quat="0 0 0 1"' if i == 0 and sign > 0 else ""
+            body = (
+                f'<body name="{jointName}" pos="{pos}"{rootQuat}>'
+                f'<joint name="{jointName}" type="hinge" axis="0 1 0" '
+                f'stiffness="{PANEL_K}" damping="{PANEL_C}" springref="0"/>'
+                f'<inertial pos="{-halfLen} 0 0" mass="{mass}" '
+                f'fullinertia="{inertia[0,0]} {inertia[1,1]} {inertia[2,2]} 0 0 0"/>'
+                f'{body}'
+                f'</body>'
+            )
+        return body
+
+    return f"""
+<mujoco>
+  <!-- No geoms, equalities, limits, or frictionloss in this model: disable the
+       collision and constraint pipelines so each derivative evaluation skips
+       broadphase and constraint-assembly bookkeeping (bit-identical results). -->
+  <option gravity="0 0 0">
+    <flag contact="disable" constraint="disable"/>
+  </option>
+  <worldbody>
+    <body name="hub">
+      <freejoint/>
+      <inertial pos="0 0 0" mass="{HUB_MASS}" fullinertia="{ix} {iy} {iz} 0 0 0"/>
+      {chain(+1, "pP")}
+      {chain(-1, "pM")}
+    </body>
+  </worldbody>
+</mujoco>
+"""
+
+
+def buildBSM(nSegments, dt, record):
+    """Build (and initialize) the back-substitution (BSM) chained-panel simulation.
+
+    Args:
+        nSegments (int): number of segments per chain
+        dt (float): integrator time step [s]
+        record (bool): if True, attach a hub-state recorder
+
+    Returns:
+        tuple: ``(scSim, recorder, handles)``.
+    """
+    scSim = SimulationBaseClass.SimBaseClass()
+    process = scSim.CreateNewProcess("dyn")
+    process.addTask(scSim.CreateNewTask("dynTask", macros.sec2nano(dt)))
+
+    scObject = spacecraft.Spacecraft()
+    scObject.ModelTag = "hub"
+    scObject.hub.mHub = HUB_MASS  # [kg]
+    scObject.hub.IHubPntBc_B = np.diag(HUB_INERTIA).tolist()  # [kg*m^2]
+    scObject.hub.omega_BN_BInit = [[w] for w in OMEGA0_B]  # [rad/s]
+    scSim.AddModelToTask("dynTask", scObject)
+
+    integrator = svIntegrators.svIntegratorRK4(scObject)
+    scObject.setIntegrator(integrator)
+
+    inertia = segmentInertia(nSegments).tolist()
+    chains = []
+    for sign in (+1, -1):
+        effector = nHingedRigidBodyStateEffector.NHingedRigidBodyStateEffector()
+        effector.ModelTag = f"chain{'P' if sign > 0 else 'M'}"
+        effector.r_HB_B = [[sign*PANEL_HINGE_X], [0.0], [0.0]]  # [m]
+        effector.dcm_HB = panelRootDcm(sign)
+        for i in range(nSegments):
+            panel = nHingedRigidBodyStateEffector.HingedPanel()
+            panel.mass = segmentMass(nSegments)  # [kg]
+            panel.d = segmentHalfLength(nSegments)  # [m]
+            panel.k = PANEL_K  # [N*m/rad]
+            panel.c = PANEL_C  # [N*m*s/rad]
+            panel.IPntS_S = inertia  # [kg*m^2]
+            panel.thetaInit = ROOT_THETA0 if i == 0 else 0.0  # [rad]
+            effector.addHingedPanel(panel)
+        scObject.addStateEffector(effector)
+        scSim.AddModelToTask("dynTask", effector)
+        chains.append(effector)
+
+    recorder = None
+    if record:
+        recorder = scObject.scStateOutMsg.recorder(macros.sec2nano(dt))
+        scSim.AddModelToTask("dynTask", recorder)
+
+    scSim.InitializeSimulation()
+    return scSim, recorder, [scObject, integrator] + chains
+
+
+def buildBsmNDOF(nSegments, dt, record):
+    """Build the BSM chained-panel simulation with the N-DOF spinning-body effector.
+
+    Models the identical flexible chain as :func:`buildBSM` (same segment mass,
+    inertia, hinge stiffness/damping, geometry, and root deflection) but expressed with
+    :ref:`spinningBodyNDOFStateEffector` instead of :ref:`nHingedRigidBodyStateEffector`,
+    so the two back-substitution effector implementations can be timed head to head. Both
+    ride the same back-substitution hub solve; only the appendage effector differs.
+
+    Args:
+        nSegments (int): number of segments per chain
+        dt (float): integrator time step [s]
+        record (bool): if True, attach a hub-state recorder
+
+    Returns:
+        tuple: ``(scSim, recorder, handles)``.
+    """
+    scSim = SimulationBaseClass.SimBaseClass()
+    process = scSim.CreateNewProcess("dyn")
+    process.addTask(scSim.CreateNewTask("dynTask", macros.sec2nano(dt)))
+
+    scObject = spacecraft.Spacecraft()
+    scObject.ModelTag = "hub"
+    scObject.hub.mHub = HUB_MASS  # [kg]
+    scObject.hub.IHubPntBc_B = np.diag(HUB_INERTIA).tolist()  # [kg*m^2]
+    scObject.hub.omega_BN_BInit = [[w] for w in OMEGA0_B]  # [rad/s]
+    scSim.AddModelToTask("dynTask", scObject)
+
+    integrator = svIntegrators.svIntegratorRK4(scObject)
+    scObject.setIntegrator(integrator)
+
+    mass = segmentMass(nSegments)  # [kg]
+    halfLen = segmentHalfLength(nSegments)  # [m] the segment half-length d
+    inertia = segmentInertia(nSegments).tolist()  # [kg*m^2] about the segment center of mass
+    identity = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+
+    chains = []
+    for sign in (+1, -1):
+        effector = spinningBodyNDOFStateEffector.SpinningBodyNDOFStateEffector()
+        effector.ModelTag = f"ndofChain{'P' if sign > 0 else 'M'}"
+        for i in range(nSegments):
+            link = spinningBodyNDOFStateEffector.SpinningBody()
+            link.setMass(mass)  # [kg]
+            link.setISPntSc_S(inertia)  # [kg*m^2]
+            link.setSHat_S([[0.0], [1.0], [0.0]])  # hinge about +y, matching MuJoCo axis
+            rootDcm = panelRootDcm(sign) if i == 0 else identity
+            link.setDCM_S0P(rootDcm)  # mirror the positive root; later links remain aligned
+            # Link 0 hinges on the hub at the root offset; each later link hinges at the
+            # previous segment's far end (-2d). The center of mass sits at -d along the
+            # link x-axis. These match the MuJoCo chain built in mujocoModel().
+            if i == 0:
+                link.setR_SP_P([[sign*PANEL_HINGE_X], [0.0], [0.0]])  # [m] hinge on the hub
+            else:
+                link.setR_SP_P([[-2.0*halfLen], [0.0], [0.0]])  # [m] previous segment far end
+            link.setR_ScS_S([[-halfLen], [0.0], [0.0]])  # [m] center of mass at -d
+            link.setK(PANEL_K)  # [N*m/rad]
+            link.setC(PANEL_C)  # [N*m*s/rad]
+            link.setThetaInit(ROOT_THETA0 if i == 0 else 0.0)  # [rad]
+            effector.addSpinningBody(link)
+        scObject.addStateEffector(effector)
+        scSim.AddModelToTask("dynTask", effector)
+        chains.append(effector)
+
+    recorder = None
+    if record:
+        recorder = scObject.scStateOutMsg.recorder(macros.sec2nano(dt))
+        scSim.AddModelToTask("dynTask", recorder)
+
+    scSim.InitializeSimulation()
+    return scSim, recorder, [scObject, integrator] + chains
+
+
+def buildMujoco(nSegments, dt, record):
+    """Build (and initialize) the MuJoCo chained-panel simulation.
+
+    Args:
+        nSegments (int): number of segments per chain
+        dt (float): integrator time step [s]
+        record (bool): if True, attach a hub-state recorder
+
+    Returns:
+        tuple: ``(scSim, recorder, handles)``.
+    """
+    scSim = SimulationBaseClass.SimBaseClass()
+    process = scSim.CreateNewProcess("dyn")
+    process.addTask(scSim.CreateNewTask("dynTask", macros.sec2nano(dt)))
+
+    scene = mujoco.MJScene(mujocoModel(nSegments))
+    scene.ModelTag = "hubMj"
+    scene.extraEoMCall = True
+    # Integrate the hub free-joint quaternion at the integrator's full order: panel-driven
+    # nutation continually changes the hub rate direction, so MuJoCo's default
+    # second-order SO(3) attitude step would dominate the cross-engine difference.
+    scene.highOrderAttitudeIntegration = True
+    scSim.AddModelToTask("dynTask", scene, 1)
+
+    integrator = svIntegrators.svIntegratorRK4(scene)
+    scene.setIntegrator(integrator)
+
+    hub = scene.getBody("hub")
+
+    recorder = None
+    if record:
+        recorder = hub.getOrigin().stateOutMsg.recorder(macros.sec2nano(dt))
+        scSim.AddModelToTask("dynTask", recorder, 0)
+
+    scSim.InitializeSimulation()
+    hub.setAttitudeRate(list(OMEGA0_B))
+    for tag in ("pP_0", "pM_0"):
+        scene.getBody(tag).getScalarJoint(tag).setPosition(ROOT_THETA0)
+    return scSim, recorder, [scene, integrator, hub]
+
+
+def relativePrincipalAngle(sigmaBSM, sigmaMujoco):
+    """Per-sample principal rotation angle between two MRP attitude histories.
+
+    Args:
+        sigmaBSM (numpy.ndarray): BSM MRP history, shape ``(N, 3)``
+        sigmaMujoco (numpy.ndarray): MuJoCo MRP history, shape ``(N, 3)``
+
+    Returns:
+        numpy.ndarray: principal angle per sample [rad].
+    """
+    nSamples = _comparisonValidation.requireEqualLength(
+        "flexible-panel attitude", sigmaBSM, sigmaMujoco)
+    angle = np.empty(nSamples)
+    for i in range(nSamples):
+        dcmRel = rbk.MRP2C(sigmaBSM[i]).dot(rbk.MRP2C(sigmaMujoco[i]).T)
+        # Use 4*atan(|sigma_rel|), which is well conditioned down to machine precision;
+        # arccos((trace-1)/2) collapses to zero for angles below ~1e-8 rad.
+        angle[i] = 4.0*np.arctan(np.linalg.norm(rbk.C2MRP(dcmRel)))
+    return angle
+
+
+def measureWallClocks(buildFuncs, nSegments, dt):
+    """Time a fixed step budget for several implementations in alternating order.
+
+    Args:
+        buildFuncs (sequence): simulation builders such as ``buildBSM`` and ``buildMujoco``
+        nSegments (int): number of segments per chain
+        dt (float): integrator time step [s]
+
+    Returns:
+        list: one ``{"median", "min", "std"}`` timing dictionary per builder [s].
+    """
+    buildFuncs = tuple(buildFuncs)
+    stopNs = macros.sec2nano(TIMING_STEPS*dt)
+    for buildFunc in buildFuncs:
+        if TIMING_WARMUP_STEPS > 0:
+            warm, _, _ = buildFunc(nSegments, dt, False)
+            warm.ConfigureStopTime(macros.sec2nano(TIMING_WARMUP_STEPS*dt))
+            warm.ExecuteSimulation()
+
+    samples = [[] for _ in buildFuncs]
+    for trial in range(TIMING_TRIALS):
+        order = (range(len(buildFuncs)) if trial % 2 == 0
+                 else range(len(buildFuncs) - 1, -1, -1))
+        for index in order:
+            scSim, _, _ = buildFuncs[index](nSegments, dt, False)
+            scSim.ConfigureStopTime(stopNs)
+            start = time.perf_counter()
+            scSim.ExecuteSimulation()
+            samples[index].append(time.perf_counter() - start)
+    return [
+        {"median": float(np.median(times)), "min": float(np.min(times)),
+         "std": float(np.std(times))}
+        for times in samples
+    ]
+
+
+def runOne(nSegments, accuracyWindow):
+    """Validate accuracy and benchmark a single dimensionality.
+
+    Args:
+        nSegments (int): number of segments per chain
+        accuracyWindow (float): duration of the accuracy comparison [s]
+
+    Returns:
+        dict: metrics for this ``N`` (DOF, attitude error, wall-clock per engine).
+    """
+    dt = timeStep(nSegments)  # [s]
+
+    bsmSim, bsmRec, _ = buildBSM(nSegments, dt, True)
+    bsmSim.ConfigureStopTime(macros.sec2nano(accuracyWindow))
+    bsmSim.ExecuteSimulation()
+    timeBSM = np.array(bsmRec.times())*macros.NANO2SEC  # [s]
+    sigmaBSM = np.array(bsmRec.sigma_BN)
+    _comparisonValidation.validateHistory(
+        "flexible-panel nHinged", timeBSM, accuracyWindow, dt,
+        attitude=sigmaBSM)
+
+    ndofSim, ndofRec, _ = buildBsmNDOF(nSegments, dt, True)
+    ndofSim.ConfigureStopTime(macros.sec2nano(accuracyWindow))
+    ndofSim.ExecuteSimulation()
+    timeNDOF = np.array(ndofRec.times())*macros.NANO2SEC  # [s]
+    sigmaNDOF = np.array(ndofRec.sigma_BN)
+    _comparisonValidation.validateMatchingHistories(
+        "flexible-panel nHinged/NDOF",
+        timeBSM, timeNDOF, accuracyWindow, dt)
+    _comparisonValidation.validateHistory(
+        "flexible-panel NDOF", timeNDOF, accuracyWindow, dt,
+        attitude=sigmaNDOF)
+
+    # Six hub coordinates plus one hinge coordinate for each of two N-segment chains.
+    row = {"nSegments": nSegments, "dof": 6 + 2*nSegments, "timeStep": dt}
+    row["ndofVsNHingedMax"] = float(np.max(relativePrincipalAngle(sigmaBSM, sigmaNDOF)))
+
+    timedImplementations = [("bsm", buildBSM), ("ndof", buildBsmNDOF)]
+    if couldImportMujoco:
+        mujocoSim, mujocoRec, _ = buildMujoco(nSegments, dt, True)
+        mujocoSim.ConfigureStopTime(macros.sec2nano(accuracyWindow))
+        mujocoSim.ExecuteSimulation()
+        timeMujoco = np.array(mujocoRec.times())*macros.NANO2SEC  # [s]
+        sigmaMujoco = np.array(mujocoRec.sigma_BN)
+        _comparisonValidation.validateMatchingHistories(
+            "flexible-panel BSM/MuJoCo",
+            timeBSM, timeMujoco, accuracyWindow, dt)
+        _comparisonValidation.validateHistory(
+            "flexible-panel MuJoCo", timeMujoco, accuracyWindow, dt,
+            attitude=sigmaMujoco)
+        row["attitudeErrorMax"] = float(
+            np.max(relativePrincipalAngle(sigmaBSM, sigmaMujoco)))
+        row["ndofAttitudeErrorMax"] = float(
+            np.max(relativePrincipalAngle(sigmaNDOF, sigmaMujoco)))
+        timedImplementations.append(("mujoco", buildMujoco))
+
+    timingStats = measureWallClocks(
+        [buildFunc for _, buildFunc in timedImplementations], nSegments, dt)
+    for (tag, _), stats in zip(timedImplementations, timingStats):
+        row[tag+"Wall"], row[tag+"WallMin"], row[tag+"WallStd"] = (
+            stats["median"], stats["min"], stats["std"])
+    return row
+
+
+def run(showPlots=False, saveJson=False, nSegmentsList=(1, 2, 4, 8, 16, 32),
+        resultsDir=None):
+    """Main function, see scenario description.
+
+    Args:
+        showPlots (bool, optional): if True, plot and show the simulation results.
+            Defaults to False.
+        saveJson (bool, optional): if True, write the comparison metrics to
+            ``results/scenarioCompareFlexPanels.json``. Defaults to False.
+        nSegmentsList (tuple, optional): per-chain segment counts to sweep. Defaults to
+            ``(1, 2, 4, 8, 16, 32)``. The unit test passes a smaller sweep to keep the
+            runtime short.
+        resultsDir (str, optional): explicit artifact directory. Defaults to
+            the scenario ``results`` folder.
+
+    Returns:
+        dict: mapping from figure name to matplotlib figure.
+    """
+    accuracyWindow = 8.0  # [s]
+    rows = [runOne(nSegments, accuracyWindow) for nSegments in nSegmentsList]
+
+    if saveJson:
+        import json
+        targetResults = resultsPath if resultsDir is None else resultsDir
+        os.makedirs(targetResults, exist_ok=True)
+        with open(os.path.join(targetResults, fileName+".json"), "w") as f:
+            json.dump({"scenario": fileName, "rows": rows}, f, indent=2)
+
+    figureList = plotResults(rows)
+
+    _comparePlots.finalizeFigures(figureList)
+    if showPlots:
+        plt.show()
+    plt.close("all")
+
+    return figureList
+
+
+def plotResults(rows):
+    """Build the scenario figures.
+
+    Args:
+        rows (list): per-``N`` metric dictionaries from :func:`runOne`
+
+    Returns:
+        dict: mapping from figure name to matplotlib figure.
+    """
+    dof = np.array([row["dof"] for row in rows])
+    figureList = {}
+
+    figureList[fileName+"_validity"], ax = plt.subplots(layout="constrained")
+    if "attitudeErrorMax" in rows[0]:
+        nHingedErr = np.degrees([row["attitudeErrorMax"] for row in rows])
+        ndofErr = np.degrees([row["ndofAttitudeErrorMax"] for row in rows])
+        angleFloor = np.degrees(1e-16)
+        ax.semilogy(dof, np.maximum(nHingedErr, angleFloor), "o-", color=COLOR_BSM,
+                    label="nHinged vs MuJoCo")
+        ax.semilogy(dof, np.maximum(ndofErr, angleFloor), "^-", color=COLOR_NDOF,
+                    label="spinningBodyNDOF vs MuJoCo")
+        ax.legend(loc="best")
+    ax.set_xlabel("System degrees of freedom")
+    ax.set_ylabel("Attitude difference [deg]")
+
+    # Draw the older nHinged effector as a thick translucent underlay, the newer NDOF
+    # effector and MuJoCo as thin lines on top, with distinct markers, so all three stay
+    # distinguishable even where curves coincide.
+    figureList[fileName+"_runtime"], ax = plt.subplots(layout="constrained")
+    ax.loglog(dof, [row["bsmWall"] for row in rows], "o-", lw=4, alpha=0.4, ms=8,
+              color=COLOR_BSM, label="BSM — nHingedRigidBody")
+    ax.loglog(dof, [row["ndofWall"] for row in rows], "^-", lw=2, ms=6,
+              color=COLOR_NDOF, label="BSM — spinningBodyNDOF")
+    if "mujocoWall" in rows[0]:
+        ax.loglog(dof, [row["mujocoWall"] for row in rows], "s-", lw=1.3, ms=5,
+                  color=COLOR_MUJOCO, label="MuJoCo")
+    ax.set_xlabel("System degrees of freedom")
+    ax.set_ylabel("Wall-clock for\nfixed step budget [s]")
+    ax.legend(loc="best")
+
+    return figureList
+
+
+if __name__ == "__main__":
+    run(True, False)
