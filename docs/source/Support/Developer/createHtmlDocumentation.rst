@@ -48,6 +48,14 @@ First generate the test plots::
 
     pytest -n auto
 
+Return to the repository root and generate the reduced dynamics-comparison
+figures used by their documentation pages. This step requires a Basilisk build
+configured with ``--mujoco True``::
+
+    cd ..
+
+    python examples/dynamicsComparison/runAllComparisons.py --documentation-figures
+
 Next, in a terminal window switch to the ``docs`` folder::
 
     cd docs
@@ -64,6 +72,7 @@ MuJoCo-enabled Release build, run::
 
     make comparison-runtime-tables
 
+On Windows, run ``make.bat comparison-runtime-tables`` instead.
 The command writes CSV tables under
 ``examples/dynamicsComparison/results``. Absolute times depend on the host and
 should not be treated as documentation-build results.
