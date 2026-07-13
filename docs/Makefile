@@ -29,6 +29,10 @@ clean :
 release-notes-snippets:
 	$(PYTHON) source/Support/bskReleaseNotesSnippets/_compile_release_notes_snippets.py
 
+# Optional benchmark target for a clean Release build with MuJoCo enabled.
+comparison-runtime-tables:
+	$(PYTHON) generateDynamicsComparisonRuntimeTables.py
+
 html: release-notes-snippets
 
 view:
