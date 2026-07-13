@@ -31,7 +31,7 @@ jobs:
         uses: ./.github/actions/setup
 
       - name: Build core bsk wheel
-        uses: pypa/cibuildwheel@v3.1.4
+        uses: pypa/cibuildwheel@v3.4.1
         with:
           output-dir: wheelhouse-core
         env:
@@ -53,7 +53,7 @@ jobs:
           df -h
 
       - name: Build opNav-enabled bsk wheel
-        uses: pypa/cibuildwheel@v3.1.4
+        uses: pypa/cibuildwheel@v3.4.1
         with:
           output-dir: wheelhouse-opnav-full
         env:
