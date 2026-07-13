@@ -1,0 +1,1 @@
+- Fixed nightly optional-wheel packaging failures caused by wheel build output changing the recorded source-dirty state between core and extension builds.
