@@ -1,0 +1,1 @@
+- Updated the BSK-SDK release and extension-writing guides to run the complete test suites and document nightly Basilisk wheel installation.
