@@ -5,6 +5,7 @@ CMakeCache.txt
 .DS_Store
 dist/
 dist3/
+/wheelhouse*/
 .pytest_cache
 docs/html
 docs/build
