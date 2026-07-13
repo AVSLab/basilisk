@@ -148,8 +148,11 @@ For either mode:
    ``develop``, the beta branch, or the feature branch being tested.
 #. For feature-branch testing, record the exact Basilisk commit so the result
    can be reproduced.
-#. :ref:`Build and install Basilisk from the local checkout
-   <bsk-sdk-install-local>`.
+#. Install the matching Basilisk package. For beta-cycle validation against
+   current ``develop``, use the :ref:`nightly develop wheel
+   <bsk-sdk-install-nightly>`. For feature branches, or whenever the nightly
+   wheel does not match the selected source, :ref:`build and install Basilisk
+   locally <bsk-sdk-install-local>`.
 #. :ref:`Sync the SDK payload <bsk-sdk-task-sync>` from the same checkout.
 #. :ref:`Verify versions and provenance <bsk-sdk-task-verify>`.
 #. :ref:`Build and test the SDK wheel <bsk-sdk-task-build-sdk>`.
@@ -300,6 +303,26 @@ Release Candidate from TestPyPI
      --extra-index-url https://pypi.org/simple/ \
      "bsk[all]==2.X.YrcN"
 
+.. _bsk-sdk-install-nightly:
+
+Develop Nightly Wheel
+^^^^^^^^^^^^^^^^^^^^^
+
+For beta-cycle validation against the current Basilisk ``develop`` branch,
+install the latest nightly development wheel:
+
+.. code-block:: bash
+
+   python -m pip install --pre --upgrade --force-reinstall --no-cache-dir \
+     --index-url https://avslab.github.io/basilisk/nightly/ \
+     --extra-index-url https://pypi.org/simple/ \
+     "bsk[all]"
+
+The nightly index supplies the Basilisk development wheels, while the PyPI
+index supplies third-party dependencies. Confirm that the installed version
+matches the version in the Basilisk source selected for ``tools/sync_all.py``.
+If it does not match, use a local build from that exact source instead.
+
 .. _bsk-sdk-install-local:
 
 Local Beta or Feature Branch
@@ -322,13 +345,13 @@ wheels produced from the same Basilisk source.
 Build and Test the SDK Wheel
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Build and install the SDK wheel, then run its smoke test:
+Build and install the SDK wheel, then run the SDK test suite:
 
 .. code-block:: bash
 
    python -m build --wheel
    python -m pip install --force-reinstall dist/bsk_sdk-*.whl
-   python -m pytest tests/test_smoke.py -v
+   python -m pytest tests -v
    python -c "import Basilisk, bsk_sdk; print('Basilisk:', Basilisk.__version__); print('SDK synced from:', bsk_sdk.bsk_version())"
 
 .. _bsk-sdk-task-test-extension:
@@ -337,13 +360,14 @@ Build and Test the Example Extension
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Build the example against the installed SDK and Basilisk wheels, install it,
-and run its unit test:
+verify its runtime imports, and run all example tests:
 
 .. code-block:: bash
 
    python -m build --wheel --no-isolation examples/custom-atm-extension
-   python -m pip install --force-reinstall examples/custom-atm-extension/dist/*.whl
-   python -m pytest examples/custom-atm-extension/customExponentialAtmosphere/_UnitTest/test_customExponentialAtmosphere.py -v
+   python -m pip install examples/custom-atm-extension/dist/*.whl
+   python -c "import Basilisk, numba, custom_atm; from custom_atm import numbaAtmosphere"
+   python -m pytest examples -v
 
 For an extension under development, replace ``examples/custom-atm-extension``
 with that extension's repository path and run its own test suite.
