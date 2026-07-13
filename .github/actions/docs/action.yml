@@ -26,6 +26,12 @@ runs:
         MPLBACKEND: agg
       working-directory: src
       run: pytest -n auto -m "not ciSkip" -rs --dist=loadscope --durations=25 -v
+    - name: Generate dynamics-comparison figures
+      shell: bash
+      env:
+        MPLBACKEND: agg
+      working-directory: examples/dynamicsComparison
+      run: python runAllComparisons.py --documentation-figures
     - name: Compile docs
       shell: bash
       run: |
