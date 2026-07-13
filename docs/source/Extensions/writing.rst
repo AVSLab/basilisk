@@ -58,15 +58,16 @@ Obtain the SDK repository and build its example:
 .. code-block:: bash
 
    git clone https://github.com/AVSLab/bsk_sdk.git
-   cd bsk_sdk/examples/custom-atm-extension
-   python -m build --wheel --no-isolation
-   python -m pip install --force-reinstall dist/*.whl
-   python -m pytest customExponentialAtmosphere/_UnitTest/ -v
+   cd bsk_sdk
+   python -m build --wheel --no-isolation examples/custom-atm-extension
+   python -m pip install examples/custom-atm-extension/dist/*.whl
+   python -c "import Basilisk, numba, custom_atm; from custom_atm import numbaAtmosphere"
+   python -m pytest examples -v
 
-The example contains a C++ atmosphere module, a small C source using a built-in
-Basilisk C message interface, and an extension-defined message. Core Basilisk
-is not rebuilt. After this succeeds, use the following sections to adapt the
-example or create a new extension.
+The example contains a C++ atmosphere module, a pure-Python Numba module, a
+small C source using a built-in Basilisk C message interface, and an
+extension-defined message. Core Basilisk is not rebuilt. After this succeeds,
+use the following sections to adapt the example or create a new extension.
 
 Choose the Package Names
 ------------------------
