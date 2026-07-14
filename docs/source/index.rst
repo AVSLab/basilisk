@@ -226,9 +226,16 @@ Related Publications
    :caption: BSK_SDK:
    :includehidden:
 
+<<<<<<< HEAD
    Overview <Extensions/overview>
    Install <Extensions/installing>
    Writing an Extension <Extensions/writing>
+=======
+   Overview <Plugins/overview>
+   Install <Plugins/installing>
+   Writing a Plugin <Plugins/writing>
+   Writing a Rust Plugin <Plugins/writingRust>
+>>>>>>> fdd653b58 (First pass at docs for Rust basilisk extension, and a general module file for Rust to reuse.)
 
 .. toctree::
    :caption: BSK_RL:

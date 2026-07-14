@@ -12,7 +12,8 @@ About Extensions
     A Basilisk extension is an independently built Python package containing
     one or more custom C or C++ modules, custom message definitions, and
     supporting code. It is installed alongside a compatible Basilisk release
-    without becoming part of the core Basilisk build.
+    without becoming part of the core Basilisk build. Modules can also be 
+    implemented in Rust (experimental) — see :ref:`writingRustPlugins`.
 
 Basilisk ships a curated set of simulation modules for common astrodynamics
 tasks. Extensions let developers add new dynamics models, environment models,

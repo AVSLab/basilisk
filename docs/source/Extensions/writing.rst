@@ -14,6 +14,11 @@ Quick Start: Writing a Basilisk Extension
     `custom atmosphere extension
     <https://github.com/AVSLab/bsk_sdk/tree/master/examples/custom-atm-extension>`_.
 
+.. note::
+
+   Modules can also be implemented in Rust instead of C++/C — see
+   :ref:`writingRustPlugins` (experimental).
+
 This guide walks through the complete extension workflow: build the working
 example, understand its files, create a package, wrap a C++ module, generate a
 custom message, build a wheel, and run tests. Read :ref:`bskExtensions` first

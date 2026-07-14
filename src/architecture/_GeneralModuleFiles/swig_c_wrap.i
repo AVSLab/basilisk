@@ -24,6 +24,7 @@
 
 %{
     #include "architecture/_GeneralModuleFiles/sys_model.h"
+    #include "architecture/_GeneralModuleFiles/bsk_rust_module.h"
     #include <architecture/utilities/bskLogging.h>
     #include <memory>
     #include <type_traits>
@@ -31,6 +32,11 @@
 %include <std_string.i>
 
 %include "sys_model.i"
+
+// Forward-declare so RustWrapper's template arguments (below) type-check
+// under SWIG's parser too; the full definition is only needed by the C++
+// compiler (it is pulled in above via bsk_rust_module.h).
+typedef struct BskRustModuleRuntime BskRustModuleRuntime;
 
 %inline %{
 
@@ -64,6 +70,61 @@ class CWrapper : public SysModel {
     TConfig& getConfig() { return *this->config.get(); }
 
   private:
+    std::unique_ptr<TConfig> config; //!< class variable
+};
+
+// Same role as CWrapper, but for Rust-backed modules (see bsk_rust_module.h).
+// Rust has no access to the C++ SysModel base class, so instead of exposing
+// SysModel members as separate lifecycle arguments, this wrapper mirrors the
+// subset a module is likely to need (moduleID, ModelTag, CallCounts, RNGSeed)
+// into a BskRustModuleRuntime snapshot, refreshed immediately before every
+// call. The generated Rust shim copies that snapshot into the config struct's
+// own `runtime` field, so Rust code reads it the same way C module code reads
+// SysModel: through the config, not a separate parameter list.
+template <typename TConfig,
+          void (*updateStateFun)(TConfig*, uint64_t, const BskRustModuleRuntime*),
+          void (*selfInitFun)(TConfig*, const BskRustModuleRuntime*),
+          void (*resetFun)(TConfig*, uint64_t, const BskRustModuleRuntime*)
+          >
+class RustWrapper : public SysModel {
+    static_assert(std::is_default_constructible_v<TConfig>,
+                  "The wrapped config must be default constructible (all 'Config' struct used in C "
+                  "should be).");
+
+  public:
+    RustWrapper() : config{std::make_unique<TConfig>()} {};
+    RustWrapper(TConfig* config) : config{config} {}; // We take ownership of config
+
+    void SelfInit(){
+        BskRustModuleRuntime runtime = this->makeRuntime();
+        selfInitFun(this->config.get(), &runtime);};
+
+    void UpdateState(uint64_t currentSimNanos){
+        BskRustModuleRuntime runtime = this->makeRuntime();
+        updateStateFun(this->config.get(), currentSimNanos, &runtime);};
+
+    void Reset(uint64_t currentSimNanos){
+        BskRustModuleRuntime runtime = this->makeRuntime();
+        resetFun(this->config.get(), currentSimNanos, &runtime);};
+
+    // Allows accesing the elements of the config from the wrapper in Python
+    // Similar to how the smart pointers are implemented in SWIG
+    TConfig* operator->() const { return this->config.get(); }
+
+    TConfig& getConfig() { return *this->config.get(); }
+
+  private:
+    // modelTag points into this->ModelTag, which outlives the synchronous
+    // lifecycle call that consumes the snapshot.
+    BskRustModuleRuntime makeRuntime() const {
+        BskRustModuleRuntime runtime;
+        runtime.moduleID = this->moduleID;
+        runtime.modelTag = this->ModelTag.c_str();
+        runtime.callCounts = this->CallCounts;
+        runtime.rngSeed = this->RNGSeed;
+        return runtime;
+    }
+
     std::unique_ptr<TConfig> config; //!< class variable
 };
 
@@ -132,6 +193,7 @@ class CWrapper : public SysModel {
 
 %enddef
 
+
 %define %c_wrap_2(moduleName, configName)
     // This macro expects the header file to be "[moduleName].h"
     // the 'Config' structure to be called [configName],
@@ -152,3 +214,11 @@ class CWrapper : public SysModel {
 
     %c_wrap_2(moduleName, moduleName ## Config)
 %enddef
+
+// There is no %rust_wrap macro family (unlike %c_wrap/%c_wrap_2/%c_wrap_3
+// above): bsk-build generates the entire .i file for a Rust module (see
+// `render_swig_interface` in bsk-build's src/lib.rs), so the %ignore /
+// %template / %pythonappend / %extend boilerplate that would otherwise live
+// in a macro here is written out directly in that generated file instead.
+// There is no hand-written-.i escape hatch for Rust modules to justify the
+// indirection of a macro with a single caller.
