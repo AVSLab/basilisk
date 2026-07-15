@@ -433,7 +433,8 @@ class fileCrawler():
                     "EGM9615.h" in files_in_dir[i] or \
                     "SunLineKF_test_utilities.py" in files_in_dir[i] or \
                     "datashader_utilities.py" in files_in_dir[i] or \
-                    "reportconf.py" in files_in_dir[i]:
+                    "reportconf.py" in files_in_dir[i] or \
+                    "_runtimeTable.py" in files_in_dir[i]:
                 removeList.extend([i])
         for i in sorted(removeList, reverse=True):
             del files_in_dir[i]
