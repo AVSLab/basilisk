@@ -20,14 +20,14 @@ Assuming you want to document a Basilisk module called `genericModule`.  This me
 - ``genericModule.h``
 - ``genericModule.i``
 
-Simply add the the desired module documentation as ``genericModule.rst`` to this folder.  The :ref:`cModuleTemplate` has a sample module documentation file that you can copy into your folder.  This content will be parsed ahead of the module function descriptions.  When running ``cmake`` the ``genericModule.rst`` file should be included in the IDE such as Xcode if the module is a C++ module.  The ``*.rst`` is not shown in the IDE if it is a C-module.
+Simply add the desired module documentation as ``genericModule.rst`` to this folder.  The :ref:`cModuleTemplate` has a sample module documentation file that you can copy into your folder.  This content will be parsed ahead of the module function descriptions.  When running ``cmake`` the ``genericModule.rst`` file should be included in the IDE such as Xcode if the module is a C++ module.  The ``*.rst`` is not shown in the IDE if it is a C-module. Rust module documentation follows the same ``<moduleName>.rst`` convention; see :ref:`rustModules`.
 
 
 Module Type Labels
 ------------------
 The generated HTML pages for BSK modules include a module type label next to
 the page title.  The documentation build infers this label from the module
-source files and applies ``C``, ``C++``, or ``Python`` automatically.  Module
+source files and applies ``C``, ``C++``, ``Python``, or ``Rust`` automatically. Module
 documentation files do not need to add this label manually.
 
 The labels are only applied to BSK module pages under ``src/fswAlgorithms`` and
@@ -44,7 +44,7 @@ Graphviz module I/O diagram and the standard Basilisk I/O message table from
 one RST block.  This keeps the visual diagram and table entries synchronized.
 The diagram module element uses the inferred module type label colors.  If the
 directive is used outside a generated module page, the ``:module-type:`` option
-can be set to ``C``, ``C++``, or ``Python``.
+can be set to ``C``, ``C++``, ``Python``, or ``Rust``.
 
 .. code-block:: rst
 

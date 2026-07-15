@@ -62,7 +62,11 @@ jobs:
         with:
           output-dir: wheelhouse-core
         env:
-          CONAN_ARGS: "--opNav False --mujoco True --clean ${{ matrix.extra-conan-args }}"
+          # --rustModules is experimental and a no-op without any Rust
+          # modules under src/ (see src/cmake/bskFindRustModules.cmake), but
+          # stays enabled here so a released wheel picks one up automatically
+          # once one exists, without a separate CI change.
+          CONAN_ARGS: "--opNav False --mujoco True --rustModules True --clean ${{ matrix.extra-conan-args }}"
           CIBW_TEST_SKIP: "*"
 
       - name: Free runner disk before opNav Linux wheel
@@ -84,7 +88,7 @@ jobs:
         with:
           output-dir: wheelhouse-opnav-full
         env:
-          CONAN_ARGS: "--opNav True --mujoco True --clean ${{ matrix.extra-conan-args }}"
+          CONAN_ARGS: "--opNav True --mujoco True --rustModules True --clean ${{ matrix.extra-conan-args }}"
           CIBW_TEST_SKIP: "*"
 
       - uses: actions/setup-python@v6

@@ -73,3 +73,6 @@ build/
 !docs/source/Build/
 
 *.git-template
+
+# Rust module support (see rust/)
+/rust/*/target/

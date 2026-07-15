@@ -48,7 +48,7 @@ Module Programming
 Module Documentation
 --------------------
 
-Does the module contain a restructured text documentation file ``xxxx.rst``, where ``xxxx`` should be the same name as the module C or C++ file name.  The :ref:`cModuleTemplate` module contains a sample documentation set for a Basilisk module.   The required sections include:
+Does the module contain a restructured text documentation file ``xxxx.rst``, where ``xxxx`` matches the module name? The :ref:`cModuleTemplate` and :ref:`rustModuleTemplate` modules contain sample documentation sets for a Basilisk module. The required sections include:
 
 -   Executive Summary
 -   Module Assumptions and Limitations

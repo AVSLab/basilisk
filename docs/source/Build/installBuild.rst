@@ -101,6 +101,11 @@ The script accepts the following options to customize this process.
       - Boolean
       - False
       - :beta:`Mujoco Support` Includes the `MuJoCo <https://mujoco.org>`_ dependencies
+    * - ``rustModules``
+      - Boolean
+      - False
+      - :beta:`Rust Module Support` Enables discovery and compilation of
+        in-tree Rust modules. Requires Rust and Cargo. See :ref:`rustModules`.
     * - ``examples``
       - Boolean
       - True

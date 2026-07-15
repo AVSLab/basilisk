@@ -101,7 +101,13 @@ repair-wheel-command = "python -m delvewheel repair -v --ignore-existing --analy
 
 [tool.cibuildwheel.linux]
 archs = ["native"]
-before-all = "mkdir -p ~/.conan2 && printf '%s\\n' 'tools.system.package_manager:mode=install' 'tools.system.package_manager:sudo=False' >> ~/.conan2/global.conf"
+# Rust module support (--rustModules, see src/cmake/bskFindRustModules.cmake)
+# is experimental and off by default, but the manylinux container has no
+# Rust/Cargo toolchain at all, so it's bootstrapped here unconditionally --
+# same reasoning as pull-request.yml's Linux lane -- so a released wheel can
+# always be built with --rustModules True even if the person cutting the
+# release doesn't have Rust installed locally.
+before-all = "mkdir -p ~/.conan2 && printf '%s\\n' 'tools.system.package_manager:mode=install' 'tools.system.package_manager:sudo=False' >> ~/.conan2/global.conf && curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y"
 repair-wheel-command = [
   "auditwheel repair --strip -w {dest_dir} {wheel}"
 ]
@@ -111,6 +117,12 @@ manylinux-aarch64-image = "manylinux_2_28"
 # that toggles MuJoCo/OpNav aren't visible to the build unless explicitly
 # forwarded.
 environment-pass = ["CONAN_ARGS", "CMAKE_C_COMPILER_LAUNCHER", "CMAKE_CXX_COMPILER_LAUNCHER"]
+
+[tool.cibuildwheel.linux.environment]
+# rustup (installed by before-all above) puts cargo/rustc here; before-all
+# runs in its own subprocess so this can't be exported from there directly --
+# see https://cibuildwheel.pypa.io/en/stable/faq/#building-rust-wheels.
+PATH = "$HOME/.cargo/bin:$PATH"
 
 [tool.pytest.ini_options]
 testpaths = [

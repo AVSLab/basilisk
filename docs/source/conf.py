@@ -397,6 +397,7 @@ class fileCrawler():
         files_in_dir.extend(glob(dir_path + "*.c"))
         files_in_dir.extend(glob(dir_path + "*.cpp"))
         files_in_dir.extend(glob(dir_path + "*.py"))
+        files_in_dir.extend(glob(dir_path + "Cargo.toml"))
 
 
         # Remove any directories that shouldn't be added directly to the website
@@ -499,6 +500,16 @@ class fileCrawler():
 
         return not os.path.isfile(os.path.join(os.path.dirname(py_file), module_name + ".i"))
 
+    def isBskRustModule(self, manifest_file):
+        src_path = os.path.dirname(manifest_file)
+        module_name = os.path.basename(src_path)
+        rel_path = self._sourceRelativePath(src_path)
+
+        if not self._isSupportedBskModulePath(rel_path):
+            return False
+
+        return os.path.isfile(os.path.join(src_path, module_name + ".rst"))
+
     def writeModuleTitle(self, title_text, module_type=None):
         if module_type:
             title = f":module-type:`{module_type}` {title_text}"
@@ -549,8 +560,21 @@ class fileCrawler():
             # Add a linking point to all local files
             lines += """\n\n.. toctree::\n   :maxdepth: 1\n   :caption: """ + "Files:\n\n"
             calledNames = []
+            rust_module_name = None
+            for file_path in file_paths:
+                if os.path.basename(file_path) != "Cargo.toml":
+                    continue
+                source_path = os.path.dirname(file_path)
+                candidate_name = os.path.basename(source_path)
+                if self.isBskRustModule(file_path):
+                    rust_module_name = candidate_name
+                    lines += "   " + rust_module_name + "\n"
+                    calledNames.append(rust_module_name)
+                    break
             for file_path in sorted(file_paths):
                 fileName = os.path.basename(os.path.normpath(file_path))
+                if fileName == "Cargo.toml" and rust_module_name:
+                    continue
                 fileName = fileName[:fileName.rfind('.')]
                 if not fileName in calledNames:
                     lines += "   " + fileName + "\n"
@@ -574,6 +598,7 @@ class fileCrawler():
         # Sort the files by language
         py_file_paths = sorted([s for s in files_paths if ".py" in s])
         c_file_paths = sorted([s for s in files_paths if ".c" in s or ".cpp" in s or ".h" in s or ".hpp" in s])
+        rust_manifest_paths = sorted([s for s in files_paths if os.path.basename(s) == "Cargo.toml"])
 
         # Create the .rst file for C-Modules
 
@@ -678,6 +703,24 @@ class fileCrawler():
                 if self.newFiles:
                     with open(path+"/"+fileName+".rst", "w") as f:
                         f.write(lines)
+
+        # Create the .rst file for Rust modules
+        for manifest_file in rust_manifest_paths:
+            if not self.isBskRustModule(manifest_file):
+                continue
+
+            src_path = os.path.dirname(manifest_file)
+            module_name = os.path.basename(src_path)
+            lines = ".. _" + module_name + ":\n\n"
+            lines += self.writeModuleTitle("Module: " + module_name, "Rust")
+
+            doc_file_name = os.path.join(src_path, module_name + ".rst")
+            with open(doc_file_name, 'r', encoding="utf8") as doc_file:
+                lines += doc_file.read() + "\n\n"
+
+            if self.newFiles:
+                with open(os.path.join(path, module_name + ".rst"), "w") as f:
+                    f.write(lines)
 
         return sources
 

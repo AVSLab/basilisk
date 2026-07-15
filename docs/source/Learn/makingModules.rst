@@ -15,7 +15,7 @@ Basics of Writing Basilisk Modules
     The older :ref:`buildExtModules` approach is still supported for
     users who need modules folded directly into a from-source Basilisk build.
 
-This chapter covers the basics of designing Basilisk modules, as well as how to write a module using C++, C or Python.  As always with code documentation, it is never complete and always work-in-progress.
+This chapter covers the basics of designing Basilisk modules, as well as how to write a module using C++, C, Python, or Rust.  As always with code documentation, it is never complete and always work-in-progress.
 
 For general developer support pages on coding guidelines, forking, building the Sphinx documentation system etc., see
 ``Support/Developer Information`` in :ref:`makingModules`.
@@ -33,6 +33,7 @@ The following pages cover the primary tasks required to make a Basilisk module. 
    makingModules/makingModules-2
    makingModules/cModules
    makingModules/cppModules
+   makingModules/rustModules
    makingModules/pyModules
    makingModules/numbaModules
    makingModules/makingModules-3

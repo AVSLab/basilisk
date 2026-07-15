@@ -24,11 +24,24 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - uses: ./.github/actions/data-cache
+      # Rust module support is experimental and gated behind --rustModules
+      #  ubuntu-24.04 GitHub-hosted runners ship cargo/rustc
+      # preinstalled (see actions/runner-images' Ubuntu 24.04 software list).
       - uses: ./.github/actions/build
         with:
           python-version: 3.14
-          conan-args: --opNav True --mujoco True
+          conan-args: --opNav True --mujoco True --rustModules True
           save-conan-cache: true
+      - name: Check committed Rust bindings are up to date
+        run: |
+          sudo apt-get update && sudo apt-get install -y libclang-dev
+          cargo install bindgen-cli --locked
+          python3 rust/gen_rust_messages.py
+          python3 rust/gen_rust_utilities.py
+          if ! git diff --exit-code -- rust/bsk_messages/src/lib.rs rust/bsk_utilities/src/raw.rs; then
+            echo "::error::rust/bsk_messages/src/lib.rs and/or rust/bsk_utilities/src/raw.rs are stale (don't match what rust/gen_rust_messages.py / rust/gen_rust_utilities.py produce from the message/utility headers in this PR). Regenerate them locally and commit the result."
+            exit 1
+          fi
       - name: Pytest
         working-directory: src
         run: |

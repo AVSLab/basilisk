@@ -1,0 +1,17 @@
+[package]
+name = "bsk-messages"
+version = "0.1.0"
+edition = "2021"
+description = "Auto-generated Rust FFI bindings for Basilisk C message types"
+license = "ISC"
+
+# This crate contains no build-time code; its src/lib.rs is generated and
+# committed, by ../gen_rust_messages.py from Basilisk's generated
+# cMsgCInterface headers. Re-run that script and commit the result after a
+# message payload changes -- see its module doc for details.
+
+[dependencies]
+# BskModuleRuntime/Msg/MsgReader/MsgWriter/BskModule/BskLoggerExt are
+# hand-written, not generated -- this crate just re-exports them from
+# bsk-build (see src/lib.rs's RUNTIME_SUPPORT_CODE in ../gen_rust_messages.py).
+bsk-build = { path = "../bsk_build" }
