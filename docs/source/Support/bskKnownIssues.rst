@@ -17,6 +17,9 @@ Version |release| (July 7, 2026)
   supported 4.x release.
 - ``python conanfile.py --clean`` now removes Basilisk Numba cache artifacts in addition to ``dist3``,
   preventing clean source builds from reusing stale compiled Numba objects after API changes.
+- A depleting :ref:`FuelTank` with attached fuel slosh particles expelled more propellant than the
+  thrusters consumed, by a factor of one plus the slosh mass fraction. Tanks without fuel slosh were
+  unaffected. This is fixed in the current version.
 
 Version 2.11.0 (July 7, 2026)
 -----------------------------

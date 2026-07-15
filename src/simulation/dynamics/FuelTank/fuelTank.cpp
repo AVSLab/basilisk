@@ -241,15 +241,10 @@ void FuelTank::updateContributions(double integTime,
     backSubContr.matrixA = backSubContr.matrixB = backSubContr.matrixC = backSubContr.matrixD = Eigen::Matrix3d::Zero();
     backSubContr.vecTrans = backSubContr.vecRot = Eigen::Vector3d::Zero();
 
-    // Calculate the fuel consumption properties for the tank
+    // tankFuelConsumption is set in updateEffectorMassProps(); do not recompute it here
     double massLocal = this->massState->getState()(0, 0);
     if (massLocal < 0.0) {
         massLocal = 0.0;  // [kg]
-    }
-    if (this->effProps.mEff > 0.0) {
-        this->tankFuelConsumption = this->fuelConsumption * massLocal / this->effProps.mEff;
-    } else {
-        this->tankFuelConsumption = 0.0;  // [kg/s]
     }
     this->fuelTankModel->computeTankPropDerivs(massLocal, -this->tankFuelConsumption);
     r_TB_BLocal = this->fuelTankModel->r_TcT_T;

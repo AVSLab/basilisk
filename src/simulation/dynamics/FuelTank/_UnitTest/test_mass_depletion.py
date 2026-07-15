@@ -25,6 +25,7 @@ import pytest
 from Basilisk.architecture import messaging
 from Basilisk.simulation import fuelTank
 from Basilisk.simulation import gravityEffector
+from Basilisk.simulation import linearSpringMassDamper
 from Basilisk.simulation import spacecraft
 from Basilisk.simulation import thrusterDynamicEffector, thrusterStateEffector
 from Basilisk.utilities import SimulationBaseClass
@@ -260,6 +261,68 @@ def test_leakyTank():
 
     assert np.allclose(fuelMassDot, -leakRate, rtol=1e-6)
     assert np.isclose(fuelMass[-1], initialFuelMass - stopTime * leakRate, rtol=1e-6)
+
+
+@pytest.mark.parametrize("sloshMass", [0.0, 50.0, 150.0])
+def test_sloshParticlesDoNotOverDeplete(sloshMass):
+    """Propellant leaving the vehicle must equal the mass flow, regardless of fuel slosh."""
+    scObject = spacecraft.Spacecraft()
+    scObject.ModelTag = "spacecraftBody"
+    scObject.hub.mHub = 1000.0  # [kg]
+    scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]  # [kg*m^2]
+
+    unitTestSim = SimulationBaseClass.SimBaseClass()
+    testProc = unitTestSim.CreateNewProcess("TestProcess")
+    testProc.addTask(unitTestSim.CreateNewTask("unitTask", macros.sec2nano(0.1)))
+
+    tank = fuelTank.FuelTank()
+    tankModel = fuelTank.FuelTankModelConstantVolume()
+    tankModel.propMassInit = 500.0  # [kg] non-sloshing propellant
+    tankModel.radiusTankInit = 0.5  # [m]
+    tankModel.r_TcT_TInit = [[0.0], [0.0], [0.0]]  # [m]
+    tank.setTankModel(tankModel)
+    tank.setR_TB_B([[0.0], [0.0], [0.0]])  # [m]
+
+    particles = []
+    for pHat in ([[1.0], [0.0], [0.0]], [[0.0], [1.0], [0.0]], [[0.0], [0.0], [1.0]]):
+        if sloshMass <= 0.0:
+            break
+        particle = linearSpringMassDamper.LinearSpringMassDamper()
+        particle.k = 100.0  # [N/m]
+        particle.c = 1.0  # [N*s/m]
+        particle.r_PB_B = [[0.0], [0.0], [0.0]]  # [m]
+        particle.pHat_B = pHat
+        particle.rhoInit = 0.0  # [m]
+        particle.rhoDotInit = 0.0  # [m/s]
+        particle.massInit = sloshMass  # [kg]
+        tank.pushFuelSloshParticle(particle)
+        scObject.addStateEffector(particle)
+        particles.append(particle)
+
+    scObject.addStateEffector(tank)
+    leakRate = 0.5  # [kg/s]
+    tank.setFuelLeakRate(leakRate)
+
+    unitTestSim.AddModelToTask("unitTask", scObject)
+    unitTestSim.AddModelToTask("unitTask", tank)
+    unitTestSim.InitializeSimulation()
+
+    stopTime = 100.0  # [s]
+    unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
+    unitTestSim.ExecuteSimulation()
+
+    finalTankMass = scObject.dynManager.getStateObject(tank.getNameOfMassState()).getState()[0][0]
+    finalSloshMass = sum(
+        scObject.dynManager.getStateObject(p.nameOfMassState).getState()[0][0] for p in particles
+    )
+
+    initialPropellant = tankModel.propMassInit + len(particles) * sloshMass  # [kg]
+    expelled = initialPropellant - (finalTankMass + finalSloshMass)  # [kg]
+
+    np.testing.assert_allclose(
+        expelled, leakRate * stopTime, rtol=1e-6,
+        err_msg="propellant shed by the vehicle must equal mDot*t regardless of fuel slosh"
+    )
 
 
 def test_leakyTankInputMessageOverridesSetter():

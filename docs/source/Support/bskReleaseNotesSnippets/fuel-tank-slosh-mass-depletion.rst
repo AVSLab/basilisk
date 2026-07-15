@@ -1,0 +1,1 @@
+- Fixed :ref:`FuelTank` shedding more propellant than the thrusters expel when fuel slosh particles are attached to a depleting tank.
