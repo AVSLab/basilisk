@@ -248,6 +248,7 @@ complexity, best studied in order.
   Hub with Reaction Wheels and Hinged Panels <dynamicsComparison/scenarioCompareRwPanels>
   Lumped-Mass Flexible Panels and Runtime Scaling <dynamicsComparison/scenarioCompareFlexPanels>
   Multi-Body in Orbit with Gravity-Gradient Torque <dynamicsComparison/scenarioCompareOrbitMultibody>
+  Variable-Mass Fuel Slosh and Depletion <dynamicsComparison/scenarioCompareVariableMass>
   Accuracy vs Runtime Pareto Front (Reaction Wheels and Panels) <dynamicsComparison/scenarioCompareParetoRwPanels>
   Accuracy vs Runtime Pareto Front (Stiff Flexible Panels) <dynamicsComparison/scenarioCompareParetoFlexPanels>
   Convenience Runner for All Comparisons <dynamicsComparison/runAllComparisons>
