@@ -210,6 +210,35 @@ void HubEffector::computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_
     return;
 }
 
+/*! This method computes direct derivatives for a fixed-mass hub-only spacecraft whose body
+ frame origin is at the hub center of mass. */
+void HubEffector::computeHubOnlyDerivatives(const Eigen::Vector3d& forceExternal_N,
+                                            const Eigen::Vector3d& forceExternal_B,
+                                            const Eigen::Vector3d& torquePntB_B)
+{
+    Eigen::Vector3d rDotLocal_BN_N = this->velocityState->getState();
+    Eigen::MRPd sigmaLocal_BN;
+    sigmaLocal_BN = (Eigen::Vector3d) this->sigmaState->getState();
+    Eigen::Vector3d omegaLocal_BN_B = this->omegaState->getState();
+    Eigen::Matrix3d dcm_NB = sigmaLocal_BN.toRotationMatrix();
+
+    Eigen::Vector3d translationalAccel_N =
+        *this->g_N + (forceExternal_N + dcm_NB*forceExternal_B)/this->effProps.mEff;
+
+    Eigen::Vector3d rotAngularMomentumPntB_B = this->effProps.IEffPntB_B*omegaLocal_BN_B;
+    Eigen::Vector3d omegaDotLocal_BN_B =
+        this->effProps.IEffPntB_B.ldlt().solve(torquePntB_B - omegaLocal_BN_B.cross(rotAngularMomentumPntB_B));
+
+    this->posState->setDerivative(rDotLocal_BN_N);
+    this->velocityState->setDerivative(translationalAccel_N);
+    this->sigmaState->setDerivative(1.0/4.0*sigmaLocal_BN.Bmat()*omegaLocal_BN_B);
+    this->omegaState->setDerivative(omegaDotLocal_BN_B);
+    this->gravVelocityState->setDerivative(*this->g_N);
+    this->gravVelocityBcState->setDerivative(*this->g_N);
+
+    return;
+}
+
 /*! This method is for computing the energy and momentum contributions from the hub */
 void HubEffector::updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
                                                double & rotEnergyContr, Eigen::Vector3d omega_BN_B)

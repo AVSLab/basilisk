@@ -148,6 +148,7 @@ private:
 
 private:
     void readOptionalRefMsg();                  //!< Read the optional attitude or translational reference input message and set the reference states
+    bool useHubOnlyFastPath() const;            //!< Return true if direct fixed-mass hub-only equations can be used
 };
 
 
