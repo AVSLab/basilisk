@@ -1,0 +1,1 @@
+- Added support for :ref:`dualHingedRigidBodyStateEffector` to be the parent for dynamic effectors.
