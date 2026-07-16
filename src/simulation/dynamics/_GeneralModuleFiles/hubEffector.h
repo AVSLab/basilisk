@@ -51,6 +51,8 @@ public:
     ~HubEffector();                      //!< -- Destructor
     void linkInStates(DynParamManager& statesIn);  //!< -- Method to give the hub access to states
     void registerStates(DynParamManager& states);  //!< -- Method for the hub to register some states
+    void registerTranslationalStates(DynParamManager& states);  //!< -- Register only translational hub states
+    void registerAttitudeStates(DynParamManager& states);       //!< -- Register constant attitude hub states
     void updateEffectorMassProps(double integTime);  //!< -- Method for the hub to update its mass props for the s/c
     void computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::Vector3d sigma_BN);  //!< -- Method for the hub to compute it's derivatives
     void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,

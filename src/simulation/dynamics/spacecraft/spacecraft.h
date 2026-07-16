@@ -66,6 +66,7 @@ public:
     Eigen::Vector3d rotAngMomPntCContr_B;  //!< [kg m^2/s] Contribution of stateEffector to total rotational angular mom.
     HubEffector hub;                     //!< The spacecraft plus needs access to the spacecraft hub
     GravityEffector gravField;           //!< Gravity effector for gravitational field experienced by spacecraft
+    bool pointMassTranslationalOnly = false; //!< -- If true, integrate only translational point-mass dynamics
     std::vector<StateEffector*> states;               //!< Vector of state effectors attached to dynObject
     std::vector<DynamicEffector*> dynEffectors;       //!< Vector of dynamic effectors attached to dynObject
     BSKLogger bskLogger;                      //!< BSK Logging
