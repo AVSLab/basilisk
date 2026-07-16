@@ -33,6 +33,8 @@ Version |release| (July 7, 2026)
   convergence tests ran at a fraction of the intended measurement noise. The tests now draw noise with
   ``sigma = sqrt(qObsVal)`` from a local seeded generator and check convergence against a noise-appropriate
   tolerance. This is fixed in the current version.
+- A depleting :ref:`FuelTank` with attached fuel slosh particles expelled propellant by a factor of
+  one plus the slosh mass fraction. This is fixed in the current version.
 
 
 Version 2.11.0 (July 7, 2026)
