@@ -59,7 +59,19 @@ Spacecraft::~Spacecraft()
 void Spacecraft::Reset(uint64_t CurrentSimNanos)
 {
     // - Verify the user-supplied hub configuration before the dynamics are initialized
-    this->hub.validateConfiguration();
+    if (this->pointMassTranslationalOnly) {
+        if (this->hub.mHub <= 0.0) {
+            bskLogger.bskError("spacecraft: pointMassTranslationalOnly requires mHub to be greater than 0.");
+        }
+        if (!this->states.empty()) {
+            bskLogger.bskError("spacecraft: pointMassTranslationalOnly does not support attached state effectors.");
+        }
+        if (this->hub.r_BcB_B.norm() > 0.0) {
+            bskLogger.bskError("spacecraft: pointMassTranslationalOnly requires r_BcB_B to be zero.");
+        }
+    } else {
+        this->hub.validateConfiguration();
+    }
 
     this->gravField.Reset(CurrentSimNanos);
     // - Call method for initializing the dynamics of spacecraft
@@ -106,14 +118,23 @@ void Spacecraft::writeOutputStateMessages(uint64_t clockTime)
     eigenMatrixXd2CArray(*this->inertialPositionProperty, stateOut.r_BN_N);
     eigenMatrixXd2CArray(*this->inertialVelocityProperty, stateOut.v_BN_N);
     Eigen::MRPd sigmaLocal_BN;
-    sigmaLocal_BN = (Eigen::Vector3d) this->hubSigma->getState();
+    if (this->pointMassTranslationalOnly && this->hubSigma == nullptr) {
+        sigmaLocal_BN = this->hub.sigma_BNInit;
+    } else {
+        sigmaLocal_BN = (Eigen::Vector3d) this->hubSigma->getState();
+    }
     Eigen::Matrix3d dcm_NB = sigmaLocal_BN.toRotationMatrix();
     Eigen::Vector3d rLocal_CN_N = (*this->inertialPositionProperty) + dcm_NB*(*this->c_B);
     Eigen::Vector3d vLocal_CN_N = (*this->inertialVelocityProperty) + dcm_NB*(*this->cDot_B);
     eigenVector3d2CArray(rLocal_CN_N, stateOut.r_CN_N);
     eigenVector3d2CArray(vLocal_CN_N, stateOut.v_CN_N);
-    eigenMatrixXd2CArray(this->hubSigma->getState(), stateOut.sigma_BN);
-    eigenMatrixXd2CArray(this->hubOmega_BN_B->getState(), stateOut.omega_BN_B);
+    if (this->pointMassTranslationalOnly && this->hubSigma == nullptr) {
+        eigenVector3d2CArray(this->hub.sigma_BNInit, stateOut.sigma_BN);
+        eigenVector3d2CArray(this->hub.omega_BN_BInit, stateOut.omega_BN_B);
+    } else {
+        eigenMatrixXd2CArray(this->hubSigma->getState(), stateOut.sigma_BN);
+        eigenMatrixXd2CArray(this->hubOmega_BN_B->getState(), stateOut.omega_BN_B);
+    }
     eigenMatrixXd2CArray(this->dvAccum_CN_B, stateOut.TotalAccumDVBdy);
     stateOut.MRPSwitchCount = this->hub.MRPSwitchCount;
     eigenMatrixXd2CArray(this->dvAccum_BN_B, stateOut.TotalAccumDV_BN_B);
@@ -135,6 +156,10 @@ void Spacecraft::writeOutputStateMessages(uint64_t clockTime)
 void Spacecraft::readOptionalRefMsg()
 {
     if (this->attRefInMsg.isLinked()) {
+        if (this->pointMassTranslationalOnly) {
+            bskLogger.bskError(
+                "spacecraft: pointMassTranslationalOnly does not support attitude reference input messages.");
+        }
         Eigen::Vector3d omega_BN_B;
         AttRefMsgPayload attRefMsgBuffer;
         attRefMsgBuffer = this->attRefInMsg();
@@ -195,10 +220,22 @@ void Spacecraft::linkInStates(DynParamManager& statesIn)
     // - Get access to all hub states
     this->hubR_N = statesIn.getStateObject(this->hub.nameOfHubPosition);
     this->hubV_N = statesIn.getStateObject(this->hub.nameOfHubVelocity);
-    this->hubSigma = statesIn.getStateObject(this->hub.nameOfHubSigma);   /* Need sigmaBN for MRP switching */
-    this->hubOmega_BN_B = statesIn.getStateObject(this->hub.nameOfHubOmega);
-    this->hubGravVelocity = statesIn.getStateObject(this->hub.nameOfHubGravVelocity);
-    this->BcGravVelocity = statesIn.getStateObject(this->hub.nameOfBcGravVelocity);
+    if (this->pointMassTranslationalOnly) {
+        if (this->dynEffectors.empty()) {
+            this->hubSigma = nullptr;
+            this->hubOmega_BN_B = nullptr;
+        } else {
+            this->hubSigma = statesIn.getStateObject(this->hub.nameOfHubSigma);
+            this->hubOmega_BN_B = statesIn.getStateObject(this->hub.nameOfHubOmega);
+        }
+        this->hubGravVelocity = nullptr;
+        this->BcGravVelocity = nullptr;
+    } else {
+        this->hubSigma = statesIn.getStateObject(this->hub.nameOfHubSigma);   /* Need sigmaBN for MRP switching */
+        this->hubOmega_BN_B = statesIn.getStateObject(this->hub.nameOfHubOmega);
+        this->hubGravVelocity = statesIn.getStateObject(this->hub.nameOfHubGravVelocity);
+        this->BcGravVelocity = statesIn.getStateObject(this->hub.nameOfBcGravVelocity);
+    }
 
     // - Get access to the hubs position and velocity in the property manager
     this->inertialPositionProperty = statesIn.getPropertyReference(this->gravField.inertialPositionPropName);
@@ -220,6 +257,13 @@ void Spacecraft::initializeDynamics()
     Eigen::MatrixXd initCDot_B(3,1);
     Eigen::MatrixXd initISCPntBPrime_B(3,3);
     Eigen::MatrixXd systemTime(2,1);
+    initM_SC.setZero();
+    initMDot_SC.setZero();
+    initC_B.setZero();
+    initISCPntB_B.setZero();
+    initCPrime_B.setZero();
+    initCDot_B.setZero();
+    initISCPntBPrime_B.setZero();
     systemTime.setZero();
     // - Create the properties
     this->m_SC = this->dynManager.createProperty(this->propName_m_SC, initM_SC);
@@ -235,7 +279,14 @@ void Spacecraft::initializeDynamics()
     this->gravField.registerProperties(this->dynManager);
 
     // - Register the hub states
-    this->hub.registerStates(this->dynManager);
+    if (this->pointMassTranslationalOnly) {
+        this->hub.registerTranslationalStates(this->dynManager);
+        if (!this->dynEffectors.empty()) {
+            this->hub.registerAttitudeStates(this->dynManager);
+        }
+    } else {
+        this->hub.registerStates(this->dynManager);
+    }
 
     // - Loop through stateEffectors to register their states
     std::vector<StateEffector*>::iterator stateIt;
@@ -250,22 +301,29 @@ void Spacecraft::initializeDynamics()
     this->hub.linkInStates(this->dynManager);
 
     // - Update the mass properties of the spacecraft to retrieve c_B and cDot_B to update r_BN_N and v_BN_N
-    this->updateSCMassProps(0.0);
+    if (this->pointMassTranslationalOnly) {
+        (*this->m_SC)(0,0) = this->hub.mHub;
+        (*this->ISCPntB_B) = this->hub.IHubPntBc_B;
+    } else {
+        this->updateSCMassProps(0.0);
+    }
 
-    // - Edit r_BN_N and v_BN_N to take into account that point B and point C are not coincident
-    // - Pulling the state from the hub at this time gives us r_CN_N
-    Eigen::Vector3d rInit_BN_N = this->hubR_N->getState();
-    Eigen::MRPd sigma_BN;
-    sigma_BN = (Eigen::Vector3d) this->hubSigma->getState();
-    Eigen::Matrix3d dcm_NB = sigma_BN.toRotationMatrix();
-    // - Substract off the center mass to leave r_BN_N
-    rInit_BN_N -= dcm_NB*(*this->c_B);
-    // - Subtract off cDot_B to get v_BN_N
-    Eigen::Vector3d vInit_BN_N = this->hubV_N->getState();
-    vInit_BN_N -= dcm_NB*(*this->cDot_B);
-    // - Finally set the translational states r_BN_N and v_BN_N with the corrections
-    this->hubR_N->setState(rInit_BN_N);
-    this->hubV_N->setState(vInit_BN_N);
+    if (!this->pointMassTranslationalOnly) {
+        // - Edit r_BN_N and v_BN_N to take into account that point B and point C are not coincident
+        // - Pulling the state from the hub at this time gives us r_CN_N
+        Eigen::Vector3d rInit_BN_N = this->hubR_N->getState();
+        Eigen::MRPd sigma_BN;
+        sigma_BN = (Eigen::Vector3d) this->hubSigma->getState();
+        Eigen::Matrix3d dcm_NB = sigma_BN.toRotationMatrix();
+        // - Substract off the center mass to leave r_BN_N
+        rInit_BN_N -= dcm_NB*(*this->c_B);
+        // - Subtract off cDot_B to get v_BN_N
+        Eigen::Vector3d vInit_BN_N = this->hubV_N->getState();
+        vInit_BN_N -= dcm_NB*(*this->cDot_B);
+        // - Finally set the translational states r_BN_N and v_BN_N with the corrections
+        this->hubR_N->setState(rInit_BN_N);
+        this->hubV_N->setState(vInit_BN_N);
+    }
 
     // - Loop through the stateEffectros to link in the states needed
     for(stateIt = this->states.begin(); stateIt != this->states.end(); stateIt++)
@@ -339,6 +397,40 @@ void Spacecraft::equationsOfMotion(double integTimeSeconds, double timeStep)
     uint64_t integTimeNanos = secToNano(integTimeSeconds);
 
     (*this->sysTime) << (double) integTimeNanos, integTimeSeconds;
+
+    if (this->pointMassTranslationalOnly) {
+        Eigen::Vector3d rLocal_BN_N = this->hubR_N->getState();
+        Eigen::Vector3d vLocal_BN_N = this->hubV_N->getState();
+
+        this->gravField.computeGravityField(rLocal_BN_N, vLocal_BN_N);
+
+        this->sumForceExternal_N.setZero();
+        this->sumForceExternal_B.setZero();
+        std::vector<DynamicEffector*>::iterator dynIt;
+        for(dynIt = this->dynEffectors.begin(); dynIt != this->dynEffectors.end(); dynIt++)
+        {
+            (*dynIt)->computeForceTorque(integTimeSeconds, timeStep);
+            this->sumForceExternal_N += (*dynIt)->forceExternal_N;
+            this->sumForceExternal_B += (*dynIt)->forceExternal_B;
+        }
+
+        Eigen::MRPd sigmaLocal_BN;
+        sigmaLocal_BN = this->hub.sigma_BNInit;
+        if (this->hubSigma != nullptr) {
+            sigmaLocal_BN = (Eigen::Vector3d) this->hubSigma->getState();
+            this->hubSigma->setDerivative(Eigen::Vector3d::Zero());
+        }
+        if (this->hubOmega_BN_B != nullptr) {
+            this->hubOmega_BN_B->setDerivative(Eigen::Vector3d::Zero());
+        }
+        Eigen::Matrix3d dcm_NB = sigmaLocal_BN.toRotationMatrix();
+        Eigen::Vector3d nonConservativeAccel_N =
+            (this->sumForceExternal_N + dcm_NB*this->sumForceExternal_B)/(*this->m_SC)(0,0);
+
+        this->hubR_N->setDerivative(vLocal_BN_N);
+        this->hubV_N->setDerivative(*this->g_N + nonConservativeAccel_N);
+        return;
+    }
 
     // - Zero all Matrices and vectors for back-sub and the dynamics
     this->hub.hubBackSubMatrices.matrixA.setZero();
@@ -459,6 +551,9 @@ void Spacecraft::equationsOfMotionDiffusion(double integTimeSeconds, double time
  */
 void Spacecraft::preIntegration(uint64_t integrateToThisTimeNanos) {
     this->timeStep = diffNanoToSec(integrateToThisTimeNanos, this->timeBeforeNanos); // - Find the time step in seconds
+    if (this->pointMassTranslationalOnly) {
+        return;
+    }
 
     // - Find v_CN_N before integration for accumulated DV
     Eigen::Vector3d oldV_BN_N = this->hubV_N->getState();  // - V_BN_N before integration
@@ -483,6 +578,10 @@ void Spacecraft::preIntegration(uint64_t integrateToThisTimeNanos) {
 void Spacecraft::postIntegration(uint64_t integrateToThisTimeNanos) {
     this->timeBeforeNanos = integrateToThisTimeNanos;     // - copy the current time into previous time for next integrate state call
     this->timeBefore = integrateToThisTimeNanos*NANO2SEC;
+    if (this->pointMassTranslationalOnly) {
+        return;
+    }
+
     double integrateToThisTime = integrateToThisTimeNanos*NANO2SEC; // - convert to seconds
 
     // - Call mass properties to get current info on the mass props of the spacecraft

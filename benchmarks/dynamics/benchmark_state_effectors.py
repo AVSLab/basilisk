@@ -63,6 +63,9 @@ The ``--case`` option accepts either the canonical benchmark names or the
 corresponding effector class-style aliases:
 
 - ``spacecraft``
+- ``spacecraft-point-mass``
+- ``spacecraft-orbit``
+- ``spacecraft-point-mass-orbit``
 - ``dual-hinged-rigid-body``
 - ``gravity-gradient``
 - ``hinged-rigid-body``
@@ -95,7 +98,7 @@ looks like:
    Warmup steps: 200
    Components per case: 4
    Segments per NDOF case: 4
-   Gravity: disabled except gravity-gradient case
+   Gravity: disabled except orbit and gravity-gradient cases
    Recorders: disabled
    Spacecraft integrator: RK4 default
 
@@ -147,7 +150,6 @@ _configure_headless_environment()
 from Basilisk.architecture import messaging
 from Basilisk.simulation import GravityGradientEffector
 from Basilisk.simulation import dualHingedRigidBodyStateEffector
-from Basilisk.simulation import gravityEffector
 from Basilisk.simulation import hingedRigidBodyStateEffector
 from Basilisk.simulation import linearSpringMassDamper
 from Basilisk.simulation import linearTranslationNDOFStateEffector
@@ -163,6 +165,7 @@ from Basilisk.simulation import spinningBodyTwoDOFStateEffector
 from Basilisk.simulation import vscmgStateEffector
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
+from Basilisk.utilities import simIncludeGravBody
 from Basilisk.utilities import simIncludeRW
 
 
@@ -293,17 +296,43 @@ def _setup_spacecraft_only(context):
     """Run the baseline spacecraft dynamics case without extra effectors."""
 
 
+def _setup_spacecraft_point_mass(context):
+    """Run the translation-only point-mass spacecraft dynamics case."""
+
+    context.scObject.pointMassTranslationalOnly = True
+
+
+def _add_central_earth_gravity(context):
+    """Attach central-body Earth point-mass gravity."""
+
+    gravFactory = simIncludeGravBody.gravBodyFactory()
+    earth = gravFactory.createEarth()
+    earth.isCentralBody = True
+    context.keepAlive.extend([gravFactory, earth])
+    context.scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))
+    return earth
+
+
+def _setup_spacecraft_orbit(context):
+    """Run the baseline spacecraft dynamics case with central gravity."""
+
+    _set_hub_properties(context.scObject, useOrbitState=True)
+    _add_central_earth_gravity(context)
+
+
+def _setup_spacecraft_point_mass_orbit(context):
+    """Run the translation-only point-mass spacecraft dynamics case with central gravity."""
+
+    context.scObject.pointMassTranslationalOnly = True
+    _set_hub_properties(context.scObject, useOrbitState=True)
+    _add_central_earth_gravity(context)
+
+
 def _setup_gravity_gradient(context):
     """Attach gravity-gradient dynamic effectors."""
 
     _set_hub_properties(context.scObject, useOrbitState=True)
-
-    earthGravBody = gravityEffector.GravBodyData()
-    earthGravBody.planetName = "earth_planet_data"
-    earthGravBody.mu = 0.3986004415e15  # [m^3/s^2]
-    earthGravBody.isCentralBody = True
-    context.keepAlive.append(earthGravBody)
-    context.scObject.gravField.gravBodies = spacecraft.GravBodyVector([earthGravBody])
+    earthGravBody = _add_central_earth_gravity(context)
 
     for effectorIndex in range(context.config.numberOfComponents):
         ggEffector = GravityGradientEffector.GravityGradientEffector()
@@ -763,6 +792,11 @@ def _setup_vscmg(context):
 
 CASE_DEFINITIONS = {
     "spacecraft": CaseDefinition("spacecraft", _setup_spacecraft_only),
+    "spacecraft-point-mass": CaseDefinition("spacecraft-point-mass", _setup_spacecraft_point_mass),
+    "spacecraft-orbit": CaseDefinition("spacecraft-orbit", _setup_spacecraft_orbit),
+    "spacecraft-point-mass-orbit": CaseDefinition(
+        "spacecraft-point-mass-orbit", _setup_spacecraft_point_mass_orbit
+    ),
     "dual-hinged-rigid-body": CaseDefinition("dual-hinged-rigid-body", _setup_dual_hinged_rigid_body),
     "gravity-gradient": CaseDefinition("gravity-gradient", _setup_gravity_gradient),
     "hinged-rigid-body": CaseDefinition("hinged-rigid-body", _setup_hinged_rigid_body),
@@ -781,6 +815,10 @@ CASE_DEFINITIONS = {
 
 
 CASE_ALIASES = {
+    "pointmassspacecraft": "spacecraft-point-mass",
+    "spacecraftpointmass": "spacecraft-point-mass",
+    "pointmassorbit": "spacecraft-point-mass-orbit",
+    "spacecraftpointmassorbit": "spacecraft-point-mass-orbit",
     "dualhingedrigidbody": "dual-hinged-rigid-body",
     "dualhingedrigidbodystateeffector": "dual-hinged-rigid-body",
     "gravitygradienteffector": "gravity-gradient",
@@ -968,7 +1006,7 @@ def _print_header(config):
     print(f"Warmup steps: {config.numberOfWarmupSteps}")
     print(f"Components per case: {config.numberOfComponents}")
     print(f"Segments per NDOF case: {config.numberOfSegments}")
-    print("Gravity: disabled except gravity-gradient case")
+    print("Gravity: disabled except orbit and gravity-gradient cases")
     print("Recorders: disabled")
     print("Spacecraft integrator: RK4 default")
 

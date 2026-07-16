@@ -114,6 +114,31 @@ void HubEffector::registerStates(DynParamManager& states)
     return;
 }
 
+/*! This method allows the hub to register only translational states: r_BN_N and v_BN_N */
+void HubEffector::registerTranslationalStates(DynParamManager& states)
+{
+    // - Register the hub translational states and set with initial values
+    this->posState = states.registerState(3, 1, this->nameOfHubPosition);
+    this->velocityState = states.registerState(3, 1, this->nameOfHubVelocity);
+
+    this->posState->setState(this->r_CN_NInit);
+    this->velocityState->setState(this->v_CN_NInit);
+
+    return;
+}
+
+/*! This method allows the hub to register fixed attitude states for point-mass dynamics with dynamic effectors */
+void HubEffector::registerAttitudeStates(DynParamManager& states)
+{
+    this->sigmaState = states.registerState(3, 1, this->nameOfHubSigma);
+    this->omegaState = states.registerState(3, 1, this->nameOfHubOmega);
+
+    this->sigmaState->setState(this->sigma_BNInit);
+    this->omegaState->setState(this->omega_BN_BInit);
+
+    return;
+}
+
 /*! This method allows the hub to give its mass properties to the spacecraft */
 void HubEffector::updateEffectorMassProps(double integTime)
 {

@@ -11,6 +11,18 @@ stateEffectors. :ref:`dynamicEffector`'s such as thrusters, external force and t
 by attaching dynamicEffectors. This class performs all of this interaction between stateEffectors, dynamicEffectors and
 the hub.
 
+The optional ``pointMassTranslationalOnly`` flag can be set to ``True`` to model the hub as a point mass and only
+integrate the translational position and velocity states. This mode is intended for dynamics comparisons or simple
+point-mass propagation where the rotational hub states and post-integration attitude bookkeeping are unnecessary.
+When enabled, the hub mass ``mHub`` must be positive and the hub center offset ``r_BcB_B`` must be zero.
+State effectors are not supported because they add internal generalized coordinates and mass-property coupling.
+Dynamic effectors may still be attached. Their translational force outputs are included in the point-mass acceleration,
+but torque outputs are ignored because there is no rotational equation of motion. If a dynamic effector requires hub
+attitude or angular-rate states to compute its force or torque, the spacecraft exposes fixed states initialized from
+``sigma_BNInit`` and ``omega_BN_BInit`` with zero derivatives. Thus attitude-dependent force models use the initial
+attitude as a fixed orientation in this mode. The optional attitude reference input message is not supported in
+``pointMassTranslationalOnly`` mode.
+
 The module
 :download:`PDF Description </../../src/simulation/dynamics/spacecraft/_Documentation/Spacecraft/Basilisk-SPACECRAFT-20170808.pdf>`
 contains further information on this module's function,
@@ -62,6 +74,13 @@ This section is to outline the steps needed to setup a Spacecraft module in pyth
 
         scObject.hub.r_CN_NInit,  scObject.hub.v_CN_NInit, scObject.hub.sigma_BNInit, scObject.hub.omega_BN_BInit
 
+#.  To run a translation-only point-mass propagation, set::
+
+        scObject.pointMassTranslationalOnly = True
+
+    This only integrates the hub position and velocity. Dynamic effectors can be attached if their translational
+    force contribution should act on the point mass, but state effectors cannot be attached.
+
 #.  Finally, add the spacecraft to the task::
 
         unitTestSim.AddModelToTask(unitTaskName, scObject)
@@ -104,3 +123,6 @@ This section is to outline the steps needed to setup a Spacecraft module in pyth
     * - r_BcB_B
       - double[3]
       - Center of mass location in B frame
+    * - pointMassTranslationalOnly
+      - bool
+      - If ``True``, integrate only translational point-mass dynamics
