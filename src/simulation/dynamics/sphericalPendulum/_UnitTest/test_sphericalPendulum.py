@@ -45,7 +45,9 @@ from Basilisk.architecture import messaging
 @pytest.mark.parametrize("useFlag, testCase", [
      (False, 1),
      (False, 2),
-    (False,3)
+    (False,3),
+    (False, 4),
+    (False, 5)
 ])
 # provide a unique test method name, starting with test_
 def test_scenarioSphericalPendulum(show_plots, useFlag, testCase):
@@ -59,7 +61,7 @@ def sphericalPendulumTest(show_plots, useFlag,testCase):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
 
-    if testCase == 1 or testCase ==  3:
+    if testCase == 1 or testCase == 3 or testCase == 4 or testCase == 5:
         timeStep = 0.01
     if testCase == 2:
         timeStep = 0.001
@@ -81,12 +83,20 @@ def sphericalPendulumTest(show_plots, useFlag,testCase):
 
     scSim.AddModelToTask(simTaskName, scObject)
 
+    # cases 4 and 5 add fuel-slosh damping (isotropic, anisotropic) to check energy dissipation
+    if testCase == 4:
+        dampingMatrix = [[10.0, 0.0, 0.0], [0.0, 10.0, 0.0], [0.0, 0.0, 10.0]]  # N*s/m
+    elif testCase == 5:
+        dampingMatrix = [[50.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]  # N*s/m
+    else:
+        dampingMatrix = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]  # N*s/m
+
     # Pendulum 1
     scSim.pendulum1 = sphericalPendulum.SphericalPendulum()
     # Define Variables for pendulum 1
     scSim.pendulum1.pendulumRadius = 0.3  #  m/s
     scSim.pendulum1.d = [[0.1], [0.1], [0.1]] # m
-    scSim.pendulum1.D = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]] # N*s/m
+    scSim.pendulum1.D = dampingMatrix # N*s/m
     scSim.pendulum1.phiDotInit = 0.01 # rad/s
     scSim.pendulum1.thetaDotInit = 0.05 # rad/s
     scSim.pendulum1.massInit = 20.0 # kg
@@ -99,7 +109,7 @@ def sphericalPendulumTest(show_plots, useFlag,testCase):
     # Define Variables for pendulum 2
     scSim.pendulum2.pendulumRadius = 0.4  #  m/s
     scSim.pendulum2.d = [[0.1], [0.1], [0.1]] # m
-    scSim.pendulum2.D = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]] # N*s/m
+    scSim.pendulum2.D = dampingMatrix # N*s/m
     scSim.pendulum2.phiDotInit = 0.1 # rad/s
     scSim.pendulum2.thetaDotInit = 0.5 # rad/s
     scSim.pendulum2.massInit =40.0 # kg
@@ -239,7 +249,7 @@ def sphericalPendulumTest(show_plots, useFlag,testCase):
 
     plt.close("all")  # clears out plots from earlier test runs
 
-    if testCase != 3:
+    if testCase == 1 or testCase == 2:
         plt.figure(1,figsize=(5,4))
         plt.plot(orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,1] - orbAngMom_N[0,1])/orbAngMom_N[0,1], orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,2] - orbAngMom_N[0,2])/orbAngMom_N[0,2], orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,3] - orbAngMom_N[0,3])/orbAngMom_N[0,3])
         plt.xlabel('Time (s)')
@@ -307,7 +317,8 @@ def sphericalPendulumTest(show_plots, useFlag,testCase):
             if abs((orbAngMom_N[k,3] - orbAngMom_N[0,3])/orbAngMom_N[0,3])>accuracy:
                 testFailCount += 1
                 testMessages.append("FAILED: SphericalPendulum does not conserve Orbital Angular Momentum around z axes (timeStep={}s)".format(timeStep))
-            if abs((rotEnergy[k,1] - rotEnergy[0,1])/rotEnergy[0,1])>accuracy:
+            # Rotational energy is conserved only without damping; the damped cases 4 and 5 dissipate it (checked below).
+            if (testCase == 1 or testCase == 2) and abs((rotEnergy[k,1] - rotEnergy[0,1])/rotEnergy[0,1])>accuracy:
                 testFailCount += 1
                 testMessages.append("FAILED: SphericalPendulum does not conserve Rotational Energy (timeStep={}s)".format(timeStep))
             if abs((orbEnergy[k,1] - orbEnergy[0,1])/orbEnergy[0,1])>accuracy:
@@ -321,6 +332,24 @@ def sphericalPendulumTest(show_plots, useFlag,testCase):
         if not unitTestSupport.isDoubleEqual(mDotParicle2Data[1],mDotParicle2True,accuracy):
             testFailCount += 1
             testMessages.append("FAILED: Linear Spring Mass Damper unit test failed mass 2 dot test")
+
+    if testCase == 4 or testCase == 5:
+        E = rotEnergy[:, 1]
+        E0 = E[0]
+        # A physical damper removes energy: require a clear net loss.
+        netLoss = (E0 - E[-1]) / E0
+        if netLoss < 1.0e-3:
+            testFailCount += 1
+            testMessages.append("FAILED: SphericalPendulum damping did not dissipate rotational "
+                                "energy (net loss {:.3e}, expected > 1e-3)".format(netLoss))
+        # A physical damper cannot increase energy between samples; allow roundoff-level noise.
+        maxStepRiseTolerance = 1.0e-10  # [-]
+        maxStepRise = np.max(np.diff(E)) / E0
+        if maxStepRise > maxStepRiseTolerance:
+            testFailCount += 1
+            testMessages.append("FAILED: SphericalPendulum damping injected rotational energy "
+                                "(maximum normalized step rise {:.3e}, expected <= {:.1e})"
+                                .format(maxStepRise, maxStepRiseTolerance))
 
     if testFailCount == 0:
         print("PASSED ")
