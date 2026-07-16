@@ -225,7 +225,7 @@ void SphericalPendulum::updateContributions(double integTime, BackSubMatrices & 
     gLocal_N = *this->g_N;
     g_B = dcm_BN*gLocal_N;
     Eigen::Vector3d L_T;
-    L_T=this->l_B.cross(this->massFSP*g_B)-dcm_B_P0*this->D*this->lPrime_P0;
+    L_T = this->l_B.cross(this->massFSP * g_B - dcm_B_P0 * this->D * this->lPrime_P0);
 
     // - Define cPhi
     Eigen::Vector3d omega_BN_B_local = omega_BN_B;
