@@ -294,7 +294,6 @@ void SpinningBodyNDOFStateEffector::computeAttitudeProperties(std::shared_ptr<Sp
 void SpinningBodyNDOFStateEffector::computeAngularVelocityProperties(std::shared_ptr<SpinningBody> spinningBody, int spinningBodyIndex) const
 {
     spinningBody->omega_SP_B = spinningBody->thetaDot * spinningBody->sHat_B;
-    spinningBody->omegaTilde_SP_B = eigenTilde(spinningBody->omega_SP_B);
     if (spinningBodyIndex == 0) {
         spinningBody->omega_SB_B = spinningBody->omega_SP_B;
     } else {
@@ -345,7 +344,6 @@ void SpinningBodyNDOFStateEffector::updateContributions(double integTime,
     this->sigma_BN = sigma_BN;
     this->dcm_BN = (this->sigma_BN.toRotationMatrix()).transpose();
     this->omega_BN_B = omega_BN_B;
-    this->omegaTilde_BN_B = eigenTilde(this->omega_BN_B);
 
     Eigen::MatrixXd MTheta = Eigen::MatrixXd::Zero(this->numberOfDegreesOfFreedom, this->numberOfDegreesOfFreedom);
     Eigen::MatrixXd AThetaStar = Eigen::MatrixXd::Zero(this->numberOfDegreesOfFreedom, 3);
