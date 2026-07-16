@@ -13,6 +13,8 @@ Version |release| (July 7, 2026)
 - The :ref:`sphericalPendulum` fuel-slosh effector applied its viscous damping force without the pendulum
   moment arm, so an isotropic damping matrix ``D`` dissipated no rotational energy and an anisotropic ``D``
   could add energy to the spacecraft. This is fixed in the current version.
+- A depleting :ref:`FuelTank` with attached fuel slosh particles expelled propellant by a factor of
+  one plus the slosh mass fraction. This is fixed in the current version.
 - BSK-422: Several SWIG-wrapped C++ members in simulation and FSW modules could emit
   ``swig/python detected a memory leak`` warnings when read from Python because their wrappers lacked
   visible destructors. Internal-only members are now private or hidden from Python, and public value-type
