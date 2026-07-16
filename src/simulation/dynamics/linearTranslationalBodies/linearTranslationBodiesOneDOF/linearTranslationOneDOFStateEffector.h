@@ -126,7 +126,6 @@ private:
 	Eigen::Matrix3d IPntFc_B = Eigen::Matrix3d::Identity();       //!< [kg-m^2] Inertia of Fc about point B in B frame components
 	Eigen::Matrix3d dcm_BN = Eigen::Matrix3d::Identity();         //!< DCM from the B frame to the N frame
     Eigen::Vector3d omega_BN_B = Eigen::Vector3d::Zero();         //!< [rad/s] angular velocity of the B frame wrt the N frame in B frame components.
-    Eigen::Matrix3d omegaTilde_BN_B = Eigen::Matrix3d::Zero();    //!< [rad/s] tilde matrix of omega_BN_B
 
     Eigen::Vector3d aRho = Eigen::Vector3d::Zero();          //!< Term needed for back-sub method
     Eigen::Vector3d bRho = Eigen::Vector3d::Zero();          //!< Term needed for back-sub method

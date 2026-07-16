@@ -123,7 +123,6 @@ private:
     Eigen::Matrix3d IPrimeSPntSc_B = Eigen::Matrix3d::Zero();    //!< [kg-m^2] body frame derivative of the inertia of spinning body about point Sc in S frame components
     Eigen::Matrix3d dcm_BS = Eigen::Matrix3d::Identity();        //!< DCM from spinner frame to body frame
     Eigen::Matrix3d rTilde_ScB_B = Eigen::Matrix3d::Zero();      //!< [m] tilde matrix of r_ScB_B
-    Eigen::Matrix3d omegaTilde_SP_B = Eigen::Matrix3d::Zero();   //!< [rad/s] tilde matrix of omega_SP_B
     Eigen::Matrix3d omegaTilde_SB_B = Eigen::Matrix3d::Zero();   //!< [rad/s] tilde matrix of omega_SB_B
 
     std::vector<DynamicEffector*> dynEffectors;     //!< -- Vector of dynamic effectors attached
