@@ -9,17 +9,17 @@ The formulation assumes that there is a rigid hub, with $N_P$ lumped masses in t
 	\includegraphics[width=13cm]{Figures/spacecraft.pdf}
 	\caption{Frame and variable definitions used for formulation}
 	\label{fig:Slosh_Figure}
-\end{figure} 
+\end{figure}
 
-There are four coordinate frames defined for this formulation. The inertial reference frame is indicated by \frameDefinition{N}. The body fixed coordinate frame, \frameDefinition{B}, which is anchored to the hub and can be oriented in any direction. The initial pendulum frame, $\mathcal{P}_{0,j}:\{\hat{\bm p}_{0_j,1},\hat{\bm p}_{0_j,2},\hat{\bm p}_{0_j,3}\}$, is a frame with its origin located at tank geometrical center, $T$. The $\mathcal{P}_{0,j}$ frame is a fixed frame respect to the body frame, oriented such that $\hat{\bm{p}}_{0_j,1}$ points to the fuel slosh mass in its initial position, $P_{j}$. The constant distance from point $T$ to point $P_{j}$ is defined as $l_j$. 
+There are four coordinate frames defined for this formulation. The inertial reference frame is indicated by \frameDefinition{N}. The body fixed coordinate frame, \frameDefinition{B}, which is anchored to the hub and can be oriented in any direction. The initial pendulum frame, $\mathcal{P}_{0,j}:\{\hat{\bm p}_{0_j,1},\hat{\bm p}_{0_j,2},\hat{\bm p}_{0_j,3}\}$, is a frame with its origin located at tank geometrical center, $T$. The $\mathcal{P}_{0,j}$ frame is a fixed frame respect to the body frame, oriented such that $\hat{\bm{p}}_{0_j,1}$ points to the fuel slosh mass in its initial position, $P_{j}$. The constant distance from point $T$ to point $P_{j}$ is defined as $l_j$.
 
 There are a few more key locations that need to be defined. Point $B$ is the origin of the body frame, and can have any location with respect to the hub. Point $B_c$ is the location of the center of mass of the rigid hub. $P_{c,j}$ is the instantaneous position of the fuel slosh mass $m_j$. $\bm{d}$ is vector from the center of the body reference system to the tank geometrical center. $\bm{l_j}$ is the vector from $T$ to $P_{c,j}$.
 
-Figure~\ref{fig:Slosh_Detailed} provides further detail of the fuel slosh parameters and reference frames. As seen in Figure~\ref{fig:Slosh_Figure}, an individual slosh particle is free to move in every direction while connected by rigid weightless rod to the geometrical center of the tank. A linear damper effect is considered using a damping matrix, $D$. The variables, $\varphi_j$ and $\vartheta_j$ are state variables and quantify the angular displacement from initial position for the corresponding slosh mass. 
+Figure~\ref{fig:Slosh_Detailed} provides further detail of the fuel slosh parameters and reference frames. As seen in Figure~\ref{fig:Slosh_Figure}, an individual slosh particle is free to move in every direction while connected by rigid weightless rod to the geometrical center of the tank. A linear damper effect is considered using a damping matrix, $D$. The variables, $\varphi_j$ and $\vartheta_j$ are state variables and quantify the angular displacement from initial position for the corresponding slosh mass.
 
 \begin{figure}[ht]
 	\centering
-	
+
 	\includegraphics[width=13cm]{Figures/referencesystems.pdf}
 	\caption{Further detail of fuel slosh and reference frames}
 	\label{fig:Slosh_Detailed}
@@ -44,7 +44,7 @@ Ultimately the acceleration of the body frame or point $B$ is desired
 The definition of $\bm{c}$ can be seen in Eq. (\ref{eq:c}).
 \begin{equation}
 	\bm{c} = \frac{1}{m_{\text{sc}}}\Big(m_{\text{\text{hub}}}\bm{r}_{B_{c}/B} +\sum_{j=1}^{N_{P}}m_j\bm{r}_{P_{c,j}/B}\Big)
-	\label{eq:c} 
+	\label{eq:c}
 \end{equation}
 To find the inertial time derivative of $\bm{c}$, it is first necessary to find the time derivative of $\bm{c}$ with respect to the body frame. A time derivative of any vector, $\bm{v}$, with respect to the body frame is denoted by $\bm{v}'$; the inertial time derivative is labeled as $\dot{\bm{v}}$. The first and second body-relative time derivatives of $\bm{c}$ can be seen in Eqs. (\ref{eq:cprime}) and (\ref{eq:cdprime}).
 \begin{align}
@@ -56,7 +56,7 @@ To find the inertial time derivative of $\bm{c}$, it is first necessary to find 
 \end{align}
 Remembering that the derivative of $d$ is null respect to the body frame, the first and second body time derivatives of $\bm{r}_{P_{c,j}/B}$ are
 \begin{equation}
-	\bm{r}_{P_{c,j}/B} = 
+	\bm{r}_{P_{c,j}/B} =
 	l_j
 	\leftidx{^{\mathcal{P}_{0,j}}}
 	{\begin{bmatrix}
@@ -69,9 +69,9 @@ Remembering that the derivative of $d$ is null respect to the body frame, the fi
 \end{equation}
 
 \begin{equation}
-	\bm{r}'_{P_{c,j}/B} 
+	\bm{r}'_{P_{c,j}/B}
 	=
-	l_j 
+	l_j
 	\leftidx{^{\mathcal{P}_{0,j}}}
 	{\begin{bmatrix}
 			-\dot{\varphi}_j\sin(\varphi_j)\cos(\vartheta_j)-\dot{\vartheta}_j\cos(\varphi_j)\sin(\vartheta_j) \\
@@ -82,7 +82,7 @@ Remembering that the derivative of $d$ is null respect to the body frame, the fi
 \end{equation}
 
 \begin{equation}
-	\bm{r}''_{P_{c,j}/B} 
+	\bm{r}''_{P_{c,j}/B}
 	=
 	l_j
 	\leftidx{^{\mathcal{P}_{0,j}}}
@@ -105,7 +105,7 @@ Eqs.~\eqref{eq:cprime} and ~\eqref{eq:cdprime} are next reformulated to include 
 
 \begin{multline}
 	\bm{c}'' = \frac{1}{m_{\text{sc}}}\sum_{j=1}^{N_{P}}m_j l_j \bigg[
-	\Big(-\ddot{\varphi}_j\sin(\varphi_j)\cos(\vartheta_j)-\ddot{\vartheta}_j\cos(\varphi_j)\sin(\vartheta_j)-\dot{\varphi}_j^2\cos(\varphi_j)\cos(\vartheta_j)-\dot{\vartheta}_j^2\cos(\varphi_j)\cos(\vartheta_j)\\+2\dot{\varphi}_j\dot{\vartheta}_j\sin(\varphi_j)\sin(\vartheta_j) \Big)\bm{\hat{p}}_{0_j,1} 
+	\Big(-\ddot{\varphi}_j\sin(\varphi_j)\cos(\vartheta_j)-\ddot{\vartheta}_j\cos(\varphi_j)\sin(\vartheta_j)-\dot{\varphi}_j^2\cos(\varphi_j)\cos(\vartheta_j)-\dot{\vartheta}_j^2\cos(\varphi_j)\cos(\vartheta_j)\\+2\dot{\varphi}_j\dot{\vartheta}_j\sin(\varphi_j)\sin(\vartheta_j) \Big)\bm{\hat{p}}_{0_j,1}
 	+\Big(\ddot{\varphi}_j\cos(\varphi_j)\cos(\vartheta_j)-\ddot{\vartheta}_j\sin(\varphi_j)\sin(\vartheta_j)-\dot{\varphi}_j^2\sin(\varphi_j)\cos(\vartheta_j)\\-\dot{\vartheta}_j^2\sin(\varphi_j)\cos(\vartheta_j)-2\dot{\varphi}_j\dot{\vartheta}_j\cos(\varphi_j)\sin(\vartheta_j) \Big)\bm{\hat{p}}_{0_j,2}
 	+\Big(-\ddot{\vartheta}_j\cos(\vartheta_j)+\dot{\vartheta}_j^2\sin(\vartheta_j) \Big)\bm{\hat{p}}_{0_j,3}
 	\bigg]
@@ -126,7 +126,7 @@ Substituting Eq.\eqref{eq:cdprime2} into Eq.\eqref{eq:Rbddot} results in
 
 \begin{multline}
 	\ddot{\bm r}_{B/N} = \ddot{\bm r}_{C/N}-\frac{1}{m_{\text{sc}}}\sum_{j=1}^{N_{P}}m_j l_j \bigg[
-	\Big(-\ddot{\varphi}_j\sin(\varphi_j)\cos(\vartheta_j)-\ddot{\vartheta}_j\cos(\varphi_j)\sin(\vartheta_j)-\dot{\varphi}_j^2\cos(\varphi_j)\cos(\vartheta_j)\\-\dot{\vartheta}_j^2\cos(\varphi_j)\cos(\vartheta_j)+2\dot{\varphi}_j\dot{\vartheta}_j\sin(\varphi_j)\sin(\vartheta_j) \Big)\bm{\hat{p}}_{0_j,1} 
+	\Big(-\ddot{\varphi}_j\sin(\varphi_j)\cos(\vartheta_j)-\ddot{\vartheta}_j\cos(\varphi_j)\sin(\vartheta_j)-\dot{\varphi}_j^2\cos(\varphi_j)\cos(\vartheta_j)\\-\dot{\vartheta}_j^2\cos(\varphi_j)\cos(\vartheta_j)+2\dot{\varphi}_j\dot{\vartheta}_j\sin(\varphi_j)\sin(\vartheta_j) \Big)\bm{\hat{p}}_{0_j,1}
 	+\Big(\ddot{\varphi}_j\cos(\varphi_j)\cos(\vartheta_j)-\ddot{\vartheta}_j\sin(\varphi_j)\sin(\vartheta_j)\\-\dot{\varphi}_j^2\sin(\varphi_j)\cos(\vartheta_j)-\dot{\vartheta}_j^2\sin(\varphi_j)\cos(\vartheta_j)-2\dot{\varphi}_j\dot{\vartheta}_j\cos(\varphi_j)\sin(\vartheta_j) \Big)\bm{\hat{p}}_{0_j,2}
 	+\Big(-\ddot{\vartheta}_j\cos(\vartheta_j)\\+\dot{\vartheta}_j^2\sin(\vartheta_j) \Big)\bm{\hat{p}}_{0_j,3}
 	\bigg]
@@ -271,7 +271,7 @@ It is necessary to express $\bm{H}_T$ of the fuel slosh particle as:
 \begin{equation}
 	\bm{H}_{T,j}= m_j \bm{l_j}\times \bm{\dot{l}_j}
 \end{equation}
-Deriving this equation we obtain: 
+Deriving this equation we obtain:
 \begin{equation}
 	\bm{\dot{H}}_{T,j}=m_j\bm{l_j}\times \bm{\ddot{l_j}}
 	\label{eq:dotH_T_particle}
@@ -284,7 +284,7 @@ Using the transport theorem once again:
 $\bm{l_j}$ prime and second derivative are equal to \eqref{eq:rPcjBprime} and \eqref{eq:rPcjBprimeprime} because the $\bm{d}$ vector is constant in body frame. The previous results are reported here:
 
 \begin{equation}
-	\bm{l_j} = 
+	\bm{l_j} =
 	l_j
 	\leftidx{^{\mathcal{P}_{0,j}}}
 	{\begin{bmatrix}
@@ -296,9 +296,9 @@ $\bm{l_j}$ prime and second derivative are equal to \eqref{eq:rPcjBprime} and \e
 \end{equation}
 
 \begin{equation}
-	\bm{l_j}' 
+	\bm{l_j}'
 	=
-	l_j 
+	l_j
 	\leftidx{^{\mathcal{P}_{0,j}}}
 	{\begin{bmatrix}
 			-\dot{\varphi}_j\sin(\varphi_j)\cos(\vartheta_j)-\dot{\vartheta}_j\cos(\varphi_j)\sin(\vartheta_j) \\
@@ -309,7 +309,7 @@ $\bm{l_j}$ prime and second derivative are equal to \eqref{eq:rPcjBprime} and \e
 \end{equation}
 
 \begin{equation}
-	\bm{l_j}'' 
+	\bm{l_j}''
 	=
 	l_j
 	\leftidx{^{\mathcal{P}_{0,j}}}
@@ -367,7 +367,7 @@ Execute separately the following vectorial product, using $C$ and $S$ to indicat
 	\end{bmatrix}}
 	\label{eq:FS3}
 \end{multline}
-Using the results obtained in eq. \eqref{eq:FS3}, project eq. \eqref{eq:FSE2} on the axis of rotation of $\varphi$ and $\vartheta$. The $\varphi$ rotation axis is $\bm{\hat{p}}_{0_j,3}$, while we will call $\bm{\hat{p}'}_{0_j,2}$ the $\vartheta$ rotation axis. 
+Using the results obtained in eq. \eqref{eq:FS3}, project eq. \eqref{eq:FSE2} on the axis of rotation of $\varphi$ and $\vartheta$. The $\varphi$ rotation axis is $\bm{\hat{p}}_{0_j,3}$, while we will call $\bm{\hat{p}'}_{0_j,2}$ the $\vartheta$ rotation axis.
 
 \begin{figure}[ht]
 	\centering
@@ -430,9 +430,9 @@ Eqs. \eqref{eq:FSE6} and \eqref{eq:FSE7} are the Fuel Slosh Particle equations.
 
 \subsection{Back-substitution Method}
 
-The equations presented in the previous sections result in $2N_P + 6$ coupled differential equations. Therefore, if the EOMs were placed into state space form, a system mass matrix of size $2N_P + 6$ would need to be inverted to numerically integrate the EOMs. This can result in a computationally expensive simulation. The computation effort to numerically invert an $N\times N$ matrix scales with $N^{3}$. In the following section, the EOMs are manipulated using a back-substitution method to increase the computational efficiency. 
+The equations presented in the previous sections result in $2N_P + 6$ coupled differential equations. Therefore, if the EOMs were placed into state space form, a system mass matrix of size $2N_P + 6$ would need to be inverted to numerically integrate the EOMs. This can result in a computationally expensive simulation. The computation effort to numerically invert an $N\times N$ matrix scales with $N^{3}$. In the following section, the EOMs are manipulated using a back-substitution method to increase the computational efficiency.
 
-This manipulation involves inverting twice a ($3\times 3$) matrix, the $A^{-1}$ and $(D-CA^{-1}B)^{-1}$ matrices as it is shown in eqs. \eqref{eq:finalsystemomega}  and \eqref{eq:finalsystemr}. Then the system is completely solved back substituting for fuel slosh and translational motions. The derivation of the back-substitution method can be seen in the following sections. 
+This manipulation involves inverting twice a ($3\times 3$) matrix, the $A^{-1}$ and $(D-CA^{-1}B)^{-1}$ matrices as it is shown in eqs. \eqref{eq:finalsystemomega}  and \eqref{eq:finalsystemr}. Then the system is completely solved back substituting for fuel slosh and translational motions. The derivation of the back-substitution method can be seen in the following sections.
 \\
 
 \subsubsection{Fuel Slosh Motion}
@@ -445,13 +445,13 @@ Starting from eq. \eqref{eq:FSE6}
 \begin{equation}
 	\ddot{\varphi}_j  =\frac{1}{m_j l_j^2 \cos^2(\vartheta_j)}\Big(m_{j}\bm{\hat{p}}_{0_j,3}^T [\bm{\tilde{l}_j}](  [\bm{\tilde{l}_j}]+ [\bm{\tilde{d}}]) \bm{\dot{\omega}}_{B/N} -m_{j} \bm{\hat{p}}_{0_j,3}^{T} [\bm{\tilde{l}_j}] \bm{\ddot{r}}_{B/N}+a_{\varphi_j} \Big)
 	\label{eq:BSM2}
-\end{equation}	
+\end{equation}
 Writing it this way instead
 \begin{equation}
 	\ddot{\varphi}_j  = \bm a_{\varphi_j}^T \ddot{\bm{r}}_{B/N} + \bm b_{\varphi_j}^T \dot{\bm\omega}_{\cal B/N} +c_{\varphi_j}
 	\label{eq:BSM3}
 \end{equation}
-Where 
+Where
 
 \begin{equation}
 	\bm a_{\varphi_j}^{T} = -\frac{\bm{\hat{p}}_{0_j,3}^{T} [\bm{\tilde{l}_j}]}{ l_j^2 \cos^2(\vartheta_j)}
@@ -466,11 +466,11 @@ Where
 \begin{multline}
 	c_{\varphi_j} = \frac{1}{m_j l_j^2 \cos^2(\vartheta_j)}\Big\{-m_{j} \bm{\hat{p}}_{0_j,3}^{T} [\bm{\tilde{l}_j}][\bm{\tilde{\omega}}_{\cal B/N}][\bm{\tilde{\omega}}_{\cal B/N}] \bm{d}+\bm{\hat{p}}_{0_j,3}^T \bm{L}_{T,j}\\+2m_j l_j^2\dot{\varphi}_j\dot{\vartheta}\cos(\vartheta_j)\sin(\vartheta_j)- m_j \bm{\hat{p}}_{0_j,3}^T [\bm{\tilde{l}_j}]\bigg[2[\bm{\tilde{\omega}}_{\cal B/N}] \bm{l_j'}+[\bm{\tilde{\omega}}_{\cal B/N}][\bm{\tilde{\omega}}_{\cal B/N}] \bm{l_j}\bigg]\Big\}
 	\label{eq:BSM6}
-\end{multline}	
+\end{multline}
 Doing the same for eq. \eqref{eq:FSE7}
 
 \begin{multline}
-	\ddot{\vartheta}_j 
+	\ddot{\vartheta}_j
 	=\frac{1}{m_j l_j^2}\Big\{m_{j}\bm{\hat{p}}_{0_j,2}^{'T} [\bm{\tilde{l}_j}]( [\bm{\tilde{l}_j}] + [\bm{\tilde{d}}])\bm{\dot{\omega}}_{B/N}
 	-m_{j} \bm{\hat{p}}_{0_j,2}^{'T} [\bm{\tilde{l}_j}] \bm{\ddot{r}}_{B/N}-m_{j} \bm{\hat{p}}_{0_j,2}^{'T}[\bm{\tilde{l}_j}][\bm{\tilde{\omega}}_{\cal B/N}][\bm{\tilde{\omega}}_{\cal B/N}] \bm{d}\\+\bm{\hat{p}}_{0_j,2}^{'T} \bm{L}_{T,j}-m_j l_j^2\dot{\varphi}_j^2\cos(\vartheta_j)\sin(\vartheta_j)- m_j \bm{\hat{p}}_{0_j,2}^{'T} [\bm{\tilde{l}_j}]\bigg[2[\bm{\tilde{\omega}}_{\cal B/N}] \bm{l_j'}+[\bm{\tilde{\omega}}_{\cal B/N}][\bm{\tilde{\omega}}_{\cal B/N}] \bm{l_j}\bigg]\Big\}
 	\label{eq:BSM7}
@@ -544,11 +544,11 @@ Simplifying
 	\Big(\sin(\varphi_j)\cos(\vartheta_j)\bm{\hat{p}}_{0_j,1}\\-\cos(\varphi_j)\cos(\vartheta_j)\bm{\hat{p}}_{0_j,2}\Big)\bm b_{\varphi_j}^T +\Big(\cos(\varphi_j)\sin(\vartheta_j)\bm{\hat{p}}_{0_j,1}+\sin(\varphi_j)\sin(\vartheta_j)\bm{\hat{p}}_{0_j,2}+\cos(\vartheta_j)\bm{\hat{p}}_{0_j,3}\Big)\bm b_{\vartheta_j}^T \bigg] \Big\}\dot{\bm\omega}_{\cal B/N}
 	\\= \ddot{\bm r}_{C/N} 	- 2[\tilde{\bm\omega}_{\cal B/N}] \bm c'
 	-[\tilde{\bm\omega}_{\cal B/N}][\tilde{\bm\omega}_{\cal B/N}]\bm{c}
-	-\frac{1}{m_{\text{sc}}}\sum_{j=1}^{N_{P}}m_j l_j \bigg[ 
+	-\frac{1}{m_{\text{sc}}}\sum_{j=1}^{N_{P}}m_j l_j \bigg[
 	\Big(-\cos(\varphi_j)\cos(\vartheta_j)\bm{\hat{p}}_{0_j,1}\\-\sin(\varphi_j)\cos(\vartheta_j)\bm{\hat{p}}_{0_j,2}\Big)\dot{\varphi}_j^2
 	+\Big(-\cos(\varphi_j)\cos(\vartheta_j)\bm{\hat{p}}_{0_j,1}-\sin(\varphi_j)\cos(\vartheta_j)\bm{\hat{p}}_{0_j,2}+\sin(\vartheta_j)\bm{\hat{p}}_{0_j,3} \Big)\dot{\vartheta}_j^2 \\+
 	\Big(2\sin(\varphi_j)\sin(\vartheta_j)\bm{\hat{p}}_{0_j,1} -2\cos(\varphi_j)\sin(\vartheta_j)\bm{\hat{p}}_{0_j,2}\Big)\dot{\varphi}_j\dot{\vartheta}_j
-	-\Big(\sin(\varphi_j)\cos(\vartheta_j)\bm{\hat{p}}_{0_j,1}\\-\cos(\varphi_j)\cos(\vartheta_j)\bm{\hat{p}}_{0_j,2}\Big)c_{\varphi_j} - \Big(\cos(\varphi_j)\sin(\vartheta_j)\bm{\hat{p}}_{0_j,1}+\sin(\varphi_j)\sin(\vartheta_j)\bm{\hat{p}}_{0_j,2}+\cos(\vartheta_j)\bm{\hat{p}}_{0_j,3}\Big) c_{\vartheta_j} 
+	-\Big(\sin(\varphi_j)\cos(\vartheta_j)\bm{\hat{p}}_{0_j,1}\\-\cos(\varphi_j)\cos(\vartheta_j)\bm{\hat{p}}_{0_j,2}\Big)c_{\varphi_j} - \Big(\cos(\varphi_j)\sin(\vartheta_j)\bm{\hat{p}}_{0_j,1}+\sin(\varphi_j)\sin(\vartheta_j)\bm{\hat{p}}_{0_j,2}+\cos(\vartheta_j)\bm{\hat{p}}_{0_j,3}\Big) c_{\vartheta_j}
 	\bigg]
 	\label{eq:Rbddot6}
 \end{multline}
@@ -561,22 +561,22 @@ Multiply both sides by $m_{\text{sc}}$.
 	\Big(\sin(\varphi_j)\cos(\vartheta_j)\bm{\hat{p}}_{0_j,1}\\-\cos(\varphi_j)\cos(\vartheta_j)\bm{\hat{p}}_{0_j,2}\Big)\bm b_{\varphi_j}^T +\Big(\cos(\varphi_j)\sin(\vartheta_j)\bm{\hat{p}}_{0_j,1}+\sin(\varphi_j)\sin(\vartheta_j)\bm{\hat{p}}_{0_j,2}+\cos(\vartheta_j)\bm{\hat{p}}_{0_j,3}\Big)\bm b_{\vartheta_j}^T \bigg] \Big\}\dot{\bm\omega}_{\cal B/N}
 	\\= m_{\text{sc}}\ddot{\bm r}_{C/N} - 2m_{\text{sc}}[\tilde{\bm\omega}_{\cal B/N}] \bm c'
 	-m_{\text{sc}}[\tilde{\bm\omega}_{\cal B/N}][\tilde{\bm\omega}_{\cal B/N}]\bm{c}
-	-\sum_{j=1}^{N_{P}}m_j l_j \bigg[ 
+	-\sum_{j=1}^{N_{P}}m_j l_j \bigg[
 	\Big(-\cos(\varphi_j)\cos(\vartheta_j)\bm{\hat{p}}_{0_j,1}\\-\sin(\varphi_j)\cos(\vartheta_j)\bm{\hat{p}}_{0_j,2}\Big)\dot{\varphi}_j^2
 	+\Big(-\cos(\varphi_j)\cos(\vartheta_j)\bm{\hat{p}}_{0_j,1}-\sin(\varphi_j)\cos(\vartheta_j)\bm{\hat{p}}_{0_j,2}+\sin(\vartheta_j)\bm{\hat{p}}_{0_j,3} \Big)\dot{\vartheta}_j^2 \\+
 	\Big(2\sin(\varphi_j)\sin(\vartheta_j)\bm{\hat{p}}_{0_j,1} -2\cos(\varphi_j)\sin(\vartheta_j)\bm{\hat{p}}_{0_j,2}\Big)\dot{\varphi}_j\dot{\vartheta}_j
-	-\Big(\sin(\varphi_j)\cos(\vartheta_j)\bm{\hat{p}}_{0_j,1}\\-\cos(\varphi_j)\cos(\vartheta_j)\bm{\hat{p}}_{0_j,2}\Big)c_{\varphi_j} - \Big(\cos(\varphi_j)\sin(\vartheta_j)\bm{\hat{p}}_{0_j,1}+\sin(\varphi_j)\sin(\vartheta_j)\bm{\hat{p}}_{0_j,2}+\cos(\vartheta_j)\bm{\hat{p}}_{0_j,3}\Big) c_{\vartheta_j} 
+	-\Big(\sin(\varphi_j)\cos(\vartheta_j)\bm{\hat{p}}_{0_j,1}\\-\cos(\varphi_j)\cos(\vartheta_j)\bm{\hat{p}}_{0_j,2}\Big)c_{\varphi_j} - \Big(\cos(\varphi_j)\sin(\vartheta_j)\bm{\hat{p}}_{0_j,1}+\sin(\varphi_j)\sin(\vartheta_j)\bm{\hat{p}}_{0_j,2}+\cos(\vartheta_j)\bm{\hat{p}}_{0_j,3}\Big) c_{\vartheta_j}
 	\bigg]
 	\label{eq:Rbddot7}
 \end{multline}
 
 \subsubsection{Rotation}
 
-Same thing for rotation: 
+Same thing for rotation:
 
 \begin{multline}
 	m_{\text{sc}}[\tilde{\bm{c}}]\ddot{\bm r}_{B/N}+[I_{\text{sc},B}] \dot{\bm\omega}_{\cal B/N}  - \sum\limits_{j=1}^{N_P}m_j l_j [\tilde{\bm{r}}_{P_{c,j}/B}] \bigg[
-	\Big(\sin(\varphi_j)\cos(\vartheta_j)\bm{\hat{p}}_{0_j,1}\\-\cos(\varphi_j)\cos(\vartheta_j)\bm{\hat{p}}_{0_j,2}\Big)(\bm a_{\varphi_j}^T \ddot{\bm{r}}_{B/N} + \bm b_{\varphi_j}^T \dot{\bm\omega}_{\cal B/N}+c_{\varphi_j}) 
+	\Big(\sin(\varphi_j)\cos(\vartheta_j)\bm{\hat{p}}_{0_j,1}\\-\cos(\varphi_j)\cos(\vartheta_j)\bm{\hat{p}}_{0_j,2}\Big)(\bm a_{\varphi_j}^T \ddot{\bm{r}}_{B/N} + \bm b_{\varphi_j}^T \dot{\bm\omega}_{\cal B/N}+c_{\varphi_j})
 	+\Big(\cos(\varphi_j)\sin(\vartheta_j)\bm{\hat{p}}_{0_j,1}+\sin(\varphi_j)\sin(\vartheta_j)\bm{\hat{p}}_{0_j,2}\\+\cos(\vartheta_j)\bm{\hat{p}}_{0_j,3} \Big)(\bm a_{\vartheta_j}^T \ddot{\bm r}_{B/N} + \bm b_{\vartheta_j}^T \dot{\bm\omega}_{\cal B/N} + c_{\vartheta_j})
 	\bigg] = \\
 	\bm{L}_B-[\bm{\tilde{\omega}}_{\cal B/N}] [I_{\text{sc},B}] \bm\omega_{\cal B/N}
@@ -602,7 +602,7 @@ Next
 	+\sin(\varphi_j)\sin(\vartheta_j)\bm{\hat{p}}_{0_j,2}+\cos(\vartheta_j)\bm{\hat{p}}_{0_j,3} \Big)\bm b_{\vartheta_j}^T
 	\bigg]
 	\Big\}\dot{\bm\omega}_{\cal B/N}
-	\\= 
+	\\=
 	\bm{L}_B-[\bm{\tilde{\omega}}_{\cal B/N}] [I_{\text{sc},B}] \bm\omega_{\cal B/N}
 	- [I'_{\text{sc},B}] \bm\omega_{\cal B/N}- \sum\limits_{j=1}^{N_P} m_j \Big\{[\tilde{\bm\omega}_{\cal B/N}] [\tilde{\bm{r}}_{P_{c,j}/B}] \bm{r}'_{P_{c,j}/B}
 	\\+l_j[\tilde{\bm{r}}_{P_{c,j}/B}]\bigg[
@@ -648,11 +648,11 @@ The following definitions can be defined:
 \begin{multline}
 	\bm v_{\text{trans}} = m_{\text{sc}}\ddot{\bm r}_{C/N} - 2m_{\text{sc}}[\tilde{\bm\omega}_{\cal B/N}] \bm c'
 	-m_{\text{sc}}[\tilde{\bm\omega}_{\cal B/N}][\tilde{\bm\omega}_{\cal B/N}]\bm{c}
-	\\-\sum_{j=1}^{N_{P}}m_j l_j \bigg[ 
+	\\-\sum_{j=1}^{N_{P}}m_j l_j \bigg[
 	\Big(-\cos(\varphi_j)\cos(\vartheta_j)\bm{\hat{p}}_{0_j,1}-\sin(\varphi_j)\cos(\vartheta_j)\bm{\hat{p}}_{0_j,2}\Big)\dot{\varphi}_j^2
 	+\Big(-\cos(\varphi_j)\cos(\vartheta_j)\bm{\hat{p}}_{0_j,1}\\-\sin(\varphi_j)\cos(\vartheta_j)\bm{\hat{p}}_{0_j,2}+\sin(\vartheta_j)\bm{\hat{p}}_{0_j,3} \Big)\dot{\vartheta}_j^2 +
 	\Big(2\sin(\varphi_j)\sin(\vartheta_j)\bm{\hat{p}}_{0_j,1}\\ -2\cos(\varphi_j)\sin(\vartheta_j)\bm{\hat{p}}_{0_j,2}\Big)\dot{\varphi}_j\dot{\vartheta}_j
-	-\Big(\sin(\varphi_j)\cos(\vartheta_j)\bm{\hat{p}}_{0_j,1}-\cos(\varphi_j)\cos(\vartheta_j)\bm{\hat{p}}_{0_j,2}\Big)c_{\varphi_j}\\ - \Big(\cos(\varphi_j)\sin(\vartheta_j)\bm{\hat{p}}_{0_j,1}+\sin(\varphi_j)\sin(\vartheta_j)\bm{\hat{p}}_{0_j,2}+\cos(\vartheta_j)\bm{\hat{p}}_{0_j,3}\Big) c_{\vartheta_j} 
+	-\Big(\sin(\varphi_j)\cos(\vartheta_j)\bm{\hat{p}}_{0_j,1}-\cos(\varphi_j)\cos(\vartheta_j)\bm{\hat{p}}_{0_j,2}\Big)c_{\varphi_j}\\ - \Big(\cos(\varphi_j)\sin(\vartheta_j)\bm{\hat{p}}_{0_j,1}+\sin(\varphi_j)\sin(\vartheta_j)\bm{\hat{p}}_{0_j,2}+\cos(\vartheta_j)\bm{\hat{p}}_{0_j,3}\Big) c_{\vartheta_j}
 	\bigg]
 \end{multline}
 
@@ -694,7 +694,7 @@ Solving the system-of-equations by
 	\label{eq:finalsystemr}
 \end{equation}
 
-Now the other state variables can be solved using Eqs. \eqref{eq:BSM3} and \eqref{eq:BSM9}: 
+Now the other state variables can be solved using Eqs. \eqref{eq:BSM3} and \eqref{eq:BSM9}:
 
 \begin{equation}
 	\ddot{\varphi}_j  = \bm a_{\varphi_j}^T \ddot{\bm{r}}_{B/N} + \bm b_{\varphi_j}^T \dot{\bm\omega}_{\cal B/N} +c_{\varphi_j}
@@ -759,7 +759,7 @@ As we can see in Eqs. \eqref{eq:BSM4}, \eqref{eq:BSM5} and \eqref{eq:BSM6}, the 
 	\includegraphics[width=13cm]{Figures/referencesystemsP0.pdf}
 	\caption{$\mathcal{P}_{0,j}^{\text{new}}$ frame definition}
 	\label{fig:newreferencesystem}
-\end{figure} 
+\end{figure}
 At this point is easy to see that the new value of $\varphi_j$ and $\vartheta_j$ are equal to 0. To compute the new value of $\dot{\varphi}_j$ and $\dot{\vartheta}_j$, Eq. \eqref{eq:ljprime} is reversed and it yields:
 \begin{equation}
 	\dot{\varphi}=\frac{\bm{l}_j[2]}{l_j}
