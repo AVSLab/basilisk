@@ -1,0 +1,1 @@
+- Fixed :ref:`FuelTank` propellant depletion when fuel slosh particles are attached. The tank and each slosh particle now drain their correct share of the mass flow regardless of how the propellant is partitioned.
