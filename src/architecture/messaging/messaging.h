@@ -52,6 +52,52 @@ private:
     void* sourceHandle = nullptr;            //!< -- opaque owner token (a PyObject* in practice)
     void  (*acquireSource)(void*) = nullptr; //!< -- +1 the owner (Py_INCREF under the GIL)
     void  (*releaseSource)(void*) = nullptr; //!< -- -1 the owner (Py_DECREF under the GIL)
+    bool replacingSource = false;            //!< -- prevents ownership changes during a release callback
+
+    //! keep replacement callbacks from changing the reader until the incoming state is committed
+    class SourceReplacementGuard {
+    public:
+        explicit SourceReplacementGuard(bool& replacementFlag)
+            : flag(replacementFlag) {
+            this->flag = true;
+        }
+
+        ~SourceReplacementGuard() {
+            this->flag = false;
+        }
+
+    private:
+        bool& flag;
+    };
+
+    //! own an acquired or transferred source reference until assignment commits it
+    class SourceHandleGuard {
+    public:
+        SourceHandleGuard(void* handle,
+                          void (*acquire)(void*),
+                          void (*release)(void*),
+                          bool acquireReference)
+            : handle(handle),
+              release(release) {
+            if (acquireReference && this->handle && acquire) {
+                acquire(this->handle);
+            }
+        }
+
+        ~SourceHandleGuard() {
+            if (this->handle && this->release) {
+                this->release(this->handle);
+            }
+        }
+
+        void relinquish() {
+            this->handle = nullptr;
+        }
+
+    private:
+        void* handle;
+        void (*release)(void*);
+    };
 
     //! release our hold on the current source (if any), then forget it
     void releaseHandle_() {
@@ -104,22 +150,49 @@ public:
         this->adoptHandleFrom_(other);
     }
 
-    //! copy assignment -- release the outgoing source and acquire the incoming one.
-    //! Guards: self-assignment, and pointer-equality on the owner token so that a
-    //! re-subscribe to the same source (or the common null-handle case from
-    //! ``*this = source->addSubscriber()``) does no redundant Py_INCREF/Py_DECREF churn.
+    //! copy assignment -- acquire the incoming owner before releasing and replacing ours
     ReadFunctor& operator=(const ReadFunctor& other) {
         if (this == &other) { return *this; }
+        if (this->replacingSource) { return *this; }
+
         bool sameSource = (this->sourceHandle == other.sourceHandle);
-        this->payloadPointer = other.payloadPointer;
-        this->headerPointer = other.headerPointer;
-        this->initialized = other.initialized;
-        this->bskLogger = other.bskLogger;
-        this->zeroMsgPayload = other.zeroMsgPayload;
-        if (!sameSource) {
-            this->releaseHandle_();
-            this->adoptHandleFrom_(other);
+        if (sameSource) {
+            this->payloadPointer = other.payloadPointer;
+            this->headerPointer = other.headerPointer;
+            this->initialized = other.initialized;
+            this->bskLogger = other.bskLogger;
+            this->zeroMsgPayload = other.zeroMsgPayload;
+            return *this;
         }
+
+        messageType* incomingPayload = other.payloadPointer;
+        MsgHeader* incomingHeader = other.headerPointer;
+        bool incomingInitialized = other.initialized;
+        BSKLogger incomingLogger = other.bskLogger;
+        messageType incomingZeroPayload = other.zeroMsgPayload;
+        void* incomingHandle = other.sourceHandle;
+        void (*incomingAcquire)(void*) = other.acquireSource;
+        void (*incomingRelease)(void*) = other.releaseSource;
+
+        SourceReplacementGuard replacementGuard(this->replacingSource);
+        SourceHandleGuard incomingOwner(incomingHandle,
+                                        incomingAcquire,
+                                        incomingRelease,
+                                        true);
+        this->payloadPointer = nullptr;
+        this->headerPointer = nullptr;
+        this->initialized = false;
+        this->releaseHandle_();
+
+        this->bskLogger = std::move(incomingLogger);
+        this->zeroMsgPayload = std::move(incomingZeroPayload);
+        this->payloadPointer = incomingPayload;
+        this->headerPointer = incomingHeader;
+        this->initialized = incomingInitialized;
+        this->sourceHandle = incomingHandle;
+        this->acquireSource = incomingAcquire;
+        this->releaseSource = incomingRelease;
+        incomingOwner.relinquish();
         return *this;
     }
 
@@ -141,18 +214,39 @@ public:
     //! move assignment -- release ours, steal theirs, null out the moved-from reader
     ReadFunctor& operator=(ReadFunctor&& other) {
         if (this == &other) { return *this; }
-        this->releaseHandle_();
-        this->payloadPointer = other.payloadPointer;
-        this->headerPointer = other.headerPointer;
-        this->initialized = other.initialized;
-        this->bskLogger = std::move(other.bskLogger);
-        this->zeroMsgPayload = std::move(other.zeroMsgPayload);
-        this->sourceHandle = other.sourceHandle;
-        this->acquireSource = other.acquireSource;
-        this->releaseSource = other.releaseSource;
+        if (this->replacingSource) { return *this; }
+
+        messageType* incomingPayload = other.payloadPointer;
+        MsgHeader* incomingHeader = other.headerPointer;
+        bool incomingInitialized = other.initialized;
+        BSKLogger incomingLogger = std::move(other.bskLogger);
+        messageType incomingZeroPayload = std::move(other.zeroMsgPayload);
+        void* incomingHandle = other.sourceHandle;
+        void (*incomingAcquire)(void*) = other.acquireSource;
+        void (*incomingRelease)(void*) = other.releaseSource;
         other.sourceHandle = nullptr;
         other.acquireSource = nullptr;
         other.releaseSource = nullptr;
+
+        SourceReplacementGuard replacementGuard(this->replacingSource);
+        SourceHandleGuard incomingOwner(incomingHandle,
+                                        incomingAcquire,
+                                        incomingRelease,
+                                        false);
+        this->payloadPointer = nullptr;
+        this->headerPointer = nullptr;
+        this->initialized = false;
+        this->releaseHandle_();
+
+        this->bskLogger = std::move(incomingLogger);
+        this->zeroMsgPayload = std::move(incomingZeroPayload);
+        this->payloadPointer = incomingPayload;
+        this->headerPointer = incomingHeader;
+        this->initialized = incomingInitialized;
+        this->sourceHandle = incomingHandle;
+        this->acquireSource = incomingAcquire;
+        this->releaseSource = incomingRelease;
+        incomingOwner.relinquish();
         return *this;
     }
 
@@ -160,6 +254,10 @@ public:
     //! after a subscribe completes. The caller has already taken the one reference we adopt
     //! here (so we do NOT call acquire); subsequent C++ copies acquire, destructors release.
     void setSource(void* handle, void(*acquire)(void*), void(*release)(void*)) {
+        if (this->replacingSource) {
+            if (handle && release) { release(handle); }
+            return;
+        }
         if (handle == this->sourceHandle) {
             // Already holding this exact source (e.g. a re-subscribe to the same message).
             // The caller still took one reference we are contractually obliged to consume, so
@@ -252,7 +350,6 @@ public:
     //! Subscribe to a C++ message
     void subscribeTo(Message<messageType> *source){
         *this = source->addSubscriber();
-        this->initialized = true;
     };
 
     //! Unsubscribe to the connected message, noop if no message was connected

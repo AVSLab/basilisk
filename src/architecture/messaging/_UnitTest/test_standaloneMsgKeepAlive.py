@@ -174,9 +174,80 @@ def test_releaseKeepAliveIsReentrantSafe():
     assert not module.dataInMsg.isLinked()
 
 
+def test_moveAssignmentRejectsReentrantKeepAlive():
+    """A reentrant subscribe during move assignment does not leak its source."""
+    module = cppModuleTemplate.CppModuleTemplate()
+    finalMsg = messaging.CModuleTemplateMsg()
+    intermediateMsg = messaging.CModuleTemplateMsg()
+    intermediateReference = weakref.ref(intermediateMsg)
+    initialMsg = messaging.CModuleTemplateMsg()
+    callbackCount = 0
+
+    def subscribeToIntermediate(_):
+        nonlocal callbackCount
+        callbackCount += 1
+        source = intermediateReference()
+        assert source is not None
+        module.dataInMsg.subscribeTo(source)
+
+    initialReference = weakref.ref(initialMsg, subscribeToIntermediate)
+    module.dataInMsg.subscribeTo(initialMsg)
+    del initialMsg
+    gc.collect()
+
+    module.dataInMsg.subscribeTo(finalMsg)
+
+    assert initialReference() is None
+    assert callbackCount == 1
+    assert module.dataInMsg.isSubscribedTo(finalMsg)
+
+    del intermediateMsg
+    gc.collect()
+    assert intermediateReference() is None
+
+
+def test_copyAssignmentSurvivesReentrantUnsubscribe():
+    """A reader-vector copy assignment commits after a reentrant unsubscribe."""
+    readers = messaging.CModuleTemplateMsgInMsgsVector()
+    initialMsg = messaging.CModuleTemplateMsg()
+    finalMsg = messaging.CModuleTemplateMsg()
+    finalReference = weakref.ref(finalMsg)
+
+    readers.append(initialMsg.addSubscriber())
+    finalReader = finalMsg.addSubscriber()
+    callbackCount = 0
+
+    def unsubscribeAgain(_):
+        nonlocal callbackCount
+        callbackCount += 1
+        readers[0].unsubscribe()
+
+    initialReference = weakref.ref(initialMsg, unsubscribeAgain)
+    del initialMsg
+    gc.collect()
+
+    readers[0] = finalReader
+
+    assert initialReference() is None
+    assert callbackCount == 1
+    assert readers[0].isLinked()
+    assert readers[0].isSubscribedTo(finalMsg)
+
+    del finalReader
+    del finalMsg
+    gc.collect()
+    assert finalReference() is not None
+
+    del readers
+    gc.collect()
+    assert finalReference() is None
+
+
 if __name__ == "__main__":
     test_standaloneMsgSurvivesGarbageCollection()
     test_unsubscribeReleasesKeepAlive()
     test_messageRecorderKeepsSourceAlive()
     test_addSubscriberKeepsSourceAlive()
     test_releaseKeepAliveIsReentrantSafe()
+    test_moveAssignmentRejectsReentrantKeepAlive()
+    test_copyAssignmentSurvivesReentrantUnsubscribe()
