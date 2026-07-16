@@ -387,6 +387,13 @@ void Spacecraft::updateSCMassProps(double time)
     (*this->cDot_B) = (*this->cPrime_B) + omegaLocal_BN_B.cross(cLocal_B);
 }
 
+/*! Return true if the spacecraft can use direct rigid-hub equations instead of
+ the full back-substitution path. */
+bool Spacecraft::useHubOnlyFastPath() const
+{
+    return this->states.empty() && this->hub.r_BcB_B.isZero();
+}
+
 /*! This method is solving Xdot = F(X,t) for the system. The hub needs to calculate its derivatives, along with all of
  the stateEffectors. The hub also has gravity and dynamicEffectors acting on it and these relationships are controlled
  in this method. At the end of this method all of the states will have their corresponding state derivatives set in the
@@ -429,6 +436,31 @@ void Spacecraft::equationsOfMotion(double integTimeSeconds, double timeStep)
 
         this->hubR_N->setDerivative(vLocal_BN_N);
         this->hubV_N->setDerivative(*this->g_N + nonConservativeAccel_N);
+        return;
+    }
+
+    if (this->useHubOnlyFastPath()) {
+        Eigen::Vector3d rLocal_BN_N = this->hubR_N->getState();
+        Eigen::Vector3d vLocal_BN_N = this->hubV_N->getState();
+
+        this->gravField.computeGravityField(rLocal_BN_N, vLocal_BN_N);
+
+        this->sumForceExternal_B.setZero();
+        this->sumForceExternal_N.setZero();
+        this->sumTorquePntB_B.setZero();
+
+        std::vector<DynamicEffector*>::iterator dynIt;
+        for(dynIt = this->dynEffectors.begin(); dynIt != this->dynEffectors.end(); dynIt++)
+        {
+            (*dynIt)->computeForceTorque(integTimeSeconds, timeStep);
+            this->sumForceExternal_N += (*dynIt)->forceExternal_N;
+            this->sumForceExternal_B += (*dynIt)->forceExternal_B;
+            this->sumTorquePntB_B += (*dynIt)->torqueExternalPntB_B;
+        }
+
+        this->hub.computeHubOnlyDerivatives(this->sumForceExternal_N,
+                                            this->sumForceExternal_B,
+                                            this->sumTorquePntB_B);
         return;
     }
 

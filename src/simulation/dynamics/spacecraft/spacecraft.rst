@@ -23,6 +23,13 @@ attitude or angular-rate states to compute its force or torque, the spacecraft e
 attitude as a fixed orientation in this mode. The optional attitude reference input message is not supported in
 ``pointMassTranslationalOnly`` mode.
 
+In the default 6-DOF mode, ``spacecraft`` automatically uses a direct fixed-mass hub-only dynamics path when no
+state effectors are attached and the hub body-frame origin :math:`B` is colocated with the hub center of mass
+(``r_BcB_B`` is zero). This optimization preserves the rigid-hub translational and rotational equations of motion,
+including gravity and dynamic-effector force and torque contributions, while bypassing the general back-substitution
+matrix assembly required for coupled multi-body state effectors. If a state effector is attached, or if point
+:math:`B` is offset from the hub center of mass, the module uses the general back-substitution formulation.
+
 The module
 :download:`PDF Description </../../src/simulation/dynamics/spacecraft/_Documentation/Spacecraft/Basilisk-SPACECRAFT-20170808.pdf>`
 contains further information on this module's function,
@@ -80,6 +87,11 @@ This section is to outline the steps needed to setup a Spacecraft module in pyth
 
     This only integrates the hub position and velocity. Dynamic effectors can be attached if their translational
     force contribution should act on the point mass, but state effectors cannot be attached.
+
+    When ``pointMassTranslationalOnly`` is left at its default value of ``False``, no additional setting is needed to
+    use the fixed-mass hub-only optimization. It is selected automatically for a hub-only spacecraft with
+    ``r_BcB_B`` equal to zero, and it is bypassed automatically for spacecraft with state effectors or a nonzero hub
+    center offset.
 
 #.  Finally, add the spacecraft to the task::
 
