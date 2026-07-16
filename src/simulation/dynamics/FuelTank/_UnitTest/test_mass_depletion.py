@@ -25,6 +25,7 @@ import pytest
 from Basilisk.architecture import messaging
 from Basilisk.simulation import fuelTank
 from Basilisk.simulation import gravityEffector
+from Basilisk.simulation import linearSpringMassDamper
 from Basilisk.simulation import spacecraft
 from Basilisk.simulation import thrusterDynamicEffector, thrusterStateEffector
 from Basilisk.utilities import SimulationBaseClass
@@ -214,8 +215,9 @@ def test_massDepletionTest(show_plots, thrusterConstructor):
     np.testing.assert_allclose(fuelMassDot[-1], 0, rtol=1e-12, err_msg="Thruster mass depletion not ramped down")
 
 
-def test_leakyTank():
-    """Module Unit Test"""
+@pytest.mark.parametrize("sloshMass", [0.0, 10.0, 40.0])
+def test_leakyTank(sloshMass):
+    """A leaking tank sheds mDot*t from the vehicle, whatever share of it fuel slosh carries."""
     scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "spacecraftBody"
     unitTaskName = "unitTask"
@@ -239,6 +241,21 @@ def test_leakyTank():
     # Add tank
     scObject.addStateEffector(unitTestSim.fuelTankStateEffector)
 
+    # Carry part of the propellant outside the tank, in an attached fuel slosh particle
+    particle = None
+    if sloshMass > 0.0:
+        particle = linearSpringMassDamper.LinearSpringMassDamper()
+        particle.k = 100.0  # [N/m]
+        particle.c = 1.0  # [N*s/m]
+        particle.r_PB_B = [[0.0], [0.0], [0.0]]  # [m]
+        particle.pHat_B = [[1.0], [0.0], [0.0]]
+        particle.rhoInit = 0.0  # [m]
+        particle.rhoDotInit = 0.0  # [m/s]
+        particle.massInit = sloshMass  # [kg]
+        unitTestSim.fuelTankStateEffector.pushFuelSloshParticle(particle)
+        scObject.addStateEffector(particle)
+    totalPropellant = initialFuelMass + sloshMass  # [kg]
+
     # Make the tank leaky
     leakRate = 1e-5  # [kg/s]
     unitTestSim.fuelTankStateEffector.setFuelLeakRate(leakRate)
@@ -259,7 +276,19 @@ def test_leakyTank():
     fuelMassDot = fuelLog.fuelMassDot
 
     assert np.allclose(fuelMassDot, -leakRate, rtol=1e-6)
-    assert np.isclose(fuelMass[-1], initialFuelMass - stopTime * leakRate, rtol=1e-6)
+
+    # The tank drains only its share of the flow, so its mass follows
+    # m(t) = m(0) * (1 - mDot*t/totalPropellant), which is m(0) - mDot*t when it carries it all.
+    expectedTankMass = initialFuelMass * (1.0 - leakRate * stopTime / totalPropellant)  # [kg]
+    assert np.isclose(fuelMass[-1], expectedTankMass, rtol=1e-6)
+
+    # Whatever the split, the vehicle sheds exactly mDot*t.
+    finalTankMass = scObject.dynManager.getStateObject(
+        unitTestSim.fuelTankStateEffector.getNameOfMassState()).getState()[0][0]
+    finalSloshMass = 0.0 if particle is None else scObject.dynManager.getStateObject(
+        particle.nameOfMassState).getState()[0][0]
+    shed = totalPropellant - (finalTankMass + finalSloshMass)  # [kg]
+    assert np.isclose(shed, leakRate * stopTime, rtol=1e-6)
 
 
 def test_leakyTankInputMessageOverridesSetter():
