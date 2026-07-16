@@ -611,6 +611,17 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
+    # Use a local, seeded RNG so the injected measurement noise is reproducible
+    # without touching NumPy's global RNG state. With the honest noise level
+    # (sigma = sqrt(qObsVal)) the final-step estimate is a noisy sample, so an
+    # unseeded draw makes the convergence check below intermittently fail; a
+    # fixed seed keeps the test deterministic.
+    rng = np.random.default_rng(42)
+
+    # Final-state convergence tolerance: loose under honest measurement noise
+    # (sigma = sqrt(qObsVal)), tight when the measurements are noiseless.
+    stateConvTol = 1.0E-1 if AddMeasNoise else 1.0E-2
+
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
 
@@ -684,7 +695,7 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
             dotList = []
             for element in CSSOrientationList:
                 if AddMeasNoise:
-                    dotProd = np.dot(np.array(element), np.array(testVector1)[0:3]) + np.random.normal(0., module.qObsVal)
+                    dotProd = np.dot(np.array(element), np.array(testVector1)[0:3]) + rng.normal(0., np.sqrt(module.qObsVal))
                 else:
                     dotProd = np.dot(np.array(element), np.array(testVector1)[0:3])
                 dotList.append(dotProd)
@@ -701,7 +712,7 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
         if (abs(covarLog[-1, i * 6 + 1 + i] - covarLog[0, i * 6 + 1 + i] / 100.) > 1E-2):
             testFailCount += 1
             testMessages.append("Covariance update failure")
-        if (abs(stateLog[-1, i + 1] - stateTarget1[i]) > 1.0E-2):
+        if (abs(stateLog[-1, i + 1] - stateTarget1[i]) > stateConvTol):
             testFailCount += 1
             testMessages.append("State update failure")
 
@@ -715,7 +726,7 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
             dotList = []
             for element in CSSOrientationList:
                 if AddMeasNoise:
-                    dotProd = np.dot(np.array(element), np.array(testVector2)[0:3])  + np.random.normal(0., module.qObsVal)
+                    dotProd = np.dot(np.array(element), np.array(testVector2)[0:3])  + rng.normal(0., np.sqrt(module.qObsVal))
                 else:
                     dotProd = np.dot(np.array(element), np.array(testVector2)[0:3])
                 dotList.append(dotProd)
@@ -734,7 +745,7 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
         if (abs(covarLog[-1, i * 6 + 1 + i] - covarLog[0, i * 6 + 1 + i] / 100.) > 1E-2):
             testFailCount += 1
             testMessages.append("Covariance update failure")
-        if (abs(stateLog[-1, i + 1] - stateTarget2[i]) > 1.0E-2):
+        if (abs(stateLog[-1, i + 1] - stateTarget2[i]) > stateConvTol):
             testFailCount += 1
             testMessages.append("State update failure")
 
