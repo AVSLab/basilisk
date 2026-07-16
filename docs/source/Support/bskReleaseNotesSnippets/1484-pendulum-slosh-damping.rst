@@ -1,0 +1,2 @@
+- Fixed :ref:`sphericalPendulum` fuel-slosh damping which omitted the pendulum moment arm (issue #1484).
+- Added initialization validation requiring the :ref:`sphericalPendulum` damping matrix ``D`` to be symmetric positive semidefinite.
