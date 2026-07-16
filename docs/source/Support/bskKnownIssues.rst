@@ -17,6 +17,9 @@ Version |release| (July 7, 2026)
   supported 4.x release.
 - ``python conanfile.py --clean`` now removes Basilisk Numba cache artifacts in addition to ``dist3``,
   preventing clean source builds from reusing stale compiled Numba objects after API changes.
+- The :ref:`sphericalPendulum` fuel-slosh effector applied its viscous damping force without the pendulum
+  moment arm, so an isotropic damping matrix ``D`` dissipated no rotational energy and an anisotropic ``D``
+  could add energy to the spacecraft. This is fixed in the current version.
 
 Version 2.11.0 (July 7, 2026)
 -----------------------------
