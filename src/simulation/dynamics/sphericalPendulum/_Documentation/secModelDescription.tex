@@ -263,9 +263,9 @@ The fuel slosh motion is being approximated by a lumped mechanical multi-mode mo
 	\bm{\dot{H}}_{T,j}=\bm{L}_{T,j}+m_{j} \bm{\ddot{r}}_{T/N}\times \bm{l_j}
 	\label{eq:dotH_T}
 \end{equation}
-Where the $\bm{L}_{T,j}$ represents the external torques. It contains the damping term that is modeled as $\bm{D}$ damping matrix multiplied by the relative velocity between the tank and the fuel, $\bm{l_j'}$. It takes into account  the torque due to gravity and any other external torque.
+Where $\bm{L}_{T,j}$ is the external torque on the slosh mass about the tank point. The damping is a linear viscous force, $-\bm{D}\bm{l_j'}$, obtained by applying the damping matrix $\bm{D}$ to the relative velocity between the tank and the fuel, $\bm{l_j'}$. This force acts on the slosh mass, so, like the gravitational force $\bm{F_g}$, it enters the torque balance through the moment arm $\bm{l_j}$. Any additional external torque is captured by $\bm{\tau}_{ext,j}$.
 \begin{equation}
-	\bm{L}_{T,j}=\bm{l_j}\times \bm{F_g}-\bm{D}\bm{l_j'} + \bm{\tau}_{ext,j}
+	\bm{L}_{T,j}=\bm{l_j}\times \left(\bm{F_g}-\bm{D}\bm{l_j'}\right) + \bm{\tau}_{ext,j}
 \end{equation}
 It is necessary to express $\bm{H}_T$ of the fuel slosh particle as:
 \begin{equation}
