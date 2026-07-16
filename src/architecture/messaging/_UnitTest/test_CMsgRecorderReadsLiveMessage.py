@@ -24,7 +24,7 @@
 #
 
 """
-Regression test for issue #338.
+Regression tests for issues #338 and #1433.
 
 A recorder attached to a C module's C output message must read the module's
 live message data, not a stale snapshot. The C-message read path reaches the
@@ -32,10 +32,17 @@ payload by pointer arithmetic from the start of the ``{type}_C`` struct, so this
 test verifies end-to-end that the recorded payload tracks the values the module
 actually writes over time (and is not constant, which would indicate the
 recorder is bound to the wrong / a copied address).
+
+The recorder also stores raw pointers into its ``Msg_C`` source. It must retain
+the object that owns that storage until the recorder is collected, including
+when config-owned storage transfers into a C-module wrapper.
 """
 
+import gc
+import weakref
+
 import numpy as np
-from Basilisk.architecture import bskLogging
+from Basilisk.architecture import bskLogging, messaging
 from Basilisk.moduleTemplates import cModuleTemplate
 from Basilisk.utilities import SimulationBaseClass, macros
 
@@ -75,5 +82,132 @@ def test_cMsgRecorderReadsLiveMessage():
         "recorded C message is constant; recorder is not reading the live message"
 
 
+def test_standaloneCMsgRecorderKeepsSourceAlive():
+    """A recorder retains its stand-alone ``Msg_C`` source until collection."""
+    inputVector = [1.0, 2.0, 3.0]  # [-]
+    payload = messaging.CModuleTemplateMsgPayload(dataVector=inputVector)
+    source = messaging.CModuleTemplateMsg_C().write(payload)
+    sourceReference = weakref.ref(source)
+    recorder = source.recorder()
+
+    del source
+    gc.collect()
+
+    assert sourceReference() is not None
+    recorder.UpdateState(0)
+    assert list(recorder.dataVector[0]) == inputVector
+
+    del recorder
+    gc.collect()
+
+    assert sourceReference() is None
+
+
+def test_copiedCMsgRecorderKeepsSourceAlive():
+    """A copied recorder inherits the original recorder's source retention."""
+    emptyRecorder = messaging.CModuleTemplateMsgRecorder()
+    assert emptyRecorder.size() == 0
+
+    inputVector = [10.0, 11.0, 12.0]  # [-]
+    source = messaging.CModuleTemplateMsg_C().write(
+        messaging.CModuleTemplateMsgPayload(dataVector=inputVector)
+    )
+    sourceReference = weakref.ref(source)
+    originalRecorder = source.recorder()
+    copiedRecorder = type(originalRecorder)(originalRecorder)
+
+    del source, originalRecorder
+    gc.collect()
+
+    assert sourceReference() is not None
+    copiedRecorder.UpdateState(0)
+    assert list(copiedRecorder.dataVector[0]) == inputVector
+
+    del copiedRecorder
+    gc.collect()
+
+    assert sourceReference() is None
+
+
+def test_directCMsgRecorderConstructorKeepsSourceAlive():
+    """The public recorder constructor retains a direct ``Msg_C`` argument."""
+    inputVector = [13.0, 14.0, 15.0]  # [-]
+    source = messaging.CModuleTemplateMsg_C().write(
+        messaging.CModuleTemplateMsgPayload(dataVector=inputVector)
+    )
+    sourceReference = weakref.ref(source)
+    recorder = messaging.CModuleTemplateMsgRecorder(source, 0)
+
+    del source
+    gc.collect()
+
+    assert sourceReference() is not None
+    recorder.UpdateState(0)
+    assert list(recorder.dataVector[0]) == inputVector
+
+    del recorder
+    gc.collect()
+
+    assert sourceReference() is None
+
+
+def test_embeddedCMsgRecorderKeepsModuleOwnerAlive():
+    """A recorder retains the module that owns an embedded ``Msg_C`` source."""
+    inputVector = [4.0, 5.0, 6.0]  # [-]
+    module = cModuleTemplate.cModuleTemplate()
+    module.dataOutMsg.write(
+        messaging.CModuleTemplateMsgPayload(dataVector=inputVector)
+    )
+
+    source = module.dataOutMsg
+    moduleReference = weakref.ref(module)
+    recorder = source.recorder()
+
+    del module, source
+    gc.collect()
+
+    assert moduleReference() is not None
+    recorder.UpdateState(0)
+    assert list(recorder.dataVector[0]) == inputVector
+
+    del recorder
+    gc.collect()
+
+    assert moduleReference() is None
+
+
+def test_configCMsgRecorderLeaseTransfersToWrapper():
+    """A recorder lease follows config-owned storage into its C-module wrapper."""
+    inputVector = [7.0, 8.0, 9.0]  # [-]
+    config = cModuleTemplate.cModuleTemplateConfig()
+    config.dataOutMsg.write(
+        messaging.CModuleTemplateMsgPayload(dataVector=inputVector)
+    )
+
+    source = config.dataOutMsg
+    configReference = weakref.ref(config)
+    recorder = source.recorder()
+    module = config.createWrapper()
+    moduleReference = weakref.ref(module)
+
+    del config, module, source
+    gc.collect()
+
+    assert configReference() is None
+    assert moduleReference() is not None
+    recorder.UpdateState(0)
+    assert list(recorder.dataVector[0]) == inputVector
+
+    del recorder
+    gc.collect()
+
+    assert moduleReference() is None
+
+
 if __name__ == "__main__":
     test_cMsgRecorderReadsLiveMessage()
+    test_standaloneCMsgRecorderKeepsSourceAlive()
+    test_copiedCMsgRecorderKeepsSourceAlive()
+    test_directCMsgRecorderConstructorKeepsSourceAlive()
+    test_embeddedCMsgRecorderKeepsModuleOwnerAlive()
+    test_configCMsgRecorderLeaseTransfersToWrapper()

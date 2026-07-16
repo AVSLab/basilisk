@@ -6,12 +6,19 @@
 %include "architecture/messaging/msgHeader.h"
 typedef struct {type};
 %extend {type}_C {{
-    Recorder<{type}Payload> recorder(uint64_t timeDiff = 0) {{
+    Recorder<{type}Payload> _recorder(uint64_t timeDiff = 0) {{
         self->header.isLinked = 1;
         return Recorder<{type}Payload>{{static_cast<void*>(self), timeDiff}};
     }}
 
     %pythoncode %{{
+
+    def recorder(self, timeDiff=0):
+        """Create a recorder that keeps this C message's storage owner alive."""
+        from Basilisk.architecture.messaging import _msgKeepAlive
+        recorder = self._recorder(timeDiff)
+        _msgKeepAlive.retainRecorderSource(recorder, self)
+        return recorder
 
     def subscribeTo(self, source):
         """subscribe to another message source"""
