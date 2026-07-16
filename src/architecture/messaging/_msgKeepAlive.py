@@ -16,12 +16,16 @@
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
-"""Keep-alive helpers for C-message (``Msg_C``) subscribers -- issue #1433.
+"""Keep-alive helpers for C-message (``Msg_C``) readers -- issue #1433.
 
 When a ``Msg_C`` reader (for example a C module's ``dataInMsg``) subscribes to a
 stand-alone source, it stores *raw pointers* into that source's memory. If the
 only Python reference to the source then goes out of scope, Python may
 garbage-collect it and the subscriber is left reading freed memory.
+
+Likewise, a recorder created from a ``Msg_C`` stores raw pointers into that
+message's storage. The recorder therefore retains the stand-alone message or
+embedded-message owner for as long as the recorder exists.
 
 Issue #676 fixed the C++ ``ReadFunctor`` direction by hanging the keep-alive on
 that reader's C++ destructor. A ``Msg_C`` is a plain C struct with no destructor,
@@ -43,9 +47,12 @@ Where the reference is stored depends on how the subscriber is owned:
 In both cases the reference is also released on an explicit ``unsubscribe()`` or
 when the subscriber re-subscribes to a different source.
 
+Recorders store their retention target directly on the persistent recorder proxy.
+The reference is released automatically with the recorder.
+
 All access happens on the Python side under the GIL (module construction,
-subscribe/unsubscribe calls, and ``weakref`` finalizers all run in the interpreter
-thread), so the registries need no additional locking.
+recorder construction, subscribe/unsubscribe calls, and ``weakref`` finalizers
+all run in the interpreter thread), so the registries need no additional locking.
 """
 
 import weakref
@@ -53,7 +60,7 @@ import weakref
 #: Embedded ``Msg_C`` C-address (``int``) -> (weak owner handle, owner token).
 _owner_by_address = {}
 
-#: Attribute name used to pin a source on a stand-alone subscriber proxy.
+#: Attribute name used to pin a retention target on a persistent SWIG proxy.
 _PIN_ATTR = "_bskKeepAliveSource"
 
 #: Attribute name used for the module-owned keep-alive dictionary.
@@ -165,6 +172,29 @@ def releaseSource(subscriber):
             delattr(subscriber, _PIN_ATTR)
         except AttributeError:
             pass
+
+
+def retainRecorderSource(recorder, source):
+    """Retain the storage owner of ``source`` for the lifetime of ``recorder``."""
+    object.__setattr__(recorder, _PIN_ATTR, _retention_target(source))
+
+
+def copyRecorderSource(recorder, sourceRecorder):
+    """Copy the source retention target when a Python recorder is copied."""
+    try:
+        target = vars(sourceRecorder).get(_PIN_ATTR)
+    except TypeError:
+        return
+    if target is not None:
+        object.__setattr__(recorder, _PIN_ATTR, target)
+
+
+def retainRecorderConstructorSource(recorder, source):
+    """Retain a direct ``Msg_C`` constructor source or copy an existing pin."""
+    if _looks_like_c_msg(source):
+        retainRecorderSource(recorder, source)
+    else:
+        copyRecorderSource(recorder, source)
 
 
 def _retention_target(source):

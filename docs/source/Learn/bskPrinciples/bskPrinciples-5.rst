@@ -70,9 +70,14 @@ message after the helper returned while a module still held pointers to its data
 Starting with Basilisk 2.12, object-based message subscriptions automatically
 retain their source for the lifetime of the subscription. A stand-alone message
 may therefore leave Python scope safely while an input message remains subscribed
-to it. This applies whether the input reader is embedded in a C or C++ module. If
-the source is embedded in another module or C-module config, Basilisk retains that
-owning object rather than the temporary Python message proxy.
+to it. This applies whether the input reader is embedded in a C or C++ module. For
+an embedded ``Msg_C`` source in a wrapped C module or C-module config, Basilisk
+retains the owning object rather than the temporary Python message proxy.
+
+Message recorders follow the same lifetime rule. A recorder created from a
+stand-alone C or C++ message retains that source until the recorder is released.
+A recorder created from an embedded ``Msg_C`` source retains the C-module wrapper
+or config that owns the message storage.
 
 For example, this helper does not need to return or otherwise retain ``inputMsg``:
 
