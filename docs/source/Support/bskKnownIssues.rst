@@ -15,6 +15,10 @@ Version |release| (July 7, 2026)
   could add energy to the spacecraft. This is fixed in the current version.
 - A depleting :ref:`FuelTank` with attached fuel slosh particles expelled propellant by a factor of
   one plus the slosh mass fraction. This is fixed in the current version.
+- The :ref:`FuelTank` mass-depletion torque treated the tank-frame fuel COM and inertia derivative
+  as body-frame quantities and dropped the tank offset, so a rotated (``dcm_TB``) or offset
+  (``r_TB_B``) depleting tank applied a wrong or missing torque about the hub. This is fixed in the
+  current version.
 - BSK-422: Several SWIG-wrapped C++ members in simulation and FSW modules could emit
   ``swig/python detected a memory leak`` warnings when read from Python because their wrappers lacked
   visible destructors. Internal-only members are now private or hidden from Python, and public value-type
