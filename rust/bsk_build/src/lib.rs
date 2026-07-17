@@ -10,7 +10,7 @@
 //!
 //! A BSK Rust module's ``build.rs`` should contain exactly:
 //!
-//! ```rust,no_run
+//! ```rust,ignore
 //! fn main() { bsk_build::generate(); }
 //! ```
 //!

@@ -488,6 +488,21 @@ Array lengths must be plain integer literals. Expressions that reference a
 a build error: ``bsk-build`` runs before the crate's own constants are
 evaluated.
 
+.. note::
+
+   SWIG returns a **fresh copy** of the array as a Python list on every read;
+   mutating the returned list does not change the struct. You must re-assign
+   to write back::
+
+       v = module.maxRwTorques   # a copy — changes to v go nowhere
+       v[0] = 0.005
+       module.maxRwTorques = v   # this is the actual write
+
+   For 1-D arrays, a shorter-than-expected input is silently zero-padded
+   (``[0.1, 0.2]`` assigned to a ``[f64; 3]`` field becomes
+   ``[0.1, 0.2, 0.0]``); a longer input raises ``ValueError``. This matches
+   the behavior of all Basilisk message payload array fields.
+
 Configure CMake
 ---------------
 
