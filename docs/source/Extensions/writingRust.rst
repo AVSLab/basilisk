@@ -159,39 +159,30 @@ Field doc comments written with ``///`` become Doxygen comments in the generated
 Module Lifecycle
 ~~~~~~~~~~~~~~~~
 
-.. list-table::
-   :header-rows: 1
-   :widths: 30 70
+Three ``BskModule`` trait methods map to the Basilisk module lifecycle:
 
-   * - Stage
-     - Description
-   * - ``Init_<module>()`` (C++ constructor)
-     - Generated C++ default constructor. Calls ``BskModule::init()``, which
-       sets non-zero parameter defaults before Python configures the module.
-       C modules cannot do this (no constructors); overriding ``init()`` is
-       the Rust equivalent of a C++ module constructor.
-   * - ``SelfInit_<module>()``
-     - Called at ``InitializeSimulation()`` after Python configuration.
-       Initializes all output message ports. No ``BskModule`` trait method —
-       the shim handles everything automatically, exactly as
-       ``cModules-3.rst`` specifies.
-   * - ``Reset_<module>()``
-     - Calls ``BskModule::reset()``, which must return ``Self::Outputs``.
-       The shim writes those values to the output ports, guaranteeing every
-       output holds a valid value before the first tick. The default
-       implementation returns ``Self::Outputs::default()``.
-   * - ``Update_<module>()``
-     - Calls ``BskModule::update()``, which must return ``Self::Outputs``.
-       The shim reads all inputs, passes values to ``update()``, and writes
-       the returned values to the ports.
+``init()``
+   Called before Python configures the module. Override to set non-zero
+   parameter defaults and initial state — the equivalent of a C++ module
+   constructor. The default implementation is a no-op (all fields stay zero).
 
-``update`` has no default and must always be implemented. ``Inputs`` and
-``Outputs`` are tuples matching the ``MsgReader`` and ``MsgWriter`` fields
-in declaration order.
+``reset(current_sim_nanos)`` → ``Self::Outputs``
+   Called at simulation start and on every ``Reset()``. Returns initial
+   values for every output port; the framework writes them automatically.
+   The default implementation returns ``Self::Outputs::default()``. Override
+   when the module has non-zero initial outputs, parameter validation, or
+   state to reset.
+
+``update(inputs, current_sim_nanos)`` → ``Self::Outputs``
+   Called every tick. Receives message values (not ports) and returns output
+   values; the framework handles all I/O. No default — must always be
+   implemented.
+
+``Inputs`` and ``Outputs`` are tuples matching the ``MsgReader`` and
+``MsgWriter`` fields in declaration order.
 
 Gate ``bsk_module!()`` with ``#[cfg(not(test))]`` so ``cargo test`` (see
-`Testing`_ below) does not require Basilisk's message-port C symbols to be
-linked.
+`Testing`_ below) does not require Basilisk to be linked.
 
 Use the Generated Wrapper
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -268,7 +259,7 @@ In test builds (enabled by adding ``bsk-build`` with the ``test_logger``
 feature to ``[dev-dependencies]``), every logger call prints to ``stderr``
 and ``.bsk_error()`` panics — no C symbols required. This means
 ``bskLogger.warning(...)`` calls in ``reset()`` and ``update()`` work
-without ``#[cfg(not(test))]`` guards:
+for unit tests:
 
 .. code-block:: toml
 
@@ -276,9 +267,6 @@ without ``#[cfg(not(test))]`` guards:
     [dev-dependencies]
     bsk-build = { git = "https://github.com/AVSLab/basilisk", tag = "v2.X.Y",
                   features = ["test_logger"] }
-
-``bsk_module!()`` must still be gated with ``#[cfg(not(test))]`` because the
-generated shim references Basilisk's message-port C symbols.
 
 Messaging
 ---------
@@ -618,8 +606,7 @@ above) so ``init()``, ``reset()``, and ``update()`` can be exercised as
 plain Rust functions with hand-built message values — no linking, no Python.
 
 Add the ``test_logger`` dev-dependency (see `Logging`_ above) so that
-``bskLogger.warning(...)`` and similar calls work without
-``#[cfg(not(test))]`` guards inside those methods. Logger calls in test
+``bskLogger.warning(...)`` and similar calls work in unit tests. Logger calls in test
 builds print to ``stderr`` rather than calling Basilisk's C symbols.
 
 Common Build Problems

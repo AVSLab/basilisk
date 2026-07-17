@@ -325,37 +325,25 @@ impl<T: Msg> MsgWriter<T> {
 /// ``runtime: BskModuleRuntime`` field, read like any other config field.
 /// ``current_sim_nanos`` is passed directly, since ``SysModel`` doesn't store it.
 ///
-/// # Lifecycle
+/// Three ``BskModule`` trait methods map to the Basilisk module lifecycle:
 ///
 /// ```text
-/// Init_<module>()                  — called from the generated C++ default constructor,
-///   └─ BskModule::init()             before Python touches the struct. Override to set
-///                                    non-zero parameter defaults and initial state.
+/// init()                           — before Python configures the module.
+///                                    Override to set non-zero defaults.
 ///
-/// SelfInit_<module>()              — called by Basilisk at InitializeSimulation(),
-///   └─ (port .init() calls only)     after Python has configured the struct. The shim
-///                                    handles everything; no trait method.
+/// reset(current_sim_nanos)         — at sim start and on every Reset().
+///   └─ returns Self::Outputs         Framework writes them to output ports.
 ///
-/// Reset_<module>()                 — called at sim start and on every Reset().
-///   └─ BskModule::reset()            Returns initial output values; the shim writes them.
-///
-/// Update_<module>()                — called every tick.
-///   └─ BskModule::update()
+/// update(inputs, current_sim_nanos) — every tick.
+///   └─ returns Self::Outputs         Framework reads inputs, writes outputs.
 /// ```
-///
-/// C modules have no constructor, so all their fields start as zero. Rust modules
-/// can set non-zero defaults in [`BskModule::init`], which is the exact equivalent
-/// of a C++ module's constructor.
 pub trait BskModule {
     type Inputs;
     type Outputs;
 
-    /// Called from the generated C++ default constructor — before Python has
-    /// configured any fields. Override to set non-zero parameter defaults and
-    /// initial state, exactly as a C++ module's constructor would.
-    ///
-    /// The default implementation is a no-op (all fields remain zero-initialized),
-    /// matching the C module behavior described in Basilisk's ``cModules-3.rst``.
+    /// Called before Python has configured any fields. Override to set
+    /// non-zero parameter defaults and initial state. The default
+    /// implementation is a no-op (all fields remain zero-initialized).
     fn init(&mut self) {}
 
     /// Called during `Reset()`. Must return initialized values for every

@@ -29,8 +29,8 @@
  *
  *  Basilisk C modules consist of two parts:
  *
- *  1. A plain-C *config struct* that holds all parameters, message ports, 
- *     and optional persistent state.  It is parsed by SWIG to produce the 
+ *  1. A plain-C *config struct* that holds all parameters, message ports,
+ *     and optional persistent state.  It is parsed by SWIG to produce the
  *     Python-accessible wrapper class.
  *  2. Three *lifecycle functions* — ``SelfInit``, ``Reset``, ``Update`` —
  *     called by the Basilisk task scheduler at well-defined points.
@@ -48,7 +48,7 @@
  *  finds the config struct by its ``impl BskModule for <Type>`` block, reads
  *  its message-port fields, and emits the ``extern "C"`` entry points that
  *  read/write messages around the module's own ``update``. The user
- *  implements ``self_init``, ``reset``, and ``update`` in safe Rust with
+ *  implements ``init``, ``reset``, and ``update`` in safe Rust with
  *  typed message arguments — no FFI boilerplate by hand. See the Basilisk
  *  documentation's "Writing a Rust Plugin" page for the full guide.
  *
@@ -176,7 +176,7 @@
  *      }
  *
  *      impl BskModule for myModuleConfig {
- *          fn self_init(&mut self) {
+ *          fn init(&mut self) {
  *              self.state = Some(Box::new(MyState::default()));
  *          }
  *          // update() accesses it via self.state.as_mut()...
@@ -262,8 +262,7 @@ typedef struct BskRustModuleRuntime {
  *
  *  ``SelfInit_name(cfg, runtime)``
  *      Called once at task registration.  The shim copies ``*runtime`` into
- *      ``cfg->runtime``, initialises output message ports (``*_C_init``),
- *      then calls ``BskModule::self_init``.
+ *      ``cfg->runtime`` and initialises output message ports (``*_C_init``).
  *
  *  ``Reset_name(cfg, currentSimNanos, runtime)``
  *      Called before the first step and on explicit resets.  The shim copies

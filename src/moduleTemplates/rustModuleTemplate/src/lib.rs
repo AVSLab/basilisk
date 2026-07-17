@@ -39,9 +39,10 @@ impl BskModule for RustModuleTemplateConfig {
     type Inputs = (Option<CModuleTemplateMsg>,);
     type Outputs = (CModuleTemplateMsg,);
 
-    fn reset(&mut self, _current_sim_nanos: u64) {
+    fn reset(&mut self, _current_sim_nanos: u64) -> Self::Outputs {
         self.dummy = 0.0;
         self.bskLogger.info("Variable dummy set to 0 in reset.");
+        (CModuleTemplateMsg::default(),)
     }
 
     fn update(&mut self, inputs: Self::Inputs, _current_sim_nanos: u64) -> Self::Outputs {

@@ -140,20 +140,15 @@ A bare input type is required; wrap an input type in ``Option<T>`` to receive
 ``None`` when its message is unlinked.
 
 ``update`` is required and receives message values rather than message ports.
-Both ``reset`` and ``update`` must return ``Self::Outputs``; the generated shim
+Both ``reset`` and ``update`` must return ``Self::Outputs``; the framework
 writes the returned values to the output ports. ``reset`` has a default
 implementation that returns ``Self::Outputs::default()``. Override it when the
 module needs non-zero initial output values, parameter validation, or state
 reset.
 
-Override ``init()`` to set non-zero parameter defaults and initial state —
-this runs from the generated C++ constructor, before Python configures the
-module, and is the direct Rust equivalent of a C++ module's constructor.
-C modules cannot do this (they have no constructors and must default to zero).
-
-There is no ``self_init()`` trait method. The shim calls ``Msg_C_init`` on
-every output port automatically during ``SelfInit``, matching the pattern
-documented in ``cModules-3.rst``.
+Override ``init()`` to set non-zero parameter defaults and initial state.
+It runs before Python configures the module; the default implementation is a
+no-op (all fields start at zero).
 
 Use the Generated Wrapper
 -------------------------
@@ -192,8 +187,7 @@ pure Rust tests run without linking Basilisk:
     cargo test
 
 ``init()``, ``reset()``, and ``update()`` are all testable this way.
-Logger calls (``bskLogger.warning(...)`` etc.) work in tests without
-``#[cfg(not(test))]`` guards when the ``test_logger`` dev-dependency
+Logger calls (``bskLogger.warning(...)`` etc.) work in tests when the ``test_logger`` dev-dependency
 feature is enabled:
 
 .. code-block:: toml

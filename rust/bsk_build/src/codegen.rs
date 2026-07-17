@@ -1150,7 +1150,8 @@ fn render_c_header(info: &ConfigInfo, module: &str) -> String {
          #ifndef {guard}\n\
          #define {guard}\n\
          \n\
-         #include \"architecture/_GeneralModuleFiles/bsk_rust_module.h\"\n"
+         #include \"architecture/_GeneralModuleFiles/bsk_rust_module.h\"\n\
+         #include <string.h>\n"
     ));
     for inc in &msg_includes {
         h.push_str(&format!("#include \"{inc}\"\n"));
@@ -1176,13 +1177,13 @@ fn render_c_header(info: &ConfigInfo, module: &str) -> String {
 
     h.push_str(&render_field_decls(&info.fields));
 
-    // The C++ constructor calls Init_<module> so `BskModule::init()` runs at
-    // construction time — before Python configures any fields. This is the Rust
-    // equivalent of a C++ module's constructor (see BskModule::init docs).
-    // The destructor runs the config struct's ordinary Rust drop glue (freeing
-    // any `Option<Box<T>>` owned-state field) — see "Owned heap state" in the
-    // module docs and `BSK_RUST_DECL`'s `Drop_<module>` declaration.
-    // Both are only visible to C++ (SWIG); plain-C consumers see an ordinary struct.
+    // The C++ constructor zeros the struct (a user-provided constructor makes
+    // `new Config()` direct- rather than value-initialization, so fields
+    // without a member-initializer would otherwise hold garbage, not zero),
+    // then calls Init_<module> so `BskModule::init()` can set real defaults.
+    // The destructor runs the struct's ordinary Rust drop glue, freeing any
+    // `Option<Box<T>>` owned-state field. Both are only visible to C++
+    // (SWIG); plain-C consumers see an ordinary struct.
     h.push_str(
         "#ifdef __cplusplus\n\
          \x20   ",
@@ -1205,7 +1206,7 @@ fn render_c_header(info: &ConfigInfo, module: &str) -> String {
          \n\
          #ifdef __cplusplus\n\
          extern \"C-unwind\" void Init_{module}({cfg_type}* cfg);\n\
-         inline {cfg_type}::{cfg_type}() {{ Init_{module}(this); }}\n\
+         inline {cfg_type}::{cfg_type}() {{ ::memset(this, 0, sizeof(*this)); Init_{module}(this); }}\n\
          inline {cfg_type}::~{cfg_type}() {{ Drop_{module}(this); }}\n\
          #endif\n\
          \n\
@@ -1663,7 +1664,15 @@ mod tests {
         assert!(header.contains("~MyConfig();"));
         // Inline definitions appear after BSK_RUST_DECL.
         assert!(header.contains("extern \"C-unwind\" void Init_myModule(MyConfig* cfg);"));
-        assert!(header.contains("inline MyConfig::MyConfig() { Init_myModule(this); }"));
+        // The struct must memset itself to zero before calling Init_, or
+        // fields init() doesn't touch would hold garbage instead of zero.
+        assert!(
+            header.contains(
+                "inline MyConfig::MyConfig() { ::memset(this, 0, sizeof(*this)); Init_myModule(this); }"
+            ),
+            "constructor must zero the struct before Init_:\n{header}"
+        );
+        assert!(header.contains("#include <string.h>"), "header:\n{header}");
         assert!(header.contains("inline MyConfig::~MyConfig() { Drop_myModule(this); }"));
         assert!(header.contains("void *state;"), "header:\n{header}");
         assert!(header.contains("BSK_RUST_DECL(myModule, MyConfig)"));
