@@ -263,7 +263,9 @@ The fuel slosh motion is being approximated by a lumped mechanical multi-mode mo
 	\bm{\dot{H}}_{T,j}=\bm{L}_{T,j}+m_{j} \bm{\ddot{r}}_{T/N}\times \bm{l_j}
 	\label{eq:dotH_T}
 \end{equation}
-Where $\bm{L}_{T,j}$ is the external torque on the slosh mass about the tank point. The damping is a linear viscous force, $-\bm{D}\bm{l_j'}$, obtained by applying the damping matrix $\bm{D}$ to the relative velocity between the tank and the fuel, $\bm{l_j'}$. This force acts on the slosh mass, so, like the gravitational force $\bm{F_g}$, it enters the torque balance through the moment arm $\bm{l_j}$. Any additional external torque is captured by $\bm{\tau}_{ext,j}$.
+Where $\bm{L}_{T,j}$ is the external torque on the slosh mass about the tank point. The damping is a linear viscous force, $-\bm{D}\bm{l_j'}$, obtained by applying the damping matrix $\bm{D}$ to the relative velocity between the tank and the fuel, $\bm{l_j'}$.
+For a physically valid damper, $\bm{D}$ is symmetric positive semidefinite, so its power contribution is $-(\bm{l_j'})^T\bm{D}\bm{l_j'} \leq 0$.
+This force acts on the slosh mass, so, like the gravitational force $\bm{F_g}$, it enters the torque balance through the moment arm $\bm{l_j}$. Any additional external torque is captured by $\bm{\tau}_{ext,j}$.
 \begin{equation}
 	\bm{L}_{T,j}=\bm{l_j}\times \left(\bm{F_g}-\bm{D}\bm{l_j'}\right) + \bm{\tau}_{ext,j}
 \end{equation}

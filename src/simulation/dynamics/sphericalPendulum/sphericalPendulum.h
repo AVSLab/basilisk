@@ -33,7 +33,7 @@ class SphericalPendulum :
 {
 public:
 	double pendulumRadius;             //!< [m] distance between the center of the tank and the spherical pendulum mass
-    Eigen::Matrix3d D;                    //!< [N*s/m] linear damping matrix for spherical pendulum
+    Eigen::Matrix3d D;                    //!< [N*s/m] symmetric positive-semidefinite damping matrix in P0 components
     double phiDotInit;             //!< [rad/s] Initial value for spherical pendulum pendulum offset derivative
     double thetaDotInit;             //!< [rad/s] Initial value for spherical pendulum pendulum offset derivative
     double massInit;               //!< [m] Initial value for spherical pendulum pendulum mass
