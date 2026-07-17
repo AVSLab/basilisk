@@ -91,8 +91,11 @@ function(generate_messages searchDir generateCCode)
               OUTPUT_DIR "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/")
 
     set_property(TARGET ${TARGET_NAME} APPEND PROPERTY SWIG_DEPENDS
-                 "${CMAKE_CURRENT_SOURCE_DIR}/newMessaging.ih")
-    add_dependencies(${TARGET_NAME} swigtrick)
+                 "${CMAKE_CURRENT_SOURCE_DIR}/newMessaging.ih"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/messaging.h"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/messagingBase.h"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/messagingBase.i")
+    add_dependencies(${TARGET_NAME} messagingBase swigtrick)
     set_target_properties(${TARGET_NAME} PROPERTIES FOLDER "architecture/messaging/derivedCode")
     set_target_properties(${SWIG_MODULE_${TARGET_NAME}_REAL_NAME}
                           PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging")

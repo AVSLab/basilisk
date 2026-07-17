@@ -149,7 +149,23 @@ def test_raw_pointer_bookkeeping_is_not_public():
     assert callable(reader.GetPointers)
 
 
+def test_message_base_types_are_shared_across_payload_modules():
+    """Verify that generated messages use the central Python base proxy types."""
+    cModuleMessage = messaging.CModuleTemplateMsg()
+    navMessage = messaging.NavAttMsg()
+    cModuleReader = messaging.CModuleTemplateMsgReader()
+    navReader = messaging.NavAttMsgReader()
+
+    assert isinstance(cModuleMessage, messaging.MessageBase)
+    assert isinstance(navMessage, messaging.MessageBase)
+    assert isinstance(cModuleReader, messaging.ReadFunctorBase)
+    assert isinstance(navReader, messaging.ReadFunctorBase)
+    assert isinstance(cModuleMessage.GetPointers(), messaging.messagePointerData)
+    assert isinstance(navReader.GetPointers(), messaging.messagePointerData)
+
+
 if __name__ == "__main__":
     test_unsubscribe()
     test_unsubscribe_clears_raw_pointers()
     test_raw_pointer_bookkeeping_is_not_public()
+    test_message_base_types_are_shared_across_payload_modules()
