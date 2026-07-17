@@ -232,9 +232,6 @@ void FuelTank::updateContributions(double integTime,
                                    Eigen::Vector3d sigma_BN,
                                    Eigen::Vector3d omega_BN_B,
                                    Eigen::Vector3d g_N) {
-    Eigen::Vector3d r_TB_BLocal;
-    Eigen::Vector3d rPrime_TB_BLocal;
-    Eigen::Vector3d rPPrime_TB_BLocal;
     Eigen::Vector3d omega_BN_BLocal;
 
     // Zero some matrices
@@ -245,18 +242,25 @@ void FuelTank::updateContributions(double integTime,
     if (massLocal < 0.0) {
         massLocal = 0.0;  // [kg]
     }
-    this->fuelTankModel->computeTankPropDerivs(massLocal, -this->tankFuelConsumption);
-    r_TB_BLocal = this->fuelTankModel->r_TcT_T;
-    rPrime_TB_BLocal = this->fuelTankModel->rPrime_TcT_T;
-    rPPrime_TB_BLocal = this->fuelTankModel->rPPrime_TcT_T;
+    const double mDotTank = -this->tankFuelConsumption; // [kg/s] tank mass rate this substep
+    this->fuelTankModel->computeTankPropDerivs(massLocal, mDotTank);
     omega_BN_BLocal = this->omegaState->getState();
     if (!this->getUpdateOnly()) {
-        backSubContr.vecRot = -massLocal * r_TB_BLocal.cross(rPPrime_TB_BLocal)
-                              - massLocal * omega_BN_BLocal.cross(r_TB_BLocal.cross(rPrime_TB_BLocal))
-                              - this->massState->getStateDeriv()(0, 0) * r_TB_BLocal.cross(rPrime_TB_BLocal);
-        backSubContr.vecRot -= this->fuelTankModel->IPrimeTankPntT_T * omega_BN_BLocal;
+        const Eigen::Matrix3d dcm_TBLocal = this->getDcm_TB();
+        Eigen::Vector3d rPrime_TcB_B = dcm_TBLocal.transpose() * this->fuelTankModel->rPrime_TcT_T;
+        Eigen::Vector3d rPPrime_TcB_B = dcm_TBLocal.transpose() * this->fuelTankModel->rPPrime_TcT_T;
+        // Inertia derivative about point B: central term plus d/dt[m (r.r I - r r^T)], r = r_TcB_B
+        Eigen::Matrix3d IPrimeTankPntB_BLocal =
+          dcm_TBLocal.transpose() * this->fuelTankModel->IPrimeTankPntT_T * dcm_TBLocal +
+          mDotTank * (this->r_TcB_B.dot(this->r_TcB_B) * Eigen::Matrix3d::Identity() -
+                      this->r_TcB_B * this->r_TcB_B.transpose()) +
+          massLocal * (2.0 * this->r_TcB_B.dot(rPrime_TcB_B) * Eigen::Matrix3d::Identity() -
+                       this->r_TcB_B * rPrime_TcB_B.transpose() - rPrime_TcB_B * this->r_TcB_B.transpose());
+        backSubContr.vecRot = -massLocal * this->r_TcB_B.cross(rPPrime_TcB_B) -
+                              massLocal * omega_BN_BLocal.cross(this->r_TcB_B.cross(rPrime_TcB_B)) -
+                              mDotTank * this->r_TcB_B.cross(rPrime_TcB_B);
+        backSubContr.vecRot -= IPrimeTankPntB_BLocal * omega_BN_BLocal;
     }
-
 }
 
 /*! Fuel tank computes its derivative */
