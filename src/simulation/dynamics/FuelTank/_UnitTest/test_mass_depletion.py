@@ -28,6 +28,7 @@ from Basilisk.simulation import gravityEffector
 from Basilisk.simulation import linearSpringMassDamper
 from Basilisk.simulation import spacecraft
 from Basilisk.simulation import thrusterDynamicEffector, thrusterStateEffector
+from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import deprecated
 from Basilisk.utilities import macros
@@ -509,6 +510,122 @@ def test_deprecatedPublicVariables():
             UserWarning,
             stacklevel=1
         )
+
+
+def test_depletionTorqueFollowsTankMounting():
+    """A rotated, offset, depleting tank must spin a resting hub up about r_TB_B x dcm_TB^T k3."""
+    dcm_TB = rbk.MRP2C([0.15, -0.25, 0.1])
+    r_TB_B = np.array([0.6, 0.0, 0.4])  # [m]
+
+    unitTestSim = SimulationBaseClass.SimBaseClass()
+    testProc = unitTestSim.CreateNewProcess("TestProcess")
+    testProc.addTask(unitTestSim.CreateNewTask("unitTask", macros.sec2nano(0.1)))
+
+    scObject = spacecraft.Spacecraft()
+    scObject.ModelTag = "spacecraftBody"
+    scObject.hub.mHub = 500.0  # [kg]
+    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # [m]
+    # isotropic keeps the torque axis an eigenvector, so the hub rate holds exactly on it
+    scObject.hub.IHubPntBc_B = [[300.0, 0.0, 0.0], [0.0, 300.0, 0.0], [0.0, 0.0, 300.0]]  # [kg*m^2]
+    scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
+    scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]  # [rad/s]
+
+    tank = fuelTank.FuelTank()
+    tankModel = fuelTank.FuelTankModelEmptying()
+    tankModel.propMassInit = 200.0  # [kg]
+    tankModel.r_TcT_TInit = [[0.0], [0.0], [0.0]]  # [m]
+    tankModel.radiusTankInit = 0.5  # [m]
+    tank.setTankModel(tankModel)
+    tank.setDcm_TB(dcm_TB.tolist())
+    tank.setR_TB_B(r_TB_B.reshape(3, 1).tolist())
+    tank.setUpdateOnly(False)
+    tank.setFuelLeakRate(1.0)  # [kg/s]
+
+    scObject.addStateEffector(tank)
+    unitTestSim.AddModelToTask("unitTask", scObject)
+    unitTestSim.AddModelToTask("unitTask", tank)
+    dataLog = scObject.scStateOutMsg.recorder()
+    unitTestSim.AddModelToTask("unitTask", dataLog)
+
+    unitTestSim.InitializeSimulation()
+    unitTestSim.ConfigureStopTime(macros.sec2nano(20.0))
+    unitTestSim.ExecuteSimulation()
+
+    omega_BN_B = np.array(dataLog.omega_BN_B)[-1]  # [rad/s]
+    k3_B = dcm_TB.transpose() @ np.array([0.0, 0.0, 1.0])
+    expectedAxis = np.cross(r_TB_B, k3_B)
+    expectedAxis /= np.linalg.norm(expectedAxis)
+    np.testing.assert_allclose(omega_BN_B / np.linalg.norm(omega_BN_B), -expectedAxis, atol=1e-6)
+
+    # target value recorded from this configuration; the integrated rate has no closed form
+    np.testing.assert_allclose(np.linalg.norm(omega_BN_B), 5.9153677696e-04, rtol=1e-5,
+                               err_msg="depletion torque magnitude not equal")
+
+
+def test_depletionTorqueUsesCurrentMassFlowRate():
+    """A ramping leak must drive the depletion torque from the current mass-flow rate, not the
+    previous integrator substep's, so an offset emptying tank under a time-varying flow reaches a
+    hub rate the stale substep rate would miss."""
+    dcm_TB = rbk.MRP2C([0.15, -0.25, 0.1])
+    r_TB_B = np.array([0.6, 0.0, 0.4])  # [m]
+    dt = 0.1  # [s]
+
+    unitTestSim = SimulationBaseClass.SimBaseClass()
+    testProc = unitTestSim.CreateNewProcess("TestProcess")
+    testProc.addTask(unitTestSim.CreateNewTask("unitTask", macros.sec2nano(dt)))
+
+    scObject = spacecraft.Spacecraft()
+    scObject.ModelTag = "spacecraftBody"
+    scObject.hub.mHub = 500.0  # [kg]
+    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # [m]
+    # isotropic keeps the torque axis an eigenvector, so the hub rate holds exactly on it
+    scObject.hub.IHubPntBc_B = [[300.0, 0.0, 0.0], [0.0, 300.0, 0.0], [0.0, 0.0, 300.0]]  # [kg*m^2]
+    scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
+    scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]  # [rad/s]
+
+    tank = fuelTank.FuelTank()
+    tankModel = fuelTank.FuelTankModelEmptying()
+    tankModel.propMassInit = 300.0  # [kg]
+    tankModel.r_TcT_TInit = [[0.0], [0.0], [0.0]]  # [m]
+    tankModel.radiusTankInit = 0.5  # [m]
+    tank.setTankModel(tankModel)
+    tank.setDcm_TB(dcm_TB.tolist())
+    tank.setR_TB_B(r_TB_B.reshape(3, 1).tolist())
+    tank.setUpdateOnly(False)
+
+    # Drive the leak rate from an input message so it can be ramped across the run
+    leakPayload = messaging.MassFlowRateMsgPayload()
+    leakMsg = messaging.MassFlowRateMsg()
+    tank.fuelLeakRateInMsg.subscribeTo(leakMsg)
+
+    scObject.addStateEffector(tank)
+    unitTestSim.AddModelToTask("unitTask", scObject)
+    unitTestSim.AddModelToTask("unitTask", tank)
+    dataLog = scObject.scStateOutMsg.recorder()
+    unitTestSim.AddModelToTask("unitTask", dataLog)
+
+    unitTestSim.InitializeSimulation()
+
+    # Linearly ramp the leak rate as mDot(t) = 1 + 0.5 t [kg/s], rewriting the message each step so the
+    # tank mass rate changes over time and the substep lag in the mDot term becomes observable.
+    baseRate = 1.0  # [kg/s]
+    rampRate = 0.5  # [kg/s^2]
+    stopTime = 15.0  # [s]
+    for step in range(int(round(stopTime / dt))):
+        leakPayload.massFlowRate = baseRate + rampRate * step * dt  # [kg/s]
+        leakMsg.write(leakPayload)
+        unitTestSim.ConfigureStopTime(macros.sec2nano((step + 1) * dt))
+        unitTestSim.ExecuteSimulation()
+
+    omega_BN_B = np.array(dataLog.omega_BN_B)[-1]  # [rad/s]
+    k3_B = dcm_TB.transpose() @ np.array([0.0, 0.0, 1.0])
+    expectedAxis = np.cross(r_TB_B, k3_B)
+    expectedAxis /= np.linalg.norm(expectedAxis)
+    np.testing.assert_allclose(omega_BN_B / np.linalg.norm(omega_BN_B), -expectedAxis, atol=1e-6)
+
+    # target value recorded from this configuration; the stale substep mass rate undershoots it by ~12%
+    np.testing.assert_allclose(np.linalg.norm(omega_BN_B), 1.6845975274e-03, rtol=1e-5,
+                               err_msg="depletion torque did not use the current mass-flow rate")
 
 
 if __name__ == "__main__":
