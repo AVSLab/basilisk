@@ -182,8 +182,8 @@ private:
     int numberOfDegreesOfFreedom = 0;
     std::vector<std::shared_ptr<SpinningBody>> spinningBodyVec;
 
-    Eigen::MatrixXd ATheta;
-    Eigen::MatrixXd BTheta;
+    Eigen::MatrixX3d ATheta;
+    Eigen::MatrixX3d BTheta;
     Eigen::VectorXd CTheta;
 
     Eigen::Vector3d omega_BN_B = Eigen::Vector3d::Zero();
@@ -232,8 +232,8 @@ private:
     void computeVelocityProperties(std::shared_ptr<SpinningBody> spinningBody, int spinningBodyIndex) const;
     void computeInertiaProperties(std::shared_ptr<SpinningBody> spinningBody) const;
     void computeMTheta(Eigen::MatrixXd& MTheta);
-    void computeAThetaStar(Eigen::MatrixXd& AThetaStar);
-    void computeBThetaStar(Eigen::MatrixXd& BThetaStar);
+    void computeAThetaStar(Eigen::MatrixX3d& AThetaStar);
+    void computeBThetaStar(Eigen::MatrixX3d& BThetaStar);
     void computeCThetaStar(Eigen::VectorXd& CThetaStar, const Eigen::Vector3d& g_N);
     void computeBackSubMatrices(BackSubMatrices& backSubContr) const;
     void computeBackSubVectors(BackSubMatrices& backSubContr) const;

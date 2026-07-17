@@ -166,8 +166,8 @@ private:
     std::vector<std::shared_ptr<TranslatingBody>> translatingBodyVec; //!< -- vector of TB effector structs
 
     // Terms needed for back substitution
-    Eigen::MatrixXd ARho;     //!< -- rDDot_BN term for back substitution
-    Eigen::MatrixXd BRho;     //!< -- omegaDot_BN term for back substitution
+    Eigen::MatrixX3d ARho;    //!< -- rDDot_BN term for back substitution
+    Eigen::MatrixX3d BRho;    //!< -- omegaDot_BN term for back substitution
     Eigen::VectorXd CRho;     //!< -- scalar term for back substitution
 
     // Hub properties
@@ -196,8 +196,8 @@ private:
                              Eigen::Vector3d omega_BN_B,
                              Eigen::Vector3d g_N) final;
     void computeMRho(Eigen::MatrixXd& MRho);
-    void computeARhoStar(Eigen::MatrixXd& ARhoStar);
-    void computeBRhoStar(Eigen::MatrixXd& BRhoStar);
+    void computeARhoStar(Eigen::MatrixX3d& ARhoStar);
+    void computeBRhoStar(Eigen::MatrixX3d& BRhoStar);
     void computeCRhoStar(Eigen::VectorXd& CRhoStar, const Eigen::Vector3d& g_N);
     void computeBackSubContributions(BackSubMatrices& backSubContr) const;
     void computeDerivatives(double integTime,

@@ -346,8 +346,8 @@ void SpinningBodyNDOFStateEffector::updateContributions(double integTime,
     this->omega_BN_B = omega_BN_B;
 
     Eigen::MatrixXd MTheta = Eigen::MatrixXd::Zero(this->numberOfDegreesOfFreedom, this->numberOfDegreesOfFreedom);
-    Eigen::MatrixXd AThetaStar = Eigen::MatrixXd::Zero(this->numberOfDegreesOfFreedom, 3);
-    Eigen::MatrixXd BThetaStar = Eigen::MatrixXd::Zero(this->numberOfDegreesOfFreedom, 3);
+    Eigen::MatrixX3d AThetaStar = Eigen::MatrixX3d::Zero(this->numberOfDegreesOfFreedom, 3);
+    Eigen::MatrixX3d BThetaStar = Eigen::MatrixX3d::Zero(this->numberOfDegreesOfFreedom, 3);
     Eigen::VectorXd CThetaStar = Eigen::VectorXd::Zero(this->numberOfDegreesOfFreedom);
 
     this->computeDependentEffectors(backSubContr, integTime);
@@ -414,7 +414,8 @@ void SpinningBodyNDOFStateEffector::computeMTheta(Eigen::MatrixXd& MTheta)
     }
 }
 
-void SpinningBodyNDOFStateEffector::computeAThetaStar(Eigen::MatrixXd& AThetaStar)
+void
+SpinningBodyNDOFStateEffector::computeAThetaStar(Eigen::MatrixX3d& AThetaStar)
 {
     for (int n = 0; n<this->numberOfDegreesOfFreedom; n++) {
         if (this->spinningBodyVec[n]->isAxisLocked)
@@ -429,7 +430,8 @@ void SpinningBodyNDOFStateEffector::computeAThetaStar(Eigen::MatrixXd& AThetaSta
     }
 }
 
-void SpinningBodyNDOFStateEffector::computeBThetaStar(Eigen::MatrixXd& BThetaStar)
+void
+SpinningBodyNDOFStateEffector::computeBThetaStar(Eigen::MatrixX3d& BThetaStar)
 {
     for (int n = 0; n<this->numberOfDegreesOfFreedom; n++) {
         if (this->spinningBodyVec[n]->isAxisLocked)
