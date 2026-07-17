@@ -38,10 +38,11 @@ struct messagePointerData{
 
 /*! A base class for Message that enables type-erased pointer access */
 class MessageBase{
-    public:
-        messagePointerData pointers;    //!< stores the message's header/payload pointers
-        messagePointerData reference;   //!< copy returned by GetPointers to avoid dangling
+    protected:
+        messagePointerData pointers;   //!< stores the message's header/payload pointers
+        messagePointerData reference;  //!< copy returned by GetPointers to avoid dangling
 
+    public:
         //! Returns pointer to struct containing type-erased message header and payload pointers
         messagePointerData *GetPointers(void)
         {
@@ -53,11 +54,12 @@ class MessageBase{
 
 /*! A base class for ReadFunctor that enables type-erased pointer access */
 class ReadFunctorBase{
-    public :
+    protected:
         void *headerVoidPtr;  //!< type-erased header pointer for external interface access
         void *payloadVoidPtr; //!< type-erased payload pointer for external interface access
         messagePointerData reference; //!< copy returned by GetPointers
 
+    public:
         //! constructor
         ReadFunctorBase() : headerVoidPtr(NULL), payloadVoidPtr(NULL) {}
 

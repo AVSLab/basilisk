@@ -134,6 +134,22 @@ def test_unsubscribe_clears_raw_pointers():
     assertRawPointersCleared(cppOutMsg)
 
 
+def test_raw_pointer_bookkeeping_is_not_public():
+    """Verify that generated bindings hide raw-pointer bookkeeping members."""
+    message = messaging.CModuleTemplateMsg()
+    reader = messaging.CModuleTemplateMsgReader()
+
+    assert not hasattr(message, "pointers")
+    assert not hasattr(message, "reference")
+    assert not hasattr(reader, "headerVoidPtr")
+    assert not hasattr(reader, "payloadVoidPtr")
+    assert not hasattr(reader, "reference")
+
+    assert callable(message.GetPointers)
+    assert callable(reader.GetPointers)
+
+
 if __name__ == "__main__":
     test_unsubscribe()
     test_unsubscribe_clears_raw_pointers()
+    test_raw_pointer_bookkeeping_is_not_public()
