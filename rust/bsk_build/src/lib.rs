@@ -67,6 +67,7 @@
 //! | ``bsk_messages::Foo`` | ``Foo`` (last segment) |
 //! | ``MsgReader<Foo>`` / ``MsgWriter<Foo>`` | ``Foo_C`` |
 //! | ``BskModuleRuntime``  | ``BskRustModuleRuntime`` (see below) |
+//! | ``[T; N]`` (``N`` a literal) | ``T name[N]`` (see "Fixed-size arrays") |
 //!
 //! # Runtime mirror field (required)
 //!
@@ -117,6 +118,20 @@
 //! but not self-referential (a struct can't contain itself by value in C).
 //! `MsgReader`/`MsgWriter` and `Option<Box<T>>` fields are only meaningful
 //! on the top-level config struct and are rejected on nested structs.
+//!
+//! # Fixed-size arrays
+//!
+//! A field of type ``[T; N]`` — ``T`` a primitive or a nested ``#[repr(C)]``
+//! struct, ``N`` a literal integer — is supported and maps to a plain C array
+//! field (``T name[N];``). Multi-dimensional arrays (``[[T; N]; M]``, etc.)
+//! are also supported and map to ``T name[M][N];`` in C order (outermost
+//! dimension first). This matches the pattern hand-written Basilisk C modules
+//! and message payloads already use (e.g. ``double torqueRequestBody[3]``,
+//! ``double dcm[3][3]``). SWIG wraps a 1-D array as a Python list of scalars;
+//! a 2-D array as a list of lists; and so on. Array lengths must be plain
+//! integer literals — ``const`` expressions, generics, and ``N * 2`` are
+//! build errors because `bsk-build` runs before the crate's own consts can
+//! be evaluated.
 //!
 //! Every other field type is a hard build error: there is no "pass the
 //! type name through unchanged" fallback, so a typo or unsupported type is
@@ -310,7 +325,21 @@ pub trait BskModule {
     type Outputs;
 
     fn self_init(&mut self) {}
-    fn reset(&mut self, _current_sim_nanos: u64) {}
+    /// Called during `Reset()`. Must return initialized values for every
+    /// output message port; the generated shim writes them to the ports so
+    /// they are valid before the first `UpdateState` tick.
+    ///
+    /// The default implementation returns `Self::Outputs::default()`, which
+    /// works for modules whose output payload types all implement `Default`
+    /// (all built-in Basilisk message payloads do). Override this method
+    /// whenever reset needs to write non-zero initial outputs, validate
+    /// parameters, or reset internal state.
+    fn reset(&mut self, _current_sim_nanos: u64) -> Self::Outputs
+    where
+        Self::Outputs: Default,
+    {
+        Self::Outputs::default()
+    }
     fn update(&mut self, inputs: Self::Inputs, current_sim_nanos: u64) -> Self::Outputs;
 }
 

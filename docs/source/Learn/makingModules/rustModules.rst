@@ -130,17 +130,21 @@ configuration struct, and implement ``BskModule``:
     bsk_build::bsk_module!();
 
 The configuration struct must contain a field named ``runtime`` with type
-``BskModuleRuntime``. Other fields are optional and can be scalar or array
-parameters, nested ``#[repr(C)]`` structs, ``Option<Box<T>>`` state,
+``BskModuleRuntime``. Other fields are optional and can be scalars, fixed-size
+arrays (``[T; N]`` or multi-dimensional ``[[T; N]; M]`` with literal lengths),
+nested ``#[repr(C)]`` structs, ``Option<Box<T>>`` state,
 ``MsgReader<T>`` and ``MsgWriter<T>`` ports, and a ``*mut BSKLogger`` field.
 
 The ``Inputs`` and ``Outputs`` tuples match message ports in declaration order.
 A bare input type is required; wrap an input type in ``Option<T>`` to receive
 ``None`` when its message is unlinked.
 
-Use ``self_init`` and ``reset`` when the module needs initialization or reset
-behavior. Their default implementations are empty. ``update`` is required and
-receives message values rather than message ports.
+``update`` is required and receives message values rather than message ports.
+Both ``reset`` and ``update`` must return ``Self::Outputs``; the generated shim
+writes the returned values to the output ports. ``reset`` has a default
+implementation that returns ``Self::Outputs::default()``. Override it when the
+module needs non-zero initial output values, parameter validation, or state
+reset. ``self_init``'s default implementation is empty.
 
 Use the Generated Wrapper
 -------------------------

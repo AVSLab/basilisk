@@ -155,8 +155,13 @@ generates the C header, SWIG wrapper, and message I/O code from this definition:
 and wrapper code. ``bsk_module!()`` includes the generated code in the crate.
 
 Field doc comments written with ``///`` become Doxygen comments in the generated header.
-``self_init`` and ``reset`` have empty default implementations; ``update`` is
-required. ``Inputs`` and ``Outputs`` are tuples matching the
+``self_init`` has an empty default implementation. ``reset`` and ``update``
+both return ``Self::Outputs``; the generated shim writes every output port
+with the returned values. For ``reset``, a default implementation returning
+``Self::Outputs::default()`` is provided, so modules only need to override it
+when they have non-zero initial outputs, parameter validation to perform, or
+internal state to reset. ``update`` has no default and must always be
+implemented. ``Inputs`` and ``Outputs`` are tuples matching the
 ``MsgReader`` and ``MsgWriter`` fields in declaration order.
 
 Gate ``bsk_module!()`` with ``#[cfg(not(test))]`` so ``cargo test`` (see
@@ -185,7 +190,7 @@ Supported Configuration Fields
 Every module configuration struct must include a field named ``runtime`` of
 type ``BskModuleRuntime``. All other fields are optional. They can include:
 
-* scalar, array, and nested ``#[repr(C)]`` parameter fields;
+* scalar, fixed-size array (``[T; N]``, multi-dimensional ``[[T; N]; M]``, etc.), and nested ``#[repr(C)]`` parameter fields;
 * ``Option<Box<T>>`` for state owned by a stateful module;
 * ``MsgReader<T>`` input ports and ``MsgWriter<T>`` output ports; and
 * ``*mut BSKLogger`` for Basilisk logging.
@@ -223,10 +228,11 @@ the field:
 
 .. code-block:: rust
 
-    fn reset(&mut self, _current_sim_nanos: u64) {
+    fn reset(&mut self, _current_sim_nanos: u64) -> Self::Outputs {
         if self.K <= 0.0 {
             self.bskLogger.warning("K should be positive");
         }
+        Self::Outputs::default()   // shim writes these to the output ports
     }
 
 ``.bsk_error(msg)`` raises the standard fatal ``BasiliskError`` and never
@@ -338,9 +344,17 @@ types don't line up, rather than silently misrouting inputs.
 Outputs
 ~~~~~~~
 
-Output ports are initialized automatically. Return the message values from
-``update()``; the wrapper writes them with the module ID and current simulation
-time in the message header.
+Output ports are initialized in both ``reset()`` and ``update()``. Both
+methods must return a value for every output port (``Self::Outputs``); the
+generated shim writes the returned values to the ports with the module ID
+and current simulation timestamp. This means every output is guaranteed to
+hold a valid, module-authored value before the first ``UpdateState`` tick.
+
+``reset()`` has a default implementation that returns
+``Self::Outputs::default()``, so a module only needs to override it when the
+initial outputs should be non-zero, when parameters need validating, or when
+internal state needs resetting. ``update()`` has no default and must always
+be implemented.
 
 Custom message types
 ~~~~~~~~~~~~~~~~~~~~
@@ -438,6 +452,41 @@ could hit undefined behavior once Python is free to write, say, ``5`` into a
 field that's only supposed to be ``0`` or ``1``. Use the underlying integer
 type as the field (e.g. ``pub mode: u8``) and convert it to your enum with a
 checked conversion inside ``update``/``reset`` instead.
+
+Fixed-size arrays
+------------------
+
+A field of type ``[T; N]`` — ``T`` a Rust primitive or a nested
+``#[repr(C)]`` struct, ``N`` a plain integer literal — is supported and maps
+to the standard C array declaration ``T name[N];``. This is the same form
+used throughout Basilisk's C message payloads (e.g.
+``double torqueRequestBody[3]``). Multi-dimensional arrays are also
+supported: ``[[T; N]; M]`` maps to ``T name[M][N];``.
+
+.. code-block:: rust
+
+    #[repr(C)]
+    pub struct myModuleConfig {
+        pub runtime: BskModuleRuntime,
+        /// [Nm] max torque per axis
+        pub maxRwTorques: [f64; 3],
+        /// [-] DCM from body to reference frame
+        pub dcm_BR: [[f64; 3]; 3],
+        // ...
+    }
+
+From Python, SWIG exposes a 1-D array as a flat list and a 2-D array as a
+list of lists — the same convention as message payload fields:
+
+.. code-block:: python
+
+    module.maxRwTorques = [0.001, 0.001, 0.001]
+    module.dcm_BR = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+
+Array lengths must be plain integer literals. Expressions that reference a
+``const`` item, use arithmetic (``N * 2``), or involve generic parameters are
+a build error: ``bsk-build`` runs before the crate's own constants are
+evaluated.
 
 Configure CMake
 ---------------

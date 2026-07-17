@@ -14,8 +14,8 @@ use std::collections::BTreeSet;
 use std::path::{Path, PathBuf};
 
 use syn::{
-    Attribute, Expr, ExprLit, Fields, File, ImplItem, Item, ItemStruct, Lit, Meta, Type, TypePath,
-    TypePtr,
+    Attribute, Expr, ExprLit, Fields, File, ImplItem, Item, ItemStruct, Lit, Meta, Type, TypeArray,
+    TypePath, TypePtr,
 };
 use walkdir::WalkDir;
 
@@ -310,6 +310,13 @@ struct FieldInfo {
     /// == "void *"` at call sites, so `render_manifest` (and anything else
     /// that needs it) has one unambiguous source of truth.
     is_owned_state: bool,
+    /// Non-empty for fixed-size array fields (`[T; N]`, `[[T; N]; M]`, …).
+    /// Holds the dimensions outermost-first in C order — so Rust `[[f64; 3]; 4]`
+    /// maps to C `double field[4][3]` and `array_dims = [4, 3]`. `c_type`
+    /// is always the *scalar* element type (`"double"`, not `"double[3]"`);
+    /// `render_field_decls` emits the dimension suffixes after the name.
+    /// Empty for every non-array field kind.
+    array_dims: Vec<usize>,
 }
 
 impl FieldInfo {
@@ -535,6 +542,7 @@ fn extract_fields(s: &ItemStruct, ctx: &mut NestedCtx, allow_module_fields: bool
                 doc,
                 is_optional: false,
                 is_owned_state: false,
+                array_dims: Vec::new(),
             });
             continue;
         }
@@ -567,12 +575,14 @@ fn extract_fields(s: &ItemStruct, ctx: &mut NestedCtx, allow_module_fields: bool
                 doc,
                 is_optional: false,
                 is_owned_state: true,
+                array_dims: Vec::new(),
             });
             continue;
         }
 
         let field_ctx = format!("{}.{name}", s.ident);
-        let Some((rust_base_type, c_type)) = decompose_type(&field.ty, ctx, &field_ctx) else {
+        let Some((rust_base_type, c_type, array_dims)) = decompose_type(&field.ty, ctx, &field_ctx)
+        else {
             continue;
         };
         result.push(FieldInfo {
@@ -585,6 +595,7 @@ fn extract_fields(s: &ItemStruct, ctx: &mut NestedCtx, allow_module_fields: bool
             // BskModule` block's `Inputs` tuple types — see module docs.
             is_optional: false,
             is_owned_state: false,
+            array_dims,
         });
     }
     result
@@ -763,12 +774,58 @@ fn collect_doc(attrs: &[Attribute]) -> String {
 /// calls names both the field and the type it couldn't resolve, so a
 /// mistake in one field of a large config struct doesn't require guessing
 /// which one.
+/// Entry point for a field's type. Peels off any number of `[T; N]` layers
+/// (collecting their dimensions outermost-first), then resolves the scalar
+/// element type with [`decompose_type_inner`]. Returns
+/// `(rust_base_type, c_type, array_dims)` where `array_dims` is empty for a
+/// non-array field and `[outer, ..., inner]` for an array (e.g. Rust
+/// `[[f64; 3]; 4]` → `c_type = "double"`, `array_dims = [4, 3]`, matching C's
+/// `double field[4][3]`). Every dimension must be a bare integer literal; a
+/// const/generic length is a build error (see below).
 fn decompose_type(
     ty: &Type,
     ctx: &mut NestedCtx,
     field_ctx: &str,
-) -> Option<(String, String)> {
-    decompose_type_inner(ty, ctx, false, field_ctx)
+) -> Option<(String, String, Vec<usize>)> {
+    let mut dims: Vec<usize> = Vec::new();
+    let mut current = ty;
+    // Peel [T; N] layers until we reach a non-array type.
+    loop {
+        match current {
+            Type::Array(TypeArray { elem, len, .. }) => {
+                let Some(n) = array_len_from_expr(len) else {
+                    ctx.error(
+                        field_ctx,
+                        "has an array length that isn't a plain integer \
+                         literal (e.g. `[f64; 3]`). bsk-build evaluates array \
+                         lengths at build-script time, before any of the \
+                         crate's own `const`s or generics exist to resolve — \
+                         const generics, `N * 2`, referencing another `const`, \
+                         etc. aren't supported. Use a literal length."
+                            .to_owned(),
+                    );
+                    return None;
+                };
+                dims.push(n);
+                current = elem;
+            }
+            other => {
+                let (rust_base_type, c_type) =
+                    decompose_type_inner(other, ctx, false, field_ctx)?;
+                return Some((rust_base_type, c_type, dims));
+            }
+        }
+    }
+}
+
+/// Evaluates a `[T; <len>]` array-length expression to a `usize`, accepting
+/// only a bare integer literal (e.g. `3`) — see `decompose_type`'s doc
+/// comment for why more complex expressions aren't supported.
+fn array_len_from_expr(len: &Expr) -> Option<usize> {
+    match len {
+        Expr::Lit(ExprLit { lit: Lit::Int(lit), .. }) => lit.base10_parse::<usize>().ok(),
+        _ => None,
+    }
 }
 
 /// `is_pointer_target` relaxes by-value resolution to also accept types this
@@ -1037,7 +1094,10 @@ fn render_field_decls(fields: &[FieldInfo]) -> String {
         // "BSKLogger *" + name -> "BSKLogger *bskLogger" (no space after
         // `*`); non-pointer types get the usual single space.
         let sep = if f.c_type.ends_with('*') { "" } else { " " };
-        let decl = format!("    {}{sep}{};", f.c_type, f.name);
+        // C's array-length suffix attaches after the field name
+        // (`double name[3];`, `double name[4][3];`), never after the type.
+        let array_suffix: String = f.array_dims.iter().map(|n| format!("[{n}]")).collect();
+        let decl = format!("    {}{sep}{}{array_suffix};", f.c_type, f.name);
 
         if f.doc.is_empty() {
             out.push_str(&format!("{decl}\n"));
@@ -1272,6 +1332,13 @@ fn render_shim(info: &ConfigInfo, module: &str) -> String {
     let inputs: Vec<&FieldInfo> = info.fields.iter().filter(|f| f.is_in_msg()).collect();
     let outputs: Vec<&FieldInfo> = info.fields.iter().filter(|f| f.is_out_msg()).collect();
 
+    let out_vars: Vec<String> = outputs.iter().map(|f| camel_to_snake(&f.name)).collect();
+    let out_lhs = match out_vars.len() {
+        0 => "let ()".to_owned(),
+        1 => format!("let ({},)", out_vars[0]),
+        _ => format!("let ({})", out_vars.join(", ")),
+    };
+
     // Does the config struct expose a bskLogger field for per-module verbosity?
     let has_logger = info.fields.iter().any(|f| f.name == "bskLogger");
     // Expression to pass as the receiver of `BskLoggerExt::bsk_error` below.
@@ -1316,12 +1383,20 @@ fn render_shim(info: &ConfigInfo, module: &str) -> String {
             ));
         }
     }
-    s.push_str("    <");
-    s.push_str(cfg_type);
-    s.push_str(
-        " as BskModule>::reset(&mut *cfg, current_sim_nanos);\n\
-         }\n\n",
-    );
+    // Capture and write the outputs returned by reset(), just as Update does,
+    // so every output port is initialised before the first UpdateState tick.
+    s.push_str(&format!(
+        "    {out_lhs}: <{cfg_type} as BskModule>::Outputs = \
+         <{cfg_type} as BskModule>::reset(&mut *cfg, current_sim_nanos);\n",
+    ));
+    for f in &outputs {
+        let var = camel_to_snake(&f.name);
+        s.push_str(&format!(
+            "    (*cfg).{field}.write(&{var}, (*cfg).runtime.module_id(), current_sim_nanos);\n",
+            field = f.name,
+        ));
+    }
+    s.push_str("}\n\n");
 
     // Update
     s.push_str(&format!(
@@ -1353,15 +1428,8 @@ fn render_shim(info: &ConfigInfo, module: &str) -> String {
         _ => format!("({})", input_vars.join(", ")),
     };
 
-    let out_vars: Vec<String> = outputs.iter().map(|f| camel_to_snake(&f.name)).collect();
-    let lhs = match out_vars.len() {
-        0 => "let ()".to_owned(),
-        1 => format!("let ({},)", out_vars[0]),
-        _ => format!("let ({})", out_vars.join(", ")),
-    };
-
     s.push_str(&format!(
-        "    {lhs}: <{cfg_type} as BskModule>::Outputs = \
+        "    {out_lhs}: <{cfg_type} as BskModule>::Outputs = \
          <{cfg_type} as BskModule>::update(&mut *cfg, {input_tuple}, current_sim_nanos);\n",
     ));
 
@@ -1630,6 +1698,45 @@ mod tests {
     }
 
     #[test]
+    fn reset_shim_writes_all_outputs_like_update() {
+        // The generated Reset_ shim must capture reset()'s return value and
+        // write every output port — exactly as Update_ does — so output
+        // messages are valid before the first UpdateState tick, and so the
+        // type system forces the module author to return something for every
+        // output rather than silently leaving a port uninitialised.
+        let info = info_for(
+            "#[repr(C)] pub struct MyController { \
+             pub runtime: bsk_messages::BskModuleRuntime, \
+             pub attGuidInMsg: MsgReader<AttGuidMsg>, \
+             pub cmdTorqueOutMsg: MsgWriter<CmdTorqueBodyMsg>, \
+             pub statusOutMsg: MsgWriter<DeviceCmdMsg>, \
+             }",
+        );
+        let shim = render_shim(&info, "myModule");
+
+        let reset_fn = {
+            let start = shim.find("fn Reset_myModule").expect("Reset_ must exist");
+            let end = shim[start..].find("\n}\n").map(|i| start + i + 3).unwrap_or(shim.len());
+            &shim[start..end]
+        };
+
+        // reset() return value must be destructured
+        assert!(
+            reset_fn.contains("let (cmd_torque_out_msg, status_out_msg)"),
+            "reset shim must destructure outputs:\n{reset_fn}"
+        );
+        // Each output must be written by the shim
+        assert!(
+            reset_fn.contains("(*cfg).cmdTorqueOutMsg.write(&cmd_torque_out_msg,"),
+            "reset shim must write cmdTorqueOutMsg:\n{reset_fn}"
+        );
+        assert!(
+            reset_fn.contains("(*cfg).statusOutMsg.write(&status_out_msg,"),
+            "reset shim must write statusOutMsg:\n{reset_fn}"
+        );
+    }
+
+    #[test]
     #[should_panic(expected = "`MyConfig.raw` is a bare `*mut`/`*const c_void` field")]
     fn bare_void_pointer_field_is_rejected() {
         // A bare `*mut c_void` (the old, unsafe pattern) is not the
@@ -1685,6 +1792,99 @@ mod tests {
         );
 
         std::fs::remove_dir_all(&tmp).ok();
+    }
+
+    #[test]
+    fn fixed_size_array_of_primitives_is_supported() {
+        let info = info_for(
+            "#[repr(C)] pub struct MyConfig { \
+             pub runtime: bsk_messages::BskModuleRuntime, \
+             pub maxTorques: [f64; 3], \
+             }",
+        );
+
+        let field = info.fields.iter().find(|f| f.name == "maxTorques").unwrap();
+        // `c_type` is the scalar element type; dimensions are in `array_dims`.
+        assert_eq!(field.c_type, "double");
+        assert_eq!(field.array_dims, [3]);
+
+        let header = render_c_header(&info, "myModule");
+        assert!(
+            header.contains("double maxTorques[3];"),
+            "expected a C array field declaration, got:\n{header}"
+        );
+    }
+
+    #[test]
+    fn fixed_size_2d_array_of_primitives_is_supported() {
+        // [[f64; 3]; 4] in Rust == double field[4][3] in C (outermost dim first).
+        let info = info_for(
+            "#[repr(C)] pub struct MyConfig { \
+             pub runtime: bsk_messages::BskModuleRuntime, \
+             pub dcm: [[f64; 3]; 3], \
+             }",
+        );
+
+        let field = info.fields.iter().find(|f| f.name == "dcm").unwrap();
+        assert_eq!(field.c_type, "double");
+        assert_eq!(field.array_dims, [3, 3]);
+
+        let header = render_c_header(&info, "myModule");
+        assert!(
+            header.contains("double dcm[3][3];"),
+            "expected a 2D C array field declaration, got:\n{header}"
+        );
+    }
+
+    #[test]
+    fn fixed_size_array_of_nested_struct_is_supported() {
+        let tmp = std::env::temp_dir().join(format!(
+            "bsk_build_test_array_nested_{}_{}",
+            std::process::id(),
+            line!()
+        ));
+        std::fs::create_dir_all(&tmp).unwrap();
+        std::fs::write(
+            tmp.join("types.rs"),
+            "#[repr(C)] pub struct Vec2 { pub x: f64, pub y: f64 }",
+        )
+        .unwrap();
+
+        let info = info_for_in(
+            "#[repr(C)] pub struct MyConfig { \
+             pub runtime: bsk_messages::BskModuleRuntime, \
+             pub corners: [Vec2; 4], \
+             }",
+            &tmp,
+        );
+
+        let field = info.fields.iter().find(|f| f.name == "corners").unwrap();
+        assert_eq!(field.c_type, "Vec2");
+        assert_eq!(field.array_dims, [4]);
+        assert_eq!(info.nested_structs.len(), 1);
+
+        let header = render_c_header(&info, "myModule");
+        assert!(
+            header.contains("Vec2 corners[4];"),
+            "expected a C array-of-struct field declaration, got:\n{header}"
+        );
+
+        std::fs::remove_dir_all(&tmp).ok();
+    }
+
+    #[test]
+    #[should_panic(expected = "`MyConfig.thing` has an array length that isn't a plain integer literal")]
+    fn non_literal_array_length_is_rejected() {
+        // `N` is written as a bare identifier in the array type — syn parses
+        // this as `Expr::Path`, not a literal, so `array_len_from_expr`
+        // returns `None` and we must emit the clear "not a plain integer
+        // literal" error rather than an opaque codegen failure.
+        info_for(
+            "#[repr(C)] pub struct MyConfig { \
+             pub runtime: bsk_messages::BskModuleRuntime, \
+             pub thing: [f64; N], \
+             }",
+        );
     }
 
     #[test]
