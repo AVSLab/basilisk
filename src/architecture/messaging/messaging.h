@@ -40,10 +40,16 @@ struct messagePointerData{
 class MessageBase{
     protected:
         messagePointerData pointers;   //!< stores the message's header/payload pointers
-        messagePointerData reference;  //!< copy returned by GetPointers to avoid dangling
+        messagePointerData reference;  //!< cached storage for the borrowed pointer view
 
     public:
-        //! Returns pointer to struct containing type-erased message header and payload pointers
+        /*!
+         * Return a borrowed view of the type-erased message header and payload pointers.
+         *
+         * The returned ``messagePointerData`` structure is owned by this object and remains
+         * valid only while the associated ``Message`` exists. Its header and payload addresses
+         * are non-owning and remain valid only for the lifetime of that message.
+         */
         messagePointerData *GetPointers(void)
         {
             reference.payload =  pointers.payload;
@@ -57,13 +63,20 @@ class ReadFunctorBase{
     protected:
         void *headerVoidPtr;  //!< type-erased header pointer for external interface access
         void *payloadVoidPtr; //!< type-erased payload pointer for external interface access
-        messagePointerData reference; //!< copy returned by GetPointers
+        messagePointerData reference; //!< cached storage for the borrowed pointer view
 
     public:
         //! constructor
         ReadFunctorBase() : headerVoidPtr(NULL), payloadVoidPtr(NULL) {}
 
-        //! Returns pointer to struct containing type-erased header and payload pointers
+        /*!
+         * Return a borrowed view of the type-erased source header and payload pointers.
+         *
+         * The returned ``messagePointerData`` structure is owned by this object and remains
+         * valid only while the associated ``ReadFunctor`` exists. Its non-null header and
+         * payload addresses are non-owning and remain valid only while the reader is subscribed
+         * and the source message exists.
+         */
         messagePointerData *GetPointers(void)
         {
             reference.header  = headerVoidPtr;
