@@ -17,6 +17,7 @@ if __name__ == "__main__":
                 className = os.path.splitext(filePre)[0]
                 msgName = className.split('Payload')[0]
                 mainImportFid.write('from Basilisk.architecture.messaging.' + className + ' import *\n')
+    mainImportFid.write('from Basilisk.architecture.messagingBase import *\n')
     mainImportFid.close()
     setOldPath = moduleOutputPath.split('messaging')[0] + '/cMsgCInterfacePy'
 
