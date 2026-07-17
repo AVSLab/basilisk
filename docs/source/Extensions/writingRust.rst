@@ -155,17 +155,43 @@ generates the C header, SWIG wrapper, and message I/O code from this definition:
 and wrapper code. ``bsk_module!()`` includes the generated code in the crate.
 
 Field doc comments written with ``///`` become Doxygen comments in the generated header.
-``self_init`` has an empty default implementation. ``reset`` and ``update``
-both return ``Self::Outputs``; the generated shim writes every output port
-with the returned values. For ``reset``, a default implementation returning
-``Self::Outputs::default()`` is provided, so modules only need to override it
-when they have non-zero initial outputs, parameter validation to perform, or
-internal state to reset. ``update`` has no default and must always be
-implemented. ``Inputs`` and ``Outputs`` are tuples matching the
-``MsgReader`` and ``MsgWriter`` fields in declaration order.
+
+Module Lifecycle
+~~~~~~~~~~~~~~~~
+
+.. list-table::
+   :header-rows: 1
+   :widths: 30 70
+
+   * - Stage
+     - Description
+   * - ``Init_<module>()`` (C++ constructor)
+     - Generated C++ default constructor. Calls ``BskModule::init()``, which
+       sets non-zero parameter defaults before Python configures the module.
+       C modules cannot do this (no constructors); overriding ``init()`` is
+       the Rust equivalent of a C++ module constructor.
+   * - ``SelfInit_<module>()``
+     - Called at ``InitializeSimulation()`` after Python configuration.
+       Initializes all output message ports. No ``BskModule`` trait method —
+       the shim handles everything automatically, exactly as
+       ``cModules-3.rst`` specifies.
+   * - ``Reset_<module>()``
+     - Calls ``BskModule::reset()``, which must return ``Self::Outputs``.
+       The shim writes those values to the output ports, guaranteeing every
+       output holds a valid value before the first tick. The default
+       implementation returns ``Self::Outputs::default()``.
+   * - ``Update_<module>()``
+     - Calls ``BskModule::update()``, which must return ``Self::Outputs``.
+       The shim reads all inputs, passes values to ``update()``, and writes
+       the returned values to the ports.
+
+``update`` has no default and must always be implemented. ``Inputs`` and
+``Outputs`` are tuples matching the ``MsgReader`` and ``MsgWriter`` fields
+in declaration order.
 
 Gate ``bsk_module!()`` with ``#[cfg(not(test))]`` so ``cargo test`` (see
-`Testing`_ below) does not require Basilisk to be linked.
+`Testing`_ below) does not require Basilisk's message-port C symbols to be
+linked.
 
 Use the Generated Wrapper
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -236,8 +262,23 @@ the field:
     }
 
 ``.bsk_error(msg)`` raises the standard fatal ``BasiliskError`` and never
-returns. A null ``bskLogger`` (module under test, or Python never set one)
-falls back to a default logger, so these are always safe to call.
+returns.
+
+In test builds (enabled by adding ``bsk-build`` with the ``test_logger``
+feature to ``[dev-dependencies]``), every logger call prints to ``stderr``
+and ``.bsk_error()`` panics — no C symbols required. This means
+``bskLogger.warning(...)`` calls in ``reset()`` and ``update()`` work
+without ``#[cfg(not(test))]`` guards:
+
+.. code-block:: toml
+
+    # Cargo.toml
+    [dev-dependencies]
+    bsk-build = { git = "https://github.com/AVSLab/basilisk", tag = "v2.X.Y",
+                  features = ["test_logger"] }
+
+``bsk_module!()`` must still be gated with ``#[cfg(not(test))]`` because the
+generated shim references Basilisk's message-port C symbols.
 
 Messaging
 ---------
@@ -389,12 +430,12 @@ pointer casts:
     }
 
     impl BskModule for myModuleConfig {
-        fn self_init(&mut self) {
+        fn init(&mut self) {
             self.state = Some(Box::new(MyState::default()));
         }
 
         fn update(&mut self, inputs: Self::Inputs, _t: u64) -> Self::Outputs {
-            let state = self.state.as_mut().expect("set in self_init");
+            let state = self.state.as_mut().expect("set in init");
             // ...
         }
     }
@@ -573,8 +614,13 @@ Testing
 
 **``cargo test`` never touches Basilisk.** Gate ``bsk_module!()`` behind
 ``#[cfg(not(test))]`` (see `Write the Rust Module`_
-above) so ``update()`` and friends can be exercised as plain Rust functions
-with hand-built message values — no linking, no Python.
+above) so ``init()``, ``reset()``, and ``update()`` can be exercised as
+plain Rust functions with hand-built message values — no linking, no Python.
+
+Add the ``test_logger`` dev-dependency (see `Logging`_ above) so that
+``bskLogger.warning(...)`` and similar calls work without
+``#[cfg(not(test))]`` guards inside those methods. Logger calls in test
+builds print to ``stderr`` rather than calling Basilisk's C symbols.
 
 Common Build Problems
 ---------------------

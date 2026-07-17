@@ -191,9 +191,13 @@
 /// ```
 ///
 /// Gate the macro with ``#[cfg(not(test))]`` so ``cargo test`` compiles
-/// without Basilisk headers. See the Basilisk documentation's "Writing a
-/// Rust Plugin" page for the full guide (required vs. optional inputs,
-/// multiple ports, custom messages, stateful modules).
+/// without Basilisk's message-port C symbols. Logger calls
+/// (``bskLogger.info(...)`` etc.) are safe to use in tests without guards
+/// when the ``test_logger`` dev-dependency feature is enabled — see
+/// ``bsk_build``'s ``Cargo.toml`` for the one-liner to add. See the
+/// Basilisk documentation's "Writing a Rust Plugin" page for the full guide
+/// (required vs. optional inputs, multiple ports, custom messages, stateful
+/// modules).
 #[macro_export]
 macro_rules! bsk_module {
     () => {
@@ -320,11 +324,40 @@ impl<T: Msg> MsgWriter<T> {
 /// ``ModelTag``, etc.) is available through the config's own
 /// ``runtime: BskModuleRuntime`` field, read like any other config field.
 /// ``current_sim_nanos`` is passed directly, since ``SysModel`` doesn't store it.
+///
+/// # Lifecycle
+///
+/// ```text
+/// Init_<module>()                  — called from the generated C++ default constructor,
+///   └─ BskModule::init()             before Python touches the struct. Override to set
+///                                    non-zero parameter defaults and initial state.
+///
+/// SelfInit_<module>()              — called by Basilisk at InitializeSimulation(),
+///   └─ (port .init() calls only)     after Python has configured the struct. The shim
+///                                    handles everything; no trait method.
+///
+/// Reset_<module>()                 — called at sim start and on every Reset().
+///   └─ BskModule::reset()            Returns initial output values; the shim writes them.
+///
+/// Update_<module>()                — called every tick.
+///   └─ BskModule::update()
+/// ```
+///
+/// C modules have no constructor, so all their fields start as zero. Rust modules
+/// can set non-zero defaults in [`BskModule::init`], which is the exact equivalent
+/// of a C++ module's constructor.
 pub trait BskModule {
     type Inputs;
     type Outputs;
 
-    fn self_init(&mut self) {}
+    /// Called from the generated C++ default constructor — before Python has
+    /// configured any fields. Override to set non-zero parameter defaults and
+    /// initial state, exactly as a C++ module's constructor would.
+    ///
+    /// The default implementation is a no-op (all fields remain zero-initialized),
+    /// matching the C module behavior described in Basilisk's ``cModules-3.rst``.
+    fn init(&mut self) {}
+
     /// Called during `Reset()`. Must return initialized values for every
     /// output message port; the generated shim writes them to the ports so
     /// they are valid before the first `UpdateState` tick.
@@ -381,6 +414,14 @@ pub const BSK_WARNING: logLevel_t = 2;
 pub const BSK_ERROR: logLevel_t = 3;
 pub const BSK_SILENT: logLevel_t = 4;
 
+// The C symbols are only available when linking against a real Basilisk build.
+// Gate their declarations (and the impl that calls them) so that `cargo test`
+// in module crates compiles without Basilisk on the link line. Module crates
+// opt in to the test replacement by adding
+//   bsk-build = { ..., features = ["test_logger"] }
+// to their [dev-dependencies]; Cargo feature unification activates
+// `test_logger` in the test binary while leaving production builds unaffected.
+#[cfg(not(any(test, feature = "test_logger")))]
 extern "C-unwind" {
     fn _BSKLogger() -> *mut BSKLogger;
     fn _bskLog(logger: *mut BSKLogger, level: logLevel_t, info: *const core::ffi::c_char);
@@ -392,8 +433,10 @@ extern "C-unwind" {
 /// ``_bskLog``/``_bskError`` entry points a hand-written Basilisk C module
 /// calls directly (``_bskLog(configData->bskLogger, BSK_WARNING, info)``).
 ///
-/// A null logger (module under test, or Python never set one) falls back
-/// to a process-wide default logger, so these are always safe to call.
+/// In test builds (enabled via the ``test_logger`` Cargo feature — see
+/// ``bsk_build``'s ``Cargo.toml``) the implementation prints to ``stderr``
+/// and panics instead of calling into Basilisk's C symbols, so module code
+/// can call these methods freely without ``#[cfg(not(test))]`` guards.
 pub trait BskLoggerExt {
     /// Log `msg` at `level` (one of the four ``BSK_*`` constants).
     fn bsk_log(self, level: logLevel_t, msg: &str);
@@ -422,9 +465,13 @@ pub trait BskLoggerExt {
     /// (propagated to Python through the generated ``extern "C-unwind"``
     /// lifecycle entry points) — the Rust equivalent of a C module's
     /// ``_bskError(configData->bskLogger, info)``.
+    ///
+    /// In test builds this panics instead of raising a C++ exception.
     fn bsk_error(self, msg: &str) -> !;
 }
 
+/// Real Basilisk build: forward every call through `_bskLog`/`_bskError`.
+#[cfg(not(any(test, feature = "test_logger")))]
 impl BskLoggerExt for *mut BSKLogger {
     fn bsk_log(self, level: logLevel_t, msg: &str) {
         unsafe {
@@ -443,6 +490,25 @@ impl BskLoggerExt for *mut BSKLogger {
             }
             _bskError(logger, c"BSK Rust module error (message contained a NUL byte)".as_ptr());
         }
+    }
+}
+
+/// Test / `test_logger` build: print to stderr and panic — no C link required.
+#[cfg(any(test, feature = "test_logger"))]
+impl BskLoggerExt for *mut BSKLogger {
+    fn bsk_log(self, level: logLevel_t, msg: &str) {
+        let tag = match level {
+            BSK_DEBUG => "DEBUG",
+            BSK_INFORMATION => "INFO",
+            BSK_WARNING => "WARNING",
+            BSK_ERROR => "ERROR",
+            _ => "LOG",
+        };
+        eprintln!("[bsk-test] {tag}: {msg}");
+    }
+
+    fn bsk_error(self, msg: &str) -> ! {
+        panic!("[bsk-test] bsk_error: {msg}");
     }
 }
 

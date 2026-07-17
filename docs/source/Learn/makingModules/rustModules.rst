@@ -144,7 +144,16 @@ Both ``reset`` and ``update`` must return ``Self::Outputs``; the generated shim
 writes the returned values to the output ports. ``reset`` has a default
 implementation that returns ``Self::Outputs::default()``. Override it when the
 module needs non-zero initial output values, parameter validation, or state
-reset. ``self_init``'s default implementation is empty.
+reset.
+
+Override ``init()`` to set non-zero parameter defaults and initial state —
+this runs from the generated C++ constructor, before Python configures the
+module, and is the direct Rust equivalent of a C++ module's constructor.
+C modules cannot do this (they have no constructors and must default to zero).
+
+There is no ``self_init()`` trait method. The shim calls ``Msg_C_init`` on
+every output port automatically during ``SelfInit``, matching the pattern
+documented in ``cModules-3.rst``.
 
 Use the Generated Wrapper
 -------------------------
@@ -181,6 +190,22 @@ pure Rust tests run without linking Basilisk:
 
     cd src/fswAlgorithms/<category>/myModule
     cargo test
+
+``init()``, ``reset()``, and ``update()`` are all testable this way.
+Logger calls (``bskLogger.warning(...)`` etc.) work in tests without
+``#[cfg(not(test))]`` guards when the ``test_logger`` dev-dependency
+feature is enabled:
+
+.. code-block:: toml
+
+    # Cargo.toml
+    [dev-dependencies]
+    bsk-build = { path = "../../../../rust/bsk_build", features = ["test_logger"] }
+
+Logger calls in test builds print to ``stderr`` instead of calling
+Basilisk's C symbols. ``bsk_module!()`` must still be gated with
+``#[cfg(not(test))]`` because the generated shim references message-port
+C symbols.
 
 Add the normal Basilisk Python unit test in the module's ``_UnitTest``
 directory. Run it after building Basilisk with Rust support:

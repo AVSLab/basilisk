@@ -14,6 +14,21 @@ description = "Build-script helpers for Basilisk Rust modules — generates C he
 # `generate()`) turns it on explicitly.
 codegen = ["dep:syn", "dep:walkdir"]
 
+# Enable this in a module crate's [dev-dependencies] to make `bskLogger`
+# calls (info/warning/bsk_error) print to stderr / panic instead of calling
+# Basilisk's C symbols, which aren't linked during `cargo test`.
+#
+# [dev-dependencies]
+# bsk-build = { path = "...", features = ["test_logger"] }
+#
+# Cargo feature unification ensures the test binary gets this feature while
+# production builds do not (dev-dep features are not propagated into the
+# crate's public library artifact). After adding this, module code can call
+# `self.bskLogger.warning(...)` without `#[cfg(not(test))]` guards.
+# `bsk_module!()` must still be gated with `#[cfg(not(test))]` because the
+# generated shim references Basilisk's message-port C symbols.
+test_logger = []
+
 [dependencies]
 # syn: proper Rust AST parser (same technology cbindgen uses internally).
 # Used to find the *Config struct in any .rs file under src/, read its
