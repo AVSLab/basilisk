@@ -189,3 +189,24 @@ TEST(avsEigenSupport, BisectionRejectsNegativeAccuracy) {
         SUCCEED();
     }
 }
+
+TEST(avsEigenSupport, PositiveSemidefiniteMatrix) {
+    Eigen::Matrix3d positiveDefinite = Eigen::Matrix3d::Identity();
+    Eigen::Matrix3d positiveSemidefinite = Eigen::Vector3d(2.0, 0.0, 0.0).asDiagonal();
+    Eigen::Matrix3d nonsymmetric;
+    nonsymmetric << 1.0, 1.0, 0.0,
+                    0.0, 1.0, 0.0,
+                    0.0, 0.0, 1.0;
+    Eigen::Matrix3d indefinite = Eigen::Vector3d(1.0, 0.0, -1.0).asDiagonal();
+    Eigen::Matrix3d roundoffNegative = Eigen::Vector3d(1.0, 0.0, -1e-10).asDiagonal();
+
+    EXPECT_TRUE(eigenIsPositiveSemidefiniteMatrix(Eigen::Matrix3d::Zero()));
+    EXPECT_TRUE(eigenIsPositiveSemidefiniteMatrix(positiveDefinite));
+    EXPECT_TRUE(eigenIsPositiveSemidefiniteMatrix(positiveSemidefinite));
+    EXPECT_FALSE(eigenIsValidInertiaMatrix(Eigen::Matrix3d::Zero()));
+    EXPECT_FALSE(eigenIsValidInertiaMatrix(positiveSemidefinite));
+    EXPECT_FALSE(eigenIsPositiveSemidefiniteMatrix(nonsymmetric));
+    EXPECT_FALSE(eigenIsPositiveSemidefiniteMatrix(indefinite));
+    EXPECT_TRUE(eigenIsPositiveSemidefiniteMatrix(roundoffNegative));
+    EXPECT_FALSE(eigenIsPositiveSemidefiniteMatrix(roundoffNegative, 1e-12));
+}
