@@ -33,6 +33,10 @@
 // Uses unique_ptr, don't need it at the Python level
 %ignore StateData::clone;
 
+// These accessors expose internal Eigen storage and are intended for C++ use only.
+%ignore StateData::getStateReference;
+%ignore StateData::getStateDerivReference;
+
 %include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
 
 // Current limitation of SWIG for complex templated types like

@@ -115,8 +115,26 @@ public:
     /** Retrieves a copy of the current state */
     Eigen::MatrixXd getState() const { return state; }
 
+    /** Retrieves a constant reference to the current state.
+     *
+     * Unlike getState(), this method does not create a copy. Subsequent state updates
+     * are visible through the returned reference, which must not outlive this object.
+     *
+     * @return Constant reference to the current state
+     */
+    const Eigen::MatrixXd& getStateReference() const { return state; }
+
     /** Retrieves a copy of the current state derivative */
     Eigen::MatrixXd getStateDeriv() const { return stateDeriv; }
+
+    /** Retrieves a constant reference to the current state derivative.
+     *
+     * Unlike getStateDeriv(), this method does not create a copy. Subsequent derivative
+     * updates are visible through the returned reference, which must not outlive this object.
+     *
+     * @return Constant reference to the current state derivative
+     */
+    const Eigen::MatrixXd& getStateDerivReference() const { return stateDeriv; }
 
     /** Retrieves a copy of the current state diffusion
      *

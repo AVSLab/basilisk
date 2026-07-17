@@ -95,9 +95,9 @@ void LinearSpringMassDamper::registerStates(DynParamManager& states)
 void LinearSpringMassDamper::updateEffectorMassProps(double integTime)
 {
 	// - Grab rho from state manager and define r_PcB_B
-	this->rho = this->rhoState->getState()(0,0);
+	this->rho = this->rhoState->getStateReference()(0,0);
 	this->r_PcB_B = this->rho * this->pHat_B + this->r_PB_B;
-	this->massSMD = this->massState->getState()(0, 0);
+	this->massSMD = this->massState->getStateReference()(0, 0);
 
 	// - Update the effectors mass
 	this->effProps.mEff = this->massSMD;
@@ -108,7 +108,7 @@ void LinearSpringMassDamper::updateEffectorMassProps(double integTime)
 	this->effProps.IEffPntB_B = this->massSMD * this->rTilde_PcB_B * this->rTilde_PcB_B.transpose();
 
 	// - Grab rhoDot from the stateManager and define rPrime_PcB_B
-	this->rhoDot = this->rhoDotState->getState()(0, 0);
+	this->rhoDot = this->rhoDotState->getStateReference()(0, 0);
 	this->rPrime_PcB_B = this->rhoDot * this->pHat_B;
 	this->effProps.rEffPrime_CB_B = this->rPrime_PcB_B;
 
@@ -181,7 +181,7 @@ void LinearSpringMassDamper::computeDerivatives(double integTime, Eigen::Vector3
 	dcm_BN = (sigmaLocal_BN.toRotationMatrix()).transpose();
 
 	// - Set the derivative of rho to rhoDot
-	this->rhoState->setDerivative(this->rhoDotState->getState());
+	this->rhoState->setDerivative(this->rhoDotState->getStateReference());
 
 	// - Compute rhoDDot
 	Eigen::MatrixXd conv(1,1);
@@ -225,7 +225,7 @@ void LinearSpringMassDamper::calcForceTorqueOnBody(double integTime, Eigen::Vect
 
     // - Get rhoDDot from last integrator call
     double rhoDDotLocal;
-    rhoDDotLocal = rhoDotState->getStateDeriv()(0, 0);
+    rhoDDotLocal = rhoDotState->getStateDerivReference()(0, 0);
 
     // - Calculate force that the FSP is applying to the spacecraft
     this->forceOnBody_B = -(this->massSMD*this->pHat_B*rhoDDotLocal + 2*this->massSMD

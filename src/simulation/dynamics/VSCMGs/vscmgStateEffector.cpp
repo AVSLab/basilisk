@@ -107,15 +107,20 @@ void VSCMGStateEffector::updateEffectorMassProps(double integTime)
     this->effProps.rEffPrime_CB_B.setZero();
     this->effProps.IEffPrimePntB_B.setZero();
 
+    const Eigen::MatrixXd& omegasVector = this->OmegasState->getStateReference();
+    const Eigen::MatrixXd& gammasVector = this->gammasState->getStateReference();
+    const Eigen::MatrixXd& gammaDotsVector = this->gammaDotsState->getStateReference();
+    const Eigen::MatrixXd* thetaVector = this->numVSCMGJitter > 0 ? &this->thetasState->getStateReference() : nullptr;
     int thetaCount = 0;
     std::vector<VSCMGConfigMsgPayload>::iterator it;
 	for(it=VSCMGData.begin(); it!=VSCMGData.end(); it++)
 	{
-		it->Omega = this->OmegasState->getState()(it - VSCMGData.begin(), 0);
-		it->gamma = this->gammasState->getState()(it - VSCMGData.begin(), 0);
-		it->gammaDot = this->gammaDotsState->getState()(it - VSCMGData.begin(), 0);
+        std::size_t vscmgIndex = it - VSCMGData.begin();
+		it->Omega = omegasVector(vscmgIndex, 0);
+		it->gamma = gammasVector(vscmgIndex, 0);
+		it->gammaDot = gammaDotsVector(vscmgIndex, 0);
 		if (it->VSCMGModel == vscmgJitterFullyCoupled || it->VSCMGModel == vscmgJitterSimple) {
-			it->theta = this->thetasState->getState()(thetaCount, 0);
+			it->theta = (*thetaVector)(thetaCount, 0);
 			thetaCount++;
 		}
 
@@ -405,7 +410,7 @@ void VSCMGStateEffector::computeDerivatives(double integTime, Eigen::Vector3d rD
 
 	//! Grab necessarry values from manager
 	omegaDotBNLoc_B = omegaDot_BN_B;
-	omegaLoc_BN_B = this->hubOmega->getState();
+	omegaLoc_BN_B = this->hubOmega->getStateReference();
 	rDDotBNLoc_N = rDDot_BN_N;
 	sigmaBNLocal = (Eigen::Vector3d ) sigma_BN;
 	dcm_NB = sigmaBNLocal.toRotationMatrix();
@@ -448,7 +453,7 @@ void VSCMGStateEffector::updateEnergyMomContributions(double integTime, Eigen::V
 	Eigen::MRPd sigmaBNLocal;
 	Eigen::Matrix3d dcm_BN;                        /* direction cosine matrix from N to B */
 	Eigen::Matrix3d dcm_NB;                        /* direction cosine matrix from B to N */
-	Eigen::Vector3d omegaLoc_BN_B = hubOmega->getState();
+	Eigen::Vector3d omegaLoc_BN_B = hubOmega->getStateReference();
 
     //! - Compute energy and momentum contribution of each wheel
     rotAngMomPntCContr_B.setZero();
@@ -535,23 +540,28 @@ void VSCMGStateEffector::WriteOutputMessages(uint64_t CurrentClock)
 {
     this->outputStates = this->speedOutMsg.zeroMsgPayload;
 	VSCMGConfigMsgPayload tmpVSCMG;
+    const Eigen::MatrixXd& omegasVector = this->OmegasState->getStateReference();
+    const Eigen::MatrixXd& gammasVector = this->gammasState->getStateReference();
+    const Eigen::MatrixXd& gammaDotsVector = this->gammaDotsState->getStateReference();
+    const Eigen::MatrixXd* thetaVector = this->numVSCMGJitter > 0 ? &this->thetasState->getStateReference() : nullptr;
 	std::vector<VSCMGConfigMsgPayload>::iterator it;
 	for (it = VSCMGData.begin(); it != VSCMGData.end(); it++)
 	{
+        std::size_t vscmgIndex = it - VSCMGData.begin();
         tmpVSCMG = this->vscmgOutMsgs[0]->zeroMsgPayload;
         if (numVSCMGJitter > 0) {
-            double thetaCurrent = this->thetasState->getState()(it - VSCMGData.begin(), 0);
+            double thetaCurrent = (*thetaVector)(vscmgIndex, 0);
             it->theta = thetaCurrent;
         }
-        double omegaCurrent = this->OmegasState->getState()(it - VSCMGData.begin(), 0);
+        double omegaCurrent = omegasVector(vscmgIndex, 0);
         it->Omega = omegaCurrent;
-		this->outputStates.wheelSpeeds[it - VSCMGData.begin()] = it->Omega;
-		double gammaCurrent = this->gammasState->getState()(it - VSCMGData.begin(), 0);
+		this->outputStates.wheelSpeeds[vscmgIndex] = it->Omega;
+		double gammaCurrent = gammasVector(vscmgIndex, 0);
 		it->gamma = gammaCurrent;
-		this->outputStates.gimbalAngles[it - VSCMGData.begin()] = it->gamma;
-		double gammaDotCurrent = this->gammaDotsState->getState()(it - VSCMGData.begin(), 0);
+		this->outputStates.gimbalAngles[vscmgIndex] = it->gamma;
+		double gammaDotCurrent = gammaDotsVector(vscmgIndex, 0);
 		it->gammaDot = gammaDotCurrent;
-		this->outputStates.gimbalRates[it - VSCMGData.begin()] = it->gammaDot;
+		this->outputStates.gimbalRates[vscmgIndex] = it->gammaDot;
 
 		tmpVSCMG.u_s_current = it->u_s_current;
 		tmpVSCMG.u_s_max = it->u_s_max;

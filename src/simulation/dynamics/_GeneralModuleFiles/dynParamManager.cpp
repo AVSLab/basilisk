@@ -41,7 +41,7 @@ void StateVector::setStates(const StateVector& operand)
     for (auto [it1, it2] = std::tuple{std::begin(this->stateMap), std::begin(operand.stateMap)};
          it1 != std::end(this->stateMap) && it2 != std::end(operand.stateMap);
          ++it1, ++it2) {
-        it1->second->setState(it2->second->getState());
+        it1->second->setState(it2->second->getStateReference());
     }
 }
 
