@@ -411,6 +411,10 @@ public:
         SourceReplacementGuard replacementGuard(this->replacingSource);
         this->payloadPointer = nullptr;
         this->headerPointer = nullptr;
+        this->payloadVoidPtr = nullptr;
+        this->headerVoidPtr = nullptr;
+        this->reference.payload = nullptr;
+        this->reference.header = nullptr;
         this->initialized = false;
         this->releaseHandle_();   // #676: drop the Python keep-alive reference, if any
     }

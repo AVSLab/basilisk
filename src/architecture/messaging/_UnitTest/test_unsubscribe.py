@@ -38,6 +38,29 @@ def assertConnectionWithValues(
 
     assert readPayload.dataVector[0] == val
 
+
+def assertRawPointersCleared(
+    outMsg: Union[messaging.CModuleTemplateMsg_C, messaging.CModuleTemplateMsg]
+):
+    """Verify that unsubscribing clears a C++ reader's type-erased pointers."""
+    reader = messaging.CModuleTemplateMsgReader()
+    reader.subscribeTo(outMsg)
+
+    pointers = reader.GetPointers()
+    assert pointers.header is not None
+    assert pointers.payload is not None
+
+    reader.unsubscribe()
+
+    assert not reader.isLinked()
+    assert pointers.header is None
+    assert pointers.payload is None
+
+    currentPointers = reader.GetPointers()
+    assert currentPointers.header is None
+    assert currentPointers.payload is None
+
+
 def test_unsubscribe():
     """
     testing the unsubscribe functions of C and C++ messages
@@ -101,5 +124,16 @@ def test_unsubscribe():
     assert not messaging.CModuleTemplateMsg_C_isLinked(cMod.dataInMsg)
     assert not cppMod.dataInMsg.isLinked()
 
+
+def test_unsubscribe_clears_raw_pointers():
+    """Verify that raw pointers are cleared for both C and C++ message sources."""
+    cMod = cModuleTemplate.cModuleTemplate()
+    cppOutMsg = messaging.CModuleTemplateMsg()
+
+    assertRawPointersCleared(cMod.dataOutMsg)
+    assertRawPointersCleared(cppOutMsg)
+
+
 if __name__ == "__main__":
     test_unsubscribe()
+    test_unsubscribe_clears_raw_pointers()
