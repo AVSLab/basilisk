@@ -41,6 +41,7 @@ from Basilisk.simulation import fuelTank
 from Basilisk.simulation import thrusterDynamicEffector
 from Basilisk.utilities import simIncludeThruster
 from Basilisk.architecture import messaging
+from Basilisk.architecture.bskLogging import BasiliskError
 
 @pytest.mark.parametrize("useFlag, testCase", [
      (False, 1),
@@ -358,6 +359,43 @@ def sphericalPendulumTest(show_plots, useFlag,testCase):
         print(testMessages)
 
     return [testFailCount, ''.join(testMessages)]
+
+
+def _initializeSphericalPendulumWithDamping(dampingMatrix):
+    """Initialize a spacecraft carrying one spherical pendulum with the given damping matrix."""
+    simulation = SimulationBaseClass.SimBaseClass()
+    process = simulation.CreateNewProcess("testProcess")
+    process.addTask(simulation.CreateNewTask("testTask", macros.sec2nano(0.01)))  # [s]
+
+    spacecraftObject = spacecraft.Spacecraft()
+    pendulum = sphericalPendulum.SphericalPendulum()
+    pendulum.pendulumRadius = 0.3  # [m]
+    pendulum.massInit = 20.0  # [kg]
+    pendulum.D = dampingMatrix  # [N*s/m]
+    spacecraftObject.addStateEffector(pendulum)
+    simulation.AddModelToTask("testTask", spacecraftObject)
+    simulation.InitializeSimulation()
+
+
+@pytest.mark.parametrize("dampingMatrix", [
+    [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]],
+    [[10.0, 0.0, 0.0], [0.0, 10.0, 0.0], [0.0, 0.0, 10.0]],
+    [[50.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]],
+], ids=["zero", "positive-definite", "singular-positive-semidefinite"])
+def test_sphericalPendulumAcceptsValidDampingMatrix(dampingMatrix):
+    """Initialization must accept zero and symmetric positive-semidefinite damping."""
+    _initializeSphericalPendulumWithDamping(dampingMatrix)
+
+
+@pytest.mark.parametrize("dampingMatrix", [
+    [[1.0, 1.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]],
+    [[1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]],
+], ids=["nonsymmetric", "indefinite"])
+def test_sphericalPendulumRejectsInvalidDampingMatrix(dampingMatrix):
+    """Initialization must reject nonsymmetric or indefinite damping."""
+    with pytest.raises(BasiliskError, match="D must be symmetric positive semidefinite"):
+        _initializeSphericalPendulumWithDamping(dampingMatrix)
+
 
 if __name__ == "__main__":
     sphericalPendulumTest(True,              # showplots
