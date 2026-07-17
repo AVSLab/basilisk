@@ -301,8 +301,8 @@ void LinearTranslationNDOFStateEffector::updateContributions(double integTime, B
     this->omega_BN_B = omega_BN_B;
 
     Eigen::MatrixXd MRho = Eigen::MatrixXd::Zero(this->N, this->N);
-    Eigen::MatrixXd ARhoStar = Eigen::MatrixXd::Zero(this->N, 3);
-    Eigen::MatrixXd BRhoStar = Eigen::MatrixXd::Zero(this->N, 3);
+    Eigen::MatrixX3d ARhoStar = Eigen::MatrixX3d::Zero(this->N, 3);
+    Eigen::MatrixX3d BRhoStar = Eigen::MatrixX3d::Zero(this->N, 3);
     Eigen::VectorXd CRhoStar = Eigen::VectorXd::Zero(this->N);
 
     this->computeMRho(MRho);
@@ -335,7 +335,8 @@ void LinearTranslationNDOFStateEffector::computeMRho(Eigen::MatrixXd& MRho)
 }
 
 /*! This method compute ARhoStar for back-sub */
-void LinearTranslationNDOFStateEffector::computeARhoStar(Eigen::MatrixXd& ARhoStar)
+void
+LinearTranslationNDOFStateEffector::computeARhoStar(Eigen::MatrixX3d& ARhoStar)
 {
     for (int n = 0; n<this->N; n++) {
         if (this->translatingBodyVec[n]->isAxisLocked)
@@ -347,7 +348,8 @@ void LinearTranslationNDOFStateEffector::computeARhoStar(Eigen::MatrixXd& ARhoSt
 }
 
 /*! This method compute BRhoStar for back-sub */
-void LinearTranslationNDOFStateEffector::computeBRhoStar(Eigen::MatrixXd& BRhoStar)
+void
+LinearTranslationNDOFStateEffector::computeBRhoStar(Eigen::MatrixX3d& BRhoStar)
 {
     for (int n = 0; n<this->N; n++) {
         if (this->translatingBodyVec[n]->isAxisLocked)
