@@ -157,10 +157,10 @@ void DualHingedRigidBodyStateEffector::updateEffectorMassProps(double integTime)
 
     // - find hinged rigid bodies' position with respect to point B
     // - First need to grab current states
-    this->theta1 = this->theta1State->getState()(0, 0);
-    this->theta1Dot = this->theta1DotState->getState()(0, 0);
-    this->theta2 = this->theta2State->getState()(0, 0);
-    this->theta2Dot = this->theta2DotState->getState()(0, 0);
+    this->theta1 = this->theta1State->getStateReference()(0, 0);
+    this->theta1Dot = this->theta1DotState->getStateReference()(0, 0);
+    this->theta2 = this->theta2State->getStateReference()(0, 0);
+    this->theta2Dot = this->theta2DotState->getStateReference()(0, 0);
     // - Next find the sHat unit vectors
     Eigen::Matrix3d dcmS1H1;
     dcmS1H1 = eigenM2(this->theta1);
@@ -314,7 +314,7 @@ void DualHingedRigidBodyStateEffector::computeDerivatives(double integTime, Eige
     Eigen::Vector3d omegaDotBNLoc_B;              /* time derivative of omegaBN in B frame */
 
     // Grab necessarry values from manager (these have been previously computed in hubEffector)
-    rDDotBNLoc_N = this->v_BN_NState->getStateDeriv();
+    rDDotBNLoc_N = this->v_BN_NState->getStateDerivReference();
     this->sigma_BN = sigma_BN;
     sigmaBNLocal = this->sigma_BN;
     omegaDotBNLoc_B = omegaDot_BN_B;
@@ -324,11 +324,11 @@ void DualHingedRigidBodyStateEffector::computeDerivatives(double integTime, Eige
 
     // - Compute Derivatives
     // - First is trivial
-    this->theta1State->setDerivative(theta1DotState->getState());
+    this->theta1State->setDerivative(theta1DotState->getStateReference());
     // - Second, a little more involved - see Allard, Diaz, Schaub flex/slosh paper
     theta1DDot(0,0) = this->matrixEDHRB.row(0).dot(this->matrixFDHRB*rDDotBNLoc_B) + this->matrixEDHRB.row(0)*this->matrixGDHRB*omegaDotBNLoc_B + this->matrixEDHRB.row(0)*this->vectorVDHRB;
     this->theta1DotState->setDerivative(theta1DDot);
-    this->theta2State->setDerivative(theta2DotState->getState());
+    this->theta2State->setDerivative(theta2DotState->getStateReference());
     theta2DDot(0,0) = this->matrixEDHRB.row(1)*(this->matrixFDHRB*rDDotBNLoc_B) + this->matrixEDHRB.row(1).dot(this->matrixGDHRB*omegaDotBNLoc_B) + this->matrixEDHRB.row(1)*this->vectorVDHRB;
     this->theta2DotState->setDerivative(theta2DDot);
 

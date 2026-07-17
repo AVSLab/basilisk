@@ -104,7 +104,7 @@ void GravityGradientEffector::computeForceTorque(double integTime, double timeSt
 
     /* compute DCN [BN] */
     Eigen::MRPd sigmaBN;
-    sigmaBN = (Eigen::Vector3d)this->hubSigma->getState();
+    sigmaBN = (Eigen::Vector3d)this->hubSigma->getStateReference();
     Eigen::Matrix3d dcm_BN = sigmaBN.toRotationMatrix().transpose();
 
     /* evaluate inertia tensor about center of mass */
@@ -119,7 +119,7 @@ void GravityGradientEffector::computeForceTorque(double integTime, double timeSt
         double mu = (*this->muPlanet[c])(0,0);  /* in m^3/s^2 */
 
         /* determine spacecraft CM position relative to planet */
-        Eigen::Vector3d r_CP_N = this->r_BN_N->getState() + dcm_BN.transpose()*(*this->c_B) - *(this->r_PN_N[c]);
+        Eigen::Vector3d r_CP_N = this->r_BN_N->getStateReference() + dcm_BN.transpose()*(*this->c_B) - *(this->r_PN_N[c]);
 
         /* find orbit radius */
         double rMag = r_CP_N.norm();

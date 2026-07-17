@@ -114,8 +114,8 @@ void SphericalPendulum::updateEffectorMassProps(double integTime)
 {
 
     // - Grab phi and theta from state manager and define r_PcB_B
-	this->phi = this->phiState->getState()(0,0);
-	this->theta = this->thetaState->getState()(0,0);
+	this->phi = this->phiState->getStateReference()(0,0);
+	this->theta = this->thetaState->getStateReference()(0,0);
 
 	// mantain phi and theta between 0 and 2pi
 	if (this->phi>2*M_PI) {
@@ -155,7 +155,7 @@ void SphericalPendulum::updateEffectorMassProps(double integTime)
 	this->l_B=dcm_B_P0*l_P0;
 
 	this->r_PcB_B = this->d + this->l_B;
-	this->massFSP = this->massState->getState()(0, 0);
+	this->massFSP = this->massState->getStateReference()(0, 0);
 
 	// - Update the effectors mass
 	this->effProps.mEff = this->massFSP;
@@ -166,8 +166,8 @@ void SphericalPendulum::updateEffectorMassProps(double integTime)
 	this->effProps.IEffPntB_B = this->massFSP * this->rTilde_PcB_B * this->rTilde_PcB_B.transpose();
 
 	// - Grab phiDot and thetaDot from the stateManager and define rPrime_PcB_B
-	this->phiDot=this->phiDotState->getState()(0,0);
-	this->thetaDot=this->thetaDotState->getState()(0,0);
+	this->phiDot=this->phiDotState->getStateReference()(0,0);
+	this->thetaDot=this->thetaDotState->getStateReference()(0,0);
 
 	// define the derivative of l in P0 frame
 	this->lPrime_P0 << this->pendulumRadius*(-this->phiDot*sin(this->phi)*cos(this->theta)-this->thetaDot*cos(this->phi)*sin(this->theta)),
@@ -299,8 +299,8 @@ void SphericalPendulum::computeDerivatives(double integTime, Eigen::Vector3d rDD
 	dcm_BN = (sigmaLocal_BN.toRotationMatrix()).transpose();
 
 	// - Set the derivative of l to lDot
-	this->phiState->setDerivative(this->phiDotState->getState());
-	this->thetaState->setDerivative(this->thetaDotState->getState());
+	this->phiState->setDerivative(this->phiDotState->getStateReference());
+	this->thetaState->setDerivative(this->thetaDotState->getStateReference());
 
 	// - Compute lDDot
 	Eigen::MatrixXd phi_conv(1,1);

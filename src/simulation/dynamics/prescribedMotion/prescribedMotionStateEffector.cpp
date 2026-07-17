@@ -201,7 +201,7 @@ void PrescribedMotionStateEffector::updateEffectorMassProps(double integTime)
     this->r_PM_M = this->rEpoch_PM_M + (this->rPrimeEpoch_PM_M * dt) + (0.5 * this->rPrimePrime_PM_M * dt * dt);
     this->rPrime_PM_M = this->rPrimeEpoch_PM_M + (this->rPrimePrime_PM_M * dt);
     this->omega_PM_P = this->omegaEpoch_PM_P + (this->omegaPrime_PM_P * dt);
-    this->sigma_PM = (Eigen::Vector3d)this->sigma_PMState->getState();
+    this->sigma_PM = (Eigen::Vector3d)this->sigma_PMState->getStateReference();
 
     // Give the mass of the prescribed body to the effProps mass
     this->effProps.mEff = this->mass;
@@ -411,7 +411,7 @@ void PrescribedMotionStateEffector::computeDerivatives(double integTime,
                                                        Eigen::Vector3d sigma_BN)
 {
     Eigen::MRPd sigma_PM_loc;
-    sigma_PM_loc = (Eigen::Vector3d)this->sigma_PMState->getState();
+    sigma_PM_loc = (Eigen::Vector3d)this->sigma_PMState->getStateReference();
     this->sigma_PMState->setDerivative(0.25*sigma_PM_loc.Bmat()*this->omega_PM_P);
 
     // Loop through attached state effectors for compute derivatives

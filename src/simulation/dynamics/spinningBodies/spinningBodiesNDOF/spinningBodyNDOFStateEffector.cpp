@@ -274,8 +274,8 @@ void SpinningBodyNDOFStateEffector::computeAttitudeProperties(std::shared_ptr<Sp
         this->thetaDotState->setState(thetaDotVector);
     }
 
-    spinningBody->theta = this->thetaState->getState()(spinningBodyIndex);
-    spinningBody->thetaDot = this->thetaDotState->getState()(spinningBodyIndex);
+    spinningBody->theta = this->thetaState->getStateReference()(spinningBodyIndex);
+    spinningBody->thetaDot = this->thetaDotState->getStateReference()(spinningBodyIndex);
 
     double dcm_S0S[3][3];
     double prv_S0S_array[3];
@@ -570,7 +570,7 @@ void SpinningBodyNDOFStateEffector::computeDerivatives(double integTime, Eigen::
     Eigen::Vector3d rDDotLocal_BN_B = this->dcm_BN * rDDot_BN_N;
 
     Eigen::VectorXd thetaDDot = this->ATheta * rDDotLocal_BN_B + this->BTheta * omegaDot_BN_B + this->CTheta;
-    this->thetaState->setDerivative(this->thetaDotState->getState());
+    this->thetaState->setDerivative(this->thetaDotState->getStateReference());
     this->thetaDotState->setDerivative(thetaDDot);
 }
 

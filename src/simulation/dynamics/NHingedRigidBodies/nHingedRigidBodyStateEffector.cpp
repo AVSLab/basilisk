@@ -120,14 +120,16 @@ void NHingedRigidBodyStateEffector::updateEffectorMassProps(double integTime)
     Eigen::Vector3d sum_rPrimeH;
     sum_rPrimeH.setZero();
 
+    const Eigen::MatrixXd& thetaVector = this->thetaState->getStateReference();
+    const Eigen::MatrixXd& thetaDotVector = this->thetaDotState->getStateReference();
     std::vector<HingedPanel>::iterator PanelIt;
     int it = 0;
     for(PanelIt=this->PanelVec.begin(); PanelIt!=this->PanelVec.end(); PanelIt++){
 
         // - Find hinged rigid bodies' position with respect to point B
         // - First need to grab current states
-        PanelIt->theta = this->thetaState->getState()(it, 0);
-        PanelIt->thetaDot = this->thetaDotState->getState()(it, 0);
+        PanelIt->theta = thetaVector(it, 0);
+        PanelIt->thetaDot = thetaDotVector(it, 0);
         // - Next find the sHat unit vectors
         sum_Theta += PanelIt->theta;
         PanelIt->dcm_SS_prev = eigenM2(PanelIt->theta);
@@ -466,7 +468,7 @@ void NHingedRigidBodyStateEffector::computeDerivatives(double integTime, Eigen::
         i += 1;
     }
     // - First is trivial
-    this->thetaState->setDerivative(this->thetaDotState->getState());
+    this->thetaState->setDerivative(this->thetaDotState->getStateReference());
     // - Second, a little more involved
     this->thetaDotState->setDerivative(thetaDDot);
 

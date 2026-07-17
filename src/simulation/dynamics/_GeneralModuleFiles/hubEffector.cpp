@@ -174,9 +174,9 @@ void HubEffector::computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_
     Eigen::Vector3d cLocal_B;
     Eigen::Vector3d cPrimeLocal_B;
     Eigen::Vector3d gLocal_N;
-    rDotLocal_BN_N = velocityState->getState();
-    sigmaLocal_BN = (Eigen::Vector3d )sigmaState->getState();
-    omegaLocal_BN_B = omegaState->getState();
+    rDotLocal_BN_N = velocityState->getStateReference();
+    sigmaLocal_BN = (Eigen::Vector3d )sigmaState->getStateReference();
+    omegaLocal_BN_B = omegaState->getStateReference();
     gLocal_N = *this->g_N;
 
     // - Set kinematic derivative
@@ -216,10 +216,10 @@ void HubEffector::computeHubOnlyDerivatives(const Eigen::Vector3d& forceExternal
                                             const Eigen::Vector3d& forceExternal_B,
                                             const Eigen::Vector3d& torquePntB_B)
 {
-    Eigen::Vector3d rDotLocal_BN_N = this->velocityState->getState();
+    Eigen::Vector3d rDotLocal_BN_N = this->velocityState->getStateReference();
     Eigen::MRPd sigmaLocal_BN;
-    sigmaLocal_BN = (Eigen::Vector3d) this->sigmaState->getState();
-    Eigen::Vector3d omegaLocal_BN_B = this->omegaState->getState();
+    sigmaLocal_BN = (Eigen::Vector3d) this->sigmaState->getStateReference();
+    Eigen::Vector3d omegaLocal_BN_B = this->omegaState->getStateReference();
     Eigen::Matrix3d dcm_NB = sigmaLocal_BN.toRotationMatrix();
 
     Eigen::Vector3d translationalAccel_N =
@@ -245,7 +245,7 @@ void HubEffector::updateEnergyMomContributions(double integTime, Eigen::Vector3d
 {
     // - Get variables needed for energy momentum calcs
     Eigen::Vector3d omegaLocal_BN_B;
-    omegaLocal_BN_B = omegaState->getState();
+    omegaLocal_BN_B = omegaState->getStateReference();
 
     //  - Find rotational angular momentum contribution from hub
     Eigen::Vector3d rDot_BcB_B;
@@ -263,7 +263,7 @@ void HubEffector::modifyStates(double integTime)
 {
     // Lets switch those MRPs!!
     Eigen::Vector3d sigmaBNLoc;
-    sigmaBNLoc = (Eigen::Vector3d) this->sigmaState->getState();
+    sigmaBNLoc = (Eigen::Vector3d) this->sigmaState->getStateReference();
     if (sigmaBNLoc.norm() > 1) {
         sigmaBNLoc = -sigmaBNLoc/(sigmaBNLoc.dot(sigmaBNLoc));
         this->sigmaState->setState(sigmaBNLoc);
@@ -275,6 +275,6 @@ void HubEffector::modifyStates(double integTime)
 /*! This method is used to set the gravitational velocity state equal to the base velocity state */
 void HubEffector::matchGravitytoVelocityState(Eigen::Vector3d v_CN_N)
 {
-    this->gravVelocityState->setState(this->velocityState->getState());
+    this->gravVelocityState->setState(this->velocityState->getStateReference());
     this->gravVelocityBcState->setState(v_CN_N);
 }

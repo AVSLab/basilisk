@@ -194,8 +194,8 @@ void LinearTranslationOneDOFStateEffector::writeOutputStateMessages(uint64_t cur
 
 void LinearTranslationOneDOFStateEffector::updateEffectorMassProps(double integTime)
 {
-	this->rho = this->rhoState->getState()(0,0);
-    this->rhoDot = this->rhoDotState->getState()(0, 0);
+	this->rho = this->rhoState->getStateReference()(0,0);
+    this->rhoDot = this->rhoDotState->getStateReference()(0, 0);
 
     if (this->isAxisLocked)
     {
@@ -300,7 +300,7 @@ void LinearTranslationOneDOFStateEffector::addPrescribedMotionCouplingContributi
     Eigen::Matrix3d dcm_PB = sigma_PB.toRotationMatrix().transpose();
 
     // Collect hub states
-    Eigen::Vector3d omega_BN_B = this->hubOmega->getState();
+    Eigen::Vector3d omega_BN_B = this->hubOmega->getStateReference();
     Eigen::Vector3d omega_BN_P = dcm_PB * omega_BN_B;
 
     // Prescribed motion translation coupling contributions
@@ -367,7 +367,7 @@ void LinearTranslationOneDOFStateEffector::computeDerivatives(double integTime,
 	Eigen::Vector3d rDDot_BN_B = dcm_BN * rDDot_BN_N;
     rhoDDot(0,0) = this->aRho.dot(rDDot_BN_B) + this->bRho.dot(omegaDot_BN_B) + this->cRho;
 	this->rhoDotState->setDerivative(rhoDDot);
-    this->rhoState->setDerivative(this->rhoDotState->getState());
+    this->rhoState->setDerivative(this->rhoDotState->getStateReference());
 }
 
 void LinearTranslationOneDOFStateEffector::updateEnergyMomContributions(double integTime,

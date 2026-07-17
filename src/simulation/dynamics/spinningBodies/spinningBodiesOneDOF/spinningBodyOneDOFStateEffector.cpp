@@ -210,8 +210,8 @@ void SpinningBodyOneDOFStateEffector::updateEffectorMassProps(double integTime)
     }
 
     // Grab current states
-    this->theta = this->thetaState->getState()(0, 0);
-    this->thetaDot = this->thetaDotState->getState()(0, 0);
+    this->theta = this->thetaState->getStateReference()(0, 0);
+    this->thetaDot = this->thetaDotState->getStateReference()(0, 0);
 
     // Compute the DCM from S frame to B frame and write sHat in B frame
     double dcm_S0S[3][3];
@@ -345,7 +345,7 @@ void SpinningBodyOneDOFStateEffector::addPrescribedMotionCouplingContributions(B
     Eigen::Matrix3d dcm_PB = sigma_PB.toRotationMatrix().transpose();
 
     // Collect hub states
-    Eigen::Vector3d omega_BN_B = this->hubOmega->getState();
+    Eigen::Vector3d omega_BN_B = this->hubOmega->getStateReference();
     Eigen::Vector3d omega_BN_P = dcm_PB * omega_BN_B;
 
     // Prescribed motion translation coupling contributions
@@ -430,7 +430,7 @@ void SpinningBodyOneDOFStateEffector::computeDerivatives(double integTime,
     rDDotLocal_BN_B = this->dcm_BN * rDDotLocal_BN_N;
 
     // Compute Derivatives
-    this->thetaState->setDerivative(this->thetaDotState->getState());
+    this->thetaState->setDerivative(this->thetaDotState->getStateReference());
     Eigen::MatrixXd thetaDDot(1, 1);
     thetaDDot(0, 0) = this->aTheta.dot(rDDotLocal_BN_B)
             + this->bTheta.dot(omegaDotLocal_BN_B) + this->cTheta;
