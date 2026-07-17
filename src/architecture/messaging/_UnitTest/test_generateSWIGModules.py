@@ -127,6 +127,7 @@ def test_generated_message_bindings_use_module_local_classes(tmp_path):
     generated = _generate_swig_interface(tmp_path, True)
     new_messaging_template = NEW_MESSAGING_TEMPLATE.read_text(encoding="utf-8")
 
+    assert '%import "architecture/messaging/messagingBase.i"' in generated
     assert "from Basilisk.architecture.messaging.messageType" not in new_messaging_template
     assert "if type(source) == messageType ## _C:" in new_messaging_template
     assert "from Basilisk.architecture.messaging import CustomMsg" not in generated
