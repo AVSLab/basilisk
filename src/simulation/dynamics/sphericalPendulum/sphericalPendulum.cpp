@@ -79,6 +79,11 @@ void SphericalPendulum::linkInStates(DynParamManager& statesIn)
 /*! This is the method for the spherical pendulum to register its states: l and lDot */
 void SphericalPendulum::registerStates(DynParamManager& states)
 {
+    if (!eigenIsPositiveSemidefiniteMatrix(this->D)) {
+        bskLogger.bskError("sphericalPendulum: D must be symmetric positive semidefinite. It may not have been set "
+                           "properly by the user.");
+    }
+
 	    // - Register phi, theta, phiDot and thetaDot
 	this->phiState = states.registerState(1, 1, nameOfPhiState);
     Eigen::MatrixXd phiInitMatrix(1,1);
