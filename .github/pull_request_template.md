@@ -1,4 +1,4 @@
-* **Tickets addressed:** bsk-000
+* **Tickets addressed:** #000
 * **Review:** By commit  <!-- Choose from: "by commit", "by file" -->
 * **Merge strategy:** Merge (no squash)  <!-- Choose from: "merge (no squash)", "squash and merge" -->
 
@@ -7,11 +7,11 @@
 commits organized? -->
 
 ## Verification
-<!-- How were the changes validated? Were any automated tests added, updated, removed, or re-baselined? If you didn't 
+<!-- How were the changes validated? Were any automated tests added, updated, removed, or re-baselined? If you didn't
 add or update any tests justify this choice. -->
 
 ## Documentation
-<!-- What documentation was invalidated by these changes? Which artifacts should reviewers check for accuracy and 
+<!-- What documentation was invalidated by these changes? Which artifacts should reviewers check for accuracy and
 completeness? -->
 
 ## Future work
