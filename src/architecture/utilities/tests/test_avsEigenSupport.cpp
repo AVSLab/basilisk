@@ -20,6 +20,7 @@
 #include <gtest/gtest.h>
 #include "architecture/utilities/avsEigenSupport.h"
 #include <cmath>
+#include <limits>
 
 // Test Vector3d conversions
 TEST(avsEigenSupport, Vector3dConversions) {
@@ -199,6 +200,8 @@ TEST(avsEigenSupport, PositiveSemidefiniteMatrix) {
                     0.0, 0.0, 1.0;
     Eigen::Matrix3d indefinite = Eigen::Vector3d(1.0, 0.0, -1.0).asDiagonal();
     Eigen::Matrix3d roundoffNegative = Eigen::Vector3d(1.0, 0.0, -1e-10).asDiagonal();
+    Eigen::Matrix3d nonfinite = Eigen::Matrix3d::Identity();
+    nonfinite(0, 1) = std::numeric_limits<double>::quiet_NaN();
 
     EXPECT_TRUE(eigenIsPositiveSemidefiniteMatrix(Eigen::Matrix3d::Zero()));
     EXPECT_TRUE(eigenIsPositiveSemidefiniteMatrix(positiveDefinite));
@@ -207,6 +210,7 @@ TEST(avsEigenSupport, PositiveSemidefiniteMatrix) {
     EXPECT_FALSE(eigenIsValidInertiaMatrix(positiveSemidefinite));
     EXPECT_FALSE(eigenIsPositiveSemidefiniteMatrix(nonsymmetric));
     EXPECT_FALSE(eigenIsPositiveSemidefiniteMatrix(indefinite));
+    EXPECT_FALSE(eigenIsPositiveSemidefiniteMatrix(nonfinite));
     EXPECT_TRUE(eigenIsPositiveSemidefiniteMatrix(roundoffNegative));
     EXPECT_FALSE(eigenIsPositiveSemidefiniteMatrix(roundoffNegative, 1e-12));
 }

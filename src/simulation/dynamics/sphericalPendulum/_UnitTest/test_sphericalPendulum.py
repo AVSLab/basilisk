@@ -336,21 +336,25 @@ def sphericalPendulumTest(show_plots, useFlag,testCase):
 
     if testCase == 4 or testCase == 5:
         E = rotEnergy[:, 1]
-        E0 = E[0]
-        # A physical damper removes energy: require a clear net loss.
-        netLoss = (E0 - E[-1]) / E0
-        if netLoss < 1.0e-3:
+        if not np.all(np.isfinite(E)):
             testFailCount += 1
-            testMessages.append("FAILED: SphericalPendulum damping did not dissipate rotational "
-                                "energy (net loss {:.3e}, expected > 1e-3)".format(netLoss))
-        # A physical damper cannot increase energy between samples; allow roundoff-level noise.
-        maxStepRiseTolerance = 1.0e-10  # [-]
-        maxStepRise = np.max(np.diff(E)) / E0
-        if maxStepRise > maxStepRiseTolerance:
-            testFailCount += 1
-            testMessages.append("FAILED: SphericalPendulum damping injected rotational energy "
-                                "(maximum normalized step rise {:.3e}, expected <= {:.1e})"
-                                .format(maxStepRise, maxStepRiseTolerance))
+            testMessages.append("FAILED: SphericalPendulum damping produced non-finite rotational energy")
+        else:
+            E0 = E[0]
+            # A physical damper removes energy: require a clear net loss.
+            netLoss = (E0 - E[-1]) / E0
+            if netLoss < 1.0e-3:
+                testFailCount += 1
+                testMessages.append("FAILED: SphericalPendulum damping did not dissipate rotational "
+                                    "energy (net loss {:.3e}, expected > 1e-3)".format(netLoss))
+            # A physical damper cannot increase energy between samples; allow roundoff-level noise.
+            maxStepRiseTolerance = 1.0e-10  # [-]
+            maxStepRise = np.max(np.diff(E)) / E0
+            if maxStepRise > maxStepRiseTolerance:
+                testFailCount += 1
+                testMessages.append("FAILED: SphericalPendulum damping injected rotational energy "
+                                    "(maximum normalized step rise {:.3e}, expected <= {:.1e})"
+                                    .format(maxStepRise, maxStepRiseTolerance))
 
     if testFailCount == 0:
         print("PASSED ")
@@ -390,9 +394,10 @@ def test_sphericalPendulumAcceptsValidDampingMatrix(dampingMatrix):
 @pytest.mark.parametrize("dampingMatrix", [
     [[1.0, 1.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]],
     [[1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]],
-], ids=["nonsymmetric", "indefinite"])
+    [[1.0, np.nan, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]],
+], ids=["nonsymmetric", "indefinite", "nonfinite"])
 def test_sphericalPendulumRejectsInvalidDampingMatrix(dampingMatrix):
-    """Initialization must reject nonsymmetric or indefinite damping."""
+    """Initialization must reject nonsymmetric, indefinite, or non-finite damping."""
     with pytest.raises(BasiliskError, match="D must be symmetric positive semidefinite"):
         _initializeSphericalPendulumWithDamping(dampingMatrix)
 

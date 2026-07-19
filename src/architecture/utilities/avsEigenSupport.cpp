@@ -407,9 +407,10 @@ bool eigenIsValidInertiaMatrix(const Eigen::Matrix3d& inertia, double tolerance)
     return solver.eigenvalues().minCoeff() > 0.0;
 }
 
-/*! This function returns true if the provided 3x3 matrix is symmetric positive
-    semidefinite within the given tolerance. The tolerance bounds both the
-    deviation from symmetry and small negative eigenvalues caused by roundoff.
+/*! This function returns true if the provided 3x3 matrix contains only finite
+    values and is symmetric positive semidefinite within the given tolerance.
+    The tolerance bounds both the deviation from symmetry and small negative
+    eigenvalues caused by roundoff.
 
     :param matrix: matrix to test
     :param tolerance: allowed deviation from symmetry and positive semidefiniteness
@@ -417,6 +418,9 @@ bool eigenIsValidInertiaMatrix(const Eigen::Matrix3d& inertia, double tolerance)
  */
 bool eigenIsPositiveSemidefiniteMatrix(const Eigen::Matrix3d& matrix, double tolerance)
 {
+    if (!matrix.allFinite()) {
+        return false;
+    }
     if ((matrix - matrix.transpose()).norm() > tolerance) {
         return false;
     }
