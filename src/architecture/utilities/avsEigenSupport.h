@@ -63,7 +63,7 @@ bool eigenIsRotationMatrix(const Eigen::Matrix3d& dcm, double tolerance = 1e-9);
 bool eigenIsUnitVector(const Eigen::Vector3d& vec, double tolerance = 1e-9);
 //!@brief returns true if the 3x3 matrix is a valid inertia tensor (symmetric within tolerance and positive definite)
 bool eigenIsValidInertiaMatrix(const Eigen::Matrix3d& inertia, double tolerance = 1e-9);
-//!@brief returns true if the 3x3 matrix is symmetric positive semidefinite within the given tolerance
+//!@brief returns true if the finite 3x3 matrix is symmetric positive semidefinite within the given tolerance
 bool eigenIsPositiveSemidefiniteMatrix(const Eigen::Matrix3d& matrix, double tolerance = 1e-9);
 
 //!@brief solves for the zero of the provided function
