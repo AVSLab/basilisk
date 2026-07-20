@@ -46,6 +46,189 @@ from Basilisk.architecture import bskLogging
 from Basilisk.architecture.bskLogging import BasiliskError
 
 
+def _make_zero_base_test_elements():
+    """Create two heliocentric element sets for the zero-base tests.
+
+    Returns:
+        planetEphemeris.classicElementVector: Independent Earth and Moon-like
+        heliocentric element sets.
+    """
+    earthElements = planetEphemeris.ClassicElements()
+    earthElements.a = orbitalMotion.SMA_EARTH * 1000.0  # [m]
+    earthElements.e = 0.01  # [-]
+    earthElements.i = 10.0 * macros.D2R  # [deg] -> [rad]
+    earthElements.Omega = 30.0 * macros.D2R  # [deg] -> [rad]
+    earthElements.omega = 20.0 * macros.D2R  # [deg] -> [rad]
+    earthElements.f = 90.0 * macros.D2R  # [deg] -> [rad]
+
+    moonElements = planetEphemeris.ClassicElements()
+    moonElements.a = 1.01 * orbitalMotion.SMA_EARTH * 1000.0  # [m]
+    moonElements.e = 0.02  # [-]
+    moonElements.i = 5.0 * macros.D2R  # [deg] -> [rad]
+    moonElements.Omega = 110.0 * macros.D2R  # [deg] -> [rad]
+    moonElements.omega = 220.0 * macros.D2R  # [deg] -> [rad]
+    moonElements.f = 180.0 * macros.D2R  # [deg] -> [rad]
+
+    return planetEphemeris.classicElementVector(
+        [earthElements, moonElements]
+    )
+
+
+def _configure_zero_base_test_module(module):
+    """Configure a ``PlanetEphemeris`` module with two oriented bodies.
+
+    Args:
+        module (planetEphemeris.PlanetEphemeris): Module to configure.
+    """
+    module.setPlanetNames(
+        planetEphemeris.StringVector(["earth", "moon"])
+    )
+    module.planetElements = _make_zero_base_test_elements()
+    module.rightAscension = planetEphemeris.DoubleVector(
+        [0.0, 10.0 * macros.D2R]
+    )  # [rad]
+    module.declination = planetEphemeris.DoubleVector(
+        [90.0 * macros.D2R, 80.0 * macros.D2R]
+    )  # [rad]
+    module.lst0 = planetEphemeris.DoubleVector(
+        [0.0, 30.0 * macros.D2R]
+    )  # [rad]
+    module.rotRate = planetEphemeris.DoubleVector(
+        [1.0e-5, 2.0e-5]
+    )  # [rad/s]
+
+
+def test_zero_base_translation():
+    """Verify that ``zeroBase`` translates positions and velocities only.
+
+    Validation Test Description
+    ---------------------------
+    Two identical modules propagate the same oriented bodies.  One retains the
+    default heliocentric origin while the other selects Earth as ``zeroBase``.
+    The relative outputs are compared with differences of the heliocentric
+    outputs at three simulation times.
+
+    Test Parameter Discussion
+    -------------------------
+    Mixed-case ``"EaRtH"`` verifies case-insensitive body-name matching.  The
+    bodies use distinct orbits and attitudes so position, velocity, and
+    orientation behavior are all observable.
+
+    Description of Variables Being Tested
+    ---------------------------------------
+    The test checks ``PositionVector``, ``VelocityVector``, ``J20002Pfix``,
+    ``J20002Pfix_dot``, ``computeOrient``, and ``PlanetName``.
+    """
+    simulation = SimulationBaseClass.SimBaseClass()
+    process = simulation.CreateNewProcess("zeroBaseProcess")
+    taskStep = 0.5  # [s]
+    process.addTask(
+        simulation.CreateNewTask(
+            "zeroBaseTask",
+            macros.sec2nano(taskStep),
+        )
+    )
+
+    heliocentricModule = planetEphemeris.PlanetEphemeris()
+    heliocentricModule.ModelTag = "heliocentricPlanetEphemeris"
+    assert heliocentricModule.zeroBase == ""
+    _configure_zero_base_test_module(heliocentricModule)
+
+    relativeModule = planetEphemeris.PlanetEphemeris()
+    relativeModule.ModelTag = "relativePlanetEphemeris"
+    _configure_zero_base_test_module(relativeModule)
+    relativeModule.zeroBase = "EaRtH"
+
+    simulation.AddModelToTask("zeroBaseTask", heliocentricModule, 10)
+    simulation.AddModelToTask("zeroBaseTask", relativeModule, 10)
+
+    heliocentricRecorders = [
+        message.recorder() for message in heliocentricModule.planetOutMsgs
+    ]
+    relativeRecorders = [
+        message.recorder() for message in relativeModule.planetOutMsgs
+    ]
+    for recorder in heliocentricRecorders + relativeRecorders:
+        simulation.AddModelToTask("zeroBaseTask", recorder, 0)
+
+    simulation.InitializeSimulation()
+    simulationDuration = 1.0  # [s]
+    simulation.ConfigureStopTime(macros.sec2nano(simulationDuration))
+    simulation.ExecuteSimulation()
+
+    basePosition = heliocentricRecorders[0].PositionVector
+    baseVelocity = heliocentricRecorders[0].VelocityVector
+    positionTolerance = 1.0e-6  # [m]
+    velocityTolerance = 1.0e-10  # [m/s]
+    attitudeTolerance = 1.0e-14  # [-]
+    for bodyIndex in range(2):
+        expectedPosition = (
+            heliocentricRecorders[bodyIndex].PositionVector - basePosition
+        )
+        expectedVelocity = (
+            heliocentricRecorders[bodyIndex].VelocityVector - baseVelocity
+        )
+        np.testing.assert_allclose(
+            relativeRecorders[bodyIndex].PositionVector,
+            expectedPosition,
+            rtol=0.0,
+            atol=positionTolerance,
+        )
+        np.testing.assert_allclose(
+            relativeRecorders[bodyIndex].VelocityVector,
+            expectedVelocity,
+            rtol=0.0,
+            atol=velocityTolerance,
+        )
+        np.testing.assert_allclose(
+            relativeRecorders[bodyIndex].J20002Pfix,
+            heliocentricRecorders[bodyIndex].J20002Pfix,
+            rtol=0.0,
+            atol=attitudeTolerance,
+        )
+        np.testing.assert_allclose(
+            relativeRecorders[bodyIndex].J20002Pfix_dot,
+            heliocentricRecorders[bodyIndex].J20002Pfix_dot,
+            rtol=0.0,
+            atol=attitudeTolerance,
+        )
+        np.testing.assert_array_equal(
+            relativeRecorders[bodyIndex].computeOrient,
+            heliocentricRecorders[bodyIndex].computeOrient,
+        )
+
+    assert relativeModule.planetOutMsgs[0].read().PlanetName == "earth"
+    assert relativeModule.planetOutMsgs[1].read().PlanetName == "moon"
+
+
+def test_zero_base_requires_local_body():
+    """Verify that ``zeroBase`` rejects bodies owned by another instance.
+
+    Validation Test Description
+    ---------------------------
+    A module configured with Earth and Moon selects Mars as its translational
+    origin.  Initialization must stop with a ``BasiliskError`` because Mars is
+    not propagated by that module instance.
+    """
+    simulation = SimulationBaseClass.SimBaseClass()
+    process = simulation.CreateNewProcess("invalidZeroBaseProcess")
+    taskStep = 0.5  # [s]
+    process.addTask(
+        simulation.CreateNewTask(
+            "invalidZeroBaseTask",
+            macros.sec2nano(taskStep),
+        )
+    )
+
+    module = planetEphemeris.PlanetEphemeris()
+    _configure_zero_base_test_module(module)
+    module.zeroBase = "mars"
+    simulation.AddModelToTask("invalidZeroBaseTask", module)
+
+    with pytest.raises(BasiliskError, match="not one of the bodies configured"):
+        simulation.InitializeSimulation()
+
+
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
 # @pytest.mark.skipif(conditionstring)
 # Uncomment this line if this test has an expected failure, adjust message as needed.
@@ -274,6 +457,8 @@ def planetEphemerisTest(show_plots, setRAN, setDEC, setLST, setRate):
 # stand-along python script
 #
 if __name__ == "__main__":
+    test_zero_base_translation()
+    test_zero_base_requires_local_body()
     test_module(
                  False,           # show plots flag
                  True,           # setRAN

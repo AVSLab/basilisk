@@ -53,9 +53,12 @@ The earth body is already supported in :ref:`simIncludeGravBody`, but in this sc
 be customized.  The gravity body ephemeris states are connected to the :ref:`planetEphemeris` planet
 state output messages.
 
-Finally, the recorded states will all be relative to the inertial origin at the sun.  :ref:`planetEphemeris` does not
-have the ``zeroBase`` capability as :ref:`spiceInterface` has.  This script also records the asteroid
-states so that the plot is done of the spacecraft motion relative to the asteroid.
+The ephemeris outputs remain heliocentric because the Sun gravity body is not
+connected to an ephemeris message.  Its default zero state therefore represents
+the Sun at the heliocentric origin.  Setting ``planetEphemeris.zeroBase`` to
+Itokawa would incorrectly place both the Sun and Itokawa at the origin.  To plot
+the spacecraft motion relative to the asteroid, the script instead records the
+Itokawa state and subtracts it from the spacecraft state during post-processing.
 
 The simulation executes and shows a plot of the spacecraft motion relative to the asteroid.
 
@@ -148,6 +151,9 @@ def run(show_plots):
 
     # specify celestial object orbit
     gravBodyEphem.planetElements = planetEphemeris.classicElementVector([oeAsteroid, oeEarth])
+    # Keep these outputs heliocentric. The unlinked Sun gravity body below uses
+    # its default zero state to represent the Sun at the heliocentric origin.
+    # The asteroid state is subtracted from the spacecraft state when plotting.
     # specify celestial object orientation
     gravBodyEphem.rightAscension = planetEphemeris.DoubleVector([0.0 * macros.D2R, 0.0 * macros.D2R])
     gravBodyEphem.declination = planetEphemeris.DoubleVector([0.0 * macros.D2R, 0.0 * macros.D2R])
