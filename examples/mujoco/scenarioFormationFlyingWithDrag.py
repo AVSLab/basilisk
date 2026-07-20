@@ -24,8 +24,9 @@ The spacecraft are defined in ``CHIEF_DEPUTY_SCENE_XML``. Each vehicle is modele
 as a single point-mass body with three translational sliding joints (x, y, z).
 Their inertial properties are assigned directly in the XML.
 
-Gravity is modeled using the :ref:`NBodyGravity` model, with a point-mass
-Earth defined by :ref:`pointMassGravityModel`. The exponential atmospheric model
+Gravity is configured with :ref:`simIncludeGravBody`.  Its gravity factory
+creates a point-mass Earth and attaches it to the MuJoCo scene, automatically
+applying gravity to both spacecraft.  The exponential atmospheric model
 (:ref:`exponentialAtmosphere`) is optionally added so that the chief and deputy
 can experience cannonball drag.
 
@@ -52,7 +53,7 @@ This scenario demonstrates:
 
 * How to construct a multi-body MuJoCo scene with two independent spacecraft
 * How to configure translation-only scenarios
-* How to model gravity on multiple bodies using the :ref:`NBodyGravity` model
+* How to configure gravity on multiple MuJoCo bodies using the gravity factory
 * How to apply aerodynamic forces
 * How to configure and apply a classical-element feedback controller for formation control
 * How to record and visualize inertial trajectories, orbital-element histories,
@@ -92,8 +93,6 @@ from matplotlib.collections import LineCollection
 from Basilisk.architecture import messaging
 from Basilisk.simulation import mujoco
 from Basilisk.simulation import svIntegrators
-from Basilisk.simulation import pointMassGravityModel
-from Basilisk.simulation import NBodyGravity
 from Basilisk.simulation import cannonballDrag
 from Basilisk.simulation import MJLinearTimeInvariantSystem
 from Basilisk.simulation import exponentialAtmosphere
@@ -161,7 +160,6 @@ class SimulationModels:
     scene: mujoco.MJScene
     chiefBody: mujoco.MJBody
     deputyBody: mujoco.MJBody
-    gravity: NBodyGravity.NBodyGravity
     atmo: exponentialAtmosphere.ExponentialAtmosphere
 
     # Drag models
@@ -321,7 +319,6 @@ def createSimulationModels(
     # Create the MuJoCo scene and add it as a dynamic object
     scene = mujoco.MJScene(CHIEF_DEPUTY_SCENE_XML)
     scene.extraEoMCall = True
-    scene._vizGravBodies = gravFactory.gravBodies
     scSim.AddModelToTask("test", scene, 1)
 
     # Select integrator
@@ -334,16 +331,9 @@ def createSimulationModels(
     chiefBody: mujoco.MJBody = scene.getBody("chief")
     deputyBody: mujoco.MJBody = scene.getBody("deputy")
 
-    # Central body gravity
-    gravity = NBodyGravity.NBodyGravity()
-    gravity.ModelTag = "gravity"
-    scene.AddModelToDynamicsTask(gravity)
-
-    gravityModel = pointMassGravityModel.PointMassGravityModel()
-    gravityModel.muBody = planet.mu
-    gravity.addGravitySource("earth", gravityModel, True)
-    gravity.addGravityTarget("chief", chiefBody)
-    gravity.addGravityTarget("deputy", deputyBody)
+    # The factory creates the NBodyGravity model, adds Earth as its central
+    # source, and registers both spacecraft as gravity targets.
+    gravFactory.addBodiesTo(scene)
 
     # Exponential atmosphere model
     atmo = exponentialAtmosphere.ExponentialAtmosphere()
@@ -360,7 +350,6 @@ def createSimulationModels(
         scene=scene,
         chiefBody=chiefBody,
         deputyBody=deputyBody,
-        gravity=gravity,
         atmo=atmo,
     )
 
