@@ -48,6 +48,11 @@ SCENARIO_FILES = [
 ]
 
 SCENARIO_RUN_KWARGS = {
+    # Run both planet-state sources used by the Earth-Moon gravity tutorial.
+    "scenarioMJEarthMoonGravity": [
+        {"useSpice": True},
+        {"useSpice": False},
+    ],
     "scenarioThrArmControl": {"showPlots": False, "timeStep": 0.08, "runTime": 240.0},
     # Run the stochastic-drag scenario in both the default (Ornstein-Uhlenbeck) and the
     # IGBM density-noise modes, so both sets of documentation figures are generated.
