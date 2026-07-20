@@ -14,22 +14,47 @@
 # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-from pathlib import Path
-from typing import Optional
-from typing import Dict
-from typing import Iterable
-from typing import Union
-from typing import overload
-from typing import Sequence
-from typing import List
-from typing import Protocol
-from typing import runtime_checkable
-from typing import Any
+"""Create gravity-body descriptors and connect them to Basilisk dynamics.
+
+The usual workflow is to create the bodies first, mark one body as central when
+appropriate, and then attach the factory bodies to a dynamics object:
+
+.. code-block:: python
+
+    from Basilisk.utilities import simIncludeGravBody
+
+    gravFactory = simIncludeGravBody.gravBodyFactory()
+    earth = gravFactory.createEarth()
+    earth.isCentralBody = True
+    gravFactory.addBodiesTo(spacecraftObject)
+
+The same ``addBodiesTo()`` call accepts a MuJoCo ``MJScene``. In that case the
+factory creates the intermediate ``NBodyGravity`` model and connects every
+MuJoCo body as a gravity target.
+
+Call ``createSpiceInterface()`` after creating the gravity bodies. The factory
+then connects each body's ephemeris input to the corresponding SPICE output.
+"""
+
+import os
 from dataclasses import dataclass
+from pathlib import Path
+from typing import (
+    Any,
+    Dict,
+    Iterable,
+    List,
+    Optional,
+    Protocol,
+    Sequence,
+    Union,
+    overload,
+    runtime_checkable,
+)
 
 from Basilisk import __path__
-from Basilisk.architecture import messaging
 from Basilisk.architecture import astroConstants
+from Basilisk.architecture import messaging
 from Basilisk.simulation import gravityEffector
 from Basilisk.simulation import spiceInterface
 from Basilisk.simulation.gravityEffector import (
@@ -41,12 +66,9 @@ from Basilisk.simulation.gravityEffector import (
 from Basilisk.utilities import simHelpers
 
 from Basilisk.utilities.deprecated import deprecationWarn
-from Basilisk.utilities.supportDataTools.dataFetcher import get_path, DataFile, POOCH
+from Basilisk.utilities.supportDataTools.dataFetcher import DataFile, POOCH, get_path
 
-# this statement is needed to enable Windows to print ANSI codes in the Terminal
-# see https://stackoverflow.com/questions/287871/how-to-print-colored-text-in-terminal-in-python/3332860#3332860
-import os
-
+# Enable ANSI color codes in the Windows terminal.
 os.system("")
 
 
@@ -76,6 +98,8 @@ class BodyData:
     radiusRatio: float = 1
 
 
+# ``astroConstants`` stores gravitational parameters in km^3/s^2 and radii in
+# km. The multipliers below convert them to the SI units used by the dynamics.
 BODY_DATA = {
     "sun": BodyData(
         identifier="sun",
@@ -181,18 +205,36 @@ BODY_DATA = {
 
 @runtime_checkable
 class WithGravField(Protocol):
-    gravField: Any  # cannot be GravityEffector because SWIG classes dont give type info
+    # SWIG classes do not expose enough static type information to name the
+    # concrete gravity-effector type here. Runtime protocol checking lets the
+    # factory recognize objects such as ``spacecraft.Spacecraft`` by interface.
+    gravField: Any
+
+
+@runtime_checkable
+class WithSetGravBodies(Protocol):
+    def setGravBodies(self, gravBodies: Any) -> None:
+        ...
 
 
 def _ensure_trailing_sep(path: str) -> str:
+    """Return a directory path in the format expected by the SPICE C API."""
     path = str(path)
     return path if path.endswith(os.sep) else path + os.sep
 
 
 class gravBodyFactory:
-    """Class to create gravitational bodies."""
+    """Create and retain the gravity bodies used by a simulation.
+
+    ``gravBodies`` is the factory's canonical dictionary of
+    ``GravBodyData`` descriptors. A descriptor can be shared by conventional
+    spacecraft dynamics, MuJoCo dynamics, SPICE, and Vizard without copying its
+    gravity model or configuration.
+    """
 
     def __init__(self, bodyNames: Iterable[str] = []):
+        # Body names and any supplied body-fixed frames are kept in insertion
+        # order because SPICE output messages are connected in that same order.
         self.spicePlanetFrames: List[str] = []
         self.gravBodies: Dict[str, gravityEffector.GravBodyData] = {}
         self.spiceObject: Optional[spiceInterface.SpiceInterface] = None
@@ -220,25 +262,36 @@ class gravBodyFactory:
             Optional[Any]: The created ``NBodyGravity`` model for an ``MJScene``;
                 otherwise, ``None``.
 
-        Note:
-            When factory bodies use SPICE ephemerides, add the factory's
-            ``spiceObject`` to the ``MJScene`` dynamics task before the returned
-            ``NBodyGravity`` model. This keeps planet states current at each
-            MuJoCo integrator substep.
+        Raises:
+            TypeError: If the supplied object is not a supported dynamics object.
+            ValueError: If gravity was already attached to the ``MJScene``.
+
+        .. note::
+
+           When factory bodies use SPICE ephemerides, add the factory's
+           ``spiceObject`` to the ``MJScene`` dynamics task before calling this
+           method. This keeps planet states current at each MuJoCo integrator
+           substep.
         """
+        # Standard dynamics objects such as ``Spacecraft`` own a gravity
+        # effector in ``gravField``. Accepting either the owner or the effector
+        # keeps the long-standing ``addBodiesTo()`` calling convention.
         if isinstance(objectToAddTheBodies, WithGravField):
             objectToAddTheBodies = objectToAddTheBodies.gravField
 
-        setGravBodies = getattr(objectToAddTheBodies, "setGravBodies", None)
-        if callable(setGravBodies):
+        # GravityEffectors expose ``setGravBodies``. Checking for that protocol
+        # first preserves the conventional path without importing MuJoCo.
+        if isinstance(objectToAddTheBodies, WithSetGravBodies):
             bodies = gravityEffector.GravBodyVector(list(self.gravBodies.values()))
-            setGravBodies(bodies)
+            objectToAddTheBodies.setGravBodies(bodies)
             return None
 
         return self._addBodiesToMJScene(objectToAddTheBodies)
 
     def _addBodiesToMJScene(self, scene: Any) -> Any:
-        """Attach the factory's gravity bodies to a MuJoCo scene."""
+        """Create and attach an ``NBodyGravity`` model for a MuJoCo scene."""
+        # MuJoCo is an optional Basilisk build feature. Import it only after the
+        # conventional gravity-effector path has been ruled out.
         try:
             from Basilisk.simulation import NBodyGravity
             from Basilisk.simulation import mujoco
@@ -254,6 +307,8 @@ class gravBodyFactory:
                 "gravField attribute, or an MJScene."
             )
 
+        # Attaching twice would duplicate every gravity force actuator. Keep a
+        # scene-side marker so that the error is caught before modifying it.
         cacheAttribute = "_gravBodyFactoryNBodyGravity"
         if getattr(scene, cacheAttribute, None) is not None:
             raise ValueError(
@@ -265,9 +320,15 @@ class gravBodyFactory:
             f"{scene.ModelTag}_gravity" if scene.ModelTag else "mujocoScene_gravity"
         )
 
+        # A factory body is a gravity *source*. The descriptor overload lets
+        # NBodyGravity read its model, central-body flag, and SPICE input
+        # directly from the same GravBodyData used by standard spacecraft.
         for name, gravBody in self.gravBodies.items():
             gravity.addGravitySourceFromBody(name, gravBody)
 
+        # Gravity is applied independently at each MuJoCo body's center of
+        # mass. This preserves gravity-gradient forces across articulated or
+        # otherwise extended systems.
         for name in scene.getBodyNames():
             gravity.addGravityTarget(name, scene.getBody(name))
 
@@ -283,8 +344,9 @@ class gravBodyFactory:
 
         return gravity
 
-    # Note, in the `create` functions below the `isCentralBody` and `useSphericalHarmParams` are
-    # all set to False in the `GravBodyData()` constructor.
+    # ``GravBodyData`` starts with a point-mass gravity model and is not a
+    # central body. Users should set ``isCentralBody = True`` on the appropriate
+    # body and may replace the point-mass model before simulation initialization.
 
     def createBody(
         self, bodyData: Union[str, BodyData]
@@ -300,15 +362,19 @@ class gravBodyFactory:
             gravityEffector.GravBodyData: The body object with corresponding data.
         """
         if not isinstance(bodyData, BodyData):
+            # Accept both ``"mars barycenter"`` and ``"mars_barycenter"`` to
+            # match common SPICE-name spelling in user scripts.
             key = bodyData.lower().replace("_", " ")
             if key not in BODY_DATA:
                 raise ValueError(
-                    f"Body {bodyData} is unkown. "
+                    f"Body {bodyData} is unknown. "
                     f"Valid options are: {', '.join(BODY_DATA)}"
                 )
 
             bodyData = BODY_DATA[key]
 
+        # The descriptor owns the gravity configuration; dynamics objects only
+        # retain a shared reference to it when ``addBodiesTo()`` is called.
         body = gravityEffector.GravBodyData()
         body.planetName = bodyData.planetName
         body.displayName = bodyData.displayName
@@ -316,6 +382,9 @@ class gravBodyFactory:
         body.mu = bodyData.mu
         body.radEquator = bodyData.radEquator
         body.radiusRatio = bodyData.radiusRatio
+
+        # Dictionary insertion order becomes the default SPICE planet-output
+        # order. ``spicePlanetFrames`` is populated in the same order.
         self.gravBodies[bodyData.identifier] = body
         self.spicePlanetFrames.append(bodyData.spicePlanetFrame)
         return body
@@ -333,6 +402,9 @@ class gravBodyFactory:
             Dict[str, gravityEffector.GravBodyData]:
                 A dictionary of gravity body objects held by the gravity factory.
         """
+        # Support either ``createBodies("earth", "moon")`` or
+        # ``createBodies(["earth", "moon"])`` without making users reshape
+        # their existing collection.
         for nameOrIterableOfNames in bodyNames:
             if isinstance(nameOrIterableOfNames, str):
                 self.createBody(nameOrIterableOfNames)
@@ -341,6 +413,9 @@ class gravBodyFactory:
                     self.createBody(name)
         return self.gravBodies
 
+    # Named helpers below are intentionally thin wrappers. They provide
+    # discoverable IDE completion while keeping all initialization in
+    # ``createBody()``.
     def createSun(self):
         return self.createBody("sun")
 
@@ -387,10 +462,11 @@ class gravBodyFactory:
         """Create a custom gravity body object.
 
         Args:
-            label (str): Gravity body name
-            mu (float): Gravity constant in m^3/s^2
-            displayName (Optional[str], optional): Vizard celestial body name, if not
-                provided then planetFrame becomes the Vizard name. Defaults to None.
+            label (str): Gravity body name.
+            mu (float): Gravitational parameter in m^3/s^2.
+            displayName (Optional[str], optional): Vizard celestial-body name. If
+                omitted, Vizard uses the gravity body's ``planetName``. Defaults
+                to None.
             modelDictionaryKey (Optional[str], optional): Vizard model key name.
                 If not set, then either the displayName or planetName is used to
                 set the model. Defaults to None.
@@ -398,12 +474,15 @@ class gravBodyFactory:
                 Defaults to None.
             radiusRatio (Optional[float], optional): Ratio of the polar radius to
                 the equatorial radius. Defaults to None.
-            planetFrame (Optional[str], optional): Name of the spice planet
+            planetFrame (Optional[str], optional): Name of the SPICE planet
                 frame. Defaults to None.
 
         Returns:
             gravityEffector.GravBodyData: The body object with the given data.
         """
+        # The GravBodyData constructor supplies the default point-mass gravity
+        # model. This method fills in the independent parameters used to
+        # initialize that model when the simulation starts.
         gravBody = gravityEffector.GravBodyData()
         gravBody.planetName = label
         gravBody.mu = mu
@@ -417,11 +496,17 @@ class gravBodyFactory:
             gravBody.modelDictionaryKey = ""
         else:
             gravBody.modelDictionaryKey = modelDictionaryKey
+
+        # Retaining the descriptor in ``gravBodies`` makes this custom body
+        # participate in later ``addBodiesTo()`` and SPICE setup calls.
         self.gravBodies[label] = gravBody
         if planetFrame is not None:
             self.spicePlanetFrames.append(planetFrame)
         return gravBody
 
+    # The two overloads document the supported positional and keyword-only
+    # calling styles for type checkers. The third definition contains the
+    # runtime implementation shared by both styles.
     @overload
     def createSpiceInterface(
         self,
@@ -437,9 +522,11 @@ class gravBodyFactory:
         spicePlanetFrames: Optional[Sequence[str]] = None,
         epochInMsg: bool = False,
     ) -> spiceInterface.SpiceInterface:
-        """A convenience function to configure a NAIF Spice module for the simulation.
-        It connects the ``gravBodyData`` objects to the spice planet state messages.  Thus,
-        it must be run after the ``gravBodyData`` objects are created.
+        """Configure a NAIF SPICE module for the simulation.
+
+        This method connects the factory's ``GravBodyData`` objects to the
+        corresponding SPICE planet-state messages. It must therefore be called
+        after the gravity bodies are created.
 
         .. note::
 
@@ -459,21 +546,25 @@ class gravBodyFactory:
         Args:
             path (str): The absolute path to the folder that contains the kernels to be loaded.
             time (str): The time string in a format that SPICE recognizes.
-            spiceKernelFileNames (Iterable[str], optional):
-                A list of spice kernel file names including file extension.
-                Defaults to `['de430.bsp', 'naif0012.tls', 'de-403-masses.tpc', 'pck00010.tpc']`.
+            spiceKernelFileNames (Iterable[DataFile.EphemerisData], optional):
+                Support-data entries for the SPICE kernels to load. Defaults to
+                ``de430.bsp``, ``naif0012.tls``, ``de-403-masses.tpc``, and
+                ``pck00010.tpc``.
             spicePlanetNames (Optional[Sequence[str]], optional):
-                A list of planet names whose Spice data is loaded. If this is not provided,
-                Spice data is loaded for the bodies created with this factory object. Defaults to None.
+                Planet names whose SPICE data is loaded. If omitted, the method
+                uses the bodies created with this factory, in insertion order.
+                Defaults to None.
             spicePlanetFrames (Optional[Sequence[str]], optional):
-                A list of planet frame names to load in Spice. If this is not provided,
-                frames are loaded for the bodies created with this factory function. Defaults to None.
+                Planet frame names to load in SPICE. If omitted, the method uses
+                the frames recorded when the factory bodies were created.
+                Defaults to None.
             epochInMsg (bool, optional):
-                Flag to set an epoch input message for the spice interface. Defaults to False.
+                If True, create and connect an epoch input message. Defaults to
+                False.
 
         Returns:
-            spiceInterface.SpiceInterface: The generated SpiceInterface, which is the
-            same as the stored `self.spiceObject`
+            spiceInterface.SpiceInterface: The generated ``SpiceInterface``.
+                The same object is also available as ``self.spiceObject``.
         """
 
     @overload
@@ -492,9 +583,11 @@ class gravBodyFactory:
         spicePlanetFrames: Optional[Sequence[str]] = None,
         epochInMsg: bool = False,
     ) -> spiceInterface.SpiceInterface:
-        """A convenience function to configure a NAIF Spice module for the simulation.
-        It connects the ``gravBodyData`` objects to the spice planet state messages.  Thus,
-        it must be run after the ``gravBodyData`` objects are created.
+        """Configure a NAIF SPICE module for the simulation.
+
+        This method connects the factory's ``GravBodyData`` objects to the
+        corresponding SPICE planet-state messages. It must therefore be called
+        after the gravity bodies are created.
 
         Unless the ``path`` input is provided, the kernels are loaded from the folder:
         `%BSK_PATH%/supportData/EphemerisData/`, where `%BSK_PATH%` is replaced by
@@ -518,21 +611,25 @@ class gravBodyFactory:
         Args:
             path (str): The absolute path to the folder that contains the kernels to be loaded.
             time (str): The time string in a format that SPICE recognizes.
-            spiceKernelFileNames (Iterable[str], optional):
-                A list of spice kernel file names including file extension.
-                Defaults to `['de430.bsp', 'naif0012.tls', 'de-403-masses.tpc', 'pck00010.tpc']`.
+            spiceKernelFileNames (Iterable[DataFile.EphemerisData], optional):
+                Support-data entries for the SPICE kernels to load. Defaults to
+                ``de430.bsp``, ``naif0012.tls``, ``de-403-masses.tpc``, and
+                ``pck00010.tpc``.
             spicePlanetNames (Optional[Sequence[str]], optional):
-                A list of planet names whose Spice data is loaded. If this is not provided,
-                Spice data is loaded for the bodies created with this factory object. Defaults to None.
+                Planet names whose SPICE data is loaded. If omitted, the method
+                uses the bodies created with this factory, in insertion order.
+                Defaults to None.
             spicePlanetFrames (Optional[Sequence[str]], optional):
-                A list of planet frame names to load in Spice. If this is not provided,
-                frames are loaded for the bodies created with this factory function. Defaults to None.
+                Planet frame names to load in SPICE. If omitted, the method uses
+                the frames recorded when the factory bodies were created.
+                Defaults to None.
             epochInMsg (bool, optional):
-                Flag to set an epoch input message for the spice interface. Defaults to False.
+                If True, create and connect an epoch input message. Defaults to
+                False.
 
         Returns:
-            spiceInterface.SpiceInterface: The generated SpiceInterface, which is the
-            same as the stored `self.spiceObject`
+            spiceInterface.SpiceInterface: The generated ``SpiceInterface``.
+                The same object is also available as ``self.spiceObject``.
         """
 
     def createSpiceInterface(
@@ -550,9 +647,11 @@ class gravBodyFactory:
         epochInMsg: bool = False,
         spiceKernalFileNames=None,
     ) -> spiceInterface.SpiceInterface:
-        """A convenience function to configure a NAIF Spice module for the simulation.
-        It connects the ``gravBodyData`` objects to the spice planet state messages.  Thus,
-        it must be run after the ``gravBodyData`` objects are created.
+        """Configure a NAIF SPICE module for the simulation.
+
+        This method connects the factory's ``GravBodyData`` objects to the
+        corresponding SPICE planet-state messages. It must therefore be called
+        after the gravity bodies are created.
 
         Unless the ``path`` input is provided, the kernels are loaded from the folder:
         `%BSK_PATH%/supportData/EphemerisData/`, where `%BSK_PATH%` is replaced by
@@ -576,46 +675,63 @@ class gravBodyFactory:
         Args:
             path (str): The absolute path to the folder that contains the kernels to be loaded.
             time (str): The time string in a format that SPICE recognizes.
-            spiceKernelFileNames (Iterable[str], optional):
-                A list of spice kernel file names including file extension.
-                Defaults to `['de430.bsp', 'naif0012.tls', 'de-403-masses.tpc', 'pck00010.tpc']`.
+            spiceKernelFileNames (Iterable[DataFile.EphemerisData], optional):
+                Support-data entries for the SPICE kernels to load. Defaults to
+                ``de430.bsp``, ``naif0012.tls``, ``de-403-masses.tpc``, and
+                ``pck00010.tpc``.
             spicePlanetNames (Optional[Sequence[str]], optional):
-                A list of planet names whose Spice data is loaded. If this is not provided,
-                Spice data is loaded for the bodies created with this factory object. Defaults to None.
+                Planet names whose SPICE data is loaded. If omitted, the method
+                uses the bodies created with this factory, in insertion order.
+                Defaults to None.
             spicePlanetFrames (Optional[Sequence[str]], optional):
-                A list of planet frame names to load in Spice. If this is not provided,
-                frames are loaded for the bodies created with this factory function. Defaults to None.
+                Planet frame names to load in SPICE. If omitted, the method uses
+                the frames recorded when the factory bodies were created.
+                Defaults to None.
             epochInMsg (bool, optional):
-                Flag to set an epoch input message for the spice interface. Defaults to False.
+                If True, create and connect an epoch input message. Defaults to
+                False.
+            spiceKernalFileNames: Deprecated misspelling of
+                ``spiceKernelFileNames``.
 
         Returns:
-            spiceInterface.SpiceInterface: The generated SpiceInterface, which is the
-            same as the stored `self.spiceObject`
+            spiceInterface.SpiceInterface: The generated ``SpiceInterface``.
+                The same object is also available as ``self.spiceObject``.
         """
         if time == "":
             raise ValueError(
-                "'time' argument must be provided and a valid SPICE time string"
+                "'time' must be provided as a valid SPICE time string"
             )
 
+        # Keep the historical misspelling working while directing users to the
+        # correctly spelled keyword.
         if spiceKernalFileNames is not None:
             spiceKernelFileNames = spiceKernalFileNames
             deprecationWarn(
-                f"{gravBodyFactory.createSpiceInterface.__qualname__}.spiceKernalFileNames"
+                f"{gravBodyFactory.createSpiceInterface.__qualname__}.spiceKernalFileNames",
                 "2024/11/24",
                 "The argument 'spiceKernalFileNames' is deprecated. Use 'spiceKernelFileNames'",
             )
 
+        # ``%BSK_PATH%`` is retained for compatibility with older scripts. The
+        # resolved path is also passed to the optional epoch-message helper.
         if isinstance(path, str) and "%BSK_PATH%" in path:
             path = path.replace("%BSK_PATH%", list(__path__)[0])
 
         path = Path(path).expanduser().resolve()
 
+        # Keep the interface on the factory so callers can schedule it and later
+        # unload its kernels through this same factory instance.
         self.spiceObject = spiceInterface.SpiceInterface()
         self.spiceObject.ModelTag = "SpiceInterfaceData"
         self.spiceObject.SPICEDataPath = (
             str(Path(POOCH.abspath) / "supportData" / "EphemerisData") + os.sep
         )
         self.spiceKernelFileNames.extend(spiceKernelFileNames)
+
+        # Python dictionaries preserve insertion order. By default, SPICE
+        # outputs therefore follow the same order as ``gravBodies`` below.
+        # Callers who provide ``spicePlanetNames`` must keep that ordering
+        # consistent with the factory bodies they intend to connect.
         self.spicePlanetNames = list(spicePlanetNames or self.gravBodies)
         if spicePlanetFrames is not None:
             self.spicePlanetFrames = list(spicePlanetFrames)
@@ -626,19 +742,22 @@ class gravBodyFactory:
             self.spiceObject.planetFrames = list(self.spicePlanetFrames)
 
         self.spiceObject.SPICELoaded = True
+        # A set avoids loading the same kernel more than once if this factory
+        # accumulated duplicate entries.
         for file_enum in set(self.spiceKernelFileNames):
-            # Resolve the file path using pooch if possible
+            # Prefer the support-data registry. It selects a local checkout
+            # when available and otherwise retrieves the cached data file.
             try:
                 resolved_path = Path(get_path(file_enum)).resolve()
             except Exception:
-                # Fallback, use the kernel filename directly inside SPICEDataPath
+                # User-supplied filenames may not be registry entries. Fall
+                # back to the interface's SPICE data directory for those.
                 fname = getattr(file_enum, "value", str(file_enum))
                 resolved_path = (Path(self.spiceObject.SPICEDataPath) / fname).resolve()
 
-            # Absolute filename SPICE should load
+            # ``loadSpiceKernel`` accepts the filename and containing directory
+            # separately, so split the resolved absolute path at this boundary.
             full_kernel_path = str(resolved_path)
-
-            # ALWAYS load using the full path.
             resolved_dir = str(resolved_path.parent) + os.sep
             resolved_name = resolved_path.name
             load_failed = self.spiceObject.loadSpiceKernel(resolved_name, resolved_dir)
@@ -647,13 +766,17 @@ class gravBodyFactory:
                 self.spiceObject.SPICELoaded = False
                 print(f"\033[91mERROR loading kernel:\033[0m {full_kernel_path}")
 
-        #  Hook grav bodies to the SPICE messages
+        # Connect each shared descriptor to the matching SPICE output. Both
+        # conventional GravityEffector and MuJoCo NBodyGravity later read this
+        # same ``planetBodyInMsg`` connection.
         for c, gravBodyDataItem in enumerate(self.gravBodies.values()):
             gravBodyDataItem.planetBodyInMsg.subscribeTo(
                 self.spiceObject.planetStateOutMsgs[c]
             )
 
         if epochInMsg:
+            # Store the message on the factory so its Python owner remains alive
+            # for as long as the SPICE interface is in use.
             self.epochMsg = simHelpers.timeStringToGregorianUTCMsg(
                 time, dataPath=str(path)
             )
@@ -662,11 +785,12 @@ class gravBodyFactory:
         return self.spiceObject
 
     def unloadSpiceKernels(self):
-        """Method to unload spice kernals at the end of a simulation."""
+        """Unload this factory's SPICE kernels at the end of a simulation."""
         if self.spiceObject is None:
             return
         for file_enum in set(self.spiceKernelFileNames):
-            # Convert enum → string filename
+            # Kernel lists normally contain DataFile enum members, but retain
+            # support for callers that supplied filename strings.
             fname = getattr(file_enum, "value", str(file_enum))
 
             d = _ensure_trailing_sep(self.spiceObject.SPICEDataPath)
@@ -680,7 +804,7 @@ def loadGravFromFile(
 ):
     """Load the gravitational body spherical harmonics coefficients from a file.
 
-    Note that this function calls the `gravityEffector` function `loadGravFromFile()`.
+    This wrapper delegates to ``gravityEffector.loadGravFromFile()``.
 
     Args:
         fileName (str): The full path to the specified data file.
@@ -698,6 +822,6 @@ def loadPolyFromFile(fileName: str, poly: gravityEffector.PolyhedralGravityModel
     Args:
         fileName (str): The full path to the specified data file.
         poly (gravityEffector.PolyhedralGravityModel):
-            The polyhedarl gravity model container of the body.
+            The polyhedral gravity model container of the body.
     """
     loadPolyFromFile_python(fileName, poly)
