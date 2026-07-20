@@ -1,0 +1,3 @@
+- Added ``gravBodyFactory.addBodiesTo()`` support for configuring gravity sources and targets on MuJoCo scenes.
+- Added ``zeroBase`` support to :ref:`planetEphemeris` for expressing all outputs relative to a body propagated by the same module instance.
+- Added :ref:`scenarioMJEarthMoonGravity`, a MuJoCo Earth-Moon gravity tutorial with selectable SPICE or :ref:`planetEphemeris` planet states.
