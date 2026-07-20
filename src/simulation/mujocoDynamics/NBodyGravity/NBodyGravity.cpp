@@ -237,6 +237,13 @@ NBodyGravity::computeAccelerationFromSource(GravitySource& source, Eigen::Vector
     {
         auto spicePayload = readState(source, bskLogger);
         dcm_sourceFixedJ2000 = c2DArray2EigenMatrix3d(spicePayload.J20002Pfix);
+        // Position-only ephemeris messages leave the source DCM at its zero
+        // default. Match GravityEffector by treating that source as inertially
+        // aligned instead of collapsing every transformed position to zero.
+        if (dcm_sourceFixedJ2000.isZero())
+        {
+            dcm_sourceFixedJ2000 = Eigen::Matrix3d::Identity();
+        }
         r_sourceJ2000 = cArray2EigenVector3d(spicePayload.PositionVector);
     }
 
