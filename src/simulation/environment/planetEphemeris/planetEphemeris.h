@@ -20,6 +20,7 @@
 #ifndef planetEphemeris_H
 #define planetEphemeris_H
 
+#include <string>
 #include <vector>
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 
@@ -52,12 +53,15 @@ public:
 
     std::vector<double> rotRate;                //!< [r/s] planet rotation rate
 
+    std::string zeroBase{};                     //!< -- Output origin body; empty preserves heliocentric states
+
     BSKLogger bskLogger;                      //!< -- BSK Logging
 
 private:
     std::vector<std::string> planetNames;       //!< -- Vector of planet names
     double epochTime;                           //!< [s] time of provided planet ephemeris epoch
-    int computeAttitudeFlag;                    //!< -- flag indicating if the planet orienation information is provided
+    int computeAttitudeFlag;                    //!< -- flag indicating whether planet orientation is provided
+    int zeroBaseIndex = -1;                     //!< -- index of the body selected as the translational origin
 };
 
 
