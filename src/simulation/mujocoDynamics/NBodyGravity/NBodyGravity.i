@@ -21,6 +21,7 @@
 %module NBodyGravity
 %{
    #include "NBodyGravity.h"
+   #include "simulation/dynamics/_GeneralModuleFiles/gravityEffector.h"
    #include "simulation/dynamics/_GeneralModuleFiles/dynamicObject.h"
    #include "simulation/mujocoDynamics/_GeneralModuleFiles/MJInterpolators.h"
 %}
@@ -34,6 +35,14 @@ from Basilisk.architecture.swig_common_model import *
 
 %import "simulation/mujocoDynamics/_GeneralModuleFiles/mujoco.i"
 %import "simulation/dynamics/_GeneralModuleFiles/gravityModel.i"
+%import "simulation/dynamics/gravityEffector/gravityEffector.i"
+
+// Keep the existing manual-source function non-overloaded in Python so SWIG
+// retains support for calls that use the ``isCentralBody`` keyword argument.
+%rename(addGravitySourceFromBody) NBodyGravity::addGravitySource(
+    std::string,
+    std::shared_ptr<GravBodyData>
+);
 
 %include "sys_model.i"
 %include "NBodyGravity.h"

@@ -203,18 +203,88 @@ class gravBodyFactory:
 
     def addBodiesTo(
         self,
-        objectToAddTheBodies: Union[gravityEffector.GravityEffector, WithGravField],
-    ):
-        """Can be called with a GravityEffector or an object that has a gravField
-        variable to set the gravity bodies used in the object.
+        objectToAddTheBodies: Any,
+    ) -> Optional[Any]:
+        """Attach the factory's gravity bodies to a dynamics object.
+
+        A conventional dynamics object may be a ``GravityEffector`` or expose a
+        ``gravField`` attribute. When an ``MJScene`` is provided, this method
+        creates one ``NBodyGravity`` model, adds every factory body as a gravity
+        source, and adds every MuJoCo body as a gravity target.
+
+        Args:
+            objectToAddTheBodies (Any): Dynamics object that should receive the
+                factory's gravity bodies.
+
+        Returns:
+            Optional[Any]: The created ``NBodyGravity`` model for an ``MJScene``;
+                otherwise, ``None``.
+
+        Note:
+            When factory bodies use SPICE ephemerides, add the factory's
+            ``spiceObject`` to the ``MJScene`` dynamics task before the returned
+            ``NBodyGravity`` model. This keeps planet states current at each
+            MuJoCo integrator substep.
         """
-        bodies = gravityEffector.GravBodyVector(list(self.gravBodies.values()))
         if isinstance(objectToAddTheBodies, WithGravField):
             objectToAddTheBodies = objectToAddTheBodies.gravField
-        objectToAddTheBodies.setGravBodies(bodies)  # type: ignore
+
+        setGravBodies = getattr(objectToAddTheBodies, "setGravBodies", None)
+        if callable(setGravBodies):
+            bodies = gravityEffector.GravBodyVector(list(self.gravBodies.values()))
+            setGravBodies(bodies)
+            return None
+
+        return self._addBodiesToMJScene(objectToAddTheBodies)
+
+    def _addBodiesToMJScene(self, scene: Any) -> Any:
+        """Attach the factory's gravity bodies to a MuJoCo scene."""
+        try:
+            from Basilisk.simulation import NBodyGravity
+            from Basilisk.simulation import mujoco
+        except ImportError as error:
+            raise TypeError(
+                "The supplied object does not support gravity-body attachment, "
+                "and this Basilisk build does not include MuJoCo."
+            ) from error
+
+        if not isinstance(scene, mujoco.MJScene):
+            raise TypeError(
+                "addBodiesTo() requires a GravityEffector, an object with a "
+                "gravField attribute, or an MJScene."
+            )
+
+        cacheAttribute = "_gravBodyFactoryNBodyGravity"
+        if getattr(scene, cacheAttribute, None) is not None:
+            raise ValueError(
+                f"Gravity bodies have already been added to MJScene '{scene.ModelTag}'."
+            )
+
+        gravity = NBodyGravity.NBodyGravity()
+        gravity.ModelTag = (
+            f"{scene.ModelTag}_gravity" if scene.ModelTag else "mujocoScene_gravity"
+        )
+
+        for name, gravBody in self.gravBodies.items():
+            gravity.addGravitySourceFromBody(name, gravBody)
+
+        for name in scene.getBodyNames():
+            gravity.addGravityTarget(name, scene.getBody(name))
+
+        scene.AddModelToDynamicsTask(gravity)
+
+        # MJScene stores raw model pointers in its dynamics task, so retain the
+        # Python model for at least as long as the scene.
+        setattr(scene, cacheAttribute, gravity)
+
+        # Match the standard spacecraft path, where Vizard discovers the
+        # attached gravity bodies through the dynamics object.
+        scene._vizGravBodies = self.gravBodies
+
+        return gravity
 
     # Note, in the `create` functions below the `isCentralBody` and `useSphericalHarmParams` are
-    # all set to False in the `GravGodyData()` constructor.
+    # all set to False in the `GravBodyData()` constructor.
 
     def createBody(
         self, bodyData: Union[str, BodyData]
