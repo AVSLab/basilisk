@@ -248,17 +248,14 @@ def test_dumbbell(showPlots, initialAngularRate):
     scene.setIntegrator(integ)
     scSim.AddModelToTask("test", scene)
 
-    # Create gravity model and add it to the scene dynamics task
-    gravity = NBodyGravity.NBodyGravity()
-    gravity.ModelTag = "gravity"
-    scene.AddModelToDynamicsTask(gravity)
+    # Use a custom factory body to preserve the gravitational parameter defined
+    # by this test. The factory applies gravity to every body in the scene.
+    gravFactory = simIncludeGravBody.gravBodyFactory()
+    earth = gravFactory.createCustomGravObject("earth", mu)
+    earth.isCentralBody = True
+    gravity = gravFactory.addBodiesTo(scene)
 
-    # Set a point mass gravity source
-    gravityModel = pointMassGravityModel.PointMassGravityModel()
-    gravityModel.muBody = mu
-    gravity.addGravitySource("earth", gravityModel, True)
-
-    # Add a gravity target for each of the bodies of the spacecraft
+    # Retrieve the gravity target that the factory created for each body.
     # Note that because 'center' has zero mass, no force should be
     # produced on this body.
     # Also, create recorders for the state of each body and for the
@@ -268,7 +265,7 @@ def test_dumbbell(showPlots, initialAngularRate):
     bodyStateRecorders = {}
     for bodyName in bodies:
         body: mujoco.MJBody = scene.getBody(bodyName)
-        target = gravity.addGravityTarget(bodyName, body)
+        target = gravity.getGravityTarget(bodyName)
 
         forceRecorders[bodyName] = target.massFixedForceOutMsg.recorder()
         scSim.AddModelToTask("test", forceRecorders[bodyName])
@@ -626,17 +623,24 @@ def test_mujocoVsSpacecraft(
 
     rN, vN = orbitalMotion.elem2rv(mu, oe)
 
-    # Create GravBodies, which will be used for the spacecraft
-    # and also the mujoco sim
+    # Configure the body names shared by the two simulation paths. Each path
+    # receives its own factory so that models and ephemeris modules are not
+    # shared across sequential simulations.
     bodies = ["earth"]
     if useThirdBodies:
         bodies.extend(["sun", "moon"])
-    gravFactory = simIncludeGravBody.gravBodyFactory()
-    gravBodies = gravFactory.createBodies(bodies)
-    gravBodies["earth"].isCentralBody = True
-    if useSphericalHarmonics:
-        ggm03s_path = get_path(DataFile.LocalGravData.GGM03S)
-        gravBodies["earth"].useSphericalHarmonicsGravityModel(str(ggm03s_path), 4)
+
+    def createGravityFactory():
+        """Create an independent factory with the requested gravity models."""
+        factory = simIncludeGravBody.gravBodyFactory()
+        gravBodies = factory.createBodies(bodies)
+        gravBodies["earth"].isCentralBody = True
+        if useSphericalHarmonics:
+            ggm03s_path = get_path(DataFile.LocalGravData.GGM03S)
+            gravBodies["earth"].useSphericalHarmonicsGravityModel(
+                str(ggm03s_path), 4
+            )
+        return factory
 
     # A decorator that times how long the function takes and
     # prints it to the console
@@ -659,6 +663,8 @@ def test_mujocoVsSpacecraft(
 
     @timed
     def spacecraftSim():
+        gravFactory = createGravityFactory()
+
         # Create sim, process, and task
         scSim = SimulationBaseClass.SimBaseClass()
         dynProcess = scSim.CreateNewProcess("test")
@@ -677,9 +683,7 @@ def test_mujocoVsSpacecraft(
         scObject.setIntegrator(integSc)
         scSim.AddModelToTask("test", scObject, 9)
 
-        scObject.gravField.gravBodies = spacecraft.GravBodyVector(
-            list(gravFactory.gravBodies.values())
-        )
+        gravFactory.addBodiesTo(scObject)
 
         # initialize spacecraft parameters
         scObject.hub.mHub = 100  # kg
@@ -705,19 +709,12 @@ def test_mujocoVsSpacecraft(
 
     @timed
     def mujocoSim():
+        gravFactory = createGravityFactory()
+
         # Create sim, process, and task
         scSim = SimulationBaseClass.SimBaseClass()
         dynProcess = scSim.CreateNewProcess("test")
         dynProcess.addTask(scSim.CreateNewTask("test", macros.sec2nano(dt)))
-
-        # Create the spice interface module, which reports the state of
-        # planetary bodies
-        spice = spiceInterface.SpiceInterface()
-        spice.ModelTag = "SpiceInterface"
-        spice.addPlanetNames(["earth", "sun", "moon"])
-        spice.UTCCalInit = utcCalInit
-        # spice.zeroBase = 'Earth' # Not actually needed for NBodyGravity
-        scSim.AddModelToTask("test", spice)
 
         # Create mujoco scene
         scene = mujoco.MJScene.fromFile(XML_PATH_BALL)
@@ -726,21 +723,17 @@ def test_mujocoVsSpacecraft(
         scene.setIntegrator(integScene)
         scSim.AddModelToTask("test", scene)
 
-        # Create N-Body Gravity
-        gravity = NBodyGravity.NBodyGravity()
-        scene.AddModelToDynamicsTask(gravity)
+        # MuJoCo evaluates gravity at integrator substeps, so its SPICE model
+        # belongs in the scene dynamics task ahead of the factory-created
+        # NBodyGravity model.
+        if useSpice:
+            gravFactory.createSpiceInterface(time=utcCalInit)
+            gravFactory.spiceObject.zeroBase = "Earth"
+            scene.AddModelToDynamicsTask(gravFactory.spiceObject, 75)
 
-        for (name, gravBody), stateOuMsg in zip(
-            gravBodies.items(), spice.planetStateOutMsgs
-        ):
-            source = gravity.addGravitySource(
-                name, gravBody.gravityModel, isCentralBody=(name == "earth")
-            )
-            if useSpice:
-                source.stateInMsg.subscribeTo(stateOuMsg)
+        gravFactory.addBodiesTo(scene)
 
         body: mujoco.MJBody = scene.getBody("ball")
-        gravity.addGravityTarget("ball", body)
 
         bodyStateRecorder = body.getCenterOfMass().stateOutMsg.recorder()
         scSim.AddModelToTask("test", bodyStateRecorder)
