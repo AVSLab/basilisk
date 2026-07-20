@@ -25,9 +25,10 @@ This script shows how to simulate a point-mass spacecraft using :ref:`MJScene<MJ
 density model. The script illustrates how one defines and handles dynamic states
 that are driven by stochastic terms.
 
-The spacecraft definition is given in ``CANNONBALL_SCENE_XML``; it contains a single
-body for which we set its mass directly. We use the :ref:`NBodyGravity` model to compute
-the gravity acting on this body due to a point-mass Earth.
+The spacecraft definition is given in ``CANNONBALL_SCENE_XML``; it contains a
+single body for which we set its mass directly.  A
+:ref:`simIncludeGravBody` gravity factory creates the point-mass Earth and
+attaches it to the MuJoCo scene.
 
 The drag force acting on the body is computed in the :ref:`CannonballDrag<CannonballDrag>`
 module. This takes as input the state of the spacecraft (so that
@@ -137,8 +138,6 @@ import os
 from Basilisk.architecture import messaging
 from Basilisk.simulation import mujoco
 from Basilisk.simulation import svIntegrators
-from Basilisk.simulation import pointMassGravityModel
-from Basilisk.simulation import NBodyGravity
 from Basilisk.simulation import exponentialAtmosphere
 from Basilisk.simulation import cannonballDrag
 from Basilisk.simulation import MJStochasticAtmDensity
@@ -211,7 +210,6 @@ def run(showPlots: bool = False, useIgbm: bool = False):
     # Create the Mujoco scene (our MuJoCo DynamicObject)
     # Load the XML file that defines the system from a file
     scene = mujoco.MJScene(CANNONBALL_SCENE_XML)
-    scene._vizGravBodies = gravFactory.gravBodies
     scSim.AddModelToTask("test", scene)
 
     # Set a stochastic integrator on the DynamicObject, necessary since we have
@@ -231,18 +229,10 @@ def run(showPlots: bool = False, useIgbm: bool = False):
     body: mujoco.MJBody = scene.getBody("ball")
     dragPoint: mujoco.MJSite = body.getCenterOfMass()
 
-    ### Create the NBodyGravity model
-    # add model to the dynamics task of the scene
-    gravity = NBodyGravity.NBodyGravity()
-    scene.AddModelToDynamicsTask(gravity)
-
-    # Create a point-mass gravity source
-    gravityModel = pointMassGravityModel.PointMassGravityModel()
-    gravityModel.muBody = planet.mu
-    gravity.addGravitySource("earth", gravityModel, True)
-
-    # Create a gravity target from the mujoco body
-    gravity.addGravityTarget("ball", body)
+    ### Add Earth gravity to the MuJoCo scene
+    # The factory creates the NBodyGravity model and registers the cannonball
+    # body as a gravity target.
+    gravFactory.addBodiesTo(scene)
 
     ### Create the density model
     atmo = exponentialAtmosphere.ExponentialAtmosphere()

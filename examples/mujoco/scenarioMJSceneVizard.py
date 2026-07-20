@@ -50,8 +50,6 @@ import numpy as np
 from Basilisk.architecture import messaging
 from Basilisk.simulation import coarseSunSensor
 from Basilisk.simulation import mujoco
-from Basilisk.simulation import NBodyGravity
-from Basilisk.simulation import pointMassGravityModel
 from Basilisk.simulation import spacecraft
 from Basilisk.simulation import StatefulSysModel
 from Basilisk.simulation import svIntegrators
@@ -197,29 +195,6 @@ def setStowed(scene, panelIds, bodyPrefix):
         ).setPosition(JOINT_START_END[i - 1][0])
 
 
-def addOrbitalGravity(scene, mu, modelCache):
-    """Apply central-body point-mass gravity to every body in ``scene``.
-
-    Uses :ref:`NBodyGravity` with one gravity target per body (hub plus each
-    deployable panel), so the field is evaluated and applied at each body's true
-    center of mass.  The whole structure is then in physical orbital freefall —
-    the appendages are weightless — while the gravity gradient across it is
-    captured.
-    """
-    gravity = NBodyGravity.NBodyGravity()
-    gravity.ModelTag = f"{scene.ModelTag}_gravity"
-    scene.AddModelToDynamicsTask(gravity)
-
-    gravityModel = pointMassGravityModel.PointMassGravityModel()
-    gravityModel.muBody = mu
-    gravity.addGravitySource("earth", gravityModel, True)
-    for name in scene.getBodyNames():
-        gravity.addGravityTarget(name, scene.getBody(name))
-
-    modelCache.extend([gravity, gravityModel])
-    return gravity
-
-
 # Main scenario
 def run(showPlots: bool = False):
     scSim = SimulationBaseClass.SimBaseClass()
@@ -264,11 +239,16 @@ def run(showPlots: bool = False):
         epochInMsg=True,
     )
     spiceObject.zeroBase = "Earth"
-    scSim.AddModelToTask("simTask", spiceObject)
 
-    # vizSupport dedupes planets by name across scenes.
-    primaryScene._vizGravBodies = gravFactory.gravBodies
-    companionScene._vizGravBodies = gravFactory.gravBodies
+    # MuJoCo gravity is evaluated at every integrator substep. Run SPICE after
+    # the scene's high-priority forward kinematics and before gravity (default
+    # priority -1), so every gravity evaluation reads current ephemerides.
+    spiceDynamicsPriority = 75
+    primaryScene.AddModelToDynamicsTask(spiceObject, spiceDynamicsPriority)
+    companionScene.AddModelToDynamicsTask(spiceObject, spiceDynamicsPriority)
+
+    # The regular spacecraft below also needs SPICE at the top-level task rate.
+    scSim.AddModelToTask("simTask", spiceObject)
 
     # Trailer is a regular Basilisk Spacecraft, behind the primary along-track.
     # Uses ``gravFactory.addBodiesTo`` for the standard gravField wiring.
@@ -301,13 +281,13 @@ def run(showPlots: bool = False):
     addDeployment(companionScene, companionPanels, "companion_panel", models)
 
     # Gravity setup.  Each MJScene gets its own NBodyGravity model that applies
-    # central-body gravity as a force at every body's center of mass (hub plus
-    # each panel), preserving the gravity gradient across the structure.
+    # the factory's Earth, Moon, and Sun gravity sources at every body's center
+    # of mass, preserving the gravity gradient across each structure.
     hubBody = primaryScene.getBody("hub")
     companionBody = companionScene.getBody("companion_hub")
 
-    addOrbitalGravity(primaryScene, mu, models)
-    addOrbitalGravity(companionScene, mu, models)
+    gravFactory.addBodiesTo(primaryScene)
+    gravFactory.addBodiesTo(companionScene)
 
     # CSS sensors mounted on the primary hub. The MJScene body's origin state
     # message subscribes the same way a regular Spacecraft body state message

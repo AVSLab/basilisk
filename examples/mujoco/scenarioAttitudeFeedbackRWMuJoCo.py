@@ -50,6 +50,11 @@ Three small "adapter" modules bridge Basilisk messaging to MuJoCo objects:
 #. ``saturationSingleActuator`` optionally clamps each ``SingleActuatorMsg`` to
    emulate actuator torque limits (for example, reaction wheel ``uMax``).
 
+Earth gravity is configured with :ref:`simIncludeGravBody`.  Calling
+``gravFactory.addBodiesTo(scene)`` creates the intermediate
+:ref:`NBodyGravity<NBodyGravity>` model and automatically registers the bus and
+all three reaction wheels as gravity targets.
+
 The simulation runs for 10 minutes. The attitude error, rate error, wheel
 motor torques, and wheel speeds are plotted at the end.
 
@@ -72,10 +77,8 @@ import numpy as np
 
 from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import attTrackingError, inertial3D, mrpFeedback, rwMotorTorque
-from Basilisk.simulation import NBodyGravity
 from Basilisk.simulation import arrayMotorTorqueToSingleActuators
 from Basilisk.simulation import mujoco
-from Basilisk.simulation import pointMassGravityModel
 from Basilisk.simulation import saturationSingleActuator
 from Basilisk.simulation import scalarJointStatesToRWSpeed
 from Basilisk.simulation import simpleNav
@@ -240,26 +243,16 @@ def run(showPlots: bool = False):
     rwActs = [scene.addJointSingleActuator(f"rw{i+1}Act", rwJoints[i]) for i in range(numRw)]
 
     # -------------------------------------------------------------------------
-    # 5) Add gravity to the special MuJoCo dynamics task (evaluated at integrator substeps)
+    # 5) Add Earth gravity to every MuJoCo body through the gravity factory
     # -------------------------------------------------------------------------
-    gravity = NBodyGravity.NBodyGravity()
-    gravity.ModelTag = "gravity"
-    scene.AddModelToDynamicsTask(gravity)
-
     gravFactory = simIncludeGravBody.gravBodyFactory()
     earth = gravFactory.createEarth()
     earth.isCentralBody = True
-    scene._vizGravBodies = gravFactory.gravBodies
-
     muEarth = earth.mu  # [m^3/s^2]
-    earthPm = pointMassGravityModel.PointMassGravityModel()
-    earthPm.muBody = muEarth
-    gravity.addGravitySource("earth", earthPm, isCentralBody=True)
 
-    # Apply gravity to all bodies to allow consistent orbital motion.
-    gravity.addGravityTarget("bus", busBody)
-    for i in range(numRw):
-        gravity.addGravityTarget(f"rw{i+1}", rwBodies[i])
+    # This creates the NBodyGravity model, adds Earth as its central source, and
+    # registers the bus and all three reaction wheels as gravity targets.
+    gravFactory.addBodiesTo(scene)
 
     # -------------------------------------------------------------------------
     # 6) Navigation: read the bus state from MJScene and publish standard nav outputs
