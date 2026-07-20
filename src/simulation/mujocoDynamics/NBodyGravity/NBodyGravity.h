@@ -34,16 +34,20 @@
 
 #include "simulation/mujocoDynamics/_GeneralModuleFiles/MJScene.h"
 
+class GravBodyData;
+
 /**
  * @brief Represents a gravity source in an N-body simulation.
  *
  * A gravity source is a celestial body or point mass that generates a gravitational field.
+ * It can be configured manually or from a shared ``GravBodyData`` descriptor.
  */
 struct GravitySource
 {
     std::shared_ptr<GravityModel> model; ///< The gravity model associated with the source.
     ReadFunctor<SpicePlanetStateMsgPayload> stateInMsg; ///< Input message providing the state of the source.
     bool isCentralBody; ///< Flag indicating whether this source is the central body.
+    std::shared_ptr<GravBodyData> gravBody; ///< Optional canonical gravity-body descriptor.
 };
 
 /**
@@ -101,6 +105,20 @@ public:
      * @throw std::invalid_argument If the source name is duplicated.
      */
     GravitySource& addGravitySource(std::string name, std::shared_ptr<GravityModel> gravityModel, bool isCentralBody);
+
+    /**
+     * @brief Adds a gravity source described by a ``GravBodyData`` object.
+     *
+     * The source retains the shared descriptor and reads its gravity model,
+     * central-body flag, and ephemeris input live. During ``Reset()``, the
+     * gravity model is initialized from the descriptor.
+     *
+     * @param name The name of the gravity source.
+     * @param gravBody The canonical gravity-body descriptor.
+     * @return A reference to the newly added ``GravitySource``.
+     * @throw BasiliskError If ``gravBody`` is null or the source name is duplicated.
+     */
+    GravitySource& addGravitySource(std::string name, std::shared_ptr<GravBodyData> gravBody);
 
     /**
      * @brief Adds a new gravity target to the simulation.

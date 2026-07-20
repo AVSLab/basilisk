@@ -20,21 +20,57 @@
 #include "NBodyGravity.h"
 
 #include "architecture/utilities/rigidBodyKinematics.h"
+#include "simulation/dynamics/_GeneralModuleFiles/gravityEffector.h"
+
+namespace {
+std::shared_ptr<GravityModel>
+getGravityModel(const GravitySource& source)
+{
+    return source.gravBody ? source.gravBody->gravityModel : source.model;
+}
+
+bool
+isCentral(const GravitySource& source)
+{
+    return source.gravBody ? source.gravBody->isCentralBody : source.isCentralBody;
+}
+
+bool
+isStateLinked(GravitySource& source)
+{
+    return source.stateInMsg.isLinked()
+           || (source.gravBody && source.gravBody->planetBodyInMsg.isLinked());
+}
+
+SpicePlanetStateMsgPayload
+readState(GravitySource& source, BSKLogger& bskLogger)
+{
+    if (source.stateInMsg.isLinked())
+    {
+        return source.stateInMsg();
+    }
+    if (source.gravBody && source.gravBody->planetBodyInMsg.isLinked())
+    {
+        return source.gravBody->planetBodyInMsg();
+    }
+    bskLogger.bskError("Cannot read an unlinked NBodyGravity source ephemeris message.");
+}
+} // namespace
 
 void
 NBodyGravity::Reset(uint64_t CurrentSimNanos)
 {
-    std::string errorPreffix = "In NBodyGravity '" + ModelTag + "': ";
+    std::string errorPrefix = "In NBodyGravity '" + ModelTag + "': ";
     for (auto&& [name, target] : targets)
     {
         if (!target.centerOfMassStateInMsg.isLinked())
         {
-            bskLogger.bskError("%sTarget '%s' centerOfMassStateInMsg is not linked!", errorPreffix.c_str(), name.c_str());
+            bskLogger.bskError("%sTarget '%s' centerOfMassStateInMsg is not linked!", errorPrefix.c_str(), name.c_str());
         }
 
         if (!target.massPropertiesInMsg.isLinked())
         {
-            bskLogger.bskError("%sTarget '%s' massPropertiesInMsg is not linked!", errorPreffix.c_str(), name.c_str());
+            bskLogger.bskError("%sTarget '%s' massPropertiesInMsg is not linked!", errorPrefix.c_str(), name.c_str());
         }
     }
 
@@ -42,22 +78,47 @@ NBodyGravity::Reset(uint64_t CurrentSimNanos)
 
     for (auto&& [name, source] : sources)
     {
-        if (sources.size() > 1 && !source.stateInMsg.isLinked())
+        if (sources.size() > 1 && !isStateLinked(source))
         {
-            bskLogger.bskError("%sSource '%s' stateInMsg is not linked but there are more than one sources!", errorPreffix.c_str(), name.c_str());
+            bskLogger.bskError(
+                "%sSource '%s' has no ephemeris input but there are multiple gravity sources!",
+                errorPrefix.c_str(),
+                name.c_str());
         }
 
-        auto error = source.model->initializeParameters();
+        auto gravityModel = getGravityModel(source);
+        if (!gravityModel)
+        {
+            bskLogger.bskError("%sSource '%s' has no gravity model!", errorPrefix.c_str(), name.c_str());
+        }
+
+        auto error = source.gravBody
+            ? gravityModel->initializeParameters(*source.gravBody)
+            : gravityModel->initializeParameters();
         if (error)
         {
-            bskLogger.bskError("%sWhile initializing source '%s' gravity model: %s", errorPreffix.c_str(), name.c_str(), error->c_str());
+            bskLogger.bskError(
+                "%sWhile initializing source '%s' gravity model: %s",
+                errorPrefix.c_str(),
+                name.c_str(),
+                error->c_str());
         }
 
-        if (source.isCentralBody)
+        if (gravityModel->dependsOnOrientation() && !isStateLinked(source))
+        {
+            bskLogger.bskLog(
+                BSK_WARNING,
+                "%sSource '%s' uses an orientation-dependent gravity model, but no "
+                "ephemeris input is connected. The body will be treated as non-rotating.",
+                errorPrefix.c_str(),
+                name.c_str());
+        }
+
+        if (isCentral(source))
         {
             if (foundCentralSource)
             {
-                bskLogger.bskError("%sMore than one central body!", errorPreffix.c_str());
+                bskLogger.bskError("%sMore than one central body!", errorPrefix.c_str());
             }
             foundCentralSource = true;
         }
@@ -91,7 +152,27 @@ NBodyGravity::UpdateState(uint64_t CurrentSimNanos)
 GravitySource&
 NBodyGravity::addGravitySource(std::string name, std::shared_ptr<GravityModel> gravityModel, bool isCentralBody)
 {
-    auto[source, actuallyEmplaced] = this->sources.emplace(name, GravitySource{gravityModel, {}, isCentralBody});
+    auto[source, actuallyEmplaced] =
+        this->sources.emplace(name, GravitySource{gravityModel, {}, isCentralBody, nullptr});
+
+    if (!actuallyEmplaced)
+    {
+        bskLogger.bskError("Cannot use repeated source name: %s", name.c_str());
+    }
+
+    return source->second;
+}
+
+GravitySource&
+NBodyGravity::addGravitySource(std::string name, std::shared_ptr<GravBodyData> gravBody)
+{
+    if (!gravBody)
+    {
+        bskLogger.bskError("Cannot add source '%s' from a null GravBodyData.", name.c_str());
+    }
+
+    auto[source, actuallyEmplaced] =
+        this->sources.emplace(name, GravitySource{nullptr, {}, false, std::move(gravBody)});
 
     if (!actuallyEmplaced)
     {
@@ -149,21 +230,21 @@ NBodyGravity::addGravityTarget(std::string name, MJBody& body)
 Eigen::Vector3d
 NBodyGravity::computeAccelerationFromSource(GravitySource& source, Eigen::Vector3d r_J2000)
 {
-    // Orientation and positon of the gravity source in J2000
+    // Orientation and position of the gravity source in J2000
     Eigen::Matrix3d dcm_sourceFixedJ2000 = Eigen::Matrix3d::Identity();
-    Eigen::Vector3d r_sourceJ200= Eigen::Vector3d::Zero();
-    if (source.stateInMsg.isLinked())
+    Eigen::Vector3d r_sourceJ2000 = Eigen::Vector3d::Zero();
+    if (isStateLinked(source))
     {
-        auto spicePayload = source.stateInMsg();
-        dcm_sourceFixedJ2000 = c2DArray2EigenMatrix3d(spicePayload.J20002Pfix); // .transpose()
-        r_sourceJ200 = cArray2EigenVector3d(spicePayload.PositionVector);
+        auto spicePayload = readState(source, bskLogger);
+        dcm_sourceFixedJ2000 = c2DArray2EigenMatrix3d(spicePayload.J20002Pfix);
+        r_sourceJ2000 = cArray2EigenVector3d(spicePayload.PositionVector);
     }
 
     // Transform position in J2000 reference frame to source-fixed reference frame
-    Eigen::Vector3d r_sourceFix = dcm_sourceFixedJ2000 * (r_J2000 - r_sourceJ200);
+    Eigen::Vector3d r_sourceFix = dcm_sourceFixedJ2000 * (r_J2000 - r_sourceJ2000);
 
     // Compute the gravity acceleration on the source-fixed reference frame
-    Eigen::Vector3d grav_sourceFix = source.model->computeField(r_sourceFix);
+    Eigen::Vector3d grav_sourceFix = getGravityModel(source)->computeField(r_sourceFix);
 
     // Convert gravity to J2000 reference frame
     return dcm_sourceFixedJ2000.transpose() * grav_sourceFix;
@@ -200,13 +281,13 @@ NBodyGravity::computeAccelerationOnTarget(GravityTarget& target)
 
     for (auto&& [_, source] : sources)
     {
-        if (!source.isCentralBody) continue;
+        if (!isCentral(source)) continue;
 
         centralSourceExists = true;
 
-        if (!source.stateInMsg.isLinked()) break;
+        if (!isStateLinked(source)) break;
 
-        auto spicePayload = source.stateInMsg();
+        auto spicePayload = readState(source, bskLogger);
         r_centralSourceSpiceRef_N = cArray2EigenVector3d(spicePayload.PositionVector);
     }
 
@@ -228,7 +309,7 @@ NBodyGravity::computeAccelerationOnTarget(GravityTarget& target)
         // If there is a central body, and 'source' is not this one,
         // then we need to take into account the acceleration of the central
         // body due to the effect of this other source.
-        if (centralSourceExists && !source.isCentralBody)
+        if (centralSourceExists && !isCentral(source))
         {
             grav_N -= computeAccelerationFromSource(source, r_centralSourceSpiceRef_N);
         }
