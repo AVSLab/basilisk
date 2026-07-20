@@ -27,13 +27,11 @@ from Basilisk.utilities import macros
 from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.utilities import orbitalMotion
-from Basilisk.simulation import pointMassGravityModel
 from Basilisk.simulation import exponentialAtmosphere
 from Basilisk.simulation import cannonballDrag
 
 try:
     from Basilisk.simulation import mujoco
-    from Basilisk.simulation import NBodyGravity
 
     couldImportMujoco = True
 except:
@@ -190,18 +188,12 @@ def test_orbit(orbitCase: Literal["LPO", "LTO"], planetCase: Literal["earth", "m
 
     mjBody = scene.getBody(bodyName)
 
-    planetData = simIncludeGravBody.BODY_DATA[planetCase]
-    gravitationalParameter = planetData.mu
-    planetRadius = planetData.radEquator  # [m]
-
-    gravityModel = NBodyGravity.NBodyGravity()
-    gravityModel.ModelTag = "gravity"
-    scene.AddModelToDynamicsTask(gravityModel)
-
-    pointMassModel = pointMassGravityModel.PointMassGravityModel()
-    pointMassModel.muBody = gravitationalParameter
-    gravityModel.addGravitySource(planetCase, pointMassModel, True)
-    gravityModel.addGravityTarget(bodyName, mjBody)
+    gravFactory = simIncludeGravBody.gravBodyFactory()
+    planet = gravFactory.createBody(planetCase)
+    planet.isCentralBody = True
+    gravitationalParameter = planet.mu
+    planetRadius = planet.radEquator  # [m]
+    gravFactory.addBodiesTo(scene)
 
     if planetCase == "earth":
         baseDensity = 1.217  # [kg/m^3]
