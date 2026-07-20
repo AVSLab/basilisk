@@ -19,6 +19,8 @@ import os
 import pytest
 import time
 
+from Basilisk.architecture import messaging
+
 try:
     from Basilisk.simulation import mujoco
     from Basilisk.simulation import NBodyGravity
@@ -161,6 +163,87 @@ def test_pointMass(showPlots):
 
         for attr in ["a", "e", "i", "Omega", "omega"]:
             assert getattr(oePost, attr) == pytest.approx(getattr(oe, attr), 1e-4)
+
+
+@pytest.mark.skipif(not couldImportMujoco, reason="Compiled Basilisk without --mujoco")
+def test_factory_source_without_attitude():
+    """Verify that a position-only factory ephemeris uses an inertial attitude.
+
+    Validation Test Description
+    ---------------------------
+    A factory-created central gravity body receives a linked planet-state
+    message containing position but leaving ``J20002Pfix`` at its all-zero
+    default.  The test applies this source to a unit-mass MuJoCo body and
+    compares the resulting force with point-mass gravity.
+
+    Test Parameter Discussion
+    -------------------------
+    The source has a nonzero position in the ephemeris reference frame, while
+    the MuJoCo body is initialized seven million meters from the central body.
+    This exercises the central-body translation and the missing-attitude
+    fallback through the shared ``GravBodyData`` path.
+
+    Description of Variables Being Tested
+    ---------------------------------------
+    The test verifies that ``massFixedForceOutMsg.force_S`` is finite and
+    equals the analytical point-mass force in the inertially aligned body frame.
+    """
+    timeStep = 1.0  # [s]
+    gravitationalParameter = 0.3986004415e15  # [m^3/s^2]
+    targetRadius = 7000.0 * 1000.0  # [m]
+    sourcePosition_N = [1000.0 * 1000.0, 0.0, 0.0]  # [m]
+
+    simulation = SimulationBaseClass.SimBaseClass()
+    process = simulation.CreateNewProcess("factoryGravityProcess")
+    process.addTask(
+        simulation.CreateNewTask(
+            "factoryGravityTask",
+            macros.sec2nano(timeStep),
+        )
+    )
+
+    sceneXml = """
+    <mujoco>
+        <worldbody>
+            <body name="ball">
+                <freejoint/>
+                <inertial pos="0 0 0" mass="1" diaginertia="1 1 1"/>
+            </body>
+        </worldbody>
+    </mujoco>
+    """
+    scene = mujoco.MJScene(sceneXml)
+    scene.extraEoMCall = True
+    simulation.AddModelToTask("factoryGravityTask", scene)
+
+    gravFactory = simIncludeGravBody.gravBodyFactory()
+    earth = gravFactory.createCustomGravObject(
+        "earth",
+        gravitationalParameter,
+    )
+    earth.isCentralBody = True
+
+    planetState = messaging.SpicePlanetStateMsgPayload()
+    planetState.PositionVector = sourcePosition_N
+    planetStateMsg = messaging.SpicePlanetStateMsg().write(planetState)
+    earth.planetBodyInMsg.subscribeTo(planetStateMsg)
+
+    gravity = gravFactory.addBodiesTo(scene)
+    body = scene.getBody("ball")
+    forceRecorder = gravity.getGravityTarget("ball").massFixedForceOutMsg.recorder()
+    simulation.AddModelToTask("factoryGravityTask", forceRecorder)
+
+    simulation.InitializeSimulation()
+    body.setPosition([targetRadius, 0.0, 0.0])  # [m]
+    simulation.ConfigureStopTime(0)
+    simulation.ExecuteSimulation()
+
+    expectedForce_S = np.array(
+        [-gravitationalParameter / targetRadius**2, 0.0, 0.0]
+    )  # [N]
+    actualForce_S = forceRecorder.force_S[0]
+    assert np.all(np.isfinite(actualForce_S))
+    np.testing.assert_allclose(actualForce_S, expectedForce_S, rtol=1.0e-12, atol=0.0)
 
 
 @pytest.mark.skipif(not couldImportMujoco, reason="Compiled Basilisk without --mujoco")
