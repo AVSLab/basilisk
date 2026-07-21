@@ -146,9 +146,11 @@ def retainSource(subscriber, source):
     old reference.
     """
     target = _retention_target(source)
-    releaseSource(subscriber)
-
     owner = _owner_of(subscriber)
+
+    # Replace the pin directly. Python installs the new reference before dropping
+    # the old one, so a weakref callback triggered by old-source destruction sees
+    # the native subscription and its keep-alive in a consistent state.
     if owner is not None:
         getattr(owner, _MODULE_PIN_ATTR)[int(subscriber.this)] = target
     elif getattr(subscriber, "thisown", False):

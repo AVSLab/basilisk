@@ -40,8 +40,10 @@ typedef struct {type};
     def unsubscribe(self):
         """Unsubscribe to the connected message, noop if no message was connected"""
         from Basilisk.architecture.messaging import _msgKeepAlive
-        _msgKeepAlive.releaseSource(self)  # issue #1433: drop the keep-alive, if any
         {type}_unsubscribe(self)
+        # Clear the native pointers before releasing the source. Source destruction
+        # can invoke Python weakref callbacks that re-enter this reader.
+        _msgKeepAlive.releaseSource(self)
 
     def isSubscribedTo(self, source):
         """check if self is subscribed to another message source"""

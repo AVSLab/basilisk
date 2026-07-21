@@ -147,6 +147,44 @@ def test_unsubscribeReleasesKeepAlive():
     assert wr() is None, "unsubscribe() did not release the keep-alive (#1433)"
 
 
+def test_unsubscribeWeakrefCallbackCanResubscribe():
+    """A source weakref callback can safely reconnect an unsubscribing reader."""
+    reader = messaging.CModuleTemplateMsg_C()
+    old_source = messaging.CModuleTemplateMsg().write(
+        messaging.CModuleTemplateMsgPayload(dataVector=[1.0, 2.0, 3.0])
+    )
+    replacement = messaging.CModuleTemplateMsg().write(
+        messaging.CModuleTemplateMsgPayload(dataVector=[4.0, 5.0, 6.0])
+    )
+    callback_states = []
+
+    def reconnect(_):
+        callback_states.append(reader.header.isLinked)
+        reader.subscribeTo(replacement)
+        callback_states.append(reader.header.isLinked)
+
+    old_source_ref = weakref.ref(old_source, reconnect)
+    replacement_ref = weakref.ref(replacement)
+    reader.subscribeTo(old_source)
+    del old_source
+    gc.collect()
+
+    reader.unsubscribe()
+
+    assert old_source_ref() is None
+    assert callback_states == [0, 1]
+    assert reader.isSubscribedTo(replacement)
+    assert list(reader.read().dataVector) == [4.0, 5.0, 6.0]
+
+    del replacement
+    gc.collect()
+    assert replacement_ref() is not None
+
+    reader.unsubscribe()
+    gc.collect()
+    assert replacement_ref() is None
+
+
 def test_resubscribeReplacesKeepAlive():
     """Re-subscribing releases the previous source and retains the new one."""
     mod = cModuleTemplate.cModuleTemplate()
@@ -158,6 +196,40 @@ def test_resubscribeReplacesKeepAlive():
     gc.collect()
     assert wrA() is None, "re-subscribe did not release the previous source (#1433)"
     assert wrB() is not None, "re-subscribe did not retain the new source (#1433)"
+
+
+def test_resubscribeWeakrefCallbackCanUnsubscribe():
+    """A source weakref callback can safely unsubscribe during re-subscription."""
+    module = cModuleTemplate.cModuleTemplate()
+    reader = module.dataInMsg
+    old_source = messaging.CModuleTemplateMsg().write(
+        messaging.CModuleTemplateMsgPayload(dataVector=[1.0, 1.0, 1.0])
+    )
+    new_source = messaging.CModuleTemplateMsg().write(
+        messaging.CModuleTemplateMsgPayload(dataVector=[2.0, 2.0, 2.0])
+    )
+    callback_states = []
+
+    def disconnect(_):
+        callback_states.append(reader.header.isLinked)
+        reader.unsubscribe()
+        callback_states.append(reader.header.isLinked)
+
+    old_source_ref = weakref.ref(old_source, disconnect)
+    new_source_ref = weakref.ref(new_source)
+    reader.subscribeTo(old_source)
+    del old_source
+    gc.collect()
+
+    reader.subscribeTo(new_source)
+
+    assert old_source_ref() is None
+    assert callback_states == [1, 0]
+    assert reader.header.isLinked == 0
+
+    del new_source
+    gc.collect()
+    assert new_source_ref() is None
 
 
 def test_resubscribeToEmbeddedSourcePreservesOwner():
@@ -324,7 +396,9 @@ if __name__ == "__main__":
     test_moduleEmbeddedCMsgSourceSurvivesGC()
     test_moduleEmbeddedCMsgSourceOwnerSurvivesGC()
     test_unsubscribeReleasesKeepAlive()
+    test_unsubscribeWeakrefCallbackCanResubscribe()
     test_resubscribeReplacesKeepAlive()
+    test_resubscribeWeakrefCallbackCanUnsubscribe()
     test_resubscribeToEmbeddedSourcePreservesOwner()
     test_configReaderKeepAliveTransfersToWrapper()
     test_configEmbeddedSourceOwnerSurvivesGC()
