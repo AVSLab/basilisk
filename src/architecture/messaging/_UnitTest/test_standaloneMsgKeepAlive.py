@@ -174,6 +174,36 @@ def test_releaseKeepAliveIsReentrantSafe():
     assert not module.dataInMsg.isLinked()
 
 
+def test_unsubscribeRejectsReentrantKeepAlive():
+    """A reentrant subscribe during unsubscribe does not retain its source."""
+    module = cppModuleTemplate.CppModuleTemplate()
+    replacementMsg = messaging.CModuleTemplateMsg()
+    replacementReference = weakref.ref(replacementMsg)
+    initialMsg = messaging.CModuleTemplateMsg()
+    callbackLinkedStates = []
+
+    def subscribeToReplacement(_):
+        callbackLinkedStates.append(module.dataInMsg.isLinked())
+        source = replacementReference()
+        if source is not None:
+            module.dataInMsg.subscribeTo(source)
+
+    initialReference = weakref.ref(initialMsg, subscribeToReplacement)
+    module.dataInMsg.subscribeTo(initialMsg)
+    del initialMsg
+    gc.collect()
+
+    module.dataInMsg.unsubscribe()
+
+    assert initialReference() is None
+    assert callbackLinkedStates == [False]
+    assert not module.dataInMsg.isLinked()
+
+    del replacementMsg
+    gc.collect()
+    assert replacementReference() is None
+
+
 def test_moveAssignmentRejectsReentrantKeepAlive():
     """A reentrant subscribe during move assignment does not leak its source."""
     module = cppModuleTemplate.CppModuleTemplate()
@@ -249,5 +279,6 @@ if __name__ == "__main__":
     test_messageRecorderKeepsSourceAlive()
     test_addSubscriberKeepsSourceAlive()
     test_releaseKeepAliveIsReentrantSafe()
+    test_unsubscribeRejectsReentrantKeepAlive()
     test_moveAssignmentRejectsReentrantKeepAlive()
     test_copyAssignmentSurvivesReentrantUnsubscribe()
