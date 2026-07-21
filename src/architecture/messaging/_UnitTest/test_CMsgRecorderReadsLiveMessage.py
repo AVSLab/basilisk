@@ -151,6 +151,28 @@ def test_directCMsgRecorderConstructorKeepsSourceAlive():
     assert sourceReference() is None
 
 
+def test_directCppMsgRecorderConstructorKeepsSourceAlive():
+    """The public recorder constructor retains a direct C++ message argument."""
+    inputVector = [16.0, 17.0, 18.0]  # [-]
+    source = messaging.CModuleTemplateMsg().write(
+        messaging.CModuleTemplateMsgPayload(dataVector=inputVector)
+    )
+    sourceReference = weakref.ref(source)
+    recorder = messaging.CModuleTemplateMsgRecorder(source, 0)
+
+    del source
+    gc.collect()
+
+    assert sourceReference() is not None
+    recorder.UpdateState(0)
+    assert list(recorder.dataVector[0]) == inputVector
+
+    del recorder
+    gc.collect()
+
+    assert sourceReference() is None
+
+
 def test_embeddedCMsgRecorderKeepsModuleOwnerAlive():
     """A recorder retains the module that owns an embedded ``Msg_C`` source."""
     inputVector = [4.0, 5.0, 6.0]  # [-]
@@ -209,5 +231,6 @@ if __name__ == "__main__":
     test_standaloneCMsgRecorderKeepsSourceAlive()
     test_copiedCMsgRecorderKeepsSourceAlive()
     test_directCMsgRecorderConstructorKeepsSourceAlive()
+    test_directCppMsgRecorderConstructorKeepsSourceAlive()
     test_embeddedCMsgRecorderKeepsModuleOwnerAlive()
     test_configCMsgRecorderLeaseTransfersToWrapper()

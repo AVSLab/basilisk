@@ -135,7 +135,7 @@ def test_generated_message_bindings_use_module_local_classes(tmp_path):
     assert "recorder = self._recorder(timeDiff)" in generated
     assert "_msgKeepAlive.retainRecorderSource(recorder, self)" in generated
     assert "if args:" in generated
-    assert "_msgKeepAlive.retainRecorderConstructorSource(self, args[0])" in generated
+    assert "_msgKeepAlive.retainRecorderConstructorSource(self, args[0], CustomMsg)" in generated
 
 
 def test_keepalive_callbacks_skip_python_finalization():
