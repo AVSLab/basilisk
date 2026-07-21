@@ -26,6 +26,13 @@ Version |release| (July 7, 2026)
   or calling ``Message.recorder()`` now keeps the source alive for the life of the reader or recorder,
   so messages created inside Python setup or helper functions no longer need to be manually retained.
   This is fixed in the current version.
+- BSK-1461: The :ref:`sunlineEKF`, :ref:`okeefeEKF`, and :ref:`sunlineSEKF` state-update unit tests
+  injected measurement noise using ``qObsVal`` as the standard deviation of ``numpy.random.normal``,
+  but ``qObsVal`` is a variance everywhere else in these filters (the measurement covariance is
+  ``R = qObsVal * I``). The injected noise was therefore ``sqrt(qObsVal)`` times too small, so the
+  convergence tests ran at a fraction of the intended measurement noise. The tests now draw noise with
+  ``sigma = sqrt(qObsVal)`` from a local seeded generator and check convergence against a noise-appropriate
+  tolerance. This is fixed in the current version.
 
 
 Version 2.11.0 (July 7, 2026)
