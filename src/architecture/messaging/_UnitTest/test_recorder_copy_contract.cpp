@@ -20,12 +20,100 @@
 #include <gtest/gtest.h>
 
 #include <type_traits>
+#include <utility>
+#include <vector>
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDefC/CModuleTemplateMsgPayload.h"
 
 class DerivedSysModel : public SysModel {};
+
+namespace {
+
+void
+expectMessagePointersReferenceOwnStorage(Message<CModuleTemplateMsgPayload>& message)
+{
+    messagePointerData* pointers = message.GetPointers();
+    EXPECT_EQ(reinterpret_cast<uintptr_t>(pointers->header), message.getHeaderAddress());
+    EXPECT_EQ(reinterpret_cast<uintptr_t>(pointers->payload), message.getPayloadAddress());
+}
+
+} // namespace
+
+TEST(MessagingPointerContract, PointerDataDefaultsToNull)
+{
+    messagePointerData pointers;
+    MessageBase messageBase;
+    ReadFunctorBase readerBase;
+
+    EXPECT_EQ(pointers.header, nullptr);
+    EXPECT_EQ(pointers.payload, nullptr);
+    EXPECT_EQ(messageBase.GetPointers()->header, nullptr);
+    EXPECT_EQ(messageBase.GetPointers()->payload, nullptr);
+    EXPECT_EQ(readerBase.GetPointers()->header, nullptr);
+    EXPECT_EQ(readerBase.GetPointers()->payload, nullptr);
+}
+
+TEST(MessagingPointerContract, ReadFunctorCopiesAndMovesPointerState)
+{
+    Message<CModuleTemplateMsgPayload> message;
+    messagePointerData* messagePointers = message.GetPointers();
+    ReadFunctor<CModuleTemplateMsgPayload> original = message.addSubscriber();
+
+    ReadFunctor<CModuleTemplateMsgPayload> copied(original);
+    EXPECT_EQ(copied.GetPointers()->header, messagePointers->header);
+    EXPECT_EQ(copied.GetPointers()->payload, messagePointers->payload);
+
+    ReadFunctor<CModuleTemplateMsgPayload> moved(std::move(copied));
+    EXPECT_EQ(moved.GetPointers()->header, messagePointers->header);
+    EXPECT_EQ(moved.GetPointers()->payload, messagePointers->payload);
+    EXPECT_EQ(copied.GetPointers()->header, nullptr);
+    EXPECT_EQ(copied.GetPointers()->payload, nullptr);
+    EXPECT_FALSE(copied.isLinked());
+
+    ReadFunctor<CModuleTemplateMsgPayload> copyAssigned;
+    copyAssigned = original;
+    EXPECT_EQ(copyAssigned.GetPointers()->header, messagePointers->header);
+    EXPECT_EQ(copyAssigned.GetPointers()->payload, messagePointers->payload);
+
+    ReadFunctor<CModuleTemplateMsgPayload> moveAssigned;
+    moveAssigned = std::move(copyAssigned);
+    EXPECT_EQ(moveAssigned.GetPointers()->header, messagePointers->header);
+    EXPECT_EQ(moveAssigned.GetPointers()->payload, messagePointers->payload);
+    EXPECT_EQ(copyAssigned.GetPointers()->header, nullptr);
+    EXPECT_EQ(copyAssigned.GetPointers()->payload, nullptr);
+    EXPECT_FALSE(copyAssigned.isLinked());
+}
+
+TEST(MessagingPointerContract, MessageCopiesAndMovesRebindPointerState)
+{
+    Message<CModuleTemplateMsgPayload> original;
+    Message<CModuleTemplateMsgPayload> copied(original);
+    expectMessagePointersReferenceOwnStorage(copied);
+
+    Message<CModuleTemplateMsgPayload> moved(std::move(copied));
+    expectMessagePointersReferenceOwnStorage(moved);
+    expectMessagePointersReferenceOwnStorage(copied);
+
+    Message<CModuleTemplateMsgPayload> copyAssigned;
+    copyAssigned = original;
+    expectMessagePointersReferenceOwnStorage(copyAssigned);
+
+    Message<CModuleTemplateMsgPayload> moveAssigned;
+    moveAssigned = std::move(copyAssigned);
+    expectMessagePointersReferenceOwnStorage(moveAssigned);
+    expectMessagePointersReferenceOwnStorage(copyAssigned);
+
+    std::vector<Message<CModuleTemplateMsgPayload>> messages;
+    messages.reserve(1);
+    messages.emplace_back();
+    uintptr_t initialHeaderAddress = messages.front().getHeaderAddress();
+    messages.emplace_back();
+
+    EXPECT_NE(messages.front().getHeaderAddress(), initialHeaderAddress);
+    expectMessagePointersReferenceOwnStorage(messages.front());
+}
 
 TEST(RecorderCopyContract, SysModelDerivedTypesAreNotCopyable)
 {
