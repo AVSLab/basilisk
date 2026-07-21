@@ -25,10 +25,7 @@ Version |release| (July 7, 2026)
   freed memory. Subscribing a C++ ``ReadFunctor`` input message, calling ``Message.addSubscriber()``,
   or calling ``Message.recorder()`` now keeps the source alive for the life of the reader or recorder,
   so messages created inside Python setup or helper functions no longer need to be manually retained.
-  This is fixed in the current version. Note: C-module input messages (``Msg_C`` readers, e.g. a C
-  module's ``dataInMsg``) are not yet covered by this automatic keep-alive and still require retaining
-  the source message in a persistent scope (see BSK-1107); this case is tracked in pull request
-  #1442.
+  This is fixed in the current version.
 
 
 Version 2.11.0 (July 7, 2026)
