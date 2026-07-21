@@ -354,10 +354,13 @@ public:
 
     //! Unsubscribe to the connected message, noop if no message was connected
     void unsubscribe(){
-        this->releaseHandle_();   // #676: drop the Python keep-alive reference, if any
+        if (this->replacingSource) { return; }
+
+        SourceReplacementGuard replacementGuard(this->replacingSource);
         this->payloadPointer = nullptr;
         this->headerPointer = nullptr;
         this->initialized = false;
+        this->releaseHandle_();   // #676: drop the Python keep-alive reference, if any
     }
 
     //! Check if self has been subscribed to a C message
