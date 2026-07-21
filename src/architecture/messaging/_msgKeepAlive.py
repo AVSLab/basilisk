@@ -191,9 +191,13 @@ def copyRecorderSource(recorder, sourceRecorder):
         object.__setattr__(recorder, _PIN_ATTR, target)
 
 
-def retainRecorderConstructorSource(recorder, source):
-    """Retain a direct ``Msg_C`` constructor source or copy an existing pin."""
-    if _looks_like_c_msg(source):
+def retainRecorderConstructorSource(recorder, source, messageType):
+    """Retain a direct message constructor source or copy an existing pin.
+
+    ``messageType`` is supplied by the generated message module so extension-local
+    C++ message classes can be recognized without importing them from Basilisk.
+    """
+    if _looks_like_c_msg(source) or isinstance(source, messageType):
         retainRecorderSource(recorder, source)
     else:
         copyRecorderSource(recorder, source)
