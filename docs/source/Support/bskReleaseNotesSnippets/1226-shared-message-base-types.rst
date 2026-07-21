@@ -1,0 +1,2 @@
+- C++ message and reader wrappers now provide borrowed raw header and payload addresses through ``GetPointers()``; these addresses remain valid only for the documented owner and source lifetimes.
+- Python message and reader wrappers now share common ``MessageBase`` and ``ReadFunctorBase`` types across all generated payload modules, enabling reliable cross-message ``isinstance()`` checks.
