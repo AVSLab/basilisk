@@ -22,16 +22,25 @@
 /*! Holds type-erased pointers to a message's header and payload. */
 struct messagePointerData
 {
-    void* header;  //!< pointer to the message header
-    void* payload; //!< pointer to the message payload
+    void* header = nullptr;  //!< pointer to the message header
+    void* payload = nullptr; //!< pointer to the message payload
 };
 
 /*! A base class for Message that enables type-erased pointer access. */
 class MessageBase
 {
   protected:
-    messagePointerData pointers;  //!< stores the message's header/payload pointers
-    messagePointerData reference; //!< cached storage for the borrowed pointer view
+    messagePointerData pointers = {};  //!< stores the message's header/payload pointers
+    messagePointerData reference = {}; //!< cached storage for the borrowed pointer view
+
+    //! Update the stored pointers and any previously returned borrowed view.
+    void setPointerData(void* headerPointer, void* payloadPointer)
+    {
+        pointers.header = headerPointer;
+        pointers.payload = payloadPointer;
+        reference.header = headerPointer;
+        reference.payload = payloadPointer;
+    }
 
   public:
     /*!
@@ -53,17 +62,25 @@ class MessageBase
 class ReadFunctorBase
 {
   protected:
-    void* headerVoidPtr;          //!< type-erased header pointer for external interface access
-    void* payloadVoidPtr;         //!< type-erased payload pointer for external interface access
-    messagePointerData reference; //!< cached storage for the borrowed pointer view
+    void* headerVoidPtr = nullptr;     //!< type-erased header pointer for external interface access
+    void* payloadVoidPtr = nullptr;    //!< type-erased payload pointer for external interface access
+    messagePointerData reference = {}; //!< cached storage for the borrowed pointer view
+
+    //! Update the stored pointers and any previously returned borrowed view.
+    void setPointerData(void* headerPointer, void* payloadPointer)
+    {
+        headerVoidPtr = headerPointer;
+        payloadVoidPtr = payloadPointer;
+        reference.header = headerPointer;
+        reference.payload = payloadPointer;
+    }
+
+    //! Clear the stored pointers and any previously returned borrowed view.
+    void clearPointerData() { this->setPointerData(nullptr, nullptr); }
 
   public:
     //! constructor
-    ReadFunctorBase()
-      : headerVoidPtr(nullptr)
-      , payloadVoidPtr(nullptr)
-    {
-    }
+    ReadFunctorBase() = default;
 
     /*!
      * Return a borrowed view of the type-erased source header and payload pointers.
