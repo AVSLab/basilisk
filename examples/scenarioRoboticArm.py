@@ -473,13 +473,10 @@ def plotting(show_plots, scLog, thetaLog):
     ax = plt.axes()
     for idx, angle in enumerate(theta):
         plt.plot(dynTimeMin, macros.R2D * angle, label=r"$\theta_" + str(idx + 1) + "$")
-    plt.legend(fontsize="14")
-    plt.title("Angles", fontsize="22")
-    plt.xlabel("time [min]", fontsize="18")
-    plt.ylabel(r"$\theta$ [deg]", fontsize="18")
-    plt.xticks(fontsize=14)
-    plt.yticks(fontsize=14)
-    ax.yaxis.offsetText.set_fontsize(14)
+    plt.legend()
+    plt.title("Angles")
+    plt.xlabel("time [min]")
+    plt.ylabel(r"$\theta$ [deg]")
     pltName = fileName + "_theta"
     figureList[pltName] = plt.figure(1)
 
@@ -492,13 +489,10 @@ def plotting(show_plots, scLog, thetaLog):
             macros.R2D * angleRate,
             label=r"$\dot{\theta}_" + str(idx + 1) + "$",
         )
-    plt.legend(fontsize="14")
-    plt.title("Angle Rates", fontsize="22")
-    plt.xlabel("time [min]", fontsize="18")
-    plt.ylabel(r"$\dot{\theta}$ [deg/s]", fontsize="18")
-    plt.xticks(fontsize=14)
-    plt.yticks(fontsize=14)
-    ax.yaxis.offsetText.set_fontsize(14)
+    plt.legend()
+    plt.title("Angle Rates")
+    plt.xlabel("time [min]")
+    plt.ylabel(r"$\dot{\theta}$ [deg/s]")
     pltName = fileName + "_thetaDot"
     figureList[pltName] = plt.figure(2)
 
@@ -512,13 +506,10 @@ def plotting(show_plots, scLog, thetaLog):
             color=simHelpers.getLineColor(idx, 3),
             label=r"$\sigma_" + str(idx) + "$",
         )
-    plt.legend(fontsize="14")
-    plt.title("Attitude", fontsize="22")
-    plt.xlabel("time [min]", fontsize="18")
-    plt.ylabel(r"$\sigma_{B/N}$", fontsize="18")
-    plt.xticks(fontsize=14)
-    plt.yticks(fontsize=14)
-    ax.yaxis.offsetText.set_fontsize(14)
+    plt.legend()
+    plt.title("Attitude")
+    plt.xlabel("time [min]")
+    plt.ylabel(r"$\sigma_{B/N}$")
     pltName = fileName + "_sigma_BN"
     figureList[pltName] = plt.figure(3)
 
@@ -532,13 +523,10 @@ def plotting(show_plots, scLog, thetaLog):
             color=simHelpers.getLineColor(idx, 3),
             label=r"$\omega_" + str(idx) + "$",
         )
-    plt.legend(fontsize="14")
-    plt.title("Attitude Rate", fontsize="22")
-    plt.xlabel("time [min]", fontsize="18")
-    plt.ylabel(r"$\omega_{B/N}$", fontsize="18")
-    plt.xticks(fontsize=14)
-    plt.yticks(fontsize=14)
-    ax.yaxis.offsetText.set_fontsize(14)
+    plt.legend()
+    plt.title("Attitude Rate")
+    plt.xlabel("time [min]")
+    plt.ylabel(r"$\omega_{B/N}$")
     pltName = fileName + "_omega_BN_B"
     figureList[pltName] = plt.figure(4)
 
