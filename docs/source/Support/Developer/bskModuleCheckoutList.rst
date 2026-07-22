@@ -36,12 +36,14 @@ Module Programming
    variable definitions, etc.
 -  Module startup and initialization
 
-   -  The ``SelfInit()`` routine should declare the module output
-      messages
-   -  The ``CrossInit()`` routine should subscribe to the module input
-      messages
-   -  The ``Reset()`` in the FSW modules should reset all the default
-      module configuration parameters.
+   -  For C modules, the ``SelfInit()`` routine initializes the module
+      output messages. C++ modules declare their output messages as members
+      and need no separate initialization step.
+   -  Input messages are subscribed to through the messaging system, for
+      example ``moduleInMsg.subscribeTo(upstreamOutMsg)``. The BSK1
+      ``CrossInit()`` routine no longer exists.
+   -  The ``Reset()`` routine resets the module configuration parameters
+      to their default values.
 - Is the module using the :ref:`bskLogging` Basilisk logging function?
   A general support library, i.e. non-Basilisk module, should use ``BSK_PRINT()`` instead.
 
