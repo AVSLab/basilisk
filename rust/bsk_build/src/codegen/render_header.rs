@@ -67,6 +67,13 @@ pub(super) fn render_c_header(info: &ConfigInfo, module: &str) -> String {
         .map(|f| format!("cMsgCInterface/{}.h", f.c_type))
         .collect();
 
+    let constructor_initializers = info
+        .fields
+        .iter()
+        .map(|field| format!("{}{{}}", field.name))
+        .collect::<Vec<_>>()
+        .join(", ");
+
     let mut h = String::new();
 
     h.push_str(&format!(
@@ -76,8 +83,7 @@ pub(super) fn render_c_header(info: &ConfigInfo, module: &str) -> String {
          #ifndef {guard}\n\
          #define {guard}\n\
          \n\
-         #include \"architecture/_GeneralModuleFiles/bsk_rust_module.h\"\n\
-         #include <string.h>\n"
+         #include \"architecture/_GeneralModuleFiles/bsk_rust_module.h\"\n"
     ));
     for inc in &msg_includes {
         h.push_str(&format!("#include \"{inc}\"\n"));
@@ -103,10 +109,11 @@ pub(super) fn render_c_header(info: &ConfigInfo, module: &str) -> String {
 
     h.push_str(&render_field_decls(&info.fields));
 
-    // The C++ constructor zeros the struct (a user-provided constructor makes
-    // `new Config()` direct- rather than value-initialization, so fields
-    // without a member-initializer would otherwise hold garbage, not zero),
-    // then calls Init_<module> so `BskModule::init()` can set real defaults.
+    // The C++ constructor value-initializes every member, including arrays,
+    // before calling Init_<module> so `BskModule::init()` can set real
+    // defaults. Explicit member initialization avoids applying `memset` to
+    // the non-trivial C++ config type while preserving Rust's requirement
+    // that every field contain a valid value before `Init_<module>` borrows it.
     // The destructor runs the struct's ordinary Rust drop glue, freeing any
     // `Option<Box<T>>` owned-state field. Both are only visible to C++
     // (SWIG); plain-C consumers see an ordinary struct. Methods from a
@@ -143,7 +150,7 @@ pub(super) fn render_c_header(info: &ConfigInfo, module: &str) -> String {
          \n\
          #ifdef __cplusplus\n\
          extern \"C\" void Init_{module}({cfg_type}* cfg);\n\
-         inline {cfg_type}::{cfg_type}() {{ ::memset(this, 0, sizeof(*this)); Init_{module}(this); }}\n\
+         inline {cfg_type}::{cfg_type}() : {constructor_initializers} {{ Init_{module}(this); }}\n\
          inline {cfg_type}::~{cfg_type}() {{ Drop_{module}(this); }}\n"
     ));
     for m in &info.methods {
@@ -257,15 +264,16 @@ mod tests {
         assert!(header.contains("~MyConfig();"));
         // Inline definitions appear after BSK_RUST_DECL.
         assert!(header.contains("extern \"C\" void Init_myModule(MyConfig* cfg);"));
-        // The struct must memset itself to zero before calling Init_, or
-        // fields init() doesn't touch would hold garbage instead of zero.
+        // Every member must be value-initialized before Init_, or fields that
+        // init() doesn't touch would hold indeterminate values.
         assert!(
             header.contains(
-                "inline MyConfig::MyConfig() { ::memset(this, 0, sizeof(*this)); Init_myModule(this); }"
+                "inline MyConfig::MyConfig() : runtime{}, state{} { Init_myModule(this); }"
             ),
-            "constructor must zero the struct before Init_:\n{header}"
+            "constructor must value-initialize every member before Init_:\n{header}"
         );
-        assert!(header.contains("#include <string.h>"), "header:\n{header}");
+        assert!(!header.contains("memset"), "header:\n{header}");
+        assert!(!header.contains("#include <string.h>"), "header:\n{header}");
         assert!(header.contains("inline MyConfig::~MyConfig() { Drop_myModule(this); }"));
         assert!(header.contains("void *state;"), "header:\n{header}");
         assert!(header.contains("BSK_RUST_DECL(myModule, MyConfig)"));
@@ -347,6 +355,10 @@ mod tests {
         assert!(
             header.contains("double maxTorques[3];"),
             "expected a C array field declaration, got:\n{header}"
+        );
+        assert!(
+            header.contains("MyConfig::MyConfig() : runtime{}, maxTorques{}"),
+            "constructor must value-initialize array members:\n{header}"
         );
     }
 
