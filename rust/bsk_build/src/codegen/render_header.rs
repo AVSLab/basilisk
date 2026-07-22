@@ -144,7 +144,7 @@ pub(super) fn render_c_header(info: &ConfigInfo, module: &str) -> String {
          BSK_RUST_DECL({module}, {cfg_type})\n\
          \n\
          #ifdef __cplusplus\n\
-         extern \"C-unwind\" void Init_{module}({cfg_type}* cfg);\n\
+         extern \"C\" void Init_{module}({cfg_type}* cfg);\n\
          inline {cfg_type}::{cfg_type}() {{ ::memset(this, 0, sizeof(*this)); Init_{module}(this); }}\n\
          inline {cfg_type}::~{cfg_type}() {{ Drop_{module}(this); }}\n"
     ));
@@ -196,7 +196,10 @@ fn render_method_extern_decl(m: &MethodInfo, module: &str, cfg_type: &str) -> St
         let array_suffix: String = p.array_dims.iter().map(|n| format!("[{n}]")).collect();
         params.push_str(&format!("{}{sep}{}{array_suffix}", p.c_type, p.name));
     }
-    format!("extern \"C-unwind\" {ret} {}_{module}({params});\n", m.name)
+    // `C-unwind` is a Rust ABI spelling, not a valid C++ linkage language.
+    // The Rust definitions retain `extern \"C-unwind\"`; C++ declares the
+    // same unmangled symbols with ordinary C language linkage.
+    format!("extern \"C\" {ret} {}_{module}({params});\n", m.name)
 }
 
 fn render_method_inline_def(m: &MethodInfo, module: &str, cfg_type: &str) -> String {
@@ -254,7 +257,7 @@ mod tests {
         assert!(header.contains("MyConfig();"));
         assert!(header.contains("~MyConfig();"));
         // Inline definitions appear after BSK_RUST_DECL.
-        assert!(header.contains("extern \"C-unwind\" void Init_myModule(MyConfig* cfg);"));
+        assert!(header.contains("extern \"C\" void Init_myModule(MyConfig* cfg);"));
         // The struct must memset itself to zero before calling Init_, or
         // fields init() doesn't touch would hold garbage instead of zero.
         assert!(
@@ -267,6 +270,22 @@ mod tests {
         assert!(header.contains("inline MyConfig::~MyConfig() { Drop_myModule(this); }"));
         assert!(header.contains("void *state;"), "header:\n{header}");
         assert!(header.contains("BSK_RUST_DECL(myModule, MyConfig)"));
+    }
+
+    #[test]
+    fn cpp_method_shim_declaration_uses_c_language_linkage() {
+        let method = MethodInfo {
+            name: "clear".to_owned(),
+            is_mut: true,
+            params: Vec::new(),
+            ret: None,
+            doc: String::new(),
+        };
+
+        assert_eq!(
+            render_method_extern_decl(&method, "myModule", "MyConfig"),
+            "extern \"C\" void clear_myModule(MyConfig* cfg);\n"
+        );
     }
 
     #[test]
