@@ -37,7 +37,7 @@ the surrounding work is already touching that area.
 
 4. **Coding-guideline conformance**
    - New code must follow Basilisk coding guidelines in:
-     `docs/source/Support/Developer/CodingGuidlines.rst`.
+     `docs/source/Support/Developer/CodingGuidelines.rst`.
    - Respect language-specific foundations referenced there (C/C++: Stroustrup/Sutter style basis; Python: PEP 8), plus Basilisk naming and message conventions.
    - For legacy non-conforming files: keep style consistent for minor edits; use major refactors to move code toward guideline compliance.
    - Follow the checkout recommendation in `docs/source/Support/Developer/bskModuleCheckoutList.rst`

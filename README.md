@@ -79,7 +79,7 @@ For more details, see [container docs](docs/source/Build/containers.rst).
 ### Basilisk Development guidelines
 
 * [Contributing](CONTRIBUTING.md)
-* [Coding Guidelines](docs/source/Support/Developer/CodingGuidlines.rst)
+* [Coding Guidelines](docs/source/Support/Developer/CodingGuidelines.rst)
 
 ### Getting Started
 

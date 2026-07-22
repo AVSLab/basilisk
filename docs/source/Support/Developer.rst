@@ -8,7 +8,7 @@ The following support files help with writing Basilisk modules.
 .. toctree::
    :maxdepth: 2
 
-   Developer/CodingGuidlines
+   Developer/CodingGuidelines
    Developer/Debugging
    Developer/deprecatingCode
    Developer/makingNewBskModule
