@@ -14,6 +14,7 @@
     #include <string>
 %}}
 %include "messaging/newMessaging.ih"
+%import "architecture/messaging/messagingBase.i"
 
 %include "std_vector.i"
 %include "std_string.i"
@@ -44,6 +45,10 @@ STRUCTASLIST(CSSArraySensorMsgPayload)
 %ignore ReadFunctor::operator=(const ReadFunctor &);
 %ignore ReadFunctor::operator=(ReadFunctor &&);
 %ignore ReadFunctor::setSource;
+%ignore Message::Message(const Message &);
+%ignore Message::Message(Message &&);
+%ignore Message::operator=(const Message &);
+%ignore Message::operator=(Message &&);
 
 %pythonappend Recorder::Recorder %{{
     from Basilisk.architecture.messaging import _msgKeepAlive

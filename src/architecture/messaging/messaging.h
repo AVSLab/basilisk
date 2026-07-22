@@ -21,6 +21,7 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 #include <vector>
 #include <deque>
 #include "architecture/messaging/msgHeader.h"
+#include "architecture/messaging/messagingBase.h"
 #include "architecture/utilities/bskLogging.h"
 #include <typeinfo>
 #include <stdlib.h>
@@ -36,11 +37,11 @@ class Recorder;
 
 /*! Read functors have read-only access to messages*/
 template<typename messageType>
-class ReadFunctor{
+class ReadFunctor : public ReadFunctorBase{
 private:
-    messageType* payloadPointer;    //!< -- pointer to the incoming msg data
-    MsgHeader *headerPointer;      //!< -- pointer to the incoming msg header
-    bool initialized;               //!< -- flag indicating if the input message is connect to another message
+    messageType* payloadPointer = nullptr; //!< -- pointer to the incoming msg data
+    MsgHeader *headerPointer = nullptr;    //!< -- pointer to the incoming msg header
+    bool initialized = false;              //!< -- flag indicating if the input message is connected to another message
 
     // --- issue #676 keep-alive bridge -------------------------------------------------------
     // When a Python-created stand-alone message is subscribed to, the SWIG layer installs an
@@ -128,15 +129,24 @@ public:
 
 
     //! constructor
-    ReadFunctor() : initialized(false) {};
+    ReadFunctor() = default;
 
     //! constructor
-    ReadFunctor(messageType* payloadPtr, MsgHeader *headerPtr) : payloadPointer(payloadPtr), headerPointer(headerPtr), initialized(true){};
+    ReadFunctor(messageType* payloadPtr, MsgHeader *headerPtr) :
+                  payloadPointer(payloadPtr), headerPointer(headerPtr), initialized(true)
+    {
+        this->setPointerData(headerPtr, payloadPtr);
+    };
 
     //! destructor -- REQUIRED for the #676 keep-alive: a ReadFunctor is usually a C++ member
     //! of a module, so SWIG %extend destructors never run for it; only this real C++
     //! destructor does, and it must drop the Python reference held via releaseSource.
     ~ReadFunctor() {
+        SourceReplacementGuard replacementGuard(this->replacingSource);
+        this->payloadPointer = nullptr;
+        this->headerPointer = nullptr;
+        this->clearPointerData();
+        this->initialized = false;
         this->releaseHandle_();
     }
 
@@ -147,6 +157,7 @@ public:
           initialized(other.initialized),
           bskLogger(other.bskLogger),
           zeroMsgPayload(other.zeroMsgPayload) {
+        this->setPointerData(other.headerPointer, other.payloadPointer);
         this->adoptHandleFrom_(other);
     }
 
@@ -159,6 +170,7 @@ public:
         if (sameSource) {
             this->payloadPointer = other.payloadPointer;
             this->headerPointer = other.headerPointer;
+            this->setPointerData(other.headerPointer, other.payloadPointer);
             this->initialized = other.initialized;
             this->bskLogger = other.bskLogger;
             this->zeroMsgPayload = other.zeroMsgPayload;
@@ -181,6 +193,7 @@ public:
                                         true);
         this->payloadPointer = nullptr;
         this->headerPointer = nullptr;
+        this->clearPointerData();
         this->initialized = false;
         this->releaseHandle_();
 
@@ -188,6 +201,7 @@ public:
         this->zeroMsgPayload = std::move(incomingZeroPayload);
         this->payloadPointer = incomingPayload;
         this->headerPointer = incomingHeader;
+        this->setPointerData(incomingHeader, incomingPayload);
         this->initialized = incomingInitialized;
         this->sourceHandle = incomingHandle;
         this->acquireSource = incomingAcquire;
@@ -206,6 +220,11 @@ public:
           releaseSource(other.releaseSource),
           bskLogger(std::move(other.bskLogger)),
           zeroMsgPayload(std::move(other.zeroMsgPayload)) {
+        this->setPointerData(this->headerPointer, this->payloadPointer);
+        other.payloadPointer = nullptr;
+        other.headerPointer = nullptr;
+        other.clearPointerData();
+        other.initialized = false;
         other.sourceHandle = nullptr;   // moved-from reader no longer owns the reference
         other.acquireSource = nullptr;
         other.releaseSource = nullptr;
@@ -224,6 +243,10 @@ public:
         void* incomingHandle = other.sourceHandle;
         void (*incomingAcquire)(void*) = other.acquireSource;
         void (*incomingRelease)(void*) = other.releaseSource;
+        other.payloadPointer = nullptr;
+        other.headerPointer = nullptr;
+        other.clearPointerData();
+        other.initialized = false;
         other.sourceHandle = nullptr;
         other.acquireSource = nullptr;
         other.releaseSource = nullptr;
@@ -235,6 +258,7 @@ public:
                                         false);
         this->payloadPointer = nullptr;
         this->headerPointer = nullptr;
+        this->clearPointerData();
         this->initialized = false;
         this->releaseHandle_();
 
@@ -242,6 +266,7 @@ public:
         this->zeroMsgPayload = std::move(incomingZeroPayload);
         this->payloadPointer = incomingPayload;
         this->headerPointer = incomingHeader;
+        this->setPointerData(incomingHeader, incomingPayload);
         this->initialized = incomingInitialized;
         this->sourceHandle = incomingHandle;
         this->acquireSource = incomingAcquire;
@@ -327,10 +352,11 @@ public:
         MsgHeader* pt = this->headerPointer;
         this->payloadPointer = (messageType *) (++pt);
 
-
         // set flag that this input message is connected to another message
         this->initialized = true;           // set input message as linked
         this->headerPointer->isLinked = 1;  // set source output message as linked
+
+        this->setPointerData(this->headerPointer, this->payloadPointer);
     };
     //! Subscribe to the message located at the sourceAddr in memory
     void subscribeToAddr(uint64_t sourceAddr)
@@ -359,6 +385,7 @@ public:
         SourceReplacementGuard replacementGuard(this->replacingSource);
         this->payloadPointer = nullptr;
         this->headerPointer = nullptr;
+        this->clearPointerData();
         this->initialized = false;
         this->releaseHandle_();   // #676: drop the Python keep-alive reference, if any
     }
@@ -417,7 +444,7 @@ template<typename messageType>
 class WriteFunctor{
 private:
     messageType* payloadPointer;    //!< pointer to the message payload
-    MsgHeader* headerPointer;       //!< pointer to the message header
+    MsgHeader* headerPointer;      //!< pointer to the message header
 public:
     //! write functor constructor
     WriteFunctor(){};
@@ -440,12 +467,21 @@ class Recorder;
  * base class template for bsk messages
  */
 template<typename messageType>
-class Message{
+class Message : public MessageBase{
 private:
     messageType payload = {};   //!< struct defining message payload, zero'd on creation
     MsgHeader header = {};      //!< struct defining the message header, zero'd on creation
     ReadFunctor<messageType> read = ReadFunctor<messageType>(&payload, &header);  //!< read functor instance
 public:
+    Message();
+    //! copy constructor
+    Message(const Message& other);
+    //! copy assignment operator
+    Message& operator=(const Message& other);
+    //! move constructor
+    Message(Message&& other);
+    //! move assignment operator
+    Message& operator=(Message&& other);
     //! write functor to this message
     WriteFunctor<messageType> write = WriteFunctor<messageType>(&payload, &header);
     //! -- request read rights. returns reference to class ``read`` variable
@@ -476,6 +512,47 @@ public:
     uintptr_t getHeaderAddress()  { return reinterpret_cast<uintptr_t>(&header);  }
 };
 
+template<typename messageType>
+Message<messageType>::Message()
+{
+    this->setPointerData(&header, &payload);
+}
+
+template<typename messageType>
+Message<messageType>::Message(const Message& other) : Message()
+{
+    *this = other;
+}
+
+template<typename messageType>
+Message<messageType>& Message<messageType>::operator=(const Message& other)
+{
+    if (this != &other) {
+        this->payload = other.payload;
+        this->header = other.header;
+        this->zeroMsgPayload = other.zeroMsgPayload;
+        this->setPointerData(&this->header, &this->payload);
+    }
+    return *this;
+}
+
+template<typename messageType>
+Message<messageType>::Message(Message&& other) : Message()
+{
+    *this = std::move(other);
+}
+
+template<typename messageType>
+Message<messageType>& Message<messageType>::operator=(Message&& other)
+{
+    if (this != &other) {
+        this->payload = std::move(other.payload);
+        this->header = std::move(other.header);
+        this->zeroMsgPayload = std::move(other.zeroMsgPayload);
+        this->setPointerData(&this->header, &this->payload);
+    }
+    return *this;
+}
 
 template<typename messageType>
 ReadFunctor<messageType> Message<messageType>::addSubscriber(){
@@ -516,12 +593,13 @@ public:
     Recorder(void* message, uint64_t timeDiff = 0){
         this->timeInterval = timeDiff;
 
-        MsgHeader* msgPt = (MsgHeader *) message;
-        MsgHeader *pt = msgPt;
-        messageType* payloadPointer;
-        payloadPointer = (messageType *) (++pt);
+        // C messages store header followed immediately by payload in memory.
+        // Advance past header to get payload pointer.
+        auto* headerPtr  = static_cast<MsgHeader*>(message);
+        auto* payloadPtr = reinterpret_cast<messageType*>(headerPtr + 1);
 
-        this->readMessage = ReadFunctor<messageType>(payloadPointer, msgPt);
+        this->readMessage = ReadFunctor<messageType>(payloadPtr, headerPtr);
+
         this->ModelTag = "Rec:";
         Message<messageType> tempMsg;
         std::string msgName = typeid(tempMsg).name();
