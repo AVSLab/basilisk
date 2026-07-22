@@ -62,6 +62,12 @@ include_guard(GLOBAL)
 #   CARGO_ENV      Extra environment variable assignments forwarded to cargo
 #                  (e.g. "RUSTFLAGS=-C opt-level=3").
 #
+# Cargo lock policy
+# -----------------
+# The crate must have a Cargo.lock, either beside its own manifest or at its
+# Cargo workspace root. The build always passes --locked so dependency drift
+# is reported instead of modifying a lockfile during a CMake build.
+#
 # Outputs (set in the caller's scope; pass the variable *name* you want each
 # written to)
 # ---------------------------------------------------------------------------
@@ -121,6 +127,29 @@ function(bsk_add_rust_module_sources)
   # ------------------------------------------------------------------
   get_filename_component(_manifest "${RUST_MANIFEST}" ABSOLUTE)
   get_filename_component(_crate_dir "${_manifest}" DIRECTORY)
+
+  execute_process(
+    COMMAND "${CARGO_EXECUTABLE}" locate-project --workspace
+            --manifest-path "${_manifest}" --message-format plain
+    RESULT_VARIABLE _cargo_locate_result
+    OUTPUT_VARIABLE _cargo_root_manifest
+    ERROR_VARIABLE _cargo_locate_error
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    ERROR_STRIP_TRAILING_WHITESPACE
+  )
+  if(NOT _cargo_locate_result EQUAL 0)
+    message(FATAL_ERROR
+      "bsk_add_rust_module_sources: could not locate the Cargo root for ${_manifest}.\n"
+      "${_cargo_locate_error}")
+  endif()
+  get_filename_component(_cargo_root_dir "${_cargo_root_manifest}" DIRECTORY)
+  set(_cargo_lock "${_cargo_root_dir}/Cargo.lock")
+  if(NOT EXISTS "${_cargo_lock}")
+    message(FATAL_ERROR
+      "bsk_add_rust_module_sources: required Cargo lockfile not found: ${_cargo_lock}\n"
+      "Generate and commit it with:\n"
+      "  cargo generate-lockfile --manifest-path ${_cargo_root_manifest}")
+  endif()
 
   set(_generates_header FALSE)
   if(NOT RUST_INTERFACE AND NOT RUST_HEADER)
@@ -205,16 +234,12 @@ function(bsk_add_rust_module_sources)
   # ------------------------------------------------------------------
   # Custom command: build the Rust crate → staticlib
   #
-  # Cargo handles its own incremental compilation.  We list Cargo.toml
-  # and Cargo.lock as explicit dependencies; source file changes will
-  # cause cargo to produce a newer .a (updating its mtime) which makes
-  # the downstream link step re-run automatically.
+  # Cargo handles its own incremental compilation. We list the crate and
+  # workspace manifests plus the resolved lockfile as explicit dependencies;
+  # source file changes cause Cargo to produce a newer .a, which makes the
+  # downstream link step re-run automatically.
   # ------------------------------------------------------------------
-  set(_cargo_lock "${_crate_dir}/Cargo.lock")
-  set(_dep_files "${_manifest}")
-  if(EXISTS "${_cargo_lock}")
-    list(APPEND _dep_files "${_cargo_lock}")
-  endif()
+  set(_dep_files "${_manifest}" "${_cargo_root_manifest}" "${_cargo_lock}")
   # Also depend on all Rust source files so cmake re-runs cargo when they change.
   file(GLOB_RECURSE _rust_sources "${_crate_dir}/src/*.rs")
   list(APPEND _dep_files ${_rust_sources})
@@ -222,6 +247,7 @@ function(bsk_add_rust_module_sources)
   if(EXISTS "${_crate_dir}/build.rs")
     list(APPEND _dep_files "${_crate_dir}/build.rs")
   endif()
+  list(REMOVE_DUPLICATES _dep_files)
 
   add_custom_command(
     OUTPUT  "${_rust_lib}"
@@ -232,7 +258,7 @@ function(bsk_add_rust_module_sources)
             ${_header_env}
             ${_interface_env}
             ${RUST_CARGO_ENV}
-            "${CARGO_EXECUTABLE}" build ${_profile_flag} ${_feature_args}
+            "${CARGO_EXECUTABLE}" build --locked ${_profile_flag} ${_feature_args}
             --manifest-path "${_manifest}"
     DEPENDS ${_dep_files}
     WORKING_DIRECTORY "${_crate_dir}"

@@ -96,6 +96,53 @@ The ``build.rs`` file generates the C and SWIG bindings:
         bsk_build::generate();
     }
 
+Register the Crate in the Workspace
+-----------------------------------
+
+All Rust code contributed to the Basilisk source tree belongs to the
+`Cargo workspace <https://doc.rust-lang.org/cargo/reference/workspaces.html>`__
+rooted at ``src/Cargo.toml``. The workspace provides one dependency resolution
+and one committed lockfile, ``src/Cargo.lock``, for the support crates and
+every in-tree Rust module.
+
+Add the new module's path, relative to ``src``, to the workspace member list:
+
+.. code-block:: toml
+
+    [workspace]
+    resolver = "2"
+    members = [
+        "architecture/rust/bsk_build",
+        "architecture/rust/bsk_messages",
+        "architecture/rust/bsk_utilities",
+        "fswAlgorithms/<category>/myModule",
+        "moduleTemplates/rustModuleTemplate",
+    ]
+
+After adding the member or changing its dependencies, update the shared
+lockfile deliberately from the repository root:
+
+.. code-block:: bash
+
+    cargo check --manifest-path src/fswAlgorithms/<category>/myModule/Cargo.toml
+    git diff -- src/Cargo.lock
+
+Review and commit both ``src/Cargo.toml`` and ``src/Cargo.lock`` with the new
+module. Do not create or commit a ``Cargo.lock`` beside an in-tree module.
+Member-local lockfiles are ignored because Cargo uses the workspace lock.
+
+Normal CMake builds pass ``--locked`` to Cargo. Consequently, a build fails
+instead of silently changing dependency versions when a contributor changes a
+manifest without updating ``src/Cargo.lock``. Run an unlocked Cargo command
+only when intentionally updating the shared lockfile; use ``--locked`` for
+normal checks and tests.
+
+Before submitting the module, run the complete Rust workspace test suite:
+
+.. code-block:: bash
+
+    cargo test --workspace --all-features --locked --manifest-path src/Cargo.toml
+
 Write the Module
 ----------------
 
@@ -189,11 +236,11 @@ pure Rust tests run without linking Basilisk:
 .. code-block:: bash
 
     cd src/fswAlgorithms/<category>/myModule
-    cargo test
+    cargo test --locked
 
 ``init()``, ``reset()``, and ``update()`` are all testable this way.
-Logger calls (``bskLogger.warning(...)`` etc.) work in tests when the ``test_logger`` dev-dependency
-feature is enabled:
+Logger calls (``bskLogger.warning(...)`` etc.) work in tests when the
+``test_logger`` dev-dependency feature is enabled:
 
 .. code-block:: toml
 
@@ -214,6 +261,10 @@ directory. Run it after building Basilisk with Rust support:
     python3 -m pytest src/fswAlgorithms/<category>/myModule/_UnitTest -v
 
 Before contributing a module, follow the :ref:`bskModuleCheckoutList`.
+
+Out-of-tree Rust extensions are not members of the Basilisk workspace. They
+remain independent Cargo packages or workspaces and should commit their own
+``Cargo.lock`` files.
 
 Further Reading
 ---------------

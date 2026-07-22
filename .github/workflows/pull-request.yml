@@ -32,6 +32,8 @@ jobs:
           python-version: 3.14
           conan-args: --opNav True --mujoco True --rustModules True
           save-conan-cache: true
+      - name: Test Rust workspace
+        run: cargo test --workspace --all-features --locked --manifest-path src/Cargo.toml
       - name: Check committed Rust bindings are up to date
         run: |
           sudo apt-get update && sudo apt-get install -y libclang-dev

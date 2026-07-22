@@ -113,6 +113,17 @@ local Basilisk checkout, add this override to a gitignored
     bsk-messages = { path = "/path/to/basilisk/src/architecture/rust/bsk_messages" }
     bsk-build    = { path = "/path/to/basilisk/src/architecture/rust/bsk_build" }
 
+An out-of-tree extension is not a member of Basilisk's in-tree Cargo
+workspace. After configuring its dependencies, generate and commit the
+extension's own lockfile so CMake can build with deterministic dependencies:
+
+.. code-block:: bash
+
+    cargo generate-lockfile --manifest-path myModule/Cargo.toml
+
+The CMake integration passes ``--locked`` to Cargo and reports an error when
+the lockfile is missing or inconsistent with the manifest.
+
 Write the Rust Module
 ---------------------
 
@@ -588,7 +599,7 @@ Testing
      - Command
      - Needs Basilisk?
    * - Pure-Rust unit tests
-     - ``cargo test`` (from the module's crate dir)
+     - ``cargo test --locked`` (from the module's crate dir)
      - No
    * - Raw CMake build + CTest
      - ``cmake -S . -B _build && cmake --build _build && ctest --test-dir _build``

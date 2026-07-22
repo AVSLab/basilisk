@@ -45,6 +45,17 @@ Module Programming
 - Is the module using the :ref:`bskLogging` Basilisk logging function?
   A general support library, i.e. non-Basilisk module, should use ``BSK_PRINT()`` instead.
 
+For a Rust module:
+
+- Is its crate listed in the ``src/Cargo.toml`` workspace members?
+- Does its ``Cargo.toml`` contain the
+  ``[package.metadata.basilisk]`` ``module = true`` marker?
+- Was the shared ``src/Cargo.lock`` updated and reviewed after dependency
+  changes, with no module-local ``Cargo.lock`` added?
+- Does the full workspace command from :ref:`rustModules` pass with
+  ``--all-features --locked``, along with a Basilisk build using
+  ``--rustModules True``?
+
 Module Documentation
 --------------------
 

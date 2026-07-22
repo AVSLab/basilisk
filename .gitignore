@@ -74,5 +74,8 @@ build/
 
 *.git-template
 
-# Rust module support (see src/architecture/rust/)
+# Rust workspace and module support (see src/Cargo.toml)
+/src/target/
 /src/**/target/
+/src/**/Cargo.lock
+!/src/Cargo.lock
