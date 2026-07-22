@@ -73,3 +73,27 @@ the surrounding work is already touching that area.
    - If the example file includes the `enableUnityVisualization()` method, ensure the `saveFile` argument is included but commented out.
    - Ensure new Python example scripts are linked in `examples/_default.rst`.
    - Ensure any data importing is done in a robust manner supporting Linux, Windows and macOS
+
+10. **Unit test amendment**
+   - Extend the existing test with a `@pytest.mark.parametrize` case or a generalized assertion instead of adding a near-duplicate file or function per bugfix or feature.
+   - Prefer the smaller principled change over a hyper-specific case added to satisfy one review comment.
+   - Check what the existing test actually asserts, not what its name implies; if a new case invalidates the old premise, correct it in place.
+   - Add a separate test only for a genuinely different quantity, a different setup, or a new untested module (rule 8); state which in the test docstring.
+
+11. **Test assertion quality**
+   - Derive assertions from governing equations, a conservation law, symmetry, an analytic solution, or a trusted reference rather than values recorded from a previous run.
+   - A derived reference must not transcribe the code under test line by line, which catches wiring regressions but not algorithm errors.
+   - Derive it instead from an independent formulation, or from a finer-step run with a correspondingly looser tolerance.
+   - Scale tolerances to the quantity, preferring a relative tolerance or an absolute one with a stated physical floor.
+   - Avoid over-precise truth values and tight tolerances on integrated or iterative results, which are not reproducible across the Linux, Windows and macOS CI.
+   - Error-path and configuration tests need no numeric content, but a module whose new tests are all error-path checks still has untested numerical behavior.
+   - Keep documented regression data where no derivation is tractable; do not churn tests to satisfy this rule.
+
+12. **AI assistance disclosure**
+   - Disclose in the PR description or review comment when code, documentation, or review content is substantially AI-generated, naming the tool if known.
+   - This is transparency, not restriction: AI-assisted contributions are welcome, and disclosure lets reviewers calibrate scrutiny.
+   - Routine editor autocomplete and formatting need no disclosure.
+
+13. **Automated review conduct**
+   - An automated tool must not approve a PR or resolve review threads on a human reviewer's behalf; those are human acts.
+   - Automated tooling may post findings, suggestions, and questions under its own identity.
