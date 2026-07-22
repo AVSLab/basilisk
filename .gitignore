@@ -74,5 +74,5 @@ build/
 
 *.git-template
 
-# Rust module support (see rust/)
-/rust/*/target/
+# Rust module support (see src/architecture/rust/)
+/src/**/target/

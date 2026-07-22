@@ -23,9 +23,11 @@ include(bskAddRustModuleSources)
 # Counterpart of find_package_targets()/generate_package_targets() (see
 # src/CMakeLists.txt) for modules implemented in Rust. Same discovery
 # convention -- one target per module directory -- but keyed on a crate's
-# Cargo.toml instead of a hand-written .i file, because a Rust module's .i
-# file is a `cargo build` *byproduct* (bsk-build generates it from the
-# crate's source), not something committed to disk. find_package_targets()'s
+# Cargo.toml and an explicit `[package.metadata.basilisk] module = true`
+# marker instead of a hand-written .i file. The marker distinguishes BSK
+# modules from support crates such as architecture/rust/bsk_build. A Rust
+# module's .i file is a `cargo build` *byproduct* (bsk-build generates it from
+# the crate's source), not something committed to disk. find_package_targets()'s
 # glob runs at CMake *configure* time, before any build step has run, so it
 # can never see a not-yet-generated .i file -- hence the separate discovery
 # function here instead of teaching the existing one to also match Cargo.toml.
@@ -38,9 +40,31 @@ include(bskAddRustModuleSources)
 
 function(find_rust_package_targets PKG_DIR ALL_TARGET_LIST)
   file(
-    GLOB_RECURSE RUST_TARGETS
+    GLOB_RECURSE RUST_MANIFESTS
     RELATIVE ${CMAKE_SOURCE_DIR}
     "${PKG_DIR}/Cargo.toml")
+
+  set(RUST_TARGETS "")
+  foreach(RUST_MANIFEST IN LISTS RUST_MANIFESTS)
+    if(RUST_MANIFEST MATCHES "(^|/)target(/|$)")
+      continue()
+    endif()
+    file(STRINGS "${CMAKE_SOURCE_DIR}/${RUST_MANIFEST}" CARGO_MANIFEST_LINES)
+    set(IN_BASILISK_METADATA FALSE)
+    foreach(CARGO_LINE IN LISTS CARGO_MANIFEST_LINES)
+      string(STRIP "${CARGO_LINE}" CARGO_LINE)
+      if(CARGO_LINE MATCHES "^\\[package\\.metadata\\.basilisk\\][ \\t]*(#.*)?$")
+        set(IN_BASILISK_METADATA TRUE)
+      elseif(CARGO_LINE MATCHES "^\\[.*\\]")
+        set(IN_BASILISK_METADATA FALSE)
+      elseif(IN_BASILISK_METADATA AND
+             CARGO_LINE MATCHES "^module[ \\t]*=[ \\t]*true([ \\t]*(#.*)?)?$")
+        list(APPEND RUST_TARGETS "${RUST_MANIFEST}")
+        break()
+      endif()
+    endforeach()
+  endforeach()
+
   set(${ALL_TARGET_LIST}
       ${RUST_TARGETS}
       PARENT_SCOPE)

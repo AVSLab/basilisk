@@ -110,8 +110,8 @@ local Basilisk checkout, add this override to a gitignored
 .. code-block:: toml
 
     [patch."https://github.com/AVSLab/basilisk"]
-    bsk-messages = { path = "/path/to/basilisk/rust/bsk_messages" }
-    bsk-build    = { path = "/path/to/basilisk/rust/bsk_build" }
+    bsk-messages = { path = "/path/to/basilisk/src/architecture/rust/bsk_messages" }
+    bsk-build    = { path = "/path/to/basilisk/src/architecture/rust/bsk_build" }
 
 Write the Rust Module
 ---------------------
@@ -636,10 +636,11 @@ Known limitations
 - ``bsk-build``, ``bsk-messages``, and ``bsk-utilities`` are not yet published
   on crates.io. Extensions depend on this repository through a Cargo ``git``
   dependency (see `Create the Project Layout`_ above).
-- ``bsk-messages``' and ``bsk-utilities``' bindings (``rust/gen_rust_messages.py``,
-  ``rust/gen_rust_utilities.py``) are generated and committed here, so they
-  only need regenerating (and re-committing) when the underlying C message
-  or utility headers change — not on every checkout.
+- ``bsk-messages``' and ``bsk-utilities``' bindings
+  (``src/architecture/rust/gen_rust_messages.py`` and
+  ``src/architecture/rust/gen_rust_utilities.py``) are generated and committed
+  here, so they only need regenerating (and re-committing) when the underlying
+  C message or utility headers change — not on every checkout.
 - Custom message types require a hand-written ``*_C`` C-interface header —
   there is no Rust-side message-definition DSL.
 - ``bsk-utilities`` covers C ABI utilities/constants only; C++/Eigen
@@ -651,4 +652,4 @@ Reference
 
 The ABI reference is the header comment in
 :download:`bsk_rust_module.h <../../../src/architecture/_GeneralModuleFiles/bsk_rust_module.h>`,
-and the module documentation in ``rust/bsk_build/src/lib.rs``.
+and the module documentation in ``src/architecture/rust/bsk_build/src/lib.rs``.

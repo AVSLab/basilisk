@@ -226,6 +226,9 @@ function(find_package_targets PKG_DIR ALL_TARGET_LIST)
     GLOB_RECURSE SWIG_TARGETS
     RELATIVE ${CMAKE_SOURCE_DIR}
     "${PKG_DIR}/*.i")
+  # Direct Cargo commands can generate SWIG interfaces below a crate's
+  # target/ directory. Those are build products, not source modules.
+  list(FILTER SWIG_TARGETS EXCLUDE REGEX "(^|/)target(/|$)")
   set(${ALL_TARGET_LIST}
       ${SWIG_TARGETS}
       PARENT_SCOPE)

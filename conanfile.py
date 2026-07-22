@@ -134,6 +134,35 @@ def clean_numba_cache_artifacts(root: Optional[Path] = None,
     return removed_cache_files, removed_user_cache
 
 
+def clean_rust_target_artifacts(root: Optional[Path] = None,
+                                print_fn: Optional[Callable[[str], None]] = print) -> int:
+    """Remove Cargo ``target`` directories belonging to crates under ``src``."""
+    root_path = Path.cwd() if root is None else Path(root)
+    source_path = root_path / "src"
+    if not source_path.exists():
+        return 0
+
+    manifests = [
+        manifest
+        for manifest in source_path.rglob("Cargo.toml")
+        if "target" not in manifest.relative_to(source_path).parts
+    ]
+    target_directories = sorted({manifest.parent / "target" for manifest in manifests})
+    removed_target_directories = 0
+    for target_directory in target_directories:
+        if not target_directory.is_dir() or target_directory.is_symlink():
+            continue
+        shutil.rmtree(target_directory, ignore_errors=True)
+        if not target_directory.exists():
+            removed_target_directories += 1
+
+    if print_fn is not None:
+        directory_label = "directory" if removed_target_directories == 1 else "directories"
+        print_fn(f"Removed {removed_target_directories} Cargo target {directory_label}.")
+
+    return removed_target_directories
+
+
 def resolve_py_limited_api(opt_value: Optional[str]) -> str:
     """Use explicit --pyLimitedAPI if provided, else cp39."""
     if opt_value:
@@ -295,6 +324,7 @@ class BasiliskConan(ConanFile):
             if os.path.exists(distPath):
                 shutil.rmtree(distPath, ignore_errors=True)
             clean_numba_cache_artifacts(Path(root))
+            clean_rust_target_artifacts(Path(root))
         if self.settings.get_safe("build_type") == "Debug":
             print(warningColor + "Build type is set to Debug. Performance will be significantly lower." + endColor)
 

@@ -40,9 +40,9 @@ the normal Basilisk build and test workflow after configuration.
 Module Layout
 -------------
 
-Place a Rust module in a normal Basilisk module directory. The Cargo manifest
-identifies the directory as a Rust module; no hand-written C header or SWIG
-interface file is needed:
+Place a Rust module in a normal Basilisk module directory. The Cargo manifest's
+``[package.metadata.basilisk]`` marker identifies the directory as a Rust
+module; no hand-written C header or SWIG interface file is needed:
 
 .. code-block:: text
 
@@ -54,8 +54,10 @@ interface file is needed:
     `-- _UnitTest/
         `-- test_myModule.py
 
-The module target name is the directory containing ``Cargo.toml``. Basilisk
-generates the C header and SWIG interface while building the crate.
+The module target name is the directory containing ``Cargo.toml``. The
+``[package.metadata.basilisk]`` marker shown below distinguishes modules from
+Rust support crates. Basilisk generates the C header and SWIG interface while
+building the crate.
 
 Configure the Crate
 -------------------
@@ -70,15 +72,18 @@ crates. From the layout above, ``Cargo.toml`` contains:
     version = "0.1.0"
     edition = "2021"
 
+    [package.metadata.basilisk]
+    module = true
+
     [lib]
     crate-type = ["staticlib"]
 
     [dependencies]
-    bsk-messages = { path = "../../../../rust/bsk_messages" }
-    bsk-build = { path = "../../../../rust/bsk_build" }
+    bsk-messages = { path = "../../../architecture/rust/bsk_messages" }
+    bsk-build = { path = "../../../architecture/rust/bsk_build" }
 
     [build-dependencies]
-    bsk-build = { path = "../../../../rust/bsk_build", features = ["codegen"] }
+    bsk-build = { path = "../../../architecture/rust/bsk_build", features = ["codegen"] }
 
 The path to each crate is relative to the module directory. Adjust it if the
 module is placed elsewhere in the source tree.
@@ -194,7 +199,7 @@ feature is enabled:
 
     # Cargo.toml
     [dev-dependencies]
-    bsk-build = { path = "../../../../rust/bsk_build", features = ["test_logger"] }
+    bsk-build = { path = "../../../architecture/rust/bsk_build", features = ["test_logger"] }
 
 Logger calls in test builds print to ``stderr`` instead of calling
 Basilisk's C symbols. ``bsk_module!()`` must still be gated with

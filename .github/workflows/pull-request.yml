@@ -36,10 +36,10 @@ jobs:
         run: |
           sudo apt-get update && sudo apt-get install -y libclang-dev
           cargo install bindgen-cli --locked
-          python3 rust/gen_rust_messages.py
-          python3 rust/gen_rust_utilities.py
-          if ! git diff --exit-code -- rust/bsk_messages/src/lib.rs rust/bsk_utilities/src/raw.rs; then
-            echo "::error::rust/bsk_messages/src/lib.rs and/or rust/bsk_utilities/src/raw.rs are stale (don't match what rust/gen_rust_messages.py / rust/gen_rust_utilities.py produce from the message/utility headers in this PR). Regenerate them locally and commit the result."
+          python3 src/architecture/rust/gen_rust_messages.py
+          python3 src/architecture/rust/gen_rust_utilities.py
+          if ! git diff --exit-code -- src/architecture/rust/bsk_messages/src/lib.rs src/architecture/rust/bsk_utilities/src/raw.rs; then
+            echo "::error::src/architecture/rust/bsk_messages/src/lib.rs and/or src/architecture/rust/bsk_utilities/src/raw.rs are stale (don't match what the generators under src/architecture/rust produce from the message/utility headers in this PR). Regenerate them locally and commit the result."
             exit 1
           fi
       - name: Pytest

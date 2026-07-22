@@ -68,3 +68,32 @@ def test_clean_numba_cache_artifacts(tmp_path, monkeypatch):
         assert not path.exists()
     for path in retained_files:
         assert path.exists()
+
+
+def test_clean_rust_target_artifacts(tmp_path, monkeypatch):
+    """Ensure clean builds remove direct Cargo outputs for in-tree crates."""
+    repo_root = Path(__file__).resolve().parents[2]
+    monkeypatch.chdir(repo_root)
+    monkeypatch.syspath_prepend(str(repo_root))
+    conanfile = importlib.import_module("conanfile")
+
+    crate_directories = [
+        tmp_path / "src" / "architecture" / "rust" / "bsk_build",
+        tmp_path / "src" / "moduleTemplates" / "rustModuleTemplate",
+    ]
+    for crate_directory in crate_directories:
+        (crate_directory / "Cargo.toml").parent.mkdir(parents=True, exist_ok=True)
+        (crate_directory / "Cargo.toml").write_text("[package]\n", encoding="utf-8")
+        target_file = crate_directory / "target" / "debug" / "artifact"
+        target_file.parent.mkdir(parents=True)
+        target_file.write_text("build output", encoding="utf-8")
+
+    unrelated_target = tmp_path / "src" / "not_a_crate" / "target"
+    unrelated_target.mkdir(parents=True)
+
+    removed_directories = conanfile.clean_rust_target_artifacts(tmp_path, print_fn=None)
+
+    assert removed_directories == len(crate_directories)
+    for crate_directory in crate_directories:
+        assert not (crate_directory / "target").exists()
+    assert unrelated_target.exists()

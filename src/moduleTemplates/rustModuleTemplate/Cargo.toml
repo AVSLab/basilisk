@@ -3,12 +3,15 @@ name = "rustModuleTemplate"
 version = "0.1.0"
 edition = "2021"
 
+[package.metadata.basilisk]
+module = true
+
 [lib]
 crate-type = ["staticlib"]
 
 [dependencies]
-bsk-messages = { path = "../../../rust/bsk_messages" }
-bsk-build = { path = "../../../rust/bsk_build" }
+bsk-messages = { path = "../../architecture/rust/bsk_messages" }
+bsk-build = { path = "../../architecture/rust/bsk_build" }
 
 [build-dependencies]
-bsk-build = { path = "../../../rust/bsk_build", features = ["codegen"] }
+bsk-build = { path = "../../architecture/rust/bsk_build", features = ["codegen"] }
