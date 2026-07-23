@@ -66,6 +66,29 @@ To clean out the sphinx generated documents and folder use::
 
     make clean
 
+Including Generated Rust Module APIs
+------------------------------------
+
+Rust module pages can include the C-compatible configuration interface
+generated from their Rust source. Configure and build Basilisk with Rust
+module support before running Sphinx:
+
+.. code-block:: console
+
+    python conanfile.py --rustModules True
+    cd docs
+    make html
+
+Sphinx looks for the generated headers in ``dist3/rust_headers`` and sends
+each available module header through the existing Doxygen/Breathe pipeline.
+
+The generated API sections are omitted when a Rust module header is
+unavailable, so Rust remains optional for normal documentation builds.
+
+If Basilisk was built in a non-default directory, set
+``BSK_RUST_HEADER_DIR`` to that build's ``rust_headers`` directory before
+running Sphinx.
+
 Rendering a Single Documentation Page
 -------------------------------------
 To quickly preview one documentation page while editing it, run ``make`` with

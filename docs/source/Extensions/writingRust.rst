@@ -20,7 +20,7 @@ Quick Start: Writing a Rust Basilisk Extension
 
 This guide explains how to package and build a Basilisk extension whose module
 lifecycle methods are implemented in Rust. It uses the same extension packaging
-described in :ref:`writingPlugins`
+described in :ref:`writingExtensions`
 (``pyproject.toml``, a Python package directory, ``bsk-sdk`` as the build
 dependency), plus ``bsk_add_rust_module`` to compile the Cargo crate and add it
 to the Python extension.
@@ -173,7 +173,10 @@ generates the C header, SWIG wrapper, and message I/O code from this definition:
 ``bsk-build`` reads the struct during ``build.rs`` and generates the C header
 and wrapper code. ``bsk_module!()`` includes the generated code in the crate.
 
-Field doc comments written with ``///`` become Doxygen comments in the generated header.
+Field doc comments written with ``///`` become Doxygen comments in the
+generated header. Follow the Basilisk unit-first convention used by the other
+module languages, for example ``/// [m/s] Velocity``. Use ``[-]`` for
+dimensionless fields when it improves clarity.
 
 Module Lifecycle
 ~~~~~~~~~~~~~~~~
@@ -590,7 +593,7 @@ Configure Python Packaging
 
    ``bsk-sdk``, ``bsk``, and the runtime ``dependencies`` entry must all be
    **pinned to the same version**, exactly as for a C++/C extension (see
-   :ref:`writingPlugins`). Replace ``2.X.Y`` with the Basilisk version being
+   :ref:`writingExtensions`). Replace ``2.X.Y`` with the Basilisk version being
    targeted.
 
 Build, Install, and Test

@@ -30,8 +30,8 @@ from docutils import nodes
 from docutils.parsers.rst import roles
 
 def beta_role(name, rawtext, text, lineno, inliner, options={}, content=[]):
-    node = nodes.inline(rawtext, f"[BETA] {text}", classes=['beta-label'])
-    return [node], []
+    label = nodes.inline(rawtext, "[BETA]", classes=['beta-label'])
+    return [label, nodes.Text(f" {text}")], []
 
 roles.register_local_role('beta', beta_role)
 
@@ -385,10 +385,11 @@ epub_exclude_files = ['search.html']
 from glob import glob
 
 class fileCrawler():
-    def __init__(self, newFiles=False):
+    def __init__(self, newFiles=False, rust_header_dir=None):
         self.newFiles = newFiles
         self.breathe_projects_source = {}
         self.counter = 0
+        self.rust_header_dir = Path(rust_header_dir).resolve() if rust_header_dir else None
 
     def grabRelevantFiles(self,dir_path):
         dirs_in_dir = glob(dir_path + '*/')
@@ -520,6 +521,24 @@ class fileCrawler():
             for file_path in file_paths
         )
 
+    def _isCargoTargetDirectory(self, directory, file_paths):
+        """Return whether *directory* contains Cargo-generated build products."""
+        if os.path.basename(os.path.normpath(directory)) != "target":
+            return False
+
+        return any(
+            os.path.basename(file_path) == "Cargo.toml"
+            for file_path in file_paths
+        )
+
+    def _generated_rust_header(self, module_name):
+        """Return the generated module header when a Rust build produced it."""
+        if self.rust_header_dir is None:
+            return None
+
+        header_path = self.rust_header_dir / f"{module_name}.h"
+        return header_path if header_path.is_file() else None
+
     def writeModuleTitle(self, title_text, module_type=None):
         if module_type:
             title = f":module-type:`{module_type}` {title_text}"
@@ -583,7 +602,7 @@ class fileCrawler():
                     break
             for file_path in sorted(file_paths):
                 fileName = os.path.basename(os.path.normpath(file_path))
-                if fileName == "Cargo.toml" and rust_module_name:
+                if fileName == "Cargo.toml":
                     continue
                 fileName = fileName[:fileName.rfind('.')]
                 if not fileName in calledNames:
@@ -675,7 +694,16 @@ class fileCrawler():
                         if name == "_GeneralModuleFiles":
                             name += str(self.counter)
                             self.counter += 1
-                        lines += """.. autodoxygenfile:: """ + module_file + """\n   :project: """ + name + """\n\n"""
+                        lines += (
+                            f".. autodoxygenfile:: {module_file}\n"
+                            f"   :project: {name}"
+                        )
+                        if module_file == "bsk_rust_module.h":
+                            lines += (
+                                "\n   :sections: innerclass briefdescription "
+                                "detaileddescription public-attrib define"
+                            )
+                        lines += "\n\n"
                         # lines += """.. inheritance-diagram:: """ + module_file + """\n\n"""
 
                 if self.newFiles:
@@ -728,6 +756,25 @@ class fileCrawler():
             with open(doc_file_name, 'r', encoding="utf8") as doc_file:
                 lines += doc_file.read() + "\n\n"
 
+            generated_header = self._generated_rust_header(module_name)
+            if generated_header:
+                project_name = module_name + "Rust"
+                lines += "Generated Module API\n--------------------\n\n"
+                lines += (
+                    "This C-compatible interface is generated from the Rust "
+                    "module source.\n\n"
+                )
+                lines += (
+                    ".. autodoxygenfile:: " + generated_header.name + "\n"
+                    "   :project: " + project_name + "\n"
+                    "   :sections: innerclass briefdescription "
+                    "detaileddescription public-attrib public-func\n\n"
+                )
+                sources[project_name] = (
+                    str(generated_header.parent),
+                    [generated_header.name],
+                )
+
             if self.newFiles:
                 with open(os.path.join(path, module_name + ".rst"), "w") as f:
                     f.write(lines)
@@ -747,6 +794,7 @@ class fileCrawler():
             directory
             for directory in dir_paths
             if not self._isCargoSourceDirectory(directory, file_paths)
+            and not self._isCargoTargetDirectory(directory, file_paths)
         ]
 
         index_path = os.path.relpath(srcDir, officialSrc)
@@ -780,7 +828,11 @@ rebuild = not single_page_docname
 officialSrc = "../../src"
 officialDoc = "./Documentation/"
 
-fileCrawler = fileCrawler(rebuild)
+default_rust_header_dir = (
+    Path(__file__).resolve().parents[2] / "dist3" / "rust_headers"
+)
+rust_header_dir = os.environ.get("BSK_RUST_HEADER_DIR", default_rust_header_dir)
+fileCrawler = fileCrawler(rebuild, rust_header_dir)
 import pickle
 
 if rebuild:

@@ -1,11 +1,8 @@
-.. Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
-..
-.. SPDX-License-Identifier: ISC
 
 .. _rustModules:
 
-Making Rust Modules
-===================
+:beta:`Making Rust Modules`
+===========================
 
 .. sidebar:: Rust Module Support
 
@@ -246,21 +243,41 @@ documentation for C and C++ modules.
 
 Use Rust documentation comments for the source API: ``//!`` documents the
 crate or containing module, while ``///`` documents the following struct,
-field, function, or method. Rust's standard documentation generator is
-`rustdoc <https://doc.rust-lang.org/rustdoc/>`__, normally invoked through
-`cargo doc <https://doc.rust-lang.org/cargo/commands/cargo-doc.html>`__:
+field, function, or method.
+
+Use the usual Basilisk unit-first convention in Rust documentation comments:
+
+.. code-block:: rust
+
+    /// [m] Inertial position vector
+    pub position: [f64; 3],
+    /// [m/s] Inertial velocity vector
+    pub velocity: [f64; 3],
+    /// [-] Dimensionless gain
+    pub gain: f64,
+
+Place the unit immediately after ``///`` so the source matches C, C++, and
+Python Basilisk modules. Use ``[-]`` for dimensionless fields when it improves
+clarity. The generated C header preserves these unit comments for Doxygen.
+
+After building Basilisk with Rust support, generate the complete Basilisk HTML
+site from the repository root with:
 
 .. code-block:: bash
 
-    cargo doc --workspace --no-deps --all-features --locked --manifest-path src/Cargo.toml
+    cd docs
+    make html
 
-``cargo doc`` generates searchable HTML with item pages and source links. The
-main Basilisk Sphinx build does not currently embed that HTML. ``bsk-build``
-does copy ``///`` comments from configuration fields and Python-exposed
-configuration methods into the generated C header, preserving their
-descriptions at the generated C/SWIG boundary. Native Rust types and lifecycle
-implementations should be documented and reviewed with ``rustdoc`` rather than
-Doxygen.
+The Sphinx module page includes the generated C header through the existing
+Doxygen/Breathe pipeline. This provides API documentation for configuration
+fields and Python-exposed configuration methods because ``bsk-build`` copies
+their ``///`` comments into the generated header.
+
+The generated API section is optional so documentation can still be built
+without a Rust toolchain. Build Basilisk with ``--rustModules True`` before
+building the documentation to include it. The default header location is
+``dist3/rust_headers``; set ``BSK_RUST_HEADER_DIR`` when using a different
+build directory.
 
 Testing
 -------
