@@ -151,6 +151,26 @@ def test_rust_module_template_abi_layout():
     assert raw_config.bsk_logger is None
 
 
+def test_rust_module_template_rust_owned_config_lifecycle():
+    """Verify that the exported Rust allocator constructs and destroys the config."""
+    extension = ctypes.CDLL(rustModuleTemplate._rustModuleTemplate.__file__)
+    new_config = extension.New_rustModuleTemplate
+    new_config.argtypes = []
+    new_config.restype = ctypes.c_void_p
+    delete_config = extension.Delete_rustModuleTemplate
+    delete_config.argtypes = [ctypes.c_void_p]
+    delete_config.restype = None
+
+    config_address = new_config()
+    assert config_address is not None
+    try:
+        raw_config = _ExpectedRustModuleTemplateConfig.from_address(config_address)
+        assert raw_config.dummy == 0.0
+        assert raw_config.bsk_logger is None
+    finally:
+        delete_config(config_address)
+
+
 @pytest.mark.parametrize("connect_input", [False, True])
 def test_rust_module_template(connect_input):
     """Verify reset and update behavior with the optional input unlinked or linked."""

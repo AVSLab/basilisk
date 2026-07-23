@@ -30,7 +30,7 @@ use syn::{
 /// ``#[bsk(input, optional)]``, or ``#[bsk(output)]``. For a config named
 /// ``MyModuleConfig``, this attribute generates ``MyModuleInputs`` and
 /// ``MyModuleOutputs`` with corresponding named message-value fields, plus
-/// the Basilisk C ABI lifecycle entry points.
+/// the Basilisk C ABI construction, destruction, and lifecycle entry points.
 #[proc_macro_attribute]
 pub fn module(arguments: TokenStream, input: TokenStream) -> TokenStream {
     let _ = parse_macro_input!(arguments as syn::parse::Nothing);
@@ -54,13 +54,27 @@ fn expand_module(input: ItemStruct) -> syn::Result<TokenStream2> {
     let outputs_type = io_type_name(&config_type, "Outputs");
 
     let module_name = module_name();
-    let init_function = format_ident!("Init_{module_name}");
+    let new_function = format_ident!("New_{module_name}");
+    let delete_function = format_ident!("Delete_{module_name}");
     let self_init_function = format_ident!("SelfInit_{module_name}");
     let reset_function = format_ident!("Reset_{module_name}");
     let update_function = format_ident!("Update_{module_name}");
-    let drop_function = format_ident!("Drop_{module_name}");
     let assert_io_types_function =
         format_ident!("__bsk_assert_io_types_for_{}", config_type.to_string());
+    let initialize_config_fields: Vec<TokenStream2> = fields
+        .iter()
+        .map(|field| {
+            let field_name = field
+                .ident
+                .as_ref()
+                .expect("validated module config must have named fields");
+            if type_last_ident(&field.ty).is_some_and(|ident| ident == "BskModuleRuntime") {
+                quote!(#field_name: ::bsk_build::BskModuleRuntime::__new())
+            } else {
+                quote!(#field_name: ::core::default::Default::default())
+            }
+        })
+        .collect();
 
     let logger = fields
         .iter()
@@ -212,8 +226,21 @@ fn expand_module(input: ItemStruct) -> syn::Result<TokenStream2> {
         #[cfg(not(test))]
         #[allow(non_snake_case)]
         #[no_mangle]
-        pub unsafe extern "C-unwind" fn #init_function(config: *mut #config_type) {
-            <#config_type as ::bsk_build::BskModule>::init(&mut *config);
+        pub extern "C-unwind" fn #new_function() -> *mut #config_type {
+            let mut config = ::std::boxed::Box::new(#config_type {
+                #(#initialize_config_fields,)*
+            });
+            <#config_type as ::bsk_build::BskModule>::init(&mut config);
+            ::std::boxed::Box::into_raw(config)
+        }
+
+        #[cfg(not(test))]
+        #[allow(non_snake_case)]
+        #[no_mangle]
+        pub unsafe extern "C-unwind" fn #delete_function(config: *mut #config_type) {
+            if !config.is_null() {
+                drop(::std::boxed::Box::from_raw(config));
+            }
         }
 
         #[cfg(not(test))]
@@ -266,12 +293,6 @@ fn expand_module(input: ItemStruct) -> syn::Result<TokenStream2> {
             #(#write_update_outputs)*
         }
 
-        #[cfg(not(test))]
-        #[allow(non_snake_case)]
-        #[no_mangle]
-        pub unsafe extern "C-unwind" fn #drop_function(config: *mut #config_type) {
-            ::core::ptr::drop_in_place(config);
-        }
     })
 }
 
@@ -590,9 +611,15 @@ mod tests {
         let expanded = expand_module(input)
             .expect("valid module must expand")
             .to_string();
-        for lifecycle in ["Init_", "SelfInit_", "Reset_", "Update_", "Drop_"] {
+        for lifecycle in ["New_", "Delete_", "SelfInit_", "Reset_", "Update_"] {
             assert!(expanded.contains(lifecycle), "expanded module: {expanded}");
         }
+        assert!(expanded.contains("Box :: new"));
+        assert!(expanded.contains("BskModuleRuntime :: __new"));
+        assert!(expanded.contains("bskLogger : :: core :: default :: Default :: default"));
+        assert!(expanded.contains("BskModule > :: init"));
+        assert!(expanded.contains("Box :: into_raw"));
+        assert!(expanded.contains("Box :: from_raw"));
         assert!(expanded.contains("BskModuleInput"));
         assert!(expanded.contains("struct ControllerInputs"));
         assert!(expanded.contains("struct ControllerOutputs"));

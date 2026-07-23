@@ -178,12 +178,12 @@ pub fn generate_from(source_path: impl AsRef<Path>) {
     }
 
     // The module name drives the generated symbol suffix
-    // (SelfInit_<name>/Reset_<name>/Update_<name>) and header filename/include
-    // guard; it must match the CMake TARGET the generated SWIG `.i` file
-    // expects. CMake supplies BSK_HEADER_PATH so this is derived from the
-    // same build-tree path it manages as a Cargo byproduct. Direct
-    // `cargo build`/`cargo test` (no CMake) falls back to the crate name —
-    // that output isn't consumed by anything in that mode.
+    // (New_<name>/Delete_<name>/SelfInit_<name>/Reset_<name>/Update_<name>)
+    // and header filename/include guard; it must match the CMake TARGET the
+    // generated SWIG `.i` file expects. CMake supplies BSK_HEADER_PATH so this
+    // is derived from the same build-tree path it manages as a Cargo
+    // byproduct. Direct `cargo build`/`cargo test` (no CMake) falls back to the
+    // crate name — that output isn't consumed by anything in that mode.
     let module_name = std::env::var_os("BSK_HEADER_PATH")
         .map(PathBuf::from)
         .and_then(|p| p.file_stem().map(|s| s.to_string_lossy().into_owned()))

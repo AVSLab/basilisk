@@ -846,10 +846,9 @@ mod tests {
     }
 
     /// `Option<Box<T>>` owned-state fields map to a nullable `void *`, and
-    /// the generated header wires a C++ destructor to a `Drop_<module>`
-    /// call so cleanup happens automatically (see "Owned heap state" in the
-    /// module docs) rather than through a hand-written `Cleanup_*` function
-    /// or a custom SWIG destructor.
+    /// the generated `Delete_<module>` function runs Rust drop glue and
+    /// returns the config allocation to Rust automatically (see "Owned heap
+    /// state" in the module docs).
     #[test]
     fn owned_state_field_maps_to_nullable_void_ptr() {
         let info = info_for(

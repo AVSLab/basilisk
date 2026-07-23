@@ -48,10 +48,10 @@ use super::types::{MethodInfo, MethodParam};
 use syn::__private::ToTokens;
 
 /// Reserved shim symbol prefixes `bsk-build` itself generates
-/// (`Init_<module>`, `SelfInit_<module>`, ...) — a config method literally
+/// (`New_<module>`, `Delete_<module>`, `SelfInit_<module>`, ...) — a config method literally
 /// named one of these would collide with them once suffixed with the same
 /// `_<module>`, so it's rejected same as any other incompatible signature.
-const RESERVED_METHOD_NAMES: &[&str] = &["Init", "SelfInit", "Reset", "Update", "Drop"];
+const RESERVED_METHOD_NAMES: &[&str] = &["New", "Delete", "SelfInit", "Reset", "Update"];
 
 /// Scans `source_asts` for a plain `impl <struct_name> { ... }` block (any
 /// number of them) and returns every `pub fn` with a C/SWIG-compatible

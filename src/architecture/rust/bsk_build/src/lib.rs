@@ -36,11 +36,11 @@
 //!
 //! # Module name
 //!
-//! The generated symbol suffix (``SelfInit_<name>`` / ``Reset_<name>`` /
-//! ``Update_<name>``) and the header's filename/include guard come from
-//! ``BSK_HEADER_PATH``'s file stem, which CMake sets to match the
-//! ``bsk_add_rust_module`` ``TARGET``. Direct ``cargo build``/``cargo test``
-//! (no CMake) falls back to the crate name.
+//! The generated symbol suffix (``New_<name>`` / ``Delete_<name>`` /
+//! ``SelfInit_<name>`` / ``Reset_<name>`` / ``Update_<name>``) and the
+//! header's filename/include guard come from ``BSK_HEADER_PATH``'s file stem,
+//! which CMake sets to match the ``bsk_add_rust_module`` ``TARGET``. Direct
+//! ``cargo build``/``cargo test`` without CMake falls back to the crate name.
 //!
 //! # The config struct
 //!
@@ -69,6 +69,11 @@
 //! | ``MsgReader<Foo>`` / ``MsgWriter<Foo>`` | ``Foo_C`` |
 //! | ``BskModuleRuntime``  | ``BskRustModuleRuntime`` (see below) |
 //! | ``[T; N]`` (``N`` a literal) | ``T name[N]`` (see "Fixed-size arrays") |
+//!
+//! Rust allocates each module config and initializes every field other than
+//! ``runtime`` through its type's ``Default`` implementation before calling
+//! [`BskModule::init`]. Built-in supported field types already implement
+//! `Default`; module-defined nested structs must derive or implement it.
 //!
 //! # Runtime mirror field (required)
 //!
@@ -107,11 +112,12 @@
 //! A field of type ``Option<Box<T>>`` (any `T`) holds heap state that
 //! persists across calls (filters, integrators, ...) — normal, safe Rust
 //! ownership, no manual `Box::into_raw`/`from_raw`. It maps to a nullable
-//! `void *` in the generated C header. Cleanup is automatic: the header also
-//! gets a C++ destructor that runs the struct's regular Rust drop glue, so
-//! the state is freed whenever the owning C++ wrapper object is (Python
-//! garbage collection, explicit `del`, or process exit) — no
-//! `Cleanup_*`-style function or custom SWIG destructor to write by hand.
+//! `void *` in the generated C header. The full config is allocated and
+//! destroyed by generated Rust functions. Destruction runs the struct's
+//! regular Rust drop glue, so the state is freed whenever the owning Python
+//! config or wrapper object is (Python garbage collection, explicit `del`,
+//! or process exit) — no `Cleanup_*`-style function or custom destructor to
+//! write by hand.
 //! It's also the *only* supported form of raw pointer field: a bare
 //! `*mut`/`*const c_void` field is a build error.
 //!
@@ -244,13 +250,27 @@ impl BskModuleRuntime {
 }
 
 impl BskModuleRuntime {
+    /// Construct the valid empty runtime used before the first lifecycle call.
+    ///
+    /// This is public only so the ``#[bsk_build::module]`` expansion in a
+    /// module crate can initialize its configuration entirely in Rust.
+    #[doc(hidden)]
+    pub const fn __new() -> Self {
+        Self {
+            module_id: 0,
+            model_tag: core::ptr::null(),
+            call_counts: 0,
+            rng_seed: 0,
+        }
+    }
+
     /// An all-zero runtime (module ID 0, empty tag, no calls yet) for
     /// constructing a config struct in a `#[cfg(test)]` unit test, without a
     /// live simulation to supply a real one. Not named/spelled `default()`
     /// (no `Default` impl) so `mem::take`/`mem::replace` can't be used to
     /// pull a live runtime out of a config struct by value.
     pub const fn for_testing() -> Self {
-        Self { module_id: 0, model_tag: core::ptr::null(), call_counts: 0, rng_seed: 0 }
+        Self::__new()
     }
 }
 
@@ -475,8 +495,10 @@ pub trait BskModule {
     type Outputs;
 
     /// Called before Python has configured any fields. Override to set
-    /// non-zero parameter defaults and initial state. The default
-    /// implementation is a no-op (all fields remain zero-initialized).
+    /// non-default parameters and initial state. Every field except
+    /// `BskModuleRuntime` has already been initialized through its type's
+    /// `Default` implementation. The default `init` implementation is a
+    /// no-op.
     fn init(&mut self) {}
 
     /// Called during `Reset()`. Must return initialized values for every

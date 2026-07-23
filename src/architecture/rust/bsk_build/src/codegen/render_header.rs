@@ -38,8 +38,8 @@ fn render_field_decls(fields: &[FieldInfo]) -> String {
 
 /// Renders a nested struct's `typedef struct` (see "Nested structs" in the
 /// module docs) — a plain C struct with no BSK-specific machinery, since
-/// only the top-level config struct gets the runtime field, message
-/// includes, and destructor.
+/// only the top-level config struct gets the runtime field, message includes,
+/// and Rust-owned allocation functions.
 fn render_nested_struct(s: &NestedStructInfo) -> String {
     format!(
         "\n\
@@ -66,13 +66,6 @@ pub(super) fn render_c_header(info: &ConfigInfo, module: &str) -> String {
         .filter(|f| f.msg.is_some())
         .map(|f| format!("cMsgCInterface/{}.h", f.c_type))
         .collect();
-
-    let constructor_initializers = info
-        .fields
-        .iter()
-        .map(|field| format!("{}{{}}", field.name))
-        .collect::<Vec<_>>()
-        .join(", ");
 
     let mut h = String::new();
 
@@ -109,27 +102,25 @@ pub(super) fn render_c_header(info: &ConfigInfo, module: &str) -> String {
 
     h.push_str(&render_field_decls(&info.fields));
 
-    // The C++ constructor value-initializes every member, including arrays,
-    // before calling Init_<module> so `BskModule::init()` can set real
-    // defaults. Explicit member initialization avoids applying `memset` to
-    // the non-trivial C++ config type while preserving Rust's requirement
-    // that every field contain a valid value before `Init_<module>` borrows it.
-    // The destructor runs the struct's ordinary Rust drop glue, freeing any
-    // `Option<Box<T>>` owned-state field. Both are only visible to C++
-    // (SWIG); plain-C consumers see an ordinary struct. Methods from a
-    // plain `impl <ConfigType>` block (see `methods::find_config_methods`)
-    // are declared here too, right after the destructor.
+    // Rust owns construction, initialization, destruction, and allocation of
+    // the config. Delete the implicit C++ operations so callers cannot create
+    // storage that `Delete_<module>` did not allocate or bypass
+    // `BskModule::init`. SWIG supplies Python-visible constructor/destructor
+    // wrappers that call `New_<module>`/`Delete_<module>` directly. Plain C
+    // consumers still see an ordinary struct. Methods from a plain
+    // `impl <ConfigType>` block (see `methods::find_config_methods`) are
+    // declared here after the deleted operations.
     h.push_str(
         "#ifdef __cplusplus\n\
          \x20   ",
     );
     h.push_str(cfg_type);
     h.push_str(
-        "();\n\
+        "() = delete;\n\
          \x20   ~",
     );
     h.push_str(cfg_type);
-    h.push_str("();\n");
+    h.push_str("() = delete;\n");
     for m in &info.methods {
         let ret = method_ret_c_type(m);
         let params = render_method_params(m);
@@ -146,20 +137,18 @@ pub(super) fn render_c_header(info: &ConfigInfo, module: &str) -> String {
     h.push_str(&format!(
         "}} {cfg_type};\n\
          \n\
-         BSK_RUST_DECL({module}, {cfg_type})\n\
-         \n\
-         #ifdef __cplusplus\n\
-         extern \"C\" void Init_{module}({cfg_type}* cfg);\n\
-         inline {cfg_type}::{cfg_type}() : {constructor_initializers} {{ Init_{module}(this); }}\n\
-         inline {cfg_type}::~{cfg_type}() {{ Drop_{module}(this); }}\n"
+         BSK_RUST_DECL({module}, {cfg_type})\n"
     ));
-    for m in &info.methods {
-        h.push_str(&render_method_extern_decl(m, module, cfg_type));
-        h.push_str(&render_method_inline_def(m, module, cfg_type));
+    if !info.methods.is_empty() {
+        h.push_str("\n#ifdef __cplusplus\n");
+        for m in &info.methods {
+            h.push_str(&render_method_extern_decl(m, module, cfg_type));
+            h.push_str(&render_method_inline_def(m, module, cfg_type));
+        }
+        h.push_str("#endif\n");
     }
     h.push_str(&format!(
-        "#endif\n\
-         \n\
+        "\n\
          #endif /* {guard} */\n"
     ));
 
@@ -247,7 +236,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn header_declares_and_defines_cpp_constructor_and_destructor() {
+    fn header_prevents_cpp_owned_construction_and_destruction() {
         let info = info_for(
             "#[repr(C)] pub struct MyConfig { \
              pub runtime: bsk_messages::BskModuleRuntime, \
@@ -261,22 +250,12 @@ mod tests {
         // Struct must have a tag name (not anonymous) for the in-class declarations
         // to be legal C++.
         assert!(header.contains("typedef struct MyConfig {"));
-        // Both declarations appear inside the struct body.
-        assert!(header.contains("MyConfig();"));
-        assert!(header.contains("~MyConfig();"));
-        // Inline definitions appear after BSK_RUST_DECL.
-        assert!(header.contains("extern \"C\" void Init_myModule(MyConfig* cfg);"));
-        // Every member must be value-initialized before Init_, or fields that
-        // init() doesn't touch would hold indeterminate values.
-        assert!(
-            header.contains(
-                "inline MyConfig::MyConfig() : runtime{}, state{} { Init_myModule(this); }"
-            ),
-            "constructor must value-initialize every member before Init_:\n{header}"
-        );
+        assert!(header.contains("MyConfig() = delete;"));
+        assert!(header.contains("~MyConfig() = delete;"));
+        assert!(!header.contains("Init_myModule"), "header:\n{header}");
+        assert!(!header.contains("Drop_myModule"), "header:\n{header}");
         assert!(!header.contains("memset"), "header:\n{header}");
         assert!(!header.contains("#include <string.h>"), "header:\n{header}");
-        assert!(header.contains("inline MyConfig::~MyConfig() { Drop_myModule(this); }"));
         assert!(header.contains("void *state;"), "header:\n{header}");
         assert!(header.contains("BSK_RUST_DECL(myModule, MyConfig)"));
     }
@@ -358,10 +337,7 @@ mod tests {
             header.contains("double maxTorques[3];"),
             "expected a C array field declaration, got:\n{header}"
         );
-        assert!(
-            header.contains("MyConfig::MyConfig() : runtime{}, maxTorques{}"),
-            "constructor must value-initialize array members:\n{header}"
-        );
+        assert!(header.contains("MyConfig() = delete;"), "header:\n{header}");
     }
 
     #[test]

@@ -67,25 +67,21 @@ fn sample_header_preserves_config_surface_and_field_order() {
         ],
     );
     assert!(header.contains("BSK_RUST_DECL(rustModuleTemplate, RustModuleTemplateConfig)"));
-    assert!(header.contains(
-        "inline RustModuleTemplateConfig::RustModuleTemplateConfig() : runtime{}, dummy{}, \
-         dataInMsg{}, dataOutMsg{}, bskLogger{} { Init_rustModuleTemplate(this); }"
-    ));
-    assert!(header.contains(
-        "inline RustModuleTemplateConfig::~RustModuleTemplateConfig() { \
-         Drop_rustModuleTemplate(this); }"
-    ));
+    assert!(header.contains("RustModuleTemplateConfig() = delete;"));
+    assert!(header.contains("~RustModuleTemplateConfig() = delete;"));
 }
 
 #[test]
 fn legacy_shim_preserves_lifecycle_and_optional_input_behavior() {
     let shim = render_shim(&sample_config(), "rustModuleTemplate");
 
-    assert!(shim.contains("fn Init_rustModuleTemplate("));
+    assert!(shim.contains("fn New_rustModuleTemplate() -> *mut RustModuleTemplateConfig"));
+    assert!(shim.contains("fn Delete_rustModuleTemplate("));
     assert!(shim.contains("fn SelfInit_rustModuleTemplate("));
     assert!(shim.contains("fn Reset_rustModuleTemplate("));
     assert!(shim.contains("fn Update_rustModuleTemplate("));
-    assert!(shim.contains("fn Drop_rustModuleTemplate("));
+    assert!(shim.contains("::std::boxed::Box::into_raw(cfg)"));
+    assert!(shim.contains("::std::boxed::Box::from_raw(cfg)"));
     assert!(shim.contains("(*cfg).dataOutMsg.init();"));
     assert!(shim.contains(
         "let data_in_msg = (*cfg).dataInMsg.is_linked().then(|| (*cfg).dataInMsg.read());"
@@ -110,8 +106,11 @@ fn sample_swig_preserves_python_wrapper_contract() {
     assert!(interface.contains("%import \"cMsgCInterface/CModuleTemplateMsg_C.h\""));
     assert!(interface.contains(
         "%template(rustModuleTemplate) RustWrapper<RustModuleTemplateConfig,\
-         Update_rustModuleTemplate,SelfInit_rustModuleTemplate,Reset_rustModuleTemplate>;"
+         New_rustModuleTemplate,Delete_rustModuleTemplate,Update_rustModuleTemplate,\
+         SelfInit_rustModuleTemplate,Reset_rustModuleTemplate>;"
     ));
+    assert!(interface.contains("return New_rustModuleTemplate();"));
+    assert!(interface.contains("Delete_rustModuleTemplate($self);"));
     assert!(interface.contains("def createWrapper(self):"));
     assert!(interface.contains("return rustModuleTemplate(self)"));
     assert!(interface.contains("args[0].thisown = False"));

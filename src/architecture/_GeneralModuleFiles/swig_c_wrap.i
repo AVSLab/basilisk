@@ -82,18 +82,16 @@ class CWrapper : public SysModel {
 // own `runtime` field, so Rust code reads it the same way C module code reads
 // SysModel: through the config, not a separate parameter list.
 template <typename TConfig,
+          TConfig* (*newConfigFun)(),
+          void (*deleteConfigFun)(TConfig*),
           void (*updateStateFun)(TConfig*, uint64_t, const BskRustModuleRuntime*),
           void (*selfInitFun)(TConfig*, const BskRustModuleRuntime*),
           void (*resetFun)(TConfig*, uint64_t, const BskRustModuleRuntime*)
           >
 class RustWrapper : public SysModel {
-    static_assert(std::is_default_constructible_v<TConfig>,
-                  "The wrapped config must be default constructible (all 'Config' struct used in C "
-                  "should be).");
-
   public:
-    RustWrapper() : config{std::make_unique<TConfig>()} {};
-    RustWrapper(TConfig* config) : config{config} {}; // We take ownership of config
+    RustWrapper() : config{newConfigFun(), deleteConfigFun} {};
+    RustWrapper(TConfig* config) : config{config, deleteConfigFun} {}; // We take ownership of config
 
     void SelfInit(){
         BskRustModuleRuntime runtime = this->makeRuntime();
@@ -125,7 +123,8 @@ class RustWrapper : public SysModel {
         return runtime;
     }
 
-    std::unique_ptr<TConfig> config; //!< class variable
+    // The config is allocated by Rust and must return to the same allocator.
+    std::unique_ptr<TConfig, void (*)(TConfig*)> config; //!< class variable
 };
 
 %}

@@ -42,9 +42,8 @@ pub(super) fn render_swig_interface(info: &ConfigInfo, module: &str, header_path
     }
 
     // Owned-state fields (Rust `Option<Box<T>>`) are Rust-internal; nothing
-    // else may safely write to them: the destructor `render_header::render_c_header`
-    // generates runs Rust's drop glue over whatever bytes are there, so a
-    // Python-side write (even just `= None`) either leaks the previously
+    // else may safely write to them. `Delete_<module>` runs Rust's drop glue,
+    // so a Python-side write (even just `= None`) either leaks the previously
     // owned box or, if aliased to some other pointer entirely, frees memory
     // Rust's allocator never allocated. `%immutable` hides only the setter;
     // the (harmless) getter is unaffected. Must appear before `%include` so
@@ -57,7 +56,7 @@ pub(super) fn render_swig_interface(info: &ConfigInfo, module: &str, header_path
     // Each config method's raw extern "C-unwind" shim (see
     // `methods::find_config_methods`) is only ever called from its own
     // inline C++ member function definition (`render_header::render_method_inline_def`);
-    // hide it from Python the same way Init_/Drop_/etc. are hidden, so only
+    // hide it from Python the same way New_/Delete_/etc. are hidden, so only
     // the member function itself (forwarded to Python via
     // `RustWrapper::operator->()`) is reachable.
     let mut method_ignores = String::new();
@@ -81,16 +80,15 @@ pub(super) fn render_swig_interface(info: &ConfigInfo, module: &str, header_path
          \n\
          {import_lines}\n\
          {immutable_lines}\n\
+         %nodefaultctor {cfg_type};\n\
+         %nodefaultdtor {cfg_type};\n\
          %include \"{header_abs}\"\n\
          \n\
+         %ignore New_{module};\n\
+         %ignore Delete_{module};\n\
          %ignore Update_{module};\n\
          %ignore SelfInit_{module};\n\
          %ignore Reset_{module};\n\
-         // Drop_{module} (BSK_RUST_DECL) is only ever called from the generated\n\
-         // header's inline destructor (see render_header::render_c_header); hide it\n\
-         // from Python so nothing can call it directly and double-drop the config's\n\
-         // owned state.\n\
-         %ignore Drop_{module};\n\
          {method_ignores}\
          \n\
          // Default no-op Reset. Templated so it loses overload resolution to a\n\
@@ -107,9 +105,15 @@ pub(super) fn render_swig_interface(info: &ConfigInfo, module: &str, header_path
          \x20       args[0].thisown = False\n\
          %}}\n\
          \n\
-         %template({module}) RustWrapper<{cfg_type},Update_{module},SelfInit_{module},Reset_{module}>;\n\
+         %template({module}) RustWrapper<{cfg_type},New_{module},Delete_{module},Update_{module},SelfInit_{module},Reset_{module}>;\n\
          \n\
          %extend {cfg_type} {{\n\
+         \x20 {cfg_type}() {{\n\
+         \x20   return New_{module}();\n\
+         \x20 }}\n\
+         \x20 ~{cfg_type}() {{\n\
+         \x20   Delete_{module}($self);\n\
+         \x20 }}\n\
          \x20 %pythoncode %{{\n\
          \x20   def createWrapper(self):\n\
          \x20       return {module}(self)\n\
@@ -144,9 +148,14 @@ mod tests {
         assert!(i_file.contains("%module myModule"));
         assert!(i_file.contains("#include \"/tmp/myModule.h\""));
         assert!(i_file.contains(
-            "%template(myModule) RustWrapper<MyController,Update_myModule,SelfInit_myModule,Reset_myModule>;"
+            "%template(myModule) RustWrapper<MyController,New_myModule,Delete_myModule,Update_myModule,SelfInit_myModule,Reset_myModule>;"
         ));
-        assert!(i_file.contains("%ignore Drop_myModule;"));
+        assert!(i_file.contains("%nodefaultctor MyController;"));
+        assert!(i_file.contains("%nodefaultdtor MyController;"));
+        assert!(i_file.contains("%ignore New_myModule;"));
+        assert!(i_file.contains("%ignore Delete_myModule;"));
+        assert!(i_file.contains("return New_myModule();"));
+        assert!(i_file.contains("Delete_myModule($self);"));
         assert!(
             i_file.contains("%import \"cMsgCInterface/CmdTorqueBodyMsg_C.h\""),
             "i_file:\n{i_file}"

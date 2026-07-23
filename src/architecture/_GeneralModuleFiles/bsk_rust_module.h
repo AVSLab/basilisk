@@ -22,8 +22,8 @@
 #include <stdint.h>
 #include "architecture/utilities/bskLogging.h"
 
-/*! @brief Declares the three BSK lifecycle entry points for a C module whose
- *  implementation is written in Rust.
+/*! @brief Declares Rust-owned configuration allocation plus the three BSK
+ *  lifecycle entry points for a module implemented in Rust.
  *
  *  **Background**
  *
@@ -188,21 +188,21 @@
  *      }
  *
  *  ``bsk-build`` maps ``Option<Box<T>>`` to a nullable ``void *`` in the
- *  generated header (Rust guarantees the same layout as a bare pointer) and
- *  gives the struct a C++ destructor that runs its ordinary Rust drop glue,
- *  freeing ``state`` automatically whenever the owning C++ wrapper object is
- *  destroyed (Python garbage collection, explicit ``del``, or process exit).
- *  No ``Cleanup_*`` function or custom SWIG destructor to write by hand.
+ *  generated header (Rust guarantees the same layout as a bare pointer).
+ *  The generated ``Delete_name`` function runs the config's ordinary Rust
+ *  drop glue and returns its allocation to Rust, freeing ``state``
+ *  automatically whenever the owning Python config or wrapper is destroyed.
+ *  No ``Cleanup_*`` function or custom destructor to write by hand.
  *
  *  ``Option<Box<T>>`` isn't chosen to guard against the Python API — it's
  *  what makes the automatic cleanup above possible at all (a bare pointer
- *  field has no drop glue for ``Drop_name`` to run). Python has no
+ *  field has no drop glue for ``Delete_name`` to run). Python has no
  *  legitimate reason to read or write this field directly, so the CMake
  *  macro (``bsk_add_rust_module``) detects every ``Option<Box<T>>`` field
  *  and marks it ``%immutable`` in the generated SWIG interface — the
  *  setter is absent from the Python API, so a script can't null it out
  *  (silently leaking the boxed value) or alias it to an unrelated pointer
- *  (which would make ``Drop_name`` free memory Rust never allocated).
+ *  (which would make ``Delete_name`` free memory Rust never allocated).
  *
  *  **Grouping parameters — nested structs**
  *
@@ -263,8 +263,9 @@ typedef struct BskRustModuleRuntime {
     uint32_t rngSeed;         /*!< [-] SysModel::RNGSeed */
 } BskRustModuleRuntime;
 
-/*! Emit ``extern "C"`` lifecycle function declarations for a Rust-backed
- *  Basilisk C module named \p name, whose config struct type is \p configType.
+/*! Emit ``extern "C"`` allocation and lifecycle function declarations for a
+ *  Rust-backed Basilisk module named \p name, whose config struct type is
+ *  \p configType.
  *
  *  ``SelfInit_name(cfg, runtime)``
  *      Called once at task registration.  The generated lifecycle code copies
@@ -281,11 +282,15 @@ typedef struct BskRustModuleRuntime {
  *      ``*runtime`` into ``cfg->runtime``, reads all input messages, calls
  *      ``BskModule::update``, and writes all output messages.
  *
- *  ``Drop_name(cfg)``
+ *  ``New_name()``
+ *      Allocates and default-initializes ``configType`` in Rust, calls
+ *      ``BskModule::init``, and returns the owning pointer.
+ *
+ *  ``Delete_name(cfg)``
  *      Runs ``cfg``'s ordinary Rust drop glue (freeing any owned heap state,
- *      see "Stateful modules" above) without deallocating ``cfg`` itself.
- *      Called automatically from the generated header's inline
- *      ``configType`` destructor — never call it directly.
+ *      see "Stateful modules" above) and returns the allocation to Rust.
+ *      The SWIG wrapper calls this automatically — never pair a pointer from
+ *      ``New_name`` with C++ ``delete``.
  *
  *  \p configType must be declared before this macro and must have a field
  *  named ``runtime`` of type ``BskRustModuleRuntime`` somewhere in it (any
@@ -295,10 +300,11 @@ typedef struct BskRustModuleRuntime {
  */
 #define BSK_RUST_DECL(name, configType) \
     BSK_RUST_EXTERN_C_BEGIN \
+    configType *New_##name(void); \
+    void Delete_##name(configType *configData); \
     void SelfInit_##name(configType *configData, const BskRustModuleRuntime *runtime); \
     void Reset_##name(configType *configData, uint64_t currentSimNanos, const BskRustModuleRuntime *runtime); \
     void Update_##name(configType *configData, uint64_t currentSimNanos, const BskRustModuleRuntime *runtime); \
-    void Drop_##name(configType *configData); \
     BSK_RUST_EXTERN_C_END
 
 #endif /* BSK_RUST_MODULE_H */

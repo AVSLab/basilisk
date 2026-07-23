@@ -214,8 +214,11 @@ module needs non-zero initial output values, parameter validation, or state
 reset.
 
 Override ``init()`` to set non-zero parameter defaults and initial state.
-It runs before Python configures the module; the default implementation is a
-no-op (all fields start at zero).
+Rust first initializes every field except ``runtime`` through the field
+type's ``Default`` implementation, then calls ``init()`` before Python
+configures the module. The default ``init()`` implementation is a no-op.
+Module-defined nested configuration structs must therefore derive or
+implement ``Default``.
 
 Use the Generated Wrapper
 -------------------------

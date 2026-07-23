@@ -192,7 +192,9 @@ Three ``BskModule`` trait methods map to the Basilisk module lifecycle:
 ``init()``
    Called before Python configures the module. Override to set non-zero
    parameter defaults and initial state — the equivalent of a C++ module
-   constructor. The default implementation is a no-op (all fields stay zero).
+   constructor. Before this call, Rust initializes every field except
+   ``runtime`` using that field type's ``Default`` implementation. The default
+   ``init()`` implementation is a no-op.
 
 ``reset(current_sim_nanos)`` → ``Self::Outputs``
    Called at simulation start and on every ``Reset()``. Returns initial
@@ -210,8 +212,9 @@ The attribute generates named ``Inputs`` and ``Outputs`` structs from the
 annotated message ports. Module code accesses those values by field name, not
 by declaration order.
 
-The attribute automatically omits its lifecycle entry points from test builds,
-so ``cargo test`` (see `Testing`_ below) does not require Basilisk to be linked.
+The attribute automatically omits its generated FFI entry points from test
+builds, so ``cargo test`` (see `Testing`_ below) does not require Basilisk to
+be linked.
 
 Use the Generated Wrapper
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -240,6 +243,12 @@ type ``BskModuleRuntime``. All other fields are optional. They can include:
 * ``Option<Box<T>>`` for state owned by a stateful module;
 * ``MsgReader<T>`` input ports and ``MsgWriter<T>`` output ports; and
 * ``*mut BSKLogger`` for Basilisk logging.
+
+Every field type other than ``BskModuleRuntime`` must implement ``Default``.
+The built-in scalar, array, message-port, pointer, and ``Option`` types already
+do. Add ``#[derive(Default)]`` or a manual ``Default`` implementation to
+module-defined nested structs. The generated constructor allocates the
+configuration in Rust, applies these defaults, and then calls ``init()``.
 
 Nested structs, owned state, and message ports have additional requirements
 described below. ``bsk-build`` rejects unsupported field types, including raw
@@ -475,8 +484,9 @@ pointer casts:
     }
 
 ``bsk-build`` maps ``Option<Box<T>>`` to a nullable ``void *`` in the
-generated header and arranges for it to be freed automatically whenever the
-owning object is destroyed.
+generated header. The configuration is allocated and destroyed by Rust, so
+ordinary Rust drop glue frees the boxed state automatically whenever the
+owning Python configuration or wrapper is destroyed.
 
 Python has no legitimate reason to touch this field directly, so
 ``bsk_add_rust_module`` marks it ``%immutable``: the setter is absent from
@@ -493,6 +503,7 @@ value, to group related parameters:
 .. code-block:: rust
 
     #[repr(C)]
+    #[derive(Default)]
     pub struct Vec2 {
         pub x: f64,
         pub y: f64,
@@ -508,9 +519,11 @@ value, to group related parameters:
 
 ``bsk-build`` generates ``Vec2``'s own C struct ahead of ``myModuleConfig``'s,
 and Python reads and writes it field-by-field like any other struct member
-(``ctrl.target.x = 1.0``). Nested structs cannot be self-referential. Message ports and
-``Option<Box<T>>`` owned state are only meaningful on the top-level config
-struct and are rejected on a nested struct.
+(``ctrl.target.x = 1.0``). Nested structs must implement ``Default`` because
+Rust constructs the complete configuration before calling ``init()``. They
+cannot be self-referential. Message ports and ``Option<Box<T>>`` owned state
+are only meaningful on the top-level config struct and are rejected on a
+nested struct.
 
 A field may **not** be a raw pointer to one of these structs (e.g. ``*mut
 Vec2``), or to any other type — ``BSKLogger`` is the only pointee

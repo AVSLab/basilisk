@@ -35,7 +35,7 @@ include_guard(GLOBAL)
 # Required arguments
 # ------------------
 #   TARGET      CMake target name (also the module/symbol name bsk-build
-#               generates against: SelfInit_<TARGET>, etc.).
+#               generates against: New_<TARGET>, SelfInit_<TARGET>, etc.).
 #   MANIFEST    Path to the crate's Cargo.toml.
 #
 # Optional arguments (header/interface overrides)
@@ -234,10 +234,11 @@ function(bsk_add_rust_module_sources)
   # ------------------------------------------------------------------
   # Custom command: build the Rust crate → staticlib
   #
-  # Cargo handles its own incremental compilation. We list the crate and
-  # workspace manifests plus the resolved lockfile as explicit dependencies;
-  # source file changes cause Cargo to produce a newer .a, which makes the
-  # downstream link step re-run automatically.
+  # Cargo handles its own incremental compilation, but CMake must first know
+  # when to invoke Cargo. List the module crate, workspace metadata, and
+  # in-tree Basilisk Rust support crates as explicit dependencies; source
+  # changes then cause Cargo to produce a newer .a, which makes the downstream
+  # link step re-run automatically.
   # ------------------------------------------------------------------
   set(_dep_files "${_manifest}" "${_cargo_root_manifest}" "${_cargo_lock}")
   # Also depend on all Rust source files in the module crate so CMake re-runs
@@ -245,6 +246,20 @@ function(bsk_add_rust_module_sources)
   file(GLOB_RECURSE _rust_sources CONFIGURE_DEPENDS "${_crate_dir}/*.rs")
   list(FILTER _rust_sources EXCLUDE REGEX "/target/")
   list(APPEND _dep_files ${_rust_sources})
+  # Basilisk's in-tree workspace keeps bsk-build, bsk-macros, bsk-messages,
+  # and bsk-utilities here. Without these dependencies, changing the shared
+  # support layer does not rerun this output-producing custom command, so
+  # CMake can continue linking a stale Rust static library. Out-of-tree
+  # extension workspaces normally fetch these crates and have no such
+  # directory, in which case this block is intentionally a no-op.
+  set(_bsk_rust_support_dir "${_cargo_root_dir}/architecture/rust")
+  if(IS_DIRECTORY "${_bsk_rust_support_dir}")
+    file(GLOB_RECURSE _bsk_rust_support_sources CONFIGURE_DEPENDS
+         "${_bsk_rust_support_dir}/*.rs"
+         "${_bsk_rust_support_dir}/Cargo.toml")
+    list(FILTER _bsk_rust_support_sources EXCLUDE REGEX "/target/")
+    list(APPEND _dep_files ${_bsk_rust_support_sources})
+  endif()
   # build.rs changes should also trigger a rebuild.
   if(EXISTS "${_crate_dir}/build.rs")
     list(APPEND _dep_files "${_crate_dir}/build.rs")
