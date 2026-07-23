@@ -170,16 +170,17 @@
 //! also has an always-available module-code surface:
 //! ``#[module]``, [`BskModule`], [`BskContext`], [`BskModuleRuntime`],
 //! [`BskError`]/[`BskResult`], [`MsgReader`]/[`MsgWriter`], and
-//! [`BskLoggerRef`]. Add a second, feature-less ``bsk-build`` entry for this
+//! [`BskLoggerRef`]. Add a second, normal ``bsk-build`` entry for this
 //! surface, alongside the existing ``[build-dependencies]`` one (which needs
-//! `codegen`):
+//! `codegen` but must not link the build-script executable to Basilisk's
+//! runtime symbols):
 //!
 //! ```toml
 //! [dependencies]
 //! bsk-build = { path = "..." }
 //!
 //! [build-dependencies]
-//! bsk-build = { path = "...", features = ["codegen"] }
+//! bsk-build = { path = "...", default-features = false, features = ["codegen"] }
 //! ```
 //!
 //! ``bsk-messages`` re-exports the runtime traits and types, so
@@ -1173,6 +1174,7 @@ pub struct BSKLogger {
 /// framework context that supplied it.
 #[derive(Clone, Copy, Debug)]
 pub struct BskLoggerRef<'a> {
+    #[cfg_attr(all(not(feature = "runtime"), not(test)), allow(dead_code))]
     raw: *mut BSKLogger,
     _lifetime: core::marker::PhantomData<&'a BSKLogger>,
 }
@@ -1186,34 +1188,42 @@ impl<'a> BskLoggerRef<'a> {
     }
 
     /// Log a debug message through Basilisk.
+    #[cfg(any(feature = "runtime", test))]
     pub fn debug(self, msg: &str) {
         log_nonfatal(self.raw, BSK_DEBUG, msg);
     }
 
     /// Log an informational message through Basilisk.
+    #[cfg(any(feature = "runtime", test))]
     pub fn info(self, msg: &str) {
         log_nonfatal(self.raw, BSK_INFORMATION, msg);
     }
 
     /// Log a warning through Basilisk.
+    #[cfg(any(feature = "runtime", test))]
     pub fn warning(self, msg: &str) {
         log_nonfatal(self.raw, BSK_WARNING, msg);
     }
 }
 
+#[cfg(any(feature = "runtime", test))]
 type LogLevel = core::ffi::c_uint;
+#[cfg(any(feature = "runtime", test))]
 const BSK_DEBUG: LogLevel = 0;
+#[cfg(any(feature = "runtime", test))]
 const BSK_INFORMATION: LogLevel = 1;
+#[cfg(any(feature = "runtime", test))]
 const BSK_WARNING: LogLevel = 2;
 
 // The C symbols are only available when linking against a real Basilisk build.
-// Gate their declarations (and the impl that calls them) so that `cargo test`
-// in module crates compiles without Basilisk on the link line. Module crates
-// opt in to the test replacement by adding
+// Gate their declarations (and the implementation that calls them) behind the
+// default `runtime` feature so a codegen-only build dependency does not link
+// its host build-script executable to Basilisk. Module crates opt in to the
+// test replacement by adding
 //   bsk-build = { ..., features = ["test_logger"] }
 // to their [dev-dependencies]; Cargo feature unification activates
 // `test_logger` in the test binary while leaving production builds unaffected.
-#[cfg(not(any(test, feature = "test_logger")))]
+#[cfg(all(feature = "runtime", not(any(test, feature = "test_logger"))))]
 extern "C" {
     fn _bskLogNoThrow(
         logger: *mut BSKLogger,
@@ -1223,7 +1233,7 @@ extern "C" {
 }
 
 /// Real Basilisk build: forward nonfatal calls through a C++ no-throw adapter.
-#[cfg(not(any(test, feature = "test_logger")))]
+#[cfg(all(feature = "runtime", not(any(test, feature = "test_logger"))))]
 fn log_nonfatal(logger: *mut BSKLogger, level: LogLevel, msg: &str) {
     if logger.is_null() {
         return;

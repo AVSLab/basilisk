@@ -19,4 +19,4 @@ bsk-build = { path = "../../architecture/rust/bsk_build" }
 bsk-build = { path = "../../architecture/rust/bsk_build", features = ["test_logger"] }
 
 [build-dependencies]
-bsk-build = { path = "../../architecture/rust/bsk_build", features = ["codegen"] }
+bsk-build = { path = "../../architecture/rust/bsk_build", default-features = false, features = ["codegen"] }

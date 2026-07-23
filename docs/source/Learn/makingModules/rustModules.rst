@@ -103,12 +103,15 @@ crates. From the layout above, ``Cargo.toml`` contains:
     bsk-build = { path = "../../../architecture/rust/bsk_build" }
 
     [build-dependencies]
-    bsk-build = { path = "../../../architecture/rust/bsk_build", features = ["codegen"] }
+    bsk-build = { path = "../../../architecture/rust/bsk_build",
+                  default-features = false, features = ["codegen"] }
 
 The ``[lib] path`` selects the Basilisk-style module source instead of Cargo's
 default ``src/lib.rs``. The path to each support crate is relative to the
 module directory. Adjust those dependency paths if the module is placed
-elsewhere in the source tree.
+elsewhere in the source tree. Keep ``default-features = false`` on the build
+dependency: ``build.rs`` needs code generation, not APIs that link the final
+module to Basilisk's C/C++ runtime.
 
 The ``build.rs`` file generates the C and SWIG bindings:
 

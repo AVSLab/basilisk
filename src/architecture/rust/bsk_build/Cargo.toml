@@ -6,6 +6,12 @@ rust-version.workspace = true
 description = "Build and runtime support for native Basilisk Rust modules."
 
 [features]
+default = ["runtime"]
+
+# Enable APIs that call into the linked Basilisk runtime. Build scripts disable
+# this feature so their host executables do not require Basilisk C/C++ symbols.
+runtime = []
+
 # The build-script surface uses cbindgen to render the module's C-compatible
 # types. Runtime support and the procedural attribute remain available without
 # this feature.
@@ -24,7 +30,7 @@ codegen = ["dep:cbindgen"]
 # `context.logger().warning(...)` without `#[cfg(not(test))]` guards.
 # The `#[bsk_build::module]` attribute automatically excludes lifecycle entry
 # points from test builds, so unit tests do not link Basilisk's C symbols.
-test_logger = []
+test_logger = ["runtime"]
 
 [dependencies]
 bsk-macros = { path = "../bsk_macros" }

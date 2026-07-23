@@ -118,7 +118,8 @@ support:
     bsk-build    = { git = "https://github.com/AVSLab/basilisk", tag = "v2.X.Y" }
 
     [build-dependencies]
-    bsk-build    = { git = "https://github.com/AVSLab/basilisk", tag = "v2.X.Y", features = ["codegen"] }
+    bsk-build    = { git = "https://github.com/AVSLab/basilisk", tag = "v2.X.Y",
+                     default-features = false, features = ["codegen"] }
 
 Replace ``v2.X.Y`` with the targeted Basilisk release. To develop against a
 local Basilisk checkout, add this override to a gitignored
