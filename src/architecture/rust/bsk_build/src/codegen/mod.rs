@@ -36,7 +36,10 @@ mod render_swig;
 mod test_support;
 mod types;
 
-use discovery::{find_bsk_module_impl, find_struct_by_name, FindStructError, SourceAsts};
+use discovery::{
+    find_bsk_module_impl, find_bsk_module_impl_for, find_marked_module_configs,
+    find_struct_by_name, FindStructError, SourceAsts,
+};
 use methods::find_config_methods;
 use optionality::apply_input_optionality;
 use render_header::render_c_header;
@@ -74,15 +77,37 @@ pub fn generate_from(source_path: impl AsRef<Path>) {
 
     let source_asts = SourceAsts::load(&source_path);
 
-    // The `impl BskModule for <Type>` block is the *only* thing that marks a
-    // struct as the module's config — no naming convention required.
-    let (struct_name, input_types) = find_bsk_module_impl(&source_asts).unwrap_or_else(|| {
+    // Prefer the explicit module attribute. The unmarked fallback keeps existing
+    // out-of-tree modules working during the staged procedural-macro migration.
+    let marked_configs = find_marked_module_configs(&source_asts);
+    if marked_configs.len() > 1 {
+        panic!(
+            "bsk-build: found more than one `#[bsk_build::module]` struct under {}: {}.\n\
+             A Rust crate can expose only one Basilisk module config.",
+            source_path.display(),
+            marked_configs.join(", ")
+        );
+    }
+    let marked_config = marked_configs.first().map(String::as_str);
+    let module_impl = match marked_config {
+        Some(config_name) => find_bsk_module_impl_for(&source_asts, Some(config_name)),
+        None => find_bsk_module_impl(&source_asts),
+    };
+    let (struct_name, input_types) = module_impl.unwrap_or_else(|| {
         if !source_asts.diagnostics.is_empty() {
             panic_with_diagnostics(source_asts.diagnostics.clone());
         }
+        let marker_help = marked_config.map_or_else(
+            || {
+                "Add `#[bsk_build::module]` to the config struct and implement \
+                 `BskModule` for it."
+                    .to_owned()
+            },
+            |config_name| format!("The marked `{config_name}` struct must implement `BskModule`."),
+        );
         panic!(
-            "bsk-build: no `impl BskModule for <Type>` found under {}.\n\
-             Every BSK Rust module's config struct must implement `BskModule`:\n\
+            "bsk-build: no matching `impl BskModule for <Type>` found under {}.\n\
+             {marker_help}\n\
              \n\
              \x20   impl BskModule for MyModuleConfig {{\n\
              \x20       type Inputs = (...);\n\

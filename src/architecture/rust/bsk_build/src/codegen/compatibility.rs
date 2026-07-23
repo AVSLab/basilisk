@@ -21,7 +21,8 @@ use super::types::ConfigInfo;
 
 fn sample_config() -> ConfigInfo {
     let mut info = info_for(
-        "#[repr(C)] pub struct RustModuleTemplateConfig { \
+        "#[bsk_build::module] #[repr(C)] \
+         pub struct RustModuleTemplateConfig { \
          pub runtime: BskModuleRuntime, \
          pub dummy: f64, \
          pub dataInMsg: MsgReader<CModuleTemplateMsg>, \

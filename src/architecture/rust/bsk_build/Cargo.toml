@@ -2,16 +2,13 @@
 name    = "bsk-build"
 version = "0.1.0"
 edition = "2021"
-description = "Build-script helpers for Basilisk Rust modules — generates C headers and BSK lifecycle shims from #[repr(C)] config structs."
+description = "Build and runtime support for native Basilisk Rust modules."
 
 [features]
 # The codegen surface (`generate()`, called from build.rs) needs `syn`/
-# `walkdir`; the `bsk_module!()` macro (called from the crate's own regular
-# code, so bsk-build is also a plain `[dependencies]` entry — see the crate
-# docs) does not. Opt-in (no `default` feature) so the common case — a
-# module's plain `[dependencies]` entry for the macro — doesn't need to
-# disable anything; only the `[build-dependencies]` entry (which needs
-# `generate()`) turns it on explicitly.
+# `walkdir`; the runtime support and procedural attribute remain available
+# without this feature. Only the `[build-dependencies]` entry, which calls
+# `generate()`, turns code generation on explicitly.
 codegen = ["dep:syn", "dep:walkdir"]
 
 # Enable this in a module crate's [dev-dependencies] to make `bskLogger`
@@ -30,6 +27,7 @@ codegen = ["dep:syn", "dep:walkdir"]
 test_logger = []
 
 [dependencies]
+bsk-macros = { path = "../bsk_macros" }
 # syn: proper Rust AST parser (same technology cbindgen uses internally).
 # Used to find the *Config struct in a module's configured Rust source path,
 # read its fields and doc-comments, and produce the C header + shim.

@@ -25,9 +25,9 @@ described in :ref:`writingExtensions`
 dependency), plus ``bsk_add_rust_module`` to compile the Cargo crate and add it
 to the Python extension.
 
-Define a ``#[repr(C)]`` configuration struct and implement ``BskModule``. The
-Rust build tooling generates the C header and wrapper code required by
-Basilisk.
+Mark a ``#[repr(C)]`` configuration struct with ``#[bsk_build::module]`` and
+implement ``BskModule``. The Rust build tooling generates the C header and
+wrapper code required by Basilisk.
 
 .. note::
 
@@ -142,6 +142,7 @@ generates the C header, SWIG wrapper, and message I/O code from this definition:
 
     use bsk_messages::*;
 
+    #[bsk_build::module]
     #[repr(C)]
     pub struct myModuleConfig {
         /// [-] SysModel runtime mirror — see below
@@ -170,8 +171,10 @@ generates the C header, SWIG wrapper, and message I/O code from this definition:
     #[cfg(not(test))]
     bsk_build::bsk_module!();
 
-``bsk-build`` reads the struct during ``build.rs`` and generates the C header
-and wrapper code. ``bsk_module!()`` includes the generated code in the crate.
+``#[bsk_build::module]`` explicitly identifies the top-level module
+configuration and validates its basic C ABI requirements. ``bsk-build`` reads
+the marked struct during ``build.rs`` and generates the C header and wrapper code.
+``bsk_module!()`` includes the generated code in the crate.
 
 Field doc comments written with ``///`` become Doxygen comments in the
 generated header. Follow the Basilisk unit-first convention used by the other
@@ -330,6 +333,7 @@ order**:
 
 .. code-block:: rust
 
+    #[bsk_build::module]
     #[repr(C)]
     pub struct myModuleConfig {
         pub runtime: BskModuleRuntime,
@@ -432,6 +436,7 @@ pointer casts:
 
 .. code-block:: rust
 
+    #[bsk_build::module]
     #[repr(C)]
     pub struct myModuleConfig {
         pub runtime: BskModuleRuntime,
@@ -474,6 +479,7 @@ value, to group related parameters:
         pub y: f64,
     }
 
+    #[bsk_build::module]
     #[repr(C)]
     pub struct myModuleConfig {
         pub runtime: BskModuleRuntime,
@@ -516,6 +522,7 @@ supported: ``[[T; N]; M]`` maps to ``T name[M][N];``.
 
 .. code-block:: rust
 
+    #[bsk_build::module]
     #[repr(C)]
     pub struct myModuleConfig {
         pub runtime: BskModuleRuntime,

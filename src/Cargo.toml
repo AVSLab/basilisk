@@ -20,6 +20,7 @@ resolver = "2"
 # reviewable workspace registration change.
 members = [
     "architecture/rust/bsk_build",
+    "architecture/rust/bsk_macros",
     "architecture/rust/bsk_messages",
     "architecture/rust/bsk_utilities",
     "moduleTemplates/rustModuleTemplate",

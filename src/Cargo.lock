@@ -6,8 +6,16 @@ version = 4
 name = "bsk-build"
 version = "0.1.0"
 dependencies = [
+ "bsk-macros",
  "syn",
  "walkdir",
+]
+
+[[package]]
+name = "bsk-macros"
+version = "0.1.0"
+dependencies = [
+ "syn",
 ]
 
 [[package]]

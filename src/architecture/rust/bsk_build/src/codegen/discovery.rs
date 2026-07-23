@@ -7,7 +7,7 @@
 //  copyright notice and this permission notice appear in all copies.
 
 //! syn-based discovery: parses a module crate's source tree, finds the
-//! `impl BskModule for <Type>` block and the `#[repr(C)]` struct it names,
+//! `#[bsk_build::module]` struct and its `impl BskModule` block,
 //! and resolves each field's Rust type to a C ABI representation
 //! (primitives, message ports, owned heap state, fixed-size arrays, and
 //! nested `#[repr(C)]` structs).
@@ -81,11 +81,44 @@ impl SourceAsts {
     }
 }
 
+/// Returns the names of structs explicitly marked as Basilisk module configs.
+pub(super) fn find_marked_module_configs(source_asts: &SourceAsts) -> Vec<String> {
+    source_asts
+        .files
+        .iter()
+        .flat_map(|file| file.items.iter())
+        .filter_map(|item| match item {
+            Item::Struct(item) if has_bsk_module_attribute(item) => {
+                Some(item.ident.to_string())
+            }
+            _ => None,
+        })
+        .collect()
+}
+
+fn has_bsk_module_attribute(item: &ItemStruct) -> bool {
+    item.attrs.iter().any(|attribute| {
+        attribute
+            .path()
+            .segments
+            .last()
+            .is_some_and(|segment| segment.ident == "module")
+    })
+}
+
 /// Searches cached source ASTs for the first
 /// `impl BskModule for <Type> { type Inputs = (...); ... }`
 /// and returns `(struct_name, input_types)`. `input_types` is the `Inputs`
 /// tuple's element types in order (empty for `type Inputs = ();`).
 pub(super) fn find_bsk_module_impl(source_asts: &SourceAsts) -> Option<(String, Vec<Type>)> {
+    find_bsk_module_impl_for(source_asts, None)
+}
+
+/// Finds the ``BskModule`` implementation for one explicitly marked config.
+pub(super) fn find_bsk_module_impl_for(
+    source_asts: &SourceAsts,
+    expected_struct: Option<&str>,
+) -> Option<(String, Vec<Type>)> {
     for ast in &source_asts.files {
         for item in &ast.items {
             let imp = match item {
@@ -104,6 +137,9 @@ pub(super) fn find_bsk_module_impl(source_asts: &SourceAsts) -> Option<(String, 
                 Some(n) => n,
                 None => continue,
             };
+            if expected_struct.is_some_and(|expected| expected != struct_name) {
+                continue;
+            }
             let mut input_types = Vec::new();
             for impl_item in &imp.items {
                 if let ImplItem::Type(assoc) = impl_item {
@@ -689,6 +725,42 @@ pub(super) fn collect_doc(attrs: &[Attribute]) -> String {
 mod tests {
     use super::*;
     use crate::codegen::test_support::*;
+
+    #[test]
+    fn qualified_attribute_marks_the_module_config() {
+        let source_asts = SourceAsts {
+            files: vec![syn::parse_file(
+                "#[bsk_build::module] #[repr(C)] \
+                 pub struct ControllerConfig { \
+                 pub runtime: BskModuleRuntime }",
+            )
+            .expect("test source must parse")],
+            diagnostics: Vec::new(),
+        };
+
+        assert_eq!(
+            find_marked_module_configs(&source_asts),
+            vec!["ControllerConfig"]
+        );
+    }
+
+    #[test]
+    fn marked_config_selects_its_matching_bsk_module_impl() {
+        let source_asts = SourceAsts {
+            files: vec![syn::parse_file(
+                "impl BskModule for OtherConfig { type Inputs = (); } \
+                 impl BskModule for ControllerConfig { type Inputs = (InputMsg,); }",
+            )
+            .expect("test source must parse")],
+            diagnostics: Vec::new(),
+        };
+
+        let (name, inputs) = find_bsk_module_impl_for(&source_asts, Some("ControllerConfig"))
+            .expect("matching implementation must be found");
+        assert_eq!(name, "ControllerConfig");
+        assert_eq!(inputs.len(), 1);
+        assert_eq!(type_last_ident(&inputs[0]).as_deref(), Some("InputMsg"));
+    }
 
     #[test]
     fn named_struct_without_repr_c_is_reported_separately() {

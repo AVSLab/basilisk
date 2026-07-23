@@ -16,7 +16,7 @@
 //!
 //! An in-tree BSK module keeps its crate root beside ``Cargo.toml`` and calls
 //! ``generate_from("myModule.rs")`` instead. Both functions scan the selected
-//! source path for a ``#[repr(C)]`` struct with an
+//! source path for the ``#[bsk_build::module]`` struct with an
 //! ``impl BskModule for <Type>`` block and emit three build artifacts:
 //!
 //! * **``<ModuleName>.h``** in ``$OUT_DIR`` by default — C header for
@@ -138,16 +138,24 @@
 //! type name through unchanged" fallback, so a typo or unsupported type is
 //! caught at build time instead of producing a broken header.
 //!
+//! # Identifying the module config
+//!
+//! Add ``#[bsk_build::module]`` to the top-level configuration struct. The
+//! attribute explicitly distinguishes the module config from other
+//! ``#[repr(C)]`` structs in the crate and asks rustc to validate the basic
+//! cross-language ABI requirements. During the staged procedural-macro
+//! migration, ``build.rs`` still renders the C header, lifecycle shim, and
+//! SWIG interface from the marked source struct.
+//!
 //! # Add `bsk-build` as a plain dependency too
 //!
 //! Besides the generator itself ([`generate()`] or [`generate_from()`], called
 //! from `build.rs` and gated behind the opt-in `codegen` feature), this crate
-//! also has an
-//! always-available, `syn`/`walkdir`-free surface for module code:
-//! [`bsk_module!()`] (includes the shim this crate just generated),
+//! also has an always-available module-code surface:
+//! ``#[module]``, [`bsk_module!()`] (which includes the generated shim),
 //! [`BskModule`], [`BskModuleRuntime`], [`MsgReader`]/[`MsgWriter`], and
-//! [`BskLoggerExt`]. Add a second, feature-less ``bsk-build`` entry for it,
-//! alongside the existing ``[build-dependencies]`` one (which needs
+//! [`BskLoggerExt`]. Add a second, feature-less ``bsk-build`` entry for this
+//! surface, alongside the existing ``[build-dependencies]`` one (which needs
 //! `codegen`):
 //!
 //! ```toml
@@ -158,10 +166,10 @@
 //! bsk-build = { path = "...", features = ["codegen"] }
 //! ```
 //!
-//! ``bsk-messages`` re-exports all of these, so ``use bsk_messages::*;``
-//! (which you need anyway, for the message types) brings them in too — the
-//! explicit ``bsk-build`` dependency above is what actually makes that
-//! resolve.
+//! ``bsk-messages`` re-exports the runtime traits and types, so
+//! ``use bsk_messages::*;`` brings those in with the message types. Refer to
+//! the attribute and shim macros through the direct dependency as
+//! ``bsk_build::module`` and ``bsk_build::bsk_module!()``.
 
 /// Include the ``build.rs``-generated BSK lifecycle shim for a Rust module.
 ///
@@ -170,6 +178,7 @@
 /// ```rust,ignore
 /// use bsk_messages::*;
 ///
+/// #[bsk_build::module]
 /// #[repr(C)]
 /// pub struct MyModuleConfig {
 ///     pub runtime: BskModuleRuntime,
@@ -206,6 +215,14 @@ macro_rules! bsk_module {
         include!(concat!(env!("OUT_DIR"), "/bsk_shim.rs"));
     };
 }
+
+/// Mark and validate a Basilisk module's top-level configuration struct.
+///
+/// The attribute validates that the type is a public, named ``#[repr(C)]``
+/// struct with public fields and a ``runtime: BskModuleRuntime`` member.
+/// ``bsk-build`` uses the marker to select this struct when generating the C
+/// header and wrapper artifacts.
+pub use bsk_macros::module;
 
 /// Rust-side mirror of the C ``BskRustModuleRuntime`` struct declared in
 /// ``bsk_rust_module.h``. Refreshed from the config struct's own ``runtime``

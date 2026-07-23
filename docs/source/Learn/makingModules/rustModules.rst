@@ -11,8 +11,8 @@
 
 Rust modules are compiled Basilisk modules written in Rust. They use the same
 module lifecycle and Python interface as C and C++ modules, but define the
-module configuration and behavior with a Rust ``#[repr(C)]`` struct and the
-``BskModule`` trait.
+module configuration and behavior with a Rust ``#[repr(C)]`` struct marked by
+the ``#[bsk_build::module]`` attribute and the ``BskModule`` trait.
 
 This page describes modules contributed to the Basilisk source tree. For a
 separately packaged Rust extension, see :ref:`writingRustPlugins`.
@@ -119,6 +119,7 @@ Add the new module's path, relative to ``src``, to the workspace member list:
     resolver = "2"
     members = [
         "architecture/rust/bsk_build",
+        "architecture/rust/bsk_macros",
         "architecture/rust/bsk_messages",
         "architecture/rust/bsk_utilities",
         "fswAlgorithms/<category>/myModule",
@@ -153,13 +154,14 @@ Write the Module
 ----------------
 
 Write the implementation in ``myModule.rs``. Import the support types from
-``bsk-messages``, define a ``#[repr(C)]`` configuration struct, and implement
-``BskModule``:
+``bsk-messages``, mark a ``#[repr(C)]`` configuration struct with
+``#[bsk_build::module]``, and implement ``BskModule``:
 
 .. code-block:: rust
 
     use bsk_messages::*;
 
+    #[bsk_build::module]
     #[repr(C)]
     pub struct myModuleConfig {
         /// [-] Basilisk runtime information
@@ -188,11 +190,14 @@ Write the implementation in ``myModule.rs``. Import the support types from
     #[cfg(not(test))]
     bsk_build::bsk_module!();
 
-The configuration struct must contain a field named ``runtime`` with type
-``BskModuleRuntime``. Other fields are optional and can be scalars, fixed-size
-arrays (``[T; N]`` or multi-dimensional ``[[T; N]; M]`` with literal lengths),
-nested ``#[repr(C)]`` structs, ``Option<Box<T>>`` state,
-``MsgReader<T>`` and ``MsgWriter<T>`` ports, and a ``*mut BSKLogger`` field.
+The ``#[bsk_build::module]`` attribute explicitly identifies the top-level
+module configuration and validates its basic C ABI requirements. The
+configuration struct must contain a field named ``runtime`` with type
+``BskModuleRuntime``.
+Other fields are optional and can be scalars, fixed-size arrays (``[T; N]`` or
+multi-dimensional ``[[T; N]; M]`` with literal lengths), nested ``#[repr(C)]``
+structs, ``Option<Box<T>>`` state, ``MsgReader<T>`` and ``MsgWriter<T>`` ports,
+and a ``*mut BSKLogger`` field.
 
 The ``Inputs`` and ``Outputs`` tuples match message ports in declaration order.
 A bare input type is required; wrap an input type in ``Option<T>`` to receive

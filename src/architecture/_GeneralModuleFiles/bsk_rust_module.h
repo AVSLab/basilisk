@@ -45,8 +45,8 @@
  *  Writing raw ``unsafe extern "C"`` Rust is error-prone.  The recommended
  *  workflow uses ``build.rs`` (via the ``bsk-build`` crate) to auto-generate
  *  both the C header below and a *shim* from the Rust source: ``bsk-build``
- *  finds the config struct by its ``impl BskModule for <Type>`` block, reads
- *  its message-port fields, and emits the ``extern "C"`` entry points that
+ *  finds the config struct by its ``#[bsk_build::module]`` attribute, reads its
+ *  message-port fields, and emits the ``extern "C"`` entry points that
  *  read/write messages around the module's own ``update``. The user
  *  implements ``init``, ``reset``, and ``update`` in safe Rust with
  *  typed message arguments — no FFI boilerplate by hand. See the Basilisk
@@ -168,6 +168,7 @@
  *  safe Rust ownership, no manual pointer casts::
  *
  *      // In lib.rs:
+ *      #[bsk_build::module]
  *      #[repr(C)]
  *      pub struct myModuleConfig {
  *          pub runtime: BskModuleRuntime,
@@ -207,6 +208,7 @@
  *      #[repr(C)]
  *      pub struct Vec2 { pub x: f64, pub y: f64 }
  *
+ *      #[bsk_build::module]
  *      #[repr(C)]
  *      pub struct myModuleConfig {
  *          pub runtime: BskModuleRuntime,

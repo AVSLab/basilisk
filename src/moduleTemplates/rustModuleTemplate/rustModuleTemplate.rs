@@ -21,6 +21,7 @@
 use bsk_messages::*;
 
 /// Rust module configuration and message ports.
+#[bsk_build::module]
 #[repr(C)]
 pub struct RustModuleTemplateConfig {
     /// [-] Basilisk runtime information

@@ -1,0 +1,11 @@
+[package]
+name = "bsk-macros"
+version = "0.1.0"
+edition = "2021"
+description = "Procedural macros for native Basilisk Rust modules."
+
+[lib]
+proc-macro = true
+
+[dependencies]
+syn = { version = "2", features = ["full"] }
