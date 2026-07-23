@@ -1,6 +1,6 @@
 # AGENTS.md
 
-## Codex PR Review Rules
+## Basilisk PR Review Rules
 
 Apply these rules to all **new or materially modified code and documentation** in
 this repository.
@@ -63,9 +63,9 @@ the surrounding work is already touching that area.
    - For new or modified BSK module `.rst` files, ensure module input/output message documentation uses the `.. bsk-module-io::` directive rather than hand-written module I/O tables or standalone module I/O SVG images.
 
 8. **Basilisk Module Creation**
-    - Ensure new Basilisk modules have a unit test
-    - Unit test method needs to have documentation strings
-    - Ensure the copyright statement is in new files using the current year
+   - Ensure new Basilisk modules have a unit test
+   - Unit test method needs to have documentation strings
+   - Ensure the copyright statement is in new files using the current year
 
 
 9. **Basilisk Example Files**
