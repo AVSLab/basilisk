@@ -263,6 +263,22 @@ typedef struct BskRustModuleRuntime {
     uint32_t rngSeed;         /*!< [-] SysModel::RNGSeed */
 } BskRustModuleRuntime;
 
+/*! @brief Borrowed framework services supplied to a Rust lifecycle call.
+ *
+ *  The wrapper owns every referenced value. Rust may use this structure only
+ *  for the duration of the lifecycle call and must not retain either pointer.
+ *  ``runtime.modelTag`` borrows the wrapper's ``SysModel::ModelTag`` storage,
+ *  while ``bskLogger`` refers to the wrapper's logging object.
+ *
+ *  This context becomes the lifecycle argument when Rust modules move to the
+ *  opaque-handle ABI. It is defined independently first so its C and Rust
+ *  layouts and safe Rust accessors can be verified before that transition.
+ */
+typedef struct BskRustModuleContext {
+    BskRustModuleRuntime runtime; /*!< [-] borrowed SysModel runtime snapshot */
+    BSKLogger *bskLogger;         /*!< [-] borrowed Basilisk logger */
+} BskRustModuleContext;
+
 /*! Emit ``extern "C"`` allocation and lifecycle function declarations for a
  *  Rust-backed Basilisk module named \p name, whose config struct type is
  *  \p configType.

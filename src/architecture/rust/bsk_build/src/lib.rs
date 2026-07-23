@@ -152,7 +152,7 @@
 //! Besides [`generate_bindings`] (called from `build.rs` and gated behind the
 //! opt-in `codegen` feature), this crate
 //! also has an always-available module-code surface:
-//! ``#[module]``, [`BskModule`], [`BskModuleRuntime`],
+//! ``#[module]``, [`BskModule`], [`BskContext`], [`BskModuleRuntime`],
 //! [`MsgReader`]/[`MsgWriter`], and [`BskLoggerExt`]. Add a second,
 //! feature-less ``bsk-build`` entry for this surface, alongside the existing
 //! ``[build-dependencies]`` one (which needs `codegen`):
@@ -247,10 +247,84 @@ impl BskModuleRuntime {
     }
 }
 
+/// Raw C-compatible storage behind [`BskContext`].
+///
+/// Module code should use the borrowed [`BskContext`] interface instead of
+/// reading this representation. The C++ wrapper owns the runtime strings and
+/// logger referenced here; neither pointer may be retained after a lifecycle
+/// call returns.
+#[doc(hidden)]
+#[repr(C)]
+#[derive(Debug)]
+pub struct BskModuleContext {
+    runtime: BskModuleRuntime,
+    bsk_logger: *mut BSKLogger,
+}
+
+/// Framework metadata and services borrowed for one module lifecycle call.
+///
+/// This type deliberately contains references rather than owned runtime
+/// values. Consequently, safe module code cannot retain the context or its
+/// model tag beyond the lifecycle call that supplied it.
+#[derive(Debug)]
+pub struct BskContext<'a> {
+    runtime: &'a BskModuleRuntime,
+    logger: BskLoggerRef<'a>,
+}
+
+impl<'a> BskContext<'a> {
+    /// Framework-assigned message-writer identifier.
+    pub const fn module_id(&self) -> i64 { self.runtime.module_id() }
+
+    /// Python-assigned module name.
+    pub fn model_tag(&self) -> &str { self.runtime.model_tag() }
+
+    /// Number of times the module has been called by the scheduler.
+    pub const fn call_counts(&self) -> u64 { self.runtime.call_counts() }
+
+    /// Random seed inherited from the module's ``SysModel`` wrapper.
+    pub const fn rng_seed(&self) -> u32 { self.runtime.rng_seed() }
+
+    /// Borrow the module's Basilisk logger for this lifecycle call.
+    pub const fn logger(&self) -> BskLoggerRef<'a> { self.logger }
+
+    /// Construct an empty context for a pure Rust module unit test.
+    ///
+    /// The returned context borrows `runtime`, which is normally created with
+    /// [`BskModuleRuntime::for_testing`]. Logging uses the `test_logger`
+    /// implementation when that feature is enabled.
+    pub const fn for_testing(runtime: &'a BskModuleRuntime) -> Self {
+        Self {
+            runtime,
+            logger: BskLoggerRef::from_raw(core::ptr::null_mut()),
+        }
+    }
+
+    /// Borrow a context supplied through the generated lifecycle ABI.
+    ///
+    /// # Safety
+    ///
+    /// `context` must be non-null, properly aligned, and point to a valid
+    /// [`BskModuleContext`] whose runtime strings and logger remain alive for
+    /// the returned value's full lifetime.
+    #[doc(hidden)]
+    pub unsafe fn __from_raw(context: *const BskModuleContext) -> Self {
+        let context = unsafe { context.as_ref() }
+            .expect("bsk-build: lifecycle context pointer must not be null");
+        Self {
+            runtime: &context.runtime,
+            logger: BskLoggerRef::from_raw(context.bsk_logger),
+        }
+    }
+}
+
 #[cfg(all(test, target_pointer_width = "64"))]
 mod runtime_abi_tests {
-    use super::BskModuleRuntime;
+    use super::{
+        BskContext, BskLoggerExt, BskModuleContext, BskModuleRuntime, BSKLogger,
+    };
     use core::mem::{align_of, offset_of, size_of};
+    use std::ffi::CString;
 
     #[test]
     fn runtime_layout_matches_cpp_mirror() {
@@ -260,6 +334,46 @@ mod runtime_abi_tests {
         assert_eq!(offset_of!(BskModuleRuntime, model_tag), 8);
         assert_eq!(offset_of!(BskModuleRuntime, call_counts), 16);
         assert_eq!(offset_of!(BskModuleRuntime, rng_seed), 24);
+    }
+
+    #[test]
+    fn context_layout_matches_cpp_mirror() {
+        assert_eq!(size_of::<BskModuleContext>(), 40);
+        assert_eq!(align_of::<BskModuleContext>(), 8);
+        assert_eq!(offset_of!(BskModuleContext, runtime), 0);
+        assert_eq!(offset_of!(BskModuleContext, bsk_logger), 32);
+    }
+
+    #[test]
+    fn borrowed_context_exposes_runtime_and_logger() {
+        let model_tag = CString::new("rustContextTest").expect("valid model tag");
+        let raw = BskModuleContext {
+            runtime: BskModuleRuntime {
+                module_id: 42,
+                model_tag: model_tag.as_ptr(),
+                call_counts: 7,
+                rng_seed: 11,
+            },
+            bsk_logger: core::ptr::null_mut::<BSKLogger>(),
+        };
+        let context = unsafe { BskContext::__from_raw(&raw) };
+
+        assert_eq!(context.module_id(), 42);
+        assert_eq!(context.model_tag(), "rustContextTest");
+        assert_eq!(context.call_counts(), 7);
+        assert_eq!(context.rng_seed(), 11);
+        context.logger().info("borrowed context logger");
+    }
+
+    #[test]
+    fn testing_context_uses_empty_runtime() {
+        let runtime = BskModuleRuntime::for_testing();
+        let context = BskContext::for_testing(&runtime);
+
+        assert_eq!(context.module_id(), 0);
+        assert_eq!(context.model_tag(), "");
+        assert_eq!(context.call_counts(), 0);
+        assert_eq!(context.rng_seed(), 0);
     }
 }
 
@@ -522,6 +636,25 @@ pub struct BSKLogger {
     _opaque: [u8; 0],
 }
 
+/// Safe borrowed access to a Basilisk logger supplied in [`BskContext`].
+///
+/// The lifetime prevents module code from retaining the handle beyond the
+/// framework context that supplied it. Use [`BskLoggerExt`] for logging.
+#[derive(Clone, Copy, Debug)]
+pub struct BskLoggerRef<'a> {
+    raw: *mut BSKLogger,
+    _lifetime: core::marker::PhantomData<&'a BSKLogger>,
+}
+
+impl<'a> BskLoggerRef<'a> {
+    const fn from_raw(raw: *mut BSKLogger) -> Self {
+        Self {
+            raw,
+            _lifetime: core::marker::PhantomData,
+        }
+    }
+}
+
 #[allow(non_camel_case_types)]
 pub type logLevel_t = core::ffi::c_uint;
 pub const BSK_DEBUG: logLevel_t = 0;
@@ -625,6 +758,16 @@ impl BskLoggerExt for *mut BSKLogger {
 
     fn bsk_error(self, msg: &str) -> ! {
         panic!("[bsk-test] bsk_error: {msg}");
+    }
+}
+
+impl BskLoggerExt for BskLoggerRef<'_> {
+    fn bsk_log(self, level: logLevel_t, msg: &str) {
+        BskLoggerExt::bsk_log(self.raw, level, msg);
+    }
+
+    fn bsk_error(self, msg: &str) -> ! {
+        BskLoggerExt::bsk_error(self.raw, msg)
     }
 }
 

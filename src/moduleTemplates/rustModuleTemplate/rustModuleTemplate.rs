@@ -88,4 +88,17 @@ mod tests {
         let outputs = RustModuleTemplateOutputs::default();
         assert_eq!(outputs.dataOutMsg.dataVector, [0.0; 3]);
     }
+
+    /// Show how pure Rust tests obtain framework metadata and logging services.
+    #[test]
+    fn testing_context_provides_runtime_services() {
+        let runtime = BskModuleRuntime::for_testing();
+        let context = BskContext::for_testing(&runtime);
+
+        assert_eq!(context.module_id(), 0);
+        assert_eq!(context.model_tag(), "");
+        assert_eq!(context.call_counts(), 0);
+        assert_eq!(context.rng_seed(), 0);
+        context.logger().info("Rust module test context is available.");
+    }
 }

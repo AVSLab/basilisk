@@ -58,16 +58,17 @@ FILE_HEADER = """\
 
 """
 
-# `BskModuleRuntime`, `Msg`/`MsgReader`/`MsgWriter`, `BskModule`, and
-# `BskLoggerExt` are hand-written, not generated — they live in `bsk-build`
-# (this crate has no bindgen step of its own to justify owning them) and are
-# just re-exported here, so `use bsk_messages::*;` still brings in everything
-# a module needs in one line. `bsk_module!()` itself is *not* re-exported —
-# see `bsk-build`'s crate docs for why it's a second, direct dependency.
+# `BskContext`, `BskModuleRuntime`, `Msg`/`MsgReader`/`MsgWriter`, `BskModule`,
+# and the logger support are hand-written, not generated — they live in
+# `bsk-build` (this crate has no bindgen step of its own to justify owning
+# them) and are just re-exported here, so `use bsk_messages::*;` still brings
+# in everything a module needs in one line. The procedural attribute itself
+# is not re-exported; see `bsk-build`'s crate docs for why it is a second,
+# direct dependency.
 RUNTIME_SUPPORT_CODE = """\
 pub use bsk_build::{
-    BskLoggerExt, BskModule, BskModuleRuntime, Msg, MsgReader, MsgWriter, BSKLogger, BSK_DEBUG,
-    BSK_ERROR, BSK_INFORMATION, BSK_SILENT, BSK_WARNING,
+    BskContext, BskLoggerExt, BskLoggerRef, BskModule, BskModuleRuntime, Msg, MsgReader, MsgWriter,
+    BSKLogger, BSK_DEBUG, BSK_ERROR, BSK_INFORMATION, BSK_SILENT, BSK_WARNING,
 };
 """
 
