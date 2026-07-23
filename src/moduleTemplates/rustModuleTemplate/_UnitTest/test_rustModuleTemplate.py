@@ -87,8 +87,18 @@ class _ExpectedRustModuleTemplateConfig(ctypes.Structure):
 def test_rust_module_template_python_api():
     """Freeze the Python-visible config fields and wrapper ownership contract."""
     expected_fields = {"runtime", "dummy", "dataInMsg", "dataOutMsg", "bskLogger"}
+    expected_wrapper_methods = {"SelfInit", "Reset", "UpdateState", "getConfig"}
+    expected_sys_model_fields = {"ModelTag", "moduleID", "CallCounts", "RNGSeed"}
+
     assert expected_fields.issubset(rustModuleTemplate.RustModuleTemplateConfig.__dict__)
     assert expected_fields.issubset(rustModuleTemplate.rustModuleTemplate.__dict__)
+    assert expected_wrapper_methods.issubset(rustModuleTemplate.rustModuleTemplate.__dict__)
+
+    direct_wrapper = rustModuleTemplate.rustModuleTemplate()
+    assert direct_wrapper.thisown is True
+    assert direct_wrapper.getConfig().thisown is False
+    for field in expected_sys_model_fields:
+        assert hasattr(direct_wrapper, field)
 
     config = rustModuleTemplate.RustModuleTemplateConfig()
     assert config.dummy == 0.0
@@ -106,6 +116,15 @@ def test_rust_module_template_python_api():
     assert wrapped_config.thisown is False
     assert int(wrapped_config.this) == config_address
     assert wrapper.dummy == 12.5
+
+    for symbol in (
+        "New_rustModuleTemplate",
+        "Delete_rustModuleTemplate",
+        "SelfInit_rustModuleTemplate",
+        "Reset_rustModuleTemplate",
+        "Update_rustModuleTemplate",
+    ):
+        assert not hasattr(rustModuleTemplate, symbol)
 
 
 def test_rust_module_template_abi_layout():
@@ -152,8 +171,21 @@ def test_rust_module_template_abi_layout():
 
 
 def test_rust_module_template_rust_owned_config_lifecycle():
-    """Verify that the exported Rust allocator constructs and destroys the config."""
+    """Freeze the exported Rust lifecycle ABI and exercise config ownership."""
     extension = ctypes.CDLL(rustModuleTemplate._rustModuleTemplate.__file__)
+    expected_symbols = (
+        "New_rustModuleTemplate",
+        "Delete_rustModuleTemplate",
+        "SelfInit_rustModuleTemplate",
+        "Reset_rustModuleTemplate",
+        "Update_rustModuleTemplate",
+    )
+    for symbol in expected_symbols:
+        assert getattr(extension, symbol) is not None
+    for obsolete_symbol in ("Init_rustModuleTemplate", "Drop_rustModuleTemplate"):
+        with pytest.raises(AttributeError):
+            getattr(extension, obsolete_symbol)
+
     new_config = extension.New_rustModuleTemplate
     new_config.argtypes = []
     new_config.restype = ctypes.c_void_p
