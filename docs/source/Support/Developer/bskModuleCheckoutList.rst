@@ -63,6 +63,8 @@ For a Rust module:
   validation and runtime failures reported as ``BskError`` rather than
   panics?
 - Is its crate listed in the ``src/Cargo.toml`` workspace members?
+- Does its ``Cargo.toml`` inherit the workspace minimum Rust version with
+  ``rust-version.workspace = true``?
 - Does its ``Cargo.toml`` contain the
   ``[package.metadata.basilisk]`` ``module = true`` marker?
 - Was the shared ``src/Cargo.lock`` updated and reviewed after dependency

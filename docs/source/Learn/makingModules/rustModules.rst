@@ -24,15 +24,22 @@ Building with Rust Support
 --------------------------
 
 Rust module discovery is disabled by default, so that Rust and Cargo remain
-optional for users who do not build Rust modules. Install Rust and Cargo, then
-configure Basilisk with:
+optional for users who do not build Rust modules. Install Rust 1.85 or newer
+and Cargo, then configure Basilisk with:
 
 .. code-block:: bash
 
     python3 conanfile.py --rustModules True
 
 This enables Rust module discovery and builds every in-tree module crate. Use
-the normal Basilisk build and test workflow after configuration.
+the normal Basilisk build and test workflow after configuration. An explicit
+Rust-enabled configuration fails if Cargo is unavailable rather than silently
+omitting Rust modules.
+
+Rust 1.85 is Basilisk's minimum supported Rust version (MSRV). The repository
+does not pin one exact toolchain for local development: Cargo accepts any
+newer compatible stable toolchain, while pull-request CI separately tests the
+MSRV and the runner's current stable toolchain.
 
 Module Layout
 -------------
@@ -70,6 +77,7 @@ crates. From the layout above, ``Cargo.toml`` contains:
     name = "myModule"
     version = "0.1.0"
     edition = "2021"
+    rust-version.workspace = true
 
     [package.metadata.basilisk]
     module = true
@@ -109,7 +117,8 @@ All Rust code contributed to the Basilisk source tree belongs to the
 `Cargo workspace <https://doc.rust-lang.org/cargo/reference/workspaces.html>`__
 rooted at ``src/Cargo.toml``. The workspace provides one dependency resolution
 and one committed lockfile, ``src/Cargo.lock``, for the support crates and
-every in-tree Rust module.
+every in-tree Rust module. In-tree crates inherit the workspace MSRV with
+``rust-version.workspace = true``.
 
 Add the new module's path, relative to ``src``, to the workspace member list:
 
@@ -157,7 +166,9 @@ Pull-request CI runs these commands and
 ``.github/scripts/check_rust_unwind_policy.py``. The latter deliberately
 compiles ``rustModuleTemplate`` with ``panic="abort"`` and requires the
 procedural macro to reject the build. This prevents a profile change from
-silently disabling panic containment at the generated C ABI.
+silently disabling panic containment at the generated C ABI. CI also runs the
+workspace tests with Rust 1.85.0 so new code or dependency updates cannot
+raise the documented MSRV accidentally.
 
 Write the Module
 ----------------

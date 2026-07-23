@@ -105,7 +105,8 @@ The script accepts the following options to customize this process.
       - Boolean
       - False
       - :beta:`Rust Module Support` Enables discovery and compilation of
-        in-tree Rust modules. Requires Rust and Cargo. See :ref:`rustModules`.
+        in-tree Rust modules. Requires Rust 1.85 or newer and Cargo. See
+        :ref:`rustModules`.
     * - ``examples``
       - Boolean
       - True

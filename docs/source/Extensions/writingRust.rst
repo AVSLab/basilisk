@@ -37,8 +37,9 @@ wrapper code required by Basilisk.
 Prerequisites
 -------------
 
-You need Rust and Cargo, CMake 3.26 or newer, and a C++17 compiler. Create a
-clean Python environment and install matching Basilisk and SDK versions:
+You need Rust 1.85 or newer and Cargo, CMake 3.26 or newer, and a C++17
+compiler. Create a clean Python environment and install matching Basilisk and
+SDK versions:
 
 .. code-block:: bash
 
@@ -49,7 +50,8 @@ clean Python environment and install matching Basilisk and SDK versions:
       build scikit-build-core cmake ninja
 
 Replace ``2.X.Y`` with the targeted Basilisk release. The ``bsk`` and
-``bsk-sdk`` versions must match exactly.
+``bsk-sdk`` versions must match exactly. Rust 1.85 is the minimum supported
+Rust version; a newer compatible stable toolchain may be used.
 
 Build the Working Example First
 -------------------------------
@@ -100,6 +102,12 @@ on crates.io. Depend on the Basilisk repository through Cargo's ``git``
 support:
 
 .. code-block:: toml
+
+    [package]
+    name = "myModule"
+    version = "0.1.0"
+    edition = "2021"
+    rust-version = "1.85"
 
     [lib]
     path = "myModule.rs"

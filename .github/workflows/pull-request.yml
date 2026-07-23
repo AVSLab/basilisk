@@ -36,6 +36,10 @@ jobs:
         run: |
           cargo test --workspace --all-features --locked --manifest-path src/Cargo.toml
           cargo test -p bsk-build --no-default-features --locked --manifest-path src/Cargo.toml
+      - name: Test minimum supported Rust version
+        run: |
+          rustup toolchain install 1.85.0 --profile minimal
+          cargo +1.85.0 test --workspace --all-features --locked --manifest-path src/Cargo.toml
       - name: Lint Rust workspace
         run: cargo clippy --workspace --all-targets --all-features --locked --manifest-path src/Cargo.toml -- -D warnings
       - name: Check Rust unwind policy
