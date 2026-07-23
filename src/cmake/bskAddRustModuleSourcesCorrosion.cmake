@@ -82,6 +82,8 @@ function(bsk_add_rust_module_sources_corrosion)
     set(RUST_INTERFACE
         "${CMAKE_CURRENT_BINARY_DIR}/${RUST_TARGET}_rust_wrap.i")
   endif()
+  set(_bindings_trigger
+      "${CMAKE_CURRENT_BINARY_DIR}/rust_bindings/${RUST_TARGET}.trigger")
 
   _bsk_load_corrosion()
   corrosion_import_crate(
@@ -105,6 +107,7 @@ function(bsk_add_rust_module_sources_corrosion)
     "BSK_INCLUDE_DIR=${RUST_INCLUDE_DIR}"
     "BSK_HEADER_PATH=${RUST_HEADER}"
     "BSK_INTERFACE_PATH=${RUST_INTERFACE}"
+    "BSK_BINDINGS_TRIGGER_PATH=${_bindings_trigger}"
     ${RUST_CARGO_ENV}
   )
   if(RUST_CARGO_FEATURES)
@@ -113,6 +116,27 @@ function(bsk_add_rust_module_sources_corrosion)
       FEATURES ${RUST_CARGO_FEATURES}
     )
   endif()
+
+  # Corrosion intentionally exposes a pre-build hook for generators that must
+  # run before Cargo. Use it to change a build.rs-watched trigger only when a
+  # generated binding has disappeared. This restores manually deleted outputs
+  # without forcing code generation during an ordinary incremental build.
+  set(_bindings_prebuild_target "_rust_bindings_prebuild_${RUST_TARGET}")
+  add_custom_target(
+    "${_bindings_prebuild_target}"
+    COMMAND
+      "${CMAKE_COMMAND}"
+      "-DBSK_RUST_BINDINGS_TRIGGER=${_bindings_trigger}"
+      "-DBSK_RUST_HEADER=${RUST_HEADER}"
+      "-DBSK_RUST_INTERFACE=${RUST_INTERFACE}"
+      -P "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/bskEnsureRustBindings.cmake"
+    BYPRODUCTS "${_bindings_trigger}"
+    VERBATIM
+  )
+  add_dependencies(
+    "cargo-prebuild_${_rust_link_target}"
+    "${_bindings_prebuild_target}"
+  )
 
   # Corrosion owns the Cargo invocation and static-library byproduct, while
   # this module's build.rs owns the generated header and SWIG interface.

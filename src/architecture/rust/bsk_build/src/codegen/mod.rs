@@ -49,6 +49,13 @@ pub fn generate_bindings(config_type: &str) {
     println!("cargo:rerun-if-changed=build.rs");
     println!("cargo:rerun-if-env-changed=BSK_HEADER_PATH");
     println!("cargo:rerun-if-env-changed=BSK_INTERFACE_PATH");
+    println!("cargo:rerun-if-env-changed=BSK_BINDINGS_TRIGGER_PATH");
+    if let Some(trigger_path) = std::env::var_os("BSK_BINDINGS_TRIGGER_PATH") {
+        println!(
+            "cargo:rerun-if-changed={}",
+            PathBuf::from(trigger_path).display()
+        );
+    }
 
     let module_name = module_name(config_type);
     let header_path = std::env::var_os("BSK_HEADER_PATH")
@@ -348,6 +355,10 @@ fn render_swig_interface(
 }
 
 fn write_generated_file(path: &Path, contents: &str, description: &str) {
+    if std::fs::read_to_string(path).is_ok_and(|existing| existing == contents) {
+        return;
+    }
+
     if let Some(parent) = path.parent() {
         std::fs::create_dir_all(parent).unwrap_or_else(|error| {
             panic!(
