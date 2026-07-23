@@ -607,7 +607,10 @@ Configure CMake
 This one call builds the crate, generates the C header and a matching SWIG
 interface (auto-detecting message port and ``Option<Box<T>>`` fields — see
 `Stateful modules — owned heap state`_ above), and links the result into
-the SWIG extension. No hand-written C/C++ ``SOURCES`` are needed.
+the SWIG extension. The generated interface supplies only module-specific
+metadata and delegates the common Python ownership and lifecycle behavior to
+Basilisk's shared Rust wrapper template. No hand-written C/C++ ``SOURCES`` or
+SWIG wrapper implementation is needed.
 
 See the comment block at the top of ``cmake/bsk_add_rust_module.cmake`` in
 the ``bsk-sdk`` repository for the full argument reference (``INTERFACE``,

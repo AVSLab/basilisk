@@ -95,7 +95,7 @@ fn legacy_shim_preserves_lifecycle_and_optional_input_behavior() {
 }
 
 #[test]
-fn sample_swig_preserves_python_wrapper_contract() {
+fn sample_swig_delegates_python_wrapper_contract_to_shared_template() {
     let interface = render_swig_interface(
         &sample_config(),
         "rustModuleTemplate",
@@ -104,14 +104,10 @@ fn sample_swig_preserves_python_wrapper_contract() {
 
     assert!(interface.contains("%module rustModuleTemplate"));
     assert!(interface.contains("%import \"cMsgCInterface/CModuleTemplateMsg_C.h\""));
-    assert!(interface.contains(
-        "%template(rustModuleTemplate) RustWrapper<RustModuleTemplateConfig,\
-         New_rustModuleTemplate,Delete_rustModuleTemplate,Update_rustModuleTemplate,\
-         SelfInit_rustModuleTemplate,Reset_rustModuleTemplate>;"
-    ));
-    assert!(interface.contains("return New_rustModuleTemplate();"));
-    assert!(interface.contains("Delete_rustModuleTemplate($self);"));
-    assert!(interface.contains("def createWrapper(self):"));
-    assert!(interface.contains("return rustModuleTemplate(self)"));
-    assert!(interface.contains("args[0].thisown = False"));
+    assert!(
+        interface.contains("%rust_wrap_2(rustModuleTemplate, RustModuleTemplateConfig)")
+    );
+    assert!(!interface.contains("%template(rustModuleTemplate)"));
+    assert!(!interface.contains("%pythonappend RustWrapper::RustWrapper"));
+    assert!(!interface.contains("%extend RustModuleTemplateConfig"));
 }

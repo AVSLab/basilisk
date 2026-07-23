@@ -6,20 +6,19 @@
 //  purpose with or without fee is hereby granted, provided that the above
 //  copyright notice and this permission notice appear in all copies.
 
-//! SWIG interface renderer: turns a [`ConfigInfo`] into the
-//! `<ModuleName>_rust_wrap.i` file CMake points SWIG at.
+//! SWIG interface renderer: emits module-specific metadata and invokes the
+//! generic ``%rust_wrap_2`` template from ``swig_c_wrap.i``.
 
 use std::collections::BTreeSet;
 use std::path::Path;
 
 use super::types::ConfigInfo;
 
-/// Renders the SWIG `.i` file `bsk_add_rust_module.cmake` points SWIG at
-/// (see the `BSK_INTERFACE_PATH` handling in `generate`). This is the only
-/// generator of Rust-module `.i` files — there is no hand-written-`.i`
-/// escape hatch (unlike C modules' `%c_wrap` family in `swig_c_wrap.i`) — so
-/// the boilerplate that wraps `RustWrapper` around the module's lifecycle
-/// functions is written out directly here instead of via a SWIG macro.
+/// Renders the small SWIG `.i` file `bsk_add_rust_module.cmake` points SWIG
+/// at (see the `BSK_INTERFACE_PATH` handling in `generate`). Message imports,
+/// owned-state fields, exported config methods, and the generated header path
+/// are module-specific. The wrapper implementation itself lives in the
+/// reusable ``%rust_wrap_2`` macro beside the C wrapper macros.
 pub(super) fn render_swig_interface(info: &ConfigInfo, module: &str, header_path: &Path) -> String {
     let cfg_type = &info.struct_name;
     let header_abs = header_path.display();
@@ -80,45 +79,12 @@ pub(super) fn render_swig_interface(info: &ConfigInfo, module: &str, header_path
          \n\
          {import_lines}\n\
          {immutable_lines}\n\
+         {method_ignores}\
          %nodefaultctor {cfg_type};\n\
          %nodefaultdtor {cfg_type};\n\
          %include \"{header_abs}\"\n\
          \n\
-         %ignore New_{module};\n\
-         %ignore Delete_{module};\n\
-         %ignore Update_{module};\n\
-         %ignore SelfInit_{module};\n\
-         %ignore Reset_{module};\n\
-         {method_ignores}\
-         \n\
-         // Default no-op Reset. Templated so it loses overload resolution to a\n\
-         // real Reset_{module} the module may define (same trick %c_wrap_3 uses\n\
-         // for C modules — see swig_c_wrap.i).\n\
-         %inline %{{\n\
-         \x20 template <typename T> inline void Reset_{module}(T, uint64_t, const BskRustModuleRuntime*) {{}}\n\
-         %}}\n\
-         \n\
-         // RustWrapper(TConfig* config) takes ownership of the pointer; the\n\
-         // Python object for that config shouldn't also think it owns the memory.\n\
-         %pythonappend RustWrapper::RustWrapper %{{\n\
-         \x20   if (len(args)) > 0:\n\
-         \x20       args[0].thisown = False\n\
-         %}}\n\
-         \n\
-         %template({module}) RustWrapper<{cfg_type},New_{module},Delete_{module},Update_{module},SelfInit_{module},Reset_{module}>;\n\
-         \n\
-         %extend {cfg_type} {{\n\
-         \x20 {cfg_type}() {{\n\
-         \x20   return New_{module}();\n\
-         \x20 }}\n\
-         \x20 ~{cfg_type}() {{\n\
-         \x20   Delete_{module}($self);\n\
-         \x20 }}\n\
-         \x20 %pythoncode %{{\n\
-         \x20   def createWrapper(self):\n\
-         \x20       return {module}(self)\n\
-         \x20 %}}\n\
-         }}\n"
+         %rust_wrap_2({module}, {cfg_type})\n"
     )
 }
 
@@ -127,11 +93,11 @@ mod tests {
     use super::super::test_support::info_for;
     use super::*;
 
-    /// The generated `.i` file must `%import` each message type exactly
-    /// once (even with two ports of the same type), `%immutable` each
-    /// owned-state field, and instantiate `RustWrapper` with the config
-    /// struct's real name — the whole point of generating this from `info`
-    /// instead of a CMake-side regex scan (see `bsk_add_rust_module.cmake`).
+    /// The generated `.i` file must `%import` each message type exactly once
+    /// (even with two ports of the same type), `%immutable` each owned-state
+    /// field, and invoke the generic Rust wrapper with the config struct's
+    /// real name. These are derived from `info` instead of a CMake-side regex
+    /// scan (see `bsk_add_rust_module.cmake`).
     #[test]
     fn swig_interface_imports_dedup_and_marks_owned_state_immutable() {
         let info = info_for(
@@ -147,15 +113,12 @@ mod tests {
 
         assert!(i_file.contains("%module myModule"));
         assert!(i_file.contains("#include \"/tmp/myModule.h\""));
-        assert!(i_file.contains(
-            "%template(myModule) RustWrapper<MyController,New_myModule,Delete_myModule,Update_myModule,SelfInit_myModule,Reset_myModule>;"
-        ));
         assert!(i_file.contains("%nodefaultctor MyController;"));
         assert!(i_file.contains("%nodefaultdtor MyController;"));
-        assert!(i_file.contains("%ignore New_myModule;"));
-        assert!(i_file.contains("%ignore Delete_myModule;"));
-        assert!(i_file.contains("return New_myModule();"));
-        assert!(i_file.contains("Delete_myModule($self);"));
+        assert!(i_file.contains("%rust_wrap_2(myModule, MyController)"));
+        assert!(!i_file.contains("%template(myModule)"));
+        assert!(!i_file.contains("%pythonappend RustWrapper::RustWrapper"));
+        assert!(!i_file.contains("%extend MyController"));
         assert!(
             i_file.contains("%import \"cMsgCInterface/CmdTorqueBodyMsg_C.h\""),
             "i_file:\n{i_file}"

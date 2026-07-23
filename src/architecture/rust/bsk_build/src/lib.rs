@@ -26,9 +26,11 @@
 //!   module's symbol/header name — see below). Do not edit by hand.
 //! * **``<ModuleName>_rust_wrap.i``** in ``$OUT_DIR`` by default — the SWIG
 //!   interface file. Set ``BSK_INTERFACE_PATH`` to place it at a CMake-managed
-//!   build path. CMake's job is then just "run cargo build, then run SWIG on
-//!   the file it wrote" — it never has to work out this module's message
-//!   ports/config type name itself. Do not edit by hand.
+//!   build path. This small file contains the module-specific message and
+//!   field metadata, then invokes the shared ``%rust_wrap_2`` template.
+//!   CMake's job is just "run cargo build, then run SWIG on the file it
+//!   wrote" — it never has to work out this module's message ports/config
+//!   type name itself. Do not edit by hand.
 //!
 //! See the Basilisk documentation's "Writing a Rust Plugin" page for the
 //! full usage guide; this module-level doc covers only what a plugin author

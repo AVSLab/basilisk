@@ -214,10 +214,53 @@ class RustWrapper : public SysModel {
     %c_wrap_2(moduleName, moduleName ## Config)
 %enddef
 
-// There is no %rust_wrap macro family (unlike %c_wrap/%c_wrap_2/%c_wrap_3
-// above): bsk-build generates the entire .i file for a Rust module (see
-// `render_swig_interface` in bsk-build's src/lib.rs), so the %ignore /
-// %template / %pythonappend / %extend boilerplate that would otherwise live
-// in a macro here is written out directly in that generated file instead.
-// There is no hand-written-.i escape hatch for Rust modules to justify the
-// indirection of a macro with a single caller.
+%define %rust_wrap_2(moduleName, configName)
+    // The Rust build layer exports these lifecycle symbols. Keep the raw
+    // functions out of Python; users interact with configName and the
+    // RustWrapper specialization below.
+    %ignore New_ ## moduleName;
+    %ignore Delete_ ## moduleName;
+    %ignore Update_ ## moduleName;
+    %ignore SelfInit_ ## moduleName;
+    %ignore Reset_ ## moduleName;
+
+    /*
+    Supply the same optional Reset behavior as %c_wrap_3. A concrete
+    Reset_moduleName function takes precedence over this function template.
+    */
+    %inline %{
+      template <typename T> inline void Reset_ ## moduleName(
+          T, uint64_t, const BskRustModuleRuntime*) {}
+    %}
+
+    // RustWrapper takes ownership of a supplied Rust configuration. Keep this
+    // pythonappend body free of apostrophes and hash comment lines because
+    // SWIG macro expansion mis-parses them.
+    %pythonappend RustWrapper::RustWrapper %{
+        if (len(args)) > 0:
+            args[0].thisown = False
+    %}
+
+    %template(moduleName) RustWrapper<
+        configName,
+        New_ ## moduleName,
+        Delete_ ## moduleName,
+        Update_ ## moduleName,
+        SelfInit_ ## moduleName,
+        Reset_ ## moduleName>;
+
+    // Preserve the standard Basilisk Python module construction pattern while
+    // ensuring both operations use the Rust allocator.
+    %extend configName {
+      configName() {
+        return New_ ## moduleName();
+      }
+      ~configName() {
+        Delete_ ## moduleName($self);
+      }
+      %pythoncode %{
+        def createWrapper(self):
+            return moduleName(self)
+      %}
+    }
+%enddef
