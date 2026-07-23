@@ -34,3 +34,8 @@ bsk-macros = { path = "../bsk_macros" }
 syn  = { version = "2", features = ["full", "extra-traits"], optional = true }
 # walkdir: portable recursive directory scan to find *.rs source files.
 walkdir = { version = "2", optional = true }
+
+[dev-dependencies]
+# Compatibility spike for replacing the custom C header renderer. Keep the
+# CLI-only clap dependency disabled because tests use cbindgen as a library.
+cbindgen = { version = "0.29.4", default-features = false }
