@@ -36,6 +36,17 @@ the normal Basilisk build and test workflow after configuration. An explicit
 Rust-enabled configuration fails if Cargo is unavailable rather than silently
 omitting Rust modules.
 
+A bounded trial of Corrosion is available as the CMake/Cargo integration for
+``rustModuleTemplate``. Enable it explicitly with:
+
+.. code-block:: bash
+
+    python3 conanfile.py --rustModules True --rustCorrosion True
+
+Corrosion is fetched only for this opt-in build, at an immutable revision.
+Other Rust modules continue to use Basilisk's existing Cargo driver while the
+trial is evaluated across supported platforms.
+
 Rust 1.85 is Basilisk's minimum supported Rust version (MSRV). The repository
 does not pin one exact toolchain for local development: Cargo accepts any
 newer compatible stable toolchain, while pull-request CI separately tests the

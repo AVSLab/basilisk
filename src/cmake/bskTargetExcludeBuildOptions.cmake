@@ -19,3 +19,14 @@ endif()
 # build Basilisk; generate_rust_package_targets() (bskFindRustModules.cmake)
 # is a no-op whenever this is OFF, regardless of what it discovers on disk.
 option(BUILD_RUST_MODULES "Build Rust modules under src/ (requires cargo)" OFF)
+
+# Bounded evaluation path for replacing Basilisk's custom Cargo driver with
+# Corrosion. It currently converts rustModuleTemplate only and intentionally
+# leaves the established path available for comparison and rollback.
+option(BSK_RUST_USE_CORROSION
+       "Build rustModuleTemplate through the pinned Corrosion integration"
+       OFF)
+if(BSK_RUST_USE_CORROSION AND NOT BUILD_RUST_MODULES)
+  message(FATAL_ERROR
+    "BSK_RUST_USE_CORROSION requires BUILD_RUST_MODULES=ON")
+endif()

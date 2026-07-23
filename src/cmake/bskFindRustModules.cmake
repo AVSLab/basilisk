@@ -16,6 +16,7 @@
 
 include_guard(GLOBAL)
 include(bskAddRustModuleSources)
+include(bskAddRustModuleSourcesCorrosion)
 
 # ---------------------------------------------------------------------------
 # find_rust_package_targets / generate_rust_package_targets
@@ -97,54 +98,77 @@ function(generate_rust_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
       continue()
     endif()
 
-    bsk_add_rust_module_sources(
-      TARGET      ${TARGET_NAME}
-      MANIFEST    "${CMAKE_SOURCE_DIR}/${TARGET_FILE}"
-      OUT_LIB_VAR          _rust_lib
-      OUT_HEADER_VAR       _rust_header
-      OUT_INTERFACE_VAR    _rust_interface
-      OUT_BUILD_TARGET_VAR _rust_build_target
-    )
+    set(_rust_manifest "${CMAKE_SOURCE_DIR}/${TARGET_FILE}")
+    set(_swig_target "${TARGET_NAME}")
+    if(BSK_RUST_USE_CORROSION AND TARGET_NAME STREQUAL "rustModuleTemplate")
+      bsk_add_rust_module_sources_corrosion(
+        TARGET      ${TARGET_NAME}
+        MANIFEST    "${_rust_manifest}"
+        OUT_LINK_TARGET_VAR  _rust_link_target
+        OUT_HEADER_VAR       _rust_header
+        OUT_INTERFACE_VAR    _rust_interface
+        OUT_BUILD_TARGET_VAR _rust_build_target
+      )
+
+      # Corrosion names its imported CMake library after the Cargo [lib]
+      # target. Use an internal name for the SWIG target to avoid colliding
+      # with that Rust target; OUTPUT_NAME below preserves the installed
+      # Python extension and import name.
+      set(_swig_target "_bsk_python_${TARGET_NAME}")
+      set_source_files_properties("${_rust_interface}" PROPERTIES GENERATED TRUE)
+    else()
+      bsk_add_rust_module_sources(
+        TARGET      ${TARGET_NAME}
+        MANIFEST    "${_rust_manifest}"
+        OUT_LIB_VAR          _rust_link_target
+        OUT_HEADER_VAR       _rust_header
+        OUT_INTERFACE_VAR    _rust_interface
+        OUT_BUILD_TARGET_VAR _rust_build_target
+      )
+    endif()
 
     set_property(SOURCE ${_rust_interface} PROPERTY USE_TARGET_INCLUDE_DIRECTORIES TRUE)
     set_property(SOURCE ${_rust_interface} PROPERTY CPLUSPLUS ON)
 
     set(_out_dir "${CMAKE_BINARY_DIR}/Basilisk/${MODULE_DIR}")
     swig_add_library(
-      ${TARGET_NAME}
+      ${_swig_target}
       LANGUAGE "python"
       TYPE MODULE
       SOURCES ${_rust_interface}
       OUTFILE_DIR "${_out_dir}"
       OUTPUT_DIR  "${_out_dir}")
+    if(BSK_RUST_USE_CORROSION AND TARGET_NAME STREQUAL "rustModuleTemplate")
+      set_target_properties(${_swig_target} PROPERTIES OUTPUT_NAME ${TARGET_NAME})
+    endif()
 
     # UseSWIG does not discover files included by a generated interface.
     # Re-run SWIG when the shared Rust wrapper template changes.
-    set_property(TARGET ${TARGET_NAME} APPEND PROPERTY SWIG_DEPENDS
+    set_property(TARGET ${_swig_target} APPEND PROPERTY SWIG_DEPENDS
       "${CMAKE_SOURCE_DIR}/architecture/_GeneralModuleFiles/swig_c_wrap.i")
 
     # The SWIG compile step (which opens the header the .i %include-s) runs
     # before link and can race the Cargo build that generates that header on
     # a cold build; UseSWIG names this intermediate target
-    # ${TARGET_NAME}_swig_compilation.
-    add_dependencies(${TARGET_NAME}_swig_compilation ${_rust_build_target})
+    # ${_swig_target}_swig_compilation.
+    add_dependencies(${_swig_target}_swig_compilation ${_rust_build_target})
 
-    target_include_directories(${TARGET_NAME} PRIVATE ${Python3_INCLUDE_DIRS})
-    target_include_directories(${TARGET_NAME} PRIVATE
+    target_include_directories(${_swig_target} PRIVATE ${Python3_INCLUDE_DIRS})
+    target_include_directories(${_swig_target} PRIVATE
       "${CMAKE_SOURCE_DIR}/architecture/_GeneralModuleFiles")
 
-    target_link_libraries(${TARGET_NAME} PRIVATE "${_rust_lib}")
+    target_link_libraries(${_swig_target} PRIVATE "${_rust_link_target}")
     foreach(LIB ${LIB_DEP_LIST})
-      target_link_libraries(${TARGET_NAME} PRIVATE ${LIB})
+      target_link_libraries(${_swig_target} PRIVATE ${LIB})
     endforeach()
-    target_link_libraries(${TARGET_NAME} PRIVATE ${PYTHON3_MODULE})
+    target_link_libraries(${_swig_target} PRIVATE ${PYTHON3_MODULE})
     if(PY_LIMITED_API AND NOT PY_LIMITED_API STREQUAL "")
-      target_compile_definitions(${TARGET_NAME} PRIVATE "Py_LIMITED_API=${PY_LIMITED_API}")
+      target_compile_definitions(${_swig_target} PRIVATE "Py_LIMITED_API=${PY_LIMITED_API}")
     endif()
 
-    set_target_properties(${TARGET_NAME} PROPERTIES FOLDER ${PARENT_DIR})
+    set_target_properties(${_swig_target} PROPERTIES FOLDER ${PARENT_DIR})
     foreach(_prop LIBRARY_OUTPUT_DIRECTORY RUNTIME_OUTPUT_DIRECTORY ARCHIVE_OUTPUT_DIRECTORY)
-      set_target_properties(${TARGET_NAME} PROPERTIES
+      set_target_properties(${_swig_target} PROPERTIES
         ${_prop}            "${_out_dir}"
         ${_prop}_DEBUG      "${_out_dir}"
         ${_prop}_RELEASE    "${_out_dir}")
