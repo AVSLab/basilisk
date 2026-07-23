@@ -168,13 +168,10 @@ generates the C header, SWIG wrapper, and message I/O code from this definition:
         }
     }
 
-    #[cfg(not(test))]
-    bsk_build::bsk_module!();
-
 ``#[bsk_build::module]`` explicitly identifies the top-level module
-configuration and validates its basic C ABI requirements. ``bsk-build`` reads
-the marked struct during ``build.rs`` and generates the C header and wrapper code.
-``bsk_module!()`` includes the generated code in the crate.
+configuration, validates its basic C ABI requirements, and generates the Rust
+lifecycle entry points. ``bsk-build`` reads the marked struct during
+``build.rs`` and generates the C header and wrapper code.
 
 Field doc comments written with ``///`` become Doxygen comments in the
 generated header. Follow the Basilisk unit-first convention used by the other
@@ -206,8 +203,8 @@ Three ``BskModule`` trait methods map to the Basilisk module lifecycle:
 ``Inputs`` and ``Outputs`` are tuples matching the ``MsgReader`` and
 ``MsgWriter`` fields in declaration order.
 
-Gate ``bsk_module!()`` with ``#[cfg(not(test))]`` so ``cargo test`` (see
-`Testing`_ below) does not require Basilisk to be linked.
+The attribute automatically omits its lifecycle entry points from test builds,
+so ``cargo test`` (see `Testing`_ below) does not require Basilisk to be linked.
 
 Use the Generated Wrapper
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -274,7 +271,7 @@ the field:
         if self.K <= 0.0 {
             self.bskLogger.warning("K should be positive");
         }
-        Self::Outputs::default()   // shim writes these to the output ports
+        Self::Outputs::default()   // lifecycle code writes these to the output ports
     }
 
 ``.bsk_error(msg)`` raises the standard fatal ``BasiliskError`` and never
@@ -401,7 +398,7 @@ Outputs
 
 Output ports are initialized in both ``reset()`` and ``update()``. Both
 methods must return a value for every output port (``Self::Outputs``); the
-generated shim writes the returned values to the ports with the module ID
+generated lifecycle code writes the returned values with the module ID
 and current simulation timestamp. This means every output is guaranteed to
 hold a valid, module-authored value before the first ``UpdateState`` tick.
 
@@ -629,10 +626,10 @@ Testing
      - ``python -m build --wheel --no-isolation`` then ``pip install dist/*.whl``
      - Yes
 
-**``cargo test`` never touches Basilisk.** Gate ``bsk_module!()`` behind
-``#[cfg(not(test))]`` (see `Write the Rust Module`_
-above) so ``init()``, ``reset()``, and ``update()`` can be exercised as
-plain Rust functions with hand-built message values — no linking, no Python.
+**``cargo test`` never touches Basilisk.** The ``#[bsk_build::module]``
+attribute omits its C ABI lifecycle entry points in test builds, so ``init()``,
+``reset()``, and ``update()`` can be exercised as plain Rust functions with
+hand-built message values — no linking, no Python.
 
 Add the ``test_logger`` dev-dependency (see `Logging`_ above) so that
 ``bskLogger.warning(...)`` and similar calls work in unit tests. Logger calls in test
@@ -654,7 +651,8 @@ Common Build Problems
    ``bsk_add_rust_module(... INCLUDE_DIRS ...)``.
 
 ``cargo test`` attempts to link Basilisk
-   Ensure that ``bsk_module!()`` is gated with ``#[cfg(not(test))]``.
+   Ensure that the config uses ``#[bsk_build::module]`` and does not invoke
+   the legacy ``bsk_module!()`` compatibility macro.
 
 Known limitations
 --------------------

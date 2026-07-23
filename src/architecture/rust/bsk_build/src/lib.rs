@@ -17,14 +17,13 @@
 //! An in-tree BSK module keeps its crate root beside ``Cargo.toml`` and calls
 //! ``generate_from("myModule.rs")`` instead. Both functions scan the selected
 //! source path for the ``#[bsk_build::module]`` struct with an
-//! ``impl BskModule for <Type>`` block and emit three build artifacts:
+//! ``impl BskModule for <Type>`` block and emit two build artifacts. The
+//! procedural attribute emits the Rust lifecycle entry points itself.
 //!
 //! * **``<ModuleName>.h``** in ``$OUT_DIR`` by default — C header for
 //!   CMake/SWIG, generated from the Rust struct.  Set ``BSK_HEADER_PATH`` to
 //!   place it at a CMake-managed build path (its file stem also becomes the
 //!   module's symbol/header name — see below). Do not edit by hand.
-//! * **``$OUT_DIR/bsk_shim.rs``** — ``extern "C-unwind"`` lifecycle entry points
-//!   that handle message I/O and call the config's ``BskModule`` implementation.
 //! * **``<ModuleName>_rust_wrap.i``** in ``$OUT_DIR`` by default — the SWIG
 //!   interface file. Set ``BSK_INTERFACE_PATH`` to place it at a CMake-managed
 //!   build path. CMake's job is then just "run cargo build, then run SWIG on
@@ -48,8 +47,9 @@
 //! Like a hand-written Basilisk C module's config struct, it holds a
 //! mandatory ``runtime: BskModuleRuntime`` mirror field (see below),
 //! parameters, persistent state, ``MsgReader``/``MsgWriter`` message ports,
-//! and normally a ``bskLogger`` pointer. The shim owns raw port I/O; the
-//! ``update`` function receives and returns plain message values.
+//! and normally a ``bskLogger`` pointer. Macro-generated lifecycle code owns
+//! raw port I/O; the ``update`` function receives and returns plain message
+//! values.
 //!
 //! ``///`` doc comments on struct fields become the Doxygen ``/*!< … */``
 //! inline comment in the generated C header.
@@ -74,7 +74,7 @@
 //!
 //! The config struct **must** have a field named exactly ``runtime`` of type
 //! [`BskModuleRuntime`]. It mirrors the ``SysModel`` fields
-//! (``moduleID``, ``ModelTag``, ``CallCounts``, ``RNGSeed``); the shim
+//! (``moduleID``, ``ModelTag``, ``CallCounts``, ``RNGSeed``); the lifecycle code
 //! refreshes it before every lifecycle call, so the rest of the module reads
 //! it like any other config field (``self.runtime``). ``build.rs`` panics if
 //! the field is missing.
@@ -143,20 +143,19 @@
 //! Add ``#[bsk_build::module]`` to the top-level configuration struct. The
 //! attribute explicitly distinguishes the module config from other
 //! ``#[repr(C)]`` structs in the crate and asks rustc to validate the basic
-//! cross-language ABI requirements. During the staged procedural-macro
-//! migration, ``build.rs`` still renders the C header, lifecycle shim, and
-//! SWIG interface from the marked source struct.
+//! cross-language ABI requirements and emits the lifecycle entry points.
+//! ``build.rs`` renders only the C header and SWIG interface for a marked
+//! module.
 //!
 //! # Add `bsk-build` as a plain dependency too
 //!
 //! Besides the generator itself ([`generate()`] or [`generate_from()`], called
 //! from `build.rs` and gated behind the opt-in `codegen` feature), this crate
 //! also has an always-available module-code surface:
-//! ``#[module]``, [`bsk_module!()`] (which includes the generated shim),
-//! [`BskModule`], [`BskModuleRuntime`], [`MsgReader`]/[`MsgWriter`], and
-//! [`BskLoggerExt`]. Add a second, feature-less ``bsk-build`` entry for this
-//! surface, alongside the existing ``[build-dependencies]`` one (which needs
-//! `codegen`):
+//! ``#[module]``, [`BskModule`], [`BskModuleRuntime`],
+//! [`MsgReader`]/[`MsgWriter`], and [`BskLoggerExt`]. Add a second,
+//! feature-less ``bsk-build`` entry for this surface, alongside the existing
+//! ``[build-dependencies]`` one (which needs `codegen`):
 //!
 //! ```toml
 //! [dependencies]
@@ -168,47 +167,13 @@
 //!
 //! ``bsk-messages`` re-exports the runtime traits and types, so
 //! ``use bsk_messages::*;`` brings those in with the message types. Refer to
-//! the attribute and shim macros through the direct dependency as
-//! ``bsk_build::module`` and ``bsk_build::bsk_module!()``.
+//! the attribute through the direct dependency as ``bsk_build::module``.
 
-/// Include the ``build.rs``-generated BSK lifecycle shim for a Rust module.
+/// Include the ``build.rs``-generated lifecycle shim for a legacy module.
 ///
-/// Minimal module template:
-///
-/// ```rust,ignore
-/// use bsk_messages::*;
-///
-/// #[bsk_build::module]
-/// #[repr(C)]
-/// pub struct MyModuleConfig {
-///     pub runtime: BskModuleRuntime,
-///     pub inMsg: MsgReader<InputMsg>,
-///     pub outMsg: MsgWriter<OutputMsg>,
-/// }
-///
-/// impl BskModule for MyModuleConfig {
-///     type Inputs = (InputMsg,);
-///     type Outputs = (OutputMsg,);
-///
-///     fn update(&mut self, inputs: Self::Inputs,
-///               current_sim_nanos: u64) -> Self::Outputs {
-///         let (input,) = inputs;
-///         (OutputMsg::default(),)
-///     }
-/// }
-///
-/// #[cfg(not(test))]
-/// bsk_build::bsk_module!();
-/// ```
-///
-/// Gate the macro with ``#[cfg(not(test))]`` so ``cargo test`` compiles
-/// without Basilisk's message-port C symbols. Logger calls
-/// (``bskLogger.info(...)`` etc.) are safe to use in tests without guards
-/// when the ``test_logger`` dev-dependency feature is enabled — see
-/// ``bsk_build``'s ``Cargo.toml`` for the one-liner to add. See the
-/// Basilisk documentation's "Writing a Rust Plugin" page for the full guide
-/// (required vs. optional inputs, multiple ports, custom messages, stateful
-/// modules).
+/// New modules use ``#[bsk_build::module]``, which emits lifecycle code
+/// directly and does not call this macro. This compatibility macro remains
+/// available while unmarked out-of-tree modules migrate.
 #[macro_export]
 macro_rules! bsk_module {
     () => {
@@ -219,9 +184,10 @@ macro_rules! bsk_module {
 /// Mark and validate a Basilisk module's top-level configuration struct.
 ///
 /// The attribute validates that the type is a public, named ``#[repr(C)]``
-/// struct with public fields and a ``runtime: BskModuleRuntime`` member.
-/// ``bsk-build`` uses the marker to select this struct when generating the C
-/// header and wrapper artifacts.
+/// struct with public fields and a ``runtime: BskModuleRuntime`` member. It
+/// generates the C ABI lifecycle functions and handles typed message I/O.
+/// ``bsk-build`` also uses the marker to select this struct when generating
+/// the C header and wrapper artifacts.
 pub use bsk_macros::module;
 
 /// Rust-side mirror of the C ``BskRustModuleRuntime`` struct declared in
@@ -352,7 +318,126 @@ impl<T: Msg> MsgWriter<T> {
     }
 }
 
-/// Strongly typed Rust lifecycle interface mirrored by the Basilisk C ABI shim.
+#[doc(hidden)]
+pub trait BskModuleInput<Message: Msg>: Sized {
+    fn validate(
+        port: &mut MsgReader<Message>,
+        logger: *mut BSKLogger,
+        missing_message: &str,
+    );
+    fn read(
+        port: &mut MsgReader<Message>,
+        logger: *mut BSKLogger,
+        missing_message: &str,
+    ) -> Self;
+}
+
+impl<Message: Msg> BskModuleInput<Message> for Message {
+    fn validate(
+        port: &mut MsgReader<Message>,
+        logger: *mut BSKLogger,
+        missing_message: &str,
+    ) {
+        if !port.is_linked() {
+            BskLoggerExt::bsk_error(logger, missing_message);
+        }
+    }
+
+    fn read(
+        port: &mut MsgReader<Message>,
+        logger: *mut BSKLogger,
+        missing_message: &str,
+    ) -> Self {
+        Self::validate(port, logger, missing_message);
+        port.read()
+    }
+}
+
+impl<Message: Msg> BskModuleInput<Message> for Option<Message> {
+    fn validate(
+        _port: &mut MsgReader<Message>,
+        _logger: *mut BSKLogger,
+        _missing_message: &str,
+    ) {
+    }
+
+    fn read(
+        port: &mut MsgReader<Message>,
+        _logger: *mut BSKLogger,
+        _missing_message: &str,
+    ) -> Self {
+        if port.is_linked() { Some(port.read()) } else { None }
+    }
+}
+
+#[cfg(test)]
+mod module_input_tests {
+    use super::*;
+
+    #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+    struct TestMessage(u64);
+
+    #[derive(Default)]
+    struct TestPort {
+        linked: bool,
+        value: TestMessage,
+    }
+
+    impl Msg for TestMessage {
+        type Port = TestPort;
+
+        fn __is_linked(port: &mut Self::Port) -> bool { port.linked }
+        fn __read(port: &mut Self::Port) -> Self { port.value }
+        fn __init(_port: &mut Self::Port) {}
+        fn __write(
+            _data: &Self,
+            _port: &mut Self::Port,
+            _module_id: i64,
+            _current_sim_nanos: u64,
+        ) {
+        }
+    }
+
+    #[test]
+    fn required_input_reads_linked_message() {
+        let mut reader = MsgReader(TestPort { linked: true, value: TestMessage(42) });
+        let value = <TestMessage as BskModuleInput<TestMessage>>::read(
+            &mut reader,
+            core::ptr::null_mut(),
+            "missing required input",
+        );
+        assert_eq!(value, TestMessage(42));
+    }
+
+    #[test]
+    fn optional_input_returns_none_when_unlinked() {
+        let mut reader = MsgReader(TestPort::default());
+        <Option<TestMessage> as BskModuleInput<TestMessage>>::validate(
+            &mut reader,
+            core::ptr::null_mut(),
+            "optional input",
+        );
+        let value = <Option<TestMessage> as BskModuleInput<TestMessage>>::read(
+            &mut reader,
+            core::ptr::null_mut(),
+            "optional input",
+        );
+        assert_eq!(value, None);
+    }
+
+    #[test]
+    #[should_panic(expected = "missing required input")]
+    fn required_input_rejects_unlinked_port() {
+        let mut reader = MsgReader(TestPort::default());
+        <TestMessage as BskModuleInput<TestMessage>>::validate(
+            &mut reader,
+            core::ptr::null_mut(),
+            "missing required input",
+        );
+    }
+}
+
+/// Strongly typed Rust lifecycle interface exposed through the Basilisk C ABI.
 ///
 /// A module's config struct implements this trait directly — no Rust code
 /// depends on the C++ ``SysModel`` class. Runtime data (module ID,
@@ -382,7 +467,7 @@ pub trait BskModule {
     fn init(&mut self) {}
 
     /// Called during `Reset()`. Must return initialized values for every
-    /// output message port; the generated shim writes them to the ports so
+    /// output message port; the generated lifecycle code writes them so
     /// they are valid before the first `UpdateState` tick.
     ///
     /// The default implementation returns `Self::Outputs::default()`, which

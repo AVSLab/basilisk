@@ -28,8 +28,8 @@ include_guard(GLOBAL)
 # wiring, etc.) is a separate concern; see bsk-sdk's bsk_add_rust_module,
 # which calls this macro and then bsk_add_swig_module.
 #
-# architecture/rust/bsk_build's build.rs does the actual codegen (parsing the crate's
-# `bsk_build::module` config struct via `syn`, emitting the header/shim/.i);
+# architecture/rust/bsk_build's build.rs does the file codegen (parsing the crate's
+# `bsk_build::module` config struct via `syn`, emitting the header and .i);
 # this macro only drives `cargo build` and tells it where to put things.
 #
 # Required arguments

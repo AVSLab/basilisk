@@ -22,15 +22,15 @@ codegen = ["dep:syn", "dep:walkdir"]
 # production builds do not (dev-dep features are not propagated into the
 # crate's public library artifact). After adding this, module code can call
 # `self.bskLogger.warning(...)` without `#[cfg(not(test))]` guards.
-# `bsk_module!()` must still be gated with `#[cfg(not(test))]` because the
-# generated shim references Basilisk's message-port C symbols.
+# The `#[bsk_build::module]` attribute automatically excludes lifecycle entry
+# points from test builds, so unit tests do not link Basilisk's C symbols.
 test_logger = []
 
 [dependencies]
 bsk-macros = { path = "../bsk_macros" }
 # syn: proper Rust AST parser (same technology cbindgen uses internally).
 # Used to find the *Config struct in a module's configured Rust source path,
-# read its fields and doc-comments, and produce the C header + shim.
+# read its fields and doc-comments, and produce the C header and SWIG input.
 syn  = { version = "2", features = ["full", "extra-traits"], optional = true }
 # walkdir: portable recursive directory scan to find *.rs source files.
 walkdir = { version = "2", optional = true }

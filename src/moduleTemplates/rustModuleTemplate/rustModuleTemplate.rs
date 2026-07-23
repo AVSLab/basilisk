@@ -57,9 +57,6 @@ impl BskModule for RustModuleTemplateConfig {
     }
 }
 
-#[cfg(not(test))]
-bsk_build::bsk_module!();
-
 #[cfg(all(test, target_pointer_width = "64"))]
 mod tests {
     use super::*;

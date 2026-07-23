@@ -6,9 +6,11 @@
 //  purpose with or without fee is hereby granted, provided that the above
 //  copyright notice and this permission notice appear in all copies.
 
-//! Rust FFI shim renderer: turns a [`ConfigInfo`] into `OUT_DIR/bsk_shim.rs`
-//! — the `extern "C-unwind"` lifecycle entry points that handle message I/O
-//! and call the config's `BskModule` implementation.
+//! Legacy Rust FFI shim renderer: turns an unmarked module's [`ConfigInfo`]
+//! into `OUT_DIR/bsk_shim.rs` — the `extern "C-unwind"` lifecycle entry
+//! points that handle message I/O and call the config's `BskModule`
+//! implementation. New modules receive these entry points from
+//! `#[bsk_build::module]` instead.
 
 use super::methods::rust_array_type;
 use super::types::{ConfigInfo, FieldInfo, MethodInfo};
@@ -164,7 +166,7 @@ pub(super) fn render_shim(info: &ConfigInfo, module: &str) -> String {
     // array parameter from the pointer it decayed to on the C++ side (see
     // `render_method_shim`).
     for m in &info.methods {
-        s.push_str("\n");
+        s.push('\n');
         s.push_str(&render_method_shim(m, module, cfg_type));
     }
 

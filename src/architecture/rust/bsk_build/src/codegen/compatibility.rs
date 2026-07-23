@@ -78,7 +78,7 @@ fn sample_header_preserves_config_surface_and_field_order() {
 }
 
 #[test]
-fn sample_shim_preserves_lifecycle_and_optional_input_behavior() {
+fn legacy_shim_preserves_lifecycle_and_optional_input_behavior() {
     let shim = render_shim(&sample_config(), "rustModuleTemplate");
 
     assert!(shim.contains("fn Init_rustModuleTemplate("));

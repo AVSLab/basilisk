@@ -7,9 +7,10 @@
 //  copyright notice and this permission notice appear in all copies.
 
 //! `build.rs` codegen: scans a BSK Rust module's config struct and emits its
-//! C header, FFI shim, and SWIG interface. See the crate root's doc comment
-//! for the user-facing guide; this module (and its submodules) is the
-//! implementation.
+//! C header and SWIG interface. During the procedural-macro migration it also
+//! emits the lifecycle shim for legacy, unmarked modules. See the crate root's
+//! doc comment for the user-facing guide; this module (and its submodules) is
+//! the implementation.
 //!
 //! * `types` — the shared data model (`ConfigInfo`, `FieldInfo`,
 //!   `MethodInfo`, ...) produced by discovery and consumed by the renderers.
@@ -17,10 +18,10 @@
 //!   types to a C ABI representation.
 //! * `methods` — finds `impl <ConfigType> { pub fn ... }` setter/getter
 //!   methods with a C/SWIG-compatible signature.
-//! * `optionality` — derives `*InMsg` field optionality from `impl
+//! * `optionality` — derives legacy `*InMsg` field optionality from `impl
 //!   BskModule`'s `Inputs` tuple.
-//! * `render_header` / `render_shim` / `render_swig` — the three build
-//!   artifacts' renderers.
+//! * `render_header` / `render_swig` — the current build-artifact renderers.
+//! * `render_shim` — the compatibility renderer for legacy, unmarked modules.
 
 use std::path::{Path, PathBuf};
 
@@ -37,8 +38,8 @@ mod test_support;
 mod types;
 
 use discovery::{
-    find_bsk_module_impl, find_bsk_module_impl_for, find_marked_module_configs,
-    find_struct_by_name, FindStructError, SourceAsts,
+    find_bsk_module_impl, find_marked_module_configs, find_struct_by_name, FindStructError,
+    SourceAsts,
 };
 use methods::find_config_methods;
 use optionality::apply_input_optionality;
@@ -89,46 +90,36 @@ pub fn generate_from(source_path: impl AsRef<Path>) {
         );
     }
     let marked_config = marked_configs.first().map(String::as_str);
-    let module_impl = match marked_config {
-        Some(config_name) => find_bsk_module_impl_for(&source_asts, Some(config_name)),
-        None => find_bsk_module_impl(&source_asts),
-    };
-    let (struct_name, input_types) = module_impl.unwrap_or_else(|| {
-        if !source_asts.diagnostics.is_empty() {
-            panic_with_diagnostics(source_asts.diagnostics.clone());
+    let (struct_name, legacy_input_types) = match marked_config {
+        Some(config_name) => (config_name.to_owned(), None),
+        None => {
+            let (config_name, input_types) =
+                find_bsk_module_impl(&source_asts).unwrap_or_else(|| {
+                    if !source_asts.diagnostics.is_empty() {
+                        panic_with_diagnostics(source_asts.diagnostics.clone());
+                    }
+                    panic!(
+                        "bsk-build: no `#[bsk_build::module]` config or legacy \
+                         `impl BskModule for <Type>` found under {}.\n\
+                         Add `#[bsk_build::module]` to the config struct.",
+                        source_path.display()
+                    )
+                });
+            (config_name, Some(input_types))
         }
-        let marker_help = marked_config.map_or_else(
-            || {
-                "Add `#[bsk_build::module]` to the config struct and implement \
-                 `BskModule` for it."
-                    .to_owned()
-            },
-            |config_name| format!("The marked `{config_name}` struct must implement `BskModule`."),
-        );
-        panic!(
-            "bsk-build: no matching `impl BskModule for <Type>` found under {}.\n\
-             {marker_help}\n\
-             \n\
-             \x20   impl BskModule for MyModuleConfig {{\n\
-             \x20       type Inputs = (...);\n\
-             \x20       type Outputs = (...);\n\
-             \x20       fn update(&mut self, inputs: Self::Inputs, t: u64) -> Self::Outputs {{ … }}\n\
-             \x20   }}\n",
-            source_path.display()
-        )
-    });
+    };
     let item_struct = match find_struct_by_name(&source_asts, &struct_name) {
         Ok(Some(item)) => item,
         Ok(None) => panic!(
-            "bsk-build: found `impl BskModule for {struct_name}`, but no \
-             `#[repr(C)] pub struct {struct_name} {{ … }}` definition under {}.\n\
-             The type implementing `BskModule` must be a `#[repr(C)]` struct \
-             defined in the configured Rust source path.",
+            "bsk-build: selected module config `{struct_name}`, but no \
+             `#[repr(C)] pub struct {struct_name} {{ … }}` definition was found under {}.\n\
+             The module config must be a `#[repr(C)]` struct defined in the \
+             configured Rust source path.",
             source_path.display()
         ),
         Err(FindStructError::MissingReprC) => panic!(
-            "bsk-build: found `struct {struct_name}`, which implements \
-             `BskModule`, but it is missing `#[repr(C)]`.\n\
+            "bsk-build: selected `struct {struct_name}` as the module config, \
+             but it is missing `#[repr(C)]`.\n\
              Add `#[repr(C)]` immediately above `pub struct {struct_name}`. \
              BSK passes this config struct across the Rust/C++ ABI, so its \
              layout must be explicitly C-compatible."
@@ -145,7 +136,7 @@ pub fn generate_from(source_path: impl AsRef<Path>) {
     };
     let mut info = ConfigInfo {
         struct_name,
-        fields: discovery::extract_fields(&item_struct, &mut ctx, true),
+        fields: discovery::extract_fields(item_struct, &mut ctx, true),
         nested_structs: Vec::new(),
         methods: Vec::new(),
     };
@@ -179,7 +170,9 @@ pub fn generate_from(source_path: impl AsRef<Path>) {
             ),
         );
     }
-    apply_input_optionality(&mut info, &input_types, &mut ctx.diagnostics);
+    if let Some(input_types) = legacy_input_types {
+        apply_input_optionality(&mut info, &input_types, &mut ctx.diagnostics);
+    }
     if !ctx.diagnostics.is_empty() {
         panic_with_diagnostics(ctx.diagnostics);
     }
@@ -230,22 +223,34 @@ pub fn generate_from(source_path: impl AsRef<Path>) {
         );
     }
 
-    // Write the BSK lifecycle shim to OUT_DIR.
-    let shim = render_shim(&info, &module_name);
+    // Explicitly marked modules receive lifecycle entry points directly from
+    // the procedural attribute. Keep writing the legacy include file only for
+    // unmarked external modules during the migration period, and remove a
+    // stale copy left by an earlier build after a module adopts the attribute.
     let shim_path = out_dir.join("bsk_shim.rs");
-    if let Err(e) = std::fs::write(&shim_path, shim) {
-        panic!(
-            "bsk-build: could not write generated shim to {}: {e}\n\
-             `OUT_DIR` is normally managed by Cargo — check that this \
-             process has permission to write under it.",
-            shim_path.display()
-        );
+    if marked_config.is_none() {
+        let shim = render_shim(&info, &module_name);
+        if let Err(e) = std::fs::write(&shim_path, shim) {
+            panic!(
+                "bsk-build: could not write generated shim to {}: {e}\n\
+                 `OUT_DIR` is normally managed by Cargo — check that this \
+                 process has permission to write under it.",
+                shim_path.display()
+            );
+        }
+    } else if let Err(error) = std::fs::remove_file(&shim_path) {
+        if error.kind() != std::io::ErrorKind::NotFound {
+            panic!(
+                "bsk-build: could not remove obsolete generated shim {}: {error}",
+                shim_path.display()
+            );
+        }
     }
 
     // CMake supplies BSK_INTERFACE_PATH (same convention as BSK_HEADER_PATH)
     // so it never has to work out message ports/owned-state fields/the
     // config type name itself: the SWIG `.i` file is just another artifact
-    // `generate()` produces from `info`, the same one the header/shim already come from.
+    // `generate()` produces from the same `info` as the header.
     // CMake's job becomes "run cargo build, then run swig on the file it wrote".
     let interface_path = std::env::var_os("BSK_INTERFACE_PATH")
         .map(PathBuf::from)

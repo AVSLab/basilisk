@@ -8,4 +8,6 @@ description = "Procedural macros for native Basilisk Rust modules."
 proc-macro = true
 
 [dependencies]
+proc-macro2 = "1"
+quote = "1"
 syn = { version = "2", features = ["full"] }

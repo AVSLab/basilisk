@@ -40,13 +40,12 @@
  *  matching ``extern "C"`` *declarations* so that the C compiler and the
  *  SWIG-generated glue can find them.
  *
- *  **Shim-based workflow**
+ *  **Macro-generated workflow**
  *
  *  Writing raw ``unsafe extern "C"`` Rust is error-prone.  The recommended
- *  workflow uses ``build.rs`` (via the ``bsk-build`` crate) to auto-generate
- *  both the C header below and a *shim* from the Rust source: ``bsk-build``
- *  finds the config struct by its ``#[bsk_build::module]`` attribute, reads its
- *  message-port fields, and emits the ``extern "C"`` entry points that
+ *  workflow uses ``build.rs`` to generate the C header while the
+ *  ``#[bsk_build::module]`` procedural attribute emits the ``extern "C"``
+ *  lifecycle entry points that
  *  read/write messages around the module's own ``update``. The user
  *  implements ``init``, ``reset``, and ``update`` in safe Rust with
  *  typed message arguments — no FFI boilerplate by hand. See the Basilisk
@@ -92,7 +91,8 @@
  *  ``ModuleIdGenerator`` when the module is registered with a task.  It is
  *  stamped onto every outgoing message header (via ``*_C_write``) so that
  *  message recording and the logging subsystem can identify which module
- *  produced a given message.  The shim reads it from ``cfg->runtime.moduleID``
+ *  produced a given message. The lifecycle code reads it from
+ *  ``cfg->runtime.moduleID``
  *  and forwards it to every ``*_C_write`` call automatically.
  *
  *  **Runtime mirror — BskRustModuleRuntime**
@@ -263,17 +263,18 @@ typedef struct BskRustModuleRuntime {
  *  Basilisk C module named \p name, whose config struct type is \p configType.
  *
  *  ``SelfInit_name(cfg, runtime)``
- *      Called once at task registration.  The shim copies ``*runtime`` into
- *      ``cfg->runtime`` and initialises output message ports (``*_C_init``).
+ *      Called once at task registration.  The generated lifecycle code copies
+ *      ``*runtime`` into ``cfg->runtime`` and initialises output message ports
+ *      (``*_C_init``).
  *
  *  ``Reset_name(cfg, currentSimNanos, runtime)``
- *      Called before the first step and on explicit resets.  The shim copies
- *      ``*runtime`` into ``cfg->runtime``, checks required input
- *      connectivity, then calls ``BskModule::reset``.
+ *      Called before the first step and on explicit resets.  The generated
+ *      lifecycle code copies ``*runtime`` into ``cfg->runtime``, checks
+ *      required input connectivity, then calls ``BskModule::reset``.
  *
  *  ``Update_name(cfg, currentSimNanos, runtime)``
- *      Called every simulation step.  The shim copies ``*runtime`` into
- *      ``cfg->runtime``, reads all input messages, calls
+ *      Called every simulation step.  The generated lifecycle code copies
+ *      ``*runtime`` into ``cfg->runtime``, reads all input messages, calls
  *      ``BskModule::update``, and writes all output messages.
  *
  *  ``Drop_name(cfg)``

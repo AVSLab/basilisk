@@ -6,11 +6,11 @@
 //  purpose with or without fee is hereby granted, provided that the above
 //  copyright notice and this permission notice appear in all copies.
 
-//! syn-based discovery: parses a module crate's source tree, finds the
-//! `#[bsk_build::module]` struct and its `impl BskModule` block,
-//! and resolves each field's Rust type to a C ABI representation
-//! (primitives, message ports, owned heap state, fixed-size arrays, and
-//! nested `#[repr(C)]` structs).
+//! syn-based discovery: parses a module crate's source tree, finds its
+//! `#[bsk_build::module]` config (or a legacy `impl BskModule` fallback), and
+//! resolves each field's Rust type to a C ABI representation (primitives,
+//! message ports, owned heap state, fixed-size arrays, and nested
+//! `#[repr(C)]` structs).
 
 use std::path::Path;
 
@@ -111,14 +111,6 @@ fn has_bsk_module_attribute(item: &ItemStruct) -> bool {
 /// and returns `(struct_name, input_types)`. `input_types` is the `Inputs`
 /// tuple's element types in order (empty for `type Inputs = ();`).
 pub(super) fn find_bsk_module_impl(source_asts: &SourceAsts) -> Option<(String, Vec<Type>)> {
-    find_bsk_module_impl_for(source_asts, None)
-}
-
-/// Finds the ``BskModule`` implementation for one explicitly marked config.
-pub(super) fn find_bsk_module_impl_for(
-    source_asts: &SourceAsts,
-    expected_struct: Option<&str>,
-) -> Option<(String, Vec<Type>)> {
     for ast in &source_asts.files {
         for item in &ast.items {
             let imp = match item {
@@ -129,7 +121,7 @@ pub(super) fn find_bsk_module_impl_for(
                 .trait_
                 .as_ref()
                 .and_then(|(_, path, _)| path.segments.last())
-                .map_or(false, |seg| seg.ident == "BskModule");
+                .is_some_and(|seg| seg.ident == "BskModule");
             if !is_bsk_module {
                 continue;
             }
@@ -137,9 +129,6 @@ pub(super) fn find_bsk_module_impl_for(
                 Some(n) => n,
                 None => continue,
             };
-            if expected_struct.is_some_and(|expected| expected != struct_name) {
-                continue;
-            }
             let mut input_types = Vec::new();
             for impl_item in &imp.items {
                 if let ImplItem::Type(assoc) = impl_item {
@@ -632,7 +621,7 @@ fn resolve_nested_struct(name: &str, ctx: &mut NestedCtx, field_ctx: &str) -> Op
     };
     ctx.in_progress.push(name.to_owned());
     let error_count = ctx.diagnostics.len();
-    let fields = extract_fields(&item, ctx, false);
+    let fields = extract_fields(item, ctx, false);
     ctx.in_progress.pop();
     if ctx.diagnostics.len() == error_count {
         ctx.nested.push(NestedStructInfo {
@@ -742,24 +731,6 @@ mod tests {
             find_marked_module_configs(&source_asts),
             vec!["ControllerConfig"]
         );
-    }
-
-    #[test]
-    fn marked_config_selects_its_matching_bsk_module_impl() {
-        let source_asts = SourceAsts {
-            files: vec![syn::parse_file(
-                "impl BskModule for OtherConfig { type Inputs = (); } \
-                 impl BskModule for ControllerConfig { type Inputs = (InputMsg,); }",
-            )
-            .expect("test source must parse")],
-            diagnostics: Vec::new(),
-        };
-
-        let (name, inputs) = find_bsk_module_impl_for(&source_asts, Some("ControllerConfig"))
-            .expect("matching implementation must be found");
-        assert_eq!(name, "ControllerConfig");
-        assert_eq!(inputs.len(), 1);
-        assert_eq!(type_last_ident(&inputs[0]).as_deref(), Some("InputMsg"));
     }
 
     #[test]

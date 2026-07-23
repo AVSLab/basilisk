@@ -187,13 +187,10 @@ Write the implementation in ``myModule.rs``. Import the support types from
         }
     }
 
-    #[cfg(not(test))]
-    bsk_build::bsk_module!();
-
 The ``#[bsk_build::module]`` attribute explicitly identifies the top-level
-module configuration and validates its basic C ABI requirements. The
-configuration struct must contain a field named ``runtime`` with type
-``BskModuleRuntime``.
+module configuration, validates its basic C ABI requirements, and generates
+the lifecycle entry points. The configuration struct must contain a field
+named ``runtime`` with type ``BskModuleRuntime``.
 Other fields are optional and can be scalars, fixed-size arrays (``[T; N]`` or
 multi-dimensional ``[[T; N]; M]`` with literal lengths), nested ``#[repr(C)]``
 structs, ``Option<Box<T>>`` state, ``MsgReader<T>`` and ``MsgWriter<T>`` ports,
@@ -287,8 +284,9 @@ build directory.
 Testing
 -------
 
-Gate ``bsk_module!()`` with ``#[cfg(not(test))]`` as shown above. This lets
-pure Rust tests run without linking Basilisk:
+The ``#[bsk_build::module]`` attribute automatically omits its lifecycle entry
+points from test builds. This lets pure Rust tests run without linking
+Basilisk:
 
 .. code-block:: bash
 
@@ -305,9 +303,7 @@ Logger calls (``bskLogger.warning(...)`` etc.) work in tests when the
     [dev-dependencies]
     bsk-build = { path = "../../../architecture/rust/bsk_build", features = ["test_logger"] }
 
-Logger calls in test builds print to ``stderr`` instead of calling
-Basilisk's C symbols. ``bsk_module!()`` must still be gated with
-``#[cfg(not(test))]`` because the generated shim references message-port
+Logger calls in test builds print to ``stderr`` instead of calling Basilisk's
 C symbols.
 
 Add the normal Basilisk Python unit test in the module's ``_UnitTest``
