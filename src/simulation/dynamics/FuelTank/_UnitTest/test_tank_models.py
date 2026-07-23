@@ -19,6 +19,7 @@ import inspect
 import os
 
 import numpy as np
+import pytest
 from Basilisk.simulation import fuelTank
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -253,6 +254,47 @@ def test_tankModelEmptying(show_plots=False):
                                    true_rPPrime_TcT_T[idx],
                                    rtol=accuracy,
                                    err_msg="Emptying tank center of mass position second derivative not equal")
+
+
+@pytest.mark.parametrize("fuel_mass_fraction", [0.05, 0.1, 0.25, 0.5, 0.75, 0.9, 0.95])
+def test_emptying_tank_derivatives_match_finite_differences(fuel_mass_fraction):
+    """Compare emptying-tank COM and inertia derivatives with centered finite differences."""
+    model = fuelTank.FuelTankModelEmptying()
+    model.propMassInit = 200.0  # [kg]
+    model.r_TcT_TInit = [[0.0], [0.0], [0.0]]  # [m]
+    model.radiusTankInit = 0.5  # [m]
+
+    fuel_mass = fuel_mass_fraction * model.propMassInit  # [kg]
+    fuel_mass_rate = -1.7  # [kg/s]
+    difference_time_step = 1.0e-2  # [s]
+
+    model.computeTankProps(fuel_mass)
+    center_position = np.array(model.r_TcT_T).reshape(3).copy()  # [m]
+    model.computeTankPropDerivs(fuel_mass, fuel_mass_rate)
+    center_position_derivative = np.array(model.rPrime_TcT_T).reshape(3).copy()  # [m/s]
+    center_position_second_derivative = np.array(model.rPPrime_TcT_T).reshape(3).copy()  # [m/s^2]
+    inertia_derivative = np.array(model.IPrimeTankPntT_T).copy()  # [kg*m^2/s]
+
+    model.computeTankProps(fuel_mass + fuel_mass_rate * difference_time_step)
+    center_position_plus = np.array(model.r_TcT_T).reshape(3).copy()  # [m]
+    inertia_plus = np.array(model.ITankPntT_T).copy()  # [kg*m^2]
+
+    model.computeTankProps(fuel_mass - fuel_mass_rate * difference_time_step)
+    center_position_minus = np.array(model.r_TcT_T).reshape(3).copy()  # [m]
+    inertia_minus = np.array(model.ITankPntT_T).copy()  # [kg*m^2]
+
+    finite_difference_center_derivative = (
+        center_position_plus - center_position_minus) / (2.0 * difference_time_step)  # [m/s]
+    finite_difference_center_second_derivative = (
+        center_position_plus - 2.0 * center_position + center_position_minus
+    ) / (difference_time_step * difference_time_step)  # [m/s^2]
+    finite_difference_inertia_derivative = (
+        inertia_plus - inertia_minus) / (2.0 * difference_time_step)  # [kg*m^2/s]
+
+    np.testing.assert_allclose(center_position_derivative, finite_difference_center_derivative, rtol=1.0e-5)
+    np.testing.assert_allclose(
+        center_position_second_derivative, finite_difference_center_second_derivative, rtol=1.0e-5)
+    np.testing.assert_allclose(inertia_derivative, finite_difference_inertia_derivative, rtol=1.0e-5)
 
 
 def test_tankModelUniformBurn(show_plots=False):
