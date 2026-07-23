@@ -286,9 +286,10 @@ The context also provides ``model_tag()``, ``call_counts()``, ``rng_seed()``,
 and ``logger()``. Values borrowed from it are valid only during the current
 lifecycle call.
 
-The configuration's ``runtime: BskModuleRuntime`` mirror remains temporarily
-required while the C++ wrapper migrates to the opaque-handle ABI. New module
-logic should use ``context`` rather than this compatibility field.
+The C++ wrapper owns an opaque Rust instance handle and passes this context to
+each lifecycle call. The configuration's ``runtime: BskModuleRuntime`` mirror
+remains temporarily for configuration-view compatibility. New module logic
+should use ``context`` rather than this compatibility field.
 
 ``current_sim_nanos`` is passed separately to ``reset`` and ``update``.
 
@@ -320,9 +321,10 @@ feature to ``[dev-dependencies]``), every logger call prints to ``stderr``
 and ``.bsk_error()`` panics — no C symbols required. This means context
 logger calls in ``reset()`` and ``update()`` work for unit tests.
 
-The configuration's raw ``bskLogger`` field remains temporarily required by
-the configuration-pointer lifecycle adapter. New module logic should not
-access it directly.
+The configuration's raw ``bskLogger`` field remains temporarily for
+configuration-view compatibility. The C++ wrapper borrows it into
+``BskContext`` for each lifecycle call; new module logic should not access the
+raw field directly.
 
 .. code-block:: toml
 

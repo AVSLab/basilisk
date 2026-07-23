@@ -35,7 +35,7 @@ include_guard(GLOBAL)
 # Required arguments
 # ------------------
 #   TARGET      CMake target name (also the module/symbol name bsk-build
-#               generates against: New_<TARGET>, SelfInit_<TARGET>, etc.).
+#               generates against: Create_<TARGET>, SelfInit_<TARGET>, etc.).
 #   MANIFEST    Path to the crate's Cargo.toml.
 #
 # Optional arguments (header/interface overrides)

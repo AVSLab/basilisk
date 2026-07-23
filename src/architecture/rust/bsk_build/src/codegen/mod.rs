@@ -343,7 +343,7 @@ fn render_swig_interface(
          %nodefaultdtor {config_type};\n\
          %include \"{header}\"\n\
          \n\
-         %rust_wrap_2({module_name}, {config_type})\n"
+         %rust_wrap_2({module_name}, {config_type}, {config_type}Handle)\n"
     )
 }
 
@@ -448,7 +448,9 @@ typedef struct ExampleConfig {
         assert!(interface.contains("%import \"cMsgCInterface/InputMsg_C.h\""));
         assert!(interface.contains("%import \"cMsgCInterface/OutputMsg_C.h\""));
         assert!(interface.contains("%immutable ExampleConfig::state;"));
-        assert!(interface.contains("%rust_wrap_2(example, ExampleConfig)"));
+        assert!(
+            interface.contains("%rust_wrap_2(example, ExampleConfig, ExampleConfigHandle)")
+        );
         assert!(!interface.contains("%template(example)"));
     }
 

@@ -83,10 +83,10 @@
 //! The config struct **must** have a field named exactly ``runtime`` of type
 //! [`BskModuleRuntime`]. It mirrors the ``SysModel`` fields
 //! (``moduleID``, ``ModelTag``, ``CallCounts``, ``RNGSeed``). This field is a
-//! temporary compatibility requirement for the configuration-pointer
-//! lifecycle ABI; ``build.rs`` panics if it is missing. Module logic receives
-//! the same data through [`BskContext`] and should use that borrowed interface
-//! instead of reading ``self.runtime``.
+//! temporary configuration-view compatibility requirement; ``build.rs``
+//! panics if it is missing. Module logic receives the same data through
+//! [`BskContext`] and should use that borrowed interface instead of reading
+//! ``self.runtime``.
 //!
 //! # Messaging
 //!
@@ -247,23 +247,6 @@ impl BskModuleRuntime {
         Self::__new()
     }
 
-    /// Copy a runtime snapshot supplied through the generated lifecycle ABI.
-    ///
-    /// # Safety
-    ///
-    /// `runtime` must be non-null, properly aligned, and point to a valid
-    /// [`BskModuleRuntime`] for the duration of this call.
-    #[doc(hidden)]
-    pub unsafe fn __copy_from_raw(runtime: *const Self) -> Self {
-        let runtime = unsafe { runtime.as_ref() }
-            .expect("bsk-build: lifecycle runtime pointer must not be null");
-        Self {
-            module_id: runtime.module_id,
-            model_tag: runtime.model_tag,
-            call_counts: runtime.call_counts,
-            rng_seed: runtime.rng_seed,
-        }
-    }
 }
 
 /// Raw C-compatible storage behind [`BskContext`].
@@ -336,26 +319,23 @@ impl<'a> BskContext<'a> {
         }
     }
 
-    /// Borrow the separate runtime and logger arguments used by the
-    /// transitional configuration-pointer lifecycle ABI.
+    /// Copy the runtime snapshot into the transitional configuration field.
     ///
-    /// # Safety
-    ///
-    /// `runtime` must satisfy the requirements of
-    /// [`BskModuleRuntime::__copy_from_raw`], and `logger` must either be null
-    /// or remain valid for the returned value's full lifetime.
+    /// Module logic must use this context instead of the copied field because
+    /// the model-tag pointer is borrowed only for the current lifecycle call.
     #[doc(hidden)]
-    pub unsafe fn __from_runtime(
-        runtime: *const BskModuleRuntime,
-        logger: *mut BSKLogger,
-    ) -> Self {
-        let runtime = unsafe { runtime.as_ref() }
-            .expect("bsk-build: lifecycle runtime pointer must not be null");
-        Self {
-            runtime,
-            logger: BskLoggerRef::from_raw(logger),
+    pub fn __runtime_snapshot(&self) -> BskModuleRuntime {
+        BskModuleRuntime {
+            module_id: self.runtime.module_id,
+            model_tag: self.runtime.model_tag,
+            call_counts: self.runtime.call_counts,
+            rng_seed: self.runtime.rng_seed,
         }
     }
+
+    /// Return the raw logger pointer for generated message-port checks.
+    #[doc(hidden)]
+    pub const fn __logger_ptr(&self) -> *mut BSKLogger { self.logger.raw }
 }
 
 #[cfg(all(test, target_pointer_width = "64"))]

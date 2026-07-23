@@ -59,8 +59,6 @@ fn expand_module(input: ItemStruct) -> syn::Result<TokenStream2> {
     let create_function = format_ident!("Create_{module_name}");
     let config_function = format_ident!("Config_{module_name}");
     let destroy_function = format_ident!("Destroy_{module_name}");
-    let new_function = format_ident!("New_{module_name}");
-    let delete_function = format_ident!("Delete_{module_name}");
     let self_init_function = format_ident!("SelfInit_{module_name}");
     let reset_function = format_ident!("Reset_{module_name}");
     let update_function = format_ident!("Update_{module_name}");
@@ -81,19 +79,7 @@ fn expand_module(input: ItemStruct) -> syn::Result<TokenStream2> {
         })
         .collect();
 
-    let logger = fields
-        .iter()
-        .find(|field| {
-            field
-                .ident
-                .as_ref()
-                .is_some_and(|ident| ident == "bskLogger")
-        })
-        .and_then(|field| field.ident.as_ref())
-        .map_or_else(
-            || quote!(::core::ptr::null_mut()),
-            |field_name| quote!((*config).#field_name),
-        );
+    let logger = quote!(context.__logger_ptr());
 
     let input_names: Vec<&syn::Ident> = input_fields.iter().map(|field| &field.name).collect();
     let input_types: Vec<TokenStream2> = input_fields
@@ -176,7 +162,7 @@ fn expand_module(input: ItemStruct) -> syn::Result<TokenStream2> {
         quote! {
             (*config).#field_name.write(
                 &outputs.#field_name,
-                (*config).runtime.module_id(),
+                context.module_id(),
                 current_sim_nanos,
             );
         }
@@ -186,7 +172,7 @@ fn expand_module(input: ItemStruct) -> syn::Result<TokenStream2> {
         quote! {
             (*config).#field_name.write(
                 &outputs.#field_name,
-                (*config).runtime.module_id(),
+                context.module_id(),
                 current_sim_nanos,
             );
         }
@@ -221,11 +207,7 @@ fn expand_module(input: ItemStruct) -> syn::Result<TokenStream2> {
             _private: [u8; 0],
         }
 
-        // Keep the configuration as the first field while the legacy
-        // configuration-pointer lifecycle ABI coexists with the opaque handle.
-        // `#[repr(C)]` guarantees both pointers have the same address.
         #[doc(hidden)]
-        #[repr(C)]
         struct #instance_type {
             config: #config_type,
             state: <#config_type as ::bsk_build::BskModule>::State,
@@ -288,34 +270,17 @@ fn expand_module(input: ItemStruct) -> syn::Result<TokenStream2> {
             }
         }
 
-        // Transitional aliases used by the current C++ wrapper. They can be
-        // removed after the wrapper owns the opaque handle directly.
-        #[cfg(not(test))]
-        #[allow(non_snake_case)]
-        #[no_mangle]
-        pub extern "C-unwind" fn #new_function() -> *mut #config_type {
-            let handle = #create_function();
-            unsafe { #config_function(handle) }
-        }
-
-        #[cfg(not(test))]
-        #[allow(non_snake_case)]
-        #[no_mangle]
-        pub unsafe extern "C-unwind" fn #delete_function(config: *mut #config_type) {
-            #destroy_function(config.cast::<#handle_type>());
-        }
-
         #[cfg(not(test))]
         #[allow(non_snake_case)]
         #[no_mangle]
         pub unsafe extern "C-unwind" fn #self_init_function(
-            config: *mut #config_type,
-            runtime: *const ::bsk_build::BskModuleRuntime,
+            handle: *mut #handle_type,
+            context: *const ::bsk_build::BskModuleContext,
         ) {
-            let instance = &mut *config.cast::<#instance_type>();
+            let instance = &mut *handle.cast::<#instance_type>();
             let config = &mut instance.config;
-            (*config).runtime =
-                ::bsk_build::BskModuleRuntime::__copy_from_raw(runtime);
+            let context = ::bsk_build::BskContext::__from_raw(context);
+            (*config).runtime = context.__runtime_snapshot();
             #(#initialize_outputs)*
         }
 
@@ -323,16 +288,14 @@ fn expand_module(input: ItemStruct) -> syn::Result<TokenStream2> {
         #[allow(non_snake_case)]
         #[no_mangle]
         pub unsafe extern "C-unwind" fn #reset_function(
-            config: *mut #config_type,
+            handle: *mut #handle_type,
             current_sim_nanos: u64,
-            runtime: *const ::bsk_build::BskModuleRuntime,
+            context: *const ::bsk_build::BskModuleContext,
         ) {
-            let instance = &mut *config.cast::<#instance_type>();
+            let instance = &mut *handle.cast::<#instance_type>();
             let config = &mut instance.config;
-            (*config).runtime =
-                ::bsk_build::BskModuleRuntime::__copy_from_raw(runtime);
-            let context =
-                ::bsk_build::BskContext::__from_runtime(runtime, #logger);
+            let context = ::bsk_build::BskContext::__from_raw(context);
+            (*config).runtime = context.__runtime_snapshot();
             #(#validate_inputs)*
             let outputs: #outputs_type =
                 <#config_type as ::bsk_build::BskModule>::reset(
@@ -348,16 +311,14 @@ fn expand_module(input: ItemStruct) -> syn::Result<TokenStream2> {
         #[allow(non_snake_case)]
         #[no_mangle]
         pub unsafe extern "C-unwind" fn #update_function(
-            config: *mut #config_type,
+            handle: *mut #handle_type,
             current_sim_nanos: u64,
-            runtime: *const ::bsk_build::BskModuleRuntime,
+            context: *const ::bsk_build::BskModuleContext,
         ) {
-            let instance = &mut *config.cast::<#instance_type>();
+            let instance = &mut *handle.cast::<#instance_type>();
             let config = &mut instance.config;
-            (*config).runtime =
-                ::bsk_build::BskModuleRuntime::__copy_from_raw(runtime);
-            let context =
-                ::bsk_build::BskContext::__from_runtime(runtime, #logger);
+            let context = ::bsk_build::BskContext::__from_raw(context);
+            (*config).runtime = context.__runtime_snapshot();
             let inputs: #inputs_type = #inputs_type {
                 #(#read_inputs,)*
             };
@@ -706,8 +667,6 @@ mod tests {
             "Create_",
             "Config_",
             "Destroy_",
-            "New_",
-            "Delete_",
             "SelfInit_",
             "Reset_",
             "Update_",
@@ -721,9 +680,14 @@ mod tests {
         assert!(expanded.contains("BskModuleRuntime :: __new"));
         assert!(expanded.contains("bskLogger : :: core :: default :: Default :: default"));
         assert!(expanded.contains("BskModule > :: init"));
-        assert!(expanded.contains("BskContext :: __from_runtime"));
+        assert!(expanded.contains("BskContext :: __from_raw"));
+        assert!(expanded.contains("BskModuleContext"));
+        assert!(expanded.contains("__runtime_snapshot"));
+        assert!(expanded.contains("__logger_ptr"));
         assert!(expanded.contains("Box :: into_raw"));
         assert!(expanded.contains("Box :: from_raw"));
+        assert!(!expanded.contains("New_"));
+        assert!(!expanded.contains("Delete_"));
         assert!(expanded.contains("BskModuleInput"));
         assert!(expanded.contains("struct ControllerInputs"));
         assert!(expanded.contains("struct ControllerOutputs"));

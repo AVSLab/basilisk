@@ -100,7 +100,7 @@
  *  ``SysModel`` fields (module ID, name, ...) for each lifecycle call.
  *  ``BskContext`` gives safe Rust module logic a borrowed view of that
  *  snapshot. The config's own ``runtime`` field is refreshed only as a
- *  temporary compatibility measure for the configuration-pointer ABI.
+ *  temporary compatibility measure for the public configuration view.
  *
  *  ``modelTag`` is a borrowed pointer valid only for the duration of the
  *  call. On the Rust side this is enforced by the compiler, not just this
@@ -123,8 +123,8 @@
  *  ``BskLoggerExt`` trait wraps those entry points as
  *  ``.debug()``/``.info()``/``.warning()``/``.bsk_error()`` methods.
  *  The raw ``bskLogger`` config field remains only for the transitional
- *  configuration-pointer lifecycle adapter. ``bsk-build``'s own generated
- *  "unconnected required input" check
+ *  configuration view; the shared wrapper borrows it into the lifecycle
+ *  context. ``bsk-build``'s own generated "unconnected required input" check
  *  (see "Message port patterns" below) uses this identical path.
  *
  *  **Message port patterns**
@@ -250,9 +250,8 @@ typedef struct BskRustModuleRuntime {
  *  ``runtime.modelTag`` borrows the wrapper's ``SysModel::ModelTag`` storage,
  *  while ``bskLogger`` refers to the wrapper's logging object.
  *
- *  This context becomes the lifecycle argument when Rust modules move to the
- *  opaque-handle ABI. It is defined independently first so its C and Rust
- *  layouts and safe Rust accessors can be verified before that transition.
+ *  The shared C++ wrapper constructs this value immediately before each
+ *  opaque-handle lifecycle call.
  */
 typedef struct BskRustModuleContext {
     BskRustModuleRuntime runtime; /*!< [-] borrowed SysModel runtime snapshot */
@@ -275,29 +274,19 @@ typedef struct BskRustModuleContext {
  *      Runs the config and internal state's Rust drop glue and returns the
  *      complete allocation to Rust.
  *
- *  ``SelfInit_name(cfg, runtime)``
- *      Called once at task registration.  The generated lifecycle code copies
- *      ``*runtime`` into ``cfg->runtime`` and initialises output message ports
- *      (``*_C_init``).
+ *  ``SelfInit_name(handle, context)``
+ *      Called once at task registration. The generated lifecycle code
+ *      initialises output message ports (``*_C_init``).
  *
- *  ``Reset_name(cfg, currentSimNanos, runtime)``
- *      Called before the first step and on explicit resets.  The generated
- *      lifecycle code copies ``*runtime`` into ``cfg->runtime``, checks
- *      required input connectivity, then calls ``BskModule::reset``.
+ *  ``Reset_name(handle, currentSimNanos, context)``
+ *      Called before the first step and on explicit resets. The generated
+ *      lifecycle code checks required input connectivity, then calls
+ *      ``BskModule::reset`` with a safe borrowed context.
  *
- *  ``Update_name(cfg, currentSimNanos, runtime)``
- *      Called every simulation step.  The generated lifecycle code copies
- *      ``*runtime`` into ``cfg->runtime``, reads all input messages, calls
- *      ``BskModule::update``, and writes all output messages.
- *
- *  ``New_name()``
- *      Transitional alias that creates the Rust instance and returns its
- *      config view for the current C++ wrapper.
- *
- *  ``Delete_name(cfg)``
- *      Transitional alias that recovers and destroys the owning Rust instance
- *      from the config view. Never pair a pointer from ``New_name`` with C++
- *      ``delete``.
+ *  ``Update_name(handle, currentSimNanos, context)``
+ *      Called every simulation step. The generated lifecycle code reads all
+ *      input messages, calls ``BskModule::update`` with a safe borrowed
+ *      context, and writes all output messages.
  *
  *  \p configType must be declared before this macro and must have a field
  *  named ``runtime`` of type ``BskRustModuleRuntime`` somewhere in it (any
@@ -311,11 +300,9 @@ typedef struct BskRustModuleContext {
     handleType *Create_##name(void); \
     configType *Config_##name(handleType *handle); \
     void Destroy_##name(handleType *handle); \
-    configType *New_##name(void); \
-    void Delete_##name(configType *configData); \
-    void SelfInit_##name(configType *configData, const BskRustModuleRuntime *runtime); \
-    void Reset_##name(configType *configData, uint64_t currentSimNanos, const BskRustModuleRuntime *runtime); \
-    void Update_##name(configType *configData, uint64_t currentSimNanos, const BskRustModuleRuntime *runtime); \
+    void SelfInit_##name(handleType *handle, const BskRustModuleContext *context); \
+    void Reset_##name(handleType *handle, uint64_t currentSimNanos, const BskRustModuleContext *context); \
+    void Update_##name(handleType *handle, uint64_t currentSimNanos, const BskRustModuleContext *context); \
     BSK_RUST_EXTERN_C_END
 
 #endif /* BSK_RUST_MODULE_H */

@@ -44,6 +44,15 @@ class _ExpectedBskModuleRuntime(ctypes.Structure):
     ]
 
 
+class _ExpectedBskModuleContext(ctypes.Structure):
+    """Mirror the generated C ``BskRustModuleContext`` ABI."""
+
+    _fields_ = [
+        ("runtime", _ExpectedBskModuleRuntime),
+        ("bsk_logger", ctypes.c_void_p),
+    ]
+
+
 class _ExpectedMsgHeader(ctypes.Structure):
     """Mirror the C message header embedded in every message port."""
 
@@ -109,6 +118,7 @@ def test_rust_module_template_python_api():
         assert not hasattr(module, internal_name)
         assert not hasattr(rustModuleTemplate.RustModuleTemplateConfig, internal_name)
     assert not hasattr(rustModuleTemplate, "RustModuleTemplateState")
+    assert not hasattr(rustModuleTemplate, "RustModuleTemplateConfigHandle")
 
     with pytest.raises(AttributeError, match="No constructor defined"):
         rustModuleTemplate.RustModuleTemplateConfig()
@@ -118,8 +128,6 @@ def test_rust_module_template_python_api():
         "Create_rustModuleTemplate",
         "Config_rustModuleTemplate",
         "Destroy_rustModuleTemplate",
-        "New_rustModuleTemplate",
-        "Delete_rustModuleTemplate",
         "SelfInit_rustModuleTemplate",
         "Reset_rustModuleTemplate",
         "Update_rustModuleTemplate",
@@ -139,6 +147,11 @@ def test_rust_module_template_abi_layout():
     assert _ExpectedBskModuleRuntime.call_counts.offset == 16
     assert _ExpectedBskModuleRuntime.rng_seed.offset == 24
 
+    assert ctypes.sizeof(_ExpectedBskModuleContext) == 40
+    assert ctypes.alignment(_ExpectedBskModuleContext) == 8
+    assert _ExpectedBskModuleContext.runtime.offset == 0
+    assert _ExpectedBskModuleContext.bsk_logger.offset == 32
+
     assert ctypes.sizeof(_ExpectedCModuleTemplatePort) == 72
     assert ctypes.alignment(_ExpectedCModuleTemplatePort) == 8
     assert _ExpectedCModuleTemplatePort.header.offset == 0
@@ -155,44 +168,6 @@ def test_rust_module_template_abi_layout():
     assert _ExpectedRustModuleTemplateConfig.bsk_logger.offset == 184
 
     extension = ctypes.CDLL(rustModuleTemplate._rustModuleTemplate.__file__)
-    new_config = extension.New_rustModuleTemplate
-    new_config.argtypes = []
-    new_config.restype = ctypes.c_void_p
-    delete_config = extension.Delete_rustModuleTemplate
-    delete_config.argtypes = [ctypes.c_void_p]
-    delete_config.restype = None
-
-    config_address = new_config()
-    assert config_address is not None
-    try:
-        raw_config = _ExpectedRustModuleTemplateConfig.from_address(config_address)
-        assert raw_config.dummy == 0.0
-        raw_config.dummy = -3.5  # [-]
-        assert raw_config.dummy == -3.5
-        assert raw_config.bsk_logger is None
-    finally:
-        delete_config(config_address)
-
-
-def test_rust_module_template_rust_owned_instance_lifecycle():
-    """Exercise opaque instance ownership and its transitional config aliases."""
-    extension = ctypes.CDLL(rustModuleTemplate._rustModuleTemplate.__file__)
-    expected_symbols = (
-        "Create_rustModuleTemplate",
-        "Config_rustModuleTemplate",
-        "Destroy_rustModuleTemplate",
-        "New_rustModuleTemplate",
-        "Delete_rustModuleTemplate",
-        "SelfInit_rustModuleTemplate",
-        "Reset_rustModuleTemplate",
-        "Update_rustModuleTemplate",
-    )
-    for symbol in expected_symbols:
-        assert getattr(extension, symbol) is not None
-    for obsolete_symbol in ("Init_rustModuleTemplate", "Drop_rustModuleTemplate"):
-        with pytest.raises(AttributeError):
-            getattr(extension, obsolete_symbol)
-
     create_instance = extension.Create_rustModuleTemplate
     create_instance.argtypes = []
     create_instance.restype = ctypes.c_void_p
@@ -210,27 +185,83 @@ def test_rust_module_template_rust_owned_instance_lifecycle():
         assert config_address is not None
         raw_config = _ExpectedRustModuleTemplateConfig.from_address(config_address)
         assert raw_config.dummy == 0.0
+        raw_config.dummy = -3.5  # [-]
+        assert raw_config.dummy == -3.5
         assert raw_config.bsk_logger is None
     finally:
         destroy_instance(handle)
 
-    # Retain the legacy config-pointer path until RustWrapper owns the opaque
-    # handle directly in the next migration step.
-    new_config = extension.New_rustModuleTemplate
-    new_config.argtypes = []
-    new_config.restype = ctypes.c_void_p
-    delete_config = extension.Delete_rustModuleTemplate
-    delete_config.argtypes = [ctypes.c_void_p]
-    delete_config.restype = None
 
-    config_address = new_config()
-    assert config_address is not None
+def test_rust_module_template_rust_owned_instance_lifecycle():
+    """Exercise opaque instance ownership and handle-based lifecycle calls."""
+    extension = ctypes.CDLL(rustModuleTemplate._rustModuleTemplate.__file__)
+    expected_symbols = (
+        "Create_rustModuleTemplate",
+        "Config_rustModuleTemplate",
+        "Destroy_rustModuleTemplate",
+        "SelfInit_rustModuleTemplate",
+        "Reset_rustModuleTemplate",
+        "Update_rustModuleTemplate",
+    )
+    for symbol in expected_symbols:
+        assert getattr(extension, symbol) is not None
+    for obsolete_symbol in (
+        "Init_rustModuleTemplate",
+        "Drop_rustModuleTemplate",
+        "New_rustModuleTemplate",
+        "Delete_rustModuleTemplate",
+    ):
+        with pytest.raises(AttributeError):
+            getattr(extension, obsolete_symbol)
+
+    create_instance = extension.Create_rustModuleTemplate
+    create_instance.argtypes = []
+    create_instance.restype = ctypes.c_void_p
+    get_config = extension.Config_rustModuleTemplate
+    get_config.argtypes = [ctypes.c_void_p]
+    get_config.restype = ctypes.c_void_p
+    destroy_instance = extension.Destroy_rustModuleTemplate
+    destroy_instance.argtypes = [ctypes.c_void_p]
+    destroy_instance.restype = None
+    self_init = extension.SelfInit_rustModuleTemplate
+    self_init.argtypes = [
+        ctypes.c_void_p,
+        ctypes.POINTER(_ExpectedBskModuleContext),
+    ]
+    self_init.restype = None
+    reset = extension.Reset_rustModuleTemplate
+    reset.argtypes = [
+        ctypes.c_void_p,
+        ctypes.c_uint64,
+        ctypes.POINTER(_ExpectedBskModuleContext),
+    ]
+    reset.restype = None
+
+    handle = create_instance()
+    assert handle is not None
     try:
+        config_address = get_config(handle)
+        assert config_address is not None
         raw_config = _ExpectedRustModuleTemplateConfig.from_address(config_address)
         assert raw_config.dummy == 0.0
         assert raw_config.bsk_logger is None
+        raw_config.dummy = 42.0  # [-]
+        context = _ExpectedBskModuleContext(
+            runtime=_ExpectedBskModuleRuntime(
+                module_id=7,
+                model_tag=None,
+                call_counts=0,
+                rng_seed=1234,
+            ),
+            bsk_logger=None,
+        )
+        self_init(handle, ctypes.byref(context))
+        reset(handle, 10, ctypes.byref(context))  # [ns]
+        assert raw_config.dummy == 0.0
+        assert raw_config.runtime.module_id == 7
+        assert raw_config.runtime.rng_seed == 1234
     finally:
-        delete_config(config_address)
+        destroy_instance(handle)
 
 
 @pytest.mark.parametrize("connect_input", [False, True])
