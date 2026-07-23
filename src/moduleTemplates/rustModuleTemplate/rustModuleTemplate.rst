@@ -7,7 +7,9 @@ Executive Summary
 
 This basic Rust Basilisk module can be copied as a starting point for a new
 Rust module. It reads an optional input message, increments the first element,
-and writes the result to its output message.
+and writes the result to its output message. Its implementation is in
+``rustModuleTemplate.rs`` beside this documentation file, following the normal
+Basilisk module naming convention.
 
 Message Connection Descriptions
 -------------------------------

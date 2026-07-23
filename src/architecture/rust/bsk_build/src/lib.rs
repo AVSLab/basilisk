@@ -8,15 +8,16 @@
 
 //! Build-script helpers for Basilisk Rust modules.
 //!
-//! A BSK Rust module's ``build.rs`` should contain exactly:
+//! A conventionally laid-out Cargo crate's ``build.rs`` can contain:
 //!
 //! ```rust,ignore
 //! fn main() { bsk_build::generate(); }
 //! ```
 //!
-//! ``generate()`` scans every ``*.rs`` file under ``src/`` of the calling
-//! crate for a ``#[repr(C)]`` struct with an ``impl BskModule for <Type>``
-//! block and emits three build artifacts:
+//! An in-tree BSK module keeps its crate root beside ``Cargo.toml`` and calls
+//! ``generate_from("myModule.rs")`` instead. Both functions scan the selected
+//! source path for a ``#[repr(C)]`` struct with an
+//! ``impl BskModule for <Type>`` block and emit three build artifacts:
 //!
 //! * **``<ModuleName>.h``** in ``$OUT_DIR`` by default — C header for
 //!   CMake/SWIG, generated from the Rust struct.  Set ``BSK_HEADER_PATH`` to
@@ -107,8 +108,8 @@
 //!
 //! # Nested structs
 //!
-//! A field whose type is another `#[repr(C)]` struct defined in the same
-//! crate's `src/` (by value, not a pointer) is supported: `bsk-build` finds
+//! A field whose type is another `#[repr(C)]` struct defined in the configured
+//! source path (by value, not a pointer) is supported: `bsk-build` finds
 //! it the same way it finds the config struct, generates its own C
 //! `typedef struct` ahead of the config struct's, and lets Python read and
 //! write it field-by-field through SWIG like any other struct member —
@@ -139,8 +140,9 @@
 //!
 //! # Add `bsk-build` as a plain dependency too
 //!
-//! Besides the generator itself ([`generate()`], called from `build.rs`,
-//! gated behind the opt-in `codegen` feature), this crate also has an
+//! Besides the generator itself ([`generate()`] or [`generate_from()`], called
+//! from `build.rs` and gated behind the opt-in `codegen` feature), this crate
+//! also has an
 //! always-available, `syn`/`walkdir`-free surface for module code:
 //! [`bsk_module!()`] (includes the shim this crate just generated),
 //! [`BskModule`], [`BskModuleRuntime`], [`MsgReader`]/[`MsgWriter`], and
@@ -501,7 +503,7 @@ impl BskLoggerExt for *mut BSKLogger {
 }
 
 #[cfg(feature = "codegen")]
-pub use codegen::generate;
+pub use codegen::{generate, generate_from};
 
 #[cfg(feature = "codegen")]
 mod codegen;

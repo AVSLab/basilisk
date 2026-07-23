@@ -49,12 +49,14 @@ module; no hand-written C header or SWIG interface file is needed:
     src/fswAlgorithms/<category>/myModule/
     |-- Cargo.toml
     |-- build.rs
-    |-- src/
-    |   `-- lib.rs
+    |-- myModule.rs
+    |-- myModule.rst
     `-- _UnitTest/
         `-- test_myModule.py
 
-The module target name is the directory containing ``Cargo.toml``. The
+The Rust source and reStructuredText documentation names match the module
+directory, following the same convention as C, C++, and Python Basilisk
+modules. The module target name is the directory containing ``Cargo.toml``. The
 ``[package.metadata.basilisk]`` marker shown below distinguishes modules from
 Rust support crates. Basilisk generates the C header and SWIG interface while
 building the crate.
@@ -76,6 +78,7 @@ crates. From the layout above, ``Cargo.toml`` contains:
     module = true
 
     [lib]
+    path = "myModule.rs"
     crate-type = ["staticlib"]
 
     [dependencies]
@@ -85,16 +88,22 @@ crates. From the layout above, ``Cargo.toml`` contains:
     [build-dependencies]
     bsk-build = { path = "../../../architecture/rust/bsk_build", features = ["codegen"] }
 
-The path to each crate is relative to the module directory. Adjust it if the
-module is placed elsewhere in the source tree.
+The ``[lib] path`` selects the Basilisk-style module source instead of Cargo's
+default ``src/lib.rs``. The path to each support crate is relative to the
+module directory. Adjust those dependency paths if the module is placed
+elsewhere in the source tree.
 
 The ``build.rs`` file generates the C and SWIG bindings:
 
 .. code-block:: rust
 
     fn main() {
-        bsk_build::generate();
+        bsk_build::generate_from("myModule.rs");
     }
+
+Keep the source path in ``build.rs`` consistent with ``[lib] path``. The
+explicit path lets ``bsk-build`` support both the in-tree Basilisk layout and
+the conventional ``src/lib.rs`` layout used by independent Cargo crates.
 
 Register the Crate in the Workspace
 -----------------------------------
@@ -146,8 +155,9 @@ Before submitting the module, run the complete Rust workspace test suite:
 Write the Module
 ----------------
 
-Import the support types from ``bsk-messages``, define a ``#[repr(C)]``
-configuration struct, and implement ``BskModule``:
+Write the implementation in ``myModule.rs``. Import the support types from
+``bsk-messages``, define a ``#[repr(C)]`` configuration struct, and implement
+``BskModule``:
 
 .. code-block:: rust
 
@@ -226,6 +236,31 @@ After adding the dependency shown above, import types with
 ``bsk_messages::AttGuidMsg``.
 
 Custom message types require their normal Basilisk ``*_C`` C-interface header.
+
+Documenting Rust Source
+-----------------------
+
+Keep the user-facing module description in ``myModule.rst``. This page is
+included in the main Basilisk Sphinx documentation in the same way as the
+documentation for C and C++ modules.
+
+Use Rust documentation comments for the source API: ``//!`` documents the
+crate or containing module, while ``///`` documents the following struct,
+field, function, or method. Rust's standard documentation generator is
+`rustdoc <https://doc.rust-lang.org/rustdoc/>`__, normally invoked through
+`cargo doc <https://doc.rust-lang.org/cargo/commands/cargo-doc.html>`__:
+
+.. code-block:: bash
+
+    cargo doc --workspace --no-deps --all-features --locked --manifest-path src/Cargo.toml
+
+``cargo doc`` generates searchable HTML with item pages and source links. The
+main Basilisk Sphinx build does not currently embed that HTML. ``bsk-build``
+does copy ``///`` comments from configuration fields and Python-exposed
+configuration methods into the generated C header, preserving their
+descriptions at the generated C/SWIG boundary. Native Rust types and lifecycle
+implementations should be documented and reviewed with ``rustdoc`` rather than
+Doxygen.
 
 Testing
 -------

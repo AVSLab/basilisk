@@ -75,8 +75,8 @@ created in the CMake build tree, not in the crate source directory:
     `-- myModule/                   # Rust crate
         |-- Cargo.toml
         |-- build.rs
-        |-- src/
-        |   `-- lib.rs               # Configuration struct and module implementation
+        |-- myModule.rs             # Configuration struct and module implementation
+        |-- myModule.rst            # Basilisk module documentation
         `-- _UnitTest/
             `-- test_myModule.py
 
@@ -84,8 +84,12 @@ created in the CMake build tree, not in the crate source directory:
 
     // build.rs
     fn main() {
-        bsk_build::generate();
+        bsk_build::generate_from("myModule.rs");
     }
+
+The Rust source and reStructuredText documentation names match the module
+directory, following the standard Basilisk module layout. The source path in
+``build.rs`` must match the library path in ``Cargo.toml``.
 
 Add ``bsk-build`` as both a normal and build dependency. Enable its
 ``codegen`` feature for the build dependency:
@@ -95,6 +99,10 @@ on crates.io. Depend on the Basilisk repository through Cargo's ``git``
 support:
 
 .. code-block:: toml
+
+    [lib]
+    path = "myModule.rs"
+    crate-type = ["staticlib"]
 
     [dependencies]
     bsk-messages = { git = "https://github.com/AVSLab/basilisk", tag = "v2.X.Y" }

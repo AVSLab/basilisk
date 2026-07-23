@@ -47,6 +47,9 @@ Module Programming
 
 For a Rust module:
 
+- Does the module implementation use the ``<moduleName>.rs`` root source
+  layout, with matching ``[lib] path`` and ``bsk_build::generate_from()``
+  entries?
 - Is its crate listed in the ``src/Cargo.toml`` workspace members?
 - Does its ``Cargo.toml`` contain the
   ``[package.metadata.basilisk]`` ``module = true`` marker?

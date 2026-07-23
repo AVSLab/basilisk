@@ -37,10 +37,10 @@ pub(super) struct SourceAsts {
 }
 
 impl SourceAsts {
-    pub(super) fn load(src_dir: &Path) -> Self {
+    pub(super) fn load(source_path: &Path) -> Self {
         let mut files = Vec::new();
         let mut diagnostics = Vec::new();
-        for entry in WalkDir::new(src_dir)
+        for entry in WalkDir::new(source_path)
             .follow_links(false)
             .into_iter()
             .filter_map(|entry| entry.ok())
@@ -495,8 +495,8 @@ fn decompose_type_inner(
                  Supported field types are: Rust primitives (f64, i32, \
                  bool, ...), `MsgReader<T>`/`MsgWriter<T>` message ports, \
                  `Option<Box<T>>` owned heap state, `*mut`/`*const` \
-                 pointers, or a `#[repr(C)]` struct defined in this crate's \
-                 `src/`.\n\
+                 pointers, or a `#[repr(C)]` struct defined in the configured \
+                 Rust source path.\n\
                  If `{field_ctx}` needs to hold `{s}` specifically, it \
                  can't be represented in the generated C header — store it \
                  behind `Option<Box<T>>` instead (see \"Owned heap state\" \
@@ -510,8 +510,8 @@ fn decompose_type_inner(
 }
 
 /// Resolves a bare (by-value) type name that isn't a primitive or special
-/// FFI type: it must be a `#[repr(C)]` struct defined in this crate's
-/// `src/` (see "Nested structs" in the module docs). Recursively extracts
+/// FFI type: it must be a `#[repr(C)]` struct defined in the configured
+/// Rust source path (see "Nested structs" in the module docs). Recursively extracts
 /// and registers its fields in `ctx.nested`, in dependency order, the first
 /// time it's seen; later references just reuse the cached entry.
 ///
@@ -571,11 +571,11 @@ fn resolve_nested_struct(name: &str, ctx: &mut NestedCtx, field_ctx: &str) -> Op
              Supported field types are: Rust primitives (f64, i32, bool, \
              ...), `MsgReader<T>`/`MsgWriter<T>` message ports, \
              `Option<Box<T>>` owned heap state, `*mut`/`*const` pointers, or \
-             another `#[repr(C)]` struct defined in this crate's `src/`.\n\
+             another `#[repr(C)]` struct defined in the configured Rust source path.\n\
              `{name}` matched none of these. If you meant to reference a \
              struct defined elsewhere in `{field_ctx}`'s crate, check that \
              it's spelled correctly and annotated `#[repr(C)]` — bsk-build \
-             only looks for `#[repr(C)]` structs under this crate's `src/`."
+             only looks for `#[repr(C)]` structs in the configured Rust source path."
                 ),
             );
             return None;
@@ -584,8 +584,8 @@ fn resolve_nested_struct(name: &str, ctx: &mut NestedCtx, field_ctx: &str) -> Op
             ctx.error(
                 field_ctx,
                 format!(
-                    "has type `{name}`, a struct defined in \
-             this crate's `src/`, but `{name}` is missing `#[repr(C)]`.\n\
+                    "has type `{name}`, a struct defined in the configured \
+             Rust source path, but `{name}` is missing `#[repr(C)]`.\n\
              Add `#[repr(C)]` immediately above `pub struct {name}`. \
              By-value nested structs are included in the generated C ABI and \
              therefore require an explicit C-compatible layout."
@@ -730,6 +730,25 @@ mod tests {
             .starts_with("could not parse Rust source:"));
 
         std::fs::remove_dir_all(test_dir).expect("test source directory must be removed");
+    }
+
+    #[test]
+    fn source_ast_cache_accepts_a_single_source_file() {
+        let test_file = std::env::temp_dir().join(format!(
+            "bsk-build-single-source-{}.rs",
+            std::process::id()
+        ));
+        std::fs::write(
+            &test_file,
+            "#[repr(C)] pub struct SingleSourceConfig { pub value: f64 }",
+        )
+        .expect("test source must be written");
+
+        let source_asts = SourceAsts::load(&test_file);
+        assert_eq!(source_asts.files.len(), 1);
+        assert!(source_asts.diagnostics.is_empty());
+
+        std::fs::remove_file(test_file).expect("test source file must be removed");
     }
 
     #[test]

@@ -22,7 +22,7 @@
 //! * `render_header` / `render_shim` / `render_swig` — the three build
 //!   artifacts' renderers.
 
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 mod discovery;
 mod methods;
@@ -42,28 +42,35 @@ use render_shim::render_shim;
 use render_swig::render_swig_interface;
 use types::{panic_with_diagnostics, ConfigInfo, FieldInfo, NestedCtx};
 
-/// Run from a BSK Rust module's ``build.rs``.
+/// Generate bindings for a conventionally laid-out Cargo crate.
 ///
-/// Reads ``CARGO_MANIFEST_DIR`` and ``OUT_DIR`` from the environment (both
-/// are set by Cargo when running build scripts), finds the module's config
-/// struct via ``syn`` AST parsing, and writes the C header and shim. The
-/// header is written under ``OUT_DIR`` unless ``BSK_HEADER_PATH`` is set.
+/// This is equivalent to calling [`generate_from`] with ``"src"``.
 pub fn generate() {
+    generate_from("src");
+}
+
+/// Generate bindings from a Rust source file or directory.
+///
+/// ``source_path`` is resolved relative to ``CARGO_MANIFEST_DIR``. Pass the
+/// crate-root file for a Basilisk-style module layout, or a directory to scan
+/// all of its Rust files recursively. ``CARGO_MANIFEST_DIR`` and ``OUT_DIR``
+/// are set by Cargo when running build scripts.
+pub fn generate_from(source_path: impl AsRef<Path>) {
     let manifest_dir = PathBuf::from(
         std::env::var("CARGO_MANIFEST_DIR")
             .expect("bsk-build: CARGO_MANIFEST_DIR not set (is this running in build.rs?)"),
     );
     let out_dir = PathBuf::from(std::env::var("OUT_DIR").expect("bsk-build: OUT_DIR not set"));
+    let source_path = manifest_dir.join(source_path);
 
     // Tell Cargo to rerun if source files or this shared build library change.
-    println!("cargo:rerun-if-changed=src");
+    println!("cargo:rerun-if-changed={}", source_path.display());
     println!("cargo:rerun-if-changed=build.rs");
     println!("cargo:rerun-if-env-changed=BSK_INCLUDE_DIR");
     println!("cargo:rerun-if-env-changed=BSK_HEADER_PATH");
     println!("cargo:rerun-if-env-changed=BSK_INTERFACE_PATH");
 
-    let src_dir = manifest_dir.join("src");
-    let source_asts = SourceAsts::load(&src_dir);
+    let source_asts = SourceAsts::load(&source_path);
 
     // The `impl BskModule for <Type>` block is the *only* thing that marks a
     // struct as the module's config — no naming convention required.
@@ -80,7 +87,7 @@ pub fn generate() {
              \x20       type Outputs = (...);\n\
              \x20       fn update(&mut self, inputs: Self::Inputs, t: u64) -> Self::Outputs {{ … }}\n\
              \x20   }}\n",
-            src_dir.display()
+            source_path.display()
         )
     });
     let item_struct = match find_struct_by_name(&source_asts, &struct_name) {
@@ -89,8 +96,8 @@ pub fn generate() {
             "bsk-build: found `impl BskModule for {struct_name}`, but no \
              `#[repr(C)] pub struct {struct_name} {{ … }}` definition under {}.\n\
              The type implementing `BskModule` must be a `#[repr(C)]` struct \
-             defined in this crate's `src/`.",
-            src_dir.display()
+             defined in the configured Rust source path.",
+            source_path.display()
         ),
         Err(FindStructError::MissingReprC) => panic!(
             "bsk-build: found `struct {struct_name}`, which implements \

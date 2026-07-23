@@ -31,8 +31,8 @@ test_logger = []
 
 [dependencies]
 # syn: proper Rust AST parser (same technology cbindgen uses internally).
-# Used to find the *Config struct in any .rs file under src/, read its
-# fields and doc-comments, and produce the C header + shim.
+# Used to find the *Config struct in a module's configured Rust source path,
+# read its fields and doc-comments, and produce the C header + shim.
 syn  = { version = "2", features = ["full", "extra-traits"], optional = true }
 # walkdir: portable recursive directory scan to find *.rs source files.
 walkdir = { version = "2", optional = true }

@@ -15,5 +15,5 @@
 // OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 fn main() {
-    bsk_build::generate();
+    bsk_build::generate_from("rustModuleTemplate.rs");
 }

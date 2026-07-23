@@ -510,6 +510,16 @@ class fileCrawler():
 
         return os.path.isfile(os.path.join(src_path, module_name + ".rst"))
 
+    def _isCargoSourceDirectory(self, directory, file_paths):
+        """Return whether *directory* is a Cargo crate's internal source folder."""
+        if os.path.basename(os.path.normpath(directory)) != "src":
+            return False
+
+        return any(
+            os.path.basename(file_path) == "Cargo.toml"
+            for file_path in file_paths
+        )
+
     def writeModuleTitle(self, title_text, module_type=None):
         if module_type:
             title = f":module-type:`{module_type}` {title_text}"
@@ -733,6 +743,11 @@ class fileCrawler():
 
         # In the local folder, divvy up files and directories
         file_paths, dir_paths = self.seperateFilesAndDirs(paths_in_dir)
+        dir_paths = [
+            directory
+            for directory in dir_paths
+            if not self._isCargoSourceDirectory(directory, file_paths)
+        ]
 
         index_path = os.path.relpath(srcDir, officialSrc)
         if index_path == ".":

@@ -240,8 +240,10 @@ function(bsk_add_rust_module_sources)
   # downstream link step re-run automatically.
   # ------------------------------------------------------------------
   set(_dep_files "${_manifest}" "${_cargo_root_manifest}" "${_cargo_lock}")
-  # Also depend on all Rust source files so cmake re-runs cargo when they change.
-  file(GLOB_RECURSE _rust_sources "${_crate_dir}/src/*.rs")
+  # Also depend on all Rust source files in the module crate so CMake re-runs
+  # Cargo for either the standard src/ layout or a Basilisk-style root source.
+  file(GLOB_RECURSE _rust_sources CONFIGURE_DEPENDS "${_crate_dir}/*.rs")
+  list(FILTER _rust_sources EXCLUDE REGEX "/target/")
   list(APPEND _dep_files ${_rust_sources})
   # build.rs changes should also trigger a rebuild.
   if(EXISTS "${_crate_dir}/build.rs")
