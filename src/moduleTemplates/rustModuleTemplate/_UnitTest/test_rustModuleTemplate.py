@@ -85,37 +85,30 @@ class _ExpectedRustModuleTemplateConfig(ctypes.Structure):
 
 
 def test_rust_module_template_python_api():
-    """Freeze the Python-visible config fields and wrapper ownership contract."""
-    expected_fields = {"runtime", "dummy", "dataInMsg", "dataOutMsg", "bskLogger"}
-    expected_wrapper_methods = {"SelfInit", "Reset", "UpdateState", "getConfig"}
+    """Freeze the module-first Python API retained by the opaque-handle design."""
+    expected_fields = {"dummy", "dataInMsg", "dataOutMsg"}
+    expected_wrapper_methods = {"SelfInit", "Reset", "UpdateState"}
     expected_sys_model_fields = {"ModelTag", "moduleID", "CallCounts", "RNGSeed"}
 
     assert expected_fields.issubset(rustModuleTemplate.RustModuleTemplateConfig.__dict__)
     assert expected_fields.issubset(rustModuleTemplate.rustModuleTemplate.__dict__)
     assert expected_wrapper_methods.issubset(rustModuleTemplate.rustModuleTemplate.__dict__)
 
-    direct_wrapper = rustModuleTemplate.rustModuleTemplate()
-    assert direct_wrapper.thisown is True
-    assert direct_wrapper.getConfig().thisown is False
+    module = rustModuleTemplate.rustModuleTemplate()
+    assert module.thisown is True
+    assert not hasattr(module, "getConfig")
     for field in expected_sys_model_fields:
-        assert hasattr(direct_wrapper, field)
+        assert hasattr(module, field)
 
-    config = rustModuleTemplate.RustModuleTemplateConfig()
-    assert config.dummy == 0.0
-    config.dummy = 12.5  # [-]
-    assert config.dummy == 12.5
-    assert hasattr(config.dataInMsg, "subscribeTo")
-    assert hasattr(config.dataOutMsg, "recorder")
+    assert module.dummy == 0.0
+    module.dummy = 12.5  # [-]
+    assert module.dummy == 12.5
+    assert hasattr(module.dataInMsg, "subscribeTo")
+    assert hasattr(module.dataOutMsg, "recorder")
 
-    config_address = int(config.this)
-    wrapper = config.createWrapper()
-    wrapped_config = wrapper.getConfig()
-
-    assert config.thisown is False
-    assert wrapper.thisown is True
-    assert wrapped_config.thisown is False
-    assert int(wrapped_config.this) == config_address
-    assert wrapper.dummy == 12.5
+    with pytest.raises(AttributeError, match="No constructor defined"):
+        rustModuleTemplate.RustModuleTemplateConfig()
+    assert not hasattr(rustModuleTemplate.RustModuleTemplateConfig, "createWrapper")
 
     for symbol in (
         "New_rustModuleTemplate",
@@ -154,20 +147,24 @@ def test_rust_module_template_abi_layout():
     assert _ExpectedRustModuleTemplateConfig.data_out_msg.offset == 112
     assert _ExpectedRustModuleTemplateConfig.bsk_logger.offset == 184
 
-    config = rustModuleTemplate.RustModuleTemplateConfig()
-    data_in_msg = config.dataInMsg
-    data_out_msg = config.dataOutMsg
-    config_address = int(config.this)
+    extension = ctypes.CDLL(rustModuleTemplate._rustModuleTemplate.__file__)
+    new_config = extension.New_rustModuleTemplate
+    new_config.argtypes = []
+    new_config.restype = ctypes.c_void_p
+    delete_config = extension.Delete_rustModuleTemplate
+    delete_config.argtypes = [ctypes.c_void_p]
+    delete_config.restype = None
 
-    assert int(data_in_msg.this) - config_address == _ExpectedRustModuleTemplateConfig.data_in_msg.offset
-    assert int(data_out_msg.this) - config_address == _ExpectedRustModuleTemplateConfig.data_out_msg.offset
-
-    raw_config = _ExpectedRustModuleTemplateConfig.from_address(config_address)
-    config.dummy = 7.25  # [-]
-    assert raw_config.dummy == 7.25
-    raw_config.dummy = -3.5  # [-]
-    assert config.dummy == -3.5
-    assert raw_config.bsk_logger is None
+    config_address = new_config()
+    assert config_address is not None
+    try:
+        raw_config = _ExpectedRustModuleTemplateConfig.from_address(config_address)
+        assert raw_config.dummy == 0.0
+        raw_config.dummy = -3.5  # [-]
+        assert raw_config.dummy == -3.5
+        assert raw_config.bsk_logger is None
+    finally:
+        delete_config(config_address)
 
 
 def test_rust_module_template_rust_owned_config_lifecycle():

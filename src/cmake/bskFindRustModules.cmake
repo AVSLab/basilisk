@@ -119,6 +119,11 @@ function(generate_rust_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
       OUTFILE_DIR "${_out_dir}"
       OUTPUT_DIR  "${_out_dir}")
 
+    # UseSWIG does not discover files included by a generated interface.
+    # Re-run SWIG when the shared Rust wrapper template changes.
+    set_property(TARGET ${TARGET_NAME} APPEND PROPERTY SWIG_DEPENDS
+      "${CMAKE_SOURCE_DIR}/architecture/_GeneralModuleFiles/swig_c_wrap.i")
+
     # The SWIG compile step (which opens the header the .i %include-s) runs
     # before link and can race the Cargo build that generates that header on
     # a cold build; UseSWIG names this intermediate target

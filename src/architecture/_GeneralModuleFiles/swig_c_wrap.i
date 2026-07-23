@@ -63,7 +63,7 @@ class CWrapper : public SysModel {
     void Reset(uint64_t currentSimNanos){
         resetFun(this->config.get(), currentSimNanos, this->moduleID);};
 
-    // Allows accesing the elements of the config from the wrapper in Python
+    // Allows accessing the elements of the config from the wrapper in Python
     // Similar to how the smart pointers are implemented in SWIG
     TConfig* operator->() const { return this->config.get(); }
 
@@ -91,7 +91,6 @@ template <typename TConfig,
 class RustWrapper : public SysModel {
   public:
     RustWrapper() : config{newConfigFun(), deleteConfigFun} {};
-    RustWrapper(TConfig* config) : config{config, deleteConfigFun} {}; // We take ownership of config
 
     void SelfInit(){
         BskRustModuleRuntime runtime = this->makeRuntime();
@@ -105,11 +104,9 @@ class RustWrapper : public SysModel {
         BskRustModuleRuntime runtime = this->makeRuntime();
         resetFun(this->config.get(), currentSimNanos, &runtime);};
 
-    // Allows accesing the elements of the config from the wrapper in Python
+    // Allows accessing the elements of the config from the wrapper in Python
     // Similar to how the smart pointers are implemented in SWIG
     TConfig* operator->() const { return this->config.get(); }
-
-    TConfig& getConfig() { return *this->config.get(); }
 
   private:
     // modelTag points into this->ModelTag, which outlives the synchronous
@@ -233,14 +230,6 @@ class RustWrapper : public SysModel {
           T, uint64_t, const BskRustModuleRuntime*) {}
     %}
 
-    // RustWrapper takes ownership of a supplied Rust configuration. Keep this
-    // pythonappend body free of apostrophes and hash comment lines because
-    // SWIG macro expansion mis-parses them.
-    %pythonappend RustWrapper::RustWrapper %{
-        if (len(args)) > 0:
-            args[0].thisown = False
-    %}
-
     %template(moduleName) RustWrapper<
         configName,
         New_ ## moduleName,
@@ -248,19 +237,4 @@ class RustWrapper : public SysModel {
         Update_ ## moduleName,
         SelfInit_ ## moduleName,
         Reset_ ## moduleName>;
-
-    // Preserve the standard Basilisk Python module construction pattern while
-    // ensuring both operations use the Rust allocator.
-    %extend configName {
-      configName() {
-        return New_ ## moduleName();
-      }
-      ~configName() {
-        Delete_ ## moduleName($self);
-      }
-      %pythoncode %{
-        def createWrapper(self):
-            return moduleName(self)
-      %}
-    }
 %enddef

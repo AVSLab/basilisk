@@ -232,7 +232,8 @@ The generated Python module class, named after the CMake target, provides the
 
 The wrapper owns a separate Rust configuration object and exposes its
 parameters and message ports directly. Configure fields and connect messages
-through ``module``.
+through ``module``. The Python proxy for ``myModuleConfig`` is an
+implementation detail and cannot be constructed independently.
 
 Supported Configuration Fields
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -233,7 +233,8 @@ The generated wrapper, named after the module target, provides the Basilisk
 
 The wrapper owns a separate Rust configuration object and exposes its
 parameters and message ports directly. Configure fields and connect messages
-through ``module``.
+through ``module``. The Python proxy for ``myModuleConfig`` is an
+implementation detail and cannot be constructed independently.
 
 Built-in and Custom Messages
 ----------------------------
