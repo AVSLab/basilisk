@@ -34,6 +34,7 @@ from Basilisk.architecture.swig_common_model import *
 %include "swig_conly_data.i"
 %include "std_string.i"
 %include "std_vector.i"
+%include "std_pair.i"
 %include "swig_deprecated.i"
 
 %deprecated_function(
@@ -43,6 +44,7 @@ from Basilisk.architecture.swig_common_model import *
 )
 
 %template() std::vector<std::string>;
+%template() std::pair<long, long>;
 %naturalvar SpiceInterface::planetFrames;
 %ignore SpiceKernel;
 
