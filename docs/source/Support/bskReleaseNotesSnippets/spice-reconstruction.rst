@@ -1,0 +1,5 @@
+- Added opt-in ephemeris **reconstruction** to :ref:`spiceInterface`: each planet's position and orientation channels can independently reconstruct their state from a coarse grid of cached SPICE samples (or be disabled) instead of querying SPICE at the exact time on every call, cutting SPICE evaluations to roughly ``horizon / knotStep`` per channel. The default behavior is unchanged and bit-for-bit identical.
+- Added ``getPlanetSpiceQueryCount`` to :ref:`spiceInterface`, returning the ``{position, orientation}`` SPICE query counts accumulated over a run.
+- Added :ref:`scenarioSpiceReconstruction`, a lunar-flyby tutorial that trades SPICE queries for accuracy on the Moon's position and shows the region below the integrator error where the trade is free.
+- Added :ref:`scenarioVestaOrientation`, showing that a constant-rate spinner's orientation can be reconstructed exactly from a single SPICE query.
+- Added the :ref:`spiceReconstruction` guide covering when SPICE is a bottleneck and how to tune the reconstruction knobs.
