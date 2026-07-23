@@ -24,6 +24,8 @@
 
 use std::path::{Path, PathBuf};
 
+#[cfg(test)]
+mod compatibility;
 mod discovery;
 mod methods;
 mod optionality;

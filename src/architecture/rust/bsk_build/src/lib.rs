@@ -260,6 +260,22 @@ impl BskModuleRuntime {
     }
 }
 
+#[cfg(all(test, target_pointer_width = "64"))]
+mod runtime_abi_tests {
+    use super::BskModuleRuntime;
+    use core::mem::{align_of, offset_of, size_of};
+
+    #[test]
+    fn runtime_layout_matches_cpp_mirror() {
+        assert_eq!(size_of::<BskModuleRuntime>(), 32);
+        assert_eq!(align_of::<BskModuleRuntime>(), 8);
+        assert_eq!(offset_of!(BskModuleRuntime, module_id), 0);
+        assert_eq!(offset_of!(BskModuleRuntime, model_tag), 8);
+        assert_eq!(offset_of!(BskModuleRuntime, call_counts), 16);
+        assert_eq!(offset_of!(BskModuleRuntime, rng_seed), 24);
+    }
+}
+
 /// A Basilisk message value, e.g. ``AttGuidMsg`` or ``CmdTorqueBodyMsg``.
 ///
 /// Implemented once per Basilisk message type by ``bsk-messages`` (generated

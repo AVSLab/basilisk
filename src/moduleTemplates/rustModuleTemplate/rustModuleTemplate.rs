@@ -58,3 +58,20 @@ impl BskModule for RustModuleTemplateConfig {
 
 #[cfg(not(test))]
 bsk_build::bsk_module!();
+
+#[cfg(all(test, target_pointer_width = "64"))]
+mod tests {
+    use super::*;
+    use core::mem::{align_of, offset_of, size_of};
+
+    #[test]
+    fn config_abi_layout_matches_compatibility_baseline() {
+        assert_eq!(size_of::<RustModuleTemplateConfig>(), 192);
+        assert_eq!(align_of::<RustModuleTemplateConfig>(), 8);
+        assert_eq!(offset_of!(RustModuleTemplateConfig, runtime), 0);
+        assert_eq!(offset_of!(RustModuleTemplateConfig, dummy), 32);
+        assert_eq!(offset_of!(RustModuleTemplateConfig, dataInMsg), 40);
+        assert_eq!(offset_of!(RustModuleTemplateConfig, dataOutMsg), 112);
+        assert_eq!(offset_of!(RustModuleTemplateConfig, bskLogger), 184);
+    }
+}
