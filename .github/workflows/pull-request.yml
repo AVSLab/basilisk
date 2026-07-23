@@ -33,7 +33,13 @@ jobs:
           conan-args: --opNav True --mujoco True --rustModules True
           save-conan-cache: true
       - name: Test Rust workspace
-        run: cargo test --workspace --all-features --locked --manifest-path src/Cargo.toml
+        run: |
+          cargo test --workspace --all-features --locked --manifest-path src/Cargo.toml
+          cargo test -p bsk-build --no-default-features --locked --manifest-path src/Cargo.toml
+      - name: Lint Rust workspace
+        run: cargo clippy --workspace --all-targets --all-features --locked --manifest-path src/Cargo.toml -- -D warnings
+      - name: Check Rust unwind policy
+        run: python3 .github/scripts/check_rust_unwind_policy.py
       - name: Check committed Rust bindings are up to date
         run: |
           sudo apt-get update && sudo apt-get install -y libclang-dev

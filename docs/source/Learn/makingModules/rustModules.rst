@@ -149,6 +149,15 @@ Before submitting the module, run the complete Rust workspace test suite:
 .. code-block:: bash
 
     cargo test --workspace --all-features --locked --manifest-path src/Cargo.toml
+    cargo test -p bsk-build --no-default-features --locked --manifest-path src/Cargo.toml
+    cargo clippy --workspace --all-targets --all-features --locked \
+        --manifest-path src/Cargo.toml -- -D warnings
+
+Pull-request CI runs these commands and
+``.github/scripts/check_rust_unwind_policy.py``. The latter deliberately
+compiles ``rustModuleTemplate`` with ``panic="abort"`` and requires the
+procedural macro to reject the build. This prevents a profile change from
+silently disabling panic containment at the generated C ABI.
 
 Write the Module
 ----------------

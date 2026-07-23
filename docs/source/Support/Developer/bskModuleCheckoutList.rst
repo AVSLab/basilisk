@@ -70,6 +70,10 @@ For a Rust module:
 - Does the full workspace command from :ref:`rustModules` pass with
   ``--all-features --locked``, along with a Basilisk build using
   ``--rustModules True``?
+- Do the feature-minimal ``bsk-build`` tests and strict workspace Clippy check
+  documented in :ref:`rustModules` pass?
+- Does the workspace retain ``panic="unwind"`` for development and release
+  profiles so generated boundaries can contain Rust panics?
 
 Module Documentation
 --------------------
