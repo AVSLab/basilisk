@@ -218,6 +218,8 @@ It's recommended to study the first 6 scenarios in order:
   Solar Radiation Pressure Model on Arbitrary Surfaces <mujoco/scenarioSRPInPanels>
   Landing on Asteroid with Contact Physics <mujoco/scenarioAsteroidLanding>
   Earth-Moon Gravity with SPICE or PlanetEphemeris <mujoco/scenarioMJEarthMoonGravity>
+  Optimizing SPICE Cost with Ephemeris Reconstruction (Position) <scenarioSpiceReconstruction>
+  Optimizing SPICE Cost with Ephemeris Reconstruction (Orientation) <scenarioVestaOrientation>
   Docking between Two CubeSats <mujoco/scenarioSimpleDocking>
   Branching Panel Deployment with Locking Mechanisms <mujoco/scenarioBranchingPanels>
   Pointing with Reaction Wheels in MuJoCo <mujoco/scenarioAttitudeFeedbackRWMuJoCo>
