@@ -54,7 +54,7 @@ jobs:
         uses: ./.github/actions/build
         with:
           python-version: 3.14
-          conan-args: --opNav True --allOptPkg --mujoco True
+          conan-args: --opNav True --allOptPkg --mujoco True --rustModules True --rustCorrosion True
           save-conan-cache: true
       - name: Build docs
         uses: ./.github/actions/docs

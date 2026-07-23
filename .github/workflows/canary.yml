@@ -36,7 +36,7 @@ jobs:
         uses: ./.github/actions/build
         with:
           python-version: ${{ matrix.python-version }}
-          conan-args: --opNav True --allOptPkg --mujoco True --rustModules True --pyPkgCanary True
+          conan-args: --opNav True --allOptPkg --mujoco True --rustModules True --rustCorrosion True --pyPkgCanary True
           is-canary: true
       - name: Capture final package versions
         run: |
