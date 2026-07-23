@@ -157,39 +157,44 @@ public:
     }
 
     void computeTankPropDerivs(double mFuel, double mDotFuel) override {
+        const double sinTheta = std::sin(this->thetaStar);
+        const double cosTheta = std::cos(this->thetaStar);
         if (mFuel != this->propMassInit) {
-            this->thetaDotStar = -mDotFuel / (M_PI * this->rhoFuel * std::pow(this->radiusTankInit, 3) * std::sin(this->thetaStar));
-            this->thetaDDotStar = -3 * this->thetaDotStar * this->thetaDotStar * std::cos(this->thetaStar) /
-                            std::sin(this->thetaStar); //This assumes that mddot = 0
+            this->thetaDotStar =
+                -mDotFuel / (M_PI * this->rhoFuel * std::pow(this->radiusTankInit, 3) * std::pow(sinTheta, 3));
+            this->thetaDDotStar =
+                -3 * this->thetaDotStar * this->thetaDotStar * cosTheta / sinTheta;  // Assumes mDDotFuel = 0
         } else {
             this->thetaDotStar = 0.0;
             this->thetaDDotStar = 0.0;
         }
         this->IPrimeTankPntT_T(2, 2) = 2.0 / 5.0 * M_PI * this->rhoFuel * std::pow(this->radiusTankInit, 5) * this->thetaDotStar *
-                                 (std::pow(std::cos(this->thetaStar), 2) * std::pow(std::sin(this->thetaStar), 3) -
-                                  1.0 / 4.0 * std::pow(std::sin(this->thetaStar), 5) +
-                                  1 / 4.0 * std::sin(3 * this->thetaStar) - 3.0 / 4.0 * std::sin(this->thetaStar));
+                                 (std::pow(cosTheta, 2) * std::pow(sinTheta, 3) -
+                                  1.0 / 4.0 * std::pow(sinTheta, 5) +
+                                  1 / 4.0 * std::sin(3 * this->thetaStar) - 3.0 / 4.0 * sinTheta);
         this->IPrimeTankPntT_T(0, 0) = this->IPrimeTankPntT_T(1, 1) =
                 2.0 / 5.0 * M_PI * this->rhoFuel * std::pow(this->radiusTankInit, 5) * this->thetaDotStar *
-                (5.0 / 4.0 * std::sin(this->thetaStar) * std::cos(this->thetaStar) - 5.0 / 4.0 * std::sin(this->thetaStar) -
+                (5.0 / 4.0 * sinTheta * std::pow(cosTheta, 4) - 5.0 / 4.0 * sinTheta -
                  1 / 8.0 * std::sin(3 * this->thetaStar) +
-                 3.0 / 8.0 * sin(this->thetaStar) +
-                 1 / 2.0 * std::pow(std::cos(this->thetaStar), 2) * std::pow(std::sin(this->thetaStar), 3) -
-                 1 / 8.0 * std::pow(std::sin(this->thetaStar), 5));
+                 3.0 / 8.0 * sinTheta +
+                 1 / 2.0 * std::pow(cosTheta, 2) * std::pow(sinTheta, 3) -
+                 1 / 8.0 * std::pow(sinTheta, 5));
         if (mFuel != 0) {
-            this->rPrime_TcT_T = -M_PI * std::pow(this->radiusTankInit, 4) * this->rhoFuel / (4 * mFuel * mFuel) *
-                           (4 * mFuel * this->thetaDotStar * std::pow(std::sin(this->thetaStar), 3) * std::cos(this->thetaStar) +
-                            mDotFuel * (2 * std::pow(std::cos(this->thetaStar), 2) - std::pow(std::cos(this->thetaStar), 4) - 1)) *
-                           this->k3;
-
-            this->rPPrime_TcT_T = -M_PI * std::pow(this->radiusTankInit, 4) * this->rhoFuel / (2 * mFuel * mFuel * mFuel) *
-                            (4 * mFuel * std::pow(std::sin(this->thetaStar), 3) * std::cos(this->thetaStar) *
-                             (this->thetaDDotStar * mFuel - 2 * this->thetaDotStar * mDotFuel) -
-                             4 * mFuel * mFuel * this->thetaDotStar * this->thetaDotStar * std::pow(std::sin(this->thetaStar), 2) *
-                             (3 * std::pow(std::cos(this->thetaStar), 2) - std::pow(std::sin(this->thetaStar), 2)) +
-                             (2 * std::pow(std::cos(this->thetaStar), 2) - std::pow(std::cos(this->thetaStar), 4) - 1) *
-                             (-2 * mDotFuel * mDotFuel)) * this->k3;
-
+            const double q = std::pow(sinTheta, 4);
+            const double qDot = 4 * std::pow(sinTheta, 3) * cosTheta * this->thetaDotStar;
+            const double qDDot =
+                4 * ((3 * std::pow(sinTheta, 2) * std::pow(cosTheta, 2) - std::pow(sinTheta, 4)) *
+                         this->thetaDotStar * this->thetaDotStar +
+                     std::pow(sinTheta, 3) * cosTheta * this->thetaDDotStar);
+            const double centerOfMassFactor =
+                -M_PI * std::pow(this->radiusTankInit, 4) * this->rhoFuel / 4.0;
+            this->rPrime_TcT_T =
+                centerOfMassFactor * (qDot / mFuel - q * mDotFuel / (mFuel * mFuel)) * this->k3;
+            this->rPPrime_TcT_T =
+                centerOfMassFactor *
+                (qDDot / mFuel - 2 * qDot * mDotFuel / (mFuel * mFuel) +
+                 2 * q * mDotFuel * mDotFuel / (mFuel * mFuel * mFuel)) *
+                this->k3;
         } else {
             this->rPrime_TcT_T.setZero();
             this->rPPrime_TcT_T.setZero();
