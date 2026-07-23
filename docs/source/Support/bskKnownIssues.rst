@@ -19,6 +19,9 @@ Version |release| (July 7, 2026)
   as body-frame quantities and dropped the tank offset, so a rotated (``dcm_TB``) or offset
   (``r_TB_B``) depleting tank applied a wrong or missing torque about the hub. This is fixed in the
   current version.
+- The :ref:`FuelTank` emptying model computed the fuel COM and transverse inertia derivatives
+  incorrectly except at the half-full condition, producing wrong high-fidelity depletion torques.
+  The derivative equations and their finite-difference coverage are corrected in the current version.
 - BSK-422: Several SWIG-wrapped C++ members in simulation and FSW modules could emit
   ``swig/python detected a memory leak`` warnings when read from Python because their wrappers lacked
   visible destructors. Internal-only members are now private or hidden from Python, and public value-type

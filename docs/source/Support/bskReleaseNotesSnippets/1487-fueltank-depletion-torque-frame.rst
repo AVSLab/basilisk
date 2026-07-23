@@ -1,1 +1,2 @@
 - Fixed the :ref:`FuelTank` mass-depletion torque ignoring the tank orientation (``dcm_TB``) and offset (``r_TB_B``). The depletion torque is now formed so a rotated or offset depleting tank produces the correct attitude dynamics.
+- Corrected :ref:`FuelTank` emptying-model center-of-mass and inertia derivatives away from the half-full condition, including the second derivative of the moving fuel center of mass.
