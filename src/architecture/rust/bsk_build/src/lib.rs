@@ -38,20 +38,21 @@
 //!
 //! # Module name
 //!
-//! The generated symbol suffix (``New_<name>`` / ``Delete_<name>`` /
-//! ``SelfInit_<name>`` / ``Reset_<name>`` / ``Update_<name>``) and the
-//! header's filename/include guard come from ``BSK_HEADER_PATH``'s file stem,
-//! which CMake sets to match the ``bsk_add_rust_module`` ``TARGET``. Direct
+//! The generated symbol suffix (``Create_<name>`` / ``Config_<name>`` /
+//! ``Destroy_<name>`` and the lifecycle entry points) and the header's
+//! filename/include guard come from ``BSK_HEADER_PATH``'s file stem, which
+//! CMake sets to match the ``bsk_add_rust_module`` ``TARGET``. Direct
 //! ``cargo build``/``cargo test`` without CMake falls back to the crate name.
 //!
 //! # The config struct
 //!
 //! Like a hand-written Basilisk C module's config struct, it holds a
-//! mandatory ``runtime: BskModuleRuntime`` mirror field (see below),
-//! parameters, persistent state, ``MsgReader``/``MsgWriter`` message ports,
-//! and normally a ``bskLogger`` pointer. Macro-generated lifecycle code owns
-//! raw port I/O; the ``update`` function receives and returns plain message
-//! values.
+//! mandatory ``runtime: BskModuleRuntime`` compatibility field (see below),
+//! parameters, ``MsgReader``/``MsgWriter`` message ports, and currently a
+//! ``bskLogger`` pointer. Persistent implementation state belongs in
+//! [`BskModule::State`] and never appears in this FFI view. Macro-generated
+//! lifecycle code owns raw port I/O; the ``update`` function receives and
+//! returns plain message values.
 //!
 //! ``///`` doc comments on structs and fields become Doxygen comments in the
 //! generated C header.
@@ -71,19 +72,21 @@
 //! | ``BskModuleRuntime``  | ``BskRustModuleRuntime`` (see below) |
 //! | ``[T; N]`` (compile-time ``N``) | ``T name[N]`` (see "Fixed-size arrays") |
 //!
-//! Rust allocates each module config and initializes every field other than
-//! ``runtime`` through its type's ``Default`` implementation before calling
-//! [`BskModule::init`]. Built-in supported field types already implement
-//! `Default`; module-defined nested structs must derive or implement it.
+//! Rust allocates the complete module instance. It initializes every config
+//! field other than ``runtime`` and the associated [`BskModule::State`]
+//! through ``Default`` before calling [`BskModule::init`]. Built-in supported
+//! field types already implement `Default`; module-defined nested structs and
+//! state types must derive or implement it.
 //!
 //! # Runtime mirror field (required)
 //!
 //! The config struct **must** have a field named exactly ``runtime`` of type
 //! [`BskModuleRuntime`]. It mirrors the ``SysModel`` fields
-//! (``moduleID``, ``ModelTag``, ``CallCounts``, ``RNGSeed``); the lifecycle code
-//! refreshes it before every lifecycle call, so the rest of the module reads
-//! it like any other config field (``self.runtime``). ``build.rs`` panics if
-//! the field is missing.
+//! (``moduleID``, ``ModelTag``, ``CallCounts``, ``RNGSeed``). This field is a
+//! temporary compatibility requirement for the configuration-pointer
+//! lifecycle ABI; ``build.rs`` panics if it is missing. Module logic receives
+//! the same data through [`BskContext`] and should use that borrowed interface
+//! instead of reading ``self.runtime``.
 //!
 //! # Messaging
 //!
@@ -108,19 +111,15 @@
 //! types need their own ``*_C`` C-interface header on the module's include
 //! path; the field is then treated identically to any built-in message port.
 //!
-//! # Owned heap state
+//! # Rust-owned state
 //!
-//! A field of type ``Option<Box<T>>`` (any `T`) holds heap state that
-//! persists across calls (filters, integrators, ...) — normal, safe Rust
-//! ownership, no manual `Box::into_raw`/`from_raw`. It maps to a nullable
-//! `void *` in the generated C header. The full config is allocated and
-//! destroyed by generated Rust functions. Destruction runs the struct's
-//! regular Rust drop glue, so the state is freed whenever the owning Python
-//! config or wrapper object is (Python garbage collection, explicit `del`,
-//! or process exit) — no `Cleanup_*`-style function or custom destructor to
-//! write by hand.
-//! It's also the *only* supported form of raw pointer field: a bare
-//! `*mut`/`*const c_void` field is a build error.
+//! Set [`BskModule::State`] to any ``Default`` Rust type that should persist
+//! across lifecycle calls. It may contain ``Vec``, ``String``, enums, maps,
+//! smart pointers, and other types with no C representation. Generated Rust
+//! code stores it beside the config inside an opaque module instance.
+//! ``Destroy_<name>`` runs ordinary Rust drop glue for both values, so no
+//! ``Cleanup_*`` function or manual pointer conversion is needed. Use ``()``
+//! for a stateless module.
 //!
 //! # Nested structs
 //!
@@ -129,9 +128,9 @@
 //! order, and SWIG exposes the nested value field-by-field. Nesting may be
 //! arbitrarily deep, but not self-referential because C cannot represent a
 //! struct containing itself by value.
-//! Keep `MsgReader`/`MsgWriter` and `Option<Box<T>>` fields on the top-level
-//! config struct, where the module lifecycle and ownership adapters process
-//! them.
+//! Keep `MsgReader`/`MsgWriter` fields on the top-level config struct, where
+//! the module lifecycle adapter processes them. Keep internal state in
+//! [`BskModule::State`].
 //!
 //! # Fixed-size arrays
 //!
@@ -181,10 +180,12 @@
 pub use bsk_macros::module;
 
 /// Rust-side mirror of the C ``BskRustModuleRuntime`` struct declared in
-/// ``bsk_rust_module.h``. Refreshed from the config struct's own ``runtime``
-/// field before every ``SelfInit``/``Reset``/``Update`` call, so a module
-/// reads framework state (``moduleID``, ``ModelTag``, ``CallCounts``,
-/// ``RNGSeed``) the same way it reads any other config field.
+/// ``bsk_rust_module.h``.
+///
+/// Generated lifecycle code currently copies this snapshot into the
+/// compatibility ``runtime`` field in the configuration view. Module logic
+/// receives a borrowed view through [`BskContext`] and should use the context
+/// accessors for ``moduleID``, ``ModelTag``, ``CallCounts``, and ``RNGSeed``.
 ///
 /// Deliberately not `Copy`/`Clone`: `model_tag()` borrows from `&self`, and
 /// its pointee is only valid for the current lifecycle call, so the compiler
@@ -244,6 +245,24 @@ impl BskModuleRuntime {
     /// pull a live runtime out of a config struct by value.
     pub const fn for_testing() -> Self {
         Self::__new()
+    }
+
+    /// Copy a runtime snapshot supplied through the generated lifecycle ABI.
+    ///
+    /// # Safety
+    ///
+    /// `runtime` must be non-null, properly aligned, and point to a valid
+    /// [`BskModuleRuntime`] for the duration of this call.
+    #[doc(hidden)]
+    pub unsafe fn __copy_from_raw(runtime: *const Self) -> Self {
+        let runtime = unsafe { runtime.as_ref() }
+            .expect("bsk-build: lifecycle runtime pointer must not be null");
+        Self {
+            module_id: runtime.module_id,
+            model_tag: runtime.model_tag,
+            call_counts: runtime.call_counts,
+            rng_seed: runtime.rng_seed,
+        }
     }
 }
 
@@ -314,6 +333,27 @@ impl<'a> BskContext<'a> {
         Self {
             runtime: &context.runtime,
             logger: BskLoggerRef::from_raw(context.bsk_logger),
+        }
+    }
+
+    /// Borrow the separate runtime and logger arguments used by the
+    /// transitional configuration-pointer lifecycle ABI.
+    ///
+    /// # Safety
+    ///
+    /// `runtime` must satisfy the requirements of
+    /// [`BskModuleRuntime::__copy_from_raw`], and `logger` must either be null
+    /// or remain valid for the returned value's full lifetime.
+    #[doc(hidden)]
+    pub unsafe fn __from_runtime(
+        runtime: *const BskModuleRuntime,
+        logger: *mut BSKLogger,
+    ) -> Self {
+        let runtime = unsafe { runtime.as_ref() }
+            .expect("bsk-build: lifecycle runtime pointer must not be null");
+        Self {
+            runtime,
+            logger: BskLoggerRef::from_raw(logger),
         }
     }
 }
@@ -558,35 +598,39 @@ mod module_input_tests {
 /// Strongly typed Rust lifecycle interface exposed through the Basilisk C ABI.
 ///
 /// A module's config struct implements this trait directly — no Rust code
-/// depends on the C++ ``SysModel`` class. Runtime data (module ID,
-/// ``ModelTag``, etc.) is available through the config's own
-/// ``runtime: BskModuleRuntime`` field, read like any other config field.
-/// ``current_sim_nanos`` is passed directly, since ``SysModel`` doesn't store it.
+/// depends on the C++ ``SysModel`` class. [`BskContext`] supplies runtime
+/// metadata and logging, while [`BskModule::State`] holds implementation
+/// details that never cross the FFI boundary. ``current_sim_nanos`` is passed
+/// directly, since ``SysModel`` doesn't store it.
 ///
 /// Three ``BskModule`` trait methods map to the Basilisk module lifecycle:
 ///
 /// ```text
-/// init()                           — before Python configures the module.
+/// init(state)                      — before Python configures the module.
 ///                                    Override to set non-zero defaults.
 ///
-/// reset(current_sim_nanos)         — at sim start and on every Reset().
+/// reset(state, context, time)      — at sim start and on every Reset().
 ///   └─ returns Self::Outputs         Framework writes them to output ports.
 ///
-/// update(inputs, current_sim_nanos) — every tick.
+/// update(state, context, inputs, time) — every tick.
 ///   └─ returns Self::Outputs         Framework reads inputs, writes outputs.
 /// ```
 pub trait BskModule {
+    /// Arbitrary Rust-owned state retained between lifecycle calls.
+    ///
+    /// This state never crosses the FFI boundary and may contain normal Rust
+    /// types such as ``Vec``, ``String``, enums, maps, and smart pointers.
+    type State: Default;
     /// Named input-value struct generated by ``#[bsk_build::module]``.
     type Inputs;
     /// Named output-value struct generated by ``#[bsk_build::module]``.
     type Outputs;
 
-    /// Called before Python has configured any fields. Override to set
-    /// non-default parameters and initial state. Every field except
-    /// `BskModuleRuntime` has already been initialized through its type's
-    /// `Default` implementation. The default `init` implementation is a
-    /// no-op.
-    fn init(&mut self) {}
+    /// Called before Python has configured any fields. The configuration and
+    /// state have already been initialized through their respective
+    /// ``Default`` implementations. Override this method to set non-default
+    /// parameters or state values.
+    fn init(&mut self, _state: &mut Self::State) {}
 
     /// Called during `Reset()`. Must return initialized values for every
     /// output message port; the generated lifecycle code writes them so
@@ -597,13 +641,24 @@ pub trait BskModule {
     /// (all built-in Basilisk message payloads do). Override this method
     /// whenever reset needs to write non-zero initial outputs, validate
     /// parameters, or reset internal state.
-    fn reset(&mut self, _current_sim_nanos: u64) -> Self::Outputs
+    fn reset(
+        &mut self,
+        _state: &mut Self::State,
+        _context: &BskContext<'_>,
+        _current_sim_nanos: u64,
+    ) -> Self::Outputs
     where
         Self::Outputs: Default,
     {
         Self::Outputs::default()
     }
-    fn update(&mut self, inputs: Self::Inputs, current_sim_nanos: u64) -> Self::Outputs;
+    fn update(
+        &mut self,
+        state: &mut Self::State,
+        context: &BskContext<'_>,
+        inputs: Self::Inputs,
+        current_sim_nanos: u64,
+    ) -> Self::Outputs;
 }
 
 // ---------------------------------------------------------------------------

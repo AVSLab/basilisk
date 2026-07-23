@@ -53,6 +53,10 @@ For a Rust module:
   layout, with a matching ``[lib] path``?
 - Does ``build.rs`` call ``bsk_build::generate_bindings()`` with the exact
   marked configuration struct name?
+- Does the ``BskModule`` implementation declare ``type State`` and keep
+  internal Rust-only state there, using ``()`` when stateless?
+- Does lifecycle code obtain runtime metadata and logging through
+  ``BskContext`` rather than retaining borrowed framework pointers?
 - Is its crate listed in the ``src/Cargo.toml`` workspace members?
 - Does its ``Cargo.toml`` contain the
   ``[package.metadata.basilisk]`` ``module = true`` marker?

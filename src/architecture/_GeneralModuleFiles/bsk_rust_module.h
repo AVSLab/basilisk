@@ -68,20 +68,17 @@
  *          double K;                             //!< [Nm]       proportional gain
  *          double P;                             //!< [Nm/(rad/s)] rate gain
  *
- *          // 3. Heap-allocated Rust state (stateful modules only — see below)
- *          void *state;                          //!< [-]  Option<Box<T>> owned state
- *
- *          // 4. Input message ports
+ *          // 3. Input message ports
  *          AttGuidMsg_C attGuidInMsg;            //!< [-]  attitude guidance
  *
- *          // 5. Output message ports
+ *          // 4. Output message ports
  *          CmdTorqueBodyMsg_C cmdTorqueOutMsg;   //!< [Nm] control torque
  *
- *          // 6. BSK logger
+ *          // 5. BSK logger
  *          BSKLogger *bskLogger;                 //!< [-]  BSK logging handle
  *      } myModuleConfig;
  *
- *      BSK_RUST_DECL(myModule, myModuleConfig)
+ *      BSK_RUST_DECL(myModule, myModuleConfig, myModuleConfigHandle)
  *
  *  On the Rust side, ``attGuidInMsg``/``cmdTorqueOutMsg`` above are annotated
  *  with ``#[bsk(input)]``/``#[bsk(output)]`` and use
@@ -94,22 +91,22 @@
  *  ``ModuleIdGenerator`` when the module is registered with a task.  It is
  *  stamped onto every outgoing message header (via ``*_C_write``) so that
  *  message recording and the logging subsystem can identify which module
- *  produced a given message. The lifecycle code reads it from
- *  ``cfg->runtime.moduleID``
- *  and forwards it to every ``*_C_write`` call automatically.
+ *  produced a given message. The generated lifecycle code forwards it to
+ *  every ``*_C_write`` call automatically.
  *
  *  **Runtime mirror — BskRustModuleRuntime**
  *
  *  A Rust module has no C++ base class, so this struct mirrors the relevant
- *  ``SysModel`` fields (module ID, name, ...) into the config's own
- *  ``runtime`` field before every ``SelfInit``/``Reset``/``Update`` call —
- *  Rust code reads it like any other config field.
+ *  ``SysModel`` fields (module ID, name, ...) for each lifecycle call.
+ *  ``BskContext`` gives safe Rust module logic a borrowed view of that
+ *  snapshot. The config's own ``runtime`` field is refreshed only as a
+ *  temporary compatibility measure for the configuration-pointer ABI.
  *
  *  ``modelTag`` is a borrowed pointer valid only for the duration of the
  *  call. On the Rust side this is enforced by the compiler, not just this
- *  comment: the Rust mirror of this struct isn't ``Copy``/``Clone``, and its
- *  string accessor returns a ``&str`` tied to that borrow, so retaining
- *  either past the lifecycle call that received it is a compile error.
+ *  comment: ``BskContext::model_tag()`` returns a ``&str`` tied to that
+ *  context borrow, so safe module logic cannot retain it past the lifecycle
+ *  call that received it.
  *
  *  **currentSimNanos**
  *
@@ -121,14 +118,13 @@
  *
  *  **Logging**
  *
- *  A ``bskLogger: *mut BSKLogger`` field (see the field-ordering example
- *  above) gets the same standard logging a hand-written C module has
- *  through ``_bskLog(configData->bskLogger, BSK_WARNING, info)`` /
- *  ``_bskError(configData->bskLogger, info)`` — ``bsk-messages``'
- *  ``BskLoggerExt`` trait wraps those same two entry points as
- *  ``.debug()``/``.info()``/``.warning()``/``.bsk_error()`` methods on the
- *  field itself, e.g. ``self.bskLogger.warning("...")``. ``bsk-build``'s
- *  own generated "unconnected required input" check
+ *  ``BskContext::logger()`` supplies the same standard logging a hand-written
+ *  C module has through ``_bskLog`` / ``_bskError``. ``bsk-messages``'
+ *  ``BskLoggerExt`` trait wraps those entry points as
+ *  ``.debug()``/``.info()``/``.warning()``/``.bsk_error()`` methods.
+ *  The raw ``bskLogger`` config field remains only for the transitional
+ *  configuration-pointer lifecycle adapter. ``bsk-build``'s own generated
+ *  "unconnected required input" check
  *  (see "Message port patterns" below) uses this identical path.
  *
  *  **Message port patterns**
@@ -165,44 +161,28 @@
  *      sim.AddModelToTask("task", ctrl)               # assigns moduleID
  *      # ctrl.cmdTorqueOutMsg is readable after InitializeSimulation()
  *
- *  **Stateful modules — owned heap state**
+ *  **Stateful modules — Rust-owned state**
  *
- *  Modules that need persistent heap state between calls (e.g. integrators,
- *  filters) add an ``Option<Box<T>>`` field to the config struct — ordinary,
- *  safe Rust ownership, no manual pointer casts::
+ *  Modules that need persistent implementation state set the
+ *  ``BskModule::State`` associated type. This state is stored beside the
+ *  config inside the opaque Rust module instance and never crosses the FFI
+ *  boundary. It may therefore contain ordinary Rust collections, strings,
+ *  enums, and smart pointers::
  *
- *      // In lib.rs:
- *      #[bsk_build::module]
- *      #[repr(C)]
- *      pub struct myModuleConfig {
- *          pub runtime: BskModuleRuntime,
- *          pub state: Option<Box<MyState>>,
- *          // ...
+ *      #[derive(Default)]
+ *      pub struct MyState {
+ *          history: Vec<f64>,
+ *          status: String,
  *      }
  *
  *      impl BskModule for myModuleConfig {
- *          fn init(&mut self) {
- *              self.state = Some(Box::new(MyState::default()));
- *          }
- *          // update() accesses it via self.state.as_mut()...
+ *          type State = MyState;
+ *          // reset()/update() receive &mut Self::State
  *      }
  *
- *  ``bsk-build`` maps ``Option<Box<T>>`` to a nullable ``void *`` in the
- *  generated header (Rust guarantees the same layout as a bare pointer).
- *  The generated ``Delete_name`` function runs the config's ordinary Rust
- *  drop glue and returns its allocation to Rust, freeing ``state``
- *  automatically whenever the owning Python config or wrapper is destroyed.
- *  No ``Cleanup_*`` function or custom destructor to write by hand.
- *
- *  ``Option<Box<T>>`` isn't chosen to guard against the Python API — it's
- *  what makes the automatic cleanup above possible at all (a bare pointer
- *  field has no drop glue for ``Delete_name`` to run). Python has no
- *  legitimate reason to read or write this field directly, so the CMake
- *  macro (``bsk_add_rust_module``) detects every ``Option<Box<T>>`` field
- *  and marks it ``%immutable`` in the generated SWIG interface — the
- *  setter is absent from the Python API, so a script can't null it out
- *  (silently leaking the boxed value) or alias it to an unrelated pointer
- *  (which would make ``Delete_name`` free memory Rust never allocated).
+ *  The generated ``Destroy_name`` function runs ordinary Rust drop glue for
+ *  both the config and state. No ``Cleanup_*`` function, raw state pointer,
+ *  or custom destructor is needed. Stateless modules use ``type State = ();``.
  *
  *  **Grouping parameters — nested structs**
  *
@@ -280,8 +260,20 @@ typedef struct BskRustModuleContext {
 } BskRustModuleContext;
 
 /*! Emit ``extern "C"`` allocation and lifecycle function declarations for a
- *  Rust-backed Basilisk module named \p name, whose config struct type is
- *  \p configType.
+ *  Rust-backed Basilisk module named \p name, whose config view is
+ *  \p configType and whose opaque instance type is \p handleType.
+ *
+ *  ``Create_name()``
+ *      Constructs the complete module instance in Rust, including arbitrary
+ *      Rust-owned state, and returns its opaque owning handle.
+ *
+ *  ``Config_name(handle)``
+ *      Returns a borrowed pointer to the instance's FFI-safe parameter and
+ *      message-port view. The pointer remains valid until ``Destroy_name``.
+ *
+ *  ``Destroy_name(handle)``
+ *      Runs the config and internal state's Rust drop glue and returns the
+ *      complete allocation to Rust.
  *
  *  ``SelfInit_name(cfg, runtime)``
  *      Called once at task registration.  The generated lifecycle code copies
@@ -299,14 +291,13 @@ typedef struct BskRustModuleContext {
  *      ``BskModule::update``, and writes all output messages.
  *
  *  ``New_name()``
- *      Allocates and default-initializes ``configType`` in Rust, calls
- *      ``BskModule::init``, and returns the owning pointer.
+ *      Transitional alias that creates the Rust instance and returns its
+ *      config view for the current C++ wrapper.
  *
  *  ``Delete_name(cfg)``
- *      Runs ``cfg``'s ordinary Rust drop glue (freeing any owned heap state,
- *      see "Stateful modules" above) and returns the allocation to Rust.
- *      The SWIG wrapper calls this automatically — never pair a pointer from
- *      ``New_name`` with C++ ``delete``.
+ *      Transitional alias that recovers and destroys the owning Rust instance
+ *      from the config view. Never pair a pointer from ``New_name`` with C++
+ *      ``delete``.
  *
  *  \p configType must be declared before this macro and must have a field
  *  named ``runtime`` of type ``BskRustModuleRuntime`` somewhere in it (any
@@ -314,8 +305,12 @@ typedef struct BskRustModuleContext {
  *  whatever struct name the crate's ``impl BskModule`` block actually uses,
  *  which need not match ``name##Config``.
  */
-#define BSK_RUST_DECL(name, configType) \
+#define BSK_RUST_DECL(name, configType, handleType) \
+    typedef struct handleType handleType; \
     BSK_RUST_EXTERN_C_BEGIN \
+    handleType *Create_##name(void); \
+    configType *Config_##name(handleType *handle); \
+    void Destroy_##name(handleType *handle); \
     configType *New_##name(void); \
     void Delete_##name(configType *configData); \
     void SelfInit_##name(configType *configData, const BskRustModuleRuntime *runtime); \

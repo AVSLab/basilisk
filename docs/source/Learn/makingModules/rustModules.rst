@@ -179,10 +179,17 @@ Write the implementation in ``myModule.rs``. Import the support types from
     }
 
     impl BskModule for myModuleConfig {
+        type State = ();
         type Inputs = myModuleInputs;
         type Outputs = myModuleOutputs;
 
-        fn update(&mut self, inputs: Self::Inputs, _current_sim_nanos: u64) -> Self::Outputs {
+        fn update(
+            &mut self,
+            _state: &mut Self::State,
+            _context: &BskContext<'_>,
+            inputs: Self::Inputs,
+            _current_sim_nanos: u64,
+        ) -> Self::Outputs {
             let _ = inputs.attGuidInMsg;
             myModuleOutputs {
                 cmdTorqueOutMsg: CmdTorqueBodyMsg::default(),
@@ -196,8 +203,9 @@ the lifecycle entry points. The configuration struct must contain a field
 named ``runtime`` with type ``BskModuleRuntime``.
 Other fields are optional and can be scalars, fixed-size arrays (``[T; N]`` or
 multi-dimensional ``[[T; N]; M]``), nested ``#[repr(C)]``
-structs, ``Option<Box<T>>`` state, ``MsgReader<T>`` and ``MsgWriter<T>`` ports,
-and a ``*mut BSKLogger`` field.
+structs, ``MsgReader<T>`` and ``MsgWriter<T>`` ports, and a
+``*mut BSKLogger`` field. Put internal implementation state in the
+``BskModule::State`` associated type rather than the configuration view.
 
 Annotate every message port with ``#[bsk(input)]`` or ``#[bsk(output)]``.
 Use ``#[bsk(input, optional)]`` when an unlinked input should produce ``None``
@@ -213,12 +221,13 @@ implementation that returns ``Self::Outputs::default()``. Override it when the
 module needs non-zero initial output values, parameter validation, or state
 reset.
 
-Override ``init()`` to set non-zero parameter defaults and initial state.
+Override ``init(state)`` to set non-zero parameter defaults and initial state.
 Rust first initializes every field except ``runtime`` through the field
-type's ``Default`` implementation, then calls ``init()`` before Python
-configures the module. The default ``init()`` implementation is a no-op.
-Module-defined nested configuration structs must therefore derive or
-implement ``Default``.
+type's ``Default`` implementation and initializes ``State`` through its own
+``Default`` implementation. It then calls ``init(state)`` before Python
+configures the module. The default implementation is a no-op. Module-defined
+nested configuration structs and state types must therefore derive or
+implement ``Default``. Use ``type State = ();`` for a stateless module.
 
 Use the Generated Wrapper
 -------------------------
@@ -303,8 +312,8 @@ Basilisk:
     cd src/fswAlgorithms/<category>/myModule
     cargo test --locked
 
-``init()``, ``reset()``, and ``update()`` are all testable this way.
-Logger calls (``bskLogger.warning(...)`` etc.) work in tests when the
+``init(state)``, ``reset(...)``, and ``update(...)`` are all testable this way.
+Logger calls through ``context.logger()`` work in tests when the
 ``test_logger`` dev-dependency feature is enabled:
 
 .. code-block:: toml

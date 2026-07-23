@@ -26,7 +26,7 @@ use bsk_messages::*;
 pub struct RustModuleTemplateConfig {
     /// [-] Basilisk runtime information
     pub runtime: BskModuleRuntime,
-    /// [-] Sample module state
+    /// [-] Python-visible sample counter
     pub dummy: f64,
     /// [-] Optional input message
     #[bsk(input, optional)]
@@ -38,22 +38,76 @@ pub struct RustModuleTemplateConfig {
     pub bskLogger: *mut BSKLogger,
 }
 
+/// Rust-owned state that is never exposed through C, C++, or Python.
+///
+/// Unlike the configuration view, this type does not use ``#[repr(C)]`` and
+/// may contain ordinary Rust collections, strings, enums, and other safe
+/// implementation details.
+pub struct RustModuleTemplateState {
+    /// [-] History retained across update calls
+    update_history: Vec<f64>,
+    /// Description of the most recent lifecycle event
+    last_event: String,
+    /// Internal operating mode represented by a Rust enum
+    mode: TemplateMode,
+}
+
+#[derive(Debug, PartialEq, Eq)]
+enum TemplateMode {
+    Idle,
+    Running,
+}
+
+impl Default for RustModuleTemplateState {
+    fn default() -> Self {
+        Self {
+            update_history: Vec::new(),
+            last_event: String::from("created"),
+            mode: TemplateMode::Idle,
+        }
+    }
+}
+
 impl BskModule for RustModuleTemplateConfig {
+    type State = RustModuleTemplateState;
     type Inputs = RustModuleTemplateInputs;
     type Outputs = RustModuleTemplateOutputs;
 
-    fn reset(&mut self, _current_sim_nanos: u64) -> Self::Outputs {
-        self.dummy = 0.0;
-        self.bskLogger.info("Variable dummy set to 0 in reset.");
+    fn reset(
+        &mut self,
+        state: &mut Self::State,
+        context: &BskContext<'_>,
+        current_sim_nanos: u64,
+    ) -> Self::Outputs {
+        self.dummy = 0.0; // [-]
+        state.update_history.clear();
+        state.last_event = format!("reset at {current_sim_nanos} ns");
+        state.mode = TemplateMode::Running;
+        context.logger().info("Variable dummy set to 0 in reset.");
         RustModuleTemplateOutputs {
             dataOutMsg: CModuleTemplateMsg::default(),
         }
     }
 
-    fn update(&mut self, inputs: Self::Inputs, _current_sim_nanos: u64) -> Self::Outputs {
+    fn update(
+        &mut self,
+        state: &mut Self::State,
+        context: &BskContext<'_>,
+        inputs: Self::Inputs,
+        current_sim_nanos: u64,
+    ) -> Self::Outputs {
         let mut data_out_msg = inputs.dataInMsg.unwrap_or_default();
 
-        self.dummy += 1.0;
+        if state.mode == TemplateMode::Idle {
+            context.logger().warning("Update called before reset.");
+            state.mode = TemplateMode::Running;
+        }
+        self.dummy += 1.0; // [-]
+        state.update_history.push(self.dummy);
+        state.last_event = format!(
+            "module {} updated at {current_sim_nanos} ns",
+            context.module_id()
+        );
         data_out_msg.dataVector[0] += self.dummy;
 
         RustModuleTemplateOutputs {
@@ -100,5 +154,34 @@ mod tests {
         assert_eq!(context.call_counts(), 0);
         assert_eq!(context.rng_seed(), 0);
         context.logger().info("Rust module test context is available.");
+    }
+
+    /// Demonstrate that internal module state can use unrestricted Rust types.
+    #[test]
+    fn internal_state_remains_outside_the_ffi_config() {
+        let runtime = BskModuleRuntime::for_testing();
+        let context = BskContext::for_testing(&runtime);
+        let mut config = RustModuleTemplateConfig {
+            runtime: BskModuleRuntime::for_testing(),
+            dummy: 99.0, // [-]
+            dataInMsg: MsgReader::default(),
+            dataOutMsg: MsgWriter::default(),
+            bskLogger: core::ptr::null_mut(),
+        };
+        let mut state = RustModuleTemplateState::default();
+
+        let _ = config.reset(&mut state, &context, 0); // [ns]
+        assert_eq!(state.mode, TemplateMode::Running);
+        assert!(state.update_history.is_empty());
+        assert_eq!(state.last_event, "reset at 0 ns");
+
+        let _ = config.update(
+            &mut state,
+            &context,
+            RustModuleTemplateInputs { dataInMsg: None },
+            1, // [ns]
+        );
+        assert_eq!(state.update_history, vec![1.0]);
+        assert_eq!(state.last_event, "module 0 updated at 1 ns");
     }
 }

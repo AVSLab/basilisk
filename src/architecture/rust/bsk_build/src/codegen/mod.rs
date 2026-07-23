@@ -260,6 +260,7 @@ fn finish_header(
     module_name: &str,
     metadata: &BindingMetadata,
 ) -> String {
+    let handle_type = format!("{config_type}Handle");
     let mut in_config = false;
     let start_marker = format!("typedef struct {config_type} {{");
     let end_marker = format!("}} {config_type};");
@@ -289,7 +290,8 @@ fn finish_header(
     }
     header = opaque_header;
 
-    let lifecycle = format!("\nBSK_RUST_DECL({module_name}, {config_type})\n\n");
+    let lifecycle =
+        format!("\nBSK_RUST_DECL({module_name}, {config_type}, {handle_type})\n\n");
     let guard_end = header
         .rfind("#endif")
         .expect("bsk-build: cbindgen include guard is missing its closing #endif");
@@ -332,7 +334,7 @@ fn render_swig_interface(
          #include \"{header}\"\n\
          %}}\n\
          \n\
-         #define BSK_RUST_DECL(name, configType)\n\
+         #define BSK_RUST_DECL(name, configType, handleType)\n\
          %include \"swig_c_wrap.i\"\n\
          \n\
          {message_imports}\
@@ -427,7 +429,10 @@ typedef struct ExampleConfig {
 
         assert!(header.contains("void *state;"));
         assert!(!header.contains("struct OwnedState *state;"));
-        assert!(header.find("BSK_RUST_DECL(example, ExampleConfig)") < header.rfind("#endif"));
+        assert!(
+            header.find("BSK_RUST_DECL(example, ExampleConfig, ExampleConfigHandle)")
+                < header.rfind("#endif")
+        );
     }
 
     #[test]

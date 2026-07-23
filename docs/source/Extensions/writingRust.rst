@@ -161,10 +161,17 @@ generates the C header, SWIG wrapper, and message I/O code from this definition:
     }
 
     impl BskModule for myModuleConfig {
+        type State = ();
         type Inputs = myModuleInputs;
         type Outputs = myModuleOutputs;
 
-        fn update(&mut self, inputs: Self::Inputs, _current_sim_nanos: u64) -> Self::Outputs {
+        fn update(
+            &mut self,
+            _state: &mut Self::State,
+            _context: &BskContext<'_>,
+            inputs: Self::Inputs,
+            _current_sim_nanos: u64,
+        ) -> Self::Outputs {
             let _att_guid_in_msg = inputs.attGuidInMsg;
             // ... pure Rust control law ...
             myModuleOutputs {
@@ -190,24 +197,25 @@ Module Lifecycle
 
 Three ``BskModule`` trait methods map to the Basilisk module lifecycle:
 
-``init()``
+``init(state)``
    Called before Python configures the module. Override to set non-zero
    parameter defaults and initial state — the equivalent of a C++ module
-   constructor. Before this call, Rust initializes every field except
-   ``runtime`` using that field type's ``Default`` implementation. The default
-   ``init()`` implementation is a no-op.
+   constructor. Before this call, Rust initializes every configuration field
+   except ``runtime`` and initializes ``State`` through ``Default``. The
+   default ``init(state)`` implementation is a no-op.
 
-``reset(current_sim_nanos)`` → ``Self::Outputs``
+``reset(state, context, current_sim_nanos)`` → ``Self::Outputs``
    Called at simulation start and on every ``Reset()``. Returns initial
    values for every output port; the framework writes them automatically.
    The default implementation returns ``Self::Outputs::default()``. Override
    when the module has non-zero initial outputs, parameter validation, or
    state to reset.
 
-``update(inputs, current_sim_nanos)`` → ``Self::Outputs``
+``update(state, context, inputs, current_sim_nanos)`` → ``Self::Outputs``
    Called every tick. Receives message values (not ports) and returns output
-   values; the framework handles all I/O. No default — must always be
-   implemented.
+   values; the framework handles all I/O. ``state`` is private Rust-owned
+   storage, while ``context`` supplies borrowed framework metadata and
+   logging. No default — must always be implemented.
 
 The attribute generates named ``Inputs`` and ``Outputs`` structs from the
 annotated message ports. Module code accesses those values by field name, not
@@ -242,7 +250,6 @@ Every module configuration struct must include a field named ``runtime`` of
 type ``BskModuleRuntime``. All other fields are optional. They can include:
 
 * scalar, fixed-size array (``[T; N]``, multi-dimensional ``[[T; N]; M]``, etc.), and nested ``#[repr(C)]`` parameter fields;
-* ``Option<Box<T>>`` for state owned by a stateful module;
 * ``MsgReader<T>`` input ports and ``MsgWriter<T>`` output ports; and
 * ``*mut BSKLogger`` for Basilisk logging.
 
@@ -250,44 +257,57 @@ Every field type other than ``BskModuleRuntime`` must implement ``Default``.
 The built-in scalar, array, message-port, pointer, and ``Option`` types already
 do. Add ``#[derive(Default)]`` or a manual ``Default`` implementation to
 module-defined nested structs. The generated constructor allocates the
-configuration in Rust, applies these defaults, and then calls ``init()``.
+configuration in Rust, applies these defaults, and then calls ``init(state)``.
 
-Nested structs, owned state, and message ports have additional requirements
+Nested structs, internal state, and message ports have additional requirements
 described below. ``bsk-build`` rejects unsupported field types, including raw
 pointers other than ``*mut BSKLogger`` and Rust enums.
 
 Runtime Context
 ~~~~~~~~~~~~~~~
 
-``runtime: BskModuleRuntime`` provides module runtime information, such as the
-module ID and name. ``bsk-build`` rejects a configuration struct without this
-field. The generated wrapper updates it before each lifecycle call:
+``BskContext`` provides module runtime information, such as the module ID and
+name. The generated lifecycle adapter borrows it for one call:
 
 .. code-block:: rust
 
-    fn update(&mut self, inputs: Self::Inputs, current_sim_nanos: u64) -> Self::Outputs {
-        let id = self.runtime.module_id();
+    fn update(
+        &mut self,
+        state: &mut Self::State,
+        context: &BskContext<'_>,
+        inputs: Self::Inputs,
+        current_sim_nanos: u64,
+    ) -> Self::Outputs {
+        let id = context.module_id();
         // ...
     }
 
-Values borrowed from ``runtime`` are valid only during the current lifecycle
-call.
+The context also provides ``model_tag()``, ``call_counts()``, ``rng_seed()``,
+and ``logger()``. Values borrowed from it are valid only during the current
+lifecycle call.
+
+The configuration's ``runtime: BskModuleRuntime`` mirror remains temporarily
+required while the C++ wrapper migrates to the opaque-handle ABI. New module
+logic should use ``context`` rather than this compatibility field.
 
 ``current_sim_nanos`` is passed separately to ``reset`` and ``update``.
 
 Logging
 -------
 
-A ``bskLogger: *mut BSKLogger`` field gets standard Basilisk logging through
-the ``BskLoggerExt`` trait, which adds
-``.debug()``/``.info()``/``.warning()``/``.bsk_error()`` methods directly on
-the field:
+``context.logger()`` provides standard Basilisk logging through the
+``BskLoggerExt`` trait:
 
 .. code-block:: rust
 
-    fn reset(&mut self, _current_sim_nanos: u64) -> Self::Outputs {
+    fn reset(
+        &mut self,
+        state: &mut Self::State,
+        context: &BskContext<'_>,
+        _current_sim_nanos: u64,
+    ) -> Self::Outputs {
         if self.K <= 0.0 {
-            self.bskLogger.warning("K should be positive");
+            context.logger().warning("K should be positive");
         }
         Self::Outputs::default()   // lifecycle code writes these to the output ports
     }
@@ -297,9 +317,12 @@ returns.
 
 In test builds (enabled by adding ``bsk-build`` with the ``test_logger``
 feature to ``[dev-dependencies]``), every logger call prints to ``stderr``
-and ``.bsk_error()`` panics — no C symbols required. This means
-``bskLogger.warning(...)`` calls in ``reset()`` and ``update()`` work
-for unit tests:
+and ``.bsk_error()`` panics — no C symbols required. This means context
+logger calls in ``reset()`` and ``update()`` work for unit tests.
+
+The configuration's raw ``bskLogger`` field remains temporarily required by
+the configuration-pointer lifecycle adapter. New module logic should not
+access it directly.
 
 .. code-block:: toml
 
@@ -315,9 +338,9 @@ The ``bsk-messages`` crate
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Add ``bsk-messages`` to the Cargo dependencies shown above. It provides the
-standard Basilisk message types and re-exports ``BskModuleRuntime``,
-``MsgReader``, ``MsgWriter``, ``BskModule``, and ``BskLoggerExt``. Import the
-types with:
+standard Basilisk message types and re-exports ``BskContext``,
+``BskModuleRuntime``, ``MsgReader``, ``MsgWriter``, ``BskModule``, and
+``BskLoggerExt``. Import the types with:
 
 .. code-block:: rust
 
@@ -364,10 +387,17 @@ names:
     }
 
     impl BskModule for myModuleConfig {
+        type State = ();
         type Inputs = myModuleInputs;
         type Outputs = myModuleOutputs;
 
-        fn update(&mut self, inputs: Self::Inputs, _t: u64) -> Self::Outputs {
+        fn update(
+            &mut self,
+            _state: &mut Self::State,
+            _context: &BskContext<'_>,
+            inputs: Self::Inputs,
+            _t: u64,
+        ) -> Self::Outputs {
             let nav_att = inputs.navAttInMsg;
             let att_ref = inputs.attRefInMsg;
             // ...
@@ -410,10 +440,17 @@ Input optionality is declared next to the corresponding port:
     }
 
     impl BskModule for myModuleConfig {
+        type State = ();
         type Inputs = myModuleInputs;
         type Outputs = myModuleOutputs;
 
-        fn update(&mut self, inputs: Self::Inputs, _t: u64) -> Self::Outputs {
+        fn update(
+            &mut self,
+            _state: &mut Self::State,
+            _context: &BskContext<'_>,
+            inputs: Self::Inputs,
+            _t: u64,
+        ) -> Self::Outputs {
             let _required_attitude = inputs.attGuidInMsg;
             let _optional_disturbance = inputs.disturbanceInMsg;
             // ...
@@ -457,44 +494,57 @@ committed to this repository. Using it does not require ``bindgen`` or
 a message payload changes.
 
 
-Stateful modules — owned heap state
---------------------------------------
+Stateful modules — Rust-owned internal state
+---------------------------------------------
 
-Modules needing heap state that persists across steps (filters, integrators)
-add an ``Option<Box<T>>`` field — ordinary, safe Rust ownership, no manual
-pointer casts:
+Set ``BskModule::State`` to a type that implements ``Default`` when a module
+needs state that persists across lifecycle calls. The complete module instance
+is allocated and destroyed by Rust. Only the separate configuration view
+crosses the FFI boundary, so state may contain unrestricted safe Rust types:
 
 .. code-block:: rust
 
-    #[bsk_build::module]
-    #[repr(C)]
-    pub struct myModuleConfig {
-        pub runtime: BskModuleRuntime,
-        pub state: Option<Box<MyState>>,
-        // ...
+    #[derive(Default)]
+    pub struct MyState {
+        history: Vec<f64>,
+        status: String,
+        mode: InternalMode,
+    }
+
+    #[derive(Default)]
+    enum InternalMode {
+        #[default]
+        Idle,
+        Running,
     }
 
     impl BskModule for myModuleConfig {
-        fn init(&mut self) {
-            self.state = Some(Box::new(MyState::default()));
-        }
+        type State = MyState;
+        type Inputs = myModuleInputs;
+        type Outputs = myModuleOutputs;
 
-        fn update(&mut self, inputs: Self::Inputs, _t: u64) -> Self::Outputs {
-            let state = self.state.as_mut().expect("set in init");
+        fn update(
+            &mut self,
+            state: &mut Self::State,
+            context: &BskContext<'_>,
+            inputs: Self::Inputs,
+            current_sim_nanos: u64,
+        ) -> Self::Outputs {
+            state.history.push(self.K);
+            state.status = format!(
+                "module {} updated at {current_sim_nanos} ns",
+                context.module_id()
+            );
+            state.mode = InternalMode::Running;
             // ...
+            Self::Outputs::default()
         }
     }
 
-``bsk-build`` maps ``Option<Box<T>>`` to a nullable ``void *`` in the
-generated header. The configuration is allocated and destroyed by Rust, so
-ordinary Rust drop glue frees the boxed state automatically whenever the
-owning Python configuration or wrapper is destroyed.
-
-Python has no legitimate reason to touch this field directly, so
-``bsk_add_rust_module`` marks it ``%immutable``: the setter is absent from
-the Python API, so a script can't null it out (leaking the boxed value) or
-alias it to an unrelated pointer (causing a crash on cleanup). The getter
-still works and returns an opaque pointer handle.
+``MyState`` does not use ``#[repr(C)]`` and does not appear in the generated
+header or Python module. Rust drop glue releases all of its contents when the
+opaque module instance is destroyed. Use ``type State = ();`` for modules
+without internal state.
 
 Grouping parameters — nested structs
 --------------------------------------
@@ -522,10 +572,10 @@ value, to group related parameters:
 ``bsk-build`` generates ``Vec2``'s own C struct ahead of ``myModuleConfig``'s,
 and Python reads and writes it field-by-field like any other struct member
 (``ctrl.target.x = 1.0``). Nested structs must implement ``Default`` because
-Rust constructs the complete configuration before calling ``init()``. They
-cannot be self-referential. Message ports and ``Option<Box<T>>`` owned state
-belong on the top-level config struct so the generated lifecycle and ownership
-adapters can process them.
+Rust constructs the complete configuration before calling ``init(state)``.
+They cannot be self-referential. Message ports belong on the top-level config
+struct so the generated lifecycle adapter can process them. Internal state
+belongs in ``BskModule::State`` and does not need a C representation.
 
 A field may **not** be a raw pointer to one of these structs (e.g. ``*mut
 Vec2``), or to any other type — ``BSKLogger`` is the only pointee
@@ -607,8 +657,7 @@ Configure CMake
     )
 
 This one call builds the crate, generates the C header and a matching SWIG
-interface (auto-detecting message port and ``Option<Box<T>>`` fields — see
-`Stateful modules — owned heap state`_ above), and links the result into
+interface (auto-detecting message port fields), and links the result into
 the SWIG extension. The generated interface supplies only module-specific
 metadata and delegates the common Python ownership and lifecycle behavior to
 Basilisk's shared Rust wrapper template. No hand-written C/C++ ``SOURCES`` or
@@ -667,13 +716,14 @@ Testing
      - Yes
 
 **``cargo test`` never touches Basilisk.** The ``#[bsk_build::module]``
-attribute omits its C ABI lifecycle entry points in test builds, so ``init()``,
-``reset()``, and ``update()`` can be exercised as plain Rust functions with
-hand-built message values — no linking, no Python.
+attribute omits its C ABI lifecycle entry points in test builds, so
+``init(state)``, ``reset(...)``, and ``update(...)`` can be exercised as plain
+Rust functions with hand-built message values — no linking, no Python.
 
 Add the ``test_logger`` dev-dependency (see `Logging`_ above) so that
-``bskLogger.warning(...)`` and similar calls work in unit tests. Logger calls in test
-builds print to ``stderr`` rather than calling Basilisk's C symbols.
+``context.logger().warning(...)`` and similar calls work in unit tests.
+Logger calls in test builds print to ``stderr`` rather than calling
+Basilisk's C symbols.
 
 Common Build Problems
 ---------------------

@@ -105,12 +105,19 @@ def test_rust_module_template_python_api():
     assert module.dummy == 12.5
     assert hasattr(module.dataInMsg, "subscribeTo")
     assert hasattr(module.dataOutMsg, "recorder")
+    for internal_name in ("state", "update_history", "last_event", "mode"):
+        assert not hasattr(module, internal_name)
+        assert not hasattr(rustModuleTemplate.RustModuleTemplateConfig, internal_name)
+    assert not hasattr(rustModuleTemplate, "RustModuleTemplateState")
 
     with pytest.raises(AttributeError, match="No constructor defined"):
         rustModuleTemplate.RustModuleTemplateConfig()
     assert not hasattr(rustModuleTemplate.RustModuleTemplateConfig, "createWrapper")
 
     for symbol in (
+        "Create_rustModuleTemplate",
+        "Config_rustModuleTemplate",
+        "Destroy_rustModuleTemplate",
         "New_rustModuleTemplate",
         "Delete_rustModuleTemplate",
         "SelfInit_rustModuleTemplate",
@@ -167,10 +174,13 @@ def test_rust_module_template_abi_layout():
         delete_config(config_address)
 
 
-def test_rust_module_template_rust_owned_config_lifecycle():
-    """Freeze the exported Rust lifecycle ABI and exercise config ownership."""
+def test_rust_module_template_rust_owned_instance_lifecycle():
+    """Exercise opaque instance ownership and its transitional config aliases."""
     extension = ctypes.CDLL(rustModuleTemplate._rustModuleTemplate.__file__)
     expected_symbols = (
+        "Create_rustModuleTemplate",
+        "Config_rustModuleTemplate",
+        "Destroy_rustModuleTemplate",
         "New_rustModuleTemplate",
         "Delete_rustModuleTemplate",
         "SelfInit_rustModuleTemplate",
@@ -183,6 +193,29 @@ def test_rust_module_template_rust_owned_config_lifecycle():
         with pytest.raises(AttributeError):
             getattr(extension, obsolete_symbol)
 
+    create_instance = extension.Create_rustModuleTemplate
+    create_instance.argtypes = []
+    create_instance.restype = ctypes.c_void_p
+    get_config = extension.Config_rustModuleTemplate
+    get_config.argtypes = [ctypes.c_void_p]
+    get_config.restype = ctypes.c_void_p
+    destroy_instance = extension.Destroy_rustModuleTemplate
+    destroy_instance.argtypes = [ctypes.c_void_p]
+    destroy_instance.restype = None
+
+    handle = create_instance()
+    assert handle is not None
+    try:
+        config_address = get_config(handle)
+        assert config_address is not None
+        raw_config = _ExpectedRustModuleTemplateConfig.from_address(config_address)
+        assert raw_config.dummy == 0.0
+        assert raw_config.bsk_logger is None
+    finally:
+        destroy_instance(handle)
+
+    # Retain the legacy config-pointer path until RustWrapper owns the opaque
+    # handle directly in the next migration step.
     new_config = extension.New_rustModuleTemplate
     new_config.argtypes = []
     new_config.restype = ctypes.c_void_p
