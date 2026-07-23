@@ -262,7 +262,7 @@ typedef uint32_t BskRustErrorKind;
 
 enum {
     BSK_RUST_ERROR_EXPECTED = 1U,        /*!< module returned an expected error */
-    BSK_RUST_ERROR_PANIC = 2U,           /*!< generated boundary caught a Rust panic */
+    BSK_RUST_ERROR_PANIC = 2U,           /*!< caught panic or call on poisoned instance */
     BSK_RUST_ERROR_INVALID_ARGUMENT = 3U /*!< lifecycle ABI contract was violated */
 };
 
@@ -319,6 +319,15 @@ BSK_RUST_EXTERN_C_END
  *  Every generated Rust definition uses the non-unwinding C ABI and catches
  *  Rust panics before returning. The caller owns every non-null error result
  *  and must release it with ``Destroy_BskRustError``.
+ *  A panic caught during ``SelfInit``, ``Reset``, or ``Update`` poisons that
+ *  module instance because its internal invariants may be incomplete.
+ *  Subsequent lifecycle calls return an error without re-entering module
+ *  code. Expected ``BskError`` results do not poison the instance, and
+ *  ``Destroy_name`` remains valid for poisoned instances.
+ *  The guarded boundary returns the panic diagnostic through
+ *  ``BskRustError`` and suppresses duplicate default Rust panic-hook output
+ *  only on the thread executing that call. Panics outside a generated
+ *  boundary continue through the previously installed application hook.
  *
  *  \p configType must be declared before this macro. bsk-build passes
  *  whatever struct name the crate's ``impl BskModule`` block actually uses,

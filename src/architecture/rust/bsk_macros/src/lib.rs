@@ -64,6 +64,8 @@ fn expand_module(input: ItemStruct) -> syn::Result<TokenStream2> {
     let update_function = format_ident!("Update_{module_name}");
     let assert_io_types_function =
         format_ident!("__bsk_assert_io_types_for_{}", config_type.to_string());
+    let guard_instance_function =
+        format_ident!("__bsk_guard_instance_for_{}", config_type.to_string());
     let initialize_config_fields: Vec<TokenStream2> = fields
         .iter()
         .map(|field| {
@@ -210,6 +212,24 @@ fn expand_module(input: ItemStruct) -> syn::Result<TokenStream2> {
         struct #instance_type {
             config: #config_type,
             state: <#config_type as ::bsk_build::BskModule>::State,
+            poisoned_by: ::core::option::Option<&'static str>,
+        }
+
+        #[doc(hidden)]
+        fn #guard_instance_function(
+            instance: &mut #instance_type,
+            operation: &'static str,
+            action: impl FnOnce(&mut #instance_type) -> ::bsk_build::BskResult<()>,
+        ) -> *mut ::bsk_build::BskRustError {
+            if let ::core::option::Option::Some(poisoned_by) = instance.poisoned_by {
+                return ::bsk_build::BskRustError::__poisoned(operation, poisoned_by);
+            }
+            let (error, panicked) =
+                ::bsk_build::__ffi_boundary_with_status(operation, || action(instance));
+            if panicked {
+                instance.poisoned_by = ::core::option::Option::Some(operation);
+            }
+            error
         }
 
         #[doc(hidden)]
@@ -251,6 +271,7 @@ fn expand_module(input: ItemStruct) -> syn::Result<TokenStream2> {
                         #(#initialize_config_fields,)*
                     },
                     state: ::core::default::Default::default(),
+                    poisoned_by: ::core::option::Option::None,
                 });
                 <#config_type as ::bsk_build::BskModule>::init(
                     &mut instance.config,
@@ -314,13 +335,17 @@ fn expand_module(input: ItemStruct) -> syn::Result<TokenStream2> {
                     ": lifecycle context must not be null",
                 ));
             }
-            ::bsk_build::__ffi_boundary(stringify!(#self_init_function), || {
-                let instance = unsafe { &mut *handle.cast::<#instance_type>() };
-                let config = &mut instance.config;
-                let _context = unsafe { ::bsk_build::BskContext::__from_raw(context) };
-                #(#initialize_outputs)*
-                Ok(())
-            })
+            let instance = unsafe { &mut *handle.cast::<#instance_type>() };
+            #guard_instance_function(
+                instance,
+                stringify!(#self_init_function),
+                |instance| {
+                    let config = &mut instance.config;
+                    let _context = unsafe { ::bsk_build::BskContext::__from_raw(context) };
+                    #(#initialize_outputs)*
+                    Ok(())
+                },
+            )
         }
 
         #[cfg(not(test))]
@@ -343,21 +368,25 @@ fn expand_module(input: ItemStruct) -> syn::Result<TokenStream2> {
                     ": lifecycle context must not be null",
                 ));
             }
-            ::bsk_build::__ffi_boundary(stringify!(#reset_function), || {
-                let instance = unsafe { &mut *handle.cast::<#instance_type>() };
-                let config = &mut instance.config;
-                let context = unsafe { ::bsk_build::BskContext::__from_raw(context) };
-                #(#validate_inputs)*
-                let outputs: #outputs_type =
-                    <#config_type as ::bsk_build::BskModule>::reset(
-                        config,
-                        &mut instance.state,
-                        &context,
-                        current_sim_nanos,
-                    )?;
-                #(#write_reset_outputs)*
-                Ok(())
-            })
+            let instance = unsafe { &mut *handle.cast::<#instance_type>() };
+            #guard_instance_function(
+                instance,
+                stringify!(#reset_function),
+                |instance| {
+                    let config = &mut instance.config;
+                    let context = unsafe { ::bsk_build::BskContext::__from_raw(context) };
+                    #(#validate_inputs)*
+                    let outputs: #outputs_type =
+                        <#config_type as ::bsk_build::BskModule>::reset(
+                            config,
+                            &mut instance.state,
+                            &context,
+                            current_sim_nanos,
+                        )?;
+                    #(#write_reset_outputs)*
+                    Ok(())
+                },
+            )
         }
 
         #[cfg(not(test))]
@@ -380,24 +409,28 @@ fn expand_module(input: ItemStruct) -> syn::Result<TokenStream2> {
                     ": lifecycle context must not be null",
                 ));
             }
-            ::bsk_build::__ffi_boundary(stringify!(#update_function), || {
-                let instance = unsafe { &mut *handle.cast::<#instance_type>() };
-                let config = &mut instance.config;
-                let context = unsafe { ::bsk_build::BskContext::__from_raw(context) };
-                let inputs: #inputs_type = #inputs_type {
-                    #(#read_inputs,)*
-                };
-                let outputs: #outputs_type =
-                    <#config_type as ::bsk_build::BskModule>::update(
-                        config,
-                        &mut instance.state,
-                        &context,
-                        inputs,
-                        current_sim_nanos,
-                    )?;
-                #(#write_update_outputs)*
-                Ok(())
-            })
+            let instance = unsafe { &mut *handle.cast::<#instance_type>() };
+            #guard_instance_function(
+                instance,
+                stringify!(#update_function),
+                |instance| {
+                    let config = &mut instance.config;
+                    let context = unsafe { ::bsk_build::BskContext::__from_raw(context) };
+                    let inputs: #inputs_type = #inputs_type {
+                        #(#read_inputs,)*
+                    };
+                    let outputs: #outputs_type =
+                        <#config_type as ::bsk_build::BskModule>::update(
+                            config,
+                            &mut instance.state,
+                            &context,
+                            inputs,
+                            current_sim_nanos,
+                        )?;
+                    #(#write_update_outputs)*
+                    Ok(())
+                },
+            )
         }
 
     })
@@ -724,6 +757,10 @@ mod tests {
         assert!(expanded.contains("BskRustError"));
         assert!(expanded.contains("BskResult < ControllerOutputs >"));
         assert!(expanded.contains("__ffi_boundary"));
+        assert_eq!(expanded.matches("__ffi_boundary_with_status").count(), 1);
+        assert!(expanded.contains("__bsk_guard_instance_for_ControllerConfig"));
+        assert!(expanded.contains("poisoned_by"));
+        assert!(expanded.contains("__poisoned"));
         assert!(expanded.contains("output_handle"));
         assert!(expanded.contains("panic = \"unwind\""));
         assert!(expanded.contains("extern \"C\""));

@@ -127,6 +127,16 @@
 //! boundary returns that failure as data, and the C++ wrapper raises
 //! ``BasiliskError`` only after Rust has returned normally. Output messages
 //! are written only after the lifecycle method returns ``Ok``.
+//! Expected errors do not invalidate the module instance, so callers may
+//! correct its configuration and retry. A caught panic can leave arbitrary
+//! internal invariants incomplete; generated instances therefore become
+//! poisoned after a panic in ``SelfInit``, ``Reset``, or ``Update``. Later
+//! lifecycle calls return a deterministic diagnostic without re-entering
+//! module code. Rust destruction remains available for the poisoned instance.
+//! The guarded boundary suppresses Rust's default panic-hook report on that
+//! thread because the same diagnostic is returned through ``BskRustError``.
+//! Panics outside a guarded call continue through the previously installed
+//! application hook.
 //!
 //! # Nested structs
 //!
@@ -245,7 +255,7 @@ pub type BskResult<T> = Result<T, BskError>;
 pub enum BskRustErrorKind {
     /// An expected module failure returned as [`BskError`].
     Expected = 1,
-    /// A Rust panic caught at the generated lifecycle boundary.
+    /// A caught Rust panic or a lifecycle call rejected on its poisoned instance.
     Panic = 2,
     /// An invalid pointer or another violation of the lifecycle ABI contract.
     InvalidArgument = 3,
@@ -310,6 +320,18 @@ impl BskRustError {
         Self::into_raw(
             BskRustErrorKind::Panic,
             format!("Rust panic in {operation}: {message}"),
+        )
+    }
+
+    /// Report that a lifecycle call cannot use an instance after an earlier panic.
+    #[doc(hidden)]
+    pub fn __poisoned(operation: &str, panicked_operation: &str) -> *mut Self {
+        Self::into_raw(
+            BskRustErrorKind::Panic,
+            format!(
+                "Rust module instance cannot execute {operation} after a previous panic in \
+                 {panicked_operation}"
+            ),
         )
     }
 
@@ -391,19 +413,76 @@ pub unsafe extern "C" fn Destroy_BskRustError(error: *mut BskRustError) {
     }
 }
 
+std::thread_local! {
+    static BSK_FFI_BOUNDARY_DEPTH: core::cell::Cell<usize> =
+        const { core::cell::Cell::new(0) };
+}
+
+static INSTALL_BSK_PANIC_HOOK: std::sync::Once = std::sync::Once::new();
+
+struct BskFfiPanicHookGuard;
+
+fn inside_ffi_boundary() -> bool {
+    BSK_FFI_BOUNDARY_DEPTH
+        .try_with(|depth| depth.get() > 0)
+        .unwrap_or(false)
+}
+
+impl BskFfiPanicHookGuard {
+    fn enter() -> Self {
+        INSTALL_BSK_PANIC_HOOK.call_once(|| {
+            let previous_hook = std::panic::take_hook();
+            std::panic::set_hook(std::boxed::Box::new(move |panic_info| {
+                if !inside_ffi_boundary() {
+                    previous_hook(panic_info);
+                }
+            }));
+        });
+        BSK_FFI_BOUNDARY_DEPTH.with(|depth| depth.set(depth.get() + 1));
+        Self
+    }
+}
+
+impl Drop for BskFfiPanicHookGuard {
+    fn drop(&mut self) {
+        let _ = BSK_FFI_BOUNDARY_DEPTH.try_with(|depth| {
+            depth.set(depth.get().saturating_sub(1));
+        });
+    }
+}
+
 /// Run one generated ABI operation without allowing a Rust panic to escape.
 ///
 /// A null return is success. An expected [`BskError`] or caught unwinding
-/// panic becomes an owning [`BskRustError`] handle for the C++ wrapper.
+/// panic becomes an owning [`BskRustError`] handle for the C++ wrapper. The
+/// panic diagnostic is returned through that handle instead of also invoking
+/// Rust's default panic-hook output.
 #[doc(hidden)]
 pub fn __ffi_boundary(
     operation: &str,
     action: impl FnOnce() -> BskResult<()>,
 ) -> *mut BskRustError {
-    match std::panic::catch_unwind(std::panic::AssertUnwindSafe(action)) {
-        Ok(Ok(())) => core::ptr::null_mut(),
-        Ok(Err(error)) => BskRustError::__from_error(error),
-        Err(payload) => BskRustError::__from_panic(operation, payload),
+    __ffi_boundary_with_status(operation, action).0
+}
+
+/// Run one generated ABI operation and report whether it caught a panic.
+///
+/// The generated module boundary uses the Boolean to poison an instance after
+/// an unwinding panic. Expected [`BskError`] values return an error handle but
+/// leave the Boolean false so callers may correct configuration and retry.
+#[doc(hidden)]
+pub fn __ffi_boundary_with_status(
+    operation: &str,
+    action: impl FnOnce() -> BskResult<()>,
+) -> (*mut BskRustError, bool) {
+    let panic_hook_guard = BskFfiPanicHookGuard::enter();
+    let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(action));
+    drop(panic_hook_guard);
+
+    match result {
+        Ok(Ok(())) => (core::ptr::null_mut(), false),
+        Ok(Err(error)) => (BskRustError::__from_error(error), false),
+        Err(payload) => (BskRustError::__from_panic(operation, payload), true),
     }
 }
 
@@ -411,7 +490,8 @@ pub fn __ffi_boundary(
 mod error_tests {
     use super::{
         BskError, BskResult, BskRustError, BskRustErrorKind, BskRustError_kind,
-        BskRustError_message, Destroy_BskRustError, LIVE_BSK_RUST_ERRORS, __ffi_boundary,
+        BskRustError_message, Destroy_BskRustError, LIVE_BSK_RUST_ERRORS,
+        BskFfiPanicHookGuard, __ffi_boundary, __ffi_boundary_with_status, inside_ffi_boundary,
     };
     use core::sync::atomic::Ordering;
     use std::ffi::CStr;
@@ -507,6 +587,23 @@ mod error_tests {
     }
 
     #[test]
+    fn poisoned_instance_error_identifies_both_operations() {
+        let _lock = ERROR_HANDLE_TEST_LOCK.lock().expect("test lock");
+        let error = BskRustError::__poisoned("sample::update", "sample::reset");
+
+        assert_eq!(
+            unsafe { BskRustError_kind(error) },
+            BskRustErrorKind::Panic
+        );
+        assert_eq!(
+            handle_message(error),
+            "Rust module instance cannot execute sample::update after a previous panic in \
+             sample::reset"
+        );
+        unsafe { Destroy_BskRustError(error) };
+    }
+
+    #[test]
     fn invalid_argument_handle_preserves_contract_diagnostic() {
         let _lock = ERROR_HANDLE_TEST_LOCK.lock().expect("test lock");
         let error = BskRustError::__invalid_argument("module handle must not be null");
@@ -576,6 +673,43 @@ mod error_tests {
             "Rust panic in sample::update: index out of range"
         );
         unsafe { Destroy_BskRustError(error) };
+    }
+
+    #[test]
+    fn ffi_boundary_status_distinguishes_errors_from_panics() {
+        let _lock = ERROR_HANDLE_TEST_LOCK.lock().expect("test lock");
+        let (expected_error, expected_panicked) =
+            __ffi_boundary_with_status("sample::reset", || Err(BskError::new("invalid gain")));
+        let (panic_error, panicked) =
+            __ffi_boundary_with_status("sample::update", || panic!("broken invariant"));
+
+        assert!(!expected_panicked);
+        assert!(panicked);
+        assert_eq!(
+            unsafe { BskRustError_kind(expected_error) },
+            BskRustErrorKind::Expected
+        );
+        assert_eq!(
+            unsafe { BskRustError_kind(panic_error) },
+            BskRustErrorKind::Panic
+        );
+        unsafe {
+            Destroy_BskRustError(expected_error);
+            Destroy_BskRustError(panic_error);
+        }
+    }
+
+    #[test]
+    fn panic_hook_guard_is_scoped_to_the_current_thread() {
+        assert!(!inside_ffi_boundary());
+        {
+            let _guard = BskFfiPanicHookGuard::enter();
+            assert!(inside_ffi_boundary());
+            std::thread::spawn(|| assert!(!inside_ffi_boundary()))
+                .join()
+                .expect("panic-hook scope test thread must complete");
+        }
+        assert!(!inside_ffi_boundary());
     }
 }
 

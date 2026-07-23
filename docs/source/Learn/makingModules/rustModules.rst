@@ -222,6 +222,17 @@ initial output values, parameter validation, or state reset.
 ``warning()`` methods. Use these for diagnostics and return ``BskError`` when
 the lifecycle call must fail; Rust logging is not an error-control mechanism.
 
+The generated ABI catches unexpected Rust panics before they can unwind into
+C++. The C++ wrapper then translates the returned diagnostic into
+``BasiliskError``. This containment protects the language boundary; use
+``BskResult`` rather than panics for failures that module code can anticipate.
+A caught lifecycle panic poisons that module instance, and later lifecycle
+calls fail without invoking its potentially inconsistent internal state.
+Expected ``BskError`` results do not poison the instance.
+The translated ``BasiliskError`` is the single user-facing diagnostic; the
+guarded call suppresses duplicate default Rust panic-hook output on its thread.
+Panic-hook behavior outside generated lifecycle calls remains unchanged.
+
 Override ``init(state)`` to set non-zero parameter defaults and initial state.
 Rust first initializes every configuration field and ``State`` through their
 ``Default`` implementations. It then calls ``init(state)`` before Python

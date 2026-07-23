@@ -35,6 +35,9 @@ demonstrates the Rust module lifecycle, explicit message-port annotations,
 named input and output values, optional message inputs, output messages, and
 logging. It also demonstrates a Python-configurable ``increment`` parameter
 that is initialized in Rust and validated during reset with ``BskResult``.
+The ``panicOnUpdate`` field is a test-only fault-injection hook used to verify
+that the generated ABI contains an unexpected Rust panic before it crosses
+into C++.
 
 User Guide
 ----------
@@ -53,6 +56,15 @@ compiled Basilisk module:
 ``module.increment`` defaults to 1 and must be finite and strictly positive.
 An invalid value returns ``BskError`` from Rust and causes initialization to
 raise ``BasiliskError`` without using cross-language unwinding.
+
+Leave ``module.panicOnUpdate`` set to its default value of ``False`` during
+normal use. Setting it to ``True`` deliberately panics during update so the
+unit tests can verify panic containment and the rejection of later lifecycle
+calls on the poisoned instance. Rust still destroys the instance normally.
+The panic is reported once as ``BasiliskError`` without an additional default
+Rust panic-hook report.
+Operational modules should return ``BskError`` for expected failures rather
+than adding a similar test hook.
 
 Connect ``module.dataInMsg`` when input data is available. When it is unconnected,
 the module starts from a zero vector.

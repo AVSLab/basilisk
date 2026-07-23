@@ -34,6 +34,8 @@ pub struct RustModuleTemplateConfig {
     /// [-] Output message
     #[bsk(output)]
     pub dataOutMsg: MsgWriter<CModuleTemplateMsg>,
+    /// [-] Test-only fault injection that deliberately panics during update
+    pub panicOnUpdate: bool,
 }
 
 /// Rust-owned state that is never exposed through C, C++, or Python.
@@ -104,6 +106,10 @@ impl BskModule for RustModuleTemplateConfig {
         inputs: Self::Inputs,
         current_sim_nanos: u64,
     ) -> BskResult<Self::Outputs> {
+        if self.panicOnUpdate {
+            panic!("deliberate rustModuleTemplate update panic");
+        }
+
         let mut data_out_msg = inputs.dataInMsg.unwrap_or_default();
 
         if state.mode == TemplateMode::Idle {
@@ -132,12 +138,13 @@ mod tests {
     /// Verify that only Python-facing parameters and ports cross the config ABI.
     #[test]
     fn config_abi_contains_only_public_module_fields() {
-        assert_eq!(size_of::<RustModuleTemplateConfig>(), 160);
+        assert_eq!(size_of::<RustModuleTemplateConfig>(), 168);
         assert_eq!(align_of::<RustModuleTemplateConfig>(), 8);
         assert_eq!(offset_of!(RustModuleTemplateConfig, dummy), 0);
         assert_eq!(offset_of!(RustModuleTemplateConfig, increment), 8);
         assert_eq!(offset_of!(RustModuleTemplateConfig, dataInMsg), 16);
         assert_eq!(offset_of!(RustModuleTemplateConfig, dataOutMsg), 88);
+        assert_eq!(offset_of!(RustModuleTemplateConfig, panicOnUpdate), 160);
     }
 
     /// Verify that generated input and output values use the config port names.
@@ -173,6 +180,7 @@ mod tests {
             increment: 1.0, // [-]
             dataInMsg: MsgReader::default(),
             dataOutMsg: MsgWriter::default(),
+            panicOnUpdate: false,
         };
         let mut state = RustModuleTemplateState::default();
 
@@ -205,6 +213,7 @@ mod tests {
             increment: 0.0, // [-]
             dataInMsg: MsgReader::default(),
             dataOutMsg: MsgWriter::default(),
+            panicOnUpdate: false,
         };
         let mut state = RustModuleTemplateState::default();
 

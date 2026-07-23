@@ -319,6 +319,24 @@ lifecycle method's error return. The C++ logging adapter catches any logger
 exception before returning to Rust, so a C++ exception never unwinds through
 Rust frames.
 
+The generated ABI also catches unexpected Rust panics and returns their
+diagnostics as error data. The C++ wrapper raises ``BasiliskError`` only after
+Rust has returned. Panics are defect containment, not a normal module error
+mechanism; return ``BskError`` for validation and runtime failures that module
+code can anticipate.
+
+A caught lifecycle panic poisons that module instance because its internal
+state may be only partially updated. Later lifecycle calls fail without
+re-entering Rust module code, while destruction remains safe. An expected
+``BskError`` does not poison the instance, allowing callers to correct module
+configuration and retry.
+
+The returned ``BasiliskError`` is the single user-facing panic diagnostic.
+The Rust runtime suppresses its default ``thread ... panicked`` hook output
+only while the current thread is inside a generated lifecycle boundary.
+Panics on other threads or outside Basilisk lifecycle calls continue through
+the application's previously installed panic hook.
+
 In test builds (enabled by adding ``bsk-build`` with the ``test_logger``
 feature to ``[dev-dependencies]``), logger calls print to ``stderr`` with no C
 symbols required. This means context logger calls in ``reset()`` and

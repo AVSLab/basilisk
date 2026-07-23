@@ -90,10 +90,12 @@ class _ExpectedRustModuleTemplateConfig(ctypes.Structure):
         ("increment", ctypes.c_double),
         ("data_in_msg", _ExpectedCModuleTemplatePort),
         ("data_out_msg", _ExpectedCModuleTemplatePort),
+        ("panic_on_update", ctypes.c_bool),
     ]
 
 
 _BSK_RUST_ERROR_EXPECTED = 1
+_BSK_RUST_ERROR_PANIC = 2
 _BSK_RUST_ERROR_INVALID_ARGUMENT = 3
 
 
@@ -144,7 +146,13 @@ def _destroy_rust_instance(extension, handle):
 
 def test_rust_module_template_python_api():
     """Freeze the module-first Python API retained by the opaque-handle design."""
-    expected_fields = {"dummy", "increment", "dataInMsg", "dataOutMsg"}
+    expected_fields = {
+        "dummy",
+        "increment",
+        "dataInMsg",
+        "dataOutMsg",
+        "panicOnUpdate",
+    }
     expected_wrapper_methods = {"SelfInit", "Reset", "UpdateState"}
     expected_framework_fields = {
         "ModelTag",
@@ -218,12 +226,13 @@ def test_rust_module_template_abi_layout():
     assert _ExpectedCModuleTemplatePort.payload_pointer.offset == 56
     assert _ExpectedCModuleTemplatePort.header_pointer.offset == 64
 
-    assert ctypes.sizeof(_ExpectedRustModuleTemplateConfig) == 160
+    assert ctypes.sizeof(_ExpectedRustModuleTemplateConfig) == 168
     assert ctypes.alignment(_ExpectedRustModuleTemplateConfig) == 8
     assert _ExpectedRustModuleTemplateConfig.dummy.offset == 0
     assert _ExpectedRustModuleTemplateConfig.increment.offset == 8
     assert _ExpectedRustModuleTemplateConfig.data_in_msg.offset == 16
     assert _ExpectedRustModuleTemplateConfig.data_out_msg.offset == 88
+    assert _ExpectedRustModuleTemplateConfig.panic_on_update.offset == 160
 
     extension = ctypes.CDLL(rustModuleTemplate._rustModuleTemplate.__file__)
     get_config = extension.Config_rustModuleTemplate
@@ -237,6 +246,7 @@ def test_rust_module_template_abi_layout():
         raw_config = _ExpectedRustModuleTemplateConfig.from_address(config_address)
         assert raw_config.dummy == 0.0
         assert raw_config.increment == 1.0
+        assert raw_config.panic_on_update is False
         raw_config.dummy = -3.5  # [-]
         assert raw_config.dummy == -3.5
     finally:
@@ -281,6 +291,13 @@ def test_rust_module_template_rust_owned_instance_lifecycle():
         ctypes.POINTER(_ExpectedBskModuleContext),
     ]
     reset.restype = ctypes.c_void_p
+    update = extension.Update_rustModuleTemplate
+    update.argtypes = [
+        ctypes.c_void_p,
+        ctypes.c_uint64,
+        ctypes.POINTER(_ExpectedBskModuleContext),
+    ]
+    update.restype = ctypes.c_void_p
 
     handle = _create_rust_instance(extension)
     try:
@@ -289,6 +306,7 @@ def test_rust_module_template_rust_owned_instance_lifecycle():
         raw_config = _ExpectedRustModuleTemplateConfig.from_address(config_address)
         assert raw_config.dummy == 0.0
         assert raw_config.increment == 1.0
+        assert raw_config.panic_on_update is False
         raw_config.dummy = 42.0  # [-]
         context = _ExpectedBskModuleContext(
             runtime=_ExpectedBskModuleRuntime(
@@ -323,6 +341,27 @@ def test_rust_module_template_rust_owned_instance_lifecycle():
         assert raw_config.dummy == 0.0
         assert raw_config.data_out_msg.header.module_id == 7
         assert raw_config.data_out_msg.header.time_written == 10
+
+        raw_config.panic_on_update = True
+        panic_error = update(handle, 11, ctypes.byref(context))  # [ns]
+        kind, message = _consume_abi_error(extension, panic_error)
+        assert kind == _BSK_RUST_ERROR_PANIC
+        assert (
+            message
+            == "Rust panic in Update_rustModuleTemplate: "
+            "deliberate rustModuleTemplate update panic"
+        )
+
+        raw_config.panic_on_update = False
+        poisoned_error = reset(handle, 12, ctypes.byref(context))  # [ns]
+        kind, message = _consume_abi_error(extension, poisoned_error)
+        assert kind == _BSK_RUST_ERROR_PANIC
+        assert (
+            message
+            == "Rust module instance cannot execute Reset_rustModuleTemplate "
+            "after a previous panic in Update_rustModuleTemplate"
+        )
+        assert raw_config.dummy == 0.0
     finally:
         _destroy_rust_instance(extension, handle)
 
@@ -385,3 +424,31 @@ def test_rust_module_template_expected_error():
         match="rustModuleTemplate.increment must be finite and strictly positive",
     ):
         simulation.InitializeSimulation()
+
+
+def test_rust_module_template_panic_is_contained(capfd):
+    """Translate a Rust panic once without emitting the default hook report."""
+    module = rustModuleTemplate.rustModuleTemplate()
+    module.panicOnUpdate = True
+
+    with pytest.raises(
+        BasiliskError,
+        match=(
+            "Rust panic in Update_rustModuleTemplate: "
+            "deliberate rustModuleTemplate update panic"
+        ),
+    ):
+        module.UpdateState(0)  # [ns]
+
+    module.panicOnUpdate = False
+    with pytest.raises(
+        BasiliskError,
+        match=(
+            "Rust module instance cannot execute Reset_rustModuleTemplate "
+            "after a previous panic in Update_rustModuleTemplate"
+        ),
+    ):
+        module.Reset(1)  # [ns]
+
+    captured = capfd.readouterr()
+    assert "panicked at" not in captured.err
