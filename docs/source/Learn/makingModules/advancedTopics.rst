@@ -11,3 +11,4 @@ This section covers advanced BSK module writing topics.
    advancedTopics/creatingDynObject
    advancedTopics/mujocoDynObject
    advancedTopics/effectorBranching
+   advancedTopics/spiceReconstruction
