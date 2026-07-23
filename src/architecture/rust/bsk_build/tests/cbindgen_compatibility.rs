@@ -6,24 +6,24 @@
 // purpose with or without fee is hereby granted, provided that the above
 // copyright notice and this permission notice appear in all copies.
 
-//! Compatibility checks for evaluating cbindgen as the C-layout renderer.
+//! Compatibility checks for the cbindgen C-layout renderer.
 //!
-//! These tests intentionally do not change production header generation. They
-//! record which Rust representations cbindgen can render and expose the exact
-//! boundary that a future procedural-macro integration must bridge:
+//! These tests record which Rust representations cbindgen renders directly
+//! and the narrow Basilisk-specific boundary handled by ``bsk-build``:
 //!
 //! - cbindgen renders ordinary ``#[repr(C)]`` config fields, nested structs,
-//!   arrays, aliases, mapped ``cfg`` values, and concrete C message-port
-//!   structs.
+//!   arrays, aliases, mapped ``cfg`` values, concrete C message-port structs,
+//!   and optional boxed state.
 //! - cbindgen does not resolve ``T::Port`` in the current
 //!   ``MsgReader<T>``/``MsgWriter<T>`` abstraction. It emits an undefined
 //!   ``Port`` type for that representation.
 //!
-//! Consequently, a future integration should have ``#[bsk_build::module]``
-//! emit a C-facing ``#[repr(C)]`` projection in which annotated message ports
-//! are already concrete. cbindgen can render that projection; a small
-//! Basilisk-specific layer must still supply includes, lifecycle declarations,
-//! and C++/SWIG conveniences.
+//! Production code recognizes those generated specialization names and maps
+//! them to Basilisk's existing ``<Message>_C`` port types. It also supplies
+//! includes, lifecycle declarations, Rust-owned-state opacity, and the shared
+//! SWIG wrapper invocation.
+
+#![cfg(feature = "codegen")]
 
 use std::path::{Path, PathBuf};
 
@@ -62,12 +62,15 @@ fn renders_c_representable_basilisk_config_fields() {
     assert!(header.contains("typedef double Gain;"));
     assert!(header.contains("double position[3];"));
     assert!(header.contains("struct NestedConfig nested;"));
-    assert!(header.contains("double vector[3];"));
+    assert!(header.contains("#define VECTOR_LENGTH 3"));
+    assert!(header.contains("double vector[VECTOR_LENGTH];"));
     assert!(header.contains("double matrix[2][3];"));
     assert!(header.contains("#if defined(BSK_CBINDGEN_WIDE)"));
     assert!(header.contains("#if !defined(BSK_CBINDGEN_WIDE)"));
     assert!(header.contains("struct ExampleMsg_C input_port;"));
     assert!(header.contains("struct ExampleMsg_C output_port;"));
+    assert!(header.contains("struct OwnedState *state;"));
+    assert!(header.contains("Mode mode;"));
 }
 
 #[test]

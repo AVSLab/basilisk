@@ -13,6 +13,9 @@ use core::ffi::c_void;
 /// Scalar alias used by a module configuration.
 pub type Gain = f64;
 
+/// Length of the example vector.
+pub const VECTOR_LENGTH: usize = 3;
+
 /// Nested configuration data passed across the Rust/C boundary.
 #[repr(C)]
 pub struct NestedConfig {
@@ -35,6 +38,22 @@ pub struct ExampleMsg_C {
     pub message: *mut c_void,
 }
 
+/// Rust-owned state stored behind an optional box.
+#[repr(C)]
+pub struct OwnedState {
+    /// [-] Persistent state value.
+    pub value: f64,
+}
+
+/// C-compatible mode used to evaluate enum rendering.
+#[repr(u8)]
+pub enum Mode {
+    /// [-] First mode.
+    First,
+    /// [-] Second mode.
+    Second,
+}
+
 /// A configuration containing the C-representable cases in this spike.
 #[repr(C)]
 pub struct CompatibleConfig {
@@ -43,7 +62,7 @@ pub struct CompatibleConfig {
     /// [-] Nested configuration.
     pub nested: NestedConfig,
     /// [-] Fixed-size vector.
-    pub vector: [f64; 3],
+    pub vector: [f64; VECTOR_LENGTH],
     /// [-] Fixed-size matrix.
     pub matrix: [[f64; 3]; 2],
     /// [-] Feature-dependent scalar.
@@ -52,6 +71,10 @@ pub struct CompatibleConfig {
     pub input_port: ExampleMsg_C,
     /// [-] Concrete output message port.
     pub output_port: ExampleMsg_C,
+    /// [-] Rust-owned persistent state.
+    pub state: Option<Box<OwnedState>>,
+    /// [-] C-compatible enum value.
+    pub mode: Mode,
 }
 
 /// Make the compatible configuration reachable from cbindgen's public C API.

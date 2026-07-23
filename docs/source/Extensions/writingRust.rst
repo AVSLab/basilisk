@@ -84,12 +84,13 @@ created in the CMake build tree, not in the crate source directory:
 
     // build.rs
     fn main() {
-        bsk_build::generate_from("myModule.rs");
+        bsk_build::generate_bindings("myModuleConfig");
     }
 
 The Rust source and reStructuredText documentation names match the module
-directory, following the standard Basilisk module layout. The source path in
-``build.rs`` must match the library path in ``Cargo.toml``.
+directory, following the standard Basilisk module layout. Pass the exact name
+of the struct marked with ``#[bsk_build::module]`` to
+``generate_bindings()``. Cargo obtains the source path from ``[lib] path``.
 
 Add ``bsk-build`` as both a normal and build dependency. Enable its
 ``codegen`` feature for the build dependency:
@@ -522,8 +523,8 @@ and Python reads and writes it field-by-field like any other struct member
 (``ctrl.target.x = 1.0``). Nested structs must implement ``Default`` because
 Rust constructs the complete configuration before calling ``init()``. They
 cannot be self-referential. Message ports and ``Option<Box<T>>`` owned state
-are only meaningful on the top-level config struct and are rejected on a
-nested struct.
+belong on the top-level config struct so the generated lifecycle and ownership
+adapters can process them.
 
 A field may **not** be a raw pointer to one of these structs (e.g. ``*mut
 Vec2``), or to any other type — ``BSKLogger`` is the only pointee
@@ -546,9 +547,10 @@ Fixed-size arrays
 ------------------
 
 A field of type ``[T; N]`` — ``T`` a Rust primitive or a nested
-``#[repr(C)]`` struct, ``N`` a plain integer literal — is supported and maps
-to the standard C array declaration ``T name[N];``. This is the same form
-used throughout Basilisk's C message payloads (e.g.
+``#[repr(C)]`` struct and ``N`` a compile-time length — is supported and maps
+to the standard C array declaration ``T name[N];``. Named length constants
+are emitted into the C header as macros. This is the same form used
+throughout Basilisk's C message payloads (e.g.
 ``double torqueRequestBody[3]``). Multi-dimensional arrays are also
 supported: ``[[T; N]; M]`` maps to ``T name[M][N];``.
 
@@ -573,10 +575,9 @@ list of lists — the same convention as message payload fields:
     module.maxRwTorques = [0.001, 0.001, 0.001]
     module.dcm_BR = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
 
-Array lengths must be plain integer literals. Expressions that reference a
-``const`` item, use arithmetic (``N * 2``), or involve generic parameters are
-a build error: ``bsk-build`` runs before the crate's own constants are
-evaluated.
+The module configuration itself cannot be generic. Array lengths can be
+integer literals or crate constants that ``cbindgen`` can emit into the C
+header.
 
 .. note::
 
@@ -689,8 +690,8 @@ Common Build Problems
    ``bsk_add_rust_module(... INCLUDE_DIRS ...)``.
 
 ``cargo test`` attempts to link Basilisk
-   Ensure that the config uses ``#[bsk_build::module]`` and does not invoke
-   the legacy ``bsk_module!()`` compatibility macro.
+   Ensure that the config uses ``#[bsk_build::module]``. The generated
+   lifecycle functions are automatically omitted from test builds.
 
 Known limitations
 --------------------
@@ -708,6 +709,9 @@ Known limitations
   C message or utility headers change — not on every checkout.
 - Custom message types require a hand-written ``*_C`` C-interface header —
   there is no Rust-side message-definition DSL.
+- Configuration values are exposed to Python as public struct fields.
+  Exporting arbitrary inherent Rust methods through SWIG is not currently
+  supported.
 - ``bsk-utilities`` covers C ABI utilities/constants only; C++/Eigen
   utilities (``Eigen::Vector3d``, ``Eigen::Matrix3d``, ...) are out of scope
   until a dedicated C shim is designed.

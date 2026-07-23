@@ -524,6 +524,18 @@ fn validate_module_config(input: &ItemStruct) -> syn::Result<()> {
                 "Basilisk module config fields must be declared `pub` for C++/SWIG access",
             ));
         }
+        if let Type::Ptr(pointer) = &field.ty {
+            let is_logger = pointer.mutability.is_some()
+                && type_last_ident(&pointer.elem)
+                    .is_some_and(|identifier| identifier == "BSKLogger");
+            if !is_logger {
+                return Err(syn::Error::new_spanned(
+                    pointer,
+                    "raw pointer config fields are unsupported; use `Option<Box<T>>` \
+                     for Rust-owned state (`*mut BSKLogger` is the only exception)",
+                ));
+            }
+        }
     }
 
     let has_runtime = fields.iter().any(|field| {
@@ -742,5 +754,19 @@ mod tests {
 
         let error = validate_module_config(&input).expect_err("private field must fail");
         assert!(error.to_string().contains("fields must be declared `pub`"));
+    }
+
+    #[test]
+    fn rejects_non_logger_raw_pointer() {
+        let input: ItemStruct = parse_quote! {
+            #[repr(C)]
+            pub struct ControllerConfig {
+                pub runtime: BskModuleRuntime,
+                pub state: *mut f64,
+            }
+        };
+
+        let error = validate_module_config(&input).expect_err("raw pointer must fail");
+        assert!(error.to_string().contains("raw pointer config fields"));
     }
 }

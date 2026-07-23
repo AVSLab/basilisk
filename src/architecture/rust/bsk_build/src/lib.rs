@@ -8,17 +8,17 @@
 
 //! Build-script helpers for Basilisk Rust modules.
 //!
-//! A conventionally laid-out Cargo crate's ``build.rs`` can contain:
+//! A Rust module crate's ``build.rs`` names its marked configuration type:
 //!
 //! ```rust,ignore
-//! fn main() { bsk_build::generate(); }
+//! fn main() {
+//!     bsk_build::generate_bindings("MyModuleConfig");
+//! }
 //! ```
 //!
-//! An in-tree BSK module keeps its crate root beside ``Cargo.toml`` and calls
-//! ``generate_from("myModule.rs")`` instead. Both functions scan the selected
-//! source path for the ``#[bsk_build::module]`` struct with an
-//! ``impl BskModule for <Type>`` block and emit two build artifacts. The
-//! procedural attribute emits the Rust lifecycle entry points itself.
+//! ``cbindgen`` reads the crate's C-compatible types and emits two build
+//! artifacts. The ``#[bsk_build::module]`` procedural attribute emits named
+//! message I/O values and the Rust lifecycle entry points.
 //!
 //! * **``<ModuleName>.h``** in ``$OUT_DIR`` by default — C header for
 //!   CMake/SWIG, generated from the Rust struct.  Set ``BSK_HEADER_PATH`` to
@@ -53,8 +53,8 @@
 //! raw port I/O; the ``update`` function receives and returns plain message
 //! values.
 //!
-//! ``///`` doc comments on struct fields become the Doxygen ``/*!< … */``
-//! inline comment in the generated C header.
+//! ``///`` doc comments on structs and fields become Doxygen comments in the
+//! generated C header.
 //!
 //! # Type mapping
 //!
@@ -65,12 +65,11 @@
 //! | ``i64`` / ``u64``     | ``int64_t`` / ``uint64_t`` |
 //! | ``i32`` / ``u32``     | ``int32_t`` / ``uint32_t`` |
 //! | ``bool``              | ``bool``            |
-//! | ``*mut T``            | ``T *``             |
-//! | ``*const T``          | ``const T *``       |
+//! | ``*mut BSKLogger``    | ``BSKLogger *``     |
 //! | ``bsk_messages::Foo`` | ``Foo`` (last segment) |
 //! | ``MsgReader<Foo>`` / ``MsgWriter<Foo>`` | ``Foo_C`` |
 //! | ``BskModuleRuntime``  | ``BskRustModuleRuntime`` (see below) |
-//! | ``[T; N]`` (``N`` a literal) | ``T name[N]`` (see "Fixed-size arrays") |
+//! | ``[T; N]`` (compile-time ``N``) | ``T name[N]`` (see "Fixed-size arrays") |
 //!
 //! Rust allocates each module config and initializes every field other than
 //! ``runtime`` through its type's ``Default`` implementation before calling
@@ -125,49 +124,33 @@
 //!
 //! # Nested structs
 //!
-//! A field whose type is another `#[repr(C)]` struct defined in the configured
-//! source path (by value, not a pointer) is supported: `bsk-build` finds
-//! it the same way it finds the config struct, generates its own C
-//! `typedef struct` ahead of the config struct's, and lets Python read and
-//! write it field-by-field through SWIG like any other struct member —
-//! SWIG's generated getter returns a live reference into the parent, and
-//! its setter is type-checked against the exact struct type, so this is no
-//! less safe than a plain `f64` field. Nesting may be arbitrarily deep,
-//! but not self-referential (a struct can't contain itself by value in C).
-//! `MsgReader`/`MsgWriter` and `Option<Box<T>>` fields are only meaningful
-//! on the top-level config struct and are rejected on nested structs.
+//! A field whose type is another `#[repr(C)]` struct (by value, not a
+//! pointer) is supported. ``cbindgen`` emits referenced structs in dependency
+//! order, and SWIG exposes the nested value field-by-field. Nesting may be
+//! arbitrarily deep, but not self-referential because C cannot represent a
+//! struct containing itself by value.
+//! Keep `MsgReader`/`MsgWriter` and `Option<Box<T>>` fields on the top-level
+//! config struct, where the module lifecycle and ownership adapters process
+//! them.
 //!
 //! # Fixed-size arrays
 //!
-//! A field of type ``[T; N]`` — ``T`` a primitive or a nested ``#[repr(C)]``
-//! struct, ``N`` a literal integer — is supported and maps to a plain C array
-//! field (``T name[N];``). Multi-dimensional arrays (``[[T; N]; M]``, etc.)
-//! are also supported and map to ``T name[M][N];`` in C order (outermost
-//! dimension first). This matches the pattern hand-written Basilisk C modules
-//! and message payloads already use (e.g. ``double torqueRequestBody[3]``,
-//! ``double dcm[3][3]``). SWIG wraps a 1-D array as a Python list of scalars;
-//! a 2-D array as a list of lists; and so on. Array lengths must be plain
-//! integer literals — ``const`` expressions, generics, and ``N * 2`` are
-//! build errors because `bsk-build` runs before the crate's own consts can
-//! be evaluated.
-//!
-//! Every other field type is a hard build error: there is no "pass the
-//! type name through unchanged" fallback, so a typo or unsupported type is
-//! caught at build time instead of producing a broken header.
+//! A field of type ``[T; N]`` — ``T`` a primitive or nested ``#[repr(C)]``
+//! struct — maps to a C array field. Multi-dimensional arrays map in C order
+//! (outermost dimension first). SWIG wraps a 1-D array as a Python list of
+//! scalars, a 2-D array as a list of lists, and so on.
 //!
 //! # Identifying the module config
 //!
 //! Add ``#[bsk_build::module]`` to the top-level configuration struct. The
-//! attribute explicitly distinguishes the module config from other
-//! ``#[repr(C)]`` structs in the crate and asks rustc to validate the basic
-//! cross-language ABI requirements and emits the lifecycle entry points.
-//! ``build.rs`` renders only the C header and SWIG interface for a marked
-//! module.
+//! attribute explicitly distinguishes the module config from ordinary Rust
+//! data and asks rustc to validate its basic ABI requirements. Pass the same
+//! type name to [`generate_bindings`] in ``build.rs``.
 //!
 //! # Add `bsk-build` as a plain dependency too
 //!
-//! Besides the generator itself ([`generate()`] or [`generate_from()`], called
-//! from `build.rs` and gated behind the opt-in `codegen` feature), this crate
+//! Besides [`generate_bindings`] (called from `build.rs` and gated behind the
+//! opt-in `codegen` feature), this crate
 //! also has an always-available module-code surface:
 //! ``#[module]``, [`BskModule`], [`BskModuleRuntime`],
 //! [`MsgReader`]/[`MsgWriter`], and [`BskLoggerExt`]. Add a second,
@@ -186,27 +169,15 @@
 //! ``use bsk_messages::*;`` brings those in with the message types. Refer to
 //! the attribute through the direct dependency as ``bsk_build::module``.
 
-/// Include the ``build.rs``-generated lifecycle shim for a legacy module.
-///
-/// New modules use ``#[bsk_build::module]``, which emits lifecycle code
-/// directly and does not call this macro. This compatibility macro remains
-/// available while unmarked out-of-tree modules migrate.
-#[macro_export]
-macro_rules! bsk_module {
-    () => {
-        include!(concat!(env!("OUT_DIR"), "/bsk_shim.rs"));
-    };
-}
-
 /// Mark and validate a Basilisk module's top-level configuration struct.
 ///
 /// The attribute validates that the type is a public, named ``#[repr(C)]``
 /// struct with public fields and a ``runtime: BskModuleRuntime`` member. It
 /// generates named input/output value structs and the C ABI lifecycle
 /// functions. Message ports must use ``#[bsk(input)]``,
-/// ``#[bsk(input, optional)]``, or ``#[bsk(output)]``. ``bsk-build`` also uses
-/// the marker to select this struct when generating the C header and wrapper
-/// artifacts.
+/// ``#[bsk(input, optional)]``, or ``#[bsk(output)]``. The module's
+/// ``build.rs`` passes this type's exact name to [`generate_bindings`] when
+/// generating the C header and wrapper artifacts.
 pub use bsk_macros::module;
 
 /// Rust-side mirror of the C ``BskRustModuleRuntime`` struct declared in
@@ -658,7 +629,7 @@ impl BskLoggerExt for *mut BSKLogger {
 }
 
 #[cfg(feature = "codegen")]
-pub use codegen::{generate, generate_from};
+pub use codegen::generate_bindings;
 
 #[cfg(feature = "codegen")]
 mod codegen;

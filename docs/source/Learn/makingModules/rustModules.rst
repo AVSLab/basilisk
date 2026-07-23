@@ -95,12 +95,12 @@ The ``build.rs`` file generates the C and SWIG bindings:
 .. code-block:: rust
 
     fn main() {
-        bsk_build::generate_from("myModule.rs");
+        bsk_build::generate_bindings("myModuleConfig");
     }
 
-Keep the source path in ``build.rs`` consistent with ``[lib] path``. The
-explicit path lets ``bsk-build`` support both the in-tree Basilisk layout and
-the conventional ``src/lib.rs`` layout used by independent Cargo crates.
+Pass the exact name of the struct marked with ``#[bsk_build::module]``.
+Cargo obtains the source file from ``[lib] path``; ``cbindgen`` then renders
+the crate's C-compatible types for the generated header.
 
 Register the Crate in the Workspace
 -----------------------------------
@@ -195,7 +195,7 @@ module configuration, validates its basic C ABI requirements, and generates
 the lifecycle entry points. The configuration struct must contain a field
 named ``runtime`` with type ``BskModuleRuntime``.
 Other fields are optional and can be scalars, fixed-size arrays (``[T; N]`` or
-multi-dimensional ``[[T; N]; M]`` with literal lengths), nested ``#[repr(C)]``
+multi-dimensional ``[[T; N]; M]``), nested ``#[repr(C)]``
 structs, ``Option<Box<T>>`` state, ``MsgReader<T>`` and ``MsgWriter<T>`` ports,
 and a ``*mut BSKLogger`` field.
 
@@ -281,8 +281,8 @@ site from the repository root with:
 
 The Sphinx module page includes the generated C header through the existing
 Doxygen/Breathe pipeline. This provides API documentation for configuration
-fields and Python-exposed configuration methods because ``bsk-build`` copies
-their ``///`` comments into the generated header.
+fields because ``cbindgen`` copies their ``///`` comments into the generated
+header.
 
 The generated API section is optional so documentation can still be built
 without a Rust toolchain. Build Basilisk with ``--rustModules True`` before

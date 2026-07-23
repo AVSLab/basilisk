@@ -50,8 +50,9 @@ For a Rust module:
 - Is the top-level configuration struct marked with
   ``#[bsk_build::module]``?
 - Does the module implementation use the ``<moduleName>.rs`` root source
-  layout, with matching ``[lib] path`` and ``bsk_build::generate_from()``
-  entries?
+  layout, with a matching ``[lib] path``?
+- Does ``build.rs`` call ``bsk_build::generate_bindings()`` with the exact
+  marked configuration struct name?
 - Is its crate listed in the ``src/Cargo.toml`` workspace members?
 - Does its ``Cargo.toml`` contain the
   ``[package.metadata.basilisk]`` ``module = true`` marker?
