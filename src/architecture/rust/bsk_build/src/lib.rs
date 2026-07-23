@@ -47,10 +47,10 @@
 //! # The config struct
 //!
 //! Like a hand-written Basilisk C module's config struct, it holds a
-//! mandatory ``runtime: BskModuleRuntime`` compatibility field (see below),
-//! parameters, ``MsgReader``/``MsgWriter`` message ports, and currently a
-//! ``bskLogger`` pointer. Persistent implementation state belongs in
-//! [`BskModule::State`] and never appears in this FFI view. Macro-generated
+//! module's Python-configurable parameters and ``MsgReader``/``MsgWriter``
+//! message ports. Framework metadata and logging arrive through
+//! [`BskContext`], while persistent implementation state belongs in
+//! [`BskModule::State`]. Neither appears in this FFI view. Macro-generated
 //! lifecycle code owns raw port I/O; the ``update`` function receives and
 //! returns plain message values.
 //!
@@ -66,27 +66,22 @@
 //! | ``i64`` / ``u64``     | ``int64_t`` / ``uint64_t`` |
 //! | ``i32`` / ``u32``     | ``int32_t`` / ``uint32_t`` |
 //! | ``bool``              | ``bool``            |
-//! | ``*mut BSKLogger``    | ``BSKLogger *``     |
 //! | ``bsk_messages::Foo`` | ``Foo`` (last segment) |
 //! | ``MsgReader<Foo>`` / ``MsgWriter<Foo>`` | ``Foo_C`` |
-//! | ``BskModuleRuntime``  | ``BskRustModuleRuntime`` (see below) |
 //! | ``[T; N]`` (compile-time ``N``) | ``T name[N]`` (see "Fixed-size arrays") |
 //!
 //! Rust allocates the complete module instance. It initializes every config
-//! field other than ``runtime`` and the associated [`BskModule::State`]
-//! through ``Default`` before calling [`BskModule::init`]. Built-in supported
-//! field types already implement `Default`; module-defined nested structs and
-//! state types must derive or implement it.
+//! field and the associated [`BskModule::State`] through ``Default`` before
+//! calling [`BskModule::init`]. Built-in supported field types already
+//! implement `Default`; module-defined nested structs and state types must
+//! derive or implement it.
 //!
-//! # Runtime mirror field (required)
+//! # Framework context
 //!
-//! The config struct **must** have a field named exactly ``runtime`` of type
-//! [`BskModuleRuntime`]. It mirrors the ``SysModel`` fields
-//! (``moduleID``, ``ModelTag``, ``CallCounts``, ``RNGSeed``). This field is a
-//! temporary configuration-view compatibility requirement; ``build.rs``
-//! panics if it is missing. Module logic receives the same data through
-//! [`BskContext`] and should use that borrowed interface instead of reading
-//! ``self.runtime``.
+//! Lifecycle methods receive [`BskContext`], which provides the ``SysModel``
+//! module ID, model tag, call count, random seed, and Basilisk logger. The
+//! context is valid only for the current call and is not part of the
+//! Python-visible configuration struct.
 //!
 //! # Messaging
 //!
@@ -171,9 +166,9 @@
 /// Mark and validate a Basilisk module's top-level configuration struct.
 ///
 /// The attribute validates that the type is a public, named ``#[repr(C)]``
-/// struct with public fields and a ``runtime: BskModuleRuntime`` member. It
-/// generates named input/output value structs and the C ABI lifecycle
-/// functions. Message ports must use ``#[bsk(input)]``,
+/// struct with public FFI-safe fields. It generates named input/output value
+/// structs and the C ABI lifecycle functions. Message ports must use
+/// ``#[bsk(input)]``,
 /// ``#[bsk(input, optional)]``, or ``#[bsk(output)]``. The module's
 /// ``build.rs`` passes this type's exact name to [`generate_bindings`] when
 /// generating the C header and wrapper artifacts.
@@ -182,10 +177,9 @@ pub use bsk_macros::module;
 /// Rust-side mirror of the C ``BskRustModuleRuntime`` struct declared in
 /// ``bsk_rust_module.h``.
 ///
-/// Generated lifecycle code currently copies this snapshot into the
-/// compatibility ``runtime`` field in the configuration view. Module logic
-/// receives a borrowed view through [`BskContext`] and should use the context
-/// accessors for ``moduleID``, ``ModelTag``, ``CallCounts``, and ``RNGSeed``.
+/// Module logic receives a borrowed view of this snapshot exclusively through
+/// [`BskContext`]. Use the context accessors for ``moduleID``, ``ModelTag``,
+/// ``CallCounts``, and ``RNGSeed``.
 ///
 /// Deliberately not `Copy`/`Clone`: `model_tag()` borrows from `&self`, and
 /// its pointee is only valid for the current lifecycle call, so the compiler
@@ -224,12 +218,10 @@ impl BskModuleRuntime {
 }
 
 impl BskModuleRuntime {
-    /// Construct the valid empty runtime used before the first lifecycle call.
-    ///
-    /// This is public only so the ``#[bsk_build::module]`` expansion in a
-    /// module crate can initialize its configuration entirely in Rust.
-    #[doc(hidden)]
-    pub const fn __new() -> Self {
+    /// An all-zero runtime (module ID 0, empty tag, no calls yet) for
+    /// constructing a [`BskContext`] in a `#[cfg(test)]` unit test without a
+    /// live simulation to supply a real one.
+    pub const fn for_testing() -> Self {
         Self {
             module_id: 0,
             model_tag: core::ptr::null(),
@@ -237,16 +229,6 @@ impl BskModuleRuntime {
             rng_seed: 0,
         }
     }
-
-    /// An all-zero runtime (module ID 0, empty tag, no calls yet) for
-    /// constructing a config struct in a `#[cfg(test)]` unit test, without a
-    /// live simulation to supply a real one. Not named/spelled `default()`
-    /// (no `Default` impl) so `mem::take`/`mem::replace` can't be used to
-    /// pull a live runtime out of a config struct by value.
-    pub const fn for_testing() -> Self {
-        Self::__new()
-    }
-
 }
 
 /// Raw C-compatible storage behind [`BskContext`].
@@ -316,20 +298,6 @@ impl<'a> BskContext<'a> {
         Self {
             runtime: &context.runtime,
             logger: BskLoggerRef::from_raw(context.bsk_logger),
-        }
-    }
-
-    /// Copy the runtime snapshot into the transitional configuration field.
-    ///
-    /// Module logic must use this context instead of the copied field because
-    /// the model-tag pointer is borrowed only for the current lifecycle call.
-    #[doc(hidden)]
-    pub fn __runtime_snapshot(&self) -> BskModuleRuntime {
-        BskModuleRuntime {
-            module_id: self.runtime.module_id,
-            model_tag: self.runtime.model_tag,
-            call_counts: self.runtime.call_counts,
-            rng_seed: self.runtime.rng_seed,
         }
     }
 
@@ -646,19 +614,18 @@ pub trait BskModule {
 // `_bskLog(configData->bskLogger, BSK_WARNING, info)` / `_bskError(...)`.
 //
 // `BSKLogger` here is an opaque marker type, not a bindgen mirror of the real
-// C++ class: Rust only ever holds a `*mut BSKLogger` obtained from C++ (via
-// `_BSKLogger()` or a config struct field set from Python) and passes it
-// straight back through `extern "C-unwind"` calls, never constructing or
-// reading one directly — so its Rust-side layout is irrelevant. `bsk-build`
-// having no bindgen step of its own is exactly why this stays hand-declared
-// rather than mirrored: `_bskLog`/`_bskError`/`_BSKLogger` are the stable,
-// non-variadic `extern "C"` wrappers Basilisk itself declares in
-// `bskLogging.h` for exactly this purpose (bindgen would otherwise also
-// emit the raw, Itanium-mangled, variadic `BSKLogger::bskLog`/`bskError` C++
-// methods, which are fragile to call across the FFI boundary and not meant
-// for direct use). They are declared `extern "C-unwind"`, not plain
-// `extern "C"`: `_bskError` throws a C++ `BasiliskError` exception, and per
-// Rust's stabilized C-unwind ABI
+// C++ class: Rust only ever borrows a `*mut BSKLogger` through `BskContext`
+// (falling back to `_BSKLogger()` when it is null) and passes it straight back
+// through `extern "C-unwind"` calls. Rust never constructs or reads the
+// object, so its Rust-side layout is irrelevant. `bsk-build` having no bindgen
+// step of its own is exactly why this stays hand-declared rather than
+// mirrored: `_bskLog`/`_bskError`/`_BSKLogger` are the stable, non-variadic
+// `extern "C"` wrappers Basilisk itself declares in `bskLogging.h` for exactly
+// this purpose (bindgen would otherwise also emit the raw, Itanium-mangled,
+// variadic `BSKLogger::bskLog`/`bskError` C++ methods, which are fragile to
+// call across the FFI boundary and not meant for direct use). They are
+// declared `extern "C-unwind"`, not plain `extern "C"`: `_bskError` throws a
+// C++ `BasiliskError` exception, and per Rust's stabilized C-unwind ABI
 // (https://github.com/rust-lang/rfcs/blob/master/text/2945-c-unwind-abi.md),
 // letting an exception cross a plain `extern "C"` boundary is undefined
 // behavior — only `"C-unwind"` guarantees it propagates cleanly instead of
@@ -712,10 +679,11 @@ extern "C-unwind" {
     fn _bskError(logger: *mut BSKLogger, info: *const core::ffi::c_char) -> !;
 }
 
-/// Basilisk's standard logging levels and error-raising, for a config
-/// struct's ``bskLogger: *mut BSKLogger`` field — the same
-/// ``_bskLog``/``_bskError`` entry points a hand-written Basilisk C module
-/// calls directly (``_bskLog(configData->bskLogger, BSK_WARNING, info)``).
+/// Basilisk's standard logging levels and error-raising for
+/// [`BskContext::logger`].
+///
+/// These use the same ``_bskLog``/``_bskError`` entry points that a
+/// hand-written Basilisk C module calls directly.
 ///
 /// In test builds (enabled via the ``test_logger`` Cargo feature — see
 /// ``bsk_build``'s ``Cargo.toml``) the implementation prints to ``stderr``
@@ -747,8 +715,7 @@ pub trait BskLoggerExt {
     }
     /// Logs at [`BSK_ERROR`] and raises the standard fatal ``BasiliskError``
     /// (propagated to Python through the generated ``extern "C-unwind"``
-    /// lifecycle entry points) — the Rust equivalent of a C module's
-    /// ``_bskError(configData->bskLogger, info)``.
+    /// lifecycle entry points).
     ///
     /// In test builds this panics instead of raising a C++ exception.
     fn bsk_error(self, msg: &str) -> !;

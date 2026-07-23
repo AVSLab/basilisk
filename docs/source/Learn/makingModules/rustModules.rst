@@ -164,8 +164,6 @@ Write the implementation in ``myModule.rs``. Import the support types from
     #[bsk_build::module]
     #[repr(C)]
     pub struct myModuleConfig {
-        /// [-] Basilisk runtime information
-        pub runtime: BskModuleRuntime,
         /// [Nm] proportional gain
         pub K: f64,
         /// [-] attitude guidance input
@@ -174,8 +172,6 @@ Write the implementation in ``myModule.rs``. Import the support types from
         /// [Nm] commanded torque output
         #[bsk(output)]
         pub cmdTorqueOutMsg: MsgWriter<CmdTorqueBodyMsg>,
-        /// [-] Basilisk logger
-        pub bskLogger: *mut BSKLogger,
     }
 
     impl BskModule for myModuleConfig {
@@ -199,13 +195,12 @@ Write the implementation in ``myModule.rs``. Import the support types from
 
 The ``#[bsk_build::module]`` attribute explicitly identifies the top-level
 module configuration, validates its basic C ABI requirements, and generates
-the lifecycle entry points. The configuration struct must contain a field
-named ``runtime`` with type ``BskModuleRuntime``.
-Other fields are optional and can be scalars, fixed-size arrays (``[T; N]`` or
-multi-dimensional ``[[T; N]; M]``), nested ``#[repr(C)]``
-structs, ``MsgReader<T>`` and ``MsgWriter<T>`` ports, and a
-``*mut BSKLogger`` field. Put internal implementation state in the
-``BskModule::State`` associated type rather than the configuration view.
+the lifecycle entry points. Configuration fields can be scalars, fixed-size
+arrays (``[T; N]`` or multi-dimensional ``[[T; N]; M]``), nested
+``#[repr(C)]`` structs, and ``MsgReader<T>`` or ``MsgWriter<T>`` ports.
+Framework metadata and logging arrive through ``BskContext``. Put internal
+implementation state in the ``BskModule::State`` associated type rather than
+the configuration view.
 
 Annotate every message port with ``#[bsk(input)]`` or ``#[bsk(output)]``.
 Use ``#[bsk(input, optional)]`` when an unlinked input should produce ``None``
@@ -222,9 +217,8 @@ module needs non-zero initial output values, parameter validation, or state
 reset.
 
 Override ``init(state)`` to set non-zero parameter defaults and initial state.
-Rust first initializes every field except ``runtime`` through the field
-type's ``Default`` implementation and initializes ``State`` through its own
-``Default`` implementation. It then calls ``init(state)`` before Python
+Rust first initializes every configuration field and ``State`` through their
+``Default`` implementations. It then calls ``init(state)`` before Python
 configures the module. The default implementation is a no-op. Module-defined
 nested configuration structs and state types must therefore derive or
 implement ``Default``. Use ``type State = ();`` for a stateless module.
@@ -240,8 +234,8 @@ The generated wrapper, named after the module target, provides the Basilisk
     module = myModule.myModule()
     simulation.AddModelToTask("taskName", module)
 
-The wrapper owns a separate Rust configuration object and exposes its
-parameters and message ports directly. Configure fields and connect messages
+The wrapper owns an opaque Rust module instance and exposes its borrowed
+configuration view directly. Configure parameters and connect messages
 through ``module``. The Python proxy for ``myModuleConfig`` is an
 implementation detail and cannot be constructed independently.
 

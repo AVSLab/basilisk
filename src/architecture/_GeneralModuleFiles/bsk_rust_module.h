@@ -22,8 +22,8 @@
 #include <stdint.h>
 #include "architecture/utilities/bskLogging.h"
 
-/*! @brief Declares Rust-owned configuration allocation plus the three BSK
- *  lifecycle entry points for a module implemented in Rust.
+/*! @brief Declares Rust-owned module allocation plus the three BSK lifecycle
+ *  entry points for a module implemented in Rust.
  *
  *  **Background**
  *
@@ -55,27 +55,20 @@
  *
  *  **Config struct field ordering**
  *
- *  For Rust modules specifically, the suggested layout below reads
- *  well and keeps the mandatory ``runtime`` field impossible to miss::
+ *  A Rust module config contains only Python-visible parameters and message
+ *  ports. Framework metadata, logging, and internal Rust state live outside
+ *  this FFI view. The suggested layout is::
  *
  *      typedef struct {
- *          // 1. Runtime mirror — required; see "Runtime mirror" below.
- *          //    Not required to be first, but every other field reads it,
- *          //    so this SDK's examples put it first for readability.
- *          BskRustModuleRuntime runtime;         //!< [-]  moduleID/ModelTag/etc. mirror
- *
- *          // 2. Scalar / array parameters
+ *          // 1. Scalar / array parameters
  *          double K;                             //!< [Nm]       proportional gain
  *          double P;                             //!< [Nm/(rad/s)] rate gain
  *
- *          // 3. Input message ports
+ *          // 2. Input message ports
  *          AttGuidMsg_C attGuidInMsg;            //!< [-]  attitude guidance
  *
- *          // 4. Output message ports
+ *          // 3. Output message ports
  *          CmdTorqueBodyMsg_C cmdTorqueOutMsg;   //!< [Nm] control torque
- *
- *          // 5. BSK logger
- *          BSKLogger *bskLogger;                 //!< [-]  BSK logging handle
  *      } myModuleConfig;
  *
  *      BSK_RUST_DECL(myModule, myModuleConfig, myModuleConfigHandle)
@@ -94,13 +87,12 @@
  *  produced a given message. The generated lifecycle code forwards it to
  *  every ``*_C_write`` call automatically.
  *
- *  **Runtime mirror — BskRustModuleRuntime**
+ *  **Lifecycle context — BskRustModuleRuntime**
  *
  *  A Rust module has no C++ base class, so this struct mirrors the relevant
  *  ``SysModel`` fields (module ID, name, ...) for each lifecycle call.
  *  ``BskContext`` gives safe Rust module logic a borrowed view of that
- *  snapshot. The config's own ``runtime`` field is refreshed only as a
- *  temporary compatibility measure for the public configuration view.
+ *  snapshot. Runtime services do not appear in the public config struct.
  *
  *  ``modelTag`` is a borrowed pointer valid only for the duration of the
  *  call. On the Rust side this is enforced by the compiler, not just this
@@ -122,10 +114,10 @@
  *  C module has through ``_bskLog`` / ``_bskError``. ``bsk-messages``'
  *  ``BskLoggerExt`` trait wraps those entry points as
  *  ``.debug()``/``.info()``/``.warning()``/``.bsk_error()`` methods.
- *  The raw ``bskLogger`` config field remains only for the transitional
- *  configuration view; the shared wrapper borrows it into the lifecycle
- *  context. ``bsk-build``'s own generated "unconnected required input" check
- *  (see "Message port patterns" below) uses this identical path.
+ *  The shared wrapper borrows its framework-managed logger into the lifecycle
+ *  context. The logger does not appear in the public config struct.
+ *  ``bsk-build``'s own generated "unconnected required input" check (see
+ *  "Message port patterns" below) uses this identical path.
  *
  *  **Message port patterns**
  *
@@ -195,7 +187,6 @@
  *      #[bsk_build::module]
  *      #[repr(C)]
  *      pub struct myModuleConfig {
- *          pub runtime: BskModuleRuntime,
  *          pub target: Vec2,
  *          // ...
  *      }
@@ -205,7 +196,7 @@
  *  (``ctrl.target.x = 1.0``) — no special handling needed.
  *
  *  A raw pointer to one of these structs (``*mut Vec2``), or to any other
- *  type, is rejected — ``BSKLogger`` is the only pointee a field may name.
+ *  type, is rejected.
  *  SWIG's pointer-field setter would transfer ownership away from the
  *  Python object with nothing on the Rust side to ever free it; this
  *  applies just as much to a pointer to a primitive (``*mut u8``) as to a
@@ -231,10 +222,9 @@
 
 /*! @brief Snapshot of the ``SysModel`` runtime fields a Rust module may need.
  *
- *  Passed by pointer to every lifecycle call and copied into the config
- *  struct's own ``runtime`` field (see "Runtime mirror" above); valid for
- *  the duration of the call only — do not retain it beyond that
- *  (``modelTag`` in particular is a borrowed pointer).
+ *  Embedded in the context passed to every lifecycle call and valid only for
+ *  that call. Do not retain it afterward; ``modelTag`` in particular is a
+ *  borrowed pointer.
  */
 typedef struct BskRustModuleRuntime {
     int64_t moduleID;         /*!< [-] unique ID assigned by ModuleIdGenerator */
@@ -288,9 +278,7 @@ typedef struct BskRustModuleContext {
  *      input messages, calls ``BskModule::update`` with a safe borrowed
  *      context, and writes all output messages.
  *
- *  \p configType must be declared before this macro and must have a field
- *  named ``runtime`` of type ``BskRustModuleRuntime`` somewhere in it (any
- *  position — see "Config struct field ordering" above). bsk-build passes
+ *  \p configType must be declared before this macro. bsk-build passes
  *  whatever struct name the crate's ``impl BskModule`` block actually uses,
  *  which need not match ``name##Config``.
  */

@@ -71,11 +71,7 @@ fn expand_module(input: ItemStruct) -> syn::Result<TokenStream2> {
                 .ident
                 .as_ref()
                 .expect("validated module config must have named fields");
-            if type_last_ident(&field.ty).is_some_and(|ident| ident == "BskModuleRuntime") {
-                quote!(#field_name: ::bsk_build::BskModuleRuntime::__new())
-            } else {
-                quote!(#field_name: ::core::default::Default::default())
-            }
+            quote!(#field_name: ::core::default::Default::default())
         })
         .collect();
 
@@ -279,8 +275,7 @@ fn expand_module(input: ItemStruct) -> syn::Result<TokenStream2> {
         ) {
             let instance = &mut *handle.cast::<#instance_type>();
             let config = &mut instance.config;
-            let context = ::bsk_build::BskContext::__from_raw(context);
-            (*config).runtime = context.__runtime_snapshot();
+            let _context = ::bsk_build::BskContext::__from_raw(context);
             #(#initialize_outputs)*
         }
 
@@ -295,7 +290,6 @@ fn expand_module(input: ItemStruct) -> syn::Result<TokenStream2> {
             let instance = &mut *handle.cast::<#instance_type>();
             let config = &mut instance.config;
             let context = ::bsk_build::BskContext::__from_raw(context);
-            (*config).runtime = context.__runtime_snapshot();
             #(#validate_inputs)*
             let outputs: #outputs_type =
                 <#config_type as ::bsk_build::BskModule>::reset(
@@ -318,7 +312,6 @@ fn expand_module(input: ItemStruct) -> syn::Result<TokenStream2> {
             let instance = &mut *handle.cast::<#instance_type>();
             let config = &mut instance.config;
             let context = ::bsk_build::BskContext::__from_raw(context);
-            (*config).runtime = context.__runtime_snapshot();
             let inputs: #inputs_type = #inputs_type {
                 #(#read_inputs,)*
             };
@@ -565,28 +558,12 @@ fn validate_module_config(input: &ItemStruct) -> syn::Result<()> {
             ));
         }
         if let Type::Ptr(pointer) = &field.ty {
-            let is_logger = pointer.mutability.is_some()
-                && type_last_ident(&pointer.elem)
-                    .is_some_and(|identifier| identifier == "BSKLogger");
-            if !is_logger {
-                return Err(syn::Error::new_spanned(
-                    pointer,
-                    "raw pointer config fields are unsupported; use `Option<Box<T>>` \
-                     for Rust-owned state (`*mut BSKLogger` is the only exception)",
-                ));
-            }
+            return Err(syn::Error::new_spanned(
+                pointer,
+                "raw pointer config fields are unsupported; use value fields for Python \
+                 parameters and `BskModule::State` for internal Rust state",
+            ));
         }
-    }
-
-    let has_runtime = fields.iter().any(|field| {
-        field.ident.as_ref().is_some_and(|ident| ident == "runtime")
-            && type_last_ident(&field.ty).is_some_and(|ident| ident == "BskModuleRuntime")
-    });
-    if !has_runtime {
-        return Err(syn::Error::new_spanned(
-            &input.ident,
-            "a Basilisk module config requires a `runtime: BskModuleRuntime` field",
-        ));
     }
 
     Ok(())
@@ -608,13 +585,6 @@ fn has_repr_c(input: &ItemStruct) -> bool {
     })
 }
 
-fn type_last_ident(field_type: &Type) -> Option<&syn::Ident> {
-    match field_type {
-        Type::Path(type_path) => type_path.path.segments.last().map(|segment| &segment.ident),
-        _ => None,
-    }
-}
-
 fn module_name() -> String {
     std::env::var_os("BSK_HEADER_PATH")
         .and_then(|path| {
@@ -634,11 +604,10 @@ mod tests {
     use syn::parse_quote;
 
     #[test]
-    fn accepts_public_repr_c_config_with_runtime() {
+    fn accepts_public_repr_c_config() {
         let input: ItemStruct = parse_quote! {
             #[repr(C)]
             pub struct ControllerConfig {
-                pub runtime: bsk_messages::BskModuleRuntime,
                 pub gain: f64,
             }
         };
@@ -651,12 +620,10 @@ mod tests {
         let input: ItemStruct = parse_quote! {
             #[repr(C)]
             pub struct ControllerConfig {
-                pub runtime: BskModuleRuntime,
                 #[bsk(input, optional)]
                 pub inputInMsg: MsgReader<InputMsg>,
                 #[bsk(output)]
                 pub outputOutMsg: MsgWriter<OutputMsg>,
-                pub bskLogger: *mut BSKLogger,
             }
         };
 
@@ -677,12 +644,9 @@ mod tests {
         assert!(expanded.contains("struct ControllerConfigHandle"));
         assert!(expanded.contains("struct __BskControllerConfigInstance"));
         assert!(expanded.contains("BskModule > :: State"));
-        assert!(expanded.contains("BskModuleRuntime :: __new"));
-        assert!(expanded.contains("bskLogger : :: core :: default :: Default :: default"));
         assert!(expanded.contains("BskModule > :: init"));
         assert!(expanded.contains("BskContext :: __from_raw"));
         assert!(expanded.contains("BskModuleContext"));
-        assert!(expanded.contains("__runtime_snapshot"));
         assert!(expanded.contains("__logger_ptr"));
         assert!(expanded.contains("Box :: into_raw"));
         assert!(expanded.contains("Box :: from_raw"));
@@ -704,7 +668,7 @@ mod tests {
 
     #[test]
     fn named_inputs_are_generated_for_every_annotated_port() {
-        let mut fields = String::from("pub runtime: BskModuleRuntime,");
+        let mut fields = String::new();
         for index in 0..12 {
             fields.push_str(&format!(
                 "#[bsk(input)] pub input{index}InMsg: MsgReader<Input{index}Msg>,"
@@ -728,7 +692,6 @@ mod tests {
         let input: ItemStruct = parse_quote! {
             #[repr(C)]
             pub struct ControllerConfig {
-                pub runtime: BskModuleRuntime,
                 pub inputInMsg: MsgReader<InputMsg>,
             }
         };
@@ -742,7 +705,6 @@ mod tests {
         let input: ItemStruct = parse_quote! {
             #[repr(C)]
             pub struct ControllerConfig {
-                pub runtime: BskModuleRuntime,
                 #[bsk(output, optional)]
                 pub outputOutMsg: MsgWriter<OutputMsg>,
             }
@@ -759,7 +721,6 @@ mod tests {
         let input: ItemStruct = parse_quote! {
             #[repr(C)]
             pub struct ControllerConfig {
-                pub runtime: BskModuleRuntime,
                 #[bsk(output)]
                 pub inputInMsg: MsgReader<InputMsg>,
             }
@@ -775,7 +736,7 @@ mod tests {
     fn rejects_config_without_repr_c() {
         let input: ItemStruct = parse_quote! {
             pub struct ControllerConfig {
-                pub runtime: BskModuleRuntime,
+                pub gain: f64,
             }
         };
 
@@ -784,7 +745,7 @@ mod tests {
     }
 
     #[test]
-    fn rejects_config_without_runtime() {
+    fn accepts_config_without_framework_fields() {
         let input: ItemStruct = parse_quote! {
             #[repr(C)]
             pub struct ControllerConfig {
@@ -792,10 +753,7 @@ mod tests {
             }
         };
 
-        let error = validate_module_config(&input).expect_err("missing runtime must fail");
-        assert!(error
-            .to_string()
-            .contains("requires a `runtime: BskModuleRuntime` field"));
+        assert!(validate_module_config(&input).is_ok());
     }
 
     #[test]
@@ -803,7 +761,6 @@ mod tests {
         let input: ItemStruct = parse_quote! {
             #[repr(C)]
             pub struct ControllerConfig {
-                pub runtime: BskModuleRuntime,
                 gain: f64,
             }
         };
@@ -813,16 +770,28 @@ mod tests {
     }
 
     #[test]
-    fn rejects_non_logger_raw_pointer() {
+    fn rejects_raw_pointer_config_field() {
         let input: ItemStruct = parse_quote! {
             #[repr(C)]
             pub struct ControllerConfig {
-                pub runtime: BskModuleRuntime,
                 pub state: *mut f64,
             }
         };
 
         let error = validate_module_config(&input).expect_err("raw pointer must fail");
+        assert!(error.to_string().contains("raw pointer config fields"));
+    }
+
+    #[test]
+    fn rejects_logger_config_field() {
+        let input: ItemStruct = parse_quote! {
+            #[repr(C)]
+            pub struct ControllerConfig {
+                pub bskLogger: *mut BSKLogger,
+            }
+        };
+
+        let error = validate_module_config(&input).expect_err("logger belongs in BskContext");
         assert!(error.to_string().contains("raw pointer config fields"));
     }
 }

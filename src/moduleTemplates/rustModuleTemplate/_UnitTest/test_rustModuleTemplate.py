@@ -58,9 +58,9 @@ class _ExpectedMsgHeader(ctypes.Structure):
 
     _fields_ = [
         ("is_linked", ctypes.c_int64),
+        ("is_written", ctypes.c_int64),
         ("time_written", ctypes.c_uint64),
         ("module_id", ctypes.c_int64),
-        ("write_counter", ctypes.c_uint64),
     ]
 
 
@@ -85,11 +85,9 @@ class _ExpectedRustModuleTemplateConfig(ctypes.Structure):
     """Mirror the intended 64-bit Rust/C++ config layout."""
 
     _fields_ = [
-        ("runtime", _ExpectedBskModuleRuntime),
         ("dummy", ctypes.c_double),
         ("data_in_msg", _ExpectedCModuleTemplatePort),
         ("data_out_msg", _ExpectedCModuleTemplatePort),
-        ("bsk_logger", ctypes.c_void_p),
     ]
 
 
@@ -97,7 +95,13 @@ def test_rust_module_template_python_api():
     """Freeze the module-first Python API retained by the opaque-handle design."""
     expected_fields = {"dummy", "dataInMsg", "dataOutMsg"}
     expected_wrapper_methods = {"SelfInit", "Reset", "UpdateState"}
-    expected_sys_model_fields = {"ModelTag", "moduleID", "CallCounts", "RNGSeed"}
+    expected_framework_fields = {
+        "ModelTag",
+        "moduleID",
+        "CallCounts",
+        "RNGSeed",
+        "bskLogger",
+    }
 
     assert expected_fields.issubset(rustModuleTemplate.RustModuleTemplateConfig.__dict__)
     assert expected_fields.issubset(rustModuleTemplate.rustModuleTemplate.__dict__)
@@ -106,8 +110,11 @@ def test_rust_module_template_python_api():
     module = rustModuleTemplate.rustModuleTemplate()
     assert module.thisown is True
     assert not hasattr(module, "getConfig")
-    for field in expected_sys_model_fields:
+    for field in expected_framework_fields:
         assert hasattr(module, field)
+    assert not hasattr(module, "runtime")
+    for framework_field in ("runtime", "bskLogger"):
+        assert not hasattr(rustModuleTemplate.RustModuleTemplateConfig, framework_field)
 
     assert module.dummy == 0.0
     module.dummy = 12.5  # [-]
@@ -136,7 +143,7 @@ def test_rust_module_template_python_api():
 
 
 def test_rust_module_template_abi_layout():
-    """Check that SWIG exposes the established 64-bit Rust/C++ ABI layout."""
+    """Check the context ABI and framework-free 64-bit config layout."""
     if ctypes.sizeof(ctypes.c_void_p) != 8:
         pytest.skip("The current Rust module ABI baseline covers 64-bit platforms.")
 
@@ -159,13 +166,11 @@ def test_rust_module_template_abi_layout():
     assert _ExpectedCModuleTemplatePort.payload_pointer.offset == 56
     assert _ExpectedCModuleTemplatePort.header_pointer.offset == 64
 
-    assert ctypes.sizeof(_ExpectedRustModuleTemplateConfig) == 192
+    assert ctypes.sizeof(_ExpectedRustModuleTemplateConfig) == 152
     assert ctypes.alignment(_ExpectedRustModuleTemplateConfig) == 8
-    assert _ExpectedRustModuleTemplateConfig.runtime.offset == 0
-    assert _ExpectedRustModuleTemplateConfig.dummy.offset == 32
-    assert _ExpectedRustModuleTemplateConfig.data_in_msg.offset == 40
-    assert _ExpectedRustModuleTemplateConfig.data_out_msg.offset == 112
-    assert _ExpectedRustModuleTemplateConfig.bsk_logger.offset == 184
+    assert _ExpectedRustModuleTemplateConfig.dummy.offset == 0
+    assert _ExpectedRustModuleTemplateConfig.data_in_msg.offset == 8
+    assert _ExpectedRustModuleTemplateConfig.data_out_msg.offset == 80
 
     extension = ctypes.CDLL(rustModuleTemplate._rustModuleTemplate.__file__)
     create_instance = extension.Create_rustModuleTemplate
@@ -187,7 +192,6 @@ def test_rust_module_template_abi_layout():
         assert raw_config.dummy == 0.0
         raw_config.dummy = -3.5  # [-]
         assert raw_config.dummy == -3.5
-        assert raw_config.bsk_logger is None
     finally:
         destroy_instance(handle)
 
@@ -244,7 +248,6 @@ def test_rust_module_template_rust_owned_instance_lifecycle():
         assert config_address is not None
         raw_config = _ExpectedRustModuleTemplateConfig.from_address(config_address)
         assert raw_config.dummy == 0.0
-        assert raw_config.bsk_logger is None
         raw_config.dummy = 42.0  # [-]
         context = _ExpectedBskModuleContext(
             runtime=_ExpectedBskModuleRuntime(
@@ -258,8 +261,8 @@ def test_rust_module_template_rust_owned_instance_lifecycle():
         self_init(handle, ctypes.byref(context))
         reset(handle, 10, ctypes.byref(context))  # [ns]
         assert raw_config.dummy == 0.0
-        assert raw_config.runtime.module_id == 7
-        assert raw_config.runtime.rng_seed == 1234
+        assert raw_config.data_out_msg.header.module_id == 7
+        assert raw_config.data_out_msg.header.time_written == 10
     finally:
         destroy_instance(handle)
 
@@ -275,6 +278,7 @@ def test_rust_module_template(connect_input):
     module = rustModuleTemplate.rustModuleTemplate()
     module.dummy = 99.0  # [-]
     simulation.AddModelToTask("testTask", module)
+    assert module.bskLogger is not None
 
     input_payload = messaging.CModuleTemplateMsgPayload()
     input_payload.dataVector = [1.0, -0.5, 0.7]  # [-]

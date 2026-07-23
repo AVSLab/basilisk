@@ -146,8 +146,6 @@ generates the C header, SWIG wrapper, and message I/O code from this definition:
     #[bsk_build::module]
     #[repr(C)]
     pub struct myModuleConfig {
-        /// [-] SysModel runtime mirror — see below
-        pub runtime: BskModuleRuntime,
         /// [Nm] proportional gain
         pub K: f64,
         /// [-] attitude guidance input
@@ -156,8 +154,6 @@ generates the C header, SWIG wrapper, and message I/O code from this definition:
         /// [Nm] commanded torque output
         #[bsk(output)]
         pub cmdTorqueOutMsg: MsgWriter<CmdTorqueBodyMsg>,
-        /// [-] BSK logging handle
-        pub bskLogger: *mut BSKLogger,
     }
 
     impl BskModule for myModuleConfig {
@@ -201,8 +197,8 @@ Three ``BskModule`` trait methods map to the Basilisk module lifecycle:
    Called before Python configures the module. Override to set non-zero
    parameter defaults and initial state — the equivalent of a C++ module
    constructor. Before this call, Rust initializes every configuration field
-   except ``runtime`` and initializes ``State`` through ``Default``. The
-   default ``init(state)`` implementation is a no-op.
+   and ``State`` through ``Default``. The default ``init(state)``
+   implementation is a no-op.
 
 ``reset(state, context, current_sim_nanos)`` → ``Self::Outputs``
    Called at simulation start and on every ``Reset()``. Returns initial
@@ -238,30 +234,28 @@ The generated Python module class, named after the CMake target, provides the
     module = myModule.myModule()
     simulation.AddModelToTask("taskName", module)
 
-The wrapper owns a separate Rust configuration object and exposes its
-parameters and message ports directly. Configure fields and connect messages
-through ``module``. The Python proxy for ``myModuleConfig`` is an
-implementation detail and cannot be constructed independently.
+The wrapper owns an opaque Rust module instance and exposes its borrowed
+configuration view directly. Configure parameters and connect messages through
+``module``. The Python proxy for ``myModuleConfig`` is an implementation
+detail and cannot be constructed independently.
 
 Supported Configuration Fields
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Every module configuration struct must include a field named ``runtime`` of
-type ``BskModuleRuntime``. All other fields are optional. They can include:
+Module configuration fields can include:
 
 * scalar, fixed-size array (``[T; N]``, multi-dimensional ``[[T; N]; M]``, etc.), and nested ``#[repr(C)]`` parameter fields;
-* ``MsgReader<T>`` input ports and ``MsgWriter<T>`` output ports; and
-* ``*mut BSKLogger`` for Basilisk logging.
+* ``MsgReader<T>`` input ports and ``MsgWriter<T>`` output ports.
 
-Every field type other than ``BskModuleRuntime`` must implement ``Default``.
-The built-in scalar, array, message-port, pointer, and ``Option`` types already
-do. Add ``#[derive(Default)]`` or a manual ``Default`` implementation to
-module-defined nested structs. The generated constructor allocates the
-configuration in Rust, applies these defaults, and then calls ``init(state)``.
+Every field type must implement ``Default``. The built-in scalar, array,
+message-port, and ``Option`` types already do. Add ``#[derive(Default)]`` or a
+manual ``Default`` implementation to module-defined nested structs. The
+generated constructor allocates the configuration in Rust, applies these
+defaults, and then calls ``init(state)``.
 
 Nested structs, internal state, and message ports have additional requirements
 described below. ``bsk-build`` rejects unsupported field types, including raw
-pointers other than ``*mut BSKLogger`` and Rust enums.
+pointers and Rust enums.
 
 Runtime Context
 ~~~~~~~~~~~~~~~
@@ -287,9 +281,8 @@ and ``logger()``. Values borrowed from it are valid only during the current
 lifecycle call.
 
 The C++ wrapper owns an opaque Rust instance handle and passes this context to
-each lifecycle call. The configuration's ``runtime: BskModuleRuntime`` mirror
-remains temporarily for configuration-view compatibility. New module logic
-should use ``context`` rather than this compatibility field.
+each lifecycle call. Runtime services do not appear in the Python-visible
+configuration.
 
 ``current_sim_nanos`` is passed separately to ``reset`` and ``update``.
 
@@ -321,10 +314,9 @@ feature to ``[dev-dependencies]``), every logger call prints to ``stderr``
 and ``.bsk_error()`` panics — no C symbols required. This means context
 logger calls in ``reset()`` and ``update()`` work for unit tests.
 
-The configuration's raw ``bskLogger`` field remains temporarily for
-configuration-view compatibility. The C++ wrapper borrows it into
-``BskContext`` for each lifecycle call; new module logic should not access the
-raw field directly.
+The C++ wrapper owns the framework logger reference and borrows it into
+``BskContext`` for each lifecycle call. It is not part of the Rust
+configuration struct.
 
 .. code-block:: toml
 
@@ -376,7 +368,6 @@ names:
     #[bsk_build::module]
     #[repr(C)]
     pub struct myModuleConfig {
-        pub runtime: BskModuleRuntime,
         #[bsk(input)]
         pub navAttInMsg: MsgReader<NavAttMsg>,
         #[bsk(input)]
@@ -385,7 +376,6 @@ names:
         pub cmdTorqueOutMsg: MsgWriter<CmdTorqueBodyMsg>,
         #[bsk(output)]
         pub cmdRateOutMsg: MsgWriter<RateCmdMsg>,
-        pub bskLogger: *mut BSKLogger,
     }
 
     impl BskModule for myModuleConfig {
@@ -432,7 +422,6 @@ Input optionality is declared next to the corresponding port:
 .. code-block:: rust
 
     pub struct myModuleConfig {
-        pub runtime: BskModuleRuntime,
         #[bsk(input)]
         pub attGuidInMsg: MsgReader<AttGuidMsg>,
         /// supplemental disturbance-torque estimate
@@ -566,7 +555,6 @@ value, to group related parameters:
     #[bsk_build::module]
     #[repr(C)]
     pub struct myModuleConfig {
-        pub runtime: BskModuleRuntime,
         pub target: Vec2,
         // ...
     }
@@ -580,13 +568,12 @@ struct so the generated lifecycle adapter can process them. Internal state
 belongs in ``BskModule::State`` and does not need a C representation.
 
 A field may **not** be a raw pointer to one of these structs (e.g. ``*mut
-Vec2``), or to any other type — ``BSKLogger`` is the only pointee
-``bsk-build`` allows. Python setters for a pointer field transfer ownership
-away from the Python object, and nothing on the Rust side would ever free
-it; embedding by value (above) has no such issue, so ``bsk-build`` rejects
-every other pointer form outright, including a raw pointer to a primitive
-(e.g. ``*mut u8``). There is currently no supported field type for a
-persistent string or byte-buffer parameter.
+Vec2``), or to any other type. Python setters for a pointer field transfer
+ownership away from the Python object, and nothing on the Rust side would ever
+free it; embedding by value (above) has no such issue, so ``bsk-build`` rejects
+all pointer fields, including a raw pointer to a primitive (e.g. ``*mut u8``).
+There is currently no supported field type for a persistent string or
+byte-buffer parameter.
 
 A field also may **not** be a Rust ``enum``, even a fieldless ``#[repr(u8)]``
 (or similar) one — SWIG's setter for an enum-typed field accepts any integer,
@@ -612,7 +599,6 @@ supported: ``[[T; N]; M]`` maps to ``T name[M][N];``.
     #[bsk_build::module]
     #[repr(C)]
     pub struct myModuleConfig {
-        pub runtime: BskModuleRuntime,
         /// [Nm] max torque per axis
         pub maxRwTorques: [f64; 3],
         /// [-] DCM from body to reference frame

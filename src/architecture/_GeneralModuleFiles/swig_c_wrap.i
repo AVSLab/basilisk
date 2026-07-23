@@ -28,21 +28,6 @@
     #include <architecture/utilities/bskLogging.h>
     #include <memory>
     #include <type_traits>
-
-    // Preserve the existing logger injection path until the raw logger leaves
-    // the Rust module's public configuration view. Configs without that
-    // compatibility field receive the standard null/default logger.
-    template <typename TConfig>
-    auto bskRustConfigLogger(TConfig *config, int) -> decltype(config->bskLogger)
-    {
-        return config->bskLogger;
-    }
-
-    template <typename TConfig>
-    BSKLogger *bskRustConfigLogger(TConfig *, long)
-    {
-        return nullptr;
-    }
 %}
 %include <std_string.i>
 
@@ -109,6 +94,8 @@ class RustWrapper : public SysModel {
         : instance{createInstanceFun(), destroyInstanceFun},
           config{configViewFun(this->instance.get())} {};
 
+    BSKLogger *bskLogger = nullptr; //!< framework logger borrowed by lifecycle context
+
     void SelfInit(){
         BskRustModuleContext context = this->makeContext();
         selfInitFun(this->instance.get(), &context);};
@@ -127,15 +114,15 @@ class RustWrapper : public SysModel {
 
   private:
     // modelTag points into this->ModelTag, which outlives the synchronous
-    // lifecycle call that consumes the context. bskLogger is likewise
-    // borrowed from the compatibility config field for this call only.
+    // lifecycle call that consumes the context. bskLogger is owned by the
+    // simulation and borrowed by the wrapper for that same call.
     BskRustModuleContext makeContext() const {
         BskRustModuleContext context;
         context.runtime.moduleID = this->moduleID;
         context.runtime.modelTag = this->ModelTag.c_str();
         context.runtime.callCounts = this->CallCounts;
         context.runtime.rngSeed = this->RNGSeed;
-        context.bskLogger = bskRustConfigLogger(this->config, 0);
+        context.bskLogger = this->bskLogger;
         return context;
     }
 

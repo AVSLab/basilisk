@@ -53,6 +53,8 @@ For a Rust module:
   layout, with a matching ``[lib] path``?
 - Does ``build.rs`` call ``bsk_build::generate_bindings()`` with the exact
   marked configuration struct name?
+- Does the configuration struct contain only public parameters and annotated
+  message ports, with no runtime, logger, or raw-pointer fields?
 - Does the ``BskModule`` implementation declare ``type State`` and keep
   internal Rust-only state there, using ``()`` when stateless?
 - Does lifecycle code obtain runtime metadata and logging through

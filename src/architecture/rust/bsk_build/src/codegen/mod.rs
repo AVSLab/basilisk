@@ -393,11 +393,9 @@ typedef Port MsgReader_InputMsg;
 typedef Port MsgWriter_OutputMsg;
 
 typedef struct ExampleConfig {
-  BskModuleRuntime runtime;
   MsgReader_InputMsg inputInMsg;
   MsgWriter_OutputMsg outputOutMsg;
   struct OwnedState *state;
-  BSKLogger *bskLogger;
 } ExampleConfig;
 "#;
 

@@ -24,8 +24,6 @@ use bsk_messages::*;
 #[bsk_build::module]
 #[repr(C)]
 pub struct RustModuleTemplateConfig {
-    /// [-] Basilisk runtime information
-    pub runtime: BskModuleRuntime,
     /// [-] Python-visible sample counter
     pub dummy: f64,
     /// [-] Optional input message
@@ -34,8 +32,6 @@ pub struct RustModuleTemplateConfig {
     /// [-] Output message
     #[bsk(output)]
     pub dataOutMsg: MsgWriter<CModuleTemplateMsg>,
-    /// [-] Basilisk logging handle
-    pub bskLogger: *mut BSKLogger,
 }
 
 /// Rust-owned state that is never exposed through C, C++, or Python.
@@ -121,16 +117,14 @@ mod tests {
     use super::*;
     use core::mem::{align_of, offset_of, size_of};
 
-    /// Verify that the generated C++ wrapper retains the established config ABI.
+    /// Verify that only Python-facing parameters and ports cross the config ABI.
     #[test]
-    fn config_abi_layout_matches_compatibility_baseline() {
-        assert_eq!(size_of::<RustModuleTemplateConfig>(), 192);
+    fn config_abi_contains_only_public_module_fields() {
+        assert_eq!(size_of::<RustModuleTemplateConfig>(), 152);
         assert_eq!(align_of::<RustModuleTemplateConfig>(), 8);
-        assert_eq!(offset_of!(RustModuleTemplateConfig, runtime), 0);
-        assert_eq!(offset_of!(RustModuleTemplateConfig, dummy), 32);
-        assert_eq!(offset_of!(RustModuleTemplateConfig, dataInMsg), 40);
-        assert_eq!(offset_of!(RustModuleTemplateConfig, dataOutMsg), 112);
-        assert_eq!(offset_of!(RustModuleTemplateConfig, bskLogger), 184);
+        assert_eq!(offset_of!(RustModuleTemplateConfig, dummy), 0);
+        assert_eq!(offset_of!(RustModuleTemplateConfig, dataInMsg), 8);
+        assert_eq!(offset_of!(RustModuleTemplateConfig, dataOutMsg), 80);
     }
 
     /// Verify that generated input and output values use the config port names.
@@ -162,11 +156,9 @@ mod tests {
         let runtime = BskModuleRuntime::for_testing();
         let context = BskContext::for_testing(&runtime);
         let mut config = RustModuleTemplateConfig {
-            runtime: BskModuleRuntime::for_testing(),
             dummy: 99.0, // [-]
             dataInMsg: MsgReader::default(),
             dataOutMsg: MsgWriter::default(),
-            bskLogger: core::ptr::null_mut(),
         };
         let mut state = RustModuleTemplateState::default();
 
