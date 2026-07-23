@@ -266,10 +266,20 @@ function(bsk_add_rust_module_sources)
   endif()
   list(REMOVE_DUPLICATES _dep_files)
 
+  # CMake's Makefile generators can leave GNU Make jobserver descriptors in
+  # MAKEFLAGS even though those descriptors are closed before Cargo starts.
+  # Clear the stale state so Cargo selects its own worker count without
+  # emitting a jobserver warning.
+  set(_cargo_makeflags_env)
+  if(CMAKE_GENERATOR MATCHES "Makefiles")
+    set(_cargo_makeflags_env "MAKEFLAGS=")
+  endif()
+
   add_custom_command(
     OUTPUT  "${_rust_lib}"
     ${_header_byproducts}
     COMMAND ${CMAKE_COMMAND} -E env
+            ${_cargo_makeflags_env}
             "CARGO_TARGET_DIR=${_rust_target_dir}"
             "BSK_INCLUDE_DIR=${RUST_INCLUDE_DIR}"
             ${_header_env}

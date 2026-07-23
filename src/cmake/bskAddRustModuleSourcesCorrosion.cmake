@@ -166,8 +166,18 @@ function(bsk_add_rust_module_sources_corrosion)
   endif()
   list(GET _rust_imported_targets 0 _rust_link_target)
 
+  # CMake's Makefile generators can leave GNU Make jobserver descriptors in
+  # MAKEFLAGS even though those descriptors are closed before Corrosion starts
+  # Cargo. Do not pass that stale jobserver state into Cargo; Cargo will select
+  # its own worker count instead of warning and falling back implicitly.
+  set(_cargo_makeflags_env)
+  if(CMAKE_GENERATOR MATCHES "Makefiles")
+    set(_cargo_makeflags_env "MAKEFLAGS=")
+  endif()
+
   corrosion_set_env_vars(
     "${_rust_link_target}"
+    ${_cargo_makeflags_env}
     "BSK_INCLUDE_DIR=${RUST_INCLUDE_DIR}"
     "BSK_HEADER_PATH=${RUST_HEADER}"
     "BSK_INTERFACE_PATH=${RUST_INTERFACE}"
