@@ -458,15 +458,35 @@ The following notation will be used: $\theta \in (0\,, \pi)$ will be the latitud
 where $\bm{\hat{k}}_3$ is the outlet-to-pole axis of the reference frame of the sphere and $\bm{r}_{Tc'/B}$ the constant vector from $B$ to the center of the sphere.\newline
 Considering that $m_{\text{fuel}}=\rho_{\text{fuel}}\mathcal{V}\,$, the derivatives in the $\mathcal{B}$ reference frame can be performed:
 
+For compactness, define $q(\theta^*)=\sin^4{\theta^*}$, such that the variable component of the fuel center of mass is
+\begin{equation}
+	\left(\bm{r}_{Tc/B}-\bm{r}_{Tc'/B}\right)\cdot\bm{\hat{k}}_3
+	= -\frac{\pi\,R_{\text{tank}}^4\,\rho_{\text{fuel}}}{4\,m_{\text{fuel}}}\,q.
+\end{equation}
+The required derivatives of $q$ are
+\begin{equation}
+	\dot{q}=4\sin^3{\theta^*}\cos{\theta^*}\dot{\theta^*},
+\end{equation}
+\begin{equation}
+	\ddot{q}=4\left[\left(3\sin^2{\theta^*}\cos^2{\theta^*}-\sin^4{\theta^*}\right)\dot{\theta^*}^2
+	+\sin^3{\theta^*}\cos{\theta^*}\ddot{\theta^*}\right].
+\end{equation}
+Thus, the fuel center-of-mass velocity and acceleration along $\bm{\hat{k}}_3$ are
+\begin{equation}
+	\bm{r}'_{Tc/B}\cdot\bm{\hat{k}}_3
+	= -\frac{\pi\,R_{\text{tank}}^4\,\rho_{\text{fuel}}}{4}
+	\left(\frac{\dot{q}}{m_{\text{fuel}}}
+	-\frac{q\dot{m}_{\text{fuel}}}{m_{\text{fuel}}^2}\right),
+\end{equation}
 \begin{multline}
-	\bm{r}'_{Tc/B}\cdot\bm{\hat{k}}_3 =- \frac{\pi\,R_{\text{tank}}^4\,\rho_{\text{fuel}}}{4\,m^2_{\text{fuel}}}\left[4\,m_{\text{fuel}}\dot{\theta^*}\,\sin^3{\theta^*}\cos{\theta^*} +\right.\\
-	\left.+ \dot{m}_{\text{fuel}}\left(2\,\cos^2{\theta^*} - \cos^4{\theta^*}-1\right)\right]
+	\bm{r}''_{Tc/B}\cdot\bm{\hat{k}}_3
+	= -\frac{\pi\,R_{\text{tank}}^4\,\rho_{\text{fuel}}}{4}
+	\left(\frac{\ddot{q}}{m_{\text{fuel}}}
+	-\frac{2\dot{q}\dot{m}_{\text{fuel}}}{m_{\text{fuel}}^2}
+	-\frac{q\ddot{m}_{\text{fuel}}}{m_{\text{fuel}}^2}
+	+\frac{2q\dot{m}_{\text{fuel}}^2}{m_{\text{fuel}}^3}\right).
 \end{multline}
-\begin{multline}
-	\bm{r}''_{Tc/B}\cdot\bm{\hat{k}}_3 =- \frac{\pi\,R_{\text{tank}}^4\,\rho_{\text{fuel}}}{2\,m^3_{\text{fuel}}}\left[4\,m_{\text{fuel}}\sin^3{\theta^*}\cos{\theta^*} \left(\ddot{\theta^*}\,m_{\text{fuel}} - 2\,\dot{\theta^*}\,\dot{m}_{\text{fuel}}\right)+\right.\\
-	\left.-4\,m^2_{\text{fuel}}\,\dot{\theta^*}^2\sin^2{\theta^*}\left(3\,\cos^2{\theta^*} -\sin^2{\theta^*}\right)+\right.\\
-	+\left. \left(2\,\cos^2{\theta^*} - \cos^4{\theta^*}-1\right)\left(m_{\text{fuel}}\ddot{m}_{\text{fuel}} - 2\,\dot{m}^2_{\text{fuel}}\right)\right]
-\end{multline}
+The implementation assumes a piecewise-constant mass flow during each dynamics evaluation, so $\ddot{m}_{\text{fuel}}=0$.
 
 The relation among $\dot{m}_{\text{fuel}}\,$, $\ddot{m}_{\text{fuel}}\, $, $\dot{\theta^*} $ and $\ddot{\theta^*} $ is deduced from the derivation of the relation between the volume $\mathcal{V}$ and $m_{\text{fuel}}$:
 
@@ -491,7 +511,7 @@ As far as the inertia concerns:
 \begin{multline}
 	I_{3\,3} = \rho_{\text{fuel}} \left(\int_{0}^{2\,\pi}\int_{0}^{\theta^*}\int_{0}^{R_{\text{tank}}\frac{\cos{\theta^*}}{\cos{\theta}}} r^4\,\sin^3{\theta}\,\text{d}\theta\,\text{d}\phi\,\text{d}r  \vspace{3pt}\right.+\\
 	\left.+ \int_{0}^{2\,\pi}\int_{\theta^*}^{\pi}\int_{0}^{R_{\text{tank}}} r^4\,\sin^3{\theta}\,\text{d}\theta\,\text{d}\phi\,\text{d}r\right)  =\\
-	= \frac{2}{5}\pi\,\rho_{\text{fuel}}R^5_{\text{tank}}\left[\frac{2}{5}  + \frac{1}{4}\cos{\theta^*}\sin^4{\theta^*} -\frac{1}{12}\left(\cos{3\theta^*} - 9\cos{\theta^*}\right)\right]
+	= \frac{2}{5}\pi\,\rho_{\text{fuel}}R^5_{\text{tank}}\left[\frac{2}{3}  + \frac{1}{4}\cos{\theta^*}\sin^4{\theta^*} -\frac{1}{12}\left(\cos{3\theta^*} - 9\cos{\theta^*}\right)\right]
 \end{multline}
 
 \begin{multline}
@@ -527,7 +547,7 @@ From those calculations the derivatives, in the tank reference frame, can be com
 	I'_{3\,3}	= \frac{2}{5}\pi\,\rho_{\text{fuel}}R^5_{\text{tank}} \, \dot{\theta^*}\left[ \cos^2{\theta^*}\sin^3{\theta^*} -\frac{1}{4}\sin^5{\theta^*} +\frac{1}{4}\sin{3\theta^*} -\frac{3}{4}\sin{\theta^*} \right]
 \end{multline}
 \begin{multline}
-	I'_{2\,2}	= I'_{1\,1}= \frac{2}{5}\pi\,\rho_{\text{fuel}}R^5_{\text{tank}} \, \dot{\theta^*}\left[ \frac{5}{4}\sin{\theta^*}\cos{\theta^*} -\frac{5}{4}\sin{\theta^*} -\frac{1}{8}\sin{3\theta^*} +\right.\\
+	I'_{2\,2}	= I'_{1\,1}= \frac{2}{5}\pi\,\rho_{\text{fuel}}R^5_{\text{tank}} \, \dot{\theta^*}\left[ \frac{5}{4}\sin{\theta^*}\cos^4{\theta^*} -\frac{5}{4}\sin{\theta^*} -\frac{1}{8}\sin{3\theta^*} +\right.\\
 	\left. + \frac{3}{8} \sin{\theta^*} + \frac{1}{2}\cos^2{\theta^*}\sin^3{\theta^*} -\frac{1}{8} \sin^5{\theta^*} \right]
 \end{multline}
 
