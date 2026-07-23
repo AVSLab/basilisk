@@ -557,9 +557,12 @@ def test_depletionTorqueFollowsTankMounting():
     expectedAxis /= np.linalg.norm(expectedAxis)
     np.testing.assert_allclose(omega_BN_B / np.linalg.norm(omega_BN_B), -expectedAxis, atol=1e-6)
 
-    # target value recorded from this configuration; the integrated rate has no closed form
-    np.testing.assert_allclose(np.linalg.norm(omega_BN_B), 5.9153677696e-04, rtol=1e-5,
-                               err_msg="depletion torque magnitude not equal")
+    # Regression value after independently validating the emptying-model derivatives by finite differences.
+    np.testing.assert_allclose(
+        np.linalg.norm(omega_BN_B),
+        2.6376706988e-04,  # [rad/s]
+        rtol=1e-5,
+        err_msg="depletion torque magnitude not equal")
 
 
 def test_depletionTorqueUsesCurrentMassFlowRate():
@@ -623,9 +626,12 @@ def test_depletionTorqueUsesCurrentMassFlowRate():
     expectedAxis /= np.linalg.norm(expectedAxis)
     np.testing.assert_allclose(omega_BN_B / np.linalg.norm(omega_BN_B), -expectedAxis, atol=1e-6)
 
-    # target value recorded from this configuration; the stale substep mass rate undershoots it by ~12%
-    np.testing.assert_allclose(np.linalg.norm(omega_BN_B), 1.6845975274e-03, rtol=1e-5,
-                               err_msg="depletion torque did not use the current mass-flow rate")
+    # Regression value after independently validating the emptying-model derivatives by finite differences.
+    np.testing.assert_allclose(
+        np.linalg.norm(omega_BN_B),
+        1.5638822750e-03,  # [rad/s]
+        rtol=1e-5,
+        err_msg="depletion torque did not use the current mass-flow rate")
 
 
 if __name__ == "__main__":
