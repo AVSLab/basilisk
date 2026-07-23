@@ -11,8 +11,8 @@ description = "Build and runtime support for native Basilisk Rust modules."
 codegen = ["dep:cbindgen"]
 
 # Enable this in a module crate's [dev-dependencies] to make `bskLogger`
-# calls (info/warning/bsk_error) print to stderr / panic instead of calling
-# Basilisk's C symbols, which aren't linked during `cargo test`.
+# calls (debug/info/warning) print to stderr instead of calling Basilisk's C
+# symbols, which aren't linked during `cargo test`.
 #
 # [dev-dependencies]
 # bsk-build = { path = "...", features = ["test_logger"] }
@@ -20,7 +20,7 @@ codegen = ["dep:cbindgen"]
 # Cargo feature unification ensures the test binary gets this feature while
 # production builds do not (dev-dep features are not propagated into the
 # crate's public library artifact). After adding this, module code can call
-# `self.bskLogger.warning(...)` without `#[cfg(not(test))]` guards.
+# `context.logger().warning(...)` without `#[cfg(not(test))]` guards.
 # The `#[bsk_build::module]` attribute automatically excludes lifecycle entry
 # points from test builds, so unit tests do not link Basilisk's C symbols.
 test_logger = []

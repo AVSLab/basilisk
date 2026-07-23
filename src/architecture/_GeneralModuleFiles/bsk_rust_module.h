@@ -48,10 +48,11 @@
  *  lifecycle entry points that
  *  read/write messages around the module's own ``update``. The user
  *  implements ``init``, ``reset``, and ``update`` in safe Rust with
- *  named, typed message values — no FFI boilerplate by hand. Message-port
- *  fields use ``#[bsk(input)]``, ``#[bsk(input, optional)]``, or
- *  ``#[bsk(output)]`` to declare their role explicitly. See the Basilisk
- *  documentation's "Writing a Rust Plugin" page for the full guide.
+ *  named, typed message values and ``BskResult`` return types — no FFI
+ *  boilerplate by hand. Message-port fields use ``#[bsk(input)]``,
+ *  ``#[bsk(input, optional)]``, or ``#[bsk(output)]`` to declare their role
+ *  explicitly. See the Basilisk documentation's "Writing a Rust Plugin"
+ *  page for the full guide.
  *
  *  **Config struct field ordering**
  *
@@ -111,13 +112,16 @@
  *  **Logging**
  *
  *  ``BskContext::logger()`` supplies the same standard logging a hand-written
- *  C module has through ``_bskLog`` / ``_bskError``. ``bsk-messages``'
- *  ``BskLoggerExt`` trait wraps those entry points as
- *  ``.debug()``/``.info()``/``.warning()``/``.bsk_error()`` methods.
+ *  C module has through the no-throw logging adapter. Its borrowed
+ *  ``BskLoggerRef`` provides
+ *  ``.debug()``/``.info()``/``.warning()`` methods.
  *  The shared wrapper borrows its framework-managed logger into the lifecycle
  *  context. The logger does not appear in the public config struct.
- *  ``bsk-build``'s own generated "unconnected required input" check (see
- *  "Message port patterns" below) uses this identical path.
+ *  A no-throw C++ adapter catches any logger exception before returning to
+ *  Rust. Expected configuration, input, and runtime failures return
+ *  ``Err(BskError::new(...))`` from a lifecycle method; they are not logging
+ *  operations. The generated boundary carries that failure as data and
+ *  raises ``BasiliskError`` only after Rust has returned normally.
  *
  *  **Message port patterns**
  *
@@ -133,8 +137,8 @@
  *      pub cmdTorqueOutMsg: MsgWriter<CmdTorqueBodyMsg>,
  *
  *  *Required input* — ``#[bsk(input)]`` checks connectivity in ``Reset`` and
- *  before each ``Update`` read; a missing connection raises the standard
- *  ``BasiliskError``.
+ *  before each ``Update`` read; a missing connection returns an expected
+ *  Rust error that the C++ wrapper translates into ``BasiliskError``.
  *
  *  *Optional input* — ``#[bsk(input, optional)]`` gives the generated input
  *  field type ``Option<Msg>`` (``None`` when unlinked) instead of raising an
@@ -169,7 +173,7 @@
  *
  *      impl BskModule for myModuleConfig {
  *          type State = MyState;
- *          // reset()/update() receive &mut Self::State
+ *          // reset()/update() receive &mut Self::State and return BskResult
  *      }
  *
  *  The generated ``Destroy_name`` function runs ordinary Rust drop glue for
@@ -248,13 +252,41 @@ typedef struct BskRustModuleContext {
     BSKLogger *bskLogger;         /*!< [-] borrowed Basilisk logger */
 } BskRustModuleContext;
 
+/*! Classification for an error returned by a Rust module ABI function.
+ *
+ *  This is a fixed-width integer rather than a C enum so its representation
+ *  exactly matches Rust's ``#[repr(u32)] BskRustErrorKind`` on every supported
+ *  compiler.
+ */
+typedef uint32_t BskRustErrorKind;
+
+enum {
+    BSK_RUST_ERROR_EXPECTED = 1U,        /*!< module returned an expected error */
+    BSK_RUST_ERROR_PANIC = 2U,           /*!< generated boundary caught a Rust panic */
+    BSK_RUST_ERROR_INVALID_ARGUMENT = 3U /*!< lifecycle ABI contract was violated */
+};
+
+/*! Opaque Rust-owned error and diagnostic message.
+ *
+ *  A non-null error returned by a Rust module must be released with
+ *  ``Destroy_BskRustError``. Its message remains valid until that call.
+ */
+typedef struct BskRustError BskRustError;
+
+BSK_RUST_EXTERN_C_BEGIN
+BskRustErrorKind BskRustError_kind(const BskRustError *error);
+const char *BskRustError_message(const BskRustError *error);
+void Destroy_BskRustError(BskRustError *error);
+BSK_RUST_EXTERN_C_END
+
 /*! Emit ``extern "C"`` allocation and lifecycle function declarations for a
  *  Rust-backed Basilisk module named \p name, whose config view is
  *  \p configType and whose opaque instance type is \p handleType.
  *
- *  ``Create_name()``
+ *  ``Create_name(&handle)``
  *      Constructs the complete module instance in Rust, including arbitrary
- *      Rust-owned state, and returns its opaque owning handle.
+ *      Rust-owned state, and writes its opaque owning handle. Returns null on
+ *      success or an owning ``BskRustError`` on failure.
  *
  *  ``Config_name(handle)``
  *      Returns a borrowed pointer to the instance's FFI-safe parameter and
@@ -262,21 +294,31 @@ typedef struct BskRustModuleContext {
  *
  *  ``Destroy_name(handle)``
  *      Runs the config and internal state's Rust drop glue and returns the
- *      complete allocation to Rust.
+ *      complete allocation to Rust. Returns null on success or an owning
+ *      ``BskRustError`` if Rust catches a panic while dropping the instance.
  *
  *  ``SelfInit_name(handle, context)``
  *      Called once at task registration. The generated lifecycle code
- *      initialises output message ports (``*_C_init``).
+ *      initialises output message ports (``*_C_init``). Returns null on
+ *      success or an owning ``BskRustError`` on failure.
  *
  *  ``Reset_name(handle, currentSimNanos, context)``
  *      Called before the first step and on explicit resets. The generated
  *      lifecycle code checks required input connectivity, then calls
- *      ``BskModule::reset`` with a safe borrowed context.
+ *      ``BskModule::reset`` with a safe borrowed context. It writes outputs
+ *      only after ``reset`` returns ``Ok``. Returns null on success or an
+ *      owning ``BskRustError`` on failure.
  *
  *  ``Update_name(handle, currentSimNanos, context)``
  *      Called every simulation step. The generated lifecycle code reads all
  *      input messages, calls ``BskModule::update`` with a safe borrowed
- *      context, and writes all output messages.
+ *      context, and writes output messages only after ``update`` returns
+ *      ``Ok``. Returns null on success or an owning ``BskRustError`` on
+ *      failure.
+ *
+ *  Every generated Rust definition uses the non-unwinding C ABI and catches
+ *  Rust panics before returning. The caller owns every non-null error result
+ *  and must release it with ``Destroy_BskRustError``.
  *
  *  \p configType must be declared before this macro. bsk-build passes
  *  whatever struct name the crate's ``impl BskModule`` block actually uses,
@@ -285,12 +327,12 @@ typedef struct BskRustModuleContext {
 #define BSK_RUST_DECL(name, configType, handleType) \
     typedef struct handleType handleType; \
     BSK_RUST_EXTERN_C_BEGIN \
-    handleType *Create_##name(void); \
+    BskRustError *Create_##name(handleType **outputHandle); \
     configType *Config_##name(handleType *handle); \
-    void Destroy_##name(handleType *handle); \
-    void SelfInit_##name(handleType *handle, const BskRustModuleContext *context); \
-    void Reset_##name(handleType *handle, uint64_t currentSimNanos, const BskRustModuleContext *context); \
-    void Update_##name(handleType *handle, uint64_t currentSimNanos, const BskRustModuleContext *context); \
+    BskRustError *Destroy_##name(handleType *handle); \
+    BskRustError *SelfInit_##name(handleType *handle, const BskRustModuleContext *context); \
+    BskRustError *Reset_##name(handleType *handle, uint64_t currentSimNanos, const BskRustModuleContext *context); \
+    BskRustError *Update_##name(handleType *handle, uint64_t currentSimNanos, const BskRustModuleContext *context); \
     BSK_RUST_EXTERN_C_END
 
 #endif /* BSK_RUST_MODULE_H */

@@ -59,6 +59,9 @@ For a Rust module:
   internal Rust-only state there, using ``()`` when stateless?
 - Does lifecycle code obtain runtime metadata and logging through
   ``BskContext`` rather than retaining borrowed framework pointers?
+- Do ``init``, ``reset``, and ``update`` return ``BskResult``, with expected
+  validation and runtime failures reported as ``BskError`` rather than
+  panics?
 - Is its crate listed in the ``src/Cargo.toml`` workspace members?
 - Does its ``Cargo.toml`` contain the
   ``[package.metadata.basilisk]`` ``module = true`` marker?

@@ -26,6 +26,8 @@
     #include "architecture/_GeneralModuleFiles/sys_model.h"
     #include "architecture/_GeneralModuleFiles/bsk_rust_module.h"
     #include <architecture/utilities/bskLogging.h>
+    #include <cstdio>
+    #include <exception>
     #include <memory>
     #include <type_traits>
 %}
@@ -38,6 +40,7 @@
 // compiler (it is pulled in above via bsk_rust_module.h).
 typedef struct BskRustModuleRuntime BskRustModuleRuntime;
 typedef struct BskRustModuleContext BskRustModuleContext;
+typedef struct BskRustError BskRustError;
 
 %inline %{
 
@@ -81,38 +84,83 @@ class CWrapper : public SysModel {
 // BskRustModuleContext created immediately before each lifecycle call.
 template <typename TConfig,
           typename THandle,
-          THandle* (*createInstanceFun)(),
+          BskRustError* (*createInstanceFun)(THandle**),
           TConfig* (*configViewFun)(THandle*),
-          void (*destroyInstanceFun)(THandle*),
-          void (*updateStateFun)(THandle*, uint64_t, const BskRustModuleContext*),
-          void (*selfInitFun)(THandle*, const BskRustModuleContext*),
-          void (*resetFun)(THandle*, uint64_t, const BskRustModuleContext*)
+          BskRustError* (*destroyInstanceFun)(THandle*),
+          BskRustError* (*updateStateFun)(THandle*, uint64_t, const BskRustModuleContext*),
+          BskRustError* (*selfInitFun)(THandle*, const BskRustModuleContext*),
+          BskRustError* (*resetFun)(THandle*, uint64_t, const BskRustModuleContext*)
           >
 class RustWrapper : public SysModel {
   public:
     RustWrapper()
-        : instance{createInstanceFun(), destroyInstanceFun},
-          config{configViewFun(this->instance.get())} {};
+        : instance{RustWrapper::createOwnedInstance(), RustWrapper::destroyOwnedInstance},
+          config{configViewFun(this->instance.get())} {
+        if (this->config == nullptr) {
+            throw BasiliskError("Rust module returned a null configuration view");
+        }
+    };
 
     BSKLogger *bskLogger = nullptr; //!< framework logger borrowed by lifecycle context
 
     void SelfInit(){
         BskRustModuleContext context = this->makeContext();
-        selfInitFun(this->instance.get(), &context);};
+        RustWrapper::throwOnRustError(selfInitFun(this->instance.get(), &context));};
 
     void UpdateState(uint64_t currentSimNanos){
         BskRustModuleContext context = this->makeContext();
-        updateStateFun(this->instance.get(), currentSimNanos, &context);};
+        RustWrapper::throwOnRustError(
+            updateStateFun(this->instance.get(), currentSimNanos, &context));};
 
     void Reset(uint64_t currentSimNanos){
         BskRustModuleContext context = this->makeContext();
-        resetFun(this->instance.get(), currentSimNanos, &context);};
+        RustWrapper::throwOnRustError(
+            resetFun(this->instance.get(), currentSimNanos, &context));};
 
     // Allows accessing the elements of the config from the wrapper in Python
     // Similar to how the smart pointers are implemented in SWIG
     TConfig* operator->() const { return this->config; }
 
   private:
+    static void throwOnRustError(BskRustError *error) {
+        if (error == nullptr) {
+            return;
+        }
+        std::unique_ptr<BskRustError, void (*)(BskRustError*)> ownedError{
+            error,
+            Destroy_BskRustError
+        };
+        throw BasiliskError(BskRustError_message(ownedError.get()));
+    }
+
+    static THandle *createOwnedInstance() {
+        THandle *instance = nullptr;
+        RustWrapper::throwOnRustError(createInstanceFun(&instance));
+        if (instance == nullptr) {
+            throw BasiliskError("Rust module creation returned a null handle");
+        }
+        return instance;
+    }
+
+    // C++ destructors must not throw. A Rust panic while dropping its owned
+    // instance is unrecoverable, so report the diagnostic and terminate.
+    static void destroyOwnedInstance(THandle *instance) noexcept {
+        if (instance == nullptr) {
+            return;
+        }
+        BskRustError *error = destroyInstanceFun(instance);
+        if (error == nullptr) {
+            return;
+        }
+        std::fprintf(
+            stderr,
+            "Fatal error while destroying Rust module: %s\n",
+            BskRustError_message(error)
+        );
+        Destroy_BskRustError(error);
+        std::terminate();
+    }
+
     // modelTag points into this->ModelTag, which outlives the synchronous
     // lifecycle call that consumes the context. bskLogger is owned by the
     // simulation and borrowed by the wrapper for that same call.

@@ -167,14 +167,14 @@ generates the C header, SWIG wrapper, and message I/O code from this definition:
             _context: &BskContext<'_>,
             inputs: Self::Inputs,
             _current_sim_nanos: u64,
-        ) -> Self::Outputs {
+        ) -> BskResult<Self::Outputs> {
             let _att_guid_in_msg = inputs.attGuidInMsg;
             // ... pure Rust control law ...
-            myModuleOutputs {
+            Ok(myModuleOutputs {
                 cmdTorqueOutMsg: CmdTorqueBodyMsg {
                     torqueRequestBody: [0.0, 0.0, 0.0],  // [Nm]
                 },
-            }
+            })
         }
     }
 
@@ -193,25 +193,30 @@ Module Lifecycle
 
 Three ``BskModule`` trait methods map to the Basilisk module lifecycle:
 
-``init(state)``
+``init(state)`` → ``BskResult<()>``
    Called before Python configures the module. Override to set non-zero
    parameter defaults and initial state — the equivalent of a C++ module
    constructor. Before this call, Rust initializes every configuration field
    and ``State`` through ``Default``. The default ``init(state)``
-   implementation is a no-op.
+   implementation returns ``Ok(())``.
 
-``reset(state, context, current_sim_nanos)`` → ``Self::Outputs``
+``reset(state, context, current_sim_nanos)`` → ``BskResult<Self::Outputs>``
    Called at simulation start and on every ``Reset()``. Returns initial
    values for every output port; the framework writes them automatically.
-   The default implementation returns ``Self::Outputs::default()``. Override
-   when the module has non-zero initial outputs, parameter validation, or
-   state to reset.
+   The default implementation returns ``Ok(Self::Outputs::default())``.
+   Override when the module has non-zero initial outputs, parameter
+   validation, or state to reset.
 
-``update(state, context, inputs, current_sim_nanos)`` → ``Self::Outputs``
+``update(state, context, inputs, current_sim_nanos)`` → ``BskResult<Self::Outputs>``
    Called every tick. Receives message values (not ports) and returns output
    values; the framework handles all I/O. ``state`` is private Rust-owned
    storage, while ``context`` supplies borrowed framework metadata and
    logging. No default — must always be implemented.
+
+Return ``Err(BskError::new("..."))`` for an expected configuration, input, or
+runtime failure. The generated Rust boundary carries the error across the C
+ABI as data, and the C++ wrapper raises ``BasiliskError`` only after Rust has
+returned normally. No output messages are written for a failed lifecycle call.
 
 The attribute generates named ``Inputs`` and ``Outputs`` structs from the
 annotated message ports. Module code accesses those values by field name, not
@@ -271,9 +276,10 @@ name. The generated lifecycle adapter borrows it for one call:
         context: &BskContext<'_>,
         inputs: Self::Inputs,
         current_sim_nanos: u64,
-    ) -> Self::Outputs {
+    ) -> BskResult<Self::Outputs> {
         let id = context.module_id();
         // ...
+        Ok(Self::Outputs::default())
     }
 
 The context also provides ``model_tag()``, ``call_counts()``, ``rng_seed()``,
@@ -289,8 +295,8 @@ configuration.
 Logging
 -------
 
-``context.logger()`` provides standard Basilisk logging through the
-``BskLoggerExt`` trait:
+``context.logger()`` returns a borrowed ``BskLoggerRef`` with the standard
+nonfatal Basilisk logging methods ``debug()``, ``info()``, and ``warning()``:
 
 .. code-block:: rust
 
@@ -299,20 +305,24 @@ Logging
         state: &mut Self::State,
         context: &BskContext<'_>,
         _current_sim_nanos: u64,
-    ) -> Self::Outputs {
+    ) -> BskResult<Self::Outputs> {
         if self.K <= 0.0 {
-            context.logger().warning("K should be positive");
+            return Err(BskError::new("K must be positive"));
         }
-        Self::Outputs::default()   // lifecycle code writes these to the output ports
+        context.logger().info("Module parameters are valid.");
+        Ok(Self::Outputs::default())  // lifecycle code writes these to the output ports
     }
 
-``.bsk_error(msg)`` raises the standard fatal ``BasiliskError`` and never
-returns.
+Use ``BskResult`` for expected failures, as shown above. Rust logging is
+deliberately nonfatal: it reports diagnostics but does not replace the
+lifecycle method's error return. The C++ logging adapter catches any logger
+exception before returning to Rust, so a C++ exception never unwinds through
+Rust frames.
 
 In test builds (enabled by adding ``bsk-build`` with the ``test_logger``
-feature to ``[dev-dependencies]``), every logger call prints to ``stderr``
-and ``.bsk_error()`` panics — no C symbols required. This means context
-logger calls in ``reset()`` and ``update()`` work for unit tests.
+feature to ``[dev-dependencies]``), logger calls print to ``stderr`` with no C
+symbols required. This means context logger calls in ``reset()`` and
+``update()`` work for unit tests.
 
 The C++ wrapper owns the framework logger reference and borrows it into
 ``BskContext`` for each lifecycle call. It is not part of the Rust
@@ -334,7 +344,8 @@ The ``bsk-messages`` crate
 Add ``bsk-messages`` to the Cargo dependencies shown above. It provides the
 standard Basilisk message types and re-exports ``BskContext``,
 ``BskModuleRuntime``, ``MsgReader``, ``MsgWriter``, ``BskModule``, and
-``BskLoggerExt``. Import the types with:
+``BskError``/``BskResult``. It also re-exports ``BskLoggerRef``. Import the
+types with:
 
 .. code-block:: rust
 
@@ -389,14 +400,14 @@ names:
             _context: &BskContext<'_>,
             inputs: Self::Inputs,
             _t: u64,
-        ) -> Self::Outputs {
+        ) -> BskResult<Self::Outputs> {
             let nav_att = inputs.navAttInMsg;
             let att_ref = inputs.attRefInMsg;
             // ...
-            myModuleOutputs {
+            Ok(myModuleOutputs {
                 cmdTorqueOutMsg: CmdTorqueBodyMsg::default(),
                 cmdRateOutMsg: RateCmdMsg::default(),
-            }
+            })
         }
     }
 
@@ -414,8 +425,9 @@ Required vs. optional inputs
 Input optionality is declared next to the corresponding port:
 
 - ``#[bsk(input)]`` means **required**: connectivity is
-  checked in ``Reset`` and before every ``Update`` read, raising the
-  standard ``BasiliskError`` if unconnected.
+  checked in ``Reset`` and before every ``Update`` read. A missing connection
+  becomes an expected ``BskError`` and the wrapper raises the standard
+  ``BasiliskError`` after Rust returns.
 - ``#[bsk(input, optional)]`` means **optional**: the generated input field
   has type ``Option<Msg>`` and is ``None`` when unlinked.
 
@@ -441,11 +453,11 @@ Input optionality is declared next to the corresponding port:
             _context: &BskContext<'_>,
             inputs: Self::Inputs,
             _t: u64,
-        ) -> Self::Outputs {
+        ) -> BskResult<Self::Outputs> {
             let _required_attitude = inputs.attGuidInMsg;
             let _optional_disturbance = inputs.disturbanceInMsg;
             // ...
-            myModuleOutputs::default()
+            Ok(myModuleOutputs::default())
         }
     }
 
@@ -457,17 +469,16 @@ Outputs
 ~~~~~~~
 
 Output ports are initialized during ``SelfInit``. Both ``reset()`` and
-``update()`` must return a named value for every output port
-(``Self::Outputs``); the generated lifecycle code writes the returned values
-with the module ID
-and current simulation timestamp. This means every output is guaranteed to
-hold a valid, module-authored value before the first ``UpdateState`` tick.
+``update()`` return ``BskResult<Self::Outputs>``. On success, the named output
+value contains every output port and the generated lifecycle code writes it
+with the module ID and current simulation timestamp. On error, no output is
+written for that call.
 
 ``reset()`` has a default implementation that returns
-``Self::Outputs::default()``, so a module only needs to override it when the
-initial outputs should be non-zero, when parameters need validating, or when
-internal state needs resetting. ``update()`` has no default and must always
-be implemented.
+``Ok(Self::Outputs::default())``, so a module only needs to override it when
+the initial outputs should be non-zero, when parameters need validating, or
+when internal state needs resetting. ``update()`` has no default and must
+always be implemented.
 
 Custom message types
 ~~~~~~~~~~~~~~~~~~~~
@@ -520,7 +531,7 @@ crosses the FFI boundary, so state may contain unrestricted safe Rust types:
             context: &BskContext<'_>,
             inputs: Self::Inputs,
             current_sim_nanos: u64,
-        ) -> Self::Outputs {
+        ) -> BskResult<Self::Outputs> {
             state.history.push(self.K);
             state.status = format!(
                 "module {} updated at {current_sim_nanos} ns",
@@ -528,7 +539,7 @@ crosses the FFI boundary, so state may contain unrestricted safe Rust types:
             );
             state.mode = InternalMode::Running;
             // ...
-            Self::Outputs::default()
+            Ok(Self::Outputs::default())
         }
     }
 

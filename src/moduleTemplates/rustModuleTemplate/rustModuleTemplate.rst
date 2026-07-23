@@ -33,7 +33,8 @@ Module Assumptions and Limitations
 This module is a template only and does not model a physical system. It
 demonstrates the Rust module lifecycle, explicit message-port annotations,
 named input and output values, optional message inputs, output messages, and
-logging.
+logging. It also demonstrates a Python-configurable ``increment`` parameter
+that is initialized in Rust and validated during reset with ``BskResult``.
 
 User Guide
 ----------
@@ -48,6 +49,10 @@ compiled Basilisk module:
 
    module = rustModuleTemplate.rustModuleTemplate()
    simulation.AddModelToTask("taskName", module)
+
+``module.increment`` defaults to 1 and must be finite and strictly positive.
+An invalid value returns ``BskError`` from Rust and causes initialization to
+raise ``BasiliskError`` without using cross-language unwinding.
 
 Connect ``module.dataInMsg`` when input data is available. When it is unconnected,
 the module starts from a zero vector.

@@ -182,6 +182,27 @@ EXTERN void _bskLog(BSKLogger* bskLogger, logLevel_t logLevel, const char* info)
     bskLogger->bskLog(logLevel, "%s", info);
 }
 
+/*! Log through the C++ logger without allowing an exception to cross the C ABI.
+
+    :param bskLogger: borrowed Basilisk logger; null disables logging
+    :param logLevel: requested logging level
+    :param info: preformatted message text
+    :returns: zero on success and nonzero when the C++ logger throws
+ */
+EXTERN int _bskLogNoThrow(BSKLogger* bskLogger, logLevel_t logLevel, const char* info) BSK_NOEXCEPT
+{
+    if (bskLogger == nullptr) {
+        return 0;
+    }
+
+    try {
+        bskLogger->bskLog(logLevel, "%s", info == nullptr ? "" : info);
+    } catch (...) {
+        return -1;
+    }
+    return 0;
+}
+
 EXTERN_NORETURN void _bskError(BSKLogger* bskLogger, const char* info)
 {
     bskLogger->bskError("%s", info == nullptr ? "" : info);

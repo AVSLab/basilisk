@@ -81,7 +81,9 @@
 //! Lifecycle methods receive [`BskContext`], which provides the ``SysModel``
 //! module ID, model tag, call count, random seed, and Basilisk logger. The
 //! context is valid only for the current call and is not part of the
-//! Python-visible configuration struct.
+//! Python-visible configuration struct. [`BskLoggerRef`] exposes only
+//! nonfatal ``debug``, ``info``, and ``warning`` operations. Expected
+//! failures return [`BskError`] rather than using logging as control flow.
 //!
 //! # Messaging
 //!
@@ -99,8 +101,9 @@
 //! ``BskModule::Outputs`` to those types. Inputs are accessed and outputs are
 //! constructed by field name, so config field declaration order has no
 //! behavioral meaning. Required inputs are checked with ``is_linked()`` in
-//! ``Reset`` and before every ``Update`` read, raising the standard Basilisk
-//! error on failure.
+//! ``Reset`` and before every ``Update`` read. A missing connection becomes
+//! an expected [`BskError`] that the C++ wrapper translates into the standard
+//! Basilisk error after Rust returns.
 //!
 //! For BSK built-in messages this works out-of-the-box. Custom message
 //! types need their own ``*_C`` C-interface header on the module's include
@@ -115,6 +118,15 @@
 //! ``Destroy_<name>`` runs ordinary Rust drop glue for both values, so no
 //! ``Cleanup_*`` function or manual pointer conversion is needed. Use ``()``
 //! for a stateless module.
+//!
+//! # Lifecycle results
+//!
+//! [`BskModule::init`], [`BskModule::reset`], and [`BskModule::update`] return
+//! [`BskResult`]. Use ``Err(BskError::new("..."))`` for an expected invalid
+//! configuration, unavailable input, or runtime failure. The generated ABI
+//! boundary returns that failure as data, and the C++ wrapper raises
+//! ``BasiliskError`` only after Rust has returned normally. Output messages
+//! are written only after the lifecycle method returns ``Ok``.
 //!
 //! # Nested structs
 //!
@@ -147,9 +159,10 @@
 //! opt-in `codegen` feature), this crate
 //! also has an always-available module-code surface:
 //! ``#[module]``, [`BskModule`], [`BskContext`], [`BskModuleRuntime`],
-//! [`MsgReader`]/[`MsgWriter`], and [`BskLoggerExt`]. Add a second,
-//! feature-less ``bsk-build`` entry for this surface, alongside the existing
-//! ``[build-dependencies]`` one (which needs `codegen`):
+//! [`BskError`]/[`BskResult`], [`MsgReader`]/[`MsgWriter`], and
+//! [`BskLoggerRef`]. Add a second, feature-less ``bsk-build`` entry for this
+//! surface, alongside the existing ``[build-dependencies]`` one (which needs
+//! `codegen`):
 //!
 //! ```toml
 //! [dependencies]
@@ -173,6 +186,398 @@
 /// ``build.rs`` passes this type's exact name to [`generate_bindings`] when
 /// generating the C header and wrapper artifacts.
 pub use bsk_macros::module;
+
+/// An expected failure reported by a Rust Basilisk module.
+///
+/// Return this through [`BskResult`] for invalid configuration, unavailable
+/// input data, or another condition that should stop the simulation without
+/// panicking. The generated lifecycle boundary will translate it into a
+/// ``BasiliskError`` after Rust returns normally.
+#[must_use]
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct BskError {
+    message: String,
+}
+
+impl BskError {
+    /// Create an error with the message that should be reported to Basilisk.
+    pub fn new(message: impl Into<String>) -> Self {
+        Self {
+            message: message.into(),
+        }
+    }
+
+    /// Return the error message.
+    pub fn message(&self) -> &str {
+        &self.message
+    }
+}
+
+impl core::fmt::Display for BskError {
+    fn fmt(&self, formatter: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        formatter.write_str(&self.message)
+    }
+}
+
+impl std::error::Error for BskError {}
+
+impl From<String> for BskError {
+    fn from(message: String) -> Self {
+        Self::new(message)
+    }
+}
+
+impl From<&str> for BskError {
+    fn from(message: &str) -> Self {
+        Self::new(message)
+    }
+}
+
+/// Result returned by fallible Rust module lifecycle methods.
+pub type BskResult<T> = Result<T, BskError>;
+
+/// Classification attached to an error returned through the Rust module ABI.
+///
+/// C and C++ see the matching ``BSK_RUST_ERROR_*`` constants declared in
+/// ``bsk_rust_module.h``.
+#[repr(u32)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum BskRustErrorKind {
+    /// An expected module failure returned as [`BskError`].
+    Expected = 1,
+    /// A Rust panic caught at the generated lifecycle boundary.
+    Panic = 2,
+    /// An invalid pointer or another violation of the lifecycle ABI contract.
+    InvalidArgument = 3,
+}
+
+/// Opaque C handle for an error allocated and owned by Rust.
+///
+/// Foreign code may inspect this only with [`BskRustError_kind`] and
+/// [`BskRustError_message`]. It must eventually return every non-null handle
+/// to [`Destroy_BskRustError`].
+#[repr(C)]
+#[derive(Debug)]
+pub struct BskRustError {
+    _private: [u8; 0],
+}
+
+struct BskRustErrorInner {
+    kind: BskRustErrorKind,
+    message: std::ffi::CString,
+}
+
+impl BskRustErrorInner {
+    fn new(kind: BskRustErrorKind, message: String) -> Self {
+        // A C string cannot represent an embedded NUL. Preserve its location
+        // visibly rather than truncating the diagnostic at that byte.
+        let message = message.replace('\0', "\\0");
+        let message = std::ffi::CString::new(message)
+            .expect("replacing embedded NUL bytes must produce a valid C string");
+        #[cfg(test)]
+        LIVE_BSK_RUST_ERRORS.fetch_add(1, core::sync::atomic::Ordering::SeqCst);
+        Self { kind, message }
+    }
+}
+
+impl Drop for BskRustErrorInner {
+    fn drop(&mut self) {
+        #[cfg(test)]
+        LIVE_BSK_RUST_ERRORS.fetch_sub(1, core::sync::atomic::Ordering::SeqCst);
+    }
+}
+
+#[cfg(test)]
+static LIVE_BSK_RUST_ERRORS: core::sync::atomic::AtomicUsize =
+    core::sync::atomic::AtomicUsize::new(0);
+
+impl BskRustError {
+    fn into_raw(kind: BskRustErrorKind, message: String) -> *mut Self {
+        std::boxed::Box::into_raw(std::boxed::Box::new(BskRustErrorInner::new(kind, message)))
+            .cast::<Self>()
+    }
+
+    /// Convert an expected module error into an owning FFI handle.
+    #[doc(hidden)]
+    pub fn __from_error(error: BskError) -> *mut Self {
+        Self::into_raw(BskRustErrorKind::Expected, error.message)
+    }
+
+    /// Convert a caught panic payload into an owning FFI handle.
+    #[doc(hidden)]
+    pub fn __from_panic(operation: &str, payload: Box<dyn core::any::Any + Send>) -> *mut Self {
+        let message = panic_payload_message(payload);
+        Self::into_raw(
+            BskRustErrorKind::Panic,
+            format!("Rust panic in {operation}: {message}"),
+        )
+    }
+
+    /// Construct an ABI-contract error.
+    #[doc(hidden)]
+    pub fn __invalid_argument(message: impl Into<String>) -> *mut Self {
+        Self::into_raw(BskRustErrorKind::InvalidArgument, message.into())
+    }
+}
+
+fn panic_payload_message(payload: Box<dyn core::any::Any + Send>) -> String {
+    let payload = match payload.downcast::<String>() {
+        Ok(message) => return *message,
+        Err(payload) => payload,
+    };
+    let payload = match payload.downcast::<&'static str>() {
+        Ok(message) => return (*message).to_owned(),
+        Err(payload) => payload,
+    };
+
+    // An arbitrary panic payload may itself panic when dropped. It is safer
+    // to leak this exceptional object than to permit a second panic while
+    // constructing the FFI error that contains the first one.
+    core::mem::forget(payload);
+    String::from("non-string panic payload")
+}
+
+/// Return the classification of an opaque Rust error.
+///
+/// A null pointer reports [`BskRustErrorKind::InvalidArgument`].
+///
+/// # Safety
+///
+/// A non-null `error` must be a live handle returned by this library and must
+/// not have been passed to [`Destroy_BskRustError`].
+#[no_mangle]
+#[allow(non_snake_case)]
+pub unsafe extern "C" fn BskRustError_kind(error: *const BskRustError) -> BskRustErrorKind {
+    let Some(error) = (unsafe { error.cast::<BskRustErrorInner>().as_ref() }) else {
+        return BskRustErrorKind::InvalidArgument;
+    };
+    error.kind
+}
+
+/// Borrow the NUL-terminated message stored in an opaque Rust error.
+///
+/// The returned pointer remains valid until `error` is passed to
+/// [`Destroy_BskRustError`]. A null error pointer returns a static
+/// invalid-argument diagnostic.
+///
+/// # Safety
+///
+/// A non-null `error` must be a live handle returned by this library and must
+/// not have been passed to [`Destroy_BskRustError`].
+#[no_mangle]
+#[allow(non_snake_case)]
+pub unsafe extern "C" fn BskRustError_message(
+    error: *const BskRustError,
+) -> *const core::ffi::c_char {
+    let Some(error) = (unsafe { error.cast::<BskRustErrorInner>().as_ref() }) else {
+        return c"bsk-build: Rust error pointer must not be null".as_ptr();
+    };
+    error.message.as_ptr()
+}
+
+/// Destroy an opaque Rust error and release its message.
+///
+/// Passing null is a no-op.
+///
+/// # Safety
+///
+/// A non-null `error` must be a live handle returned by this library. Each
+/// handle may be passed to this function exactly once.
+#[no_mangle]
+#[allow(non_snake_case)]
+pub unsafe extern "C" fn Destroy_BskRustError(error: *mut BskRustError) {
+    if !error.is_null() {
+        drop(unsafe { std::boxed::Box::from_raw(error.cast::<BskRustErrorInner>()) });
+    }
+}
+
+/// Run one generated ABI operation without allowing a Rust panic to escape.
+///
+/// A null return is success. An expected [`BskError`] or caught unwinding
+/// panic becomes an owning [`BskRustError`] handle for the C++ wrapper.
+#[doc(hidden)]
+pub fn __ffi_boundary(
+    operation: &str,
+    action: impl FnOnce() -> BskResult<()>,
+) -> *mut BskRustError {
+    match std::panic::catch_unwind(std::panic::AssertUnwindSafe(action)) {
+        Ok(Ok(())) => core::ptr::null_mut(),
+        Ok(Err(error)) => BskRustError::__from_error(error),
+        Err(payload) => BskRustError::__from_panic(operation, payload),
+    }
+}
+
+#[cfg(test)]
+mod error_tests {
+    use super::{
+        BskError, BskResult, BskRustError, BskRustErrorKind, BskRustError_kind,
+        BskRustError_message, Destroy_BskRustError, LIVE_BSK_RUST_ERRORS, __ffi_boundary,
+    };
+    use core::sync::atomic::Ordering;
+    use std::ffi::CStr;
+    use std::sync::Mutex;
+
+    static ERROR_HANDLE_TEST_LOCK: Mutex<()> = Mutex::new(());
+
+    fn handle_message(error: *const BskRustError) -> String {
+        let message = unsafe { BskRustError_message(error) };
+        unsafe { CStr::from_ptr(message) }
+            .to_str()
+            .expect("error messages must be valid UTF-8")
+            .to_owned()
+    }
+
+    #[test]
+    fn expected_error_supports_result_and_standard_error_apis() {
+        fn validate(valid: bool) -> BskResult<()> {
+            if valid {
+                Ok(())
+            } else {
+                Err(BskError::new("gain must be positive"))
+            }
+        }
+
+        let error = validate(false).expect_err("invalid input must return an error");
+        assert_eq!(error.message(), "gain must be positive");
+        assert_eq!(error.to_string(), "gain must be positive");
+        assert_eq!(
+            BskError::from(String::from("owned")),
+            BskError::new("owned")
+        );
+        assert_eq!(BskError::from("borrowed"), BskError::new("borrowed"));
+        assert!(validate(true).is_ok());
+    }
+
+    #[test]
+    fn expected_error_handle_owns_and_releases_its_message() {
+        let _lock = ERROR_HANDLE_TEST_LOCK.lock().expect("test lock");
+        let initial_count = LIVE_BSK_RUST_ERRORS.load(Ordering::SeqCst);
+        let error = BskRustError::__from_error(BskError::new("before\0after"));
+
+        assert!(!error.is_null());
+        assert_eq!(
+            unsafe { BskRustError_kind(error) },
+            BskRustErrorKind::Expected
+        );
+        assert_eq!(handle_message(error), "before\\0after");
+        assert_eq!(
+            LIVE_BSK_RUST_ERRORS.load(Ordering::SeqCst),
+            initial_count + 1
+        );
+
+        unsafe { Destroy_BskRustError(error) };
+        assert_eq!(LIVE_BSK_RUST_ERRORS.load(Ordering::SeqCst), initial_count);
+    }
+
+    #[test]
+    fn panic_handles_preserve_string_payloads_and_classification() {
+        let _lock = ERROR_HANDLE_TEST_LOCK.lock().expect("test lock");
+        let owned =
+            BskRustError::__from_panic("sample::update", Box::new(String::from("owned panic")));
+        let borrowed = BskRustError::__from_panic("sample::reset", Box::new("borrowed panic"));
+
+        for error in [owned, borrowed] {
+            assert_eq!(unsafe { BskRustError_kind(error) }, BskRustErrorKind::Panic);
+        }
+        assert_eq!(
+            handle_message(owned),
+            "Rust panic in sample::update: owned panic"
+        );
+        assert_eq!(
+            handle_message(borrowed),
+            "Rust panic in sample::reset: borrowed panic"
+        );
+
+        unsafe {
+            Destroy_BskRustError(owned);
+            Destroy_BskRustError(borrowed);
+        }
+    }
+
+    #[test]
+    fn non_string_panic_payload_uses_safe_fallback() {
+        let _lock = ERROR_HANDLE_TEST_LOCK.lock().expect("test lock");
+        let error = BskRustError::__from_panic("sample::init", Box::new(7_u32));
+
+        assert_eq!(
+            handle_message(error),
+            "Rust panic in sample::init: non-string panic payload"
+        );
+        unsafe { Destroy_BskRustError(error) };
+    }
+
+    #[test]
+    fn invalid_argument_handle_preserves_contract_diagnostic() {
+        let _lock = ERROR_HANDLE_TEST_LOCK.lock().expect("test lock");
+        let error = BskRustError::__invalid_argument("module handle must not be null");
+
+        assert_eq!(
+            unsafe { BskRustError_kind(error) },
+            BskRustErrorKind::InvalidArgument
+        );
+        assert_eq!(handle_message(error), "module handle must not be null");
+        unsafe { Destroy_BskRustError(error) };
+    }
+
+    #[test]
+    fn null_ffi_error_access_is_deterministic() {
+        let _lock = ERROR_HANDLE_TEST_LOCK.lock().expect("test lock");
+        assert_eq!(
+            unsafe { BskRustError_kind(core::ptr::null()) },
+            BskRustErrorKind::InvalidArgument
+        );
+        assert_eq!(
+            handle_message(core::ptr::null()),
+            "bsk-build: Rust error pointer must not be null"
+        );
+        unsafe { Destroy_BskRustError(core::ptr::null_mut()) };
+    }
+
+    #[test]
+    fn ffi_error_kind_has_stable_u32_representation() {
+        assert_eq!(core::mem::size_of::<BskRustErrorKind>(), 4);
+        assert_eq!(BskRustErrorKind::Expected as u32, 1);
+        assert_eq!(BskRustErrorKind::Panic as u32, 2);
+        assert_eq!(BskRustErrorKind::InvalidArgument as u32, 3);
+    }
+
+    #[test]
+    fn ffi_boundary_returns_null_on_success() {
+        let _lock = ERROR_HANDLE_TEST_LOCK.lock().expect("test lock");
+        let error = __ffi_boundary("sample::success", || Ok(()));
+
+        assert!(error.is_null());
+    }
+
+    #[test]
+    fn ffi_boundary_converts_expected_error() {
+        let _lock = ERROR_HANDLE_TEST_LOCK.lock().expect("test lock");
+        let error = __ffi_boundary("sample::reset", || Err(BskError::new("invalid gain")));
+
+        assert_eq!(
+            unsafe { BskRustError_kind(error) },
+            BskRustErrorKind::Expected
+        );
+        assert_eq!(handle_message(error), "invalid gain");
+        unsafe { Destroy_BskRustError(error) };
+    }
+
+    #[test]
+    fn ffi_boundary_catches_rust_panic() {
+        let _lock = ERROR_HANDLE_TEST_LOCK.lock().expect("test lock");
+        let error = __ffi_boundary("sample::update", || panic!("index out of range"));
+
+        assert_eq!(
+            unsafe { BskRustError_kind(error) },
+            BskRustErrorKind::Panic
+        );
+        assert_eq!(
+            handle_message(error),
+            "Rust panic in sample::update: index out of range"
+        );
+        unsafe { Destroy_BskRustError(error) };
+    }
+}
 
 /// Rust-side mirror of the C ``BskRustModuleRuntime`` struct declared in
 /// ``bsk_rust_module.h``.
@@ -300,16 +705,12 @@ impl<'a> BskContext<'a> {
             logger: BskLoggerRef::from_raw(context.bsk_logger),
         }
     }
-
-    /// Return the raw logger pointer for generated message-port checks.
-    #[doc(hidden)]
-    pub const fn __logger_ptr(&self) -> *mut BSKLogger { self.logger.raw }
 }
 
 #[cfg(all(test, target_pointer_width = "64"))]
 mod runtime_abi_tests {
     use super::{
-        BskContext, BskLoggerExt, BskModuleContext, BskModuleRuntime, BSKLogger,
+        BskContext, BskModuleContext, BskModuleRuntime, BSKLogger,
     };
     use core::mem::{align_of, offset_of, size_of};
     use std::ffi::CString;
@@ -428,51 +829,48 @@ impl<T: Msg> MsgWriter<T> {
 pub trait BskModuleInput<Message: Msg>: Sized {
     fn validate(
         port: &mut MsgReader<Message>,
-        logger: *mut BSKLogger,
         missing_message: &str,
-    );
+    ) -> BskResult<()>;
     fn read(
         port: &mut MsgReader<Message>,
-        logger: *mut BSKLogger,
         missing_message: &str,
-    ) -> Self;
+    ) -> BskResult<Self>;
 }
 
 impl<Message: Msg> BskModuleInput<Message> for Message {
     fn validate(
         port: &mut MsgReader<Message>,
-        logger: *mut BSKLogger,
         missing_message: &str,
-    ) {
-        if !port.is_linked() {
-            BskLoggerExt::bsk_error(logger, missing_message);
+    ) -> BskResult<()> {
+        if port.is_linked() {
+            Ok(())
+        } else {
+            Err(BskError::new(missing_message))
         }
     }
 
     fn read(
         port: &mut MsgReader<Message>,
-        logger: *mut BSKLogger,
         missing_message: &str,
-    ) -> Self {
-        Self::validate(port, logger, missing_message);
-        port.read()
+    ) -> BskResult<Self> {
+        Self::validate(port, missing_message)?;
+        Ok(port.read())
     }
 }
 
 impl<Message: Msg> BskModuleInput<Message> for Option<Message> {
     fn validate(
         _port: &mut MsgReader<Message>,
-        _logger: *mut BSKLogger,
         _missing_message: &str,
-    ) {
+    ) -> BskResult<()> {
+        Ok(())
     }
 
     fn read(
         port: &mut MsgReader<Message>,
-        _logger: *mut BSKLogger,
         _missing_message: &str,
-    ) -> Self {
-        if port.is_linked() { Some(port.read()) } else { None }
+    ) -> BskResult<Self> {
+        Ok(if port.is_linked() { Some(port.read()) } else { None })
     }
 }
 
@@ -509,9 +907,9 @@ mod module_input_tests {
         let mut reader = MsgReader(TestPort { linked: true, value: TestMessage(42) });
         let value = <TestMessage as BskModuleInput<TestMessage>>::read(
             &mut reader,
-            core::ptr::null_mut(),
             "missing required input",
-        );
+        )
+        .expect("linked input must be readable");
         assert_eq!(value, TestMessage(42));
     }
 
@@ -520,26 +918,26 @@ mod module_input_tests {
         let mut reader = MsgReader(TestPort::default());
         <Option<TestMessage> as BskModuleInput<TestMessage>>::validate(
             &mut reader,
-            core::ptr::null_mut(),
             "optional input",
-        );
+        )
+        .expect("an optional input never requires a connection");
         let value = <Option<TestMessage> as BskModuleInput<TestMessage>>::read(
             &mut reader,
-            core::ptr::null_mut(),
             "optional input",
-        );
+        )
+        .expect("an optional input must remain readable when unlinked");
         assert_eq!(value, None);
     }
 
     #[test]
-    #[should_panic(expected = "missing required input")]
-    fn required_input_rejects_unlinked_port() {
+    fn required_input_returns_error_when_unlinked() {
         let mut reader = MsgReader(TestPort::default());
-        <TestMessage as BskModuleInput<TestMessage>>::validate(
+        let error = <TestMessage as BskModuleInput<TestMessage>>::validate(
             &mut reader,
-            core::ptr::null_mut(),
             "missing required input",
-        );
+        )
+        .expect_err("an unlinked required input must fail validation");
+        assert_eq!(error, BskError::new("missing required input"));
     }
 }
 
@@ -555,13 +953,13 @@ mod module_input_tests {
 ///
 /// ```text
 /// init(state)                      — before Python configures the module.
-///                                    Override to set non-zero defaults.
+///   └─ returns BskResult<()>         Override to set non-zero defaults.
 ///
 /// reset(state, context, time)      — at sim start and on every Reset().
-///   └─ returns Self::Outputs         Framework writes them to output ports.
+///   └─ returns BskResult<Outputs>    Framework writes them to output ports.
 ///
 /// update(state, context, inputs, time) — every tick.
-///   └─ returns Self::Outputs         Framework reads inputs, writes outputs.
+///   └─ returns BskResult<Outputs>    Framework reads inputs, writes outputs.
 /// ```
 pub trait BskModule {
     /// Arbitrary Rust-owned state retained between lifecycle calls.
@@ -577,59 +975,56 @@ pub trait BskModule {
     /// Called before Python has configured any fields. The configuration and
     /// state have already been initialized through their respective
     /// ``Default`` implementations. Override this method to set non-default
-    /// parameters or state values.
-    fn init(&mut self, _state: &mut Self::State) {}
+    /// parameters or state values. Returning an error prevents construction
+    /// of the module's opaque instance.
+    fn init(&mut self, _state: &mut Self::State) -> BskResult<()> {
+        Ok(())
+    }
 
     /// Called during `Reset()`. Must return initialized values for every
     /// output message port; the generated lifecycle code writes them so
     /// they are valid before the first `UpdateState` tick.
     ///
-    /// The default implementation returns `Self::Outputs::default()`, which
-    /// works for modules whose output payload types all implement `Default`
-    /// (all built-in Basilisk message payloads do). Override this method
-    /// whenever reset needs to write non-zero initial outputs, validate
-    /// parameters, or reset internal state.
+    /// The default implementation returns
+    /// `Ok(Self::Outputs::default())`, which works for modules whose output
+    /// payload types all implement `Default` (all built-in Basilisk message
+    /// payloads do). Override this method whenever reset needs to write
+    /// non-zero initial outputs, validate parameters, or reset internal
+    /// state. No output is written when this method returns an error.
     fn reset(
         &mut self,
         _state: &mut Self::State,
         _context: &BskContext<'_>,
         _current_sim_nanos: u64,
-    ) -> Self::Outputs
+    ) -> BskResult<Self::Outputs>
     where
         Self::Outputs: Default,
     {
-        Self::Outputs::default()
+        Ok(Self::Outputs::default())
     }
+
+    /// Called every simulation tick. Receives named input message values and
+    /// returns named output message values for the framework to write. No
+    /// output is written when this method returns an error.
     fn update(
         &mut self,
         state: &mut Self::State,
         context: &BskContext<'_>,
         inputs: Self::Inputs,
         current_sim_nanos: u64,
-    ) -> Self::Outputs;
+    ) -> BskResult<Self::Outputs>;
 }
 
 // ---------------------------------------------------------------------------
 // Logging — the Rust-side equivalent of a hand-written C module calling
-// `_bskLog(configData->bskLogger, BSK_WARNING, info)` / `_bskError(...)`.
+// `_bskLog(configData->bskLogger, BSK_WARNING, info)`.
 //
 // `BSKLogger` here is an opaque marker type, not a bindgen mirror of the real
 // C++ class: Rust only ever borrows a `*mut BSKLogger` through `BskContext`
-// (falling back to `_BSKLogger()` when it is null) and passes it straight back
-// through `extern "C-unwind"` calls. Rust never constructs or reads the
-// object, so its Rust-side layout is irrelevant. `bsk-build` having no bindgen
-// step of its own is exactly why this stays hand-declared rather than
-// mirrored: `_bskLog`/`_bskError`/`_BSKLogger` are the stable, non-variadic
-// `extern "C"` wrappers Basilisk itself declares in `bskLogging.h` for exactly
-// this purpose (bindgen would otherwise also emit the raw, Itanium-mangled,
-// variadic `BSKLogger::bskLog`/`bskError` C++ methods, which are fragile to
-// call across the FFI boundary and not meant for direct use). They are
-// declared `extern "C-unwind"`, not plain `extern "C"`: `_bskError` throws a
-// C++ `BasiliskError` exception, and per Rust's stabilized C-unwind ABI
-// (https://github.com/rust-lang/rfcs/blob/master/text/2945-c-unwind-abi.md),
-// letting an exception cross a plain `extern "C"` boundary is undefined
-// behavior — only `"C-unwind"` guarantees it propagates cleanly instead of
-// aborting the process.
+// and passes it through the nonfatal `_bskLogNoThrow` C wrapper. That adapter
+// catches every C++ exception before returning to Rust. Rust never constructs
+// or reads the logger object, so its Rust-side layout is irrelevant. A null
+// logger disables logging for the current context.
 
 /// Opaque handle to a Basilisk ``BSKLogger``. Only ever used behind a
 /// pointer (``*mut BSKLogger``) — see the module for why.
@@ -641,7 +1036,7 @@ pub struct BSKLogger {
 /// Safe borrowed access to a Basilisk logger supplied in [`BskContext`].
 ///
 /// The lifetime prevents module code from retaining the handle beyond the
-/// framework context that supplied it. Use [`BskLoggerExt`] for logging.
+/// framework context that supplied it.
 #[derive(Clone, Copy, Debug)]
 pub struct BskLoggerRef<'a> {
     raw: *mut BSKLogger,
@@ -655,15 +1050,27 @@ impl<'a> BskLoggerRef<'a> {
             _lifetime: core::marker::PhantomData,
         }
     }
+
+    /// Log a debug message through Basilisk.
+    pub fn debug(self, msg: &str) {
+        log_nonfatal(self.raw, BSK_DEBUG, msg);
+    }
+
+    /// Log an informational message through Basilisk.
+    pub fn info(self, msg: &str) {
+        log_nonfatal(self.raw, BSK_INFORMATION, msg);
+    }
+
+    /// Log a warning through Basilisk.
+    pub fn warning(self, msg: &str) {
+        log_nonfatal(self.raw, BSK_WARNING, msg);
+    }
 }
 
-#[allow(non_camel_case_types)]
-pub type logLevel_t = core::ffi::c_uint;
-pub const BSK_DEBUG: logLevel_t = 0;
-pub const BSK_INFORMATION: logLevel_t = 1;
-pub const BSK_WARNING: logLevel_t = 2;
-pub const BSK_ERROR: logLevel_t = 3;
-pub const BSK_SILENT: logLevel_t = 4;
+type LogLevel = core::ffi::c_uint;
+const BSK_DEBUG: LogLevel = 0;
+const BSK_INFORMATION: LogLevel = 1;
+const BSK_WARNING: LogLevel = 2;
 
 // The C symbols are only available when linking against a real Basilisk build.
 // Gate their declarations (and the impl that calls them) so that `cargo test`
@@ -673,104 +1080,40 @@ pub const BSK_SILENT: logLevel_t = 4;
 // to their [dev-dependencies]; Cargo feature unification activates
 // `test_logger` in the test binary while leaving production builds unaffected.
 #[cfg(not(any(test, feature = "test_logger")))]
-extern "C-unwind" {
-    fn _BSKLogger() -> *mut BSKLogger;
-    fn _bskLog(logger: *mut BSKLogger, level: logLevel_t, info: *const core::ffi::c_char);
-    fn _bskError(logger: *mut BSKLogger, info: *const core::ffi::c_char) -> !;
+extern "C" {
+    fn _bskLogNoThrow(
+        logger: *mut BSKLogger,
+        level: LogLevel,
+        info: *const core::ffi::c_char,
+    ) -> core::ffi::c_int;
 }
 
-/// Basilisk's standard logging levels and error-raising for
-/// [`BskContext::logger`].
-///
-/// These use the same ``_bskLog``/``_bskError`` entry points that a
-/// hand-written Basilisk C module calls directly.
-///
-/// In test builds (enabled via the ``test_logger`` Cargo feature — see
-/// ``bsk_build``'s ``Cargo.toml``) the implementation prints to ``stderr``
-/// and panics instead of calling into Basilisk's C symbols, so module code
-/// can call these methods freely without ``#[cfg(not(test))]`` guards.
-pub trait BskLoggerExt {
-    /// Log `msg` at `level` (one of the four ``BSK_*`` constants).
-    fn bsk_log(self, level: logLevel_t, msg: &str);
-    /// [`BSK_DEBUG`] convenience wrapper.
-    fn debug(self, msg: &str)
-    where
-        Self: Sized,
-    {
-        self.bsk_log(BSK_DEBUG, msg);
-    }
-    /// [`BSK_INFORMATION`] convenience wrapper.
-    fn info(self, msg: &str)
-    where
-        Self: Sized,
-    {
-        self.bsk_log(BSK_INFORMATION, msg);
-    }
-    /// [`BSK_WARNING`] convenience wrapper.
-    fn warning(self, msg: &str)
-    where
-        Self: Sized,
-    {
-        self.bsk_log(BSK_WARNING, msg);
-    }
-    /// Logs at [`BSK_ERROR`] and raises the standard fatal ``BasiliskError``
-    /// (propagated to Python through the generated ``extern "C-unwind"``
-    /// lifecycle entry points).
-    ///
-    /// In test builds this panics instead of raising a C++ exception.
-    fn bsk_error(self, msg: &str) -> !;
-}
-
-/// Real Basilisk build: forward every call through `_bskLog`/`_bskError`.
+/// Real Basilisk build: forward nonfatal calls through a C++ no-throw adapter.
 #[cfg(not(any(test, feature = "test_logger")))]
-impl BskLoggerExt for *mut BSKLogger {
-    fn bsk_log(self, level: logLevel_t, msg: &str) {
-        unsafe {
-            let logger = if self.is_null() { _BSKLogger() } else { self };
-            if let Ok(c_msg) = std::ffi::CString::new(msg) {
-                _bskLog(logger, level, c_msg.as_ptr());
-            }
-        }
+fn log_nonfatal(logger: *mut BSKLogger, level: LogLevel, msg: &str) {
+    if logger.is_null() {
+        return;
     }
 
-    fn bsk_error(self, msg: &str) -> ! {
-        unsafe {
-            let logger = if self.is_null() { _BSKLogger() } else { self };
-            if let Ok(c_msg) = std::ffi::CString::new(msg) {
-                _bskError(logger, c_msg.as_ptr());
-            }
-            _bskError(logger, c"BSK Rust module error (message contained a NUL byte)".as_ptr());
-        }
+    let message = msg.replace('\0', "\\0");
+    let message = std::ffi::CString::new(message)
+        .expect("replacing embedded NUL bytes must produce a valid C string");
+    let status = unsafe { _bskLogNoThrow(logger, level, message.as_ptr()) };
+    if status != 0 {
+        panic!("Basilisk logger raised while handling a nonfatal Rust log message");
     }
 }
 
-/// Test / `test_logger` build: print to stderr and panic — no C link required.
+/// Test / `test_logger` build: print to stderr with no C link required.
 #[cfg(any(test, feature = "test_logger"))]
-impl BskLoggerExt for *mut BSKLogger {
-    fn bsk_log(self, level: logLevel_t, msg: &str) {
-        let tag = match level {
-            BSK_DEBUG => "DEBUG",
-            BSK_INFORMATION => "INFO",
-            BSK_WARNING => "WARNING",
-            BSK_ERROR => "ERROR",
-            _ => "LOG",
-        };
-        eprintln!("[bsk-test] {tag}: {msg}");
-    }
-
-    fn bsk_error(self, msg: &str) -> ! {
-        panic!("[bsk-test] bsk_error: {msg}");
-    }
-}
-
-impl BskLoggerExt for BskLoggerRef<'_> {
-    fn bsk_log(self, level: logLevel_t, msg: &str) {
-        BskLoggerExt::bsk_log(self.raw, level, msg);
-    }
-
-    fn bsk_error(self, msg: &str) -> ! {
-        BskLoggerExt::bsk_error(self.raw, msg)
-    }
+fn log_nonfatal(_logger: *mut BSKLogger, level: LogLevel, msg: &str) {
+    let tag = match level {
+        BSK_DEBUG => "DEBUG",
+        BSK_INFORMATION => "INFO",
+        BSK_WARNING => "WARNING",
+        _ => unreachable!("Rust exposes only nonfatal Basilisk log levels"),
+    };
+    eprintln!("[bsk-test] {tag}: {msg}");
 }
 
 #[cfg(feature = "codegen")]

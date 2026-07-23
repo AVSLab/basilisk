@@ -75,8 +75,6 @@ fn expand_module(input: ItemStruct) -> syn::Result<TokenStream2> {
         })
         .collect();
 
-    let logger = quote!(context.__logger_ptr());
-
     let input_names: Vec<&syn::Ident> = input_fields.iter().map(|field| &field.name).collect();
     let input_types: Vec<TokenStream2> = input_fields
         .iter()
@@ -115,9 +113,8 @@ fn expand_module(input: ItemStruct) -> syn::Result<TokenStream2> {
             quote! {
                 <#message_type as ::bsk_build::BskModuleInput<#message_type>>::validate(
                     &mut (*config).#field_name,
-                    #logger,
                     #missing_message,
-                );
+                )?;
             }
         });
     let read_inputs = input_fields
@@ -131,9 +128,8 @@ fn expand_module(input: ItemStruct) -> syn::Result<TokenStream2> {
                 #field_name:
                     <#input_type as ::bsk_build::BskModuleInput<#message_type>>::read(
                         &mut (*config).#field_name,
-                        #logger,
                         #missing_message,
-                    )
+                    )?
             }
         });
 
@@ -177,6 +173,13 @@ fn expand_module(input: ItemStruct) -> syn::Result<TokenStream2> {
     Ok(quote! {
         #input
 
+        #[cfg(not(panic = "unwind"))]
+        compile_error!(
+            "Basilisk Rust modules require panic=\"unwind\" so generated FFI \
+             boundaries can contain panics; set panic = \"unwind\" in the \
+             workspace dev and release profiles"
+        );
+
         /// Named message values supplied to this module's `update` method.
         #[allow(non_camel_case_types, non_snake_case)]
         pub struct #inputs_type {
@@ -217,7 +220,7 @@ fn expand_module(input: ItemStruct) -> syn::Result<TokenStream2> {
             context: &::bsk_build::BskContext<'_>,
             inputs: #inputs_type,
             current_sim_nanos: u64,
-        ) -> #outputs_type {
+        ) -> ::bsk_build::BskResult<#outputs_type> {
             <#config_type as ::bsk_build::BskModule>::update(
                 config,
                 state,
@@ -230,24 +233,42 @@ fn expand_module(input: ItemStruct) -> syn::Result<TokenStream2> {
         #[cfg(not(test))]
         #[allow(non_snake_case)]
         #[no_mangle]
-        pub extern "C-unwind" fn #create_function() -> *mut #handle_type {
-            let mut instance = ::std::boxed::Box::new(#instance_type {
-                config: #config_type {
-                    #(#initialize_config_fields,)*
-                },
-                state: ::core::default::Default::default(),
-            });
-            <#config_type as ::bsk_build::BskModule>::init(
-                &mut instance.config,
-                &mut instance.state,
-            );
-            ::std::boxed::Box::into_raw(instance).cast::<#handle_type>()
+        pub unsafe extern "C" fn #create_function(
+            output_handle: *mut *mut #handle_type,
+        ) -> *mut ::bsk_build::BskRustError {
+            if output_handle.is_null() {
+                return ::bsk_build::BskRustError::__invalid_argument(concat!(
+                    stringify!(#create_function),
+                    ": output handle pointer must not be null",
+                ));
+            }
+            unsafe {
+                output_handle.write(::core::ptr::null_mut());
+            }
+            ::bsk_build::__ffi_boundary(stringify!(#create_function), || {
+                let mut instance = ::std::boxed::Box::new(#instance_type {
+                    config: #config_type {
+                        #(#initialize_config_fields,)*
+                    },
+                    state: ::core::default::Default::default(),
+                });
+                <#config_type as ::bsk_build::BskModule>::init(
+                    &mut instance.config,
+                    &mut instance.state,
+                )?;
+                unsafe {
+                    output_handle.write(
+                        ::std::boxed::Box::into_raw(instance).cast::<#handle_type>(),
+                    );
+                }
+                Ok(())
+            })
         }
 
         #[cfg(not(test))]
         #[allow(non_snake_case)]
         #[no_mangle]
-        pub unsafe extern "C-unwind" fn #config_function(
+        pub unsafe extern "C" fn #config_function(
             handle: *mut #handle_type,
         ) -> *mut #config_type {
             if handle.is_null() {
@@ -260,70 +281,123 @@ fn expand_module(input: ItemStruct) -> syn::Result<TokenStream2> {
         #[cfg(not(test))]
         #[allow(non_snake_case)]
         #[no_mangle]
-        pub unsafe extern "C-unwind" fn #destroy_function(handle: *mut #handle_type) {
-            if !handle.is_null() {
-                drop(::std::boxed::Box::from_raw(handle.cast::<#instance_type>()));
+        pub unsafe extern "C" fn #destroy_function(
+            handle: *mut #handle_type,
+        ) -> *mut ::bsk_build::BskRustError {
+            if handle.is_null() {
+                return ::core::ptr::null_mut();
             }
+            ::bsk_build::__ffi_boundary(stringify!(#destroy_function), || {
+                unsafe {
+                    drop(::std::boxed::Box::from_raw(handle.cast::<#instance_type>()));
+                }
+                Ok(())
+            })
         }
 
         #[cfg(not(test))]
         #[allow(non_snake_case)]
         #[no_mangle]
-        pub unsafe extern "C-unwind" fn #self_init_function(
+        pub unsafe extern "C" fn #self_init_function(
             handle: *mut #handle_type,
             context: *const ::bsk_build::BskModuleContext,
-        ) {
-            let instance = &mut *handle.cast::<#instance_type>();
-            let config = &mut instance.config;
-            let _context = ::bsk_build::BskContext::__from_raw(context);
-            #(#initialize_outputs)*
+        ) -> *mut ::bsk_build::BskRustError {
+            if handle.is_null() {
+                return ::bsk_build::BskRustError::__invalid_argument(concat!(
+                    stringify!(#self_init_function),
+                    ": module handle must not be null",
+                ));
+            }
+            if context.is_null() {
+                return ::bsk_build::BskRustError::__invalid_argument(concat!(
+                    stringify!(#self_init_function),
+                    ": lifecycle context must not be null",
+                ));
+            }
+            ::bsk_build::__ffi_boundary(stringify!(#self_init_function), || {
+                let instance = unsafe { &mut *handle.cast::<#instance_type>() };
+                let config = &mut instance.config;
+                let _context = unsafe { ::bsk_build::BskContext::__from_raw(context) };
+                #(#initialize_outputs)*
+                Ok(())
+            })
         }
 
         #[cfg(not(test))]
         #[allow(non_snake_case)]
         #[no_mangle]
-        pub unsafe extern "C-unwind" fn #reset_function(
+        pub unsafe extern "C" fn #reset_function(
             handle: *mut #handle_type,
             current_sim_nanos: u64,
             context: *const ::bsk_build::BskModuleContext,
-        ) {
-            let instance = &mut *handle.cast::<#instance_type>();
-            let config = &mut instance.config;
-            let context = ::bsk_build::BskContext::__from_raw(context);
-            #(#validate_inputs)*
-            let outputs: #outputs_type =
-                <#config_type as ::bsk_build::BskModule>::reset(
-                    config,
-                    &mut instance.state,
-                    &context,
-                    current_sim_nanos,
-                );
-            #(#write_reset_outputs)*
+        ) -> *mut ::bsk_build::BskRustError {
+            if handle.is_null() {
+                return ::bsk_build::BskRustError::__invalid_argument(concat!(
+                    stringify!(#reset_function),
+                    ": module handle must not be null",
+                ));
+            }
+            if context.is_null() {
+                return ::bsk_build::BskRustError::__invalid_argument(concat!(
+                    stringify!(#reset_function),
+                    ": lifecycle context must not be null",
+                ));
+            }
+            ::bsk_build::__ffi_boundary(stringify!(#reset_function), || {
+                let instance = unsafe { &mut *handle.cast::<#instance_type>() };
+                let config = &mut instance.config;
+                let context = unsafe { ::bsk_build::BskContext::__from_raw(context) };
+                #(#validate_inputs)*
+                let outputs: #outputs_type =
+                    <#config_type as ::bsk_build::BskModule>::reset(
+                        config,
+                        &mut instance.state,
+                        &context,
+                        current_sim_nanos,
+                    )?;
+                #(#write_reset_outputs)*
+                Ok(())
+            })
         }
 
         #[cfg(not(test))]
         #[allow(non_snake_case)]
         #[no_mangle]
-        pub unsafe extern "C-unwind" fn #update_function(
+        pub unsafe extern "C" fn #update_function(
             handle: *mut #handle_type,
             current_sim_nanos: u64,
             context: *const ::bsk_build::BskModuleContext,
-        ) {
-            let instance = &mut *handle.cast::<#instance_type>();
-            let config = &mut instance.config;
-            let context = ::bsk_build::BskContext::__from_raw(context);
-            let inputs: #inputs_type = #inputs_type {
-                #(#read_inputs,)*
-            };
-            let outputs: #outputs_type =
-                <#config_type as ::bsk_build::BskModule>::update(
-                    config,
-                    &mut instance.state,
-                    &context,
-                    inputs,
-                    current_sim_nanos,
-                );
-            #(#write_update_outputs)*
+        ) -> *mut ::bsk_build::BskRustError {
+            if handle.is_null() {
+                return ::bsk_build::BskRustError::__invalid_argument(concat!(
+                    stringify!(#update_function),
+                    ": module handle must not be null",
+                ));
+            }
+            if context.is_null() {
+                return ::bsk_build::BskRustError::__invalid_argument(concat!(
+                    stringify!(#update_function),
+                    ": lifecycle context must not be null",
+                ));
+            }
+            ::bsk_build::__ffi_boundary(stringify!(#update_function), || {
+                let instance = unsafe { &mut *handle.cast::<#instance_type>() };
+                let config = &mut instance.config;
+                let context = unsafe { ::bsk_build::BskContext::__from_raw(context) };
+                let inputs: #inputs_type = #inputs_type {
+                    #(#read_inputs,)*
+                };
+                let outputs: #outputs_type =
+                    <#config_type as ::bsk_build::BskModule>::update(
+                        config,
+                        &mut instance.state,
+                        &context,
+                        inputs,
+                        current_sim_nanos,
+                    )?;
+                #(#write_update_outputs)*
+                Ok(())
+            })
         }
 
     })
@@ -647,7 +721,13 @@ mod tests {
         assert!(expanded.contains("BskModule > :: init"));
         assert!(expanded.contains("BskContext :: __from_raw"));
         assert!(expanded.contains("BskModuleContext"));
-        assert!(expanded.contains("__logger_ptr"));
+        assert!(expanded.contains("BskRustError"));
+        assert!(expanded.contains("BskResult < ControllerOutputs >"));
+        assert!(expanded.contains("__ffi_boundary"));
+        assert!(expanded.contains("output_handle"));
+        assert!(expanded.contains("panic = \"unwind\""));
+        assert!(expanded.contains("extern \"C\""));
+        assert!(!expanded.contains("C-unwind"));
         assert!(expanded.contains("Box :: into_raw"));
         assert!(expanded.contains("Box :: from_raw"));
         assert!(!expanded.contains("New_"));

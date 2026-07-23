@@ -25,3 +25,12 @@ members = [
     "architecture/rust/bsk_utilities",
     "moduleTemplates/rustModuleTemplate",
 ]
+
+# Generated module entry points use catch_unwind to contain Rust panics before
+# returning to C++. Out-of-tree module workspaces must use the same strategy;
+# the #[bsk_build::module] expansion emits a compile error for panic="abort".
+[profile.dev]
+panic = "unwind"
+
+[profile.release]
+panic = "unwind"

@@ -11,7 +11,7 @@ license = "ISC"
 # message payload changes -- see its module doc for details.
 
 [dependencies]
-# BskModuleRuntime/Msg/MsgReader/MsgWriter/BskModule/BskLoggerExt are
+# BskModuleRuntime/Msg/MsgReader/MsgWriter/BskModule/BskLoggerRef are
 # hand-written, not generated -- this crate just re-exports them from
 # bsk-build (see src/lib.rs's RUNTIME_SUPPORT_CODE in ../gen_rust_messages.py).
 bsk-build = { path = "../bsk_build" }

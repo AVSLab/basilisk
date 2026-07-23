@@ -24,6 +24,7 @@ import numpy as np
 import pytest
 
 from Basilisk.architecture import messaging
+from Basilisk.architecture.bskLogging import BasiliskError
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 
@@ -86,14 +87,64 @@ class _ExpectedRustModuleTemplateConfig(ctypes.Structure):
 
     _fields_ = [
         ("dummy", ctypes.c_double),
+        ("increment", ctypes.c_double),
         ("data_in_msg", _ExpectedCModuleTemplatePort),
         ("data_out_msg", _ExpectedCModuleTemplatePort),
     ]
 
 
+_BSK_RUST_ERROR_EXPECTED = 1
+_BSK_RUST_ERROR_INVALID_ARGUMENT = 3
+
+
+def _consume_abi_error(extension, error):
+    """Return and release the classification and message for an ABI error."""
+    error_kind = extension.BskRustError_kind
+    error_kind.argtypes = [ctypes.c_void_p]
+    error_kind.restype = ctypes.c_uint32
+    error_message = extension.BskRustError_message
+    error_message.argtypes = [ctypes.c_void_p]
+    error_message.restype = ctypes.c_char_p
+    destroy_error = extension.Destroy_BskRustError
+    destroy_error.argtypes = [ctypes.c_void_p]
+    destroy_error.restype = None
+
+    kind = error_kind(error)
+    message = error_message(error).decode("utf-8")
+    destroy_error(error)
+    return kind, message
+
+
+def _assert_no_abi_error(extension, error):
+    """Fail with the owned Rust diagnostic when an ABI call returns an error."""
+    if error is None:
+        return
+    kind, message = _consume_abi_error(extension, error)
+    pytest.fail(f"Rust ABI error kind {kind}: {message}")
+
+
+def _create_rust_instance(extension):
+    """Create an opaque Rust instance through the guarded ABI."""
+    create_instance = extension.Create_rustModuleTemplate
+    create_instance.argtypes = [ctypes.POINTER(ctypes.c_void_p)]
+    create_instance.restype = ctypes.c_void_p
+    handle = ctypes.c_void_p()
+    _assert_no_abi_error(extension, create_instance(ctypes.byref(handle)))
+    assert handle.value is not None
+    return handle
+
+
+def _destroy_rust_instance(extension, handle):
+    """Destroy an opaque Rust instance and verify its guarded ABI result."""
+    destroy_instance = extension.Destroy_rustModuleTemplate
+    destroy_instance.argtypes = [ctypes.c_void_p]
+    destroy_instance.restype = ctypes.c_void_p
+    _assert_no_abi_error(extension, destroy_instance(handle))
+
+
 def test_rust_module_template_python_api():
     """Freeze the module-first Python API retained by the opaque-handle design."""
-    expected_fields = {"dummy", "dataInMsg", "dataOutMsg"}
+    expected_fields = {"dummy", "increment", "dataInMsg", "dataOutMsg"}
     expected_wrapper_methods = {"SelfInit", "Reset", "UpdateState"}
     expected_framework_fields = {
         "ModelTag",
@@ -117,6 +168,7 @@ def test_rust_module_template_python_api():
         assert not hasattr(rustModuleTemplate.RustModuleTemplateConfig, framework_field)
 
     assert module.dummy == 0.0
+    assert module.increment == 1.0
     module.dummy = 12.5  # [-]
     assert module.dummy == 12.5
     assert hasattr(module.dataInMsg, "subscribeTo")
@@ -166,34 +218,29 @@ def test_rust_module_template_abi_layout():
     assert _ExpectedCModuleTemplatePort.payload_pointer.offset == 56
     assert _ExpectedCModuleTemplatePort.header_pointer.offset == 64
 
-    assert ctypes.sizeof(_ExpectedRustModuleTemplateConfig) == 152
+    assert ctypes.sizeof(_ExpectedRustModuleTemplateConfig) == 160
     assert ctypes.alignment(_ExpectedRustModuleTemplateConfig) == 8
     assert _ExpectedRustModuleTemplateConfig.dummy.offset == 0
-    assert _ExpectedRustModuleTemplateConfig.data_in_msg.offset == 8
-    assert _ExpectedRustModuleTemplateConfig.data_out_msg.offset == 80
+    assert _ExpectedRustModuleTemplateConfig.increment.offset == 8
+    assert _ExpectedRustModuleTemplateConfig.data_in_msg.offset == 16
+    assert _ExpectedRustModuleTemplateConfig.data_out_msg.offset == 88
 
     extension = ctypes.CDLL(rustModuleTemplate._rustModuleTemplate.__file__)
-    create_instance = extension.Create_rustModuleTemplate
-    create_instance.argtypes = []
-    create_instance.restype = ctypes.c_void_p
     get_config = extension.Config_rustModuleTemplate
     get_config.argtypes = [ctypes.c_void_p]
     get_config.restype = ctypes.c_void_p
-    destroy_instance = extension.Destroy_rustModuleTemplate
-    destroy_instance.argtypes = [ctypes.c_void_p]
-    destroy_instance.restype = None
 
-    handle = create_instance()
-    assert handle is not None
+    handle = _create_rust_instance(extension)
     try:
         config_address = get_config(handle)
         assert config_address is not None
         raw_config = _ExpectedRustModuleTemplateConfig.from_address(config_address)
         assert raw_config.dummy == 0.0
+        assert raw_config.increment == 1.0
         raw_config.dummy = -3.5  # [-]
         assert raw_config.dummy == -3.5
     finally:
-        destroy_instance(handle)
+        _destroy_rust_instance(extension, handle)
 
 
 def test_rust_module_template_rust_owned_instance_lifecycle():
@@ -218,36 +265,30 @@ def test_rust_module_template_rust_owned_instance_lifecycle():
         with pytest.raises(AttributeError):
             getattr(extension, obsolete_symbol)
 
-    create_instance = extension.Create_rustModuleTemplate
-    create_instance.argtypes = []
-    create_instance.restype = ctypes.c_void_p
     get_config = extension.Config_rustModuleTemplate
     get_config.argtypes = [ctypes.c_void_p]
     get_config.restype = ctypes.c_void_p
-    destroy_instance = extension.Destroy_rustModuleTemplate
-    destroy_instance.argtypes = [ctypes.c_void_p]
-    destroy_instance.restype = None
     self_init = extension.SelfInit_rustModuleTemplate
     self_init.argtypes = [
         ctypes.c_void_p,
         ctypes.POINTER(_ExpectedBskModuleContext),
     ]
-    self_init.restype = None
+    self_init.restype = ctypes.c_void_p
     reset = extension.Reset_rustModuleTemplate
     reset.argtypes = [
         ctypes.c_void_p,
         ctypes.c_uint64,
         ctypes.POINTER(_ExpectedBskModuleContext),
     ]
-    reset.restype = None
+    reset.restype = ctypes.c_void_p
 
-    handle = create_instance()
-    assert handle is not None
+    handle = _create_rust_instance(extension)
     try:
         config_address = get_config(handle)
         assert config_address is not None
         raw_config = _ExpectedRustModuleTemplateConfig.from_address(config_address)
         assert raw_config.dummy == 0.0
+        assert raw_config.increment == 1.0
         raw_config.dummy = 42.0  # [-]
         context = _ExpectedBskModuleContext(
             runtime=_ExpectedBskModuleRuntime(
@@ -258,13 +299,32 @@ def test_rust_module_template_rust_owned_instance_lifecycle():
             ),
             bsk_logger=None,
         )
-        self_init(handle, ctypes.byref(context))
-        reset(handle, 10, ctypes.byref(context))  # [ns]
+        invalid_error = reset(None, 10, ctypes.byref(context))  # [ns]
+        kind, message = _consume_abi_error(extension, invalid_error)
+        assert kind == _BSK_RUST_ERROR_INVALID_ARGUMENT
+        assert "module handle must not be null" in message
+
+        _assert_no_abi_error(extension, self_init(handle, ctypes.byref(context)))
+        raw_config.increment = 0.0  # [-]
+        expected_error = reset(handle, 9, ctypes.byref(context))  # [ns]
+        kind, message = _consume_abi_error(extension, expected_error)
+        assert kind == _BSK_RUST_ERROR_EXPECTED
+        assert (
+            message
+            == "rustModuleTemplate.increment must be finite and strictly positive"
+        )
+        assert raw_config.data_out_msg.header.is_written == 0
+
+        raw_config.increment = 1.0  # [-]
+        _assert_no_abi_error(
+            extension,
+            reset(handle, 10, ctypes.byref(context)),  # [ns]
+        )
         assert raw_config.dummy == 0.0
         assert raw_config.data_out_msg.header.module_id == 7
         assert raw_config.data_out_msg.header.time_written == 10
     finally:
-        destroy_instance(handle)
+        _destroy_rust_instance(extension, handle)
 
 
 @pytest.mark.parametrize("connect_input", [False, True])
@@ -307,3 +367,21 @@ def test_rust_module_template(connect_input):
     np.testing.assert_array_equal(output_log.times(), expected_times)
     np.testing.assert_allclose(output_log.dataVector, expected_output)
     assert module.dummy == 3.0
+
+
+def test_rust_module_template_expected_error():
+    """Translate a Rust ``BskError`` into a Python ``BasiliskError``."""
+    simulation = SimulationBaseClass.SimBaseClass()
+    process = simulation.CreateNewProcess("testProcess")
+    task_time_step = macros.sec2nano(0.5)  # [ns]
+    process.addTask(simulation.CreateNewTask("testTask", task_time_step))
+
+    module = rustModuleTemplate.rustModuleTemplate()
+    module.increment = 0.0  # [-]
+    simulation.AddModelToTask("testTask", module)
+
+    with pytest.raises(
+        BasiliskError,
+        match="rustModuleTemplate.increment must be finite and strictly positive",
+    ):
+        simulation.InitializeSimulation()

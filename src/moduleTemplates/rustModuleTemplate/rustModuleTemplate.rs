@@ -26,6 +26,8 @@ use bsk_messages::*;
 pub struct RustModuleTemplateConfig {
     /// [-] Python-visible sample counter
     pub dummy: f64,
+    /// [-] Positive amount added to the sample counter on each update
+    pub increment: f64,
     /// [-] Optional input message
     #[bsk(input, optional)]
     pub dataInMsg: MsgReader<CModuleTemplateMsg>,
@@ -69,20 +71,30 @@ impl BskModule for RustModuleTemplateConfig {
     type Inputs = RustModuleTemplateInputs;
     type Outputs = RustModuleTemplateOutputs;
 
+    fn init(&mut self, _state: &mut Self::State) -> BskResult<()> {
+        self.increment = 1.0; // [-]
+        Ok(())
+    }
+
     fn reset(
         &mut self,
         state: &mut Self::State,
         context: &BskContext<'_>,
         current_sim_nanos: u64,
-    ) -> Self::Outputs {
+    ) -> BskResult<Self::Outputs> {
+        if !self.increment.is_finite() || self.increment <= 0.0 {
+            return Err(BskError::new(
+                "rustModuleTemplate.increment must be finite and strictly positive",
+            ));
+        }
         self.dummy = 0.0; // [-]
         state.update_history.clear();
         state.last_event = format!("reset at {current_sim_nanos} ns");
         state.mode = TemplateMode::Running;
         context.logger().info("Variable dummy set to 0 in reset.");
-        RustModuleTemplateOutputs {
+        Ok(RustModuleTemplateOutputs {
             dataOutMsg: CModuleTemplateMsg::default(),
-        }
+        })
     }
 
     fn update(
@@ -91,14 +103,14 @@ impl BskModule for RustModuleTemplateConfig {
         context: &BskContext<'_>,
         inputs: Self::Inputs,
         current_sim_nanos: u64,
-    ) -> Self::Outputs {
+    ) -> BskResult<Self::Outputs> {
         let mut data_out_msg = inputs.dataInMsg.unwrap_or_default();
 
         if state.mode == TemplateMode::Idle {
             context.logger().warning("Update called before reset.");
             state.mode = TemplateMode::Running;
         }
-        self.dummy += 1.0; // [-]
+        self.dummy += self.increment;
         state.update_history.push(self.dummy);
         state.last_event = format!(
             "module {} updated at {current_sim_nanos} ns",
@@ -106,9 +118,9 @@ impl BskModule for RustModuleTemplateConfig {
         );
         data_out_msg.dataVector[0] += self.dummy;
 
-        RustModuleTemplateOutputs {
+        Ok(RustModuleTemplateOutputs {
             dataOutMsg: data_out_msg,
-        }
+        })
     }
 }
 
@@ -120,11 +132,12 @@ mod tests {
     /// Verify that only Python-facing parameters and ports cross the config ABI.
     #[test]
     fn config_abi_contains_only_public_module_fields() {
-        assert_eq!(size_of::<RustModuleTemplateConfig>(), 152);
+        assert_eq!(size_of::<RustModuleTemplateConfig>(), 160);
         assert_eq!(align_of::<RustModuleTemplateConfig>(), 8);
         assert_eq!(offset_of!(RustModuleTemplateConfig, dummy), 0);
-        assert_eq!(offset_of!(RustModuleTemplateConfig, dataInMsg), 8);
-        assert_eq!(offset_of!(RustModuleTemplateConfig, dataOutMsg), 80);
+        assert_eq!(offset_of!(RustModuleTemplateConfig, increment), 8);
+        assert_eq!(offset_of!(RustModuleTemplateConfig, dataInMsg), 16);
+        assert_eq!(offset_of!(RustModuleTemplateConfig, dataOutMsg), 88);
     }
 
     /// Verify that generated input and output values use the config port names.
@@ -156,24 +169,52 @@ mod tests {
         let runtime = BskModuleRuntime::for_testing();
         let context = BskContext::for_testing(&runtime);
         let mut config = RustModuleTemplateConfig {
-            dummy: 99.0, // [-]
+            dummy: 99.0,    // [-]
+            increment: 1.0, // [-]
             dataInMsg: MsgReader::default(),
             dataOutMsg: MsgWriter::default(),
         };
         let mut state = RustModuleTemplateState::default();
 
-        let _ = config.reset(&mut state, &context, 0); // [ns]
+        config
+            .reset(&mut state, &context, 0) // [ns]
+            .expect("valid parameters must reset");
         assert_eq!(state.mode, TemplateMode::Running);
         assert!(state.update_history.is_empty());
         assert_eq!(state.last_event, "reset at 0 ns");
 
-        let _ = config.update(
-            &mut state,
-            &context,
-            RustModuleTemplateInputs { dataInMsg: None },
-            1, // [ns]
-        );
+        config
+            .update(
+                &mut state,
+                &context,
+                RustModuleTemplateInputs { dataInMsg: None },
+                1, // [ns]
+            )
+            .expect("update must succeed");
         assert_eq!(state.update_history, vec![1.0]);
         assert_eq!(state.last_event, "module 0 updated at 1 ns");
+    }
+
+    /// Demonstrate expected parameter failures without panicking.
+    #[test]
+    fn invalid_increment_returns_bsk_error() {
+        let runtime = BskModuleRuntime::for_testing();
+        let context = BskContext::for_testing(&runtime);
+        let mut config = RustModuleTemplateConfig {
+            dummy: 0.0,     // [-]
+            increment: 0.0, // [-]
+            dataInMsg: MsgReader::default(),
+            dataOutMsg: MsgWriter::default(),
+        };
+        let mut state = RustModuleTemplateState::default();
+
+        let error = match config.reset(&mut state, &context, 0) {
+            Ok(_) => panic!("a zero increment must fail reset validation"),
+            Err(error) => error,
+        };
+        assert_eq!(
+            error.message(),
+            "rustModuleTemplate.increment must be finite and strictly positive"
+        );
     }
 }

@@ -185,11 +185,11 @@ Write the implementation in ``myModule.rs``. Import the support types from
             _context: &BskContext<'_>,
             inputs: Self::Inputs,
             _current_sim_nanos: u64,
-        ) -> Self::Outputs {
+        ) -> BskResult<Self::Outputs> {
             let _ = inputs.attGuidInMsg;
-            myModuleOutputs {
+            Ok(myModuleOutputs {
                 cmdTorqueOutMsg: CmdTorqueBodyMsg::default(),
-            }
+            })
         }
     }
 
@@ -210,18 +210,25 @@ the same names as the corresponding config ports, so port declaration order
 does not affect message routing.
 
 ``update`` is required and receives message values rather than message ports.
-Both ``reset`` and ``update`` must return ``Self::Outputs``; the framework
-writes the returned values to the output ports. ``reset`` has a default
-implementation that returns ``Self::Outputs::default()``. Override it when the
-module needs non-zero initial output values, parameter validation, or state
-reset.
+Both ``reset`` and ``update`` return ``BskResult<Self::Outputs>``; the
+framework writes the returned values to the output ports only for ``Ok``.
+Return ``Err(BskError::new("..."))`` for expected configuration or runtime
+failures. The C++ wrapper translates that error into ``BasiliskError`` after
+Rust returns normally. ``reset`` has a default implementation that returns
+``Ok(Self::Outputs::default())``. Override it when the module needs non-zero
+initial output values, parameter validation, or state reset.
+
+``context.logger()`` provides nonfatal ``debug()``, ``info()``, and
+``warning()`` methods. Use these for diagnostics and return ``BskError`` when
+the lifecycle call must fail; Rust logging is not an error-control mechanism.
 
 Override ``init(state)`` to set non-zero parameter defaults and initial state.
 Rust first initializes every configuration field and ``State`` through their
 ``Default`` implementations. It then calls ``init(state)`` before Python
-configures the module. The default implementation is a no-op. Module-defined
-nested configuration structs and state types must therefore derive or
-implement ``Default``. Use ``type State = ();`` for a stateless module.
+configures the module. ``init`` returns ``BskResult<()>`` and its default
+implementation returns ``Ok(())``. Module-defined nested configuration structs
+and state types must therefore derive or implement ``Default``. Use
+``type State = ();`` for a stateless module.
 
 Use the Generated Wrapper
 -------------------------
