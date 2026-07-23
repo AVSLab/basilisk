@@ -150,21 +150,27 @@ generates the C header, SWIG wrapper, and message I/O code from this definition:
         /// [Nm] proportional gain
         pub K: f64,
         /// [-] attitude guidance input
+        #[bsk(input)]
         pub attGuidInMsg: MsgReader<AttGuidMsg>,
         /// [Nm] commanded torque output
+        #[bsk(output)]
         pub cmdTorqueOutMsg: MsgWriter<CmdTorqueBodyMsg>,
         /// [-] BSK logging handle
         pub bskLogger: *mut BSKLogger,
     }
 
     impl BskModule for myModuleConfig {
-        type Inputs = (AttGuidMsg,);
-        type Outputs = (CmdTorqueBodyMsg,);
+        type Inputs = myModuleInputs;
+        type Outputs = myModuleOutputs;
 
         fn update(&mut self, inputs: Self::Inputs, _current_sim_nanos: u64) -> Self::Outputs {
-            let (att_guid_in_msg,) = inputs;
+            let _att_guid_in_msg = inputs.attGuidInMsg;
             // ... pure Rust control law ...
-            (CmdTorqueBodyMsg { torqueRequestBody: [0.0, 0.0, 0.0] },)
+            myModuleOutputs {
+                cmdTorqueOutMsg: CmdTorqueBodyMsg {
+                    torqueRequestBody: [0.0, 0.0, 0.0],  // [Nm]
+                },
+            }
         }
     }
 
@@ -200,8 +206,9 @@ Three ``BskModule`` trait methods map to the Basilisk module lifecycle:
    values; the framework handles all I/O. No default — must always be
    implemented.
 
-``Inputs`` and ``Outputs`` are tuples matching the ``MsgReader`` and
-``MsgWriter`` fields in declaration order.
+The attribute generates named ``Inputs`` and ``Outputs`` structs from the
+annotated message ports. Module code accesses those values by field name, not
+by declaration order.
 
 The attribute automatically omits its lifecycle entry points from test builds,
 so ``cargo test`` (see `Testing`_ below) does not require Basilisk to be linked.
@@ -324,9 +331,9 @@ returned output values to their ports.
 Multiple inputs and outputs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Any number of ``MsgReader``/``MsgWriter`` fields are supported. They map to
-the ``BskModule::Inputs``/``Outputs`` tuple types, **in field declaration
-order**:
+Any number of ``MsgReader``/``MsgWriter`` fields are supported. Annotate each
+port explicitly; the generated input and output structs use the same field
+names:
 
 .. code-block:: rust
 
@@ -334,71 +341,86 @@ order**:
     #[repr(C)]
     pub struct myModuleConfig {
         pub runtime: BskModuleRuntime,
+        #[bsk(input)]
         pub navAttInMsg: MsgReader<NavAttMsg>,
+        #[bsk(input)]
         pub attRefInMsg: MsgReader<AttRefMsg>,
+        #[bsk(output)]
         pub cmdTorqueOutMsg: MsgWriter<CmdTorqueBodyMsg>,
+        #[bsk(output)]
         pub cmdRateOutMsg: MsgWriter<RateCmdMsg>,
         pub bskLogger: *mut BSKLogger,
     }
 
     impl BskModule for myModuleConfig {
-        type Inputs = (NavAttMsg, AttRefMsg);
-        type Outputs = (CmdTorqueBodyMsg, RateCmdMsg);
+        type Inputs = myModuleInputs;
+        type Outputs = myModuleOutputs;
 
         fn update(&mut self, inputs: Self::Inputs, _t: u64) -> Self::Outputs {
-            let (nav_att, att_ref) = inputs;
+            let nav_att = inputs.navAttInMsg;
+            let att_ref = inputs.attRefInMsg;
             // ...
-            (CmdTorqueBodyMsg { ..Default::default() },
-             RateCmdMsg { ..Default::default() })
+            myModuleOutputs {
+                cmdTorqueOutMsg: CmdTorqueBodyMsg::default(),
+                cmdRateOutMsg: RateCmdMsg::default(),
+            }
         }
     }
 
-A module with zero inputs uses ``type Inputs = ();`` and
-``update(&mut self, _: (), t: u64)``; zero outputs uses
-``type Outputs = ();`` and returns ``()``.
+The generated structs are named by removing a final ``Config`` from the
+configuration type and adding ``Inputs`` or ``Outputs``. Thus
+``myModuleConfig`` produces ``myModuleInputs`` and ``myModuleOutputs``. Set the
+``BskModule`` associated types to those generated types as shown above.
+
+A module with zero inputs or outputs still uses its generated empty named
+struct. No tuple or unit-type special case is needed.
 
 Required vs. optional inputs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Whether an input is required or optional is determined from the ``Inputs``
-tuple type in the ``impl BskModule`` block. There is nothing extra to
-annotate: the type already required for ``update`` to type-check is the
-single source of truth.
+Input optionality is declared next to the corresponding port:
 
-- A bare message type (``AttGuidMsg``) means **required**: connectivity is
+- ``#[bsk(input)]`` means **required**: connectivity is
   checked in ``Reset`` and before every ``Update`` read, raising the
   standard ``BasiliskError`` if unconnected.
-- Wrapping the type in ``Option<Msg>`` means **optional**: ``update()``
-  receives ``Option<Msg>`` (``None`` when unlinked) instead of an error.
+- ``#[bsk(input, optional)]`` means **optional**: the generated input field
+  has type ``Option<Msg>`` and is ``None`` when unlinked.
 
 .. code-block:: rust
 
     pub struct myModuleConfig {
         pub runtime: BskModuleRuntime,
+        #[bsk(input)]
         pub attGuidInMsg: MsgReader<AttGuidMsg>,
         /// supplemental disturbance-torque estimate
+        #[bsk(input, optional)]
         pub disturbanceInMsg: MsgReader<CmdTorqueBodyMsg>,
         // ...
     }
 
     impl BskModule for myModuleConfig {
-        type Inputs = (AttGuidMsg, Option<CmdTorqueBodyMsg>);
-        //             ^^^^^^^^^^  ^^^^^^^^^^^^^^^^^^^^^^^^^
-        //             required    optional (attGuidInMsg / disturbanceInMsg,
-        //                         matched by field declaration order)
-        // ...
+        type Inputs = myModuleInputs;
+        type Outputs = myModuleOutputs;
+
+        fn update(&mut self, inputs: Self::Inputs, _t: u64) -> Self::Outputs {
+            let _required_attitude = inputs.attGuidInMsg;
+            let _optional_disturbance = inputs.disturbanceInMsg;
+            // ...
+            myModuleOutputs::default()
+        }
     }
 
-``bsk-build`` matches ``Inputs`` tuple elements to ``MsgReader`` fields by
-declaration order and fails the build immediately if the counts or message
-types don't line up, rather than silently misrouting inputs.
+The annotation macro creates those named fields directly. Rust then checks
+that ``BskModule::Inputs`` is the generated input type, eliminating the
+field-order correlation that could otherwise misroute same-typed messages.
 
 Outputs
 ~~~~~~~
 
-Output ports are initialized in both ``reset()`` and ``update()``. Both
-methods must return a value for every output port (``Self::Outputs``); the
-generated lifecycle code writes the returned values with the module ID
+Output ports are initialized during ``SelfInit``. Both ``reset()`` and
+``update()`` must return a named value for every output port
+(``Self::Outputs``); the generated lifecycle code writes the returned values
+with the module ID
 and current simulation timestamp. This means every output is guaranteed to
 hold a valid, module-authored value before the first ``UpdateState`` tick.
 

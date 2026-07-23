@@ -169,21 +169,24 @@ Write the implementation in ``myModule.rs``. Import the support types from
         /// [Nm] proportional gain
         pub K: f64,
         /// [-] attitude guidance input
+        #[bsk(input)]
         pub attGuidInMsg: MsgReader<AttGuidMsg>,
         /// [Nm] commanded torque output
+        #[bsk(output)]
         pub cmdTorqueOutMsg: MsgWriter<CmdTorqueBodyMsg>,
         /// [-] Basilisk logger
         pub bskLogger: *mut BSKLogger,
     }
 
     impl BskModule for myModuleConfig {
-        type Inputs = (AttGuidMsg,);
-        type Outputs = (CmdTorqueBodyMsg,);
+        type Inputs = myModuleInputs;
+        type Outputs = myModuleOutputs;
 
         fn update(&mut self, inputs: Self::Inputs, _current_sim_nanos: u64) -> Self::Outputs {
-            let (att_guid_in_msg,) = inputs;
-            let _ = att_guid_in_msg;
-            (CmdTorqueBodyMsg::default(),)
+            let _ = inputs.attGuidInMsg;
+            myModuleOutputs {
+                cmdTorqueOutMsg: CmdTorqueBodyMsg::default(),
+            }
         }
     }
 
@@ -196,9 +199,12 @@ multi-dimensional ``[[T; N]; M]`` with literal lengths), nested ``#[repr(C)]``
 structs, ``Option<Box<T>>`` state, ``MsgReader<T>`` and ``MsgWriter<T>`` ports,
 and a ``*mut BSKLogger`` field.
 
-The ``Inputs`` and ``Outputs`` tuples match message ports in declaration order.
-A bare input type is required; wrap an input type in ``Option<T>`` to receive
-``None`` when its message is unlinked.
+Annotate every message port with ``#[bsk(input)]`` or ``#[bsk(output)]``.
+Use ``#[bsk(input, optional)]`` when an unlinked input should produce ``None``
+instead of an error. For ``myModuleConfig``, the attribute generates the named
+``myModuleInputs`` and ``myModuleOutputs`` types used above. Their fields have
+the same names as the corresponding config ports, so port declaration order
+does not affect message routing.
 
 ``update`` is required and receives message values rather than message ports.
 Both ``reset`` and ``update`` must return ``Self::Outputs``; the framework

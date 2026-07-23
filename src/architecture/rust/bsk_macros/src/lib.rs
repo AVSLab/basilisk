@@ -19,9 +19,18 @@
 use proc_macro::TokenStream;
 use proc_macro2::TokenStream as TokenStream2;
 use quote::{format_ident, quote};
-use syn::{parse_macro_input, Field, Fields, ItemStruct, LitStr, Type, Visibility};
+use syn::{
+    parse_macro_input, AngleBracketedGenericArguments, Attribute, Field, Fields, GenericArgument,
+    ItemStruct, LitStr, PathArguments, Type, Visibility,
+};
 
 /// Mark and validate a Basilisk module's top-level configuration struct.
+///
+/// Message fields must use ``#[bsk(input)]``,
+/// ``#[bsk(input, optional)]``, or ``#[bsk(output)]``. For a config named
+/// ``MyModuleConfig``, this attribute generates ``MyModuleInputs`` and
+/// ``MyModuleOutputs`` with corresponding named message-value fields, plus
+/// the Basilisk C ABI lifecycle entry points.
 #[proc_macro_attribute]
 pub fn module(arguments: TokenStream, input: TokenStream) -> TokenStream {
     let _ = parse_macro_input!(arguments as syn::parse::Nothing);
@@ -34,19 +43,15 @@ pub fn module(arguments: TokenStream, input: TokenStream) -> TokenStream {
 fn expand_module(input: ItemStruct) -> syn::Result<TokenStream2> {
     validate_module_config(&input)?;
 
-    let config_type = &input.ident;
+    let mut input = input;
+    let config_type = input.ident.clone();
+    let (input_fields, output_fields) = extract_message_ports(&mut input)?;
     let fields = match &input.fields {
         Fields::Named(fields) => &fields.named,
         _ => unreachable!("validated module config must have named fields"),
     };
-    let input_fields: Vec<&Field> = fields
-        .iter()
-        .filter(|field| type_last_ident(&field.ty).is_some_and(|ident| ident == "MsgReader"))
-        .collect();
-    let output_fields: Vec<&Field> = fields
-        .iter()
-        .filter(|field| type_last_ident(&field.ty).is_some_and(|ident| ident == "MsgWriter"))
-        .collect();
+    let inputs_type = io_type_name(&config_type, "Inputs");
+    let outputs_type = io_type_name(&config_type, "Outputs");
 
     let module_name = module_name();
     let init_function = format_ident!("Init_{module_name}");
@@ -54,6 +59,8 @@ fn expand_module(input: ItemStruct) -> syn::Result<TokenStream2> {
     let reset_function = format_ident!("Reset_{module_name}");
     let update_function = format_ident!("Update_{module_name}");
     let drop_function = format_ident!("Drop_{module_name}");
+    let assert_io_types_function =
+        format_ident!("__bsk_assert_io_types_for_{}", config_type.to_string());
 
     let logger = fields
         .iter()
@@ -69,210 +76,138 @@ fn expand_module(input: ItemStruct) -> syn::Result<TokenStream2> {
             |field_name| quote!((*config).#field_name),
         );
 
-    let input_ports: Vec<TokenStream2> = input_fields
+    let input_names: Vec<&syn::Ident> = input_fields.iter().map(|field| &field.name).collect();
+    let input_types: Vec<TokenStream2> = input_fields
         .iter()
-        .filter_map(|field| field.ident.as_ref())
-        .map(|field_name| quote!(&mut (*config).#field_name))
+        .map(|field| {
+            let message_type = &field.message_type;
+            if field.optional {
+                quote!(::core::option::Option<#message_type>)
+            } else {
+                quote!(#message_type)
+            }
+        })
+        .collect();
+    let input_docs: Vec<TokenStream2> = input_fields
+        .iter()
+        .map(|field| {
+            let docs = &field.docs;
+            quote!(#(#docs)*)
+        })
         .collect();
     let missing_input_messages: Vec<LitStr> = input_fields
         .iter()
-        .filter_map(|field| field.ident.as_ref())
-        .map(|field_name| {
+        .map(|field| {
             LitStr::new(
-                &format!("[{module_name}] {field_name} is not connected"),
-                field_name.span(),
+                &format!("[{module_name}] {} is not connected", field.name),
+                field.name.span(),
             )
         })
         .collect();
-
-    let input_values: Vec<syn::Ident> = (0..input_fields.len())
-        .map(|index| format_ident!("Input{index}"))
-        .collect();
-    let input_messages: Vec<syn::Ident> = (0..input_fields.len())
-        .map(|index| format_ident!("Message{index}"))
-        .collect();
-    let input_port_variables: Vec<syn::Ident> = (0..input_fields.len())
-        .map(|index| format_ident!("port{index}"))
-        .collect();
-    let input_indices: Vec<syn::Index> = (0..input_fields.len()).map(syn::Index::from).collect();
-    let input_tuple_trait = format_ident!("__BskInputTupleFor{config_type}");
-    let validate_inputs_function =
-        format_ident!("__bsk_validate_inputs_for_{}", config_type.to_string());
-    let read_inputs_function = format_ident!("__bsk_read_inputs_for_{}", config_type.to_string());
-    let input_adapter = if input_fields.is_empty() {
-        TokenStream2::new()
-    } else {
-        quote! {
-            #[cfg(not(test))]
-            trait #input_tuple_trait<Ports>: Sized {
-                fn validate(
-                    ports: Ports,
-                    logger: *mut ::bsk_build::BSKLogger,
-                    missing_messages: &[&str],
+    let validate_inputs = input_fields
+        .iter()
+        .zip(missing_input_messages.iter())
+        .filter(|(field, _)| !field.optional)
+        .map(|(field, missing_message)| {
+            let field_name = &field.name;
+            let message_type = &field.message_type;
+            quote! {
+                <#message_type as ::bsk_build::BskModuleInput<#message_type>>::validate(
+                    &mut (*config).#field_name,
+                    #logger,
+                    #missing_message,
                 );
-                fn read(
-                    ports: Ports,
-                    logger: *mut ::bsk_build::BSKLogger,
-                    missing_messages: &[&str],
-                ) -> Self;
             }
-
-            #[cfg(not(test))]
-            impl<'bsk_ports, #(#input_values, #input_messages),*>
-                #input_tuple_trait<(
-                    #(&'bsk_ports mut ::bsk_build::MsgReader<#input_messages>,)*
-                )> for (#(#input_values,)*)
-            where
-                #(
-                    #input_messages: ::bsk_build::Msg,
-                    #input_values: ::bsk_build::BskModuleInput<#input_messages>,
-                )*
-            {
-                fn validate(
-                    ports: (
-                        #(&'bsk_ports mut ::bsk_build::MsgReader<#input_messages>,)*
-                    ),
-                    logger: *mut ::bsk_build::BSKLogger,
-                    missing_messages: &[&str],
-                ) {
-                    let (#(#input_port_variables,)*) = ports;
-                    #(
-                        <#input_values as ::bsk_build::BskModuleInput<#input_messages>>::validate(
-                            #input_port_variables,
-                            logger,
-                            missing_messages[#input_indices],
-                        );
-                    )*
-                }
-
-                fn read(
-                    ports: (
-                        #(&'bsk_ports mut ::bsk_build::MsgReader<#input_messages>,)*
-                    ),
-                    logger: *mut ::bsk_build::BSKLogger,
-                    missing_messages: &[&str],
-                ) -> Self {
-                    let (#(#input_port_variables,)*) = ports;
-                    (
-                        #(
-                            <#input_values as ::bsk_build::BskModuleInput<#input_messages>>::read(
-                                #input_port_variables,
-                                logger,
-                                missing_messages[#input_indices],
-                            ),
-                        )*
-                    )
-                }
-            }
-
-            #[cfg(not(test))]
-            #[allow(non_snake_case)]
-            fn #validate_inputs_function<Ports>(
-                ports: Ports,
-                logger: *mut ::bsk_build::BSKLogger,
-                missing_messages: &[&str],
-            )
-            where
-                <#config_type as ::bsk_build::BskModule>::Inputs:
-                    #input_tuple_trait<Ports>,
-            {
-                <<#config_type as ::bsk_build::BskModule>::Inputs as
-                    #input_tuple_trait<Ports>>::validate(
-                        ports,
-                        logger,
-                        missing_messages,
-                    );
-            }
-
-            #[cfg(not(test))]
-            #[allow(non_snake_case)]
-            fn #read_inputs_function<Ports>(
-                ports: Ports,
-                logger: *mut ::bsk_build::BSKLogger,
-                missing_messages: &[&str],
-            ) -> <#config_type as ::bsk_build::BskModule>::Inputs
-            where
-                <#config_type as ::bsk_build::BskModule>::Inputs:
-                    #input_tuple_trait<Ports>,
-            {
-                <<#config_type as ::bsk_build::BskModule>::Inputs as
-                    #input_tuple_trait<Ports>>::read(
-                        ports,
-                        logger,
-                        missing_messages,
+        });
+    let read_inputs = input_fields
+        .iter()
+        .zip(input_types.iter())
+        .zip(missing_input_messages.iter())
+        .map(|((field, input_type), missing_message)| {
+            let field_name = &field.name;
+            let message_type = &field.message_type;
+            quote! {
+                #field_name:
+                    <#input_type as ::bsk_build::BskModuleInput<#message_type>>::read(
+                        &mut (*config).#field_name,
+                        #logger,
+                        #missing_message,
                     )
             }
-        }
-    };
+        });
 
-    let validate_inputs = if input_ports.is_empty() {
-        TokenStream2::new()
-    } else {
+    let output_names: Vec<&syn::Ident> = output_fields.iter().map(|field| &field.name).collect();
+    let output_types: Vec<&Type> = output_fields
+        .iter()
+        .map(|field| &field.message_type)
+        .collect();
+    let output_docs: Vec<TokenStream2> = output_fields
+        .iter()
+        .map(|field| {
+            let docs = &field.docs;
+            quote!(#(#docs)*)
+        })
+        .collect();
+    let initialize_outputs = output_fields.iter().map(|field| {
+        let field_name = &field.name;
+        quote!((*config).#field_name.init();)
+    });
+    let write_reset_outputs = output_fields.iter().map(|field| {
+        let field_name = &field.name;
         quote! {
-            #validate_inputs_function(
-                (#(#input_ports,)*),
-                #logger,
-                &[#(#missing_input_messages,)*],
+            (*config).#field_name.write(
+                &outputs.#field_name,
+                (*config).runtime.module_id(),
+                current_sim_nanos,
             );
         }
-    };
-    let read_inputs = if input_ports.is_empty() {
+    });
+    let write_update_outputs = output_fields.iter().map(|field| {
+        let field_name = &field.name;
         quote! {
-            let inputs: <#config_type as ::bsk_build::BskModule>::Inputs = ();
+            (*config).#field_name.write(
+                &outputs.#field_name,
+                (*config).runtime.module_id(),
+                current_sim_nanos,
+            );
         }
-    } else {
-        quote! {
-            let inputs: <#config_type as ::bsk_build::BskModule>::Inputs =
-                #read_inputs_function(
-                    (#(#input_ports,)*),
-                    #logger,
-                    &[#(#missing_input_messages,)*],
-                );
-        }
-    };
-
-    let output_fields: Vec<&syn::Ident> = output_fields
-        .iter()
-        .filter_map(|field| field.ident.as_ref())
-        .collect();
-    let output_variables: Vec<syn::Ident> = output_fields
-        .iter()
-        .map(|field_name| format_ident!("{}", camel_to_snake(&field_name.to_string())))
-        .collect();
-    let initialize_outputs = output_fields
-        .iter()
-        .map(|field_name| quote!((*config).#field_name.init();));
-    let write_reset_outputs =
-        output_fields
-            .iter()
-            .zip(output_variables.iter())
-            .map(|(field_name, variable)| {
-                quote! {
-                    (*config).#field_name.write(
-                        &#variable,
-                        (*config).runtime.module_id(),
-                        current_sim_nanos,
-                    );
-                }
-            });
-    let write_update_outputs =
-        output_fields
-            .iter()
-            .zip(output_variables.iter())
-            .map(|(field_name, variable)| {
-                quote! {
-                    (*config).#field_name.write(
-                        &#variable,
-                        (*config).runtime.module_id(),
-                        current_sim_nanos,
-                    );
-                }
-            });
+    });
 
     Ok(quote! {
         #input
 
-        #input_adapter
+        /// Named message values supplied to this module's `update` method.
+        #[allow(non_camel_case_types, non_snake_case)]
+        pub struct #inputs_type {
+            #(
+                #input_docs
+                pub #input_names: #input_types,
+            )*
+        }
+
+        /// Named message values returned by this module's `reset` and `update` methods.
+        #[allow(non_camel_case_types, non_snake_case)]
+        #[derive(Default)]
+        pub struct #outputs_type {
+            #(
+                #output_docs
+                pub #output_names: #output_types,
+            )*
+        }
+
+        #[doc(hidden)]
+        #[allow(dead_code, non_snake_case)]
+        fn #assert_io_types_function(
+            config: &mut #config_type,
+            inputs: #inputs_type,
+            current_sim_nanos: u64,
+        ) -> #outputs_type {
+            <#config_type as ::bsk_build::BskModule>::update(
+                config,
+                inputs,
+                current_sim_nanos,
+            )
+        }
 
         #[cfg(not(test))]
         #[allow(non_snake_case)]
@@ -301,9 +236,8 @@ fn expand_module(input: ItemStruct) -> syn::Result<TokenStream2> {
             runtime: *const ::bsk_build::BskModuleRuntime,
         ) {
             (*config).runtime = ::core::ptr::read(runtime);
-            #validate_inputs
-            let (#(#output_variables,)*):
-                <#config_type as ::bsk_build::BskModule>::Outputs =
+            #(#validate_inputs)*
+            let outputs: #outputs_type =
                 <#config_type as ::bsk_build::BskModule>::reset(
                     &mut *config,
                     current_sim_nanos,
@@ -320,9 +254,10 @@ fn expand_module(input: ItemStruct) -> syn::Result<TokenStream2> {
             runtime: *const ::bsk_build::BskModuleRuntime,
         ) {
             (*config).runtime = ::core::ptr::read(runtime);
-            #read_inputs
-            let (#(#output_variables,)*):
-                <#config_type as ::bsk_build::BskModule>::Outputs =
+            let inputs: #inputs_type = #inputs_type {
+                #(#read_inputs,)*
+            };
+            let outputs: #outputs_type =
                 <#config_type as ::bsk_build::BskModule>::update(
                     &mut *config,
                     inputs,
@@ -338,6 +273,191 @@ fn expand_module(input: ItemStruct) -> syn::Result<TokenStream2> {
             ::core::ptr::drop_in_place(config);
         }
     })
+}
+
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum PortDirection {
+    Input,
+    Output,
+}
+
+struct MessagePort {
+    name: syn::Ident,
+    message_type: Type,
+    optional: bool,
+    docs: Vec<Attribute>,
+}
+
+fn extract_message_ports(
+    input: &mut ItemStruct,
+) -> syn::Result<(Vec<MessagePort>, Vec<MessagePort>)> {
+    let fields = match &mut input.fields {
+        Fields::Named(fields) => &mut fields.named,
+        _ => unreachable!("validated module config must have named fields"),
+    };
+    let mut inputs = Vec::new();
+    let mut outputs = Vec::new();
+
+    for field in fields {
+        let port = parse_message_port(field)?;
+        if let Some((direction, port)) = port {
+            match direction {
+                PortDirection::Input => inputs.push(port),
+                PortDirection::Output => outputs.push(port),
+            }
+        }
+    }
+
+    Ok((inputs, outputs))
+}
+
+fn parse_message_port(field: &mut Field) -> syn::Result<Option<(PortDirection, MessagePort)>> {
+    let annotation_indices: Vec<usize> = field
+        .attrs
+        .iter()
+        .enumerate()
+        .filter_map(|(index, attribute)| attribute.path().is_ident("bsk").then_some(index))
+        .collect();
+    let port_type = message_port_type(&field.ty);
+
+    if annotation_indices.is_empty() {
+        if port_type.is_some() {
+            return Err(syn::Error::new_spanned(
+                field,
+                "message ports require `#[bsk(input)]`, \
+                 `#[bsk(input, optional)]`, or `#[bsk(output)]`",
+            ));
+        }
+        return Ok(None);
+    }
+    if annotation_indices.len() > 1 {
+        return Err(syn::Error::new_spanned(
+            field,
+            "a message port must have exactly one `#[bsk(...)]` annotation",
+        ));
+    }
+
+    let annotation = field.attrs[annotation_indices[0]].clone();
+    let mut direction = None;
+    let mut optional = false;
+    annotation.parse_nested_meta(|meta| {
+        let candidate = if meta.path.is_ident("input") {
+            Some(PortDirection::Input)
+        } else if meta.path.is_ident("output") {
+            Some(PortDirection::Output)
+        } else if meta.path.is_ident("optional") {
+            if optional {
+                return Err(meta.error("duplicate `optional` argument"));
+            }
+            optional = true;
+            return Ok(());
+        } else {
+            return Err(meta.error("expected `input`, `output`, or `optional` in this annotation"));
+        };
+
+        if direction
+            .replace(candidate.expect("direction candidate"))
+            .is_some()
+        {
+            return Err(meta.error("choose exactly one of `input` or `output`"));
+        }
+        Ok(())
+    })?;
+
+    let direction = direction.ok_or_else(|| {
+        syn::Error::new_spanned(
+            &annotation,
+            "a message port annotation requires `input` or `output`",
+        )
+    })?;
+    if optional && direction != PortDirection::Input {
+        return Err(syn::Error::new_spanned(
+            &annotation,
+            "`optional` is valid only for an input port",
+        ));
+    }
+
+    let (type_direction, message_type) = port_type.ok_or_else(|| {
+        syn::Error::new_spanned(
+            &field.ty,
+            "an annotated input must use `MsgReader<Message>` and an annotated \
+             output must use `MsgWriter<Message>`",
+        )
+    })?;
+    if direction != type_direction {
+        let expected = match direction {
+            PortDirection::Input => "MsgReader<Message>",
+            PortDirection::Output => "MsgWriter<Message>",
+        };
+        return Err(syn::Error::new_spanned(
+            &field.ty,
+            format!("this annotation requires `{expected}`"),
+        ));
+    }
+
+    let name = field
+        .ident
+        .clone()
+        .expect("validated module config must have named fields");
+    let docs = field
+        .attrs
+        .iter()
+        .filter(|attribute| attribute.path().is_ident("doc"))
+        .cloned()
+        .collect();
+    field
+        .attrs
+        .retain(|attribute| !attribute.path().is_ident("bsk"));
+
+    Ok(Some((
+        direction,
+        MessagePort {
+            name,
+            message_type,
+            optional,
+            docs,
+        },
+    )))
+}
+
+fn message_port_type(field_type: &Type) -> Option<(PortDirection, Type)> {
+    let type_path = match field_type {
+        Type::Path(type_path) => type_path,
+        _ => return None,
+    };
+    let segment = type_path.path.segments.last()?;
+    let direction = if segment.ident == "MsgReader" {
+        PortDirection::Input
+    } else if segment.ident == "MsgWriter" {
+        PortDirection::Output
+    } else {
+        return None;
+    };
+    let arguments = match &segment.arguments {
+        PathArguments::AngleBracketed(arguments) => arguments,
+        _ => return None,
+    };
+    let message_type = single_type_argument(arguments)?;
+    Some((direction, message_type.clone()))
+}
+
+fn single_type_argument(arguments: &AngleBracketedGenericArguments) -> Option<&Type> {
+    if arguments.args.len() != 1 {
+        return None;
+    }
+    match arguments.args.first()? {
+        GenericArgument::Type(argument) => Some(argument),
+        _ => None,
+    }
+}
+
+fn io_type_name(config_type: &syn::Ident, suffix: &str) -> syn::Ident {
+    let config_name = config_type.to_string();
+    let module_name = config_name
+        .strip_suffix("Config")
+        .filter(|name| !name.is_empty())
+        .unwrap_or(&config_name);
+    format_ident!("{module_name}{suffix}", span = config_type.span())
 }
 
 fn validate_module_config(input: &ItemStruct) -> syn::Result<()> {
@@ -435,17 +555,6 @@ fn module_name() -> String {
         .replace('-', "_")
 }
 
-fn camel_to_snake(name: &str) -> String {
-    let mut output = String::new();
-    for (index, character) in name.chars().enumerate() {
-        if character.is_uppercase() && index > 0 {
-            output.push('_');
-        }
-        output.push(character.to_ascii_lowercase());
-    }
-    output
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -470,7 +579,9 @@ mod tests {
             #[repr(C)]
             pub struct ControllerConfig {
                 pub runtime: BskModuleRuntime,
+                #[bsk(input, optional)]
                 pub inputInMsg: MsgReader<InputMsg>,
+                #[bsk(output)]
                 pub outputOutMsg: MsgWriter<OutputMsg>,
                 pub bskLogger: *mut BSKLogger,
             }
@@ -483,18 +594,25 @@ mod tests {
             assert!(expanded.contains(lifecycle), "expanded module: {expanded}");
         }
         assert!(expanded.contains("BskModuleInput"));
+        assert!(expanded.contains("struct ControllerInputs"));
+        assert!(expanded.contains("struct ControllerOutputs"));
+        assert!(expanded.contains("inputInMsg : :: core :: option :: Option < InputMsg >"));
+        assert!(expanded.contains("outputOutMsg : OutputMsg"));
+        assert!(expanded.contains("__bsk_assert_io_types_for_ControllerConfig"));
         assert!(expanded.contains("inputInMsg is not connected"));
         assert!(expanded.contains("outputOutMsg . init"));
         assert_eq!(expanded.matches("outputOutMsg . write").count(), 2);
         assert!(!expanded.contains("include !"));
+        assert!(!expanded.contains("bsk (input"));
+        assert!(!expanded.contains("bsk (output"));
     }
 
     #[test]
-    fn input_adapter_is_generated_for_the_config_arity() {
+    fn named_inputs_are_generated_for_every_annotated_port() {
         let mut fields = String::from("pub runtime: BskModuleRuntime,");
         for index in 0..12 {
             fields.push_str(&format!(
-                "pub input{index}InMsg: MsgReader<Input{index}Msg>,"
+                "#[bsk(input)] pub input{index}InMsg: MsgReader<Input{index}Msg>,"
             ));
         }
         let input: ItemStruct = syn::parse_str(&format!(
@@ -505,9 +623,57 @@ mod tests {
         let expanded = expand_module(input)
             .expect("valid module must expand")
             .to_string();
-        assert!(expanded.contains("Input11"));
-        assert!(expanded.contains("Message11"));
-        assert!(expanded.contains("port11"));
+        assert!(expanded.contains("struct ManyInputsInputs"));
+        assert!(expanded.contains("input11InMsg : Input11Msg"));
+        assert!(expanded.contains("input11InMsg : < Input11Msg as"));
+    }
+
+    #[test]
+    fn rejects_unannotated_message_port() {
+        let input: ItemStruct = parse_quote! {
+            #[repr(C)]
+            pub struct ControllerConfig {
+                pub runtime: BskModuleRuntime,
+                pub inputInMsg: MsgReader<InputMsg>,
+            }
+        };
+
+        let error = expand_module(input).expect_err("unannotated port must fail");
+        assert!(error.to_string().contains("message ports require"));
+    }
+
+    #[test]
+    fn rejects_optional_output_port() {
+        let input: ItemStruct = parse_quote! {
+            #[repr(C)]
+            pub struct ControllerConfig {
+                pub runtime: BskModuleRuntime,
+                #[bsk(output, optional)]
+                pub outputOutMsg: MsgWriter<OutputMsg>,
+            }
+        };
+
+        let error = expand_module(input).expect_err("optional output must fail");
+        assert!(error
+            .to_string()
+            .contains("`optional` is valid only for an input port"));
+    }
+
+    #[test]
+    fn rejects_annotation_that_disagrees_with_port_type() {
+        let input: ItemStruct = parse_quote! {
+            #[repr(C)]
+            pub struct ControllerConfig {
+                pub runtime: BskModuleRuntime,
+                #[bsk(output)]
+                pub inputInMsg: MsgReader<InputMsg>,
+            }
+        };
+
+        let error = expand_module(input).expect_err("mismatched annotation must fail");
+        assert!(error
+            .to_string()
+            .contains("this annotation requires `MsgWriter<Message>`"));
     }
 
     #[test]

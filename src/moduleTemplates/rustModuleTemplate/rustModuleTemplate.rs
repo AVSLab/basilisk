@@ -29,31 +29,36 @@ pub struct RustModuleTemplateConfig {
     /// [-] Sample module state
     pub dummy: f64,
     /// [-] Optional input message
+    #[bsk(input, optional)]
     pub dataInMsg: MsgReader<CModuleTemplateMsg>,
     /// [-] Output message
+    #[bsk(output)]
     pub dataOutMsg: MsgWriter<CModuleTemplateMsg>,
     /// [-] Basilisk logging handle
     pub bskLogger: *mut BSKLogger,
 }
 
 impl BskModule for RustModuleTemplateConfig {
-    type Inputs = (Option<CModuleTemplateMsg>,);
-    type Outputs = (CModuleTemplateMsg,);
+    type Inputs = RustModuleTemplateInputs;
+    type Outputs = RustModuleTemplateOutputs;
 
     fn reset(&mut self, _current_sim_nanos: u64) -> Self::Outputs {
         self.dummy = 0.0;
         self.bskLogger.info("Variable dummy set to 0 in reset.");
-        (CModuleTemplateMsg::default(),)
+        RustModuleTemplateOutputs {
+            dataOutMsg: CModuleTemplateMsg::default(),
+        }
     }
 
     fn update(&mut self, inputs: Self::Inputs, _current_sim_nanos: u64) -> Self::Outputs {
-        let (data_in_msg,) = inputs;
-        let mut data_out_msg = data_in_msg.unwrap_or_default();
+        let mut data_out_msg = inputs.dataInMsg.unwrap_or_default();
 
         self.dummy += 1.0;
         data_out_msg.dataVector[0] += self.dummy;
 
-        (data_out_msg,)
+        RustModuleTemplateOutputs {
+            dataOutMsg: data_out_msg,
+        }
     }
 }
 
@@ -62,6 +67,7 @@ mod tests {
     use super::*;
     use core::mem::{align_of, offset_of, size_of};
 
+    /// Verify that the generated C++ wrapper retains the established config ABI.
     #[test]
     fn config_abi_layout_matches_compatibility_baseline() {
         assert_eq!(size_of::<RustModuleTemplateConfig>(), 192);
@@ -71,5 +77,15 @@ mod tests {
         assert_eq!(offset_of!(RustModuleTemplateConfig, dataInMsg), 40);
         assert_eq!(offset_of!(RustModuleTemplateConfig, dataOutMsg), 112);
         assert_eq!(offset_of!(RustModuleTemplateConfig, bskLogger), 184);
+    }
+
+    /// Verify that generated input and output values use the config port names.
+    #[test]
+    fn generated_io_values_are_named_by_port() {
+        let inputs = RustModuleTemplateInputs { dataInMsg: None };
+        assert!(inputs.dataInMsg.is_none());
+
+        let outputs = RustModuleTemplateOutputs::default();
+        assert_eq!(outputs.dataOutMsg.dataVector, [0.0; 3]);
     }
 }

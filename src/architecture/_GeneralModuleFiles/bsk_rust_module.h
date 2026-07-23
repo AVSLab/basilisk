@@ -48,7 +48,9 @@
  *  lifecycle entry points that
  *  read/write messages around the module's own ``update``. The user
  *  implements ``init``, ``reset``, and ``update`` in safe Rust with
- *  typed message arguments — no FFI boilerplate by hand. See the Basilisk
+ *  named, typed message values — no FFI boilerplate by hand. Message-port
+ *  fields use ``#[bsk(input)]``, ``#[bsk(input, optional)]``, or
+ *  ``#[bsk(output)]`` to declare their role explicitly. See the Basilisk
  *  documentation's "Writing a Rust Plugin" page for the full guide.
  *
  *  **Config struct field ordering**
@@ -81,9 +83,10 @@
  *
  *      BSK_RUST_DECL(myModule, myModuleConfig)
  *
- *  On the Rust side, ``attGuidInMsg``/``cmdTorqueOutMsg`` above are written
- *  as ``MsgReader<AttGuidMsg>``/``MsgWriter<CmdTorqueBodyMsg>`` — see the
- *  "Writing a Rust Plugin" documentation page for the Rust-side type.
+ *  On the Rust side, ``attGuidInMsg``/``cmdTorqueOutMsg`` above are annotated
+ *  with ``#[bsk(input)]``/``#[bsk(output)]`` and use
+ *  ``MsgReader<AttGuidMsg>``/``MsgWriter<CmdTorqueBodyMsg>`` — see the
+ *  "Writing a Rust Plugin" documentation page for the complete Rust form.
  *
  *  **moduleID**
  *
@@ -130,27 +133,28 @@
  *
  *  **Message port patterns**
  *
- *  Whether an input port is required or optional is determined from the
- *  ``impl BskModule`` block's ``type Inputs`` tuple.  The element type you
- *  already have to write for ``update`` to type-check is the single source
- *  of truth::
+ *  Annotate each Rust config field so the port role is explicit. The
+ *  procedural attribute generates named input and output value structs whose
+ *  fields retain those config field names::
  *
- *      impl BskModule for myModuleConfig {
- *          type Inputs = (AttGuidMsg, Option<CmdTorqueBodyMsg>);
- *          //              ^^^^^^^^^  ^^^^^^^^^^^^^^^^^^^^^^^^^
- *          //              required   optional
- *          ...
- *      }
+ *      #[bsk(input)]
+ *      pub attGuidInMsg: MsgReader<AttGuidMsg>,
+ *      #[bsk(input, optional)]
+ *      pub disturbanceInMsg: MsgReader<CmdTorqueBodyMsg>,
+ *      #[bsk(output)]
+ *      pub cmdTorqueOutMsg: MsgWriter<CmdTorqueBodyMsg>,
  *
- *  *Required input* — connectivity is checked in ``Reset`` and before each
- *  ``Update`` read; a missing connection raises the standard
+ *  *Required input* — ``#[bsk(input)]`` checks connectivity in ``Reset`` and
+ *  before each ``Update`` read; a missing connection raises the standard
  *  ``BasiliskError``.
  *
- *  *Optional input* — wrap the corresponding ``Inputs`` tuple element in
- *  ``Option<Msg>``; ``update`` then receives ``Option<Msg>`` (``None`` when
- *  unlinked) instead of an error.
+ *  *Optional input* — ``#[bsk(input, optional)]`` gives the generated input
+ *  field type ``Option<Msg>`` (``None`` when unlinked) instead of raising an
+ *  error.
  *
- *  *Output* — initialized automatically in ``SelfInit``.
+ *  *Output* — ``#[bsk(output)]`` is initialized automatically in
+ *  ``SelfInit`` and written from the same named field returned by ``reset``
+ *  or ``update``.
  *
  *  **Python wiring** (same as any BSK C module)::
  *

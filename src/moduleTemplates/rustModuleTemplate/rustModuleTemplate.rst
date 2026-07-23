@@ -31,8 +31,9 @@ Module Assumptions and Limitations
 ----------------------------------
 
 This module is a template only and does not model a physical system. It
-demonstrates the Rust module lifecycle, optional message inputs, output
-messages, and logging.
+demonstrates the Rust module lifecycle, explicit message-port annotations,
+named input and output values, optional message inputs, output messages, and
+logging.
 
 User Guide
 ----------
