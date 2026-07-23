@@ -42,6 +42,7 @@ include(bskAddRustModuleSourcesCorrosion)
 function(find_rust_package_targets PKG_DIR ALL_TARGET_LIST)
   file(
     GLOB_RECURSE RUST_MANIFESTS
+    CONFIGURE_DEPENDS
     RELATIVE ${CMAKE_SOURCE_DIR}
     "${PKG_DIR}/Cargo.toml")
 
@@ -100,7 +101,7 @@ function(generate_rust_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
 
     set(_rust_manifest "${CMAKE_SOURCE_DIR}/${TARGET_FILE}")
     set(_swig_target "${TARGET_NAME}")
-    if(BSK_RUST_USE_CORROSION AND TARGET_NAME STREQUAL "rustModuleTemplate")
+    if(BSK_RUST_USE_CORROSION)
       bsk_add_rust_module_sources_corrosion(
         TARGET      ${TARGET_NAME}
         MANIFEST    "${_rust_manifest}"
@@ -138,7 +139,7 @@ function(generate_rust_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
       SOURCES ${_rust_interface}
       OUTFILE_DIR "${_out_dir}"
       OUTPUT_DIR  "${_out_dir}")
-    if(BSK_RUST_USE_CORROSION AND TARGET_NAME STREQUAL "rustModuleTemplate")
+    if(BSK_RUST_USE_CORROSION)
       set_target_properties(${_swig_target} PROPERTIES OUTPUT_NAME ${TARGET_NAME})
     endif()
 

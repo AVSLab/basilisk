@@ -35,13 +35,77 @@ function(_bsk_load_corrosion)
   FetchContent_MakeAvailable(Corrosion)
 endfunction()
 
-# Build one Rust Basilisk module through Corrosion. This deliberately mirrors
-# only the inputs needed by the in-tree rustModuleTemplate trial; the legacy
-# bsk_add_rust_module_sources() function remains the default build path.
+# Read the Cargo package that owns a manifest without parsing Cargo.toml.
+# Corrosion also consumes Cargo metadata internally; this small query supplies
+# the package allowlist needed to import only the requested workspace member.
+function(_bsk_rust_package_name_from_metadata MANIFEST OUT_PACKAGE_NAME)
+  get_target_property(_cargo_executable Rust::Cargo IMPORTED_LOCATION)
+  if(NOT _cargo_executable)
+    message(FATAL_ERROR
+      "Corrosion did not provide the Rust::Cargo executable target")
+  endif()
+
+  file(REAL_PATH "${MANIFEST}" _requested_manifest)
+  execute_process(
+    COMMAND
+      "${_cargo_executable}" metadata
+      --locked
+      --no-deps
+      --format-version 1
+      --manifest-path "${_requested_manifest}"
+    RESULT_VARIABLE _metadata_result
+    OUTPUT_VARIABLE _metadata_json
+    ERROR_VARIABLE _metadata_error
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    ERROR_STRIP_TRAILING_WHITESPACE
+  )
+  if(NOT _metadata_result EQUAL 0)
+    message(FATAL_ERROR
+      "Could not read Cargo metadata for ${_requested_manifest}:\n"
+      "${_metadata_error}")
+  endif()
+
+  string(JSON _package_count
+         ERROR_VARIABLE _metadata_json_error
+         LENGTH "${_metadata_json}" packages)
+  if(_metadata_json_error)
+    message(FATAL_ERROR
+      "Cargo returned invalid metadata for ${_requested_manifest}:\n"
+      "${_metadata_json_error}")
+  endif()
+  if(_package_count EQUAL 0)
+    message(FATAL_ERROR
+      "Cargo metadata contains no packages for ${_requested_manifest}")
+  endif()
+
+  set(_matching_packages 0)
+  math(EXPR _last_package_index "${_package_count} - 1")
+  foreach(_package_index RANGE 0 ${_last_package_index})
+    string(JSON _candidate_manifest
+           GET "${_metadata_json}" packages ${_package_index} manifest_path)
+    file(REAL_PATH "${_candidate_manifest}" _candidate_manifest)
+    if("${_candidate_manifest}" STREQUAL "${_requested_manifest}")
+      math(EXPR _matching_packages "${_matching_packages} + 1")
+      string(JSON _package_name
+             GET "${_metadata_json}" packages ${_package_index} name)
+    endif()
+  endforeach()
+
+  if(NOT _matching_packages EQUAL 1)
+    message(FATAL_ERROR
+      "Cargo metadata matched ${_matching_packages} packages to "
+      "${_requested_manifest}; expected exactly one")
+  endif()
+  set("${OUT_PACKAGE_NAME}" "${_package_name}" PARENT_SCOPE)
+endfunction()
+
+# Build one Rust Basilisk module through Corrosion. Cargo metadata determines
+# the package and library target names; Corrosion determines the profile and
+# platform artifact path. The legacy bsk_add_rust_module_sources() function
+# remains available as the comparison and rollback path.
 function(bsk_add_rust_module_sources_corrosion)
   set(_one
       TARGET
-      PACKAGE_NAME
       HEADER
       MANIFEST
       INTERFACE
@@ -67,10 +131,9 @@ function(bsk_add_rust_module_sources_corrosion)
     message(FATAL_ERROR
       "bsk_add_rust_module_sources_corrosion: manifest not found: ${_manifest}")
   endif()
+  set_property(DIRECTORY APPEND PROPERTY
+               CMAKE_CONFIGURE_DEPENDS "${_manifest}")
 
-  if(NOT RUST_PACKAGE_NAME)
-    set(RUST_PACKAGE_NAME "${RUST_TARGET}")
-  endif()
   if(NOT RUST_INCLUDE_DIR)
     set(RUST_INCLUDE_DIR "${CMAKE_SOURCE_DIR}")
   endif()
@@ -86,9 +149,10 @@ function(bsk_add_rust_module_sources_corrosion)
       "${CMAKE_CURRENT_BINARY_DIR}/rust_bindings/${RUST_TARGET}.trigger")
 
   _bsk_load_corrosion()
+  _bsk_rust_package_name_from_metadata("${_manifest}" _rust_package_name)
   corrosion_import_crate(
     MANIFEST_PATH "${_manifest}"
-    CRATES "${RUST_PACKAGE_NAME}"
+    CRATES "${_rust_package_name}"
     CRATE_TYPES staticlib
     LOCKED
     IMPORTED_CRATES _rust_imported_targets
@@ -98,7 +162,7 @@ function(bsk_add_rust_module_sources_corrosion)
   if(NOT _rust_imported_target_count EQUAL 1)
     message(FATAL_ERROR
       "Corrosion imported ${_rust_imported_target_count} targets for "
-      "${RUST_PACKAGE_NAME}: expected exactly one static library target")
+      "${_rust_package_name}: expected exactly one static library target")
   endif()
   list(GET _rust_imported_targets 0 _rust_link_target)
 

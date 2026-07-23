@@ -42,8 +42,8 @@ bskModuleOptionsBool = {
     # Requires a Rust/Cargo toolchain on PATH; off by default so most builds/CI
     # jobs never need one.
     "rustModules": [[True, False], False],
-    # Bounded trial of the pinned Corrosion CMake/Cargo integration. This
-    # affects rustModuleTemplate only and requires rustModules=True.
+    # Trial of the pinned Corrosion CMake/Cargo integration for discovered
+    # Rust modules. This requires rustModules=True.
     "rustCorrosion": [[True, False], False],
     "examples": [[True, False], True],
     "buildProject": [[True, False], True],
