@@ -45,7 +45,8 @@ discovered Rust modules. Enable it explicitly with:
 
 Corrosion is fetched only for this opt-in build, at an immutable revision.
 Basilisk's existing Cargo driver remains available when ``rustCorrosion`` is
-disabled while the trial is evaluated across supported platforms.
+disabled while the trial is evaluated. Pull-request CI exercises the
+Corrosion path on Linux, macOS, and Windows.
 
 Rust 1.85 is Basilisk's minimum supported Rust version (MSRV). The repository
 does not pin one exact toolchain for local development: Cargo accepts any
