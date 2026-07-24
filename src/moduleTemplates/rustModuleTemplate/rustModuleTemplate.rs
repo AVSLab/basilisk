@@ -34,10 +34,10 @@ pub struct RustModuleTemplateConfig {
     /// [-] Fixed-size array of optional input messages
     #[bsk(input, optional)]
     pub dataInMsgs: [MsgReader<CModuleTemplateMsg>; 2],
-    /// [-] Output message
+    /// [-] Individual output written from the returned ``dataOutMsg`` value
     #[bsk(output)]
     pub dataOutMsg: MsgWriter<CModuleTemplateMsg>,
-    /// [-] Fixed-size array of output messages
+    /// [-] Output array written element-by-element from returned ``dataOutMsgs``
     #[bsk(output)]
     pub dataOutMsgs: [MsgWriter<CModuleTemplateMsg>; 2],
     /// [-] Test-only fault injection that deliberately panics during update
@@ -80,6 +80,12 @@ impl BskModule for RustModuleTemplateConfig {
     type Outputs = RustModuleTemplateOutputs;
 
     fn init(&mut self, _state: &mut Self::State) -> BskResult<()> {
+        // Before init runs, every configuration field and the private state
+        // have been initialized through Rust's Default trait. Numeric fields
+        // are zero, booleans are false, and message ports are empty. This is
+        // typed initialization rather than a raw-memory memset; custom state
+        // can define other defaults. Set non-zero configuration defaults here
+        // before Python configures the module.
         self.increment = 1.0; // [-]
         Ok(())
     }
@@ -90,16 +96,23 @@ impl BskModule for RustModuleTemplateConfig {
         context: &BskContext<'_>,
         current_sim_nanos: u64,
     ) -> BskResult<Self::Outputs> {
+        // Validate Python-visible configuration before the simulation runs.
+        // Return BskError for expected failures instead of panicking.
         if !self.increment.is_finite() || self.increment <= 0.0 {
             return Err(BskError::new(
                 "rustModuleTemplate.increment must be finite and strictly positive",
             ));
         }
+
+        // Reset both Python-visible configuration and private Rust state.
         self.dummy = 0.0; // [-]
         state.update_history.clear();
         state.last_event = format!("reset at {current_sim_nanos} ns");
         state.mode = TemplateMode::Running;
         context.logger().info("Variable dummy set to 0 in reset.");
+
+        // Reset returns the initial output payloads. The generated lifecycle
+        // publishes these values with the reset time and module ID.
         Ok(RustModuleTemplateOutputs {
             dataOutMsg: CModuleTemplateMsg::default(),
             dataOutMsgs: core::array::from_fn(|_| CModuleTemplateMsg::default()),
@@ -113,30 +126,43 @@ impl BskModule for RustModuleTemplateConfig {
         inputs: Self::Inputs,
         current_sim_nanos: u64,
     ) -> BskResult<Self::Outputs> {
+        // This template-only hook exercises generated panic containment.
+        // Normal modules should return BskError for expected failures.
         if self.panicOnUpdate {
             panic!("deliberate rustModuleTemplate update panic");
         }
 
+        // Optional input ports arrive as Option<Message>. Use a default
+        // payload for each input that is not connected.
         let mut data_out_msg = inputs.dataInMsg.unwrap_or_default();
         let mut data_out_msgs = inputs
             .dataInMsgs
             .map(|input_message| input_message.unwrap_or_default());
 
+        // The context provides framework services without adding fields to
+        // the Python-visible configuration.
         if state.mode == TemplateMode::Idle {
             context.logger().warning("Update called before reset.");
             state.mode = TemplateMode::Running;
         }
+
+        // Update both public sample data and unrestricted private Rust state.
         self.dummy += self.increment;
         state.update_history.push(self.dummy);
         state.last_event = format!(
             "module {} updated at {current_sim_nanos} ns",
             context.module_id()
         );
+
+        // Construct one individual output and one fixed-size output array.
         data_out_msg.dataVector[0] += self.dummy;
         for output_message in &mut data_out_msgs {
             output_message.dataVector[0] += self.dummy;
         }
 
+        // The generated lifecycle writes these named payload values to the
+        // corresponding ports and supplies the module ID, current timestamp,
+        // and isWritten flag.
         Ok(RustModuleTemplateOutputs {
             dataOutMsg: data_out_msg,
             dataOutMsgs: data_out_msgs,
@@ -144,6 +170,17 @@ impl BskModule for RustModuleTemplateConfig {
     }
 }
 
+// -----------------------------------------------------------------------------
+// Optional template-specific Rust tests
+// -----------------------------------------------------------------------------
+//
+// This in-file test module is not required by the Rust module interface and is
+// not compiled into the Basilisk module library. It is included because
+// rustModuleTemplate is also a regression target for generated configuration
+// layout, named message values, Rust-owned state, lifecycle context services,
+// and expected-error handling. A new module does not need to copy these tests,
+// but it should provide tests appropriate for its own behavior as described in
+// the Rust module development guide.
 #[cfg(all(test, target_pointer_width = "64"))]
 mod tests {
     use super::*;

@@ -82,7 +82,8 @@
  *  **moduleID**
  *
  *  ``moduleID`` is a unique ``int64_t`` assigned by Basilisk's
- *  ``ModuleIdGenerator`` when the module is registered with a task.  It is
+ *  ``ModuleIdGenerator`` when the Python-visible C++ wrapper's ``SysModel``
+ *  base is constructed. Task registration does not assign the ID. It is
  *  stamped onto every outgoing message header (via ``*_C_write``) so that
  *  message recording and the logging subsystem can identify which module
  *  produced a given message. The generated lifecycle code forwards it to
@@ -154,7 +155,7 @@
  *      ctrl.ModelTag = "myCtrl"
  *      ctrl.K = 5.0                                  # set parameters
  *      ctrl.attGuidInMsg.subscribeTo(src.attGuidOutMsg)   # connect input
- *      sim.AddModelToTask("task", ctrl)               # assigns moduleID
+ *      sim.AddModelToTask("task", ctrl)               # schedule the module
  *      # ctrl.cmdTorqueOutMsg is readable after InitializeSimulation()
  *
  *  **Stateful modules — Rust-owned state**

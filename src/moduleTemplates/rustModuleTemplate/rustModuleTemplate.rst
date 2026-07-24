@@ -77,6 +77,25 @@ Rust panic-hook report.
 Operational modules should return ``BskError`` for expected failures rather
 than adding a similar test hook.
 
+The template's Rust implementation shows how one individual output and a
+fixed-size output array are published together:
+
+.. code-block:: rust
+
+   Ok(RustModuleTemplateOutputs {
+       dataOutMsg: data_out_msg,
+       dataOutMsgs: data_out_msgs,
+   })
+
+The generated lifecycle code writes ``data_out_msg`` to ``dataOutMsg``. It
+also writes ``data_out_msgs[0]`` and ``data_out_msgs[1]`` to the corresponding
+elements of ``dataOutMsgs``. The returned values contain only
+``CModuleTemplateMsg`` payload data. Basilisk automatically stamps every
+published message with this module's ``moduleID`` and the current simulation
+time, and sets its ``isWritten`` flag. Both reset and update return a complete
+``RustModuleTemplateOutputs`` value, so all three output messages are
+published after each successful call.
+
 Connect ``module.dataInMsg`` when input data is available. When it is unconnected,
 the module starts from a zero vector.
 

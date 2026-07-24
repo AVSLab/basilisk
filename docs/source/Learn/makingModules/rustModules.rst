@@ -446,6 +446,15 @@ The generated wrapper provides ``SelfInit()``, ``Reset()``, and
    state. Rust first initializes every configuration and state field through
    its ``Default`` implementation. The default ``init`` returns ``Ok(())``.
 
+   This typed initialization provides the familiar zero initial values for
+   primitive configuration fields: numeric fields start at zero, booleans at
+   ``false``, arrays are initialized element-by-element, and message ports
+   start empty. Rust does not apply a raw-memory ``memset`` to the module.
+   Custom Rust-owned state uses its own ``Default`` implementation and may
+   therefore begin with non-zero values, allocated collections, strings, or
+   enum variants. Use ``init`` for any non-zero Python-visible configuration
+   defaults that should be applied before the user configures the module.
+
 ``reset(state, context, current_sim_nanos) -> BskResult<Outputs>``
    Runs at simulation start and on every Basilisk ``Reset()``. Use it for
    parameter validation, private-state reset, and non-zero initial output
@@ -510,6 +519,45 @@ Any number of inputs and outputs is supported, and declaration order does not
 control message routing. Both ``reset`` and ``update`` must return a value for
 every output port.
 
+Writing Output Messages
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Rust module logic returns message payload values in its generated ``Outputs``
+struct. It does not call ``MsgWriter`` or fill in a Basilisk message header
+directly. Each returned field is matched by name to the corresponding
+``#[bsk(output)]`` configuration field. For example, the return value
+
+.. code-block:: rust
+
+    Ok(RustModuleTemplateOutputs {
+        dataOutMsg: data_out_msg,
+        dataOutMsgs: data_out_msgs,
+    })
+
+writes ``data_out_msg`` to ``dataOutMsg`` and each element of
+``data_out_msgs`` to the same-index element of ``dataOutMsgs``. Additional
+individual output ports are handled by adding their named payload values to
+the same generated output struct.
+
+After ``reset`` or ``update`` returns ``Ok(...)``, the generated lifecycle
+code publishes every declared output and completes its message header
+automatically:
+
+* ``moduleID`` is the unique ID assigned when the Python/C++ module wrapper is
+  constructed. Every output from that module receives this ID.
+* ``timeWritten`` is the ``current_sim_nanos`` value for that ``Reset`` or
+  ``UpdateState`` call [ns]. All outputs from one lifecycle call receive the
+  same timestamp.
+* ``isWritten`` is set to true by the normal Basilisk C message write
+  interface.
+
+Thus, these header values do not appear in the Rust ``Outputs`` value and the
+module developer should not set them. ``SelfInit`` initializes the output
+ports but does not publish payloads. A lifecycle call that returns ``Err(...)``
+does not write any output. Under the current interface, every successful
+``reset`` and ``update`` writes every declared output port because both
+methods must return a complete ``Outputs`` value.
+
 Fixed-Size Arrays of Message Ports
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -554,6 +602,12 @@ Process and return the arrays with normal Rust array operations:
     Ok(myModuleOutputs {
         cmdTorqueOutMsgs: cmd_torques,
     })
+
+The generated wrapper pairs array element ``i`` with output port ``i`` and
+writes all elements. Each element receives the module ID and current
+simulation timestamp described above. A literal array,
+``core::array::from_fn``, and the array ``map`` method are all convenient ways
+to construct the required ``[MessageType; N]`` value.
 
 Python returns a list containing the fixed set of normal message interfaces:
 

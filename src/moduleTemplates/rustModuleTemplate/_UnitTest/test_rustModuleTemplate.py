@@ -444,6 +444,12 @@ def test_rust_module_template(connect_input):
     simulation.ExecuteSimulation()
 
     expected_times = np.array([0, 500000000, 1000000000], dtype=np.uint64)  # [ns]
+    output_ports = [module.dataOutMsg, *module.dataOutMsgs]
+    for output_port in output_ports:
+        assert output_port.header.moduleID == module.moduleID
+        assert output_port.header.timeWritten == expected_times[-1]
+        assert output_port.header.isWritten
+
     if connect_input:
         expected_output = np.array(
             [[2.0, -0.5, 0.7], [3.0, -0.5, 0.7], [4.0, -0.5, 0.7]]
@@ -454,6 +460,7 @@ def test_rust_module_template(connect_input):
         )  # [-]
 
     np.testing.assert_array_equal(output_log.times(), expected_times)
+    np.testing.assert_array_equal(output_log.timesWritten(), expected_times)
     np.testing.assert_allclose(output_log.dataVector, expected_output)
     for index, array_output_log in enumerate(array_output_logs):
         if connect_input:
@@ -468,6 +475,7 @@ def test_rust_module_template(connect_input):
                 (np.arange(1.0, 4.0), np.zeros((3, 2)))
             )
         np.testing.assert_array_equal(array_output_log.times(), expected_times)
+        np.testing.assert_array_equal(array_output_log.timesWritten(), expected_times)
         np.testing.assert_allclose(
             array_output_log.dataVector, expected_array_output
         )
