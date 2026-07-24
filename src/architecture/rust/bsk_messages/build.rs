@@ -40,6 +40,7 @@ fn generate_bindings() -> Result<(), Box<dyn Error>> {
     for variable in [
         "BSK_CMSG_DIR",
         "BSK_SRC_ROOT",
+        "BSK_C_SYSTEM_INCLUDE_DIRS",
         "LIBCLANG_PATH",
         "VIRTUAL_ENV",
         "CONDA_PREFIX",
@@ -114,7 +115,7 @@ fn generate_bindings() -> Result<(), Box<dyn Error>> {
     // Rust modules bind only Basilisk's C message ABI. Parsing these headers
     // as C also avoids coupling bindgen's libclang version to the host C++
     // standard-library implementation.
-    let bindings = bindgen::Builder::default()
+    let mut bindings_builder = bindgen::Builder::default()
         .header(wrapper_path.display().to_string())
         .use_core()
         .prepend_enum_name(false)
@@ -125,7 +126,15 @@ fn generate_bindings() -> Result<(), Box<dyn Error>> {
         .opaque_type("BSKLogger")
         .clang_arg(format!("-I{}", source_root.display()))
         .clang_arg(format!("-I{}", c_message_dir.display()))
-        .clang_args(["-std=c11", "-x", "c"])
+        .clang_args(["-std=c11", "-x", "c"]);
+    if let Some(include_dirs) = env::var_os("BSK_C_SYSTEM_INCLUDE_DIRS") {
+        for include_dir in env::split_paths(&include_dirs) {
+            bindings_builder = bindings_builder
+                .clang_arg("-isystem")
+                .clang_arg(include_dir.to_string_lossy().into_owned());
+        }
+    }
+    let bindings = bindings_builder
         .generate()
         .map_err(|_| "bindgen could not parse the generated Basilisk C message headers")?;
 

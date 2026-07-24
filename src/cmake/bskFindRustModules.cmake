@@ -147,6 +147,18 @@ function(generate_rust_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
   set(_rust_cargo_env
       "BSK_CMSG_DIR=${CMAKE_BINARY_DIR}/autoSource/cMsgCInterface"
       "BSK_SRC_ROOT=${CMAKE_SOURCE_DIR}")
+  if(UNIX AND NOT APPLE AND CMAKE_C_IMPLICIT_INCLUDE_DIRECTORIES)
+    # The Python libclang wheels used in isolated manylinux builds provide
+    # libclang itself but not a discoverable compiler resource-header tree.
+    # Give rust-bindgen the same standard C include paths CMake detected for
+    # the active compiler so headers such as stddef.h remain available.
+    cmake_path(
+      CONVERT "${CMAKE_C_IMPLICIT_INCLUDE_DIRECTORIES}"
+      TO_NATIVE_PATH_LIST _rust_c_system_include_dirs)
+    list(APPEND
+      _rust_cargo_env
+      "BSK_C_SYSTEM_INCLUDE_DIRS=${_rust_c_system_include_dirs}")
+  endif()
   if(NOT APPLE)
     _bsk_find_python_libclang(_rust_libclang_dir)
     list(APPEND _rust_cargo_env "LIBCLANG_PATH=${_rust_libclang_dir}")
