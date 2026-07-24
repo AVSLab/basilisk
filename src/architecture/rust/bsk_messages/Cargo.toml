@@ -6,13 +6,19 @@ rust-version.workspace = true
 description = "Auto-generated Rust FFI bindings for Basilisk C message types"
 license = "ISC"
 
-# This crate contains no build-time code; its src/lib.rs is generated and
-# committed, by ../gen_rust_messages.py from Basilisk's generated
-# cMsgCInterface headers. Re-run that script and commit the result after a
-# message payload changes -- see its module doc for details.
+# build.rs generates the message bindings into Cargo's OUT_DIR from Basilisk's
+# generated cMsgCInterface headers. CMake supplies those headers whenever Rust
+# module support is enabled, so message contributors do not maintain a second
+# committed interface.
 
 [dependencies]
 # BskModuleRuntime/Msg/MsgReader/MsgWriter/BskModule/BskLoggerRef are
-# hand-written, not generated -- this crate just re-exports them from
-# bsk-build (see src/lib.rs's RUNTIME_SUPPORT_CODE in ../gen_rust_messages.py).
+# hand-written, not generated. This crate re-exports them from bsk-build.
 bsk-build = { path = "../bsk_build" }
+
+[build-dependencies]
+bindgen = { version = "0.72.1", default-features = false, features = ["prettyplease", "runtime"] }
+prettyplease = "0.2.37"
+proc-macro2 = "1.0.107"
+regex = "1.12.3"
+syn = { version = "2.0.119", features = ["full"] }

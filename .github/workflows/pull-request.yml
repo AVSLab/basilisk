@@ -48,14 +48,13 @@ jobs:
         run: cargo clippy --workspace --all-targets --all-features --locked --manifest-path src/Cargo.toml -- -D warnings
       - name: Check Rust unwind policy
         run: python3 .github/scripts/check_rust_unwind_policy.py
-      - name: Check committed Rust bindings are up to date
+      - name: Check committed Rust utility bindings are up to date
         run: |
           sudo apt-get update && sudo apt-get install -y libclang-dev
           cargo install bindgen-cli --locked
-          python3 src/architecture/rust/gen_rust_messages.py
           python3 src/architecture/rust/gen_rust_utilities.py
-          if ! git diff --exit-code -- src/architecture/rust/bsk_messages/src/lib.rs src/architecture/rust/bsk_utilities/src/raw.rs; then
-            echo "::error::src/architecture/rust/bsk_messages/src/lib.rs and/or src/architecture/rust/bsk_utilities/src/raw.rs are stale (don't match what the generators under src/architecture/rust produce from the message/utility headers in this PR). Regenerate them locally and commit the result."
+          if ! git diff --exit-code -- src/architecture/rust/bsk_utilities/src/raw.rs; then
+            echo "::error::src/architecture/rust/bsk_utilities/src/raw.rs is stale (it does not match the utility headers in this PR). Regenerate it locally and commit the result."
             exit 1
           fi
       - name: Pytest

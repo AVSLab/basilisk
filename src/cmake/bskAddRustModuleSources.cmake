@@ -58,6 +58,7 @@ include_guard(GLOBAL)
 #   CARGO_FEATURES Cargo feature flags to enable (list).
 #   CARGO_ENV      Extra environment variable assignments forwarded to cargo
 #                  (e.g. "RUSTFLAGS=-C opt-level=3").
+#   CARGO_DEPENDS  Extra files that must retrigger Cargo (list).
 #
 # Cargo lock policy
 # -----------------
@@ -91,7 +92,7 @@ include_guard(GLOBAL)
 function(bsk_add_rust_module_sources)
   set(_one  TARGET HEADER MANIFEST INTERFACE CRATE_NAME CARGO_PROFILE
             INCLUDE_DIR OUT_LIB_VAR OUT_HEADER_VAR OUT_INTERFACE_VAR OUT_BUILD_TARGET_VAR)
-  set(_multi CARGO_FEATURES CARGO_ENV)
+  set(_multi CARGO_FEATURES CARGO_ENV CARGO_DEPENDS)
   cmake_parse_arguments(RUST "" "${_one}" "${_multi}" ${ARGN})
 
   # ------------------------------------------------------------------
@@ -260,6 +261,7 @@ function(bsk_add_rust_module_sources)
   if(EXISTS "${_crate_dir}/build.rs")
     list(APPEND _dep_files "${_crate_dir}/build.rs")
   endif()
+  list(APPEND _dep_files ${RUST_CARGO_DEPENDS})
   list(REMOVE_DUPLICATES _dep_files)
 
   # CMake's Makefile generators can leave GNU Make jobserver descriptors in

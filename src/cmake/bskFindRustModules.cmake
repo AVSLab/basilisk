@@ -49,6 +49,29 @@ function(_bsk_add_rust_windows_exports SWIG_TARGET MODULE_NAME)
   target_sources("${SWIG_TARGET}" PRIVATE "${_rust_export_file}")
 endfunction()
 
+# rust-bindgen uses libclang at Cargo build time. On Linux and Windows,
+# Basilisk's Python libclang package provides that native library without
+# requiring another user-installed dependency. macOS instead lets clang-sys
+# select Xcode's libclang so the compiler and SDK headers remain compatible.
+function(_bsk_find_python_libclang OUT_VAR)
+  execute_process(
+    COMMAND
+      "${Python3_EXECUTABLE}" -c
+      "from pathlib import Path; import clang; print((Path(clang.__file__).resolve().parent / 'native').as_posix())"
+    RESULT_VARIABLE _libclang_result
+    OUTPUT_VARIABLE _libclang_dir
+    ERROR_VARIABLE _libclang_error
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    ERROR_STRIP_TRAILING_WHITESPACE
+  )
+  if(NOT _libclang_result EQUAL 0 OR NOT IS_DIRECTORY "${_libclang_dir}")
+    message(FATAL_ERROR
+      "Rust message binding generation could not locate the libclang Python "
+      "package used by Basilisk.\n${_libclang_error}")
+  endif()
+  set("${OUT_VAR}" "${_libclang_dir}" PARENT_SCOPE)
+endfunction()
+
 # ---------------------------------------------------------------------------
 # find_rust_package_targets / generate_rust_package_targets
 #
@@ -121,6 +144,18 @@ function(generate_rust_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
       "make sure 'cargo' is on PATH, or configure with BUILD_RUST_MODULES=OFF.")
   endif()
 
+  set(_rust_cargo_env
+      "BSK_CMSG_DIR=${CMAKE_BINARY_DIR}/autoSource/cMsgCInterface"
+      "BSK_SRC_ROOT=${CMAKE_SOURCE_DIR}")
+  if(NOT APPLE)
+    _bsk_find_python_libclang(_rust_libclang_dir)
+    list(APPEND _rust_cargo_env "LIBCLANG_PATH=${_rust_libclang_dir}")
+  endif()
+  file(
+    GLOB _rust_message_headers
+    CONFIGURE_DEPENDS
+    "${CMAKE_BINARY_DIR}/autoSource/cMsgCInterface/*_C.h")
+
   foreach(TARGET_FILE ${TARGET_LIST})
     get_filename_component(PARENT_DIR ${TARGET_FILE} DIRECTORY)
     get_filename_component(TARGET_NAME ${PARENT_DIR} NAME)
@@ -140,6 +175,7 @@ function(generate_rust_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
         OUT_HEADER_VAR       _rust_header
         OUT_INTERFACE_VAR    _rust_interface
         OUT_BUILD_TARGET_VAR _rust_build_target
+        CARGO_ENV             ${_rust_cargo_env}
       )
 
       # Corrosion names its imported CMake library after the Cargo [lib]
@@ -156,6 +192,8 @@ function(generate_rust_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
         OUT_HEADER_VAR       _rust_header
         OUT_INTERFACE_VAR    _rust_interface
         OUT_BUILD_TARGET_VAR _rust_build_target
+        CARGO_ENV             ${_rust_cargo_env}
+        CARGO_DEPENDS         ${_rust_message_headers}
       )
     endif()
 
