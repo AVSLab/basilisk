@@ -636,8 +636,8 @@ if __name__ == "__main__":
 
     # setup conan install command arguments
     conanInstallArgs = [sys.executable, "-m", "conans.conan", "install", ".", "--build=missing"]
-    conanInstallArgs.extend(["-s", "build_type=" + str(args.buildType)])
-    conanBuildOptionsList = list()  # setup list of conan build arguments
+    # setup arguments shared by conan install and conan build
+    conanBuildOptionsList = ["-s", "build_type=" + str(args.buildType)]
     conanBuildOptionsList.extend(["-s", "compiler.cppstd=17"])
     if os.name != "nt":
         conanBuildOptionsList.extend(["-s", "compiler.cstd=gnu17"])
