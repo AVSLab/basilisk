@@ -1,0 +1,771 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Making Numba Modules &mdash; Basilisk 2.12.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=2ebb1c42" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=4ad2e773"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Module RST Documentation" href="makingModules-3.html" />
+    <link rel="prev" title="Making Python Modules" href="pyModules.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Build.html">Building from Source</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../Learn.html">Learning Basilisk</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../bskPrinciples.html">Fundamentals of Basilisk Simulations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/index.html">Integrated Example Scripts</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../makingModules.html">Basics of Writing Basilisk Modules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="makingModules-1.html">Module Design Considerations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="makingModules-2.html">Creating New Message Definitions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cModules.html">Making C Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cppModules.html">Making C++ Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyModules.html">Making Python Modules</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Making Numba Modules</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#defining-a-numba-module">Defining a Numba Module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#parameter-naming-convention">Parameter Naming Convention</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#what-is-allowed-in-updatestateimpl">What is Allowed in <code class="docutils literal notranslate"><span class="pre">UpdateStateImpl</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#re-use-and-re-initialisation">Re-use and Re-initialisation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#rigidbodykinematicsnumba"><code class="docutils literal notranslate"><span class="pre">RigidBodyKinematicsNumba</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#continuous-time-states-statefulnumbamodel">Continuous-Time States (<code class="docutils literal notranslate"><span class="pre">StatefulNumbaModel</span></code>)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#performance-notes">Performance Notes</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="makingModules-3.html">Module RST Documentation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="makingModules-4.html">Module Unit Test File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="makingDraftModule.html">Automation Script to Create a New Basilisk Module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="makingModules-5.html">Common Basilisk Support Files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="advancedTopics.html">Advanced Topics</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../Learn.html">Learning Basilisk</a></li>
+          <li class="breadcrumb-item"><a href="../makingModules.html">Basics of Writing Basilisk Modules</a></li>
+      <li class="breadcrumb-item active">Making Numba Modules</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Learn/makingModules/numbaModules.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="making-numba-modules">
+<span id="numbamodules"></span><h1>Making Numba Modules<a class="headerlink" href="#making-numba-modules" title="Link to this heading"></a></h1>
+<aside class="sidebar">
+<p class="sidebar-title">Source Code</p>
+<p>The Python code shown below can be downloaded <a class="reference download internal" download="" href="../../_downloads/d818d7213eb6e0c12a2102d043ad97eb/making-numbaModules.py"><code class="xref download docutils literal notranslate"><span class="pre">here</span></code></a>.</p>
+</aside>
+<p><code class="docutils literal notranslate"><span class="pre">NumbaModel</span></code> is a Basilisk module type that achieves near-C execution speed
+while being written entirely in Python.  It is a good fit for numerically
+intensive inner loops (attitude control laws, filter update steps, trajectory
+integrators) that are too slow as plain Python modules.</p>
+<p>Under the hood, <code class="docutils literal notranslate"><span class="pre">NumbaModel</span></code> uses <a class="reference external" href="https://numba.readthedocs.io">Numba</a>
+to JIT-compile the user-supplied <code class="docutils literal notranslate"><span class="pre">UpdateStateImpl</span></code> static method into a
+<code class="docutils literal notranslate"><span class="pre">cfunc</span></code> (a C-callable function pointer) that the Basilisk C++ scheduler
+calls directly every tick.  The compilation happens once, at <code class="docutils literal notranslate"><span class="pre">Reset</span></code> time.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Because <code class="docutils literal notranslate"><span class="pre">UpdateStateImpl</span></code> is compiled by Numba in <em>nopython</em> mode, a
+subset of Python and NumPy is available inside it.  Read the
+<a class="reference internal" href="#numbamodules-constraints"><span class="std std-ref">What is Allowed in UpdateStateImpl</span></a> section carefully before writing complex
+logic.</p>
+</div>
+<section id="defining-a-numba-module">
+<h2>Defining a Numba Module<a class="headerlink" href="#defining-a-numba-module" title="Link to this heading"></a></h2>
+<p>Subclass <code class="docutils literal notranslate"><span class="pre">NumbaModel</span></code> from <code class="docutils literal notranslate"><span class="pre">Basilisk.architecture.numbaModel</span></code> and
+implement <code class="docutils literal notranslate"><span class="pre">UpdateStateImpl</span></code> as a <code class="docutils literal notranslate"><span class="pre">&#64;staticmethod</span></code>.  All message attributes
+and memory fields must be created before <code class="docutils literal notranslate"><span class="pre">Reset</span></code>; the parameter names of
+<code class="docutils literal notranslate"><span class="pre">UpdateStateImpl</span></code> tell the framework which of those attributes to wire up.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="linenos"> 2</span><span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture.numbaModel</span><span class="w"> </span><span class="kn">import</span> <span class="n">NumbaModel</span>
+<span class="linenos"> 3</span><span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span><span class="p">,</span> <span class="n">bskLogging</span>
+<span class="linenos"> 4</span><span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span><span class="p">,</span> <span class="n">macros</span>
+<span class="linenos"> 5</span>
+<span class="linenos"> 6</span>
+<span class="linenos"> 7</span><span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">():</span>
+<span class="linenos"> 8</span><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="linenos"> 9</span><span class="sd">    Illustration of NumbaModel: two JIT-compiled modules exchanging messages.</span>
+<span class="linenos">10</span><span class="sd">    &quot;&quot;&quot;</span>
+<span class="linenos">11</span>
+<span class="linenos">12</span>    <span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+<span class="linenos">13</span>    <span class="n">proc</span>  <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="s2">&quot;proc&quot;</span><span class="p">)</span>
+<span class="linenos">14</span>    <span class="n">proc</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">&quot;task&quot;</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)))</span>
+<span class="linenos">15</span>
+<span class="linenos">16</span>    <span class="c1"># AccumulatorModel tracks elapsed time in memory; it has no input messages.</span>
+<span class="linenos">17</span>    <span class="n">prod</span> <span class="o">=</span> <span class="n">AccumulatorModel</span><span class="p">()</span>
+<span class="linenos">18</span>    <span class="n">prod</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;accumulator&quot;</span>
+<span class="linenos">19</span>    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;task&quot;</span><span class="p">,</span> <span class="n">prod</span><span class="p">)</span>
+<span class="linenos">20</span>
+<span class="linenos">21</span>    <span class="c1"># FilterModel reads from AccumulatorModel and scales by a configurable gain.</span>
+<span class="linenos">22</span>    <span class="n">filt</span> <span class="o">=</span> <span class="n">FilterModel</span><span class="p">()</span>
+<span class="linenos">23</span>    <span class="n">filt</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;filter&quot;</span>
+<span class="linenos">24</span>    <span class="n">filt</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">gain</span> <span class="o">=</span> <span class="mf">2.0</span>                  <span class="c1"># override default before Reset</span>
+<span class="linenos">25</span>    <span class="n">filt</span><span class="o">.</span><span class="n">dataInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">prod</span><span class="o">.</span><span class="n">dataOutMsg</span><span class="p">)</span>
+<span class="linenos">26</span>    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;task&quot;</span><span class="p">,</span> <span class="n">filt</span><span class="p">)</span>
+<span class="linenos">27</span>
+<span class="linenos">28</span>    <span class="n">recorder</span> <span class="o">=</span> <span class="n">filt</span><span class="o">.</span><span class="n">dataOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+<span class="linenos">29</span>    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;task&quot;</span><span class="p">,</span> <span class="n">recorder</span><span class="p">)</span>
+<span class="linenos">30</span>
+<span class="linenos">31</span>    <span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+<span class="linenos">32</span>    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">3.0</span><span class="p">))</span>  <span class="c1"># 4 ticks: t = 0, 1, 2, 3 s</span>
+<span class="linenos">33</span>    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+<span class="linenos">34</span>
+<span class="linenos">35</span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ticks recorded by accumulator:&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">prod</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">ticks</span><span class="p">))</span>
+<span class="linenos">36</span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;filtered dataVector at t=3s:  &quot;</span><span class="p">,</span> <span class="n">recorder</span><span class="o">.</span><span class="n">dataVector</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+<span class="linenos">37</span>
+<span class="linenos">38</span>
+<span class="linenos">39</span><span class="c1"># =============================================================================</span>
+<span class="linenos">40</span><span class="c1"># Module 1: AccumulatorModel</span>
+<span class="linenos">41</span><span class="c1">#</span>
+<span class="linenos">42</span><span class="c1"># Demonstrates: memory namespace, CurrentSimNanos, no readers.</span>
+<span class="linenos">43</span><span class="c1"># =============================================================================</span>
+<span class="linenos">44</span><span class="k">class</span><span class="w"> </span><span class="nc">AccumulatorModel</span><span class="p">(</span><span class="n">NumbaModel</span><span class="p">):</span>
+<span class="linenos">45</span><span class="w">    </span><span class="sd">&quot;&quot;&quot;Outputs the cumulative simulation time (seconds) and a tick counter.&quot;&quot;&quot;</span>
+<span class="linenos">46</span>
+<span class="linenos">47</span>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="linenos">48</span><span class="w">        </span><span class="sd">&quot;&quot;&quot;Declare the output message and persistent accumulator state.&quot;&quot;&quot;</span>
+<span class="linenos">49</span>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+<span class="linenos">50</span>        <span class="bp">self</span><span class="o">.</span><span class="n">dataOutMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CModuleTemplateMsg</span><span class="p">()</span>
+<span class="linenos">51</span>
+<span class="linenos">52</span>        <span class="c1"># Fields declared here become a C-level structured buffer after Reset.</span>
+<span class="linenos">53</span>        <span class="c1"># The dtype is inferred from the value: 0.0 -&gt; float64, 0 -&gt; int64,</span>
+<span class="linenos">54</span>        <span class="c1"># np.int32(0) -&gt; int32, np.array(...) -&gt; array field.</span>
+<span class="linenos">55</span>        <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">total_s</span> <span class="o">=</span> <span class="mf">0.0</span>
+<span class="linenos">56</span>        <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">ticks</span>   <span class="o">=</span> <span class="mi">0</span>
+<span class="linenos">57</span>
+<span class="linenos">58</span>    <span class="nd">@staticmethod</span>
+<span class="linenos">59</span>    <span class="k">def</span><span class="w"> </span><span class="nf">UpdateStateImpl</span><span class="p">(</span><span class="n">dataOutMsgPayload</span><span class="p">,</span> <span class="n">CurrentSimNanos</span><span class="p">,</span> <span class="n">memory</span><span class="p">):</span>
+<span class="linenos">60</span><span class="w">        </span><span class="sd">&quot;&quot;&quot;Accumulate elapsed time and publish the running totals.&quot;&quot;&quot;</span>
+<span class="linenos">61</span>        <span class="c1"># Everything in this method is compiled by Numba in nopython mode.</span>
+<span class="linenos">62</span>        <span class="c1"># See the &quot;What is allowed&quot; section in the documentation.</span>
+<span class="linenos">63</span>        <span class="n">memory</span><span class="o">.</span><span class="n">total_s</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="n">CurrentSimNanos</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1e-9</span>
+<span class="linenos">64</span>        <span class="n">memory</span><span class="o">.</span><span class="n">ticks</span>   <span class="o">+=</span> <span class="mi">1</span>
+<span class="linenos">65</span>        <span class="n">dataOutMsgPayload</span><span class="o">.</span><span class="n">dataVector</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">memory</span><span class="o">.</span><span class="n">total_s</span>
+<span class="linenos">66</span>        <span class="n">dataOutMsgPayload</span><span class="o">.</span><span class="n">dataVector</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">memory</span><span class="o">.</span><span class="n">ticks</span><span class="p">)</span>
+<span class="linenos">67</span>
+<span class="linenos">68</span>
+<span class="linenos">69</span><span class="c1"># =============================================================================</span>
+<span class="linenos">70</span><span class="c1"># Module 2: FilterModel</span>
+<span class="linenos">71</span><span class="c1">#</span>
+<span class="linenos">72</span><span class="c1"># Demonstrates: scalar reader with IsLinked guard, bskLogger, memory gain.</span>
+<span class="linenos">73</span><span class="c1"># =============================================================================</span>
+<span class="linenos">74</span><span class="k">class</span><span class="w"> </span><span class="nc">FilterModel</span><span class="p">(</span><span class="n">NumbaModel</span><span class="p">):</span>
+<span class="linenos">75</span><span class="w">    </span><span class="sd">&quot;&quot;&quot;Scales each element of the input dataVector by a configurable gain.&quot;&quot;&quot;</span>
+<span class="linenos">76</span>
+<span class="linenos">77</span>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="linenos">78</span><span class="w">        </span><span class="sd">&quot;&quot;&quot;Set up one reader, one writer, and the configurable gain term.&quot;&quot;&quot;</span>
+<span class="linenos">79</span>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+<span class="linenos">80</span>        <span class="bp">self</span><span class="o">.</span><span class="n">dataInMsg</span>  <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CModuleTemplateMsgReader</span><span class="p">()</span>
+<span class="linenos">81</span>        <span class="bp">self</span><span class="o">.</span><span class="n">dataOutMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CModuleTemplateMsg</span><span class="p">()</span>
+<span class="linenos">82</span>        <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">gain</span> <span class="o">=</span> <span class="mf">1.0</span>               <span class="c1"># default; caller may override</span>
+<span class="linenos">83</span>
+<span class="linenos">84</span>    <span class="nd">@staticmethod</span>
+<span class="linenos">85</span>    <span class="k">def</span><span class="w"> </span><span class="nf">UpdateStateImpl</span><span class="p">(</span><span class="n">dataInMsgPayload</span><span class="p">,</span> <span class="n">dataInMsgIsLinked</span><span class="p">,</span>
+<span class="linenos">86</span>                        <span class="n">dataOutMsgPayload</span><span class="p">,</span> <span class="n">bskLogger</span><span class="p">,</span> <span class="n">memory</span><span class="p">):</span>
+<span class="linenos">87</span><span class="w">        </span><span class="sd">&quot;&quot;&quot;Scale the input vector when linked and warn otherwise.&quot;&quot;&quot;</span>
+<span class="linenos">88</span>        <span class="k">if</span> <span class="ow">not</span> <span class="n">dataInMsgIsLinked</span><span class="p">:</span>
+<span class="linenos">89</span>            <span class="n">bskLogger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;FilterModel: input not linked&quot;</span><span class="p">)</span>
+<span class="linenos">90</span>            <span class="k">return</span>
+<span class="linenos">91</span>        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+<span class="linenos">92</span>            <span class="n">dataOutMsgPayload</span><span class="o">.</span><span class="n">dataVector</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">dataInMsgPayload</span><span class="o">.</span><span class="n">dataVector</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">memory</span><span class="o">.</span><span class="n">gain</span>
+<span class="linenos">93</span>
+<span class="linenos">94</span>
+<span class="linenos">95</span><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<span class="linenos">96</span>    <span class="n">run</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="parameter-naming-convention">
+<h2>Parameter Naming Convention<a class="headerlink" href="#parameter-naming-convention" title="Link to this heading"></a></h2>
+<p>Unlike regular Python or C++ modules, <code class="docutils literal notranslate"><span class="pre">NumbaModel</span></code> does <strong>not</strong> require you
+to write a <code class="docutils literal notranslate"><span class="pre">Reset</span></code> or <code class="docutils literal notranslate"><span class="pre">UpdateState</span></code> method.  Instead, the framework
+introspects the parameter names of <code class="docutils literal notranslate"><span class="pre">UpdateStateImpl</span></code> at <code class="docutils literal notranslate"><span class="pre">Reset</span></code> time and
+automatically wires each one to the correct buffer.</p>
+<p>You <strong>may</strong> override <code class="docutils literal notranslate"><span class="pre">Reset</span></code> (e.g. to perform additional Python-level
+setup), but you must call <code class="docutils literal notranslate"><span class="pre">super().Reset(CurrentSimNanos)</span></code> so that the
+cfunc is compiled and registered:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">Reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">CurrentSimNanos</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="c1"># ... additional setup ...</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="n">CurrentSimNanos</span><span class="p">)</span>   <span class="c1"># must be called</span>
+</pre></div>
+</div>
+<p>Do <strong>not</strong> override <code class="docutils literal notranslate"><span class="pre">UpdateState</span></code>.  The C++ scheduler calls the
+JIT-compiled cfunc registered by <code class="docutils literal notranslate"><span class="pre">NumbaModel.Reset</span></code> directly.</p>
+<p>The recognised <code class="docutils literal notranslate"><span class="pre">UpdateStateImpl</span></code> parameter names are:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 35.0%" />
+<col style="width: 15.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter name pattern</p></th>
+<th class="head"><p>Type inside <code class="docutils literal notranslate"><span class="pre">UpdateStateImpl</span></code></p></th>
+<th class="head"><p>What it provides</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">&lt;name&gt;OutMsgPayload</span></code></p></td>
+<td><p>Numba Record (struct-like)</p></td>
+<td><p>Writable payload of <code class="docutils literal notranslate"><span class="pre">self.&lt;name&gt;OutMsg</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">&lt;name&gt;InMsgPayload</span></code></p></td>
+<td><p>Numba Record or array of Records</p></td>
+<td><p>Read-only snapshot of <code class="docutils literal notranslate"><span class="pre">self.&lt;name&gt;InMsg</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">&lt;name&gt;InMsgIsLinked</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bool</span></code> (scalar reader), <code class="docutils literal notranslate"><span class="pre">uint8[:]</span></code> (list), or Record (dict)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code>/non-zero when the corresponding reader is subscribed</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">CurrentSimNanos</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">uint64</span></code></p></td>
+<td><p>Current simulation time in nanoseconds</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">moduleID</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">int64</span></code></p></td>
+<td><p>This module’s unique integer ID</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">memory</span></code></p></td>
+<td><p>Numba Record</p></td>
+<td><p>Persistent state fields (see <a class="reference internal" href="#numbamodules-memory"><span class="std std-ref">Persistent Memory</span></a>)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bskLogger</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">BskLoggerProxy</span></code></p></td>
+<td><p>Logging proxy (see <a class="reference internal" href="#numbamodules-logging"><span class="std std-ref">Logging with bskLogger</span></a>)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">rng</span></code></p></td>
+<td><p>xoshiro256++ PRNG</p></td>
+<td><p>Per-module PRNG seeded from <code class="docutils literal notranslate"><span class="pre">self.RNGSeed</span></code> at Reset (see <a class="reference internal" href="#numbamodules-rng"><span class="std std-ref">Per-module Random Number Generator (rng)</span></a>)</p></td>
+</tr>
+</tbody>
+</table>
+<p>Any parameter name not matching one of the patterns above raises an
+<code class="docutils literal notranslate"><span class="pre">AttributeError</span></code> at <code class="docutils literal notranslate"><span class="pre">Reset</span></code> time with a descriptive message.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Parameter order inside <code class="docutils literal notranslate"><span class="pre">UpdateStateImpl</span></code> does <strong>not</strong> matter; the
+framework matches by name, not position.</p>
+</div>
+<section id="output-messages">
+<h3>Output Messages<a class="headerlink" href="#output-messages" title="Link to this heading"></a></h3>
+<p>Declare output messages as <code class="docutils literal notranslate"><span class="pre">messaging.&lt;Type&gt;Msg()</span></code> attributes in <code class="docutils literal notranslate"><span class="pre">__init__</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">dataOutMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CModuleTemplateMsg</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Use the suffix <code class="docutils literal notranslate"><span class="pre">OutMsgPayload</span></code> in <code class="docutils literal notranslate"><span class="pre">UpdateStateImpl</span></code> to receive a writable
+view of the payload:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@staticmethod</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">UpdateStateImpl</span><span class="p">(</span><span class="n">dataOutMsgPayload</span><span class="p">,</span> <span class="o">...</span><span class="p">):</span>
+    <span class="n">dataOutMsgPayload</span><span class="o">.</span><span class="n">dataVector</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">42.0</span>
+</pre></div>
+</div>
+<p>The Basilisk header timestamp is written automatically after <code class="docutils literal notranslate"><span class="pre">UpdateStateImpl</span></code>
+returns.  You do not need to call <code class="docutils literal notranslate"><span class="pre">.write()</span></code>.</p>
+<p>For <strong>multiple</strong> output messages, assign a list or dict to the attribute:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">dataOutMsg</span> <span class="o">=</span> <span class="p">[</span><span class="n">messaging</span><span class="o">.</span><span class="n">CModuleTemplateMsg</span><span class="p">(),</span>
+                   <span class="n">messaging</span><span class="o">.</span><span class="n">CModuleTemplateMsg</span><span class="p">()]</span>
+</pre></div>
+</div>
+<p>Inside <code class="docutils literal notranslate"><span class="pre">UpdateStateImpl</span></code>, access them by integer index:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dataOutMsgPayload</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">dataVector</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+<span class="n">dataOutMsgPayload</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">dataVector</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span> <span class="o">*</span> <span class="mf">2.0</span>
+</pre></div>
+</div>
+<p>Or by string key when using a dict:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">dataOutMsg</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;pos&#39;</span><span class="p">:</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CModuleTemplateMsg</span><span class="p">(),</span>
+                   <span class="s1">&#39;neg&#39;</span><span class="p">:</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CModuleTemplateMsg</span><span class="p">()}</span>
+
+<span class="c1"># inside UpdateStateImpl:</span>
+<span class="n">dataOutMsgPayload</span><span class="p">[</span><span class="s1">&#39;pos&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dataVector</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span>  <span class="n">v</span>
+<span class="n">dataOutMsgPayload</span><span class="p">[</span><span class="s1">&#39;neg&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dataVector</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">v</span>
+</pre></div>
+</div>
+</section>
+<section id="input-messages-readers">
+<h3>Input Messages (Readers)<a class="headerlink" href="#input-messages-readers" title="Link to this heading"></a></h3>
+<p>Declare readers as <code class="docutils literal notranslate"><span class="pre">messaging.&lt;Type&gt;MsgReader()</span></code> attributes:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">dataInMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CModuleTemplateMsgReader</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Subscribe before <code class="docutils literal notranslate"><span class="pre">InitializeSimulation</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mod</span><span class="o">.</span><span class="n">dataInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">src</span><span class="o">.</span><span class="n">dataOutMsg</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The payload is refreshed from the source every tick by the C++ scheduler.
+Access it in <code class="docutils literal notranslate"><span class="pre">UpdateStateImpl</span></code> via the <code class="docutils literal notranslate"><span class="pre">InMsgPayload</span></code> parameter.</p>
+<p>If a reader <strong>may</strong> be unlinked, declare the corresponding <code class="docutils literal notranslate"><span class="pre">IsLinked</span></code>
+parameter and guard reads behind it:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@staticmethod</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">UpdateStateImpl</span><span class="p">(</span><span class="n">dataInMsgPayload</span><span class="p">,</span> <span class="n">dataInMsgIsLinked</span><span class="p">,</span> <span class="n">dataOutMsgPayload</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">dataInMsgIsLinked</span><span class="p">:</span>
+        <span class="n">dataOutMsgPayload</span><span class="o">.</span><span class="n">dataVector</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">dataInMsgPayload</span><span class="o">.</span><span class="n">dataVector</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>If <code class="docutils literal notranslate"><span class="pre">&lt;name&gt;InMsgPayload</span></code> is declared <em>without</em> a corresponding
+<code class="docutils literal notranslate"><span class="pre">&lt;name&gt;InMsgIsLinked</span></code>, <code class="docutils literal notranslate"><span class="pre">Reset</span></code> raises <code class="docutils literal notranslate"><span class="pre">RuntimeError</span></code> when the reader
+is not subscribed. This is an intentional early failure rather than a silent
+wrong-data scenario.</p>
+<p>List and dict attributes work the same way as for output messages.  For a
+<strong>list</strong> reader, <code class="docutils literal notranslate"><span class="pre">IsLinked</span></code> is a <code class="docutils literal notranslate"><span class="pre">uint8[:]</span></code> array indexed by position
+(<code class="docutils literal notranslate"><span class="pre">dataInMsgIsLinked[0]</span></code>, <code class="docutils literal notranslate"><span class="pre">dataInMsgIsLinked[1]</span></code>, …).  For a <strong>dict</strong>
+reader, <code class="docutils literal notranslate"><span class="pre">IsLinked</span></code> is a Record keyed by the same names as the payload, so
+both can be accessed identically:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">dataInMsgIsLinked</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">]:</span>
+    <span class="n">val</span> <span class="o">=</span> <span class="n">dataInMsgPayload</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dataVector</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+</div>
+</section>
+<section id="persistent-memory">
+<span id="numbamodules-memory"></span><h3>Persistent Memory<a class="headerlink" href="#persistent-memory" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">self.memory</span></code> is a namespace that holds persistent module state across ticks.
+Fields are defined as attributes in <code class="docutils literal notranslate"><span class="pre">__init__</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">step</span>   <span class="o">=</span> <span class="mi">0</span>                 <span class="c1"># scalar integer (→ int64)</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">gain</span>   <span class="o">=</span> <span class="mf">1.5</span>              <span class="c1"># scalar float   (→ float64)</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">bias</span>   <span class="o">=</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">]</span>  <span class="c1"># 1-D array (converted to numpy)</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>         <span class="c1"># 2-D array</span>
+</pre></div>
+</div>
+<p>At <code class="docutils literal notranslate"><span class="pre">Reset</span></code> time the fields are packed into a single structured numpy array
+whose pointer is handed to the C++ scheduler.  After <code class="docutils literal notranslate"><span class="pre">Reset</span></code>, the fields are
+accessible from Python via the same <code class="docutils literal notranslate"><span class="pre">self.memory.&lt;name&gt;</span></code> syntax and any
+assignment is forwarded directly to the underlying C buffer - no re-compilation
+is needed.</p>
+<p>Rules:</p>
+<ul class="simple">
+<li><p>All fields must be defined <strong>before</strong> <code class="docutils literal notranslate"><span class="pre">Reset</span></code> is called (i.e., in
+<code class="docutils literal notranslate"><span class="pre">__init__</span></code> or before <code class="docutils literal notranslate"><span class="pre">InitializeSimulation</span></code>).</p></li>
+<li><p>New fields cannot be added after <code class="docutils literal notranslate"><span class="pre">Reset</span></code>.</p></li>
+<li><p>The numpy dtype of each field is inferred from the value assigned in
+<code class="docutils literal notranslate"><span class="pre">__init__</span></code>: a plain <code class="docutils literal notranslate"><span class="pre">0</span></code> becomes <code class="docutils literal notranslate"><span class="pre">int64</span></code>, a plain <code class="docutils literal notranslate"><span class="pre">0.0</span></code> becomes
+<code class="docutils literal notranslate"><span class="pre">float64</span></code>.  Use an explicit numpy type (e.g. <code class="docutils literal notranslate"><span class="pre">np.int32(0)</span></code>) only when
+a specific width is required.</p></li>
+<li><p>Inside <code class="docutils literal notranslate"><span class="pre">UpdateStateImpl</span></code>, <code class="docutils literal notranslate"><span class="pre">memory</span></code> behaves like a Numba <code class="docutils literal notranslate"><span class="pre">Record</span></code>.
+Array fields are accessed with standard bracket indexing:
+<code class="docutils literal notranslate"><span class="pre">memory.bias[1]</span></code>, <code class="docutils literal notranslate"><span class="pre">memory.matrix[i,</span> <span class="pre">j]</span></code>.</p></li>
+</ul>
+</section>
+<section id="logging-with-bsklogger">
+<span id="numbamodules-logging"></span><h3>Logging with <code class="docutils literal notranslate"><span class="pre">bskLogger</span></code><a class="headerlink" href="#logging-with-bsklogger" title="Link to this heading"></a></h3>
+<p>Add <code class="docutils literal notranslate"><span class="pre">bskLogger</span></code> as a parameter to receive a Numba-compatible logging proxy:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@staticmethod</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">UpdateStateImpl</span><span class="p">(</span><span class="n">dataOutMsgPayload</span><span class="p">,</span> <span class="n">bskLogger</span><span class="p">,</span> <span class="n">memory</span><span class="p">):</span>
+    <span class="n">bskLogger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;tick&quot;</span><span class="p">)</span>
+    <span class="n">bskLogger</span><span class="o">.</span><span class="n">bskLog1</span><span class="p">(</span><span class="n">bskLogging</span><span class="o">.</span><span class="n">WARNING</span><span class="p">,</span> <span class="s2">&quot;step:&quot;</span><span class="p">,</span> <span class="n">memory</span><span class="o">.</span><span class="n">step</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The proxy respects the log level set on <code class="docutils literal notranslate"><span class="pre">self.bskLogger</span></code> at <code class="docutils literal notranslate"><span class="pre">Reset</span></code> time:
+messages below the current threshold are suppressed.  Output goes to stdout via
+<code class="docutils literal notranslate"><span class="pre">print</span></code>; ANSI colour codes match the rest of Basilisk’s log output.</p>
+<p>Available methods:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 50.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Method</p></th>
+<th class="head"><p>Prints</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">debug(msg)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[TAG]</span> <span class="pre">msg</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">info(msg)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[TAG]</span> <span class="pre">msg</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">warning(msg)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[TAG]</span> <span class="pre">msg</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">error(msg)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[TAG]</span> <span class="pre">msg</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bskLog(level,</span> <span class="pre">msg)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[TAG]</span> <span class="pre">msg</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">bskLog1(level,</span> <span class="pre">msg,</span> <span class="pre">v0)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[TAG]</span> <span class="pre">msg</span> <span class="pre">v0</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bskLog2(level,</span> <span class="pre">msg,</span> <span class="pre">v0,</span> <span class="pre">v1)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[TAG]</span> <span class="pre">msg</span> <span class="pre">v0</span> <span class="pre">v1</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">bskLog3(level,</span> <span class="pre">msg,</span> <span class="pre">v0,</span> <span class="pre">v1,</span> <span class="pre">v2)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[TAG]</span> <span class="pre">msg</span> <span class="pre">v0</span> <span class="pre">v1</span> <span class="pre">v2</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<p>The <code class="docutils literal notranslate"><span class="pre">debug(msg)</span></code>, <code class="docutils literal notranslate"><span class="pre">info(msg)</span></code>, <code class="docutils literal notranslate"><span class="pre">warning(msg)</span></code>, and <code class="docutils literal notranslate"><span class="pre">error(msg)</span></code>
+convenience methods accept one complete message string.  Use <code class="docutils literal notranslate"><span class="pre">bskLog1</span></code>,
+<code class="docutils literal notranslate"><span class="pre">bskLog2</span></code>, or <code class="docutils literal notranslate"><span class="pre">bskLog3</span></code> when a Numba module needs to log numeric values
+along with the message.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In Numba modules, <code class="docutils literal notranslate"><span class="pre">bskLogger.error(msg)</span></code> prints at the <code class="docutils literal notranslate"><span class="pre">ERROR</span></code> level but
+does not raise <code class="docutils literal notranslate"><span class="pre">BasiliskError</span></code> or stop simulation execution.  This differs
+from Python <code class="docutils literal notranslate"><span class="pre">SysModel</span></code> modules, where <code class="docutils literal notranslate"><span class="pre">self.bskLogger.error(msg)</span></code> is
+equivalent to <code class="docutils literal notranslate"><span class="pre">bskError()</span></code> and raises immediately.</p>
+</div>
+<p>Short level aliases (<code class="docutils literal notranslate"><span class="pre">bskLogging.DEBUG</span></code>, <code class="docutils literal notranslate"><span class="pre">bskLogging.INFO</span></code>,
+<code class="docutils literal notranslate"><span class="pre">bskLogging.WARNING</span></code>, and <code class="docutils literal notranslate"><span class="pre">bskLogging.ERROR</span></code>) work inside
+<code class="docutils literal notranslate"><span class="pre">UpdateStateImpl</span></code> because Numba resolves module-level integer attributes at
+compile time.  The original <code class="docutils literal notranslate"><span class="pre">BSK_</span></code>-prefixed constants remain supported.</p>
+<p><code class="docutils literal notranslate"><span class="pre">msg</span></code> must be a <strong>string literal</strong> - variables of string type are not
+supported in nopython mode.  Values <code class="docutils literal notranslate"><span class="pre">v0</span></code>–<code class="docutils literal notranslate"><span class="pre">v2</span></code> can be any numeric type
+that Numba supports (<code class="docutils literal notranslate"><span class="pre">int32</span></code>, <code class="docutils literal notranslate"><span class="pre">float64</span></code>, etc.).</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Plain <code class="docutils literal notranslate"><span class="pre">print(&quot;label:&quot;,</span> <span class="pre">value)</span></code> also works in <code class="docutils literal notranslate"><span class="pre">UpdateStateImpl</span></code> with no
+additional setup.</p>
+</div>
+</section>
+<section id="per-module-random-number-generator-rng">
+<span id="numbamodules-rng"></span><h3>Per-module Random Number Generator (<code class="docutils literal notranslate"><span class="pre">rng</span></code>)<a class="headerlink" href="#per-module-random-number-generator-rng" title="Link to this heading"></a></h3>
+<p>Add <code class="docutils literal notranslate"><span class="pre">rng</span></code> as a parameter to receive a per-module xoshiro256++ PRNG that is
+private to this module instance and seeded from <code class="docutils literal notranslate"><span class="pre">self.RNGSeed</span></code> at <code class="docutils literal notranslate"><span class="pre">Reset</span></code>
+time:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@staticmethod</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">UpdateStateImpl</span><span class="p">(</span><span class="n">dataOutMsgPayload</span><span class="p">,</span> <span class="n">rng</span><span class="p">,</span> <span class="n">memory</span><span class="p">):</span>
+    <span class="n">noise</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">standard_normal</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>     <span class="c1"># independent per-module stream</span>
+    <span class="n">dataOutMsgPayload</span><span class="o">.</span><span class="n">dataVector</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">memory</span><span class="o">.</span><span class="n">signal</span> <span class="o">+</span> <span class="n">noise</span>
+</pre></div>
+</div>
+<p>The generator state persists across ticks, so each call advances the sequence
+deterministically.  <code class="docutils literal notranslate"><span class="pre">self.RNGSeed</span></code> is inherited from <code class="docutils literal notranslate"><span class="pre">SysModel</span></code> and
+defaults to <code class="docutils literal notranslate"><span class="pre">0x1badcad1</span></code>; set it before <code class="docutils literal notranslate"><span class="pre">InitializeSimulation()</span></code> for
+reproducible Monte Carlo runs:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sNav</span><span class="o">.</span><span class="n">RNGSeed</span> <span class="o">=</span> <span class="mi">12345</span>
+</pre></div>
+</div>
+<p>Key properties:</p>
+<ul class="simple">
+<li><p><strong>Per-module isolation</strong>: each instance owns an independent generator — two
+modules with the same seed produce the same sequence independently, and two
+modules with different seeds never interfere.</p></li>
+<li><p><strong>Re-seeded on Reset</strong>: calling <code class="docutils literal notranslate"><span class="pre">Reset</span></code> again seeds a fresh generator from
+the current <code class="docutils literal notranslate"><span class="pre">self.RNGSeed</span></code>, resetting the sequence.</p></li>
+</ul>
+<p>Available methods:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 40.0%" />
+<col style="width: 60.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Method</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">standard_normal(n)</span></code></p></td>
+<td><p>Return <code class="docutils literal notranslate"><span class="pre">n</span></code> independent standard-normal samples as <code class="docutils literal notranslate"><span class="pre">float64[n]</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">random()</span></code></p></td>
+<td><p>Uniform <code class="docutils literal notranslate"><span class="pre">float64</span></code> in <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">integers(low,</span> <span class="pre">high)</span></code></p></td>
+<td><p>Uniform <code class="docutils literal notranslate"><span class="pre">int64</span></code> in <code class="docutils literal notranslate"><span class="pre">[low,</span> <span class="pre">high)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">uniform(low,</span> <span class="pre">high)</span></code></p></td>
+<td><p>Uniform <code class="docutils literal notranslate"><span class="pre">float64</span></code> in <code class="docutils literal notranslate"><span class="pre">[low,</span> <span class="pre">high)</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="what-is-allowed-in-updatestateimpl">
+<span id="numbamodules-constraints"></span><h2>What is Allowed in <code class="docutils literal notranslate"><span class="pre">UpdateStateImpl</span></code><a class="headerlink" href="#what-is-allowed-in-updatestateimpl" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">UpdateStateImpl</span></code> is compiled by Numba in <strong>nopython mode</strong>.  The following
+is a summary of what is and is not supported.</p>
+<section id="allowed">
+<h3>Allowed<a class="headerlink" href="#allowed" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>NumPy array operations</strong> on pre-allocated arrays (element-wise arithmetic,
+<code class="docutils literal notranslate"><span class="pre">[i]</span></code> / <code class="docutils literal notranslate"><span class="pre">[i,</span> <span class="pre">j]</span></code> indexing, <code class="docutils literal notranslate"><span class="pre">array.copy()</span></code>, <code class="docutils literal notranslate"><span class="pre">np.zeros(n)</span></code>,
+<code class="docutils literal notranslate"><span class="pre">np.dot</span></code>, reductions, etc.).  See the
+<a class="reference external" href="https://numba.readthedocs.io/en/stable/reference/numpysupported.html">Numba NumPy support list</a>
+for the full set.</p></li>
+<li><p><strong>Explicit numpy scalars</strong> such as <code class="docutils literal notranslate"><span class="pre">np.int32(1)</span></code>, <code class="docutils literal notranslate"><span class="pre">np.float64(3.14)</span></code>.
+Use these when a specific width is required (e.g. to match a memory field
+declared as <code class="docutils literal notranslate"><span class="pre">np.int32</span></code>); otherwise plain literals are fine.</p></li>
+<li><p><strong>Control flow</strong>: <code class="docutils literal notranslate"><span class="pre">if</span></code>/<code class="docutils literal notranslate"><span class="pre">elif</span></code>/<code class="docutils literal notranslate"><span class="pre">else</span></code>, <code class="docutils literal notranslate"><span class="pre">for</span></code> over <code class="docutils literal notranslate"><span class="pre">range(n)</span></code>,
+<code class="docutils literal notranslate"><span class="pre">while</span></code>, <code class="docutils literal notranslate"><span class="pre">break</span></code>, <code class="docutils literal notranslate"><span class="pre">continue</span></code>, <code class="docutils literal notranslate"><span class="pre">return</span></code>.</p></li>
+<li><p><strong>Math functions</strong>: <code class="docutils literal notranslate"><span class="pre">math.sqrt</span></code>, <code class="docutils literal notranslate"><span class="pre">math.sin</span></code>, etc. (import <code class="docutils literal notranslate"><span class="pre">math</span></code>
+at module level, use inside the function normally).</p></li>
+<li><p><strong>Calling other</strong> <code class="docutils literal notranslate"><span class="pre">&#64;nb.njit</span></code> <strong>functions</strong> - factor complex logic into
+helper functions decorated with <code class="docutils literal notranslate"><span class="pre">&#64;numba.njit</span></code>.</p></li>
+<li><p><strong>``print(label, value, …)``</strong> - variadic print to stdout works and is
+the simplest way to emit debug output.</p></li>
+<li><p><strong>``bskLogger``</strong> methods as described in <a class="reference internal" href="#numbamodules-logging"><span class="std std-ref">Logging with bskLogger</span></a>.</p></li>
+<li><p><strong>Reading from</strong> <code class="docutils literal notranslate"><span class="pre">memory</span></code> <strong>Record fields</strong> and <strong>writing to them</strong>.</p></li>
+<li><p><strong>Reading from</strong> <code class="docutils literal notranslate"><span class="pre">InMsgPayload</span></code> <strong>Record fields</strong> and <strong>writing to</strong>
+<code class="docutils literal notranslate"><span class="pre">OutMsgPayload</span></code> <strong>Record fields</strong>.</p></li>
+</ul>
+</section>
+<section id="not-allowed">
+<h3>Not Allowed<a class="headerlink" href="#not-allowed" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>Python objects</strong> of any kind: no lists, dicts, sets, tuples, classes,
+generators, or iterators.  Use numpy arrays for all collections.</p></li>
+<li><p><strong>String variables</strong> - string <em>literals</em> in <code class="docutils literal notranslate"><span class="pre">print</span></code> and <code class="docutils literal notranslate"><span class="pre">bskLogger</span></code> calls
+work, but you cannot assign a string to a variable or pass one as a
+function argument (other than via the <code class="docutils literal notranslate"><span class="pre">bskLog*</span></code> API).</p></li>
+<li><p><strong>f-strings and %-formatting</strong> - these require Python object creation.
+Use <code class="docutils literal notranslate"><span class="pre">bskLog1</span></code>/<code class="docutils literal notranslate"><span class="pre">bskLog2</span></code> to attach numeric values to log messages.</p></li>
+<li><p><strong>Exceptions</strong> - <code class="docutils literal notranslate"><span class="pre">raise</span></code>, <code class="docutils literal notranslate"><span class="pre">try</span></code>/<code class="docutils literal notranslate"><span class="pre">except</span></code>/<code class="docutils literal notranslate"><span class="pre">finally</span></code> are not
+supported.  Use conditional logic and <code class="docutils literal notranslate"><span class="pre">bskLogger</span></code> to handle error
+conditions.</p></li>
+<li><p><strong>Calling Python functions</strong> that are not themselves <code class="docutils literal notranslate"><span class="pre">&#64;nb.njit</span></code>-compiled.
+Standard library functions (<code class="docutils literal notranslate"><span class="pre">os</span></code>, <code class="docutils literal notranslate"><span class="pre">sys</span></code>, etc.) are unavailable.</p></li>
+<li><p><strong>Dynamic memory allocation</strong> with arbitrary Python types.  NumPy array
+creation with a <em>constant</em> size (<code class="docutils literal notranslate"><span class="pre">np.zeros(3)</span></code>) is fine; allocation
+whose size depends on a runtime variable may require care.</p></li>
+<li><p><strong>Global mutable state</strong> - do not capture mutable Python objects in the
+closure of <code class="docutils literal notranslate"><span class="pre">UpdateStateImpl</span></code>.  Use <code class="docutils literal notranslate"><span class="pre">memory</span></code> for persistent state.</p></li>
+<li><p><strong>Messaging API</strong> - do not call <code class="docutils literal notranslate"><span class="pre">.write()</span></code>, <code class="docutils literal notranslate"><span class="pre">.read()</span></code>, or
+<code class="docutils literal notranslate"><span class="pre">.subscribeTo()</span></code> inside <code class="docutils literal notranslate"><span class="pre">UpdateStateImpl</span></code>.  Payload structs are
+passed as already-refreshed Records; writing back through them is
+sufficient.</p></li>
+</ul>
+</section>
+</section>
+<section id="re-use-and-re-initialisation">
+<h2>Re-use and Re-initialisation<a class="headerlink" href="#re-use-and-re-initialisation" title="Link to this heading"></a></h2>
+<p><strong>Re-wiring messages mid-simulation</strong> (calling <code class="docutils literal notranslate"><span class="pre">subscribeTo</span></code> without a
+<code class="docutils literal notranslate"><span class="pre">Reset</span></code>) is fully supported.  The C++ scheduler refreshes the payload
+pointer dynamically every tick via registered reader slots.</p>
+<p><strong>Calling ``Reset`` a second time</strong> re-compiles the cfunc and re-initialises
+<code class="docutils literal notranslate"><span class="pre">memory</span></code> from the current buffer state.  The buffer is always the source of
+truth: Python-side writes (<code class="docutils literal notranslate"><span class="pre">self.memory.gain</span> <span class="pre">=</span> <span class="pre">2.0</span></code>) and cfunc-internal
+writes (<code class="docutils literal notranslate"><span class="pre">memory.step</span> <span class="pre">+=</span> <span class="pre">1</span></code> inside <code class="docutils literal notranslate"><span class="pre">UpdateStateImpl</span></code>) are treated
+identically; both persist through a subsequent Reset.  The next run always
+continues from whatever value was last written, by any means.</p>
+</section>
+<section id="rigidbodykinematicsnumba">
+<span id="numbamodules-rbkn"></span><h2><code class="docutils literal notranslate"><span class="pre">RigidBodyKinematicsNumba</span></code><a class="headerlink" href="#rigidbodykinematicsnumba" title="Link to this heading"></a></h2>
+<p><code class="xref py py-mod docutils literal notranslate"><span class="pre">Basilisk.utilities.RigidBodyKinematicsNumba</span></code> provides
+<code class="docutils literal notranslate"><span class="pre">&#64;nb.njit</span></code>-compiled versions of every function in
+<code class="xref py py-mod docutils literal notranslate"><span class="pre">Basilisk.utilities.RigidBodyKinematics</span></code>, making the full rigid-body
+kinematics library callable from within compiled <code class="docutils literal notranslate"><span class="pre">UpdateStateImpl</span></code> kernels.</p>
+<p>Import individual functions at module level (outside <code class="docutils literal notranslate"><span class="pre">UpdateStateImpl</span></code>):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities.RigidBodyKinematicsNumba</span><span class="w"> </span><span class="kn">import</span> <span class="n">MRP2C</span><span class="p">,</span> <span class="n">addMRP</span><span class="p">,</span> <span class="n">subMRP</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">MyModule</span><span class="p">(</span><span class="n">NumbaModel</span><span class="p">):</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">UpdateStateImpl</span><span class="p">(</span><span class="n">attNavInMsgPayload</span><span class="p">,</span> <span class="n">attGuidOutMsgPayload</span><span class="p">,</span> <span class="n">memory</span><span class="p">):</span>
+        <span class="n">C_BN</span> <span class="o">=</span> <span class="n">MRP2C</span><span class="p">(</span><span class="n">attNavInMsgPayload</span><span class="o">.</span><span class="n">sigma_BN</span><span class="p">)</span>
+        <span class="n">sigma_BR</span> <span class="o">=</span> <span class="n">subMRP</span><span class="p">(</span><span class="n">attNavInMsgPayload</span><span class="o">.</span><span class="n">sigma_BN</span><span class="p">,</span> <span class="n">memory</span><span class="o">.</span><span class="n">sigma_RN</span><span class="p">)</span>
+        <span class="n">attGuidOutMsgPayload</span><span class="o">.</span><span class="n">sigma_BR</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">sigma_BR</span>
+</pre></div>
+</div>
+<p>All kinematics functions (<code class="docutils literal notranslate"><span class="pre">MRP2C</span></code>, <code class="docutils literal notranslate"><span class="pre">C2MRP</span></code>, <code class="docutils literal notranslate"><span class="pre">addMRP</span></code>, <code class="docutils literal notranslate"><span class="pre">subMRP</span></code>,
+<code class="docutils literal notranslate"><span class="pre">EP2C</span></code>, <code class="docutils literal notranslate"><span class="pre">C2EP</span></code>, <code class="docutils literal notranslate"><span class="pre">PRV2C</span></code>, and more) are available.  Because they are
+decorated with <code class="docutils literal notranslate"><span class="pre">&#64;nb.njit(inline='always')</span></code>, calls inside <code class="docutils literal notranslate"><span class="pre">UpdateStateImpl</span></code>
+compile inline with no per-call overhead.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="docutils literal notranslate"><span class="pre">RigidBodyKinematicsNumba</span></code> requires <code class="docutils literal notranslate"><span class="pre">scipy</span></code> to be installed for
+BLAS-backed <code class="docutils literal notranslate"><span class="pre">np.linalg</span></code> operations inside Numba nopython mode.</p>
+</div>
+</section>
+<section id="continuous-time-states-statefulnumbamodel">
+<span id="numbamodules-stateful"></span><h2>Continuous-Time States (<code class="docutils literal notranslate"><span class="pre">StatefulNumbaModel</span></code>)<a class="headerlink" href="#continuous-time-states-statefulnumbamodel" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">StatefulNumbaModel</span></code> (from <code class="docutils literal notranslate"><span class="pre">Basilisk.simulation.StatefulNumbaModel</span></code>)
+combines <code class="docutils literal notranslate"><span class="pre">NumbaModel</span></code> with <code class="docutils literal notranslate"><span class="pre">StatefulSysModel</span></code> to add continuous-time states
+that are integrated by a <code class="docutils literal notranslate"><span class="pre">MJScene</span></code> dynamics scene.  Use it when a Numba
+module needs to register differentiable states (position, velocity, etc.) for
+integration alongside MuJoCo dynamics.</p>
+<section id="defining-a-statefulnumbamodel">
+<h3>Defining a <code class="docutils literal notranslate"><span class="pre">StatefulNumbaModel</span></code><a class="headerlink" href="#defining-a-statefulnumbamodel" title="Link to this heading"></a></h3>
+<p>Subclass <code class="docutils literal notranslate"><span class="pre">StatefulNumbaModel</span></code>, implement <code class="docutils literal notranslate"><span class="pre">registerStates</span></code> to create
+<code class="docutils literal notranslate"><span class="pre">StateData</span></code> objects, and write the derivatives in <code class="docutils literal notranslate"><span class="pre">UpdateStateImpl</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation.StatefulNumbaModel</span><span class="w"> </span><span class="kn">import</span> <span class="n">StatefulNumbaModel</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">HarmonicOscillator</span><span class="p">(</span><span class="n">StatefulNumbaModel</span><span class="p">):</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">registerStates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">registerer</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">posState</span> <span class="o">=</span> <span class="n">registerer</span><span class="o">.</span><span class="n">registerState</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;pos&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">velState</span> <span class="o">=</span> <span class="n">registerer</span><span class="o">.</span><span class="n">registerState</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;vel&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">Reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">CurrentSimNanos</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">omega</span> <span class="o">=</span> <span class="mf">2.0</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="n">CurrentSimNanos</span><span class="p">)</span>   <span class="c1"># compiles the cfunc</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">UpdateStateImpl</span><span class="p">(</span><span class="n">posState</span><span class="p">,</span> <span class="n">posStateDeriv</span><span class="p">,</span>
+                        <span class="n">velState</span><span class="p">,</span> <span class="n">velStateDeriv</span><span class="p">,</span> <span class="n">memory</span><span class="p">):</span>
+        <span class="n">posStateDeriv</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">velState</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">velStateDeriv</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">memory</span><span class="o">.</span><span class="n">omega</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">posState</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">registerStates</span></code> is called by <code class="docutils literal notranslate"><span class="pre">MJScene</span></code> before <code class="docutils literal notranslate"><span class="pre">Reset()</span></code>.  Always call
+<code class="docutils literal notranslate"><span class="pre">super().Reset(CurrentSimNanos)</span></code> in your <code class="docutils literal notranslate"><span class="pre">Reset</span></code> override so that the cfunc
+is compiled after the state objects exist.</p>
+</section>
+<section id="additional-updatestateimpl-parameters">
+<h3>Additional <code class="docutils literal notranslate"><span class="pre">UpdateStateImpl</span></code> parameters<a class="headerlink" href="#additional-updatestateimpl-parameters" title="Link to this heading"></a></h3>
+<p>All <code class="docutils literal notranslate"><span class="pre">NumbaModel</span></code> parameters are supported, plus:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 35.0%" />
+<col style="width: 15.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter name pattern</p></th>
+<th class="head"><p>Type inside <code class="docutils literal notranslate"><span class="pre">UpdateStateImpl</span></code></p></th>
+<th class="head"><p>What it provides</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">&lt;name&gt;State</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">float64[:,</span> <span class="pre">:]</span></code> (Fortran-order)</p></td>
+<td><p>Read-only current state value; resolved from <code class="docutils literal notranslate"><span class="pre">self.&lt;name&gt;State</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">&lt;name&gt;StateDeriv</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">float64[:,</span> <span class="pre">:]</span></code> (Fortran-order)</p></td>
+<td><p>Writable state derivative; resolved from the same <code class="docutils literal notranslate"><span class="pre">StateData</span></code> as <code class="docutils literal notranslate"><span class="pre">&lt;name&gt;State</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">&lt;name&gt;StateDiffusionN</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">float64[:,</span> <span class="pre">:]</span></code> (Fortran-order)</p></td>
+<td><p>Writable diffusion matrix for the <code class="docutils literal notranslate"><span class="pre">N</span></code>-th noise source (<code class="docutils literal notranslate"><span class="pre">N</span> <span class="pre">≥</span> <span class="pre">0</span></code>);
+requires <code class="docutils literal notranslate"><span class="pre">self.&lt;name&gt;State.setNumNoiseSources(N+1)</span></code> in <code class="docutils literal notranslate"><span class="pre">registerStates()</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<p>States are registered as <em>nRow × nCol</em> matrices with a column-major
+(Fortran-order) backing store, so <code class="docutils literal notranslate"><span class="pre">arr[i,</span> <span class="pre">j]</span></code> equals matrix element
+<code class="docutils literal notranslate"><span class="pre">M(i,</span> <span class="pre">j)</span></code>.  Even 1-D states are exposed as 2-D arrays — a 3×1 column
+vector is accessed as <code class="docutils literal notranslate"><span class="pre">posState[i,</span> <span class="pre">0]</span></code>.</p>
+</section>
+</section>
+<section id="performance-notes">
+<h2>Performance Notes<a class="headerlink" href="#performance-notes" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Compilation happens once at <code class="docutils literal notranslate"><span class="pre">Reset</span></code> time and is cached to disk by Numba
+(keyed on the bytecode of <code class="docutils literal notranslate"><span class="pre">UpdateStateImpl</span></code>).  Subsequent runs with the
+same code load the cached binary instantly.</p></li>
+<li><p>The cfunc is called from C++ with zero Python overhead per tick.  Execution
+speed is comparable to a hand-written C extension for the same algorithm.</p></li>
+<li><p>Keep <code class="docutils literal notranslate"><span class="pre">UpdateStateImpl</span></code> free of Python-level function calls; every call
+that Numba cannot inline adds compilation complexity and may defeat
+caching.</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="pyModules.html" class="btn btn-neutral float-left" title="Making Python Modules" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="makingModules-3.html" class="btn btn-neutral float-right" title="Module RST Documentation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

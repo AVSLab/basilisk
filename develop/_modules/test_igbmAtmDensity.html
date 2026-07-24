@@ -1,0 +1,389 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_igbmAtmDensity &mdash; Basilisk 2.12.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=2ebb1c42" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=4ad2e773"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">test_igbmAtmDensity</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for test_igbmAtmDensity</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy.testing</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">npt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">svIntegrators</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">macros</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">mujoco</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">MJInhomogeneousGeometricBrownianMotion</span> <span class="k">as</span> <span class="n">MJIGBM</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">MJIgbmAtmDensity</span>
+
+    <span class="n">couldImportMujoco</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+    <span class="n">couldImportMujoco</span> <span class="o">=</span> <span class="kc">False</span>
+
+
+<div class="viewcode-block" id="test_igbmAtmDensity">
+<a class="viewcode-back" href="../Documentation/simulation/mujocoDynamics/igbmAtmDensity/_UnitTest/test_igbmAtmDensity.html#test_igbmAtmDensity.test_igbmAtmDensity">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">skipif</span><span class="p">(</span><span class="ow">not</span> <span class="n">couldImportMujoco</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="s2">&quot;Compiled Basilisk without --mujoco&quot;</span><span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;usePython&quot;</span><span class="p">,</span> <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_igbmAtmDensity</span><span class="p">(</span><span class="n">usePython</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">showPlots</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Unit test for IgbmAtmDensity.</span>
+
+<span class="sd">    Verifies that the output density follows the stationary statistics of the inhomogeneous</span>
+<span class="sd">    geometric Brownian motion (IGBM)</span>
+
+<span class="sd">        dX = (mu - X)/tau dt + sigma X dW,</span>
+
+<span class="sd">    configured in stationary form (mean mu, time constant tau, stationary std sigma_st,</span>
+<span class="sd">    with sigma derived internally), that it never goes non-positive, and that a Python</span>
+<span class="sd">    subclass of the IGBM base also works.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dt</span> <span class="o">=</span> <span class="mf">0.001</span>  <span class="c1"># [s] small step for the multiplicative-noise Euler-Maruyama path</span>
+    <span class="n">tf</span> <span class="o">=</span> <span class="mf">400.0</span>  <span class="c1"># [s]</span>
+
+    <span class="n">mean</span> <span class="o">=</span> <span class="mf">1.0</span>             <span class="c1"># mu (mean-preserving correction of a unit nominal density)</span>
+    <span class="n">timeConstant</span> <span class="o">=</span> <span class="mf">0.2</span>     <span class="c1"># tau [s]</span>
+    <span class="n">sigmaStationary</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="mf">3.0</span>  <span class="c1"># sigma_st: stationary std of the density factor</span>
+
+    <span class="n">varTarget</span> <span class="o">=</span> <span class="n">sigmaStationary</span><span class="o">**</span><span class="mi">2</span>
+
+    <span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">dynProcess</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">)</span>
+    <span class="n">dynProcess</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">dt</span><span class="p">)))</span>
+
+    <span class="n">scene</span> <span class="o">=</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MJScene</span><span class="p">(</span><span class="s2">&quot;&lt;mujoco/&gt;&quot;</span><span class="p">)</span>  <span class="c1"># empty scene, no multi-body dynamics</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">scene</span><span class="p">)</span>
+
+    <span class="c1"># A strong integrator is required for multiplicative noise.</span>
+    <span class="n">integratorObject</span> <span class="o">=</span> <span class="n">svIntegrators</span><span class="o">.</span><span class="n">svStochasticIntegratorMayurama</span><span class="p">(</span><span class="n">scene</span><span class="p">)</span>
+    <span class="n">integratorObject</span><span class="o">.</span><span class="n">setRNGSeed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">setIntegrator</span><span class="p">(</span><span class="n">integratorObject</span><span class="p">)</span>
+
+    <span class="n">nominal</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">AtmoPropsMsg</span><span class="p">()</span>
+    <span class="n">nominal</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">messaging</span><span class="o">.</span><span class="n">AtmoPropsMsgPayload</span><span class="p">(</span><span class="n">neutralDensity</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">usePython</span><span class="p">:</span>
+        <span class="k">class</span><span class="w"> </span><span class="nc">PyIgbmAtmDensity</span><span class="p">(</span><span class="n">MJIGBM</span><span class="o">.</span><span class="n">InhomogeneousGeometricBrownianMotion</span><span class="p">):</span>
+
+            <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+                <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">atmoDensInMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">AtmoPropsMsgReader</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">atmoDensOutMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">AtmoPropsMsg</span><span class="p">()</span>
+
+            <span class="k">def</span><span class="w"> </span><span class="nf">writeOutput</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">CurrentSimNanos</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+                <span class="n">payload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">AtmoPropsMsgPayload</span><span class="p">(</span>
+                    <span class="n">neutralDensity</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">atmoDensInMsg</span><span class="p">()</span><span class="o">.</span><span class="n">neutralDensity</span> <span class="o">*</span> <span class="n">x</span>
+                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">atmoDensOutMsg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">CurrentSimNanos</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">moduleID</span><span class="p">)</span>
+
+        <span class="n">stochasticAtm</span> <span class="o">=</span> <span class="n">PyIgbmAtmDensity</span><span class="p">()</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">stochasticAtm</span> <span class="o">=</span> <span class="n">MJIgbmAtmDensity</span><span class="o">.</span><span class="n">IgbmAtmDensity</span><span class="p">()</span>
+
+    <span class="n">stochasticAtm</span><span class="o">.</span><span class="n">setMean</span><span class="p">(</span><span class="n">mean</span><span class="p">)</span>
+    <span class="n">stochasticAtm</span><span class="o">.</span><span class="n">setTimeConstant</span><span class="p">(</span><span class="n">timeConstant</span><span class="p">)</span>
+    <span class="n">stochasticAtm</span><span class="o">.</span><span class="n">setStationaryStd</span><span class="p">(</span><span class="n">sigmaStationary</span><span class="p">)</span>
+    <span class="n">stochasticAtm</span><span class="o">.</span><span class="n">atmoDensInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">nominal</span><span class="p">)</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">AddModelToDynamicsTask</span><span class="p">(</span><span class="n">stochasticAtm</span><span class="p">)</span>
+
+    <span class="n">atmoDensRecorder</span> <span class="o">=</span> <span class="n">stochasticAtm</span><span class="o">.</span><span class="n">atmoDensOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">atmoDensRecorder</span><span class="p">)</span>
+
+    <span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+
+    <span class="k">assert</span> <span class="n">stochasticAtm</span><span class="o">.</span><span class="n">getMean</span><span class="p">()</span> <span class="o">==</span> <span class="n">mean</span>
+    <span class="k">assert</span> <span class="n">stochasticAtm</span><span class="o">.</span><span class="n">getTimeConstant</span><span class="p">()</span> <span class="o">==</span> <span class="n">timeConstant</span>
+    <span class="k">assert</span> <span class="n">stochasticAtm</span><span class="o">.</span><span class="n">getStationaryStd</span><span class="p">()</span> <span class="o">==</span> <span class="n">sigmaStationary</span>
+    <span class="c1"># Start at the stationary mean so no long transient biases the statistics.</span>
+    <span class="n">stochasticAtm</span><span class="o">.</span><span class="n">setStateValue</span><span class="p">(</span><span class="n">mean</span><span class="p">)</span>
+
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">tf</span><span class="p">))</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="n">t</span> <span class="o">=</span> <span class="n">atmoDensRecorder</span><span class="o">.</span><span class="n">times</span><span class="p">()</span>
+    <span class="n">dens</span> <span class="o">=</span> <span class="n">atmoDensRecorder</span><span class="o">.</span><span class="n">neutralDensity</span>
+
+    <span class="k">if</span> <span class="n">showPlots</span><span class="p">:</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">dens</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Time [s]&quot;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Stochastic Density [kg/m^3]&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">dens</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+    <span class="c1"># Discard an initial transient (a few reversion time constants) before averaging.</span>
+    <span class="n">burn</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="mf">5.0</span> <span class="o">*</span> <span class="n">timeConstant</span> <span class="o">/</span> <span class="n">dt</span><span class="p">))</span>
+    <span class="n">ys</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="n">burn</span><span class="p">:]</span>
+
+    <span class="n">meanEst</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">ys</span><span class="p">))</span>
+    <span class="n">varEst</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">ys</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;mean=</span><span class="si">{</span><span class="n">meanEst</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> (target </span><span class="si">{</span><span class="n">mean</span><span class="si">}</span><span class="s2">)  var=</span><span class="si">{</span><span class="n">varEst</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> (target </span><span class="si">{</span><span class="n">varTarget</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+
+    <span class="c1"># The corrected density is clamped to be non-negative (see the dedicated clamp test).</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">ys</span> <span class="o">&gt;=</span> <span class="mf">0.0</span><span class="p">),</span> <span class="s2">&quot;IGBM-corrected density went negative&quot;</span>
+
+    <span class="n">npt</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">meanEst</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">0.02</span><span class="p">)</span>
+    <span class="n">npt</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">varEst</span><span class="p">,</span> <span class="n">varTarget</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">0.20</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_igbmAtmDensity_passesThroughOtherFields">
+<a class="viewcode-back" href="../Documentation/simulation/mujocoDynamics/igbmAtmDensity/_UnitTest/test_igbmAtmDensity.html#test_igbmAtmDensity.test_igbmAtmDensity_passesThroughOtherFields">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">skipif</span><span class="p">(</span><span class="ow">not</span> <span class="n">couldImportMujoco</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="s2">&quot;Compiled Basilisk without --mujoco&quot;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_igbmAtmDensity_passesThroughOtherFields</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Only neutralDensity is corrected; the other AtmoPropsMsgPayload fields (localTemp)</span>
+<span class="sd">    pass through unchanged.&quot;&quot;&quot;</span>
+    <span class="n">dt</span> <span class="o">=</span> <span class="mf">0.01</span>
+    <span class="n">localTemp</span> <span class="o">=</span> <span class="mf">933.7</span>  <span class="c1"># [K] arbitrary nonzero value that must survive unchanged</span>
+
+    <span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">dynProcess</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">)</span>
+    <span class="n">dynProcess</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">dt</span><span class="p">)))</span>
+    <span class="n">scene</span> <span class="o">=</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MJScene</span><span class="p">(</span><span class="s2">&quot;&lt;mujoco/&gt;&quot;</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">scene</span><span class="p">)</span>
+    <span class="n">integ</span> <span class="o">=</span> <span class="n">svIntegrators</span><span class="o">.</span><span class="n">svStochasticIntegratorMayurama</span><span class="p">(</span><span class="n">scene</span><span class="p">)</span>
+    <span class="n">integ</span><span class="o">.</span><span class="n">setRNGSeed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">setIntegrator</span><span class="p">(</span><span class="n">integ</span><span class="p">)</span>
+
+    <span class="n">nominal</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">AtmoPropsMsg</span><span class="p">()</span>
+    <span class="n">nominal</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">messaging</span><span class="o">.</span><span class="n">AtmoPropsMsgPayload</span><span class="p">(</span><span class="n">neutralDensity</span><span class="o">=</span><span class="mf">2.5</span><span class="p">,</span> <span class="n">localTemp</span><span class="o">=</span><span class="n">localTemp</span><span class="p">))</span>
+
+    <span class="n">stochasticAtm</span> <span class="o">=</span> <span class="n">MJIgbmAtmDensity</span><span class="o">.</span><span class="n">IgbmAtmDensity</span><span class="p">()</span>
+    <span class="n">stochasticAtm</span><span class="o">.</span><span class="n">setMean</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">stochasticAtm</span><span class="o">.</span><span class="n">setTimeConstant</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">stochasticAtm</span><span class="o">.</span><span class="n">setStationaryStd</span><span class="p">(</span><span class="mf">0.2</span><span class="p">)</span>
+    <span class="n">stochasticAtm</span><span class="o">.</span><span class="n">atmoDensInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">nominal</span><span class="p">)</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">AddModelToDynamicsTask</span><span class="p">(</span><span class="n">stochasticAtm</span><span class="p">)</span>
+
+    <span class="n">rec</span> <span class="o">=</span> <span class="n">stochasticAtm</span><span class="o">.</span><span class="n">atmoDensOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">rec</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mi">10</span> <span class="o">*</span> <span class="n">dt</span><span class="p">))</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="n">temps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">rec</span><span class="o">.</span><span class="n">localTemp</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="c1"># localTemp is copied verbatim (never scaled), so every logged sample equals the input.</span>
+    <span class="n">npt</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">temps</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">localTemp</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="c1"># neutralDensity is scaled by the (here mild) correction factor and stays positive.</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">rec</span><span class="o">.</span><span class="n">neutralDensity</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_igbmAtmDensity_clampsNegativeDensity">
+<a class="viewcode-back" href="../Documentation/simulation/mujocoDynamics/igbmAtmDensity/_UnitTest/test_igbmAtmDensity.html#test_igbmAtmDensity.test_igbmAtmDensity_clampsNegativeDensity">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">skipif</span><span class="p">(</span><span class="ow">not</span> <span class="n">couldImportMujoco</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="s2">&quot;Compiled Basilisk without --mujoco&quot;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_igbmAtmDensity_clampsNegativeDensity</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The IGBM process is integrated as written (pure math), so an explicit integrator</span>
+<span class="sd">    can drive the factor negative under a large step/increment. IgbmAtmDensity must clamp</span>
+<span class="sd">    the corrected density to be non-negative rather than emit an unphysical negative value.</span>
+<span class="sd">    Prescribing large negative Wiener increments forces the factor below zero.&quot;&quot;&quot;</span>
+    <span class="n">dt</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># large step</span>
+    <span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">dynProcess</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">)</span>
+    <span class="n">dynProcess</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">dt</span><span class="p">)))</span>
+    <span class="n">scene</span> <span class="o">=</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MJScene</span><span class="p">(</span><span class="s2">&quot;&lt;mujoco/&gt;&quot;</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">scene</span><span class="p">)</span>
+
+    <span class="n">integ</span> <span class="o">=</span> <span class="n">svIntegrators</span><span class="o">.</span><span class="n">svStochasticIntegratorMayurama</span><span class="p">(</span><span class="n">scene</span><span class="p">)</span>
+    <span class="n">prescribed</span> <span class="o">=</span> <span class="n">svIntegrators</span><span class="o">.</span><span class="n">PrescribedGaussianNoiseGenerator</span><span class="p">()</span>
+    <span class="n">nSteps</span> <span class="o">=</span> <span class="mi">5</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nSteps</span><span class="p">):</span>
+        <span class="n">prescribed</span><span class="o">.</span><span class="n">pushStep</span><span class="p">([</span><span class="o">-</span><span class="mf">4.0</span><span class="p">],</span> <span class="p">[])</span>  <span class="c1"># ~4-sigma negative excursions at dt=1</span>
+    <span class="n">integ</span><span class="o">.</span><span class="n">setNoiseGenerator</span><span class="p">(</span><span class="n">prescribed</span><span class="p">)</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">setIntegrator</span><span class="p">(</span><span class="n">integ</span><span class="p">)</span>
+
+    <span class="n">nominal</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">AtmoPropsMsg</span><span class="p">()</span>
+    <span class="n">nominal</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">messaging</span><span class="o">.</span><span class="n">AtmoPropsMsgPayload</span><span class="p">(</span><span class="n">neutralDensity</span><span class="o">=</span><span class="mf">1.0</span><span class="p">))</span>
+
+    <span class="n">stochasticAtm</span> <span class="o">=</span> <span class="n">MJIgbmAtmDensity</span><span class="o">.</span><span class="n">IgbmAtmDensity</span><span class="p">()</span>
+    <span class="n">stochasticAtm</span><span class="o">.</span><span class="n">setMean</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">stochasticAtm</span><span class="o">.</span><span class="n">setTimeConstant</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">stochasticAtm</span><span class="o">.</span><span class="n">setStationaryStd</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>  <span class="c1"># sigma ~ 1, so the factor is easily driven &lt; 0</span>
+    <span class="n">stochasticAtm</span><span class="o">.</span><span class="n">atmoDensInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">nominal</span><span class="p">)</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">AddModelToDynamicsTask</span><span class="p">(</span><span class="n">stochasticAtm</span><span class="p">)</span>
+
+    <span class="n">rec</span> <span class="o">=</span> <span class="n">stochasticAtm</span><span class="o">.</span><span class="n">atmoDensOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">rec</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">nSteps</span> <span class="o">*</span> <span class="n">dt</span><span class="p">))</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="n">dens</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">rec</span><span class="o">.</span><span class="n">neutralDensity</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="c1"># Never negative, and the clamp actually engaged (some steps hit exactly zero) for</span>
+    <span class="c1"># this deliberately extreme increment sequence.</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">dens</span> <span class="o">&gt;=</span> <span class="mf">0.0</span><span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;corrected density went negative: min=</span><span class="si">{</span><span class="n">dens</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">dens</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">),</span> <span class="s2">&quot;expected the non-negativity clamp to engage for these increments&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="test_igbmAtmDensity_rejectsBadParameters">
+<a class="viewcode-back" href="../Documentation/simulation/mujocoDynamics/igbmAtmDensity/_UnitTest/test_igbmAtmDensity.html#test_igbmAtmDensity.test_igbmAtmDensity_rejectsBadParameters">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_igbmAtmDensity_rejectsBadParameters</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The inherited parameter setters reject values outside their valid range.&quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">bskLogging</span>
+
+    <span class="n">atm</span> <span class="o">=</span> <span class="n">MJIgbmAtmDensity</span><span class="o">.</span><span class="n">IgbmAtmDensity</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">bad</span> <span class="ow">in</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">bskLogging</span><span class="o">.</span><span class="n">BasiliskError</span><span class="p">):</span>
+            <span class="n">atm</span><span class="o">.</span><span class="n">setMean</span><span class="p">(</span><span class="n">bad</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">bad</span> <span class="ow">in</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.1</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">bskLogging</span><span class="o">.</span><span class="n">BasiliskError</span><span class="p">):</span>
+            <span class="n">atm</span><span class="o">.</span><span class="n">setTimeConstant</span><span class="p">(</span><span class="n">bad</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">bskLogging</span><span class="o">.</span><span class="n">BasiliskError</span><span class="p">):</span>
+        <span class="n">atm</span><span class="o">.</span><span class="n">setStationaryStd</span><span class="p">(</span><span class="o">-</span><span class="mf">0.01</span><span class="p">)</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="k">assert</span> <span class="n">couldImportMujoco</span>
+    <span class="n">test_igbmAtmDensity</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

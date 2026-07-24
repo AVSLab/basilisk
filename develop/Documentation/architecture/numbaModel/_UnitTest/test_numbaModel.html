@@ -1,0 +1,592 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_numbaModel &mdash; Basilisk 2.12.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=2ebb1c42" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=4ad2e773"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="system_model" href="../../system_model/index.html" />
+    <link rel="prev" title="_UnitTest" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">architecture</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../messaging/index.html">messaging</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../msgPayloadDefC/index.html">msgPayloadDefC</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../msgPayloadDefCpp/index.html">msgPayloadDefCpp</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">numbaModel</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">_UnitTest</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../system_model/index.html">system_model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../utilities/index.html">utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../utilitiesSelfCheck/index.html">utilitiesSelfCheck</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../simulation/index.html">simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">architecture</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">numbaModel</a></li>
+          <li class="breadcrumb-item"><a href="index.html">_UnitTest</a></li>
+      <li class="breadcrumb-item active">test_numbaModel</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/architecture/numbaModel/_UnitTest/test_numbaModel.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="test-numbamodel">
+<span id="id1"></span><h1>test_numbaModel<a class="headerlink" href="#test-numbamodel" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<p id="module-test_numbaModel">Unit tests for NumbaModel.</p>
+<p>Section  Topic
+——-  ———————————————————————-
+1        Basic scalar I/O + memory namespace (smoke test)
+2        Auto-convert scalar / list memory at Reset time
+3        Post-Reset convenience writes via memory namespace
+4        CurrentSimNanos parameter
+5        IsLinked: scalar reader (unlinked, linked, becomes linked mid-sim)
+6        Message chain: producer -&gt; consumer (scalar I/O, memory)
+7        List readers: all linked, partial link (IsLinked array)
+8        List writers
+9        Dict readers: key introspection, data round-trip, unlinked error
+10       Dict writers
+11       2-D memory array
+12       moduleID parameter
+13       Re-wiring: subscribeTo after Reset
+14       Memory persistence across resets
+15       Error cases (incl. empty containers, empty memory)
+16       Dict reader IsLinked keyed access
+17       bskLogger proxy</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="test_numbaModel.AutoConvertModel">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">test_numbaModel.</span></span><span class="sig-name descname"><span class="pre">AutoConvertModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_numbaModel.html#AutoConvertModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_numbaModel.AutoConvertModel" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">NumbaModel</span></code></p>
+<p>Model used to verify scalar and list memory auto-conversion.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="test_numbaModel.AutoConvertModel.UpdateStateImpl">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">UpdateStateImpl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataOutMsgPayload</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">memory</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_numbaModel.html#AutoConvertModel.UpdateStateImpl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_numbaModel.AutoConvertModel.UpdateStateImpl" title="Link to this definition"></a></dt>
+<dd><p>Write the gain-plus-bias result into the outgoing message.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="test_numbaModel.BasicModel">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">test_numbaModel.</span></span><span class="sig-name descname"><span class="pre">BasicModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_numbaModel.html#BasicModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_numbaModel.BasicModel" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">NumbaModel</span></code></p>
+<p>Minimal scalar input/output model with one integer memory field.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="test_numbaModel.BasicModel.UpdateStateImpl">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">UpdateStateImpl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataInMsgPayload</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataInMsgIsLinked</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataOutMsgPayload</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">CurrentSimNanos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">memory</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_numbaModel.html#BasicModel.UpdateStateImpl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_numbaModel.BasicModel.UpdateStateImpl" title="Link to this definition"></a></dt>
+<dd><p>Forward the input vector when linked and increment the step count.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="test_numbaModel.ConsumerModel">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">test_numbaModel.</span></span><span class="sig-name descname"><span class="pre">ConsumerModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_numbaModel.html#ConsumerModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_numbaModel.ConsumerModel" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">NumbaModel</span></code></p>
+<p>Sink model that scales the producer output by a fixed factor.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="test_numbaModel.ConsumerModel.UpdateStateImpl">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">UpdateStateImpl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataInMsgPayload</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataInMsgIsLinked</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataOutMsgPayload</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_numbaModel.html#ConsumerModel.UpdateStateImpl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_numbaModel.ConsumerModel.UpdateStateImpl" title="Link to this definition"></a></dt>
+<dd><p>Copy the input vector into the output after multiplying by ten.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="test_numbaModel.DictInModel">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">test_numbaModel.</span></span><span class="sig-name descname"><span class="pre">DictInModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_numbaModel.html#DictInModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_numbaModel.DictInModel" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">NumbaModel</span></code></p>
+<p>Dictionary-based input reader model used for key-order tests.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="test_numbaModel.DictInModel.UpdateStateImpl">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">UpdateStateImpl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataInMsgPayload</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataOutMsgPayload</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_numbaModel.html#DictInModel.UpdateStateImpl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_numbaModel.DictInModel.UpdateStateImpl" title="Link to this definition"></a></dt>
+<dd><p>Route the named inputs into separate output vector components.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="test_numbaModel.DictOutModel">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">test_numbaModel.</span></span><span class="sig-name descname"><span class="pre">DictOutModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_numbaModel.html#DictOutModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_numbaModel.DictOutModel" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">NumbaModel</span></code></p>
+<p>One input reader → two named output messages.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="test_numbaModel.DictOutModel.UpdateStateImpl">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">UpdateStateImpl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataInMsgPayload</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataInMsgIsLinked</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataOutMsgPayload</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_numbaModel.html#DictOutModel.UpdateStateImpl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_numbaModel.DictOutModel.UpdateStateImpl" title="Link to this definition"></a></dt>
+<dd><p>Write positive and negative copies of the input value.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="test_numbaModel.GuardedReaderModel">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">test_numbaModel.</span></span><span class="sig-name descname"><span class="pre">GuardedReaderModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_numbaModel.html#GuardedReaderModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_numbaModel.GuardedReaderModel" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">NumbaModel</span></code></p>
+<p>Forwards payload when linked; writes sentinel −1 when unlinked.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="test_numbaModel.GuardedReaderModel.UpdateStateImpl">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">UpdateStateImpl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataInMsgPayload</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataInMsgIsLinked</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataOutMsgPayload</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">memory</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_numbaModel.html#GuardedReaderModel.UpdateStateImpl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_numbaModel.GuardedReaderModel.UpdateStateImpl" title="Link to this definition"></a></dt>
+<dd><p>Copy the input when linked and publish a sentinel otherwise.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="test_numbaModel.MatrixMemoryModel">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">test_numbaModel.</span></span><span class="sig-name descname"><span class="pre">MatrixMemoryModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_numbaModel.html#MatrixMemoryModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_numbaModel.MatrixMemoryModel" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">NumbaModel</span></code></p>
+<p>Stores a 3×3 diagonal matrix; outputs the diagonal each tick.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="test_numbaModel.MatrixMemoryModel.UpdateStateImpl">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">UpdateStateImpl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataOutMsgPayload</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">memory</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_numbaModel.html#MatrixMemoryModel.UpdateStateImpl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_numbaModel.MatrixMemoryModel.UpdateStateImpl" title="Link to this definition"></a></dt>
+<dd><p>Copy the matrix diagonal into the output vector.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="test_numbaModel.ModuleIDModel">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">test_numbaModel.</span></span><span class="sig-name descname"><span class="pre">ModuleIDModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_numbaModel.html#ModuleIDModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_numbaModel.ModuleIDModel" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">NumbaModel</span></code></p>
+<p>Helper model that captures the module ID seen by the compiled kernel.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="test_numbaModel.ModuleIDModel.UpdateStateImpl">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">UpdateStateImpl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataOutMsgPayload</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">memory</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">moduleID</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_numbaModel.html#ModuleIDModel.UpdateStateImpl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_numbaModel.ModuleIDModel.UpdateStateImpl" title="Link to this definition"></a></dt>
+<dd><p>Store the provided module identifier in persistent memory.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="test_numbaModel.MultiInModel">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">test_numbaModel.</span></span><span class="sig-name descname"><span class="pre">MultiInModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_numbaModel.html#MultiInModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_numbaModel.MultiInModel" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">NumbaModel</span></code></p>
+<p>Two input readers summed into one output.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="test_numbaModel.MultiInModel.UpdateStateImpl">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">UpdateStateImpl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataInMsgPayload</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataInMsgIsLinked</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataOutMsgPayload</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_numbaModel.html#MultiInModel.UpdateStateImpl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_numbaModel.MultiInModel.UpdateStateImpl" title="Link to this definition"></a></dt>
+<dd><p>Sum the first component from each linked reader.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="test_numbaModel.MultiOutModel">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">test_numbaModel.</span></span><span class="sig-name descname"><span class="pre">MultiOutModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_numbaModel.html#MultiOutModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_numbaModel.MultiOutModel" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">NumbaModel</span></code></p>
+<p>One input reader → two indexed output writers.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="test_numbaModel.MultiOutModel.UpdateStateImpl">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">UpdateStateImpl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataInMsgPayload</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataInMsgIsLinked</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataOutMsgPayload</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_numbaModel.html#MultiOutModel.UpdateStateImpl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_numbaModel.MultiOutModel.UpdateStateImpl" title="Link to this definition"></a></dt>
+<dd><p>Write the input value and its doubled copy to the outputs.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="test_numbaModel.ProducerModel">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">test_numbaModel.</span></span><span class="sig-name descname"><span class="pre">ProducerModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_numbaModel.html#ProducerModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_numbaModel.ProducerModel" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">NumbaModel</span></code></p>
+<p>Source model used to exercise chained message passing.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="test_numbaModel.ProducerModel.UpdateStateImpl">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">UpdateStateImpl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataOutMsgPayload</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">memory</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_numbaModel.html#ProducerModel.UpdateStateImpl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_numbaModel.ProducerModel.UpdateStateImpl" title="Link to this definition"></a></dt>
+<dd><p>Increment the counter and publish three scaled copies.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="test_numbaModel.TimeRecorderModel">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">test_numbaModel.</span></span><span class="sig-name descname"><span class="pre">TimeRecorderModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_numbaModel.html#TimeRecorderModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_numbaModel.TimeRecorderModel" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">NumbaModel</span></code></p>
+<p>Records the last simulation time and a tick counter in memory.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="test_numbaModel.TimeRecorderModel.UpdateStateImpl">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">UpdateStateImpl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataOutMsgPayload</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">CurrentSimNanos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">memory</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_numbaModel.html#TimeRecorderModel.UpdateStateImpl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_numbaModel.TimeRecorderModel.UpdateStateImpl" title="Link to this definition"></a></dt>
+<dd><p>Store the current simulation time and publish it as a float.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_numbaModel.test_2dMemoryArrayPythonWrite">
+<span class="sig-prename descclassname"><span class="pre">test_numbaModel.</span></span><span class="sig-name descname"><span class="pre">test_2dMemoryArrayPythonWrite</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_numbaModel.html#test_2dMemoryArrayPythonWrite"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_numbaModel.test_2dMemoryArrayPythonWrite" title="Link to this definition"></a></dt>
+<dd><p>Python-side assignment to a 2-D memory field propagates to the C buffer.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_numbaModel.test_2dMemoryArrayRead">
+<span class="sig-prename descclassname"><span class="pre">test_numbaModel.</span></span><span class="sig-name descname"><span class="pre">test_2dMemoryArrayRead</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_numbaModel.html#test_2dMemoryArrayRead"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_numbaModel.test_2dMemoryArrayRead" title="Link to this definition"></a></dt>
+<dd><p>Cfunc reads 2-D memory field correctly.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_numbaModel.test_autoConvertMemory">
+<span class="sig-prename descclassname"><span class="pre">test_numbaModel.</span></span><span class="sig-name descname"><span class="pre">test_autoConvertMemory</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_numbaModel.html#test_autoConvertMemory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_numbaModel.test_autoConvertMemory" title="Link to this definition"></a></dt>
+<dd><p>Check scalar and list memory fields are converted at reset.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_numbaModel.test_basicModel">
+<span class="sig-prename descclassname"><span class="pre">test_numbaModel.</span></span><span class="sig-name descname"><span class="pre">test_basicModel</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_numbaModel.html#test_basicModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_numbaModel.test_basicModel" title="Link to this definition"></a></dt>
+<dd><p>Smoke-test scalar I/O and persistent memory updates.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_numbaModel.test_bsklogger">
+<span class="sig-prename descclassname"><span class="pre">test_numbaModel.</span></span><span class="sig-name descname"><span class="pre">test_bsklogger</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_numbaModel.html#test_bsklogger"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_numbaModel.test_bsklogger" title="Link to this definition"></a></dt>
+<dd><p>bskLog / bskLog1 inside UpdateStateImpl should not crash; logic must run.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_numbaModel.test_cacheDiskImplBodyChange">
+<span class="sig-prename descclassname"><span class="pre">test_numbaModel.</span></span><span class="sig-name descname"><span class="pre">test_cacheDiskImplBodyChange</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tmp_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_numbaModel.html#test_cacheDiskImplBodyChange"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_numbaModel.test_cacheDiskImplBodyChange" title="Link to this definition"></a></dt>
+<dd><p>Edit <code class="docutils literal notranslate"><span class="pre">UpdateStateImpl</span></code> on disk between processes and require the new implementation to run.</p>
+<p>This verifies the full production invalidation chain. The implementation
+body hash changes, the fingerprint changes, a new wrapper file is emitted,
+and Numba recompiles the implementation after its source timestamp changes.
+A stale-cache bug would show up as process 2 still returning <code class="docutils literal notranslate"><span class="pre">11.0</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_numbaModel.test_cacheDiskReuseAfterInProcessClear">
+<span class="sig-prename descclassname"><span class="pre">test_numbaModel.</span></span><span class="sig-name descname"><span class="pre">test_cacheDiskReuseAfterInProcessClear</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_numbaModel.html#test_cacheDiskReuseAfterInProcessClear"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_numbaModel.test_cacheDiskReuseAfterInProcessClear" title="Link to this definition"></a></dt>
+<dd><p>Clear _NBMODEL_CFUNC_CACHE, re-run same config → disk path gives correct result.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_numbaModel.test_cacheDiskSurvivesProcessRestart">
+<span class="sig-prename descclassname"><span class="pre">test_numbaModel.</span></span><span class="sig-name descname"><span class="pre">test_cacheDiskSurvivesProcessRestart</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tmp_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_numbaModel.html#test_cacheDiskSurvivesProcessRestart"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_numbaModel.test_cacheDiskSurvivesProcessRestart" title="Link to this definition"></a></dt>
+<dd><p>Disk cache written in process 1 is used correctly by process 2.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_numbaModel.test_cacheImplIdentityIsolation">
+<span class="sig-prename descclassname"><span class="pre">test_numbaModel.</span></span><span class="sig-name descname"><span class="pre">test_cacheImplIdentityIsolation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_numbaModel.html#test_cacheImplIdentityIsolation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_numbaModel.test_cacheImplIdentityIsolation" title="Link to this definition"></a></dt>
+<dd><p>Two classes with same dtype/structure but different UpdateStateImpl must not share cfunc.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_numbaModel.test_cacheLoggerLevelRuntime">
+<span class="sig-prename descclassname"><span class="pre">test_numbaModel.</span></span><span class="sig-name descname"><span class="pre">test_cacheLoggerLevelRuntime</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">monkeypatch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmp_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">capfd</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_numbaModel.html#test_cacheLoggerLevelRuntime"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_numbaModel.test_cacheLoggerLevelRuntime" title="Link to this definition"></a></dt>
+<dd><p>Logger level is read at runtime; models with different levels share one cfunc.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_numbaModel.test_cacheMultipleResetsReusesCfunc">
+<span class="sig-prename descclassname"><span class="pre">test_numbaModel.</span></span><span class="sig-name descname"><span class="pre">test_cacheMultipleResetsReusesCfunc</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_numbaModel.html#test_cacheMultipleResetsReusesCfunc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_numbaModel.test_cacheMultipleResetsReusesCfunc" title="Link to this definition"></a></dt>
+<dd><p>Re-running InitializeSimulation reuses the in-process cfunc (Tier 2 benefit).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_numbaModel.test_cacheNoDtypeCollision">
+<span class="sig-prename descclassname"><span class="pre">test_numbaModel.</span></span><span class="sig-name descname"><span class="pre">test_cacheNoDtypeCollision</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_numbaModel.html#test_cacheNoDtypeCollision"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_numbaModel.test_cacheNoDtypeCollision" title="Link to this definition"></a></dt>
+<dd><p>Same class, different reader dtypes → distinct fingerprints, no in-process collision.</p>
+<p>Regression test for the location-based idHash bug: md5(<a class="reference external" href="file:qualname">file:qualname</a>) produced
+the same key for all instances of a class regardless of message-type configuration.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_numbaModel.test_cacheSameDtypeSharesCfunc">
+<span class="sig-prename descclassname"><span class="pre">test_numbaModel.</span></span><span class="sig-name descname"><span class="pre">test_cacheSameDtypeSharesCfunc</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_numbaModel.html#test_cacheSameDtypeSharesCfunc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_numbaModel.test_cacheSameDtypeSharesCfunc" title="Link to this definition"></a></dt>
+<dd><p>Two instances with identical dtype config share exactly one cfunc.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_numbaModel.test_cacheSharedCfuncIndependentState">
+<span class="sig-prename descclassname"><span class="pre">test_numbaModel.</span></span><span class="sig-name descname"><span class="pre">test_cacheSharedCfuncIndependentState</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_numbaModel.html#test_cacheSharedCfuncIndependentState"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_numbaModel.test_cacheSharedCfuncIndependentState" title="Link to this definition"></a></dt>
+<dd><p>Two instances share one cfunc but each has its own <code class="docutils literal notranslate"><span class="pre">allPtrs_</span></code> buffer, so outputs never bleed.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_numbaModel.test_currentSimNanos">
+<span class="sig-prename descclassname"><span class="pre">test_numbaModel.</span></span><span class="sig-name descname"><span class="pre">test_currentSimNanos</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_numbaModel.html#test_currentSimNanos"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_numbaModel.test_currentSimNanos" title="Link to this definition"></a></dt>
+<dd><p>Check the compiled model receives the current simulation time.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_numbaModel.test_dictIslinkedKeyed">
+<span class="sig-prename descclassname"><span class="pre">test_numbaModel.</span></span><span class="sig-name descname"><span class="pre">test_dictIslinkedKeyed</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_numbaModel.html#test_dictIslinkedKeyed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_numbaModel.test_dictIslinkedKeyed" title="Link to this definition"></a></dt>
+<dd><p>Dict reader IsLinked is accessible by key name: dataInMsgIsLinked[‘a’].</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_numbaModel.test_dictReaderData">
+<span class="sig-prename descclassname"><span class="pre">test_numbaModel.</span></span><span class="sig-name descname"><span class="pre">test_dictReaderData</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_numbaModel.html#test_dictReaderData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_numbaModel.test_dictReaderData" title="Link to this definition"></a></dt>
+<dd><p>Payload from each dict key is routed to the correct output field.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_numbaModel.test_dictReaderKeys">
+<span class="sig-prename descclassname"><span class="pre">test_numbaModel.</span></span><span class="sig-name descname"><span class="pre">test_dictReaderKeys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_numbaModel.html#test_dictReaderKeys"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_numbaModel.test_dictReaderKeys" title="Link to this definition"></a></dt>
+<dd><p>Key order is preserved and accessible from Python after Reset.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_numbaModel.test_dictWriter">
+<span class="sig-prename descclassname"><span class="pre">test_numbaModel.</span></span><span class="sig-name descname"><span class="pre">test_dictWriter</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_numbaModel.html#test_dictWriter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_numbaModel.test_dictWriter" title="Link to this definition"></a></dt>
+<dd><p>Check dictionary-based output messages are written by key.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_numbaModel.test_emptyListReader">
+<span class="sig-prename descclassname"><span class="pre">test_numbaModel.</span></span><span class="sig-name descname"><span class="pre">test_emptyListReader</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_numbaModel.html#test_emptyListReader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_numbaModel.test_emptyListReader" title="Link to this definition"></a></dt>
+<dd><p>Empty list attribute is allowed; cfunc receives a zero-element array (never iterated).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_numbaModel.test_emptyMemory">
+<span class="sig-prename descclassname"><span class="pre">test_numbaModel.</span></span><span class="sig-name descname"><span class="pre">test_emptyMemory</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_numbaModel.html#test_emptyMemory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_numbaModel.test_emptyMemory" title="Link to this definition"></a></dt>
+<dd><p>No memory fields defined: ‘memory’ param still compiles as a valid (ignored) Record.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_numbaModel.test_errorIslinkedWithoutPayload">
+<span class="sig-prename descclassname"><span class="pre">test_numbaModel.</span></span><span class="sig-name descname"><span class="pre">test_errorIslinkedWithoutPayload</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_numbaModel.html#test_errorIslinkedWithoutPayload"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_numbaModel.test_errorIslinkedWithoutPayload" title="Link to this definition"></a></dt>
+<dd><p>An IsLinked flag without a matching Payload param leaves the variable
+undefined in the generated wrapper, which Numba catches as a TypingError.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_numbaModel.test_errorMissingInMsg">
+<span class="sig-prename descclassname"><span class="pre">test_numbaModel.</span></span><span class="sig-name descname"><span class="pre">test_errorMissingInMsg</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_numbaModel.html#test_errorMissingInMsg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_numbaModel.test_errorMissingInMsg" title="Link to this definition"></a></dt>
+<dd><p>Check Reset fails when a referenced input message is missing.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_numbaModel.test_errorNotOverridden">
+<span class="sig-prename descclassname"><span class="pre">test_numbaModel.</span></span><span class="sig-name descname"><span class="pre">test_errorNotOverridden</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_numbaModel.html#test_errorNotOverridden"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_numbaModel.test_errorNotOverridden" title="Link to this definition"></a></dt>
+<dd><p>Check Reset fails when <code class="docutils literal notranslate"><span class="pre">UpdateStateImpl</span></code> is not overridden.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_numbaModel.test_errorNotStaticmethod">
+<span class="sig-prename descclassname"><span class="pre">test_numbaModel.</span></span><span class="sig-name descname"><span class="pre">test_errorNotStaticmethod</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_numbaModel.html#test_errorNotStaticmethod"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_numbaModel.test_errorNotStaticmethod" title="Link to this definition"></a></dt>
+<dd><p>Check Reset fails when <code class="docutils literal notranslate"><span class="pre">UpdateStateImpl</span></code> is not static.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_numbaModel.test_errorUnlinkedWithoutIslinkedGuard">
+<span class="sig-prename descclassname"><span class="pre">test_numbaModel.</span></span><span class="sig-name descname"><span class="pre">test_errorUnlinkedWithoutIslinkedGuard</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_numbaModel.html#test_errorUnlinkedWithoutIslinkedGuard"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_numbaModel.test_errorUnlinkedWithoutIslinkedGuard" title="Link to this definition"></a></dt>
+<dd><p>Declaring <code class="docutils literal notranslate"><span class="pre">InMsgPayload</span></code> without <code class="docutils literal notranslate"><span class="pre">InMsgIsLinked</span></code> crashes at reset if a reader is unlinked.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_numbaModel.test_errorUnrecognisedParam">
+<span class="sig-prename descclassname"><span class="pre">test_numbaModel.</span></span><span class="sig-name descname"><span class="pre">test_errorUnrecognisedParam</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_numbaModel.html#test_errorUnrecognisedParam"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_numbaModel.test_errorUnrecognisedParam" title="Link to this definition"></a></dt>
+<dd><p>Check Reset fails when the compiled signature has an unknown parameter.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_numbaModel.test_islinkedBecomesLinkedMidSim">
+<span class="sig-prename descclassname"><span class="pre">test_numbaModel.</span></span><span class="sig-name descname"><span class="pre">test_islinkedBecomesLinkedMidSim</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_numbaModel.html#test_islinkedBecomesLinkedMidSim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_numbaModel.test_islinkedBecomesLinkedMidSim" title="Link to this definition"></a></dt>
+<dd><p>Reader starts unlinked; subscribed after first tick - cfunc picks it up.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_numbaModel.test_islinkedLinked">
+<span class="sig-prename descclassname"><span class="pre">test_numbaModel.</span></span><span class="sig-name descname"><span class="pre">test_islinkedLinked</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_numbaModel.html#test_islinkedLinked"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_numbaModel.test_islinkedLinked" title="Link to this definition"></a></dt>
+<dd><p>Subscribed reader → IsLinked is True; payload is forwarded.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_numbaModel.test_islinkedUnlinked">
+<span class="sig-prename descclassname"><span class="pre">test_numbaModel.</span></span><span class="sig-name descname"><span class="pre">test_islinkedUnlinked</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_numbaModel.html#test_islinkedUnlinked"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_numbaModel.test_islinkedUnlinked" title="Link to this definition"></a></dt>
+<dd><p>Unlinked reader → IsLinked is False; cfunc takes the else branch.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_numbaModel.test_listReaderBothLinked">
+<span class="sig-prename descclassname"><span class="pre">test_numbaModel.</span></span><span class="sig-name descname"><span class="pre">test_listReaderBothLinked</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_numbaModel.html#test_listReaderBothLinked"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_numbaModel.test_listReaderBothLinked" title="Link to this definition"></a></dt>
+<dd><p>Both readers subscribed → sum of both sources.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_numbaModel.test_listReaderNoneLinked">
+<span class="sig-prename descclassname"><span class="pre">test_numbaModel.</span></span><span class="sig-name descname"><span class="pre">test_listReaderNoneLinked</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_numbaModel.html#test_listReaderNoneLinked"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_numbaModel.test_listReaderNoneLinked" title="Link to this definition"></a></dt>
+<dd><p>Both readers unlinked → output stays zero.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_numbaModel.test_listReaderPartialLink">
+<span class="sig-prename descclassname"><span class="pre">test_numbaModel.</span></span><span class="sig-name descname"><span class="pre">test_listReaderPartialLink</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_numbaModel.html#test_listReaderPartialLink"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_numbaModel.test_listReaderPartialLink" title="Link to this definition"></a></dt>
+<dd><p>reader[0] subscribed, reader[1] unlinked → only reader[0] contributes.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_numbaModel.test_listWriter">
+<span class="sig-prename descclassname"><span class="pre">test_numbaModel.</span></span><span class="sig-name descname"><span class="pre">test_listWriter</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_numbaModel.html#test_listWriter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_numbaModel.test_listWriter" title="Link to this definition"></a></dt>
+<dd><p>Check list-based output messages are written by index.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_numbaModel.test_memoryWritePersistsThroughReset">
+<span class="sig-prename descclassname"><span class="pre">test_numbaModel.</span></span><span class="sig-name descname"><span class="pre">test_memoryWritePersistsThroughReset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_numbaModel.html#test_memoryWritePersistsThroughReset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_numbaModel.test_memoryWritePersistsThroughReset" title="Link to this definition"></a></dt>
+<dd><p>Both Python-side writes and cfunc-internal writes survive a subsequent Reset.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_numbaModel.test_messageChain">
+<span class="sig-prename descclassname"><span class="pre">test_numbaModel.</span></span><span class="sig-name descname"><span class="pre">test_messageChain</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_numbaModel.html#test_messageChain"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_numbaModel.test_messageChain" title="Link to this definition"></a></dt>
+<dd><p>Check a NumbaModel output can feed another NumbaModel input.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_numbaModel.test_moduleIdParameter">
+<span class="sig-prename descclassname"><span class="pre">test_numbaModel.</span></span><span class="sig-name descname"><span class="pre">test_moduleIdParameter</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_numbaModel.html#test_moduleIdParameter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_numbaModel.test_moduleIdParameter" title="Link to this definition"></a></dt>
+<dd><p>Check the compiled model receives the owning module identifier.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_numbaModel.test_multipleResets">
+<span class="sig-prename descclassname"><span class="pre">test_numbaModel.</span></span><span class="sig-name descname"><span class="pre">test_multipleResets</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_numbaModel.html#test_multipleResets"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_numbaModel.test_multipleResets" title="Link to this definition"></a></dt>
+<dd><p>Reset always continues from the current buffer value; cfunc writes and
+Python writes are treated identically.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_numbaModel.test_postResetConvenienceWrite">
+<span class="sig-prename descclassname"><span class="pre">test_numbaModel.</span></span><span class="sig-name descname"><span class="pre">test_postResetConvenienceWrite</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_numbaModel.html#test_postResetConvenienceWrite"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_numbaModel.test_postResetConvenienceWrite" title="Link to this definition"></a></dt>
+<dd><p>Check post-reset memory writes update existing fields and reject new ones.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_numbaModel.test_rewireAfterReset">
+<span class="sig-prename descclassname"><span class="pre">test_numbaModel.</span></span><span class="sig-name descname"><span class="pre">test_rewireAfterReset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/test_numbaModel.html#test_rewireAfterReset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_numbaModel.test_rewireAfterReset" title="Link to this definition"></a></dt>
+<dd><p>Switching sources mid-sim is transparent - no Reset required.</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="_UnitTest" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../../system_model/index.html" class="btn btn-neutral float-right" title="system_model" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

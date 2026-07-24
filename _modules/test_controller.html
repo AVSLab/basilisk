@@ -1,0 +1,564 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_controller &mdash; Basilisk 2.11.0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=2ebb1c42" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=1647406f"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Plugins/overview.html">About Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Plugins/installing.html">Installing Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Plugins/writing.html">Writing a Basilisk Plugin</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">test_controller</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for test_controller</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">motorVoltageInterface</span><span class="p">,</span> <span class="n">spacecraft</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">simHelpers</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities.MonteCarlo.Controller</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationExecutor</span><span class="p">,</span> <span class="n">SimulationParameters</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities.MonteCarlo.Dispersions</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">NormalVectorAngleDispersion</span><span class="p">,</span>
+    <span class="n">NormalVectorDispersion</span><span class="p">,</span>
+    <span class="n">UniformDispersion</span><span class="p">,</span>
+    <span class="n">UniformVectorAngleDispersion</span>
+<span class="p">)</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">DummyHub</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mHub</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># [kg]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">r_BcB_B</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>  <span class="c1"># [m]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">unitVector</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]])</span>  <span class="c1"># [-]</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">DummyModel</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">RNGSeed</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hub</span> <span class="o">=</span> <span class="n">DummyHub</span><span class="p">()</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">DummyModelWithoutSeed</span><span class="p">:</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">DummyTask</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">TaskModels</span> <span class="o">=</span> <span class="p">[</span><span class="n">DummyModel</span><span class="p">(),</span> <span class="n">DummyModelWithoutSeed</span><span class="p">()]</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">DummyVectorContainer</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">DummyDynModel</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scObject</span> <span class="o">=</span> <span class="n">DummyModel</span><span class="p">()</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">DummySimulation</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">TaskList</span> <span class="o">=</span> <span class="p">[</span><span class="n">DummyTask</span><span class="p">()]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vectorContainer</span> <span class="o">=</span> <span class="n">DummyVectorContainer</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dynModel</span> <span class="o">=</span> <span class="n">DummyDynModel</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_DynModel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dynModel</span>
+
+
+<div class="viewcode-block" id="test_apply_modification_updates_nested_attributes">
+<a class="viewcode-back" href="../Documentation/utilities/MonteCarlo/_UnitTests/test_controller.html#test_controller.test_apply_modification_updates_nested_attributes">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_apply_modification_updates_nested_attributes</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Verify Monte Carlo path strings update the nested object.&quot;&quot;&quot;</span>
+    <span class="n">sim</span> <span class="o">=</span> <span class="n">DummySimulation</span><span class="p">()</span>
+
+    <span class="n">mass_path</span> <span class="o">=</span> <span class="s2">&quot;TaskList[0].TaskModels[0].hub.mHub&quot;</span>
+    <span class="n">SimulationExecutor</span><span class="o">.</span><span class="n">applyModification</span><span class="p">(</span><span class="n">sim</span><span class="p">,</span> <span class="n">mass_path</span><span class="p">,</span> <span class="s2">&quot;25.0&quot;</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">sim</span><span class="o">.</span><span class="n">TaskList</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">TaskModels</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span> <span class="o">==</span> <span class="mf">25.0</span>
+    <span class="k">assert</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">sim</span><span class="p">,</span> <span class="n">mass_path</span><span class="p">)</span>
+
+    <span class="n">center_of_mass_path</span> <span class="o">=</span> <span class="s2">&quot;TaskList[0].TaskModels[0].hub.r_BcB_B&quot;</span>
+    <span class="n">SimulationExecutor</span><span class="o">.</span><span class="n">applyModification</span><span class="p">(</span><span class="n">sim</span><span class="p">,</span> <span class="n">center_of_mass_path</span><span class="p">,</span> <span class="s2">&quot;[1.0, 2.0, 3.0]&quot;</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">sim</span><span class="o">.</span><span class="n">TaskList</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">TaskModels</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_BcB_B</span> <span class="o">==</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">]</span>
+
+    <span class="n">indexed_path</span> <span class="o">=</span> <span class="s2">&quot;vectorContainer.values[1]&quot;</span>
+    <span class="n">SimulationExecutor</span><span class="o">.</span><span class="n">applyModification</span><span class="p">(</span><span class="n">sim</span><span class="p">,</span> <span class="n">indexed_path</span><span class="p">,</span> <span class="s2">&quot;7.5&quot;</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">sim</span><span class="o">.</span><span class="n">vectorContainer</span><span class="o">.</span><span class="n">values</span> <span class="o">==</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">7.5</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+
+    <span class="n">method_path</span> <span class="o">=</span> <span class="s2">&quot;get_DynModel().scObject.hub.mHub&quot;</span>
+    <span class="n">SimulationExecutor</span><span class="o">.</span><span class="n">applyModification</span><span class="p">(</span><span class="n">sim</span><span class="p">,</span> <span class="n">method_path</span><span class="p">,</span> <span class="s2">&quot;35.0&quot;</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">sim</span><span class="o">.</span><span class="n">get_DynModel</span><span class="p">()</span><span class="o">.</span><span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span> <span class="o">==</span> <span class="mf">35.0</span>
+    <span class="k">assert</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">sim</span><span class="p">,</span> <span class="n">method_path</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_indexed_modification_updates_swig_copy_on_read_container">
+<a class="viewcode-back" href="../Documentation/utilities/MonteCarlo/_UnitTests/test_controller.html#test_controller.test_indexed_modification_updates_swig_copy_on_read_container">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_indexed_modification_updates_swig_copy_on_read_container</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Verify indexed paths write back copy-on-read SWIG containers.&quot;&quot;&quot;</span>
+    <span class="n">sim</span> <span class="o">=</span> <span class="n">DummySimulation</span><span class="p">()</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">rwVoltageIO</span> <span class="o">=</span> <span class="n">motorVoltageInterface</span><span class="o">.</span><span class="n">MotorVoltageInterface</span><span class="p">()</span>
+    <span class="n">initial_gains</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.02</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">]</span>  <span class="c1"># [N*m/V]</span>
+    <span class="n">new_gain</span> <span class="o">=</span> <span class="mf">0.123</span>  <span class="c1"># [N*m/V]</span>
+
+    <span class="n">sim</span><span class="o">.</span><span class="n">rwVoltageIO</span><span class="o">.</span><span class="n">setGains</span><span class="p">(</span><span class="n">initial_gains</span><span class="p">)</span>
+    <span class="n">SimulationExecutor</span><span class="o">.</span><span class="n">applyModification</span><span class="p">(</span>
+        <span class="n">sim</span><span class="p">,</span>
+        <span class="s2">&quot;rwVoltageIO.voltage2TorqueGain[0]&quot;</span><span class="p">,</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">new_gain</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">sim</span><span class="o">.</span><span class="n">rwVoltageIO</span><span class="o">.</span><span class="n">voltage2TorqueGain</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">new_gain</span></div>
+
+
+
+<div class="viewcode-block" id="test_double_indexed_modification_updates_swig_matrix3d">
+<a class="viewcode-back" href="../Documentation/utilities/MonteCarlo/_UnitTests/test_controller.html#test_controller.test_double_indexed_modification_updates_swig_matrix3d">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_double_indexed_modification_updates_swig_matrix3d</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Verify double-indexed paths write back SWIG Matrix3d attributes.&quot;&quot;&quot;</span>
+    <span class="n">sim</span> <span class="o">=</span> <span class="n">DummySimulation</span><span class="p">()</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">scObject</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+    <span class="n">inertia</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="mf">900.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="mf">0.0</span><span class="p">,</span> <span class="mf">800.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">600.0</span>
+    <span class="p">]</span>  <span class="c1"># [kg*m^2]</span>
+    <span class="n">new_cross_inertia</span> <span class="o">=</span> <span class="mf">12.5</span>  <span class="c1"># [kg*m^2]</span>
+
+    <span class="n">sim</span><span class="o">.</span><span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">IHubPntBc_B</span> <span class="o">=</span> <span class="n">simHelpers</span><span class="o">.</span><span class="n">np2EigenMatrix3d</span><span class="p">(</span><span class="n">inertia</span><span class="p">)</span>
+    <span class="n">SimulationExecutor</span><span class="o">.</span><span class="n">applyModification</span><span class="p">(</span>
+        <span class="n">sim</span><span class="p">,</span>
+        <span class="s2">&quot;scObject.hub.IHubPntBc_B[0][1]&quot;</span><span class="p">,</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">new_cross_inertia</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">sim</span><span class="o">.</span><span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">IHubPntBc_B</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">new_cross_inertia</span></div>
+
+
+
+<div class="viewcode-block" id="test_vector_angle_dispersion_reads_nested_method_path">
+<a class="viewcode-back" href="../Documentation/utilities/MonteCarlo/_UnitTests/test_controller.html#test_controller.test_vector_angle_dispersion_reads_nested_method_path">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_vector_angle_dispersion_reads_nested_method_path</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Verify vector dispersions read nested zero-argument method paths.&quot;&quot;&quot;</span>
+    <span class="n">sim</span> <span class="o">=</span> <span class="n">DummySimulation</span><span class="p">()</span>
+    <span class="n">vector_path</span> <span class="o">=</span> <span class="s2">&quot;get_DynModel().scObject.hub.unitVector&quot;</span>
+    <span class="n">phi_bounds</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.001</span><span class="p">,</span> <span class="mf">0.001</span><span class="p">]</span>  <span class="c1"># [rad]</span>
+    <span class="n">theta_bounds</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.001</span><span class="p">,</span> <span class="mf">0.001</span><span class="p">]</span>  <span class="c1"># [rad]</span>
+
+    <span class="n">dispersion</span> <span class="o">=</span> <span class="n">UniformVectorAngleDispersion</span><span class="p">(</span>
+        <span class="n">vector_path</span><span class="p">,</span>
+        <span class="n">phiBoundsOffNom</span><span class="o">=</span><span class="n">phi_bounds</span><span class="p">,</span>
+        <span class="n">thetaBoundsOffNom</span><span class="o">=</span><span class="n">theta_bounds</span>
+    <span class="p">)</span>
+
+    <span class="n">dispersed_vector</span> <span class="o">=</span> <span class="n">dispersion</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">sim</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">dispersed_vector</span><span class="p">),</span> <span class="mf">1.0</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_uniform_vector_angle_dispersion_uses_bounds_off_nominal">
+<a class="viewcode-back" href="../Documentation/utilities/MonteCarlo/_UnitTests/test_controller.html#test_controller.test_uniform_vector_angle_dispersion_uses_bounds_off_nominal">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_uniform_vector_angle_dispersion_uses_bounds_off_nominal</span><span class="p">(</span><span class="n">monkeypatch</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Verify angle dispersions use bounds centered on the nominal vector.&quot;&quot;&quot;</span>
+    <span class="n">sim</span> <span class="o">=</span> <span class="n">DummySimulation</span><span class="p">()</span>
+    <span class="n">vector_path</span> <span class="o">=</span> <span class="s2">&quot;get_DynModel().scObject.hub.unitVector&quot;</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">get_DynModel</span><span class="p">()</span><span class="o">.</span><span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">unitVector</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+        <span class="p">[</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">]</span>
+    <span class="p">])</span>  <span class="c1"># [-]</span>
+    <span class="n">phi_bounds</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.02</span><span class="p">,</span> <span class="mf">0.03</span><span class="p">]</span>  <span class="c1"># [rad]</span>
+    <span class="n">theta_bounds</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.04</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">]</span>  <span class="c1"># [rad]</span>
+    <span class="n">uniform_calls</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">record_uniform</span><span class="p">(</span><span class="n">lower_bound</span><span class="p">,</span> <span class="n">upper_bound</span><span class="p">):</span>
+        <span class="n">uniform_calls</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">lower_bound</span><span class="p">,</span> <span class="n">upper_bound</span><span class="p">))</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">lower_bound</span> <span class="o">+</span> <span class="n">upper_bound</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+
+    <span class="n">monkeypatch</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="p">,</span> <span class="s2">&quot;uniform&quot;</span><span class="p">,</span> <span class="n">record_uniform</span><span class="p">)</span>
+
+    <span class="n">dispersion</span> <span class="o">=</span> <span class="n">UniformVectorAngleDispersion</span><span class="p">(</span>
+        <span class="n">vector_path</span><span class="p">,</span>
+        <span class="n">phiBoundsOffNom</span><span class="o">=</span><span class="n">phi_bounds</span><span class="p">,</span>
+        <span class="n">thetaBoundsOffNom</span><span class="o">=</span><span class="n">theta_bounds</span>
+    <span class="p">)</span>
+    <span class="n">dispersion</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">sim</span><span class="p">)</span>
+
+    <span class="n">nominal_vector</span> <span class="o">=</span> <span class="n">sim</span><span class="o">.</span><span class="n">get_DynModel</span><span class="p">()</span><span class="o">.</span><span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">unitVector</span>
+    <span class="n">nominal_vector</span> <span class="o">=</span> <span class="n">nominal_vector</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">nominal_vector</span><span class="p">)</span>
+    <span class="n">nominal_spherical</span> <span class="o">=</span> <span class="n">dispersion</span><span class="o">.</span><span class="n">cart2Spherical</span><span class="p">(</span><span class="n">nominal_vector</span><span class="p">)</span>
+    <span class="n">expected_phi_bounds</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">nominal_spherical</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">phi_bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">nominal_spherical</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">phi_bounds</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="p">]</span>
+    <span class="n">expected_theta_bounds</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">nominal_spherical</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="n">theta_bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">nominal_spherical</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="n">theta_bounds</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="p">]</span>
+
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">uniform_calls</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">expected_phi_bounds</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">uniform_calls</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">expected_theta_bounds</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_normal_vector_angle_dispersion_uses_scalar_angle_samples">
+<a class="viewcode-back" href="../Documentation/utilities/MonteCarlo/_UnitTests/test_controller.html#test_controller.test_normal_vector_angle_dispersion_uses_scalar_angle_samples">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_normal_vector_angle_dispersion_uses_scalar_angle_samples</span><span class="p">(</span><span class="n">monkeypatch</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Verify normal angle dispersions draw scalar angle samples.&quot;&quot;&quot;</span>
+    <span class="n">sim</span> <span class="o">=</span> <span class="n">DummySimulation</span><span class="p">()</span>
+    <span class="n">vector_path</span> <span class="o">=</span> <span class="s2">&quot;get_DynModel().scObject.hub.unitVector&quot;</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">get_DynModel</span><span class="p">()</span><span class="o">.</span><span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">unitVector</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+        <span class="p">[</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">]</span>
+    <span class="p">])</span>  <span class="c1"># [-]</span>
+    <span class="n">phi_std</span> <span class="o">=</span> <span class="mf">0.02</span>  <span class="c1"># [rad]</span>
+    <span class="n">theta_std</span> <span class="o">=</span> <span class="mf">0.03</span>  <span class="c1"># [rad]</span>
+    <span class="n">normal_calls</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">record_normal</span><span class="p">(</span><span class="n">mean</span><span class="p">,</span> <span class="n">standard_deviation</span><span class="p">):</span>
+        <span class="n">normal_calls</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">mean</span><span class="p">,</span> <span class="n">standard_deviation</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">mean</span>
+
+    <span class="n">monkeypatch</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="p">,</span> <span class="s2">&quot;normal&quot;</span><span class="p">,</span> <span class="n">record_normal</span><span class="p">)</span>
+
+    <span class="n">dispersion</span> <span class="o">=</span> <span class="n">NormalVectorAngleDispersion</span><span class="p">(</span>
+        <span class="n">vector_path</span><span class="p">,</span>
+        <span class="n">phiStd</span><span class="o">=</span><span class="n">phi_std</span><span class="p">,</span>
+        <span class="n">thetaStd</span><span class="o">=</span><span class="n">theta_std</span><span class="p">,</span>
+        <span class="n">phiBoundsOffNom</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">],</span>
+        <span class="n">thetaBoundsOffNom</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="n">dispersed_vector</span> <span class="o">=</span> <span class="n">dispersion</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">sim</span><span class="p">)</span>
+
+    <span class="n">nominal_vector</span> <span class="o">=</span> <span class="n">sim</span><span class="o">.</span><span class="n">get_DynModel</span><span class="p">()</span><span class="o">.</span><span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">unitVector</span>
+    <span class="n">nominal_vector</span> <span class="o">=</span> <span class="n">nominal_vector</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">nominal_vector</span><span class="p">)</span>
+    <span class="n">nominal_spherical</span> <span class="o">=</span> <span class="n">dispersion</span><span class="o">.</span><span class="n">cart2Spherical</span><span class="p">(</span><span class="n">nominal_vector</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">dispersed_vector</span><span class="p">),</span> <span class="mf">1.0</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">normal_calls</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="n">nominal_spherical</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">phi_std</span><span class="p">])</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">normal_calls</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="n">nominal_spherical</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">theta_std</span><span class="p">])</span>
+    <span class="k">assert</span> <span class="n">dispersion</span><span class="o">.</span><span class="n">getDispersionMag</span><span class="p">()</span> <span class="o">==</span> <span class="p">[</span><span class="sa">r</span><span class="s2">&quot;0.0 $\sigma$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;0.0 $\sigma$&quot;</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="test_normal_vector_dispersion_uses_configured_statistics">
+<a class="viewcode-back" href="../Documentation/utilities/MonteCarlo/_UnitTests/test_controller.html#test_controller.test_normal_vector_dispersion_uses_configured_statistics">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_normal_vector_dispersion_uses_configured_statistics</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Verify normal vector dispersions retain mean and standard deviation.&quot;&quot;&quot;</span>
+    <span class="n">sim</span> <span class="o">=</span> <span class="n">DummySimulation</span><span class="p">()</span>
+    <span class="n">vector_path</span> <span class="o">=</span> <span class="s2">&quot;TaskList[0].TaskModels[0].hub.r_BcB_B&quot;</span>
+    <span class="n">mean</span> <span class="o">=</span> <span class="mf">2.5</span>  <span class="c1"># [m]</span>
+    <span class="n">std_deviation</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># [m]</span>
+
+    <span class="n">dispersion</span> <span class="o">=</span> <span class="n">NormalVectorDispersion</span><span class="p">(</span>
+        <span class="n">vector_path</span><span class="p">,</span>
+        <span class="n">mean</span><span class="o">=</span><span class="n">mean</span><span class="p">,</span>
+        <span class="n">stdDeviation</span><span class="o">=</span><span class="n">std_deviation</span>
+    <span class="p">)</span>
+    <span class="n">dispersed_vector</span> <span class="o">=</span> <span class="n">dispersion</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">sim</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">dispersed_vector</span><span class="p">,</span> <span class="p">[</span><span class="n">mean</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">mean</span><span class="p">])</span></div>
+
+
+
+<div class="viewcode-block" id="test_populate_seeds_applies_before_configure_function">
+<a class="viewcode-back" href="../Documentation/utilities/MonteCarlo/_UnitTests/test_controller.html#test_controller.test_populate_seeds_applies_before_configure_function">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_populate_seeds_applies_before_configure_function</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Verify archived RNGSeed modifications are set before configuration.&quot;&quot;&quot;</span>
+    <span class="n">configured_seeds</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_sim</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">DummySimulation</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">configure_sim</span><span class="p">(</span><span class="n">sim</span><span class="p">):</span>
+        <span class="n">configured_seeds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sim</span><span class="o">.</span><span class="n">TaskList</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">TaskModels</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">RNGSeed</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">execute_sim</span><span class="p">(</span><span class="n">sim</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">sim</span><span class="o">.</span><span class="n">TaskList</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">TaskModels</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">RNGSeed</span> <span class="o">==</span> <span class="mi">8675309</span>
+        <span class="k">assert</span> <span class="n">sim</span><span class="o">.</span><span class="n">TaskList</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">TaskModels</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span> <span class="o">==</span> <span class="mf">42.0</span>
+
+    <span class="n">sim_params</span> <span class="o">=</span> <span class="n">SimulationParameters</span><span class="p">(</span>
+        <span class="n">creationFunction</span><span class="o">=</span><span class="n">create_sim</span><span class="p">,</span>
+        <span class="n">executionFunction</span><span class="o">=</span><span class="n">execute_sim</span><span class="p">,</span>
+        <span class="n">configureFunction</span><span class="o">=</span><span class="n">configure_sim</span><span class="p">,</span>
+        <span class="n">retentionPolicies</span><span class="o">=</span><span class="p">[],</span>
+        <span class="n">dispersions</span><span class="o">=</span><span class="p">[],</span>
+        <span class="n">shouldDisperseSeeds</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">shouldArchiveParameters</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">filename</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">icfilename</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">index</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">modifications</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;TaskList[0].TaskModels[0].RNGSeed&quot;</span><span class="p">:</span> <span class="s2">&quot;8675309&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;TaskList[0].TaskModels[0].hub.mHub&quot;</span><span class="p">:</span> <span class="s2">&quot;42.0&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="n">SimulationExecutor</span><span class="p">()([</span><span class="n">sim_params</span><span class="p">,</span> <span class="kc">None</span><span class="p">])</span>
+
+    <span class="k">assert</span> <span class="n">result</span> <span class="o">==</span> <span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">configured_seeds</span> <span class="o">==</span> <span class="p">[</span><span class="mi">8675309</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="test_uniform_dispersion_randomizes_nested_sim_parameter">
+<a class="viewcode-back" href="../Documentation/utilities/MonteCarlo/_UnitTests/test_controller.html#test_controller.test_uniform_dispersion_randomizes_nested_sim_parameter">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_uniform_dispersion_randomizes_nested_sim_parameter</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Verify generated dispersions update the live simulation parameter.&quot;&quot;&quot;</span>
+    <span class="n">mass_path</span> <span class="o">=</span> <span class="s2">&quot;TaskList[0].TaskModels[0].hub.mHub&quot;</span>
+    <span class="n">mass_bounds</span> <span class="o">=</span> <span class="p">[</span><span class="mf">24.0</span><span class="p">,</span> <span class="mf">26.0</span><span class="p">]</span>  <span class="c1"># [kg]</span>
+    <span class="n">observed_masses</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">generated_masses</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_sim</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">DummySimulation</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">execute_sim</span><span class="p">(</span><span class="n">sim</span><span class="p">):</span>
+        <span class="n">observed_masses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sim</span><span class="o">.</span><span class="n">TaskList</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">TaskModels</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">run_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
+        <span class="n">sim_params</span> <span class="o">=</span> <span class="n">SimulationParameters</span><span class="p">(</span>
+            <span class="n">creationFunction</span><span class="o">=</span><span class="n">create_sim</span><span class="p">,</span>
+            <span class="n">executionFunction</span><span class="o">=</span><span class="n">execute_sim</span><span class="p">,</span>
+            <span class="n">configureFunction</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">retentionPolicies</span><span class="o">=</span><span class="p">[],</span>
+            <span class="n">dispersions</span><span class="o">=</span><span class="p">[</span><span class="n">UniformDispersion</span><span class="p">(</span><span class="n">mass_path</span><span class="p">,</span> <span class="n">mass_bounds</span><span class="p">)],</span>
+            <span class="n">shouldDisperseSeeds</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">shouldArchiveParameters</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">filename</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="n">icfilename</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="n">index</span><span class="o">=</span><span class="n">run_index</span><span class="p">,</span>
+            <span class="n">modifications</span><span class="o">=</span><span class="p">{}</span>
+        <span class="p">)</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="n">SimulationExecutor</span><span class="p">()([</span><span class="n">sim_params</span><span class="p">,</span> <span class="kc">None</span><span class="p">])</span>
+        <span class="n">generated_mass</span> <span class="o">=</span> <span class="n">SimulationExecutor</span><span class="o">.</span><span class="n">parseModificationValue</span><span class="p">(</span>
+            <span class="n">sim_params</span><span class="o">.</span><span class="n">modifications</span><span class="p">[</span><span class="n">mass_path</span><span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="k">assert</span> <span class="n">result</span> <span class="o">==</span> <span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">run_index</span><span class="p">)</span>
+        <span class="n">generated_masses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">generated_mass</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">observed_masses</span> <span class="o">==</span> <span class="n">generated_masses</span>
+    <span class="k">assert</span> <span class="n">observed_masses</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">observed_masses</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">observed_mass</span> <span class="ow">in</span> <span class="n">observed_masses</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">mass_bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">observed_mass</span> <span class="o">&lt;=</span> <span class="n">mass_bounds</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">observed_mass</span> <span class="o">!=</span> <span class="n">DummyHub</span><span class="p">()</span><span class="o">.</span><span class="n">mHub</span></div>
+
+
+
+<div class="viewcode-block" id="test_uniform_dispersion_randomizes_method_path_parameter">
+<a class="viewcode-back" href="../Documentation/utilities/MonteCarlo/_UnitTests/test_controller.html#test_controller.test_uniform_dispersion_randomizes_method_path_parameter">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_uniform_dispersion_randomizes_method_path_parameter</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Verify generated dispersions update a zero-argument method path.&quot;&quot;&quot;</span>
+    <span class="n">mass_path</span> <span class="o">=</span> <span class="s2">&quot;get_DynModel().scObject.hub.mHub&quot;</span>
+    <span class="n">mass_bounds</span> <span class="o">=</span> <span class="p">[</span><span class="mf">34.0</span><span class="p">,</span> <span class="mf">36.0</span><span class="p">]</span>  <span class="c1"># [kg]</span>
+    <span class="n">observed_masses</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">generated_masses</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_sim</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">DummySimulation</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">execute_sim</span><span class="p">(</span><span class="n">sim</span><span class="p">):</span>
+        <span class="n">observed_masses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sim</span><span class="o">.</span><span class="n">get_DynModel</span><span class="p">()</span><span class="o">.</span><span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">run_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
+        <span class="n">sim_params</span> <span class="o">=</span> <span class="n">SimulationParameters</span><span class="p">(</span>
+            <span class="n">creationFunction</span><span class="o">=</span><span class="n">create_sim</span><span class="p">,</span>
+            <span class="n">executionFunction</span><span class="o">=</span><span class="n">execute_sim</span><span class="p">,</span>
+            <span class="n">configureFunction</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">retentionPolicies</span><span class="o">=</span><span class="p">[],</span>
+            <span class="n">dispersions</span><span class="o">=</span><span class="p">[</span><span class="n">UniformDispersion</span><span class="p">(</span><span class="n">mass_path</span><span class="p">,</span> <span class="n">mass_bounds</span><span class="p">)],</span>
+            <span class="n">shouldDisperseSeeds</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">shouldArchiveParameters</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">filename</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="n">icfilename</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="n">index</span><span class="o">=</span><span class="n">run_index</span><span class="p">,</span>
+            <span class="n">modifications</span><span class="o">=</span><span class="p">{}</span>
+        <span class="p">)</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="n">SimulationExecutor</span><span class="p">()([</span><span class="n">sim_params</span><span class="p">,</span> <span class="kc">None</span><span class="p">])</span>
+        <span class="n">generated_mass</span> <span class="o">=</span> <span class="n">SimulationExecutor</span><span class="o">.</span><span class="n">parseModificationValue</span><span class="p">(</span>
+            <span class="n">sim_params</span><span class="o">.</span><span class="n">modifications</span><span class="p">[</span><span class="n">mass_path</span><span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="k">assert</span> <span class="n">result</span> <span class="o">==</span> <span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">run_index</span><span class="p">)</span>
+        <span class="n">generated_masses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">generated_mass</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">observed_masses</span> <span class="o">==</span> <span class="n">generated_masses</span>
+    <span class="k">assert</span> <span class="n">observed_masses</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">observed_masses</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">observed_mass</span> <span class="ow">in</span> <span class="n">observed_masses</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">mass_bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">observed_mass</span> <span class="o">&lt;=</span> <span class="n">mass_bounds</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">observed_mass</span> <span class="o">!=</span> <span class="n">DummyHub</span><span class="p">()</span><span class="o">.</span><span class="n">mHub</span></div>
+
+
+
+<div class="viewcode-block" id="test_disperse_seeds_only_records_seeded_models">
+<a class="viewcode-back" href="../Documentation/utilities/MonteCarlo/_UnitTests/test_controller.html#test_controller.test_disperse_seeds_only_records_seeded_models">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_disperse_seeds_only_records_seeded_models</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Verify random seed dispersions are recorded only for seeded models.&quot;&quot;&quot;</span>
+    <span class="n">sim</span> <span class="o">=</span> <span class="n">DummySimulation</span><span class="p">()</span>
+
+    <span class="n">random_seeds</span> <span class="o">=</span> <span class="n">SimulationExecutor</span><span class="o">.</span><span class="n">disperseSeeds</span><span class="p">(</span><span class="n">sim</span><span class="p">)</span>
+
+    <span class="n">seed_path</span> <span class="o">=</span> <span class="s2">&quot;TaskList[0].TaskModels[0].RNGSeed&quot;</span>
+
+    <span class="k">assert</span> <span class="nb">set</span><span class="p">(</span><span class="n">random_seeds</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">==</span> <span class="p">{</span><span class="n">seed_path</span><span class="p">}</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
+        <span class="n">SimulationExecutor</span><span class="o">.</span><span class="n">parseModificationValue</span><span class="p">(</span><span class="n">random_seeds</span><span class="p">[</span><span class="n">seed_path</span><span class="p">]),</span>
+        <span class="nb">int</span>
+    <span class="p">)</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">test_apply_modification_updates_nested_attributes</span><span class="p">()</span>
+    <span class="n">test_indexed_modification_updates_swig_copy_on_read_container</span><span class="p">()</span>
+    <span class="n">test_double_indexed_modification_updates_swig_matrix3d</span><span class="p">()</span>
+    <span class="n">test_vector_angle_dispersion_reads_nested_method_path</span><span class="p">()</span>
+    <span class="n">test_normal_vector_dispersion_uses_configured_statistics</span><span class="p">()</span>
+    <span class="n">test_populate_seeds_applies_before_configure_function</span><span class="p">()</span>
+    <span class="n">test_uniform_dispersion_randomizes_nested_sim_parameter</span><span class="p">()</span>
+    <span class="n">test_uniform_dispersion_randomizes_method_path_parameter</span><span class="p">()</span>
+    <span class="n">test_disperse_seeds_only_records_seeded_models</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

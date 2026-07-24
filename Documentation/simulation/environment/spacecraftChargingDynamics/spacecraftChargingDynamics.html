@@ -1,0 +1,1217 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>C++ Module: spacecraftChargingDynamics &mdash; Basilisk 2.11.0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=2ebb1c42" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=1647406f"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="spacecraftChargingDynamics" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../communication/index.html">communication</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dynamics/index.html">dynamics</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">environment</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../ExponentialAtmosphere/index.html">ExponentialAtmosphere</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../MsisAtmosphere/index.html">MsisAtmosphere</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../TabularAtmosphere/index.html">TabularAtmosphere</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ZeroWindModel/index.html">ZeroWindModel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../albedo/index.html">albedo</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dentonFluxModel/index.html">dentonFluxModel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../earthRadiationModel/index.html">earthRadiationModel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../eclipse/index.html">eclipse</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ephemerisConverter/index.html">ephemerisConverter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../groundLocation/index.html">groundLocation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../groundMapping/index.html">groundMapping</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../magneticFieldCenteredDipole/index.html">magneticFieldCenteredDipole</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../magneticFieldWMM/index.html">magneticFieldWMM</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../planetEphemeris/index.html">planetEphemeris</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../solarFlux/index.html">solarFlux</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spaceWeatherData/index.html">spaceWeatherData</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">spacecraftChargingDynamics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraftChargingEquilibrium/index.html">spacecraftChargingEquilibrium</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraftLocation/index.html">spacecraftLocation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spiceInterface/index.html">spiceInterface</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../stripLocation/index.html">stripLocation</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../forceTorque/index.html">forceTorque</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujocoDynamics/index.html">mujocoDynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../simSynch/index.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Plugins/overview.html">About Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Plugins/installing.html">Installing Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Plugins/writing.html">Writing a Basilisk Plugin</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">environment</a></li>
+          <li class="breadcrumb-item"><a href="index.html">spacecraftChargingDynamics</a></li>
+      <li class="breadcrumb-item active"><span class="module-type-label module-type-cpp">C++</span> Module: spacecraftChargingDynamics</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/simulation/environment/spacecraftChargingDynamics/spacecraftChargingDynamics.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="c-module-spacecraftchargingdynamics">
+<span id="spacecraftchargingdynamics"></span><h1><span class="module-type-label module-type-cpp">C++</span> Module: spacecraftChargingDynamics<a class="headerlink" href="#c-module-spacecraftchargingdynamics" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">spacecraftChargingDynamics</span></code> class is derived from the the parent class <code class="docutils literal notranslate"><span class="pre">DynamicObject</span></code>. This module integrates the
+electric potential of two spacecraft (a servicer and a target) in a plasma environment using a first order
+ordinary differential equation for each spacecraft. The charging model includes plasma electron current, plasma
+ion current, photoelectric current, and an optional electron beam current.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>while this module defaults all module member variables, there is a setter method available for each attribute.</p>
+</div>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>The following table lists all module input and output messages.
+The module msg connections are set by the user from Python.
+The msg type contains a link to the message structure definition, while the description
+provides information on what each message is used for.</p>
+<div align="center" class="align-center"><div class="graphviz"><object data="../../../../_images/graphviz-730a1f1dd083181106e8c2fd45cfec4df1f156c0.svg" type="image/svg+xml" class="graphviz">
+<p class="warning">spacecraftChargingDynamics module input and output messages</p></object></div>
+</div>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>servicerStateInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#scstatesmsgpayload"><span class="std std-ref">SCStatesMsgPayload</span></a></p></td>
+<td><p>Input spacecraft inertial state message for the servicer.</p></td>
+</tr>
+<tr class="row-odd"><td><p>targetStateInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#scstatesmsgpayload"><span class="std std-ref">SCStatesMsgPayload</span></a></p></td>
+<td><p>Input spacecraft inertial state message for the target.</p></td>
+</tr>
+<tr class="row-even"><td><p>servicerSurfaceAreaInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/ProjectedAreaMsgPayload.html#projectedareamsgpayload"><span class="std std-ref">ProjectedAreaMsgPayload</span></a></p></td>
+<td><p>Input message containing the total servicer surface area.</p></td>
+</tr>
+<tr class="row-odd"><td><p>targetSurfaceAreaInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/ProjectedAreaMsgPayload.html#projectedareamsgpayload"><span class="std std-ref">ProjectedAreaMsgPayload</span></a></p></td>
+<td><p>Input message containing the total target surface area.</p></td>
+</tr>
+<tr class="row-even"><td><p>servicerSunlitAreaInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/ProjectedAreaMsgPayload.html#projectedareamsgpayload"><span class="std std-ref">ProjectedAreaMsgPayload</span></a></p></td>
+<td><p>Input message containing the total servicer sunlit area.</p></td>
+</tr>
+<tr class="row-odd"><td><p>targetSunlitAreaInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/ProjectedAreaMsgPayload.html#projectedareamsgpayload"><span class="std std-ref">ProjectedAreaMsgPayload</span></a></p></td>
+<td><p>Input message containing total target sunlit area.</p></td>
+</tr>
+<tr class="row-even"><td><p>electronBeamInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/ElectronBeamMsgPayload.html#electronbeammsgpayload"><span class="std std-ref">ElectronBeamMsgPayload</span></a></p></td>
+<td><p>Optional input message containing the electron beam parameters.</p></td>
+</tr>
+<tr class="row-odd"><td><p>servicerPotentialOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/VoltMsgPayload.html#voltmsgpayload"><span class="std std-ref">VoltMsgPayload</span></a></p></td>
+<td><p>Output message containing the servicer electric potential.</p></td>
+</tr>
+<tr class="row-even"><td><p>targetPotentialOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/VoltMsgPayload.html#voltmsgpayload"><span class="std std-ref">VoltMsgPayload</span></a></p></td>
+<td><p>Output message containing the target electric potential.</p></td>
+</tr>
+<tr class="row-odd"><td><p>servicerEBCurrentOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/CurrentMsgPayload.html#currentmsgpayload"><span class="std std-ref">CurrentMsgPayload</span></a></p></td>
+<td><p>Output message containing the servicer electron beam current.</p></td>
+</tr>
+<tr class="row-even"><td><p>targetEBCurrentOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/CurrentMsgPayload.html#currentmsgpayload"><span class="std std-ref">CurrentMsgPayload</span></a></p></td>
+<td><p>Output message containing the target electron beam current.</p></td>
+</tr>
+<tr class="row-odd"><td><p>servicerPhotoelectricCurrentOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/CurrentMsgPayload.html#currentmsgpayload"><span class="std std-ref">CurrentMsgPayload</span></a></p></td>
+<td><p>Output message containing the servicer photoelectric current.</p></td>
+</tr>
+<tr class="row-even"><td><p>targetPhotoelectricCurrentOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/CurrentMsgPayload.html#currentmsgpayload"><span class="std std-ref">CurrentMsgPayload</span></a></p></td>
+<td><p>Output message containing the target photoelectric current.</p></td>
+</tr>
+<tr class="row-odd"><td><p>servicerPlasmaElectronCurrentOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/CurrentMsgPayload.html#currentmsgpayload"><span class="std std-ref">CurrentMsgPayload</span></a></p></td>
+<td><p>Output message containing the servicer plasma electron current.</p></td>
+</tr>
+<tr class="row-even"><td><p>targetPlasmaElectronCurrentOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/CurrentMsgPayload.html#currentmsgpayload"><span class="std std-ref">CurrentMsgPayload</span></a></p></td>
+<td><p>Output message containing the target plasma electron current.</p></td>
+</tr>
+<tr class="row-odd"><td><p>servicerPlasmaIonCurrentOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/CurrentMsgPayload.html#currentmsgpayload"><span class="std std-ref">CurrentMsgPayload</span></a></p></td>
+<td><p>Output message containing the servicer plasma ion current.</p></td>
+</tr>
+<tr class="row-even"><td><p>targetPlasmaIonCurrentOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/CurrentMsgPayload.html#currentmsgpayload"><span class="std std-ref">CurrentMsgPayload</span></a></p></td>
+<td><p>Output message containing the target plasma ion current.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="detailed-module-description">
+<h2>Detailed Module Description<a class="headerlink" href="#detailed-module-description" title="Link to this heading"></a></h2>
+<p>See the following journal paper for a detailed description of the charging equations implemented in this module.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>J. Hammerl and H. Schaub, <a class="reference external" href="https://hanspeterschaub.info/PapersPrivate/Hammerl2024a.pdf">“Servicing and Target Spacecraft Charging Behavior Due to Emission of an
+Electron Beam”</a>.</p>
+</div>
+<p>The module computes the total current on each spacecraft as the sum of:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>plasma electron current</p></li>
+<li><p>plasma ion current</p></li>
+<li><p>photoelectric current</p></li>
+<li><p>optional electron beam current</p></li>
+</ul>
+</div></blockquote>
+<p>For each spacecraft, total current is divided by the spacecraft capacitance and integrated to determine the
+spacecraft potential as a function of time.</p>
+</section>
+<section id="module-functions">
+<h2>Module Functions<a class="headerlink" href="#module-functions" title="Link to this heading"></a></h2>
+<p>Below is a list of functions this module performs:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Reads the servicer and target spacecraft inertial velocity states</p></li>
+<li><p>Reads the servicer and target total surface area and sunlit area inputs</p></li>
+<li><p>Reads the optional electron beam input message</p></li>
+<li><p>Computes the plasma electron current for each spacecraft</p></li>
+<li><p>Computes the plasma ion current for each spacecraft</p></li>
+<li><p>Computes the electron beam current for each spacecraft</p></li>
+<li><p>Computes the photoelectric current for each spacecraft</p></li>
+<li><p>Integrates the servicer and target potential states forward in time</p></li>
+<li><p>Writes the spacecraft potentials and all currents as output messages</p></li>
+</ul>
+</div></blockquote>
+</section>
+<section id="module-assumptions-and-limitations">
+<h2>Module Assumptions and Limitations<a class="headerlink" href="#module-assumptions-and-limitations" title="Link to this heading"></a></h2>
+<blockquote>
+<div><ul class="simple">
+<li><p>The module requires two spacecraft to be configured: servicer and target</p></li>
+<li><p>Each spacecraft is represented by a fixed capacitance and a potential.</p></li>
+<li><p>The module requires all state and area input messages (except the optional <code class="docutils literal notranslate"><span class="pre">electronBeamInMsg</span></code>) to be linked and written.</p></li>
+<li><p>If a required input message is not linked or not written, the module logs an error and returns from <code class="docutils literal notranslate"><span class="pre">UpdateState()</span></code>.</p></li>
+</ul>
+</div></blockquote>
+</section>
+<section id="test-description-and-success-criteria">
+<h2>Test Description and Success Criteria<a class="headerlink" href="#test-description-and-success-criteria" title="Link to this heading"></a></h2>
+<p>The unit test for this module is located at <code class="docutils literal notranslate"><span class="pre">src/simulation/environment/spacecraftChargingDynamics/_UnitTest/test_spacecraftChargingDynamics.py</span></code>.
+The test verifies that the spacecraft charging dynamics module correctly computes the different types of currents
+impacting both a target and servicer spacecraft. Specifically, this test checks that the module
+correctly computes the photoelectric current, electron beam current, plasma electron current, and plasma ion
+current acting on both spacecraft. While the module defaults many required variables, the user has the ability
+to configure all information describing the electrons, ions, and photons using setter methods.</p>
+<p>The test varies the initial spacecraft potentials and sizes, the electron beam parameters, and the bulk plasma ion
+velocity. The test checks that the module correctly computes the photoelectric current, electron beam current,
+plasma electron current, and plasma ion current acting on both spacecraft.</p>
+</section>
+<section id="user-guide">
+<h2>User Guide<a class="headerlink" href="#user-guide" title="Link to this heading"></a></h2>
+<p>The following steps are required to set up the <code class="docutils literal notranslate"><span class="pre">spacecraftChargingDynamics</span></code> module in Python.</p>
+<ol class="arabic">
+<li><p>Import required Basilisk modules:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">macros</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">astroConstants</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">spacecraft</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">spacecraftChargingDynamics</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
+</pre></div>
+</div>
+</li>
+<li><p>Create the servicer spacecraft:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">servicer_radius</span> <span class="o">=</span> <span class="mf">3.0</span>  <span class="c1"># [m]</span>
+<span class="n">mass_servicer</span> <span class="o">=</span> <span class="mf">500.0</span>  <span class="c1"># [kg]</span>
+<span class="n">length_servicer</span> <span class="o">=</span> <span class="n">servicer_radius</span>  <span class="c1"># [m]</span>
+<span class="n">width_servicer</span> <span class="o">=</span> <span class="n">servicer_radius</span>  <span class="c1"># [m]</span>
+<span class="n">height_servicer</span> <span class="o">=</span> <span class="n">servicer_radius</span>  <span class="c1"># [m]</span>
+<span class="n">I_servicer_11</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="mf">12.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">mass_servicer</span> <span class="o">*</span> <span class="p">(</span><span class="n">length_servicer</span> <span class="o">*</span> <span class="n">length_servicer</span> <span class="o">+</span> <span class="n">height_servicer</span> <span class="o">*</span> <span class="n">height_servicer</span><span class="p">)</span>  <span class="c1"># [kg m^2]</span>
+<span class="n">I_servicer_22</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="mf">12.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">mass_servicer</span> <span class="o">*</span> <span class="p">(</span><span class="n">length_servicer</span> <span class="o">*</span> <span class="n">length_servicer</span> <span class="o">+</span> <span class="n">width_servicer</span> <span class="o">*</span> <span class="n">width_servicer</span><span class="p">)</span>  <span class="c1"># [kg m^2]</span>
+<span class="n">I_servicer_33</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="mf">12.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">mass_servicer</span> <span class="o">*</span> <span class="p">(</span><span class="n">width_servicer</span> <span class="o">*</span> <span class="n">width_servicer</span> <span class="o">+</span> <span class="n">height_servicer</span> <span class="o">*</span> <span class="n">height_servicer</span><span class="p">)</span>  <span class="c1"># [kg m^2]</span>
+
+<span class="n">servicer_spacecraft</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+<span class="n">servicer_spacecraft</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;ServicerSpacecraft&quot;</span>
+<span class="n">servicer_spacecraft</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span> <span class="o">=</span> <span class="n">mass_servicer</span>  <span class="c1"># [kg]</span>
+<span class="n">servicer_spacecraft</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_BcB_B</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>  <span class="c1"># [m]</span>
+<span class="n">servicer_spacecraft</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">IHubPntBc_B</span> <span class="o">=</span> <span class="p">[[</span><span class="n">I_servicer_11</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">I_servicer_22</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">I_servicer_33</span><span class="p">]]</span>  <span class="c1"># [kg m^2]</span>
+<span class="n">servicer_spacecraft</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">10.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>  <span class="c1"># [m]</span>
+<span class="n">servicer_spacecraft</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span> <span class="o">=</span> <span class="p">[[</span><span class="o">-</span><span class="mf">5199.77710904224</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">3436.681645356935</span><span class="p">],</span> <span class="p">[</span><span class="mf">1041.576797498721</span><span class="p">]]</span>  <span class="c1"># [m/s]</span>
+<span class="n">servicer_spacecraft</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">omega_BN_BInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="n">macros</span><span class="o">.</span><span class="n">D2R</span> <span class="o">*</span> <span class="mf">1.5</span><span class="p">]]</span>  <span class="c1"># [rad/s]</span>
+<span class="n">servicer_spacecraft</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">sigma_BNInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>
+</pre></div>
+</div>
+</li>
+<li><p>Create the target spacecraft:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">target_radius</span> <span class="o">=</span> <span class="mf">2.0</span>  <span class="c1"># [m]</span>
+<span class="n">mass_target</span> <span class="o">=</span> <span class="mf">800.0</span>  <span class="c1"># [kg]</span>
+<span class="n">length_target</span> <span class="o">=</span> <span class="n">target_radius</span>  <span class="c1"># [m]</span>
+<span class="n">width_target</span> <span class="o">=</span> <span class="n">target_radius</span>  <span class="c1"># [m]</span>
+<span class="n">height_target</span> <span class="o">=</span> <span class="n">target_radius</span>  <span class="c1"># [m]</span>
+<span class="n">I_target_11</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="mf">12.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">mass_target</span> <span class="o">*</span> <span class="p">(</span><span class="n">length_target</span> <span class="o">*</span> <span class="n">length_target</span> <span class="o">+</span> <span class="n">height_target</span> <span class="o">*</span> <span class="n">height_target</span><span class="p">)</span>  <span class="c1"># [kg m^2]</span>
+<span class="n">I_target_22</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="mf">12.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">mass_target</span> <span class="o">*</span> <span class="p">(</span><span class="n">length_target</span> <span class="o">*</span> <span class="n">length_target</span> <span class="o">+</span> <span class="n">width_target</span> <span class="o">*</span> <span class="n">width_target</span><span class="p">)</span>  <span class="c1"># [kg m^2]</span>
+<span class="n">I_target_33</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="mf">12.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">mass_target</span> <span class="o">*</span> <span class="p">(</span><span class="n">width_target</span> <span class="o">*</span> <span class="n">width_target</span> <span class="o">+</span> <span class="n">height_target</span> <span class="o">*</span> <span class="n">height_target</span><span class="p">)</span>  <span class="c1"># [kg m^2]</span>
+<span class="n">target_spacecraft</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+<span class="n">target_spacecraft</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;TargetSpacecraft&quot;</span>
+<span class="n">target_spacecraft</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span> <span class="o">=</span> <span class="n">mass_target</span>  <span class="c1"># [kg]</span>
+<span class="n">target_spacecraft</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_BcB_B</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>  <span class="c1"># [m]</span>
+<span class="n">target_spacecraft</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">IHubPntBc_B</span> <span class="o">=</span> <span class="p">[[</span><span class="n">I_target_11</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">I_target_22</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">I_target_33</span><span class="p">]]</span>  <span class="c1"># [kg m^2]</span>
+<span class="n">target_spacecraft</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">5.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>  <span class="c1"># [m]</span>
+<span class="n">target_spacecraft</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span> <span class="o">=</span> <span class="p">[[</span><span class="o">-</span><span class="mf">5199.77710904224</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">3436.681645356935</span><span class="p">],</span> <span class="p">[</span><span class="mf">1041.576797498721</span><span class="p">]]</span>  <span class="c1"># [m/s]</span>
+<span class="n">target_spacecraft</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">omega_BN_BInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="n">macros</span><span class="o">.</span><span class="n">D2R</span> <span class="o">*</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">]]</span>  <span class="c1"># [rad/s]</span>
+<span class="n">target_spacecraft</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">sigma_BNInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>
+</pre></div>
+</div>
+</li>
+<li><p>Create the total surface area and sunlit area messages for each spacecraft. (For complex articulating spacecraft, the <a class="reference internal" href="../../deviceInterface/facetedSpacecraftProjectedArea/facetedSpacecraftProjectedArea.html#facetedspacecraftprojectedarea"><span class="std std-ref">C++ Module: facetedSpacecraftProjectedArea</span></a> module should be used):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">servicer_surface_area_msg_data</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">ProjectedAreaMsgPayload</span><span class="p">()</span>
+<span class="n">servicer_surface_area_msg_data</span><span class="o">.</span><span class="n">area</span> <span class="o">=</span> <span class="mf">4.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">servicer_radius</span> <span class="o">*</span> <span class="n">servicer_radius</span>  <span class="c1"># [m^2]</span>
+<span class="n">servicer_surface_area_msg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">ProjectedAreaMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">servicer_surface_area_msg_data</span><span class="p">)</span>
+
+<span class="n">target_surface_area_msg_data</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">ProjectedAreaMsgPayload</span><span class="p">()</span>
+<span class="n">target_surface_area_msg_data</span><span class="o">.</span><span class="n">area</span> <span class="o">=</span> <span class="mf">4.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">target_radius</span> <span class="o">*</span> <span class="n">target_radius</span>  <span class="c1"># [m^2]</span>
+<span class="n">target_surface_area_msg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">ProjectedAreaMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">target_surface_area_msg_data</span><span class="p">)</span>
+
+<span class="n">servicer_sunlit_area_msg_data</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">ProjectedAreaMsgPayload</span><span class="p">()</span>
+<span class="n">servicer_sunlit_area_msg_data</span><span class="o">.</span><span class="n">area</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">servicer_radius</span> <span class="o">*</span> <span class="n">servicer_radius</span>  <span class="c1"># [m^2]</span>
+<span class="n">servicer_sunlit_area_msg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">ProjectedAreaMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">servicer_sunlit_area_msg_data</span><span class="p">)</span>
+
+<span class="n">target_sunlit_area_msg_data</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">ProjectedAreaMsgPayload</span><span class="p">()</span>
+<span class="n">target_sunlit_area_msg_data</span><span class="o">.</span><span class="n">area</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">target_radius</span> <span class="o">*</span> <span class="n">target_radius</span>  <span class="c1"># [m^2]</span>
+<span class="n">target_sunlit_area_msg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">ProjectedAreaMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">target_sunlit_area_msg_data</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p>Create the electron beam input message (optional):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">electron_beam_msg_data</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">ElectronBeamMsgPayload</span><span class="p">()</span>
+<span class="n">electron_beam_msg_data</span><span class="o">.</span><span class="n">energyEB</span> <span class="o">=</span> <span class="mf">10000.0</span>  <span class="c1"># [eV]</span>
+<span class="n">electron_beam_msg_data</span><span class="o">.</span><span class="n">currentEB</span> <span class="o">=</span> <span class="mf">250e-6</span>  <span class="c1"># [A]</span>
+<span class="n">electron_beam_msg_data</span><span class="o">.</span><span class="n">alphaEB</span> <span class="o">=</span> <span class="mf">0.5</span>  <span class="c1"># [-]</span>
+<span class="n">electron_beam_msg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">ElectronBeamMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">electron_beam_msg_data</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p>Create and configure the charging dynamics module:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">capacitance</span> <span class="o">=</span> <span class="mf">1e-9</span>  <span class="c1"># [F]</span>
+<span class="n">charging_dynamics</span> <span class="o">=</span> <span class="n">spacecraftChargingDynamics</span><span class="o">.</span><span class="n">SpacecraftChargingDynamics</span><span class="p">()</span>
+<span class="n">charging_dynamics</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;SpacecraftChargingDynamics&quot;</span>
+<span class="n">charging_dynamics</span><span class="o">.</span><span class="n">setServicerPotentialInit</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>  <span class="c1"># [Volts]</span>
+<span class="n">charging_dynamics</span><span class="o">.</span><span class="n">setTargetPotentialInit</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>  <span class="c1"># [Volts]</span>
+<span class="n">charging_dynamics</span><span class="o">.</span><span class="n">setServicerCapacitance</span><span class="p">(</span><span class="n">capacitance</span><span class="p">)</span>  <span class="c1"># [farads]</span>
+<span class="n">charging_dynamics</span><span class="o">.</span><span class="n">setTargetCapacitance</span><span class="p">(</span><span class="n">capacitance</span><span class="p">)</span>  <span class="c1"># [farads]</span>
+
+<span class="n">charging_dynamics</span><span class="o">.</span><span class="n">setTempPhotoelectrons</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span>  <span class="c1"># [eV]</span>
+<span class="n">charging_dynamics</span><span class="o">.</span><span class="n">setFluxPhotoelectrons</span><span class="p">(</span><span class="mf">1e-6</span><span class="p">)</span>  <span class="c1"># [A/m^2]</span>
+<span class="n">charging_dynamics</span><span class="o">.</span><span class="n">setTempElectrons</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span>  <span class="c1"># [eV]</span>
+<span class="n">charging_dynamics</span><span class="o">.</span><span class="n">setDensityElectrons</span><span class="p">(</span><span class="mf">950000.0</span><span class="p">)</span>  <span class="c1"># [m^-3]</span>
+<span class="n">charging_dynamics</span><span class="o">.</span><span class="n">setTempIons</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span>  <span class="c1"># [eV]</span>
+<span class="n">charging_dynamics</span><span class="o">.</span><span class="n">setDensityIons</span><span class="p">(</span><span class="mf">950000.0</span><span class="p">)</span>  <span class="c1"># [m^-3]</span>
+<span class="n">charging_dynamics</span><span class="o">.</span><span class="n">setBulkVelocityIons</span><span class="p">(</span><span class="mf">400000.0</span><span class="p">)</span>  <span class="c1"># [m/s]</span>
+</pre></div>
+</div>
+</li>
+<li><p>Connect all required input messages:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">charging_dynamics</span><span class="o">.</span><span class="n">servicerStateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">servicer_spacecraft</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="p">)</span>
+<span class="n">charging_dynamics</span><span class="o">.</span><span class="n">targetStateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">target_spacecraft</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="p">)</span>
+<span class="n">charging_dynamics</span><span class="o">.</span><span class="n">electronBeamInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">electron_beam_msg</span><span class="p">)</span>
+<span class="n">charging_dynamics</span><span class="o">.</span><span class="n">servicerSurfaceAreaInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">servicer_surface_area_msg</span><span class="p">)</span>
+<span class="n">charging_dynamics</span><span class="o">.</span><span class="n">targetSurfaceAreaInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">target_surface_area_msg</span><span class="p">)</span>
+<span class="n">charging_dynamics</span><span class="o">.</span><span class="n">servicerSunlitAreaInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">servicer_sunlit_area_msg</span><span class="p">)</span>
+<span class="n">charging_dynamics</span><span class="o">.</span><span class="n">targetSunlitAreaInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">target_sunlit_area_msg</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p>Add all modules to a task:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">task_name</span><span class="p">,</span> <span class="n">servicer_spacecraft</span><span class="p">)</span>
+<span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">task_name</span><span class="p">,</span> <span class="n">target_spacecraft</span><span class="p">)</span>
+<span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">task_name</span><span class="p">,</span> <span class="n">charging_dynamics</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+</ol>
+<hr class="docutils" />
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv426SpacecraftChargingDynamics">
+<span id="_CPPv326SpacecraftChargingDynamics"></span><span id="_CPPv226SpacecraftChargingDynamics"></span><span id="SpacecraftChargingDynamics"></span><span class="target" id="class_spacecraft_charging_dynamics"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SpacecraftChargingDynamics</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../../dynamics/_GeneralModuleFiles/dynamicObject.html#_CPPv413DynamicObject" title="DynamicObject"><span class="n"><span class="pre">DynamicObject</span></span></a><a class="headerlink" href="#_CPPv426SpacecraftChargingDynamics" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;spacecraftChargingDynamics.h&gt;</em></div>
+<p>spacecraft charging dynamics module </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics26SpacecraftChargingDynamicsEv">
+<span id="_CPPv3N26SpacecraftChargingDynamics26SpacecraftChargingDynamicsEv"></span><span id="_CPPv2N26SpacecraftChargingDynamics26SpacecraftChargingDynamicsEv"></span><span id="SpacecraftChargingDynamics::SpacecraftChargingDynamics"></span><span class="target" id="class_spacecraft_charging_dynamics_1af519248e96ef0cf08652e2edd04e0a41"></span><span class="sig-name descname"><span class="n"><span class="pre">SpacecraftChargingDynamics</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics26SpacecraftChargingDynamicsEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Constructor. </p>
+<p>Class constructor. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamicsD0Ev">
+<span id="_CPPv3N26SpacecraftChargingDynamicsD0Ev"></span><span id="_CPPv2N26SpacecraftChargingDynamicsD0Ev"></span><span id="SpacecraftChargingDynamics::~SpacecraftChargingDynamics"></span><span class="target" id="class_spacecraft_charging_dynamics_1a11a3937f3cd0dc12056bfeca05952079"></span><span class="sig-name descname"><span class="n"><span class="pre">~SpacecraftChargingDynamics</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">default</span></span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamicsD0Ev" title="Link to this definition"></a><br /></dt>
+<dd><p>Destructor. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics18initializeDynamicsEv">
+<span id="_CPPv3N26SpacecraftChargingDynamics18initializeDynamicsEv"></span><span id="_CPPv2N26SpacecraftChargingDynamics18initializeDynamicsEv"></span><span id="SpacecraftChargingDynamics::initializeDynamics"></span><span class="target" id="class_spacecraft_charging_dynamics_1af581b110d1b9a8f95a0edadc6f803be7"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">initializeDynamics</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics18initializeDynamicsEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Method to initialize dynamics. </p>
+<p>Method to initialize dynamics. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics5ResetE8uint64_t">
+<span id="_CPPv3N26SpacecraftChargingDynamics5ResetE8uint64_t"></span><span id="_CPPv2N26SpacecraftChargingDynamics5ResetE8uint64_t"></span><span id="SpacecraftChargingDynamics::Reset__uint64_t"></span><span class="target" id="class_spacecraft_charging_dynamics_1a14a6c43a9684beb2b672be1672dd9e3a"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics5ResetE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Reset method. </p>
+<p>Reset method. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics14registerStatesER15DynParamManager">
+<span id="_CPPv3N26SpacecraftChargingDynamics14registerStatesER15DynParamManager"></span><span id="_CPPv2N26SpacecraftChargingDynamics14registerStatesER15DynParamManager"></span><span id="SpacecraftChargingDynamics::registerStates__DynParamManagerR"></span><span class="target" id="class_spacecraft_charging_dynamics_1a4deb6d5fb3b23511033821a006db64ed"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">registerStates</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../dynamics/_GeneralModuleFiles/dynParamManager.html#_CPPv415DynParamManager" title="DynParamManager"><span class="n"><span class="pre">DynParamManager</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">states</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics14registerStatesER15DynParamManager" title="Link to this definition"></a><br /></dt>
+<dd><p>Method to register states. </p>
+<p>Method to register states. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics24writeOutputStateMessagesE8uint64_t">
+<span id="_CPPv3N26SpacecraftChargingDynamics24writeOutputStateMessagesE8uint64_t"></span><span id="_CPPv2N26SpacecraftChargingDynamics24writeOutputStateMessagesE8uint64_t"></span><span id="SpacecraftChargingDynamics::writeOutputStateMessages__uint64_t"></span><span class="target" id="class_spacecraft_charging_dynamics_1a5e57b9dcdf25a50eb20d4f865866729d"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">writeOutputStateMessages</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">clockTime</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics24writeOutputStateMessagesE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Method to write output messages. </p>
+<p>Method to write module output messages. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics11UpdateStateE8uint64_t">
+<span id="_CPPv3N26SpacecraftChargingDynamics11UpdateStateE8uint64_t"></span><span id="_CPPv2N26SpacecraftChargingDynamics11UpdateStateE8uint64_t"></span><span id="SpacecraftChargingDynamics::UpdateState__uint64_t"></span><span class="target" id="class_spacecraft_charging_dynamics_1a684cb526d3375c3789646e2be5ed182f"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">UpdateState</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics11UpdateStateE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Update method. </p>
+<p>Module update method. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics17equationsOfMotionEdd">
+<span id="_CPPv3N26SpacecraftChargingDynamics17equationsOfMotionEdd"></span><span id="_CPPv2N26SpacecraftChargingDynamics17equationsOfMotionEdd"></span><span id="SpacecraftChargingDynamics::equationsOfMotion__double.double"></span><span class="target" id="class_spacecraft_charging_dynamics_1ae5d26598d729b36bcade16d7856cc978"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">equationsOfMotion</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">integTimeSeconds</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">timeStep</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics17equationsOfMotionEdd" title="Link to this definition"></a><br /></dt>
+<dd><p>Method defining equations of motion. </p>
+<p>Method for the charging equations of motion </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics14preIntegrationE8uint64_t">
+<span id="_CPPv3N26SpacecraftChargingDynamics14preIntegrationE8uint64_t"></span><span id="_CPPv2N26SpacecraftChargingDynamics14preIntegrationE8uint64_t"></span><span id="SpacecraftChargingDynamics::preIntegration__uint64_t"></span><span class="target" id="class_spacecraft_charging_dynamics_1addd761bcea989c13308d375da833fec5"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">preIntegration</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">callTimeNanos</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">final</span></span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics14preIntegrationE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Pre-integration method. </p>
+<p>Method for pre-integration steps. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>integrateToThisTimeNanos</strong> – Time to integrate to </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics15postIntegrationE8uint64_t">
+<span id="_CPPv3N26SpacecraftChargingDynamics15postIntegrationE8uint64_t"></span><span id="_CPPv2N26SpacecraftChargingDynamics15postIntegrationE8uint64_t"></span><span id="SpacecraftChargingDynamics::postIntegration__uint64_t"></span><span class="target" id="class_spacecraft_charging_dynamics_1af98cc09cd85b23c8c4a7b260f36e45fb"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">postIntegration</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">callTimeNanos</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">final</span></span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics15postIntegrationE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Post-integration method. </p>
+<p>Method for post-integration steps. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>integrateToThisTimeNanos</strong> – Time to integrate to </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics24setServicerPotentialInitEKd">
+<span id="_CPPv3N26SpacecraftChargingDynamics24setServicerPotentialInitEKd"></span><span id="_CPPv2N26SpacecraftChargingDynamics24setServicerPotentialInitEKd"></span><span id="SpacecraftChargingDynamics::setServicerPotentialInit__doubleC"></span><span class="target" id="class_spacecraft_charging_dynamics_1ae0aceccf75e3ad4bbf08a41491887e60"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setServicerPotentialInit</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">potentialInit</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics24setServicerPotentialInitEKd" title="Link to this definition"></a><br /></dt>
+<dd><p>Setter for the initial servicer potential. </p>
+<p>Setter for the initial servicer potential. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>potentialInit</strong> – [Volts] Servicer initial potential </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics22setTargetPotentialInitEKd">
+<span id="_CPPv3N26SpacecraftChargingDynamics22setTargetPotentialInitEKd"></span><span id="_CPPv2N26SpacecraftChargingDynamics22setTargetPotentialInitEKd"></span><span id="SpacecraftChargingDynamics::setTargetPotentialInit__doubleC"></span><span class="target" id="class_spacecraft_charging_dynamics_1a916175f49aa6fa7876654f45e7323c9f"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setTargetPotentialInit</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">potentialInit</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics22setTargetPotentialInitEKd" title="Link to this definition"></a><br /></dt>
+<dd><p>Setter for the initial target potential. </p>
+<p>Setter for the initial target potential. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>potentialInit</strong> – [Volts] Target initial potential </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK26SpacecraftChargingDynamics24getServicerPotentialInitEv">
+<span id="_CPPv3NK26SpacecraftChargingDynamics24getServicerPotentialInitEv"></span><span id="_CPPv2NK26SpacecraftChargingDynamics24getServicerPotentialInitEv"></span><span id="SpacecraftChargingDynamics::getServicerPotentialInitC"></span><span class="target" id="class_spacecraft_charging_dynamics_1a80bff2a7aaba8b52a050fccfb99dd474"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getServicerPotentialInit</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK26SpacecraftChargingDynamics24getServicerPotentialInitEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Getter for the initial servicer potential. </p>
+<p>Getter for the servicer initial potential. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>double </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK26SpacecraftChargingDynamics22getTargetPotentialInitEv">
+<span id="_CPPv3NK26SpacecraftChargingDynamics22getTargetPotentialInitEv"></span><span id="_CPPv2NK26SpacecraftChargingDynamics22getTargetPotentialInitEv"></span><span id="SpacecraftChargingDynamics::getTargetPotentialInitC"></span><span class="target" id="class_spacecraft_charging_dynamics_1af30812c7ba8eb358a2136cb381d31b8f"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getTargetPotentialInit</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK26SpacecraftChargingDynamics22getTargetPotentialInitEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Getter for the initial target potential. </p>
+<p>Getter for the target initial potential. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>double </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics22setServicerCapacitanceEKd">
+<span id="_CPPv3N26SpacecraftChargingDynamics22setServicerCapacitanceEKd"></span><span id="_CPPv2N26SpacecraftChargingDynamics22setServicerCapacitanceEKd"></span><span id="SpacecraftChargingDynamics::setServicerCapacitance__doubleC"></span><span class="target" id="class_spacecraft_charging_dynamics_1ae719f6bc5f4b4d91575a2a0b0563aedb"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setServicerCapacitance</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">capacitance</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics22setServicerCapacitanceEKd" title="Link to this definition"></a><br /></dt>
+<dd><p>Setter for the servicer capacitance. </p>
+<p>Setter for the servicer spacecraft capacitance. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>capacitance</strong> – [farad] Servicer spacecraft capacitance </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics20setTargetCapacitanceEKd">
+<span id="_CPPv3N26SpacecraftChargingDynamics20setTargetCapacitanceEKd"></span><span id="_CPPv2N26SpacecraftChargingDynamics20setTargetCapacitanceEKd"></span><span id="SpacecraftChargingDynamics::setTargetCapacitance__doubleC"></span><span class="target" id="class_spacecraft_charging_dynamics_1a7f0bcf95c6963474d3f738c7b14c641a"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setTargetCapacitance</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">capacitance</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics20setTargetCapacitanceEKd" title="Link to this definition"></a><br /></dt>
+<dd><p>Setter for the target capacitance. </p>
+<p>Setter for the target spacecraft capacitance. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>capacitance</strong> – [farad] Target spacecraft capacitance </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK26SpacecraftChargingDynamics22getServicerCapacitanceEv">
+<span id="_CPPv3NK26SpacecraftChargingDynamics22getServicerCapacitanceEv"></span><span id="_CPPv2NK26SpacecraftChargingDynamics22getServicerCapacitanceEv"></span><span id="SpacecraftChargingDynamics::getServicerCapacitanceC"></span><span class="target" id="class_spacecraft_charging_dynamics_1a2cb3c0698c9693fd0dc6838b74bad58e"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getServicerCapacitance</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK26SpacecraftChargingDynamics22getServicerCapacitanceEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Getter for the servicer capacitance. </p>
+<p>Getter for the servicer spacecraft capacitance. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>double </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK26SpacecraftChargingDynamics20getTargetCapacitanceEv">
+<span id="_CPPv3NK26SpacecraftChargingDynamics20getTargetCapacitanceEv"></span><span id="_CPPv2NK26SpacecraftChargingDynamics20getTargetCapacitanceEv"></span><span id="SpacecraftChargingDynamics::getTargetCapacitanceC"></span><span class="target" id="class_spacecraft_charging_dynamics_1a3c771bf832b47250d606862f56cef7b3"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getTargetCapacitance</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK26SpacecraftChargingDynamics20getTargetCapacitanceEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Getter for the target capacitance. </p>
+<p>Getter for the target spacecraft capacitance. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>double </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics21setFluxPhotoelectronsEKd">
+<span id="_CPPv3N26SpacecraftChargingDynamics21setFluxPhotoelectronsEKd"></span><span id="_CPPv2N26SpacecraftChargingDynamics21setFluxPhotoelectronsEKd"></span><span id="SpacecraftChargingDynamics::setFluxPhotoelectrons__doubleC"></span><span class="target" id="class_spacecraft_charging_dynamics_1ad80a3f20c6c0edbe07f60b51237ed950"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setFluxPhotoelectrons</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">flux</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics21setFluxPhotoelectronsEKd" title="Link to this definition"></a><br /></dt>
+<dd><p>Setter for the photoelectron flux. </p>
+<p>Setter for the photoelectron flux. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>flux</strong> – [A/m^2] Photoelectron flux </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics21setTempPhotoelectronsEKd">
+<span id="_CPPv3N26SpacecraftChargingDynamics21setTempPhotoelectronsEKd"></span><span id="_CPPv2N26SpacecraftChargingDynamics21setTempPhotoelectronsEKd"></span><span id="SpacecraftChargingDynamics::setTempPhotoelectrons__doubleC"></span><span class="target" id="class_spacecraft_charging_dynamics_1a2cd2d2d5c3a42a23d12dee832450817c"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setTempPhotoelectrons</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">temp</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics21setTempPhotoelectronsEKd" title="Link to this definition"></a><br /></dt>
+<dd><p>Setter for the photoelectron temperature. </p>
+<p>Setter for the photoelectron temperature. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>temp</strong> – [eV] Photoelectron temperature </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK26SpacecraftChargingDynamics21getFluxPhotoelectronsEv">
+<span id="_CPPv3NK26SpacecraftChargingDynamics21getFluxPhotoelectronsEv"></span><span id="_CPPv2NK26SpacecraftChargingDynamics21getFluxPhotoelectronsEv"></span><span id="SpacecraftChargingDynamics::getFluxPhotoelectronsC"></span><span class="target" id="class_spacecraft_charging_dynamics_1ad366a6fa5554c1d0fbdb28980ad7daf4"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getFluxPhotoelectrons</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK26SpacecraftChargingDynamics21getFluxPhotoelectronsEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Getter for the photoelectron flux. </p>
+<p>Getter for the photoelectron flux. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>double </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK26SpacecraftChargingDynamics21getTempPhotoelectronsEv">
+<span id="_CPPv3NK26SpacecraftChargingDynamics21getTempPhotoelectronsEv"></span><span id="_CPPv2NK26SpacecraftChargingDynamics21getTempPhotoelectronsEv"></span><span id="SpacecraftChargingDynamics::getTempPhotoelectronsC"></span><span class="target" id="class_spacecraft_charging_dynamics_1aac3d9440517f08813b93a9b2ba5289c0"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getTempPhotoelectrons</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK26SpacecraftChargingDynamics21getTempPhotoelectronsEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Getter for the photoelectron temperature. </p>
+<p>Getter for the photoelectron temperature. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>double </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics16setTempElectronsEKd">
+<span id="_CPPv3N26SpacecraftChargingDynamics16setTempElectronsEKd"></span><span id="_CPPv2N26SpacecraftChargingDynamics16setTempElectronsEKd"></span><span id="SpacecraftChargingDynamics::setTempElectrons__doubleC"></span><span class="target" id="class_spacecraft_charging_dynamics_1a6fa2c5a3d91cacb588be20725162dd9a"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setTempElectrons</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">temp</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics16setTempElectronsEKd" title="Link to this definition"></a><br /></dt>
+<dd><p>Setter for the electron temperature. </p>
+<p>Setter for the electron temperature. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>temp</strong> – [eV] Electron temperature </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK26SpacecraftChargingDynamics16getTempElectronsEv">
+<span id="_CPPv3NK26SpacecraftChargingDynamics16getTempElectronsEv"></span><span id="_CPPv2NK26SpacecraftChargingDynamics16getTempElectronsEv"></span><span id="SpacecraftChargingDynamics::getTempElectronsC"></span><span class="target" id="class_spacecraft_charging_dynamics_1a9a80103d28c0dbec754b95e12bc825e2"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getTempElectrons</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK26SpacecraftChargingDynamics16getTempElectronsEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Getter for the electron temperature. </p>
+<p>Getter for the electron temperature. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>double </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics19setDensityElectronsEKd">
+<span id="_CPPv3N26SpacecraftChargingDynamics19setDensityElectronsEKd"></span><span id="_CPPv2N26SpacecraftChargingDynamics19setDensityElectronsEKd"></span><span id="SpacecraftChargingDynamics::setDensityElectrons__doubleC"></span><span class="target" id="class_spacecraft_charging_dynamics_1a21f38e04073c217c5e381cfc3dcd00d0"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setDensityElectrons</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">density</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics19setDensityElectronsEKd" title="Link to this definition"></a><br /></dt>
+<dd><p>Setter for the electron density. </p>
+<p>Setter for the electron density. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>density</strong> – [m^-3] Electron density </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK26SpacecraftChargingDynamics19getDensityElectronsEv">
+<span id="_CPPv3NK26SpacecraftChargingDynamics19getDensityElectronsEv"></span><span id="_CPPv2NK26SpacecraftChargingDynamics19getDensityElectronsEv"></span><span id="SpacecraftChargingDynamics::getDensityElectronsC"></span><span class="target" id="class_spacecraft_charging_dynamics_1a0284eedf22a31cf35f87be4cc6a3369f"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getDensityElectrons</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK26SpacecraftChargingDynamics19getDensityElectronsEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Getter for the electron density. </p>
+<p>Getter for the electron density. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>double </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics11setTempIonsEKd">
+<span id="_CPPv3N26SpacecraftChargingDynamics11setTempIonsEKd"></span><span id="_CPPv2N26SpacecraftChargingDynamics11setTempIonsEKd"></span><span id="SpacecraftChargingDynamics::setTempIons__doubleC"></span><span class="target" id="class_spacecraft_charging_dynamics_1ac02d53d72a2de9c0c90f550be5d475af"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setTempIons</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">temp</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics11setTempIonsEKd" title="Link to this definition"></a><br /></dt>
+<dd><p>Setter for the ion temperature. </p>
+<p>Setter for the ion temperature. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>temp</strong> – [eV] Ion temperature </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK26SpacecraftChargingDynamics11getTempIonsEv">
+<span id="_CPPv3NK26SpacecraftChargingDynamics11getTempIonsEv"></span><span id="_CPPv2NK26SpacecraftChargingDynamics11getTempIonsEv"></span><span id="SpacecraftChargingDynamics::getTempIonsC"></span><span class="target" id="class_spacecraft_charging_dynamics_1a5be565f78b6f523c2056901a4cc5c51f"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getTempIons</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK26SpacecraftChargingDynamics11getTempIonsEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Getter for the ion temperature. </p>
+<p>Getter for the ion temperature. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>double </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics14setDensityIonsEKd">
+<span id="_CPPv3N26SpacecraftChargingDynamics14setDensityIonsEKd"></span><span id="_CPPv2N26SpacecraftChargingDynamics14setDensityIonsEKd"></span><span id="SpacecraftChargingDynamics::setDensityIons__doubleC"></span><span class="target" id="class_spacecraft_charging_dynamics_1a7d509cf9c9ffe5a1f6e10275d099a01c"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setDensityIons</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">density</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics14setDensityIonsEKd" title="Link to this definition"></a><br /></dt>
+<dd><p>Setter for the ion density. </p>
+<p>Setter for the ion density. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>density</strong> – [m^-3] Ion density </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK26SpacecraftChargingDynamics14getDensityIonsEv">
+<span id="_CPPv3NK26SpacecraftChargingDynamics14getDensityIonsEv"></span><span id="_CPPv2NK26SpacecraftChargingDynamics14getDensityIonsEv"></span><span id="SpacecraftChargingDynamics::getDensityIonsC"></span><span class="target" id="class_spacecraft_charging_dynamics_1a6348629889c75d7837a200448e465a29"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getDensityIons</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK26SpacecraftChargingDynamics14getDensityIonsEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Getter for the ion density. </p>
+<p>Getter for the ion density. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>double </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics19setBulkVelocityIonsEKd">
+<span id="_CPPv3N26SpacecraftChargingDynamics19setBulkVelocityIonsEKd"></span><span id="_CPPv2N26SpacecraftChargingDynamics19setBulkVelocityIonsEKd"></span><span id="SpacecraftChargingDynamics::setBulkVelocityIons__doubleC"></span><span class="target" id="class_spacecraft_charging_dynamics_1a518aa14d43fe29dd861275e4e41c1e8d"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setBulkVelocityIons</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">density</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics19setBulkVelocityIonsEKd" title="Link to this definition"></a><br /></dt>
+<dd><p>Setter for the bulk ion velocity. </p>
+<p>Setter for the bulk ion velocity. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>velocity</strong> – [m/s] Bulk ion velocity </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK26SpacecraftChargingDynamics19getBulkVelocityIonsEv">
+<span id="_CPPv3NK26SpacecraftChargingDynamics19getBulkVelocityIonsEv"></span><span id="_CPPv2NK26SpacecraftChargingDynamics19getBulkVelocityIonsEv"></span><span id="SpacecraftChargingDynamics::getBulkVelocityIonsC"></span><span class="target" id="class_spacecraft_charging_dynamics_1ab0cd2a68d10307ee591348dea228edb0"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getBulkVelocityIons</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK26SpacecraftChargingDynamics19getBulkVelocityIonsEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Getter for the bulk ion velocity. </p>
+<p>Getter for the bulk ion velocity. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>double </p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics18servicerStateInMsgE">
+<span id="_CPPv3N26SpacecraftChargingDynamics18servicerStateInMsgE"></span><span id="_CPPv2N26SpacecraftChargingDynamics18servicerStateInMsgE"></span><span id="SpacecraftChargingDynamics::servicerStateInMsg__ReadFunctor:SCStatesMsgPayload:"></span><span class="target" id="class_spacecraft_charging_dynamics_1a9973c7d398a115163182116f613f8260"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#_CPPv418SCStatesMsgPayload" title="SCStatesMsgPayload"><span class="n"><span class="pre">SCStatesMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">servicerStateInMsg</span></span></span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics18servicerStateInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Servicer state input message. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics16targetStateInMsgE">
+<span id="_CPPv3N26SpacecraftChargingDynamics16targetStateInMsgE"></span><span id="_CPPv2N26SpacecraftChargingDynamics16targetStateInMsgE"></span><span id="SpacecraftChargingDynamics::targetStateInMsg__ReadFunctor:SCStatesMsgPayload:"></span><span class="target" id="class_spacecraft_charging_dynamics_1a6ddb21be0456c81ac65781e350e88040"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#_CPPv418SCStatesMsgPayload" title="SCStatesMsgPayload"><span class="n"><span class="pre">SCStatesMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">targetStateInMsg</span></span></span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics16targetStateInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Target state input message. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics17electronBeamInMsgE">
+<span id="_CPPv3N26SpacecraftChargingDynamics17electronBeamInMsgE"></span><span id="_CPPv2N26SpacecraftChargingDynamics17electronBeamInMsgE"></span><span id="SpacecraftChargingDynamics::electronBeamInMsg__ReadFunctor:ElectronBeamMsgPayload:"></span><span class="target" id="class_spacecraft_charging_dynamics_1a70140617dc0f1db7e2179815627441c7"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/ElectronBeamMsgPayload.html#_CPPv422ElectronBeamMsgPayload" title="ElectronBeamMsgPayload"><span class="n"><span class="pre">ElectronBeamMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">electronBeamInMsg</span></span></span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics17electronBeamInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Electron beam input message (optional). </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics24servicerSurfaceAreaInMsgE">
+<span id="_CPPv3N26SpacecraftChargingDynamics24servicerSurfaceAreaInMsgE"></span><span id="_CPPv2N26SpacecraftChargingDynamics24servicerSurfaceAreaInMsgE"></span><span id="SpacecraftChargingDynamics::servicerSurfaceAreaInMsg__ReadFunctor:ProjectedAreaMsgPayload:"></span><span class="target" id="class_spacecraft_charging_dynamics_1ad4df31aa6de1b42ce00d438e587e221f"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/ProjectedAreaMsgPayload.html#_CPPv423ProjectedAreaMsgPayload" title="ProjectedAreaMsgPayload"><span class="n"><span class="pre">ProjectedAreaMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">servicerSurfaceAreaInMsg</span></span></span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics24servicerSurfaceAreaInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Servicer surface area input message. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics22targetSurfaceAreaInMsgE">
+<span id="_CPPv3N26SpacecraftChargingDynamics22targetSurfaceAreaInMsgE"></span><span id="_CPPv2N26SpacecraftChargingDynamics22targetSurfaceAreaInMsgE"></span><span id="SpacecraftChargingDynamics::targetSurfaceAreaInMsg__ReadFunctor:ProjectedAreaMsgPayload:"></span><span class="target" id="class_spacecraft_charging_dynamics_1adbefb9d30fa5f0e1d63d94d7a973e6e7"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/ProjectedAreaMsgPayload.html#_CPPv423ProjectedAreaMsgPayload" title="ProjectedAreaMsgPayload"><span class="n"><span class="pre">ProjectedAreaMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">targetSurfaceAreaInMsg</span></span></span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics22targetSurfaceAreaInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Target surface area input message. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics23servicerSunlitAreaInMsgE">
+<span id="_CPPv3N26SpacecraftChargingDynamics23servicerSunlitAreaInMsgE"></span><span id="_CPPv2N26SpacecraftChargingDynamics23servicerSunlitAreaInMsgE"></span><span id="SpacecraftChargingDynamics::servicerSunlitAreaInMsg__ReadFunctor:ProjectedAreaMsgPayload:"></span><span class="target" id="class_spacecraft_charging_dynamics_1a385ab7605f574cf3e4827f45581f626d"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/ProjectedAreaMsgPayload.html#_CPPv423ProjectedAreaMsgPayload" title="ProjectedAreaMsgPayload"><span class="n"><span class="pre">ProjectedAreaMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">servicerSunlitAreaInMsg</span></span></span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics23servicerSunlitAreaInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Total servicer sunlit facet area input message. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics21targetSunlitAreaInMsgE">
+<span id="_CPPv3N26SpacecraftChargingDynamics21targetSunlitAreaInMsgE"></span><span id="_CPPv2N26SpacecraftChargingDynamics21targetSunlitAreaInMsgE"></span><span id="SpacecraftChargingDynamics::targetSunlitAreaInMsg__ReadFunctor:ProjectedAreaMsgPayload:"></span><span class="target" id="class_spacecraft_charging_dynamics_1a065f5139f3972d25857cee2dbf2d6fd9"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/ProjectedAreaMsgPayload.html#_CPPv423ProjectedAreaMsgPayload" title="ProjectedAreaMsgPayload"><span class="n"><span class="pre">ProjectedAreaMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">targetSunlitAreaInMsg</span></span></span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics21targetSunlitAreaInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Total target sunlit facet area input message. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics23servicerPotentialOutMsgE">
+<span id="_CPPv3N26SpacecraftChargingDynamics23servicerPotentialOutMsgE"></span><span id="_CPPv2N26SpacecraftChargingDynamics23servicerPotentialOutMsgE"></span><span id="SpacecraftChargingDynamics::servicerPotentialOutMsg__Message:VoltMsgPayload:"></span><span class="target" id="class_spacecraft_charging_dynamics_1a02e1998e2495304ec7fa6fc3222a89ae"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/VoltMsgPayload.html#_CPPv414VoltMsgPayload" title="VoltMsgPayload"><span class="n"><span class="pre">VoltMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">servicerPotentialOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics23servicerPotentialOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Servicer potential (voltage) output message. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics21targetPotentialOutMsgE">
+<span id="_CPPv3N26SpacecraftChargingDynamics21targetPotentialOutMsgE"></span><span id="_CPPv2N26SpacecraftChargingDynamics21targetPotentialOutMsgE"></span><span id="SpacecraftChargingDynamics::targetPotentialOutMsg__Message:VoltMsgPayload:"></span><span class="target" id="class_spacecraft_charging_dynamics_1a414876cb421ad9ca35cc1cbb1398ac8c"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/VoltMsgPayload.html#_CPPv414VoltMsgPayload" title="VoltMsgPayload"><span class="n"><span class="pre">VoltMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">targetPotentialOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics21targetPotentialOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Target potential (voltage) output message. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics23servicerEBCurrentOutMsgE">
+<span id="_CPPv3N26SpacecraftChargingDynamics23servicerEBCurrentOutMsgE"></span><span id="_CPPv2N26SpacecraftChargingDynamics23servicerEBCurrentOutMsgE"></span><span id="SpacecraftChargingDynamics::servicerEBCurrentOutMsg__Message:CurrentMsgPayload:"></span><span class="target" id="class_spacecraft_charging_dynamics_1ad01dc8e56c3b039fed22a33f6a55293d"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/CurrentMsgPayload.html#_CPPv417CurrentMsgPayload" title="CurrentMsgPayload"><span class="n"><span class="pre">CurrentMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">servicerEBCurrentOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics23servicerEBCurrentOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Servicer electron beam current output message. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics21targetEBCurrentOutMsgE">
+<span id="_CPPv3N26SpacecraftChargingDynamics21targetEBCurrentOutMsgE"></span><span id="_CPPv2N26SpacecraftChargingDynamics21targetEBCurrentOutMsgE"></span><span id="SpacecraftChargingDynamics::targetEBCurrentOutMsg__Message:CurrentMsgPayload:"></span><span class="target" id="class_spacecraft_charging_dynamics_1a3571e98e9249a45448d6a2cbdb71104e"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/CurrentMsgPayload.html#_CPPv417CurrentMsgPayload" title="CurrentMsgPayload"><span class="n"><span class="pre">CurrentMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">targetEBCurrentOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics21targetEBCurrentOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Target electron beam current output message. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics34servicerPhotoelectricCurrentOutMsgE">
+<span id="_CPPv3N26SpacecraftChargingDynamics34servicerPhotoelectricCurrentOutMsgE"></span><span id="_CPPv2N26SpacecraftChargingDynamics34servicerPhotoelectricCurrentOutMsgE"></span><span id="SpacecraftChargingDynamics::servicerPhotoelectricCurrentOutMsg__Message:CurrentMsgPayload:"></span><span class="target" id="class_spacecraft_charging_dynamics_1adaf9888a6476eb296d0d532793d62f4e"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/CurrentMsgPayload.html#_CPPv417CurrentMsgPayload" title="CurrentMsgPayload"><span class="n"><span class="pre">CurrentMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">servicerPhotoelectricCurrentOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics34servicerPhotoelectricCurrentOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Servicer photoelectric current output message. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics32targetPhotoelectricCurrentOutMsgE">
+<span id="_CPPv3N26SpacecraftChargingDynamics32targetPhotoelectricCurrentOutMsgE"></span><span id="_CPPv2N26SpacecraftChargingDynamics32targetPhotoelectricCurrentOutMsgE"></span><span id="SpacecraftChargingDynamics::targetPhotoelectricCurrentOutMsg__Message:CurrentMsgPayload:"></span><span class="target" id="class_spacecraft_charging_dynamics_1ab8b9fe2e1be0493ffa1e4b9f704391f6"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/CurrentMsgPayload.html#_CPPv417CurrentMsgPayload" title="CurrentMsgPayload"><span class="n"><span class="pre">CurrentMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">targetPhotoelectricCurrentOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics32targetPhotoelectricCurrentOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Target photoelectric current output message. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics35servicerPlasmaElectronCurrentOutMsgE">
+<span id="_CPPv3N26SpacecraftChargingDynamics35servicerPlasmaElectronCurrentOutMsgE"></span><span id="_CPPv2N26SpacecraftChargingDynamics35servicerPlasmaElectronCurrentOutMsgE"></span><span id="SpacecraftChargingDynamics::servicerPlasmaElectronCurrentOutMsg__Message:CurrentMsgPayload:"></span><span class="target" id="class_spacecraft_charging_dynamics_1a27d4fa312863509113f4be8a8cdd498f"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/CurrentMsgPayload.html#_CPPv417CurrentMsgPayload" title="CurrentMsgPayload"><span class="n"><span class="pre">CurrentMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">servicerPlasmaElectronCurrentOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics35servicerPlasmaElectronCurrentOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Servicer plasma electron current output message. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics33targetPlasmaElectronCurrentOutMsgE">
+<span id="_CPPv3N26SpacecraftChargingDynamics33targetPlasmaElectronCurrentOutMsgE"></span><span id="_CPPv2N26SpacecraftChargingDynamics33targetPlasmaElectronCurrentOutMsgE"></span><span id="SpacecraftChargingDynamics::targetPlasmaElectronCurrentOutMsg__Message:CurrentMsgPayload:"></span><span class="target" id="class_spacecraft_charging_dynamics_1a30ff174c6dd5e817f91db8b025466ef5"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/CurrentMsgPayload.html#_CPPv417CurrentMsgPayload" title="CurrentMsgPayload"><span class="n"><span class="pre">CurrentMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">targetPlasmaElectronCurrentOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics33targetPlasmaElectronCurrentOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Target plasma electron current output message. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics30servicerPlasmaIonCurrentOutMsgE">
+<span id="_CPPv3N26SpacecraftChargingDynamics30servicerPlasmaIonCurrentOutMsgE"></span><span id="_CPPv2N26SpacecraftChargingDynamics30servicerPlasmaIonCurrentOutMsgE"></span><span id="SpacecraftChargingDynamics::servicerPlasmaIonCurrentOutMsg__Message:CurrentMsgPayload:"></span><span class="target" id="class_spacecraft_charging_dynamics_1ab5a4af6a6f9642811150db25f2d344c6"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/CurrentMsgPayload.html#_CPPv417CurrentMsgPayload" title="CurrentMsgPayload"><span class="n"><span class="pre">CurrentMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">servicerPlasmaIonCurrentOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics30servicerPlasmaIonCurrentOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Servicer plasma ion current output message. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics28targetPlasmaIonCurrentOutMsgE">
+<span id="_CPPv3N26SpacecraftChargingDynamics28targetPlasmaIonCurrentOutMsgE"></span><span id="_CPPv2N26SpacecraftChargingDynamics28targetPlasmaIonCurrentOutMsgE"></span><span id="SpacecraftChargingDynamics::targetPlasmaIonCurrentOutMsg__Message:CurrentMsgPayload:"></span><span class="target" id="class_spacecraft_charging_dynamics_1aa134db6c662acf654eeb0d015fc448e9"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/CurrentMsgPayload.html#_CPPv417CurrentMsgPayload" title="CurrentMsgPayload"><span class="n"><span class="pre">CurrentMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">targetPlasmaIonCurrentOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics28targetPlasmaIonCurrentOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Target plasma ion current output message. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics9bskLoggerE">
+<span id="_CPPv3N26SpacecraftChargingDynamics9bskLoggerE"></span><span id="_CPPv2N26SpacecraftChargingDynamics9bskLoggerE"></span><span id="SpacecraftChargingDynamics::bskLogger__BSKLogger"></span><span class="target" id="class_spacecraft_charging_dynamics_1a41eb99cfbac61999339da2bdfea6e2c5"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>BSK Logging. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-functions">Private Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics15computeCurrentsEv">
+<span id="_CPPv3N26SpacecraftChargingDynamics15computeCurrentsEv"></span><span id="_CPPv2N26SpacecraftChargingDynamics15computeCurrentsEv"></span><span id="SpacecraftChargingDynamics::computeCurrents"></span><span class="target" id="class_spacecraft_charging_dynamics_1af347126e16cd07ef03bcf736c96f0473"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeCurrents</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics15computeCurrentsEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Method to compute all electric currents. </p>
+<p>Method for computing all currents acting on the spacecraft </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics26computeElectronBeamCurrentEv">
+<span id="_CPPv3N26SpacecraftChargingDynamics26computeElectronBeamCurrentEv"></span><span id="_CPPv2N26SpacecraftChargingDynamics26computeElectronBeamCurrentEv"></span><span id="SpacecraftChargingDynamics::computeElectronBeamCurrent"></span><span class="target" id="class_spacecraft_charging_dynamics_1a7a06f8e20720c0f0b447fc291ff9d0c0"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeElectronBeamCurrent</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics26computeElectronBeamCurrentEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Method to compute electron beam current. </p>
+<p>Method to compute electron beam currents </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics27computePhotoelectricCurrentEv">
+<span id="_CPPv3N26SpacecraftChargingDynamics27computePhotoelectricCurrentEv"></span><span id="_CPPv2N26SpacecraftChargingDynamics27computePhotoelectricCurrentEv"></span><span id="SpacecraftChargingDynamics::computePhotoelectricCurrent"></span><span class="target" id="class_spacecraft_charging_dynamics_1ad14273579f456ba4160bedab29461a0a"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computePhotoelectricCurrent</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics27computePhotoelectricCurrentEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Method to compute photoelectric current. </p>
+<p>Method to compute photoelectric currents </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics28computePlasmaElectronCurrentEdd">
+<span id="_CPPv3N26SpacecraftChargingDynamics28computePlasmaElectronCurrentEdd"></span><span id="_CPPv2N26SpacecraftChargingDynamics28computePlasmaElectronCurrentEdd"></span><span id="SpacecraftChargingDynamics::computePlasmaElectronCurrent__double.double"></span><span class="target" id="class_spacecraft_charging_dynamics_1a63ae26612b5c9639b77de1d0a34235e8"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computePlasmaElectronCurrent</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">sunlitArea</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">spacecraftPotential</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics28computePlasmaElectronCurrentEdd" title="Link to this definition"></a><br /></dt>
+<dd><p>Method to compute plasma electron current. </p>
+<p>Method to compute plasma electron current </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>surfaceArea</strong> – [m^2] Spacecraft surface area </p></li>
+<li><p><strong>spacecraftPotential</strong> – [Volts] Spacecraft potential </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>double </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics23computePlasmaIonCurrentEdddd">
+<span id="_CPPv3N26SpacecraftChargingDynamics23computePlasmaIonCurrentEdddd"></span><span id="_CPPv2N26SpacecraftChargingDynamics23computePlasmaIonCurrentEdddd"></span><span id="SpacecraftChargingDynamics::computePlasmaIonCurrent__double.double.double.double"></span><span class="target" id="class_spacecraft_charging_dynamics_1adbc24501e13efff3a721bf9dc78f5c6f"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computePlasmaIonCurrent</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">surfaceArea</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">sunlitArea</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">spacecraftPotential</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">v_BN_N_norm</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics23computePlasmaIonCurrentEdddd" title="Link to this definition"></a><br /></dt>
+<dd><p>Method to compute plasma ion current. </p>
+<p>Method to compute plasma ion current </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>surfaceArea</strong> – [m^2] Spacecraft surface area </p></li>
+<li><p><strong>sunlitArea</strong> – [m^2] Spacecraft sunlit area </p></li>
+<li><p><strong>spacecraftPotential</strong> – [Volts] Spacecraft potential </p></li>
+<li><p><strong>v_BN_N_norm</strong> – [m/s] Spacecraft inertial velocity norm </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>double </p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics21servicerPotentialInitE">
+<span id="_CPPv3N26SpacecraftChargingDynamics21servicerPotentialInitE"></span><span id="_CPPv2N26SpacecraftChargingDynamics21servicerPotentialInitE"></span><span id="SpacecraftChargingDynamics::servicerPotentialInit__double"></span><span class="target" id="class_spacecraft_charging_dynamics_1a87c9abfb2ac37c21ceab504967cc6af2"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">servicerPotentialInit</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics21servicerPotentialInitE" title="Link to this definition"></a><br /></dt>
+<dd><p>[Volts] Initial servicer potential </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics19targetPotentialInitE">
+<span id="_CPPv3N26SpacecraftChargingDynamics19targetPotentialInitE"></span><span id="_CPPv2N26SpacecraftChargingDynamics19targetPotentialInitE"></span><span id="SpacecraftChargingDynamics::targetPotentialInit__double"></span><span class="target" id="class_spacecraft_charging_dynamics_1ac73d3c77538cd7ebf739837841a750f3"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">targetPotentialInit</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics19targetPotentialInitE" title="Link to this definition"></a><br /></dt>
+<dd><p>[Volts] Initial target potential </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics19servicerCapacitanceE">
+<span id="_CPPv3N26SpacecraftChargingDynamics19servicerCapacitanceE"></span><span id="_CPPv2N26SpacecraftChargingDynamics19servicerCapacitanceE"></span><span id="SpacecraftChargingDynamics::servicerCapacitance__double"></span><span class="target" id="class_spacecraft_charging_dynamics_1a2b6a1c021c426711db47d55b7f482ce7"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">servicerCapacitance</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="m"><span class="pre">1e-9</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics19servicerCapacitanceE" title="Link to this definition"></a><br /></dt>
+<dd><p>[farads] Servicer capacitance </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics17targetCapacitanceE">
+<span id="_CPPv3N26SpacecraftChargingDynamics17targetCapacitanceE"></span><span id="_CPPv2N26SpacecraftChargingDynamics17targetCapacitanceE"></span><span id="SpacecraftChargingDynamics::targetCapacitance__double"></span><span class="target" id="class_spacecraft_charging_dynamics_1a3560502fc3d702f40118c85811303073"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">targetCapacitance</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="m"><span class="pre">1e-9</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics17targetCapacitanceE" title="Link to this definition"></a><br /></dt>
+<dd><p>[farads] Target capacitance </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics19servicerSurfaceAreaE">
+<span id="_CPPv3N26SpacecraftChargingDynamics19servicerSurfaceAreaE"></span><span id="_CPPv2N26SpacecraftChargingDynamics19servicerSurfaceAreaE"></span><span id="SpacecraftChargingDynamics::servicerSurfaceArea__double"></span><span class="target" id="class_spacecraft_charging_dynamics_1a9b2765dc79e77ca60afde129fc7556b6"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">servicerSurfaceArea</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics19servicerSurfaceAreaE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m^2] Servicer surface area </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics17targetSurfaceAreaE">
+<span id="_CPPv3N26SpacecraftChargingDynamics17targetSurfaceAreaE"></span><span id="_CPPv2N26SpacecraftChargingDynamics17targetSurfaceAreaE"></span><span id="SpacecraftChargingDynamics::targetSurfaceArea__double"></span><span class="target" id="class_spacecraft_charging_dynamics_1a2e36d8eaf9d1d46a3262572803a1d173"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">targetSurfaceArea</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics17targetSurfaceAreaE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m^2] Target surface area </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics18servicerSunlitAreaE">
+<span id="_CPPv3N26SpacecraftChargingDynamics18servicerSunlitAreaE"></span><span id="_CPPv2N26SpacecraftChargingDynamics18servicerSunlitAreaE"></span><span id="SpacecraftChargingDynamics::servicerSunlitArea__double"></span><span class="target" id="class_spacecraft_charging_dynamics_1a02f46f2369e5bca4ce04b5b290932ed3"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">servicerSunlitArea</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics18servicerSunlitAreaE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m^2] Servicer sunlit area </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics16targetSunlitAreaE">
+<span id="_CPPv3N26SpacecraftChargingDynamics16targetSunlitAreaE"></span><span id="_CPPv2N26SpacecraftChargingDynamics16targetSunlitAreaE"></span><span id="SpacecraftChargingDynamics::targetSunlitArea__double"></span><span class="target" id="class_spacecraft_charging_dynamics_1adaba124e84db37c2b998539155f9d158"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">targetSunlitArea</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics16targetSunlitAreaE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m^2] Target sunlit area </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics18tempPhotoelectronsE">
+<span id="_CPPv3N26SpacecraftChargingDynamics18tempPhotoelectronsE"></span><span id="_CPPv2N26SpacecraftChargingDynamics18tempPhotoelectronsE"></span><span id="SpacecraftChargingDynamics::tempPhotoelectrons__double"></span><span class="target" id="class_spacecraft_charging_dynamics_1afac2dc3e91e9008cba29bb3baf7a3b93"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">tempPhotoelectrons</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">2.0</span></span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics18tempPhotoelectronsE" title="Link to this definition"></a><br /></dt>
+<dd><p>[eV] Photoelectron temperature </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics18fluxPhotoelectronsE">
+<span id="_CPPv3N26SpacecraftChargingDynamics18fluxPhotoelectronsE"></span><span id="_CPPv2N26SpacecraftChargingDynamics18fluxPhotoelectronsE"></span><span id="SpacecraftChargingDynamics::fluxPhotoelectrons__double"></span><span class="target" id="class_spacecraft_charging_dynamics_1af1c8662c4a4389c8bf228185cdbd87a3"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">fluxPhotoelectrons</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">1e-6</span></span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics18fluxPhotoelectronsE" title="Link to this definition"></a><br /></dt>
+<dd><p>[A/m^2] Photoelectron flux </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics13tempElectronsE">
+<span id="_CPPv3N26SpacecraftChargingDynamics13tempElectronsE"></span><span id="_CPPv2N26SpacecraftChargingDynamics13tempElectronsE"></span><span id="SpacecraftChargingDynamics::tempElectrons__double"></span><span class="target" id="class_spacecraft_charging_dynamics_1a3f125f193a674391a10a873ca601548c"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">tempElectrons</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">2.0</span></span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics13tempElectronsE" title="Link to this definition"></a><br /></dt>
+<dd><p>[eV] Electron temperature </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics16densityElectronsE">
+<span id="_CPPv3N26SpacecraftChargingDynamics16densityElectronsE"></span><span id="_CPPv2N26SpacecraftChargingDynamics16densityElectronsE"></span><span id="SpacecraftChargingDynamics::densityElectrons__double"></span><span class="target" id="class_spacecraft_charging_dynamics_1a69ae510e2360aecee9b29200402cf140"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">densityElectrons</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">950000</span></span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics16densityElectronsE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m^-3] Electron density </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics8tempIonsE">
+<span id="_CPPv3N26SpacecraftChargingDynamics8tempIonsE"></span><span id="_CPPv2N26SpacecraftChargingDynamics8tempIonsE"></span><span id="SpacecraftChargingDynamics::tempIons__double"></span><span class="target" id="class_spacecraft_charging_dynamics_1a5d60e5d56f317839ebc3fdb8fbc414ef"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">tempIons</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">2.0</span></span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics8tempIonsE" title="Link to this definition"></a><br /></dt>
+<dd><p>[eV] Ion temperature </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics11densityIonsE">
+<span id="_CPPv3N26SpacecraftChargingDynamics11densityIonsE"></span><span id="_CPPv2N26SpacecraftChargingDynamics11densityIonsE"></span><span id="SpacecraftChargingDynamics::densityIons__double"></span><span class="target" id="class_spacecraft_charging_dynamics_1ae76f2fc83bfd602d64004ff9e3a62bb8"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">densityIons</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">950000</span></span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics11densityIonsE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m^-3] Ion density </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics16bulkVelocityIonsE">
+<span id="_CPPv3N26SpacecraftChargingDynamics16bulkVelocityIonsE"></span><span id="_CPPv2N26SpacecraftChargingDynamics16bulkVelocityIonsE"></span><span id="SpacecraftChargingDynamics::bulkVelocityIons__double"></span><span class="target" id="class_spacecraft_charging_dynamics_1af4c300e05817689c0c52b5a202087a1a"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bulkVelocityIons</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="m"><span class="pre">400000</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics16bulkVelocityIonsE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s] Bulk ion velocity </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics18electronBeamEnergyE">
+<span id="_CPPv3N26SpacecraftChargingDynamics18electronBeamEnergyE"></span><span id="_CPPv2N26SpacecraftChargingDynamics18electronBeamEnergyE"></span><span id="SpacecraftChargingDynamics::electronBeamEnergy__double"></span><span class="target" id="class_spacecraft_charging_dynamics_1a1f42030f60ae88a7a34e28ec3f6a010b"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">electronBeamEnergy</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics18electronBeamEnergyE" title="Link to this definition"></a><br /></dt>
+<dd><p>[eV] Electron beam energy </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics19electronBeamCurrentE">
+<span id="_CPPv3N26SpacecraftChargingDynamics19electronBeamCurrentE"></span><span id="_CPPv2N26SpacecraftChargingDynamics19electronBeamCurrentE"></span><span id="SpacecraftChargingDynamics::electronBeamCurrent__double"></span><span class="target" id="class_spacecraft_charging_dynamics_1a50345cfbeefb52c3ea1fb6f6c2ec8f59"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">electronBeamCurrent</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics19electronBeamCurrentE" title="Link to this definition"></a><br /></dt>
+<dd><p>[Amps] Electron beam current </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics7alphaEBE">
+<span id="_CPPv3N26SpacecraftChargingDynamics7alphaEBE"></span><span id="_CPPv2N26SpacecraftChargingDynamics7alphaEBE"></span><span id="SpacecraftChargingDynamics::alphaEB__double"></span><span class="target" id="class_spacecraft_charging_dynamics_1aa58c34fcb1aea6cfe513c6934b2d1be2"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">alphaEB</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics7alphaEBE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Scaling term for the fraction of current reaching the target </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics11v_SN_N_normE">
+<span id="_CPPv3N26SpacecraftChargingDynamics11v_SN_N_normE"></span><span id="_CPPv2N26SpacecraftChargingDynamics11v_SN_N_normE"></span><span id="SpacecraftChargingDynamics::v_SN_N_norm__double"></span><span class="target" id="class_spacecraft_charging_dynamics_1a6e28f2b560db60366d6f0b1ac14b1963"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">v_SN_N_norm</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics11v_SN_N_normE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s] Servicer inertial velocity norm </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics11v_TN_N_normE">
+<span id="_CPPv3N26SpacecraftChargingDynamics11v_TN_N_normE"></span><span id="_CPPv2N26SpacecraftChargingDynamics11v_TN_N_normE"></span><span id="SpacecraftChargingDynamics::v_TN_N_norm__double"></span><span class="target" id="class_spacecraft_charging_dynamics_1aabb674638cd5c287e4a02b881ec62dd0"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">v_TN_N_norm</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics11v_TN_N_normE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s] Target inertial velocity norm </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics17servicerPotentialE">
+<span id="_CPPv3N26SpacecraftChargingDynamics17servicerPotentialE"></span><span id="_CPPv2N26SpacecraftChargingDynamics17servicerPotentialE"></span><span id="SpacecraftChargingDynamics::servicerPotential__double"></span><span class="target" id="class_spacecraft_charging_dynamics_1ad94bb0f126b346e4afc808d6979287c7"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">servicerPotential</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics17servicerPotentialE" title="Link to this definition"></a><br /></dt>
+<dd><p>[Volts] Servicer potential </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics15targetPotentialE">
+<span id="_CPPv3N26SpacecraftChargingDynamics15targetPotentialE"></span><span id="_CPPv2N26SpacecraftChargingDynamics15targetPotentialE"></span><span id="SpacecraftChargingDynamics::targetPotential__double"></span><span class="target" id="class_spacecraft_charging_dynamics_1a44b66bd6cf2b221863f2eb2949e553b1"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">targetPotential</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics15targetPotentialE" title="Link to this definition"></a><br /></dt>
+<dd><p>[Volts] Target potential </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics17servicerEBCurrentE">
+<span id="_CPPv3N26SpacecraftChargingDynamics17servicerEBCurrentE"></span><span id="_CPPv2N26SpacecraftChargingDynamics17servicerEBCurrentE"></span><span id="SpacecraftChargingDynamics::servicerEBCurrent__double"></span><span class="target" id="class_spacecraft_charging_dynamics_1a1f04822597267b67b2c5b3f7a3be0e43"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">servicerEBCurrent</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics17servicerEBCurrentE" title="Link to this definition"></a><br /></dt>
+<dd><p>[Amps] Servicer electron beam current </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics15targetEBCurrentE">
+<span id="_CPPv3N26SpacecraftChargingDynamics15targetEBCurrentE"></span><span id="_CPPv2N26SpacecraftChargingDynamics15targetEBCurrentE"></span><span id="SpacecraftChargingDynamics::targetEBCurrent__double"></span><span class="target" id="class_spacecraft_charging_dynamics_1a92c73e5bb20924675f3d66d369c39701"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">targetEBCurrent</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics15targetEBCurrentE" title="Link to this definition"></a><br /></dt>
+<dd><p>[Amps] Target electron beam current </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics28servicerPhotoelectricCurrentE">
+<span id="_CPPv3N26SpacecraftChargingDynamics28servicerPhotoelectricCurrentE"></span><span id="_CPPv2N26SpacecraftChargingDynamics28servicerPhotoelectricCurrentE"></span><span id="SpacecraftChargingDynamics::servicerPhotoelectricCurrent__double"></span><span class="target" id="class_spacecraft_charging_dynamics_1aac056f833a5c70ddf15bf1f7e4941c7a"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">servicerPhotoelectricCurrent</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics28servicerPhotoelectricCurrentE" title="Link to this definition"></a><br /></dt>
+<dd><p>[Amps] Servicer photoelectric current </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics26targetPhotoelectricCurrentE">
+<span id="_CPPv3N26SpacecraftChargingDynamics26targetPhotoelectricCurrentE"></span><span id="_CPPv2N26SpacecraftChargingDynamics26targetPhotoelectricCurrentE"></span><span id="SpacecraftChargingDynamics::targetPhotoelectricCurrent__double"></span><span class="target" id="class_spacecraft_charging_dynamics_1ab3304789b66ade7236f91432f60674f2"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">targetPhotoelectricCurrent</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics26targetPhotoelectricCurrentE" title="Link to this definition"></a><br /></dt>
+<dd><p>[Amps] Target photoelectric current </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics29servicerPlasmaElectronCurrentE">
+<span id="_CPPv3N26SpacecraftChargingDynamics29servicerPlasmaElectronCurrentE"></span><span id="_CPPv2N26SpacecraftChargingDynamics29servicerPlasmaElectronCurrentE"></span><span id="SpacecraftChargingDynamics::servicerPlasmaElectronCurrent__double"></span><span class="target" id="class_spacecraft_charging_dynamics_1acb56ab30f636630b4e4145d2bbc8afb1"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">servicerPlasmaElectronCurrent</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics29servicerPlasmaElectronCurrentE" title="Link to this definition"></a><br /></dt>
+<dd><p>[Amps] Servicer plasma electron current </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics27targetPlasmaElectronCurrentE">
+<span id="_CPPv3N26SpacecraftChargingDynamics27targetPlasmaElectronCurrentE"></span><span id="_CPPv2N26SpacecraftChargingDynamics27targetPlasmaElectronCurrentE"></span><span id="SpacecraftChargingDynamics::targetPlasmaElectronCurrent__double"></span><span class="target" id="class_spacecraft_charging_dynamics_1adc802ada1ab6952c9add50b78b35b7a6"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">targetPlasmaElectronCurrent</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics27targetPlasmaElectronCurrentE" title="Link to this definition"></a><br /></dt>
+<dd><p>[Amps] Target plasma electron current </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics24servicerPlasmaIonCurrentE">
+<span id="_CPPv3N26SpacecraftChargingDynamics24servicerPlasmaIonCurrentE"></span><span id="_CPPv2N26SpacecraftChargingDynamics24servicerPlasmaIonCurrentE"></span><span id="SpacecraftChargingDynamics::servicerPlasmaIonCurrent__double"></span><span class="target" id="class_spacecraft_charging_dynamics_1a2f05f01454b2be14dae7e32feedc0b8b"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">servicerPlasmaIonCurrent</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics24servicerPlasmaIonCurrentE" title="Link to this definition"></a><br /></dt>
+<dd><p>[Amps] Servicer plasma ion current </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics22targetPlasmaIonCurrentE">
+<span id="_CPPv3N26SpacecraftChargingDynamics22targetPlasmaIonCurrentE"></span><span id="_CPPv2N26SpacecraftChargingDynamics22targetPlasmaIonCurrentE"></span><span id="SpacecraftChargingDynamics::targetPlasmaIonCurrent__double"></span><span class="target" id="class_spacecraft_charging_dynamics_1a890e16b348cb35291b31673b34ffc3a7"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">targetPlasmaIonCurrent</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics22targetPlasmaIonCurrentE" title="Link to this definition"></a><br /></dt>
+<dd><p>[Amps] Target plasma ion current </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics22servicerPotentialStateE">
+<span id="_CPPv3N26SpacecraftChargingDynamics22servicerPotentialStateE"></span><span id="_CPPv2N26SpacecraftChargingDynamics22servicerPotentialStateE"></span><span id="SpacecraftChargingDynamics::servicerPotentialState__StateDataP"></span><span class="target" id="class_spacecraft_charging_dynamics_1abcd69cf843fc268afc9c4df12f31e3d5"></span><a class="reference internal" href="../../dynamics/_GeneralModuleFiles/stateData.html#_CPPv49StateData" title="StateData"><span class="n"><span class="pre">StateData</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">servicerPotentialState</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">nullptr</span></span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics22servicerPotentialStateE" title="Link to this definition"></a><br /></dt>
+<dd><p>State data container for servicer potential. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics20targetPotentialStateE">
+<span id="_CPPv3N26SpacecraftChargingDynamics20targetPotentialStateE"></span><span id="_CPPv2N26SpacecraftChargingDynamics20targetPotentialStateE"></span><span id="SpacecraftChargingDynamics::targetPotentialState__StateDataP"></span><span class="target" id="class_spacecraft_charging_dynamics_1af311da40a5d7d0f9f0cee0dbde7371fb"></span><a class="reference internal" href="../../dynamics/_GeneralModuleFiles/stateData.html#_CPPv49StateData" title="StateData"><span class="n"><span class="pre">StateData</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">targetPotentialState</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">nullptr</span></span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics20targetPotentialStateE" title="Link to this definition"></a><br /></dt>
+<dd><p>State data container for target potential. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics28nameOfServicerPotentialStateE">
+<span id="_CPPv3N26SpacecraftChargingDynamics28nameOfServicerPotentialStateE"></span><span id="_CPPv2N26SpacecraftChargingDynamics28nameOfServicerPotentialStateE"></span><span id="SpacecraftChargingDynamics::nameOfServicerPotentialState__ss"></span><span class="target" id="class_spacecraft_charging_dynamics_1a21eade6091ddb49f9d825d77d19989ff"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">nameOfServicerPotentialState</span></span></span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics28nameOfServicerPotentialStateE" title="Link to this definition"></a><br /></dt>
+<dd><p>Name of servicer potential state. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26SpacecraftChargingDynamics26nameOfTargetPotentialStateE">
+<span id="_CPPv3N26SpacecraftChargingDynamics26nameOfTargetPotentialStateE"></span><span id="_CPPv2N26SpacecraftChargingDynamics26nameOfTargetPotentialStateE"></span><span id="SpacecraftChargingDynamics::nameOfTargetPotentialState__ss"></span><span class="target" id="class_spacecraft_charging_dynamics_1a77bc39caec5d2261033087823f8e3a95"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">nameOfTargetPotentialState</span></span></span><a class="headerlink" href="#_CPPv4N26SpacecraftChargingDynamics26nameOfTargetPotentialStateE" title="Link to this definition"></a><br /></dt>
+<dd><p>Name of target potential state. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="spacecraftChargingDynamics" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

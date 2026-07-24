@@ -1,0 +1,359 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Installing Basilisk Extensions &mdash; Basilisk 2.12.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=2ebb1c42" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=4ad2e773"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Quick Start: Writing a Basilisk Extension" href="writing.html" />
+    <link rel="prev" title="About Extensions" href="overview.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">About Extensions</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Installing Basilisk Extensions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#create-a-clean-environment">Create a Clean Environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#install-a-published-extension">Install a Published Extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#install-specific-versions">Install Specific Versions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#install-a-local-wheel">Install a Local Wheel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#verify-the-installation">Verify the Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-and-abi-compatibility">Version and ABI Compatibility</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#wheel-availability-and-source-builds">Wheel Availability and Source Builds</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#upgrade-an-extension">Upgrade an Extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#uninstall-an-extension">Uninstall an Extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#common-installation-problems">Common Installation Problems</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Installing Basilisk Extensions</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/Extensions/installing.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="toctree-wrapper compound">
+</div>
+<section id="installing-basilisk-extensions">
+<span id="extensionsinstall"></span><h1>Installing Basilisk Extensions<a class="headerlink" href="#installing-basilisk-extensions" title="Link to this heading"></a></h1>
+<p>This page is for users installing an extension that someone else has built.
+To create or compile an extension, follow <a class="reference internal" href="writing.html#writingextensions"><span class="std std-ref">Quick Start: Writing a Basilisk Extension</span></a> instead.
+See <a class="reference internal" href="overview.html#bskextensions"><span class="std std-ref">About Extensions</span></a> for an explanation of how extensions relate to core
+Basilisk and integrated external-folder modules.</p>
+<p>An extension is normally distributed as a Python wheel. A compatible prebuilt
+wheel can be installed without a compiler, a Basilisk source checkout, or
+<code class="docutils literal notranslate"><span class="pre">bsk-sdk</span></code>. The wheel still depends on a specific Basilisk version and must
+support the user’s operating system, processor architecture, and Python
+version.</p>
+<section id="create-a-clean-environment">
+<h2>Create a Clean Environment<a class="headerlink" href="#create-a-clean-environment" title="Link to this heading"></a></h2>
+<p>Using a virtual environment keeps the extension and its required Basilisk
+version separate from other Python projects. The activation command shown is
+for macOS and Linux; on Windows use <code class="docutils literal notranslate"><span class="pre">.venv\Scripts\activate</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>.venv
+<span class="nb">source</span><span class="w"> </span>.venv/bin/activate
+python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>--upgrade<span class="w"> </span>pip
+</pre></div>
+</div>
+<p>Use <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">-m</span> <span class="pre">pip</span></code> throughout this guide so installation uses the same
+Python interpreter that will run the simulation.</p>
+</section>
+<section id="install-a-published-extension">
+<h2>Install a Published Extension<a class="headerlink" href="#install-a-published-extension" title="Link to this heading"></a></h2>
+<p>Install the extension by its distribution name. A correctly packaged
+extension declares its compatible <code class="docutils literal notranslate"><span class="pre">bsk</span></code> release as a dependency, so <code class="docutils literal notranslate"><span class="pre">pip</span></code>
+installs or retains that version automatically:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>&lt;extension-name&gt;
+</pre></div>
+</div>
+<p>For example, an extension published as <code class="docutils literal notranslate"><span class="pre">my-atm-extension</span></code> is installed with:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>my-atm-extension
+</pre></div>
+</div>
+<p>Most users should also request the recommended Basilisk optional components:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;bsk[all]&quot;</span><span class="w"> </span>my-atm-extension
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">all</span></code> extra installs the core Basilisk wheel and all published optional
+component wheels. An extension that only requires core Basilisk does not need
+this extra. Installing it provides the standard complete Basilisk environment
+at the cost of additional packages and download size.</p>
+<p>Do not install <code class="docutils literal notranslate"><span class="pre">bsk-sdk</span></code> merely to run a prebuilt extension. The SDK contains
+headers, message generators, and build tools for extension authors; it is not a
+normal runtime dependency.</p>
+</section>
+<section id="install-specific-versions">
+<h2>Install Specific Versions<a class="headerlink" href="#install-specific-versions" title="Link to this heading"></a></h2>
+<p>The extension’s own version does not have to match Basilisk. Consult the
+extension’s compatibility documentation, then constrain both packages when a
+reproducible installation is required:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="s2">&quot;my-atm-extension==1.4.0&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="s2">&quot;bsk[all]==2.11.0&quot;</span>
+</pre></div>
+</div>
+<p>If those versions are incompatible according to the extension’s package
+metadata, <code class="docutils literal notranslate"><span class="pre">pip</span></code> stops with a dependency-resolution error instead of creating
+an unsafe environment.</p>
+<p>Avoid <code class="docutils literal notranslate"><span class="pre">--no-deps</span></code> when installing an extension. It bypasses the dependency
+metadata that protects the Basilisk ABI relationship.</p>
+</section>
+<section id="install-a-local-wheel">
+<h2>Install a Local Wheel<a class="headerlink" href="#install-a-local-wheel" title="Link to this heading"></a></h2>
+<p>An extension developer or internal build system may provide a wheel file
+directly. Install it by path:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>/path/to/my_atm_extension-1.4.0-*.whl
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">pip</span></code> still resolves the wheel’s declared Basilisk dependency. A wheel can
+only be installed if its platform and Python compatibility tags match the
+current environment.</p>
+<p>For a wheel hosted on a private package index, follow the index’s authentication
+instructions and install it with the appropriate <code class="docutils literal notranslate"><span class="pre">--index-url</span></code> or
+<code class="docutils literal notranslate"><span class="pre">--extra-index-url</span></code> option. Do not place credentials directly in shell
+history or documentation.</p>
+</section>
+<section id="verify-the-installation">
+<h2>Verify the Installation<a class="headerlink" href="#verify-the-installation" title="Link to this heading"></a></h2>
+<p>First ask <code class="docutils literal notranslate"><span class="pre">pip</span></code> to verify that every installed dependency is satisfied:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>check
+</pre></div>
+</div>
+<p>Inspect the installed distribution and Basilisk version:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>show<span class="w"> </span>my-atm-extension<span class="w"> </span>bsk
+python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;import Basilisk; print(Basilisk.__version__)&quot;</span>
+</pre></div>
+</div>
+<p>Finally, import the extension using its Python package name. The distribution
+name used by <code class="docutils literal notranslate"><span class="pre">pip</span></code> may contain hyphens, while the import package normally uses
+underscores:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">Basilisk</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">my_atm_extension</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Basilisk:&quot;</span><span class="p">,</span> <span class="n">Basilisk</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Extension imported from:&quot;</span><span class="p">,</span> <span class="n">my_atm_extension</span><span class="o">.</span><span class="vm">__file__</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Instantiate one of the extension’s modules or run its supplied smoke test
+before using it in a larger simulation:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">my_atm_extension</span><span class="w"> </span><span class="kn">import</span> <span class="n">customAtmosphere</span>
+
+<span class="n">atmosphere</span> <span class="o">=</span> <span class="n">customAtmosphere</span><span class="o">.</span><span class="n">CustomAtmosphere</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">atmosphere</span><span class="o">.</span><span class="n">ModelTag</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The extension’s documentation should identify its import package, exported
+modules, required message connections, and any initialization test.</p>
+</section>
+<section id="version-and-abi-compatibility">
+<h2>Version and ABI Compatibility<a class="headerlink" href="#version-and-abi-compatibility" title="Link to this heading"></a></h2>
+<p>An extension wheel contains native code compiled against a specific Basilisk
+C/C++ and SWIG interface. Its compatible Basilisk version is determined when
+the wheel is built, not when the extension is imported.</p>
+<p>For example, <code class="docutils literal notranslate"><span class="pre">my-atm-extension==1.4.0</span></code> might have been built with
+<code class="docutils literal notranslate"><span class="pre">bsk-sdk==2.11.0</span></code> and declare <code class="docutils literal notranslate"><span class="pre">bsk==2.11.0</span></code> as its runtime dependency. The
+extension version remains <code class="docutils literal notranslate"><span class="pre">1.4.0</span></code>; it does not need to copy the Basilisk
+version number.</p>
+<p>Compatibility is enforced differently depending on how the extension is
+obtained:</p>
+<ul class="simple">
+<li><p><strong>Prebuilt wheel:</strong> <code class="docutils literal notranslate"><span class="pre">pip</span></code> uses the extension’s declared <code class="docutils literal notranslate"><span class="pre">bsk</span></code> dependency
+to select a compatible Basilisk release.</p></li>
+<li><p><strong>Source build:</strong> <code class="docutils literal notranslate"><span class="pre">bsk-sdk</span></code> checks the installed Basilisk version and SWIG
+runtime while CMake configures the extension.</p></li>
+</ul>
+<p>If a prebuilt extension does not declare an exact Basilisk dependency, its
+documentation must state the supported Basilisk version. Treat missing or vague
+compatibility information as a packaging defect and ask the extension
+maintainer for clarification.</p>
+</section>
+<section id="wheel-availability-and-source-builds">
+<h2>Wheel Availability and Source Builds<a class="headerlink" href="#wheel-availability-and-source-builds" title="Link to this heading"></a></h2>
+<p>Extension wheels are platform-specific native artifacts. Publishers normally
+build separate wheels for each supported operating system and processor
+architecture, with Python compatibility encoded in the wheel filename.</p>
+<p>If no compatible wheel is available, <code class="docutils literal notranslate"><span class="pre">pip</span></code> may report <code class="docutils literal notranslate"><span class="pre">No</span> <span class="pre">matching</span>
+<span class="pre">distribution</span> <span class="pre">found</span></code> or download a source archive and attempt a local build. A
+source build requires the tools described in <a class="reference internal" href="writing.html#writingextensions"><span class="std std-ref">Quick Start: Writing a Basilisk Extension</span></a>,
+including a C++17 compiler, CMake, <code class="docutils literal notranslate"><span class="pre">bsk-sdk</span></code>, and the matching Basilisk
+release.</p>
+<p>Users who only want to run the extension should normally request a compatible
+wheel from its publisher rather than setting up a native development
+toolchain.</p>
+</section>
+<section id="upgrade-an-extension">
+<h2>Upgrade an Extension<a class="headerlink" href="#upgrade-an-extension" title="Link to this heading"></a></h2>
+<p>Upgrade the extension and let its dependency metadata select the compatible
+Basilisk version:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>--upgrade<span class="w"> </span><span class="s2">&quot;bsk[all]&quot;</span><span class="w"> </span>my-atm-extension
+python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>check
+</pre></div>
+</div>
+<p>When deliberately moving to a specific Basilisk release, confirm that a
+compatible extension release exists and upgrade them together:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>--upgrade<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="s2">&quot;bsk[all]==2.11.0&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="s2">&quot;my-atm-extension==1.4.0&quot;</span>
+python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>check
+</pre></div>
+</div>
+<p>Do not upgrade only <code class="docutils literal notranslate"><span class="pre">bsk</span></code> and ignore a dependency conflict. A wheel built for
+an older Basilisk ABI must be replaced by a compatible wheel or rebuilt by the
+extension maintainer.</p>
+</section>
+<section id="uninstall-an-extension">
+<h2>Uninstall an Extension<a class="headerlink" href="#uninstall-an-extension" title="Link to this heading"></a></h2>
+<p>Remove the extension by its distribution name:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>uninstall<span class="w"> </span>my-atm-extension
+</pre></div>
+</div>
+<p>This does not normally remove Basilisk because other installed packages or the
+user may still require it.</p>
+</section>
+<section id="common-installation-problems">
+<h2>Common Installation Problems<a class="headerlink" href="#common-installation-problems" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">ResolutionImpossible</span></code> or conflicting dependencies</dt><dd><p>The requested extension and Basilisk versions are incompatible. Install a
+documented compatible pair rather than forcing the resolver to ignore the
+conflict.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">No</span> <span class="pre">matching</span> <span class="pre">distribution</span> <span class="pre">found</span></code></dt><dd><p>The requested extension version may not exist, or the publisher may not
+provide a wheel for the current operating system, architecture, or Python
+version. Check the available wheel filenames or contact the publisher.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">pip</span></code> starts compiling the extension</dt><dd><p>No compatible prebuilt wheel was selected, so <code class="docutils literal notranslate"><span class="pre">pip</span></code> downloaded a source
+distribution. Cancel the build if a compiler toolchain was not intended and
+obtain a compatible wheel instead.</p>
+</dd>
+<dt>An optional Basilisk module cannot be imported</dt><dd><p>Install the appropriate Basilisk extra. The recommended complete set is
+<code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">-m</span> <span class="pre">pip</span> <span class="pre">install</span> <span class="pre">&quot;bsk[all]&quot;</span></code>.</p>
+</dd>
+<dt>The extension imports in one terminal but not another</dt><dd><p>The terminals are using different Python environments. Compare
+<code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">-c</span> <span class="pre">&quot;import</span> <span class="pre">sys;</span> <span class="pre">print(sys.executable)&quot;</span></code> and reinstall using that
+interpreter’s <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">-m</span> <span class="pre">pip</span></code>.</p>
+</dd>
+<dt>Undefined symbols, SWIG type errors, or a crash during import</dt><dd><p>These can indicate an extension wheel built for a different Basilisk or SWIG
+ABI, especially if it was installed with <code class="docutils literal notranslate"><span class="pre">--no-deps</span></code>. Create a clean
+environment, install a documented compatible package pair, and report a
+reproducible failure to the extension maintainer if it persists.</p>
+</dd>
+</dl>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="overview.html" class="btn btn-neutral float-left" title="About Extensions" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="writing.html" class="btn btn-neutral float-right" title="Quick Start: Writing a Basilisk Extension" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

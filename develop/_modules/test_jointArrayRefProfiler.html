@@ -1,0 +1,580 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_jointArrayRefProfiler &mdash; Basilisk 2.12.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=2ebb1c42" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=4ad2e773"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">test_jointArrayRefProfiler</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for test_jointArrayRefProfiler</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">jointArrayRefProfiler</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">macros</span>
+
+
+<span class="n">JOINT_ANGLES</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.3</span><span class="p">])</span>  <span class="c1"># [rad]</span>
+<span class="n">JOINT_RATES</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.05</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.07</span><span class="p">,</span> <span class="mf">0.04</span><span class="p">])</span>  <span class="c1"># [rad/s]</span>
+<span class="n">DES_JOINT_ANGLES</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">])</span>  <span class="c1"># [rad]</span>
+<span class="n">DES_JOINT_RATES</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>  <span class="c1"># [rad/s]</span>
+<span class="n">DES_JOINT_ACCELS</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>  <span class="c1"># [rad/s^2]</span>
+
+
+<div class="viewcode-block" id="setup_joint_array_ref_profiler">
+<a class="viewcode-back" href="../Documentation/simulation/deviceInterface/jointArrayRefProfiler/_UnitTest/test_jointArrayRefProfiler.html#test_jointArrayRefProfiler.setup_joint_array_ref_profiler">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">setup_joint_array_ref_profiler</span><span class="p">(</span><span class="n">profile_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a jointArrayRefProfiler module with three joint inputs.&quot;&quot;&quot;</span>
+    <span class="n">module</span> <span class="o">=</span> <span class="n">jointArrayRefProfiler</span><span class="o">.</span><span class="n">JointArrayRefProfiler</span><span class="p">()</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">setProfileType</span><span class="p">(</span><span class="n">profile_type</span><span class="p">)</span>
+    <span class="n">joint_state_in_msgs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">joint_state_dot_in_msgs</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+        <span class="n">module</span><span class="o">.</span><span class="n">addHingedJoint</span><span class="p">()</span>
+
+        <span class="n">joint_state_in</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">ScalarJointStateMsgPayload</span><span class="p">()</span>
+        <span class="n">joint_state_in</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">JOINT_ANGLES</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">joint_state_in_msg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">ScalarJointStateMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">joint_state_in</span><span class="p">)</span>
+        <span class="n">module</span><span class="o">.</span><span class="n">jointStatesInMsgs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">joint_state_in_msg</span><span class="p">)</span>
+        <span class="n">joint_state_in_msgs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">joint_state_in_msg</span><span class="p">)</span>
+
+        <span class="n">joint_state_dot_in</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">ScalarJointStateMsgPayload</span><span class="p">()</span>
+        <span class="n">joint_state_dot_in</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">JOINT_RATES</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">joint_state_dot_in_msg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">ScalarJointStateMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">joint_state_dot_in</span><span class="p">)</span>
+        <span class="n">module</span><span class="o">.</span><span class="n">jointStateDotsInMsgs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">joint_state_dot_in_msg</span><span class="p">)</span>
+        <span class="n">joint_state_dot_in_msgs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">joint_state_dot_in_msg</span><span class="p">)</span>
+
+    <span class="n">des_payload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">JointArrayStateMsgPayload</span><span class="p">()</span>
+    <span class="n">des_payload</span><span class="o">.</span><span class="n">states</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+    <span class="n">des_payload</span><span class="o">.</span><span class="n">stateDots</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+    <span class="n">des_payload</span><span class="o">.</span><span class="n">stateDDots</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">DES_JOINT_ANGLES</span><span class="p">:</span>
+        <span class="n">des_payload</span><span class="o">.</span><span class="n">states</span><span class="o">.</span><span class="n">push_back</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">DES_JOINT_RATES</span><span class="p">:</span>
+        <span class="n">des_payload</span><span class="o">.</span><span class="n">stateDots</span><span class="o">.</span><span class="n">push_back</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">DES_JOINT_ACCELS</span><span class="p">:</span>
+        <span class="n">des_payload</span><span class="o">.</span><span class="n">stateDDots</span><span class="o">.</span><span class="n">push_back</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+    <span class="n">des_msg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">JointArrayStateMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">des_payload</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">desJointStatesInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">des_msg</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">module</span><span class="p">,</span> <span class="n">joint_state_in_msgs</span><span class="p">,</span> <span class="n">joint_state_dot_in_msgs</span><span class="p">,</span> <span class="n">des_msg</span></div>
+
+
+<div class="viewcode-block" id="test_joint_array_ref_profiler_filter">
+<a class="viewcode-back" href="../Documentation/simulation/deviceInterface/jointArrayRefProfiler/_UnitTest/test_jointArrayRefProfiler.html#test_jointArrayRefProfiler.test_joint_array_ref_profiler_filter">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_joint_array_ref_profiler_filter</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    **Validation Test Description**</span>
+
+<span class="sd">    This unit test verifies that :class:`jointArrayRefProfiler.JointArrayRefProfiler` can be</span>
+<span class="sd">    constructed from the standard ``Basilisk.simulation`` import path and</span>
+<span class="sd">    that the low pass filter mode works correctly.</span>
+
+<span class="sd">    **Description of Variables Being Tested**</span>
+
+<span class="sd">    This unit test checks the outputs of ``desJointStatesOutMsg`` when using</span>
+<span class="sd">    the low pass filter mode.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Set up the module and its parameters</span>
+    <span class="n">module</span><span class="p">,</span> <span class="n">joint_state_in_msgs</span><span class="p">,</span> <span class="n">joint_state_dot_in_msgs</span><span class="p">,</span> <span class="n">des_msg</span> <span class="o">=</span> <span class="n">setup_joint_array_ref_profiler</span><span class="p">(</span><span class="s2">&quot;lowPass&quot;</span><span class="p">)</span>
+    <span class="n">filter_dt</span> <span class="o">=</span> <span class="mf">0.1</span>  <span class="c1"># [s]</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">setFilterDt</span><span class="p">(</span><span class="n">filter_dt</span><span class="p">)</span>  <span class="c1"># [s]</span>
+    <span class="n">filter_cutoff_freq</span> <span class="o">=</span> <span class="mf">0.5</span>  <span class="c1"># [Hz]</span>
+    <span class="n">wc</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">filter_cutoff_freq</span>  <span class="c1"># [rad/s]</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">setWc</span><span class="p">(</span><span class="n">wc</span><span class="p">)</span>  <span class="c1"># [rad/s]</span>
+
+    <span class="n">module</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">UpdateState</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">refOut</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">desJointStatesOutMsg</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">refOut</span><span class="o">.</span><span class="n">states</span><span class="p">,</span> <span class="n">JOINT_ANGLES</span><span class="p">)</span>  <span class="c1"># [rad]</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">refOut</span><span class="o">.</span><span class="n">stateDots</span><span class="p">,</span> <span class="n">JOINT_RATES</span><span class="p">)</span>  <span class="c1"># [rad/s]</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">refOut</span><span class="o">.</span><span class="n">stateDDots</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>  <span class="c1"># [rad/s^2]</span>
+
+    <span class="n">module</span><span class="o">.</span><span class="n">UpdateState</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">filter_dt</span><span class="p">))</span>
+
+    <span class="n">refOut</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">desJointStatesOutMsg</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="n">beta</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">wc</span> <span class="o">*</span> <span class="n">filter_dt</span><span class="p">)</span>
+    <span class="n">refAngles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">refRates</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">refAccels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+        <span class="n">refAngles</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">JOINT_ANGLES</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">beta</span> <span class="o">*</span> <span class="p">(</span><span class="n">DES_JOINT_ANGLES</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">JOINT_ANGLES</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">refRates</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">refAngles</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">JOINT_ANGLES</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">/</span> <span class="n">filter_dt</span>
+        <span class="n">refAccels</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">refRates</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">JOINT_RATES</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">/</span> <span class="n">filter_dt</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">refOut</span><span class="o">.</span><span class="n">states</span><span class="p">,</span> <span class="n">refAngles</span><span class="p">)</span>  <span class="c1"># [rad]</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">refOut</span><span class="o">.</span><span class="n">stateDots</span><span class="p">,</span> <span class="n">refRates</span><span class="p">)</span>  <span class="c1"># [rad/s]</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">refOut</span><span class="o">.</span><span class="n">stateDDots</span><span class="p">,</span> <span class="n">refAccels</span><span class="p">)</span>  <span class="c1"># [rad/s^2]</span>
+
+    <span class="n">module</span><span class="o">.</span><span class="n">UpdateState</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">filter_dt</span><span class="p">))</span>
+
+    <span class="n">refOut</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">desJointStatesOutMsg</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="n">prev_ref_angles</span> <span class="o">=</span> <span class="n">refAngles</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">prev_ref_rates</span> <span class="o">=</span> <span class="n">refRates</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+        <span class="n">refAngles</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">prev_ref_angles</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">beta</span> <span class="o">*</span> <span class="p">(</span><span class="n">DES_JOINT_ANGLES</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">prev_ref_angles</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">refRates</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">refAngles</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">prev_ref_angles</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">/</span> <span class="n">filter_dt</span>
+        <span class="n">refAccels</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">refRates</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">prev_ref_rates</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">/</span> <span class="n">filter_dt</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">refOut</span><span class="o">.</span><span class="n">states</span><span class="p">,</span> <span class="n">refAngles</span><span class="p">)</span>  <span class="c1"># [rad]</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">refOut</span><span class="o">.</span><span class="n">stateDots</span><span class="p">,</span> <span class="n">refRates</span><span class="p">)</span>  <span class="c1"># [rad/s]</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">refOut</span><span class="o">.</span><span class="n">stateDDots</span><span class="p">,</span> <span class="n">refAccels</span><span class="p">)</span>  <span class="c1"># [rad/s^2]</span></div>
+
+
+
+<div class="viewcode-block" id="test_joint_array_ref_profiler_linear">
+<a class="viewcode-back" href="../Documentation/simulation/deviceInterface/jointArrayRefProfiler/_UnitTest/test_jointArrayRefProfiler.html#test_jointArrayRefProfiler.test_joint_array_ref_profiler_linear">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_joint_array_ref_profiler_linear</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    **Validation Test Description**</span>
+
+<span class="sd">    This unit test verifies that :class:`jointArrayRefProfiler.JointArrayRefProfiler` can be</span>
+<span class="sd">    constructed from the standard ``Basilisk.simulation`` import path and</span>
+<span class="sd">    that the linear profile mode works correctly.</span>
+
+<span class="sd">    **Description of Variables Being Tested**</span>
+
+<span class="sd">    This unit test checks the outputs of ``desJointStatesOutMsg`` when using</span>
+<span class="sd">    the linear profile mode at the start of the profile, during the profile,</span>
+<span class="sd">    and after the profile completes.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">module</span><span class="p">,</span> <span class="n">joint_state_in_msgs</span><span class="p">,</span> <span class="n">joint_state_dot_in_msgs</span><span class="p">,</span> <span class="n">des_msg</span> <span class="o">=</span> <span class="n">setup_joint_array_ref_profiler</span><span class="p">(</span><span class="s2">&quot;linear&quot;</span><span class="p">)</span>
+    <span class="n">profile_duration</span> <span class="o">=</span> <span class="mf">0.4</span>  <span class="c1"># [s]</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">setProfileDuration</span><span class="p">(</span><span class="n">profile_duration</span><span class="p">)</span>  <span class="c1"># [s]</span>
+
+    <span class="n">module</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">module</span><span class="o">.</span><span class="n">UpdateState</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">ref_out</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">desJointStatesOutMsg</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">ref_out</span><span class="o">.</span><span class="n">states</span><span class="p">,</span> <span class="n">JOINT_ANGLES</span><span class="p">)</span>  <span class="c1"># [rad]</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">ref_out</span><span class="o">.</span><span class="n">stateDots</span><span class="p">,</span> <span class="p">(</span><span class="n">DES_JOINT_ANGLES</span> <span class="o">-</span> <span class="n">JOINT_ANGLES</span><span class="p">)</span> <span class="o">/</span> <span class="n">profile_duration</span><span class="p">)</span>  <span class="c1"># [rad/s]</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">ref_out</span><span class="o">.</span><span class="n">stateDDots</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>  <span class="c1"># [rad/s^2]</span>
+
+    <span class="n">mid_time</span> <span class="o">=</span> <span class="n">profile_duration</span> <span class="o">/</span> <span class="mf">2.0</span>  <span class="c1"># [s]</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">UpdateState</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">mid_time</span><span class="p">))</span>
+    <span class="n">ref_out</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">desJointStatesOutMsg</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">ref_out</span><span class="o">.</span><span class="n">states</span><span class="p">,</span> <span class="n">JOINT_ANGLES</span> <span class="o">+</span> <span class="p">(</span><span class="n">DES_JOINT_ANGLES</span> <span class="o">-</span> <span class="n">JOINT_ANGLES</span><span class="p">)</span> <span class="o">*</span> <span class="n">mid_time</span> <span class="o">/</span> <span class="n">profile_duration</span><span class="p">)</span>  <span class="c1"># [rad]</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">ref_out</span><span class="o">.</span><span class="n">stateDots</span><span class="p">,</span> <span class="p">(</span><span class="n">DES_JOINT_ANGLES</span> <span class="o">-</span> <span class="n">JOINT_ANGLES</span><span class="p">)</span> <span class="o">/</span> <span class="n">profile_duration</span><span class="p">)</span>  <span class="c1"># [rad/s]</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">ref_out</span><span class="o">.</span><span class="n">stateDDots</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>  <span class="c1"># [rad/s^2]</span>
+
+    <span class="n">module</span><span class="o">.</span><span class="n">UpdateState</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">profile_duration</span> <span class="o">+</span> <span class="mf">0.1</span><span class="p">))</span>  <span class="c1"># [s]</span>
+    <span class="n">ref_out</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">desJointStatesOutMsg</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">ref_out</span><span class="o">.</span><span class="n">states</span><span class="p">,</span> <span class="n">DES_JOINT_ANGLES</span><span class="p">)</span>  <span class="c1"># [rad]</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">ref_out</span><span class="o">.</span><span class="n">stateDots</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>  <span class="c1"># [rad/s]</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">ref_out</span><span class="o">.</span><span class="n">stateDDots</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>  <span class="c1"># [rad/s^2]</span></div>
+
+
+
+<div class="viewcode-block" id="test_joint_array_ref_profiler_cubic">
+<a class="viewcode-back" href="../Documentation/simulation/deviceInterface/jointArrayRefProfiler/_UnitTest/test_jointArrayRefProfiler.html#test_jointArrayRefProfiler.test_joint_array_ref_profiler_cubic">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_joint_array_ref_profiler_cubic</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    **Validation Test Description**</span>
+
+<span class="sd">    This unit test verifies that :class:`jointArrayRefProfiler.JointArrayRefProfiler` can be</span>
+<span class="sd">    constructed from the standard ``Basilisk.simulation`` import path and</span>
+<span class="sd">    that the cubic profile mode works correctly.</span>
+
+<span class="sd">    **Description of Variables Being Tested**</span>
+
+<span class="sd">    This unit test checks the outputs of ``desJointStatesOutMsg`` when using</span>
+<span class="sd">    the cubic profile mode at the start of the profile, during the profile,</span>
+<span class="sd">    and after the profile completes.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">module</span><span class="p">,</span> <span class="n">joint_state_in_msgs</span><span class="p">,</span> <span class="n">joint_state_dot_in_msgs</span><span class="p">,</span> <span class="n">des_msg</span> <span class="o">=</span> <span class="n">setup_joint_array_ref_profiler</span><span class="p">(</span><span class="s2">&quot;cubic&quot;</span><span class="p">)</span>
+    <span class="n">profile_duration</span> <span class="o">=</span> <span class="mf">0.4</span>  <span class="c1"># [s]</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">setProfileDuration</span><span class="p">(</span><span class="n">profile_duration</span><span class="p">)</span>  <span class="c1"># [s]</span>
+
+    <span class="n">module</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">module</span><span class="o">.</span><span class="n">UpdateState</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">ref_out</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">desJointStatesOutMsg</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">ref_out</span><span class="o">.</span><span class="n">states</span><span class="p">,</span> <span class="n">JOINT_ANGLES</span><span class="p">)</span>  <span class="c1"># [rad]</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">ref_out</span><span class="o">.</span><span class="n">stateDots</span><span class="p">,</span> <span class="n">JOINT_RATES</span><span class="p">)</span>  <span class="c1"># [rad/s]</span>
+    <span class="n">expected_accels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+        <span class="n">expected_accels</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="mf">2.0</span> <span class="o">*</span> <span class="p">((</span><span class="mf">3.0</span> <span class="o">*</span> <span class="p">(</span><span class="n">DES_JOINT_ANGLES</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">JOINT_ANGLES</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span> <span class="o">/</span> <span class="p">(</span><span class="n">profile_duration</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="o">-</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">JOINT_RATES</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">/</span> <span class="n">profile_duration</span><span class="p">)</span>
+        <span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">ref_out</span><span class="o">.</span><span class="n">stateDDots</span><span class="p">,</span> <span class="n">expected_accels</span><span class="p">)</span>  <span class="c1"># [rad/s^2]</span>
+
+    <span class="n">tau</span> <span class="o">=</span> <span class="n">profile_duration</span> <span class="o">/</span> <span class="mf">2.0</span>  <span class="c1"># [s]</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">UpdateState</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">tau</span><span class="p">))</span>
+    <span class="n">ref_out</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">desJointStatesOutMsg</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="n">expected_angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">expected_rates</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">expected_accels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+        <span class="n">theta0</span> <span class="o">=</span> <span class="n">JOINT_ANGLES</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">thetaf</span> <span class="o">=</span> <span class="n">DES_JOINT_ANGLES</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">theta_dot0</span> <span class="o">=</span> <span class="n">JOINT_RATES</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">a0</span> <span class="o">=</span> <span class="n">theta0</span>
+        <span class="n">a1</span> <span class="o">=</span> <span class="n">theta_dot0</span>
+        <span class="n">a2</span> <span class="o">=</span> <span class="p">(</span><span class="mf">3.0</span> <span class="o">*</span> <span class="p">(</span><span class="n">thetaf</span> <span class="o">-</span> <span class="n">theta0</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="n">profile_duration</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">theta_dot0</span><span class="p">)</span> <span class="o">/</span> <span class="n">profile_duration</span>
+        <span class="n">a3</span> <span class="o">=</span> <span class="o">-</span><span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="p">(</span><span class="n">thetaf</span> <span class="o">-</span> <span class="n">theta0</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="n">profile_duration</span> <span class="o">**</span> <span class="mi">3</span><span class="p">)</span> <span class="o">+</span> <span class="n">theta_dot0</span> <span class="o">/</span> <span class="p">(</span><span class="n">profile_duration</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">expected_angles</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">a0</span> <span class="o">+</span> <span class="n">a1</span> <span class="o">*</span> <span class="n">tau</span> <span class="o">+</span> <span class="n">a2</span> <span class="o">*</span> <span class="n">tau</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">a3</span> <span class="o">*</span> <span class="n">tau</span> <span class="o">**</span> <span class="mi">3</span>
+        <span class="n">expected_rates</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">a1</span> <span class="o">+</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">a2</span> <span class="o">*</span> <span class="n">tau</span> <span class="o">+</span> <span class="mf">3.0</span> <span class="o">*</span> <span class="n">a3</span> <span class="o">*</span> <span class="n">tau</span> <span class="o">**</span> <span class="mi">2</span>
+        <span class="n">expected_accels</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">a2</span> <span class="o">+</span> <span class="mf">6.0</span> <span class="o">*</span> <span class="n">a3</span> <span class="o">*</span> <span class="n">tau</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">ref_out</span><span class="o">.</span><span class="n">states</span><span class="p">,</span> <span class="n">expected_angles</span><span class="p">)</span>  <span class="c1"># [rad]</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">ref_out</span><span class="o">.</span><span class="n">stateDots</span><span class="p">,</span> <span class="n">expected_rates</span><span class="p">)</span>  <span class="c1"># [rad/s]</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">ref_out</span><span class="o">.</span><span class="n">stateDDots</span><span class="p">,</span> <span class="n">expected_accels</span><span class="p">)</span>  <span class="c1"># [rad/s^2]</span>
+
+    <span class="n">module</span><span class="o">.</span><span class="n">UpdateState</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">profile_duration</span> <span class="o">+</span> <span class="mf">0.1</span><span class="p">))</span>  <span class="c1"># [s]</span>
+    <span class="n">ref_out</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">desJointStatesOutMsg</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">ref_out</span><span class="o">.</span><span class="n">states</span><span class="p">,</span> <span class="n">DES_JOINT_ANGLES</span><span class="p">)</span>  <span class="c1"># [rad]</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">ref_out</span><span class="o">.</span><span class="n">stateDots</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>  <span class="c1"># [rad/s]</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">ref_out</span><span class="o">.</span><span class="n">stateDDots</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>  <span class="c1"># [rad/s^2]</span></div>
+
+
+
+<div class="viewcode-block" id="test_joint_array_ref_profiler_quintic">
+<a class="viewcode-back" href="../Documentation/simulation/deviceInterface/jointArrayRefProfiler/_UnitTest/test_jointArrayRefProfiler.html#test_jointArrayRefProfiler.test_joint_array_ref_profiler_quintic">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_joint_array_ref_profiler_quintic</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    **Validation Test Description**</span>
+
+<span class="sd">    This unit test verifies that :class:`jointArrayRefProfiler.JointArrayRefProfiler` can be</span>
+<span class="sd">    constructed from the standard ``Basilisk.simulation`` import path and</span>
+<span class="sd">    that the quintic profile mode works correctly.</span>
+
+<span class="sd">    **Description of Variables Being Tested**</span>
+
+<span class="sd">    This unit test checks the outputs of ``desJointStatesOutMsg`` when using</span>
+<span class="sd">    the quintic profile mode at the start of the profile, during the profile,</span>
+<span class="sd">    and after the profile completes.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">module</span><span class="p">,</span> <span class="n">joint_state_in_msgs</span><span class="p">,</span> <span class="n">joint_state_dot_in_msgs</span><span class="p">,</span> <span class="n">des_msg</span> <span class="o">=</span> <span class="n">setup_joint_array_ref_profiler</span><span class="p">(</span><span class="s2">&quot;quintic&quot;</span><span class="p">)</span>
+    <span class="n">profile_duration</span> <span class="o">=</span> <span class="mf">0.4</span>  <span class="c1"># [s]</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">setProfileDuration</span><span class="p">(</span><span class="n">profile_duration</span><span class="p">)</span>  <span class="c1"># [s]</span>
+
+    <span class="n">module</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">module</span><span class="o">.</span><span class="n">UpdateState</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">ref_out</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">desJointStatesOutMsg</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">ref_out</span><span class="o">.</span><span class="n">states</span><span class="p">,</span> <span class="n">JOINT_ANGLES</span><span class="p">)</span>  <span class="c1"># [rad]</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">ref_out</span><span class="o">.</span><span class="n">stateDots</span><span class="p">,</span> <span class="n">JOINT_RATES</span><span class="p">)</span>  <span class="c1"># [rad/s]</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">ref_out</span><span class="o">.</span><span class="n">stateDDots</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>  <span class="c1"># [rad/s^2]</span>
+
+    <span class="n">tau</span> <span class="o">=</span> <span class="n">profile_duration</span> <span class="o">/</span> <span class="mf">2.0</span>  <span class="c1"># [s]</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">UpdateState</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">tau</span><span class="p">))</span>
+    <span class="n">ref_out</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">desJointStatesOutMsg</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="n">expected_angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">expected_rates</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">expected_accels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+        <span class="n">theta0</span> <span class="o">=</span> <span class="n">JOINT_ANGLES</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">thetaf</span> <span class="o">=</span> <span class="n">DES_JOINT_ANGLES</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">theta_dot0</span> <span class="o">=</span> <span class="n">JOINT_RATES</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">delta_theta</span> <span class="o">=</span> <span class="n">thetaf</span> <span class="o">-</span> <span class="n">theta0</span>
+        <span class="n">a0</span> <span class="o">=</span> <span class="n">theta0</span>
+        <span class="n">a1</span> <span class="o">=</span> <span class="n">theta_dot0</span>
+        <span class="n">a2</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">a3</span> <span class="o">=</span> <span class="p">(</span><span class="mf">20.0</span> <span class="o">*</span> <span class="n">delta_theta</span> <span class="o">-</span> <span class="mf">12.0</span> <span class="o">*</span> <span class="n">theta_dot0</span> <span class="o">*</span> <span class="n">profile_duration</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">profile_duration</span> <span class="o">**</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="n">a4</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mf">30.0</span> <span class="o">*</span> <span class="n">delta_theta</span> <span class="o">+</span> <span class="mf">16.0</span> <span class="o">*</span> <span class="n">theta_dot0</span> <span class="o">*</span> <span class="n">profile_duration</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">profile_duration</span> <span class="o">**</span> <span class="mi">4</span><span class="p">)</span>
+        <span class="n">a5</span> <span class="o">=</span> <span class="p">(</span><span class="mf">12.0</span> <span class="o">*</span> <span class="n">delta_theta</span> <span class="o">-</span> <span class="mf">6.0</span> <span class="o">*</span> <span class="n">theta_dot0</span> <span class="o">*</span> <span class="n">profile_duration</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">profile_duration</span> <span class="o">**</span> <span class="mi">5</span><span class="p">)</span>
+        <span class="n">expected_angles</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">a0</span> <span class="o">+</span> <span class="n">a1</span> <span class="o">*</span> <span class="n">tau</span> <span class="o">+</span> <span class="n">a2</span> <span class="o">*</span> <span class="n">tau</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">a3</span> <span class="o">*</span> <span class="n">tau</span> <span class="o">**</span> <span class="mi">3</span> <span class="o">+</span> <span class="n">a4</span> <span class="o">*</span> <span class="n">tau</span> <span class="o">**</span> <span class="mi">4</span> <span class="o">+</span> <span class="n">a5</span> <span class="o">*</span> <span class="n">tau</span> <span class="o">**</span> <span class="mi">5</span>
+        <span class="n">expected_rates</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">a1</span> <span class="o">+</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">a2</span> <span class="o">*</span> <span class="n">tau</span> <span class="o">+</span> <span class="mf">3.0</span> <span class="o">*</span> <span class="n">a3</span> <span class="o">*</span> <span class="n">tau</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="mf">4.0</span> <span class="o">*</span> <span class="n">a4</span> <span class="o">*</span> <span class="n">tau</span> <span class="o">**</span> <span class="mi">3</span> <span class="o">+</span> <span class="mf">5.0</span> <span class="o">*</span> <span class="n">a5</span> <span class="o">*</span> <span class="n">tau</span> <span class="o">**</span> <span class="mi">4</span>
+        <span class="n">expected_accels</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">a2</span> <span class="o">+</span> <span class="mf">6.0</span> <span class="o">*</span> <span class="n">a3</span> <span class="o">*</span> <span class="n">tau</span> <span class="o">+</span> <span class="mf">12.0</span> <span class="o">*</span> <span class="n">a4</span> <span class="o">*</span> <span class="n">tau</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="mf">20.0</span> <span class="o">*</span> <span class="n">a5</span> <span class="o">*</span> <span class="n">tau</span> <span class="o">**</span> <span class="mi">3</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">ref_out</span><span class="o">.</span><span class="n">states</span><span class="p">,</span> <span class="n">expected_angles</span><span class="p">)</span>  <span class="c1"># [rad]</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">ref_out</span><span class="o">.</span><span class="n">stateDots</span><span class="p">,</span> <span class="n">expected_rates</span><span class="p">)</span>  <span class="c1"># [rad/s]</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">ref_out</span><span class="o">.</span><span class="n">stateDDots</span><span class="p">,</span> <span class="n">expected_accels</span><span class="p">)</span>  <span class="c1"># [rad/s^2]</span>
+
+    <span class="n">module</span><span class="o">.</span><span class="n">UpdateState</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">profile_duration</span> <span class="o">+</span> <span class="mf">0.1</span><span class="p">))</span>  <span class="c1"># [s]</span>
+    <span class="n">ref_out</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">desJointStatesOutMsg</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">ref_out</span><span class="o">.</span><span class="n">states</span><span class="p">,</span> <span class="n">DES_JOINT_ANGLES</span><span class="p">)</span>  <span class="c1"># [rad]</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">ref_out</span><span class="o">.</span><span class="n">stateDots</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>  <span class="c1"># [rad/s]</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">ref_out</span><span class="o">.</span><span class="n">stateDDots</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>  <span class="c1"># [rad/s^2]</span></div>
+
+
+
+<div class="viewcode-block" id="test_joint_array_ref_profiler_filter_reinitializes_on_new_command">
+<a class="viewcode-back" href="../Documentation/simulation/deviceInterface/jointArrayRefProfiler/_UnitTest/test_jointArrayRefProfiler.html#test_jointArrayRefProfiler.test_joint_array_ref_profiler_filter_reinitializes_on_new_command">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_joint_array_ref_profiler_filter_reinitializes_on_new_command</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    **Validation Test Description**</span>
+
+<span class="sd">    This unit test verifies that :class:`jointArrayRefProfiler.JointArrayRefProfiler` can be</span>
+<span class="sd">    constructed from the standard ``Basilisk.simulation`` import path and</span>
+<span class="sd">    that the low pass filter mode reinitializes correctly when a new desired</span>
+<span class="sd">    joint state message is written after the filter has already stepped once.</span>
+
+<span class="sd">    **Description of Variables Being Tested**</span>
+
+<span class="sd">    This unit test checks the outputs of ``desJointStatesOutMsg`` when using</span>
+<span class="sd">    the low pass filter mode after a second desired joint state message is</span>
+<span class="sd">    written. The expected behavior is that the module reinitializes the</span>
+<span class="sd">    internal reference state to the current joint states instead of</span>
+<span class="sd">    continuing from the previous filtered reference.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">module</span><span class="p">,</span> <span class="n">joint_state_in_msgs</span><span class="p">,</span> <span class="n">joint_state_dot_in_msgs</span><span class="p">,</span> <span class="n">des_msg</span> <span class="o">=</span> <span class="n">setup_joint_array_ref_profiler</span><span class="p">(</span><span class="s2">&quot;lowPass&quot;</span><span class="p">)</span>
+    <span class="n">filter_dt</span> <span class="o">=</span> <span class="mf">0.1</span>  <span class="c1"># [s]</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">setFilterDt</span><span class="p">(</span><span class="n">filter_dt</span><span class="p">)</span>  <span class="c1"># [s]</span>
+    <span class="n">filter_cutoff_freq</span> <span class="o">=</span> <span class="mf">0.5</span>  <span class="c1"># [Hz]</span>
+    <span class="n">wc</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">filter_cutoff_freq</span>  <span class="c1"># [rad/s]</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">setWc</span><span class="p">(</span><span class="n">wc</span><span class="p">)</span>  <span class="c1"># [rad/s]</span>
+
+    <span class="n">module</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">UpdateState</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">UpdateState</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">filter_dt</span><span class="p">))</span>
+
+    <span class="n">new_joint_angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.3</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">])</span>  <span class="c1"># [rad]</span>
+    <span class="n">new_joint_rates</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">0.02</span><span class="p">,</span> <span class="mf">0.06</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.01</span><span class="p">])</span>  <span class="c1"># [rad/s]</span>
+    <span class="n">new_joint_state_in_msgs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">new_joint_state_dot_in_msgs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+        <span class="n">joint_state_in</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">ScalarJointStateMsgPayload</span><span class="p">()</span>
+        <span class="n">joint_state_in</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">new_joint_angles</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">joint_state_in_msg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">ScalarJointStateMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">joint_state_in</span><span class="p">)</span>
+        <span class="n">module</span><span class="o">.</span><span class="n">jointStatesInMsgs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">joint_state_in_msg</span><span class="p">)</span>
+        <span class="n">new_joint_state_in_msgs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">joint_state_in_msg</span><span class="p">)</span>
+
+        <span class="n">joint_state_dot_in</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">ScalarJointStateMsgPayload</span><span class="p">()</span>
+        <span class="n">joint_state_dot_in</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">new_joint_rates</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">joint_state_dot_in_msg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">ScalarJointStateMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">joint_state_dot_in</span><span class="p">)</span>
+        <span class="n">module</span><span class="o">.</span><span class="n">jointStateDotsInMsgs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">joint_state_dot_in_msg</span><span class="p">)</span>
+        <span class="n">new_joint_state_dot_in_msgs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">joint_state_dot_in_msg</span><span class="p">)</span>
+
+    <span class="n">new_des_joint_angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">])</span>  <span class="c1"># [rad]</span>
+    <span class="n">new_des_payload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">JointArrayStateMsgPayload</span><span class="p">()</span>
+    <span class="n">new_des_payload</span><span class="o">.</span><span class="n">states</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+    <span class="n">new_des_payload</span><span class="o">.</span><span class="n">stateDots</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+    <span class="n">new_des_payload</span><span class="o">.</span><span class="n">stateDDots</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">new_des_joint_angles</span><span class="p">:</span>
+        <span class="n">new_des_payload</span><span class="o">.</span><span class="n">states</span><span class="o">.</span><span class="n">push_back</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">DES_JOINT_RATES</span><span class="p">:</span>
+        <span class="n">new_des_payload</span><span class="o">.</span><span class="n">stateDots</span><span class="o">.</span><span class="n">push_back</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">DES_JOINT_ACCELS</span><span class="p">:</span>
+        <span class="n">new_des_payload</span><span class="o">.</span><span class="n">stateDDots</span><span class="o">.</span><span class="n">push_back</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+    <span class="n">new_des_msg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">JointArrayStateMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">new_des_payload</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">filter_dt</span><span class="p">))</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">desJointStatesInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">new_des_msg</span><span class="p">)</span>
+
+    <span class="n">module</span><span class="o">.</span><span class="n">UpdateState</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">filter_dt</span><span class="p">))</span>
+
+    <span class="n">ref_out</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">desJointStatesOutMsg</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">ref_out</span><span class="o">.</span><span class="n">states</span><span class="p">,</span> <span class="n">new_joint_angles</span><span class="p">)</span>  <span class="c1"># [rad]</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">ref_out</span><span class="o">.</span><span class="n">stateDots</span><span class="p">,</span> <span class="n">new_joint_rates</span><span class="p">)</span>  <span class="c1"># [rad/s]</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">ref_out</span><span class="o">.</span><span class="n">stateDDots</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>  <span class="c1"># [rad/s^2]</span></div>
+
+
+
+<div class="viewcode-block" id="test_joint_array_ref_profiler_quintic_repeated_identical_writes">
+<a class="viewcode-back" href="../Documentation/simulation/deviceInterface/jointArrayRefProfiler/_UnitTest/test_jointArrayRefProfiler.html#test_jointArrayRefProfiler.test_joint_array_ref_profiler_quintic_repeated_identical_writes">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_joint_array_ref_profiler_quintic_repeated_identical_writes</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    **Validation Test Description**</span>
+
+<span class="sd">    This unit test verifies that :class:`jointArrayRefProfiler.JointArrayRefProfiler` can be</span>
+<span class="sd">    constructed from the standard ``Basilisk.simulation`` import path and</span>
+<span class="sd">    that repeated writes of an identical desired joint state message do not</span>
+<span class="sd">    restart the profile.</span>
+
+<span class="sd">    **Description of Variables Being Tested**</span>
+
+<span class="sd">    This unit test checks the outputs of ``desJointStatesOutMsg`` when using</span>
+<span class="sd">    the quintic profile mode after an identical desired joint state message is</span>
+<span class="sd">    rewritten at a later time. The expected behavior is that the profile</span>
+<span class="sd">    continues based on accumulated profile time instead of resetting to the</span>
+<span class="sd">    initial conditions.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">module</span><span class="p">,</span> <span class="n">joint_state_in_msgs</span><span class="p">,</span> <span class="n">joint_state_dot_in_msgs</span><span class="p">,</span> <span class="n">des_msg</span> <span class="o">=</span> <span class="n">setup_joint_array_ref_profiler</span><span class="p">(</span><span class="s2">&quot;quintic&quot;</span><span class="p">)</span>
+    <span class="n">profile_duration</span> <span class="o">=</span> <span class="mf">0.4</span>  <span class="c1"># [s]</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">setProfileDuration</span><span class="p">(</span><span class="n">profile_duration</span><span class="p">)</span>  <span class="c1"># [s]</span>
+
+    <span class="n">module</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">UpdateState</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">first_tau</span> <span class="o">=</span> <span class="mf">0.1</span>  <span class="c1"># [s]</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">UpdateState</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">first_tau</span><span class="p">))</span>
+
+    <span class="n">identical_des_payload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">JointArrayStateMsgPayload</span><span class="p">()</span>
+    <span class="n">identical_des_payload</span><span class="o">.</span><span class="n">states</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+    <span class="n">identical_des_payload</span><span class="o">.</span><span class="n">stateDots</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+    <span class="n">identical_des_payload</span><span class="o">.</span><span class="n">stateDDots</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">DES_JOINT_ANGLES</span><span class="p">:</span>
+        <span class="n">identical_des_payload</span><span class="o">.</span><span class="n">states</span><span class="o">.</span><span class="n">push_back</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">DES_JOINT_RATES</span><span class="p">:</span>
+        <span class="n">identical_des_payload</span><span class="o">.</span><span class="n">stateDots</span><span class="o">.</span><span class="n">push_back</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">DES_JOINT_ACCELS</span><span class="p">:</span>
+        <span class="n">identical_des_payload</span><span class="o">.</span><span class="n">stateDDots</span><span class="o">.</span><span class="n">push_back</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+    <span class="n">identical_des_msg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">JointArrayStateMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+        <span class="n">identical_des_payload</span><span class="p">,</span>
+        <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">0.2</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">desJointStatesInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">identical_des_msg</span><span class="p">)</span>
+
+    <span class="n">second_tau</span> <span class="o">=</span> <span class="mf">0.2</span>  <span class="c1"># [s]</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">UpdateState</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">second_tau</span><span class="p">))</span>
+
+    <span class="n">ref_out</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">desJointStatesOutMsg</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="n">expected_angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">expected_rates</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">expected_accels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+        <span class="n">theta0</span> <span class="o">=</span> <span class="n">JOINT_ANGLES</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">thetaf</span> <span class="o">=</span> <span class="n">DES_JOINT_ANGLES</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">theta_dot0</span> <span class="o">=</span> <span class="n">JOINT_RATES</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">delta_theta</span> <span class="o">=</span> <span class="n">thetaf</span> <span class="o">-</span> <span class="n">theta0</span>
+        <span class="n">a0</span> <span class="o">=</span> <span class="n">theta0</span>
+        <span class="n">a1</span> <span class="o">=</span> <span class="n">theta_dot0</span>
+        <span class="n">a2</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">a3</span> <span class="o">=</span> <span class="p">(</span><span class="mf">20.0</span> <span class="o">*</span> <span class="n">delta_theta</span> <span class="o">-</span> <span class="mf">12.0</span> <span class="o">*</span> <span class="n">theta_dot0</span> <span class="o">*</span> <span class="n">profile_duration</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">profile_duration</span> <span class="o">**</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="n">a4</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mf">30.0</span> <span class="o">*</span> <span class="n">delta_theta</span> <span class="o">+</span> <span class="mf">16.0</span> <span class="o">*</span> <span class="n">theta_dot0</span> <span class="o">*</span> <span class="n">profile_duration</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">profile_duration</span> <span class="o">**</span> <span class="mi">4</span><span class="p">)</span>
+        <span class="n">a5</span> <span class="o">=</span> <span class="p">(</span><span class="mf">12.0</span> <span class="o">*</span> <span class="n">delta_theta</span> <span class="o">-</span> <span class="mf">6.0</span> <span class="o">*</span> <span class="n">theta_dot0</span> <span class="o">*</span> <span class="n">profile_duration</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">profile_duration</span> <span class="o">**</span> <span class="mi">5</span><span class="p">)</span>
+        <span class="n">expected_angles</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">a0</span> <span class="o">+</span> <span class="n">a1</span> <span class="o">*</span> <span class="n">second_tau</span> <span class="o">+</span> <span class="n">a2</span> <span class="o">*</span> <span class="n">second_tau</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">a3</span> <span class="o">*</span> <span class="n">second_tau</span> <span class="o">**</span> <span class="mi">3</span> <span class="o">+</span> <span class="n">a4</span> <span class="o">*</span> <span class="n">second_tau</span> <span class="o">**</span> <span class="mi">4</span> <span class="o">+</span> <span class="n">a5</span> <span class="o">*</span> <span class="n">second_tau</span> <span class="o">**</span> <span class="mi">5</span>
+        <span class="n">expected_rates</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">a1</span> <span class="o">+</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">a2</span> <span class="o">*</span> <span class="n">second_tau</span> <span class="o">+</span> <span class="mf">3.0</span> <span class="o">*</span> <span class="n">a3</span> <span class="o">*</span> <span class="n">second_tau</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="mf">4.0</span> <span class="o">*</span> <span class="n">a4</span> <span class="o">*</span> <span class="n">second_tau</span> <span class="o">**</span> <span class="mi">3</span> <span class="o">+</span> <span class="mf">5.0</span> <span class="o">*</span> <span class="n">a5</span> <span class="o">*</span> <span class="n">second_tau</span> <span class="o">**</span> <span class="mi">4</span>
+        <span class="n">expected_accels</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">a2</span> <span class="o">+</span> <span class="mf">6.0</span> <span class="o">*</span> <span class="n">a3</span> <span class="o">*</span> <span class="n">second_tau</span> <span class="o">+</span> <span class="mf">12.0</span> <span class="o">*</span> <span class="n">a4</span> <span class="o">*</span> <span class="n">second_tau</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="mf">20.0</span> <span class="o">*</span> <span class="n">a5</span> <span class="o">*</span> <span class="n">second_tau</span> <span class="o">**</span> <span class="mi">3</span>
+
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">ref_out</span><span class="o">.</span><span class="n">states</span><span class="p">,</span> <span class="n">expected_angles</span><span class="p">)</span>  <span class="c1"># [rad]</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">ref_out</span><span class="o">.</span><span class="n">stateDots</span><span class="p">,</span> <span class="n">expected_rates</span><span class="p">)</span>  <span class="c1"># [rad/s]</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">ref_out</span><span class="o">.</span><span class="n">stateDDots</span><span class="p">,</span> <span class="n">expected_accels</span><span class="p">)</span>  <span class="c1"># [rad/s^2]</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

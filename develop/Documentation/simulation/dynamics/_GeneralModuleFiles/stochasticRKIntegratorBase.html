@@ -1,0 +1,290 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>stochasticRKIntegratorBase &mdash; Basilisk 2.12.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=2ebb1c42" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=4ad2e773"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="stochasticWeakRandomVariables" href="stochasticWeakRandomVariables.html" />
+    <link rel="prev" title="stochasticNoiseGenerator" href="stochasticNoiseGenerator.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../communication/index.html">communication</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">dynamics</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../DynOutput/index.html">DynOutput</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ExtPulsedTorque/index.html">ExtPulsedTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../FuelTank/index.html">FuelTank</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../GravityGradientEffector/index.html">GravityGradientEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../HingedRigidBodies/index.html">HingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../Integrators/index.html">Integrators</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../LinearSpringMassDamper/index.html">LinearSpringMassDamper</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../MtbEffector/index.html">MtbEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../NHingedRigidBodies/index.html">NHingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../RadiationPressure/index.html">RadiationPressure</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../Thrusters/index.html">Thrusters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../VSCMGs/index.html">VSCMGs</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../constraintEffector/index.html">constraintEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dragEffector/index.html">dragEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dualHingedRigidBodies/index.html">dualHingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../extForceTorque/index.html">extForceTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../facetDragEffector/index.html">facetDragEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../facetSRPDynamicEffector/index.html">facetSRPDynamicEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../facetedSRPEffector/index.html">facetedSRPEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../gravityEffector/index.html">gravityEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../hingedRigidBodyMotor/index.html">hingedRigidBodyMotor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../igbmNoiseStateEffector/index.html">igbmNoiseStateEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../linearTranslationalBodies/index.html">linearTranslationalBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../meanRevertingNoiseStateEffector/index.html">meanRevertingNoiseStateEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../msmForceTorque/index.html">msmForceTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../prescribedMotion/index.html">prescribedMotion</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reactionWheels/index.html">reactionWheels</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraft/index.html">spacecraft</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraftSystem/index.html">spacecraftSystem</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../sphericalPendulum/index.html">sphericalPendulum</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spinningBodies/index.html">spinningBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../stateArchitecture/index.html">stateArchitecture</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../environment/index.html">environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../forceTorque/index.html">forceTorque</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujocoDynamics/index.html">mujocoDynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../simSynch/index.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">dynamics</a></li>
+          <li class="breadcrumb-item"><a href="index.html">_GeneralModuleFiles</a></li>
+      <li class="breadcrumb-item active">stochasticRKIntegratorBase</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/simulation/dynamics/_GeneralModuleFiles/stochasticRKIntegratorBase.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="stochasticrkintegratorbase">
+<span id="id1"></span><h1>stochasticRKIntegratorBase<a class="headerlink" href="#stochasticrkintegratorbase" title="Link to this heading"></a></h1>
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv426StochasticRKIntegratorBase">
+<span id="_CPPv326StochasticRKIntegratorBase"></span><span id="_CPPv226StochasticRKIntegratorBase"></span><span id="StochasticRKIntegratorBase"></span><span class="target" id="class_stochastic_r_k_integrator_base"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">StochasticRKIntegratorBase</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="stateVecStochasticIntegrator.html#_CPPv428StateVecStochasticIntegrator" title="StateVecStochasticIntegrator"><span class="n"><span class="pre">StateVecStochasticIntegrator</span></span></a><a class="headerlink" href="#_CPPv426StochasticRKIntegratorBase" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;stochasticRKIntegratorBase.h&gt;</em></div>
+<p>Shared base for the native stochastic Runge-Kutta integrators (Euler-Maruyama, the SRI/SRA strong methods, the weak W2Ito/DRI1/RI/RS/SIESME families, RDI1WM and Euler-Heun/RKMil).</p>
+<p>It factors out the machinery every one of these integrators needs, so each concrete method only has to implement its own <code class="docutils literal notranslate"><a class="reference internal" href="stateVecIntegrator.html#class_state_vec_integrator_1a2a89bf5fec4255af0b0c4297c9b1bb81"><span class="std std-ref"><span class="pre">integrate()</span></span></a></code> step recurrence:</p>
+<p><ul class="simple">
+<li><p>a pluggable <code class="docutils literal notranslate"><a class="reference internal" href="stochasticNoiseGenerator.html#class_gaussian_noise_generator"><span class="std std-ref"><span class="pre">GaussianNoiseGenerator</span></span></a></code> (defaulting to a random Mersenne-Twister source, replaceable by a prescribed-replay generator for tests), plus the <code class="docutils literal notranslate"><a class="reference internal" href="#class_stochastic_r_k_integrator_base_1add86cef185598c2872f226e6310016ab"><span class="std std-ref"><span class="pre">setRNGSeed</span></span></a></code> / <code class="docutils literal notranslate"><a class="reference internal" href="#class_stochastic_r_k_integrator_base_1a4c0c56aa0840138aa9c668d7f9271580"><span class="std std-ref"><span class="pre">setNoiseGenerator</span></span></a></code> accessors;</p></li>
+<li><p>the pointwise stage-evaluation helpers <code class="docutils literal notranslate"><a class="reference internal" href="#class_stochastic_r_k_integrator_base_1ae06959f5e24b5cfe45d56804a462e467"><span class="std std-ref"><span class="pre">computeDerivatives</span></span></a></code> / <code class="docutils literal notranslate"><a class="reference internal" href="#class_stochastic_r_k_integrator_base_1aab07fe28553c922166030d18a693f9d5"><span class="std std-ref"><span class="pre">computeDiffusion</span></span></a></code> / <code class="docutils literal notranslate"><a class="reference internal" href="#class_stochastic_r_k_integrator_base_1a636653fe29aa5caa107d5ed65337a346"><span class="std std-ref"><span class="pre">computeDiffusions</span></span></a></code> (set the stage state, call the dynamic objects’ <code class="docutils literal notranslate"><span class="pre">equationsOfMotion</span></code> / <code class="docutils literal notranslate"><span class="pre">equationsOfMotionDiffusion</span></code>, and gather the result);</p></li>
+<li><p>a cached view of <code class="docutils literal notranslate"><a class="reference internal" href="stateVecStochasticIntegrator.html#class_state_vec_stochastic_integrator_1adf61b44bda444cb9efd65b660e741c7f"><span class="std std-ref"><span class="pre">getStateIdToNoiseIndexMaps()</span></span></a></code> (<code class="docutils literal notranslate"><a class="reference internal" href="#class_stochastic_r_k_integrator_base_1a5a11c16d10fe567ad8a360a606bb3df4"><span class="std std-ref"><span class="pre">noiseIndexMaps()</span></span></a></code>), whose state/noise topology is invariant during a run, so it is built once instead of every step.</p></li>
+</ul>
+</p>
+<p>Every native stochastic integrator derives from this base. Methods that need only the Wiener increment (Euler-Maruyama, Euler-Heun, RKMil) simply ignore the second increment <code class="docutils literal notranslate"><span class="pre">dZ</span></code> the generator also draws.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Stochastic integration is in beta. </p>
+</div>
+<p>Subclassed by <a class="reference internal" href="svIntegratorStrongStochasticRungeKuttaSRA.html#classsv_integrator_strong_stochastic_runge_kutta_s_r_a"><span class="std std-ref">svIntegratorStrongStochasticRungeKuttaSRA&lt; numberStages &gt;</span></a>, <a class="reference internal" href="svIntegratorStrongStochasticRungeKuttaSRI.html#classsv_integrator_strong_stochastic_runge_kutta_s_r_i"><span class="std std-ref">svIntegratorStrongStochasticRungeKuttaSRI&lt; numberStages &gt;</span></a>, <a class="reference internal" href="svIntegratorWeakSIESME.html#classsv_integrator_weak_s_i_e_s_m_e"><span class="std std-ref">svIntegratorWeakSIESME</span></a></p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N26StochasticRKIntegratorBase10setRNGSeedE6size_t">
+<span id="_CPPv3N26StochasticRKIntegratorBase10setRNGSeedE6size_t"></span><span id="_CPPv2N26StochasticRKIntegratorBase10setRNGSeedE6size_t"></span><span id="StochasticRKIntegratorBase::setRNGSeed__s"></span><span class="target" id="class_stochastic_r_k_integrator_base_1add86cef185598c2872f226e6310016ab"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setRNGSeed</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">seed</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N26StochasticRKIntegratorBase10setRNGSeedE6size_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Sets the seed for the (default) Random Number Generator used by this integrator.</p>
+<p>As a stochastic integrator, random numbers are drawn during each time step. By default a randomly generated seed is used. Setting the seed makes the integrator draw the same sequence each run. Has no effect if a custom noise generator that does not honour the seed was installed via <code class="docutils literal notranslate"><a class="reference internal" href="#class_stochastic_r_k_integrator_base_1a4c0c56aa0840138aa9c668d7f9271580"><span class="std std-ref"><span class="pre">setNoiseGenerator</span></span></a></code>. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N26StochasticRKIntegratorBase17setNoiseGeneratorENSt10shared_ptrI22GaussianNoiseGeneratorEE">
+<span id="_CPPv3N26StochasticRKIntegratorBase17setNoiseGeneratorENSt10shared_ptrI22GaussianNoiseGeneratorEE"></span><span id="_CPPv2N26StochasticRKIntegratorBase17setNoiseGeneratorENSt10shared_ptrI22GaussianNoiseGeneratorEE"></span><span id="StochasticRKIntegratorBase::setNoiseGenerator__std::shared_ptr:GaussianNoiseGenerator:"></span><span class="target" id="class_stochastic_r_k_integrator_base_1a4c0c56aa0840138aa9c668d7f9271580"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setNoiseGenerator</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">shared_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="stochasticNoiseGenerator.html#_CPPv422GaussianNoiseGenerator" title="GaussianNoiseGenerator"><span class="n"><span class="pre">GaussianNoiseGenerator</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">generator</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N26StochasticRKIntegratorBase17setNoiseGeneratorENSt10shared_ptrI22GaussianNoiseGeneratorEE" title="Link to this definition"></a><br /></dt>
+<dd><p>Replaces the noise generator used by this integrator. This is primarily useful for testing, where a <code class="docutils literal notranslate"><a class="reference internal" href="stochasticNoiseGenerator.html#class_prescribed_gaussian_noise_generator"><span class="std std-ref"><span class="pre">PrescribedGaussianNoiseGenerator</span></span></a></code> can be installed so the integrator replays a known sequence of Wiener increments. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26StochasticRKIntegratorBase11rvGeneratorE">
+<span id="_CPPv3N26StochasticRKIntegratorBase11rvGeneratorE"></span><span id="_CPPv2N26StochasticRKIntegratorBase11rvGeneratorE"></span><span id="StochasticRKIntegratorBase::rvGenerator__std::shared_ptr:GaussianNoiseGenerator:"></span><span class="target" id="class_stochastic_r_k_integrator_base_1abc1a8bb8050ca3472db8c9f16428dc58"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">shared_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="stochasticNoiseGenerator.html#_CPPv422GaussianNoiseGenerator" title="GaussianNoiseGenerator"><span class="n"><span class="pre">GaussianNoiseGenerator</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rvGenerator</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">make_shared</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="stochasticNoiseGenerator.html#_CPPv428RandomGaussianNoiseGenerator" title="RandomGaussianNoiseGenerator"><span class="n"><span class="pre">RandomGaussianNoiseGenerator</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N26StochasticRKIntegratorBase11rvGeneratorE" title="Link to this definition"></a><br /></dt>
+<dd><p>Random Number Generator for the integrator (supplies dW and dZ per noise source). </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-protected-functions">Protected Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N26StochasticRKIntegratorBase14noiseIndexMapsEv">
+<span id="_CPPv3N26StochasticRKIntegratorBase14noiseIndexMapsEv"></span><span id="_CPPv2N26StochasticRKIntegratorBase14noiseIndexMapsEv"></span><span id="StochasticRKIntegratorBase::noiseIndexMaps"></span><span class="target" id="class_stochastic_r_k_integrator_base_1a5a11c16d10fe567ad8a360a606bb3df4"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="extendedStateVector.html#_CPPv417StateIdToIndexMap" title="StateIdToIndexMap"><span class="n"><span class="pre">StateIdToIndexMap</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">noiseIndexMaps</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N26StochasticRKIntegratorBase14noiseIndexMapsEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Returns the (cached) state-id -&gt; noise-index maps. The topology is fixed for the run, so it is computed once on first use and reused thereafter. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N26StochasticRKIntegratorBase18computeDerivativesEdd">
+<span id="_CPPv3N26StochasticRKIntegratorBase18computeDerivativesEdd"></span><span id="_CPPv2N26StochasticRKIntegratorBase18computeDerivativesEdd"></span><span id="StochasticRKIntegratorBase::computeDerivatives__double.double"></span><span class="target" id="class_stochastic_r_k_integrator_base_1ae06959f5e24b5cfe45d56804a462e467"></span><a class="reference internal" href="extendedStateVector.html#_CPPv419ExtendedStateVector" title="ExtendedStateVector"><span class="n"><span class="pre">ExtendedStateVector</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeDerivatives</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">time</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">timeStep</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N26StochasticRKIntegratorBase18computeDerivativesEdd" title="Link to this definition"></a><br /></dt>
+<dd><p>Computes f at the current state/time (sets states, calls equationsOfMotion). </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N26StochasticRKIntegratorBase16computeDiffusionEddRK17StateIdToIndexMap">
+<span id="_CPPv3N26StochasticRKIntegratorBase16computeDiffusionEddRK17StateIdToIndexMap"></span><span id="_CPPv2N26StochasticRKIntegratorBase16computeDiffusionEddRK17StateIdToIndexMap"></span><span id="StochasticRKIntegratorBase::computeDiffusion__double.double.StateIdToIndexMapCR"></span><span class="target" id="class_stochastic_r_k_integrator_base_1aab07fe28553c922166030d18a693f9d5"></span><a class="reference internal" href="extendedStateVector.html#_CPPv419ExtendedStateVector" title="ExtendedStateVector"><span class="n"><span class="pre">ExtendedStateVector</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeDiffusion</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">time</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">timeStep</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="extendedStateVector.html#_CPPv417StateIdToIndexMap" title="StateIdToIndexMap"><span class="n"><span class="pre">StateIdToIndexMap</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">stateIdToNoiseIndexMap</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N26StochasticRKIntegratorBase16computeDiffusionEddRK17StateIdToIndexMap" title="Link to this definition"></a><br /></dt>
+<dd><p>Computes g for a single noise source at the current state/time. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N26StochasticRKIntegratorBase17computeDiffusionsEddRKNSt6vectorI17StateIdToIndexMapEE">
+<span id="_CPPv3N26StochasticRKIntegratorBase17computeDiffusionsEddRKNSt6vectorI17StateIdToIndexMapEE"></span><span id="_CPPv2N26StochasticRKIntegratorBase17computeDiffusionsEddRKNSt6vectorI17StateIdToIndexMapEE"></span><span id="StochasticRKIntegratorBase::computeDiffusions__double.double.std::vector:StateIdToIndexMap:CR"></span><span class="target" id="class_stochastic_r_k_integrator_base_1a636653fe29aa5caa107d5ed65337a346"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="extendedStateVector.html#_CPPv419ExtendedStateVector" title="ExtendedStateVector"><span class="n"><span class="pre">ExtendedStateVector</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeDiffusions</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">time</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">timeStep</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="extendedStateVector.html#_CPPv417StateIdToIndexMap" title="StateIdToIndexMap"><span class="n"><span class="pre">StateIdToIndexMap</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">stateIdToNoiseIndexMaps</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N26StochasticRKIntegratorBase17computeDiffusionsEddRKNSt6vectorI17StateIdToIndexMapEE" title="Link to this definition"></a><br /></dt>
+<dd><p>Computes g for every noise source at the current state/time. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26StochasticRKIntegratorBase20cachedNoiseIndexMapsE">
+<span id="_CPPv3N26StochasticRKIntegratorBase20cachedNoiseIndexMapsE"></span><span id="_CPPv2N26StochasticRKIntegratorBase20cachedNoiseIndexMapsE"></span><span id="StochasticRKIntegratorBase::cachedNoiseIndexMaps__std::vector:StateIdToIndexMap:"></span><span class="target" id="class_stochastic_r_k_integrator_base_1a535287e2a0a9ef7332b59053044b191f"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="extendedStateVector.html#_CPPv417StateIdToIndexMap" title="StateIdToIndexMap"><span class="n"><span class="pre">StateIdToIndexMap</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">cachedNoiseIndexMaps</span></span></span><a class="headerlink" href="#_CPPv4N26StochasticRKIntegratorBase20cachedNoiseIndexMapsE" title="Link to this definition"></a><br /></dt>
+<dd><p>Cached noise-index maps (empty until first <a class="reference internal" href="#class_stochastic_r_k_integrator_base_1a5a11c16d10fe567ad8a360a606bb3df4"><span class="std std-ref">noiseIndexMaps()</span></a> call). </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26StochasticRKIntegratorBase20noiseIndexMapsCachedE">
+<span id="_CPPv3N26StochasticRKIntegratorBase20noiseIndexMapsCachedE"></span><span id="_CPPv2N26StochasticRKIntegratorBase20noiseIndexMapsCachedE"></span><span id="StochasticRKIntegratorBase::noiseIndexMapsCached__b"></span><span class="target" id="class_stochastic_r_k_integrator_base_1a5f3bb16d29267f637eb10eed657a1607"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">noiseIndexMapsCached</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">false</span></span><a class="headerlink" href="#_CPPv4N26StochasticRKIntegratorBase20noiseIndexMapsCachedE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="stochasticNoiseGenerator.html" class="btn btn-neutral float-left" title="stochasticNoiseGenerator" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="stochasticWeakRandomVariables.html" class="btn btn-neutral float-right" title="stochasticWeakRandomVariables" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

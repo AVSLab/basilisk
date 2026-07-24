@@ -1,0 +1,363 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>stochasticNoiseGenerator &mdash; Basilisk 2.12.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=2ebb1c42" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=4ad2e773"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script>window.MathJax = {"svg": {"fontCache": "global"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="stochasticRKIntegratorBase" href="stochasticRKIntegratorBase.html" />
+    <link rel="prev" title="stateVecStochasticIntegrator" href="stateVecStochasticIntegrator.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../communication/index.html">communication</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">dynamics</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../DynOutput/index.html">DynOutput</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ExtPulsedTorque/index.html">ExtPulsedTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../FuelTank/index.html">FuelTank</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../GravityGradientEffector/index.html">GravityGradientEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../HingedRigidBodies/index.html">HingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../Integrators/index.html">Integrators</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../LinearSpringMassDamper/index.html">LinearSpringMassDamper</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../MtbEffector/index.html">MtbEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../NHingedRigidBodies/index.html">NHingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../RadiationPressure/index.html">RadiationPressure</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../Thrusters/index.html">Thrusters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../VSCMGs/index.html">VSCMGs</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../constraintEffector/index.html">constraintEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dragEffector/index.html">dragEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dualHingedRigidBodies/index.html">dualHingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../extForceTorque/index.html">extForceTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../facetDragEffector/index.html">facetDragEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../facetSRPDynamicEffector/index.html">facetSRPDynamicEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../facetedSRPEffector/index.html">facetedSRPEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../gravityEffector/index.html">gravityEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../hingedRigidBodyMotor/index.html">hingedRigidBodyMotor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../igbmNoiseStateEffector/index.html">igbmNoiseStateEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../linearTranslationalBodies/index.html">linearTranslationalBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../meanRevertingNoiseStateEffector/index.html">meanRevertingNoiseStateEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../msmForceTorque/index.html">msmForceTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../prescribedMotion/index.html">prescribedMotion</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reactionWheels/index.html">reactionWheels</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraft/index.html">spacecraft</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraftSystem/index.html">spacecraftSystem</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../sphericalPendulum/index.html">sphericalPendulum</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spinningBodies/index.html">spinningBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../stateArchitecture/index.html">stateArchitecture</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../environment/index.html">environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../forceTorque/index.html">forceTorque</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujocoDynamics/index.html">mujocoDynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../simSynch/index.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">dynamics</a></li>
+          <li class="breadcrumb-item"><a href="index.html">_GeneralModuleFiles</a></li>
+      <li class="breadcrumb-item active">stochasticNoiseGenerator</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/simulation/dynamics/_GeneralModuleFiles/stochasticNoiseGenerator.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="stochasticnoisegenerator">
+<span id="id1"></span><h1>stochasticNoiseGenerator<a class="headerlink" href="#stochasticnoisegenerator" title="Link to this heading"></a></h1>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv419GaussianNoiseSample">
+<span id="_CPPv319GaussianNoiseSample"></span><span id="_CPPv219GaussianNoiseSample"></span><span id="GaussianNoiseSample"></span><span class="target" id="struct_gaussian_noise_sample"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">GaussianNoiseSample</span></span></span><a class="headerlink" href="#_CPPv419GaussianNoiseSample" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;stochasticNoiseGenerator.h&gt;</em></div>
+<p>One draw of the Gaussian random variables needed to advance a stochastic integrator by a single time step.</p>
+<p>Both members have length <code class="docutils literal notranslate"><span class="pre">m</span></code> (the number of independent noise sources). <code class="docutils literal notranslate"><a class="reference internal" href="#struct_gaussian_noise_sample_1a1d88c18ddd4c490ba9a728cf7538c6a5"><span class="std std-ref"><span class="pre">dW</span></span></a></code> is the Wiener increment for each noise source; <code class="docutils literal notranslate"><a class="reference internal" href="#struct_gaussian_noise_sample_1a7c0c013865978dbf29ad48cd6f1bc409"><span class="std std-ref"><span class="pre">dZ</span></span></a></code> is a second, independent Wiener increment required by the higher-order Roessler methods (SRI/SRA) to build the mixed iterated integrals. Methods that only need the Wiener increment (e.g. Euler-Maruyama, Euler-Heun, RKMil) simply ignore <code class="docutils literal notranslate"><a class="reference internal" href="#struct_gaussian_noise_sample_1a7c0c013865978dbf29ad48cd6f1bc409"><span class="std std-ref"><span class="pre">dZ</span></span></a></code>.</p>
+<p>With time step <code class="docutils literal notranslate"><span class="pre">h</span></code>, each entry of <code class="docutils literal notranslate"><a class="reference internal" href="#struct_gaussian_noise_sample_1a1d88c18ddd4c490ba9a728cf7538c6a5"><span class="std std-ref"><span class="pre">dW</span></span></a></code> and <code class="docutils literal notranslate"><a class="reference internal" href="#struct_gaussian_noise_sample_1a7c0c013865978dbf29ad48cd6f1bc409"><span class="std std-ref"><span class="pre">dZ</span></span></a></code> is distributed as <span class="math notranslate nohighlight">\(N(0, h)\)</span>. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19GaussianNoiseSample2dWE">
+<span id="_CPPv3N19GaussianNoiseSample2dWE"></span><span id="_CPPv2N19GaussianNoiseSample2dWE"></span><span id="GaussianNoiseSample::dW__Eigen::VectorXd"></span><span class="target" id="struct_gaussian_noise_sample_1a1d88c18ddd4c490ba9a728cf7538c6a5"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dW</span></span></span><a class="headerlink" href="#_CPPv4N19GaussianNoiseSample2dWE" title="Link to this definition"></a><br /></dt>
+<dd><p>Wiener increment per noise source, ~ N(0, h). </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19GaussianNoiseSample2dZE">
+<span id="_CPPv3N19GaussianNoiseSample2dZE"></span><span id="_CPPv2N19GaussianNoiseSample2dZE"></span><span id="GaussianNoiseSample::dZ__Eigen::VectorXd"></span><span class="target" id="struct_gaussian_noise_sample_1a7c0c013865978dbf29ad48cd6f1bc409"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dZ</span></span></span><a class="headerlink" href="#_CPPv4N19GaussianNoiseSample2dZE" title="Link to this definition"></a><br /></dt>
+<dd><p>Second independent Wiener increment per noise source, ~ N(0, h). </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv422GaussianNoiseGenerator">
+<span id="_CPPv322GaussianNoiseGenerator"></span><span id="_CPPv222GaussianNoiseGenerator"></span><span id="GaussianNoiseGenerator"></span><span class="target" id="class_gaussian_noise_generator"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">GaussianNoiseGenerator</span></span></span><a class="headerlink" href="#_CPPv422GaussianNoiseGenerator" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;stochasticNoiseGenerator.h&gt;</em></div>
+<p>Interface for the random-variable source used by the native stochastic integrators.</p>
+<p>Separating the noise generation from the integrator lets a test install a generator that replays a known sequence of increments (see <code class="docutils literal notranslate"><a class="reference internal" href="#class_prescribed_gaussian_noise_generator"><span class="std std-ref"><span class="pre">PrescribedGaussianNoiseGenerator</span></span></a></code>), which is how the Basilisk integrators are checked for numerical equivalence against a reference implementation.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Stochastic integration is in beta. </p>
+</div>
+<p>Subclassed by <a class="reference internal" href="#class_prescribed_gaussian_noise_generator"><span class="std std-ref">PrescribedGaussianNoiseGenerator</span></a>, <a class="reference internal" href="#class_random_gaussian_noise_generator"><span class="std std-ref">RandomGaussianNoiseGenerator</span></a></p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N22GaussianNoiseGeneratorD0Ev">
+<span id="_CPPv3N22GaussianNoiseGeneratorD0Ev"></span><span id="_CPPv2N22GaussianNoiseGeneratorD0Ev"></span><span id="GaussianNoiseGenerator::~GaussianNoiseGenerator"></span><span class="target" id="class_gaussian_noise_generator_1affb28585b6a2a4152506acb10ca7be0d"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">~GaussianNoiseGenerator</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">default</span></span><a class="headerlink" href="#_CPPv4N22GaussianNoiseGeneratorD0Ev" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N22GaussianNoiseGenerator7setSeedE6size_t">
+<span id="_CPPv3N22GaussianNoiseGenerator7setSeedE6size_t"></span><span id="_CPPv2N22GaussianNoiseGenerator7setSeedE6size_t"></span><span id="GaussianNoiseGenerator::setSeed__s"></span><span class="target" id="class_gaussian_noise_generator_1a957b163ef3bc71f5a7b77c846898608a"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setSeed</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">seed</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N22GaussianNoiseGenerator7setSeedE6size_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Sets the seed for the underlying RNG (if any). </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N22GaussianNoiseGenerator8generateE6size_td">
+<span id="_CPPv3N22GaussianNoiseGenerator8generateE6size_td"></span><span id="_CPPv2N22GaussianNoiseGenerator8generateE6size_td"></span><span id="GaussianNoiseGenerator::generate__s.double"></span><span class="target" id="class_gaussian_noise_generator_1aee2910a3d1fbbb567ccd4a44d1bee74f"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv419GaussianNoiseSample" title="GaussianNoiseSample"><span class="n"><span class="pre">GaussianNoiseSample</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">generate</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">m</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">h</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N22GaussianNoiseGenerator8generateE6size_td" title="Link to this definition"></a><br /></dt>
+<dd><p>Returns the Gaussian increments for one step with <code class="docutils literal notranslate"><span class="pre">m</span></code> noise sources and time step <code class="docutils literal notranslate"><span class="pre">h</span></code>. Both returned vectors have length <code class="docutils literal notranslate"><span class="pre">m</span></code>. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv428RandomGaussianNoiseGenerator">
+<span id="_CPPv328RandomGaussianNoiseGenerator"></span><span id="_CPPv228RandomGaussianNoiseGenerator"></span><span id="RandomGaussianNoiseGenerator"></span><span class="target" id="class_random_gaussian_noise_generator"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">RandomGaussianNoiseGenerator</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv422GaussianNoiseGenerator" title="GaussianNoiseGenerator"><span class="n"><span class="pre">GaussianNoiseGenerator</span></span></a><a class="headerlink" href="#_CPPv428RandomGaussianNoiseGenerator" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;stochasticNoiseGenerator.h&gt;</em></div>
+<p>Draws the Gaussian increments from a Mersenne-Twister RNG.</p>
+<p>This is the default generator used in production. Each entry of <code class="docutils literal notranslate"><span class="pre">dW</span></code> and <code class="docutils literal notranslate"><span class="pre">dZ</span></code> is drawn as <span class="math notranslate nohighlight">\(\sqrt{h}\,N(0,1)\)</span>. The <code class="docutils literal notranslate"><span class="pre">dW</span></code> entries are drawn first (indices 0..m-1), then the <code class="docutils literal notranslate"><span class="pre">dZ</span></code> entries. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N28RandomGaussianNoiseGenerator7setSeedE6size_t">
+<span id="_CPPv3N28RandomGaussianNoiseGenerator7setSeedE6size_t"></span><span id="_CPPv2N28RandomGaussianNoiseGenerator7setSeedE6size_t"></span><span id="RandomGaussianNoiseGenerator::setSeed__s"></span><span class="target" id="class_random_gaussian_noise_generator_1a38672564ca116403ec7557ba3deb25d9"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setSeed</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">seed</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N28RandomGaussianNoiseGenerator7setSeedE6size_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Sets the seed for the underlying RNG (if any). </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N28RandomGaussianNoiseGenerator8generateE6size_td">
+<span id="_CPPv3N28RandomGaussianNoiseGenerator8generateE6size_td"></span><span id="_CPPv2N28RandomGaussianNoiseGenerator8generateE6size_td"></span><span id="RandomGaussianNoiseGenerator::generate__s.double"></span><span class="target" id="class_random_gaussian_noise_generator_1ab62e83df5630b8735fcd94746620e230"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv419GaussianNoiseSample" title="GaussianNoiseSample"><span class="n"><span class="pre">GaussianNoiseSample</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">generate</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">m</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">h</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N28RandomGaussianNoiseGenerator8generateE6size_td" title="Link to this definition"></a><br /></dt>
+<dd><p>Returns the Gaussian increments for one step with <code class="docutils literal notranslate"><span class="pre">m</span></code> noise sources and time step <code class="docutils literal notranslate"><span class="pre">h</span></code>. Both returned vectors have length <code class="docutils literal notranslate"><span class="pre">m</span></code>. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-protected-attributes">Protected Attributes</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N28RandomGaussianNoiseGenerator3rngE">
+<span id="_CPPv3N28RandomGaussianNoiseGenerator3rngE"></span><span id="_CPPv2N28RandomGaussianNoiseGenerator3rngE"></span><span id="RandomGaussianNoiseGenerator::rng__std::mt19937"></span><span class="target" id="class_random_gaussian_noise_generator_1a68525c9c2189d24e2771ff948b4aa39f"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">mt19937</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rng</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">random_device</span></span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N28RandomGaussianNoiseGenerator3rngE" title="Link to this definition"></a><br /></dt>
+<dd><p>Random Number Generator </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N28RandomGaussianNoiseGenerator9normal_rvE">
+<span id="_CPPv3N28RandomGaussianNoiseGenerator9normal_rvE"></span><span id="_CPPv2N28RandomGaussianNoiseGenerator9normal_rvE"></span><span id="RandomGaussianNoiseGenerator::normal_rv__std::normal_distribution:double:"></span><span class="target" id="class_random_gaussian_noise_generator_1a55a285bee456b3e9d90a8117b081097b"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">normal_distribution</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">normal_rv</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="m"><span class="pre">0.</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">1.</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N28RandomGaussianNoiseGenerator9normal_rvE" title="Link to this definition"></a><br /></dt>
+<dd><p>Standard normally distributed random variable </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv432PrescribedGaussianNoiseGenerator">
+<span id="_CPPv332PrescribedGaussianNoiseGenerator"></span><span id="_CPPv232PrescribedGaussianNoiseGenerator"></span><span id="PrescribedGaussianNoiseGenerator"></span><span class="target" id="class_prescribed_gaussian_noise_generator"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PrescribedGaussianNoiseGenerator</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv422GaussianNoiseGenerator" title="GaussianNoiseGenerator"><span class="n"><span class="pre">GaussianNoiseGenerator</span></span></a><a class="headerlink" href="#_CPPv432PrescribedGaussianNoiseGenerator" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;stochasticNoiseGenerator.h&gt;</em></div>
+<p>Replays a pre-computed sequence of Gaussian increments.</p>
+<p>Each call to <code class="docutils literal notranslate"><a class="reference internal" href="#class_prescribed_gaussian_noise_generator_1a01a38200b7f9df333febc95f67c54dbc"><span class="std std-ref"><span class="pre">generate</span></span></a></code> pops the next queued sample. This is used by the unit tests to feed a native integrator exactly the same Wiener increments that a reference implementation used, so that the two can be compared to within floating-point tolerance.</p>
+<p>The queued <code class="docutils literal notranslate"><span class="pre">dW</span></code>/<code class="docutils literal notranslate"><span class="pre">dZ</span></code> values are the actual increments (already scaled to the step, i.e. distributed as <span class="math notranslate nohighlight">\(N(0,h)\)</span>); they are returned verbatim and the <code class="docutils literal notranslate"><span class="pre">h</span></code> argument to <code class="docutils literal notranslate"><a class="reference internal" href="#class_prescribed_gaussian_noise_generator_1a01a38200b7f9df333febc95f67c54dbc"><span class="std std-ref"><span class="pre">generate</span></span></a></code> is ignored for the values themselves. If a generate call is made after the queue is exhausted, a <code class="docutils literal notranslate"><span class="pre">std::runtime_error</span></code> is thrown. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N32PrescribedGaussianNoiseGenerator7setSeedE6size_t">
+<span id="_CPPv3N32PrescribedGaussianNoiseGenerator7setSeedE6size_t"></span><span id="_CPPv2N32PrescribedGaussianNoiseGenerator7setSeedE6size_t"></span><span id="PrescribedGaussianNoiseGenerator::setSeed__s"></span><span class="target" id="class_prescribed_gaussian_noise_generator_1a5a48536d3c9a07a668ca269985c200ce"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setSeed</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N32PrescribedGaussianNoiseGenerator7setSeedE6size_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Seeding has no effect on a prescribed generator. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N32PrescribedGaussianNoiseGenerator8pushStepERKNSt6vectorIdEERKNSt6vectorIdEE">
+<span id="_CPPv3N32PrescribedGaussianNoiseGenerator8pushStepERKNSt6vectorIdEERKNSt6vectorIdEE"></span><span id="_CPPv2N32PrescribedGaussianNoiseGenerator8pushStepERKNSt6vectorIdEERKNSt6vectorIdEE"></span><span id="PrescribedGaussianNoiseGenerator::pushStep__std::vector:double:CR.std::vector:double:CR"></span><span class="target" id="class_prescribed_gaussian_noise_generator_1a9de07fbc2303907214c9596188880830"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pushStep</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">dW</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">dZ</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N32PrescribedGaussianNoiseGenerator8pushStepERKNSt6vectorIdEERKNSt6vectorIdEE" title="Link to this definition"></a><br /></dt>
+<dd><p>Appends one step’s worth of increments to the replay queue.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dW</strong> – Wiener increments for each noise source for this step. </p></li>
+<li><p><strong>dZ</strong> – Second Wiener increments for each noise source for this step. May be empty for methods that do not use it, in which case a zero vector of matching length is returned. </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N32PrescribedGaussianNoiseGenerator5clearEv">
+<span id="_CPPv3N32PrescribedGaussianNoiseGenerator5clearEv"></span><span id="_CPPv2N32PrescribedGaussianNoiseGenerator5clearEv"></span><span id="PrescribedGaussianNoiseGenerator::clear"></span><span class="target" id="class_prescribed_gaussian_noise_generator_1a73d88a503f2055d57b80f62f91261a37"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">clear</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N32PrescribedGaussianNoiseGenerator5clearEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Removes all queued samples. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK32PrescribedGaussianNoiseGenerator9remainingEv">
+<span id="_CPPv3NK32PrescribedGaussianNoiseGenerator9remainingEv"></span><span id="_CPPv2NK32PrescribedGaussianNoiseGenerator9remainingEv"></span><span id="PrescribedGaussianNoiseGenerator::remainingC"></span><span class="target" id="class_prescribed_gaussian_noise_generator_1a7481eaf50ee3e4ef08e97cecc6b35b1f"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">remaining</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK32PrescribedGaussianNoiseGenerator9remainingEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Number of steps still queued. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N32PrescribedGaussianNoiseGenerator8generateE6size_td">
+<span id="_CPPv3N32PrescribedGaussianNoiseGenerator8generateE6size_td"></span><span id="_CPPv2N32PrescribedGaussianNoiseGenerator8generateE6size_td"></span><span id="PrescribedGaussianNoiseGenerator::generate__s.double"></span><span class="target" id="class_prescribed_gaussian_noise_generator_1a01a38200b7f9df333febc95f67c54dbc"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv419GaussianNoiseSample" title="GaussianNoiseSample"><span class="n"><span class="pre">GaussianNoiseSample</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">generate</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">m</span></span>, <span class="kt"><span class="pre">double</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N32PrescribedGaussianNoiseGenerator8generateE6size_td" title="Link to this definition"></a><br /></dt>
+<dd><p>Returns the Gaussian increments for one step with <code class="docutils literal notranslate"><span class="pre">m</span></code> noise sources and time step <code class="docutils literal notranslate"><span class="pre">h</span></code>. Both returned vectors have length <code class="docutils literal notranslate"><span class="pre">m</span></code>. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-protected-attributes">Protected Attributes</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32PrescribedGaussianNoiseGenerator5queueE">
+<span id="_CPPv3N32PrescribedGaussianNoiseGenerator5queueE"></span><span id="_CPPv2N32PrescribedGaussianNoiseGenerator5queueE"></span><span id="PrescribedGaussianNoiseGenerator::queue__std::deque:GaussianNoiseSample:"></span><span class="target" id="class_prescribed_gaussian_noise_generator_1af1d24c9dba9fc82de76db91c941405d4"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">deque</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv419GaussianNoiseSample" title="GaussianNoiseSample"><span class="n"><span class="pre">GaussianNoiseSample</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">queue</span></span></span><a class="headerlink" href="#_CPPv4N32PrescribedGaussianNoiseGenerator5queueE" title="Link to this definition"></a><br /></dt>
+<dd><p>FIFO of prescribed increments, one entry per integration step. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="stateVecStochasticIntegrator.html" class="btn btn-neutral float-left" title="stateVecStochasticIntegrator" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="stochasticRKIntegratorBase.html" class="btn btn-neutral float-right" title="stochasticRKIntegratorBase" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

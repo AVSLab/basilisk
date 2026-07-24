@@ -1,0 +1,355 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>svStochasticIntegratorW2Ito &mdash; Basilisk 2.12.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=2ebb1c42" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=4ad2e773"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script>window.MathJax = {"svg": {"fontCache": "global"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="svStochasticIntegratorW2Ito1" href="svStochasticIntegratorW2Ito1.html" />
+    <link rel="prev" title="svStochasticIntegratorSRIW1" href="svStochasticIntegratorSRIW1.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../communication/index.html">communication</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">dynamics</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../DynOutput/index.html">DynOutput</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ExtPulsedTorque/index.html">ExtPulsedTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../FuelTank/index.html">FuelTank</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../GravityGradientEffector/index.html">GravityGradientEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../HingedRigidBodies/index.html">HingedRigidBodies</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">Integrators</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../LinearSpringMassDamper/index.html">LinearSpringMassDamper</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../MtbEffector/index.html">MtbEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../NHingedRigidBodies/index.html">NHingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../RadiationPressure/index.html">RadiationPressure</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../Thrusters/index.html">Thrusters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../VSCMGs/index.html">VSCMGs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../constraintEffector/index.html">constraintEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dragEffector/index.html">dragEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dualHingedRigidBodies/index.html">dualHingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../extForceTorque/index.html">extForceTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../facetDragEffector/index.html">facetDragEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../facetSRPDynamicEffector/index.html">facetSRPDynamicEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../facetedSRPEffector/index.html">facetedSRPEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../gravityEffector/index.html">gravityEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../hingedRigidBodyMotor/index.html">hingedRigidBodyMotor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../igbmNoiseStateEffector/index.html">igbmNoiseStateEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../linearTranslationalBodies/index.html">linearTranslationalBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../meanRevertingNoiseStateEffector/index.html">meanRevertingNoiseStateEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../msmForceTorque/index.html">msmForceTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../prescribedMotion/index.html">prescribedMotion</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reactionWheels/index.html">reactionWheels</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraft/index.html">spacecraft</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraftSystem/index.html">spacecraftSystem</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../sphericalPendulum/index.html">sphericalPendulum</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spinningBodies/index.html">spinningBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../stateArchitecture/index.html">stateArchitecture</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../environment/index.html">environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../forceTorque/index.html">forceTorque</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujocoDynamics/index.html">mujocoDynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../simSynch/index.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">dynamics</a></li>
+          <li class="breadcrumb-item"><a href="index.html">Integrators</a></li>
+      <li class="breadcrumb-item active">svStochasticIntegratorW2Ito</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/simulation/dynamics/Integrators/svStochasticIntegratorW2Ito.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="svstochasticintegratorw2ito">
+<span id="id1"></span><h1>svStochasticIntegratorW2Ito<a class="headerlink" href="#svstochasticintegratorw2ito" title="Link to this heading"></a></h1>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv417W2ItoCoefficients">
+<span id="_CPPv317W2ItoCoefficients"></span><span id="_CPPv217W2ItoCoefficients"></span><span id="W2ItoCoefficients"></span><span class="target" id="struct_w2_ito_coefficients"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">W2ItoCoefficients</span></span></span><a class="headerlink" href="#_CPPv417W2ItoCoefficients" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;svStochasticIntegratorW2Ito.h&gt;</em></div>
+<p>Extended Butcher tableau for the Tang &amp; Xiao weak-order-2 SRK family. </p>
+<p>The coefficients characterise a specific member of the general weak-order-2 stochastic Runge-Kutta scheme for Ito SDEs. The number of stages <span class="math notranslate nohighlight">\(s\)</span> is inferred from the length of <code class="docutils literal notranslate"><a class="reference internal" href="#struct_w2_ito_coefficients_1ae6180b395533f44c0e0376824ae6be15"><span class="std std-ref"><span class="pre">alpha</span></span></a></code>. The tableau is</p>
+<p><div class="math notranslate nohighlight">
+\[\begin{split}  \begin{array}{c|c|c}
+     &amp; A^{(0)} &amp; B^{(0)} \\ \hline
+     &amp; A^{(1)} &amp; B^{(1)}\; B^{(2)} \\ \hline
+     &amp; \alpha &amp; \beta^{(0)}\; \beta^{(1)}
+  \end{array}
+\end{split}\]</div>
+</p>
+<p>with <span class="math notranslate nohighlight">\(A^{(0)}, A^{(1)}, B^{(0)}, B^{(1)}, B^{(2)}\)</span> strictly lower-triangular <span class="math notranslate nohighlight">\(s\times s\)</span> matrices (explicit method) and <span class="math notranslate nohighlight">\(\alpha, \beta^{(0)}, \beta^{(1)}\)</span> length- <span class="math notranslate nohighlight">\(s\)</span> weight vectors. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK17W2ItoCoefficients9numStagesEv">
+<span id="_CPPv3NK17W2ItoCoefficients9numStagesEv"></span><span id="_CPPv2NK17W2ItoCoefficients9numStagesEv"></span><span id="W2ItoCoefficients::numStagesC"></span><span class="target" id="struct_w2_ito_coefficients_1ae23ce2c12981b4dc188011f796913607"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">numStages</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK17W2ItoCoefficients9numStagesEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Number of stages, inferred from the length of <code class="docutils literal notranslate"><a class="reference internal" href="#struct_w2_ito_coefficients_1ae6180b395533f44c0e0376824ae6be15"><span class="std std-ref"><span class="pre">alpha</span></span></a></code>. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK17W2ItoCoefficients2c0E6size_t">
+<span id="_CPPv3NK17W2ItoCoefficients2c0E6size_t"></span><span id="_CPPv2NK17W2ItoCoefficients2c0E6size_t"></span><span id="W2ItoCoefficients::c0__sC"></span><span class="target" id="struct_w2_ito_coefficients_1a73f705d5a61d320b37cbe79d06c88e6c"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">c0</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">i</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK17W2ItoCoefficients2c0E6size_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Drift stage node <span class="math notranslate nohighlight">\(c^{(0)}_i = \sum_j A^{(0)}_{ij}\)</span> (row sum of A0). </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK17W2ItoCoefficients2c1E6size_t">
+<span id="_CPPv3NK17W2ItoCoefficients2c1E6size_t"></span><span id="_CPPv2NK17W2ItoCoefficients2c1E6size_t"></span><span id="W2ItoCoefficients::c1__sC"></span><span class="target" id="struct_w2_ito_coefficients_1a2bba06ba906db3ae04fd187d16a26db2"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">c1</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">i</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK17W2ItoCoefficients2c1E6size_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Diffusion stage node <span class="math notranslate nohighlight">\(c^{(1)}_i = \sum_j A^{(1)}_{ij}\)</span> (row sum of A1). </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17W2ItoCoefficients5alphaE">
+<span id="_CPPv3N17W2ItoCoefficients5alphaE"></span><span id="_CPPv2N17W2ItoCoefficients5alphaE"></span><span id="W2ItoCoefficients::alpha__std::vector:double:"></span><span class="target" id="struct_w2_ito_coefficients_1ae6180b395533f44c0e0376824ae6be15"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">alpha</span></span></span><a class="headerlink" href="#_CPPv4N17W2ItoCoefficients5alphaE" title="Link to this definition"></a><br /></dt>
+<dd><p>drift weights, length s </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17W2ItoCoefficients5beta0E">
+<span id="_CPPv3N17W2ItoCoefficients5beta0E"></span><span id="_CPPv2N17W2ItoCoefficients5beta0E"></span><span id="W2ItoCoefficients::beta0__std::vector:double:"></span><span class="target" id="struct_w2_ito_coefficients_1aacf4abd093cbdc530c55fc58079275a8"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">beta0</span></span></span><a class="headerlink" href="#_CPPv4N17W2ItoCoefficients5beta0E" title="Link to this definition"></a><br /></dt>
+<dd><p>diffusion weights on the three-point increment, length s </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17W2ItoCoefficients5beta1E">
+<span id="_CPPv3N17W2ItoCoefficients5beta1E"></span><span id="_CPPv2N17W2ItoCoefficients5beta1E"></span><span id="W2ItoCoefficients::beta1__std::vector:double:"></span><span class="target" id="struct_w2_ito_coefficients_1af77772aacaef7e1915813cb4f99166bd"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">beta1</span></span></span><a class="headerlink" href="#_CPPv4N17W2ItoCoefficients5beta1E" title="Link to this definition"></a><br /></dt>
+<dd><p>diffusion weights on the diagonal iterated integral, length s </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17W2ItoCoefficients2A0E">
+<span id="_CPPv3N17W2ItoCoefficients2A0E"></span><span id="_CPPv2N17W2ItoCoefficients2A0E"></span><span id="W2ItoCoefficients::A0__std::vector:std::vector:double::"></span><span class="target" id="struct_w2_ito_coefficients_1a100f4fd351ae0bbe73a229676fc3a1da"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">A0</span></span></span><a class="headerlink" href="#_CPPv4N17W2ItoCoefficients2A0E" title="Link to this definition"></a><br /></dt>
+<dd><p>drift-to-drift stage matrix, s x s </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17W2ItoCoefficients2B0E">
+<span id="_CPPv3N17W2ItoCoefficients2B0E"></span><span id="_CPPv2N17W2ItoCoefficients2B0E"></span><span id="W2ItoCoefficients::B0__std::vector:std::vector:double::"></span><span class="target" id="struct_w2_ito_coefficients_1a03d230c8187901f3103da2e8f6b45f13"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">B0</span></span></span><a class="headerlink" href="#_CPPv4N17W2ItoCoefficients2B0E" title="Link to this definition"></a><br /></dt>
+<dd><p>diffusion-to-drift stage matrix, s x s </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17W2ItoCoefficients2A1E">
+<span id="_CPPv3N17W2ItoCoefficients2A1E"></span><span id="_CPPv2N17W2ItoCoefficients2A1E"></span><span id="W2ItoCoefficients::A1__std::vector:std::vector:double::"></span><span class="target" id="struct_w2_ito_coefficients_1a09debbe7c671a5132e6847637bbda107"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">A1</span></span></span><a class="headerlink" href="#_CPPv4N17W2ItoCoefficients2A1E" title="Link to this definition"></a><br /></dt>
+<dd><p>drift-to-diffusion stage matrix, s x s </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17W2ItoCoefficients2B1E">
+<span id="_CPPv3N17W2ItoCoefficients2B1E"></span><span id="_CPPv2N17W2ItoCoefficients2B1E"></span><span id="W2ItoCoefficients::B1__std::vector:std::vector:double::"></span><span class="target" id="struct_w2_ito_coefficients_1a4627e4c28afc9ab620e1e6679ff2fc7c"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">B1</span></span></span><a class="headerlink" href="#_CPPv4N17W2ItoCoefficients2B1E" title="Link to this definition"></a><br /></dt>
+<dd><p>self-noise diffusion-to-diffusion stage matrix, s x s </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17W2ItoCoefficients2B2E">
+<span id="_CPPv3N17W2ItoCoefficients2B2E"></span><span id="_CPPv2N17W2ItoCoefficients2B2E"></span><span id="W2ItoCoefficients::B2__std::vector:std::vector:double::"></span><span class="target" id="struct_w2_ito_coefficients_1a4d13db4ae408ebdf35d2bff90b1cca99"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">B2</span></span></span><a class="headerlink" href="#_CPPv4N17W2ItoCoefficients2B2E" title="Link to this definition"></a><br /></dt>
+<dd><p>cross-noise diffusion-to-diffusion stage matrix, s x s </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv427svStochasticIntegratorW2Ito">
+<span id="_CPPv327svStochasticIntegratorW2Ito"></span><span id="_CPPv227svStochasticIntegratorW2Ito"></span><span id="svStochasticIntegratorW2Ito"></span><span class="target" id="classsv_stochastic_integrator_w2_ito"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">svStochasticIntegratorW2Ito</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../_GeneralModuleFiles/stochasticRKIntegratorBase.html#_CPPv426StochasticRKIntegratorBase" title="StochasticRKIntegratorBase"><span class="n"><span class="pre">StochasticRKIntegratorBase</span></span></a><a class="headerlink" href="#_CPPv427svStochasticIntegratorW2Ito" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;svStochasticIntegratorW2Ito.h&gt;</em></div>
+<p>The <a class="reference internal" href="#classsv_stochastic_integrator_w2_ito"><span class="std std-ref">svStochasticIntegratorW2Ito</span></a> class implements the Tang &amp; Xiao efficient weak second-order (deterministic order 3+) Runge-Kutta family for Ito SDEs. <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Tang</span><span class="p">,</span> <span class="n">X</span><span class="o">.</span><span class="p">,</span> <span class="n">Xiao</span><span class="p">,</span> <span class="n">A</span><span class="o">.</span> <span class="s2">&quot;Efficient weak second-order stochastic Runge-Kutta methods</span>
+<span class="k">for</span> <span class="n">Ito</span> <span class="n">stochastic</span> <span class="n">differential</span> <span class="n">equations</span><span class="s2">&quot;, BIT Numer. Math. 57, 241-260 (2017).</span>
+<span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">doi</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="mf">10.1007</span><span class="o">/</span><span class="n">s10543</span><span class="o">-</span><span class="mi">016</span><span class="o">-</span><span class="mi">0618</span><span class="o">-</span><span class="mi">9</span>
+</pre></div>
+</div>
+</p>
+<p>This is the shared base for the concrete W2Ito1 and W2Ito2 methods, which differ only in their coefficient tableau (see <a class="reference internal" href="svStochasticIntegratorW2Ito1.html#classsv_stochastic_integrator_w2_ito1"><span class="std std-ref">svStochasticIntegratorW2Ito1</span></a> and <a class="reference internal" href="svStochasticIntegratorW2Ito2.html#classsv_stochastic_integrator_w2_ito2"><span class="std std-ref">svStochasticIntegratorW2Ito2</span></a>). It shares the pluggable noise-generator architecture of the other native stochastic integrators, so the same prescribed-noise test harness drives every method unchanged.</p>
+<p>For an <span class="math notranslate nohighlight">\(s\)</span>-stage tableau the step (paper eq. 3.1) is</p>
+<p><div class="math notranslate nohighlight">
+\[  y_{n+1} = y_n + \sum_i \alpha_i f(H^{(0)}_i)\,h
+          + \sum_i \sum_k \beta^{(0)}_i g_k(H^{(k)}_i)\,\hat I_k
+          + \sum_i \sum_k \beta^{(1)}_i g_k(H^{(k)}_i)\,\hat I_{(k,k)}
+\]</div>
+</p>
+<p>with drift stages <span class="math notranslate nohighlight">\(H^{(0)}_i\)</span> and per-noise-source diffusion stages <span class="math notranslate nohighlight">\(H^{(k)}_i\)</span>. The driving random variables are a three-point increment <span class="math notranslate nohighlight">\(\hat I_k \in \{\pm\sqrt{3h}, 0\}\)</span> (from the Gaussian <span class="math notranslate nohighlight">\(\Delta W_k\)</span>), a two-point scale <span class="math notranslate nohighlight">\(\xi = \eta_1\sqrt h\)</span> (from the Gaussian <span class="math notranslate nohighlight">\(\Delta Z_0\)</span>), and the mixed iterated integrals <span class="math notranslate nohighlight">\(\hat I_{(k,l)} = \tfrac12(\hat I_l \mp \eta_2 \hat I_l)\)</span> for <span class="math notranslate nohighlight">\(k\neq l\)</span> (using a second two-point sign <span class="math notranslate nohighlight">\(\eta_2\)</span> from <span class="math notranslate nohighlight">\(\Delta Z_1\)</span>) and <span class="math notranslate nohighlight">\(\hat I_{(k,k)} = \tfrac12(\hat I_k^2/\xi - \xi)\)</span> on the diagonal. The step is explicit and derivative-free.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Stochastic integration is in beta. </p>
+</div>
+<p>Subclassed by <a class="reference internal" href="svStochasticIntegratorW2Ito1.html#classsv_stochastic_integrator_w2_ito1"><span class="std std-ref">svStochasticIntegratorW2Ito1</span></a>, <a class="reference internal" href="svStochasticIntegratorW2Ito2.html#classsv_stochastic_integrator_w2_ito2"><span class="std std-ref">svStochasticIntegratorW2Ito2</span></a></p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N27svStochasticIntegratorW2Ito9integrateEdd">
+<span id="_CPPv3N27svStochasticIntegratorW2Ito9integrateEdd"></span><span id="_CPPv2N27svStochasticIntegratorW2Ito9integrateEdd"></span><span id="svStochasticIntegratorW2Ito::integrate__double.double"></span><span class="target" id="classsv_stochastic_integrator_w2_ito_1ae0f22f61fc493f603b711f63c69d2ce7"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">integrate</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">currentTime</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">timeStep</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N27svStochasticIntegratorW2Ito9integrateEdd" title="Link to this definition"></a><br /></dt>
+<dd><p>Performs the integration of the associated dynamic objects up to time currentTime+timeStep </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-protected-functions">Protected Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N27svStochasticIntegratorW2Ito27svStochasticIntegratorW2ItoEP13DynamicObjectRK17W2ItoCoefficients">
+<span id="_CPPv3N27svStochasticIntegratorW2Ito27svStochasticIntegratorW2ItoEP13DynamicObjectRK17W2ItoCoefficients"></span><span id="_CPPv2N27svStochasticIntegratorW2Ito27svStochasticIntegratorW2ItoEP13DynamicObjectRK17W2ItoCoefficients"></span><span id="svStochasticIntegratorW2Ito::svStochasticIntegratorW2Ito__DynamicObjectP.W2ItoCoefficientsCR"></span><span class="target" id="classsv_stochastic_integrator_w2_ito_1a0f599fa5937286ea6b05babec8ed4674"></span><span class="sig-name descname"><span class="n"><span class="pre">svStochasticIntegratorW2Ito</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../_GeneralModuleFiles/dynamicObject.html#_CPPv413DynamicObject" title="DynamicObject"><span class="n"><span class="pre">DynamicObject</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">dyn</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv417W2ItoCoefficients" title="W2ItoCoefficients"><span class="n"><span class="pre">W2ItoCoefficients</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">coefficients</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N27svStochasticIntegratorW2Ito27svStochasticIntegratorW2ItoEP13DynamicObjectRK17W2ItoCoefficients" title="Link to this definition"></a><br /></dt>
+<dd><p>Constructor used by the concrete W2Ito methods, which supply their tableau. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N27svStochasticIntegratorW2Ito9scaledSumERKNSt6vectorIdEERKNSt6vectorI19ExtendedStateVectorEE6size_t">
+<span id="_CPPv3N27svStochasticIntegratorW2Ito9scaledSumERKNSt6vectorIdEERKNSt6vectorI19ExtendedStateVectorEE6size_t"></span><span id="_CPPv2N27svStochasticIntegratorW2Ito9scaledSumERKNSt6vectorIdEERKNSt6vectorI19ExtendedStateVectorEE6size_t"></span><span id="svStochasticIntegratorW2Ito::scaledSum__std::vector:double:CR.std::vector:ExtendedStateVector:CR.s"></span><span class="target" id="classsv_stochastic_integrator_w2_ito_1afe81a4a58f2f7362659371a00dbe5797"></span><a class="reference internal" href="../_GeneralModuleFiles/extendedStateVector.html#_CPPv419ExtendedStateVector" title="ExtendedStateVector"><span class="n"><span class="pre">ExtendedStateVector</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">scaledSum</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">factors</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../_GeneralModuleFiles/extendedStateVector.html#_CPPv419ExtendedStateVector" title="ExtendedStateVector"><span class="n"><span class="pre">ExtendedStateVector</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">vectors</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">length</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N27svStochasticIntegratorW2Ito9scaledSumERKNSt6vectorIdEERKNSt6vectorI19ExtendedStateVectorEE6size_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Returns sum_{j&lt;length} factors[j]*vectors[j] (skipping zero factors). </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-protected-attributes">Protected Attributes</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27svStochasticIntegratorW2Ito12coefficientsE">
+<span id="_CPPv3N27svStochasticIntegratorW2Ito12coefficientsE"></span><span id="_CPPv2N27svStochasticIntegratorW2Ito12coefficientsE"></span><span id="svStochasticIntegratorW2Ito::coefficients__W2ItoCoefficientsC"></span><span class="target" id="classsv_stochastic_integrator_w2_ito_1adf9d12e5998bd7f47b00b345d9a4b073"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv417W2ItoCoefficients" title="W2ItoCoefficients"><span class="n"><span class="pre">W2ItoCoefficients</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">coefficients</span></span></span><a class="headerlink" href="#_CPPv4N27svStochasticIntegratorW2Ito12coefficientsE" title="Link to this definition"></a><br /></dt>
+<dd><p>The extended Butcher tableau of the specific W2Ito method. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="svStochasticIntegratorSRIW1.html" class="btn btn-neutral float-left" title="svStochasticIntegratorSRIW1" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="svStochasticIntegratorW2Ito1.html" class="btn btn-neutral float-right" title="svStochasticIntegratorW2Ito1" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

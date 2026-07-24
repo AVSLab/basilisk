@@ -1,0 +1,33 @@
+.. _ephemNavConverter:
+
+:module-type:`C` Module: ephemNavConverter
+==========================================
+
+Executive Summary
+-----------------
+
+Converter that takes an ephemeris output message and converts it over to a translational state estimate message.
+
+Message Connection Descriptions
+-------------------------------
+The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.
+
+.. _ModuleIO_ephemNavConverter:
+
+
+.. bsk-module-io:: ephemNavConverter
+    :caption: Module I/O Messages
+
+    input ephInMsg EphemerisMsgPayload
+        ephemeris input message
+    output stateOutMsg NavTransMsgPayload
+        navigation output message
+
+
+----
+
+.. autodoxygenfile:: ephemNavConverter.h
+   :project: ephemNavConverter
+

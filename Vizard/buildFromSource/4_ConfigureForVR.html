@@ -1,0 +1,231 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Configure Vizard for Virtual Reality (Windows Only) &mdash; Basilisk 2.11.0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=2ebb1c42" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=1647406f"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Release Notes" href="../VizardReleaseNotes.html" />
+    <link rel="prev" title="Building a Stand-Alone Vizard Application" href="3_BuildVizardBinary.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Plugins/overview.html">About Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Plugins/installing.html">Installing Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Plugins/writing.html">Writing a Basilisk Plugin</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../VizardDownload.html">Download</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Building from Source</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="0_DownloadVizardSourceCode.html">Download Vizard Source Code</a></li>
+<li class="toctree-l2"><a class="reference internal" href="1_CompileVizardUnityProject.html">Building the Vizard Unity Project</a></li>
+<li class="toctree-l2"><a class="reference internal" href="2_OptionalNativeFileBrowser.html">Optional: Install Native File Browser</a></li>
+<li class="toctree-l2"><a class="reference internal" href="3_BuildVizardBinary.html">Building a Stand-Alone Vizard Application</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Configure Vizard for Virtual Reality (Windows Only)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#configure-vizard-for-vr">Configure Vizard for VR</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#vizard-vr-controller-guide">Vizard VR Controller Guide</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Building from Source</a></li>
+      <li class="breadcrumb-item active">Configure Vizard for Virtual Reality (Windows Only)</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Vizard/buildFromSource/4_ConfigureForVR.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="configure-vizard-for-virtual-reality-windows-only">
+<h1>Configure Vizard for Virtual Reality (Windows Only)<a class="headerlink" href="#configure-vizard-for-virtual-reality-windows-only" title="Link to this heading"></a></h1>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Vizard is configured to run with Unity’s OpenXR packages and has been deployed
+with Meta Quest 2 and Quest 3 headsets.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>To test with a Meta Quest headset, the
+<a class="reference external" href="https://www.meta.com/help/quest/1517439565442928/">Meta Horizon Link</a>
+application must be installed on the Windows machine, and the Quest headset must
+have <a class="reference external" href="https://developers.meta.com/horizon/documentation/unity/unity-env-device-setup/">developer mode</a>
+enabled.</p>
+</div>
+<section id="configure-vizard-for-vr">
+<h2>Configure Vizard for VR<a class="headerlink" href="#configure-vizard-for-vr" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p>Open <code class="docutils literal notranslate"><span class="pre">VizardUnityProject</span></code> in the Unity Editor.</p></li>
+<li><p>Install XR packages</p>
+<ol class="loweralpha simple">
+<li><p>Open the Unity Package Manager through <code class="docutils literal notranslate"><span class="pre">Window</span> <span class="pre">/</span> <span class="pre">Package</span> <span class="pre">Manager</span></code>.</p></li>
+<li><p>Select <code class="docutils literal notranslate"><span class="pre">Unity</span> <span class="pre">Registry</span></code> from the left-hand list.</p></li>
+<li><p>Select <code class="docutils literal notranslate"><span class="pre">XR</span> <span class="pre">Interaction</span> <span class="pre">Toolkit</span></code> from the available packages.</p></li>
+<li><p>In the package details panel, click <code class="docutils literal notranslate"><span class="pre">Install</span></code>.</p></li>
+<li><p>Next, select <code class="docutils literal notranslate"><span class="pre">XR</span> <span class="pre">Plug-In</span> <span class="pre">Management</span></code> from the Unity Registry list.</p></li>
+<li><p>In the package details panel, click <code class="docutils literal notranslate"><span class="pre">Install</span></code>.</p></li>
+<li><p>Close the Unity Package Manager.</p></li>
+</ol>
+</li>
+<li><p>Enable OpenXR in XR Plug-in Management</p>
+<ol class="loweralpha simple">
+<li><p>Open <code class="docutils literal notranslate"><span class="pre">Edit</span> <span class="pre">/</span> <span class="pre">Project</span> <span class="pre">Settings</span></code>.</p></li>
+<li><p>Select <code class="docutils literal notranslate"><span class="pre">XR</span> <span class="pre">Plug-In</span> <span class="pre">Management</span></code> in the left-hand list.</p></li>
+<li><p>Enable <code class="docutils literal notranslate"><span class="pre">OpenXR</span></code> in the list of plug-in providers.</p></li>
+<li><p>Confirm that <code class="docutils literal notranslate"><span class="pre">Initialize</span> <span class="pre">XR</span> <span class="pre">on</span> <span class="pre">Startup</span></code> is enabled.</p></li>
+</ol>
+</li>
+<li><p>Add the <code class="docutils literal notranslate"><span class="pre">VIZARD_OPENXR</span></code> compile argument</p>
+<ol class="loweralpha simple">
+<li><p>In Project Settings, select <code class="docutils literal notranslate"><span class="pre">Player</span></code>.</p></li>
+<li><p>Scroll to <code class="docutils literal notranslate"><span class="pre">Scripting</span> <span class="pre">Define</span> <span class="pre">Symbols</span></code>, click <code class="docutils literal notranslate"><span class="pre">+</span></code>, and add <code class="docutils literal notranslate"><span class="pre">VIZARD_OPENXR</span></code>.</p></li>
+<li><p>Click <code class="docutils literal notranslate"><span class="pre">Apply</span></code>.</p></li>
+</ol>
+</li>
+<li><p>Add VizardVR_MainScene to the scene list</p>
+<ol class="loweralpha simple">
+<li><p>Open the Build Profiles panel through <code class="docutils literal notranslate"><span class="pre">File</span> <span class="pre">/</span> <span class="pre">Build</span> <span class="pre">Profiles</span></code>.</p></li>
+<li><p>Select <code class="docutils literal notranslate"><span class="pre">Scene</span> <span class="pre">List</span></code> from the left-hand list.</p></li>
+<li><p>Enable <code class="docutils literal notranslate"><span class="pre">Scenes/VizardVR_MainScene</span></code>. Optionally disable the 2D main scene by
+clearing <code class="docutils literal notranslate"><span class="pre">Scenes/VizardMainScene</span></code>.</p></li>
+</ol>
+</li>
+<li><p>Connect the Quest headset</p>
+<ol class="loweralpha simple">
+<li><p>Open the Meta Horizon Link application.</p></li>
+<li><p>Connect the Quest headset through a cable, or wirelessly if preferred, and enable
+the Link. The headset should show a white waiting room.</p></li>
+<li><p>Press <code class="docutils literal notranslate"><span class="pre">Play</span></code> in the Unity Editor on the desktop. File selection is not currently
+available from within the headset, so playback-file selection or live Basilisk
+connection setup must be done from the desktop Editor window.</p></li>
+</ol>
+</li>
+</ol>
+</section>
+<section id="vizard-vr-controller-guide">
+<h2>Vizard VR Controller Guide<a class="headerlink" href="#vizard-vr-controller-guide" title="Link to this heading"></a></h2>
+<p><strong>Controller Guide</strong></p>
+<p>Vizard VR supports Meta Quest 2 and Quest 3 controllers. Changes to the controller
+configuration can be made in the <code class="docutils literal notranslate"><span class="pre">VizardOpenXR</span></code> input action asset.</p>
+<a class="reference internal image-reference" href="../../_images/VizardVR_ControllerGuide.jpg"><img alt="../../_images/VizardVR_ControllerGuide.jpg" class="align-center" height="259" src="../../_images/VizardVR_ControllerGuide.jpg" width="461" />
+</a>
+<p><strong>View Menu</strong></p>
+<a class="reference internal image-reference" href="../../_images/VizardVR_ViewMenu.jpg"><img alt="../../_images/VizardVR_ViewMenu.jpg" class="align-center" height="258" src="../../_images/VizardVR_ViewMenu.jpg" width="390" />
+</a>
+<p><strong>Program Controls Menu</strong></p>
+<a class="reference internal image-reference" href="../../_images/VizardVR_ProgramControlsMenu.jpg"><img alt="../../_images/VizardVR_ProgramControlsMenu.jpg" class="align-center" height="257" src="../../_images/VizardVR_ProgramControlsMenu.jpg" width="393" />
+</a>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="3_BuildVizardBinary.html" class="btn btn-neutral float-left" title="Building a Stand-Alone Vizard Application" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../VizardReleaseNotes.html" class="btn btn-neutral float-right" title="Release Notes" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

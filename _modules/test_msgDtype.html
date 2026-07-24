@@ -1,0 +1,546 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_msgDtype &mdash; Basilisk 2.11.0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=2ebb1c42" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=1647406f"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Plugins/overview.html">About Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Plugins/installing.html">Installing Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Plugins/writing.html">Writing a Basilisk Plugin</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">test_msgDtype</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for test_msgDtype</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Tests for PayloadType.__dtype__ - numpy structured dtype mirroring the C struct layout.</span>
+
+<span class="sd">Each test:</span>
+<span class="sd">  1. Creates a payload object.</span>
+<span class="sd">  2. Gets a writable numpy view of the underlying C memory via sim_model.getObjectAddress.</span>
+<span class="sd">  3. Writes values through numpy and asserts the Python wrapper sees them (numpy → Python).</span>
+<span class="sd">  4. Writes values through the Python wrapper and asserts numpy sees them (Python → numpy).</span>
+
+<span class="sd">Coverage:</span>
+<span class="sd">  - Primitive scalars with implicit padding   (EpochMsgPayload)</span>
+<span class="sd">  - 1-D float arrays                          (AttStateMsgPayload)</span>
+<span class="sd">  - 2-D float array                           (SCMassPropsMsgPayload)</span>
+<span class="sd">  - Enum field                                (DeviceStatusMsgPayload)</span>
+<span class="sd">  - Char array + 2-D array + scalar           (SpicePlanetStateMsgPayload)</span>
+<span class="sd">  - Array of nested structs                   (AccDataMsgPayload)</span>
+<span class="sd">  - Pointer field → uint64 in dtype           (CameraImageMsgPayload)</span>
+<span class="sd">  - Incomplete struct (C++ vectors) → None    (JointArrayStateMsgPayload)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">ctypes</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">sim_model</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_writable_view</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">dtype</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a writable 1-element structured numpy array backed by the payload&#39;s C memory.&quot;&quot;&quot;</span>
+    <span class="n">addr</span> <span class="o">=</span> <span class="n">sim_model</span><span class="o">.</span><span class="n">getObjectAddress</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+    <span class="n">buf</span>  <span class="o">=</span> <span class="p">(</span><span class="n">ctypes</span><span class="o">.</span><span class="n">c_byte</span> <span class="o">*</span> <span class="n">dtype</span><span class="o">.</span><span class="n">itemsize</span><span class="p">)</span><span class="o">.</span><span class="n">from_address</span><span class="p">(</span><span class="n">addr</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span> <span class="n">buffer</span><span class="o">=</span><span class="n">buf</span><span class="p">)</span>
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># 1. Primitive scalars + implicit padding  (EpochMsgPayload)</span>
+<span class="c1">#    struct: int year, month, day, hours, minutes; double seconds;</span>
+<span class="c1">#    layout: 5×int32 (20 bytes) + 4-byte pad + float64 = 32 bytes total</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="test_epochDtypeLayout">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_msgDtype.html#test_msgDtype.test_epochDtypeLayout">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_epochDtypeLayout</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check the Epoch payload dtype layout and padding offsets.&quot;&quot;&quot;</span>
+    <span class="n">dt</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">EpochMsgPayload</span><span class="o">.</span><span class="n">__dtype__</span>
+    <span class="k">assert</span> <span class="n">dt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="k">assert</span> <span class="n">dt</span><span class="o">.</span><span class="n">itemsize</span> <span class="o">==</span> <span class="mi">32</span>
+    <span class="k">assert</span> <span class="n">dt</span><span class="o">.</span><span class="n">fields</span><span class="p">[</span><span class="s1">&#39;year&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>    <span class="o">==</span> <span class="mi">0</span>
+    <span class="k">assert</span> <span class="n">dt</span><span class="o">.</span><span class="n">fields</span><span class="p">[</span><span class="s1">&#39;month&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>   <span class="o">==</span> <span class="mi">4</span>
+    <span class="k">assert</span> <span class="n">dt</span><span class="o">.</span><span class="n">fields</span><span class="p">[</span><span class="s1">&#39;day&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>     <span class="o">==</span> <span class="mi">8</span>
+    <span class="k">assert</span> <span class="n">dt</span><span class="o">.</span><span class="n">fields</span><span class="p">[</span><span class="s1">&#39;hours&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>   <span class="o">==</span> <span class="mi">12</span>
+    <span class="k">assert</span> <span class="n">dt</span><span class="o">.</span><span class="n">fields</span><span class="p">[</span><span class="s1">&#39;minutes&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">16</span>
+    <span class="k">assert</span> <span class="n">dt</span><span class="o">.</span><span class="n">fields</span><span class="p">[</span><span class="s1">&#39;seconds&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">24</span>   <span class="c1"># 4-byte padding gap at bytes 20-23</span></div>
+
+
+
+<div class="viewcode-block" id="test_epochDtypeNumpyToPython">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_msgDtype.html#test_msgDtype.test_epochDtypeNumpyToPython">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_epochDtypeNumpyToPython</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check numpy writes into Epoch payload memory update Python fields.&quot;&quot;&quot;</span>
+    <span class="n">p</span>   <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">EpochMsgPayload</span><span class="p">()</span>
+    <span class="n">arr</span> <span class="o">=</span> <span class="n">_writable_view</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">messaging</span><span class="o">.</span><span class="n">EpochMsgPayload</span><span class="o">.</span><span class="n">__dtype__</span><span class="p">)</span>
+
+    <span class="n">arr</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;year&#39;</span><span class="p">]</span>    <span class="o">=</span> <span class="mi">2024</span>
+    <span class="n">arr</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;month&#39;</span><span class="p">]</span>   <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">arr</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;day&#39;</span><span class="p">]</span>     <span class="o">=</span> <span class="mi">15</span>
+    <span class="n">arr</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;hours&#39;</span><span class="p">]</span>   <span class="o">=</span> <span class="mi">12</span>
+    <span class="n">arr</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;minutes&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">30</span>
+    <span class="n">arr</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;seconds&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">45.5</span>
+
+    <span class="k">assert</span> <span class="n">p</span><span class="o">.</span><span class="n">year</span>    <span class="o">==</span> <span class="mi">2024</span>
+    <span class="k">assert</span> <span class="n">p</span><span class="o">.</span><span class="n">month</span>   <span class="o">==</span> <span class="mi">3</span>
+    <span class="k">assert</span> <span class="n">p</span><span class="o">.</span><span class="n">day</span>     <span class="o">==</span> <span class="mi">15</span>
+    <span class="k">assert</span> <span class="n">p</span><span class="o">.</span><span class="n">hours</span>   <span class="o">==</span> <span class="mi">12</span>
+    <span class="k">assert</span> <span class="n">p</span><span class="o">.</span><span class="n">minutes</span> <span class="o">==</span> <span class="mi">30</span>
+    <span class="k">assert</span> <span class="n">p</span><span class="o">.</span><span class="n">seconds</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="mf">45.5</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_epochDtypePythonToNumpy">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_msgDtype.html#test_msgDtype.test_epochDtypePythonToNumpy">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_epochDtypePythonToNumpy</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check Python writes to Epoch fields are visible through the dtype view.&quot;&quot;&quot;</span>
+    <span class="n">p</span>   <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">EpochMsgPayload</span><span class="p">()</span>
+    <span class="n">arr</span> <span class="o">=</span> <span class="n">_writable_view</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">messaging</span><span class="o">.</span><span class="n">EpochMsgPayload</span><span class="o">.</span><span class="n">__dtype__</span><span class="p">)</span>
+
+    <span class="n">p</span><span class="o">.</span><span class="n">year</span>    <span class="o">=</span> <span class="mi">1999</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">seconds</span> <span class="o">=</span> <span class="mf">0.125</span>
+
+    <span class="k">assert</span> <span class="n">arr</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;year&#39;</span><span class="p">]</span>    <span class="o">==</span> <span class="mi">1999</span>
+    <span class="k">assert</span> <span class="n">arr</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;seconds&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="mf">0.125</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># 2. 1-D float arrays  (AttStateMsgPayload)</span>
+<span class="c1">#    struct: double state[3], rate[3];  - 48 bytes, no padding</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="test_attStateDtypeLayout">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_msgDtype.html#test_msgDtype.test_attStateDtypeLayout">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_attStateDtypeLayout</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check the attitude-state payload dtype layout and vector shapes.&quot;&quot;&quot;</span>
+    <span class="n">dt</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">AttStateMsgPayload</span><span class="o">.</span><span class="n">__dtype__</span>
+    <span class="k">assert</span> <span class="n">dt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="k">assert</span> <span class="n">dt</span><span class="o">.</span><span class="n">itemsize</span> <span class="o">==</span> <span class="mi">48</span>
+    <span class="k">assert</span> <span class="n">dt</span><span class="o">.</span><span class="n">fields</span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="k">assert</span> <span class="n">dt</span><span class="o">.</span><span class="n">fields</span><span class="p">[</span><span class="s1">&#39;rate&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>  <span class="o">==</span> <span class="mi">24</span>
+    <span class="k">assert</span> <span class="n">dt</span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="mi">3</span><span class="p">,)</span>
+    <span class="k">assert</span> <span class="n">dt</span><span class="p">[</span><span class="s1">&#39;rate&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span>  <span class="o">==</span> <span class="p">(</span><span class="mi">3</span><span class="p">,)</span></div>
+
+
+
+<div class="viewcode-block" id="test_attStateDtypeNumpyToPython">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_msgDtype.html#test_msgDtype.test_attStateDtypeNumpyToPython">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_attStateDtypeNumpyToPython</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check numpy writes into attitude-state memory update Python fields.&quot;&quot;&quot;</span>
+    <span class="n">p</span>   <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">AttStateMsgPayload</span><span class="p">()</span>
+    <span class="n">arr</span> <span class="o">=</span> <span class="n">_writable_view</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">messaging</span><span class="o">.</span><span class="n">AttStateMsgPayload</span><span class="o">.</span><span class="n">__dtype__</span><span class="p">)</span>
+
+    <span class="n">arr</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;state&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">]</span>
+    <span class="n">arr</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;rate&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">]</span>
+
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">])</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">rate</span><span class="p">,</span>  <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">])</span></div>
+
+
+
+<div class="viewcode-block" id="test_attStateDtypePythonToNumpy">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_msgDtype.html#test_msgDtype.test_attStateDtypePythonToNumpy">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_attStateDtypePythonToNumpy</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check Python attitude-state writes are visible through the dtype view.&quot;&quot;&quot;</span>
+    <span class="n">p</span>   <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">AttStateMsgPayload</span><span class="p">()</span>
+    <span class="n">arr</span> <span class="o">=</span> <span class="n">_writable_view</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">messaging</span><span class="o">.</span><span class="n">AttStateMsgPayload</span><span class="o">.</span><span class="n">__dtype__</span><span class="p">)</span>
+
+    <span class="n">p</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="p">[</span><span class="mf">9.0</span><span class="p">,</span> <span class="mf">8.0</span><span class="p">,</span> <span class="mf">7.0</span><span class="p">]</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">rate</span>  <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.0</span><span class="p">]</span>
+
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">arr</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;state&#39;</span><span class="p">],</span> <span class="p">[</span><span class="mf">9.0</span><span class="p">,</span> <span class="mf">8.0</span><span class="p">,</span> <span class="mf">7.0</span><span class="p">])</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">arr</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;rate&#39;</span><span class="p">],</span>  <span class="p">[</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.0</span><span class="p">])</span></div>
+
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># 3. 2-D float array  (SCMassPropsMsgPayload)</span>
+<span class="c1">#    struct: double massSC; double c_B[3]; double ISC_PntB_B[3][3];  - 104 bytes</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="test_scMassPropsDtypeLayout">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_msgDtype.html#test_msgDtype.test_scMassPropsDtypeLayout">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_scMassPropsDtypeLayout</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check spacecraft mass-properties dtype offsets and matrix shape.&quot;&quot;&quot;</span>
+    <span class="n">dt</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCMassPropsMsgPayload</span><span class="o">.</span><span class="n">__dtype__</span>
+    <span class="k">assert</span> <span class="n">dt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="k">assert</span> <span class="n">dt</span><span class="o">.</span><span class="n">itemsize</span> <span class="o">==</span> <span class="mi">104</span>
+    <span class="k">assert</span> <span class="n">dt</span><span class="o">.</span><span class="n">fields</span><span class="p">[</span><span class="s1">&#39;massSC&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>     <span class="o">==</span> <span class="mi">0</span>
+    <span class="k">assert</span> <span class="n">dt</span><span class="o">.</span><span class="n">fields</span><span class="p">[</span><span class="s1">&#39;c_B&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>        <span class="o">==</span> <span class="mi">8</span>
+    <span class="k">assert</span> <span class="n">dt</span><span class="o">.</span><span class="n">fields</span><span class="p">[</span><span class="s1">&#39;ISC_PntB_B&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">32</span>
+    <span class="k">assert</span> <span class="n">dt</span><span class="p">[</span><span class="s1">&#39;ISC_PntB_B&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_scMassPropsDtypeNumpyToPython">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_msgDtype.html#test_msgDtype.test_scMassPropsDtypeNumpyToPython">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_scMassPropsDtypeNumpyToPython</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check numpy writes into mass-properties memory update Python fields.&quot;&quot;&quot;</span>
+    <span class="n">p</span>   <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCMassPropsMsgPayload</span><span class="p">()</span>
+    <span class="n">arr</span> <span class="o">=</span> <span class="n">_writable_view</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCMassPropsMsgPayload</span><span class="o">.</span><span class="n">__dtype__</span><span class="p">)</span>
+
+    <span class="n">inertia</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">]])</span>
+    <span class="n">arr</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;massSC&#39;</span><span class="p">]</span>     <span class="o">=</span> <span class="mf">500.0</span>
+    <span class="n">arr</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;c_B&#39;</span><span class="p">]</span>        <span class="o">=</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">]</span>
+    <span class="n">arr</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;ISC_PntB_B&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">inertia</span>
+
+    <span class="k">assert</span> <span class="n">p</span><span class="o">.</span><span class="n">massSC</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="mf">500.0</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">c_B</span><span class="p">),</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">])</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">ISC_PntB_B</span><span class="p">),</span> <span class="n">inertia</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span></div>
+
+
+
+<div class="viewcode-block" id="test_scMassPropsDtypePythonToNumpy">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_msgDtype.html#test_msgDtype.test_scMassPropsDtypePythonToNumpy">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_scMassPropsDtypePythonToNumpy</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check Python mass-property writes are visible through the dtype view.&quot;&quot;&quot;</span>
+    <span class="n">p</span>   <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCMassPropsMsgPayload</span><span class="p">()</span>
+    <span class="n">arr</span> <span class="o">=</span> <span class="n">_writable_view</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCMassPropsMsgPayload</span><span class="o">.</span><span class="n">__dtype__</span><span class="p">)</span>
+
+    <span class="n">p</span><span class="o">.</span><span class="n">massSC</span> <span class="o">=</span> <span class="mf">750.0</span>
+
+    <span class="k">assert</span> <span class="n">arr</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;massSC&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="mf">750.0</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># 4. Enum field  (DeviceStatusMsgPayload)</span>
+<span class="c1">#    struct: deviceState deviceStatus;  - 4 bytes</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="test_deviceStatusDtypeLayout">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_msgDtype.html#test_msgDtype.test_deviceStatusDtypeLayout">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_deviceStatusDtypeLayout</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check the device-status enum dtype layout.&quot;&quot;&quot;</span>
+    <span class="n">dt</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">DeviceStatusMsgPayload</span><span class="o">.</span><span class="n">__dtype__</span>
+    <span class="k">assert</span> <span class="n">dt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="k">assert</span> <span class="n">dt</span><span class="o">.</span><span class="n">itemsize</span> <span class="o">==</span> <span class="mi">4</span>
+    <span class="k">assert</span> <span class="n">dt</span><span class="o">.</span><span class="n">fields</span><span class="p">[</span><span class="s1">&#39;deviceStatus&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="s1">&#39;int32&#39;</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">dt</span><span class="o">.</span><span class="n">fields</span><span class="p">[</span><span class="s1">&#39;deviceStatus&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span></div>
+
+
+
+<div class="viewcode-block" id="test_deviceStatusDtypeNumpyToPython">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_msgDtype.html#test_msgDtype.test_deviceStatusDtypeNumpyToPython">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_deviceStatusDtypeNumpyToPython</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check numpy writes into device-status memory update Python fields.&quot;&quot;&quot;</span>
+    <span class="n">p</span>   <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">DeviceStatusMsgPayload</span><span class="p">()</span>
+    <span class="n">arr</span> <span class="o">=</span> <span class="n">_writable_view</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">messaging</span><span class="o">.</span><span class="n">DeviceStatusMsgPayload</span><span class="o">.</span><span class="n">__dtype__</span><span class="p">)</span>
+
+    <span class="n">arr</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;deviceStatus&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>   <span class="c1"># On</span>
+    <span class="k">assert</span> <span class="n">p</span><span class="o">.</span><span class="n">deviceStatus</span> <span class="o">==</span> <span class="mi">1</span></div>
+
+
+
+<div class="viewcode-block" id="test_deviceStatusDtypePythonToNumpy">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_msgDtype.html#test_msgDtype.test_deviceStatusDtypePythonToNumpy">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_deviceStatusDtypePythonToNumpy</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check Python device-status writes are visible through the dtype view.&quot;&quot;&quot;</span>
+    <span class="n">p</span>   <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">DeviceStatusMsgPayload</span><span class="p">()</span>
+    <span class="n">arr</span> <span class="o">=</span> <span class="n">_writable_view</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">messaging</span><span class="o">.</span><span class="n">DeviceStatusMsgPayload</span><span class="o">.</span><span class="n">__dtype__</span><span class="p">)</span>
+
+    <span class="n">p</span><span class="o">.</span><span class="n">deviceStatus</span> <span class="o">=</span> <span class="mi">0</span>           <span class="c1"># Off</span>
+    <span class="k">assert</span> <span class="n">arr</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;deviceStatus&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span></div>
+
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># 5. Char array + 2-D array + scalar  (SpicePlanetStateMsgPayload)</span>
+<span class="c1">#    struct: double J2000Current; double PositionVector[3]; double VelocityVector[3];</span>
+<span class="c1">#            double J20002Pfix[3][3]; double J20002Pfix_dot[3][3];</span>
+<span class="c1">#            int computeOrient; char PlanetName[64];  - 272 bytes</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="test_spicePlanetDtypeLayout">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_msgDtype.html#test_msgDtype.test_spicePlanetDtypeLayout">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_spicePlanetDtypeLayout</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check the SPICE planet-state dtype offsets and string field type.&quot;&quot;&quot;</span>
+    <span class="n">dt</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsgPayload</span><span class="o">.</span><span class="n">__dtype__</span>
+    <span class="k">assert</span> <span class="n">dt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="k">assert</span> <span class="n">dt</span><span class="o">.</span><span class="n">itemsize</span> <span class="o">==</span> <span class="mi">272</span>
+    <span class="k">assert</span> <span class="n">dt</span><span class="p">[</span><span class="s1">&#39;PlanetName&#39;</span><span class="p">]</span>            <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="s1">&#39;S64&#39;</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">dt</span><span class="o">.</span><span class="n">fields</span><span class="p">[</span><span class="s1">&#39;J2000Current&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>  <span class="o">==</span> <span class="mi">0</span>
+    <span class="k">assert</span> <span class="n">dt</span><span class="o">.</span><span class="n">fields</span><span class="p">[</span><span class="s1">&#39;PlanetName&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>    <span class="o">==</span> <span class="mi">204</span></div>
+
+
+
+<div class="viewcode-block" id="test_spicePlanetDtypeNumpyToPython">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_msgDtype.html#test_msgDtype.test_spicePlanetDtypeNumpyToPython">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_spicePlanetDtypeNumpyToPython</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check numpy writes into SPICE planet-state memory update Python fields.&quot;&quot;&quot;</span>
+    <span class="n">p</span>   <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsgPayload</span><span class="p">()</span>
+    <span class="n">arr</span> <span class="o">=</span> <span class="n">_writable_view</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsgPayload</span><span class="o">.</span><span class="n">__dtype__</span><span class="p">)</span>
+
+    <span class="n">arr</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;J2000Current&#39;</span><span class="p">]</span>   <span class="o">=</span> <span class="mf">1234.5</span>
+    <span class="n">arr</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;PositionVector&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1e6</span><span class="p">,</span> <span class="mf">2e6</span><span class="p">,</span> <span class="mf">3e6</span><span class="p">]</span>
+    <span class="n">arr</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;PlanetName&#39;</span><span class="p">]</span>     <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;Earth&#39;</span>
+
+    <span class="k">assert</span> <span class="n">p</span><span class="o">.</span><span class="n">J2000Current</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="mf">1234.5</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">PositionVector</span><span class="p">),</span> <span class="p">[</span><span class="mf">1e6</span><span class="p">,</span> <span class="mf">2e6</span><span class="p">,</span> <span class="mf">3e6</span><span class="p">])</span>
+    <span class="c1"># SWIG exposes char[] as a Python string</span>
+    <span class="k">assert</span> <span class="n">p</span><span class="o">.</span><span class="n">PlanetName</span><span class="p">[:</span><span class="mi">5</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Earth&#39;</span></div>
+
+
+
+<div class="viewcode-block" id="test_spicePlanetDtypePythonToNumpy">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_msgDtype.html#test_msgDtype.test_spicePlanetDtypePythonToNumpy">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_spicePlanetDtypePythonToNumpy</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check Python SPICE planet-state writes are visible through the dtype view.&quot;&quot;&quot;</span>
+    <span class="n">p</span>   <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsgPayload</span><span class="p">()</span>
+    <span class="n">arr</span> <span class="o">=</span> <span class="n">_writable_view</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsgPayload</span><span class="o">.</span><span class="n">__dtype__</span><span class="p">)</span>
+
+    <span class="n">p</span><span class="o">.</span><span class="n">J2000Current</span> <span class="o">=</span> <span class="mf">9999.0</span>
+    <span class="k">assert</span> <span class="n">arr</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;J2000Current&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="mf">9999.0</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># 6. Array of nested structs  (AccDataMsgPayload)</span>
+<span class="c1">#    struct: AccPktDataMsgPayload accPkts[120];</span>
+<span class="c1">#    each AccPktDataMsgPayload: uint64 measTime + double gyro_B[3] + double accel_B[3] = 56 bytes</span>
+<span class="c1">#    total: 6720 bytes</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="test_accDataDtypeLayout">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_msgDtype.html#test_msgDtype.test_accDataDtypeLayout">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_accDataDtypeLayout</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check the accelerometer-packet nested dtype layout.&quot;&quot;&quot;</span>
+    <span class="n">dt</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">AccDataMsgPayload</span><span class="o">.</span><span class="n">__dtype__</span>
+    <span class="k">assert</span> <span class="n">dt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="k">assert</span> <span class="n">dt</span><span class="o">.</span><span class="n">itemsize</span> <span class="o">==</span> <span class="mi">6720</span>
+    <span class="c1"># accPkts field: array of 120 nested structs</span>
+    <span class="n">pkt_dt</span> <span class="o">=</span> <span class="n">dt</span><span class="p">[</span><span class="s1">&#39;accPkts&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">base</span>
+    <span class="k">assert</span> <span class="n">pkt_dt</span><span class="o">.</span><span class="n">itemsize</span> <span class="o">==</span> <span class="mi">56</span>
+    <span class="k">assert</span> <span class="n">pkt_dt</span><span class="o">.</span><span class="n">fields</span><span class="p">[</span><span class="s1">&#39;measTime&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="k">assert</span> <span class="n">pkt_dt</span><span class="o">.</span><span class="n">fields</span><span class="p">[</span><span class="s1">&#39;gyro_B&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>   <span class="o">==</span> <span class="mi">8</span>
+    <span class="k">assert</span> <span class="n">pkt_dt</span><span class="o">.</span><span class="n">fields</span><span class="p">[</span><span class="s1">&#39;accel_B&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>  <span class="o">==</span> <span class="mi">32</span></div>
+
+
+
+<div class="viewcode-block" id="test_accDataDtypeNumpyToPython">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_msgDtype.html#test_msgDtype.test_accDataDtypeNumpyToPython">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_accDataDtypeNumpyToPython</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check numpy writes into accelerometer-packet memory update Python fields.&quot;&quot;&quot;</span>
+    <span class="n">p</span>   <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">AccDataMsgPayload</span><span class="p">()</span>
+    <span class="n">arr</span> <span class="o">=</span> <span class="n">_writable_view</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">messaging</span><span class="o">.</span><span class="n">AccDataMsgPayload</span><span class="o">.</span><span class="n">__dtype__</span><span class="p">)</span>
+
+    <span class="n">arr</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;accPkts&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;measTime&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">999</span>
+    <span class="n">arr</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;accPkts&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;gyro_B&#39;</span><span class="p">]</span>   <span class="o">=</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">]</span>
+
+    <span class="k">assert</span> <span class="n">p</span><span class="o">.</span><span class="n">accPkts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">measTime</span> <span class="o">==</span> <span class="mi">999</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">accPkts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">gyro_B</span><span class="p">),</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">])</span></div>
+
+
+
+<div class="viewcode-block" id="test_accDataDtypePythonToNumpy">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_msgDtype.html#test_msgDtype.test_accDataDtypePythonToNumpy">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_accDataDtypePythonToNumpy</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check Python accelerometer-packet writes are visible through the dtype view.&quot;&quot;&quot;</span>
+    <span class="n">p</span>   <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">AccDataMsgPayload</span><span class="p">()</span>
+    <span class="n">arr</span> <span class="o">=</span> <span class="n">_writable_view</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">messaging</span><span class="o">.</span><span class="n">AccDataMsgPayload</span><span class="o">.</span><span class="n">__dtype__</span><span class="p">)</span>
+
+    <span class="n">p</span><span class="o">.</span><span class="n">accPkts</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">measTime</span> <span class="o">=</span> <span class="mi">42</span>
+    <span class="k">assert</span> <span class="n">arr</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;accPkts&#39;</span><span class="p">][</span><span class="mi">5</span><span class="p">][</span><span class="s1">&#39;measTime&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">42</span></div>
+
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># 7. Struct with pointer field → pointer is uint64 in dtype (CameraImageMsgPayload)</span>
+<span class="c1">#    struct: uint64 timeTag; int valid; int64 cameraID; void* imagePointer;</span>
+<span class="c1">#            int32 imageBufferLength; int8 imageType;  - 40 bytes</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="test_cameraImageDtypeLayout">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_msgDtype.html#test_msgDtype.test_cameraImageDtypeLayout">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_cameraImageDtypeLayout</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check the camera-image payload dtype layout and pointer field type.&quot;&quot;&quot;</span>
+    <span class="n">dt</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CameraImageMsgPayload</span><span class="o">.</span><span class="n">__dtype__</span>
+    <span class="k">assert</span> <span class="n">dt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="k">assert</span> <span class="n">dt</span><span class="o">.</span><span class="n">itemsize</span> <span class="o">==</span> <span class="mi">40</span>
+    <span class="k">assert</span> <span class="n">dt</span><span class="p">[</span><span class="s1">&#39;imagePointer&#39;</span><span class="p">]</span>              <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="s1">&#39;uint64&#39;</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">dt</span><span class="o">.</span><span class="n">fields</span><span class="p">[</span><span class="s1">&#39;timeTag&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>         <span class="o">==</span> <span class="mi">0</span>
+    <span class="k">assert</span> <span class="n">dt</span><span class="o">.</span><span class="n">fields</span><span class="p">[</span><span class="s1">&#39;imagePointer&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>    <span class="o">==</span> <span class="mi">24</span>
+    <span class="k">assert</span> <span class="n">dt</span><span class="o">.</span><span class="n">fields</span><span class="p">[</span><span class="s1">&#39;imageBufferLength&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">32</span></div>
+
+
+
+<div class="viewcode-block" id="test_cameraImageDtypeNumpyToPython">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_msgDtype.html#test_msgDtype.test_cameraImageDtypeNumpyToPython">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_cameraImageDtypeNumpyToPython</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check numpy writes into camera-image memory update Python fields.&quot;&quot;&quot;</span>
+    <span class="n">p</span>   <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CameraImageMsgPayload</span><span class="p">()</span>
+    <span class="n">arr</span> <span class="o">=</span> <span class="n">_writable_view</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CameraImageMsgPayload</span><span class="o">.</span><span class="n">__dtype__</span><span class="p">)</span>
+
+    <span class="n">arr</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;timeTag&#39;</span><span class="p">]</span>           <span class="o">=</span> <span class="mi">123456789</span>
+    <span class="n">arr</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;valid&#39;</span><span class="p">]</span>             <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">arr</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;imageBufferLength&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">512</span>
+
+    <span class="k">assert</span> <span class="n">p</span><span class="o">.</span><span class="n">timeTag</span>           <span class="o">==</span> <span class="mi">123456789</span>
+    <span class="k">assert</span> <span class="n">p</span><span class="o">.</span><span class="n">valid</span>             <span class="o">==</span> <span class="mi">1</span>
+    <span class="k">assert</span> <span class="n">p</span><span class="o">.</span><span class="n">imageBufferLength</span> <span class="o">==</span> <span class="mi">512</span></div>
+
+
+
+<div class="viewcode-block" id="test_cameraImageDtypePythonToNumpy">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_msgDtype.html#test_msgDtype.test_cameraImageDtypePythonToNumpy">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_cameraImageDtypePythonToNumpy</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check Python camera-image writes are visible through the dtype view.&quot;&quot;&quot;</span>
+    <span class="n">p</span>   <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CameraImageMsgPayload</span><span class="p">()</span>
+    <span class="n">arr</span> <span class="o">=</span> <span class="n">_writable_view</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CameraImageMsgPayload</span><span class="o">.</span><span class="n">__dtype__</span><span class="p">)</span>
+
+    <span class="n">p</span><span class="o">.</span><span class="n">timeTag</span> <span class="o">=</span> <span class="mi">987654321</span>
+    <span class="k">assert</span> <span class="n">arr</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;timeTag&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">987654321</span></div>
+
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># 8. Incomplete struct (C++ std::vector fields) → __dtype__ is None</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="test_jointArrayStateDtypeIsNone">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_msgDtype.html#test_msgDtype.test_jointArrayStateDtypeIsNone">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_jointArrayStateDtypeIsNone</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check payloads with unsupported vector fields expose no numpy dtype.&quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="n">messaging</span><span class="o">.</span><span class="n">JointArrayStateMsgPayload</span><span class="o">.</span><span class="n">__dtype__</span> <span class="ow">is</span> <span class="kc">None</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,42 @@
+.. _imuSensor:
+
+:module-type:`C++` Module: imuSensor
+====================================
+
+Executive Summary
+-----------------
+
+Sensor model to simulate an IMU.
+
+The module
+:download:`PDF Description </../../src/simulation/sensors/imuSensor/_Documentation/Basilisk-IMU-20170712.pdf>`
+contains further information on this module's function,
+how to run it, as well as testing.
+The corruption types are outlined in this
+:download:`PDF Description </../../src/simulation/sensors/imuSensor/_Documentation/BasiliskCorruptions.pdf>`.
+
+.. note::
+
+    On the first run the module outputs a zero'd message.  Only on the 2nd run onwards does the sensor
+    have IMU data.
+
+Message Connection Descriptions
+-------------------------------
+The following table lists all the module input and output messages.  The module msg connection is set by the
+user from python.  The msg type contains a link to the message structure definition, while the description
+provides information on what this message is used for.
+
+.. bsk-module-io:: imuSensor
+
+   input scStateInMsg SCStatesMsgPayload
+      input essage name for spacecraft state
+
+   output sensorOutMsg IMUSensorMsgPayload
+      output message name for IMU output data
+
+
+----
+
+.. autodoxygenfile:: imuSensor.h
+   :project: imuSensor
+

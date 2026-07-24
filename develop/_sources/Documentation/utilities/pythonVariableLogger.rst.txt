@@ -1,0 +1,13 @@
+.. _pythonVariableLogger:
+
+pythonVariableLogger
+====================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. automodule:: pythonVariableLogger
+   :members:
+   :show-inheritance:
+

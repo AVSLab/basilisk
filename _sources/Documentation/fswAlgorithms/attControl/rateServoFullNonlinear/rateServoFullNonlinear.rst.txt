@@ -1,0 +1,45 @@
+.. _rateServoFullNonlinear:
+
+:module-type:`C` Module: rateServoFullNonlinear
+===============================================
+
+Executive Summary
+-----------------
+
+This module implements a nonlinear rate servo control uses the attiude steering message and determine the ADCS control torque vector.
+
+The module
+:download:`PDF Description </../../src/fswAlgorithms/attControl/rateServoFullNonlinear/_Documentation/AVS-Sim-nonlinRateServo-2019-0327.pdf>`
+contains further information on this module's function,
+how to run it, as well as testing.
+
+Message Connection Descriptions
+-------------------------------
+The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.
+
+.. bsk-module-io:: rateServoFullNonlinear
+    :caption: Module I/O Messages
+
+    output cmdTorqueOutMsg CmdTorqueBodyMsgPayload
+        Commanded torque output message
+    input guidInMsg AttGuidMsgPayload
+        Attitude guidance input message
+    input vehConfigInMsg VehicleConfigMsgPayload
+        Vehicle configuration input message
+    input rwSpeedsInMsg RWSpeedMsgPayload
+        (optional) RW speed input message
+    input rwAvailInMsg RWAvailabilityMsgPayload
+        (optional) RW availability input message
+    input rwParamsInMsg RWArrayConfigMsgPayload
+        (optional) RW configuration parameter input message
+    input rateSteeringInMsg RateCmdMsgPayload
+        Commanded rate input message
+
+
+----
+
+.. autodoxygenfile:: rateServoFullNonlinear.h
+   :project: rateServoFullNonlinear
+

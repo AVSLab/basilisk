@@ -1,0 +1,8 @@
+.. _MJGeomInfo:
+
+MJGeomInfo
+==========
+
+.. autodoxygenfile:: MJGeomInfo.h
+   :project: _GeneralModuleFiles6
+

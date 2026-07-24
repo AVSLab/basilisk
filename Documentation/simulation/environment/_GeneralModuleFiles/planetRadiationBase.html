@@ -1,0 +1,848 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>C++ Module: planetRadiationBase &mdash; Basilisk 2.11.0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=2ebb1c42" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=1647406f"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="C++ Module: windBase" href="windBase.html" />
+    <link rel="prev" title="C++ Module: magneticFieldBase" href="magneticFieldBase.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../communication/index.html">communication</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dynamics/index.html">dynamics</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">environment</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../ExponentialAtmosphere/index.html">ExponentialAtmosphere</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../MsisAtmosphere/index.html">MsisAtmosphere</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../TabularAtmosphere/index.html">TabularAtmosphere</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ZeroWindModel/index.html">ZeroWindModel</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../albedo/index.html">albedo</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dentonFluxModel/index.html">dentonFluxModel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../earthRadiationModel/index.html">earthRadiationModel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../eclipse/index.html">eclipse</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ephemerisConverter/index.html">ephemerisConverter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../groundLocation/index.html">groundLocation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../groundMapping/index.html">groundMapping</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../magneticFieldCenteredDipole/index.html">magneticFieldCenteredDipole</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../magneticFieldWMM/index.html">magneticFieldWMM</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../planetEphemeris/index.html">planetEphemeris</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../solarFlux/index.html">solarFlux</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spaceWeatherData/index.html">spaceWeatherData</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraftChargingDynamics/index.html">spacecraftChargingDynamics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraftChargingEquilibrium/index.html">spacecraftChargingEquilibrium</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraftLocation/index.html">spacecraftLocation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spiceInterface/index.html">spiceInterface</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../stripLocation/index.html">stripLocation</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../forceTorque/index.html">forceTorque</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujocoDynamics/index.html">mujocoDynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../simSynch/index.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Plugins/overview.html">About Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Plugins/installing.html">Installing Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Plugins/writing.html">Writing a Basilisk Plugin</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">environment</a></li>
+          <li class="breadcrumb-item"><a href="index.html">_GeneralModuleFiles</a></li>
+      <li class="breadcrumb-item active"><span class="module-type-label module-type-cpp">C++</span> Module: planetRadiationBase</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/simulation/environment/_GeneralModuleFiles/planetRadiationBase.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="c-module-planetradiationbase">
+<span id="planetradiationbase"></span><h1><span class="module-type-label module-type-cpp">C++</span> Module: planetRadiationBase<a class="headerlink" href="#c-module-planetradiationbase" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>Abstract Basilisk base class for modules that compute planetary radiation using the
+Knocke et al. (1988) <a class="reference internal" href="#knocke1988" id="id1"><span>[Knocke1988]</span></a> patch model.</p>
+<p><code class="docutils literal notranslate"><span class="pre">PlanetRadiationBase</span></code> owns the full simulation loop:</p>
+<ul class="simple">
+<li><p>message validation and reading (spacecraft, Sun, per-planet)</p></li>
+<li><p>authalic planet radius computation from WGS-84/spheroid parameters</p></li>
+<li><p>patch grid initialisation and distance-corrected solar flux</p></li>
+<li><p>per-timestep call to <code class="docutils literal notranslate"><span class="pre">evaluatePlanet()</span></code> for every registered planet</p></li>
+</ul>
+<p>Derived classes implement a set of <strong>virtual hooks</strong> rather than overriding
+<code class="docutils literal notranslate"><span class="pre">Reset()</span></code> / <code class="docutils literal notranslate"><span class="pre">UpdateState()</span></code> directly.</p>
+</section>
+<section id="user-guide">
+<h2>User Guide<a class="headerlink" href="#user-guide" title="Link to this heading"></a></h2>
+<p>Register planets by calling <code class="docutils literal notranslate"><span class="pre">addPlanetEntry(msg,</span> <span class="pre">gridConfig)</span></code> from a derived
+<code class="docutils literal notranslate"><span class="pre">addPlanet*()</span></code> method.  The grid config may contain sentinel values (e.g.
+<code class="docutils literal notranslate"><span class="pre">REQ_m</span> <span class="pre">=</span> <span class="pre">-1</span></code>, <code class="docutils literal notranslate"><span class="pre">albedoAvg</span> <span class="pre">=</span> <span class="pre">-1</span></code>, <code class="docutils literal notranslate"><span class="pre">nLat</span> <span class="pre">=</span> <span class="pre">0</span></code>) that
+<code class="docutils literal notranslate"><span class="pre">resolvePlanetEntry()</span></code> fills in during <code class="docutils literal notranslate"><span class="pre">Reset()</span></code>.</p>
+<table class="docutils align-default" id="id3">
+<caption><span class="caption-text">Virtual hooks</span><a class="headerlink" href="#id3" title="Link to this table"></a></caption>
+<tbody>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">evaluatePlanet(scMsg,</span> <span class="pre">sunMsg,</span> <span class="pre">planetMsg,</span> <span class="pre">entry,</span> <span class="pre">S_sun,</span> <span class="pre">nanos)</span></code></p></td>
+<td><p><strong>pure virtual</strong></p></td>
+<td><p>Called once per planet per timestep.  Call <code class="docutils literal notranslate"><span class="pre">entry.grid.computePatches()</span></code>
+at the appropriate observer position and accumulate results.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">resolvePlanetEntry(planetMsg,</span> <span class="pre">grid,</span> <span class="pre">idx)</span></code></p></td>
+<td><p>optional</p></td>
+<td><p>Called in <code class="docutils literal notranslate"><span class="pre">Reset()</span></code> after reading the planet message.  Fill in
+<code class="docutils literal notranslate"><span class="pre">grid.REQ_m</span></code>, <code class="docutils literal notranslate"><span class="pre">grid.RP_m</span></code>, <code class="docutils literal notranslate"><span class="pre">grid.albedoAvg</span></code>, <code class="docutils literal notranslate"><span class="pre">grid.nLat</span></code>,
+<code class="docutils literal notranslate"><span class="pre">grid.nLon</span></code> from the planet name.  Default: no-op (ERM uses scalar
+config members set before <code class="docutils literal notranslate"><span class="pre">Reset()</span></code>).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">onUpdateBegin(scMsg,</span> <span class="pre">sunMsg,</span> <span class="pre">nanos)</span></code></p></td>
+<td><p>optional</p></td>
+<td><p>Called before the planet loop.  Clear per-timestep accumulators or
+cache spacecraft attitude.  Default: no-op.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">onUpdateEnd(nanos)</span></code></p></td>
+<td><p>optional</p></td>
+<td><p>Called after the planet loop.  Write output messages.  Default: no-op.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">customReset(nanos)</span></code></p></td>
+<td><p>optional</p></td>
+<td><p>Called at the end of <code class="docutils literal notranslate"><span class="pre">Reset()</span></code>.  Validate instrument configuration
+or size accumulator vectors.  Default: no-op.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">isPatchEclipsed(patch,</span> <span class="pre">scMsg,</span> <span class="pre">sunMsg)</span></code></p></td>
+<td><p>optional</p></td>
+<td><p>Determine if a patch is in eclipse (umbra/penumbra).  Default implementation
+applies the Knocke penumbra model when <code class="docutils literal notranslate"><span class="pre">getEclipseCase()=True</span></code>; returns <code class="docutils literal notranslate"><span class="pre">False</span></code>
+immediately when <code class="docutils literal notranslate"><span class="pre">getEclipseCase()=False</span></code>.  Override to customise eclipse logic.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="single-planet-backward-compatibility-path">
+<h2>Single-planet backward-compatibility path<a class="headerlink" href="#single-planet-backward-compatibility-path" title="Link to this heading"></a></h2>
+<p>If no planets are registered via <code class="docutils literal notranslate"><span class="pre">addPlanetEntry()</span></code> at <code class="docutils literal notranslate"><span class="pre">Reset()</span></code> time
+(i.e. <code class="docutils literal notranslate"><span class="pre">planets_</span></code> is empty), the base class automatically builds one entry
+from the public scalar config members (<code class="docutils literal notranslate"><span class="pre">nLat</span></code>, <code class="docutils literal notranslate"><span class="pre">nLon</span></code>, <code class="docutils literal notranslate"><span class="pre">irFluxMean</span></code>,
+<code class="docutils literal notranslate"><span class="pre">albedoAvg</span></code>, <code class="docutils literal notranslate"><span class="pre">useAlbedoData</span></code>, <code class="docutils literal notranslate"><span class="pre">REQ_m</span></code>, <code class="docutils literal notranslate"><span class="pre">RP_m</span></code>) and the public
+<code class="docutils literal notranslate"><span class="pre">planetInMsg</span></code> functor.  This means <code class="docutils literal notranslate"><span class="pre">EarthRadiationModel</span></code> users need no
+code changes.</p>
+</section>
+<section id="current-derived-classes">
+<h2>Current derived classes<a class="headerlink" href="#current-derived-classes" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="../earthRadiationModel/earthRadiationModel.html#earthradiationmodel"><span class="std std-ref">C++ Module: earthRadiationModel</span></a> — ERP flux and flux-weighted direction vectors.
+Uses the backward-compat single-planet path; overrides
+<code class="docutils literal notranslate"><span class="pre">evaluatePlanet()</span></code>, <code class="docutils literal notranslate"><span class="pre">onUpdateBegin()</span></code>, and <code class="docutils literal notranslate"><span class="pre">onUpdateEnd()</span></code>.</p></li>
+<li><p><a class="reference internal" href="../albedo/albedo.html#albedo"><span class="std std-ref">C++ Module: albedo</span></a> — per-instrument albedo ratio and flux for multiple planets
+and multiple instruments.  Registers planets via <code class="docutils literal notranslate"><span class="pre">addPlanetEntry()</span></code> inside
+<code class="docutils literal notranslate"><span class="pre">addPlanetandAlbedoAverageModel()</span></code> / <code class="docutils literal notranslate"><span class="pre">addPlanetandAlbedoDataModel()</span></code>;
+overrides all five hooks.</p></li>
+</ul>
+</section>
+<section id="known-limitations">
+<h2>Known limitations<a class="headerlink" href="#known-limitations" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">EarthRadiationModel</span></code> has no Python-facing <code class="docutils literal notranslate"><span class="pre">addPlanetandAlbedoAverageModel()</span></code>-style
+API.  Multi-planet support is wired in the base class (the <code class="docutils literal notranslate"><span class="pre">planets_</span></code> loop runs
+for all registered entries), but the user must call <code class="docutils literal notranslate"><span class="pre">addPlanetEntry()</span></code> directly
+from C++ or a future Python-facing wrapper is needed.</p>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>The following messages are defined in <code class="docutils literal notranslate"><span class="pre">PlanetRadiationBase</span></code> and inherited by all
+derived classes.</p>
+<div align="center" class="align-center"><div class="graphviz"><object data="../../../../_images/graphviz-edf74166490caf1dd000a3451d3d4c4c60502b9d.svg" type="image/svg+xml" class="graphviz">
+<p class="warning">Module I/O Messages module input and output messages</p></object></div>
+</div>
+<table class="docutils align-default" id="id4">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id4" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>spacecraftStateInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#scstatesmsgpayload"><span class="std std-ref">SCStatesMsgPayload</span></a></p></td>
+<td><p>spacecraft position and attitude in inertial frame N</p></td>
+</tr>
+<tr class="row-odd"><td><p>planetInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#spiceplanetstatemsgpayload"><span class="std std-ref">SpicePlanetStateMsgPayload</span></a></p></td>
+<td><p>single-planet state (ERM backward-compat path only)</p></td>
+</tr>
+<tr class="row-even"><td><p>sunPositionInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#spiceplanetstatemsgpayload"><span class="std std-ref">SpicePlanetStateMsgPayload</span></a></p></td>
+<td><p>Sun position used for solar flux distance correction and patch illumination</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Link to this heading"></a></h2>
+<div role="list" class="citation-list">
+<div class="citation" id="knocke1988" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">Knocke1988</a><span class="fn-bracket">]</span></span>
+<p>Knocke, P. C., Ries, J. C., and Tapley, B. D., <em>Earth Radiation Pressure Effects on Satellites</em>, AIAA/AAS Astrodynamics Conference, 1988. DOI: <a class="reference external" href="https://doi.org/10.2514/6.1988-4292">10.2514/6.1988-4292</a></p>
+</div>
+</div>
+<hr class="docutils" />
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv411PatchResult">
+<span id="_CPPv311PatchResult"></span><span id="_CPPv211PatchResult"></span><span id="PatchResult"></span><span class="target" id="struct_patch_result"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PatchResult</span></span></span><a class="headerlink" href="#_CPPv411PatchResult" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;planetRadiationBase.h&gt;</em></div>
+<p>Per-patch flux and geometry returned by <a class="reference internal" href="#struct_planet_grid_1a55c51e07327cb72c7970e6b6b8214d61"><span class="std std-ref">PlanetGrid::computePatches()</span></a>. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11PatchResult10albedoFluxE">
+<span id="_CPPv3N11PatchResult10albedoFluxE"></span><span id="_CPPv2N11PatchResult10albedoFluxE"></span><span id="PatchResult::albedoFlux__double"></span><span class="target" id="struct_patch_result_1a537500f6dae7a09f7ded8592b0287f2b"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">albedoFlux</span></span></span><a class="headerlink" href="#_CPPv4N11PatchResult10albedoFluxE" title="Link to this definition"></a><br /></dt>
+<dd><p>[W/m^2] albedo flux from this patch; 0 if not illuminated </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11PatchResult6irFluxE">
+<span id="_CPPv3N11PatchResult6irFluxE"></span><span id="_CPPv2N11PatchResult6irFluxE"></span><span id="PatchResult::irFlux__double"></span><span class="target" id="struct_patch_result_1a1ce20eb4a0c2fa7c63eda0524b7bda1a"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">irFlux</span></span></span><a class="headerlink" href="#_CPPv4N11PatchResult6irFluxE" title="Link to this definition"></a><br /></dt>
+<dd><p>[W/m^2] IR flux from this patch; &gt; 0 for all visible patches </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11PatchResult10rHat_IdA_NE">
+<span id="_CPPv3N11PatchResult10rHat_IdA_NE"></span><span id="_CPPv2N11PatchResult10rHat_IdA_NE"></span><span id="PatchResult::rHat_IdA_N__doubleA"></span><span class="target" id="struct_patch_result_1a56694e4321098e65ff760c0f09908963"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rHat_IdA_N</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N11PatchResult10rHat_IdA_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] unit vector patch centroid -&gt; satellite, inertial N </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11PatchResult10solidAngleE">
+<span id="_CPPv3N11PatchResult10solidAngleE"></span><span id="_CPPv2N11PatchResult10solidAngleE"></span><span id="PatchResult::solidAngle__double"></span><span class="target" id="struct_patch_result_1a120d12943f5bce8ab492f6104b7ee2d9"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">solidAngle</span></span></span><a class="headerlink" href="#_CPPv4N11PatchResult10solidAngleE" title="Link to this definition"></a><br /></dt>
+<dd><p>[sr] solid angle of patch as seen from satellite </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11PatchResult7r_dAP_NE">
+<span id="_CPPv3N11PatchResult7r_dAP_NE"></span><span id="_CPPv2N11PatchResult7r_dAP_NE"></span><span id="PatchResult::r_dAP_N__doubleA"></span><span class="target" id="struct_patch_result_1a14be379831461e3a4546a0fdda7f9073"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_dAP_N</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N11PatchResult7r_dAP_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] patch centroid position relative to planet centre, N frame </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv410PlanetGrid">
+<span id="_CPPv310PlanetGrid"></span><span id="_CPPv210PlanetGrid"></span><span id="PlanetGrid"></span><span class="target" id="struct_planet_grid"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PlanetGrid</span></span></span><a class="headerlink" href="#_CPPv410PlanetGrid" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;planetRadiationBase.h&gt;</em></div>
+<p>Initialised patch grid for one planet. </p>
+<p>Configure all public members, then call <a class="reference internal" href="#struct_planet_grid_1a849c284a327d03d3a201da709a18b29c"><span class="std std-ref">initialize()</span></a>. After that, call <a class="reference internal" href="#struct_planet_grid_1a55c51e07327cb72c7970e6b6b8214d61"><span class="std std-ref">computePatches()</span></a> every timestep. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N10PlanetGrid10initializeE9BSKLogger">
+<span id="_CPPv3N10PlanetGrid10initializeE9BSKLogger"></span><span id="_CPPv2N10PlanetGrid10initializeE9BSKLogger"></span><span id="PlanetGrid::initialize__BSKLogger"></span><span class="target" id="struct_planet_grid_1a849c284a327d03d3a201da709a18b29c"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">initialize</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">bskLogger</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N10PlanetGrid10initializeE9BSKLogger" title="Link to this definition"></a><br /></dt>
+<dd><p>Builds the patch grid and loads optional CSV albedo data. Call once after setting all configuration members. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK10PlanetGrid14computePatchesEAL3E_KdAL3E_KdAL3E_KdAL3E_AL3E_ddKd">
+<span id="_CPPv3NK10PlanetGrid14computePatchesEAL3E_KdAL3E_KdAL3E_KdAL3E_AL3E_ddKd"></span><span id="_CPPv2NK10PlanetGrid14computePatchesEA3_KdA3_KdA3_KdA3_A3_ddKd"></span><span id="PlanetGrid::computePatches__doubleCA.doubleCA.doubleCA.doubleAA.double.doubleCC"></span><span class="target" id="struct_planet_grid_1a55c51e07327cb72c7970e6b6b8214d61"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv411PatchResult" title="PatchResult"><span class="n"><span class="pre">PatchResult</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computePatches</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">r_sat_N</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">r_sun_N</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">r_planet_N</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">J20002Pfix</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">R_planet</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">S_sun</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK10PlanetGrid14computePatchesEAL3E_KdAL3E_KdAL3E_KdAL3E_AL3E_ddKd" title="Link to this definition"></a><br /></dt>
+<dd><p>Computes per-patch radiation fluxes for one timestep.</p>
+<p>Only patches with cos_sat &gt; 0 (visible from r_sat_N) are returned. Eclipse shadowing is not applied here; use isPatchEclipsed() post-kernel.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>r_sat_N</strong> – [m] satellite (or instrument) position, inertial N </p></li>
+<li><p><strong>r_sun_N</strong> – [m] Sun position, inertial N </p></li>
+<li><p><strong>r_planet_N</strong> – [m] planet centre position, inertial N </p></li>
+<li><p><strong>J20002Pfix</strong> – [-] SpicePlanetStateMsgPayload rotation matrix (row-major) </p></li>
+<li><p><strong>R_planet</strong> – [m] authalic planet radius </p></li>
+<li><p><strong>S_sun</strong> – [W/m^2] solar flux at planet, distance-corrected </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10PlanetGrid4nLatE">
+<span id="_CPPv3N10PlanetGrid4nLatE"></span><span id="_CPPv2N10PlanetGrid4nLatE"></span><span id="PlanetGrid::nLat__i"></span><span class="target" id="struct_planet_grid_1a96c03177b0729d8c57a9cb51573ce51b"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">nLat</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">180</span></span><a class="headerlink" href="#_CPPv4N10PlanetGrid4nLatE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] latitude zones </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10PlanetGrid4nLonE">
+<span id="_CPPv3N10PlanetGrid4nLonE"></span><span id="_CPPv2N10PlanetGrid4nLonE"></span><span id="PlanetGrid::nLon__i"></span><span class="target" id="struct_planet_grid_1abf769ad2c86a36110fb88e06625fe477"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">nLon</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">360</span></span><a class="headerlink" href="#_CPPv4N10PlanetGrid4nLonE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] longitude zones per band </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10PlanetGrid10irFluxMeanE">
+<span id="_CPPv3N10PlanetGrid10irFluxMeanE"></span><span id="_CPPv2N10PlanetGrid10irFluxMeanE"></span><span id="PlanetGrid::irFluxMean__double"></span><span class="target" id="struct_planet_grid_1a51c8d2d9dc16d2a19647a908f3158f56"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">irFluxMean</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">237.0</span></span><a class="headerlink" href="#_CPPv4N10PlanetGrid10irFluxMeanE" title="Link to this definition"></a><br /></dt>
+<dd><p>[W/m^2] mean </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10PlanetGrid9albedoAvgE">
+<span id="_CPPv3N10PlanetGrid9albedoAvgE"></span><span id="_CPPv2N10PlanetGrid9albedoAvgE"></span><span id="PlanetGrid::albedoAvg__double"></span><span class="target" id="struct_planet_grid_1a158924dd22f85db12910c0eedd74d9c5"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">albedoAvg</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.30</span></span><a class="headerlink" href="#_CPPv4N10PlanetGrid9albedoAvgE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Bond albedo (albedoDataPath=””) </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10PlanetGrid13useAlbedoDataE">
+<span id="_CPPv3N10PlanetGrid13useAlbedoDataE"></span><span id="_CPPv2N10PlanetGrid13useAlbedoDataE"></span><span id="PlanetGrid::useAlbedoData__b"></span><span class="target" id="struct_planet_grid_1a25fde428726eff9b3d9a15338c9d97ae"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">useAlbedoData</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">false</span></span><a class="headerlink" href="#_CPPv4N10PlanetGrid13useAlbedoDataE" title="Link to this definition"></a><br /></dt>
+<dd><p>true = load CSV albedo data </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10PlanetGrid14albedoDataPathE">
+<span id="_CPPv3N10PlanetGrid14albedoDataPathE"></span><span id="_CPPv2N10PlanetGrid14albedoDataPathE"></span><span id="PlanetGrid::albedoDataPath__ss"></span><span class="target" id="struct_planet_grid_1a93c54e8fd85284a4cfb25736ca365242"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">albedoDataPath</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;&quot;</span></span><a class="headerlink" href="#_CPPv4N10PlanetGrid14albedoDataPathE" title="Link to this definition"></a><br /></dt>
+<dd><p>path to supportData/AlbedoData/ </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10PlanetGrid14albedoDataFileE">
+<span id="_CPPv3N10PlanetGrid14albedoDataFileE"></span><span id="_CPPv2N10PlanetGrid14albedoDataFileE"></span><span id="PlanetGrid::albedoDataFile__ss"></span><span class="target" id="struct_planet_grid_1aec35b73e3901b6e5ce71272340d9ffd8"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">albedoDataFile</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;&quot;</span></span><a class="headerlink" href="#_CPPv4N10PlanetGrid14albedoDataFileE" title="Link to this definition"></a><br /></dt>
+<dd><p>CSV filename. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10PlanetGrid5REQ_mE">
+<span id="_CPPv3N10PlanetGrid5REQ_mE"></span><span id="_CPPv2N10PlanetGrid5REQ_mE"></span><span id="PlanetGrid::REQ_m__double"></span><span class="target" id="struct_planet_grid_1aaa16a80e6e469733b95c8cf6e547566a"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">REQ_m</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="o"><span class="pre">-</span></span><span class="m"><span class="pre">1.0</span></span><a class="headerlink" href="#_CPPv4N10PlanetGrid5REQ_mE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] equatorial radius; -1 = must be set before <a class="reference internal" href="#struct_planet_grid_1a849c284a327d03d3a201da709a18b29c"><span class="std std-ref">initialize()</span></a></p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10PlanetGrid4RP_mE">
+<span id="_CPPv3N10PlanetGrid4RP_mE"></span><span id="_CPPv2N10PlanetGrid4RP_mE"></span><span id="PlanetGrid::RP_m__double"></span><span class="target" id="struct_planet_grid_1add36fbe655ee9d1dfdc0803f67287362"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">RP_m</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="o"><span class="pre">-</span></span><span class="m"><span class="pre">1.0</span></span><a class="headerlink" href="#_CPPv4N10PlanetGrid4RP_mE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] polar radius; -1 = spherical (REQ used) </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-functions">Private Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK10PlanetGrid21loadAlbedoGridFromCsvE9BSKLogger">
+<span id="_CPPv3NK10PlanetGrid21loadAlbedoGridFromCsvE9BSKLogger"></span><span id="_CPPv2NK10PlanetGrid21loadAlbedoGridFromCsvE9BSKLogger"></span><span id="PlanetGrid::loadAlbedoGridFromCsv__BSKLoggerC"></span><span class="target" id="struct_planet_grid_1a32a2c23871497b080f5e9072235a3970"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">loadAlbedoGridFromCsv</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">bskLogger</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK10PlanetGrid21loadAlbedoGridFromCsvE9BSKLogger" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10PlanetGrid11patchDirs_PE">
+<span id="_CPPv3N10PlanetGrid11patchDirs_PE"></span><span id="_CPPv2N10PlanetGrid11patchDirs_PE"></span><span id="PlanetGrid::patchDirs_P__std::vector:std::array:double.3::"></span><span class="target" id="struct_planet_grid_1ae59b9d6358652554ec608ae8ec24882e"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">array</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">patchDirs_P</span></span></span><a class="headerlink" href="#_CPPv4N10PlanetGrid11patchDirs_PE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] patch centroid directions in planet frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10PlanetGrid9normAreasE">
+<span id="_CPPv3N10PlanetGrid9normAreasE"></span><span id="_CPPv2N10PlanetGrid9normAreasE"></span><span id="PlanetGrid::normAreas__std::vector:double:"></span><span class="target" id="struct_planet_grid_1a91f5246b873db8ade7b996c6a609df2a"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">normAreas</span></span></span><a class="headerlink" href="#_CPPv4N10PlanetGrid9normAreasE" title="Link to this definition"></a><br /></dt>
+<dd><p>[sr] normalised patch areas </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10PlanetGrid11patchAlbedoE">
+<span id="_CPPv3N10PlanetGrid11patchAlbedoE"></span><span id="_CPPv2N10PlanetGrid11patchAlbedoE"></span><span id="PlanetGrid::patchAlbedo__std::vector:double:"></span><span class="target" id="struct_planet_grid_1acd133d641cb59172f1951bf2b4cfe45d"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">patchAlbedo</span></span></span><a class="headerlink" href="#_CPPv4N10PlanetGrid11patchAlbedoE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] per-patch albedo values </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10PlanetGrid5t_autE">
+<span id="_CPPv3N10PlanetGrid5t_autE"></span><span id="_CPPv2N10PlanetGrid5t_autE"></span><span id="PlanetGrid::t_aut__doubleA"></span><span class="target" id="struct_planet_grid_1a595566031c7f8d9f6d63cefa3749f10f"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">t_aut</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="m"><span class="pre">0.0</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N10PlanetGrid5t_autE" title="Link to this definition"></a><br /></dt>
+<dd><p>authalic latitude correction coefficients </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10PlanetGrid11hasAuthalicE">
+<span id="_CPPv3N10PlanetGrid11hasAuthalicE"></span><span id="_CPPv2N10PlanetGrid11hasAuthalicE"></span><span id="PlanetGrid::hasAuthalic__b"></span><span class="target" id="struct_planet_grid_1a26cccc0731e00da8bfab905d96d4f7b6"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">hasAuthalic</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">false</span></span><a class="headerlink" href="#_CPPv4N10PlanetGrid11hasAuthalicE" title="Link to this definition"></a><br /></dt>
+<dd><p>true when oblate spheroid correction is active </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10PlanetGrid7latDiffE">
+<span id="_CPPv3N10PlanetGrid7latDiffE"></span><span id="_CPPv2N10PlanetGrid7latDiffE"></span><span id="PlanetGrid::latDiff__double"></span><span class="target" id="struct_planet_grid_1afafcd53e03a97b6f5acc0792d0c35c73"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">latDiff</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N10PlanetGrid7latDiffE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad] latitude spacing between grid points </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10PlanetGrid7lonDiffE">
+<span id="_CPPv3N10PlanetGrid7lonDiffE"></span><span id="_CPPv2N10PlanetGrid7lonDiffE"></span><span id="PlanetGrid::lonDiff__double"></span><span class="target" id="struct_planet_grid_1a637b85a5e123392e2df6022e367d258c"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">lonDiff</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N10PlanetGrid7lonDiffE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad] longitude spacing between grid points </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10PlanetGrid11initializedE">
+<span id="_CPPv3N10PlanetGrid11initializedE"></span><span id="_CPPv2N10PlanetGrid11initializedE"></span><span id="PlanetGrid::initialized__b"></span><span class="target" id="struct_planet_grid_1aacbe5d4fdd043861a7e3f57f65a5f0a6"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">initialized</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">false</span></span><a class="headerlink" href="#_CPPv4N10PlanetGrid11initializedE" title="Link to this definition"></a><br /></dt>
+<dd><p>true after <a class="reference internal" href="#struct_planet_grid_1a849c284a327d03d3a201da709a18b29c"><span class="std std-ref">initialize()</span></a> completes successfully </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv411PlanetEntry">
+<span id="_CPPv311PlanetEntry"></span><span id="_CPPv211PlanetEntry"></span><span id="PlanetEntry"></span><span class="target" id="struct_planet_entry"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PlanetEntry</span></span></span><a class="headerlink" href="#_CPPv411PlanetEntry" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;planetRadiationBase.h&gt;</em></div>
+<p>One registered planet: message functor, initialised grid, authalic radius. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11PlanetEntry9planetMsgE">
+<span id="_CPPv3N11PlanetEntry9planetMsgE"></span><span id="_CPPv2N11PlanetEntry9planetMsgE"></span><span id="PlanetEntry::planetMsg__ReadFunctor:SpicePlanetStateMsgPayload:"></span><span class="target" id="struct_planet_entry_1a89b398545797b6c06f0780e95b311998"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#_CPPv426SpicePlanetStateMsgPayload" title="SpicePlanetStateMsgPayload"><span class="n"><span class="pre">SpicePlanetStateMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">planetMsg</span></span></span><a class="headerlink" href="#_CPPv4N11PlanetEntry9planetMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>per-planet input message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11PlanetEntry4gridE">
+<span id="_CPPv3N11PlanetEntry4gridE"></span><span id="_CPPv2N11PlanetEntry4gridE"></span><span id="PlanetEntry::grid__PlanetGrid"></span><span class="target" id="struct_planet_entry_1a9a82a2731b2dec347402ca44f71617c9"></span><a class="reference internal" href="#_CPPv410PlanetGrid" title="PlanetGrid"><span class="n"><span class="pre">PlanetGrid</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">grid</span></span></span><a class="headerlink" href="#_CPPv4N11PlanetEntry4gridE" title="Link to this definition"></a><br /></dt>
+<dd><p>initialised patch grid </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11PlanetEntry8R_planetE">
+<span id="_CPPv3N11PlanetEntry8R_planetE"></span><span id="_CPPv2N11PlanetEntry8R_planetE"></span><span id="PlanetEntry::R_planet__double"></span><span class="target" id="struct_planet_entry_1aa19d23ba097cfb6dbfff51ea30be7664"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">R_planet</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N11PlanetEntry8R_planetE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] authalic radius, set in Reset() </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv419PlanetRadiationBase">
+<span id="_CPPv319PlanetRadiationBase"></span><span id="_CPPv219PlanetRadiationBase"></span><span id="PlanetRadiationBase"></span><span class="target" id="class_planet_radiation_base"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PlanetRadiationBase</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../../../architecture/_GeneralModuleFiles/sys_model.html#_CPPv48SysModel" title="SysModel"><span class="n"><span class="pre">SysModel</span></span></a><a class="headerlink" href="#_CPPv419PlanetRadiationBase" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;planetRadiationBase.h&gt;</em></div>
+<p>Abstract base class for Basilisk planetary-radiation environment modules. </p>
+<p><a class="reference internal" href="#class_planet_radiation_base"><span class="std std-ref">PlanetRadiationBase</span></a> reads spacecraft and sun state messages, iterates over registered planets, and dispatches per-planet evaluation to the derived class via <a class="reference internal" href="#class_planet_radiation_base_1a7253baf334c08608d5cfcc8bebccb7d3"><span class="std std-ref">evaluatePlanet()</span></a>. Concrete subclasses implement <a class="reference internal" href="#class_planet_radiation_base_1a7253baf334c08608d5cfcc8bebccb7d3"><span class="std std-ref">evaluatePlanet()</span></a> and optionally override the other virtual hooks. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N19PlanetRadiationBase19PlanetRadiationBaseEv">
+<span id="_CPPv3N19PlanetRadiationBase19PlanetRadiationBaseEv"></span><span id="_CPPv2N19PlanetRadiationBase19PlanetRadiationBaseEv"></span><span id="PlanetRadiationBase::PlanetRadiationBase"></span><span class="target" id="class_planet_radiation_base_1abed62487b57b4ffbb49b2ac0698671c2"></span><span class="sig-name descname"><span class="n"><span class="pre">PlanetRadiationBase</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">default</span></span><a class="headerlink" href="#_CPPv4N19PlanetRadiationBase19PlanetRadiationBaseEv" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N19PlanetRadiationBaseD0Ev">
+<span id="_CPPv3N19PlanetRadiationBaseD0Ev"></span><span id="_CPPv2N19PlanetRadiationBaseD0Ev"></span><span id="PlanetRadiationBase::~PlanetRadiationBase"></span><span class="target" id="class_planet_radiation_base_1a8addb979261df880315979de13616a02"></span><span class="sig-name descname"><span class="n"><span class="pre">~PlanetRadiationBase</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">default</span></span><a class="headerlink" href="#_CPPv4N19PlanetRadiationBaseD0Ev" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N19PlanetRadiationBase5ResetE8uint64_t">
+<span id="_CPPv3N19PlanetRadiationBase5ResetE8uint64_t"></span><span id="_CPPv2N19PlanetRadiationBase5ResetE8uint64_t"></span><span id="PlanetRadiationBase::Reset__uint64_t"></span><span class="target" id="class_planet_radiation_base_1a94a24138521e976fff071a2270beb5e3"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N19PlanetRadiationBase5ResetE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Validates messages, builds planet entries, and initialises patch grids. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CurrentSimNanos</strong> – Current simulation time (ns). </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N19PlanetRadiationBase11UpdateStateE8uint64_t">
+<span id="_CPPv3N19PlanetRadiationBase11UpdateStateE8uint64_t"></span><span id="_CPPv2N19PlanetRadiationBase11UpdateStateE8uint64_t"></span><span id="PlanetRadiationBase::UpdateState__uint64_t"></span><span class="target" id="class_planet_radiation_base_1ab2b951431f54bf23099c99a8b8701f37"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">UpdateState</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N19PlanetRadiationBase11UpdateStateE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Reads inputs, dispatches per-planet evaluation, and writes outputs. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CurrentSimNanos</strong> – Current simulation time (ns). </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N19PlanetRadiationBase14addPlanetEntryE11ReadFunctorI26SpicePlanetStateMsgPayloadERK10PlanetGrid">
+<span id="_CPPv3N19PlanetRadiationBase14addPlanetEntryE11ReadFunctorI26SpicePlanetStateMsgPayloadERK10PlanetGrid"></span><span id="_CPPv2N19PlanetRadiationBase14addPlanetEntryE11ReadFunctorI26SpicePlanetStateMsgPayloadERK10PlanetGrid"></span><span id="PlanetRadiationBase::addPlanetEntry__ReadFunctor:SpicePlanetStateMsgPayload:.PlanetGridCR"></span><span class="target" id="class_planet_radiation_base_1a4cefc897378d9375988ad22972bca367"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">addPlanetEntry</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#_CPPv426SpicePlanetStateMsgPayload" title="SpicePlanetStateMsgPayload"><span class="n"><span class="pre">SpicePlanetStateMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">msg</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv410PlanetGrid" title="PlanetGrid"><span class="n"><span class="pre">PlanetGrid</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">gridConfig</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N19PlanetRadiationBase14addPlanetEntryE11ReadFunctorI26SpicePlanetStateMsgPayloadERK10PlanetGrid" title="Link to this definition"></a><br /></dt>
+<dd><p>Registers a planet. Call from derived addPlanet*() methods.</p>
+<p>gridConfig may have sentinel values (e.g. REQ_m=-1, albedoAvg=-1, nLat=0) that <a class="reference internal" href="#class_planet_radiation_base_1ae77ecf61864be4994b8af097b8d3dbba"><span class="std std-ref">resolvePlanetEntry()</span></a> fills in during <a class="reference internal" href="#class_planet_radiation_base_1a94a24138521e976fff071a2270beb5e3"><span class="std std-ref">Reset()</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>msg</strong> – Planet state message functor. </p></li>
+<li><p><strong>gridConfig</strong> – Partially-configured patch grid. </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N19PlanetRadiationBase14getEclipseCaseEv">
+<span id="_CPPv3N19PlanetRadiationBase14getEclipseCaseEv"></span><span id="_CPPv2N19PlanetRadiationBase14getEclipseCaseEv"></span><span id="PlanetRadiationBase::getEclipseCase"></span><span class="target" id="class_planet_radiation_base_1aacbe4f9064c039908b3203c08d2117c7"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getEclipseCase</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N19PlanetRadiationBase14getEclipseCaseEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for the eclipseCase flag </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N19PlanetRadiationBase14setEclipseCaseEb">
+<span id="_CPPv3N19PlanetRadiationBase14setEclipseCaseEb"></span><span id="_CPPv2N19PlanetRadiationBase14setEclipseCaseEb"></span><span id="PlanetRadiationBase::setEclipseCase__b"></span><span class="target" id="class_planet_radiation_base_1a2cb6359d3f60d715a6f5208fe4914132"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setEclipseCase</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">value</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N19PlanetRadiationBase14setEclipseCaseEb" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for the eclipseCase flag </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19PlanetRadiationBase13defaultNumLatE">
+<span id="_CPPv3N19PlanetRadiationBase13defaultNumLatE"></span><span id="_CPPv2N19PlanetRadiationBase13defaultNumLatE"></span><span id="PlanetRadiationBase::defaultNumLat__i"></span><span class="target" id="class_planet_radiation_base_1a7bfc891a45c956daf535e5757651a9f1"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">defaultNumLat</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">180</span></span><a class="headerlink" href="#_CPPv4N19PlanetRadiationBase13defaultNumLatE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] default number of latitude grid points </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19PlanetRadiationBase13defaultNumLonE">
+<span id="_CPPv3N19PlanetRadiationBase13defaultNumLonE"></span><span id="_CPPv2N19PlanetRadiationBase13defaultNumLonE"></span><span id="PlanetRadiationBase::defaultNumLon__i"></span><span class="target" id="class_planet_radiation_base_1a8829670215cdee90dd6b3e74f3993f9a"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">defaultNumLon</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">360</span></span><a class="headerlink" href="#_CPPv4N19PlanetRadiationBase13defaultNumLonE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] default number of longitude grid points </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19PlanetRadiationBase10irFluxMeanE">
+<span id="_CPPv3N19PlanetRadiationBase10irFluxMeanE"></span><span id="_CPPv2N19PlanetRadiationBase10irFluxMeanE"></span><span id="PlanetRadiationBase::irFluxMean__double"></span><span class="target" id="class_planet_radiation_base_1ac542c8b9ad59620ef9313976ac7f4fe3"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">irFluxMean</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">237.0</span></span><a class="headerlink" href="#_CPPv4N19PlanetRadiationBase10irFluxMeanE" title="Link to this definition"></a><br /></dt>
+<dd><p>[W/m^2] mean outgoing IR radiation </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19PlanetRadiationBase9albedoAvgE">
+<span id="_CPPv3N19PlanetRadiationBase9albedoAvgE"></span><span id="_CPPv2N19PlanetRadiationBase9albedoAvgE"></span><span id="PlanetRadiationBase::albedoAvg__double"></span><span class="target" id="class_planet_radiation_base_1a4c378c70517be831023d89f7767d4c08"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">albedoAvg</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.30</span></span><a class="headerlink" href="#_CPPv4N19PlanetRadiationBase9albedoAvgE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Bond albedo, used when albedoDataPath is left empty </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19PlanetRadiationBase14albedoDataPathE">
+<span id="_CPPv3N19PlanetRadiationBase14albedoDataPathE"></span><span id="_CPPv2N19PlanetRadiationBase14albedoDataPathE"></span><span id="PlanetRadiationBase::albedoDataPath__ss"></span><span class="target" id="class_planet_radiation_base_1a5a8c57d6660ae013672f7d16b9973976"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">albedoDataPath</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;&quot;</span></span><a class="headerlink" href="#_CPPv4N19PlanetRadiationBase14albedoDataPathE" title="Link to this definition"></a><br /></dt>
+<dd><p>path to supportData/AlbedoData/ </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19PlanetRadiationBase14albedoDataFileE">
+<span id="_CPPv3N19PlanetRadiationBase14albedoDataFileE"></span><span id="_CPPv2N19PlanetRadiationBase14albedoDataFileE"></span><span id="PlanetRadiationBase::albedoDataFile__ss"></span><span class="target" id="class_planet_radiation_base_1af17a23455e81f9fa3e1ca385848c32e1"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">albedoDataFile</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;&quot;</span></span><a class="headerlink" href="#_CPPv4N19PlanetRadiationBase14albedoDataFileE" title="Link to this definition"></a><br /></dt>
+<dd><p>CSV filename. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19PlanetRadiationBase5REQ_mE">
+<span id="_CPPv3N19PlanetRadiationBase5REQ_mE"></span><span id="_CPPv2N19PlanetRadiationBase5REQ_mE"></span><span id="PlanetRadiationBase::REQ_m__double"></span><span class="target" id="class_planet_radiation_base_1a98818cc1ab800e2dad036053232bf512"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">REQ_m</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="o"><span class="pre">-</span></span><span class="m"><span class="pre">1.0</span></span><a class="headerlink" href="#_CPPv4N19PlanetRadiationBase5REQ_mE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] equatorial radius; -1 (default) = use WGS-84 Earth value </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19PlanetRadiationBase4RP_mE">
+<span id="_CPPv3N19PlanetRadiationBase4RP_mE"></span><span id="_CPPv2N19PlanetRadiationBase4RP_mE"></span><span id="PlanetRadiationBase::RP_m__double"></span><span class="target" id="class_planet_radiation_base_1a80526a58264125f799886a7969a52846"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">RP_m</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="o"><span class="pre">-</span></span><span class="m"><span class="pre">1.0</span></span><a class="headerlink" href="#_CPPv4N19PlanetRadiationBase4RP_mE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] polar radius; -1 (default) = use WGS-84 Earth value </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19PlanetRadiationBase20spacecraftStateInMsgE">
+<span id="_CPPv3N19PlanetRadiationBase20spacecraftStateInMsgE"></span><span id="_CPPv2N19PlanetRadiationBase20spacecraftStateInMsgE"></span><span id="PlanetRadiationBase::spacecraftStateInMsg__ReadFunctor:SCStatesMsgPayload:"></span><span class="target" id="class_planet_radiation_base_1a61260a8fc7f2c16023c2abe26b44fce1"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#_CPPv418SCStatesMsgPayload" title="SCStatesMsgPayload"><span class="n"><span class="pre">SCStatesMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">spacecraftStateInMsg</span></span></span><a class="headerlink" href="#_CPPv4N19PlanetRadiationBase20spacecraftStateInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>spacecraft position input message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19PlanetRadiationBase11planetInMsgE">
+<span id="_CPPv3N19PlanetRadiationBase11planetInMsgE"></span><span id="_CPPv2N19PlanetRadiationBase11planetInMsgE"></span><span id="PlanetRadiationBase::planetInMsg__ReadFunctor:SpicePlanetStateMsgPayload:"></span><span class="target" id="class_planet_radiation_base_1abe70c33cb1f25e921e6c034dde8384d7"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#_CPPv426SpicePlanetStateMsgPayload" title="SpicePlanetStateMsgPayload"><span class="n"><span class="pre">SpicePlanetStateMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">planetInMsg</span></span></span><a class="headerlink" href="#_CPPv4N19PlanetRadiationBase11planetInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>single-planet convenience (ERM path) </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19PlanetRadiationBase16sunPositionInMsgE">
+<span id="_CPPv3N19PlanetRadiationBase16sunPositionInMsgE"></span><span id="_CPPv2N19PlanetRadiationBase16sunPositionInMsgE"></span><span id="PlanetRadiationBase::sunPositionInMsg__ReadFunctor:SpicePlanetStateMsgPayload:"></span><span class="target" id="class_planet_radiation_base_1a2e7d894f4076a3439a13d52e7134241a"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#_CPPv426SpicePlanetStateMsgPayload" title="SpicePlanetStateMsgPayload"><span class="n"><span class="pre">SpicePlanetStateMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sunPositionInMsg</span></span></span><a class="headerlink" href="#_CPPv4N19PlanetRadiationBase16sunPositionInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Sun position input message. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19PlanetRadiationBase9bskLoggerE">
+<span id="_CPPv3N19PlanetRadiationBase9bskLoggerE"></span><span id="_CPPv2N19PlanetRadiationBase9bskLoggerE"></span><span id="PlanetRadiationBase::bskLogger__BSKLogger"></span><span class="target" id="class_planet_radiation_base_1a5b30ef8fd5f93743b6002d420b229b01"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N19PlanetRadiationBase9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>BSK logging. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19PlanetRadiationBase11eclipseCaseE">
+<span id="_CPPv3N19PlanetRadiationBase11eclipseCaseE"></span><span id="_CPPv2N19PlanetRadiationBase11eclipseCaseE"></span><span id="PlanetRadiationBase::eclipseCase__b"></span><span class="target" id="class_planet_radiation_base_1a8b0431fc0a8daeee0bd7ae5756eefb93"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">eclipseCase</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">false</span></span><a class="headerlink" href="#_CPPv4N19PlanetRadiationBase11eclipseCaseE" title="Link to this definition"></a><br /></dt>
+<dd><p>true = compute eclipse shadowing at each patch. Deprecated, will be removed after May 1st 2027. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19PlanetRadiationBase7planetsE">
+<span id="_CPPv3N19PlanetRadiationBase7planetsE"></span><span id="_CPPv2N19PlanetRadiationBase7planetsE"></span><span id="PlanetRadiationBase::planets__std::vector:PlanetEntry:"></span><span class="target" id="class_planet_radiation_base_1afa3d8568b37502c3680b4d721a9369b9"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv411PlanetEntry" title="PlanetEntry"><span class="n"><span class="pre">PlanetEntry</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">planets</span></span></span><a class="headerlink" href="#_CPPv4N19PlanetRadiationBase7planetsE" title="Link to this definition"></a><br /></dt>
+<dd><p>registered planets, built in <a class="reference internal" href="#class_planet_radiation_base_1a94a24138521e976fff071a2270beb5e3"><span class="std std-ref">Reset()</span></a> or <a class="reference internal" href="#class_planet_radiation_base_1a4cefc897378d9375988ad22972bca367"><span class="std std-ref">addPlanetEntry()</span></a></p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-protected-functions">Protected Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N19PlanetRadiationBase14evaluatePlanetERK18SCStatesMsgPayloadRK26SpicePlanetStateMsgPayload26SpicePlanetStateMsgPayloadR11PlanetEntryKd8uint64_t">
+<span id="_CPPv3N19PlanetRadiationBase14evaluatePlanetERK18SCStatesMsgPayloadRK26SpicePlanetStateMsgPayload26SpicePlanetStateMsgPayloadR11PlanetEntryKd8uint64_t"></span><span id="_CPPv2N19PlanetRadiationBase14evaluatePlanetERK18SCStatesMsgPayloadRK26SpicePlanetStateMsgPayload26SpicePlanetStateMsgPayloadR11PlanetEntryKd8uint64_t"></span><span id="PlanetRadiationBase::evaluatePlanet__SCStatesMsgPayloadCR.SpicePlanetStateMsgPayloadCR.SpicePlanetStateMsgPayload.PlanetEntryR.doubleC.uint64_t"></span><span class="target" id="class_planet_radiation_base_1a7253baf334c08608d5cfcc8bebccb7d3"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">evaluatePlanet</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#_CPPv418SCStatesMsgPayload" title="SCStatesMsgPayload"><span class="n"><span class="pre">SCStatesMsgPayload</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">scMsg</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#_CPPv426SpicePlanetStateMsgPayload" title="SpicePlanetStateMsgPayload"><span class="n"><span class="pre">SpicePlanetStateMsgPayload</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">sunMsg</span></span>, <a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#_CPPv426SpicePlanetStateMsgPayload" title="SpicePlanetStateMsgPayload"><span class="n"><span class="pre">SpicePlanetStateMsgPayload</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">planetMsg</span></span>, <a class="reference internal" href="#_CPPv411PlanetEntry" title="PlanetEntry"><span class="n"><span class="pre">PlanetEntry</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">entry</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">S_sun</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">nanos</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N19PlanetRadiationBase14evaluatePlanetERK18SCStatesMsgPayloadRK26SpicePlanetStateMsgPayload26SpicePlanetStateMsgPayloadR11PlanetEntryKd8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Called once per planet per timestep. PURE VIRTUAL.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>scMsg</strong> – spacecraft state </p></li>
+<li><p><strong>sunMsg</strong> – sun state </p></li>
+<li><p><strong>planetMsg</strong> – planet state (non-const copy, safe to pass J20002Pfix onward) </p></li>
+<li><p><strong>entry</strong> – planet entry with initialised grid and authalic radius </p></li>
+<li><p><strong>S_sun</strong> – [W/m^2] distance-corrected solar flux at planet </p></li>
+<li><p><strong>nanos</strong> – simulation time </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N19PlanetRadiationBase18resolvePlanetEntryERK26SpicePlanetStateMsgPayloadR10PlanetGridi">
+<span id="_CPPv3N19PlanetRadiationBase18resolvePlanetEntryERK26SpicePlanetStateMsgPayloadR10PlanetGridi"></span><span id="_CPPv2N19PlanetRadiationBase18resolvePlanetEntryERK26SpicePlanetStateMsgPayloadR10PlanetGridi"></span><span id="PlanetRadiationBase::resolvePlanetEntry__SpicePlanetStateMsgPayloadCR.PlanetGridR.i"></span><span class="target" id="class_planet_radiation_base_1ae77ecf61864be4994b8af097b8d3dbba"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">resolvePlanetEntry</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#_CPPv426SpicePlanetStateMsgPayload" title="SpicePlanetStateMsgPayload"><span class="n"><span class="pre">SpicePlanetStateMsgPayload</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">planetMsg</span></span>, <a class="reference internal" href="#_CPPv410PlanetGrid" title="PlanetGrid"><span class="n"><span class="pre">PlanetGrid</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">grid</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">idx</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N19PlanetRadiationBase18resolvePlanetEntryERK26SpicePlanetStateMsgPayloadR10PlanetGridi" title="Link to this definition"></a><br /></dt>
+<dd><p>Called in <a class="reference internal" href="#class_planet_radiation_base_1a94a24138521e976fff071a2270beb5e3"><span class="std std-ref">Reset()</span></a> for each entry after reading the planet message.</p>
+<p>Override to fill in grid members that depend on the planet name, e.g. REQ_m, RP_m, albedoAvg, nLat, nLon. Default: no-op (ERM relies on scalar config set before <a class="reference internal" href="#class_planet_radiation_base_1a94a24138521e976fff071a2270beb5e3"><span class="std std-ref">Reset()</span></a>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>planetMsg</strong> – Planet state message. </p></li>
+<li><p><strong>grid</strong> – <a class="reference internal" href="#struct_planet_grid"><span class="std std-ref">PlanetGrid</span></a> to fill in. </p></li>
+<li><p><strong>idx</strong> – Index of this planet entry. </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N19PlanetRadiationBase13onUpdateBeginERK18SCStatesMsgPayloadRK26SpicePlanetStateMsgPayload8uint64_t">
+<span id="_CPPv3N19PlanetRadiationBase13onUpdateBeginERK18SCStatesMsgPayloadRK26SpicePlanetStateMsgPayload8uint64_t"></span><span id="_CPPv2N19PlanetRadiationBase13onUpdateBeginERK18SCStatesMsgPayloadRK26SpicePlanetStateMsgPayload8uint64_t"></span><span id="PlanetRadiationBase::onUpdateBegin__SCStatesMsgPayloadCR.SpicePlanetStateMsgPayloadCR.uint64_t"></span><span class="target" id="class_planet_radiation_base_1aab8810d472796785cc13c4309e9ba6c5"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">onUpdateBegin</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#_CPPv418SCStatesMsgPayload" title="SCStatesMsgPayload"><span class="n"><span class="pre">SCStatesMsgPayload</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">scMsg</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#_CPPv426SpicePlanetStateMsgPayload" title="SpicePlanetStateMsgPayload"><span class="n"><span class="pre">SpicePlanetStateMsgPayload</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">sunMsg</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">nanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N19PlanetRadiationBase13onUpdateBeginERK18SCStatesMsgPayloadRK26SpicePlanetStateMsgPayload8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Called at the start of <a class="reference internal" href="#class_planet_radiation_base_1ab2b951431f54bf23099c99a8b8701f37"><span class="std std-ref">UpdateState()</span></a>, before the planet loop. Override to clear per-timestep accumulators or cache the spacecraft attitude. Default: no-op.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>scMsg</strong> – Spacecraft state message. </p></li>
+<li><p><strong>sunMsg</strong> – Sun state message. </p></li>
+<li><p><strong>nanos</strong> – Current simulation time (ns). </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N19PlanetRadiationBase11onUpdateEndE8uint64_t">
+<span id="_CPPv3N19PlanetRadiationBase11onUpdateEndE8uint64_t"></span><span id="_CPPv2N19PlanetRadiationBase11onUpdateEndE8uint64_t"></span><span id="PlanetRadiationBase::onUpdateEnd__uint64_t"></span><span class="target" id="class_planet_radiation_base_1a0e0636c29bb85675eee51d570c173ed4"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">onUpdateEnd</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">nanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N19PlanetRadiationBase11onUpdateEndE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Called after the planet loop in <a class="reference internal" href="#class_planet_radiation_base_1ab2b951431f54bf23099c99a8b8701f37"><span class="std std-ref">UpdateState()</span></a>. Override to write output messages. Default: no-op.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>nanos</strong> – Current simulation time (ns). </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N19PlanetRadiationBase11customResetE8uint64_t">
+<span id="_CPPv3N19PlanetRadiationBase11customResetE8uint64_t"></span><span id="_CPPv2N19PlanetRadiationBase11customResetE8uint64_t"></span><span id="PlanetRadiationBase::customReset__uint64_t"></span><span class="target" id="class_planet_radiation_base_1a9f3b500bf5c67cafce7f29e9bff75e8c"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">customReset</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">nanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N19PlanetRadiationBase11customResetE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Called at the end of <a class="reference internal" href="#class_planet_radiation_base_1a94a24138521e976fff071a2270beb5e3"><span class="std std-ref">Reset()</span></a>. Override for additional validation (e.g. instrument configuration). Default: no-op.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>nanos</strong> – Current simulation time (ns). </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK19PlanetRadiationBase25allowSinglePlanetFallbackEv">
+<span id="_CPPv3NK19PlanetRadiationBase25allowSinglePlanetFallbackEv"></span><span id="_CPPv2NK19PlanetRadiationBase25allowSinglePlanetFallbackEv"></span><span id="PlanetRadiationBase::allowSinglePlanetFallbackC"></span><span class="target" id="class_planet_radiation_base_1a918396e542086bd7300d04d81e7b6567"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">allowSinglePlanetFallback</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK19PlanetRadiationBase25allowSinglePlanetFallbackEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Return true to enable the single-planet backward-compat fallback in <a class="reference internal" href="#class_planet_radiation_base_1a94a24138521e976fff071a2270beb5e3"><span class="std std-ref">Reset()</span></a>: when planets is empty and planetInMsg is linked, a default <a class="reference internal" href="#struct_planet_grid"><span class="std std-ref">PlanetGrid</span></a> is built from the scalar config fields. Default: false. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N19PlanetRadiationBase15isPatchEclipsedERK11PatchResultRK18SCStatesMsgPayloadRK26SpicePlanetStateMsgPayload">
+<span id="_CPPv3N19PlanetRadiationBase15isPatchEclipsedERK11PatchResultRK18SCStatesMsgPayloadRK26SpicePlanetStateMsgPayload"></span><span id="_CPPv2N19PlanetRadiationBase15isPatchEclipsedERK11PatchResultRK18SCStatesMsgPayloadRK26SpicePlanetStateMsgPayload"></span><span id="PlanetRadiationBase::isPatchEclipsed__PatchResultCR.SCStatesMsgPayloadCR.SpicePlanetStateMsgPayloadCR"></span><span class="target" id="class_planet_radiation_base_1ab14bff6e141732024710936a9eb6594c"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">isPatchEclipsed</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv411PatchResult" title="PatchResult"><span class="n"><span class="pre">PatchResult</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">patch</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#_CPPv418SCStatesMsgPayload" title="SCStatesMsgPayload"><span class="n"><span class="pre">SCStatesMsgPayload</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">scMsg</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#_CPPv426SpicePlanetStateMsgPayload" title="SpicePlanetStateMsgPayload"><span class="n"><span class="pre">SpicePlanetStateMsgPayload</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">sunMsg</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N19PlanetRadiationBase15isPatchEclipsedERK11PatchResultRK18SCStatesMsgPayloadRK26SpicePlanetStateMsgPayload" title="Link to this definition"></a><br /></dt>
+<dd><p>Determines if a patch is in eclipse (umbra/penumbra). Returns true if the patch should contribute zero albedo flux.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>patch</strong> – Patch result to evaluate. </p></li>
+<li><p><strong>scMsg</strong> – Spacecraft state message. </p></li>
+<li><p><strong>sunMsg</strong> – Sun state message. </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-protected-attributes">Protected Attributes</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19PlanetRadiationBase13currentR_SP_NE">
+<span id="_CPPv3N19PlanetRadiationBase13currentR_SP_NE"></span><span id="_CPPv2N19PlanetRadiationBase13currentR_SP_NE"></span><span id="PlanetRadiationBase::currentR_SP_N__Eigen::Vector3d"></span><span class="target" id="class_planet_radiation_base_1acc038a1ec6463f56f09cf65b9971c910"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">currentR_SP_N</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Zero</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N19PlanetRadiationBase13currentR_SP_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] Sun position relative to current planet centre </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19PlanetRadiationBase19currentPlanetRadiusE">
+<span id="_CPPv3N19PlanetRadiationBase19currentPlanetRadiusE"></span><span id="_CPPv2N19PlanetRadiationBase19currentPlanetRadiusE"></span><span id="PlanetRadiationBase::currentPlanetRadius__double"></span><span class="target" id="class_planet_radiation_base_1a658ab4dca1197e0578938048c1969a9c"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">currentPlanetRadius</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N19PlanetRadiationBase19currentPlanetRadiusE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] current planet authalic radius </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19PlanetRadiationBase13useAlbedoDataE">
+<span id="_CPPv3N19PlanetRadiationBase13useAlbedoDataE"></span><span id="_CPPv2N19PlanetRadiationBase13useAlbedoDataE"></span><span id="PlanetRadiationBase::useAlbedoData__b"></span><span class="target" id="class_planet_radiation_base_1a97e7e8b0eebfa15d0e30f3ea54b1a3a4"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">useAlbedoData</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">false</span></span><a class="headerlink" href="#_CPPv4N19PlanetRadiationBase13useAlbedoDataE" title="Link to this definition"></a><br /></dt>
+<dd><p>true = load CSV albedo data </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19PlanetRadiationBase13m_eclipseCaseE">
+<span id="_CPPv3N19PlanetRadiationBase13m_eclipseCaseE"></span><span id="_CPPv2N19PlanetRadiationBase13m_eclipseCaseE"></span><span id="PlanetRadiationBase::m_eclipseCase__b"></span><span class="target" id="class_planet_radiation_base_1a9486bae3f61920cc918ed07e9409a962"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">m_eclipseCase</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">false</span></span><a class="headerlink" href="#_CPPv4N19PlanetRadiationBase13m_eclipseCaseE" title="Link to this definition"></a><br /></dt>
+<dd><p>true = compute eclipse shadowing at each patch </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-protected-static-functions">Protected Static Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N19PlanetRadiationBase23computeIlluminationAtdAEdN5Eigen8Vector3dEN5Eigen8Vector3dE">
+<span id="_CPPv3N19PlanetRadiationBase23computeIlluminationAtdAEdN5Eigen8Vector3dEN5Eigen8Vector3dE"></span><span id="_CPPv2N19PlanetRadiationBase23computeIlluminationAtdAEdN5Eigen8Vector3dEN5Eigen8Vector3dE"></span><span id="PlanetRadiationBase::computeIlluminationAtdA__double.Eigen::Vector3d.Eigen::Vector3d"></span><span class="target" id="class_planet_radiation_base_1ab724bf91ef7b18e0f4edf35c6675e746"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeIlluminationAtdA</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">Rplanet</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">r_dAP_N</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">r_SP_N</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N19PlanetRadiationBase23computeIlluminationAtdAEdN5Eigen8Vector3dEN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>Computes the umbra/penumbra illumination factor [0, 1] for a surface element at r_dAP_N (relative to planet centre). Returns 0 in full umbra, 1 in full sunlight, smooth intermediate in penumbra.</p>
+<p>
+Compute the fraction of the solar disk visible from a surface patch. Returns: 1.0 -&gt; fully illuminated 0.0 -&gt; full umbra 0.0 &lt; value &lt; 1.0 -&gt; penumbra</p>
+<p>The calculation follows the apparent angular radii of the Sun and planet as seen from the patch and computes the overlap area of the two disks. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Rplanet</strong> – [m] planet radius </p></li>
+<li><p><strong>r_dAP_N</strong> – [m] patch position relative to planet centre </p></li>
+<li><p><strong>r_SP_N</strong> – [m] Sun position relative to planet centre</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="magneticFieldBase.html" class="btn btn-neutral float-left" title="C++ Module: magneticFieldBase" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="windBase.html" class="btn btn-neutral float-right" title="C++ Module: windBase" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

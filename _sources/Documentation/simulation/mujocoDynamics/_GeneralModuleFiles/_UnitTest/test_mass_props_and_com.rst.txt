@@ -1,0 +1,13 @@
+.. _test_mass_props_and_com:
+
+test_mass_props_and_com
+=======================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. automodule:: test_mass_props_and_com
+   :members:
+   :show-inheritance:
+

@@ -1,0 +1,1073 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_downlinkHandling &mdash; Basilisk 2.12.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=2ebb1c42" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=4ad2e773"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">test_downlinkHandling</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for test_downlinkHandling</h1><div class="highlight"><pre>
+<span></span><span class="c1"># ISC License</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado Boulder</span>
+<span class="c1">#</span>
+<span class="c1"># Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1"># purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1"># copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1"># THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1"># WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1"># MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1"># ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1"># WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1"># ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1"># OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Unit tests for downlinkHandling.</span>
+
+<span class="sd">Coverage:</span>
+<span class="sd">- Formula parity against the Python-equivalent BER/PER/ARQ model.</span>
+<span class="sd">- Zero-throughput behavior when link quality inputs are invalid.</span>
+<span class="sd">- Retry-cap effects on storage drawdown and packet drop probability.</span>
+<span class="sd">- Removal-policy behavior (attempted removal vs delivered-only removal).</span>
+<span class="sd">- Storage-limited operation and remaining-data estimate behavior.</span>
+<span class="sd">- Automatic receiver-path selection from linkBudget antenna states/CNR values.</span>
+
+<span class="sd">Debug toggle:</span>
+<span class="sd">- Default is off.</span>
+<span class="sd">- Set ``BSK_DOWNLINK_TEST_DEBUG=1`` to print case setup and actual-vs-expected metrics.</span>
+<span class="sd">- Or run this file directly with ``--debug``.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">importlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">downlinkHandling</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">partitionedStorageUnit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">simpleStorageUnit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">macros</span>
+
+<span class="n">DownlinkHandlingMsgPayload</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="s2">&quot;Basilisk.architecture.messaging.DownlinkHandlingMsgPayload&quot;</span><span class="p">)</span>
+<span class="n">LinkBudgetMsgPayload</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="s2">&quot;Basilisk.architecture.messaging.LinkBudgetMsgPayload&quot;</span><span class="p">)</span>
+<span class="n">DataStorageStatusMsgPayload</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="s2">&quot;Basilisk.architecture.messaging.DataStorageStatusMsgPayload&quot;</span><span class="p">)</span>
+
+<span class="n">REMOVE_ATTEMPTED</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">REMOVE_DELIVERED_ONLY</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="c1"># Debug is false by default; can be enabled by environment variable or --debug when running this file directly.</span>
+<span class="n">DEBUG_DOWNLINK_TEST</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;BSK_DOWNLINK_TEST_DEBUG&quot;</span><span class="p">,</span> <span class="s2">&quot;0&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;true&quot;</span><span class="p">,</span> <span class="s2">&quot;yes&quot;</span><span class="p">,</span> <span class="s2">&quot;on&quot;</span><span class="p">}:</span>
+    <span class="n">DEBUG_DOWNLINK_TEST</span> <span class="o">=</span> <span class="kc">True</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">debug_print</span><span class="p">(</span><span class="n">msg</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">DEBUG_DOWNLINK_TEST</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[downlinkHandlingTest] </span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">debug_compare</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">actual</span><span class="p">,</span> <span class="n">expected</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">DEBUG_DOWNLINK_TEST</span><span class="p">:</span>
+        <span class="n">abs_err</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">actual</span> <span class="o">-</span> <span class="n">expected</span><span class="p">)</span>
+        <span class="n">rel_err</span> <span class="o">=</span> <span class="n">abs_err</span> <span class="o">/</span> <span class="nb">max</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">expected</span><span class="p">),</span> <span class="mf">1.0e-30</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;[downlinkHandlingTest] </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">: &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;actual=</span><span class="si">{</span><span class="n">actual</span><span class="si">:</span><span class="s2">.16e</span><span class="si">}</span><span class="s2">, expected=</span><span class="si">{</span><span class="n">expected</span><span class="si">:</span><span class="s2">.16e</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;abs_err=</span><span class="si">{</span><span class="n">abs_err</span><span class="si">:</span><span class="s2">.3e</span><span class="si">}</span><span class="s2">, rel_err=</span><span class="si">{</span><span class="n">rel_err</span><span class="si">:</span><span class="s2">.3e</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">q_function</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">erfc</span><span class="p">(</span><span class="n">x</span> <span class="o">/</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2.0</span><span class="p">))</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">python_equivalent_from_link</span><span class="p">(</span><span class="n">cnr_linear</span><span class="p">,</span> <span class="n">bandwidth_hz</span><span class="p">,</span> <span class="n">bit_rate_bps</span><span class="p">,</span> <span class="n">packet_bits</span><span class="p">,</span> <span class="n">max_retx</span><span class="p">,</span> <span class="n">removal_policy</span><span class="o">=</span><span class="n">REMOVE_ATTEMPTED</span><span class="p">):</span>
+    <span class="n">cnr_db</span> <span class="o">=</span> <span class="mf">10.0</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">cnr_linear</span><span class="p">)</span>
+    <span class="n">c_n0_dbhz</span> <span class="o">=</span> <span class="n">cnr_db</span> <span class="o">+</span> <span class="mf">10.0</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">bandwidth_hz</span><span class="p">)</span>
+    <span class="n">eb_n0_db</span> <span class="o">=</span> <span class="n">c_n0_dbhz</span> <span class="o">-</span> <span class="mf">10.0</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">bit_rate_bps</span><span class="p">)</span>
+
+    <span class="n">eb_n0_linear</span> <span class="o">=</span> <span class="mf">10.0</span> <span class="o">**</span> <span class="p">(</span><span class="n">eb_n0_db</span> <span class="o">/</span> <span class="mf">10.0</span><span class="p">)</span>
+    <span class="n">ber</span> <span class="o">=</span> <span class="n">q_function</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">eb_n0_linear</span><span class="p">))</span>
+    <span class="n">per</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">ber</span><span class="p">)</span> <span class="o">**</span> <span class="n">packet_bits</span>
+
+    <span class="n">one_try_success</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">per</span>
+    <span class="n">packet_drop</span> <span class="o">=</span> <span class="n">per</span> <span class="o">**</span> <span class="n">max_retx</span>
+    <span class="n">packet_success</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">packet_drop</span>
+
+    <span class="k">if</span> <span class="n">one_try_success</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="n">expected_attempts</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">max_retx</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">expected_attempts</span> <span class="o">=</span> <span class="n">packet_success</span> <span class="o">/</span> <span class="n">one_try_success</span>
+
+    <span class="n">modeled_storage_removal_rate</span> <span class="o">=</span> <span class="n">bit_rate_bps</span> <span class="o">/</span> <span class="n">expected_attempts</span>
+    <span class="n">delivered_rate</span> <span class="o">=</span> <span class="n">modeled_storage_removal_rate</span> <span class="o">*</span> <span class="n">packet_success</span>
+    <span class="n">dropped_rate</span> <span class="o">=</span> <span class="n">modeled_storage_removal_rate</span> <span class="o">-</span> <span class="n">delivered_rate</span>
+    <span class="k">if</span> <span class="n">removal_policy</span> <span class="o">==</span> <span class="n">REMOVE_DELIVERED_ONLY</span><span class="p">:</span>
+        <span class="n">storage_removal_rate</span> <span class="o">=</span> <span class="n">delivered_rate</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">storage_removal_rate</span> <span class="o">=</span> <span class="n">modeled_storage_removal_rate</span>
+
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;c_n0_dbhz&quot;</span><span class="p">:</span> <span class="n">c_n0_dbhz</span><span class="p">,</span>
+        <span class="s2">&quot;eb_n0_db&quot;</span><span class="p">:</span> <span class="n">eb_n0_db</span><span class="p">,</span>
+        <span class="s2">&quot;ber&quot;</span><span class="p">:</span> <span class="n">ber</span><span class="p">,</span>
+        <span class="s2">&quot;per&quot;</span><span class="p">:</span> <span class="n">per</span><span class="p">,</span>
+        <span class="s2">&quot;packet_success&quot;</span><span class="p">:</span> <span class="n">packet_success</span><span class="p">,</span>
+        <span class="s2">&quot;packet_drop&quot;</span><span class="p">:</span> <span class="n">packet_drop</span><span class="p">,</span>
+        <span class="s2">&quot;expected_attempts&quot;</span><span class="p">:</span> <span class="n">expected_attempts</span><span class="p">,</span>
+        <span class="s2">&quot;storage_removal_rate&quot;</span><span class="p">:</span> <span class="n">storage_removal_rate</span><span class="p">,</span>
+        <span class="s2">&quot;delivered_rate&quot;</span><span class="p">:</span> <span class="n">delivered_rate</span><span class="p">,</span>
+        <span class="s2">&quot;dropped_rate&quot;</span><span class="p">:</span> <span class="n">dropped_rate</span>
+    <span class="p">}</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">make_storage_status_msg</span><span class="p">(</span><span class="n">storage_level_bits</span><span class="p">,</span> <span class="n">partition_entries</span><span class="p">):</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="n">DataStorageStatusMsgPayload</span><span class="o">.</span><span class="n">DataStorageStatusMsgPayload</span><span class="p">()</span>
+    <span class="n">payload</span><span class="o">.</span><span class="n">storageLevel</span> <span class="o">=</span> <span class="n">storage_level_bits</span>          <span class="c1"># [bit]</span>
+
+    <span class="n">names</span> <span class="o">=</span> <span class="n">DataStorageStatusMsgPayload</span><span class="o">.</span><span class="n">StringVector</span><span class="p">()</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="n">DataStorageStatusMsgPayload</span><span class="o">.</span><span class="n">DoubleVector</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">bits</span> <span class="ow">in</span> <span class="n">partition_entries</span><span class="p">:</span>
+        <span class="n">names</span><span class="o">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">values</span><span class="o">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">bits</span><span class="p">)</span>                         <span class="c1"># [bit]</span>
+
+    <span class="n">payload</span><span class="o">.</span><span class="n">storedDataName</span> <span class="o">=</span> <span class="n">names</span>
+    <span class="n">payload</span><span class="o">.</span><span class="n">storedData</span> <span class="o">=</span> <span class="n">values</span>
+    <span class="k">return</span> <span class="n">DataStorageStatusMsgPayload</span><span class="o">.</span><span class="n">DataStorageStatusMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">run_downlink_case</span><span class="p">(</span>
+    <span class="n">cnr1</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+    <span class="n">cnr2</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+    <span class="n">ant_state1</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">ant_state2</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">bandwidth_hz</span><span class="o">=</span><span class="mf">1.0e6</span><span class="p">,</span>
+    <span class="n">bit_rate_bps</span><span class="o">=</span><span class="mf">1.0e5</span><span class="p">,</span>
+    <span class="n">packet_bits</span><span class="o">=</span><span class="mf">256.0</span><span class="p">,</span>
+    <span class="n">max_retx</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">receiver_index</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">removal_policy</span><span class="o">=</span><span class="n">REMOVE_ATTEMPTED</span><span class="p">,</span>
+    <span class="n">initial_bits</span><span class="o">=</span><span class="mf">1.0e9</span><span class="p">,</span>
+    <span class="n">task_dt_s</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">stop_time_s</span><span class="o">=</span><span class="mf">3.0</span>
+<span class="p">):</span>
+    <span class="n">debug_print</span><span class="p">(</span>
+        <span class="s2">&quot;run_downlink_case: &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;cnr1=</span><span class="si">{</span><span class="n">cnr1</span><span class="si">}</span><span class="s2">, cnr2=</span><span class="si">{</span><span class="n">cnr2</span><span class="si">}</span><span class="s2">, bandwidth_hz=</span><span class="si">{</span><span class="n">bandwidth_hz</span><span class="si">}</span><span class="s2">, &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;bit_rate_bps=</span><span class="si">{</span><span class="n">bit_rate_bps</span><span class="si">}</span><span class="s2">, packet_bits=</span><span class="si">{</span><span class="n">packet_bits</span><span class="si">}</span><span class="s2">, &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;max_retx=</span><span class="si">{</span><span class="n">max_retx</span><span class="si">}</span><span class="s2">, receiver_index=</span><span class="si">{</span><span class="n">receiver_index</span><span class="si">}</span><span class="s2">, &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;removal_policy=</span><span class="si">{</span><span class="n">removal_policy</span><span class="si">}</span><span class="s2">, &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;initial_bits=</span><span class="si">{</span><span class="n">initial_bits</span><span class="si">}</span><span class="s2">, task_dt_s=</span><span class="si">{</span><span class="n">task_dt_s</span><span class="si">}</span><span class="s2">, stop_time_s=</span><span class="si">{</span><span class="n">stop_time_s</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+    <span class="n">unit_task_name</span> <span class="o">=</span> <span class="s2">&quot;unitTask&quot;</span>
+    <span class="n">unit_process_name</span> <span class="o">=</span> <span class="s2">&quot;unitProcess&quot;</span>
+
+    <span class="n">unit_test_sim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">test_proc</span> <span class="o">=</span> <span class="n">unit_test_sim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">unit_process_name</span><span class="p">)</span>
+    <span class="n">test_proc</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">unit_test_sim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">unit_task_name</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">task_dt_s</span><span class="p">)))</span>
+
+    <span class="n">test_module</span> <span class="o">=</span> <span class="n">downlinkHandling</span><span class="o">.</span><span class="n">DownlinkHandling</span><span class="p">()</span>
+    <span class="n">test_module</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;downlink&quot;</span>
+    <span class="k">assert</span> <span class="n">test_module</span><span class="o">.</span><span class="n">setBitRateRequest</span><span class="p">(</span><span class="n">bit_rate_bps</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">test_module</span><span class="o">.</span><span class="n">setPacketSizeBits</span><span class="p">(</span><span class="n">packet_bits</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">test_module</span><span class="o">.</span><span class="n">setMaxRetransmissions</span><span class="p">(</span><span class="n">max_retx</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">test_module</span><span class="o">.</span><span class="n">setReceiverAntenna</span><span class="p">(</span><span class="n">receiver_index</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">test_module</span><span class="o">.</span><span class="n">setRemovalPolicy</span><span class="p">(</span><span class="n">removal_policy</span><span class="p">)</span>
+    <span class="n">test_module</span><span class="o">.</span><span class="n">setRequireFullPacket</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">unit_test_sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unit_task_name</span><span class="p">,</span> <span class="n">test_module</span><span class="p">)</span>
+
+    <span class="n">data_storage</span> <span class="o">=</span> <span class="n">simpleStorageUnit</span><span class="o">.</span><span class="n">SimpleStorageUnit</span><span class="p">()</span>
+    <span class="n">data_storage</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;storage&quot;</span>
+    <span class="n">data_storage</span><span class="o">.</span><span class="n">storageCapacity</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">initial_bits</span><span class="p">,</span> <span class="n">initial_bits</span> <span class="o">+</span> <span class="mf">1.0e6</span><span class="p">))</span>
+    <span class="n">data_storage</span><span class="o">.</span><span class="n">addDataNodeToModel</span><span class="p">(</span><span class="n">test_module</span><span class="o">.</span><span class="n">nodeDataOutMsg</span><span class="p">)</span>
+    <span class="n">unit_test_sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unit_task_name</span><span class="p">,</span> <span class="n">data_storage</span><span class="p">)</span>
+    <span class="n">test_module</span><span class="o">.</span><span class="n">addStorageUnitToDownlink</span><span class="p">(</span><span class="n">data_storage</span><span class="o">.</span><span class="n">storageUnitDataOutMsg</span><span class="p">)</span>
+    <span class="n">data_storage</span><span class="o">.</span><span class="n">setDataBuffer</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">initial_bits</span><span class="p">))</span>
+
+    <span class="n">link_payload</span> <span class="o">=</span> <span class="n">LinkBudgetMsgPayload</span><span class="o">.</span><span class="n">LinkBudgetMsgPayload</span><span class="p">()</span>
+    <span class="n">link_payload</span><span class="o">.</span><span class="n">antennaName1</span> <span class="o">=</span> <span class="s2">&quot;TX_Ant&quot;</span>
+    <span class="n">link_payload</span><span class="o">.</span><span class="n">antennaName2</span> <span class="o">=</span> <span class="s2">&quot;RX_Ant&quot;</span>
+    <span class="n">link_payload</span><span class="o">.</span><span class="n">antennaState1</span> <span class="o">=</span> <span class="n">ant_state1</span>
+    <span class="n">link_payload</span><span class="o">.</span><span class="n">antennaState2</span> <span class="o">=</span> <span class="n">ant_state2</span>
+    <span class="n">link_payload</span><span class="o">.</span><span class="n">CNR1</span> <span class="o">=</span> <span class="n">cnr1</span>
+    <span class="n">link_payload</span><span class="o">.</span><span class="n">CNR2</span> <span class="o">=</span> <span class="n">cnr2</span>
+    <span class="n">link_payload</span><span class="o">.</span><span class="n">bandwidth</span> <span class="o">=</span> <span class="n">bandwidth_hz</span>
+    <span class="n">link_payload</span><span class="o">.</span><span class="n">frequency</span> <span class="o">=</span> <span class="mf">2.2e9</span>
+    <span class="n">link_msg</span> <span class="o">=</span> <span class="n">LinkBudgetMsgPayload</span><span class="o">.</span><span class="n">LinkBudgetMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">link_payload</span><span class="p">)</span>
+    <span class="n">test_module</span><span class="o">.</span><span class="n">linkBudgetInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">link_msg</span><span class="p">)</span>
+
+    <span class="n">node_log</span> <span class="o">=</span> <span class="n">test_module</span><span class="o">.</span><span class="n">nodeDataOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">storage_log</span> <span class="o">=</span> <span class="n">data_storage</span><span class="o">.</span><span class="n">storageUnitDataOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">downlink_reader</span> <span class="o">=</span> <span class="n">DownlinkHandlingMsgPayload</span><span class="o">.</span><span class="n">DownlinkHandlingMsgReader</span><span class="p">()</span>
+    <span class="n">downlink_reader</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">test_module</span><span class="o">.</span><span class="n">downlinkOutMsg</span><span class="p">)</span>
+    <span class="n">downlink_log</span> <span class="o">=</span> <span class="n">downlink_reader</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+
+    <span class="n">unit_test_sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unit_task_name</span><span class="p">,</span> <span class="n">node_log</span><span class="p">)</span>
+    <span class="n">unit_test_sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unit_task_name</span><span class="p">,</span> <span class="n">storage_log</span><span class="p">)</span>
+    <span class="n">unit_test_sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unit_task_name</span><span class="p">,</span> <span class="n">downlink_log</span><span class="p">)</span>
+
+    <span class="n">unit_test_sim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">unit_test_sim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">stop_time_s</span><span class="p">))</span>
+    <span class="n">unit_test_sim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">DEBUG_DOWNLINK_TEST</span><span class="p">:</span>
+        <span class="n">debug_print</span><span class="p">(</span>
+            <span class="s2">&quot;case results: &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;linkActive=</span><span class="si">{</span><span class="n">downlink_log</span><span class="o">.</span><span class="n">linkActive</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;removalPolicy=</span><span class="si">{</span><span class="n">downlink_log</span><span class="o">.</span><span class="n">removalPolicy</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;receiverIndex=</span><span class="si">{</span><span class="n">downlink_log</span><span class="o">.</span><span class="n">receiverIndex</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;ber=</span><span class="si">{</span><span class="n">downlink_log</span><span class="o">.</span><span class="n">ber</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.16e</span><span class="si">}</span><span class="s2">, per=</span><span class="si">{</span><span class="n">downlink_log</span><span class="o">.</span><span class="n">per</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.16e</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;storageRemovalRate=</span><span class="si">{</span><span class="n">downlink_log</span><span class="o">.</span><span class="n">storageRemovalRate</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.16e</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;deliveredRate=</span><span class="si">{</span><span class="n">downlink_log</span><span class="o">.</span><span class="n">deliveredDataRate</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.16e</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;droppedRate=</span><span class="si">{</span><span class="n">downlink_log</span><span class="o">.</span><span class="n">droppedDataRate</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.16e</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;nodeBaud=</span><span class="si">{</span><span class="n">node_log</span><span class="o">.</span><span class="n">baudRate</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.16e</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;storageLevel=</span><span class="si">{</span><span class="n">storage_log</span><span class="o">.</span><span class="n">storageLevel</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.16e</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">test_module</span><span class="p">,</span> <span class="n">node_log</span><span class="p">,</span> <span class="n">storage_log</span><span class="p">,</span> <span class="n">downlink_log</span>
+
+
+<div class="viewcode-block" id="test_downlink_matches_python_equivalent">
+<a class="viewcode-back" href="../Documentation/simulation/communication/downlinkHandling/_UnitTest/test_downlinkHandling.html#test_downlinkHandling.test_downlink_matches_python_equivalent">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_downlink_matches_python_equivalent</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Verify C++ module outputs match the Python-equivalent BER/PER/ARQ model.&quot;&quot;&quot;</span>
+    <span class="n">debug_print</span><span class="p">(</span><span class="s2">&quot;test_downlink_matches_python_equivalent&quot;</span><span class="p">)</span>
+    <span class="n">cnr</span> <span class="o">=</span> <span class="mf">0.5</span>
+    <span class="n">bandwidth</span> <span class="o">=</span> <span class="mf">1.0e6</span>
+    <span class="n">bit_rate</span> <span class="o">=</span> <span class="mf">1.0e5</span>
+    <span class="n">packet_bits</span> <span class="o">=</span> <span class="mf">256.0</span>
+    <span class="n">max_retx</span> <span class="o">=</span> <span class="mi">10</span>
+
+    <span class="n">_</span><span class="p">,</span> <span class="n">node_log</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">downlink_log</span> <span class="o">=</span> <span class="n">run_downlink_case</span><span class="p">(</span>
+        <span class="n">cnr2</span><span class="o">=</span><span class="n">cnr</span><span class="p">,</span>
+        <span class="n">bandwidth_hz</span><span class="o">=</span><span class="n">bandwidth</span><span class="p">,</span>
+        <span class="n">bit_rate_bps</span><span class="o">=</span><span class="n">bit_rate</span><span class="p">,</span>
+        <span class="n">packet_bits</span><span class="o">=</span><span class="n">packet_bits</span><span class="p">,</span>
+        <span class="n">max_retx</span><span class="o">=</span><span class="n">max_retx</span><span class="p">,</span>
+        <span class="n">initial_bits</span><span class="o">=</span><span class="mf">1.0e9</span>
+    <span class="p">)</span>
+
+    <span class="n">expected</span> <span class="o">=</span> <span class="n">python_equivalent_from_link</span><span class="p">(</span><span class="n">cnr</span><span class="p">,</span> <span class="n">bandwidth</span><span class="p">,</span> <span class="n">bit_rate</span><span class="p">,</span> <span class="n">packet_bits</span><span class="p">,</span> <span class="n">max_retx</span><span class="p">)</span>
+    <span class="n">debug_compare</span><span class="p">(</span><span class="s2">&quot;ber&quot;</span><span class="p">,</span> <span class="n">downlink_log</span><span class="o">.</span><span class="n">ber</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">expected</span><span class="p">[</span><span class="s2">&quot;ber&quot;</span><span class="p">])</span>
+    <span class="n">debug_compare</span><span class="p">(</span><span class="s2">&quot;per&quot;</span><span class="p">,</span> <span class="n">downlink_log</span><span class="o">.</span><span class="n">per</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">expected</span><span class="p">[</span><span class="s2">&quot;per&quot;</span><span class="p">])</span>
+    <span class="n">debug_compare</span><span class="p">(</span><span class="s2">&quot;expectedAttemptsPerPacket&quot;</span><span class="p">,</span> <span class="n">downlink_log</span><span class="o">.</span><span class="n">expectedAttemptsPerPacket</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">expected</span><span class="p">[</span><span class="s2">&quot;expected_attempts&quot;</span><span class="p">])</span>
+    <span class="n">debug_compare</span><span class="p">(</span><span class="s2">&quot;deliveredDataRate&quot;</span><span class="p">,</span> <span class="n">downlink_log</span><span class="o">.</span><span class="n">deliveredDataRate</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">expected</span><span class="p">[</span><span class="s2">&quot;delivered_rate&quot;</span><span class="p">])</span>
+    <span class="n">debug_compare</span><span class="p">(</span><span class="s2">&quot;storageRemovalRate&quot;</span><span class="p">,</span> <span class="n">downlink_log</span><span class="o">.</span><span class="n">storageRemovalRate</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">expected</span><span class="p">[</span><span class="s2">&quot;storage_removal_rate&quot;</span><span class="p">])</span>
+    <span class="n">debug_compare</span><span class="p">(</span><span class="s2">&quot;droppedDataRate&quot;</span><span class="p">,</span> <span class="n">downlink_log</span><span class="o">.</span><span class="n">droppedDataRate</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">expected</span><span class="p">[</span><span class="s2">&quot;dropped_rate&quot;</span><span class="p">])</span>
+    <span class="n">debug_compare</span><span class="p">(</span><span class="s2">&quot;nodeBaudRate&quot;</span><span class="p">,</span> <span class="n">node_log</span><span class="o">.</span><span class="n">baudRate</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="o">-</span><span class="n">expected</span><span class="p">[</span><span class="s2">&quot;storage_removal_rate&quot;</span><span class="p">])</span>
+
+    <span class="k">assert</span> <span class="n">downlink_log</span><span class="o">.</span><span class="n">linkActive</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span>
+    <span class="k">assert</span> <span class="n">downlink_log</span><span class="o">.</span><span class="n">removalPolicy</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">REMOVE_ATTEMPTED</span>
+    <span class="k">assert</span> <span class="n">downlink_log</span><span class="o">.</span><span class="n">ber</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">expected</span><span class="p">[</span><span class="s2">&quot;ber&quot;</span><span class="p">],</span> <span class="n">rel</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">1e-15</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">downlink_log</span><span class="o">.</span><span class="n">per</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">expected</span><span class="p">[</span><span class="s2">&quot;per&quot;</span><span class="p">],</span> <span class="n">rel</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">1e-15</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">downlink_log</span><span class="o">.</span><span class="n">expectedAttemptsPerPacket</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">expected</span><span class="p">[</span><span class="s2">&quot;expected_attempts&quot;</span><span class="p">],</span> <span class="n">rel</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">1e-15</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">downlink_log</span><span class="o">.</span><span class="n">deliveredDataRate</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">expected</span><span class="p">[</span><span class="s2">&quot;delivered_rate&quot;</span><span class="p">],</span> <span class="n">rel</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">1e-9</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">downlink_log</span><span class="o">.</span><span class="n">storageRemovalRate</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">expected</span><span class="p">[</span><span class="s2">&quot;storage_removal_rate&quot;</span><span class="p">],</span> <span class="n">rel</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">1e-9</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">downlink_log</span><span class="o">.</span><span class="n">droppedDataRate</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">expected</span><span class="p">[</span><span class="s2">&quot;dropped_rate&quot;</span><span class="p">],</span> <span class="n">rel</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">1e-9</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">node_log</span><span class="o">.</span><span class="n">baudRate</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="o">-</span><span class="n">expected</span><span class="p">[</span><span class="s2">&quot;storage_removal_rate&quot;</span><span class="p">],</span> <span class="n">rel</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">1e-9</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_downlink_invalid_link_outputs_zero_flow">
+<a class="viewcode-back" href="../Documentation/simulation/communication/downlinkHandling/_UnitTest/test_downlinkHandling.html#test_downlinkHandling.test_downlink_invalid_link_outputs_zero_flow">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_downlink_invalid_link_outputs_zero_flow</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Verify invalid link inputs produce zero link-active flag and zero throughput.&quot;&quot;&quot;</span>
+    <span class="n">debug_print</span><span class="p">(</span><span class="s2">&quot;test_downlink_invalid_link_outputs_zero_flow&quot;</span><span class="p">)</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">node_log</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">downlink_log</span> <span class="o">=</span> <span class="n">run_downlink_case</span><span class="p">(</span>
+        <span class="n">cnr2</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">bandwidth_hz</span><span class="o">=</span><span class="mf">1.0e6</span><span class="p">,</span>
+        <span class="n">bit_rate_bps</span><span class="o">=</span><span class="mf">1.0e5</span><span class="p">,</span>
+        <span class="n">packet_bits</span><span class="o">=</span><span class="mf">256.0</span><span class="p">,</span>
+        <span class="n">max_retx</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+        <span class="n">initial_bits</span><span class="o">=</span><span class="mf">1.0e9</span>
+    <span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">downlink_log</span><span class="o">.</span><span class="n">linkActive</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="k">assert</span> <span class="n">downlink_log</span><span class="o">.</span><span class="n">storageRemovalRate</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">downlink_log</span><span class="o">.</span><span class="n">deliveredDataRate</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">downlink_log</span><span class="o">.</span><span class="n">droppedDataRate</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">node_log</span><span class="o">.</span><span class="n">baudRate</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_downlink_disabling_node_clears_diagnostics">
+<a class="viewcode-back" href="../Documentation/simulation/communication/downlinkHandling/_UnitTest/test_downlinkHandling.html#test_downlinkHandling.test_downlink_disabling_node_clears_diagnostics">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_downlink_disabling_node_clears_diagnostics</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Verify disabling the node zeroes downlink diagnostics instead of republishing stale values.&quot;&quot;&quot;</span>
+    <span class="n">debug_print</span><span class="p">(</span><span class="s2">&quot;test_downlink_disabling_node_clears_diagnostics&quot;</span><span class="p">)</span>
+    <span class="n">unit_task_name</span> <span class="o">=</span> <span class="s2">&quot;unitTask&quot;</span>
+    <span class="n">unit_process_name</span> <span class="o">=</span> <span class="s2">&quot;unitProcess&quot;</span>
+
+    <span class="n">unit_test_sim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">test_proc</span> <span class="o">=</span> <span class="n">unit_test_sim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">unit_process_name</span><span class="p">)</span>
+    <span class="n">test_proc</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">unit_test_sim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">unit_task_name</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)))</span>  <span class="c1"># [s]</span>
+
+    <span class="n">test_module</span> <span class="o">=</span> <span class="n">downlinkHandling</span><span class="o">.</span><span class="n">DownlinkHandling</span><span class="p">()</span>
+    <span class="n">test_module</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;downlink&quot;</span>
+    <span class="k">assert</span> <span class="n">test_module</span><span class="o">.</span><span class="n">setBitRateRequest</span><span class="p">(</span><span class="mf">1.0e5</span><span class="p">)</span>       <span class="c1"># [bit/s]</span>
+    <span class="k">assert</span> <span class="n">test_module</span><span class="o">.</span><span class="n">setPacketSizeBits</span><span class="p">(</span><span class="mf">256.0</span><span class="p">)</span>       <span class="c1"># [bit]</span>
+    <span class="k">assert</span> <span class="n">test_module</span><span class="o">.</span><span class="n">setMaxRetransmissions</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>       <span class="c1"># [-]</span>
+    <span class="k">assert</span> <span class="n">test_module</span><span class="o">.</span><span class="n">setReceiverAntenna</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>          <span class="c1"># [-]</span>
+    <span class="n">unit_test_sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unit_task_name</span><span class="p">,</span> <span class="n">test_module</span><span class="p">)</span>
+
+    <span class="n">data_storage</span> <span class="o">=</span> <span class="n">simpleStorageUnit</span><span class="o">.</span><span class="n">SimpleStorageUnit</span><span class="p">()</span>
+    <span class="n">data_storage</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;storage&quot;</span>
+    <span class="n">data_storage</span><span class="o">.</span><span class="n">storageCapacity</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mf">2.0e9</span><span class="p">)</span>         <span class="c1"># [bit]</span>
+    <span class="n">data_storage</span><span class="o">.</span><span class="n">addDataNodeToModel</span><span class="p">(</span><span class="n">test_module</span><span class="o">.</span><span class="n">nodeDataOutMsg</span><span class="p">)</span>
+    <span class="n">unit_test_sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unit_task_name</span><span class="p">,</span> <span class="n">data_storage</span><span class="p">)</span>
+    <span class="n">test_module</span><span class="o">.</span><span class="n">addStorageUnitToDownlink</span><span class="p">(</span><span class="n">data_storage</span><span class="o">.</span><span class="n">storageUnitDataOutMsg</span><span class="p">)</span>
+    <span class="n">data_storage</span><span class="o">.</span><span class="n">setDataBuffer</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="mf">1.0e9</span><span class="p">))</span>            <span class="c1"># [bit]</span>
+
+    <span class="n">link_payload</span> <span class="o">=</span> <span class="n">LinkBudgetMsgPayload</span><span class="o">.</span><span class="n">LinkBudgetMsgPayload</span><span class="p">()</span>
+    <span class="n">link_payload</span><span class="o">.</span><span class="n">antennaName1</span> <span class="o">=</span> <span class="s2">&quot;TX_Ant&quot;</span>
+    <span class="n">link_payload</span><span class="o">.</span><span class="n">antennaName2</span> <span class="o">=</span> <span class="s2">&quot;RX_Ant&quot;</span>
+    <span class="n">link_payload</span><span class="o">.</span><span class="n">antennaState1</span> <span class="o">=</span> <span class="mi">2</span>                    <span class="c1"># [-] TX</span>
+    <span class="n">link_payload</span><span class="o">.</span><span class="n">antennaState2</span> <span class="o">=</span> <span class="mi">1</span>                    <span class="c1"># [-] RX</span>
+    <span class="n">link_payload</span><span class="o">.</span><span class="n">CNR1</span> <span class="o">=</span> <span class="mf">0.0</span>                           <span class="c1"># [-]</span>
+    <span class="n">link_payload</span><span class="o">.</span><span class="n">CNR2</span> <span class="o">=</span> <span class="mf">0.5</span>                           <span class="c1"># [-]</span>
+    <span class="n">link_payload</span><span class="o">.</span><span class="n">bandwidth</span> <span class="o">=</span> <span class="mf">1.0e6</span>                    <span class="c1"># [Hz]</span>
+    <span class="n">link_payload</span><span class="o">.</span><span class="n">frequency</span> <span class="o">=</span> <span class="mf">2.2e9</span>                    <span class="c1"># [Hz]</span>
+    <span class="n">link_msg</span> <span class="o">=</span> <span class="n">LinkBudgetMsgPayload</span><span class="o">.</span><span class="n">LinkBudgetMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">link_payload</span><span class="p">)</span>
+    <span class="n">test_module</span><span class="o">.</span><span class="n">linkBudgetInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">link_msg</span><span class="p">)</span>
+
+    <span class="n">status_payload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">DeviceCmdMsgPayload</span><span class="p">()</span>
+    <span class="n">status_payload</span><span class="o">.</span><span class="n">deviceCmd</span> <span class="o">=</span> <span class="mi">1</span>                      <span class="c1"># [-] on</span>
+    <span class="n">status_msg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">DeviceCmdMsg</span><span class="p">()</span>
+    <span class="n">status_msg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">status_payload</span><span class="p">)</span>
+    <span class="n">test_module</span><span class="o">.</span><span class="n">nodeStatusInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">status_msg</span><span class="p">)</span>
+
+    <span class="n">node_log</span> <span class="o">=</span> <span class="n">test_module</span><span class="o">.</span><span class="n">nodeDataOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">downlink_reader</span> <span class="o">=</span> <span class="n">DownlinkHandlingMsgPayload</span><span class="o">.</span><span class="n">DownlinkHandlingMsgReader</span><span class="p">()</span>
+    <span class="n">downlink_reader</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">test_module</span><span class="o">.</span><span class="n">downlinkOutMsg</span><span class="p">)</span>
+    <span class="n">downlink_log</span> <span class="o">=</span> <span class="n">downlink_reader</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">unit_test_sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unit_task_name</span><span class="p">,</span> <span class="n">node_log</span><span class="p">)</span>
+    <span class="n">unit_test_sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unit_task_name</span><span class="p">,</span> <span class="n">downlink_log</span><span class="p">)</span>
+
+    <span class="n">unit_test_sim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">unit_test_sim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">1.0</span><span class="p">))</span>        <span class="c1"># [s]</span>
+    <span class="n">unit_test_sim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="k">assert</span> <span class="n">downlink_log</span><span class="o">.</span><span class="n">linkActive</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span>
+    <span class="k">assert</span> <span class="n">downlink_log</span><span class="o">.</span><span class="n">storageRemovalRate</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.0</span>
+    <span class="k">assert</span> <span class="n">node_log</span><span class="o">.</span><span class="n">baudRate</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mf">0.0</span>
+
+    <span class="n">status_payload</span><span class="o">.</span><span class="n">deviceCmd</span> <span class="o">=</span> <span class="mi">0</span>                      <span class="c1"># [-] off</span>
+    <span class="n">status_msg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">status_payload</span><span class="p">,</span> <span class="n">unit_test_sim</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">CurrentNanos</span><span class="p">)</span>
+    <span class="n">unit_test_sim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">2.0</span><span class="p">))</span>        <span class="c1"># [s]</span>
+    <span class="n">unit_test_sim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="k">assert</span> <span class="n">downlink_log</span><span class="o">.</span><span class="n">linkActive</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="k">assert</span> <span class="n">downlink_log</span><span class="o">.</span><span class="n">receiverIndex</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="k">assert</span> <span class="n">downlink_log</span><span class="o">.</span><span class="n">storageRemovalRate</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">downlink_log</span><span class="o">.</span><span class="n">deliveredDataRate</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">downlink_log</span><span class="o">.</span><span class="n">droppedDataRate</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">downlink_log</span><span class="o">.</span><span class="n">ber</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">downlink_log</span><span class="o">.</span><span class="n">per</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">node_log</span><span class="o">.</span><span class="n">baudRate</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_downlink_reenable_does_not_integrate_disabled_downtime">
+<a class="viewcode-back" href="../Documentation/simulation/communication/downlinkHandling/_UnitTest/test_downlinkHandling.html#test_downlinkHandling.test_downlink_reenable_does_not_integrate_disabled_downtime">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_downlink_reenable_does_not_integrate_disabled_downtime</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Verify re-enabling after several disabled ticks does not collapse off-time into one large downlink step.&quot;&quot;&quot;</span>
+    <span class="n">debug_print</span><span class="p">(</span><span class="s2">&quot;test_downlink_reenable_does_not_integrate_disabled_downtime&quot;</span><span class="p">)</span>
+    <span class="n">unit_task_name</span> <span class="o">=</span> <span class="s2">&quot;unitTask&quot;</span>
+    <span class="n">unit_process_name</span> <span class="o">=</span> <span class="s2">&quot;unitProcess&quot;</span>
+    <span class="n">task_dt_s</span> <span class="o">=</span> <span class="mf">1.0</span>                                          <span class="c1"># [s]</span>
+
+    <span class="n">unit_test_sim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">test_proc</span> <span class="o">=</span> <span class="n">unit_test_sim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">unit_process_name</span><span class="p">)</span>
+    <span class="n">test_proc</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">unit_test_sim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">unit_task_name</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">task_dt_s</span><span class="p">)))</span>
+
+    <span class="n">test_module</span> <span class="o">=</span> <span class="n">downlinkHandling</span><span class="o">.</span><span class="n">DownlinkHandling</span><span class="p">()</span>
+    <span class="n">test_module</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;downlink&quot;</span>
+    <span class="k">assert</span> <span class="n">test_module</span><span class="o">.</span><span class="n">setBitRateRequest</span><span class="p">(</span><span class="mf">1.0e5</span><span class="p">)</span>               <span class="c1"># [bit/s]</span>
+    <span class="k">assert</span> <span class="n">test_module</span><span class="o">.</span><span class="n">setPacketSizeBits</span><span class="p">(</span><span class="mf">256.0</span><span class="p">)</span>               <span class="c1"># [bit]</span>
+    <span class="k">assert</span> <span class="n">test_module</span><span class="o">.</span><span class="n">setMaxRetransmissions</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>               <span class="c1"># [-]</span>
+    <span class="k">assert</span> <span class="n">test_module</span><span class="o">.</span><span class="n">setReceiverAntenna</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>                  <span class="c1"># [-]</span>
+    <span class="n">unit_test_sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unit_task_name</span><span class="p">,</span> <span class="n">test_module</span><span class="p">)</span>
+
+    <span class="n">data_storage</span> <span class="o">=</span> <span class="n">simpleStorageUnit</span><span class="o">.</span><span class="n">SimpleStorageUnit</span><span class="p">()</span>
+    <span class="n">data_storage</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;storage&quot;</span>
+    <span class="n">data_storage</span><span class="o">.</span><span class="n">storageCapacity</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mf">2.0e9</span><span class="p">)</span>                 <span class="c1"># [bit]</span>
+    <span class="n">data_storage</span><span class="o">.</span><span class="n">addDataNodeToModel</span><span class="p">(</span><span class="n">test_module</span><span class="o">.</span><span class="n">nodeDataOutMsg</span><span class="p">)</span>
+    <span class="n">unit_test_sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unit_task_name</span><span class="p">,</span> <span class="n">data_storage</span><span class="p">)</span>
+    <span class="n">test_module</span><span class="o">.</span><span class="n">addStorageUnitToDownlink</span><span class="p">(</span><span class="n">data_storage</span><span class="o">.</span><span class="n">storageUnitDataOutMsg</span><span class="p">)</span>
+    <span class="n">data_storage</span><span class="o">.</span><span class="n">setDataBuffer</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="mf">1.0e9</span><span class="p">))</span>                    <span class="c1"># [bit]</span>
+
+    <span class="n">link_payload</span> <span class="o">=</span> <span class="n">LinkBudgetMsgPayload</span><span class="o">.</span><span class="n">LinkBudgetMsgPayload</span><span class="p">()</span>
+    <span class="n">link_payload</span><span class="o">.</span><span class="n">antennaName1</span> <span class="o">=</span> <span class="s2">&quot;TX_Ant&quot;</span>
+    <span class="n">link_payload</span><span class="o">.</span><span class="n">antennaName2</span> <span class="o">=</span> <span class="s2">&quot;RX_Ant&quot;</span>
+    <span class="n">link_payload</span><span class="o">.</span><span class="n">antennaState1</span> <span class="o">=</span> <span class="mi">2</span>                            <span class="c1"># [-] TX</span>
+    <span class="n">link_payload</span><span class="o">.</span><span class="n">antennaState2</span> <span class="o">=</span> <span class="mi">1</span>                            <span class="c1"># [-] RX</span>
+    <span class="n">link_payload</span><span class="o">.</span><span class="n">CNR1</span> <span class="o">=</span> <span class="mf">0.0</span>                                   <span class="c1"># [-]</span>
+    <span class="n">link_payload</span><span class="o">.</span><span class="n">CNR2</span> <span class="o">=</span> <span class="mf">0.5</span>                                   <span class="c1"># [-]</span>
+    <span class="n">link_payload</span><span class="o">.</span><span class="n">bandwidth</span> <span class="o">=</span> <span class="mf">1.0e6</span>                            <span class="c1"># [Hz]</span>
+    <span class="n">link_payload</span><span class="o">.</span><span class="n">frequency</span> <span class="o">=</span> <span class="mf">2.2e9</span>                            <span class="c1"># [Hz]</span>
+    <span class="n">link_msg</span> <span class="o">=</span> <span class="n">LinkBudgetMsgPayload</span><span class="o">.</span><span class="n">LinkBudgetMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">link_payload</span><span class="p">)</span>
+    <span class="n">test_module</span><span class="o">.</span><span class="n">linkBudgetInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">link_msg</span><span class="p">)</span>
+
+    <span class="n">status_payload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">DeviceCmdMsgPayload</span><span class="p">()</span>
+    <span class="n">status_payload</span><span class="o">.</span><span class="n">deviceCmd</span> <span class="o">=</span> <span class="mi">1</span>                              <span class="c1"># [-] on</span>
+    <span class="n">status_msg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">DeviceCmdMsg</span><span class="p">()</span>
+    <span class="n">status_msg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">status_payload</span><span class="p">)</span>
+    <span class="n">test_module</span><span class="o">.</span><span class="n">nodeStatusInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">status_msg</span><span class="p">)</span>
+
+    <span class="n">downlink_reader</span> <span class="o">=</span> <span class="n">DownlinkHandlingMsgPayload</span><span class="o">.</span><span class="n">DownlinkHandlingMsgReader</span><span class="p">()</span>
+    <span class="n">downlink_reader</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">test_module</span><span class="o">.</span><span class="n">downlinkOutMsg</span><span class="p">)</span>
+    <span class="n">downlink_log</span> <span class="o">=</span> <span class="n">downlink_reader</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">unit_test_sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unit_task_name</span><span class="p">,</span> <span class="n">downlink_log</span><span class="p">)</span>
+
+    <span class="n">unit_test_sim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+
+    <span class="c1"># Active baseline tick</span>
+    <span class="n">unit_test_sim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">1.0</span><span class="p">))</span>     <span class="c1"># [s]</span>
+    <span class="n">unit_test_sim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+    <span class="n">baseline_rate</span> <span class="o">=</span> <span class="n">downlink_log</span><span class="o">.</span><span class="n">storageRemovalRate</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>        <span class="c1"># [bit/s]</span>
+    <span class="n">baseline_cum_removed</span> <span class="o">=</span> <span class="n">downlink_log</span><span class="o">.</span><span class="n">cumulativeRemovedBits</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># [bit]</span>
+    <span class="k">assert</span> <span class="n">downlink_log</span><span class="o">.</span><span class="n">timeStep</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">task_dt_s</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">baseline_rate</span> <span class="o">&gt;</span> <span class="mf">0.0</span>
+
+    <span class="c1"># Disable for multiple ticks and verify cumulative removal does not change.</span>
+    <span class="n">status_payload</span><span class="o">.</span><span class="n">deviceCmd</span> <span class="o">=</span> <span class="mi">0</span>                               <span class="c1"># [-] off</span>
+    <span class="n">status_msg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">status_payload</span><span class="p">,</span> <span class="n">unit_test_sim</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">CurrentNanos</span><span class="p">)</span>
+    <span class="n">unit_test_sim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">4.0</span><span class="p">))</span>     <span class="c1"># [s]</span>
+    <span class="n">unit_test_sim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+    <span class="n">cum_removed_after_off</span> <span class="o">=</span> <span class="n">downlink_log</span><span class="o">.</span><span class="n">cumulativeRemovedBits</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># [bit]</span>
+    <span class="k">assert</span> <span class="n">cum_removed_after_off</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">baseline_cum_removed</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">1e-9</span><span class="p">)</span>
+
+    <span class="c1"># Re-enable and verify single-step timing/removal behavior.</span>
+    <span class="n">status_payload</span><span class="o">.</span><span class="n">deviceCmd</span> <span class="o">=</span> <span class="mi">1</span>                               <span class="c1"># [-] on</span>
+    <span class="n">status_msg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">status_payload</span><span class="p">,</span> <span class="n">unit_test_sim</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">CurrentNanos</span><span class="p">)</span>
+    <span class="n">unit_test_sim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">5.0</span><span class="p">))</span>     <span class="c1"># [s]</span>
+    <span class="n">unit_test_sim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="k">assert</span> <span class="n">downlink_log</span><span class="o">.</span><span class="n">timeStep</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">task_dt_s</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">downlink_log</span><span class="o">.</span><span class="n">storageRemovalRate</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">baseline_rate</span><span class="p">,</span> <span class="n">rel</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">1e-9</span><span class="p">)</span>
+    <span class="n">reenable_delta_removed</span> <span class="o">=</span> <span class="n">downlink_log</span><span class="o">.</span><span class="n">cumulativeRemovedBits</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">cum_removed_after_off</span>  <span class="c1"># [bit]</span>
+    <span class="k">assert</span> <span class="n">reenable_delta_removed</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">baseline_rate</span> <span class="o">*</span> <span class="n">task_dt_s</span><span class="p">,</span> <span class="n">rel</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_downlink_retry_limit_changes_storage_draw_not_goodput">
+<a class="viewcode-back" href="../Documentation/simulation/communication/downlinkHandling/_UnitTest/test_downlinkHandling.html#test_downlinkHandling.test_downlink_retry_limit_changes_storage_draw_not_goodput">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_downlink_retry_limit_changes_storage_draw_not_goodput</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Verify higher retry caps reduce storage draw while preserving expected delivered-rate level.&quot;&quot;&quot;</span>
+    <span class="n">debug_print</span><span class="p">(</span><span class="s2">&quot;test_downlink_retry_limit_changes_storage_draw_not_goodput&quot;</span><span class="p">)</span>
+    <span class="n">common</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">cnr2</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+        <span class="n">bandwidth_hz</span><span class="o">=</span><span class="mf">1.0e6</span><span class="p">,</span>
+        <span class="n">bit_rate_bps</span><span class="o">=</span><span class="mf">1.0e5</span><span class="p">,</span>
+        <span class="n">packet_bits</span><span class="o">=</span><span class="mf">256.0</span><span class="p">,</span>
+        <span class="n">initial_bits</span><span class="o">=</span><span class="mf">1.0e9</span>
+    <span class="p">)</span>
+
+    <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">downlink_log_m1</span> <span class="o">=</span> <span class="n">run_downlink_case</span><span class="p">(</span><span class="n">max_retx</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">common</span><span class="p">)</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">downlink_log_m8</span> <span class="o">=</span> <span class="n">run_downlink_case</span><span class="p">(</span><span class="n">max_retx</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="o">**</span><span class="n">common</span><span class="p">)</span>
+    <span class="n">debug_print</span><span class="p">(</span>
+        <span class="s2">&quot;retry comparison: &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;m1(storageRemovalRate=</span><span class="si">{</span><span class="n">downlink_log_m1</span><span class="o">.</span><span class="n">storageRemovalRate</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.16e</span><span class="si">}</span><span class="s2">, &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;packetDropProb=</span><span class="si">{</span><span class="n">downlink_log_m1</span><span class="o">.</span><span class="n">packetDropProb</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.16e</span><span class="si">}</span><span class="s2">, &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;deliveredDataRate=</span><span class="si">{</span><span class="n">downlink_log_m1</span><span class="o">.</span><span class="n">deliveredDataRate</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.16e</span><span class="si">}</span><span class="s2">) &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;m8(storageRemovalRate=</span><span class="si">{</span><span class="n">downlink_log_m8</span><span class="o">.</span><span class="n">storageRemovalRate</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.16e</span><span class="si">}</span><span class="s2">, &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;packetDropProb=</span><span class="si">{</span><span class="n">downlink_log_m8</span><span class="o">.</span><span class="n">packetDropProb</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.16e</span><span class="si">}</span><span class="s2">, &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;deliveredDataRate=</span><span class="si">{</span><span class="n">downlink_log_m8</span><span class="o">.</span><span class="n">deliveredDataRate</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.16e</span><span class="si">}</span><span class="s2">)&quot;</span>
+    <span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">downlink_log_m1</span><span class="o">.</span><span class="n">storageRemovalRate</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">downlink_log_m8</span><span class="o">.</span><span class="n">storageRemovalRate</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="n">downlink_log_m1</span><span class="o">.</span><span class="n">packetDropProb</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">downlink_log_m8</span><span class="o">.</span><span class="n">packetDropProb</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="n">downlink_log_m1</span><span class="o">.</span><span class="n">deliveredDataRate</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">downlink_log_m8</span><span class="o">.</span><span class="n">deliveredDataRate</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">rel</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">1e-9</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_downlink_remove_delivered_only_retains_undelivered_bits">
+<a class="viewcode-back" href="../Documentation/simulation/communication/downlinkHandling/_UnitTest/test_downlinkHandling.html#test_downlinkHandling.test_downlink_remove_delivered_only_retains_undelivered_bits">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_downlink_remove_delivered_only_retains_undelivered_bits</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Verify delivered-only removal mode keeps dropped/undelivered bits onboard.&quot;&quot;&quot;</span>
+    <span class="n">debug_print</span><span class="p">(</span><span class="s2">&quot;test_downlink_remove_delivered_only_retains_undelivered_bits&quot;</span><span class="p">)</span>
+    <span class="n">common</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">cnr2</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+        <span class="n">bandwidth_hz</span><span class="o">=</span><span class="mf">1.0e6</span><span class="p">,</span>
+        <span class="n">bit_rate_bps</span><span class="o">=</span><span class="mf">1.0e5</span><span class="p">,</span>
+        <span class="n">packet_bits</span><span class="o">=</span><span class="mf">256.0</span><span class="p">,</span>
+        <span class="n">max_retx</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+        <span class="n">initial_bits</span><span class="o">=</span><span class="mf">1.0e9</span><span class="p">,</span>
+        <span class="n">stop_time_s</span><span class="o">=</span><span class="mf">3.0</span>
+    <span class="p">)</span>
+
+    <span class="n">_</span><span class="p">,</span> <span class="n">node_attempted</span><span class="p">,</span> <span class="n">storage_attempted</span><span class="p">,</span> <span class="n">downlink_attempted</span> <span class="o">=</span> <span class="n">run_downlink_case</span><span class="p">(</span>
+        <span class="n">removal_policy</span><span class="o">=</span><span class="n">REMOVE_ATTEMPTED</span><span class="p">,</span> <span class="o">**</span><span class="n">common</span>
+    <span class="p">)</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">node_delivered</span><span class="p">,</span> <span class="n">storage_delivered</span><span class="p">,</span> <span class="n">downlink_delivered</span> <span class="o">=</span> <span class="n">run_downlink_case</span><span class="p">(</span>
+        <span class="n">removal_policy</span><span class="o">=</span><span class="n">REMOVE_DELIVERED_ONLY</span><span class="p">,</span> <span class="o">**</span><span class="n">common</span>
+    <span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">downlink_attempted</span><span class="o">.</span><span class="n">removalPolicy</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">REMOVE_ATTEMPTED</span>
+    <span class="k">assert</span> <span class="n">downlink_delivered</span><span class="o">.</span><span class="n">removalPolicy</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">REMOVE_DELIVERED_ONLY</span>
+
+    <span class="k">assert</span> <span class="n">downlink_attempted</span><span class="o">.</span><span class="n">attemptedDataRate</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span>
+        <span class="n">downlink_delivered</span><span class="o">.</span><span class="n">attemptedDataRate</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">rel</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">1e-9</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="n">downlink_attempted</span><span class="o">.</span><span class="n">deliveredDataRate</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span>
+        <span class="n">downlink_delivered</span><span class="o">.</span><span class="n">deliveredDataRate</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">rel</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">1e-9</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="n">downlink_attempted</span><span class="o">.</span><span class="n">droppedDataRate</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span>
+        <span class="n">downlink_delivered</span><span class="o">.</span><span class="n">droppedDataRate</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">rel</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">1e-9</span>
+    <span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">downlink_attempted</span><span class="o">.</span><span class="n">storageRemovalRate</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">downlink_delivered</span><span class="o">.</span><span class="n">storageRemovalRate</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="n">downlink_delivered</span><span class="o">.</span><span class="n">storageRemovalRate</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span>
+        <span class="n">downlink_delivered</span><span class="o">.</span><span class="n">deliveredDataRate</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">rel</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">1e-9</span>
+    <span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">node_attempted</span><span class="o">.</span><span class="n">baudRate</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="o">-</span><span class="n">downlink_attempted</span><span class="o">.</span><span class="n">storageRemovalRate</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">rel</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">1e-9</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">node_delivered</span><span class="o">.</span><span class="n">baudRate</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="o">-</span><span class="n">downlink_delivered</span><span class="o">.</span><span class="n">storageRemovalRate</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">rel</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">1e-9</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">storage_delivered</span><span class="o">.</span><span class="n">storageLevel</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">storage_attempted</span><span class="o">.</span><span class="n">storageLevel</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="test_downlink_storage_limited_case_caps_rate_and_drains_storage">
+<a class="viewcode-back" href="../Documentation/simulation/communication/downlinkHandling/_UnitTest/test_downlinkHandling.html#test_downlinkHandling.test_downlink_storage_limited_case_caps_rate_and_drains_storage">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_downlink_storage_limited_case_caps_rate_and_drains_storage</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Verify storage-limited operation caps removal rate and drains remaining data correctly.&quot;&quot;&quot;</span>
+    <span class="n">debug_print</span><span class="p">(</span><span class="s2">&quot;test_downlink_storage_limited_case_caps_rate_and_drains_storage&quot;</span><span class="p">)</span>
+    <span class="n">initial_bits</span> <span class="o">=</span> <span class="mf">300.0</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">storage_log</span><span class="p">,</span> <span class="n">downlink_log</span> <span class="o">=</span> <span class="n">run_downlink_case</span><span class="p">(</span>
+        <span class="n">cnr2</span><span class="o">=</span><span class="mf">100.0</span><span class="p">,</span>
+        <span class="n">bandwidth_hz</span><span class="o">=</span><span class="mf">1.0e6</span><span class="p">,</span>
+        <span class="n">bit_rate_bps</span><span class="o">=</span><span class="mf">1.0e5</span><span class="p">,</span>
+        <span class="n">packet_bits</span><span class="o">=</span><span class="mf">256.0</span><span class="p">,</span>
+        <span class="n">max_retx</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+        <span class="n">initial_bits</span><span class="o">=</span><span class="n">initial_bits</span><span class="p">,</span>
+        <span class="n">stop_time_s</span><span class="o">=</span><span class="mf">1.0</span>
+    <span class="p">)</span>
+
+    <span class="n">expected_cap_rate</span> <span class="o">=</span> <span class="n">initial_bits</span> <span class="o">/</span> <span class="n">downlink_log</span><span class="o">.</span><span class="n">timeStep</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">debug_compare</span><span class="p">(</span><span class="s2">&quot;storage_limited_rate_cap&quot;</span><span class="p">,</span> <span class="n">downlink_log</span><span class="o">.</span><span class="n">storageRemovalRate</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">expected_cap_rate</span><span class="p">)</span>
+    <span class="n">debug_print</span><span class="p">(</span>
+        <span class="s2">&quot;storage-limited results: &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;remainingBits=</span><span class="si">{</span><span class="n">downlink_log</span><span class="o">.</span><span class="n">estimatedRemainingDataBits</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.16e</span><span class="si">}</span><span class="s2">, &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;storageLevel=</span><span class="si">{</span><span class="n">storage_log</span><span class="o">.</span><span class="n">storageLevel</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.16e</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="n">downlink_log</span><span class="o">.</span><span class="n">storageRemovalRate</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">expected_cap_rate</span><span class="p">,</span> <span class="n">rel</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">1e-9</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">downlink_log</span><span class="o">.</span><span class="n">estimatedRemainingDataBits</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">storage_log</span><span class="o">.</span><span class="n">storageLevel</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_downlink_auto_receiver_selects_valid_rx_path">
+<a class="viewcode-back" href="../Documentation/simulation/communication/downlinkHandling/_UnitTest/test_downlinkHandling.html#test_downlinkHandling.test_downlink_auto_receiver_selects_valid_rx_path">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_downlink_auto_receiver_selects_valid_rx_path</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Verify auto receiver selection chooses a valid RX path with nonzero CNR.&quot;&quot;&quot;</span>
+    <span class="n">debug_print</span><span class="p">(</span><span class="s2">&quot;test_downlink_auto_receiver_selects_valid_rx_path&quot;</span><span class="p">)</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">downlink_log</span> <span class="o">=</span> <span class="n">run_downlink_case</span><span class="p">(</span>
+        <span class="n">cnr1</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span>
+        <span class="n">cnr2</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">ant_state1</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">ant_state2</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">receiver_index</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">initial_bits</span><span class="o">=</span><span class="mf">1.0e9</span>
+    <span class="p">)</span>
+    <span class="n">debug_print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;auto receiver selected index=</span><span class="si">{</span><span class="n">downlink_log</span><span class="o">.</span><span class="n">receiverIndex</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">downlink_log</span><span class="o">.</span><span class="n">linkActive</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span>
+    <span class="k">assert</span> <span class="n">downlink_log</span><span class="o">.</span><span class="n">receiverIndex</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span></div>
+
+
+
+<div class="viewcode-block" id="test_downlink_setter_validation_rejects_invalid_inputs">
+<a class="viewcode-back" href="../Documentation/simulation/communication/downlinkHandling/_UnitTest/test_downlinkHandling.html#test_downlinkHandling.test_downlink_setter_validation_rejects_invalid_inputs">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_downlink_setter_validation_rejects_invalid_inputs</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check that module setters reject invalid values and preserve prior valid configuration.&quot;&quot;&quot;</span>
+    <span class="n">debug_print</span><span class="p">(</span><span class="s2">&quot;test_downlink_setter_validation_rejects_invalid_inputs&quot;</span><span class="p">)</span>
+    <span class="n">test_module</span> <span class="o">=</span> <span class="n">downlinkHandling</span><span class="o">.</span><span class="n">DownlinkHandling</span><span class="p">()</span>
+
+    <span class="k">assert</span> <span class="n">test_module</span><span class="o">.</span><span class="n">setBitRateRequest</span><span class="p">(</span><span class="mf">1.0e5</span><span class="p">)</span>    <span class="c1"># [bit/s]</span>
+    <span class="k">assert</span> <span class="n">test_module</span><span class="o">.</span><span class="n">setPacketSizeBits</span><span class="p">(</span><span class="mf">1024.0</span><span class="p">)</span>   <span class="c1"># [bit]</span>
+    <span class="k">assert</span> <span class="n">test_module</span><span class="o">.</span><span class="n">setMaxRetransmissions</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>    <span class="c1"># [-]</span>
+    <span class="k">assert</span> <span class="n">test_module</span><span class="o">.</span><span class="n">setReceiverAntenna</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>       <span class="c1"># [-]</span>
+    <span class="k">assert</span> <span class="n">test_module</span><span class="o">.</span><span class="n">setRemovalPolicy</span><span class="p">(</span><span class="n">REMOVE_DELIVERED_ONLY</span><span class="p">)</span>
+    <span class="n">test_module</span><span class="o">.</span><span class="n">setRequireFullPacket</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+        <span class="n">test_module</span><span class="o">.</span><span class="n">setBitRateRequest</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">)</span>                   <span class="c1"># [bit/s]</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+        <span class="n">test_module</span><span class="o">.</span><span class="n">setBitRateRequest</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="s2">&quot;nan&quot;</span><span class="p">))</span>           <span class="c1"># [bit/s]</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+        <span class="n">test_module</span><span class="o">.</span><span class="n">setPacketSizeBits</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>                    <span class="c1"># [bit]</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+        <span class="n">test_module</span><span class="o">.</span><span class="n">setPacketSizeBits</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">))</span>           <span class="c1"># [bit]</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+        <span class="n">test_module</span><span class="o">.</span><span class="n">setMaxRetransmissions</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>                  <span class="c1"># [-]</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+        <span class="n">test_module</span><span class="o">.</span><span class="n">setReceiverAntenna</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>                     <span class="c1"># [-]</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+        <span class="n">test_module</span><span class="o">.</span><span class="n">setRemovalPolicy</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>                       <span class="c1"># [-]</span>
+
+    <span class="k">assert</span> <span class="n">test_module</span><span class="o">.</span><span class="n">getBitRateRequest</span><span class="p">()</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="mf">1.0e5</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">test_module</span><span class="o">.</span><span class="n">getPacketSizeBits</span><span class="p">()</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="mf">1024.0</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">test_module</span><span class="o">.</span><span class="n">getMaxRetransmissions</span><span class="p">()</span> <span class="o">==</span> <span class="mi">6</span>
+    <span class="k">assert</span> <span class="n">test_module</span><span class="o">.</span><span class="n">getReceiverAntenna</span><span class="p">()</span> <span class="o">==</span> <span class="mi">2</span>
+    <span class="k">assert</span> <span class="n">test_module</span><span class="o">.</span><span class="n">getRemovalPolicy</span><span class="p">()</span> <span class="o">==</span> <span class="n">REMOVE_DELIVERED_ONLY</span>
+    <span class="k">assert</span> <span class="n">test_module</span><span class="o">.</span><span class="n">getRequireFullPacket</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">True</span></div>
+
+
+
+<div class="viewcode-block" id="test_downlink_forced_receiver_invalid_path_disables_link">
+<a class="viewcode-back" href="../Documentation/simulation/communication/downlinkHandling/_UnitTest/test_downlinkHandling.html#test_downlinkHandling.test_downlink_forced_receiver_invalid_path_disables_link">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_downlink_forced_receiver_invalid_path_disables_link</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Verify that forcing an unavailable receiver path yields no selected receiver and zero throughput.&quot;&quot;&quot;</span>
+    <span class="n">debug_print</span><span class="p">(</span><span class="s2">&quot;test_downlink_forced_receiver_invalid_path_disables_link&quot;</span><span class="p">)</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">node_log</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">downlink_log</span> <span class="o">=</span> <span class="n">run_downlink_case</span><span class="p">(</span>
+        <span class="n">cnr1</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span>
+        <span class="n">cnr2</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">ant_state1</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">ant_state2</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">receiver_index</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">initial_bits</span><span class="o">=</span><span class="mf">1.0e8</span>
+    <span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">downlink_log</span><span class="o">.</span><span class="n">receiverIndex</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="k">assert</span> <span class="n">downlink_log</span><span class="o">.</span><span class="n">linkActive</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="k">assert</span> <span class="n">downlink_log</span><span class="o">.</span><span class="n">storageRemovalRate</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">node_log</span><span class="o">.</span><span class="n">baudRate</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_downlink_duplicate_storage_message_is_rejected">
+<a class="viewcode-back" href="../Documentation/simulation/communication/downlinkHandling/_UnitTest/test_downlinkHandling.html#test_downlinkHandling.test_downlink_duplicate_storage_message_is_rejected">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_downlink_duplicate_storage_message_is_rejected</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Verify duplicate storage message registration is rejected by the module.&quot;&quot;&quot;</span>
+    <span class="n">debug_print</span><span class="p">(</span><span class="s2">&quot;test_downlink_duplicate_storage_message_is_rejected&quot;</span><span class="p">)</span>
+
+    <span class="n">test_module</span> <span class="o">=</span> <span class="n">downlinkHandling</span><span class="o">.</span><span class="n">DownlinkHandling</span><span class="p">()</span>
+    <span class="n">storage_msg</span> <span class="o">=</span> <span class="n">make_storage_status_msg</span><span class="p">(</span><span class="mf">100.0</span><span class="p">,</span> <span class="p">[(</span><span class="s2">&quot;DATA&quot;</span><span class="p">,</span> <span class="mf">100.0</span><span class="p">)])</span>  <span class="c1"># [bit]</span>
+
+    <span class="k">assert</span> <span class="n">test_module</span><span class="o">.</span><span class="n">addStorageUnitToDownlink</span><span class="p">(</span><span class="n">storage_msg</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">True</span>
+    <span class="k">assert</span> <span class="n">test_module</span><span class="o">.</span><span class="n">addStorageUnitToDownlink</span><span class="p">(</span><span class="n">storage_msg</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">False</span></div>
+
+
+
+<div class="viewcode-block" id="test_downlink_selects_largest_partition_across_storage_messages">
+<a class="viewcode-back" href="../Documentation/simulation/communication/downlinkHandling/_UnitTest/test_downlinkHandling.html#test_downlinkHandling.test_downlink_selects_largest_partition_across_storage_messages">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_downlink_selects_largest_partition_across_storage_messages</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Verify storage selection uses the largest partition across all linked storage status inputs.&quot;&quot;&quot;</span>
+    <span class="n">debug_print</span><span class="p">(</span><span class="s2">&quot;test_downlink_selects_largest_partition_across_storage_messages&quot;</span><span class="p">)</span>
+
+    <span class="n">unit_task_name</span> <span class="o">=</span> <span class="s2">&quot;unitTask&quot;</span>
+    <span class="n">unit_process_name</span> <span class="o">=</span> <span class="s2">&quot;unitProcess&quot;</span>
+
+    <span class="n">unit_test_sim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">test_proc</span> <span class="o">=</span> <span class="n">unit_test_sim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">unit_process_name</span><span class="p">)</span>
+    <span class="n">test_proc</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">unit_test_sim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">unit_task_name</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)))</span>  <span class="c1"># [s]</span>
+
+    <span class="n">test_module</span> <span class="o">=</span> <span class="n">downlinkHandling</span><span class="o">.</span><span class="n">DownlinkHandling</span><span class="p">()</span>
+    <span class="n">test_module</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;downlink&quot;</span>
+    <span class="k">assert</span> <span class="n">test_module</span><span class="o">.</span><span class="n">setBitRateRequest</span><span class="p">(</span><span class="mf">1.0e5</span><span class="p">)</span>       <span class="c1"># [bit/s]</span>
+    <span class="k">assert</span> <span class="n">test_module</span><span class="o">.</span><span class="n">setPacketSizeBits</span><span class="p">(</span><span class="mf">256.0</span><span class="p">)</span>       <span class="c1"># [bit]</span>
+    <span class="k">assert</span> <span class="n">test_module</span><span class="o">.</span><span class="n">setMaxRetransmissions</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>       <span class="c1"># [-]</span>
+    <span class="k">assert</span> <span class="n">test_module</span><span class="o">.</span><span class="n">setReceiverAntenna</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>          <span class="c1"># [-]</span>
+    <span class="n">test_module</span><span class="o">.</span><span class="n">setRequireFullPacket</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>            <span class="c1"># [-]</span>
+    <span class="n">unit_test_sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unit_task_name</span><span class="p">,</span> <span class="n">test_module</span><span class="p">)</span>
+
+    <span class="n">storage_msg_a</span> <span class="o">=</span> <span class="n">make_storage_status_msg</span><span class="p">(</span>
+        <span class="mf">900.0</span><span class="p">,</span>                                         <span class="c1"># [bit]</span>
+        <span class="p">[(</span><span class="s2">&quot;A_BIG&quot;</span><span class="p">,</span> <span class="mf">400.0</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;A_SMALL&quot;</span><span class="p">,</span> <span class="mf">100.0</span><span class="p">)]</span>        <span class="c1"># [bit]</span>
+    <span class="p">)</span>
+    <span class="n">storage_msg_b</span> <span class="o">=</span> <span class="n">make_storage_status_msg</span><span class="p">(</span>
+        <span class="mf">2000.0</span><span class="p">,</span>                                        <span class="c1"># [bit]</span>
+        <span class="p">[(</span><span class="s2">&quot;B_TOP&quot;</span><span class="p">,</span> <span class="mf">1200.0</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;B_OTHER&quot;</span><span class="p">,</span> <span class="mf">800.0</span><span class="p">)]</span>       <span class="c1"># [bit]</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="n">test_module</span><span class="o">.</span><span class="n">addStorageUnitToDownlink</span><span class="p">(</span><span class="n">storage_msg_a</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">test_module</span><span class="o">.</span><span class="n">addStorageUnitToDownlink</span><span class="p">(</span><span class="n">storage_msg_b</span><span class="p">)</span>
+
+    <span class="n">link_payload</span> <span class="o">=</span> <span class="n">LinkBudgetMsgPayload</span><span class="o">.</span><span class="n">LinkBudgetMsgPayload</span><span class="p">()</span>
+    <span class="n">link_payload</span><span class="o">.</span><span class="n">antennaName1</span> <span class="o">=</span> <span class="s2">&quot;TX_Ant&quot;</span>
+    <span class="n">link_payload</span><span class="o">.</span><span class="n">antennaName2</span> <span class="o">=</span> <span class="s2">&quot;RX_Ant&quot;</span>
+    <span class="n">link_payload</span><span class="o">.</span><span class="n">antennaState1</span> <span class="o">=</span> <span class="mi">2</span>                    <span class="c1"># [-] TX</span>
+    <span class="n">link_payload</span><span class="o">.</span><span class="n">antennaState2</span> <span class="o">=</span> <span class="mi">1</span>                    <span class="c1"># [-] RX</span>
+    <span class="n">link_payload</span><span class="o">.</span><span class="n">CNR1</span> <span class="o">=</span> <span class="mf">0.0</span>                           <span class="c1"># [-]</span>
+    <span class="n">link_payload</span><span class="o">.</span><span class="n">CNR2</span> <span class="o">=</span> <span class="mf">20.0</span>                          <span class="c1"># [-]</span>
+    <span class="n">link_payload</span><span class="o">.</span><span class="n">bandwidth</span> <span class="o">=</span> <span class="mf">1.0e6</span>                    <span class="c1"># [Hz]</span>
+    <span class="n">link_payload</span><span class="o">.</span><span class="n">frequency</span> <span class="o">=</span> <span class="mf">2.2e9</span>                    <span class="c1"># [Hz]</span>
+    <span class="n">link_msg</span> <span class="o">=</span> <span class="n">LinkBudgetMsgPayload</span><span class="o">.</span><span class="n">LinkBudgetMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">link_payload</span><span class="p">)</span>
+    <span class="n">test_module</span><span class="o">.</span><span class="n">linkBudgetInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">link_msg</span><span class="p">)</span>
+
+    <span class="n">downlink_reader</span> <span class="o">=</span> <span class="n">DownlinkHandlingMsgPayload</span><span class="o">.</span><span class="n">DownlinkHandlingMsgReader</span><span class="p">()</span>
+    <span class="n">downlink_reader</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">test_module</span><span class="o">.</span><span class="n">downlinkOutMsg</span><span class="p">)</span>
+    <span class="n">downlink_log</span> <span class="o">=</span> <span class="n">downlink_reader</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">unit_test_sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unit_task_name</span><span class="p">,</span> <span class="n">downlink_log</span><span class="p">)</span>
+
+    <span class="n">unit_test_sim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">unit_test_sim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">1.0</span><span class="p">))</span>    <span class="c1"># [s]</span>
+    <span class="n">unit_test_sim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="k">assert</span> <span class="n">downlink_log</span><span class="o">.</span><span class="n">availableDataBits</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="mf">1200.0</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">downlink_log</span><span class="o">.</span><span class="n">dataName</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;B_TOP&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="test_downlink_ambiguous_multi_storage_name_blocks_removal">
+<a class="viewcode-back" href="../Documentation/simulation/communication/downlinkHandling/_UnitTest/test_downlinkHandling.html#test_downlinkHandling.test_downlink_ambiguous_multi_storage_name_blocks_removal">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_downlink_ambiguous_multi_storage_name_blocks_removal</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Verify duplicate partition names across linked storage units force removal rate to zero.&quot;&quot;&quot;</span>
+    <span class="n">debug_print</span><span class="p">(</span><span class="s2">&quot;test_downlink_ambiguous_multi_storage_name_blocks_removal&quot;</span><span class="p">)</span>
+
+    <span class="n">unit_task_name</span> <span class="o">=</span> <span class="s2">&quot;unitTask&quot;</span>
+    <span class="n">unit_process_name</span> <span class="o">=</span> <span class="s2">&quot;unitProcess&quot;</span>
+
+    <span class="n">unit_test_sim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">test_proc</span> <span class="o">=</span> <span class="n">unit_test_sim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">unit_process_name</span><span class="p">)</span>
+    <span class="n">test_proc</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">unit_test_sim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">unit_task_name</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)))</span>  <span class="c1"># [s]</span>
+
+    <span class="n">test_module</span> <span class="o">=</span> <span class="n">downlinkHandling</span><span class="o">.</span><span class="n">DownlinkHandling</span><span class="p">()</span>
+    <span class="n">test_module</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;downlink&quot;</span>
+    <span class="k">assert</span> <span class="n">test_module</span><span class="o">.</span><span class="n">setBitRateRequest</span><span class="p">(</span><span class="mf">1.0e5</span><span class="p">)</span>       <span class="c1"># [bit/s]</span>
+    <span class="k">assert</span> <span class="n">test_module</span><span class="o">.</span><span class="n">setPacketSizeBits</span><span class="p">(</span><span class="mf">256.0</span><span class="p">)</span>       <span class="c1"># [bit]</span>
+    <span class="k">assert</span> <span class="n">test_module</span><span class="o">.</span><span class="n">setMaxRetransmissions</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>       <span class="c1"># [-]</span>
+    <span class="k">assert</span> <span class="n">test_module</span><span class="o">.</span><span class="n">setReceiverAntenna</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>          <span class="c1"># [-]</span>
+    <span class="n">test_module</span><span class="o">.</span><span class="n">setRequireFullPacket</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>            <span class="c1"># [-]</span>
+    <span class="n">unit_test_sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unit_task_name</span><span class="p">,</span> <span class="n">test_module</span><span class="p">)</span>
+
+    <span class="n">storage_msg_a</span> <span class="o">=</span> <span class="n">make_storage_status_msg</span><span class="p">(</span>
+        <span class="mf">800.0</span><span class="p">,</span>                                         <span class="c1"># [bit]</span>
+        <span class="p">[(</span><span class="s2">&quot;STORED DATA&quot;</span><span class="p">,</span> <span class="mf">400.0</span><span class="p">)]</span>                      <span class="c1"># [bit]</span>
+    <span class="p">)</span>
+    <span class="n">storage_msg_b</span> <span class="o">=</span> <span class="n">make_storage_status_msg</span><span class="p">(</span>
+        <span class="mf">3000.0</span><span class="p">,</span>                                        <span class="c1"># [bit]</span>
+        <span class="p">[(</span><span class="s2">&quot;STORED DATA&quot;</span><span class="p">,</span> <span class="mf">1200.0</span><span class="p">)]</span>                     <span class="c1"># [bit]</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="n">test_module</span><span class="o">.</span><span class="n">addStorageUnitToDownlink</span><span class="p">(</span><span class="n">storage_msg_a</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">test_module</span><span class="o">.</span><span class="n">addStorageUnitToDownlink</span><span class="p">(</span><span class="n">storage_msg_b</span><span class="p">)</span>
+
+    <span class="n">link_payload</span> <span class="o">=</span> <span class="n">LinkBudgetMsgPayload</span><span class="o">.</span><span class="n">LinkBudgetMsgPayload</span><span class="p">()</span>
+    <span class="n">link_payload</span><span class="o">.</span><span class="n">antennaName1</span> <span class="o">=</span> <span class="s2">&quot;TX_Ant&quot;</span>
+    <span class="n">link_payload</span><span class="o">.</span><span class="n">antennaName2</span> <span class="o">=</span> <span class="s2">&quot;RX_Ant&quot;</span>
+    <span class="n">link_payload</span><span class="o">.</span><span class="n">antennaState1</span> <span class="o">=</span> <span class="mi">2</span>                    <span class="c1"># [-] TX</span>
+    <span class="n">link_payload</span><span class="o">.</span><span class="n">antennaState2</span> <span class="o">=</span> <span class="mi">1</span>                    <span class="c1"># [-] RX</span>
+    <span class="n">link_payload</span><span class="o">.</span><span class="n">CNR1</span> <span class="o">=</span> <span class="mf">0.0</span>                           <span class="c1"># [-]</span>
+    <span class="n">link_payload</span><span class="o">.</span><span class="n">CNR2</span> <span class="o">=</span> <span class="mf">20.0</span>                          <span class="c1"># [-]</span>
+    <span class="n">link_payload</span><span class="o">.</span><span class="n">bandwidth</span> <span class="o">=</span> <span class="mf">1.0e6</span>                    <span class="c1"># [Hz]</span>
+    <span class="n">link_payload</span><span class="o">.</span><span class="n">frequency</span> <span class="o">=</span> <span class="mf">2.2e9</span>                    <span class="c1"># [Hz]</span>
+    <span class="n">link_msg</span> <span class="o">=</span> <span class="n">LinkBudgetMsgPayload</span><span class="o">.</span><span class="n">LinkBudgetMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">link_payload</span><span class="p">)</span>
+    <span class="n">test_module</span><span class="o">.</span><span class="n">linkBudgetInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">link_msg</span><span class="p">)</span>
+
+    <span class="n">node_log</span> <span class="o">=</span> <span class="n">test_module</span><span class="o">.</span><span class="n">nodeDataOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">downlink_reader</span> <span class="o">=</span> <span class="n">DownlinkHandlingMsgPayload</span><span class="o">.</span><span class="n">DownlinkHandlingMsgReader</span><span class="p">()</span>
+    <span class="n">downlink_reader</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">test_module</span><span class="o">.</span><span class="n">downlinkOutMsg</span><span class="p">)</span>
+    <span class="n">downlink_log</span> <span class="o">=</span> <span class="n">downlink_reader</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">unit_test_sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unit_task_name</span><span class="p">,</span> <span class="n">node_log</span><span class="p">)</span>
+    <span class="n">unit_test_sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unit_task_name</span><span class="p">,</span> <span class="n">downlink_log</span><span class="p">)</span>
+
+    <span class="n">unit_test_sim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">unit_test_sim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">1.0</span><span class="p">))</span>    <span class="c1"># [s]</span>
+    <span class="n">unit_test_sim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="k">assert</span> <span class="n">downlink_log</span><span class="o">.</span><span class="n">linkActive</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span>
+    <span class="k">assert</span> <span class="n">downlink_log</span><span class="o">.</span><span class="n">dataName</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;STORED DATA&quot;</span>
+    <span class="k">assert</span> <span class="n">downlink_log</span><span class="o">.</span><span class="n">availableDataBits</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="mf">1200.0</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">downlink_log</span><span class="o">.</span><span class="n">storageRemovalRate</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">downlink_log</span><span class="o">.</span><span class="n">deliveredDataRate</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">downlink_log</span><span class="o">.</span><span class="n">droppedDataRate</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">node_log</span><span class="o">.</span><span class="n">baudRate</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_downlink_multi_storage_units_block_actual_removal_even_with_unique_names">
+<a class="viewcode-back" href="../Documentation/simulation/communication/downlinkHandling/_UnitTest/test_downlinkHandling.html#test_downlinkHandling.test_downlink_multi_storage_units_block_actual_removal_even_with_unique_names">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_downlink_multi_storage_units_block_actual_removal_even_with_unique_names</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Verify actual storage removal is blocked when more than one storage unit is linked.&quot;&quot;&quot;</span>
+    <span class="n">debug_print</span><span class="p">(</span><span class="s2">&quot;test_downlink_multi_storage_units_block_actual_removal_even_with_unique_names&quot;</span><span class="p">)</span>
+
+    <span class="n">unit_task_name</span> <span class="o">=</span> <span class="s2">&quot;unitTask&quot;</span>
+    <span class="n">unit_process_name</span> <span class="o">=</span> <span class="s2">&quot;unitProcess&quot;</span>
+
+    <span class="n">unit_test_sim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">test_proc</span> <span class="o">=</span> <span class="n">unit_test_sim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">unit_process_name</span><span class="p">)</span>
+    <span class="n">test_proc</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">unit_test_sim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">unit_task_name</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)))</span>  <span class="c1"># [s]</span>
+
+    <span class="n">test_module</span> <span class="o">=</span> <span class="n">downlinkHandling</span><span class="o">.</span><span class="n">DownlinkHandling</span><span class="p">()</span>
+    <span class="n">test_module</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;downlink&quot;</span>
+    <span class="k">assert</span> <span class="n">test_module</span><span class="o">.</span><span class="n">setBitRateRequest</span><span class="p">(</span><span class="mf">1.0e5</span><span class="p">)</span>       <span class="c1"># [bit/s]</span>
+    <span class="k">assert</span> <span class="n">test_module</span><span class="o">.</span><span class="n">setPacketSizeBits</span><span class="p">(</span><span class="mf">256.0</span><span class="p">)</span>       <span class="c1"># [bit]</span>
+    <span class="k">assert</span> <span class="n">test_module</span><span class="o">.</span><span class="n">setMaxRetransmissions</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>       <span class="c1"># [-]</span>
+    <span class="k">assert</span> <span class="n">test_module</span><span class="o">.</span><span class="n">setReceiverAntenna</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>          <span class="c1"># [-]</span>
+    <span class="n">test_module</span><span class="o">.</span><span class="n">setRequireFullPacket</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>            <span class="c1"># [-]</span>
+    <span class="n">unit_test_sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unit_task_name</span><span class="p">,</span> <span class="n">test_module</span><span class="p">)</span>
+
+    <span class="n">storage_a</span> <span class="o">=</span> <span class="n">partitionedStorageUnit</span><span class="o">.</span><span class="n">PartitionedStorageUnit</span><span class="p">()</span>
+    <span class="n">storage_a</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;storageA&quot;</span>
+    <span class="n">storage_a</span><span class="o">.</span><span class="n">storageCapacity</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mf">1.0e6</span><span class="p">)</span>            <span class="c1"># [bit]</span>
+    <span class="n">storage_a</span><span class="o">.</span><span class="n">addPartition</span><span class="p">(</span><span class="s2">&quot;A_ONLY&quot;</span><span class="p">)</span>
+    <span class="n">storage_a</span><span class="o">.</span><span class="n">setDataBuffer</span><span class="p">([</span><span class="s2">&quot;A_ONLY&quot;</span><span class="p">],</span> <span class="p">[</span><span class="mi">400</span><span class="p">])</span>        <span class="c1"># [bit]</span>
+    <span class="n">storage_a</span><span class="o">.</span><span class="n">addDataNodeToModel</span><span class="p">(</span><span class="n">test_module</span><span class="o">.</span><span class="n">nodeDataOutMsg</span><span class="p">)</span>
+    <span class="n">unit_test_sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unit_task_name</span><span class="p">,</span> <span class="n">storage_a</span><span class="p">)</span>
+
+    <span class="n">storage_b</span> <span class="o">=</span> <span class="n">partitionedStorageUnit</span><span class="o">.</span><span class="n">PartitionedStorageUnit</span><span class="p">()</span>
+    <span class="n">storage_b</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;storageB&quot;</span>
+    <span class="n">storage_b</span><span class="o">.</span><span class="n">storageCapacity</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mf">1.0e6</span><span class="p">)</span>            <span class="c1"># [bit]</span>
+    <span class="n">storage_b</span><span class="o">.</span><span class="n">addPartition</span><span class="p">(</span><span class="s2">&quot;B_TOP&quot;</span><span class="p">)</span>
+    <span class="n">storage_b</span><span class="o">.</span><span class="n">setDataBuffer</span><span class="p">([</span><span class="s2">&quot;B_TOP&quot;</span><span class="p">],</span> <span class="p">[</span><span class="mi">1200</span><span class="p">])</span>        <span class="c1"># [bit]</span>
+    <span class="n">storage_b</span><span class="o">.</span><span class="n">addDataNodeToModel</span><span class="p">(</span><span class="n">test_module</span><span class="o">.</span><span class="n">nodeDataOutMsg</span><span class="p">)</span>
+    <span class="n">unit_test_sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unit_task_name</span><span class="p">,</span> <span class="n">storage_b</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">test_module</span><span class="o">.</span><span class="n">addStorageUnitToDownlink</span><span class="p">(</span><span class="n">storage_a</span><span class="o">.</span><span class="n">storageUnitDataOutMsg</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">test_module</span><span class="o">.</span><span class="n">addStorageUnitToDownlink</span><span class="p">(</span><span class="n">storage_b</span><span class="o">.</span><span class="n">storageUnitDataOutMsg</span><span class="p">)</span>
+
+    <span class="n">link_payload</span> <span class="o">=</span> <span class="n">LinkBudgetMsgPayload</span><span class="o">.</span><span class="n">LinkBudgetMsgPayload</span><span class="p">()</span>
+    <span class="n">link_payload</span><span class="o">.</span><span class="n">antennaName1</span> <span class="o">=</span> <span class="s2">&quot;TX_Ant&quot;</span>
+    <span class="n">link_payload</span><span class="o">.</span><span class="n">antennaName2</span> <span class="o">=</span> <span class="s2">&quot;RX_Ant&quot;</span>
+    <span class="n">link_payload</span><span class="o">.</span><span class="n">antennaState1</span> <span class="o">=</span> <span class="mi">2</span>                    <span class="c1"># [-] TX</span>
+    <span class="n">link_payload</span><span class="o">.</span><span class="n">antennaState2</span> <span class="o">=</span> <span class="mi">1</span>                    <span class="c1"># [-] RX</span>
+    <span class="n">link_payload</span><span class="o">.</span><span class="n">CNR1</span> <span class="o">=</span> <span class="mf">0.0</span>                           <span class="c1"># [-]</span>
+    <span class="n">link_payload</span><span class="o">.</span><span class="n">CNR2</span> <span class="o">=</span> <span class="mf">20.0</span>                          <span class="c1"># [-]</span>
+    <span class="n">link_payload</span><span class="o">.</span><span class="n">bandwidth</span> <span class="o">=</span> <span class="mf">1.0e6</span>                    <span class="c1"># [Hz]</span>
+    <span class="n">link_payload</span><span class="o">.</span><span class="n">frequency</span> <span class="o">=</span> <span class="mf">2.2e9</span>                    <span class="c1"># [Hz]</span>
+    <span class="n">link_msg</span> <span class="o">=</span> <span class="n">LinkBudgetMsgPayload</span><span class="o">.</span><span class="n">LinkBudgetMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">link_payload</span><span class="p">)</span>
+    <span class="n">test_module</span><span class="o">.</span><span class="n">linkBudgetInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">link_msg</span><span class="p">)</span>
+
+    <span class="n">node_log</span> <span class="o">=</span> <span class="n">test_module</span><span class="o">.</span><span class="n">nodeDataOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">downlink_reader</span> <span class="o">=</span> <span class="n">DownlinkHandlingMsgPayload</span><span class="o">.</span><span class="n">DownlinkHandlingMsgReader</span><span class="p">()</span>
+    <span class="n">downlink_reader</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">test_module</span><span class="o">.</span><span class="n">downlinkOutMsg</span><span class="p">)</span>
+    <span class="n">downlink_log</span> <span class="o">=</span> <span class="n">downlink_reader</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">unit_test_sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unit_task_name</span><span class="p">,</span> <span class="n">node_log</span><span class="p">)</span>
+    <span class="n">unit_test_sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unit_task_name</span><span class="p">,</span> <span class="n">downlink_log</span><span class="p">)</span>
+
+    <span class="n">unit_test_sim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">unit_test_sim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">1.0</span><span class="p">))</span>    <span class="c1"># [s]</span>
+    <span class="n">unit_test_sim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="n">storage_a_payload</span> <span class="o">=</span> <span class="n">storage_a</span><span class="o">.</span><span class="n">storageUnitDataOutMsg</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="n">storage_b_payload</span> <span class="o">=</span> <span class="n">storage_b</span><span class="o">.</span><span class="n">storageUnitDataOutMsg</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+    <span class="k">assert</span> <span class="n">downlink_log</span><span class="o">.</span><span class="n">linkActive</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span>
+    <span class="k">assert</span> <span class="n">downlink_log</span><span class="o">.</span><span class="n">dataName</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;B_TOP&quot;</span>
+    <span class="k">assert</span> <span class="n">downlink_log</span><span class="o">.</span><span class="n">availableDataBits</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="mf">1200.0</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">downlink_log</span><span class="o">.</span><span class="n">storageRemovalRate</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">downlink_log</span><span class="o">.</span><span class="n">deliveredDataRate</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">downlink_log</span><span class="o">.</span><span class="n">droppedDataRate</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">node_log</span><span class="o">.</span><span class="n">baudRate</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">node_log</span><span class="o">.</span><span class="n">dataName</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">storage_a_payload</span><span class="o">.</span><span class="n">storedDataName</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span><span class="s2">&quot;A_ONLY&quot;</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">storage_b_payload</span><span class="o">.</span><span class="n">storedDataName</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span><span class="s2">&quot;B_TOP&quot;</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="n">storage_a_payload</span><span class="o">.</span><span class="n">storedData</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="mf">400.0</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">storage_b_payload</span><span class="o">.</span><span class="n">storedData</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="mf">1200.0</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_downlink_missing_partition_name_blocks_removal">
+<a class="viewcode-back" href="../Documentation/simulation/communication/downlinkHandling/_UnitTest/test_downlinkHandling.html#test_downlinkHandling.test_downlink_missing_partition_name_blocks_removal">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_downlink_missing_partition_name_blocks_removal</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Verify selected partitions without explicit names do not publish removal commands.&quot;&quot;&quot;</span>
+    <span class="n">debug_print</span><span class="p">(</span><span class="s2">&quot;test_downlink_missing_partition_name_blocks_removal&quot;</span><span class="p">)</span>
+
+    <span class="n">unit_task_name</span> <span class="o">=</span> <span class="s2">&quot;unitTask&quot;</span>
+    <span class="n">unit_process_name</span> <span class="o">=</span> <span class="s2">&quot;unitProcess&quot;</span>
+
+    <span class="n">unit_test_sim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">test_proc</span> <span class="o">=</span> <span class="n">unit_test_sim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">unit_process_name</span><span class="p">)</span>
+    <span class="n">test_proc</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">unit_test_sim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">unit_task_name</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)))</span>  <span class="c1"># [s]</span>
+
+    <span class="n">test_module</span> <span class="o">=</span> <span class="n">downlinkHandling</span><span class="o">.</span><span class="n">DownlinkHandling</span><span class="p">()</span>
+    <span class="n">test_module</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;downlink&quot;</span>
+    <span class="k">assert</span> <span class="n">test_module</span><span class="o">.</span><span class="n">setBitRateRequest</span><span class="p">(</span><span class="mf">1.0e5</span><span class="p">)</span>       <span class="c1"># [bit/s]</span>
+    <span class="k">assert</span> <span class="n">test_module</span><span class="o">.</span><span class="n">setPacketSizeBits</span><span class="p">(</span><span class="mf">256.0</span><span class="p">)</span>       <span class="c1"># [bit]</span>
+    <span class="k">assert</span> <span class="n">test_module</span><span class="o">.</span><span class="n">setMaxRetransmissions</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>       <span class="c1"># [-]</span>
+    <span class="k">assert</span> <span class="n">test_module</span><span class="o">.</span><span class="n">setReceiverAntenna</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>          <span class="c1"># [-]</span>
+    <span class="n">test_module</span><span class="o">.</span><span class="n">setRequireFullPacket</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>            <span class="c1"># [-]</span>
+    <span class="n">unit_test_sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unit_task_name</span><span class="p">,</span> <span class="n">test_module</span><span class="p">)</span>
+
+    <span class="n">storage_msg</span> <span class="o">=</span> <span class="n">make_storage_status_msg</span><span class="p">(</span><span class="mf">1200.0</span><span class="p">,</span> <span class="p">[(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="mf">1200.0</span><span class="p">)])</span>  <span class="c1"># [bit]</span>
+    <span class="k">assert</span> <span class="n">test_module</span><span class="o">.</span><span class="n">addStorageUnitToDownlink</span><span class="p">(</span><span class="n">storage_msg</span><span class="p">)</span>
+
+    <span class="n">link_payload</span> <span class="o">=</span> <span class="n">LinkBudgetMsgPayload</span><span class="o">.</span><span class="n">LinkBudgetMsgPayload</span><span class="p">()</span>
+    <span class="n">link_payload</span><span class="o">.</span><span class="n">antennaName1</span> <span class="o">=</span> <span class="s2">&quot;TX_Ant&quot;</span>
+    <span class="n">link_payload</span><span class="o">.</span><span class="n">antennaName2</span> <span class="o">=</span> <span class="s2">&quot;RX_Ant&quot;</span>
+    <span class="n">link_payload</span><span class="o">.</span><span class="n">antennaState1</span> <span class="o">=</span> <span class="mi">2</span>                    <span class="c1"># [-] TX</span>
+    <span class="n">link_payload</span><span class="o">.</span><span class="n">antennaState2</span> <span class="o">=</span> <span class="mi">1</span>                    <span class="c1"># [-] RX</span>
+    <span class="n">link_payload</span><span class="o">.</span><span class="n">CNR1</span> <span class="o">=</span> <span class="mf">0.0</span>                           <span class="c1"># [-]</span>
+    <span class="n">link_payload</span><span class="o">.</span><span class="n">CNR2</span> <span class="o">=</span> <span class="mf">20.0</span>                          <span class="c1"># [-]</span>
+    <span class="n">link_payload</span><span class="o">.</span><span class="n">bandwidth</span> <span class="o">=</span> <span class="mf">1.0e6</span>                    <span class="c1"># [Hz]</span>
+    <span class="n">link_payload</span><span class="o">.</span><span class="n">frequency</span> <span class="o">=</span> <span class="mf">2.2e9</span>                    <span class="c1"># [Hz]</span>
+    <span class="n">link_msg</span> <span class="o">=</span> <span class="n">LinkBudgetMsgPayload</span><span class="o">.</span><span class="n">LinkBudgetMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">link_payload</span><span class="p">)</span>
+    <span class="n">test_module</span><span class="o">.</span><span class="n">linkBudgetInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">link_msg</span><span class="p">)</span>
+
+    <span class="n">node_log</span> <span class="o">=</span> <span class="n">test_module</span><span class="o">.</span><span class="n">nodeDataOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">downlink_reader</span> <span class="o">=</span> <span class="n">DownlinkHandlingMsgPayload</span><span class="o">.</span><span class="n">DownlinkHandlingMsgReader</span><span class="p">()</span>
+    <span class="n">downlink_reader</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">test_module</span><span class="o">.</span><span class="n">downlinkOutMsg</span><span class="p">)</span>
+    <span class="n">downlink_log</span> <span class="o">=</span> <span class="n">downlink_reader</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">unit_test_sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unit_task_name</span><span class="p">,</span> <span class="n">node_log</span><span class="p">)</span>
+    <span class="n">unit_test_sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unit_task_name</span><span class="p">,</span> <span class="n">downlink_log</span><span class="p">)</span>
+
+    <span class="n">unit_test_sim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">unit_test_sim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">1.0</span><span class="p">))</span>    <span class="c1"># [s]</span>
+    <span class="n">unit_test_sim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="k">assert</span> <span class="n">downlink_log</span><span class="o">.</span><span class="n">linkActive</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span>
+    <span class="k">assert</span> <span class="n">downlink_log</span><span class="o">.</span><span class="n">dataName</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">assert</span> <span class="n">downlink_log</span><span class="o">.</span><span class="n">availableDataBits</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="mf">1200.0</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">downlink_log</span><span class="o">.</span><span class="n">storageRemovalRate</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">downlink_log</span><span class="o">.</span><span class="n">deliveredDataRate</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">downlink_log</span><span class="o">.</span><span class="n">droppedDataRate</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">node_log</span><span class="o">.</span><span class="n">dataName</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">assert</span> <span class="n">node_log</span><span class="o">.</span><span class="n">baudRate</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">)</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="c1"># Allow direct execution:</span>
+    <span class="c1"># python test_downlinkHandling.py -k test_name -q -s --debug</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="n">debug_flags</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;--debug&quot;</span><span class="p">,</span> <span class="s2">&quot;--debug-downlink&quot;</span><span class="p">,</span> <span class="s2">&quot;--debug-downlink-test&quot;</span><span class="p">}</span>
+    <span class="n">filtered_args</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">debug_requested</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">debug_flags</span><span class="p">:</span>
+            <span class="n">debug_requested</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">filtered_args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
+
+    <span class="c1"># If no explicit test file/path is passed, run this file only.</span>
+    <span class="n">explicit_target</span> <span class="o">=</span> <span class="nb">any</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.py&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">filtered_args</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">a</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">))</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">explicit_target</span><span class="p">:</span>
+        <span class="n">filtered_args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">debug_requested</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">&quot;-s&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">filtered_args</span><span class="p">:</span>
+            <span class="n">filtered_args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;-s&quot;</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;BSK_DOWNLINK_TEST_DEBUG&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;1&quot;</span>
+        <span class="n">DEBUG_DOWNLINK_TEST</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">raise</span> <span class="ne">SystemExit</span><span class="p">(</span><span class="n">pytest</span><span class="o">.</span><span class="n">main</span><span class="p">(</span><span class="n">filtered_args</span><span class="p">))</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,555 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>C++ Module: jointArrayRefProfiler &mdash; Basilisk 2.11.0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=2ebb1c42" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=1647406f"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="jointArrayRefProfiler" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../communication/index.html">communication</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">deviceInterface</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../arrayMotorTorqueToSingleActuators/index.html">arrayMotorTorqueToSingleActuators</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../encoder/index.html">encoder</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../facetedSpacecraftModel/index.html">facetedSpacecraftModel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../facetedSpacecraftProjectedArea/index.html">facetedSpacecraftProjectedArea</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../hingedBodyLinearProfiler/index.html">hingedBodyLinearProfiler</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">jointArrayRefProfiler</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../motorVoltageInterface/index.html">motorVoltageInterface</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../prescribedLinearTranslation/index.html">prescribedLinearTranslation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../prescribedRotation1DOF/index.html">prescribedRotation1DOF</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../saturationSingleActuator/index.html">saturationSingleActuator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../scalarJointStatesToRWSpeed/index.html">scalarJointStatesToRWSpeed</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../stepperMotor/index.html">stepperMotor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../tempMeasurement/index.html">tempMeasurement</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../dynamics/index.html">dynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../environment/index.html">environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../forceTorque/index.html">forceTorque</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujocoDynamics/index.html">mujocoDynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../simSynch/index.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Plugins/overview.html">About Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Plugins/installing.html">Installing Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Plugins/writing.html">Writing a Basilisk Plugin</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">deviceInterface</a></li>
+          <li class="breadcrumb-item"><a href="index.html">jointArrayRefProfiler</a></li>
+      <li class="breadcrumb-item active"><span class="module-type-label module-type-cpp">C++</span> Module: jointArrayRefProfiler</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/simulation/deviceInterface/jointArrayRefProfiler/jointArrayRefProfiler.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="c-module-jointarrayrefprofiler">
+<span id="jointarrayrefprofiler"></span><h1><span class="module-type-label module-type-cpp">C++</span> Module: jointArrayRefProfiler<a class="headerlink" href="#c-module-jointarrayrefprofiler" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>This module converts instantaneous reference joint angle changes to either
+filtered or time-profiled reference joint angles, rates, and accelerations.</p>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>The following diagram and table list the module input and output messages.</p>
+<div align="center" class="align-center"><div class="graphviz"><object data="../../../../_images/graphviz-8ddf02e47ae21626a6a95cdaa45e3829a9a3223e.svg" type="image/svg+xml" class="graphviz">
+<p class="warning">jointArrayRefProfiler module input and output messages</p></object></div>
+</div>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>jointStatesInMsgs</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/ScalarJointStateMsgPayload.html#scalarjointstatemsgpayload"><span class="std std-ref">ScalarJointStateMsgPayload</span></a></p></td>
+<td><p>Vector of current joint state input messages.</p></td>
+</tr>
+<tr class="row-odd"><td><p>jointStateDotsInMsgs</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/ScalarJointStateMsgPayload.html#scalarjointstatemsgpayload"><span class="std std-ref">ScalarJointStateMsgPayload</span></a></p></td>
+<td><p>Vector of current joint state-derivative input messages.</p></td>
+</tr>
+<tr class="row-even"><td><p>desJointStatesInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefCpp/JointArrayStateMsgPayload.html#jointarraystatemsgpayload"><span class="std std-ref">JointArrayStateMsgPayload</span></a></p></td>
+<td><p>Desired joint-array state input message.</p></td>
+</tr>
+<tr class="row-odd"><td><p>desJointStatesOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefCpp/JointArrayStateMsgPayload.html#jointarraystatemsgpayload"><span class="std std-ref">JointArrayStateMsgPayload</span></a></p></td>
+<td><p>Joint-array reference output message.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="module-assumptions-and-limitations">
+<h2>Module Assumptions and Limitations<a class="headerlink" href="#module-assumptions-and-limitations" title="Link to this heading"></a></h2>
+<p>This module assumes the desired joint-array command remains constant
+between message updates and that a new profile should begin whenever
+The values within the <code class="docutils literal notranslate"><span class="pre">desJointStatesInMsg</span></code> are updated. In instances where
+there is a timing mismatch between the write time of
+<code class="docutils literal notranslate"><span class="pre">desJointStatesInMsg</span></code> and the module update time, the new profile
+begins based on the module update time rather than the time the message
+was written.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">lowPass</span></code> mode applies a first-order discrete low-pass filter
+to the desired joint angles using the user-specified <code class="docutils literal notranslate"><span class="pre">wc</span></code> and <code class="docutils literal notranslate"><span class="pre">filterDt</span></code>
+parameters. This mode smooths the reference command but does not guarantee
+finite-time convergence like the time-profiled modes.</p>
+<p>For the <code class="docutils literal notranslate"><span class="pre">linear</span></code>, <code class="docutils literal notranslate"><span class="pre">cubic</span></code>, and <code class="docutils literal notranslate"><span class="pre">quintic</span></code> modes, the module is
+designed to drive each joint to the desired final angle over the
+specified <code class="docutils literal notranslate"><span class="pre">profileDuration</span></code>. The <code class="docutils literal notranslate"><span class="pre">cubic</span></code> and <code class="docutils literal notranslate"><span class="pre">quintic</span></code>
+implementations assume the terminal joint rate and terminal joint
+acceleration are zero. The <code class="docutils literal notranslate"><span class="pre">linear</span></code> mode does not preserve the
+initial joint rates, performs constant-rate interpolation, and only
+reaches zero rate once the profile completes.</p>
+</section>
+<section id="user-guide">
+<h2>User Guide<a class="headerlink" href="#user-guide" title="Link to this heading"></a></h2>
+<p>This section outlines the steps needed to set up the <code class="docutils literal notranslate"><span class="pre">jointArrayRefProfiler</span></code> module in
+Python using Basilisk.</p>
+<ol class="arabic">
+<li><p>Import the module:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">jointArrayRefProfiler</span>
+</pre></div>
+</div>
+</li>
+<li><p>Create an instance of the module:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">module</span> <span class="o">=</span> <span class="n">jointArrayRefProfiler</span><span class="o">.</span><span class="n">JointArrayRefProfiler</span><span class="p">()</span>
+<span class="n">module</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;jointArrayRefProfiler&quot;</span>
+</pre></div>
+</div>
+</li>
+<li><p>Set the profile type to either <code class="docutils literal notranslate"><span class="pre">linear</span></code>, <code class="docutils literal notranslate"><span class="pre">cubic</span></code>, <code class="docutils literal notranslate"><span class="pre">quintic</span></code>, or <code class="docutils literal notranslate"><span class="pre">lowPass</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">module</span><span class="o">.</span><span class="n">setProfileType</span><span class="p">(</span><span class="s2">&quot;linear&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p>For the low pass filter mode, set the cutoff frequency and filter time step:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">module</span><span class="o">.</span><span class="n">setWc</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>  <span class="c1"># [rad/s]</span>
+<span class="n">module</span><span class="o">.</span><span class="n">setFilterDt</span><span class="p">(</span><span class="mf">0.01</span><span class="p">)</span>  <span class="c1"># [s]</span>
+</pre></div>
+</div>
+</li>
+<li><p>For the time-profiled modes, set the profile duration:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">module</span><span class="o">.</span><span class="n">setProfileDuration</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span>  <span class="c1"># [s]</span>
+</pre></div>
+</div>
+</li>
+<li><p>For each hinged joint in the system, add a hinged joint to the module:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">module</span><span class="o">.</span><span class="n">addHingedJoint</span><span class="p">()</span>
+</pre></div>
+</div>
+</li>
+<li><p>Add the module to the task list:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">module</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+</ol>
+<hr class="docutils" />
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv421JointArrayRefProfiler">
+<span id="_CPPv321JointArrayRefProfiler"></span><span id="_CPPv221JointArrayRefProfiler"></span><span id="JointArrayRefProfiler"></span><span class="target" id="class_joint_array_ref_profiler"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">JointArrayRefProfiler</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../../../architecture/_GeneralModuleFiles/sys_model.html#_CPPv48SysModel" title="SysModel"><span class="n"><span class="pre">SysModel</span></span></a><a class="headerlink" href="#_CPPv421JointArrayRefProfiler" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;jointArrayRefProfiler.h&gt;</em></div>
+<p>This module converts instantaneous reference angle changes for an array of joints to smooth profiles. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N21JointArrayRefProfiler21JointArrayRefProfilerEv">
+<span id="_CPPv3N21JointArrayRefProfiler21JointArrayRefProfilerEv"></span><span id="_CPPv2N21JointArrayRefProfiler21JointArrayRefProfilerEv"></span><span id="JointArrayRefProfiler::JointArrayRefProfiler"></span><span class="target" id="class_joint_array_ref_profiler_1aa008af5f51036f67045435032118b7cc"></span><span class="sig-name descname"><span class="n"><span class="pre">JointArrayRefProfiler</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">default</span></span><a class="headerlink" href="#_CPPv4N21JointArrayRefProfiler21JointArrayRefProfilerEv" title="Link to this definition"></a><br /></dt>
+<dd><p>This is the constructor for the module class. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N21JointArrayRefProfilerD0Ev">
+<span id="_CPPv3N21JointArrayRefProfilerD0Ev"></span><span id="_CPPv2N21JointArrayRefProfilerD0Ev"></span><span id="JointArrayRefProfiler::~JointArrayRefProfiler"></span><span class="target" id="class_joint_array_ref_profiler_1ae9f86c7722d2dc27bd5aaacc2c17fca9"></span><span class="sig-name descname"><span class="n"><span class="pre">~JointArrayRefProfiler</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">default</span></span><a class="headerlink" href="#_CPPv4N21JointArrayRefProfilerD0Ev" title="Link to this definition"></a><br /></dt>
+<dd><p>This is the destructor for the module class. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N21JointArrayRefProfiler5ResetE8uint64_t">
+<span id="_CPPv3N21JointArrayRefProfiler5ResetE8uint64_t"></span><span id="_CPPv2N21JointArrayRefProfiler5ResetE8uint64_t"></span><span id="JointArrayRefProfiler::Reset__uint64_t"></span><span class="target" id="class_joint_array_ref_profiler_1a9568c76656712e163665f73076eb9e1e"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N21JointArrayRefProfiler5ResetE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method is used to reset the module and checks that required input messages are connected. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N21JointArrayRefProfiler11UpdateStateE8uint64_t">
+<span id="_CPPv3N21JointArrayRefProfiler11UpdateStateE8uint64_t"></span><span id="_CPPv2N21JointArrayRefProfiler11UpdateStateE8uint64_t"></span><span id="JointArrayRefProfiler::UpdateState__uint64_t"></span><span class="target" id="class_joint_array_ref_profiler_1a96bdc7abc0ea54841fad280f2666d467"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">UpdateState</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N21JointArrayRefProfiler11UpdateStateE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This is the main method that gets called every time the module is updated. It determines the current joint reference states based on the profile shape and duration. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N21JointArrayRefProfiler14setProfileTypeENSt6stringE">
+<span id="_CPPv3N21JointArrayRefProfiler14setProfileTypeENSt6stringE"></span><span id="_CPPv2N21JointArrayRefProfiler14setProfileTypeENSt6stringE"></span><span id="JointArrayRefProfiler::setProfileType__ss"></span><span class="target" id="class_joint_array_ref_profiler_1a27d73699855779568f99aee8c1c7c50c"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setProfileType</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">profileType</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N21JointArrayRefProfiler14setProfileTypeENSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for the <code class="docutils literal notranslate"><span class="pre">profileType</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK21JointArrayRefProfiler14getProfileTypeEv">
+<span id="_CPPv3NK21JointArrayRefProfiler14getProfileTypeEv"></span><span id="_CPPv2NK21JointArrayRefProfiler14getProfileTypeEv"></span><span id="JointArrayRefProfiler::getProfileTypeC"></span><span class="target" id="class_joint_array_ref_profiler_1a60f6919becf8c7914a4a28321a76bc0b"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getProfileType</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK21JointArrayRefProfiler14getProfileTypeEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for the <code class="docutils literal notranslate"><span class="pre">profileType</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N21JointArrayRefProfiler18setProfileDurationEd">
+<span id="_CPPv3N21JointArrayRefProfiler18setProfileDurationEd"></span><span id="_CPPv2N21JointArrayRefProfiler18setProfileDurationEd"></span><span id="JointArrayRefProfiler::setProfileDuration__double"></span><span class="target" id="class_joint_array_ref_profiler_1aba2601fa28ea797c29d18c66fadf31e6"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setProfileDuration</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">profileDuration</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N21JointArrayRefProfiler18setProfileDurationEd" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for the <code class="docutils literal notranslate"><span class="pre">profileDuration</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK21JointArrayRefProfiler18getProfileDurationEv">
+<span id="_CPPv3NK21JointArrayRefProfiler18getProfileDurationEv"></span><span id="_CPPv2NK21JointArrayRefProfiler18getProfileDurationEv"></span><span id="JointArrayRefProfiler::getProfileDurationC"></span><span class="target" id="class_joint_array_ref_profiler_1a8e2e29af49f61a072e441c105e317e3f"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getProfileDuration</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK21JointArrayRefProfiler18getProfileDurationEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for the <code class="docutils literal notranslate"><span class="pre">profileDuration</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N21JointArrayRefProfiler5setWcEd">
+<span id="_CPPv3N21JointArrayRefProfiler5setWcEd"></span><span id="_CPPv2N21JointArrayRefProfiler5setWcEd"></span><span id="JointArrayRefProfiler::setWc__double"></span><span class="target" id="class_joint_array_ref_profiler_1a1684c85f8f3bfd920cece73fcd73bf43"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setWc</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">wc</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N21JointArrayRefProfiler5setWcEd" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for the <code class="docutils literal notranslate"><span class="pre">wc</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK21JointArrayRefProfiler5getWcEv">
+<span id="_CPPv3NK21JointArrayRefProfiler5getWcEv"></span><span id="_CPPv2NK21JointArrayRefProfiler5getWcEv"></span><span id="JointArrayRefProfiler::getWcC"></span><span class="target" id="class_joint_array_ref_profiler_1a481bccc3659527412d9b85f6c6b329cb"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getWc</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK21JointArrayRefProfiler5getWcEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for the <code class="docutils literal notranslate"><span class="pre">wc</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N21JointArrayRefProfiler11setFilterDtEd">
+<span id="_CPPv3N21JointArrayRefProfiler11setFilterDtEd"></span><span id="_CPPv2N21JointArrayRefProfiler11setFilterDtEd"></span><span id="JointArrayRefProfiler::setFilterDt__double"></span><span class="target" id="class_joint_array_ref_profiler_1a5274ef650450077e03169fa1f04abb72"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setFilterDt</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">filterDt</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N21JointArrayRefProfiler11setFilterDtEd" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for the <code class="docutils literal notranslate"><span class="pre">filterDt</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK21JointArrayRefProfiler11getFilterDtEv">
+<span id="_CPPv3NK21JointArrayRefProfiler11getFilterDtEv"></span><span id="_CPPv2NK21JointArrayRefProfiler11getFilterDtEv"></span><span id="JointArrayRefProfiler::getFilterDtC"></span><span class="target" id="class_joint_array_ref_profiler_1a5e8b96e01d6c76bfdce6699bedd3ab3c"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getFilterDt</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK21JointArrayRefProfiler11getFilterDtEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for the <code class="docutils literal notranslate"><span class="pre">filterDt</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N21JointArrayRefProfiler14addHingedJointEv">
+<span id="_CPPv3N21JointArrayRefProfiler14addHingedJointEv"></span><span id="_CPPv2N21JointArrayRefProfiler14addHingedJointEv"></span><span id="JointArrayRefProfiler::addHingedJoint"></span><span class="target" id="class_joint_array_ref_profiler_1a71828469e2296cdecd57f08c4edbbb1b"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">addHingedJoint</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N21JointArrayRefProfiler14addHingedJointEv" title="Link to this definition"></a><br /></dt>
+<dd><p>method for adding a new hinged joint to the system </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21JointArrayRefProfiler17jointStatesInMsgsE">
+<span id="_CPPv3N21JointArrayRefProfiler17jointStatesInMsgsE"></span><span id="_CPPv2N21JointArrayRefProfiler17jointStatesInMsgsE"></span><span id="JointArrayRefProfiler::jointStatesInMsgs__std::vector:ReadFunctor:ScalarJointStateMsgPayload::"></span><span class="target" id="class_joint_array_ref_profiler_1a753e3630308d16ff9370ed2414d5259b"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/ScalarJointStateMsgPayload.html#_CPPv426ScalarJointStateMsgPayload" title="ScalarJointStateMsgPayload"><span class="n"><span class="pre">ScalarJointStateMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">jointStatesInMsgs</span></span></span><a class="headerlink" href="#_CPPv4N21JointArrayRefProfiler17jointStatesInMsgsE" title="Link to this definition"></a><br /></dt>
+<dd><p>vector of current joint state input messages </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21JointArrayRefProfiler20jointStateDotsInMsgsE">
+<span id="_CPPv3N21JointArrayRefProfiler20jointStateDotsInMsgsE"></span><span id="_CPPv2N21JointArrayRefProfiler20jointStateDotsInMsgsE"></span><span id="JointArrayRefProfiler::jointStateDotsInMsgs__std::vector:ReadFunctor:ScalarJointStateMsgPayload::"></span><span class="target" id="class_joint_array_ref_profiler_1abee5c1d053410cae60f19dbef87924d9"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/ScalarJointStateMsgPayload.html#_CPPv426ScalarJointStateMsgPayload" title="ScalarJointStateMsgPayload"><span class="n"><span class="pre">ScalarJointStateMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">jointStateDotsInMsgs</span></span></span><a class="headerlink" href="#_CPPv4N21JointArrayRefProfiler20jointStateDotsInMsgsE" title="Link to this definition"></a><br /></dt>
+<dd><p>vector of current joint state-derivative input messages </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21JointArrayRefProfiler19desJointStatesInMsgE">
+<span id="_CPPv3N21JointArrayRefProfiler19desJointStatesInMsgE"></span><span id="_CPPv2N21JointArrayRefProfiler19desJointStatesInMsgE"></span><span id="JointArrayRefProfiler::desJointStatesInMsg__ReadFunctor:JointArrayStateMsgPayload:"></span><span class="target" id="class_joint_array_ref_profiler_1a6db1ec2891028198f556f3835d341e9a"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefCpp/JointArrayStateMsgPayload.html#_CPPv425JointArrayStateMsgPayload" title="JointArrayStateMsgPayload"><span class="n"><span class="pre">JointArrayStateMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">desJointStatesInMsg</span></span></span><a class="headerlink" href="#_CPPv4N21JointArrayRefProfiler19desJointStatesInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Desired joint-array state input message. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21JointArrayRefProfiler20desJointStatesOutMsgE">
+<span id="_CPPv3N21JointArrayRefProfiler20desJointStatesOutMsgE"></span><span id="_CPPv2N21JointArrayRefProfiler20desJointStatesOutMsgE"></span><span id="JointArrayRefProfiler::desJointStatesOutMsg__Message:JointArrayStateMsgPayload:"></span><span class="target" id="class_joint_array_ref_profiler_1a03aca13e69c64ffa76a995d1163b195c"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefCpp/JointArrayStateMsgPayload.html#_CPPv425JointArrayStateMsgPayload" title="JointArrayStateMsgPayload"><span class="n"><span class="pre">JointArrayStateMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">desJointStatesOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N21JointArrayRefProfiler20desJointStatesOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Joint-array reference output message. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21JointArrayRefProfiler9bskLoggerE">
+<span id="_CPPv3N21JointArrayRefProfiler9bskLoggerE"></span><span id="_CPPv2N21JointArrayRefProfiler9bskLoggerE"></span><span id="JointArrayRefProfiler::bskLogger__BSKLogger"></span><span class="target" id="class_joint_array_ref_profiler_1a59b06b0fe97ef1620e020ed2b68575b2"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N21JointArrayRefProfiler9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>BSK Logging. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-functions">Private Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N21JointArrayRefProfiler20computeLowPassFilterE8uint64_tRK25JointArrayStateMsgPayload">
+<span id="_CPPv3N21JointArrayRefProfiler20computeLowPassFilterE8uint64_tRK25JointArrayStateMsgPayload"></span><span id="_CPPv2N21JointArrayRefProfiler20computeLowPassFilterE8uint64_tRK25JointArrayStateMsgPayload"></span><span id="JointArrayRefProfiler::computeLowPassFilter__uint64_t.JointArrayStateMsgPayloadCR"></span><span class="target" id="class_joint_array_ref_profiler_1afee91bd2b0e73a2ef30ceabaaa35946b"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeLowPassFilter</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../../architecture/msgPayloadDefCpp/JointArrayStateMsgPayload.html#_CPPv425JointArrayStateMsgPayload" title="JointArrayStateMsgPayload"><span class="n"><span class="pre">JointArrayStateMsgPayload</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">desJointStatesIn</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N21JointArrayRefProfiler20computeLowPassFilterE8uint64_tRK25JointArrayStateMsgPayload" title="Link to this definition"></a><br /></dt>
+<dd><p>Method for computing the low pass filtered joint reference profile </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>CurrentSimNanos</strong> – current simulation time in nanoseconds </p></li>
+<li><p><strong>desJointStatesIn</strong> – desired joint states input message payload </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N21JointArrayRefProfiler20computeLinearProfileE8uint64_tRK25JointArrayStateMsgPayload">
+<span id="_CPPv3N21JointArrayRefProfiler20computeLinearProfileE8uint64_tRK25JointArrayStateMsgPayload"></span><span id="_CPPv2N21JointArrayRefProfiler20computeLinearProfileE8uint64_tRK25JointArrayStateMsgPayload"></span><span id="JointArrayRefProfiler::computeLinearProfile__uint64_t.JointArrayStateMsgPayloadCR"></span><span class="target" id="class_joint_array_ref_profiler_1a50ff81751bb0fb00a25c02bb49468d63"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeLinearProfile</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../../architecture/msgPayloadDefCpp/JointArrayStateMsgPayload.html#_CPPv425JointArrayStateMsgPayload" title="JointArrayStateMsgPayload"><span class="n"><span class="pre">JointArrayStateMsgPayload</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">desJointStatesIn</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N21JointArrayRefProfiler20computeLinearProfileE8uint64_tRK25JointArrayStateMsgPayload" title="Link to this definition"></a><br /></dt>
+<dd><p>Method for computing the linear joint reference profile </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>CurrentSimNanos</strong> – current simulation time in nanoseconds </p></li>
+<li><p><strong>desJointStatesIn</strong> – desired joint states input message payload </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N21JointArrayRefProfiler19computeCubicProfileE8uint64_tRK25JointArrayStateMsgPayload">
+<span id="_CPPv3N21JointArrayRefProfiler19computeCubicProfileE8uint64_tRK25JointArrayStateMsgPayload"></span><span id="_CPPv2N21JointArrayRefProfiler19computeCubicProfileE8uint64_tRK25JointArrayStateMsgPayload"></span><span id="JointArrayRefProfiler::computeCubicProfile__uint64_t.JointArrayStateMsgPayloadCR"></span><span class="target" id="class_joint_array_ref_profiler_1a62b40fba30f06d307e79ee6a31f11dcc"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeCubicProfile</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../../architecture/msgPayloadDefCpp/JointArrayStateMsgPayload.html#_CPPv425JointArrayStateMsgPayload" title="JointArrayStateMsgPayload"><span class="n"><span class="pre">JointArrayStateMsgPayload</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">desJointStatesIn</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N21JointArrayRefProfiler19computeCubicProfileE8uint64_tRK25JointArrayStateMsgPayload" title="Link to this definition"></a><br /></dt>
+<dd><p>Method for computing the cubic joint reference profile </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>CurrentSimNanos</strong> – current simulation time in nanoseconds </p></li>
+<li><p><strong>desJointStatesIn</strong> – desired joint states input message payload </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N21JointArrayRefProfiler21computeQuinticProfileE8uint64_tRK25JointArrayStateMsgPayload">
+<span id="_CPPv3N21JointArrayRefProfiler21computeQuinticProfileE8uint64_tRK25JointArrayStateMsgPayload"></span><span id="_CPPv2N21JointArrayRefProfiler21computeQuinticProfileE8uint64_tRK25JointArrayStateMsgPayload"></span><span id="JointArrayRefProfiler::computeQuinticProfile__uint64_t.JointArrayStateMsgPayloadCR"></span><span class="target" id="class_joint_array_ref_profiler_1a87252aff08a070baad3b77e677751b8d"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeQuinticProfile</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../../architecture/msgPayloadDefCpp/JointArrayStateMsgPayload.html#_CPPv425JointArrayStateMsgPayload" title="JointArrayStateMsgPayload"><span class="n"><span class="pre">JointArrayStateMsgPayload</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">desJointStatesIn</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N21JointArrayRefProfiler21computeQuinticProfileE8uint64_tRK25JointArrayStateMsgPayload" title="Link to this definition"></a><br /></dt>
+<dd><p>Method for computing the quintic joint reference profile </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>CurrentSimNanos</strong> – current simulation time in nanoseconds </p></li>
+<li><p><strong>desJointStatesIn</strong> – desired joint states input message payload </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21JointArrayRefProfiler11profileTypeE">
+<span id="_CPPv3N21JointArrayRefProfiler11profileTypeE"></span><span id="_CPPv2N21JointArrayRefProfiler11profileTypeE"></span><span id="JointArrayRefProfiler::profileType__ss"></span><span class="target" id="class_joint_array_ref_profiler_1afa6d787c76e1e5911a88b2adb2580800"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">profileType</span></span></span><a class="headerlink" href="#_CPPv4N21JointArrayRefProfiler11profileTypeE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Reference profile type </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21JointArrayRefProfiler15profileDurationE">
+<span id="_CPPv3N21JointArrayRefProfiler15profileDurationE"></span><span id="_CPPv2N21JointArrayRefProfiler15profileDurationE"></span><span id="JointArrayRefProfiler::profileDuration__double"></span><span class="target" id="class_joint_array_ref_profiler_1a96215c6ffe962578d6d3f06d09674799"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">profileDuration</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="o"><span class="pre">-</span></span><span class="m"><span class="pre">1.0</span></span><a class="headerlink" href="#_CPPv4N21JointArrayRefProfiler15profileDurationE" title="Link to this definition"></a><br /></dt>
+<dd><p>[s] Reference profile duration, used for all profile types except “lowPass” </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21JointArrayRefProfiler2wcE">
+<span id="_CPPv3N21JointArrayRefProfiler2wcE"></span><span id="_CPPv2N21JointArrayRefProfiler2wcE"></span><span id="JointArrayRefProfiler::wc__double"></span><span class="target" id="class_joint_array_ref_profiler_1adca1da9d30a6d530cbe6e8bc0b73a3b8"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">wc</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="o"><span class="pre">-</span></span><span class="m"><span class="pre">1.0</span></span><a class="headerlink" href="#_CPPv4N21JointArrayRefProfiler2wcE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad/s] low pass filter cutoff frequency, only used if profileType is “lowPass” </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21JointArrayRefProfiler8filterDtE">
+<span id="_CPPv3N21JointArrayRefProfiler8filterDtE"></span><span id="_CPPv2N21JointArrayRefProfiler8filterDtE"></span><span id="JointArrayRefProfiler::filterDt__double"></span><span class="target" id="class_joint_array_ref_profiler_1aa0dd246fb789c9402f9e8b91ed75b300"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">filterDt</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="o"><span class="pre">-</span></span><span class="m"><span class="pre">1.0</span></span><a class="headerlink" href="#_CPPv4N21JointArrayRefProfiler8filterDtE" title="Link to this definition"></a><br /></dt>
+<dd><p>[s] low pass filter time step, only used if profileType is “lowPass” </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21JointArrayRefProfiler15numHingedJointsE">
+<span id="_CPPv3N21JointArrayRefProfiler15numHingedJointsE"></span><span id="_CPPv2N21JointArrayRefProfiler15numHingedJointsE"></span><span id="JointArrayRefProfiler::numHingedJoints__i"></span><span class="target" id="class_joint_array_ref_profiler_1a5c64bb8327a995740101e86b6df57ee5"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">numHingedJoints</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N21JointArrayRefProfiler15numHingedJointsE" title="Link to this definition"></a><br /></dt>
+<dd><p>number of hinged joints in the system </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21JointArrayRefProfiler16profileStartTimeE">
+<span id="_CPPv3N21JointArrayRefProfiler16profileStartTimeE"></span><span id="_CPPv2N21JointArrayRefProfiler16profileStartTimeE"></span><span id="JointArrayRefProfiler::profileStartTime__uint64_t"></span><span class="target" id="class_joint_array_ref_profiler_1a3e4ae19ae8b84784f46e8429b0b8dd77"></span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">profileStartTime</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N21JointArrayRefProfiler16profileStartTimeE" title="Link to this definition"></a><br /></dt>
+<dd><p>[ns] simulation time at which the current profile started </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21JointArrayRefProfiler19profileStartTimeSetE">
+<span id="_CPPv3N21JointArrayRefProfiler19profileStartTimeSetE"></span><span id="_CPPv2N21JointArrayRefProfiler19profileStartTimeSetE"></span><span id="JointArrayRefProfiler::profileStartTimeSet__b"></span><span class="target" id="class_joint_array_ref_profiler_1aad378983bd3e46002849506f0139af28"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">profileStartTimeSet</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">false</span></span><a class="headerlink" href="#_CPPv4N21JointArrayRefProfiler19profileStartTimeSetE" title="Link to this definition"></a><br /></dt>
+<dd><p>flag indicating whether the profile start time has been set </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21JointArrayRefProfiler16startJointAnglesE">
+<span id="_CPPv3N21JointArrayRefProfiler16startJointAnglesE"></span><span id="_CPPv2N21JointArrayRefProfiler16startJointAnglesE"></span><span id="JointArrayRefProfiler::startJointAngles__Eigen::VectorXd"></span><span class="target" id="class_joint_array_ref_profiler_1a9f5a8016392439b3924cb34b69995dfb"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">startJointAngles</span></span></span><a class="headerlink" href="#_CPPv4N21JointArrayRefProfiler16startJointAnglesE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad] joint angles at the start of the current reference profile </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21JointArrayRefProfiler15startJointRatesE">
+<span id="_CPPv3N21JointArrayRefProfiler15startJointRatesE"></span><span id="_CPPv2N21JointArrayRefProfiler15startJointRatesE"></span><span id="JointArrayRefProfiler::startJointRates__Eigen::VectorXd"></span><span class="target" id="class_joint_array_ref_profiler_1abbf6e525628f16922068d1efe04c1ce5"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">startJointRates</span></span></span><a class="headerlink" href="#_CPPv4N21JointArrayRefProfiler15startJointRatesE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad/s] joint angle rates at the start of the current reference profile </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21JointArrayRefProfiler14refJointAnglesE">
+<span id="_CPPv3N21JointArrayRefProfiler14refJointAnglesE"></span><span id="_CPPv2N21JointArrayRefProfiler14refJointAnglesE"></span><span id="JointArrayRefProfiler::refJointAngles__Eigen::VectorXd"></span><span class="target" id="class_joint_array_ref_profiler_1a0040c00a2321c982523363561f822dc8"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">refJointAngles</span></span></span><a class="headerlink" href="#_CPPv4N21JointArrayRefProfiler14refJointAnglesE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad] current profiled joint angles </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21JointArrayRefProfiler13refJointRatesE">
+<span id="_CPPv3N21JointArrayRefProfiler13refJointRatesE"></span><span id="_CPPv2N21JointArrayRefProfiler13refJointRatesE"></span><span id="JointArrayRefProfiler::refJointRates__Eigen::VectorXd"></span><span class="target" id="class_joint_array_ref_profiler_1aa573842a47719eb5075ea1e3c661804f"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">refJointRates</span></span></span><a class="headerlink" href="#_CPPv4N21JointArrayRefProfiler13refJointRatesE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad/s] current profiled joint angle rates </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21JointArrayRefProfiler14refJointAccelsE">
+<span id="_CPPv3N21JointArrayRefProfiler14refJointAccelsE"></span><span id="_CPPv2N21JointArrayRefProfiler14refJointAccelsE"></span><span id="JointArrayRefProfiler::refJointAccels__Eigen::VectorXd"></span><span class="target" id="class_joint_array_ref_profiler_1afdf11aecea62f4849943a455b50abb48"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">refJointAccels</span></span></span><a class="headerlink" href="#_CPPv4N21JointArrayRefProfiler14refJointAccelsE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad/s^2] current profiled joint angle accelerations </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21JointArrayRefProfiler18prevDesJointStatesE">
+<span id="_CPPv3N21JointArrayRefProfiler18prevDesJointStatesE"></span><span id="_CPPv2N21JointArrayRefProfiler18prevDesJointStatesE"></span><span id="JointArrayRefProfiler::prevDesJointStates__JointArrayStateMsgPayload"></span><span class="target" id="class_joint_array_ref_profiler_1a02365b873d197677d7f9c21d585152a6"></span><a class="reference internal" href="../../../architecture/msgPayloadDefCpp/JointArrayStateMsgPayload.html#_CPPv425JointArrayStateMsgPayload" title="JointArrayStateMsgPayload"><span class="n"><span class="pre">JointArrayStateMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">prevDesJointStates</span></span></span><a class="headerlink" href="#_CPPv4N21JointArrayRefProfiler18prevDesJointStatesE" title="Link to this definition"></a><br /></dt>
+<dd><p>previous desired joint states, used to detect changes in the desired state command </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="jointArrayRefProfiler" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

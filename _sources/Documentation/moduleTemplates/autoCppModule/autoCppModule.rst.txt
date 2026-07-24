@@ -1,0 +1,49 @@
+.. _autoCppModule:
+
+:module-type:`C++` Module: autoCppModule
+========================================
+
+Executive Summary
+-----------------
+This is an auto-created sample C++ module.  The description is included with the module class definition
+
+Message Connection Descriptions
+-------------------------------
+The following diagram and table list all the module input and output messages.  
+The module message connection is set by the user from Python.  
+The message type contains a link to the message structure definition, while the description 
+provides information on what this message is used for.
+
+.. bsk-module-io:: autoCppModule
+    :caption: Module I/O Messages
+    :module-type: C++
+
+    input someInMsg AttRefMsgPayload
+        Input message description.
+
+    input some2InMsg AttRefMsgPayload
+        Input message description.
+
+    input anotherInMsg CSSConfigMsgPayload
+        Input message description.
+
+    input anotherCppInMsg CSSConfigLogMsgPayload
+        Input message description.
+
+    output some2OutMsg AttRefMsgPayload
+        Output message description.
+
+    output someOutMsg SCStatesMsgPayload
+        Output message description.
+
+    output anotherCppOutMsg DataStorageStatusMsgPayload
+        Output message description.
+
+
+
+
+----
+
+.. autodoxygenfile:: autoCppModule.h
+   :project: autoCppModule
+

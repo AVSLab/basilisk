@@ -1,0 +1,589 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_cMsgReaderKeepAlive &mdash; Basilisk 2.12.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=2ebb1c42" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=4ad2e773"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">test_cMsgReaderKeepAlive</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for test_cMsgReaderKeepAlive</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+
+<span class="c1">#</span>
+<span class="c1">#   Unit Test Script</span>
+<span class="c1">#   Module Name:        messaging (Msg_C reader keep-alive)</span>
+<span class="c1">#   Author:             robotrocketscience (https://github.com/robotrocketscience)</span>
+<span class="c1">#   Creation Date:      June 25, 2026</span>
+<span class="c1">#</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Regression test for issue #1433 (follow-up to #676 / #1432).</span>
+
+<span class="sd">A ``Msg_C`` reader (e.g. a C module&#39;s ``dataInMsg``) that subscribes to a Python</span>
+<span class="sd">source stores raw pointers into that source&#39;s memory. If the only Python reference</span>
+<span class="sd">to the source then goes out of scope, the source must *not* be garbage-collected</span>
+<span class="sd">while the subscription is live, otherwise the reader points into freed memory. The</span>
+<span class="sd">keep-alive added for #1433 retains the source owner and releases it again on</span>
+<span class="sd">``unsubscribe()``, on re-subscribe, when a stand-alone subscriber proxy is</span>
+<span class="sd">collected, and when the C module that embeds the subscriber is collected.</span>
+
+<span class="sd">These tests assert the lifetime contract directly with ``weakref`` (deterministic,</span>
+<span class="sd">no reliance on memory being clobbered) and additionally check that a module reads</span>
+<span class="sd">the correct, live data end-to-end after a garbage-collection pass.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">gc</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">weakref</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">bskLogging</span><span class="p">,</span> <span class="n">messaging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.moduleTemplates</span><span class="w"> </span><span class="kn">import</span> <span class="n">cModuleTemplate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span><span class="p">,</span> <span class="n">macros</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_cppSourceInScope</span><span class="p">(</span><span class="n">reader</span><span class="p">,</span> <span class="n">vec</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Subscribe `reader` (a Msg_C) to a C++ Message source created in this scope,</span>
+<span class="sd">    then let the only Python reference to the source fall out of scope on return.</span>
+<span class="sd">    Returns a weakref to the source so the caller can observe its lifetime.&quot;&quot;&quot;</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CModuleTemplateMsgPayload</span><span class="p">()</span>
+    <span class="n">payload</span><span class="o">.</span><span class="n">dataVector</span> <span class="o">=</span> <span class="n">vec</span>
+    <span class="n">src</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CModuleTemplateMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+    <span class="n">reader</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">src</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">src</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_cMsgSourceInScope</span><span class="p">(</span><span class="n">reader</span><span class="p">,</span> <span class="n">vec</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Same as `_cppSourceInScope` but the source is a stand-alone Msg_C.&quot;&quot;&quot;</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CModuleTemplateMsgPayload</span><span class="p">()</span>
+    <span class="n">payload</span><span class="o">.</span><span class="n">dataVector</span> <span class="o">=</span> <span class="n">vec</span>
+    <span class="n">src</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CModuleTemplateMsg_C</span><span class="p">()</span>
+    <span class="n">src</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+    <span class="n">reader</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">src</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">src</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="test_moduleEmbeddedCppSourceSurvivesGC">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_cMsgReaderKeepAlive.html#test_cMsgReaderKeepAlive.test_moduleEmbeddedCppSourceSurvivesGC">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_moduleEmbeddedCppSourceSurvivesGC</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A C module&#39;s Msg_C reader keeps a C++ Message source alive across GC, and</span>
+<span class="sd">    reads its live data end-to-end.&quot;&quot;&quot;</span>
+    <span class="n">bskLogging</span><span class="o">.</span><span class="n">setDefaultLogLevel</span><span class="p">(</span><span class="n">bskLogging</span><span class="o">.</span><span class="n">BSK_WARNING</span><span class="p">)</span>
+
+    <span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">proc</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">)</span>
+    <span class="n">proc</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">&quot;t&quot;</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)))</span>
+
+    <span class="n">mod</span> <span class="o">=</span> <span class="n">cModuleTemplate</span><span class="o">.</span><span class="n">cModuleTemplate</span><span class="p">()</span>
+    <span class="n">mod</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;cMod&quot;</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;t&quot;</span><span class="p">,</span> <span class="n">mod</span><span class="p">)</span>
+
+    <span class="n">vec</span> <span class="o">=</span> <span class="p">[</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">20.0</span><span class="p">,</span> <span class="mf">30.0</span><span class="p">]</span>
+    <span class="n">wr</span> <span class="o">=</span> <span class="n">_cppSourceInScope</span><span class="p">(</span><span class="n">mod</span><span class="o">.</span><span class="n">dataInMsg</span><span class="p">,</span> <span class="n">vec</span><span class="p">)</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">wr</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;source was garbage-collected despite an active subscription (#1433)&quot;</span>
+
+    <span class="n">rec</span> <span class="o">=</span> <span class="n">mod</span><span class="o">.</span><span class="n">dataInMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;t&quot;</span><span class="p">,</span> <span class="n">rec</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">3.0</span><span class="p">))</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="n">recorded</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rec</span><span class="o">.</span><span class="n">dataVector</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span>
+        <span class="n">recorded</span><span class="p">,</span> <span class="p">[</span><span class="n">vec</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">recorded</span><span class="p">),</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-9</span><span class="p">,</span>
+        <span class="n">err_msg</span><span class="o">=</span><span class="s2">&quot;C module read garbage from a GC&#39;d subscribed source (#1433)&quot;</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_moduleEmbeddedCMsgSourceSurvivesGC">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_cMsgReaderKeepAlive.html#test_cMsgReaderKeepAlive.test_moduleEmbeddedCMsgSourceSurvivesGC">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_moduleEmbeddedCMsgSourceSurvivesGC</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A C module&#39;s Msg_C reader keeps a stand-alone Msg_C source alive across GC.&quot;&quot;&quot;</span>
+    <span class="n">mod</span> <span class="o">=</span> <span class="n">cModuleTemplate</span><span class="o">.</span><span class="n">cModuleTemplate</span><span class="p">()</span>
+    <span class="n">wr</span> <span class="o">=</span> <span class="n">_cMsgSourceInScope</span><span class="p">(</span><span class="n">mod</span><span class="o">.</span><span class="n">dataInMsg</span><span class="p">,</span> <span class="p">[</span><span class="mf">40.0</span><span class="p">,</span> <span class="mf">50.0</span><span class="p">,</span> <span class="mf">60.0</span><span class="p">])</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">wr</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;Msg_C source was garbage-collected despite a subscription (#1433)&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="test_moduleEmbeddedCMsgSourceOwnerSurvivesGC">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_cMsgReaderKeepAlive.html#test_cMsgReaderKeepAlive.test_moduleEmbeddedCMsgSourceOwnerSurvivesGC">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_moduleEmbeddedCMsgSourceOwnerSurvivesGC</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A C module&#39;s Msg_C reader keeps the owning module alive when subscribing</span>
+<span class="sd">    to another module&#39;s embedded Msg_C source.&quot;&quot;&quot;</span>
+    <span class="n">consumer</span> <span class="o">=</span> <span class="n">cModuleTemplate</span><span class="o">.</span><span class="n">cModuleTemplate</span><span class="p">()</span>
+    <span class="n">producer</span> <span class="o">=</span> <span class="n">cModuleTemplate</span><span class="o">.</span><span class="n">cModuleTemplate</span><span class="p">()</span>
+
+    <span class="n">payload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CModuleTemplateMsgPayload</span><span class="p">()</span>
+    <span class="n">payload</span><span class="o">.</span><span class="n">dataVector</span> <span class="o">=</span> <span class="p">[</span><span class="mf">14.0</span><span class="p">,</span> <span class="mf">15.0</span><span class="p">,</span> <span class="mf">16.0</span><span class="p">]</span>
+    <span class="n">producer</span><span class="o">.</span><span class="n">dataOutMsg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+
+    <span class="n">source</span> <span class="o">=</span> <span class="n">producer</span><span class="o">.</span><span class="n">dataOutMsg</span>
+    <span class="n">producer_ref</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">producer</span><span class="p">)</span>
+    <span class="n">source_ref</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+
+    <span class="n">consumer</span><span class="o">.</span><span class="n">dataInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+    <span class="k">del</span> <span class="n">producer</span><span class="p">,</span> <span class="n">source</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+
+    <span class="k">assert</span> <span class="n">producer_ref</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;embedded Msg_C source owner was not retained (#1433)&quot;</span>
+    <span class="k">assert</span> <span class="n">source_ref</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;embedded Msg_C proxy was retained instead of its owner (#1433)&quot;</span>
+    <span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">consumer</span><span class="o">.</span><span class="n">dataInMsg</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">dataVector</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span><span class="mf">14.0</span><span class="p">,</span> <span class="mf">15.0</span><span class="p">,</span> <span class="mf">16.0</span><span class="p">]</span>
+
+    <span class="n">consumer</span><span class="o">.</span><span class="n">dataInMsg</span><span class="o">.</span><span class="n">unsubscribe</span><span class="p">()</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">producer_ref</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;unsubscribe() did not release embedded Msg_C source owner (#1433)&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="test_unsubscribeReleasesKeepAlive">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_cMsgReaderKeepAlive.html#test_cMsgReaderKeepAlive.test_unsubscribeReleasesKeepAlive">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_unsubscribeReleasesKeepAlive</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;unsubscribe() drops the keep-alive so the source can be collected.&quot;&quot;&quot;</span>
+    <span class="n">mod</span> <span class="o">=</span> <span class="n">cModuleTemplate</span><span class="o">.</span><span class="n">cModuleTemplate</span><span class="p">()</span>
+    <span class="n">wr</span> <span class="o">=</span> <span class="n">_cppSourceInScope</span><span class="p">(</span><span class="n">mod</span><span class="o">.</span><span class="n">dataInMsg</span><span class="p">,</span> <span class="p">[</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">])</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">wr</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+    <span class="n">mod</span><span class="o">.</span><span class="n">dataInMsg</span><span class="o">.</span><span class="n">unsubscribe</span><span class="p">()</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">wr</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;unsubscribe() did not release the keep-alive (#1433)&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="test_unsubscribeWeakrefCallbackCanResubscribe">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_cMsgReaderKeepAlive.html#test_cMsgReaderKeepAlive.test_unsubscribeWeakrefCallbackCanResubscribe">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_unsubscribeWeakrefCallbackCanResubscribe</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A source weakref callback can safely reconnect an unsubscribing reader.&quot;&quot;&quot;</span>
+    <span class="n">reader</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CModuleTemplateMsg_C</span><span class="p">()</span>
+    <span class="n">old_source</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CModuleTemplateMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+        <span class="n">messaging</span><span class="o">.</span><span class="n">CModuleTemplateMsgPayload</span><span class="p">(</span><span class="n">dataVector</span><span class="o">=</span><span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">])</span>
+    <span class="p">)</span>
+    <span class="n">replacement</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CModuleTemplateMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+        <span class="n">messaging</span><span class="o">.</span><span class="n">CModuleTemplateMsgPayload</span><span class="p">(</span><span class="n">dataVector</span><span class="o">=</span><span class="p">[</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">])</span>
+    <span class="p">)</span>
+    <span class="n">callback_states</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">reconnect</span><span class="p">(</span><span class="n">_</span><span class="p">):</span>
+        <span class="n">callback_states</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">reader</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">isLinked</span><span class="p">)</span>
+        <span class="n">reader</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">replacement</span><span class="p">)</span>
+        <span class="n">callback_states</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">reader</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">isLinked</span><span class="p">)</span>
+
+    <span class="n">old_source_ref</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">old_source</span><span class="p">,</span> <span class="n">reconnect</span><span class="p">)</span>
+    <span class="n">replacement_ref</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">replacement</span><span class="p">)</span>
+    <span class="n">reader</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">old_source</span><span class="p">)</span>
+    <span class="k">del</span> <span class="n">old_source</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+
+    <span class="n">reader</span><span class="o">.</span><span class="n">unsubscribe</span><span class="p">()</span>
+
+    <span class="k">assert</span> <span class="n">old_source_ref</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span>
+    <span class="k">assert</span> <span class="n">callback_states</span> <span class="o">==</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="n">reader</span><span class="o">.</span><span class="n">isSubscribedTo</span><span class="p">(</span><span class="n">replacement</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">reader</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">dataVector</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">]</span>
+
+    <span class="k">del</span> <span class="n">replacement</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">replacement_ref</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+    <span class="n">reader</span><span class="o">.</span><span class="n">unsubscribe</span><span class="p">()</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">replacement_ref</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="test_resubscribeReplacesKeepAlive">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_cMsgReaderKeepAlive.html#test_cMsgReaderKeepAlive.test_resubscribeReplacesKeepAlive">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_resubscribeReplacesKeepAlive</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Re-subscribing releases the previous source and retains the new one.&quot;&quot;&quot;</span>
+    <span class="n">mod</span> <span class="o">=</span> <span class="n">cModuleTemplate</span><span class="o">.</span><span class="n">cModuleTemplate</span><span class="p">()</span>
+    <span class="n">wrA</span> <span class="o">=</span> <span class="n">_cppSourceInScope</span><span class="p">(</span><span class="n">mod</span><span class="o">.</span><span class="n">dataInMsg</span><span class="p">,</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">wrA</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+    <span class="n">wrB</span> <span class="o">=</span> <span class="n">_cppSourceInScope</span><span class="p">(</span><span class="n">mod</span><span class="o">.</span><span class="n">dataInMsg</span><span class="p">,</span> <span class="p">[</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">])</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">wrA</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;re-subscribe did not release the previous source (#1433)&quot;</span>
+    <span class="k">assert</span> <span class="n">wrB</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;re-subscribe did not retain the new source (#1433)&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="test_resubscribeWeakrefCallbackCanUnsubscribe">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_cMsgReaderKeepAlive.html#test_cMsgReaderKeepAlive.test_resubscribeWeakrefCallbackCanUnsubscribe">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_resubscribeWeakrefCallbackCanUnsubscribe</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A source weakref callback can safely unsubscribe during re-subscription.&quot;&quot;&quot;</span>
+    <span class="n">module</span> <span class="o">=</span> <span class="n">cModuleTemplate</span><span class="o">.</span><span class="n">cModuleTemplate</span><span class="p">()</span>
+    <span class="n">reader</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">dataInMsg</span>
+    <span class="n">old_source</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CModuleTemplateMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+        <span class="n">messaging</span><span class="o">.</span><span class="n">CModuleTemplateMsgPayload</span><span class="p">(</span><span class="n">dataVector</span><span class="o">=</span><span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span>
+    <span class="p">)</span>
+    <span class="n">new_source</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CModuleTemplateMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+        <span class="n">messaging</span><span class="o">.</span><span class="n">CModuleTemplateMsgPayload</span><span class="p">(</span><span class="n">dataVector</span><span class="o">=</span><span class="p">[</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">])</span>
+    <span class="p">)</span>
+    <span class="n">callback_states</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">disconnect</span><span class="p">(</span><span class="n">_</span><span class="p">):</span>
+        <span class="n">callback_states</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">reader</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">isLinked</span><span class="p">)</span>
+        <span class="n">reader</span><span class="o">.</span><span class="n">unsubscribe</span><span class="p">()</span>
+        <span class="n">callback_states</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">reader</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">isLinked</span><span class="p">)</span>
+
+    <span class="n">old_source_ref</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">old_source</span><span class="p">,</span> <span class="n">disconnect</span><span class="p">)</span>
+    <span class="n">new_source_ref</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">new_source</span><span class="p">)</span>
+    <span class="n">reader</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">old_source</span><span class="p">)</span>
+    <span class="k">del</span> <span class="n">old_source</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+
+    <span class="n">reader</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">new_source</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">old_source_ref</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span>
+    <span class="k">assert</span> <span class="n">callback_states</span> <span class="o">==</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="n">reader</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">isLinked</span> <span class="o">==</span> <span class="mi">0</span>
+
+    <span class="k">del</span> <span class="n">new_source</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">new_source_ref</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="test_resubscribeToEmbeddedSourcePreservesOwner">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_cMsgReaderKeepAlive.html#test_cMsgReaderKeepAlive.test_resubscribeToEmbeddedSourcePreservesOwner">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_resubscribeToEmbeddedSourcePreservesOwner</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Re-subscribing through a non-owning ``Msg_C`` proxy preserves its owner.&quot;&quot;&quot;</span>
+    <span class="n">consumer</span> <span class="o">=</span> <span class="n">cModuleTemplate</span><span class="o">.</span><span class="n">cModuleTemplate</span><span class="p">()</span>
+    <span class="n">producer</span> <span class="o">=</span> <span class="n">cModuleTemplate</span><span class="o">.</span><span class="n">cModuleTemplate</span><span class="p">()</span>
+
+    <span class="n">payload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CModuleTemplateMsgPayload</span><span class="p">()</span>
+    <span class="n">payload</span><span class="o">.</span><span class="n">dataVector</span> <span class="o">=</span> <span class="p">[</span><span class="mf">21.0</span><span class="p">,</span> <span class="mf">22.0</span><span class="p">,</span> <span class="mf">23.0</span><span class="p">]</span>
+    <span class="n">producer</span><span class="o">.</span><span class="n">dataOutMsg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+
+    <span class="n">source</span> <span class="o">=</span> <span class="n">producer</span><span class="o">.</span><span class="n">dataOutMsg</span>
+    <span class="n">producer_ref</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">producer</span><span class="p">)</span>
+    <span class="n">consumer</span><span class="o">.</span><span class="n">dataInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+
+    <span class="k">del</span> <span class="n">producer</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">producer_ref</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+    <span class="n">consumer</span><span class="o">.</span><span class="n">dataInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+
+    <span class="k">assert</span> <span class="n">producer_ref</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;re-subscribe released the embedded source owner (#1433)&quot;</span>
+    <span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">consumer</span><span class="o">.</span><span class="n">dataInMsg</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">dataVector</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span><span class="mf">21.0</span><span class="p">,</span> <span class="mf">22.0</span><span class="p">,</span> <span class="mf">23.0</span><span class="p">]</span>
+
+    <span class="n">consumer</span><span class="o">.</span><span class="n">dataInMsg</span><span class="o">.</span><span class="n">unsubscribe</span><span class="p">()</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">producer_ref</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="test_configReaderKeepAliveTransfersToWrapper">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_cMsgReaderKeepAlive.html#test_cMsgReaderKeepAlive.test_configReaderKeepAliveTransfersToWrapper">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_configReaderKeepAliveTransfersToWrapper</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A config reader transfers its active source keep-alive to its wrapper.&quot;&quot;&quot;</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">cModuleTemplate</span><span class="o">.</span><span class="n">cModuleTemplateConfig</span><span class="p">()</span>
+    <span class="n">source_ref</span> <span class="o">=</span> <span class="n">_cppSourceInScope</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">dataInMsg</span><span class="p">,</span> <span class="p">[</span><span class="mf">31.0</span><span class="p">,</span> <span class="mf">32.0</span><span class="p">,</span> <span class="mf">33.0</span><span class="p">])</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">source_ref</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+    <span class="n">config_ref</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+    <span class="n">module</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">createWrapper</span><span class="p">()</span>
+    <span class="k">del</span> <span class="n">config</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+
+    <span class="k">assert</span> <span class="n">config_ref</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span>
+    <span class="k">assert</span> <span class="n">source_ref</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;config-to-wrapper transfer released the source (#1433)&quot;</span>
+    <span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">module</span><span class="o">.</span><span class="n">dataInMsg</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">dataVector</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span><span class="mf">31.0</span><span class="p">,</span> <span class="mf">32.0</span><span class="p">,</span> <span class="mf">33.0</span><span class="p">]</span>
+
+    <span class="k">del</span> <span class="n">module</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">source_ref</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="test_configEmbeddedSourceOwnerSurvivesGC">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_cMsgReaderKeepAlive.html#test_cMsgReaderKeepAlive.test_configEmbeddedSourceOwnerSurvivesGC">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_configEmbeddedSourceOwnerSurvivesGC</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A wrapper reader retains the config that owns an embedded source.&quot;&quot;&quot;</span>
+    <span class="n">consumer</span> <span class="o">=</span> <span class="n">cModuleTemplate</span><span class="o">.</span><span class="n">cModuleTemplate</span><span class="p">()</span>
+    <span class="n">producer_config</span> <span class="o">=</span> <span class="n">cModuleTemplate</span><span class="o">.</span><span class="n">cModuleTemplateConfig</span><span class="p">()</span>
+
+    <span class="n">payload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CModuleTemplateMsgPayload</span><span class="p">()</span>
+    <span class="n">payload</span><span class="o">.</span><span class="n">dataVector</span> <span class="o">=</span> <span class="p">[</span><span class="mf">41.0</span><span class="p">,</span> <span class="mf">42.0</span><span class="p">,</span> <span class="mf">43.0</span><span class="p">]</span>
+    <span class="n">producer_config</span><span class="o">.</span><span class="n">dataOutMsg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+
+    <span class="n">source</span> <span class="o">=</span> <span class="n">producer_config</span><span class="o">.</span><span class="n">dataOutMsg</span>
+    <span class="n">config_ref</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">producer_config</span><span class="p">)</span>
+    <span class="n">source_ref</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+    <span class="n">consumer</span><span class="o">.</span><span class="n">dataInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+
+    <span class="k">del</span> <span class="n">producer_config</span><span class="p">,</span> <span class="n">source</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+
+    <span class="k">assert</span> <span class="n">config_ref</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;embedded source config owner was not retained (#1433)&quot;</span>
+    <span class="k">assert</span> <span class="n">source_ref</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;embedded config message proxy was retained instead of its owner (#1433)&quot;</span>
+    <span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">consumer</span><span class="o">.</span><span class="n">dataInMsg</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">dataVector</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span><span class="mf">41.0</span><span class="p">,</span> <span class="mf">42.0</span><span class="p">,</span> <span class="mf">43.0</span><span class="p">]</span>
+
+    <span class="n">consumer</span><span class="o">.</span><span class="n">dataInMsg</span><span class="o">.</span><span class="n">unsubscribe</span><span class="p">()</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">config_ref</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="test_configSourceOwnerLeaseTransfersToWrapper">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_cMsgReaderKeepAlive.html#test_cMsgReaderKeepAlive.test_configSourceOwnerLeaseTransfersToWrapper">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_configSourceOwnerLeaseTransfersToWrapper</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;An existing source lease follows config storage into its new wrapper.&quot;&quot;&quot;</span>
+    <span class="n">consumer</span> <span class="o">=</span> <span class="n">cModuleTemplate</span><span class="o">.</span><span class="n">cModuleTemplate</span><span class="p">()</span>
+    <span class="n">producer_config</span> <span class="o">=</span> <span class="n">cModuleTemplate</span><span class="o">.</span><span class="n">cModuleTemplateConfig</span><span class="p">()</span>
+
+    <span class="n">payload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CModuleTemplateMsgPayload</span><span class="p">()</span>
+    <span class="n">payload</span><span class="o">.</span><span class="n">dataVector</span> <span class="o">=</span> <span class="p">[</span><span class="mf">51.0</span><span class="p">,</span> <span class="mf">52.0</span><span class="p">,</span> <span class="mf">53.0</span><span class="p">]</span>
+    <span class="n">producer_config</span><span class="o">.</span><span class="n">dataOutMsg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+
+    <span class="n">source</span> <span class="o">=</span> <span class="n">producer_config</span><span class="o">.</span><span class="n">dataOutMsg</span>
+    <span class="n">config_ref</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">producer_config</span><span class="p">)</span>
+    <span class="n">consumer</span><span class="o">.</span><span class="n">dataInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+
+    <span class="n">producer</span> <span class="o">=</span> <span class="n">producer_config</span><span class="o">.</span><span class="n">createWrapper</span><span class="p">()</span>
+    <span class="n">producer_ref</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">producer</span><span class="p">)</span>
+    <span class="k">del</span> <span class="n">producer_config</span><span class="p">,</span> <span class="n">producer</span><span class="p">,</span> <span class="n">source</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+
+    <span class="k">assert</span> <span class="n">config_ref</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span>
+    <span class="k">assert</span> <span class="n">producer_ref</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;source lease did not follow config ownership transfer (#1433)&quot;</span>
+    <span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">consumer</span><span class="o">.</span><span class="n">dataInMsg</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">dataVector</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span><span class="mf">51.0</span><span class="p">,</span> <span class="mf">52.0</span><span class="p">,</span> <span class="mf">53.0</span><span class="p">]</span>
+
+    <span class="n">consumer</span><span class="o">.</span><span class="n">dataInMsg</span><span class="o">.</span><span class="n">unsubscribe</span><span class="p">()</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">producer_ref</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="test_moduleDeathReleasesSources">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_cMsgReaderKeepAlive.html#test_cMsgReaderKeepAlive.test_moduleDeathReleasesSources">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_moduleDeathReleasesSources</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;When the owning C module is collected, its subscribed sources are released</span>
+<span class="sd">    (no leak); this exercises the module-owned keep-alive dictionary.&quot;&quot;&quot;</span>
+    <span class="n">mod</span> <span class="o">=</span> <span class="n">cModuleTemplate</span><span class="o">.</span><span class="n">cModuleTemplate</span><span class="p">()</span>
+    <span class="n">wr</span> <span class="o">=</span> <span class="n">_cppSourceInScope</span><span class="p">(</span><span class="n">mod</span><span class="o">.</span><span class="n">dataInMsg</span><span class="p">,</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">])</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">wr</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;source not retained while the module is alive (#1433)&quot;</span>
+
+    <span class="k">del</span> <span class="n">mod</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">wr</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;module garbage-collection did not release the subscribed source (#1433)&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="test_standaloneSubscriberSurvivesGCAndReleasesOnDeath">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_cMsgReaderKeepAlive.html#test_cMsgReaderKeepAlive.test_standaloneSubscriberSurvivesGCAndReleasesOnDeath">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_standaloneSubscriberSurvivesGCAndReleasesOnDeath</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A stand-alone Msg_C subscriber keeps its source alive, reads it correctly,</span>
+<span class="sd">    and releases it when the subscriber itself is collected.&quot;&quot;&quot;</span>
+    <span class="n">sub</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CModuleTemplateMsg_C</span><span class="p">()</span>
+    <span class="n">wr</span> <span class="o">=</span> <span class="n">_cppSourceInScope</span><span class="p">(</span><span class="n">sub</span><span class="p">,</span> <span class="p">[</span><span class="mf">7.0</span><span class="p">,</span> <span class="mf">8.0</span><span class="p">,</span> <span class="mf">9.0</span><span class="p">])</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">wr</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;source GC&#39;d despite a stand-alone subscription (#1433)&quot;</span>
+    <span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">sub</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">dataVector</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span><span class="mf">7.0</span><span class="p">,</span> <span class="mf">8.0</span><span class="p">,</span> <span class="mf">9.0</span><span class="p">]</span>
+
+    <span class="k">del</span> <span class="n">sub</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">wr</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;stand-alone subscriber death did not release its source (#1433)&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="test_rawAddressSubscriptionStillWorks">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_cMsgReaderKeepAlive.html#test_cMsgReaderKeepAlive.test_rawAddressSubscriptionStillWorks">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_rawAddressSubscriptionStillWorks</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Subscribing by raw integer address must keep working: that path has no Python</span>
+<span class="sd">    source object to retain (the caller owns the source&#39;s lifetime), so the keep-alive</span>
+<span class="sd">    layer must simply stay out of its way.&quot;&quot;&quot;</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CModuleTemplateMsgPayload</span><span class="p">()</span>
+    <span class="n">payload</span><span class="o">.</span><span class="n">dataVector</span> <span class="o">=</span> <span class="p">[</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">,</span> <span class="mf">9.0</span><span class="p">]</span>
+    <span class="n">persistent</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CModuleTemplateMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>  <span class="c1"># kept alive by the caller</span>
+
+    <span class="n">mod</span> <span class="o">=</span> <span class="n">cModuleTemplate</span><span class="o">.</span><span class="n">cModuleTemplate</span><span class="p">()</span>
+    <span class="n">mod</span><span class="o">.</span><span class="n">dataInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">persistent</span><span class="o">.</span><span class="n">this</span><span class="p">))</span>  <span class="c1"># raw-address branch</span>
+    <span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">mod</span><span class="o">.</span><span class="n">dataInMsg</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">dataVector</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">,</span> <span class="mf">9.0</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="test_rawAddressResubscribeReleasesPreviousKeepAlive">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_cMsgReaderKeepAlive.html#test_cMsgReaderKeepAlive.test_rawAddressResubscribeReleasesPreviousKeepAlive">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_rawAddressResubscribeReleasesPreviousKeepAlive</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Re-subscribing by raw integer address releases any previous Python source.&quot;&quot;&quot;</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CModuleTemplateMsgPayload</span><span class="p">()</span>
+    <span class="n">payload</span><span class="o">.</span><span class="n">dataVector</span> <span class="o">=</span> <span class="p">[</span><span class="mf">9.0</span><span class="p">,</span> <span class="mf">8.0</span><span class="p">,</span> <span class="mf">7.0</span><span class="p">]</span>
+    <span class="n">persistent</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CModuleTemplateMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+
+    <span class="n">mod</span> <span class="o">=</span> <span class="n">cModuleTemplate</span><span class="o">.</span><span class="n">cModuleTemplate</span><span class="p">()</span>
+    <span class="n">wr</span> <span class="o">=</span> <span class="n">_cppSourceInScope</span><span class="p">(</span><span class="n">mod</span><span class="o">.</span><span class="n">dataInMsg</span><span class="p">,</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">])</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">wr</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+    <span class="n">mod</span><span class="o">.</span><span class="n">dataInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">persistent</span><span class="o">.</span><span class="n">this</span><span class="p">))</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">wr</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;raw-address re-subscribe did not release the previous source (#1433)&quot;</span>
+    <span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">mod</span><span class="o">.</span><span class="n">dataInMsg</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">dataVector</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span><span class="mf">9.0</span><span class="p">,</span> <span class="mf">8.0</span><span class="p">,</span> <span class="mf">7.0</span><span class="p">]</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">test_moduleEmbeddedCppSourceSurvivesGC</span><span class="p">()</span>
+    <span class="n">test_moduleEmbeddedCMsgSourceSurvivesGC</span><span class="p">()</span>
+    <span class="n">test_moduleEmbeddedCMsgSourceOwnerSurvivesGC</span><span class="p">()</span>
+    <span class="n">test_unsubscribeReleasesKeepAlive</span><span class="p">()</span>
+    <span class="n">test_unsubscribeWeakrefCallbackCanResubscribe</span><span class="p">()</span>
+    <span class="n">test_resubscribeReplacesKeepAlive</span><span class="p">()</span>
+    <span class="n">test_resubscribeWeakrefCallbackCanUnsubscribe</span><span class="p">()</span>
+    <span class="n">test_resubscribeToEmbeddedSourcePreservesOwner</span><span class="p">()</span>
+    <span class="n">test_configReaderKeepAliveTransfersToWrapper</span><span class="p">()</span>
+    <span class="n">test_configEmbeddedSourceOwnerSurvivesGC</span><span class="p">()</span>
+    <span class="n">test_configSourceOwnerLeaseTransfersToWrapper</span><span class="p">()</span>
+    <span class="n">test_moduleDeathReleasesSources</span><span class="p">()</span>
+    <span class="n">test_standaloneSubscriberSurvivesGCAndReleasesOnDeath</span><span class="p">()</span>
+    <span class="n">test_rawAddressSubscriptionStillWorks</span><span class="p">()</span>
+    <span class="n">test_rawAddressResubscribeReleasesPreviousKeepAlive</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;All #1433 keep-alive tests passed.&quot;</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

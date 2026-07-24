@@ -1,0 +1,8 @@
+.. _MassFlowRateMsgPayload:
+
+MassFlowRateMsgPayload
+======================
+
+.. autodoxygenfile:: MassFlowRateMsgPayload.h
+   :project: msgPayloadDefC
+

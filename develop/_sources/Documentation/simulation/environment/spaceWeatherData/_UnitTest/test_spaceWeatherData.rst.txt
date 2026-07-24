@@ -1,0 +1,13 @@
+.. _test_spaceWeatherData:
+
+test_spaceWeatherData
+=====================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. automodule:: test_spaceWeatherData
+   :members:
+   :show-inheritance:
+

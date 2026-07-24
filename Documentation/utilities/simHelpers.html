@@ -1,0 +1,373 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>simHelpers &mdash; Basilisk 2.11.0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=2ebb1c42" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=1647406f"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="simIncludeGravBody" href="simIncludeGravBody.html" />
+    <link rel="prev" title="readAtmTable" href="readAtmTable.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../simulation/index.html">simulation</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">utilities</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="RigidBodyKinematics.html">RigidBodyKinematics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="RigidBodyKinematicsNumba.html">RigidBodyKinematicsNumba</a></li>
+<li class="toctree-l3"><a class="reference internal" href="SimulationBaseClass.html">SimulationBaseClass</a></li>
+<li class="toctree-l3"><a class="reference internal" href="SpherePlot.html">SpherePlot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="astroFunctions.html">astroFunctions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskExamples.html">bskExamples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskLargeData.html">bskLargeData</a></li>
+<li class="toctree-l3"><a class="reference internal" href="datasheet_RW.html">datasheet_RW</a></li>
+<li class="toctree-l3"><a class="reference internal" href="deprecated.html">deprecated</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fswSetupRW.html">fswSetupRW</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fswSetupThrusters.html">fswSetupThrusters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fswSetupVSCMGs.html">fswSetupVSCMGs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="macros.html">macros</a></li>
+<li class="toctree-l3"><a class="reference internal" href="makeDraftModule.html">makeDraftModule</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orbitalMotion.html">orbitalMotion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="planetStates.html">planetStates</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyswice_ck_utilities.html">pyswice_ck_utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyswice_spk_utilities.html">pyswice_spk_utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pythonVariableLogger.html">pythonVariableLogger</a></li>
+<li class="toctree-l3"><a class="reference internal" href="quadMapSupport.html">quadMapSupport</a></li>
+<li class="toctree-l3"><a class="reference internal" href="readAtmTable.html">readAtmTable</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">simHelpers</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#simHelpers.EigenVector3d2list"><code class="docutils literal notranslate"><span class="pre">EigenVector3d2list()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#simHelpers.EigenVector3d2np"><code class="docutils literal notranslate"><span class="pre">EigenVector3d2np()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#simHelpers.addTimeColumn"><code class="docutils literal notranslate"><span class="pre">addTimeColumn()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#simHelpers.checkMethodKeyword"><code class="docutils literal notranslate"><span class="pre">checkMethodKeyword()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#simHelpers.columnToRowList"><code class="docutils literal notranslate"><span class="pre">columnToRowList()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#simHelpers.decimalYearToDateTime"><code class="docutils literal notranslate"><span class="pre">decimalYearToDateTime()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#simHelpers.flattenList"><code class="docutils literal notranslate"><span class="pre">flattenList()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#simHelpers.getLineColor"><code class="docutils literal notranslate"><span class="pre">getLineColor()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#simHelpers.getScenarioFigureFileName"><code class="docutils literal notranslate"><span class="pre">getScenarioFigureFileName()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#simHelpers.np2EigenMatrix3d"><code class="docutils literal notranslate"><span class="pre">np2EigenMatrix3d()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#simHelpers.np2EigenVectorXd"><code class="docutils literal notranslate"><span class="pre">np2EigenVectorXd()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#simHelpers.npList2EigenXdVector"><code class="docutils literal notranslate"><span class="pre">npList2EigenXdVector()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#simHelpers.pullVectorSetFromData"><code class="docutils literal notranslate"><span class="pre">pullVectorSetFromData()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#simHelpers.removeTimeFromData"><code class="docutils literal notranslate"><span class="pre">removeTimeFromData()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#simHelpers.samplingTime"><code class="docutils literal notranslate"><span class="pre">samplingTime()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#simHelpers.saveFigurePDF"><code class="docutils literal notranslate"><span class="pre">saveFigurePDF()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#simHelpers.saveScenarioFigure"><code class="docutils literal notranslate"><span class="pre">saveScenarioFigure()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#simHelpers.saveScenarioGraphvizFigure"><code class="docutils literal notranslate"><span class="pre">saveScenarioGraphvizFigure()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#simHelpers.timeStringToGregorianUTCMsg"><code class="docutils literal notranslate"><span class="pre">timeStringToGregorianUTCMsg()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#simHelpers.writeFigureLaTeX"><code class="docutils literal notranslate"><span class="pre">writeFigureLaTeX()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#simHelpers.writeTableLaTeX"><code class="docutils literal notranslate"><span class="pre">writeTableLaTeX()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#simHelpers.writeTeXSnippet"><code class="docutils literal notranslate"><span class="pre">writeTeXSnippet()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="simIncludeGravBody.html">simIncludeGravBody</a></li>
+<li class="toctree-l3"><a class="reference internal" href="simIncludeRW.html">simIncludeRW</a></li>
+<li class="toctree-l3"><a class="reference internal" href="simIncludeThruster.html">simIncludeThruster</a></li>
+<li class="toctree-l3"><a class="reference internal" href="simSetPlanetEnvironment.html">simSetPlanetEnvironment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="simulationArchTypes.html">simulationArchTypes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="simulationProgessBar.html">simulationProgessBar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tabulate.html">tabulate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tleHandling.html">tleHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="unitTestSupport.html">unitTestSupport</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vizSupport.html">vizSupport</a></li>
+<li class="toctree-l3"><a class="reference internal" href="MonteCarlo/index.html">MonteCarlo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="preCommitTools/index.html">preCommitTools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="supportDataTools/index.html">supportDataTools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vizProtobuffer/index.html">vizProtobuffer</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Plugins/overview.html">About Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Plugins/installing.html">Installing Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Plugins/writing.html">Writing a Basilisk Plugin</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="index.html">utilities</a></li>
+      <li class="breadcrumb-item active">simHelpers</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Documentation/utilities/simHelpers.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="simhelpers">
+<span id="id1"></span><h1>simHelpers<a class="headerlink" href="#simhelpers" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<p id="module-simHelpers">General-purpose simulation helpers.</p>
+<p>These utilities are used by modules such as <a class="reference internal" href="simIncludeGravBody.html#simincludegravbody"><span class="std std-ref">simIncludeGravBody</span></a> and
+<a class="reference internal" href="vizSupport.html#vizsupport"><span class="std std-ref">vizSupport</span></a>.  They are kept here so that importing those user-facing
+modules does not pull in the test-only <code class="docutils literal notranslate"><span class="pre">pytest</span></code> dependency that
+<code class="docutils literal notranslate"><span class="pre">unitTestSupport</span></code> transitively would introduce.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="simHelpers.EigenVector3d2list">
+<span class="sig-prename descclassname"><span class="pre">simHelpers.</span></span><span class="sig-name descname"><span class="pre">EigenVector3d2list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">eig</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/simHelpers.html#EigenVector3d2list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simHelpers.EigenVector3d2list" title="Link to this definition"></a></dt>
+<dd><p>convert Eigen vector3d to list</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="simHelpers.EigenVector3d2np">
+<span class="sig-prename descclassname"><span class="pre">simHelpers.</span></span><span class="sig-name descname"><span class="pre">EigenVector3d2np</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">eig</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/simHelpers.html#EigenVector3d2np"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simHelpers.EigenVector3d2np" title="Link to this definition"></a></dt>
+<dd><p>convert Eigen vector3d to numpy</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="simHelpers.addTimeColumn">
+<span class="sig-prename descclassname"><span class="pre">simHelpers.</span></span><span class="sig-name descname"><span class="pre">addTimeColumn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/simHelpers.html#addTimeColumn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simHelpers.addTimeColumn" title="Link to this definition"></a></dt>
+<dd><p>Add a time column to the data set</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="simHelpers.checkMethodKeyword">
+<span class="sig-prename descclassname"><span class="pre">simHelpers.</span></span><span class="sig-name descname"><span class="pre">checkMethodKeyword</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">karglist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/simHelpers.html#checkMethodKeyword"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simHelpers.checkMethodKeyword" title="Link to this definition"></a></dt>
+<dd><p>Check that keyword arguments are in the allowed keyword list.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="simHelpers.columnToRowList">
+<span class="sig-prename descclassname"><span class="pre">simHelpers.</span></span><span class="sig-name descname"><span class="pre">columnToRowList</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">set</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/simHelpers.html#columnToRowList"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simHelpers.columnToRowList" title="Link to this definition"></a></dt>
+<dd><p>Loop through a column list and return a row list.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="simHelpers.decimalYearToDateTime">
+<span class="sig-prename descclassname"><span class="pre">simHelpers.</span></span><span class="sig-name descname"><span class="pre">decimalYearToDateTime</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/simHelpers.html#decimalYearToDateTime"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simHelpers.decimalYearToDateTime" title="Link to this definition"></a></dt>
+<dd><p>Convert a decimal year to a <code class="xref py py-class docutils literal notranslate"><span class="pre">datetime.datetime</span></code> object.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="simHelpers.flattenList">
+<span class="sig-prename descclassname"><span class="pre">simHelpers.</span></span><span class="sig-name descname"><span class="pre">flattenList</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">matrix</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/simHelpers.html#flattenList"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simHelpers.flattenList" title="Link to this definition"></a></dt>
+<dd><p>Return a flattened list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>matrix</strong> – List of lists.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Flattened list.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="simHelpers.getLineColor">
+<span class="sig-prename descclassname"><span class="pre">simHelpers.</span></span><span class="sig-name descname"><span class="pre">getLineColor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxNum</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/simHelpers.html#getLineColor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simHelpers.getLineColor" title="Link to this definition"></a></dt>
+<dd><p>Pick a color from a scenario plotting color map.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="simHelpers.getScenarioFigureFileName">
+<span class="sig-prename descclassname"><span class="pre">simHelpers.</span></span><span class="sig-name descname"><span class="pre">getScenarioFigureFileName</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">figureName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extension</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.svg'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/simHelpers.html#getScenarioFigureFileName"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simHelpers.getScenarioFigureFileName" title="Link to this definition"></a></dt>
+<dd><p>Return the documentation image path for a scenario figure.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="simHelpers.np2EigenMatrix3d">
+<span class="sig-prename descclassname"><span class="pre">simHelpers.</span></span><span class="sig-name descname"><span class="pre">np2EigenMatrix3d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mat</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/simHelpers.html#np2EigenMatrix3d"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simHelpers.np2EigenMatrix3d" title="Link to this definition"></a></dt>
+<dd><p>Convert a 3D NumPy matrix to an Eigen matrix.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="simHelpers.np2EigenVectorXd">
+<span class="sig-prename descclassname"><span class="pre">simHelpers.</span></span><span class="sig-name descname"><span class="pre">np2EigenVectorXd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vec</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/simHelpers.html#np2EigenVectorXd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simHelpers.np2EigenVectorXd" title="Link to this definition"></a></dt>
+<dd><p>Convert a NumPy vector to an Eigen vector.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="simHelpers.npList2EigenXdVector">
+<span class="sig-prename descclassname"><span class="pre">simHelpers.</span></span><span class="sig-name descname"><span class="pre">npList2EigenXdVector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/simHelpers.html#npList2EigenXdVector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simHelpers.npList2EigenXdVector" title="Link to this definition"></a></dt>
+<dd><p>Convert a list of arrays to a list of Eigen values.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="simHelpers.pullVectorSetFromData">
+<span class="sig-prename descclassname"><span class="pre">simHelpers.</span></span><span class="sig-name descname"><span class="pre">pullVectorSetFromData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inpMat</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/simHelpers.html#pullVectorSetFromData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simHelpers.pullVectorSetFromData" title="Link to this definition"></a></dt>
+<dd><p>Extract vector data from a matrix whose first column is time data.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="simHelpers.removeTimeFromData">
+<span class="sig-prename descclassname"><span class="pre">simHelpers.</span></span><span class="sig-name descname"><span class="pre">removeTimeFromData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataList</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/simHelpers.html#removeTimeFromData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simHelpers.removeTimeFromData" title="Link to this definition"></a></dt>
+<dd><p>Remove the time column from a data list.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="simHelpers.samplingTime">
+<span class="sig-prename descclassname"><span class="pre">simHelpers.</span></span><span class="sig-name descname"><span class="pre">samplingTime</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">simTime</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">baseTimeStep</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numDataPoints</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/simHelpers.html#samplingTime"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simHelpers.samplingTime" title="Link to this definition"></a></dt>
+<dd><p>Return a sample time that approximates a target number of samples.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>simTime</strong> – [ns] Total simulation duration.</p></li>
+<li><p><strong>baseTimeStep</strong> – [ns] Baseline sampling period.</p></li>
+<li><p><strong>numDataPoints</strong> – Nominal desired number of data points over the
+simulation duration.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>[ns] Sampling period.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="simHelpers.saveFigurePDF">
+<span class="sig-prename descclassname"><span class="pre">simHelpers.</span></span><span class="sig-name descname"><span class="pre">saveFigurePDF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">figureName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/simHelpers.html#saveFigurePDF"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simHelpers.saveFigurePDF" title="Link to this definition"></a></dt>
+<dd><p>Save a figure as a PDF.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="simHelpers.saveScenarioFigure">
+<span class="sig-prename descclassname"><span class="pre">simHelpers.</span></span><span class="sig-name descname"><span class="pre">saveScenarioFigure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">figureName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extension</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.svg'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/simHelpers.html#saveScenarioFigure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simHelpers.saveScenarioFigure" title="Link to this definition"></a></dt>
+<dd><p>Save a Python scenario result into the documentation image folder.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="simHelpers.saveScenarioGraphvizFigure">
+<span class="sig-prename descclassname"><span class="pre">simHelpers.</span></span><span class="sig-name descname"><span class="pre">saveScenarioGraphvizFigure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">figureName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">simulationBase</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extension</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.svg'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_plots</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/simHelpers.html#saveScenarioGraphvizFigure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simHelpers.saveScenarioGraphvizFigure" title="Link to this definition"></a></dt>
+<dd><p>Save a Graphviz message flow figure into the documentation image folder.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="simHelpers.timeStringToGregorianUTCMsg">
+<span class="sig-prename descclassname"><span class="pre">simHelpers.</span></span><span class="sig-name descname"><span class="pre">timeStringToGregorianUTCMsg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">DateSpice</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/simHelpers.html#timeStringToGregorianUTCMsg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simHelpers.timeStringToGregorianUTCMsg" title="Link to this definition"></a></dt>
+<dd><p>convert a general time/date string to a gregoarian UTC msg object</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="simHelpers.writeFigureLaTeX">
+<span class="sig-prename descclassname"><span class="pre">simHelpers.</span></span><span class="sig-name descname"><span class="pre">writeFigureLaTeX</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">figureName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">caption</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/simHelpers.html#writeFigureLaTeX"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simHelpers.writeFigureLaTeX" title="Link to this definition"></a></dt>
+<dd><p>Save a figure and associated TeX code snippet.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="simHelpers.writeTableLaTeX">
+<span class="sig-prename descclassname"><span class="pre">simHelpers.</span></span><span class="sig-name descname"><span class="pre">writeTableLaTeX</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tableName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tableHeaders</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">caption</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/simHelpers.html#writeTableLaTeX"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simHelpers.writeTableLaTeX" title="Link to this definition"></a></dt>
+<dd><p>Take a list and return equivalent LaTeX table code.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="simHelpers.writeTeXSnippet">
+<span class="sig-prename descclassname"><span class="pre">simHelpers.</span></span><span class="sig-name descname"><span class="pre">writeTeXSnippet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">snippetName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">texSnippet</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/simHelpers.html#writeTeXSnippet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simHelpers.writeTeXSnippet" title="Link to this definition"></a></dt>
+<dd><p>Write a LaTeX snippet to a file.</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="readAtmTable.html" class="btn btn-neutral float-left" title="readAtmTable" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="simIncludeGravBody.html" class="btn btn-neutral float-right" title="simIncludeGravBody" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,400 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Release Guide &mdash; Basilisk 2.12.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=2ebb1c42" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=4ad2e773"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Documentation" href="../../Documentation/index.html" />
+    <link rel="prev" title="Adding Support Data Files" href="addSupportData.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../Support.html">Support</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../bskReleaseNotes.html">Basilisk Release Notes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bskKnownIssues.html">Basilisk Known Issues</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../User.html">User Information</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../Developer.html">Developer Information</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="CodingGuidlines.html">Coding Guidelines</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Debugging.html">Accessing the Debugger for C/C++ Basilisk Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="deprecatingCode.html">Deprecating code in Basilisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="makingNewBskModule.html">Making a New C/C++ Basilisk Module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="addSphinxDoc.html">Using Sphinx to Document Basilisk Modules and Folders</a></li>
+<li class="toctree-l3"><a class="reference internal" href="createHtmlDocumentation.html">Creating the HTML Basilisk Documentation using Sphinx/Doxygen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskModuleCheckoutList.html">Basilisk Module Checkout List</a></li>
+<li class="toctree-l3"><a class="reference internal" href="UnderstandingBasilisk.html">Basilisk Architecture Support Documentation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migratingBskModuleToBsk2.html">Migrating Basilisk Modules from Version 1.X to 2.X</a></li>
+<li class="toctree-l3"><a class="reference internal" href="MigratingToPython3.html">Migrating BSK Scripts to Python 3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="addSupportData.html">Adding Support Data Files</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Release Guide</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#major-release-guide">Major Release Guide</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#patch-release-guide">Patch Release Guide</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#releasing-the-bsk-sdk">Releasing the BSK SDK</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Plugins/overview.html">About Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Plugins/installing.html">Installing Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Plugins/writing.html">Writing a Basilisk Plugin</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../Support.html">Support</a></li>
+          <li class="breadcrumb-item"><a href="../Developer.html">Developer Information</a></li>
+      <li class="breadcrumb-item active">Release Guide</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Support/Developer/releaseGuide.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="release-guide">
+<span id="releaseguide"></span><h1>Release Guide<a class="headerlink" href="#release-guide" title="Link to this heading"></a></h1>
+<section id="major-release-guide">
+<h2>Major Release Guide<a class="headerlink" href="#major-release-guide" title="Link to this heading"></a></h2>
+<p>These docs outline the process for releasing a new version of Basilisk. It is
+intended for developers and maintainers of the Basilisk software.</p>
+<p>The high level steps to release a new version of Basilisk are as follows:</p>
+<ol class="arabic simple">
+<li><p>Create a new branch <code class="docutils literal notranslate"><span class="pre">feature/v2_X_Y</span></code> on <code class="docutils literal notranslate"><span class="pre">develop</span></code> for the release.</p></li>
+<li><p>Modify the version number in <code class="docutils literal notranslate"><span class="pre">docs/source/bskVersion.txt</span></code>
+to reflect the new release.</p></li>
+<li><p>Add release date to <code class="docutils literal notranslate"><span class="pre">docs/source/Support/bskReleaseNotes.rst</span></code>
+and <code class="docutils literal notranslate"><span class="pre">docs/source/Support/bskKnownIssues.rst</span></code> files.</p></li>
+<li><p>Integrate content of <code class="docutils literal notranslate"><span class="pre">docs/source/Support/bskReleaseNotesSnippets/_compiled_latest.rst</span></code> into <code class="docutils literal notranslate"><span class="pre">bskReleaseNotes.rst</span></code>.
+Delete the release notes snippets.</p></li>
+<li><p>Ensure documentation builds without warnings or errors.</p></li>
+<li><p>Push branch to origin and do a PR.</p></li>
+<li><p>Merge <code class="docutils literal notranslate"><span class="pre">develop</span></code> into <code class="docutils literal notranslate"><span class="pre">master</span></code></p></li>
+<li><p>Add release tag <code class="docutils literal notranslate"><span class="pre">v2.X.Y</span></code> to <code class="docutils literal notranslate"><span class="pre">master</span></code></p></li>
+<li><p>When BSK wheels are successfully deployed, create a Release on GitHub</p></li>
+</ol>
+<p>To prepare <code class="docutils literal notranslate"><span class="pre">develop</span></code> for the next beta cycle:</p>
+<ol class="arabic simple">
+<li><p>Create <code class="docutils literal notranslate"><span class="pre">beta_X_Y</span></code> branch</p></li>
+<li><p>Modify the version number in <code class="docutils literal notranslate"><span class="pre">docs/source/bskVersion.txt</span></code>
+to reflect the new beta cycle such as <code class="docutils literal notranslate"><span class="pre">v2.X.Yb0</span></code>.</p></li>
+<li><p>Update <code class="docutils literal notranslate"><span class="pre">docs/source/Support/bskReleaseNotes.rst</span></code>
+and <code class="docutils literal notranslate"><span class="pre">docs/source/Support/bskKnownIssues.rst</span></code> files to next beta cycle</p></li>
+<li><p>Make PR and push to <code class="docutils literal notranslate"><span class="pre">develop</span></code></p></li>
+<li><p>Manually run the <code class="docutils literal notranslate"><span class="pre">Nightly</span> <span class="pre">Wheels</span></code> workflow using the <code class="docutils literal notranslate"><span class="pre">workflow_dispatch</span></code>
+trigger after merging the beta branch so the nightly wheels are
+republished on GitHub Pages.</p></li>
+</ol>
+<p>The following documentation provides detailed instructions for some of these steps.</p>
+<section id="updating-the-version-number">
+<h3>Updating the Version Number<a class="headerlink" href="#updating-the-version-number" title="Link to this heading"></a></h3>
+<p>The version number is stored in the <code class="docutils literal notranslate"><span class="pre">docs/source/bskVersion.txt</span></code> file. This file
+gets read by the <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code> during packaging to set the version of the
+package. Previously, this file was updated automatically during the CI/CD
+process; however, it must now be updated manually to prevent excessive version
+bumps.</p>
+<p>Update this file to reflect the new version number following semantic versioning
+guidelines (e.g., <code class="docutils literal notranslate"><span class="pre">MAJOR.MINOR.PATCH</span></code>).</p>
+<p>For a release candidate, set the version to <code class="docutils literal notranslate"><span class="pre">MAJOR.MINOR.PATCHrcN</span></code>
+(e.g., <code class="docutils literal notranslate"><span class="pre">2.10.2rc1</span></code>). This ensures artifacts built from an RC tag are
+correctly identified as pre-release and are published to TestPyPI rather than
+production PyPI. Once the release candidate is validated and a final release tag
+is pushed, reset <code class="docutils literal notranslate"><span class="pre">bskVersion.txt</span></code> to the plain <code class="docutils literal notranslate"><span class="pre">MAJOR.MINOR.PATCH</span></code> form
+(e.g., <code class="docutils literal notranslate"><span class="pre">2.10.2</span></code>) before tagging.</p>
+</section>
+<section id="updating-the-release-notes">
+<h3>Updating the Release Notes<a class="headerlink" href="#updating-the-release-notes" title="Link to this heading"></a></h3>
+<p>For normal PR development, release notes are contributed as snippet files in:
+<code class="docutils literal notranslate"><span class="pre">docs/source/Support/bskReleaseNotesSnippets</span></code>.
+These snippets are compiled and included automatically into the current
+<code class="docutils literal notranslate"><span class="pre">Version</span> <span class="pre">|release|</span></code> section in <code class="docutils literal notranslate"><span class="pre">docs/source/Support/bskReleaseNotes.rst</span></code> when documentation is built.</p>
+</section>
+<section id="creating-a-release-branch">
+<h3>Creating a Release Branch<a class="headerlink" href="#creating-a-release-branch" title="Link to this heading"></a></h3>
+<p>Active development occurs on the <code class="docutils literal notranslate"><span class="pre">develop</span></code> branch. Once all commits for a new
+minor release have been merged into <code class="docutils literal notranslate"><span class="pre">develop</span></code>, then a release branch <code class="docutils literal notranslate"><span class="pre">feature/v2_X_0</span></code> is created
+off of <code class="docutils literal notranslate"><span class="pre">develop</span></code> where the version number and changelog are updated.  After <code class="docutils literal notranslate"><span class="pre">feature/v2_X_0</span></code>
+is merged into <code class="docutils literal notranslate"><span class="pre">develop</span></code>, <code class="docutils literal notranslate"><span class="pre">develop</span></code> is merged into <code class="docutils literal notranslate"><span class="pre">master</span></code> and that commit is tagged with <code class="docutils literal notranslate"><span class="pre">v2.X.0</span></code>.</p>
+<p>All patches and fixes for the <code class="docutils literal notranslate"><span class="pre">2.X</span></code> release line must be made on the <code class="docutils literal notranslate"><span class="pre">patch/v2_X_x</span></code> branch.
+Any changes applied to the release branch should also be merged or cherry-picked
+back into <code class="docutils literal notranslate"><span class="pre">develop</span></code> to ensure they are included in future releases.</p>
+</section>
+<section id="creating-and-pushing-tags">
+<h3>Creating and Pushing Tags<a class="headerlink" href="#creating-and-pushing-tags" title="Link to this heading"></a></h3>
+<p>Releases are published by pushing a git tag. The <code class="docutils literal notranslate"><span class="pre">Publish</span> <span class="pre">Wheels</span></code> GitHub Actions
+workflow triggers on tag pushes and routes artifacts based on the tag name:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 30.0%" />
+<col style="width: 70.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Tag pattern</p></th>
+<th class="head"><p>Destination</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">vX.Y.Z</span></code> (no <code class="docutils literal notranslate"><span class="pre">rc</span></code>)</p></td>
+<td><p>PyPI (public release)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">vX.Y.ZrcN</span></code></p></td>
+<td><p>TestPyPI (release candidate)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">test*</span></code></p></td>
+<td><p>TestPyPI (ad-hoc testing)</p></td>
+</tr>
+</tbody>
+</table>
+<p>This means: <strong>pushing a tag kicks off the wheel builds on all supported
+platforms, builds an sdist, and then publishes the artifacts</strong>.</p>
+<section id="tag-format">
+<h4>Tag format<a class="headerlink" href="#tag-format" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p>Full release tags must follow the format <code class="docutils literal notranslate"><span class="pre">vX.Y.Z</span></code> (for example, <code class="docutils literal notranslate"><span class="pre">v2.9.0</span></code>).</p></li>
+<li><p>Release candidate tags follow <code class="docutils literal notranslate"><span class="pre">vX.Y.ZrcN</span></code> (for example, <code class="docutils literal notranslate"><span class="pre">v2.10.2rc1</span></code>).</p></li>
+</ul>
+</section>
+<section id="when-to-use-a-release-candidate-tag">
+<h4>When to use a release candidate tag<a class="headerlink" href="#when-to-use-a-release-candidate-tag" title="Link to this heading"></a></h4>
+<p>Push an RC tag when you want to publish a pre-release build to TestPyPI for
+validation before committing to a final release. Typical scenarios include:</p>
+<ul class="simple">
+<li><p>Verifying that the wheel build pipeline works end-to-end for a new version.</p></li>
+<li><p>Giving early adopters a chance to test a release before it is published to
+production PyPI.</p></li>
+<li><p>Debugging the publish workflow itself without touching the production index.</p></li>
+</ul>
+<p>The workflow for an RC release is:</p>
+<ol class="arabic simple">
+<li><p>Set <code class="docutils literal notranslate"><span class="pre">docs/source/bskVersion.txt</span></code> to the RC version (e.g. <code class="docutils literal notranslate"><span class="pre">2.10.2rc1</span></code>).</p></li>
+<li><p>Push an RC tag (e.g. <code class="docutils literal notranslate"><span class="pre">v2.10.2rc1</span></code>) — CI builds wheels and publishes to
+TestPyPI automatically.</p></li>
+<li><p>Validate the artifacts from TestPyPI.</p></li>
+<li><p>If further changes are needed, increment the RC counter (<code class="docutils literal notranslate"><span class="pre">rc2</span></code>, <code class="docutils literal notranslate"><span class="pre">rc3</span></code>,
+…) and repeat.</p></li>
+<li><p>Once the RC is validated, reset <code class="docutils literal notranslate"><span class="pre">bskVersion.txt</span></code> to the final version
+(e.g. <code class="docutils literal notranslate"><span class="pre">2.10.2</span></code>) and push the release tag (e.g. <code class="docutils literal notranslate"><span class="pre">v2.10.2</span></code>) to trigger
+the production PyPI publish.</p></li>
+</ol>
+</section>
+<section id="where-to-tag">
+<h4>Where to tag<a class="headerlink" href="#where-to-tag" title="Link to this heading"></a></h4>
+<p>Tags for the <code class="docutils literal notranslate"><span class="pre">2.X.Y</span></code> patch release line must be created from the corresponding
+maintenance branch (e.g. create tag <code class="docutils literal notranslate"><span class="pre">v2.9.1</span></code> on the branch <code class="docutils literal notranslate"><span class="pre">patch/v2_9_x</span></code>).</p>
+</section>
+<section id="notes">
+<h4>Notes<a class="headerlink" href="#notes" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p>Tag pushes are immutable release triggers: once a tag is pushed, CI will build
+and attempt to publish. If a mistake is made, prefer bumping the version and
+tagging again rather than reusing the same version tag.</p></li>
+<li><p>After patching on <code class="docutils literal notranslate"><span class="pre">v2.X</span></code>, merge or cherry-pick the fix back into <code class="docutils literal notranslate"><span class="pre">develop</span></code>
+so the next release line also contains the change.</p></li>
+</ul>
+</section>
+</section>
+<section id="creating-a-release-on-github">
+<h3>Creating a Release on GitHub<a class="headerlink" href="#creating-a-release-on-github" title="Link to this heading"></a></h3>
+<p>After pushing the release tag, create a new release on GitHub:</p>
+<ol class="arabic simple">
+<li><p>Go to “Code” tab, on right column select Releases</p></li>
+<li><p>Select “Draft new Release”</p></li>
+<li><p>Select correct tag <code class="docutils literal notranslate"><span class="pre">v2.X.Y</span></code> on <code class="docutils literal notranslate"><span class="pre">master</span></code></p></li>
+<li><p>Add title “Basilisk v2.X.Y”</p></li>
+<li><p>Add release notes manually or using the auto-generation option</p></li>
+<li><p>Remove all <code class="docutils literal notranslate"><span class="pre">:ref:</span></code> statements, if needed, from release notes</p></li>
+<li><p>Bottom of page, press “Publish Release” button</p></li>
+</ol>
+<p>This will make the release official and provide users with information about the new version.</p>
+</section>
+</section>
+<section id="patch-release-guide">
+<h2>Patch Release Guide<a class="headerlink" href="#patch-release-guide" title="Link to this heading"></a></h2>
+<p>Once a major tagged release (<code class="docutils literal notranslate"><span class="pre">v2.X.0</span></code>) exists we only maintain this latest <code class="docutils literal notranslate"><span class="pre">v2.X.Y</span></code> patch release on
+a branch <code class="docutils literal notranslate"><span class="pre">patch/v2_X_x</span></code> and the current beta on <code class="docutils literal notranslate"><span class="pre">develop</span></code>.</p>
+<p>To release a patch version <code class="docutils literal notranslate"><span class="pre">v2.X.Y</span></code> the following steps are used:</p>
+<ol class="arabic simple">
+<li><p>If this is the first patch since <code class="docutils literal notranslate"><span class="pre">v2.X</span></code>, create a branch off the <code class="docutils literal notranslate"><span class="pre">v2.X.0</span></code> tagged release on <code class="docutils literal notranslate"><span class="pre">master</span></code>
+and call it <code class="docutils literal notranslate"><span class="pre">patch/v2_X_x</span></code>.  Pull this <code class="docutils literal notranslate"><span class="pre">patch/v2_X_x</span></code> branch.</p></li>
+<li><p>Cherry pick over the commits from <code class="docutils literal notranslate"><span class="pre">develop</span></code> for this patch release.</p></li>
+<li><p>Update Basilisk version number in <code class="docutils literal notranslate"><span class="pre">docs/source/bskVersion.txt</span></code> to <code class="docutils literal notranslate"><span class="pre">2.X.Y</span></code>.</p></li>
+<li><p>Update <code class="docutils literal notranslate"><span class="pre">docs/source/Support/bskReleaseNotes.rst</span></code> by
+removing release notes snippets to add them to <code class="docutils literal notranslate"><span class="pre">bskReleaseNotes.rst</span></code> directly in a dated section for <code class="docutils literal notranslate"><span class="pre">2.X.Y</span></code>.</p></li>
+<li><p>If needed, update <code class="docutils literal notranslate"><span class="pre">docs/source/Support/bskKnownIssues.rst</span></code> to have a section for <code class="docutils literal notranslate"><span class="pre">2.X.Y</span></code>.</p></li>
+<li><p>Locally test a clean build of Basilisk and documentation.</p></li>
+<li><p>Push branch to <code class="docutils literal notranslate"><span class="pre">origin</span></code>.</p></li>
+<li><p>On <a class="reference external" href="https://github.com/AVSLab/basilisk/actions">https://github.com/AVSLab/basilisk/actions</a>, run the action “Pull Request” on the branch <code class="docutils literal notranslate"><span class="pre">patch/v2_X_x</span></code>.
+Wait for tests to complete.</p></li>
+<li><p>Add a tag <code class="docutils literal notranslate"><span class="pre">v2.X.Y</span></code> to this branch and push tag to origin.  This will trigger the wheel build process.</p></li>
+<li><p>The last step does not trigger the patch release documentation process as this patch release is neither
+on <code class="docutils literal notranslate"><span class="pre">master</span></code> or <code class="docutils literal notranslate"><span class="pre">develop</span></code>.  On <a class="reference external" href="https://github.com/AVSLab/basilisk/actions">https://github.com/AVSLab/basilisk/actions</a> manually run the
+action <code class="docutils literal notranslate"><span class="pre">Merge</span> <span class="pre">to</span> <span class="pre">master</span> <span class="pre">or</span> <span class="pre">develop</span></code> on the branch <code class="docutils literal notranslate"><span class="pre">patch/v2_X_x</span></code>.</p></li>
+<li><p>The last step deletes the online developer documentation and it needs to be rebuilt.
+On <a class="reference external" href="https://github.com/AVSLab/basilisk/actions">https://github.com/AVSLab/basilisk/actions</a> manually run the
+action <code class="docutils literal notranslate"><span class="pre">Merge</span> <span class="pre">to</span> <span class="pre">master</span> <span class="pre">or</span> <span class="pre">develop</span></code> on the branch <code class="docutils literal notranslate"><span class="pre">develop</span></code>.</p></li>
+<li><p>Create a Release on GitHub</p></li>
+</ol>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<ul class="simple">
+<li><p>Never develop directly on multiple branches in parallel for the same fix.
+This leads to divergence and hard-to-resolve conflicts.</p></li>
+<li><p>Do not merge <code class="docutils literal notranslate"><span class="pre">develop</span></code> back into <code class="docutils literal notranslate"><span class="pre">v2.X</span></code> after the release branch is
+created. Release branches must remain stable and focused on fixes only.</p></li>
+<li><p>Cherry-picks should be small, focused, and preferably reference the original
+commit hash in the message.</p></li>
+</ul>
+</div>
+</section>
+<section id="releasing-the-bsk-sdk">
+<h2>Releasing the BSK SDK<a class="headerlink" href="#releasing-the-bsk-sdk" title="Link to this heading"></a></h2>
+<p>The <a class="reference external" href="https://github.com/AVSLab/bsk_sdk">bsk-sdk</a> package vendors the Basilisk
+SDK headers and runtime for plugin authors. Its version is kept in sync with
+Basilisk, so a new BSK release requires a corresponding SDK release.</p>
+<p>The following steps are to be done after the Basilisk <code class="docutils literal notranslate"><span class="pre">v2.X.Y</span></code> release is fully completed.
+This ensures that the Basilisk release is completed and available on the expected Basilisk branch.</p>
+<section id="major-sdk-release">
+<h3>Major SDK Release<a class="headerlink" href="#major-sdk-release" title="Link to this heading"></a></h3>
+<p>To release a major version <code class="docutils literal notranslate"><span class="pre">2.X.0</span></code> the following steps are used:</p>
+<ol class="arabic simple">
+<li><p>On a branch of develop, update the <code class="docutils literal notranslate"><span class="pre">version</span></code> field in <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code>
+to match the new major BSK release (e.g. <code class="docutils literal notranslate"><span class="pre">2.X.0</span></code>).</p></li>
+<li><p>Push branch to <code class="docutils literal notranslate"><span class="pre">origin</span></code> and create a PR to trigger the CI workflow to test the SDK wheel.</p></li>
+<li><p>Merge the PR to <code class="docutils literal notranslate"><span class="pre">develop</span></code> once CI tests pass.</p></li>
+<li><p>Merge <code class="docutils literal notranslate"><span class="pre">develop</span></code> into <code class="docutils literal notranslate"><span class="pre">master</span></code>.</p></li>
+<li><p>Add the tag <code class="docutils literal notranslate"><span class="pre">v2.X.0</span></code> to <code class="docutils literal notranslate"><span class="pre">master</span></code> and push tag to origin to trigger the wheel build
+and PyPI publish via GitHub Actions.</p></li>
+<li><p>Create a Release on GitHub</p></li>
+</ol>
+</section>
+<section id="patch-release">
+<h3>Patch Release<a class="headerlink" href="#patch-release" title="Link to this heading"></a></h3>
+<p>To release a patch version <code class="docutils literal notranslate"><span class="pre">2.X.Y</span></code> the following steps are used:</p>
+<ol class="arabic simple">
+<li><p>If this is the first patch since <code class="docutils literal notranslate"><span class="pre">v2.X</span></code>, create a branch off the <code class="docutils literal notranslate"><span class="pre">v2.X.0</span></code> tagged release on <code class="docutils literal notranslate"><span class="pre">master</span></code>
+and call it <code class="docutils literal notranslate"><span class="pre">patch/v2_X_x</span></code>.  Pull this <code class="docutils literal notranslate"><span class="pre">patch/v2_X_x</span></code> branch.</p></li>
+<li><p>Cherry pick over the commits from <code class="docutils literal notranslate"><span class="pre">develop</span></code> for this patch release.</p></li>
+<li><p>Update the <code class="docutils literal notranslate"><span class="pre">version</span></code> field in <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code> to match the patch BSK release (e.g. <code class="docutils literal notranslate"><span class="pre">2.X.Y</span></code>).</p></li>
+<li><p>Update <code class="docutils literal notranslate"><span class="pre">.github/workflows/ci.yml</span></code>, section <code class="docutils literal notranslate"><span class="pre">Install</span> <span class="pre">bsk-sdk</span> <span class="pre">wheel</span> <span class="pre">and</span> <span class="pre">Basilisk</span></code>, to pull the matching
+Basilisk branch <code class="docutils literal notranslate"><span class="pre">--branch</span> <span class="pre">patch/v2_X_x</span></code></p></li>
+<li><p>Commit edits and push to <code class="docutils literal notranslate"><span class="pre">origin</span></code></p></li>
+<li><p>Manually run the <code class="docutils literal notranslate"><span class="pre">CI</span></code> action on <a class="reference external" href="https://github.com/AVSLab/bsk_sdk/actions">https://github.com/AVSLab/bsk_sdk/actions</a>. Wait for tests to complete.</p></li>
+<li><p>Add the tag <code class="docutils literal notranslate"><span class="pre">v2.X.Y</span></code> to <code class="docutils literal notranslate"><span class="pre">patch/v2_X_x</span></code> and push tag to origin to trigger the wheel build
+and PyPI publish via GitHub Actions.</p></li>
+<li><p>Create a Release on GitHub</p></li>
+</ol>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="addSupportData.html" class="btn btn-neutral float-left" title="Adding Support Data Files" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../../Documentation/index.html" class="btn btn-neutral float-right" title="Documentation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

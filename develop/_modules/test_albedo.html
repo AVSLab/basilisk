@@ -1,0 +1,900 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_albedo &mdash; Basilisk 2.12.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=2ebb1c42" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=4ad2e773"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">test_albedo</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for test_albedo</h1><div class="highlight"><pre>
+<span></span><span class="c1"># ISC License</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright (c) 2020, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1"># Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1"># purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1"># copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1"># THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1"># WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1"># MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1"># ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1"># WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1"># ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1"># OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+
+<span class="c1">#</span>
+<span class="c1">#   Unit Test Script</span>
+<span class="c1">#   Module Name:   Planet&#39;s Albedo</span>
+<span class="c1">#   Author:        Demet Cilden-Guler</span>
+<span class="c1">#   Creation Date: May 28, 2020</span>
+<span class="c1">#</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk</span><span class="w"> </span><span class="kn">import</span> <span class="n">__path__</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture.bskLogging</span><span class="w"> </span><span class="kn">import</span> <span class="n">BasiliskError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">albedo</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">macros</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">orbitalMotion</span> <span class="k">as</span> <span class="n">om</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">simIncludeGravBody</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">unitTestSupport</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">bskLogging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities.supportDataTools.dataFetcher</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataFile</span><span class="p">,</span> <span class="n">get_path</span>
+
+<span class="n">bskPath</span> <span class="o">=</span> <span class="n">__path__</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
+
+
+<span class="c1"># uncomment this line if this test has an expected failure, adjust message as needed</span>
+<span class="c1"># @pytest.mark.xfail(True)</span>
+<div class="viewcode-block" id="test_unitAlbedo">
+<a class="viewcode-back" href="../Documentation/simulation/environment/albedo/_UnitTest/test_albedo.html#test_albedo.test_unitAlbedo">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;planetCase&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;earth&quot;</span><span class="p">,</span> <span class="s2">&quot;mars&quot;</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s2">&quot;modelType&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;ALBEDO_AVG_IMPLICIT&quot;</span><span class="p">,</span> <span class="s2">&quot;ALBEDO_AVG_EXPLICIT&quot;</span><span class="p">,</span> <span class="s2">&quot;ALBEDO_DATA&quot;</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;useEclipse&quot;</span><span class="p">,</span> <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_unitAlbedo</span><span class="p">(</span><span class="n">planetCase</span><span class="p">,</span> <span class="n">modelType</span><span class="p">,</span> <span class="n">useEclipse</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    **Validation Test Description**</span>
+
+<span class="sd">    This section describes the specific unit tests conducted on this module.</span>
+<span class="sd">    The test contains 4 tests and is located at ``test_albedo.py``.</span>
+<span class="sd">    The success criteria is to match the outputs with the generated truth.</span>
+
+<span class="sd">    Args:</span>
+
+<span class="sd">        planetCase (string): Defines which planet to use.  Options include &quot;earth&quot; and &quot;mars&quot;.</span>
+<span class="sd">        modelType (string):  Defines which albedo model to use. Options include &quot;ALBEDO_AVG_EXPLICIT&quot;, &quot;ALBEDO_AVG_IMPLICIT&quot; and &quot;ALBEDO_DATA&quot;.</span>
+<span class="sd">        useEclipse (bool):  Defines if the eclipse is considered for this parameterized unit test.</span>
+
+<span class="sd">    **Description of Variables Being Tested**</span>
+
+<span class="sd">    In this file, we are checking the values of the variable:</span>
+
+<span class="sd">    ``albedoAtInstrument``</span>
+
+<span class="sd">    which are pulled from the log data to see if they match with the expected truth values.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># each test method requires a single assert method to be called</span>
+    <span class="p">[</span><span class="n">testResults</span><span class="p">,</span> <span class="n">testMessage</span><span class="p">]</span> <span class="o">=</span> <span class="n">unitAlbedo</span><span class="p">(</span>
+        <span class="n">planetCase</span><span class="p">,</span> <span class="n">modelType</span><span class="p">,</span> <span class="n">useEclipse</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="n">testResults</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">,</span> <span class="n">testMessage</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">unitAlbedo</span><span class="p">(</span><span class="n">planetCase</span><span class="p">,</span> <span class="n">modelType</span><span class="p">,</span> <span class="n">useEclipse</span><span class="p">):</span>
+    <span class="n">__tracebackhide__</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">testFailCount</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">testMessages</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">testTaskName</span> <span class="o">=</span> <span class="s2">&quot;unitTestTask&quot;</span>
+    <span class="n">testProcessName</span> <span class="o">=</span> <span class="s2">&quot;unitTestProcess&quot;</span>
+    <span class="n">testTaskRate</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+
+    <span class="c1"># Create a simulation container</span>
+    <span class="n">unitTestSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+
+    <span class="n">testProc</span> <span class="o">=</span> <span class="n">unitTestSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">testProcessName</span><span class="p">)</span>
+    <span class="n">testProc</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">unitTestSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">testTaskName</span><span class="p">,</span> <span class="n">testTaskRate</span><span class="p">))</span>
+
+    <span class="c1"># create planet input message</span>
+    <span class="n">planetInMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsg</span><span class="p">()</span>
+
+    <span class="c1"># Albedo A1</span>
+    <span class="n">albModule</span> <span class="o">=</span> <span class="n">albedo</span><span class="o">.</span><span class="n">Albedo</span><span class="p">()</span>
+    <span class="n">albModule</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;Albedo_0&quot;</span>
+    <span class="k">if</span> <span class="n">modelType</span> <span class="o">==</span> <span class="s2">&quot;ALBEDO_DATA&quot;</span><span class="p">:</span>
+        <span class="n">dataFile</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">DataFile</span><span class="o">.</span><span class="n">AlbedoData</span><span class="o">.</span><span class="n">Earth_ALB_2018_CERES_All_10x10</span>
+            <span class="k">if</span> <span class="n">planetCase</span> <span class="o">==</span> <span class="s2">&quot;earth&quot;</span>
+            <span class="k">else</span> <span class="n">DataFile</span><span class="o">.</span><span class="n">AlbedoData</span><span class="o">.</span><span class="n">Mars_ALB_TES_10x10</span>
+        <span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">get_path</span><span class="p">(</span><span class="n">dataFile</span><span class="p">)</span>
+        <span class="n">fileName</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">dataPath</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">parent</span><span class="p">)</span>
+        <span class="n">albModule</span><span class="o">.</span><span class="n">addPlanetandAlbedoDataModel</span><span class="p">(</span><span class="n">planetInMsg</span><span class="p">,</span> <span class="n">dataPath</span><span class="p">,</span> <span class="n">fileName</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">ALB_avg</span> <span class="o">=</span> <span class="mf">0.5</span>
+        <span class="n">numLat</span> <span class="o">=</span> <span class="mi">200</span>
+        <span class="n">numLon</span> <span class="o">=</span> <span class="mi">400</span>
+        <span class="k">if</span> <span class="n">modelType</span> <span class="o">==</span> <span class="s2">&quot;ALBEDO_AVG_EXPLICIT&quot;</span><span class="p">:</span>
+            <span class="n">albModule</span><span class="o">.</span><span class="n">addPlanetandAlbedoAverageModel</span><span class="p">(</span>
+                <span class="n">planetInMsg</span><span class="p">,</span> <span class="n">ALB_avg</span><span class="p">,</span> <span class="n">numLat</span><span class="p">,</span> <span class="n">numLon</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">albModule</span><span class="o">.</span><span class="n">addPlanetandAlbedoAverageModel</span><span class="p">(</span><span class="n">planetInMsg</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">useEclipse</span><span class="p">:</span>
+        <span class="n">albModule</span><span class="o">.</span><span class="n">bskLogger</span><span class="o">.</span><span class="n">setLogLevel</span><span class="p">(</span><span class="n">bskLogging</span><span class="o">.</span><span class="n">BSK_ERROR</span><span class="p">)</span>
+        <span class="n">albModule</span><span class="o">.</span><span class="n">setEclipseCase</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+    <span class="c1"># Create dummy sun message</span>
+    <span class="n">sunPositionMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsgPayload</span><span class="p">()</span>
+
+    <span class="c1"># Create dummy planet message</span>
+    <span class="n">planetPositionMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsgPayload</span><span class="p">()</span>
+    <span class="n">planetPositionMsg</span><span class="o">.</span><span class="n">PositionVector</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+
+    <span class="n">gravFactory</span> <span class="o">=</span> <span class="n">simIncludeGravBody</span><span class="o">.</span><span class="n">gravBodyFactory</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">planetCase</span> <span class="o">==</span> <span class="s2">&quot;earth&quot;</span><span class="p">:</span>
+        <span class="n">planet</span> <span class="o">=</span> <span class="n">gravFactory</span><span class="o">.</span><span class="n">createEarth</span><span class="p">()</span>
+        <span class="n">sunPositionMsg</span><span class="o">.</span><span class="n">PositionVector</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="n">om</span><span class="o">.</span><span class="n">AU</span> <span class="o">*</span> <span class="mf">1000.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">planetCase</span> <span class="o">==</span> <span class="s2">&quot;mars&quot;</span><span class="p">:</span>
+        <span class="n">planet</span> <span class="o">=</span> <span class="n">gravFactory</span><span class="o">.</span><span class="n">createMars</span><span class="p">()</span>
+        <span class="n">sunPositionMsg</span><span class="o">.</span><span class="n">PositionVector</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">1.5</span> <span class="o">*</span> <span class="n">om</span><span class="o">.</span><span class="n">AU</span> <span class="o">*</span> <span class="mf">1000.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+    <span class="n">planetPositionMsg</span><span class="o">.</span><span class="n">PlanetName</span> <span class="o">=</span> <span class="n">planetCase</span>
+    <span class="n">planetPositionMsg</span><span class="o">.</span><span class="n">J20002Pfix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+
+    <span class="n">req</span> <span class="o">=</span> <span class="n">planet</span><span class="o">.</span><span class="n">radEquator</span>
+    <span class="n">sunMessage</span> <span class="o">=</span> <span class="s2">&quot;sun_message&quot;</span>
+    <span class="c1"># Create dummy spacecraft message</span>
+    <span class="n">scStateMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsgPayload</span><span class="p">()</span>
+    <span class="n">rSC</span> <span class="o">=</span> <span class="n">req</span> <span class="o">+</span> <span class="mi">6000</span> <span class="o">*</span> <span class="mi">1000</span>  <span class="c1"># meters</span>
+    <span class="n">alpha</span> <span class="o">=</span> <span class="mf">71.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">scStateMsg</span><span class="o">.</span><span class="n">r_BN_N</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">rSC</span><span class="p">,</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">alpha</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">alpha</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">])</span>
+    <span class="n">scStateMsg</span><span class="o">.</span><span class="n">sigma_BN</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+
+    <span class="c1"># Albedo instrument configuration</span>
+    <span class="n">config1</span> <span class="o">=</span> <span class="n">albedo</span><span class="o">.</span><span class="n">instConfig_t</span><span class="p">()</span>
+    <span class="n">config1</span><span class="o">.</span><span class="n">fov</span> <span class="o">=</span> <span class="mf">80.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">config1</span><span class="o">.</span><span class="n">nHat_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">alpha</span><span class="p">),</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">alpha</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">])</span>
+    <span class="n">config1</span><span class="o">.</span><span class="n">r_IB_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+    <span class="n">albModule</span><span class="o">.</span><span class="n">addInstrumentConfig</span><span class="p">(</span><span class="n">config1</span><span class="p">)</span>
+
+    <span class="n">sunInMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">sunPositionMsg</span><span class="p">)</span>
+    <span class="n">albModule</span><span class="o">.</span><span class="n">sunPositionInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">sunInMsg</span><span class="p">)</span>
+
+    <span class="n">planetInMsg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">planetPositionMsg</span><span class="p">)</span>
+
+    <span class="n">scInMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">scStateMsg</span><span class="p">)</span>
+    <span class="n">albModule</span><span class="o">.</span><span class="n">spacecraftStateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">scInMsg</span><span class="p">)</span>
+
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">testTaskName</span><span class="p">,</span> <span class="n">albModule</span><span class="p">)</span>
+
+    <span class="c1"># setup logging</span>
+    <span class="n">dataLog</span> <span class="o">=</span> <span class="n">albModule</span><span class="o">.</span><span class="n">albOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">testTaskName</span><span class="p">,</span> <span class="n">dataLog</span><span class="p">)</span>
+
+    <span class="c1"># Initialize and run simulation one step at a time</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="c1"># Execute the simulation for one time step</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">SingleStepProcesses</span><span class="p">()</span>
+    <span class="c1"># This pulls the actual data log from the simulation run.</span>
+    <span class="n">dataAlb0</span> <span class="o">=</span> <span class="n">dataLog</span><span class="o">.</span><span class="n">albedoAtInstrument</span>
+    <span class="n">errTol</span> <span class="o">=</span> <span class="mf">1e-12</span>
+    <span class="k">if</span> <span class="n">planetCase</span> <span class="o">==</span> <span class="s2">&quot;earth&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">modelType</span> <span class="o">==</span> <span class="s2">&quot;ALBEDO_DATA&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">useEclipse</span><span class="p">:</span>
+                <span class="n">truthAlb</span> <span class="o">=</span> <span class="mf">0.0022055492477917</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">truthAlb</span> <span class="o">=</span> <span class="mf">0.0022055492477917</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">modelType</span> <span class="o">==</span> <span class="s2">&quot;ALBEDO_AVG_EXPLICIT&quot;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">useEclipse</span><span class="p">:</span>
+                    <span class="n">truthAlb</span> <span class="o">=</span> <span class="mf">0.0041742091531996</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">truthAlb</span> <span class="o">=</span> <span class="mf">0.004174209177079</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">useEclipse</span><span class="p">:</span>
+                    <span class="n">truthAlb</span> <span class="o">=</span> <span class="mf">0.002421222716229847</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">truthAlb</span> <span class="o">=</span> <span class="mf">0.002421222716229847</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">modelType</span> <span class="o">==</span> <span class="s2">&quot;ALBEDO_DATA&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">useEclipse</span><span class="p">:</span>
+                <span class="n">truthAlb</span> <span class="o">=</span> <span class="mf">0.0014001432717662</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">truthAlb</span> <span class="o">=</span> <span class="mf">0.0014001432717662</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">modelType</span> <span class="o">==</span> <span class="s2">&quot;ALBEDO_AVG_EXPLICIT&quot;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">useEclipse</span><span class="p">:</span>
+                    <span class="n">truthAlb</span> <span class="o">=</span> <span class="mf">0.0035681407388827</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">truthAlb</span> <span class="o">=</span> <span class="mf">0.0035681407390035</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">useEclipse</span><span class="p">:</span>
+                    <span class="n">truthAlb</span> <span class="o">=</span> <span class="mf">0.0011418311186365906</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">truthAlb</span> <span class="o">=</span> <span class="mf">0.0011418311186365906</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">isDoubleEqual</span><span class="p">(</span><span class="n">dataAlb0</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">truthAlb</span><span class="p">,</span> <span class="n">errTol</span><span class="p">):</span>
+        <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="c1">#   print out success or failure message</span>
+    <span class="k">if</span> <span class="n">testFailCount</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;PASSED: &quot;</span> <span class="o">+</span> <span class="n">albModule</span><span class="o">.</span><span class="n">ModelTag</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Failed: &quot;</span> <span class="o">+</span> <span class="n">albModule</span><span class="o">.</span><span class="n">ModelTag</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span>
+        <span class="s2">&quot;This test uses a relative accuracy value of &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">errTol</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; percent&quot;</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">[</span><span class="n">testFailCount</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">testMessages</span><span class="p">)]</span>
+
+
+<div class="viewcode-block" id="test_albedo_invalid_file">
+<a class="viewcode-back" href="../Documentation/simulation/environment/albedo/_UnitTest/test_albedo.html#test_albedo.test_albedo_invalid_file">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_albedo_invalid_file</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Verify that Albedo model returns gracefully when file cannot be loaded.</span>
+
+<span class="sd">    Regression test for BSK-428 where model would segfault when invalid file</span>
+<span class="sd">    was specified.</span>
+
+<span class="sd">    .. note:: The model is not in a usable state if this initialization fails.</span>
+<span class="sd">        Ideally an exception would be thrown, but the SWIG infrastructure doesn&#39;t</span>
+<span class="sd">        appear to be setup to handle C++ exceptions, so we settle for printing a</span>
+<span class="sd">        message and not segfaulting.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">albModule</span> <span class="o">=</span> <span class="n">albedo</span><span class="o">.</span><span class="n">Albedo</span><span class="p">()</span>
+    <span class="c1"># silence expected error message</span>
+    <span class="n">albModule</span><span class="o">.</span><span class="n">bskLogger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">bskLogging</span><span class="o">.</span><span class="n">SILENT</span><span class="p">)</span>
+
+    <span class="n">gravFactory</span> <span class="o">=</span> <span class="n">simIncludeGravBody</span><span class="o">.</span><span class="n">gravBodyFactory</span><span class="p">()</span>
+    <span class="n">gravFactory</span><span class="o">.</span><span class="n">createEarth</span><span class="p">()</span>
+    <span class="n">planetPositionMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsgPayload</span><span class="p">()</span>
+    <span class="n">planetPositionMsg</span><span class="o">.</span><span class="n">PlanetName</span> <span class="o">=</span> <span class="s2">&quot;earth&quot;</span>
+    <span class="n">planetInMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">planetPositionMsg</span><span class="p">)</span>
+
+    <span class="n">sunPositionMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsgPayload</span><span class="p">()</span>
+    <span class="n">sunInMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">sunPositionMsg</span><span class="p">)</span>
+    <span class="n">albModule</span><span class="o">.</span><span class="n">sunPositionInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">sunInMsg</span><span class="p">)</span>
+
+    <span class="n">scStateMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsgPayload</span><span class="p">()</span>
+    <span class="n">scInMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">scStateMsg</span><span class="p">)</span>
+    <span class="n">albModule</span><span class="o">.</span><span class="n">spacecraftStateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">scInMsg</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">BasiliskError</span><span class="p">):</span>
+        <span class="n">albModule</span><span class="o">.</span><span class="n">addPlanetandAlbedoDataModel</span><span class="p">(</span>
+            <span class="n">planetInMsg</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">),</span> <span class="s2">&quot;does_not_exist.file&quot;</span>
+        <span class="p">)</span>
+        <span class="n">albModule</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># the fact that we got here without segfaulting means the test</span>
+    <span class="c1"># passed</span>
+    <span class="k">assert</span> <span class="kc">True</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_run_albedo_at_planet_offset</span><span class="p">(</span><span class="n">planet_offset_m</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Run Albedo (ALBEDO_AVG_EXPLICIT, earth, eclipseCase=True) with the whole</span>
+<span class="sd">    scene translated by ``planet_offset_m``.  Returns ``albedoAtInstrument``.</span>
+
+<span class="sd">    Translating planet + Sun + SC by the same vector leaves every relative</span>
+<span class="sd">    distance and angle unchanged, so the eclipse-model output must be</span>
+<span class="sd">    identical regardless of the offset.  This invariance is broken when</span>
+<span class="sd">    ``isPatchEclipsed()`` uses the inertial Sun position instead of</span>
+<span class="sd">    the planet-relative Sun vector ``r_SP_N = r_SN_N - r_PN_N``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">offset</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">planet_offset_m</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+    <span class="n">sim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">proc</span> <span class="o">=</span> <span class="n">sim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="s2">&quot;testProc_p1&quot;</span><span class="p">)</span>
+    <span class="n">proc</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">sim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">&quot;testTask_p1&quot;</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)))</span>
+
+    <span class="n">planetInMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsg</span><span class="p">()</span>
+
+    <span class="n">albModule</span> <span class="o">=</span> <span class="n">albedo</span><span class="o">.</span><span class="n">Albedo</span><span class="p">()</span>
+    <span class="n">albModule</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;Albedo_p1&quot;</span>
+    <span class="c1"># ALBEDO_AVG_EXPLICIT with fine grid — same parameters as test_unitAlbedo</span>
+    <span class="n">albModule</span><span class="o">.</span><span class="n">addPlanetandAlbedoAverageModel</span><span class="p">(</span><span class="n">planetInMsg</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">400</span><span class="p">)</span>
+    <span class="n">albModule</span><span class="o">.</span><span class="n">setEclipseCase</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Sun at -x relative to planet, shifted by offset</span>
+    <span class="n">sun_pos</span> <span class="o">=</span> <span class="n">offset</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="n">om</span><span class="o">.</span><span class="n">AU</span> <span class="o">*</span> <span class="mf">1000.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+    <span class="n">sunMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsgPayload</span><span class="p">()</span>
+    <span class="n">sunMsg</span><span class="o">.</span><span class="n">PositionVector</span> <span class="o">=</span> <span class="n">sun_pos</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="n">sunInMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">sunMsg</span><span class="p">)</span>
+    <span class="n">albModule</span><span class="o">.</span><span class="n">sunPositionInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">sunInMsg</span><span class="p">)</span>
+
+    <span class="c1"># Planet at offset</span>
+    <span class="n">planetMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsgPayload</span><span class="p">()</span>
+    <span class="n">planetMsg</span><span class="o">.</span><span class="n">PositionVector</span> <span class="o">=</span> <span class="n">offset</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="n">planetMsg</span><span class="o">.</span><span class="n">PlanetName</span> <span class="o">=</span> <span class="s2">&quot;earth&quot;</span>
+    <span class="n">planetMsg</span><span class="o">.</span><span class="n">J20002Pfix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">planetInMsg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">planetMsg</span><span class="p">)</span>
+
+    <span class="c1"># SC at alpha=71° from x, altitude 6000 km above planet equatorial radius</span>
+    <span class="n">req_m</span> <span class="o">=</span> <span class="n">om</span><span class="o">.</span><span class="n">REQ_EARTH</span> <span class="o">*</span> <span class="mf">1e3</span>          <span class="c1"># km → m</span>
+    <span class="n">rSC_m</span> <span class="o">=</span> <span class="n">req_m</span> <span class="o">+</span> <span class="mf">6000e3</span>
+    <span class="n">alpha</span> <span class="o">=</span> <span class="mf">71.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">sc_pos</span> <span class="o">=</span> <span class="n">offset</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">rSC_m</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">alpha</span><span class="p">),</span> <span class="n">rSC_m</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">alpha</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">])</span>
+    <span class="n">scMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsgPayload</span><span class="p">()</span>
+    <span class="n">scMsg</span><span class="o">.</span><span class="n">r_BN_N</span> <span class="o">=</span> <span class="n">sc_pos</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="n">scMsg</span><span class="o">.</span><span class="n">sigma_BN</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+    <span class="n">scInMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">scMsg</span><span class="p">)</span>
+    <span class="n">albModule</span><span class="o">.</span><span class="n">spacecraftStateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">scInMsg</span><span class="p">)</span>
+
+    <span class="n">cfg</span> <span class="o">=</span> <span class="n">albedo</span><span class="o">.</span><span class="n">instConfig_t</span><span class="p">()</span>
+    <span class="n">cfg</span><span class="o">.</span><span class="n">fov</span> <span class="o">=</span> <span class="mf">80.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">cfg</span><span class="o">.</span><span class="n">nHat_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">alpha</span><span class="p">),</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">alpha</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">])</span>
+    <span class="n">cfg</span><span class="o">.</span><span class="n">r_IB_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+    <span class="n">albModule</span><span class="o">.</span><span class="n">addInstrumentConfig</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span>
+
+    <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;testTask_p1&quot;</span><span class="p">,</span> <span class="n">albModule</span><span class="p">)</span>
+    <span class="n">dataLog</span> <span class="o">=</span> <span class="n">albModule</span><span class="o">.</span><span class="n">albOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;testTask_p1&quot;</span><span class="p">,</span> <span class="n">dataLog</span><span class="p">)</span>
+
+    <span class="n">sim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">SingleStepProcesses</span><span class="p">()</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">dataLog</span><span class="o">.</span><span class="n">albedoAtInstrument</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+
+<div class="viewcode-block" id="test_albedo_eclipse_uses_planet_relative_sun_vector">
+<a class="viewcode-back" href="../Documentation/simulation/environment/albedo/_UnitTest/test_albedo.html#test_albedo.test_albedo_eclipse_uses_planet_relative_sun_vector">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_albedo_eclipse_uses_planet_relative_sun_vector</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    ``isPatchEclipsed()`` must use the planet-relative Sun</span>
+<span class="sd">    vector ``r_SP_N = r_SN_N - r_PN_N``, not the inertial Sun position.</span>
+
+<span class="sd">    A rigid translation of the whole scene (planet + Sun + SC) leaves every</span>
+<span class="sd">    relative distance and angle unchanged.  Eclipse output must therefore be</span>
+<span class="sd">    identical regardless of where the scene is placed in inertial space.</span>
+
+<span class="sd">    ``r_SN_N`` was passed directly to the penumbra geometry instead of</span>
+<span class="sd">    ``r_SP_N``.  With the planet offset by 1e12 m (~6.7 AU), the inertial Sun</span>
+<span class="sd">    distance grows from 1 AU to ~7.7 AU.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">alb_origin</span> <span class="o">=</span> <span class="n">_run_albedo_at_planet_offset</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+    <span class="n">alb_offset</span> <span class="o">=</span> <span class="n">_run_albedo_at_planet_offset</span><span class="p">([</span><span class="mf">1e12</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+
+    <span class="k">assert</span> <span class="n">alb_origin</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s2">&quot;reference albedo at origin must be positive&quot;</span>
+
+    <span class="n">rel_err</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">alb_origin</span> <span class="o">-</span> <span class="n">alb_offset</span><span class="p">)</span> <span class="o">/</span> <span class="n">alb_origin</span>
+    <span class="k">assert</span> <span class="n">rel_err</span> <span class="o">&lt;</span> <span class="mf">1e-10</span><span class="p">,</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Eclipse output is not translation-invariant: &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;origin=</span><span class="si">{</span><span class="n">alb_origin</span><span class="si">:</span><span class="s2">.15e</span><span class="si">}</span><span class="s2">, offset=</span><span class="si">{</span><span class="n">alb_offset</span><span class="si">:</span><span class="s2">.15e</span><span class="si">}</span><span class="s2">, &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;rel_err=</span><span class="si">{</span><span class="n">rel_err</span><span class="si">:</span><span class="s2">.2e</span><span class="si">}</span><span class="s2">.  &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;isPatchEclipsed() likely used r_SN_N instead of r_SP_N.&quot;</span>
+    <span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_albedo_run_earth</span><span class="p">(</span><span class="n">nHat_B</span><span class="p">,</span> <span class="n">fov_rad</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+                      <span class="n">altitudeRateLimit</span><span class="o">=-</span><span class="mf">1.0</span><span class="p">,</span>
+                      <span class="n">illuminationFactorAtdA</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+                      <span class="n">ALB_avg</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">numLat</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">numLon</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span>
+                      <span class="n">logLevel</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Run Albedo (ALBEDO_AVG_EXPLICIT, earth, eclipseCase=False) for one step.</span>
+
+<span class="sd">    Standard geometry:</span>
+<span class="sd">      Earth at origin, Sun at -x AU, SC at (REQ+6000 km)·[cos 71°, sin 71°, 0].</span>
+
+<span class="sd">    logLevel: optional bskLogging level (e.g. BSK_ERROR) to suppress expected warnings.</span>
+
+<span class="sd">    Returns the recorder attached to albOutMsgs[0].</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">bskLogging</span><span class="o">.</span><span class="n">setDefaultLogLevel</span><span class="p">(</span><span class="n">logLevel</span><span class="p">)</span>
+    <span class="n">sim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">proc</span> <span class="o">=</span> <span class="n">sim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="s2">&quot;tp_a&quot;</span><span class="p">)</span>
+    <span class="n">proc</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">sim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">&quot;tt_a&quot;</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)))</span>
+
+    <span class="n">planetInMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsg</span><span class="p">()</span>
+
+    <span class="n">albModule</span> <span class="o">=</span> <span class="n">albedo</span><span class="o">.</span><span class="n">Albedo</span><span class="p">()</span>
+    <span class="n">albModule</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;alb_helper&quot;</span>
+    <span class="n">albModule</span><span class="o">.</span><span class="n">addPlanetandAlbedoAverageModel</span><span class="p">(</span><span class="n">planetInMsg</span><span class="p">,</span> <span class="n">ALB_avg</span><span class="p">,</span> <span class="n">numLat</span><span class="p">,</span> <span class="n">numLon</span><span class="p">)</span>
+    <span class="n">albModule</span><span class="o">.</span><span class="n">altitudeRateLimit</span>      <span class="o">=</span> <span class="n">altitudeRateLimit</span>
+    <span class="n">albModule</span><span class="o">.</span><span class="n">illuminationFactorAtdA</span> <span class="o">=</span> <span class="n">illuminationFactorAtdA</span>
+
+    <span class="n">sunPayload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsgPayload</span><span class="p">()</span>
+    <span class="n">sunPayload</span><span class="o">.</span><span class="n">PositionVector</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="n">om</span><span class="o">.</span><span class="n">AU</span> <span class="o">*</span> <span class="mf">1000.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+    <span class="n">sunInMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">sunPayload</span><span class="p">)</span>  <span class="c1"># keep alive</span>
+    <span class="n">albModule</span><span class="o">.</span><span class="n">sunPositionInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">sunInMsg</span><span class="p">)</span>
+
+    <span class="n">gravFactory</span> <span class="o">=</span> <span class="n">simIncludeGravBody</span><span class="o">.</span><span class="n">gravBodyFactory</span><span class="p">()</span>
+    <span class="n">planet</span> <span class="o">=</span> <span class="n">gravFactory</span><span class="o">.</span><span class="n">createEarth</span><span class="p">()</span>
+    <span class="n">req</span> <span class="o">=</span> <span class="n">planet</span><span class="o">.</span><span class="n">radEquator</span>
+    <span class="n">planetPayload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsgPayload</span><span class="p">()</span>
+    <span class="n">planetPayload</span><span class="o">.</span><span class="n">PositionVector</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+    <span class="n">planetPayload</span><span class="o">.</span><span class="n">PlanetName</span>     <span class="o">=</span> <span class="s2">&quot;earth&quot;</span>
+    <span class="n">planetPayload</span><span class="o">.</span><span class="n">J20002Pfix</span>     <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">planetInMsg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">planetPayload</span><span class="p">)</span>
+
+    <span class="n">rSC</span>   <span class="o">=</span> <span class="n">req</span> <span class="o">+</span> <span class="mf">6000.0</span> <span class="o">*</span> <span class="mf">1000.0</span>
+    <span class="n">alpha</span> <span class="o">=</span> <span class="mf">71.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">scPayload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsgPayload</span><span class="p">()</span>
+    <span class="n">scPayload</span><span class="o">.</span><span class="n">r_BN_N</span>   <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">rSC</span><span class="p">,</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">alpha</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">alpha</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">])</span>
+    <span class="n">scPayload</span><span class="o">.</span><span class="n">sigma_BN</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+    <span class="n">scInMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">scPayload</span><span class="p">)</span>           <span class="c1"># keep alive</span>
+    <span class="n">albModule</span><span class="o">.</span><span class="n">spacecraftStateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">scInMsg</span><span class="p">)</span>
+
+    <span class="n">cfg</span> <span class="o">=</span> <span class="n">albedo</span><span class="o">.</span><span class="n">instConfig_t</span><span class="p">()</span>
+    <span class="n">cfg</span><span class="o">.</span><span class="n">fov</span>    <span class="o">=</span> <span class="n">fov_rad</span>
+    <span class="n">cfg</span><span class="o">.</span><span class="n">nHat_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">nHat_B</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">cfg</span><span class="o">.</span><span class="n">r_IB_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">albModule</span><span class="o">.</span><span class="n">addInstrumentConfig</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span>
+
+    <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;tt_a&quot;</span><span class="p">,</span> <span class="n">albModule</span><span class="p">)</span>
+    <span class="n">log</span> <span class="o">=</span> <span class="n">albModule</span><span class="o">.</span><span class="n">albOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;tt_a&quot;</span><span class="p">,</span> <span class="n">log</span><span class="p">)</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">SingleStepProcesses</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">log</span>
+
+
+<div class="viewcode-block" id="test_albedo_altitudeRateLimit_suppresses_output">
+<a class="viewcode-back" href="../Documentation/simulation/environment/albedo/_UnitTest/test_albedo.html#test_albedo.test_albedo_altitudeRateLimit_suppresses_output">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_albedo_altitudeRateLimit_suppresses_output</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Setting altitudeRateLimit=0 must zero albedo for any satellite above the surface.</span>
+
+<span class="sd">    The altitude/radius ratio for the standard 6000 km orbit is ~0.94, which exceeds</span>
+<span class="sd">    a limit of 0.  The module must skip that planet and write 0 for all output fields.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">alpha</span> <span class="o">=</span> <span class="mf">71.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">nHat</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">alpha</span><span class="p">),</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">alpha</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">])</span>
+    <span class="n">fov</span>   <span class="o">=</span> <span class="mf">80.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+
+    <span class="n">log_free</span>    <span class="o">=</span> <span class="n">_albedo_run_earth</span><span class="p">(</span><span class="n">nHat</span><span class="p">,</span> <span class="n">fov</span><span class="p">,</span> <span class="n">logLevel</span><span class="o">=</span><span class="n">bskLogging</span><span class="o">.</span><span class="n">BSK_WARNING</span><span class="p">)</span>
+    <span class="n">log_limited</span> <span class="o">=</span> <span class="n">_albedo_run_earth</span><span class="p">(</span><span class="n">nHat</span><span class="p">,</span> <span class="n">fov</span><span class="p">,</span> <span class="n">altitudeRateLimit</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                                    <span class="n">logLevel</span><span class="o">=</span><span class="n">bskLogging</span><span class="o">.</span><span class="n">BSK_ERROR</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">log_free</span><span class="o">.</span><span class="n">albedoAtInstrument</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s2">&quot;baseline albedo must be positive&quot;</span>
+    <span class="k">assert</span> <span class="n">log_limited</span><span class="o">.</span><span class="n">albedoAtInstrument</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">,</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;altitudeRateLimit=0 must suppress albedo; &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;got </span><span class="si">{</span><span class="n">log_limited</span><span class="o">.</span><span class="n">albedoAtInstrument</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">.4e</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_albedo_instConfig_defaults_fallback">
+<a class="viewcode-back" href="../Documentation/simulation/environment/albedo/_UnitTest/test_albedo.html#test_albedo.test_albedo_instConfig_defaults_fallback">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_albedo_instConfig_defaults_fallback</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Default instConfig_t (fov&lt;0, nHat_B=zeros) must use module-level defaults.</span>
+
+<span class="sd">    The test overrides albModule.nHat_B_default and albModule.fov_default to</span>
+<span class="sd">    match a useful geometry, adds a default-constructed instConfig_t, and</span>
+<span class="sd">    verifies that the result is identical to an explicit config with the same</span>
+<span class="sd">    values.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">alpha</span>       <span class="o">=</span> <span class="mf">71.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">useful_nHat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">alpha</span><span class="p">),</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">alpha</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">])</span>
+    <span class="n">useful_fov</span>  <span class="o">=</span> <span class="mf">80.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+
+    <span class="c1"># ---- reference: explicit instConfig_t ----</span>
+    <span class="n">log_explicit</span> <span class="o">=</span> <span class="n">_albedo_run_earth</span><span class="p">(</span><span class="n">useful_nHat</span><span class="p">,</span> <span class="n">useful_fov</span><span class="p">,</span>
+                                     <span class="n">logLevel</span><span class="o">=</span><span class="n">bskLogging</span><span class="o">.</span><span class="n">BSK_WARNING</span><span class="p">)</span>
+    <span class="n">alb_explicit</span> <span class="o">=</span> <span class="n">log_explicit</span><span class="o">.</span><span class="n">albedoAtInstrument</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="n">alb_explicit</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s2">&quot;reference albedo must be positive&quot;</span>
+
+    <span class="c1"># ---- default instConfig_t with overridden module-level defaults ----</span>
+    <span class="n">sim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">proc</span> <span class="o">=</span> <span class="n">sim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="s2">&quot;tp_d&quot;</span><span class="p">)</span>
+    <span class="n">proc</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">sim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">&quot;tt_d&quot;</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)))</span>
+
+    <span class="n">planetInMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsg</span><span class="p">()</span>
+    <span class="n">albModule</span> <span class="o">=</span> <span class="n">albedo</span><span class="o">.</span><span class="n">Albedo</span><span class="p">()</span>
+    <span class="n">albModule</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;alb_defaults&quot;</span>
+    <span class="n">albModule</span><span class="o">.</span><span class="n">addPlanetandAlbedoAverageModel</span><span class="p">(</span><span class="n">planetInMsg</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">400</span><span class="p">)</span>
+    <span class="c1"># Override module-level defaults to match the reference config</span>
+    <span class="n">albModule</span><span class="o">.</span><span class="n">nHat_B_default</span> <span class="o">=</span> <span class="n">useful_nHat</span>
+    <span class="n">albModule</span><span class="o">.</span><span class="n">fov_default</span>    <span class="o">=</span> <span class="n">useful_fov</span>
+    <span class="c1"># Default-constructed instConfig_t: fov=-1, nHat_B=zeros → triggers fallback</span>
+    <span class="n">albModule</span><span class="o">.</span><span class="n">bskLogger</span><span class="o">.</span><span class="n">setLogLevel</span><span class="p">(</span><span class="n">bskLogging</span><span class="o">.</span><span class="n">BSK_ERROR</span><span class="p">)</span>
+    <span class="n">albModule</span><span class="o">.</span><span class="n">addInstrumentConfig</span><span class="p">(</span><span class="n">albedo</span><span class="o">.</span><span class="n">instConfig_t</span><span class="p">())</span>
+
+    <span class="n">sunPayload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsgPayload</span><span class="p">()</span>
+    <span class="n">sunPayload</span><span class="o">.</span><span class="n">PositionVector</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="n">om</span><span class="o">.</span><span class="n">AU</span> <span class="o">*</span> <span class="mf">1000.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+    <span class="n">sunInMsg_d</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">sunPayload</span><span class="p">)</span>  <span class="c1"># keep alive</span>
+    <span class="n">albModule</span><span class="o">.</span><span class="n">sunPositionInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">sunInMsg_d</span><span class="p">)</span>
+
+    <span class="n">gravFactory</span> <span class="o">=</span> <span class="n">simIncludeGravBody</span><span class="o">.</span><span class="n">gravBodyFactory</span><span class="p">()</span>
+    <span class="n">planet</span> <span class="o">=</span> <span class="n">gravFactory</span><span class="o">.</span><span class="n">createEarth</span><span class="p">()</span>
+    <span class="n">req</span> <span class="o">=</span> <span class="n">planet</span><span class="o">.</span><span class="n">radEquator</span>
+    <span class="n">planetPayload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsgPayload</span><span class="p">()</span>
+    <span class="n">planetPayload</span><span class="o">.</span><span class="n">PositionVector</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+    <span class="n">planetPayload</span><span class="o">.</span><span class="n">PlanetName</span>     <span class="o">=</span> <span class="s2">&quot;earth&quot;</span>
+    <span class="n">planetPayload</span><span class="o">.</span><span class="n">J20002Pfix</span>     <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">planetInMsg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">planetPayload</span><span class="p">)</span>
+
+    <span class="n">rSC</span>   <span class="o">=</span> <span class="n">req</span> <span class="o">+</span> <span class="mf">6000.0</span> <span class="o">*</span> <span class="mf">1000.0</span>
+    <span class="n">scPayload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsgPayload</span><span class="p">()</span>
+    <span class="n">scPayload</span><span class="o">.</span><span class="n">r_BN_N</span>   <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">rSC</span><span class="p">,</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">alpha</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">alpha</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">])</span>
+    <span class="n">scPayload</span><span class="o">.</span><span class="n">sigma_BN</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+    <span class="n">scInMsg_d</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">scPayload</span><span class="p">)</span>           <span class="c1"># keep alive</span>
+    <span class="n">albModule</span><span class="o">.</span><span class="n">spacecraftStateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">scInMsg_d</span><span class="p">)</span>
+
+    <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;tt_d&quot;</span><span class="p">,</span> <span class="n">albModule</span><span class="p">)</span>
+    <span class="n">log_default</span> <span class="o">=</span> <span class="n">albModule</span><span class="o">.</span><span class="n">albOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;tt_d&quot;</span><span class="p">,</span> <span class="n">log_default</span><span class="p">)</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">SingleStepProcesses</span><span class="p">()</span>
+
+    <span class="k">assert</span> <span class="n">log_default</span><span class="o">.</span><span class="n">albedoAtInstrument</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">alb_explicit</span><span class="p">,</span> <span class="n">rel</span><span class="o">=</span><span class="mf">1e-10</span><span class="p">),</span> <span class="p">(</span>
+        <span class="s2">&quot;default instConfig_t with overridden module defaults must match explicit config&quot;</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_albedo_nHat_B_normalization">
+<a class="viewcode-back" href="../Documentation/simulation/environment/albedo/_UnitTest/test_albedo.html#test_albedo.test_albedo_nHat_B_normalization">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_albedo_nHat_B_normalization</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Non-unit nHat_B must be normalised; output must be identical to the unit version.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">alpha</span>    <span class="o">=</span> <span class="mf">71.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">nHat</span>     <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">alpha</span><span class="p">),</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">alpha</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">])</span>
+    <span class="n">nHat_big</span> <span class="o">=</span> <span class="n">nHat</span> <span class="o">*</span> <span class="mf">5.0</span>   <span class="c1"># same direction, arbitrary scale factor</span>
+    <span class="n">fov</span>      <span class="o">=</span> <span class="mf">80.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+
+    <span class="n">log_unit</span>    <span class="o">=</span> <span class="n">_albedo_run_earth</span><span class="p">(</span><span class="n">nHat</span><span class="p">,</span>     <span class="n">fov</span><span class="p">,</span> <span class="n">logLevel</span><span class="o">=</span><span class="n">bskLogging</span><span class="o">.</span><span class="n">BSK_WARNING</span><span class="p">)</span>
+    <span class="n">log_nonunit</span> <span class="o">=</span> <span class="n">_albedo_run_earth</span><span class="p">(</span><span class="n">nHat_big</span><span class="p">,</span> <span class="n">fov</span><span class="p">,</span> <span class="n">logLevel</span><span class="o">=</span><span class="n">bskLogging</span><span class="o">.</span><span class="n">BSK_WARNING</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">log_unit</span><span class="o">.</span><span class="n">albedoAtInstrument</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s2">&quot;baseline albedo must be positive&quot;</span>
+    <span class="k">assert</span> <span class="n">log_unit</span><span class="o">.</span><span class="n">albedoAtInstrument</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span>
+        <span class="n">log_nonunit</span><span class="o">.</span><span class="n">albedoAtInstrument</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">rel</span><span class="o">=</span><span class="mf">1e-10</span>
+    <span class="p">),</span> <span class="s2">&quot;scaled nHat_B must give identical output after normalisation&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="test_albedo_illuminationFactor_scaling">
+<a class="viewcode-back" href="../Documentation/simulation/environment/albedo/_UnitTest/test_albedo.html#test_albedo.test_albedo_illuminationFactor_scaling">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_albedo_illuminationFactor_scaling</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    User-set illuminationFactorAtdA (eclipseCase=False) must scale albedo linearly.</span>
+
+<span class="sd">    All other parameters are fixed; only illuminationFactorAtdA changes from 1.0</span>
+<span class="sd">    to 0.5.  Both albedoAtInstrument and AfluxAtInstrument must halve.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">alpha</span> <span class="o">=</span> <span class="mf">71.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">nHat</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">alpha</span><span class="p">),</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">alpha</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">])</span>
+    <span class="n">fov</span>   <span class="o">=</span> <span class="mf">80.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+
+    <span class="n">log_full</span> <span class="o">=</span> <span class="n">_albedo_run_earth</span><span class="p">(</span><span class="n">nHat</span><span class="p">,</span> <span class="n">fov</span><span class="p">,</span> <span class="n">illuminationFactorAtdA</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">logLevel</span><span class="o">=</span><span class="n">bskLogging</span><span class="o">.</span><span class="n">BSK_WARNING</span><span class="p">)</span>
+    <span class="n">log_half</span> <span class="o">=</span> <span class="n">_albedo_run_earth</span><span class="p">(</span><span class="n">nHat</span><span class="p">,</span> <span class="n">fov</span><span class="p">,</span> <span class="n">illuminationFactorAtdA</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">logLevel</span><span class="o">=</span><span class="n">bskLogging</span><span class="o">.</span><span class="n">BSK_WARNING</span><span class="p">)</span>
+
+    <span class="n">alb_full</span> <span class="o">=</span> <span class="n">log_full</span><span class="o">.</span><span class="n">albedoAtInstrument</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">alb_half</span> <span class="o">=</span> <span class="n">log_half</span><span class="o">.</span><span class="n">albedoAtInstrument</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">assert</span> <span class="n">alb_full</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s2">&quot;baseline must be positive&quot;</span>
+    <span class="k">assert</span> <span class="n">alb_half</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">alb_full</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">rel</span><span class="o">=</span><span class="mf">1e-10</span><span class="p">),</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;illuminationFactorAtdA=0.5 must halve albedo; &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;full=</span><span class="si">{</span><span class="n">alb_full</span><span class="si">:</span><span class="s2">.6e</span><span class="si">}</span><span class="s2">  half=</span><span class="si">{</span><span class="n">alb_half</span><span class="si">:</span><span class="s2">.6e</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_albedo_AfluxAtInstrument_positive_and_consistent">
+<a class="viewcode-back" href="../Documentation/simulation/environment/albedo/_UnitTest/test_albedo.html#test_albedo.test_albedo_AfluxAtInstrument_positive_and_consistent">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_albedo_AfluxAtInstrument_positive_and_consistent</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    AfluxAtInstrument and AfluxAtInstrumentMax (W/m^2) must both be positive.</span>
+<span class="sd">    AfluxAtInstrumentMax ignores the FOV cone filter, so it must be &gt;= AfluxAtInstrument.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">alpha</span> <span class="o">=</span> <span class="mf">71.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">nHat</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">alpha</span><span class="p">),</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">alpha</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">])</span>
+    <span class="n">fov</span>   <span class="o">=</span> <span class="mf">80.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+
+    <span class="n">log</span> <span class="o">=</span> <span class="n">_albedo_run_earth</span><span class="p">(</span><span class="n">nHat</span><span class="p">,</span> <span class="n">fov</span><span class="p">,</span> <span class="n">logLevel</span><span class="o">=</span><span class="n">bskLogging</span><span class="o">.</span><span class="n">BSK_WARNING</span><span class="p">)</span>
+
+    <span class="n">aFlux</span>    <span class="o">=</span> <span class="n">log</span><span class="o">.</span><span class="n">AfluxAtInstrument</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">aFluxMax</span> <span class="o">=</span> <span class="n">log</span><span class="o">.</span><span class="n">AfluxAtInstrumentMax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">assert</span> <span class="n">aFlux</span>    <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;AfluxAtInstrument must be &gt; 0; got </span><span class="si">{</span><span class="n">aFlux</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">assert</span> <span class="n">aFluxMax</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;AfluxAtInstrumentMax must be &gt; 0; got </span><span class="si">{</span><span class="n">aFluxMax</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">assert</span> <span class="n">aFluxMax</span> <span class="o">&gt;=</span> <span class="n">aFlux</span> <span class="o">-</span> <span class="mf">1e-12</span><span class="p">,</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;AfluxAtInstrumentMax (</span><span class="si">{</span><span class="n">aFluxMax</span><span class="si">:</span><span class="s2">.6e</span><span class="si">}</span><span class="s2">) must be &gt;= AfluxAtInstrument (</span><span class="si">{</span><span class="n">aFlux</span><span class="si">:</span><span class="s2">.6e</span><span class="si">}</span><span class="s2">)&quot;</span>
+    <span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_run_albedo_multi_planet_scene</span><span class="p">(</span><span class="n">planet_positions_m</span><span class="p">,</span> <span class="n">sun_position_m</span><span class="p">,</span> <span class="n">sc_position_m</span><span class="p">):</span>
+    <span class="n">sim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">proc</span> <span class="o">=</span> <span class="n">sim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="s2">&quot;tp_multi&quot;</span><span class="p">)</span>
+    <span class="n">proc</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">sim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">&quot;tt_multi&quot;</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)))</span>
+
+    <span class="n">alb_module</span> <span class="o">=</span> <span class="n">albedo</span><span class="o">.</span><span class="n">Albedo</span><span class="p">()</span>
+    <span class="n">alb_module</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;alb_multi&quot;</span>
+
+    <span class="n">cfg</span> <span class="o">=</span> <span class="n">albedo</span><span class="o">.</span><span class="n">instConfig_t</span><span class="p">()</span>
+    <span class="n">cfg</span><span class="o">.</span><span class="n">fov</span> <span class="o">=</span> <span class="mf">120.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">cfg</span><span class="o">.</span><span class="n">nHat_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+    <span class="n">cfg</span><span class="o">.</span><span class="n">r_IB_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+    <span class="n">alb_module</span><span class="o">.</span><span class="n">addInstrumentConfig</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span>
+
+    <span class="n">sun_payload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsgPayload</span><span class="p">()</span>
+    <span class="n">sun_payload</span><span class="o">.</span><span class="n">PositionVector</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">sun_position_m</span><span class="p">)</span>
+    <span class="n">sun_msg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsg</span><span class="p">()</span>
+    <span class="n">sun_msg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">sun_payload</span><span class="p">)</span>
+    <span class="n">alb_module</span><span class="o">.</span><span class="n">sunPositionInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">sun_msg</span><span class="p">)</span>
+
+    <span class="n">sc_payload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsgPayload</span><span class="p">()</span>
+    <span class="n">sc_payload</span><span class="o">.</span><span class="n">r_BN_N</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">sc_position_m</span><span class="p">)</span>
+    <span class="n">sc_payload</span><span class="o">.</span><span class="n">sigma_BN</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+    <span class="n">sc_msg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsg</span><span class="p">()</span>
+    <span class="n">sc_msg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">sc_payload</span><span class="p">)</span>
+    <span class="n">alb_module</span><span class="o">.</span><span class="n">spacecraftStateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">sc_msg</span><span class="p">)</span>
+
+    <span class="c1"># Keep planet messages alive for full sim step</span>
+    <span class="n">planet_msgs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">planet_pos</span> <span class="ow">in</span> <span class="n">planet_positions_m</span><span class="p">:</span>
+        <span class="n">pmsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsg</span><span class="p">()</span>
+        <span class="n">planet_msgs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pmsg</span><span class="p">)</span>
+        <span class="n">alb_module</span><span class="o">.</span><span class="n">addPlanetandAlbedoAverageModel</span><span class="p">(</span><span class="n">pmsg</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">120</span><span class="p">,</span> <span class="mi">240</span><span class="p">)</span>
+
+        <span class="n">pp</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsgPayload</span><span class="p">()</span>
+        <span class="n">pp</span><span class="o">.</span><span class="n">PositionVector</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">planet_pos</span><span class="p">)</span>
+        <span class="n">pp</span><span class="o">.</span><span class="n">PlanetName</span> <span class="o">=</span> <span class="s2">&quot;earth&quot;</span>
+        <span class="n">pp</span><span class="o">.</span><span class="n">J20002Pfix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">pmsg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">pp</span><span class="p">)</span>
+
+    <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;tt_multi&quot;</span><span class="p">,</span> <span class="n">alb_module</span><span class="p">)</span>
+    <span class="n">log</span> <span class="o">=</span> <span class="n">alb_module</span><span class="o">.</span><span class="n">albOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;tt_multi&quot;</span><span class="p">,</span> <span class="n">log</span><span class="p">)</span>
+
+    <span class="n">sim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">SingleStepProcesses</span><span class="p">()</span>
+
+    <span class="c1"># Return messages too so references stay alive until after run</span>
+    <span class="k">return</span> <span class="n">log</span><span class="p">,</span> <span class="n">planet_msgs</span><span class="p">,</span> <span class="n">sun_msg</span><span class="p">,</span> <span class="n">sc_msg</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">test_albedo_two_planet_superposition_ratio_max</span><span class="p">():</span>
+    <span class="n">sun</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">1.0e8</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>   <span class="c1"># [m]</span>
+    <span class="n">p_a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">2.0e7</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>   <span class="c1"># [m]</span>
+    <span class="n">p_b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span> <span class="mf">2.0e7</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>   <span class="c1"># [m]</span>
+    <span class="n">sc</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">8.0e7</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>   <span class="c1"># [m]</span>
+
+    <span class="n">log_a</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span>  <span class="o">=</span> <span class="n">_run_albedo_multi_planet_scene</span><span class="p">([</span><span class="n">p_a</span><span class="p">],</span> <span class="n">sun</span><span class="p">,</span> <span class="n">sc</span><span class="p">)</span>
+    <span class="n">log_b</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span>  <span class="o">=</span> <span class="n">_run_albedo_multi_planet_scene</span><span class="p">([</span><span class="n">p_b</span><span class="p">],</span> <span class="n">sun</span><span class="p">,</span> <span class="n">sc</span><span class="p">)</span>
+    <span class="n">log_ab</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span> <span class="o">=</span> <span class="n">_run_albedo_multi_planet_scene</span><span class="p">([</span><span class="n">p_a</span><span class="p">,</span> <span class="n">p_b</span><span class="p">],</span> <span class="n">sun</span><span class="p">,</span> <span class="n">sc</span><span class="p">)</span>
+
+    <span class="n">a</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">log_a</span><span class="o">.</span><span class="n">albedoAtInstrumentMax</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">log_b</span><span class="o">.</span><span class="n">albedoAtInstrumentMax</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">ab</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">log_ab</span><span class="o">.</span><span class="n">albedoAtInstrumentMax</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="k">assert</span> <span class="n">a</span> <span class="o">&gt;</span> <span class="mf">0.0</span> <span class="ow">and</span> <span class="n">b</span> <span class="o">&gt;</span> <span class="mf">0.0</span> <span class="ow">and</span> <span class="n">ab</span> <span class="o">&gt;</span> <span class="mf">0.0</span>
+    <span class="k">assert</span> <span class="n">ab</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="p">,</span> <span class="n">rel</span><span class="o">=</span><span class="mf">5e-3</span><span class="p">),</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Superposition failed for albedoAtInstrumentMax: AB=</span><span class="si">{</span><span class="n">ab</span><span class="si">:</span><span class="s2">.6e</span><span class="si">}</span><span class="s2">, A+B=</span><span class="si">{</span><span class="n">a</span><span class="o">+</span><span class="n">b</span><span class="si">:</span><span class="s2">.6e</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">test_albedo_two_planet_order_invariance_max_fields</span><span class="p">():</span>
+    <span class="n">sun</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">1.0e8</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>   <span class="c1"># [m]</span>
+    <span class="n">p_a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">2.0e7</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>   <span class="c1"># [m]</span>
+    <span class="n">p_b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span> <span class="mf">2.0e7</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>   <span class="c1"># [m]</span>
+    <span class="n">sc</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">8.0e7</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>   <span class="c1"># [m]</span>
+
+    <span class="n">log_ab</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span> <span class="o">=</span> <span class="n">_run_albedo_multi_planet_scene</span><span class="p">([</span><span class="n">p_a</span><span class="p">,</span> <span class="n">p_b</span><span class="p">],</span> <span class="n">sun</span><span class="p">,</span> <span class="n">sc</span><span class="p">)</span>
+    <span class="n">log_ba</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span> <span class="o">=</span> <span class="n">_run_albedo_multi_planet_scene</span><span class="p">([</span><span class="n">p_b</span><span class="p">,</span> <span class="n">p_a</span><span class="p">],</span> <span class="n">sun</span><span class="p">,</span> <span class="n">sc</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="nb">float</span><span class="p">(</span><span class="n">log_ab</span><span class="o">.</span><span class="n">albedoAtInstrumentMax</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span>
+        <span class="nb">float</span><span class="p">(</span><span class="n">log_ba</span><span class="o">.</span><span class="n">albedoAtInstrumentMax</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">rel</span><span class="o">=</span><span class="mf">1e-10</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">float</span><span class="p">(</span><span class="n">log_ab</span><span class="o">.</span><span class="n">AfluxAtInstrumentMax</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span>
+        <span class="nb">float</span><span class="p">(</span><span class="n">log_ba</span><span class="o">.</span><span class="n">AfluxAtInstrumentMax</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">rel</span><span class="o">=</span><span class="mf">1e-10</span>
+    <span class="p">)</span>
+
+
+<div class="viewcode-block" id="test_ir_flux_conservation">
+<a class="viewcode-back" href="../Documentation/simulation/environment/albedo/_UnitTest/test_albedo.html#test_albedo.test_ir_flux_conservation">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_ir_flux_conservation</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test IR flux conservation for PlanetGrid (Lambertian sphere).&quot;&quot;&quot;</span>
+    <span class="n">albedo_mod</span> <span class="o">=</span> <span class="n">albedo</span><span class="o">.</span><span class="n">Albedo</span><span class="p">()</span>
+    <span class="n">grid</span> <span class="o">=</span> <span class="n">albedo</span><span class="o">.</span><span class="n">PlanetGrid</span><span class="p">()</span>
+    <span class="n">grid</span><span class="o">.</span><span class="n">nLat</span> <span class="o">=</span> <span class="mi">180</span>
+    <span class="n">grid</span><span class="o">.</span><span class="n">nLon</span> <span class="o">=</span> <span class="mi">360</span>
+    <span class="n">grid</span><span class="o">.</span><span class="n">REQ_m</span> <span class="o">=</span> <span class="mf">6371000.0</span>  <span class="c1"># [m]</span>
+    <span class="n">grid</span><span class="o">.</span><span class="n">RP_m</span> <span class="o">=</span> <span class="mf">6371000.0</span>  <span class="c1"># [m]</span>
+    <span class="n">grid</span><span class="o">.</span><span class="n">irFluxMean</span> <span class="o">=</span> <span class="mf">237.0</span>  <span class="c1"># [W/m^2]</span>
+    <span class="n">grid</span><span class="o">.</span><span class="n">albedoAvg</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># [-]</span>
+    <span class="n">grid</span><span class="o">.</span><span class="n">useAlbedoData</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">grid</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="n">albedo_mod</span><span class="o">.</span><span class="n">bskLogger</span><span class="p">)</span>
+
+    <span class="n">d_center</span> <span class="o">=</span> <span class="mf">1e9</span>  <span class="c1"># [m]</span>
+
+    <span class="n">r_sat</span>    <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">d_center</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>  <span class="c1"># [m]</span>
+    <span class="n">r_planet</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>  <span class="c1"># [m]</span>
+    <span class="n">r_sun</span>    <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1e11</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>  <span class="c1"># [m]</span>
+    <span class="n">J</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+
+    <span class="n">patches</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">computePatches</span><span class="p">(</span><span class="n">r_sat</span><span class="p">,</span> <span class="n">r_sun</span><span class="p">,</span> <span class="n">r_planet</span><span class="p">,</span> <span class="n">J</span><span class="p">,</span> <span class="n">grid</span><span class="o">.</span><span class="n">REQ_m</span><span class="p">,</span> <span class="mf">1361.0</span><span class="p">)</span>
+    <span class="n">total_flux</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">irFlux</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">patches</span><span class="p">)</span>  <span class="c1"># [W/m^2]</span>
+
+    <span class="c1"># Far-field Lambertian sphere: E = M * R^2 / D^2</span>
+    <span class="n">expected</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">irFluxMean</span> <span class="o">*</span> <span class="n">grid</span><span class="o">.</span><span class="n">REQ_m</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="n">d_center</span><span class="o">**</span><span class="mi">2</span>  <span class="c1"># [W/m^2]</span>
+
+    <span class="n">rel_error</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">total_flux</span> <span class="o">-</span> <span class="n">expected</span><span class="p">)</span> <span class="o">/</span> <span class="n">expected</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Computed:  </span><span class="si">{</span><span class="n">total_flux</span><span class="si">:</span><span class="s2">.6e</span><span class="si">}</span><span class="s2"> W/m^2&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Expected:  </span><span class="si">{</span><span class="n">expected</span><span class="si">:</span><span class="s2">.6e</span><span class="si">}</span><span class="s2"> W/m^2&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Rel error: </span><span class="si">{</span><span class="n">rel_error</span><span class="si">:</span><span class="s2">.2e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Patches:   </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">patches</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">total_flux</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;No IR flux&quot;</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">patches</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;No visible patch&quot;</span>
+    <span class="k">assert</span> <span class="n">rel_error</span> <span class="o">&lt;</span> <span class="mf">1e-4</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Relative error: </span><span class="si">{</span><span class="n">rel_error</span><span class="si">:</span><span class="s2">.4e</span><span class="si">}</span><span class="s2"> &gt;= 1e-4&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="test_planet_grid_compute_patches_requires_initialize">
+<a class="viewcode-back" href="../Documentation/simulation/environment/albedo/_UnitTest/test_albedo.html#test_albedo.test_planet_grid_compute_patches_requires_initialize">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_planet_grid_compute_patches_requires_initialize</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Verify direct PlanetGrid calls raise a Python exception before initialization.&quot;&quot;&quot;</span>
+    <span class="n">grid</span> <span class="o">=</span> <span class="n">albedo</span><span class="o">.</span><span class="n">PlanetGrid</span><span class="p">()</span>
+    <span class="n">grid</span><span class="o">.</span><span class="n">nLat</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">grid</span><span class="o">.</span><span class="n">nLon</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="n">r_sat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">7000000.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>  <span class="c1"># [m]</span>
+    <span class="n">r_sun</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0e11</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>  <span class="c1"># [m]</span>
+    <span class="n">r_planet</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>  <span class="c1"># [m]</span>
+    <span class="n">J</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">planet_radius</span> <span class="o">=</span> <span class="mf">6371000.0</span>  <span class="c1"># [m]</span>
+    <span class="n">solar_flux</span> <span class="o">=</span> <span class="mf">1361.0</span>  <span class="c1"># [W/m^2]</span>
+
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">BasiliskError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;grid is not initialized&quot;</span><span class="p">):</span>
+        <span class="n">grid</span><span class="o">.</span><span class="n">computePatches</span><span class="p">(</span><span class="n">r_sat</span><span class="p">,</span> <span class="n">r_sun</span><span class="p">,</span> <span class="n">r_planet</span><span class="p">,</span> <span class="n">J</span><span class="p">,</span> <span class="n">planet_radius</span><span class="p">,</span> <span class="n">solar_flux</span><span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">test_planet_grid_initialize_invalid_albedo_file_raises</span><span class="p">():</span>
+    <span class="n">grid</span> <span class="o">=</span> <span class="n">albedo</span><span class="o">.</span><span class="n">PlanetGrid</span><span class="p">()</span>
+    <span class="n">albedo_mod</span> <span class="o">=</span> <span class="n">albedo</span><span class="o">.</span><span class="n">Albedo</span><span class="p">()</span>
+
+    <span class="n">grid</span><span class="o">.</span><span class="n">useAlbedoData</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="c1">#grid.albedoDataPath = &quot;/tmp&quot;  # valid directory</span>
+    <span class="n">grid</span><span class="o">.</span><span class="n">albedoDataFile</span> <span class="o">=</span> <span class="s2">&quot;nope.csv&quot;</span>
+
+    <span class="c1"># initialize should raise a catchable BasiliskError</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">BasiliskError</span><span class="p">):</span>
+        <span class="n">grid</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="n">albedo_mod</span><span class="o">.</span><span class="n">bskLogger</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="c1"># unitAlbedo(&#39;earth&#39;, &#39;ALBEDO_AVG_EXPLICIT&#39;, True)</span>
+    <span class="n">unitAlbedo</span><span class="p">(</span><span class="s2">&quot;mars&quot;</span><span class="p">,</span> <span class="s2">&quot;ALBEDO_AVG_IMPLICIT&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="n">test_albedo_eclipse_uses_planet_relative_sun_vector</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

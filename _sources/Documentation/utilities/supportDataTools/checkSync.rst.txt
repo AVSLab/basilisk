@@ -1,0 +1,13 @@
+.. _checkSync:
+
+checkSync
+=========
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. automodule:: checkSync
+   :members:
+   :show-inheritance:
+

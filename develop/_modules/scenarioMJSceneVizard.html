@@ -1,0 +1,525 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scenarioMJSceneVizard &mdash; Basilisk 2.12.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=2ebb1c42" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=4ad2e773"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">scenarioMJSceneVizard</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for scenarioMJSceneVizard</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This scenario builds on :ref:`scenarioDeployPanels` to show how multiple</span>
+<span class="sd">:ref:`MJScene&lt;MJScene&gt;` instances and a regular :ref:`spacecraft` object</span>
+<span class="sd">coexist in one simulation and feed :ref:`Vizard &lt;vizard&gt;` through a single</span>
+<span class="sd">``enableUnityVisualization`` call:</span>
+
+<span class="sd">* **Primary hub** (MJScene, red, 6 panels): loaded from</span>
+<span class="sd">  ``sat_w_deployable_panels.xml`` - the same XML used by</span>
+<span class="sd">  ``scenarioDeployPanels.py``.  Circular 500 km LEO around Earth, PID</span>
+<span class="sd">  deployment, and a four-unit CSS pyramid on the hub.</span>
+<span class="sd">* **Companion hub** (MJScene, blue, 2 panels): loaded from</span>
+<span class="sd">  ``sat_w_companion.xml``.  Same circular LEO, 15 m ahead along-track,</span>
+<span class="sd">  with a Vizard star tracker on the hub.</span>
+<span class="sd">* **Trailer** (regular Basilisk :ref:`spacecraft`): point-mass body 15 m</span>
+<span class="sd">  behind the primary along-track, gravity wired through the standard</span>
+<span class="sd">  ``gravFactory.addBodiesTo`` plumbing, with a Vizard transceiver</span>
+<span class="sd">  (downlink antenna).</span>
+
+<span class="sd">Illustration of Simulation Results</span>
+<span class="sd">----------------------------------</span>
+
+<span class="sd">This scenario does not generate plots; instead it writes to</span>
+<span class="sd">``examples/mujoco/_VizFiles/scenarioMJSceneVizard_UnityViz.bin`` if the user uncomments</span>
+<span class="sd">the ``saveFile=__file__`` line.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">coarseSunSensor</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">mujoco</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">spacecraft</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">StatefulSysModel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">svIntegrators</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">vizInterface</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="k">pass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">macros</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">orbitalMotion</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">simIncludeGravBody</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">vizSupport</span>
+
+<span class="n">CURRENT_FOLDER</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span>
+<span class="n">PRIMARY_XML_PATH</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">CURRENT_FOLDER</span><span class="p">,</span> <span class="s2">&quot;sat_w_deployable_panels.xml&quot;</span><span class="p">)</span>
+<span class="n">COMPANION_XML_PATH</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">CURRENT_FOLDER</span><span class="p">,</span> <span class="s2">&quot;sat_w_companion.xml&quot;</span><span class="p">)</span>
+
+<span class="c1"># Along-track separation between adjacent spacecraft.</span>
+<span class="n">SC_SEPARATION_M</span> <span class="o">=</span> <span class="mf">15.0</span>  <span class="c1"># [m]</span>
+
+<span class="c1"># Same profile as scenarioDeployPanels.py</span>
+<span class="n">JOINT_START_END</span> <span class="o">=</span> <span class="p">[(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">0</span><span class="p">)]</span>  <span class="c1"># [rad] indexed by tier</span>
+<span class="n">MAX_PROFILE_VEL</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="mf">0.05</span><span class="p">)</span>  <span class="c1"># [deg/s] -&gt; [rad/s]</span>
+<span class="n">MAX_PROFILE_ACCEL</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="mf">0.0001</span><span class="p">)</span>  <span class="c1"># [deg/s^2] -&gt; [rad/s^2]</span>
+
+
+<span class="c1"># Trapezoidal profile generator</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">generateProfiles</span><span class="p">(</span>
+    <span class="n">initialPoint</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">finalPoint</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">vMax</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">aMax</span><span class="p">:</span> <span class="nb">float</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">mujoco</span><span class="o">.</span><span class="n">ScalarJointStateInterpolator</span><span class="p">]:</span>
+    <span class="n">distance</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">finalPoint</span> <span class="o">-</span> <span class="n">initialPoint</span><span class="p">)</span>
+    <span class="n">tAccel</span> <span class="o">=</span> <span class="n">vMax</span> <span class="o">/</span> <span class="n">aMax</span>
+    <span class="n">dAccel</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">aMax</span> <span class="o">*</span> <span class="n">tAccel</span><span class="o">**</span><span class="mi">2</span>
+    <span class="k">if</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">dAccel</span> <span class="o">&gt;</span> <span class="n">distance</span><span class="p">:</span>
+        <span class="n">tAccel</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">distance</span> <span class="o">/</span> <span class="n">aMax</span><span class="p">)</span>
+        <span class="n">tConst</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">tConst</span> <span class="o">=</span> <span class="p">(</span><span class="n">distance</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">dAccel</span><span class="p">)</span> <span class="o">/</span> <span class="n">vMax</span>
+
+    <span class="n">tTotal</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">tAccel</span> <span class="o">+</span> <span class="n">tConst</span>
+    <span class="n">time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">tTotal</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+    <span class="n">position</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">time</span><span class="p">)</span>
+    <span class="n">velocity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">time</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">time</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">t</span> <span class="o">&lt;</span> <span class="n">tAccel</span><span class="p">:</span>
+            <span class="n">velocity</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">aMax</span> <span class="o">*</span> <span class="n">t</span>
+            <span class="n">position</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">aMax</span> <span class="o">*</span> <span class="n">t</span><span class="o">**</span><span class="mi">2</span>
+        <span class="k">elif</span> <span class="n">t</span> <span class="o">&lt;</span> <span class="n">tAccel</span> <span class="o">+</span> <span class="n">tConst</span><span class="p">:</span>
+            <span class="n">velocity</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">vMax</span>
+            <span class="n">position</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">dAccel</span> <span class="o">+</span> <span class="n">vMax</span> <span class="o">*</span> <span class="p">(</span><span class="n">t</span> <span class="o">-</span> <span class="n">tAccel</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">tDecel</span> <span class="o">=</span> <span class="n">t</span> <span class="o">-</span> <span class="n">tAccel</span> <span class="o">-</span> <span class="n">tConst</span>
+            <span class="n">velocity</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">vMax</span> <span class="o">-</span> <span class="n">aMax</span> <span class="o">*</span> <span class="n">tDecel</span>
+            <span class="n">position</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">dAccel</span> <span class="o">+</span> <span class="n">vMax</span> <span class="o">*</span> <span class="n">tConst</span> <span class="o">+</span> <span class="p">(</span><span class="n">vMax</span> <span class="o">*</span> <span class="n">tDecel</span> <span class="o">-</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">aMax</span> <span class="o">*</span> <span class="n">tDecel</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+            <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">finalPoint</span> <span class="o">&gt;</span> <span class="n">initialPoint</span><span class="p">:</span>
+        <span class="n">position</span> <span class="o">=</span> <span class="n">initialPoint</span> <span class="o">+</span> <span class="n">position</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">position</span> <span class="o">=</span> <span class="n">initialPoint</span> <span class="o">-</span> <span class="n">position</span>
+        <span class="n">velocity</span> <span class="o">=</span> <span class="o">-</span><span class="n">velocity</span>
+
+    <span class="n">interpolators</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">values</span> <span class="ow">in</span> <span class="p">(</span><span class="n">position</span><span class="p">,</span> <span class="n">velocity</span><span class="p">):</span>
+        <span class="n">pts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">time</span> <span class="o">*</span> <span class="mf">1e9</span><span class="p">,</span> <span class="n">values</span><span class="p">])</span>
+        <span class="n">interp</span> <span class="o">=</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">ScalarJointStateInterpolator</span><span class="p">()</span>
+        <span class="n">interp</span><span class="o">.</span><span class="n">setDataPoints</span><span class="p">(</span><span class="n">pts</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">interpolators</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">interp</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">interpolators</span>
+
+
+<span class="c1"># PID controller</span>
+<div class="viewcode-block" id="PIDController">
+<a class="viewcode-back" href="../examples/mujoco/scenarioMJSceneVizard.html#scenarioMJSceneVizard.PIDController">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PIDController</span><span class="p">(</span><span class="n">StatefulSysModel</span><span class="o">.</span><span class="n">StatefulSysModel</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">K_p</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">K_d</span> <span class="o">=</span> <span class="mf">0.2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">K_i</span> <span class="o">=</span> <span class="mf">0.0001</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">measuredInMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">ScalarJointStateMsgReader</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">desiredInMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">ScalarJointStateMsgReader</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">measuredDotInMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">ScalarJointStateMsgReader</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">desiredDotInMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">ScalarJointStateMsgReader</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outputOutMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SingleActuatorMsg</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">registerStates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">registerer</span><span class="p">:</span> <span class="n">StatefulSysModel</span><span class="o">.</span><span class="n">DynParamRegisterer</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">integralErrorState</span> <span class="o">=</span> <span class="n">registerer</span><span class="o">.</span><span class="n">registerState</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;integralError&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">integralErrorState</span><span class="o">.</span><span class="n">setState</span><span class="p">([[</span><span class="mi">0</span><span class="p">]])</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">UpdateState</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">CurrentSimNanos</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="n">stateError</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">desiredInMsg</span><span class="p">()</span><span class="o">.</span><span class="n">state</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">measuredInMsg</span><span class="p">()</span><span class="o">.</span><span class="n">state</span>
+        <span class="n">stateDotError</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">desiredDotInMsg</span><span class="p">()</span><span class="o">.</span><span class="n">state</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">measuredDotInMsg</span><span class="p">()</span><span class="o">.</span><span class="n">state</span>
+        <span class="n">stateIntegralError</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">integralErrorState</span><span class="o">.</span><span class="n">getState</span><span class="p">()[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">control_output</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">K_p</span> <span class="o">*</span> <span class="n">stateError</span>
+            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">K_d</span> <span class="o">*</span> <span class="n">stateDotError</span>
+            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">K_i</span> <span class="o">*</span> <span class="n">stateIntegralError</span>
+        <span class="p">)</span>
+        <span class="c1"># Saturate the command to keep a transient adaptive-integrator probe</span>
+        <span class="c1"># from emitting a huge value that trips MuJoCo&#39;s CTRL sanity check.</span>
+        <span class="n">control_output</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">control_output</span><span class="p">,</span> <span class="o">-</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">integralErrorState</span><span class="o">.</span><span class="n">setDerivative</span><span class="p">([[</span><span class="n">stateError</span><span class="p">]])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outputOutMsg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+            <span class="n">messaging</span><span class="o">.</span><span class="n">SingleActuatorMsgPayload</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="n">control_output</span><span class="p">),</span>
+            <span class="n">CurrentSimNanos</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">moduleID</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+
+<span class="c1"># Helper to attach PID deployment to a set of panel actuators in a scene</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">addDeployment</span><span class="p">(</span><span class="n">scene</span><span class="p">,</span> <span class="n">panelIds</span><span class="p">,</span> <span class="n">bodyPrefix</span><span class="p">,</span> <span class="n">modelCache</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">side</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">panelIds</span><span class="p">:</span>
+        <span class="n">actuatorName</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">bodyPrefix</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">side</span><span class="si">}{</span><span class="n">i</span><span class="si">}</span><span class="s2">_deploy&quot;</span>
+        <span class="n">bodyName</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">bodyPrefix</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">side</span><span class="si">}{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">act</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">getSingleActuator</span><span class="p">(</span><span class="n">actuatorName</span><span class="p">)</span>
+        <span class="n">joint</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">getBody</span><span class="p">(</span><span class="n">bodyName</span><span class="p">)</span><span class="o">.</span><span class="n">getScalarJoint</span><span class="p">(</span><span class="n">actuatorName</span><span class="p">)</span>
+
+        <span class="n">posInterp</span><span class="p">,</span> <span class="n">velInterp</span> <span class="o">=</span> <span class="n">generateProfiles</span><span class="p">(</span>
+            <span class="n">JOINT_START_END</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+            <span class="n">JOINT_START_END</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span>
+            <span class="n">MAX_PROFILE_VEL</span><span class="p">,</span>
+            <span class="n">MAX_PROFILE_ACCEL</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">pid</span> <span class="o">=</span> <span class="n">PIDController</span><span class="p">()</span>
+        <span class="n">pid</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">actuatorName</span><span class="si">}</span><span class="s2">_ctrl&quot;</span>
+        <span class="n">pid</span><span class="o">.</span><span class="n">desiredInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">posInterp</span><span class="o">.</span><span class="n">interpolatedOutMsg</span><span class="p">)</span>
+        <span class="n">pid</span><span class="o">.</span><span class="n">desiredDotInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">velInterp</span><span class="o">.</span><span class="n">interpolatedOutMsg</span><span class="p">)</span>
+        <span class="n">pid</span><span class="o">.</span><span class="n">measuredInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">joint</span><span class="o">.</span><span class="n">stateOutMsg</span><span class="p">)</span>
+        <span class="n">pid</span><span class="o">.</span><span class="n">measuredDotInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">joint</span><span class="o">.</span><span class="n">stateDotOutMsg</span><span class="p">)</span>
+        <span class="n">act</span><span class="o">.</span><span class="n">actuatorInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">pid</span><span class="o">.</span><span class="n">outputOutMsg</span><span class="p">)</span>
+
+        <span class="n">scene</span><span class="o">.</span><span class="n">AddModelToDynamicsTask</span><span class="p">(</span><span class="n">posInterp</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
+        <span class="n">scene</span><span class="o">.</span><span class="n">AddModelToDynamicsTask</span><span class="p">(</span><span class="n">velInterp</span><span class="p">,</span> <span class="mi">49</span><span class="p">)</span>
+        <span class="n">scene</span><span class="o">.</span><span class="n">AddModelToDynamicsTask</span><span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="mi">25</span><span class="p">)</span>
+        <span class="n">modelCache</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">posInterp</span><span class="p">,</span> <span class="n">velInterp</span><span class="p">,</span> <span class="n">pid</span><span class="p">])</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">setStowed</span><span class="p">(</span><span class="n">scene</span><span class="p">,</span> <span class="n">panelIds</span><span class="p">,</span> <span class="n">bodyPrefix</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">side</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">panelIds</span><span class="p">:</span>
+        <span class="n">scene</span><span class="o">.</span><span class="n">getBody</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">bodyPrefix</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">side</span><span class="si">}{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">getScalarJoint</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">bodyPrefix</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">side</span><span class="si">}{</span><span class="n">i</span><span class="si">}</span><span class="s2">_deploy&quot;</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">setPosition</span><span class="p">(</span><span class="n">JOINT_START_END</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+
+
+<span class="c1"># Main scenario</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="n">showPlots</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+    <span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">SetProgressBar</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">proc</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="s2">&quot;simProcess&quot;</span><span class="p">)</span>
+    <span class="n">taskPeriodSec</span> <span class="o">=</span> <span class="mf">4.0</span>  <span class="c1"># [s]</span>
+    <span class="n">proc</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">&quot;simTask&quot;</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">taskPeriodSec</span><span class="p">)))</span>
+
+    <span class="c1"># Two MJScenes, the primary has 6 panels, and the companion 2 panels.</span>
+    <span class="c1"># Each is loaded from its own XML and both are running in the same simTask.</span>
+    <span class="n">primaryScene</span> <span class="o">=</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MJScene</span><span class="o">.</span><span class="n">fromFile</span><span class="p">(</span><span class="n">PRIMARY_XML_PATH</span><span class="p">)</span>
+    <span class="n">primaryScene</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;primaryScene&quot;</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;simTask&quot;</span><span class="p">,</span> <span class="n">primaryScene</span><span class="p">)</span>
+
+    <span class="c1"># MJScene defaults to RK4 so we swap in RKF45 for the adaptive step-size</span>
+    <span class="c1"># control needed at orbital speeds.</span>
+    <span class="n">integ</span> <span class="o">=</span> <span class="n">svIntegrators</span><span class="o">.</span><span class="n">svIntegratorRKF45</span><span class="p">(</span><span class="n">primaryScene</span><span class="p">)</span>
+    <span class="n">accuracy</span> <span class="o">=</span> <span class="mf">1e-5</span>
+    <span class="n">integ</span><span class="o">.</span><span class="n">setRelativeTolerance</span><span class="p">(</span><span class="n">accuracy</span><span class="p">)</span>
+    <span class="n">integ</span><span class="o">.</span><span class="n">setAbsoluteTolerance</span><span class="p">(</span><span class="n">accuracy</span><span class="p">)</span>
+    <span class="n">primaryScene</span><span class="o">.</span><span class="n">setIntegrator</span><span class="p">(</span><span class="n">integ</span><span class="p">)</span>
+    <span class="n">primaryScene</span><span class="o">.</span><span class="n">extraEoMCall</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="n">companionScene</span> <span class="o">=</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MJScene</span><span class="o">.</span><span class="n">fromFile</span><span class="p">(</span><span class="n">COMPANION_XML_PATH</span><span class="p">)</span>
+    <span class="n">companionScene</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;companionScene&quot;</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;simTask&quot;</span><span class="p">,</span> <span class="n">companionScene</span><span class="p">)</span>
+    <span class="n">integ2</span> <span class="o">=</span> <span class="n">svIntegrators</span><span class="o">.</span><span class="n">svIntegratorRKF45</span><span class="p">(</span><span class="n">companionScene</span><span class="p">)</span>
+    <span class="n">integ2</span><span class="o">.</span><span class="n">setRelativeTolerance</span><span class="p">(</span><span class="n">accuracy</span><span class="p">)</span>
+    <span class="n">integ2</span><span class="o">.</span><span class="n">setAbsoluteTolerance</span><span class="p">(</span><span class="n">accuracy</span><span class="p">)</span>
+    <span class="n">companionScene</span><span class="o">.</span><span class="n">setIntegrator</span><span class="p">(</span><span class="n">integ2</span><span class="p">)</span>
+    <span class="n">companionScene</span><span class="o">.</span><span class="n">extraEoMCall</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="n">gravFactory</span> <span class="o">=</span> <span class="n">simIncludeGravBody</span><span class="o">.</span><span class="n">gravBodyFactory</span><span class="p">()</span>
+    <span class="n">earth</span> <span class="o">=</span> <span class="n">gravFactory</span><span class="o">.</span><span class="n">createEarth</span><span class="p">()</span>
+    <span class="n">earth</span><span class="o">.</span><span class="n">isCentralBody</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">mu</span> <span class="o">=</span> <span class="n">earth</span><span class="o">.</span><span class="n">mu</span>
+    <span class="n">gravFactory</span><span class="o">.</span><span class="n">createMoon</span><span class="p">()</span>
+    <span class="n">gravFactory</span><span class="o">.</span><span class="n">createSun</span><span class="p">()</span>
+
+    <span class="n">spiceObject</span> <span class="o">=</span> <span class="n">gravFactory</span><span class="o">.</span><span class="n">createSpiceInterface</span><span class="p">(</span>
+        <span class="n">time</span><span class="o">=</span><span class="s2">&quot;2025 NOVEMBER 15 12:00:00.000&quot;</span><span class="p">,</span>
+        <span class="n">epochInMsg</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">spiceObject</span><span class="o">.</span><span class="n">zeroBase</span> <span class="o">=</span> <span class="s2">&quot;Earth&quot;</span>
+
+    <span class="c1"># MuJoCo gravity is evaluated at every integrator substep. Run SPICE after</span>
+    <span class="c1"># the scene&#39;s high-priority forward kinematics and before gravity (default</span>
+    <span class="c1"># priority -1), so every gravity evaluation reads current ephemerides.</span>
+    <span class="n">spiceDynamicsPriority</span> <span class="o">=</span> <span class="mi">75</span>
+    <span class="n">primaryScene</span><span class="o">.</span><span class="n">AddModelToDynamicsTask</span><span class="p">(</span><span class="n">spiceObject</span><span class="p">,</span> <span class="n">spiceDynamicsPriority</span><span class="p">)</span>
+    <span class="n">companionScene</span><span class="o">.</span><span class="n">AddModelToDynamicsTask</span><span class="p">(</span><span class="n">spiceObject</span><span class="p">,</span> <span class="n">spiceDynamicsPriority</span><span class="p">)</span>
+
+    <span class="c1"># The regular spacecraft below also needs SPICE at the top-level task rate.</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;simTask&quot;</span><span class="p">,</span> <span class="n">spiceObject</span><span class="p">)</span>
+
+    <span class="c1"># Trailer is a regular Basilisk Spacecraft, behind the primary along-track.</span>
+    <span class="c1"># Uses ``gravFactory.addBodiesTo`` for the standard gravField wiring.</span>
+    <span class="n">trailer</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+    <span class="n">trailer</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;trailer&quot;</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;simTask&quot;</span><span class="p">,</span> <span class="n">trailer</span><span class="p">)</span>
+    <span class="n">gravFactory</span><span class="o">.</span><span class="n">addBodiesTo</span><span class="p">(</span><span class="n">trailer</span><span class="p">)</span>
+
+    <span class="c1"># Primary hub orbit definition.</span>
+    <span class="n">oe</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">ClassicElements</span><span class="p">()</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="mf">6_371_000.0</span> <span class="o">+</span> <span class="mf">500_000.0</span>  <span class="c1"># [m]</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="mf">0.0</span>                       <span class="c1"># [-]</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="mf">28.5</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>        <span class="c1"># [deg] -&gt; [rad]</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">Omega</span> <span class="o">=</span> <span class="mf">48.2</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>    <span class="c1"># [deg] -&gt; [rad]</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">omega</span> <span class="o">=</span> <span class="mf">347.8</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>   <span class="c1"># [deg] -&gt; [rad]</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="mf">85.3</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>        <span class="c1"># [deg] -&gt; [rad]</span>
+    <span class="n">rN</span><span class="p">,</span> <span class="n">vN</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">elem2rv</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">oe</span><span class="p">)</span>
+    <span class="n">vHat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">vN</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">vN</span><span class="p">)</span>
+    <span class="n">primaryOrbitPeriodSec</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">oe</span><span class="o">.</span><span class="n">a</span><span class="o">**</span><span class="mi">3</span> <span class="o">/</span> <span class="n">mu</span><span class="p">)</span>  <span class="c1"># [s]</span>
+
+    <span class="c1"># Trailer initial state must be set before InitializeSimulation.</span>
+    <span class="n">trailer</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rN</span><span class="p">)</span> <span class="o">-</span> <span class="n">SC_SEPARATION_M</span> <span class="o">*</span> <span class="n">vHat</span><span class="p">)</span>
+    <span class="n">trailer</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">vN</span><span class="p">)</span>
+
+    <span class="c1"># Panel deployment</span>
+    <span class="n">primaryPanels</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">&quot;p&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;n&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;n&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;n&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">)]</span>
+    <span class="n">companionPanels</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">&quot;p&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;n&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]</span>
+    <span class="n">models</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">addDeployment</span><span class="p">(</span><span class="n">primaryScene</span><span class="p">,</span> <span class="n">primaryPanels</span><span class="p">,</span> <span class="s2">&quot;panel&quot;</span><span class="p">,</span> <span class="n">models</span><span class="p">)</span>
+    <span class="n">addDeployment</span><span class="p">(</span><span class="n">companionScene</span><span class="p">,</span> <span class="n">companionPanels</span><span class="p">,</span> <span class="s2">&quot;companion_panel&quot;</span><span class="p">,</span> <span class="n">models</span><span class="p">)</span>
+
+    <span class="c1"># Gravity setup.  Each MJScene gets its own NBodyGravity model that applies</span>
+    <span class="c1"># the factory&#39;s Earth, Moon, and Sun gravity sources at every body&#39;s center</span>
+    <span class="c1"># of mass, preserving the gravity gradient across each structure.</span>
+    <span class="n">hubBody</span> <span class="o">=</span> <span class="n">primaryScene</span><span class="o">.</span><span class="n">getBody</span><span class="p">(</span><span class="s2">&quot;hub&quot;</span><span class="p">)</span>
+    <span class="n">companionBody</span> <span class="o">=</span> <span class="n">companionScene</span><span class="o">.</span><span class="n">getBody</span><span class="p">(</span><span class="s2">&quot;companion_hub&quot;</span><span class="p">)</span>
+
+    <span class="n">gravFactory</span><span class="o">.</span><span class="n">addBodiesTo</span><span class="p">(</span><span class="n">primaryScene</span><span class="p">)</span>
+    <span class="n">gravFactory</span><span class="o">.</span><span class="n">addBodiesTo</span><span class="p">(</span><span class="n">companionScene</span><span class="p">)</span>
+
+    <span class="c1"># CSS sensors mounted on the primary hub. The MJScene body&#39;s origin state</span>
+    <span class="c1"># message subscribes the same way a regular Spacecraft body state message</span>
+    <span class="c1"># would.  Sun state comes from the SPICE planet outputs.</span>
+    <span class="n">hubStateMsg</span> <span class="o">=</span> <span class="n">hubBody</span><span class="o">.</span><span class="n">getOrigin</span><span class="p">()</span><span class="o">.</span><span class="n">stateOutMsg</span>
+    <span class="n">sunStateMsg</span> <span class="o">=</span> <span class="n">spiceObject</span><span class="o">.</span><span class="n">planetStateOutMsgs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">cssNormals_B</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+        <span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+        <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+        <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+    <span class="p">]</span>
+    <span class="n">cssUnits</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">nHat</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">cssNormals_B</span><span class="p">):</span>
+        <span class="n">css</span> <span class="o">=</span> <span class="n">coarseSunSensor</span><span class="o">.</span><span class="n">CoarseSunSensor</span><span class="p">()</span>
+        <span class="n">css</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;hub_CSS</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">css</span><span class="o">.</span><span class="n">fov</span> <span class="o">=</span> <span class="mf">80.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>  <span class="c1"># [deg] -&gt; [rad]</span>
+        <span class="n">css</span><span class="o">.</span><span class="n">scaleFactor</span> <span class="o">=</span> <span class="mf">2.0</span>        <span class="c1"># [-]</span>
+        <span class="n">css</span><span class="o">.</span><span class="n">maxOutput</span> <span class="o">=</span> <span class="mf">2.0</span>          <span class="c1"># [-]</span>
+        <span class="n">css</span><span class="o">.</span><span class="n">nHat_B</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">nHat</span><span class="p">)</span>      <span class="c1"># [-]</span>
+        <span class="n">css</span><span class="o">.</span><span class="n">r_B</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]</span>   <span class="c1"># [m]</span>
+        <span class="n">css</span><span class="o">.</span><span class="n">sunInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">sunStateMsg</span><span class="p">)</span>
+        <span class="n">css</span><span class="o">.</span><span class="n">stateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">hubStateMsg</span><span class="p">)</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;simTask&quot;</span><span class="p">,</span> <span class="n">css</span><span class="p">)</span>
+        <span class="n">cssUnits</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">css</span><span class="p">)</span>
+    <span class="n">models</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">cssUnits</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">vizSupport</span><span class="o">.</span><span class="n">vizFound</span><span class="p">:</span>
+        <span class="c1"># Star tracker mounted on top of the companion hub, boresight +Z body.</span>
+        <span class="n">starTracker</span> <span class="o">=</span> <span class="n">vizInterface</span><span class="o">.</span><span class="n">GenericSensor</span><span class="p">()</span>
+        <span class="n">starTracker</span><span class="o">.</span><span class="n">r_SB_B</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]</span>              <span class="c1"># [m]</span>
+        <span class="n">starTracker</span><span class="o">.</span><span class="n">fieldOfView</span><span class="o">.</span><span class="n">push_back</span><span class="p">(</span><span class="mf">8.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span><span class="p">)</span>  <span class="c1"># [deg] -&gt; [rad]</span>
+        <span class="n">starTracker</span><span class="o">.</span><span class="n">fieldOfView</span><span class="o">.</span><span class="n">push_back</span><span class="p">(</span><span class="mf">8.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span><span class="p">)</span>  <span class="c1"># [deg] -&gt; [rad]</span>
+        <span class="n">starTracker</span><span class="o">.</span><span class="n">normalVector</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]</span>          <span class="c1"># [-]</span>
+        <span class="n">starTracker</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="mf">1.5</span>                               <span class="c1"># [m]</span>
+        <span class="n">starTracker</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="n">vizInterface</span><span class="o">.</span><span class="n">IntVector</span><span class="p">(</span><span class="n">vizSupport</span><span class="o">.</span><span class="n">toRGBA255</span><span class="p">(</span><span class="s2">&quot;yellow&quot;</span><span class="p">))</span>
+        <span class="n">starTracker</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;STR&quot;</span>
+        <span class="n">starTracker</span><span class="o">.</span><span class="n">genericSensorCmd</span> <span class="o">=</span> <span class="mi">1</span>
+
+        <span class="c1"># Vizard transceiver, boresight +Z body.</span>
+        <span class="n">trailerAntenna</span> <span class="o">=</span> <span class="n">vizInterface</span><span class="o">.</span><span class="n">Transceiver</span><span class="p">()</span>
+        <span class="n">trailerAntenna</span><span class="o">.</span><span class="n">r_SB_B</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]</span>       <span class="c1"># [m]</span>
+        <span class="n">trailerAntenna</span><span class="o">.</span><span class="n">fieldOfView</span> <span class="o">=</span> <span class="mf">30.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>  <span class="c1"># [deg] -&gt; [rad]</span>
+        <span class="n">trailerAntenna</span><span class="o">.</span><span class="n">normalVector</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]</span>  <span class="c1"># [-]</span>
+        <span class="n">trailerAntenna</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="n">vizInterface</span><span class="o">.</span><span class="n">IntVector</span><span class="p">(</span><span class="n">vizSupport</span><span class="o">.</span><span class="n">toRGBA255</span><span class="p">(</span><span class="s2">&quot;cyan&quot;</span><span class="p">))</span>
+        <span class="n">trailerAntenna</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;TX&quot;</span>
+        <span class="n">trailerAntenna</span><span class="o">.</span><span class="n">animationSpeed</span> <span class="o">=</span> <span class="mi">1</span>
+
+        <span class="n">viz</span> <span class="o">=</span> <span class="n">vizSupport</span><span class="o">.</span><span class="n">enableUnityVisualization</span><span class="p">(</span>
+            <span class="n">scSim</span><span class="p">,</span>
+            <span class="s2">&quot;simTask&quot;</span><span class="p">,</span>
+            <span class="p">[</span><span class="n">primaryScene</span><span class="p">,</span> <span class="n">companionScene</span><span class="p">,</span> <span class="n">trailer</span><span class="p">],</span>
+            <span class="c1"># saveFile=__file__,</span>
+            <span class="n">cssList</span><span class="o">=</span><span class="p">[{</span><span class="s2">&quot;hub&quot;</span><span class="p">:</span> <span class="n">cssUnits</span><span class="p">},</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
+            <span class="n">genericSensorList</span><span class="o">=</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;companion_hub&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">starTracker</span><span class="p">]},</span> <span class="kc">None</span><span class="p">],</span>
+            <span class="n">transceiverList</span><span class="o">=</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">[</span><span class="n">trailerAntenna</span><span class="p">]],</span>
+        <span class="p">)</span>
+        <span class="n">vizSupport</span><span class="o">.</span><span class="n">setInstrumentGuiSetting</span><span class="p">(</span>
+            <span class="n">viz</span><span class="p">,</span>
+            <span class="n">spacecraftName</span><span class="o">=</span><span class="s2">&quot;hub&quot;</span><span class="p">,</span>
+            <span class="n">viewCSSPanel</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">viewCSSCoverage</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">viewCSSBoresight</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">showCSSLabels</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">vizSupport</span><span class="o">.</span><span class="n">setInstrumentGuiSetting</span><span class="p">(</span>
+            <span class="n">viz</span><span class="p">,</span>
+            <span class="n">spacecraftName</span><span class="o">=</span><span class="s2">&quot;companion_hub&quot;</span><span class="p">,</span>
+            <span class="n">showGenericSensorLabels</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">vizSupport</span><span class="o">.</span><span class="n">setInstrumentGuiSetting</span><span class="p">(</span>
+            <span class="n">viz</span><span class="p">,</span>
+            <span class="n">spacecraftName</span><span class="o">=</span><span class="s2">&quot;trailer&quot;</span><span class="p">,</span>
+            <span class="n">showTransceiverLabels</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">showTransceiverFrustum</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">viz</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">orbitLinesOn</span> <span class="o">=</span> <span class="mi">2</span>
+
+    <span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+
+    <span class="c1"># Panels to stowed</span>
+    <span class="n">setStowed</span><span class="p">(</span><span class="n">primaryScene</span><span class="p">,</span> <span class="n">primaryPanels</span><span class="p">,</span> <span class="s2">&quot;panel&quot;</span><span class="p">)</span>
+    <span class="n">setStowed</span><span class="p">(</span><span class="n">companionScene</span><span class="p">,</span> <span class="n">companionPanels</span><span class="p">,</span> <span class="s2">&quot;companion_panel&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Primary hub: circular LEO</span>
+    <span class="n">hubBody</span><span class="o">.</span><span class="n">setPosition</span><span class="p">(</span><span class="n">rN</span><span class="p">)</span>
+    <span class="n">hubBody</span><span class="o">.</span><span class="n">setVelocity</span><span class="p">(</span><span class="n">vN</span><span class="p">)</span>
+
+    <span class="c1"># Companion: same orbit, ahead along-track.</span>
+    <span class="n">companionBody</span><span class="o">.</span><span class="n">setPosition</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rN</span><span class="p">)</span> <span class="o">+</span> <span class="n">SC_SEPARATION_M</span> <span class="o">*</span> <span class="n">vHat</span><span class="p">)</span>
+    <span class="n">companionBody</span><span class="o">.</span><span class="n">setVelocity</span><span class="p">(</span><span class="n">vN</span><span class="p">)</span>
+
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">primaryOrbitPeriodSec</span><span class="p">)</span><span class="o">*</span><span class="mf">.75</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">run</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

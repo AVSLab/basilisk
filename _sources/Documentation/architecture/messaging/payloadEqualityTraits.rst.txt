@@ -1,0 +1,8 @@
+.. _payloadEqualityTraits:
+
+payloadEqualityTraits
+=====================
+
+.. autodoxygenfile:: payloadEqualityTraits.h
+   :project: messaging
+

@@ -1,0 +1,371 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scenarioMJEarthMoonGravity &mdash; Basilisk 2.12.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=2ebb1c42" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=4ad2e773"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=3cd7d658"></script>
+      <script>window.MathJax = {"svg": {"fontCache": "global"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="scenarioSpiceReconstruction" href="../scenarioSpiceReconstruction.html" />
+    <link rel="prev" title="scenarioAsteroidLanding" href="scenarioAsteroidLanding.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Build.html">Building from Source</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../Learn.html">Learning Basilisk</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../Learn/bskPrinciples.html">Fundamentals of Basilisk Simulations</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html">Integrated Example Scripts</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../index.html#orbital-simulations">Orbital Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#attitude-simulations">Attitude Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#orbit-control">Orbit Control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#planetary-environments">Planetary Environments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#spacecraft-sensors">Spacecraft Sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#spacecraft-sub-systems">Spacecraft Sub-Systems</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html#multi-body-dynamics-simulations-with-mujoco">Multi-Body Dynamics Simulations with MuJoCo</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="scenarioReactionWheel.html">CubeSat with Reaction Wheel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenarioUnbalancedThrusters.html">CubeSat with 4 Unbalanced Thrusters and Fuel Tanks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenarioArmWithThrusters.html">Branching Deployable Arm with Thrusters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenarioDeployPanels.html">Chained Hinged Panel Deployment</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenarioSRPInPanels.html">Solar Radiation Pressure Model on Arbitrary Surfaces</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenarioAsteroidLanding.html">Landing on Asteroid with Contact Physics</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Earth-Moon Gravity with SPICE or PlanetEphemeris</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../scenarioSpiceReconstruction.html">Optimizing SPICE Cost with Ephemeris Reconstruction (Position)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../scenarioVestaOrientation.html">Optimizing SPICE Cost with Ephemeris Reconstruction (Orientation)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenarioSimpleDocking.html">Docking between Two CubeSats</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenarioBranchingPanels.html">Branching Panel Deployment with Locking Mechanisms</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenarioAttitudeFeedbackRWMuJoCo.html">Pointing with Reaction Wheels in MuJoCo</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenarioFormationFlyingWithDrag.html">Translation-only formation flying under differential drag</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenarioStochasticDrag.html">Satellite Drag with Stochastic (Random) Density using MuJoCo</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenarioThrArmControl.html">Spacecraft Control with Thruster Arms using MuJoCo</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenarioMJSceneVizard.html">Combining MuJoCo Scenes and a Spacecraft in Vizard</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../index.html#support-files">Support Files</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#constrained-spacecraft-dynamics-simulations">Constrained Spacecraft Dynamics Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#complex-spacecraft-dynamics-simulations">Complex Spacecraft Dynamics Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#prescribed-motion-spacecraft-dynamics-simulations">Prescribed Motion Spacecraft Dynamics Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#mission-simulations">Mission Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#spacecraft-formation-flying">Spacecraft Formation Flying</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#small-body-navigation-simulations">Small Body Navigation Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#bsksim-architecture"><code class="docutils literal notranslate"><span class="pre">bskSim()</span></code> Architecture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#multisatbsksim-architecture"><code class="docutils literal notranslate"><span class="pre">MultiSatBskSim()</span></code> Architecture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#optical-navigation-simulations">Optical Navigation Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#monte-carlo-simulations">Monte Carlo Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#advanced-simulation-options">Advanced Simulation Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#multi-threading-basilisk-simulations">Multi-Threading Basilisk Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#advanced-visualizations">Advanced Visualizations</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../Learn/makingModules.html">Basics of Writing Basilisk Modules</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../Learn.html">Learning Basilisk</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Integrated Example Scripts</a></li>
+      <li class="breadcrumb-item active">scenarioMJEarthMoonGravity</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/examples/mujoco/scenarioMJEarthMoonGravity.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="scenariomjearthmoongravity">
+<span id="id1"></span><h1>scenarioMJEarthMoonGravity<a class="headerlink" href="#scenariomjearthmoongravity" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<section id="overview">
+<span id="module-scenarioMJEarthMoonGravity"></span><h2>Overview<a class="headerlink" href="#overview" title="Link to this heading"></a></h2>
+<p>This tutorial demonstrates how to add Earth and Moon gravity to a
+<a class="reference internal" href="../../Documentation/simulation/mujocoDynamics/_GeneralModuleFiles/MJScene.html#mjscene"><span class="std std-ref">MJScene</span></a> with <a class="reference internal" href="../../Documentation/utilities/simIncludeGravBody.html#simincludegravbody"><span class="std std-ref">simIncludeGravBody</span></a>.  The same MuJoCo
+spacecraft and gravity-factory setup can be driven by either:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="../../Documentation/simulation/environment/spiceInterface/spiceInterface.html#spiceinterface"><span class="std std-ref">C++ Module: spiceInterface</span></a>, which reads high-fidelity ephemerides from NAIF
+kernels, or</p></li>
+<li><p><a class="reference internal" href="../../Documentation/simulation/environment/planetEphemeris/planetEphemeris.html#planetephemeris"><span class="std std-ref">C++ Module: planetEphemeris</span></a>, which propagates user-supplied heliocentric
+classical orbit elements with two-body Keplerian motion.</p></li>
+</ul>
+<p>Select the ephemeris source through the <code class="docutils literal notranslate"><span class="pre">useSpice</span></code> argument to <code class="docutils literal notranslate"><span class="pre">run()</span></code>.
+The default is <code class="docutils literal notranslate"><span class="pre">True</span></code>.  For example, the analytic ephemeris case is run with:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">run</span><span class="p">(</span><span class="n">showPlots</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">useSpice</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="gravity-factory-setup">
+<h2>Gravity-factory setup<a class="headerlink" href="#gravity-factory-setup" title="Link to this heading"></a></h2>
+<p>Both cases begin by creating the same shared gravity-body descriptors.  Earth
+is marked as the central body because the MuJoCo spacecraft state is initialized
+relative to Earth:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">gravFactory</span> <span class="o">=</span> <span class="n">simIncludeGravBody</span><span class="o">.</span><span class="n">gravBodyFactory</span><span class="p">()</span>
+<span class="n">earth</span> <span class="o">=</span> <span class="n">gravFactory</span><span class="o">.</span><span class="n">createEarth</span><span class="p">()</span>
+<span class="n">earth</span><span class="o">.</span><span class="n">isCentralBody</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">moon</span> <span class="o">=</span> <span class="n">gravFactory</span><span class="o">.</span><span class="n">createMoon</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Each descriptor contains the body’s gravity model, gravitational parameter,
+central-body flag, and a planet-state input message.  The only difference
+between the two cases is which ephemeris output is connected to those input
+messages.</p>
+</section>
+<section id="using-spice-planet-states">
+<h2>Using SPICE planet states<a class="headerlink" href="#using-spice-planet-states" title="Link to this heading"></a></h2>
+<p>The SPICE helper uses the bodies already present in the factory to configure
+and connect its output messages:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">spiceObject</span> <span class="o">=</span> <span class="n">gravFactory</span><span class="o">.</span><span class="n">createSpiceInterface</span><span class="p">(</span>
+    <span class="n">time</span><span class="o">=</span><span class="s2">&quot;2025 NOVEMBER 15 12:00:00.000&quot;</span><span class="p">,</span>
+    <span class="n">epochInMsg</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">spiceObject</span><span class="o">.</span><span class="n">zeroBase</span> <span class="o">=</span> <span class="s2">&quot;Earth&quot;</span>
+<span class="n">scene</span><span class="o">.</span><span class="n">AddModelToDynamicsTask</span><span class="p">(</span><span class="n">spiceObject</span><span class="p">,</span> <span class="mi">75</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The factory creates the SPICE output messages in gravity-body insertion order,
+so the first output is Earth and the second is the Moon in this example.
+<code class="docutils literal notranslate"><span class="pre">createSpiceInterface()</span></code> subscribes each gravity body’s
+<code class="docutils literal notranslate"><span class="pre">planetBodyInMsg</span></code> to the corresponding output automatically.</p>
+<p>Setting <code class="docutils literal notranslate"><span class="pre">zeroBase</span></code> to Earth makes the planet states and the spacecraft state
+Earth-relative.  This is convenient but is not required by
+<a class="reference internal" href="../../Documentation/simulation/mujocoDynamics/NBodyGravity/NBodyGravity.html#nbodygravity"><span class="std std-ref">NBodyGravity</span></a>; it only requires all gravity-source states
+to use one consistent inertial origin.</p>
+</section>
+<section id="using-analytic-planetephemeris-states">
+<h2>Using analytic <code class="docutils literal notranslate"><span class="pre">PlanetEphemeris</span></code> states<a class="headerlink" href="#using-analytic-planetephemeris-states" title="Link to this heading"></a></h2>
+<p>The analytic alternative names its output bodies and supplies one
+heliocentric classical-element set for each body:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">planetObject</span> <span class="o">=</span> <span class="n">planetEphemeris</span><span class="o">.</span><span class="n">PlanetEphemeris</span><span class="p">()</span>
+<span class="n">planetObject</span><span class="o">.</span><span class="n">setPlanetNames</span><span class="p">(</span>
+    <span class="n">planetEphemeris</span><span class="o">.</span><span class="n">StringVector</span><span class="p">([</span><span class="s2">&quot;earth&quot;</span><span class="p">,</span> <span class="s2">&quot;moon&quot;</span><span class="p">])</span>
+<span class="p">)</span>
+<span class="n">planetObject</span><span class="o">.</span><span class="n">planetElements</span> <span class="o">=</span> <span class="n">planetEphemeris</span><span class="o">.</span><span class="n">classicElementVector</span><span class="p">(</span>
+    <span class="p">[</span><span class="n">earthElements</span><span class="p">,</span> <span class="n">moonElements</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="n">planetObject</span><span class="o">.</span><span class="n">zeroBase</span> <span class="o">=</span> <span class="s2">&quot;earth&quot;</span>
+<span class="n">earth</span><span class="o">.</span><span class="n">planetBodyInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">planetObject</span><span class="o">.</span><span class="n">planetOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">moon</span><span class="o">.</span><span class="n">planetBodyInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">planetObject</span><span class="o">.</span><span class="n">planetOutMsgs</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">scene</span><span class="o">.</span><span class="n">AddModelToDynamicsTask</span><span class="p">(</span><span class="n">planetObject</span><span class="p">,</span> <span class="mi">75</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Unlike the factory’s SPICE helper, a separately created <code class="docutils literal notranslate"><span class="pre">PlanetEphemeris</span></code>
+module does not know which gravity descriptors it should drive.  Its output
+messages are therefore connected explicitly.</p>
+<p><code class="docutils literal notranslate"><span class="pre">PlanetEphemeris</span></code> propagates every supplied element set independently about
+the Sun.  It does not implement a hierarchical Earth-Moon model.  To provide a
+reasonable local approximation, this example constructs an initial
+heliocentric Moon state by adding a geocentric lunar state to Earth’s
+heliocentric state, then converts the result to heliocentric elements.  This is
+useful for short examples and deterministic tests.  SPICE should generally be
+preferred when accurate Earth-Moon geometry over long intervals is required.</p>
+<p>Setting <code class="docutils literal notranslate"><span class="pre">zeroBase</span></code> to Earth translates both outputs after propagation.  The
+Earth message is therefore zero and the Moon message is Earth-relative.  This
+keeps the analytic planet messages in the same frame as the Earth-relative
+MuJoCo state, which is required for correct Vizard placement.  The selected
+zero-base body must be configured on this same <code class="docutils literal notranslate"><span class="pre">PlanetEphemeris</span></code> instance.</p>
+</section>
+<section id="execution-ordering-and-committed-state-outputs">
+<h2>Execution ordering and committed-state outputs<a class="headerlink" href="#execution-ordering-and-committed-state-outputs" title="Link to this heading"></a></h2>
+<p>The ephemeris execution order is critical.  Basilisk executes models with
+higher numeric priorities first; model insertion order in the Python script
+does not determine execution order.  This example explicitly enforces the
+following sequence:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Top</span><span class="o">-</span><span class="n">level</span> <span class="n">task</span><span class="p">:</span>
+    <span class="n">MJScene</span> <span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">recorders</span> <span class="ow">and</span> <span class="n">Vizard</span>
+
+<span class="n">MJScene</span> <span class="n">dynamics</span> <span class="n">task</span><span class="p">:</span>
+    <span class="n">forward</span> <span class="n">kinematics</span> <span class="p">(</span><span class="mi">10000</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ephemeris</span> <span class="p">(</span><span class="mi">75</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NBodyGravity</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>MuJoCo’s adaptive integrator evaluates dynamics between top-level task ticks.
+The ephemeris must therefore run in the scene dynamics task before
+<code class="docutils literal notranslate"><span class="pre">NBodyGravity</span></code> so that every force evaluation uses planet positions for the
+current integrator time:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">scene</span><span class="o">.</span><span class="n">AddModelToDynamicsTask</span><span class="p">(</span>
+    <span class="n">ephemeris</span><span class="p">,</span> <span class="n">EPHEMERIS_PRIORITY</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Integrator stages use provisional states.  Without an additional evaluation,
+messages written by dynamics-task models can therefore describe the last
+integrator stage rather than the state committed at the end of the step.  This
+example enables:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">scene</span><span class="o">.</span><span class="n">extraEoMCall</span> <span class="o">=</span> <span class="kc">True</span>
+</pre></div>
+</div>
+<p>After integration, <code class="docutils literal notranslate"><span class="pre">MJScene</span></code> then executes its dynamics task once more at the
+top-level task time using the committed MuJoCo state.  This final evaluation
+refreshes the forward-kinematics, ephemeris, and gravity outputs before the
+recorders and Vizard execute.  It does not advance or otherwise change the
+integrated state.  Because this final dynamics-task evaluation supplies the
+current ephemeris messages, the ephemeris module does not also need to be added
+to the top-level task.</p>
+</section>
+<section id="attaching-gravity-to-mujoco">
+<h2>Attaching gravity to MuJoCo<a class="headerlink" href="#attaching-gravity-to-mujoco" title="Link to this heading"></a></h2>
+<p>After either ephemeris has been configured, one factory call completes the
+MuJoCo gravity setup:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">gravity</span> <span class="o">=</span> <span class="n">gravFactory</span><span class="o">.</span><span class="n">addBodiesTo</span><span class="p">(</span><span class="n">scene</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The factory creates one <a class="reference internal" href="../../Documentation/simulation/mujocoDynamics/NBodyGravity/NBodyGravity.html#nbodygravity"><span class="std std-ref">NBodyGravity</span></a> model, adds Earth and
+the Moon as gravity sources, and adds every MuJoCo body as a gravity target.
+For the articulated CubeSat used here, gravity is applied at the center of mass
+of both the hub and the reaction wheel.</p>
+</section>
+<section id="illustration-of-simulation-results">
+<h2>Illustration of Simulation Results<a class="headerlink" href="#illustration-of-simulation-results" title="Link to this heading"></a></h2>
+<p>The scenario test runs both ephemeris cases and saves three figures per case.
+The first shows the spacecraft trajectory in its orbital plane, including the
+Earth surface and the required <span class="math notranslate nohighlight">\(R_E + 400\)</span> km minimum-radius boundary.
+The initial orbit has a 700 km periapsis altitude, and the scenario checks the
+recorded three-dimensional radius to ensure it remains above the 400 km
+boundary.  The second figure shows the Earth-Moon geometry during the
+simulation, and the third shows osculating spacecraft elements and the
+magnitude of the Moon’s third-body acceleration.</p>
+<img alt="../../_images/scenarioMJEarthMoonGravity_spice_orbit.svg" class="align-center" src="../../_images/scenarioMJEarthMoonGravity_spice_orbit.svg" />
+<img alt="../../_images/scenarioMJEarthMoonGravity_spice_moonGeometry.svg" class="align-center" src="../../_images/scenarioMJEarthMoonGravity_spice_moonGeometry.svg" />
+<img alt="../../_images/scenarioMJEarthMoonGravity_spice_diagnostics.svg" class="align-center" src="../../_images/scenarioMJEarthMoonGravity_spice_diagnostics.svg" />
+<img alt="../../_images/scenarioMJEarthMoonGravity_planetEphemeris_orbit.svg" class="align-center" src="../../_images/scenarioMJEarthMoonGravity_planetEphemeris_orbit.svg" />
+<img alt="../../_images/scenarioMJEarthMoonGravity_planetEphemeris_moonGeometry.svg" class="align-center" src="../../_images/scenarioMJEarthMoonGravity_planetEphemeris_moonGeometry.svg" />
+<img alt="../../_images/scenarioMJEarthMoonGravity_planetEphemeris_diagnostics.svg" class="align-center" src="../../_images/scenarioMJEarthMoonGravity_planetEphemeris_diagnostics.svg" />
+</section>
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioMJEarthMoonGravity.run">
+<span class="sig-prename descclassname"><span class="pre">scenarioMJEarthMoonGravity.</span></span><span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">showPlots</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">useSpice</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Figure</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/scenarioMJEarthMoonGravity.html#run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioMJEarthMoonGravity.run" title="Link to this definition"></a></dt>
+<dd><p>Run the Earth-Moon gravity tutorial.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>showPlots</strong> (<em>bool</em><em>, </em><em>optional</em>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, display the generated figures.
+Defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+<li><p><strong>useSpice</strong> (<em>bool</em><em>, </em><em>optional</em>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, use SPICE planet states. If
+<code class="docutils literal notranslate"><span class="pre">False</span></code>, use analytic <code class="docutils literal notranslate"><span class="pre">PlanetEphemeris</span></code> states. Defaults to
+<code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Generated figures keyed by documentation image
+name.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dict[str, plt.Figure]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="scenarioAsteroidLanding.html" class="btn btn-neutral float-left" title="scenarioAsteroidLanding" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../scenarioSpiceReconstruction.html" class="btn btn-neutral float-right" title="scenarioSpiceReconstruction" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

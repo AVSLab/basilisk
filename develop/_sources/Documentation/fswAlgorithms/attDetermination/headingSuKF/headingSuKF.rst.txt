@@ -1,0 +1,35 @@
+.. _headingSuKF:
+
+:module-type:`C` Module: headingSuKF
+====================================
+
+Executive Summary
+-----------------
+This module implements and tests a Switch Unscented Kalman Filter in order to estimate an arbitrary heading direction.
+More information on can be found in the
+:download:`PDF Description </../../src/fswAlgorithms/attDetermination/headingSuKF/_Documentation/heading_SuKF.pdf>`
+
+Message Connection Descriptions
+-------------------------------
+The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.
+
+.. bsk-module-io:: headingSuKF
+    :caption: Module I/O Messages
+
+    output opnavDataOutMsg OpNavMsgPayload
+        Output message with opnav information
+    output filtDataOutMsg HeadingFilterMsgPayload
+        Output message with filter state data information
+    input opnavDataInMsg OpNavMsgPayload
+        optical navigation input message
+    input cameraConfigInMsg CameraConfigMsgPayload
+        (optional) camera configuration input message
+
+
+----
+
+.. autodoxygenfile:: headingSuKF.h
+   :project: headingSuKF
+

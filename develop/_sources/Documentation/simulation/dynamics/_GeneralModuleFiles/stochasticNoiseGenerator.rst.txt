@@ -1,0 +1,8 @@
+.. _stochasticNoiseGenerator:
+
+stochasticNoiseGenerator
+========================
+
+.. autodoxygenfile:: stochasticNoiseGenerator.h
+   :project: _GeneralModuleFiles4
+

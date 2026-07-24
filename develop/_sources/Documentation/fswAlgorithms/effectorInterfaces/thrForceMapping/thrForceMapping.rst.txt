@@ -1,0 +1,37 @@
+.. _thrForceMapping:
+
+:module-type:`C` Module: thrForceMapping
+========================================
+
+Executive Summary
+-----------------
+
+This module is reads in a desired attitude control torque vector and maps it onto a set of thrusters.
+
+The module works for both on-pulsing (nominal thruster state is off such as with RCS thrusters) and off-pulsing (nominal thruster state in such as with DV thrusters). More information can be found in the
+:download:`PDF Description </../../src/fswAlgorithms/effectorInterfaces/thrForceMapping/_Documentation/Basilisk-ThrusterForces-20160627.pdf>`.
+
+Message Connection Descriptions
+-------------------------------
+The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.
+
+.. bsk-module-io:: thrForceMapping
+    :caption: Module I/O Messages
+
+    output thrForceCmdOutMsg THRArrayCmdForceMsgPayload
+        thruster force output message
+    input cmdTorqueInMsg CmdTorqueBodyMsgPayload
+        commanded attitude control torque vector input message
+    input thrConfigInMsg THRArrayConfigMsgPayload
+        Thruster array configuration input message
+    input vehConfigInMsg VehicleConfigMsgPayload
+        spacecraft configuration input message
+
+
+----
+
+.. autodoxygenfile:: thrForceMapping.h
+   :project: thrForceMapping
+

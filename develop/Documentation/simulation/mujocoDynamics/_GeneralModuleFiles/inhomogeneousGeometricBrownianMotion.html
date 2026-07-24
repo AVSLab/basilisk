@@ -1,0 +1,456 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>C++ Module: inhomogeneousGeometricBrownianMotion &mdash; Basilisk 2.12.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=2ebb1c42" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=4ad2e773"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script>window.MathJax = {"svg": {"fontCache": "global"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="C++ Module: meanRevertingNoise" href="meanRevertingNoise.html" />
+    <link rel="prev" title="StatefulSysModel" href="StatefulSysModel.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../communication/index.html">communication</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dynamics/index.html">dynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../environment/index.html">environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../forceTorque/index.html">forceTorque</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">mujocoDynamics</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../JointPIDController/index.html">JointPIDController</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../MJJointReactionForces/index.html">MJJointReactionForces</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../MJSystemCoM/index.html">MJSystemCoM</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../MJSystemMassMatrix/index.html">MJSystemMassMatrix</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../NBodyGravity/index.html">NBodyGravity</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../cmdForceInertialToForceAtSite/index.html">cmdForceInertialToForceAtSite</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../igbmAtmDensity/index.html">igbmAtmDensity</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../linearTimeInvariantSystem/index.html">linearTimeInvariantSystem</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../stochasticAtmDensity/index.html">stochasticAtmDensity</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../stochasticDragCoeff/index.html">stochasticDragCoeff</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../thrOnTimeToForce/index.html">thrOnTimeToForce</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../simSynch/index.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">mujocoDynamics</a></li>
+          <li class="breadcrumb-item"><a href="index.html">_GeneralModuleFiles</a></li>
+      <li class="breadcrumb-item active"><span class="module-type-label module-type-cpp">C++</span> Module: inhomogeneousGeometricBrownianMotion</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/simulation/mujocoDynamics/_GeneralModuleFiles/inhomogeneousGeometricBrownianMotion.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="c-module-inhomogeneousgeometricbrownianmotion">
+<span id="inhomogeneousgeometricbrownianmotion"></span><h1><span class="module-type-label module-type-cpp">C++</span> Module: inhomogeneousGeometricBrownianMotion<a class="headerlink" href="#c-module-inhomogeneousgeometricbrownianmotion" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">InhomogeneousGeometricBrownianMotion</span></code> module is an abstract MuJoCo dynamics-task base class that implements a
+scalar inhomogeneous geometric Brownian motion (IGBM) stochastic process. It provides state registration,
+drift/diffusion setup, and parameter accessors. Derived classes define how the scalar stochastic state is mapped into
+output messages.</p>
+<p>Unlike the additive-noise <a class="reference internal" href="meanRevertingNoise.html#meanrevertingnoise"><span class="std std-ref">MeanRevertingNoise</span></a> (Ornstein-Uhlenbeck) process, IGBM has
+<em>multiplicative</em> noise: the diffusion is proportional to the state, so the exact continuous process stays strictly
+positive when started positive with a positive mean. This makes it well suited to representing a
+multiplicatively-uncertain positive physical quantity (e.g. a density or a scale factor) that also mean-reverts. (See
+the note below on positivity under an explicit integrator.)</p>
+</section>
+<section id="module-description">
+<h2>Module Description<a class="headerlink" href="#module-description" title="Link to this heading"></a></h2>
+<p>The internal scalar state <span class="math notranslate nohighlight">\(X_t\)</span> follows the Itô stochastic differential equation</p>
+<div class="math notranslate nohighlight">
+\[\text{d}X_t = \frac{1}{\tau}\,(\mu - X_t)\,\text{d}t + \sigma\,X_t\,\text{d}W_t\]</div>
+<p>where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\mu\)</span> is the mean-reversion level (long-run mean)</p></li>
+<li><p><span class="math notranslate nohighlight">\(\tau\)</span> is the mean-reversion time constant [s]</p></li>
+<li><p><span class="math notranslate nohighlight">\(\sigma\)</span> is the volatility [s<sup>-1/2</sup>] of the multiplicative noise</p></li>
+<li><p><span class="math notranslate nohighlight">\(\text{d}W\)</span> is a Wiener process increment</p></li>
+</ul>
+<p>Mirroring <a class="reference internal" href="meanRevertingNoise.html#meanrevertingnoise"><span class="std std-ref">MeanRevertingNoise</span></a>, the process is configured in <strong>stationary form</strong>: the user
+sets the mean level <span class="math notranslate nohighlight">\(\mu\)</span>, the time constant <span class="math notranslate nohighlight">\(\tau\)</span>, and the stationary standard deviation
+<span class="math notranslate nohighlight">\(\sigma_{st}\)</span>. The SDE volatility is derived internally as</p>
+<div class="math notranslate nohighlight">
+\[\sigma^2 = \frac{2}{\tau}\,\frac{\sigma_{st}^2}{\mu^2 + \sigma_{st}^2}\]</div>
+<p>so that the stationary moments are exactly</p>
+<div class="math notranslate nohighlight">
+\[\mathbb{E}[X_\infty] = \mu, \qquad
+\operatorname{Var}[X_\infty] = \sigma_{st}^2.\]</div>
+<p>Because <span class="math notranslate nohighlight">\(\sigma_{st}^2/(\mu^2+\sigma_{st}^2) &lt; 1\)</span>, this parameterization automatically satisfies the IGBM
+stationarity condition <span class="math notranslate nohighlight">\(2/\tau &gt; \sigma^2\)</span>, so a stationary distribution always exists.</p>
+<p>At each update, the base class computes the drift</p>
+<div class="math notranslate nohighlight">
+\[\dot{X} = \frac{\mu - X}{\tau}\]</div>
+<p>and configures one scalar diffusion source with the state-dependent amplitude</p>
+<div class="math notranslate nohighlight">
+\[\sigma X\]</div>
+<p>The base class then calls the virtual hook:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">writeOutput</span><span class="p">(</span><span class="n">CurrentSimNanos</span><span class="p">,</span><span class="w"> </span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>which must be implemented by subclasses.</p>
+<p>Assuming <span class="math notranslate nohighlight">\(\mu &gt; 0\)</span> and <span class="math notranslate nohighlight">\(X_0 &gt; 0\)</span>, the <em>exact</em> continuous process stays
+strictly positive. The module integrates the SDE as written (pure math), so an
+<strong>explicit</strong> integrator carries no such guarantee: for a large time step or Wiener
+increment the numerically-integrated <span class="math notranslate nohighlight">\(X\)</span> can occasionally go non-positive.
+Consumers that need a non-negative quantity (e.g. a density) should clamp the value they
+derive from <span class="math notranslate nohighlight">\(X\)</span> (see <a class="reference internal" href="../igbmAtmDensity/igbmAtmDensity.html#igbmatmdensity"><span class="std std-ref">C++ Module: igbmAtmDensity</span></a>), rather than assume positivity here.</p>
+</section>
+<section id="message-interfaces">
+<h2>Message Interfaces<a class="headerlink" href="#message-interfaces" title="Link to this heading"></a></h2>
+<p>This base class does not define concrete input or output messages.</p>
+<p>Subclasses are responsible for defining and publishing message interfaces in their <code class="docutils literal notranslate"><span class="pre">writeOutput</span></code> implementation.</p>
+</section>
+<section id="detailed-behavior">
+<h2>Detailed Behavior<a class="headerlink" href="#detailed-behavior" title="Link to this heading"></a></h2>
+<p>At each update step, the module performs the following operations:</p>
+<ol class="arabic simple">
+<li><p>Ensures the scalar state was registered.</p></li>
+<li><p>Reads current state value <span class="math notranslate nohighlight">\(X\)</span>.</p></li>
+<li><p>Sets the deterministic derivative <span class="math notranslate nohighlight">\(\dot{X} = (\mu - X)/\tau\)</span>.</p></li>
+<li><p>Sets the scalar diffusion magnitude <span class="math notranslate nohighlight">\(\sigma X\)</span> for one noise source, with <span class="math notranslate nohighlight">\(\sigma\)</span> derived from the
+stationary-form parameters.</p></li>
+<li><p>Calls subclass <code class="docutils literal notranslate"><span class="pre">writeOutput(CurrentSimNanos,</span> <span class="pre">x)</span></code>.</p></li>
+</ol>
+<p>During state registration, the module:</p>
+<ul class="simple">
+<li><p>registers a 1x1 state named <code class="docutils literal notranslate"><span class="pre">inhomogeneousGBMState</span></code>,</p></li>
+<li><p>assigns one noise source,</p></li>
+<li><p>initializes the state to the mean-reversion level <span class="math notranslate nohighlight">\(\mu\)</span> (a positive, stationary-consistent default, since
+<span class="math notranslate nohighlight">\(x = 0\)</span> is degenerate for the multiplicative diffusion; override with <code class="docutils literal notranslate"><span class="pre">setStateValue</span></code> if desired).</p></li>
+</ul>
+<hr class="docutils" />
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv436InhomogeneousGeometricBrownianMotion">
+<span id="_CPPv336InhomogeneousGeometricBrownianMotion"></span><span id="_CPPv236InhomogeneousGeometricBrownianMotion"></span><span id="InhomogeneousGeometricBrownianMotion"></span><span class="target" id="class_inhomogeneous_geometric_brownian_motion"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">InhomogeneousGeometricBrownianMotion</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="StatefulSysModel.html#_CPPv416StatefulSysModel" title="StatefulSysModel"><span class="n"><span class="pre">StatefulSysModel</span></span></a><a class="headerlink" href="#_CPPv436InhomogeneousGeometricBrownianMotion" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;inhomogeneousGeometricBrownianMotion.h&gt;</em></div>
+<p>Base class that provides a scalar inhomogeneous geometric Brownian motion (IGBM) state x and its stochastic evolution. Derived classes implement output handling. </p>
+<p>The state x follows the Itô SDE   <div class="math notranslate nohighlight">
+\[  \text{d}X_t = \frac{1}{\tau}\,(\mu - X_t)\,\text{d}t + \sigma\,X_t\,\text{d}W_t
+\]</div>
+ so the drift mean-reverts toward <span class="math notranslate nohighlight">\(\mu\)</span> with time constant <span class="math notranslate nohighlight">\(\tau\)</span> while the diffusion <span class="math notranslate nohighlight">\(\sigma X_t\)</span> is multiplicative (proportional to the state, as in geometric Brownian motion). This process is also known as the GARCH diffusion or the mean-reverting geometric Brownian motion.</p>
+<p>Like <a class="reference internal" href="meanRevertingNoise.html#class_mean_reverting_noise"><span class="std std-ref">MeanRevertingNoise</span></a>, the process is configured in stationary form: the user sets the mean level <span class="math notranslate nohighlight">\(\mu\)</span>, the time constant <span class="math notranslate nohighlight">\(\tau\)</span>, and the stationary standard deviation <span class="math notranslate nohighlight">\(\sigma_{\text{st}}\)</span>. The SDE volatility is derived as   <div class="math notranslate nohighlight">
+\[  \sigma^2 = \frac{2}{\tau}\,\frac{\sigma_{\text{st}}^2}{\mu^2 + \sigma_{\text{st}}^2}
+\]</div>
+ so that the stationary moments are exactly    <div class="math notranslate nohighlight">
+\[  \mathbb{E}[X_\infty] = \mu, \qquad
+  \operatorname{Var}[X_\infty] = \sigma_{\text{st}}^2.
+\]</div>
+ Because <span class="math notranslate nohighlight">\(\sigma_{\text{st}}^2/(\mu^2+\sigma_{\text{st}}^2) &lt; 1\)</span>, this parameterization automatically satisfies the stationarity condition <span class="math notranslate nohighlight">\(2/\tau &gt; \sigma^2\)</span>, so a stationary distribution always exists.</p>
+<p>Assuming <span class="math notranslate nohighlight">\(\mu &gt; 0\)</span> and the initial value <span class="math notranslate nohighlight">\(X_0 &gt; 0\)</span>, the <em>exact</em> continuous process stays strictly positive for all time. Note, however, that this base class integrates the SDE as written (pure math): an <strong>explicit</strong> stochastic integrator has no such guarantee, and for a large time step or a large Wiener increment a numerically-integrated <span class="math notranslate nohighlight">\(X\)</span> can occasionally cross zero. Consumers that require a non-negative quantity (e.g. a density) should clamp the value they derive from <span class="math notranslate nohighlight">\(X\)</span> downstream rather than assume positivity here.</p>
+<p>The base class: 1) registers a 1-by-1 state with one noise source 2) computes drift and diffusion each step 3) calls the user hook writeOutput(CurrentSimNanos, x) </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N36InhomogeneousGeometricBrownianMotion36InhomogeneousGeometricBrownianMotionEv">
+<span id="_CPPv3N36InhomogeneousGeometricBrownianMotion36InhomogeneousGeometricBrownianMotionEv"></span><span id="_CPPv2N36InhomogeneousGeometricBrownianMotion36InhomogeneousGeometricBrownianMotionEv"></span><span id="InhomogeneousGeometricBrownianMotion::InhomogeneousGeometricBrownianMotion"></span><span class="target" id="class_inhomogeneous_geometric_brownian_motion_1af331e3ffb2091cbc197e828e5dde9111"></span><span class="sig-name descname"><span class="n"><span class="pre">InhomogeneousGeometricBrownianMotion</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">default</span></span><a class="headerlink" href="#_CPPv4N36InhomogeneousGeometricBrownianMotion36InhomogeneousGeometricBrownianMotionEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Default constructor. Parameters remain at defaults. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N36InhomogeneousGeometricBrownianMotion14registerStatesE18DynParamRegisterer">
+<span id="_CPPv3N36InhomogeneousGeometricBrownianMotion14registerStatesE18DynParamRegisterer"></span><span id="_CPPv2N36InhomogeneousGeometricBrownianMotion14registerStatesE18DynParamRegisterer"></span><span id="InhomogeneousGeometricBrownianMotion::registerStates__DynParamRegisterer"></span><span class="target" id="class_inhomogeneous_geometric_brownian_motion_1a6c7fb49665eaaacc287d08d1b8fc24a2"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">registerStates</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="StatefulSysModel.html#_CPPv418DynParamRegisterer" title="DynParamRegisterer"><span class="n"><span class="pre">DynParamRegisterer</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">registerer</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N36InhomogeneousGeometricBrownianMotion14registerStatesE18DynParamRegisterer" title="Link to this definition"></a><br /></dt>
+<dd><p>Register the scalar IGBM state with one noise source. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>registerer</strong> – Simulation state registerer. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N36InhomogeneousGeometricBrownianMotion11UpdateStateE8uint64_t">
+<span id="_CPPv3N36InhomogeneousGeometricBrownianMotion11UpdateStateE8uint64_t"></span><span id="_CPPv2N36InhomogeneousGeometricBrownianMotion11UpdateStateE8uint64_t"></span><span id="InhomogeneousGeometricBrownianMotion::UpdateState__uint64_t"></span><span class="target" id="class_inhomogeneous_geometric_brownian_motion_1a10fa9f65891cb528051bc3234cb9a255"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">UpdateState</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N36InhomogeneousGeometricBrownianMotion11UpdateStateE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Update the IGBM state drift and diffusion, then call writeOutput. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CurrentSimNanos</strong> – Current simulation time in nanoseconds. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK36InhomogeneousGeometricBrownianMotion7getMeanEv">
+<span id="_CPPv3NK36InhomogeneousGeometricBrownianMotion7getMeanEv"></span><span id="_CPPv2NK36InhomogeneousGeometricBrownianMotion7getMeanEv"></span><span id="InhomogeneousGeometricBrownianMotion::getMeanC"></span><span class="target" id="class_inhomogeneous_geometric_brownian_motion_1aaf98e4589e47a7c76445bb731f0efe29"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getMean</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK36InhomogeneousGeometricBrownianMotion7getMeanEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Get the mean-reversion level <span class="math notranslate nohighlight">\(\mu\)</span>. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N36InhomogeneousGeometricBrownianMotion7setMeanEd">
+<span id="_CPPv3N36InhomogeneousGeometricBrownianMotion7setMeanEd"></span><span id="_CPPv2N36InhomogeneousGeometricBrownianMotion7setMeanEd"></span><span id="InhomogeneousGeometricBrownianMotion::setMean__double"></span><span class="target" id="class_inhomogeneous_geometric_brownian_motion_1a53f6dd7fb39980e2a4e662d6cd1baa0f"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setMean</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">m</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N36InhomogeneousGeometricBrownianMotion7setMeanEd" title="Link to this definition"></a><br /></dt>
+<dd><p>Set the mean-reversion level <span class="math notranslate nohighlight">\(\mu\)</span>. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>m</strong> – Long-run mean the process reverts toward. Positive expected. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK36InhomogeneousGeometricBrownianMotion16getStationaryStdEv">
+<span id="_CPPv3NK36InhomogeneousGeometricBrownianMotion16getStationaryStdEv"></span><span id="_CPPv2NK36InhomogeneousGeometricBrownianMotion16getStationaryStdEv"></span><span id="InhomogeneousGeometricBrownianMotion::getStationaryStdC"></span><span class="target" id="class_inhomogeneous_geometric_brownian_motion_1abe2875ea6f3839c547e23cbb0436e815"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getStationaryStd</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK36InhomogeneousGeometricBrownianMotion16getStationaryStdEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Get stationary standard deviation <span class="math notranslate nohighlight">\(\sigma_{\text{st}}\)</span>. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N36InhomogeneousGeometricBrownianMotion16setStationaryStdEd">
+<span id="_CPPv3N36InhomogeneousGeometricBrownianMotion16setStationaryStdEd"></span><span id="_CPPv2N36InhomogeneousGeometricBrownianMotion16setStationaryStdEd"></span><span id="InhomogeneousGeometricBrownianMotion::setStationaryStd__double"></span><span class="target" id="class_inhomogeneous_geometric_brownian_motion_1a8b20054e6104b702eb712966090080c7"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setStationaryStd</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">s</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N36InhomogeneousGeometricBrownianMotion16setStationaryStdEd" title="Link to this definition"></a><br /></dt>
+<dd><p>Set stationary standard deviation <span class="math notranslate nohighlight">\(\sigma_{\text{st}}\)</span>. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>s</strong> – Nonnegative expected. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK36InhomogeneousGeometricBrownianMotion15getTimeConstantEv">
+<span id="_CPPv3NK36InhomogeneousGeometricBrownianMotion15getTimeConstantEv"></span><span id="_CPPv2NK36InhomogeneousGeometricBrownianMotion15getTimeConstantEv"></span><span id="InhomogeneousGeometricBrownianMotion::getTimeConstantC"></span><span class="target" id="class_inhomogeneous_geometric_brownian_motion_1ad743c494d6e155b6af324cf4804663e7"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getTimeConstant</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK36InhomogeneousGeometricBrownianMotion15getTimeConstantEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Get time constant <span class="math notranslate nohighlight">\(\tau\)</span> [s]. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N36InhomogeneousGeometricBrownianMotion15setTimeConstantEd">
+<span id="_CPPv3N36InhomogeneousGeometricBrownianMotion15setTimeConstantEd"></span><span id="_CPPv2N36InhomogeneousGeometricBrownianMotion15setTimeConstantEd"></span><span id="InhomogeneousGeometricBrownianMotion::setTimeConstant__double"></span><span class="target" id="class_inhomogeneous_geometric_brownian_motion_1a9033f4cbd4bbd087959715bcbcef9e01"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setTimeConstant</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">t</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N36InhomogeneousGeometricBrownianMotion15setTimeConstantEd" title="Link to this definition"></a><br /></dt>
+<dd><p>Set time constant <span class="math notranslate nohighlight">\(\tau\)</span> [s]. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>t</strong> – Positive expected. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK36InhomogeneousGeometricBrownianMotion8getThetaEv">
+<span id="_CPPv3NK36InhomogeneousGeometricBrownianMotion8getThetaEv"></span><span id="_CPPv2NK36InhomogeneousGeometricBrownianMotion8getThetaEv"></span><span id="InhomogeneousGeometricBrownianMotion::getThetaC"></span><span class="target" id="class_inhomogeneous_geometric_brownian_motion_1a822bd9ecfb8f3f6204120dbe2b85cfc1"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getTheta</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK36InhomogeneousGeometricBrownianMotion8getThetaEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Get <span class="math notranslate nohighlight">\(\theta = 1/\tau\)</span> [s^{-1}]. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK36InhomogeneousGeometricBrownianMotion8getSigmaEv">
+<span id="_CPPv3NK36InhomogeneousGeometricBrownianMotion8getSigmaEv"></span><span id="_CPPv2NK36InhomogeneousGeometricBrownianMotion8getSigmaEv"></span><span id="InhomogeneousGeometricBrownianMotion::getSigmaC"></span><span class="target" id="class_inhomogeneous_geometric_brownian_motion_1a4a053c43a837ed61bc508b9b884fb4e9"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getSigma</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK36InhomogeneousGeometricBrownianMotion8getSigmaEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Get the derived SDE volatility <span class="math notranslate nohighlight">\(\sigma\)</span> [s^{-1/2}] multiplying <span class="math notranslate nohighlight">\(X_t\,\text{d}W_t\)</span>:  <span class="math notranslate nohighlight">\(\sigma = \sqrt{(2/\tau)\,
+       \sigma_{\text{st}}^2/(\mu^2+\sigma_{\text{st}}^2)}\)</span>. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK36InhomogeneousGeometricBrownianMotion13getStateValueEv">
+<span id="_CPPv3NK36InhomogeneousGeometricBrownianMotion13getStateValueEv"></span><span id="_CPPv2NK36InhomogeneousGeometricBrownianMotion13getStateValueEv"></span><span id="InhomogeneousGeometricBrownianMotion::getStateValueC"></span><span class="target" id="class_inhomogeneous_geometric_brownian_motion_1ad03c18ee25ffb612a8ce7eaceea2ad04"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getStateValue</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK36InhomogeneousGeometricBrownianMotion13getStateValueEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Get the current scalar state x. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Throws<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">runtime_error</span></span></span> – if called before registerStates. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N36InhomogeneousGeometricBrownianMotion13setStateValueEd">
+<span id="_CPPv3N36InhomogeneousGeometricBrownianMotion13setStateValueEd"></span><span id="_CPPv2N36InhomogeneousGeometricBrownianMotion13setStateValueEd"></span><span id="InhomogeneousGeometricBrownianMotion::setStateValue__double"></span><span class="target" id="class_inhomogeneous_geometric_brownian_motion_1aacf425e4b5567998b20e02a53239dc62"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setStateValue</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">val</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N36InhomogeneousGeometricBrownianMotion13setStateValueEd" title="Link to this definition"></a><br /></dt>
+<dd><p>Set the scalar state x. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>val</strong> – New value. Must be strictly positive, since the multiplicative process is only well-posed for a positive initial state. </p>
+</dd>
+<dt class="field-even">Throws<span class="colon">:</span></dt>
+<dd class="field-even"><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">runtime_error</span></span></span> – if called before registerStates. </p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N36InhomogeneousGeometricBrownianMotion9bskLoggerE">
+<span id="_CPPv3N36InhomogeneousGeometricBrownianMotion9bskLoggerE"></span><span id="_CPPv2N36InhomogeneousGeometricBrownianMotion9bskLoggerE"></span><span id="InhomogeneousGeometricBrownianMotion::bskLogger__BSKLogger"></span><span class="target" id="class_inhomogeneous_geometric_brownian_motion_1a3bb6b4b08572c1b26d162ed4f644bcc2"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N36InhomogeneousGeometricBrownianMotion9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>Logger. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-protected-functions">Protected Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N36InhomogeneousGeometricBrownianMotion11writeOutputE8uint64_td">
+<span id="_CPPv3N36InhomogeneousGeometricBrownianMotion11writeOutputE8uint64_td"></span><span id="_CPPv2N36InhomogeneousGeometricBrownianMotion11writeOutputE8uint64_td"></span><span id="InhomogeneousGeometricBrownianMotion::writeOutput__uint64_t.double"></span><span class="target" id="class_inhomogeneous_geometric_brownian_motion_1a313f1e0a15139682600ffc1a46636387"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">writeOutput</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">x</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N36InhomogeneousGeometricBrownianMotion11writeOutputE8uint64_td" title="Link to this definition"></a><br /></dt>
+<dd><p>Pure virtual output hook. Called every step after drift and diffusion are set. Use this to read inputs if needed and write outputs. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>CurrentSimNanos</strong> – Current simulation time in nanoseconds. </p></li>
+<li><p><strong>x</strong> – Current scalar state value. </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N36InhomogeneousGeometricBrownianMotion6xStateE">
+<span id="_CPPv3N36InhomogeneousGeometricBrownianMotion6xStateE"></span><span id="_CPPv2N36InhomogeneousGeometricBrownianMotion6xStateE"></span><span id="InhomogeneousGeometricBrownianMotion::xState__StateDataP"></span><span class="target" id="class_inhomogeneous_geometric_brownian_motion_1aeecb4bd8ab49a22ccdfefa8a5a4a77e4"></span><a class="reference internal" href="../../dynamics/_GeneralModuleFiles/stateData.html#_CPPv49StateData" title="StateData"><span class="n"><span class="pre">StateData</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">xState</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">nullptr</span></span><a class="headerlink" href="#_CPPv4N36InhomogeneousGeometricBrownianMotion6xStateE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N36InhomogeneousGeometricBrownianMotion4meanE">
+<span id="_CPPv3N36InhomogeneousGeometricBrownianMotion4meanE"></span><span id="_CPPv2N36InhomogeneousGeometricBrownianMotion4meanE"></span><span id="InhomogeneousGeometricBrownianMotion::mean__double"></span><span class="target" id="class_inhomogeneous_geometric_brownian_motion_1a15030b449d9fbf9351f12a6f4231d939"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">mean</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">1.0</span></span><a class="headerlink" href="#_CPPv4N36InhomogeneousGeometricBrownianMotion4meanE" title="Link to this definition"></a><br /></dt>
+<dd><p>Mean-reversion level mu. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N36InhomogeneousGeometricBrownianMotion15sigmaStationaryE">
+<span id="_CPPv3N36InhomogeneousGeometricBrownianMotion15sigmaStationaryE"></span><span id="_CPPv2N36InhomogeneousGeometricBrownianMotion15sigmaStationaryE"></span><span id="InhomogeneousGeometricBrownianMotion::sigmaStationary__double"></span><span class="target" id="class_inhomogeneous_geometric_brownian_motion_1a84c25077dad127c143b821681ca62b94"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sigmaStationary</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N36InhomogeneousGeometricBrownianMotion15sigmaStationaryE" title="Link to this definition"></a><br /></dt>
+<dd><p>Stationary std dev of x. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N36InhomogeneousGeometricBrownianMotion12timeConstantE">
+<span id="_CPPv3N36InhomogeneousGeometricBrownianMotion12timeConstantE"></span><span id="_CPPv2N36InhomogeneousGeometricBrownianMotion12timeConstantE"></span><span id="InhomogeneousGeometricBrownianMotion::timeConstant__double"></span><span class="target" id="class_inhomogeneous_geometric_brownian_motion_1a5ce75ecbc1e2530da8dff9078e727094"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">timeConstant</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">1.0</span></span><a class="headerlink" href="#_CPPv4N36InhomogeneousGeometricBrownianMotion12timeConstantE" title="Link to this definition"></a><br /></dt>
+<dd><p>Mean-reversion time constant in seconds. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="StatefulSysModel.html" class="btn btn-neutral float-left" title="StatefulSysModel" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="meanRevertingNoise.html" class="btn btn-neutral float-right" title="C++ Module: meanRevertingNoise" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

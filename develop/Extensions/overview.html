@@ -1,0 +1,391 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About Extensions &mdash; Basilisk 2.12.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=2ebb1c42" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=4ad2e773"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Installing Basilisk Extensions" href="installing.html" />
+    <link rel="prev" title="External Sites" href="../ExternalSites.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">About Extensions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#why-the-package-boundary-matters">Why the Package Boundary Matters</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#independent-ownership">Independent Ownership</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#isolated-builds">Isolated Builds</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#native-in-process-execution">Native In-Process Execution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#distribution">Distribution</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#extensions-vs-integrated-external-modules">Extensions vs. Integrated External Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#how-extensions-work">How Extensions Work</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#custom-messages">Custom Messages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-and-abi-compatibility">Version and ABI Compatibility</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#next-steps">Next Steps</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">About Extensions</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/Extensions/overview.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="toctree-wrapper compound">
+</div>
+<section id="about-extensions">
+<span id="bskextensions"></span><h1>About Extensions<a class="headerlink" href="#about-extensions" title="Link to this heading"></a></h1>
+<aside class="sidebar">
+<p class="sidebar-title">What is an Extension?</p>
+<p>A Basilisk extension is an independently built Python package containing
+one or more custom C or C++ modules, custom message definitions, and
+supporting code. It is installed alongside a compatible Basilisk release
+without becoming part of the core Basilisk build.</p>
+</aside>
+<p>Basilisk ships a curated set of simulation modules for common astrodynamics
+tasks. Extensions let developers add new dynamics models, environment models,
+sensors, effectors, algorithms, messages, and other simulation capabilities
+without modifying the Basilisk source tree.</p>
+<p>An extension can own:</p>
+<ul class="simple">
+<li><p>one or more C or C++ modules that use Basilisk base classes and APIs;</p></li>
+<li><p>custom message payloads and their generated Python bindings;</p></li>
+<li><p>shared support code used by those modules;</p></li>
+<li><p>pure-Python helpers and modules; and</p></li>
+<li><p>its own tests, examples, version, and release process.</p></li>
+</ul>
+<p>The extension normally lives in a separate repository controlled by its
+developer or organization. Core Basilisk and the extension can therefore
+evolve as separate projects. Extension developers do not need to place files
+inside Basilisk, modify core modules, or carry local source changes that can
+conflict when updating the Basilisk checkout. An extension must still be
+rebuilt when moving to a different Basilisk version because it uses Basilisk’s
+compiled C/C++ and SWIG interfaces.</p>
+<section id="why-the-package-boundary-matters">
+<h2>Why the Package Boundary Matters<a class="headerlink" href="#why-the-package-boundary-matters" title="Link to this heading"></a></h2>
+<section id="independent-ownership">
+<h3>Independent Ownership<a class="headerlink" href="#independent-ownership" title="Link to this heading"></a></h3>
+<p>The extension repository contains the custom source, messages, tests, and
+packaging configuration. Its maintainers decide when to change or release it.
+Basilisk remains a separately installed dependency rather than a source tree
+that must contain every local customization.</p>
+</section>
+<section id="isolated-builds">
+<h3>Isolated Builds<a class="headerlink" href="#isolated-builds" title="Link to this heading"></a></h3>
+<p>An extension has its own build graph. Rebuilding it compiles the affected
+extension targets and a small set of support sources supplied by
+<code class="docutils literal notranslate"><span class="pre">bsk-sdk</span></code>. It does not rebuild the installed core Basilisk package.</p>
+<p>This distinction is especially important for custom messages. Changing an
+extension-owned payload regenerates that payload’s bindings and recompiles the
+extension targets that depend on it. The change does not regenerate or
+recompile the core Basilisk message system.</p>
+</section>
+<section id="native-in-process-execution">
+<h3>Native In-Process Execution<a class="headerlink" href="#native-in-process-execution" title="Link to this heading"></a></h3>
+<p>The package boundary is a build and distribution boundary, not a process
+boundary. Extension modules and Basilisk run in the same Python process and
+exchange compatible Basilisk objects and messages directly. There is no IPC
+or serialization step on each module update, so a compiled extension retains
+the native execution characteristics of a built-in C or C++ module.</p>
+</section>
+<section id="distribution">
+<h3>Distribution<a class="headerlink" href="#distribution" title="Link to this heading"></a></h3>
+<p>An extension can be built as a standard Python wheel and distributed through
+PyPI, a private package index, or another artifact store. End users can install
+a prebuilt wheel without a compiler or Basilisk source checkout, provided a
+wheel exists for their operating system, processor architecture, Python
+version, and Basilisk version.</p>
+</section>
+</section>
+<section id="extensions-vs-integrated-external-modules">
+<span id="extensions-vs-external-modules"></span><h2>Extensions vs. Integrated External Modules<a class="headerlink" href="#extensions-vs-integrated-external-modules" title="Link to this heading"></a></h2>
+<p>Basilisk also supports the <a class="reference internal" href="../Build/buildExtModules.html#buildextmodules"><span class="std std-ref">Building Basilisk with External Modules</span></a> external-folder option. That
+option keeps custom source outside the repository but folds it into a
+from-source Basilisk build. The result is one customized Basilisk installation
+containing both core and external modules.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Extension and external-folder build comparison</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 27.0%" />
+<col style="width: 36.0%" />
+<col style="width: 37.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Characteristic</p></th>
+<th class="head"><p>Extension</p></th>
+<th class="head"><p>External-folder build</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Project ownership</p></td>
+<td><p>Independent repository, package, and release lifecycle</p></td>
+<td><p>Separate source folder incorporated into one Basilisk build</p></td>
+</tr>
+<tr class="row-odd"><td><p>Basilisk source checkout</p></td>
+<td><p>Not required for a released Basilisk version</p></td>
+<td><p>Required</p></td>
+</tr>
+<tr class="row-even"><td><p>Build product</p></td>
+<td><p>Separate wheel installed alongside Basilisk</p></td>
+<td><p>One customized Basilisk installation</p></td>
+</tr>
+<tr class="row-odd"><td><p>Normal module rebuild</p></td>
+<td><p>Rebuilds affected extension targets and SDK support sources</p></td>
+<td><p>Rebuilds affected targets inside the integrated Basilisk build</p></td>
+</tr>
+<tr class="row-even"><td><p>Custom message rebuild</p></td>
+<td><p>Regenerates the extension message bindings and affected extension
+targets; core Basilisk remains untouched</p></td>
+<td><p>Updates the combined message system and can trigger broad regeneration
+and recompilation across the Basilisk build</p></td>
+</tr>
+<tr class="row-odd"><td><p>Runtime execution</p></td>
+<td><p>Native and in-process</p></td>
+<td><p>Native and in-process</p></td>
+</tr>
+<tr class="row-even"><td><p>Distribution</p></td>
+<td><p>Can publish platform-specific wheels for <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span></code></p></td>
+<td><p>Distribute the customized build or its source and build instructions</p></td>
+</tr>
+<tr class="row-odd"><td><p>Basilisk API access</p></td>
+<td><p>Uses the headers, base classes, messages, and utilities exported by
+<code class="docutils literal notranslate"><span class="pre">bsk-sdk</span></code></p></td>
+<td><p>Builds with the complete Basilisk source tree and can use internal
+implementation details</p></td>
+</tr>
+<tr class="row-even"><td><p>Version relationship</p></td>
+<td><p>Rebuild against the SDK matching each targeted Basilisk version</p></td>
+<td><p>Core and custom code are rebuilt together</p></td>
+</tr>
+<tr class="row-odd"><td><p>Python import</p></td>
+<td><p>Extension-defined package, such as <code class="docutils literal notranslate"><span class="pre">my_extension</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Basilisk.ExternalModules</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<p>Extensions are the recommended choice for custom modules and messages that can
+be built with the interfaces exported by <code class="docutils literal notranslate"><span class="pre">bsk-sdk</span></code>. The external-folder
+option remains useful when custom code must participate in the complete
+Basilisk source build, depends on non-exported internals, or must be delivered
+as one customized Basilisk implementation.</p>
+</section>
+<section id="how-extensions-work">
+<h2>How Extensions Work<a class="headerlink" href="#how-extensions-work" title="Link to this heading"></a></h2>
+<p>Extensions are built with
+<a class="reference external" href="https://pypi.org/project/bsk-sdk/">bsk-sdk</a>, a companion package that
+contains a versioned subset of Basilisk needed for out-of-tree development:</p>
+<ul class="simple">
+<li><p>public headers and SWIG interface files;</p></li>
+<li><p>custom-message generation tools;</p></li>
+<li><p>CMake helpers for C and C++ modules; and</p></li>
+<li><p>a small set of Basilisk runtime and utility sources compiled into extension
+targets.</p></li>
+</ul>
+<p>The build-time and runtime relationships are different:</p>
+<div class="graphviz"><object data="../_images/graphviz-c674749b38e66e11d1a191efdbd9997c615afa78.svg" type="image/svg+xml" class="graphviz">
+<p class="warning">digraph extension_arch {
+   graph [rankdir=TB, splines=ortho, bgcolor=transparent, nodesep=0.45,
+          ranksep=0.55]
+   node [shape=box, style=&quot;rounded,filled&quot;, fontname=&quot;Helvetica&quot;,
+         fontsize=12, margin=&quot;0.35,0.18&quot;]
+   edge [fontname=&quot;Helvetica&quot;, fontsize=10]
+
+   subgraph cluster_build {
+      label=&quot;Build time&quot;
+      color=&quot;#9aa0a6&quot;
+      style=&quot;rounded&quot;
+      source [label=&quot;Extension source\n(modules and messages)&quot;,
+              fillcolor=&quot;#dce8fb&quot;]
+      sdk [label=&quot;bsk-sdk\n(headers, generators, CMake, support sources)&quot;,
+           fillcolor=&quot;#d4edda&quot;]
+      wheel [label=&quot;Extension wheel&quot;, fillcolor=&quot;#f1f3f4&quot;]
+      source -&gt; wheel [label=&quot; compile &quot;]
+      sdk -&gt; wheel [label=&quot; build against &quot;]
+   }
+
+   subgraph cluster_runtime {
+      label=&quot;Runtime&quot;
+      color=&quot;#9aa0a6&quot;
+      style=&quot;rounded&quot;
+      bsk [label=&quot;Matching Basilisk wheel&quot;, fillcolor=&quot;#fff3cd&quot;]
+      installed [label=&quot;Installed extension wheel&quot;, fillcolor=&quot;#dce8fb&quot;]
+      sim [label=&quot;One Basilisk simulation process&quot;, fillcolor=&quot;#f1f3f4&quot;]
+      bsk -&gt; sim [label=&quot; import &quot;]
+      installed -&gt; sim [label=&quot; import &quot;]
+   }
+
+   wheel -&gt; installed [label=&quot; pip install &quot;]
+}</p></object></div>
+<p>At build time, <code class="docutils literal notranslate"><span class="pre">bsk-sdk</span></code> checks the installed Basilisk version and SWIG
+runtime compatibility. It then generates any custom message bindings and
+builds the extension’s native Python modules. The already installed Basilisk
+wheel is not rebuilt.</p>
+<p>At runtime, the matching Basilisk and extension wheels are imported into the
+same simulation process. This allows extension modules to inherit supported
+Basilisk base classes, use built-in and custom messages, and participate in the
+normal task scheduling and message-passing system.</p>
+</section>
+<section id="custom-messages">
+<h2>Custom Messages<a class="headerlink" href="#custom-messages" title="Link to this heading"></a></h2>
+<p>An extension can define payload headers in its own repository and use
+<code class="docutils literal notranslate"><span class="pre">bsk_generate_messages</span></code> to create the same style of Python message,
+recorder, and optional C interface support used by core Basilisk messages. The
+generated bindings are packaged inside the extension’s Python namespace.</p>
+<p>Both extension modules and Python simulation code can import these custom
+message types. Because the payload definitions belong to the extension, a
+payload change remains local to that extension’s build and does not modify the
+installed <code class="docutils literal notranslate"><span class="pre">Basilisk.architecture.messaging</span></code> package.</p>
+</section>
+<section id="version-and-abi-compatibility">
+<h2>Version and ABI Compatibility<a class="headerlink" href="#version-and-abi-compatibility" title="Link to this heading"></a></h2>
+<p>An extension has its own package version, but each compiled wheel targets a
+specific Basilisk version. <code class="docutils literal notranslate"><span class="pre">bsk-sdk</span></code> versions track Basilisk versions; for
+example, <code class="docutils literal notranslate"><span class="pre">bsk-sdk==2.11.0</span></code> contains the interfaces from Basilisk <code class="docutils literal notranslate"><span class="pre">v2.11.0</span></code>.</p>
+<p>Extension authors should pin the same Basilisk version in their build and
+runtime dependencies:</p>
+<div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span class="k">[build-system]</span>
+<span class="n">requires</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;bsk-sdk==2.X.Y&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;bsk==2.X.Y&quot;</span><span class="p">]</span>
+
+<span class="k">[project]</span>
+<span class="n">dependencies</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;bsk==2.X.Y&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>CMake reports a version or SWIG ABI mismatch while building an extension. For
+a prebuilt wheel, the extension’s runtime dependency metadata is what prevents
+<code class="docutils literal notranslate"><span class="pre">pip</span></code> from selecting an incompatible Basilisk release. Upgrading Basilisk
+therefore requires rebuilding the extension or installing an extension wheel
+built for the new version.</p>
+</section>
+<section id="next-steps">
+<h2>Next Steps<a class="headerlink" href="#next-steps" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>To install an already built extension, see <a class="reference internal" href="installing.html#extensionsinstall"><span class="std std-ref">Installing Basilisk Extensions</span></a>.</p></li>
+<li><p>To build the working example and create an extension of your own, follow
+<a class="reference internal" href="writing.html#writingextensions"><span class="std std-ref">Quick Start: Writing a Basilisk Extension</span></a>.</p></li>
+<li><p>To build custom modules as part of one integrated Basilisk implementation,
+see <a class="reference internal" href="../Build/buildExtModules.html#buildextmodules"><span class="std std-ref">Building Basilisk with External Modules</span></a>.</p></li>
+<li><p>For a complete extension containing C++, C, and custom-message examples, see
+the <a class="reference external" href="https://github.com/AVSLab/bsk_sdk/tree/master/examples/custom-atm-extension">custom atmosphere extension</a>.</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../ExternalSites.html" class="btn btn-neutral float-left" title="External Sites" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="installing.html" class="btn btn-neutral float-right" title="Installing Basilisk Extensions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

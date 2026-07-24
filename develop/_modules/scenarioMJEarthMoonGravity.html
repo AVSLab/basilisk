@@ -1,0 +1,824 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scenarioMJEarthMoonGravity &mdash; Basilisk 2.12.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=2ebb1c42" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=4ad2e773"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">scenarioMJEarthMoonGravity</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for scenarioMJEarthMoonGravity</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+
+<span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Overview</span>
+<span class="sd">--------</span>
+
+<span class="sd">This tutorial demonstrates how to add Earth and Moon gravity to a</span>
+<span class="sd">:ref:`MJScene&lt;MJScene&gt;` with :ref:`simIncludeGravBody`.  The same MuJoCo</span>
+<span class="sd">spacecraft and gravity-factory setup can be driven by either:</span>
+
+<span class="sd">* :ref:`spiceInterface`, which reads high-fidelity ephemerides from NAIF</span>
+<span class="sd">  kernels, or</span>
+<span class="sd">* :ref:`planetEphemeris`, which propagates user-supplied heliocentric</span>
+<span class="sd">  classical orbit elements with two-body Keplerian motion.</span>
+
+<span class="sd">Select the ephemeris source through the ``useSpice`` argument to ``run()``.</span>
+<span class="sd">The default is ``True``.  For example, the analytic ephemeris case is run with::</span>
+
+<span class="sd">    run(showPlots=True, useSpice=False)</span>
+
+<span class="sd">Gravity-factory setup</span>
+<span class="sd">---------------------</span>
+
+<span class="sd">Both cases begin by creating the same shared gravity-body descriptors.  Earth</span>
+<span class="sd">is marked as the central body because the MuJoCo spacecraft state is initialized</span>
+<span class="sd">relative to Earth::</span>
+
+<span class="sd">    gravFactory = simIncludeGravBody.gravBodyFactory()</span>
+<span class="sd">    earth = gravFactory.createEarth()</span>
+<span class="sd">    earth.isCentralBody = True</span>
+<span class="sd">    moon = gravFactory.createMoon()</span>
+
+<span class="sd">Each descriptor contains the body&#39;s gravity model, gravitational parameter,</span>
+<span class="sd">central-body flag, and a planet-state input message.  The only difference</span>
+<span class="sd">between the two cases is which ephemeris output is connected to those input</span>
+<span class="sd">messages.</span>
+
+<span class="sd">Using SPICE planet states</span>
+<span class="sd">-------------------------</span>
+
+<span class="sd">The SPICE helper uses the bodies already present in the factory to configure</span>
+<span class="sd">and connect its output messages::</span>
+
+<span class="sd">    spiceObject = gravFactory.createSpiceInterface(</span>
+<span class="sd">        time=&quot;2025 NOVEMBER 15 12:00:00.000&quot;,</span>
+<span class="sd">        epochInMsg=True,</span>
+<span class="sd">    )</span>
+<span class="sd">    spiceObject.zeroBase = &quot;Earth&quot;</span>
+<span class="sd">    scene.AddModelToDynamicsTask(spiceObject, 75)</span>
+
+<span class="sd">The factory creates the SPICE output messages in gravity-body insertion order,</span>
+<span class="sd">so the first output is Earth and the second is the Moon in this example.</span>
+<span class="sd">``createSpiceInterface()`` subscribes each gravity body&#39;s</span>
+<span class="sd">``planetBodyInMsg`` to the corresponding output automatically.</span>
+
+<span class="sd">Setting ``zeroBase`` to Earth makes the planet states and the spacecraft state</span>
+<span class="sd">Earth-relative.  This is convenient but is not required by</span>
+<span class="sd">:ref:`NBodyGravity&lt;NBodyGravity&gt;`; it only requires all gravity-source states</span>
+<span class="sd">to use one consistent inertial origin.</span>
+
+<span class="sd">Using analytic ``PlanetEphemeris`` states</span>
+<span class="sd">-----------------------------------------</span>
+
+<span class="sd">The analytic alternative names its output bodies and supplies one</span>
+<span class="sd">heliocentric classical-element set for each body::</span>
+
+<span class="sd">    planetObject = planetEphemeris.PlanetEphemeris()</span>
+<span class="sd">    planetObject.setPlanetNames(</span>
+<span class="sd">        planetEphemeris.StringVector([&quot;earth&quot;, &quot;moon&quot;])</span>
+<span class="sd">    )</span>
+<span class="sd">    planetObject.planetElements = planetEphemeris.classicElementVector(</span>
+<span class="sd">        [earthElements, moonElements]</span>
+<span class="sd">    )</span>
+<span class="sd">    planetObject.zeroBase = &quot;earth&quot;</span>
+<span class="sd">    earth.planetBodyInMsg.subscribeTo(planetObject.planetOutMsgs[0])</span>
+<span class="sd">    moon.planetBodyInMsg.subscribeTo(planetObject.planetOutMsgs[1])</span>
+<span class="sd">    scene.AddModelToDynamicsTask(planetObject, 75)</span>
+
+<span class="sd">Unlike the factory&#39;s SPICE helper, a separately created ``PlanetEphemeris``</span>
+<span class="sd">module does not know which gravity descriptors it should drive.  Its output</span>
+<span class="sd">messages are therefore connected explicitly.</span>
+
+<span class="sd">``PlanetEphemeris`` propagates every supplied element set independently about</span>
+<span class="sd">the Sun.  It does not implement a hierarchical Earth-Moon model.  To provide a</span>
+<span class="sd">reasonable local approximation, this example constructs an initial</span>
+<span class="sd">heliocentric Moon state by adding a geocentric lunar state to Earth&#39;s</span>
+<span class="sd">heliocentric state, then converts the result to heliocentric elements.  This is</span>
+<span class="sd">useful for short examples and deterministic tests.  SPICE should generally be</span>
+<span class="sd">preferred when accurate Earth-Moon geometry over long intervals is required.</span>
+
+<span class="sd">Setting ``zeroBase`` to Earth translates both outputs after propagation.  The</span>
+<span class="sd">Earth message is therefore zero and the Moon message is Earth-relative.  This</span>
+<span class="sd">keeps the analytic planet messages in the same frame as the Earth-relative</span>
+<span class="sd">MuJoCo state, which is required for correct Vizard placement.  The selected</span>
+<span class="sd">zero-base body must be configured on this same ``PlanetEphemeris`` instance.</span>
+
+<span class="sd">Execution ordering and committed-state outputs</span>
+<span class="sd">----------------------------------------------</span>
+
+<span class="sd">The ephemeris execution order is critical.  Basilisk executes models with</span>
+<span class="sd">higher numeric priorities first; model insertion order in the Python script</span>
+<span class="sd">does not determine execution order.  This example explicitly enforces the</span>
+<span class="sd">following sequence::</span>
+
+<span class="sd">    Top-level task:</span>
+<span class="sd">        MJScene (0) -&gt; recorders and Vizard</span>
+
+<span class="sd">    MJScene dynamics task:</span>
+<span class="sd">        forward kinematics (10000) -&gt; ephemeris (75) -&gt; NBodyGravity (-1)</span>
+
+<span class="sd">MuJoCo&#39;s adaptive integrator evaluates dynamics between top-level task ticks.</span>
+<span class="sd">The ephemeris must therefore run in the scene dynamics task before</span>
+<span class="sd">``NBodyGravity`` so that every force evaluation uses planet positions for the</span>
+<span class="sd">current integrator time::</span>
+
+<span class="sd">    scene.AddModelToDynamicsTask(</span>
+<span class="sd">        ephemeris, EPHEMERIS_PRIORITY</span>
+<span class="sd">    )</span>
+
+<span class="sd">Integrator stages use provisional states.  Without an additional evaluation,</span>
+<span class="sd">messages written by dynamics-task models can therefore describe the last</span>
+<span class="sd">integrator stage rather than the state committed at the end of the step.  This</span>
+<span class="sd">example enables::</span>
+
+<span class="sd">    scene.extraEoMCall = True</span>
+
+<span class="sd">After integration, ``MJScene`` then executes its dynamics task once more at the</span>
+<span class="sd">top-level task time using the committed MuJoCo state.  This final evaluation</span>
+<span class="sd">refreshes the forward-kinematics, ephemeris, and gravity outputs before the</span>
+<span class="sd">recorders and Vizard execute.  It does not advance or otherwise change the</span>
+<span class="sd">integrated state.  Because this final dynamics-task evaluation supplies the</span>
+<span class="sd">current ephemeris messages, the ephemeris module does not also need to be added</span>
+<span class="sd">to the top-level task.</span>
+
+<span class="sd">Attaching gravity to MuJoCo</span>
+<span class="sd">---------------------------</span>
+
+<span class="sd">After either ephemeris has been configured, one factory call completes the</span>
+<span class="sd">MuJoCo gravity setup::</span>
+
+<span class="sd">    gravity = gravFactory.addBodiesTo(scene)</span>
+
+<span class="sd">The factory creates one :ref:`NBodyGravity&lt;NBodyGravity&gt;` model, adds Earth and</span>
+<span class="sd">the Moon as gravity sources, and adds every MuJoCo body as a gravity target.</span>
+<span class="sd">For the articulated CubeSat used here, gravity is applied at the center of mass</span>
+<span class="sd">of both the hub and the reaction wheel.</span>
+
+<span class="sd">Illustration of Simulation Results</span>
+<span class="sd">----------------------------------</span>
+
+<span class="sd">The scenario test runs both ephemeris cases and saves three figures per case.</span>
+<span class="sd">The first shows the spacecraft trajectory in its orbital plane, including the</span>
+<span class="sd">Earth surface and the required :math:`R_E + 400` km minimum-radius boundary.</span>
+<span class="sd">The initial orbit has a 700 km periapsis altitude, and the scenario checks the</span>
+<span class="sd">recorded three-dimensional radius to ensure it remains above the 400 km</span>
+<span class="sd">boundary.  The second figure shows the Earth-Moon geometry during the</span>
+<span class="sd">simulation, and the third shows osculating spacecraft elements and the</span>
+<span class="sd">magnitude of the Moon&#39;s third-body acceleration.</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioMJEarthMoonGravity_spice_orbit.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioMJEarthMoonGravity_spice_moonGeometry.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioMJEarthMoonGravity_spice_diagnostics.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioMJEarthMoonGravity_planetEphemeris_orbit.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioMJEarthMoonGravity_planetEphemeris_moonGeometry.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioMJEarthMoonGravity_planetEphemeris_diagnostics.svg</span>
+<span class="sd">   :align: center</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">mujoco</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">planetEphemeris</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">svIntegrators</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">macros</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">orbitalMotion</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">simIncludeGravBody</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">vizSupport</span>
+
+
+<span class="n">CURRENT_FOLDER</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span>
+<span class="n">XML_PATH</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">CURRENT_FOLDER</span><span class="p">,</span> <span class="s2">&quot;sat_w_wheel.xml&quot;</span><span class="p">)</span>
+<span class="n">FILE_NAME</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+
+<span class="n">TASK_NAME</span> <span class="o">=</span> <span class="s2">&quot;simTask&quot;</span>
+<span class="n">PROCESS_NAME</span> <span class="o">=</span> <span class="s2">&quot;simProcess&quot;</span>
+<span class="n">TASK_STEP_SEC</span> <span class="o">=</span> <span class="mf">30.0</span>  <span class="c1"># [s]</span>
+<span class="n">SIMULATION_DURATION_SEC</span> <span class="o">=</span> <span class="mf">6.0</span> <span class="o">*</span> <span class="mf">3600.0</span>  <span class="c1"># [s]</span>
+<span class="n">MINIMUM_SAFE_ALTITUDE_M</span> <span class="o">=</span> <span class="mf">400_000.0</span>  <span class="c1"># [m]</span>
+<span class="n">INITIAL_PERIAPSIS_ALTITUDE_M</span> <span class="o">=</span> <span class="mf">700_000.0</span>  <span class="c1"># [m]</span>
+<span class="n">INITIAL_ECCENTRICITY</span> <span class="o">=</span> <span class="mf">0.001</span>  <span class="c1"># [-]</span>
+<span class="n">SPICE_EPOCH</span> <span class="o">=</span> <span class="s2">&quot;2025 NOVEMBER 15 12:00:00.000&quot;</span>
+<span class="n">EPHEMERIS_PRIORITY</span> <span class="o">=</span> <span class="mi">75</span>
+<span class="n">SCENE_PRIORITY</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">RECORDER_PRIORITY</span> <span class="o">=</span> <span class="o">-</span><span class="mi">100</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_copy_classic_elements</span><span class="p">(</span>
+    <span class="n">source</span><span class="p">:</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">ClassicElements</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">planetEphemeris</span><span class="o">.</span><span class="n">ClassicElements</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Copy orbital elements into the SWIG type used by ``PlanetEphemeris``.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        source (orbitalMotion.ClassicElements): Elements to copy.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        planetEphemeris.ClassicElements: Equivalent element set accepted by</span>
+<span class="sd">        :ref:`planetEphemeris`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">destination</span> <span class="o">=</span> <span class="n">planetEphemeris</span><span class="o">.</span><span class="n">ClassicElements</span><span class="p">()</span>
+    <span class="n">destination</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">a</span>
+    <span class="n">destination</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">e</span>
+    <span class="n">destination</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">i</span>
+    <span class="n">destination</span><span class="o">.</span><span class="n">Omega</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">Omega</span>
+    <span class="n">destination</span><span class="o">.</span><span class="n">omega</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">omega</span>
+    <span class="n">destination</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">f</span>
+    <span class="k">return</span> <span class="n">destination</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_create_analytic_ephemeris</span><span class="p">(</span>
+    <span class="n">earth</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="n">moon</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">planetEphemeris</span><span class="o">.</span><span class="n">PlanetEphemeris</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create and connect an analytic Earth-Moon ephemeris.</span>
+
+<span class="sd">    ``PlanetEphemeris`` expects heliocentric elements for every output.  The</span>
+<span class="sd">    Moon&#39;s initial heliocentric state is therefore formed by adding a simple</span>
+<span class="sd">    geocentric lunar state to a heliocentric Earth state.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        earth (Any): Earth&#39;s shared ``GravBodyData`` descriptor.</span>
+<span class="sd">        moon (Any): The Moon&#39;s shared ``GravBodyData`` descriptor.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Tuple[planetEphemeris.PlanetEphemeris, List[Any]]: Configured module</span>
+<span class="sd">        and its Earth/Moon output messages.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">sunMu</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">MU_SUN</span> <span class="o">*</span> <span class="mf">1.0e9</span>  <span class="c1"># [m^3/s^2]</span>
+
+    <span class="n">earthElements</span> <span class="o">=</span> <span class="n">planetEphemeris</span><span class="o">.</span><span class="n">ClassicElements</span><span class="p">()</span>
+    <span class="n">earthElements</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">AU</span> <span class="o">*</span> <span class="mf">1000.0</span>  <span class="c1"># [m]</span>
+    <span class="n">earthElements</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="mf">0.0167086</span>  <span class="c1"># [-]</span>
+    <span class="n">earthElements</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="mf">0.00005</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>  <span class="c1"># [deg] -&gt; [rad]</span>
+    <span class="n">earthElements</span><span class="o">.</span><span class="n">Omega</span> <span class="o">=</span> <span class="o">-</span><span class="mf">11.26064</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>  <span class="c1"># [deg] -&gt; [rad]</span>
+    <span class="n">earthElements</span><span class="o">.</span><span class="n">omega</span> <span class="o">=</span> <span class="mf">102.94719</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>  <span class="c1"># [deg] -&gt; [rad]</span>
+    <span class="n">earthElements</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="mf">55.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>  <span class="c1"># [deg] -&gt; [rad]</span>
+
+    <span class="n">moonAboutEarth</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">ClassicElements</span><span class="p">()</span>
+    <span class="n">moonAboutEarth</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="mf">384_400_000.0</span>  <span class="c1"># [m]</span>
+    <span class="n">moonAboutEarth</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="mf">0.0549</span>  <span class="c1"># [-]</span>
+    <span class="n">moonAboutEarth</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="mf">5.145</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>  <span class="c1"># [deg] -&gt; [rad]</span>
+    <span class="n">moonAboutEarth</span><span class="o">.</span><span class="n">Omega</span> <span class="o">=</span> <span class="mf">125.08</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>  <span class="c1"># [deg] -&gt; [rad]</span>
+    <span class="n">moonAboutEarth</span><span class="o">.</span><span class="n">omega</span> <span class="o">=</span> <span class="mf">318.15</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>  <span class="c1"># [deg] -&gt; [rad]</span>
+    <span class="n">moonAboutEarth</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="mf">35.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>  <span class="c1"># [deg] -&gt; [rad]</span>
+
+    <span class="n">earthPosition</span><span class="p">,</span> <span class="n">earthVelocity</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">elem2rv</span><span class="p">(</span><span class="n">sunMu</span><span class="p">,</span> <span class="n">earthElements</span><span class="p">)</span>
+    <span class="n">moonRelativePosition</span><span class="p">,</span> <span class="n">moonRelativeVelocity</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">elem2rv</span><span class="p">(</span>
+        <span class="n">earth</span><span class="o">.</span><span class="n">mu</span><span class="p">,</span> <span class="n">moonAboutEarth</span>
+    <span class="p">)</span>
+    <span class="n">moonHeliocentricElements</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">rv2elem</span><span class="p">(</span>
+        <span class="n">sunMu</span><span class="p">,</span>
+        <span class="n">earthPosition</span> <span class="o">+</span> <span class="n">moonRelativePosition</span><span class="p">,</span>
+        <span class="n">earthVelocity</span> <span class="o">+</span> <span class="n">moonRelativeVelocity</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">ephemeris</span> <span class="o">=</span> <span class="n">planetEphemeris</span><span class="o">.</span><span class="n">PlanetEphemeris</span><span class="p">()</span>
+    <span class="n">ephemeris</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;EarthMoonPlanetEphemeris&quot;</span>
+    <span class="n">ephemeris</span><span class="o">.</span><span class="n">setPlanetNames</span><span class="p">(</span>
+        <span class="n">planetEphemeris</span><span class="o">.</span><span class="n">StringVector</span><span class="p">([</span><span class="s2">&quot;Earth&quot;</span><span class="p">,</span> <span class="s2">&quot;Moon&quot;</span><span class="p">])</span>
+    <span class="p">)</span>
+    <span class="n">ephemeris</span><span class="o">.</span><span class="n">planetElements</span> <span class="o">=</span> <span class="n">planetEphemeris</span><span class="o">.</span><span class="n">classicElementVector</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">earthElements</span><span class="p">,</span> <span class="n">_copy_classic_elements</span><span class="p">(</span><span class="n">moonHeliocentricElements</span><span class="p">)]</span>
+    <span class="p">)</span>
+
+    <span class="c1"># A stand-alone PlanetEphemeris module cannot infer which factory body</span>
+    <span class="c1"># corresponds to each output, so make the two subscriptions explicitly.</span>
+    <span class="n">earth</span><span class="o">.</span><span class="n">planetBodyInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">ephemeris</span><span class="o">.</span><span class="n">planetOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">moon</span><span class="o">.</span><span class="n">planetBodyInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">ephemeris</span><span class="o">.</span><span class="n">planetOutMsgs</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">ephemeris</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">ephemeris</span><span class="o">.</span><span class="n">planetOutMsgs</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_create_figures</span><span class="p">(</span>
+    <span class="n">useSpice</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="n">earth</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="n">moon</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="n">spacecraftRecorder</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="n">earthRecorder</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="n">moonRecorder</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create the tutorial&#39;s orbit, geometry, and diagnostic figures.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        useSpice (bool): If ``True``, label results as the SPICE case.</span>
+<span class="sd">        earth (Any): Earth&#39;s gravity-body descriptor.</span>
+<span class="sd">        moon (Any): The Moon&#39;s gravity-body descriptor.</span>
+<span class="sd">        spacecraftRecorder (Any): MuJoCo hub state recorder.</span>
+<span class="sd">        earthRecorder (Any): Earth ephemeris recorder.</span>
+<span class="sd">        moonRecorder (Any): Moon ephemeris recorder.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Dict[str, plt.Figure]: Figures keyed by documentation image name.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">modeKey</span> <span class="o">=</span> <span class="s2">&quot;spice&quot;</span> <span class="k">if</span> <span class="n">useSpice</span> <span class="k">else</span> <span class="s2">&quot;planetEphemeris&quot;</span>
+    <span class="n">modeLabel</span> <span class="o">=</span> <span class="s2">&quot;SPICE&quot;</span> <span class="k">if</span> <span class="n">useSpice</span> <span class="k">else</span> <span class="s2">&quot;PlanetEphemeris&quot;</span>
+    <span class="n">figurePrefix</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">FILE_NAME</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">modeKey</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="n">timeHours</span> <span class="o">=</span> <span class="n">spacecraftRecorder</span><span class="o">.</span><span class="n">times</span><span class="p">()</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2HOUR</span>
+    <span class="n">spacecraftPosition</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">spacecraftRecorder</span><span class="o">.</span><span class="n">r_BN_N</span><span class="p">)</span>
+    <span class="n">spacecraftVelocity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">spacecraftRecorder</span><span class="o">.</span><span class="n">v_BN_N</span><span class="p">)</span>
+    <span class="n">moonRelativePosition</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">moonRecorder</span><span class="o">.</span><span class="n">PositionVector</span><span class="p">)</span>
+        <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">earthRecorder</span><span class="o">.</span><span class="n">PositionVector</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="n">semiMajorAxis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">spacecraftPosition</span><span class="p">))</span>
+    <span class="n">eccentricity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">spacecraftPosition</span><span class="p">))</span>
+    <span class="n">orbitRadius</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">spacecraftPosition</span><span class="p">))</span>
+    <span class="n">orbitAngle</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">spacecraftPosition</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="p">(</span><span class="n">position</span><span class="p">,</span> <span class="n">velocity</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span>
+        <span class="nb">zip</span><span class="p">(</span><span class="n">spacecraftPosition</span><span class="p">,</span> <span class="n">spacecraftVelocity</span><span class="p">)</span>
+    <span class="p">):</span>
+        <span class="n">elements</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">rv2elem</span><span class="p">(</span><span class="n">earth</span><span class="o">.</span><span class="n">mu</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">velocity</span><span class="p">)</span>
+        <span class="n">semiMajorAxis</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">elements</span><span class="o">.</span><span class="n">a</span>
+        <span class="n">eccentricity</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">elements</span><span class="o">.</span><span class="n">e</span>
+        <span class="n">orbitRadius</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">elements</span><span class="o">.</span><span class="n">rmag</span>
+        <span class="n">orbitAngle</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">elements</span><span class="o">.</span><span class="n">omega</span> <span class="o">+</span> <span class="n">elements</span><span class="o">.</span><span class="n">f</span>
+
+    <span class="c1"># This is the Moon&#39;s direct acceleration on the spacecraft minus the</span>
+    <span class="c1"># acceleration it gives Earth, expressed in the Earth-centered frame.</span>
+    <span class="n">moonToSpacecraft</span> <span class="o">=</span> <span class="n">moonRelativePosition</span> <span class="o">-</span> <span class="n">spacecraftPosition</span>
+    <span class="n">moonDirect</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">moon</span><span class="o">.</span><span class="n">mu</span>
+        <span class="o">*</span> <span class="n">moonToSpacecraft</span>
+        <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">moonToSpacecraft</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">**</span> <span class="mi">3</span>
+    <span class="p">)</span>
+    <span class="n">moonIndirect</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">moon</span><span class="o">.</span><span class="n">mu</span>
+        <span class="o">*</span> <span class="n">moonRelativePosition</span>
+        <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">moonRelativePosition</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">**</span> <span class="mi">3</span>
+    <span class="p">)</span>
+    <span class="n">lunarThirdBodyAcceleration</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span>
+        <span class="n">moonDirect</span> <span class="o">-</span> <span class="n">moonIndirect</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span>
+    <span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+    <span class="n">figures</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="n">earthRadiusKm</span> <span class="o">=</span> <span class="n">earth</span><span class="o">.</span><span class="n">radEquator</span> <span class="o">/</span> <span class="mf">1000.0</span>  <span class="c1"># [km]</span>
+    <span class="n">minimumSafeRadiusKm</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">earth</span><span class="o">.</span><span class="n">radEquator</span> <span class="o">+</span> <span class="n">MINIMUM_SAFE_ALTITUDE_M</span>
+    <span class="p">)</span> <span class="o">/</span> <span class="mf">1000.0</span>  <span class="c1"># [km]</span>
+    <span class="n">orbitRadiusKm</span> <span class="o">=</span> <span class="n">orbitRadius</span> <span class="o">/</span> <span class="mf">1000.0</span>  <span class="c1"># [km]</span>
+
+    <span class="n">orbitFigure</span><span class="p">,</span> <span class="n">orbitAxis</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">6.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">))</span>
+    <span class="n">earthDisk</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">Circle</span><span class="p">(</span>
+        <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+        <span class="n">earthRadiusKm</span><span class="p">,</span>
+        <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#2a6fbb&quot;</span><span class="p">,</span>
+        <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span>
+        <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Earth&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">orbitAxis</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">earthDisk</span><span class="p">)</span>
+    <span class="n">minimumRadiusBoundary</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">Circle</span><span class="p">(</span>
+        <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+        <span class="n">minimumSafeRadiusKm</span><span class="p">,</span>
+        <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#e9c46a&quot;</span><span class="p">,</span>
+        <span class="n">fill</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span>
+        <span class="n">linewidth</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>
+        <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;Minimum radius ($R_E+400$ km)&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">orbitAxis</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">minimumRadiusBoundary</span><span class="p">)</span>
+    <span class="n">orbitAxis</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+        <span class="n">orbitRadiusKm</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">orbitAngle</span><span class="p">),</span>
+        <span class="n">orbitRadiusKm</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">orbitAngle</span><span class="p">),</span>
+        <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#bb3e03&quot;</span><span class="p">,</span>
+        <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+        <span class="n">label</span><span class="o">=</span><span class="s2">&quot;MuJoCo hub&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">orbitAxis</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s2">&quot;equal&quot;</span><span class="p">,</span> <span class="n">adjustable</span><span class="o">=</span><span class="s2">&quot;box&quot;</span><span class="p">)</span>
+    <span class="n">orbitAxis</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$r_x$ [km]&quot;</span><span class="p">)</span>
+    <span class="n">orbitAxis</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$r_y$ [km]&quot;</span><span class="p">)</span>
+    <span class="n">orbitAxis</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;MuJoCo trajectory in the orbital plane (</span><span class="si">{</span><span class="n">modeLabel</span><span class="si">}</span><span class="s2">)&quot;</span>
+    <span class="p">)</span>
+    <span class="n">orbitAxis</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;best&quot;</span><span class="p">)</span>
+    <span class="n">orbitAxis</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+    <span class="n">orbitFigure</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+    <span class="n">figures</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">figurePrefix</span><span class="si">}</span><span class="s2">_orbit&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">orbitFigure</span>
+
+    <span class="n">geometryFigure</span><span class="p">,</span> <span class="n">geometryAxes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span>
+        <span class="mi">1</span><span class="p">,</span>
+        <span class="mi">2</span><span class="p">,</span>
+        <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">4.5</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">geometryAxes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+        <span class="n">moonRelativePosition</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mf">1.0e6</span><span class="p">,</span>
+        <span class="n">moonRelativePosition</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="mf">1.0e6</span><span class="p">,</span>
+        <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#6a4c93&quot;</span><span class="p">,</span>
+        <span class="n">linewidth</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>
+        <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Moon trajectory&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">geometryAxes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
+        <span class="n">moonRelativePosition</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mf">1.0e6</span><span class="p">,</span>
+        <span class="n">moonRelativePosition</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="mf">1.0e6</span><span class="p">,</span>
+        <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#2a9d8f&quot;</span><span class="p">,</span>
+        <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span>
+        <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Start&quot;</span><span class="p">,</span>
+        <span class="n">zorder</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">geometryAxes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
+        <span class="n">moonRelativePosition</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mf">1.0e6</span><span class="p">,</span>
+        <span class="n">moonRelativePosition</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="mf">1.0e6</span><span class="p">,</span>
+        <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#e76f51&quot;</span><span class="p">,</span>
+        <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">,</span>
+        <span class="n">label</span><span class="o">=</span><span class="s2">&quot;End&quot;</span><span class="p">,</span>
+        <span class="n">zorder</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">geometryAxes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#2a6fbb&quot;</span><span class="p">,</span>
+        <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span>
+        <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Earth&quot;</span><span class="p">,</span>
+        <span class="n">zorder</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">geometryAxes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s2">&quot;equal&quot;</span><span class="p">,</span> <span class="n">adjustable</span><span class="o">=</span><span class="s2">&quot;datalim&quot;</span><span class="p">)</span>
+    <span class="n">geometryAxes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Earth-Moon $x$ [$10^3$ km]&quot;</span><span class="p">)</span>
+    <span class="n">geometryAxes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Earth-Moon $y$ [$10^3$ km]&quot;</span><span class="p">)</span>
+    <span class="n">geometryAxes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Earth-centered geometry&quot;</span><span class="p">)</span>
+    <span class="n">geometryAxes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;best&quot;</span><span class="p">)</span>
+    <span class="n">geometryAxes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+
+    <span class="n">moonPositionChange</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">moonRelativePosition</span> <span class="o">-</span> <span class="n">moonRelativePosition</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">/</span> <span class="mf">1000.0</span>  <span class="c1"># [m] -&gt; [km]</span>
+    <span class="n">geometryAxes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+        <span class="n">moonPositionChange</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="n">moonPositionChange</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#6a4c93&quot;</span><span class="p">,</span>
+        <span class="n">linewidth</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">geometryAxes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
+        <span class="n">moonPositionChange</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="n">moonPositionChange</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#2a9d8f&quot;</span><span class="p">,</span>
+        <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span>
+        <span class="n">zorder</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">geometryAxes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
+        <span class="n">moonPositionChange</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="n">moonPositionChange</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#e76f51&quot;</span><span class="p">,</span>
+        <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">,</span>
+        <span class="n">zorder</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">geometryAxes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s2">&quot;equal&quot;</span><span class="p">,</span> <span class="n">adjustable</span><span class="o">=</span><span class="s2">&quot;datalim&quot;</span><span class="p">)</span>
+    <span class="n">geometryAxes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$\Delta r_x$ [km]&quot;</span><span class="p">)</span>
+    <span class="n">geometryAxes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$\Delta r_y$ [km]&quot;</span><span class="p">)</span>
+    <span class="n">geometryAxes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Lunar motion from initial position&quot;</span><span class="p">)</span>
+    <span class="n">geometryAxes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+    <span class="n">geometryFigure</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Earth-Moon geometry over 6 hours (</span><span class="si">{</span><span class="n">modeLabel</span><span class="si">}</span><span class="s2">)&quot;</span>
+    <span class="p">)</span>
+    <span class="n">geometryFigure</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+    <span class="n">figures</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">figurePrefix</span><span class="si">}</span><span class="s2">_moonGeometry&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">geometryFigure</span>
+
+    <span class="n">diagnosticsFigure</span><span class="p">,</span> <span class="n">diagnosticAxes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span>
+        <span class="mi">3</span><span class="p">,</span>
+        <span class="mi">1</span><span class="p">,</span>
+        <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">7.0</span><span class="p">,</span> <span class="mf">7.0</span><span class="p">),</span>
+        <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">diagnosticAxes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+        <span class="n">timeHours</span><span class="p">,</span>
+        <span class="n">semiMajorAxis</span> <span class="o">-</span> <span class="n">semiMajorAxis</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#005f73&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">diagnosticAxes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$a-a_0$ [m]&quot;</span><span class="p">)</span>
+    <span class="n">diagnosticAxes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+        <span class="n">timeHours</span><span class="p">,</span>
+        <span class="n">eccentricity</span><span class="p">,</span>
+        <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#ca6702&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">diagnosticAxes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Eccentricity [-]&quot;</span><span class="p">)</span>
+    <span class="n">diagnosticAxes</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+        <span class="n">timeHours</span><span class="p">,</span>
+        <span class="n">lunarThirdBodyAcceleration</span><span class="p">,</span>
+        <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#6a4c93&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">diagnosticAxes</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$|\mathbf</span><span class="si">{a}</span><span class="s2">_{Moon,3B}|$ [m/s$^2$]&quot;</span><span class="p">)</span>
+    <span class="n">diagnosticAxes</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Time [h]&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">axis</span> <span class="ow">in</span> <span class="n">diagnosticAxes</span><span class="p">:</span>
+        <span class="n">axis</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+    <span class="n">diagnosticsFigure</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Osculating orbit and lunar perturbation (</span><span class="si">{</span><span class="n">modeLabel</span><span class="si">}</span><span class="s2">)&quot;</span>
+    <span class="p">)</span>
+    <span class="n">diagnosticsFigure</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+    <span class="n">figures</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">figurePrefix</span><span class="si">}</span><span class="s2">_diagnostics&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">diagnosticsFigure</span>
+
+    <span class="k">return</span> <span class="n">figures</span>
+
+
+<div class="viewcode-block" id="run">
+<a class="viewcode-back" href="../examples/mujoco/scenarioMJEarthMoonGravity.html#scenarioMJEarthMoonGravity.run">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span>
+    <span class="n">showPlots</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">useSpice</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Run the Earth-Moon gravity tutorial.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        showPlots (bool, optional): If ``True``, display the generated figures.</span>
+<span class="sd">            Defaults to ``False``.</span>
+<span class="sd">        useSpice (bool, optional): If ``True``, use SPICE planet states. If</span>
+<span class="sd">            ``False``, use analytic ``PlanetEphemeris`` states. Defaults to</span>
+<span class="sd">            ``True``.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Dict[str, plt.Figure]: Generated figures keyed by documentation image</span>
+<span class="sd">        name.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">simulation</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">process</span> <span class="o">=</span> <span class="n">simulation</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">PROCESS_NAME</span><span class="p">)</span>
+    <span class="n">process</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span>
+        <span class="n">simulation</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span>
+            <span class="n">TASK_NAME</span><span class="p">,</span>
+            <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">TASK_STEP_SEC</span><span class="p">),</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="n">scene</span> <span class="o">=</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MJScene</span><span class="o">.</span><span class="n">fromFile</span><span class="p">(</span><span class="n">XML_PATH</span><span class="p">)</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;earthMoonSpacecraft&quot;</span>
+    <span class="c1"># Dynamics-task messages are normally left at the final integrator-stage</span>
+    <span class="c1"># evaluation, which can use a provisional rather than the committed state.</span>
+    <span class="c1"># Re-evaluate the dynamics task after integration so the ephemeris, gravity,</span>
+    <span class="c1"># and forward-kinematics messages are current for recorders and Vizard.</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">extraEoMCall</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">simulation</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span>
+        <span class="n">TASK_NAME</span><span class="p">,</span>
+        <span class="n">scene</span><span class="p">,</span>
+        <span class="n">SCENE_PRIORITY</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">integrator</span> <span class="o">=</span> <span class="n">svIntegrators</span><span class="o">.</span><span class="n">svIntegratorRKF45</span><span class="p">(</span><span class="n">scene</span><span class="p">)</span>
+    <span class="n">integrationTolerance</span> <span class="o">=</span> <span class="mf">1.0e-8</span>  <span class="c1"># [-]</span>
+    <span class="n">integrator</span><span class="o">.</span><span class="n">setRelativeTolerance</span><span class="p">(</span><span class="n">integrationTolerance</span><span class="p">)</span>
+    <span class="n">integrator</span><span class="o">.</span><span class="n">setAbsoluteTolerance</span><span class="p">(</span><span class="n">integrationTolerance</span><span class="p">)</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">setIntegrator</span><span class="p">(</span><span class="n">integrator</span><span class="p">)</span>
+
+    <span class="n">gravFactory</span> <span class="o">=</span> <span class="n">simIncludeGravBody</span><span class="o">.</span><span class="n">gravBodyFactory</span><span class="p">()</span>
+    <span class="n">earth</span> <span class="o">=</span> <span class="n">gravFactory</span><span class="o">.</span><span class="n">createEarth</span><span class="p">()</span>
+    <span class="n">earth</span><span class="o">.</span><span class="n">isCentralBody</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">moon</span> <span class="o">=</span> <span class="n">gravFactory</span><span class="o">.</span><span class="n">createMoon</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">useSpice</span><span class="p">:</span>
+        <span class="n">ephemeris</span> <span class="o">=</span> <span class="n">gravFactory</span><span class="o">.</span><span class="n">createSpiceInterface</span><span class="p">(</span>
+            <span class="n">time</span><span class="o">=</span><span class="n">SPICE_EPOCH</span><span class="p">,</span>
+            <span class="n">epochInMsg</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">ephemerisMessages</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">ephemeris</span><span class="o">.</span><span class="n">planetStateOutMsgs</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">ephemeris</span><span class="p">,</span> <span class="n">ephemerisMessages</span> <span class="o">=</span> <span class="n">_create_analytic_ephemeris</span><span class="p">(</span>
+            <span class="n">earth</span><span class="p">,</span>
+            <span class="n">moon</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="n">ephemeris</span><span class="o">.</span><span class="n">zeroBase</span> <span class="o">=</span> <span class="s2">&quot;Earth&quot;</span>
+
+    <span class="c1"># The adaptive integrator evaluates dynamics between top-level task ticks.</span>
+    <span class="c1"># Run the ephemeris after forward kinematics (priority 10000) but before the</span>
+    <span class="c1"># factory-created NBodyGravity model (default priority -1) at every such</span>
+    <span class="c1"># evaluation.</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">AddModelToDynamicsTask</span><span class="p">(</span><span class="n">ephemeris</span><span class="p">,</span> <span class="n">EPHEMERIS_PRIORITY</span><span class="p">)</span>
+    <span class="n">gravFactory</span><span class="o">.</span><span class="n">addBodiesTo</span><span class="p">(</span><span class="n">scene</span><span class="p">)</span>
+
+    <span class="n">hub</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">getBody</span><span class="p">(</span><span class="s2">&quot;hub&quot;</span><span class="p">)</span>
+    <span class="n">hubRecorder</span> <span class="o">=</span> <span class="n">hub</span><span class="o">.</span><span class="n">getCenterOfMass</span><span class="p">()</span><span class="o">.</span><span class="n">stateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">earthRecorder</span> <span class="o">=</span> <span class="n">ephemerisMessages</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">moonRecorder</span> <span class="o">=</span> <span class="n">ephemerisMessages</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="c1"># Run recorders after MJScene. The extra equations-of-motion call above</span>
+    <span class="c1"># ensures their samples see messages evaluated at the committed state.</span>
+    <span class="n">simulation</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span>
+        <span class="n">TASK_NAME</span><span class="p">,</span>
+        <span class="n">hubRecorder</span><span class="p">,</span>
+        <span class="n">RECORDER_PRIORITY</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">simulation</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span>
+        <span class="n">TASK_NAME</span><span class="p">,</span>
+        <span class="n">earthRecorder</span><span class="p">,</span>
+        <span class="n">RECORDER_PRIORITY</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">simulation</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span>
+        <span class="n">TASK_NAME</span><span class="p">,</span>
+        <span class="n">moonRecorder</span><span class="p">,</span>
+        <span class="n">RECORDER_PRIORITY</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">vizSupport</span><span class="o">.</span><span class="n">vizFound</span><span class="p">:</span>
+        <span class="n">vizSupport</span><span class="o">.</span><span class="n">enableUnityVisualization</span><span class="p">(</span>
+            <span class="n">simulation</span><span class="p">,</span>
+            <span class="n">TASK_NAME</span><span class="p">,</span>
+            <span class="n">scene</span><span class="p">,</span>
+            <span class="c1"># saveFile=__file__,</span>
+        <span class="p">)</span>
+
+    <span class="n">spacecraftElements</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">ClassicElements</span><span class="p">()</span>
+    <span class="n">spacecraftElements</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="n">INITIAL_ECCENTRICITY</span>
+    <span class="n">spacecraftElements</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">earth</span><span class="o">.</span><span class="n">radEquator</span> <span class="o">+</span> <span class="n">INITIAL_PERIAPSIS_ALTITUDE_M</span>
+    <span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">spacecraftElements</span><span class="o">.</span><span class="n">e</span><span class="p">)</span>  <span class="c1"># [m]</span>
+    <span class="n">spacecraftElements</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="mf">28.5</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>  <span class="c1"># [deg] -&gt; [rad]</span>
+    <span class="n">spacecraftElements</span><span class="o">.</span><span class="n">Omega</span> <span class="o">=</span> <span class="mf">48.2</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>  <span class="c1"># [deg] -&gt; [rad]</span>
+    <span class="n">spacecraftElements</span><span class="o">.</span><span class="n">omega</span> <span class="o">=</span> <span class="mf">347.8</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>  <span class="c1"># [deg] -&gt; [rad]</span>
+    <span class="n">spacecraftElements</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="mf">85.3</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>  <span class="c1"># [deg] -&gt; [rad]</span>
+    <span class="n">initialPosition</span><span class="p">,</span> <span class="n">initialVelocity</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">elem2rv</span><span class="p">(</span>
+        <span class="n">earth</span><span class="o">.</span><span class="n">mu</span><span class="p">,</span>
+        <span class="n">spacecraftElements</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">simulation</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">hub</span><span class="o">.</span><span class="n">setPosition</span><span class="p">(</span><span class="n">initialPosition</span><span class="p">)</span>
+    <span class="n">hub</span><span class="o">.</span><span class="n">setVelocity</span><span class="p">(</span><span class="n">initialVelocity</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">simulation</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span>
+            <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">SIMULATION_DURATION_SEC</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">simulation</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">useSpice</span><span class="p">:</span>
+            <span class="n">gravFactory</span><span class="o">.</span><span class="n">unloadSpiceKernels</span><span class="p">()</span>
+
+    <span class="n">minimumSafeRadius</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">earth</span><span class="o">.</span><span class="n">radEquator</span> <span class="o">+</span> <span class="n">MINIMUM_SAFE_ALTITUDE_M</span>
+    <span class="p">)</span>  <span class="c1"># [m]</span>
+    <span class="n">minimumRecordedRadius</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">hubRecorder</span><span class="o">.</span><span class="n">r_BN_N</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="p">)</span>  <span class="c1"># [m]</span>
+    <span class="k">if</span> <span class="n">minimumRecordedRadius</span> <span class="o">&lt;=</span> <span class="n">minimumSafeRadius</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+            <span class="s2">&quot;The MuJoCo spacecraft crossed the required &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">MINIMUM_SAFE_ALTITUDE_M</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">1000.0</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2"> km altitude boundary.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">figures</span> <span class="o">=</span> <span class="n">_create_figures</span><span class="p">(</span>
+        <span class="n">useSpice</span><span class="p">,</span>
+        <span class="n">earth</span><span class="p">,</span>
+        <span class="n">moon</span><span class="p">,</span>
+        <span class="n">hubRecorder</span><span class="p">,</span>
+        <span class="n">earthRecorder</span><span class="p">,</span>
+        <span class="n">moonRecorder</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">showPlots</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">figures</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">run</span><span class="p">(</span><span class="n">showPlots</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">useSpice</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

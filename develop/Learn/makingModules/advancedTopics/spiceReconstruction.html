@@ -1,0 +1,334 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Optimizing performance when using SPICE &mdash; Basilisk 2.12.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=2ebb1c42" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=4ad2e773"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Support" href="../../../Support.html" />
+    <link rel="prev" title="Enabling Branching of Basilisk Effectors" href="effectorBranching.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Build.html">Building from Source</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../Learn.html">Learning Basilisk</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../bskPrinciples.html">Fundamentals of Basilisk Simulations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/index.html">Integrated Example Scripts</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../makingModules.html">Basics of Writing Basilisk Modules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../makingModules-1.html">Module Design Considerations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../makingModules-2.html">Creating New Message Definitions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../cModules.html">Making C Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../cppModules.html">Making C++ Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../pyModules.html">Making Python Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../numbaModules.html">Making Numba Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../makingModules-3.html">Module RST Documentation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../makingModules-4.html">Module Unit Test File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../makingDraftModule.html">Automation Script to Create a New Basilisk Module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../makingModules-5.html">Common Basilisk Support Files</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../advancedTopics.html">Advanced Topics</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="creatingDynObject.html">Creating <code class="docutils literal notranslate"><span class="pre">DynamicObject</span></code> Basilisk Modules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mujocoDynObject.html">Multi-body Dynamics with MuJoCo</a></li>
+<li class="toctree-l4"><a class="reference internal" href="effectorBranching.html">Enabling Branching of Basilisk Effectors</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Optimizing performance when using SPICE</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../Learn.html">Learning Basilisk</a></li>
+          <li class="breadcrumb-item"><a href="../../makingModules.html">Basics of Writing Basilisk Modules</a></li>
+          <li class="breadcrumb-item"><a href="../advancedTopics.html">Advanced Topics</a></li>
+      <li class="breadcrumb-item active">Optimizing performance when using SPICE</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/Learn/makingModules/advancedTopics/spiceReconstruction.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="optimizing-performance-when-using-spice">
+<span id="spicereconstruction"></span><h1>Optimizing performance when using SPICE<a class="headerlink" href="#optimizing-performance-when-using-spice" title="Link to this heading"></a></h1>
+<p>By default, <a class="reference internal" href="../../../Documentation/simulation/environment/spiceInterface/spiceInterface.html#spiceinterface"><span class="std std-ref">C++ Module: spiceInterface</span></a> evaluates SPICE (<code class="docutils literal notranslate"><span class="pre">spkezr_c</span></code> for a body’s position,
+<code class="docutils literal notranslate"><span class="pre">sxform_c</span></code> for its orientation) at the <em>exact</em> simulation time on every <code class="docutils literal notranslate"><span class="pre">UpdateState</span></code>
+call. When SPICE has become a performance bottleneck, the module can instead <strong>reconstruct</strong> each
+body’s state from a coarse grid of cached SPICE samples (“knots”), trading a controllable amount
+of accuracy for far fewer SPICE evaluations. This page describes when that helps and how to
+configure it.</p>
+<section id="when-spice-is-and-is-not-a-bottleneck">
+<h2>When SPICE is (and is not) a bottleneck<a class="headerlink" href="#when-spice-is-and-is-not-a-bottleneck" title="Link to this heading"></a></h2>
+<p>How often SPICE is queried depends entirely on how the module is scheduled:</p>
+<ul class="simple">
+<li><p><strong>Regular task, e.g. a classic</strong> <a class="reference internal" href="../../../Documentation/simulation/dynamics/spacecraft/spacecraft.html#spacecraft"><span class="std std-ref">C++ Module: spacecraft</span></a> <strong>with</strong>
+<a class="reference internal" href="../../../Documentation/simulation/dynamics/_GeneralModuleFiles/gravityEffector.html#gravityeffector"><span class="std std-ref">C++ Module: gravityEffector</span></a>. <code class="docutils literal notranslate"><span class="pre">spiceInterface</span></code> runs once per task period and writes each planet
+message a single time per step. <code class="docutils literal notranslate"><span class="pre">gravityEffector</span></code> then reads that one message and performs
+its <em>own</em> internal linear extrapolation of the planet to each integrator sub-step (position via
+<code class="docutils literal notranslate"><span class="pre">PositionVector</span> <span class="pre">+</span> <span class="pre">VelocityVector*dt</span></code> and orientation via <code class="docutils literal notranslate"><span class="pre">J20002Pfix</span> <span class="pre">+</span> <span class="pre">J20002Pfix_dot*dt</span></code>).</p></li>
+<li><p><strong>Dynamics task (e.g.</strong> <a class="reference internal" href="../../../Documentation/simulation/mujocoDynamics/_GeneralModuleFiles/MJScene.html#mjscene"><span class="std std-ref">MJScene</span></a> <strong>).</strong> A model added with <code class="docutils literal notranslate"><span class="pre">AddModelToDynamicsTask</span></code> has
+its <code class="docutils literal notranslate"><span class="pre">UpdateState</span></code> invoked once per <em>integrator stage</em>. A fixed RK4 step calls it four times;
+an adaptive integrator such as RKF45 calls it more. Every one of those calls issues a fresh
+<code class="docutils literal notranslate"><span class="pre">spkezr_c</span></code>/<code class="docutils literal notranslate"><span class="pre">sxform_c</span></code> per body.</p></li>
+</ul>
+<p>Reconstruction breaks the tie between “how often the state is <em>requested</em>” and “how often SPICE
+is <em>called</em>”. It lays down a grid of sample points (“knots”) spaced <code class="docutils literal notranslate"><span class="pre">knotStep</span></code> nanoseconds
+apart in absolute time: knot 0 at the epoch, knot 1 at <code class="docutils literal notranslate"><span class="pre">knotStep</span></code>, knot 2 at <code class="docutils literal notranslate"><span class="pre">2*knotStep</span></code>, and so
+on. SPICE is called only to fill a knot, and only the first time that knot is needed; the result
+is cached. When the state is requested at some arbitrary time (say a mid-step stage time), the
+module finds the knots surrounding that time, calls SPICE for any not already cached, and
+computes the requested value by interpolating or extrapolating between them. It does <strong>not</strong>
+call SPICE at the requested time itself.</p>
+<p>The consequence is that the cost no longer depends on the integrator. Many different requests
+fall between the same pair of knots: the four RK4 stages within one step, the extra stages of
+an adaptive method, and the re-tried stages of a rejected step all land in the same knot interval
+and reuse the same cached knots. So the number of SPICE calls is set purely by how many knots the
+run spans, <code class="docutils literal notranslate"><span class="pre">~</span> <span class="pre">horizon</span> <span class="pre">/</span> <span class="pre">knotStep</span></code> per channel per body, regardless of how many times per step
+the integrator asks for the state.</p>
+</section>
+<section id="the-three-per-channel-states">
+<h2>The three per-channel states<a class="headerlink" href="#the-three-per-channel-states" title="Link to this heading"></a></h2>
+<p>Each planet has two independent channels, <strong>position</strong> and <strong>orientation</strong>, and each channel
+is in one of three states:</p>
+<ol class="arabic simple">
+<li><p><strong>Exact</strong> (the default): query SPICE at the exact time on every call.</p></li>
+<li><p><strong>Reconstruct</strong>: build the value from the cached knot grid.</p></li>
+<li><p><strong>Disabled</strong>: make no SPICE query and emit the trivial default (zero position and velocity,
+or the identity orientation and zero rate). Use this to remove a computation that is not needed
+(e.g. a body pinned at the frame origin needs no position; a body used purely as a point mass
+needs no orientation).</p></li>
+</ol>
+<p>In all three states every field of the planet-state message is still populated: the numeric
+arrays as described above, and <code class="docutils literal notranslate"><span class="pre">J2000Current</span></code> (message validity time), <code class="docutils literal notranslate"><span class="pre">computeOrient</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">PlanetName</span></code> exactly as in the exact path. Orientation reconstruction is additionally gated on
+<code class="docutils literal notranslate"><span class="pre">computeOrient</span></code>, so a body with no orientation frame keeps the identity <code class="docutils literal notranslate"><span class="pre">J20002Pfix</span></code>.</p>
+<p>The reconstruction is controlled by four knobs, set per planet and per channel:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">knotStep</span></code>: spacing of the absolute-time knot grid, in nanoseconds;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">nKnots</span></code>: stencil size, i.e. the polynomial order;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">useVelocity</span></code>: also match the SPICE-provided velocity/rate at each knot (Hermite) rather
+than fitting positions only (Lagrange);</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">interpolate</span></code>: bracket the current time with past <em>and</em> future knots (interpolation) or use
+only past knots (causal extrapolation).</p></li>
+</ul>
+</section>
+<section id="configuring-it">
+<h2>Configuring it<a class="headerlink" href="#configuring-it" title="Link to this heading"></a></h2>
+<p>Create the <code class="docutils literal notranslate"><span class="pre">SpiceInterface</span></code> the usual way, through <a class="reference internal" href="../../../Documentation/utilities/simIncludeGravBody.html#simincludegravbody"><span class="std std-ref">simIncludeGravBody</span></a>: the same factory
+that creates the gravity bodies also builds and connects the <code class="docutils literal notranslate"><span class="pre">SpiceInterface</span></code> (and, on an
+<a class="reference internal" href="../../../Documentation/simulation/mujocoDynamics/_GeneralModuleFiles/MJScene.html#mjscene"><span class="std std-ref">MJScene</span></a>, attaches the gravity model with <code class="docutils literal notranslate"><span class="pre">addBodiesTo</span></code>). The reconstruction methods are
+then called on the returned object, keyed by planet name (case-insensitive):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">macros</span><span class="p">,</span> <span class="n">simIncludeGravBody</span>
+
+<span class="n">gravFactory</span> <span class="o">=</span> <span class="n">simIncludeGravBody</span><span class="o">.</span><span class="n">gravBodyFactory</span><span class="p">()</span>
+<span class="n">gravFactory</span><span class="o">.</span><span class="n">createEarth</span><span class="p">()</span><span class="o">.</span><span class="n">isCentralBody</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">gravFactory</span><span class="o">.</span><span class="n">createMoon</span><span class="p">()</span>
+<span class="n">gravFactory</span><span class="o">.</span><span class="n">createSun</span><span class="p">()</span>
+<span class="n">spice</span> <span class="o">=</span> <span class="n">gravFactory</span><span class="o">.</span><span class="n">createSpiceInterface</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="s2">&quot;2025 NOVEMBER 15 12:00:00.000&quot;</span><span class="p">)</span>
+
+<span class="c1"># Position: cubic Hermite interpolation on a 240 s grid. knotStep is in nanoseconds,</span>
+<span class="c1"># so use macros.sec2nano to convert (like task periods elsewhere in Basilisk).</span>
+<span class="n">spice</span><span class="o">.</span><span class="n">setPlanetPositionReconstruction</span><span class="p">(</span><span class="s2">&quot;earth&quot;</span><span class="p">,</span> <span class="n">knotStep</span><span class="o">=</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">240.0</span><span class="p">))</span>   <span class="c1"># nKnots=2, useVelocity=True, interpolate=True</span>
+
+<span class="c1"># Orientation of a constant-rate spinner: extrapolate from a SINGLE knot (see below).</span>
+<span class="n">spice</span><span class="o">.</span><span class="n">setPlanetOrientationReconstruction</span><span class="p">(</span><span class="s2">&quot;moon&quot;</span><span class="p">,</span> <span class="n">knotStep</span><span class="o">=</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">1.0e5</span><span class="p">),</span> <span class="n">nKnots</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                                         <span class="n">useVelocity</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">interpolate</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># Turn a channel off entirely (no SPICE query):</span>
+<span class="n">spice</span><span class="o">.</span><span class="n">setPlanetPositionDisabled</span><span class="p">(</span><span class="s2">&quot;sun&quot;</span><span class="p">)</span>
+
+<span class="c1"># Revert a planet to the exact per-call SPICE query:</span>
+<span class="n">spice</span><span class="o">.</span><span class="n">setPlanetExactSpice</span><span class="p">(</span><span class="s2">&quot;earth&quot;</span><span class="p">)</span>
+
+<span class="c1"># Measure the payoff: {positionQueries, orientationQueries} over the run.</span>
+<span class="n">nPos</span><span class="p">,</span> <span class="n">nOrient</span> <span class="o">=</span> <span class="n">spice</span><span class="o">.</span><span class="n">getPlanetSpiceQueryCount</span><span class="p">(</span><span class="s2">&quot;earth&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>When a channel is enabled, its defaults are the efficient ones: cubic Hermite interpolation
+(<code class="docutils literal notranslate"><span class="pre">nKnots=2,</span> <span class="pre">useVelocity=True,</span> <span class="pre">interpolate=True</span></code>) on a 60 s grid. So
+<code class="docutils literal notranslate"><span class="pre">setPlanetPositionReconstruction(name)</span></code> with no further arguments is usually a good starting
+point.</p>
+</section>
+<section id="choosing-knobs-by-body-type">
+<h2>Choosing knobs by body type<a class="headerlink" href="#choosing-knobs-by-body-type" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong>Bodies with a constant rotation vector</strong> (a fixed spin axis and constant rate). This covers
+nearly every catalogued small body and the planetary IAU frames, whose orientation model is a
+linear <code class="docutils literal notranslate"><span class="pre">W</span> <span class="pre">=</span> <span class="pre">W0</span> <span class="pre">+</span> <span class="pre">Wdot*t</span></code>. SPICE returns the attitude as a DCM, whose trajectory is <em>not</em> linear
+in time; the reconstruction extrapolates the <strong>principal rotation vector</strong> (PRV) instead, which
+<em>is</em> linear in time for a fixed axis at a constant rate. So first-order extrapolation from a
+<strong>single knot</strong> (<code class="docutils literal notranslate"><span class="pre">nKnots=1,</span> <span class="pre">useVelocity=True,</span> <span class="pre">interpolate=False</span></code>) is exact at any <code class="docutils literal notranslate"><span class="pre">knotStep</span></code>:
+one <code class="docutils literal notranslate"><span class="pre">sxform_c</span></code> call serves the whole run. Do not pay for interpolation or extra knots here.</p></li>
+<li><p><strong>Smooth heliocentric position</strong> (planets, the Moon relative to Earth). The trajectory is very
+smooth on the scale of a propagation, so cubic Hermite interpolation (<code class="docutils literal notranslate"><span class="pre">nKnots=2,</span>
+<span class="pre">useVelocity=True,</span> <span class="pre">interpolate=True</span></code>) on a coarse <code class="docutils literal notranslate"><span class="pre">knotStep</span></code> reconstructs it to well below the
+integrator’s own error.</p></li>
+<li><p><strong>Tumblers</strong> (non-principal-axis rotators, e.g. proximity operations at objects like Apophis).
+The orientation has genuine curvature, so linear extrapolation degrades as the knot spacing
+grows; use interpolation (<code class="docutils literal notranslate"><span class="pre">interpolate=True</span></code>) and, if needed, <code class="docutils literal notranslate"><span class="pre">nKnots</span> <span class="pre">&gt;=</span> <span class="pre">2</span></code>.</p></li>
+</ul>
+</section>
+<section id="tuning-match-the-reconstruction-error-to-the-integrator-error">
+<h2>Tuning: match the reconstruction error to the integrator error<a class="headerlink" href="#tuning-match-the-reconstruction-error-to-the-integrator-error" title="Link to this heading"></a></h2>
+<p>The guiding principle is that <strong>the reconstruction error should be the same order of magnitude as
+the integrator’s own truncation error.</strong> Once the reconstruction error drops
+below the integrator error it no longer affects the trajectory, so any finer knot grid is wasted
+computation.</p>
+<p>A practical workflow:</p>
+<ol class="arabic simple">
+<li><p>Fix the shape at the efficient default (<code class="docutils literal notranslate"><span class="pre">nKnots=2,</span> <span class="pre">useVelocity=True,</span> <span class="pre">interpolate=True</span></code>), or
+the single-knot extrapolation above for a constant rotator. If SPICE querying is no longer
+a performance bottleneck, stop here. Otherwise:</p></li>
+<li><p>Treat <code class="docutils literal notranslate"><span class="pre">knotStep</span></code> as the primary lever. A reasonable starting value is <strong>8-16x the task
+step</strong>. Then <em>increase</em> <code class="docutils literal notranslate"><span class="pre">knotStep</span></code> until the final-state error just begins to rise above the
+exact-SPICE baseline (that rise is reconstruction error emerging from beneath the integrator
+floor), and back off one step. Equivalently, if <code class="docutils literal notranslate"><span class="pre">knotStep</span></code> is fixed, there is no benefit to
+shrinking it once the error curve has flattened onto the integrator floor.</p></li>
+<li><p>Use <code class="docutils literal notranslate"><span class="pre">getPlanetSpiceQueryCount</span></code> to confirm the query count fell to roughly <code class="docutils literal notranslate"><span class="pre">horizon</span> <span class="pre">/</span>
+<span class="pre">knotStep</span></code> and quantify the saving.</p></li>
+</ol>
+</section>
+<section id="align-knotstep-with-the-task-step-when-possible">
+<h2>Align <code class="docutils literal notranslate"><span class="pre">knotStep</span></code> with the task step when possible<a class="headerlink" href="#align-knotstep-with-the-task-step-when-possible" title="Link to this heading"></a></h2>
+<p>The reconstruction is a <em>piecewise</em> polynomial: its knot stencil switches as time crosses each
+knot, so the reconstructed state has a mild discontinuity in its curvature (a “C1 kink”) at knot
+boundaries. If such a kink falls <em>inside</em> an integrator step it can locally reduce the
+integrator’s order and, for adaptive steppers, provoke unnecessary step-size cuts. The
+reconstructed <em>value</em> is correct for any <code class="docutils literal notranslate"><span class="pre">knotStep</span></code>; this is purely an integrator-efficiency
+concern.</p>
+<p>For a <strong>fixed-step</strong> integrator you can neutralize it by choosing <code class="docutils literal notranslate"><span class="pre">knotStep</span></code> as an integer
+multiple of the task step, <code class="docutils literal notranslate"><span class="pre">knotStep</span> <span class="pre">=</span> <span class="pre">m</span> <span class="pre">*</span> <span class="pre">dt</span></code>. Every knot boundary then coincides with a step
+boundary (where the integrator restarts its expansion anyway) instead of landing mid-step. For
+the orientation channel, whose base knot switches at the half-interval, an <strong>even</strong> multiple aligns
+that boundary too. For adaptive integrators exact alignment is not possible, but keeping
+<code class="docutils literal notranslate"><span class="pre">knotStep</span></code> large relative to the average step keeps kinks rare. This is the concrete reason the
+<code class="docutils literal notranslate"><span class="pre">knotStep</span> <span class="pre">&gt;&gt;</span> <span class="pre">task</span> <span class="pre">step</span></code> guidance above is a soundness recommendation, not merely a tuning tip.</p>
+</section>
+<section id="worked-examples">
+<h2>Worked examples<a class="headerlink" href="#worked-examples" title="Link to this heading"></a></h2>
+<p>Two example scenarios put this page into practice, one per channel:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="../../../examples/scenarioSpiceReconstruction.html#scenariospicereconstruction"><span class="std std-ref">scenarioSpiceReconstruction</span></a> reconstructs the <strong>position</strong> of the Moon during a cislunar
+lunar-flyby transfer, sweeping <code class="docutils literal notranslate"><span class="pre">knotStep</span></code> to trace the accuracy-vs-query-count tradeoff and
+showing the “free” region below the integrator error.</p></li>
+<li><p><a class="reference internal" href="../../../examples/scenarioVestaOrientation.html#scenariovestaorientation"><span class="std std-ref">scenarioVestaOrientation</span></a> reconstructs the <strong>orientation</strong> of the constant-rate spinner
+(4) Vesta, showing that a single-knot velocity extrapolation reproduces the attitude exactly at
+a fraction of the SPICE cost.</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="effectorBranching.html" class="btn btn-neutral float-left" title="Enabling Branching of Basilisk Effectors" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../../../Support.html" class="btn btn-neutral float-right" title="Support" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

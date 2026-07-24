@@ -1,0 +1,405 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_stateful_numba_model &mdash; Basilisk 2.12.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=2ebb1c42" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=4ad2e773"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">test_stateful_numba_model</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for test_stateful_numba_model</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2025, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">macros</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">mujoco</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">StatefulNumbaModel</span>
+    <span class="n">couldImport</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+    <span class="n">couldImport</span> <span class="o">=</span> <span class="kc">False</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+
+<div class="viewcode-block" id="test_StatefulNumbaOscillator">
+<a class="viewcode-back" href="../Documentation/simulation/mujocoDynamics/_GeneralModuleFiles/_UnitTest/test_stateful_numba_model.html#test_stateful_numba_model.test_StatefulNumbaOscillator">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">skipif</span><span class="p">(</span><span class="ow">not</span> <span class="n">couldImport</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="s2">&quot;Compiled Basilisk without --mujoco or numba not available&quot;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_StatefulNumbaOscillator</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Tests that StatefulNumbaModel works as expected in MJScene.</span>
+
+<span class="sd">    We use a simple harmonic oscillator with two 3×1 states (pos, vel) and</span>
+<span class="sd">    a scalar memory field (omega).  The UpdateStateImpl is a Numba cfunc.</span>
+
+<span class="sd">    posDot = vel</span>
+<span class="sd">    velDot = -omega^2 * pos</span>
+
+<span class="sd">    With pos(0) = [1, 0, 0] and vel(0) = [0, omega, 0] and omega = 2*pi</span>
+<span class="sd">    the analytic solution at tf=0.5 s is:</span>
+
+<span class="sd">        pos[0](tf) = cos(omega * tf)</span>
+<span class="sd">        pos[1](tf) = sin(omega * tf)</span>
+<span class="sd">        pos[2](tf) = 0</span>
+
+<span class="sd">        vel[0](tf) = -omega * sin(omega * tf)</span>
+<span class="sd">        vel[1](tf) =  omega * cos(omega * tf)</span>
+<span class="sd">        vel[2](tf) = 0</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Declared inside the test so the import guard works correctly.</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">OscillatorModel</span><span class="p">(</span><span class="n">StatefulNumbaModel</span><span class="o">.</span><span class="n">StatefulNumbaModel</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;3-D harmonic oscillator integrated by MJScene&#39;s RK4 solver.&quot;&quot;&quot;</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">registerStates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">registerer</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Register position and velocity states for the oscillator.&quot;&quot;&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">posState</span> <span class="o">=</span> <span class="n">registerer</span><span class="o">.</span><span class="n">registerState</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;pos&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">velState</span> <span class="o">=</span> <span class="n">registerer</span><span class="o">.</span><span class="n">registerState</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;vel&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">posState</span><span class="o">.</span><span class="n">setState</span><span class="p">([[</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">velState</span><span class="o">.</span><span class="n">setState</span><span class="p">([[</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">Reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">CurrentSimNanos</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Refresh the compiled state and restore the stored frequency.&quot;&quot;&quot;</span>
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="n">CurrentSimNanos</span><span class="p">)</span>
+            <span class="c1"># memory fields must be set before Reset, but we can re-set here</span>
+            <span class="c1"># because Reset() propagates the updated value into the cfunc buffer.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">omega</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_omega</span>
+
+        <span class="nd">@staticmethod</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">UpdateStateImpl</span><span class="p">(</span><span class="n">posState</span><span class="p">,</span> <span class="n">posStateDeriv</span><span class="p">,</span> <span class="n">velState</span><span class="p">,</span> <span class="n">velStateDeriv</span><span class="p">,</span> <span class="n">memory</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Write the first-order oscillator dynamics into the derivative buffers.&quot;&quot;&quot;</span>
+            <span class="n">posStateDeriv</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">velState</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+            <span class="n">velStateDeriv</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">memory</span><span class="o">.</span><span class="n">omega</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">posState</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">omega</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>   <span class="c1"># rad/s</span>
+    <span class="n">dt</span>    <span class="o">=</span> <span class="mf">1e-3</span>           <span class="c1"># s - small step for accuracy</span>
+    <span class="n">tf</span>    <span class="o">=</span> <span class="mf">0.5</span>            <span class="c1"># s</span>
+
+    <span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">dynProcess</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">)</span>
+    <span class="n">dynProcess</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">dt</span><span class="p">)))</span>
+
+    <span class="n">scene</span> <span class="o">=</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MJScene</span><span class="p">(</span><span class="s2">&quot;&lt;mujoco/&gt;&quot;</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">scene</span><span class="p">)</span>
+
+    <span class="n">osc</span> <span class="o">=</span> <span class="n">OscillatorModel</span><span class="p">()</span>
+    <span class="n">osc</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;oscillator&quot;</span>
+    <span class="n">osc</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">omega</span> <span class="o">=</span> <span class="n">omega</span>   <span class="c1"># set before Reset is called</span>
+    <span class="n">osc</span><span class="o">.</span><span class="n">_omega</span> <span class="o">=</span> <span class="n">omega</span>         <span class="c1"># stash for Reset()</span>
+
+    <span class="n">scene</span><span class="o">.</span><span class="n">AddModelToDynamicsTask</span><span class="p">(</span><span class="n">osc</span><span class="p">)</span>
+
+    <span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+
+    <span class="c1"># Set initial conditions: pos = [1, 0, 0], vel = [0, omega, 0]</span>
+    <span class="n">osc</span><span class="o">.</span><span class="n">posState</span><span class="o">.</span><span class="n">setState</span><span class="p">([[</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]])</span>
+    <span class="n">osc</span><span class="o">.</span><span class="n">velState</span><span class="o">.</span><span class="n">setState</span><span class="p">([[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="n">omega</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]])</span>
+
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">tf</span><span class="p">))</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="n">pos</span> <span class="o">=</span> <span class="n">osc</span><span class="o">.</span><span class="n">posState</span><span class="o">.</span><span class="n">getState</span><span class="p">()</span>
+    <span class="n">vel</span> <span class="o">=</span> <span class="n">osc</span><span class="o">.</span><span class="n">velState</span><span class="o">.</span><span class="n">getState</span><span class="p">()</span>
+
+    <span class="n">expectedPos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">omega</span> <span class="o">*</span> <span class="n">tf</span><span class="p">)],</span>
+                              <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">omega</span> <span class="o">*</span> <span class="n">tf</span><span class="p">)],</span>
+                              <span class="p">[</span><span class="mf">0.0</span><span class="p">]])</span>
+    <span class="n">expectedVel</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="o">-</span><span class="n">omega</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">omega</span> <span class="o">*</span> <span class="n">tf</span><span class="p">)],</span>
+                              <span class="p">[</span> <span class="n">omega</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">omega</span> <span class="o">*</span> <span class="n">tf</span><span class="p">)],</span>
+                              <span class="p">[</span><span class="mf">0.0</span><span class="p">]])</span>
+
+    <span class="c1"># RK4 with dt=1ms should give ~1e-8 accuracy over 0.5 s</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">expectedPos</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">vel</span><span class="p">,</span> <span class="n">expectedVel</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_StatefulNumbaStateNames">
+<a class="viewcode-back" href="../Documentation/simulation/mujocoDynamics/_GeneralModuleFiles/_UnitTest/test_stateful_numba_model.html#test_stateful_numba_model.test_StatefulNumbaStateNames">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">skipif</span><span class="p">(</span><span class="ow">not</span> <span class="n">couldImport</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="s2">&quot;Compiled Basilisk without --mujoco or numba not available&quot;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_StatefulNumbaStateNames</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Tests that state names are prefixed with model tag and ID.&quot;&quot;&quot;</span>
+
+    <span class="k">class</span><span class="w"> </span><span class="nc">ScalarModel</span><span class="p">(</span><span class="n">StatefulNumbaModel</span><span class="o">.</span><span class="n">StatefulNumbaModel</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Minimal scalar state model used to verify generated state names.&quot;&quot;&quot;</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">registerStates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">registerer</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Register a single scalar state named ``x``.&quot;&quot;&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">xState</span> <span class="o">=</span> <span class="n">registerer</span><span class="o">.</span><span class="n">registerState</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;x&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">xState</span><span class="o">.</span><span class="n">setState</span><span class="p">([[</span><span class="mi">0</span><span class="p">]])</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">Reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">CurrentSimNanos</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Delegate to the base reset to compile and bind state pointers.&quot;&quot;&quot;</span>
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="n">CurrentSimNanos</span><span class="p">)</span>
+
+        <span class="nd">@staticmethod</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">UpdateStateImpl</span><span class="p">(</span><span class="n">xState</span><span class="p">,</span> <span class="n">xStateDeriv</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Set a constant unit derivative for the scalar state.&quot;&quot;&quot;</span>
+            <span class="n">xStateDeriv</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>   <span class="c1"># dx/dt = 1</span>
+
+    <span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">dynProcess</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">)</span>
+    <span class="n">dynProcess</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)))</span>
+
+    <span class="n">scene</span> <span class="o">=</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MJScene</span><span class="p">(</span><span class="s2">&quot;&lt;mujoco/&gt;&quot;</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">scene</span><span class="p">)</span>
+
+    <span class="n">model</span> <span class="o">=</span> <span class="n">ScalarModel</span><span class="p">()</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;myModel&quot;</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">AddModelToDynamicsTask</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+
+    <span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+
+    <span class="n">expectedName</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">model</span><span class="o">.</span><span class="n">ModelTag</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">model</span><span class="o">.</span><span class="n">moduleID</span><span class="si">}</span><span class="s2">_x&quot;</span>
+    <span class="k">assert</span> <span class="n">model</span><span class="o">.</span><span class="n">xState</span><span class="o">.</span><span class="n">getName</span><span class="p">()</span> <span class="o">==</span> <span class="n">expectedName</span><span class="p">,</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;State name </span><span class="si">{</span><span class="n">model</span><span class="o">.</span><span class="n">xState</span><span class="o">.</span><span class="n">getName</span><span class="p">()</span><span class="si">!r}</span><span class="s2"> != </span><span class="si">{</span><span class="n">expectedName</span><span class="si">!r}</span><span class="s2">&quot;</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_StatefulNumbaDiffusion">
+<a class="viewcode-back" href="../Documentation/simulation/mujocoDynamics/_GeneralModuleFiles/_UnitTest/test_stateful_numba_model.html#test_stateful_numba_model.test_StatefulNumbaDiffusion">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">skipif</span><span class="p">(</span><span class="ow">not</span> <span class="n">couldImport</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="s2">&quot;Compiled Basilisk without --mujoco or numba not available&quot;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_StatefulNumbaDiffusion</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Tests that xStateDiffusionN correctly wires to the StateData diffusion buffer.</span>
+
+<span class="sd">    We run a scalar Ornstein-Uhlenbeck process:</span>
+<span class="sd">        dx = theta*(mu - x)*dt + sigma*dW</span>
+
+<span class="sd">    once using StatefulNumbaModel (diffusion written via xStateDiffusion0 in</span>
+<span class="sd">    UpdateStateImpl) and once using StatefulSysModel (diffusion written via</span>
+<span class="sd">    setDiffusion in Python UpdateState).  With the same integrator seed both</span>
+<span class="sd">    simulations must produce bit-identical final states.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">svIntegrators</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">StatefulSysModel</span>
+
+    <span class="n">theta</span> <span class="o">=</span> <span class="mf">0.5</span>
+    <span class="n">mu</span>    <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">sigma</span> <span class="o">=</span> <span class="mf">0.1</span>
+    <span class="n">x0</span>    <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">dt</span>    <span class="o">=</span> <span class="mf">0.1</span>
+    <span class="n">tf</span>    <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">seed</span>  <span class="o">=</span> <span class="mi">42</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_make_sim</span><span class="p">():</span>
+        <span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span>
+            <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">dt</span><span class="p">))</span>
+        <span class="p">)</span>
+        <span class="n">scene</span> <span class="o">=</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MJScene</span><span class="p">(</span><span class="s2">&quot;&lt;mujoco/&gt;&quot;</span><span class="p">)</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">scene</span><span class="p">)</span>
+        <span class="n">intg</span> <span class="o">=</span> <span class="n">svIntegrators</span><span class="o">.</span><span class="n">svStochasticIntegratorMayurama</span><span class="p">(</span><span class="n">scene</span><span class="p">)</span>
+        <span class="n">intg</span><span class="o">.</span><span class="n">setRNGSeed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+        <span class="n">scene</span><span class="o">.</span><span class="n">setIntegrator</span><span class="p">(</span><span class="n">intg</span><span class="p">)</span>
+        <span class="c1"># intg must be returned: scene stores only a raw C++ pointer, so Python</span>
+        <span class="c1"># would GC the integrator before the simulation runs without this.</span>
+        <span class="k">return</span> <span class="n">scSim</span><span class="p">,</span> <span class="n">scene</span><span class="p">,</span> <span class="n">intg</span>
+
+    <span class="c1"># ---- Numba model: diffusion written via xStateDiffusion0 in cfunc ----</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">OuNumba</span><span class="p">(</span><span class="n">StatefulNumbaModel</span><span class="o">.</span><span class="n">StatefulNumbaModel</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Stateful Numba implementation of the scalar OU process.&quot;&quot;&quot;</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">registerStates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">registerer</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Register the scalar stochastic state and one noise source.&quot;&quot;&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">xState</span> <span class="o">=</span> <span class="n">registerer</span><span class="o">.</span><span class="n">registerState</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;x&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">xState</span><span class="o">.</span><span class="n">setNumNoiseSources</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="nd">@staticmethod</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">UpdateStateImpl</span><span class="p">(</span><span class="n">xState</span><span class="p">,</span> <span class="n">xStateDeriv</span><span class="p">,</span> <span class="n">xStateDiffusion0</span><span class="p">,</span> <span class="n">memory</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Write the OU drift and diffusion terms into the state buffers.&quot;&quot;&quot;</span>
+            <span class="n">xStateDeriv</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>      <span class="o">=</span> <span class="n">memory</span><span class="o">.</span><span class="n">theta</span> <span class="o">*</span> <span class="p">(</span><span class="n">memory</span><span class="o">.</span><span class="n">mu</span> <span class="o">-</span> <span class="n">xState</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+            <span class="n">xStateDiffusion0</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">memory</span><span class="o">.</span><span class="n">sigma</span>
+
+    <span class="n">scSimA</span><span class="p">,</span> <span class="n">sceneA</span><span class="p">,</span> <span class="n">intgA</span> <span class="o">=</span> <span class="n">_make_sim</span><span class="p">()</span>
+    <span class="n">modelA</span> <span class="o">=</span> <span class="n">OuNumba</span><span class="p">()</span>
+    <span class="n">modelA</span><span class="o">.</span><span class="n">ModelTag</span>     <span class="o">=</span> <span class="s2">&quot;ou_numba&quot;</span>
+    <span class="n">modelA</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">theta</span> <span class="o">=</span> <span class="n">theta</span>
+    <span class="n">modelA</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">mu</span>    <span class="o">=</span> <span class="n">mu</span>
+    <span class="n">modelA</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">sigma</span> <span class="o">=</span> <span class="n">sigma</span>
+    <span class="n">sceneA</span><span class="o">.</span><span class="n">AddModelToDynamicsTask</span><span class="p">(</span><span class="n">modelA</span><span class="p">)</span>
+    <span class="n">sceneA</span><span class="o">.</span><span class="n">AddModelToDiffusionDynamicsTask</span><span class="p">(</span><span class="n">modelA</span><span class="p">)</span>
+    <span class="n">scSimA</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">modelA</span><span class="o">.</span><span class="n">xState</span><span class="o">.</span><span class="n">setState</span><span class="p">([[</span><span class="n">x0</span><span class="p">]])</span>
+    <span class="n">scSimA</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">tf</span><span class="p">))</span>
+    <span class="n">scSimA</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+    <span class="n">xNumba</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">modelA</span><span class="o">.</span><span class="n">xState</span><span class="o">.</span><span class="n">getState</span><span class="p">())[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># ---- Reference: plain StatefulSysModel using setDiffusion in Python ----</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">OuStateful</span><span class="p">(</span><span class="n">StatefulSysModel</span><span class="o">.</span><span class="n">StatefulSysModel</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reference Python StatefulSysModel implementation of the OU process.&quot;&quot;&quot;</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">registerStates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">registerer</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Register the scalar stochastic state and one noise source.&quot;&quot;&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">xState</span> <span class="o">=</span> <span class="n">registerer</span><span class="o">.</span><span class="n">registerState</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;x&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">xState</span><span class="o">.</span><span class="n">setNumNoiseSources</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">UpdateState</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">CurrentSimNanos</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Update the OU drift and diffusion using the Python API.&quot;&quot;&quot;</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xState</span><span class="o">.</span><span class="n">getState</span><span class="p">())[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">xState</span><span class="o">.</span><span class="n">setDerivative</span><span class="p">([[</span><span class="n">theta</span> <span class="o">*</span> <span class="p">(</span><span class="n">mu</span> <span class="o">-</span> <span class="n">x</span><span class="p">)]])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">xState</span><span class="o">.</span><span class="n">setDiffusion</span><span class="p">([[</span><span class="n">sigma</span><span class="p">]],</span> <span class="n">index</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">scSimB</span><span class="p">,</span> <span class="n">sceneB</span><span class="p">,</span> <span class="n">intgB</span> <span class="o">=</span> <span class="n">_make_sim</span><span class="p">()</span>
+    <span class="n">modelB</span> <span class="o">=</span> <span class="n">OuStateful</span><span class="p">()</span>
+    <span class="n">modelB</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;ou_stateful&quot;</span>
+    <span class="n">sceneB</span><span class="o">.</span><span class="n">AddModelToDynamicsTask</span><span class="p">(</span><span class="n">modelB</span><span class="p">)</span>
+    <span class="n">sceneB</span><span class="o">.</span><span class="n">AddModelToDiffusionDynamicsTask</span><span class="p">(</span><span class="n">modelB</span><span class="p">)</span>
+    <span class="n">scSimB</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">modelB</span><span class="o">.</span><span class="n">xState</span><span class="o">.</span><span class="n">setState</span><span class="p">([[</span><span class="n">x0</span><span class="p">]])</span>
+    <span class="n">scSimB</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">tf</span><span class="p">))</span>
+    <span class="n">scSimB</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+    <span class="n">xStateful</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">modelB</span><span class="o">.</span><span class="n">xState</span><span class="o">.</span><span class="n">getState</span><span class="p">())[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">xNumba</span><span class="p">,</span> <span class="n">xStateful</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-14</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">test_StatefulNumbaDiffusion</span><span class="p">()</span>
+    <span class="k">if</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">test_StatefulNumbaOscillator</span><span class="p">()</span>
+        <span class="n">test_StatefulNumbaStateNames</span><span class="p">()</span>
+        <span class="n">test_StatefulNumbaDiffusion</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">main</span><span class="p">([</span><span class="vm">__file__</span><span class="p">])</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

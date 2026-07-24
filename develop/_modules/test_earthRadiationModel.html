@@ -1,0 +1,836 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_earthRadiationModel &mdash; Basilisk 2.12.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=2ebb1c42" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=4ad2e773"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">test_earthRadiationModel</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for test_earthRadiationModel</h1><div class="highlight"><pre>
+<span></span><span class="c1"># ISC License</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright (c) 2026, PIC4SeR &amp; AVS Lab, Politecnico di Torino &amp; Argotec S.R.L., University of Colorado Boulder</span>
+<span class="c1">#</span>
+<span class="c1"># Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1"># purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1"># copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1"># THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1"># WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1"># MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1"># ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1"># WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1"># ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1"># OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Unit tests for earthRadiationModel.</span>
+
+<span class="sd">Test geometry (all tests unless noted)</span>
+<span class="sd">---------------------------------------</span>
+<span class="sd">  Earth at origin (planet-fixed = inertial, J20002Pfix = I)</span>
+<span class="sd">  Sun at (+AU, 0, 0)  → sunlit side: +x hemisphere</span>
+<span class="sd">  Satellite at (0, REQ+600 [km], 0)  → visible side: +y hemisphere</span>
+<span class="sd">  Overlap (first quadrant lon 0-90°) → albedoFlux &gt; 0, irFlux &gt; 0</span>
+
+<span class="sd">Physics expected values (approximate, for sanity-check only)</span>
+<span class="sd">-------------------------------------------------------------</span>
+<span class="sd">  irFlux  ~ OLR/(pi) * solid_angle_of_Earth  ~ O(50) W/m^2</span>
+<span class="sd">  albedoFlux &gt; 0 (sunlit + visible patches exist)</span>
+<span class="sd">  Both direction vectors are unit vectors when flux &gt; 0</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk</span><span class="w"> </span><span class="kn">import</span> <span class="n">__path__</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">bskLogging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture.bskLogging</span><span class="w"> </span><span class="kn">import</span> <span class="n">BasiliskError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">earthRadiationModel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span><span class="p">,</span> <span class="n">macros</span><span class="p">,</span> <span class="n">orbitalMotion</span> <span class="k">as</span> <span class="n">om</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities.supportDataTools.dataFetcher</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataFile</span><span class="p">,</span> <span class="n">get_path</span>
+
+<span class="n">bskPath</span> <span class="o">=</span> <span class="n">__path__</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="n">REQ_EARTH_KM</span> <span class="o">=</span> <span class="n">om</span><span class="o">.</span><span class="n">REQ_EARTH</span>  <span class="c1"># [km]</span>
+<span class="n">RP_EARTH_KM</span>  <span class="o">=</span> <span class="n">om</span><span class="o">.</span><span class="n">RP_EARTH</span>  <span class="c1"># [km]</span>
+<span class="n">REQ_EARTH_M</span>  <span class="o">=</span> <span class="n">REQ_EARTH_KM</span> <span class="o">*</span> <span class="mf">1000.0</span>
+<span class="n">RP_EARTH_M</span>   <span class="o">=</span> <span class="n">RP_EARTH_KM</span>  <span class="o">*</span> <span class="mf">1000.0</span>
+<span class="n">ALT_M</span>        <span class="o">=</span> <span class="mf">600.0e3</span> <span class="c1"># [m] altitude</span>
+
+<span class="c1"># Radiation constants matching planetRadiationBase defaults and astroConstants.h</span>
+<span class="n">S0_WM2</span>         <span class="o">=</span> <span class="mf">1361.0</span>             <span class="c1"># [W/m^2], solar irradiance at 1 AU (PRB_S0_WM2)</span>
+<span class="n">AU2M</span>           <span class="o">=</span> <span class="n">om</span><span class="o">.</span><span class="n">AU</span> <span class="o">*</span> <span class="mf">1000.0</span>     <span class="c1"># [m], 1 AU (AU from astroConstants is in [km])</span>
+<span class="n">OLR_DEFAULT</span>    <span class="o">=</span> <span class="mf">237.0</span>              <span class="c1"># [W/m^2], default irFluxMean</span>
+<span class="n">ALBEDO_DEFAULT</span> <span class="o">=</span> <span class="mf">0.30</span>               <span class="c1"># default albedoAvg</span>
+<span class="n">NLAT_DEFAULT</span>   <span class="o">=</span> <span class="mi">180</span>
+<span class="n">NLON_DEFAULT</span>   <span class="o">=</span> <span class="mi">360</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_run_sim</span><span class="p">(</span><span class="n">useAlbedoData</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">nLat</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">nLon</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+             <span class="n">eclipseCase</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">sunPos_N</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">scPos_N</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create and step the earthRadiationModel module once.</span>
+
+<span class="sd">    Returns the recorded EarthRadiationMsgPayload after one timestep.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">sim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">proc</span> <span class="o">=</span> <span class="n">sim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="s2">&quot;testProc&quot;</span><span class="p">)</span>
+    <span class="n">proc</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">sim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">&quot;testTask&quot;</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)))</span>
+
+    <span class="n">erm</span> <span class="o">=</span> <span class="n">earthRadiationModel</span><span class="o">.</span><span class="n">EarthRadiationModel</span><span class="p">()</span>
+    <span class="n">erm</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;earthRadiation&quot;</span>
+
+    <span class="k">if</span> <span class="n">nLat</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">erm</span><span class="o">.</span><span class="n">defaultNumLat</span> <span class="o">=</span> <span class="n">nLat</span>
+    <span class="k">if</span> <span class="n">nLon</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">erm</span><span class="o">.</span><span class="n">defaultNumLon</span> <span class="o">=</span> <span class="n">nLon</span>
+
+    <span class="k">if</span> <span class="n">eclipseCase</span><span class="p">:</span>
+        <span class="n">erm</span><span class="o">.</span><span class="n">bskLogger</span><span class="o">.</span><span class="n">setLogLevel</span><span class="p">(</span><span class="n">bskLogging</span><span class="o">.</span><span class="n">BSK_ERROR</span><span class="p">)</span>
+        <span class="n">erm</span><span class="o">.</span><span class="n">setEclipseCase</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Default 180×360 grid, Bond albedo 0.30, OLR 237 W/m^2</span>
+    <span class="k">if</span> <span class="n">useAlbedoData</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">get_path</span><span class="p">(</span><span class="n">DataFile</span><span class="o">.</span><span class="n">AlbedoData</span><span class="o">.</span><span class="n">Earth_ALB_2018_CERES_All_1x1</span><span class="p">)</span>
+        <span class="n">erm</span><span class="o">.</span><span class="n">albedoDataPath</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">parent</span><span class="p">)</span>
+        <span class="n">erm</span><span class="o">.</span><span class="n">albedoDataFile</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">name</span>
+
+    <span class="c1"># --- Earth message ---</span>
+    <span class="n">earthPayload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsgPayload</span><span class="p">()</span>
+    <span class="n">earthPayload</span><span class="o">.</span><span class="n">PositionVector</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+    <span class="n">earthPayload</span><span class="o">.</span><span class="n">PlanetName</span>     <span class="o">=</span> <span class="s2">&quot;earth&quot;</span>
+    <span class="c1"># planet-fixed frame = inertial (identity rotation)</span>
+    <span class="n">earthPayload</span><span class="o">.</span><span class="n">J20002Pfix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">earthMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">earthPayload</span><span class="p">)</span>
+    <span class="n">erm</span><span class="o">.</span><span class="n">planetInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">earthMsg</span><span class="p">)</span>
+
+    <span class="c1"># --- Sun message ---</span>
+    <span class="n">sunPayload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsgPayload</span><span class="p">()</span>
+    <span class="n">sunPayload</span><span class="o">.</span><span class="n">PositionVector</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">sunPos_N</span><span class="p">)</span> <span class="k">if</span> <span class="n">sunPos_N</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> \
+                                <span class="k">else</span> <span class="p">[</span><span class="n">om</span><span class="o">.</span><span class="n">AU</span> <span class="o">*</span> <span class="mf">1000.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+    <span class="n">sunMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">sunPayload</span><span class="p">)</span>
+    <span class="n">erm</span><span class="o">.</span><span class="n">sunPositionInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">sunMsg</span><span class="p">)</span>
+
+    <span class="c1"># --- Spacecraft message ---</span>
+    <span class="n">scPayload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsgPayload</span><span class="p">()</span>
+    <span class="n">scPayload</span><span class="o">.</span><span class="n">r_BN_N</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">scPos_N</span><span class="p">)</span> <span class="k">if</span> <span class="n">scPos_N</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> \
+                       <span class="k">else</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">REQ_EARTH_M</span> <span class="o">+</span> <span class="n">ALT_M</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+    <span class="n">scMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">scPayload</span><span class="p">)</span>
+    <span class="n">erm</span><span class="o">.</span><span class="n">spacecraftStateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">scMsg</span><span class="p">)</span>
+
+    <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;testTask&quot;</span><span class="p">,</span> <span class="n">erm</span><span class="p">)</span>
+    <span class="n">dataLog</span> <span class="o">=</span> <span class="n">erm</span><span class="o">.</span><span class="n">earthRadiationOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;testTask&quot;</span><span class="p">,</span> <span class="n">dataLog</span><span class="p">)</span>
+
+    <span class="n">sim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">SingleStepProcesses</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">dataLog</span>
+
+
+<span class="c1"># ------------------------------------------------------------------ #</span>
+<span class="c1"># Test 1: ALBEDO_AVG mode — basic physics                             #</span>
+<span class="c1"># ------------------------------------------------------------------ #</span>
+<div class="viewcode-block" id="test_earthRadiation_albedoAvg_physicsChecks">
+<a class="viewcode-back" href="../Documentation/simulation/environment/earthRadiationModel/_UnitTest/test_earthRadiationModel.html#test_earthRadiationModel.test_earthRadiation_albedoAvg_physicsChecks">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_earthRadiation_albedoAvg_physicsChecks</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    albedoFlux and irFlux are positive; direction vectors are unit vectors.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">log</span> <span class="o">=</span> <span class="n">_run_sim</span><span class="p">(</span><span class="n">useAlbedoData</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="n">albFlux</span> <span class="o">=</span> <span class="n">log</span><span class="o">.</span><span class="n">albedoFlux</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">irFlux</span>  <span class="o">=</span> <span class="n">log</span><span class="o">.</span><span class="n">irFlux</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">albDir</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">log</span><span class="o">.</span><span class="n">albedoDir_N</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">irDir</span>   <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">log</span><span class="o">.</span><span class="n">irDir_N</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="c1"># Both flux channels must be positive for this geometry</span>
+    <span class="k">assert</span> <span class="n">albFlux</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;albedoFlux should be &gt; 0, got </span><span class="si">{</span><span class="n">albFlux</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">assert</span> <span class="n">irFlux</span>  <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;irFlux should be &gt; 0, got </span><span class="si">{</span><span class="n">irFlux</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="c1"># Albedo flux at 600 [km] should be O(10) W/m^2 — sanity bound</span>
+    <span class="k">assert</span> <span class="n">albFlux</span> <span class="o">&lt;</span> <span class="mf">1000.0</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;albedoFlux unrealistically large: </span><span class="si">{</span><span class="n">albFlux</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">assert</span> <span class="n">irFlux</span>  <span class="o">&lt;</span> <span class="mf">1000.0</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;irFlux unrealistically large: </span><span class="si">{</span><span class="n">irFlux</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="c1"># Direction vectors must be unit vectors (within float tolerance)</span>
+    <span class="n">albNorm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">albDir</span><span class="p">)</span>
+    <span class="n">irNorm</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">irDir</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">abs</span><span class="p">(</span><span class="n">albNorm</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-10</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;|albedoDir_N| = </span><span class="si">{</span><span class="n">albNorm</span><span class="si">}</span><span class="s2">, expected 1&quot;</span>
+    <span class="k">assert</span> <span class="nb">abs</span><span class="p">(</span><span class="n">irNorm</span>  <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-10</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;|irDir_N| = </span><span class="si">{</span><span class="n">irNorm</span><span class="si">}</span><span class="s2">, expected 1&quot;</span></div>
+
+
+
+<span class="c1"># ------------------------------------------------------------------ #</span>
+<span class="c1"># Test 2: ALBEDO_DATA mode — non-zero output with CERES data          #</span>
+<span class="c1"># ------------------------------------------------------------------ #</span>
+<div class="viewcode-block" id="test_earthRadiation_albedoData_nonzero">
+<a class="viewcode-back" href="../Documentation/simulation/environment/earthRadiationModel/_UnitTest/test_earthRadiationModel.html#test_earthRadiationModel.test_earthRadiation_albedoData_nonzero">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_earthRadiation_albedoData_nonzero</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    With CERES albedo data, albedoFlux must remain positive.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">log</span> <span class="o">=</span> <span class="n">_run_sim</span><span class="p">(</span><span class="n">useAlbedoData</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">albFlux</span> <span class="o">=</span> <span class="n">log</span><span class="o">.</span><span class="n">albedoFlux</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">irFlux</span>  <span class="o">=</span> <span class="n">log</span><span class="o">.</span><span class="n">irFlux</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">assert</span> <span class="n">albFlux</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;albedoFlux should be &gt; 0 with CERES data, got </span><span class="si">{</span><span class="n">albFlux</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">assert</span> <span class="n">irFlux</span>  <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;irFlux should be &gt; 0 with CERES data, got </span><span class="si">{</span><span class="n">irFlux</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+
+
+<span class="c1"># ------------------------------------------------------------------ #</span>
+<span class="c1"># Test 3: Direction geometry — rough check                            #</span>
+<span class="c1"># ------------------------------------------------------------------ #</span>
+<div class="viewcode-block" id="test_earthRadiation_direction_toward_earth">
+<a class="viewcode-back" href="../Documentation/simulation/environment/earthRadiationModel/_UnitTest/test_earthRadiationModel.html#test_earthRadiationModel.test_earthRadiation_direction_toward_earth">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_earthRadiation_direction_toward_earth</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The net force direction from ERP points roughly from satellite toward Earth</span>
+<span class="sd">    (i.e. the radiation comes from Earth).  With the satellite on the +y axis,</span>
+<span class="sd">    irDir_N should have a dominant negative-y component.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">log</span> <span class="o">=</span> <span class="n">_run_sim</span><span class="p">(</span><span class="n">useAlbedoData</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">irDir</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">log</span><span class="o">.</span><span class="n">irDir_N</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="c1"># Satellite at (0, +y, 0); most IR comes from below (-y hemisphere relative</span>
+    <span class="c1"># to satellite) so dir_N (patch-&gt;sat) has positive y, hence irDir_N has +y.</span>
+    <span class="c1"># The net weighted direction from patches visible from +y satellite:</span>
+    <span class="c1"># all visible patches have dir_N pointing toward +y (up), so irDir_N[1] &gt; 0.</span>
+    <span class="k">assert</span> <span class="n">irDir</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">,</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;irDir_N[1] expected &gt; 0 (satellite on +y axis, patches push upward), &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;got </span><span class="si">{</span><span class="n">irDir</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span></div>
+
+
+
+<span class="c1"># ------------------------------------------------------------------ #</span>
+<span class="c1"># Test 4: Reset() error — unlinked messages                           #</span>
+<span class="c1"># ------------------------------------------------------------------ #</span>
+<div class="viewcode-block" id="test_earthRadiation_unlinked_messages">
+<a class="viewcode-back" href="../Documentation/simulation/environment/earthRadiationModel/_UnitTest/test_earthRadiationModel.html#test_earthRadiationModel.test_earthRadiation_unlinked_messages">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_earthRadiation_unlinked_messages</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reset() must raise BSK_ERROR (BasiliskError) when messages are unlinked.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">erm</span> <span class="o">=</span> <span class="n">earthRadiationModel</span><span class="o">.</span><span class="n">EarthRadiationModel</span><span class="p">()</span>
+    <span class="n">erm</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;earthRadiationUnlinked&quot;</span>
+
+    <span class="c1"># No messages linked — Reset() should log BSK_ERROR =&gt; raises BasiliskError</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">BasiliskError</span><span class="p">):</span>
+        <span class="n">erm</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># ------------------------------------------------------------------ #</span>
+<span class="c1"># Test 5: ALBEDO_DATA missing file raises                             #</span>
+<span class="c1"># ------------------------------------------------------------------ #</span>
+<div class="viewcode-block" id="test_earthRadiation_invalid_albedo_file">
+<a class="viewcode-back" href="../Documentation/simulation/environment/earthRadiationModel/_UnitTest/test_earthRadiationModel.html#test_earthRadiationModel.test_earthRadiation_invalid_albedo_file">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_earthRadiation_invalid_albedo_file</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Providing a nonexistent albedo file must raise an error in Reset().</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">sim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">proc</span> <span class="o">=</span> <span class="n">sim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="s2">&quot;testProc&quot;</span><span class="p">)</span>
+    <span class="n">proc</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">sim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">&quot;testTask&quot;</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)))</span>
+
+    <span class="n">erm</span> <span class="o">=</span> <span class="n">earthRadiationModel</span><span class="o">.</span><span class="n">EarthRadiationModel</span><span class="p">()</span>
+    <span class="n">erm</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;erm_badfile&quot;</span>
+    <span class="n">erm</span><span class="o">.</span><span class="n">albedoDataPath</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">)</span>
+    <span class="n">erm</span><span class="o">.</span><span class="n">albedoDataFile</span> <span class="o">=</span> <span class="s2">&quot;does_not_exist.csv&quot;</span>
+
+    <span class="c1"># Link messages so the linkage check passes</span>
+    <span class="n">earthPayload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsgPayload</span><span class="p">()</span>
+    <span class="n">earthPayload</span><span class="o">.</span><span class="n">J20002Pfix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">earthMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">earthPayload</span><span class="p">)</span>
+    <span class="n">erm</span><span class="o">.</span><span class="n">planetInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">earthMsg</span><span class="p">)</span>
+
+    <span class="n">sunPayload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsgPayload</span><span class="p">()</span>
+    <span class="n">sunMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">sunPayload</span><span class="p">)</span>
+    <span class="n">erm</span><span class="o">.</span><span class="n">sunPositionInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">sunMsg</span><span class="p">)</span>
+
+    <span class="n">scPayload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsgPayload</span><span class="p">()</span>
+    <span class="n">scMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">scPayload</span><span class="p">)</span>
+    <span class="n">erm</span><span class="o">.</span><span class="n">spacecraftStateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">scMsg</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">BasiliskError</span><span class="p">):</span>
+        <span class="n">erm</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># ================================================================= #</span>
+<span class="c1"># Validation helpers                                                #</span>
+<span class="c1"># ================================================================= #</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_authalic_radius</span><span class="p">(</span><span class="n">REQ_m</span><span class="p">,</span> <span class="n">RP_m</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Authalic (equal-area) sphere radius.</span>
+
+<span class="sd">    Mirrors `PlanetRadiationBase::Reset()` in ``planetRadiationBase.cpp``:</span>
+
+<span class="sd">    .. code-block:: none</span>
+
+<span class="sd">        e  = sqrt(1 - (RP/REQ)^2)</span>
+<span class="sd">        R  = sqrt( REQ^2 * 0.5 * (1 + (1-e^2)/(2e) * ln((1+e)/(1-e))) )</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">e</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="p">(</span><span class="n">RP_m</span> <span class="o">/</span> <span class="n">REQ_m</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span>
+        <span class="n">REQ_m</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="mf">0.5</span>
+        <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">e</span> <span class="o">*</span> <span class="n">e</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">e</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">((</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">e</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">e</span><span class="p">)))</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_python_lambertian</span><span class="p">(</span><span class="n">r_sat_N</span><span class="p">,</span> <span class="n">r_sun_N</span><span class="p">,</span> <span class="n">r_planet_N</span><span class="p">,</span> <span class="n">J20002Pfix</span><span class="p">,</span>
+                       <span class="n">R_planet</span><span class="p">,</span> <span class="n">OLR</span><span class="p">,</span> <span class="n">S_sun</span><span class="p">,</span> <span class="n">nLat</span><span class="p">,</span> <span class="n">nLon</span><span class="p">,</span> <span class="n">albedo_grid</span><span class="p">,</span>
+                       <span class="n">REQ_m</span><span class="p">,</span> <span class="n">RP_m</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Pure NumPy reimplementation of the Lambertian patch model.</span>
+
+<span class="sd">    Mirrors:</span>
+
+<span class="sd">    - `PlanetGrid::initialize()` (``planetRadiationBase.cpp``)</span>
+<span class="sd">    - `PlanetGrid::computePatches()` (``planetRadiationBase.cpp``)</span>
+<span class="sd">    - `EarthRadiationModel::evaluateModel()` (``earthRadiationModel.cpp``)</span>
+
+<span class="sd">    The DCM convention follows ``avsEigenSupport.cpp``:</span>
+<span class="sd">    ``Eigen::Map&lt;MatrixXd&gt;(row-major C array, n, n)`` interprets the C</span>
+<span class="sd">    row-major layout as column-major, yielding the transpose.</span>
+<span class="sd">    Hence ``dcm_NP = J20002Pfix.T``.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    J20002Pfix : (3, 3) ndarray, same row-major layout as</span>
+<span class="sd">                 `SpicePlanetStateMsgPayload.J20002Pfix`</span>
+<span class="sd">    albedo_grid : (nLat, nLon) ndarray of per-patch albedo values</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple of (albedoFlux, irFlux) in W/m^2</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># ---- authalic correction coefficients [cpp:88-95] ---------------</span>
+    <span class="n">t_aut</span>   <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">has_aut</span> <span class="o">=</span> <span class="p">(</span><span class="n">REQ_m</span> <span class="o">&gt;</span> <span class="mf">0.0</span> <span class="ow">and</span> <span class="n">RP_m</span> <span class="o">&gt;</span> <span class="mf">0.0</span> <span class="ow">and</span> <span class="n">REQ_m</span> <span class="o">!=</span> <span class="n">RP_m</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">has_aut</span><span class="p">:</span>
+        <span class="n">e</span>  <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="p">(</span><span class="n">RP_m</span> <span class="o">/</span> <span class="n">REQ_m</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">e2</span><span class="p">,</span> <span class="n">e4</span><span class="p">,</span> <span class="n">e6</span> <span class="o">=</span> <span class="n">e</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">e</span><span class="o">**</span><span class="mi">4</span><span class="p">,</span> <span class="n">e</span><span class="o">**</span><span class="mi">6</span>
+        <span class="n">t_aut</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">e2</span> <span class="o">/</span> <span class="mf">3.0</span>       <span class="o">+</span> <span class="mf">31.0</span> <span class="o">*</span> <span class="n">e4</span> <span class="o">/</span> <span class="mf">180.0</span>  <span class="o">+</span> <span class="mf">59.0</span>  <span class="o">*</span> <span class="n">e6</span> <span class="o">/</span> <span class="mf">560.0</span>
+        <span class="n">t_aut</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mf">17.0</span> <span class="o">*</span> <span class="n">e4</span> <span class="o">/</span> <span class="mf">360.0</span> <span class="o">+</span> <span class="mf">61.0</span> <span class="o">*</span> <span class="n">e6</span> <span class="o">/</span> <span class="mf">1260.0</span>
+        <span class="n">t_aut</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mf">383.0</span> <span class="o">*</span> <span class="n">e6</span> <span class="o">/</span> <span class="mf">45360.0</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_aut</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">has_aut</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">x</span>
+        <span class="k">return</span> <span class="n">x</span> <span class="o">-</span> <span class="p">(</span><span class="n">t_aut</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">x</span><span class="p">)</span>
+                    <span class="o">-</span> <span class="n">t_aut</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mf">4.0</span> <span class="o">*</span> <span class="n">x</span><span class="p">)</span>
+                    <span class="o">+</span> <span class="n">t_aut</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mf">6.0</span> <span class="o">*</span> <span class="n">x</span><span class="p">))</span>
+
+    <span class="c1"># ---- lat/lon grid [cpp:130-138] ----------------------------------</span>
+    <span class="n">latDiff</span> <span class="o">=</span> <span class="p">(</span><span class="mf">180.0</span> <span class="o">/</span> <span class="n">nLat</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">180.0</span>
+    <span class="n">lonDiff</span> <span class="o">=</span> <span class="p">(</span><span class="mf">360.0</span> <span class="o">/</span> <span class="n">nLon</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">180.0</span>
+    <span class="n">halfLat</span><span class="p">,</span> <span class="n">halfLon</span> <span class="o">=</span> <span class="n">nLat</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="n">nLon</span> <span class="o">//</span> <span class="mi">2</span>
+    <span class="n">gdlat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([(</span><span class="n">i</span> <span class="o">-</span> <span class="n">halfLat</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">*</span> <span class="n">latDiff</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nLat</span><span class="p">)])</span>
+    <span class="n">gdlon</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([(</span><span class="n">j</span> <span class="o">-</span> <span class="n">halfLon</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">*</span> <span class="n">lonDiff</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nLon</span><span class="p">)])</span>
+
+    <span class="c1"># ---- DCM [avsEigenSupport.cpp:111] -------------------------------</span>
+    <span class="n">dcm_NP</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">J20002Pfix</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+
+    <span class="n">r_sat</span>    <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">r_sat_N</span><span class="p">,</span>    <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">r_sun</span>    <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">r_sun_N</span><span class="p">,</span>    <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">r_planet</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">r_planet_N</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+    <span class="n">rs_sat</span> <span class="o">=</span> <span class="n">r_sat</span> <span class="o">-</span> <span class="n">r_planet</span>
+    <span class="n">rs_sun</span> <span class="o">=</span> <span class="n">r_sun</span> <span class="o">-</span> <span class="n">r_planet</span>
+
+    <span class="n">R2</span><span class="p">,</span> <span class="n">inv_pi</span> <span class="o">=</span> <span class="n">R_planet</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span>
+    <span class="n">alb_flat</span>   <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">albedo_grid</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>  <span class="c1"># row-major k = ilat*nLon+ilon</span>
+
+    <span class="n">alb_sum</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">ir_sum</span>  <span class="o">=</span> <span class="mf">0.0</span>
+
+    <span class="k">for</span> <span class="n">ilat</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nLat</span><span class="p">):</span>
+        <span class="n">lat</span>  <span class="o">=</span> <span class="n">gdlat</span><span class="p">[</span><span class="n">ilat</span><span class="p">]</span>
+        <span class="n">lat1</span> <span class="o">=</span> <span class="n">_aut</span><span class="p">(</span><span class="n">lat</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">latDiff</span><span class="p">)</span>
+        <span class="n">lat2</span> <span class="o">=</span> <span class="n">_aut</span><span class="p">(</span><span class="n">lat</span> <span class="o">-</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">latDiff</span><span class="p">)</span>
+        <span class="n">normArea</span>  <span class="o">=</span> <span class="n">lonDiff</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">lat1</span><span class="p">)</span> <span class="o">-</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">lat2</span><span class="p">))</span>
+        <span class="n">dA</span>        <span class="o">=</span> <span class="n">normArea</span> <span class="o">*</span> <span class="n">R2</span>
+        <span class="n">cosLat</span><span class="p">,</span> <span class="n">sinLat</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">lat</span><span class="p">),</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">lat</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">ilon</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nLon</span><span class="p">):</span>
+            <span class="n">lon</span> <span class="o">=</span> <span class="n">gdlon</span><span class="p">[</span><span class="n">ilon</span><span class="p">]</span>
+            <span class="n">dir_P</span>   <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">cosLat</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">lon</span><span class="p">),</span>
+                                 <span class="n">cosLat</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">lon</span><span class="p">),</span>
+                                 <span class="n">sinLat</span><span class="p">])</span>
+            <span class="n">r_dAP_N</span> <span class="o">=</span> <span class="n">R_planet</span> <span class="o">*</span> <span class="p">(</span><span class="n">dcm_NP</span> <span class="o">@</span> <span class="n">dir_P</span><span class="p">)</span>
+            <span class="n">n_hat</span>   <span class="o">=</span> <span class="n">r_dAP_N</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">r_dAP_N</span><span class="p">)</span>
+
+            <span class="n">r_IdA</span> <span class="o">=</span> <span class="n">rs_sat</span> <span class="o">-</span> <span class="n">r_dAP_N</span>
+            <span class="n">d</span>     <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">r_IdA</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">d</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">rHat</span>    <span class="o">=</span> <span class="n">r_IdA</span> <span class="o">/</span> <span class="n">d</span>
+            <span class="n">cos_sat</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">n_hat</span> <span class="o">@</span> <span class="n">rHat</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">cos_sat</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="n">ir_sum</span> <span class="o">+=</span> <span class="p">(</span><span class="n">OLR</span> <span class="o">*</span> <span class="n">inv_pi</span><span class="p">)</span> <span class="o">*</span> <span class="n">cos_sat</span> <span class="o">*</span> <span class="n">dA</span> <span class="o">/</span> <span class="p">(</span><span class="n">d</span> <span class="o">*</span> <span class="n">d</span><span class="p">)</span>
+
+            <span class="n">r_SdA</span>  <span class="o">=</span> <span class="n">rs_sun</span> <span class="o">-</span> <span class="n">r_dAP_N</span>
+            <span class="n">r_SdA_n</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">r_SdA</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">r_SdA_n</span> <span class="o">&gt;</span> <span class="mf">1.0</span><span class="p">:</span>
+                <span class="n">cos_sun</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">n_hat</span> <span class="o">@</span> <span class="p">(</span><span class="n">r_SdA</span> <span class="o">/</span> <span class="n">r_SdA_n</span><span class="p">))</span>
+                <span class="k">if</span> <span class="n">cos_sun</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+                    <span class="n">k</span> <span class="o">=</span> <span class="n">ilat</span> <span class="o">*</span> <span class="n">nLon</span> <span class="o">+</span> <span class="n">ilon</span>
+                    <span class="n">alb_sum</span> <span class="o">+=</span> <span class="p">((</span><span class="n">S_sun</span> <span class="o">*</span> <span class="n">inv_pi</span><span class="p">)</span> <span class="o">*</span> <span class="n">alb_flat</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+                                <span class="o">*</span> <span class="n">cos_sun</span> <span class="o">*</span> <span class="n">cos_sat</span> <span class="o">*</span> <span class="n">dA</span> <span class="o">/</span> <span class="p">(</span><span class="n">d</span> <span class="o">*</span> <span class="n">d</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">alb_sum</span><span class="p">,</span> <span class="n">ir_sum</span>
+
+
+<span class="c1"># ================================================================= #</span>
+<span class="c1"># Test 6: Analytical closed-form IR reference                        #</span>
+<span class="c1"># ================================================================= #</span>
+
+<div class="viewcode-block" id="test_earthRadiation_analytical_ir">
+<a class="viewcode-back" href="../Documentation/simulation/environment/earthRadiationModel/_UnitTest/test_earthRadiationModel.html#test_earthRadiationModel.test_earthRadiation_analytical_ir">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_earthRadiation_analytical_ir</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Validate `irFlux` against the exact Lambertian-sphere closed form.</span>
+
+<span class="sd">    Derivation (integrating the patch kernel over the visible hemisphere):</span>
+
+<span class="sd">    .. code-block:: none</span>
+
+<span class="sd">        F_IR = (OLR/pi) * integral_{visible} cos_sat * dA / d^2</span>
+<span class="sd">             = 2 * OLR * (1 - sqrt(1 - (R_aut/D)^2))</span>
+
+<span class="sd">    This result is independent of the albedo model since `OLR` is spatially</span>
+<span class="sd">    uniform in both avg and CERES-data configurations.</span>
+
+<span class="sd">    .. note::</span>
+
+<span class="sd">        The far-field approximation ``OLR*(R/D)^2`` is only valid for ``D &gt;&gt; R``.</span>
+<span class="sd">        At 600 km LEO, ``R/D ~ 0.91`` so the far-field error is ~30 %;</span>
+<span class="sd">        the exact formula above is used here.</span>
+
+<span class="sd">    A fine grid (``nLat=180``, ``nLon=360``, 1-degree resolution) is used so</span>
+<span class="sd">    that the midpoint-rule discretisation error is &lt; 0.3 %, well below the</span>
+<span class="sd">    assertion tolerance of 1 %.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">log</span> <span class="o">=</span> <span class="n">_run_sim</span><span class="p">(</span><span class="n">useAlbedoData</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">nLat</span><span class="o">=</span><span class="mi">180</span><span class="p">,</span> <span class="n">nLon</span><span class="o">=</span><span class="mi">360</span><span class="p">)</span>
+    <span class="n">ir_bsk</span> <span class="o">=</span> <span class="n">log</span><span class="o">.</span><span class="n">irFlux</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">R_aut</span>  <span class="o">=</span> <span class="n">_authalic_radius</span><span class="p">(</span><span class="n">REQ_EARTH_M</span><span class="p">,</span> <span class="n">RP_EARTH_M</span><span class="p">)</span>
+    <span class="n">D</span>      <span class="o">=</span> <span class="n">REQ_EARTH_M</span> <span class="o">+</span> <span class="n">ALT_M</span>
+    <span class="n">ir_ref</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">OLR_DEFAULT</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="p">(</span><span class="n">R_aut</span> <span class="o">/</span> <span class="n">D</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span>
+
+    <span class="n">tol</span>     <span class="o">=</span> <span class="mf">0.01</span>   <span class="c1"># 1 % — covers &lt;0.3 % grid error + floating-point noise</span>
+    <span class="n">rel_err</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">ir_bsk</span> <span class="o">-</span> <span class="n">ir_ref</span><span class="p">)</span> <span class="o">/</span> <span class="n">ir_ref</span>
+    <span class="k">assert</span> <span class="n">rel_err</span> <span class="o">&lt;</span> <span class="n">tol</span><span class="p">,</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;irFlux=</span><span class="si">{</span><span class="n">ir_bsk</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> W/m^2 vs analytical </span><span class="si">{</span><span class="n">ir_ref</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> W/m^2 &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;(rel err </span><span class="si">{</span><span class="n">rel_err</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> %, tol </span><span class="si">{</span><span class="n">tol</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2"> %)&quot;</span>
+    <span class="p">)</span></div>
+
+
+
+<span class="c1"># ================================================================= #</span>
+<span class="c1"># Test 7: Pure-NumPy independent reference (avg and CERES data)      #</span>
+<span class="c1"># ================================================================= #</span>
+
+<div class="viewcode-block" id="test_earthRadiation_numpy_reference">
+<a class="viewcode-back" href="../Documentation/simulation/environment/earthRadiationModel/_UnitTest/test_earthRadiationModel.html#test_earthRadiationModel.test_earthRadiation_numpy_reference">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;useAlbedoData&quot;</span><span class="p">,</span> <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_earthRadiation_numpy_reference</span><span class="p">(</span><span class="n">useAlbedoData</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Cross-check EarthRadiationModel against a pure-NumPy reimplementation of</span>
+<span class="sd">    the same Lambertian patch algorithm.</span>
+
+<span class="sd">    **What this test validates (and does not validate)**</span>
+
+<span class="sd">    `_python_lambertian` mirrors ``planetRadiationBase.cpp`` and</span>
+<span class="sd">    ``earthRadiationModel.cpp`` line-by-line in a different language.</span>
+<span class="sd">    Because it replicates the *same model*, it cannot catch physics errors</span>
+<span class="sd">    shared by both implementations.  Its value is:</span>
+
+<span class="sd">    - **Arithmetic correctness** — catches mistakes in the C++/Eigen</span>
+<span class="sd">      indexing, DCM convention (``Eigen::Map`` column-major transpose of</span>
+<span class="sd">      row-major C array, see ``avsEigenSupport.cpp``), `normArea`</span>
+<span class="sd">      formula, or accumulation loop.</span>
+<span class="sd">    - **CERES CSV loading** — verifies that the C++ CSV parser produces the</span>
+<span class="sd">      same per-patch albedo values as ``np.loadtxt``.  The albedo grid is</span>
+<span class="sd">      loaded from Basilisk ``supportData``</span>
+<span class="sd">      (`DataFile.AlbedoData.Earth_ALB_2018_CERES_All_1x1`) and fed</span>
+<span class="sd">      identically into both sides.</span>
+
+<span class="sd">    Physics correctness (the model converges to the right integral) is</span>
+<span class="sd">    covered by `test_earthRadiation_analytical_ir`.</span>
+
+<span class="sd">    Tolerance: ``1e-7`` relative, accounting for accumulated floating-point</span>
+<span class="sd">    differences between Eigen and NumPy across the 180x360 patch loop.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">log</span>     <span class="o">=</span> <span class="n">_run_sim</span><span class="p">(</span><span class="n">useAlbedoData</span><span class="o">=</span><span class="n">useAlbedoData</span><span class="p">,</span> <span class="n">nLat</span><span class="o">=</span><span class="n">NLAT_DEFAULT</span><span class="p">,</span> <span class="n">nLon</span><span class="o">=</span><span class="n">NLON_DEFAULT</span><span class="p">)</span>
+    <span class="n">alb_bsk</span> <span class="o">=</span> <span class="n">log</span><span class="o">.</span><span class="n">albedoFlux</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">ir_bsk</span>  <span class="o">=</span> <span class="n">log</span><span class="o">.</span><span class="n">irFlux</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">R_aut</span> <span class="o">=</span> <span class="n">_authalic_radius</span><span class="p">(</span><span class="n">REQ_EARTH_M</span><span class="p">,</span> <span class="n">RP_EARTH_M</span><span class="p">)</span>
+
+    <span class="c1"># Geometry: must match _run_sim exactly</span>
+    <span class="n">r_sat_N</span>    <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">REQ_EARTH_M</span> <span class="o">+</span> <span class="n">ALT_M</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+    <span class="n">r_sun_N</span>    <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">AU2M</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+    <span class="n">r_planet_N</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">J20002Pfix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+
+    <span class="c1"># S_sun: mirrors planetRadiationBase.cpp:UpdateState()</span>
+    <span class="n">r_SE</span>  <span class="o">=</span> <span class="n">r_sun_N</span> <span class="o">-</span> <span class="n">r_planet_N</span>
+    <span class="n">S_sun</span> <span class="o">=</span> <span class="n">S0_WM2</span> <span class="o">*</span> <span class="p">(</span><span class="n">AU2M</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">r_SE</span><span class="p">))</span> <span class="o">**</span> <span class="mi">2</span>   <span class="c1"># = S0_WM2 for r_SE = 1 AU</span>
+
+    <span class="c1"># Albedo grid</span>
+    <span class="k">if</span> <span class="n">useAlbedoData</span><span class="p">:</span>
+        <span class="n">data_path</span>   <span class="o">=</span> <span class="n">get_path</span><span class="p">(</span><span class="n">DataFile</span><span class="o">.</span><span class="n">AlbedoData</span><span class="o">.</span><span class="n">Earth_ALB_2018_CERES_All_1x1</span><span class="p">)</span>
+        <span class="n">albedo_grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">data_path</span><span class="p">),</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">albedo_grid</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="n">NLAT_DEFAULT</span><span class="p">,</span> <span class="n">NLON_DEFAULT</span><span class="p">),</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Expected CERES grid shape (</span><span class="si">{</span><span class="n">NLAT_DEFAULT</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">NLON_DEFAULT</span><span class="si">}</span><span class="s2">), &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;got </span><span class="si">{</span><span class="n">albedo_grid</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">albedo_grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">NLAT_DEFAULT</span><span class="p">,</span> <span class="n">NLON_DEFAULT</span><span class="p">),</span> <span class="n">ALBEDO_DEFAULT</span><span class="p">)</span>
+
+    <span class="n">alb_ref</span><span class="p">,</span> <span class="n">ir_ref</span> <span class="o">=</span> <span class="n">_python_lambertian</span><span class="p">(</span>
+        <span class="n">r_sat_N</span><span class="p">,</span> <span class="n">r_sun_N</span><span class="p">,</span> <span class="n">r_planet_N</span><span class="p">,</span> <span class="n">J20002Pfix</span><span class="p">,</span> <span class="n">R_aut</span><span class="p">,</span>
+        <span class="n">OLR_DEFAULT</span><span class="p">,</span> <span class="n">S_sun</span><span class="p">,</span>
+        <span class="n">NLAT_DEFAULT</span><span class="p">,</span> <span class="n">NLON_DEFAULT</span><span class="p">,</span> <span class="n">albedo_grid</span><span class="p">,</span>
+        <span class="n">REQ_EARTH_M</span><span class="p">,</span> <span class="n">RP_EARTH_M</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">alb_bsk</span> <span class="o">&gt;</span> <span class="mf">0.0</span> <span class="ow">and</span> <span class="n">alb_ref</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s2">&quot;albedoFlux must be positive&quot;</span>
+    <span class="k">assert</span> <span class="n">ir_bsk</span>  <span class="o">&gt;</span> <span class="mf">0.0</span> <span class="ow">and</span> <span class="n">ir_ref</span>  <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s2">&quot;irFlux must be positive&quot;</span>
+
+    <span class="n">tol</span> <span class="o">=</span> <span class="mf">1e-7</span>
+    <span class="n">alb_rel</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">alb_bsk</span> <span class="o">-</span> <span class="n">alb_ref</span><span class="p">)</span> <span class="o">/</span> <span class="n">alb_ref</span>
+    <span class="n">ir_rel</span>  <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">ir_bsk</span>  <span class="o">-</span> <span class="n">ir_ref</span><span class="p">)</span>  <span class="o">/</span> <span class="n">ir_ref</span>
+    <span class="k">assert</span> <span class="n">alb_rel</span> <span class="o">&lt;</span> <span class="n">tol</span><span class="p">,</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;albedoFlux: BSK=</span><span class="si">{</span><span class="n">alb_bsk</span><span class="si">:</span><span class="s2">.6e</span><span class="si">}</span><span class="s2">  NumPy=</span><span class="si">{</span><span class="n">alb_ref</span><span class="si">:</span><span class="s2">.6e</span><span class="si">}</span><span class="s2"> &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;rel err=</span><span class="si">{</span><span class="n">alb_rel</span><span class="si">:</span><span class="s2">.2e</span><span class="si">}</span><span class="s2">  tol=</span><span class="si">{</span><span class="n">tol</span><span class="si">:</span><span class="s2">.0e</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="n">ir_rel</span> <span class="o">&lt;</span> <span class="n">tol</span><span class="p">,</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;irFlux:     BSK=</span><span class="si">{</span><span class="n">ir_bsk</span><span class="si">:</span><span class="s2">.6e</span><span class="si">}</span><span class="s2">  NumPy=</span><span class="si">{</span><span class="n">ir_ref</span><span class="si">:</span><span class="s2">.6e</span><span class="si">}</span><span class="s2"> &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;rel err=</span><span class="si">{</span><span class="n">ir_rel</span><span class="si">:</span><span class="s2">.2e</span><span class="si">}</span><span class="s2">  tol=</span><span class="si">{</span><span class="n">tol</span><span class="si">:</span><span class="s2">.0e</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span></div>
+
+
+
+<span class="c1"># ================================================================= #</span>
+<span class="c1"># Test 8: eclipseCase regression (P2)                               #</span>
+<span class="c1"># ================================================================= #</span>
+
+<div class="viewcode-block" id="test_earthRadiation_eclipseCase_applied">
+<a class="viewcode-back" href="../Documentation/simulation/environment/earthRadiationModel/_UnitTest/test_earthRadiationModel.html#test_earthRadiationModel.test_earthRadiation_eclipseCase_applied">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_earthRadiation_eclipseCase_applied</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    **P2 regression**: ``eclipseCase=True`` must be applied in</span>
+<span class="sd">    ``EarthRadiationModel``.</span>
+
+<span class="sd">    Before the fix, ``isPatchEclipsed()`` in the base class always returned</span>
+<span class="sd">    ``False`` regardless of the flag, so ``eclipseCase=True`` had no effect</span>
+<span class="sd">    on ERM output.  After the fix, the base-class implementation runs the</span>
+<span class="sd">    Knocke penumbra model when the flag is set.</span>
+
+<span class="sd">    Properties verified:</span>
+
+<span class="sd">    1. ``eclipseCase=True`` runs without error.</span>
+<span class="sd">    2. **Monotonicity**: eclipse can only reduce albedo flux, never increase</span>
+<span class="sd">       it — ``albedo_eclipse &lt;= albedo_no_eclipse``.</span>
+<span class="sd">    3. **IR is unaffected**: eclipse shadows apply only to the albedo channel;</span>
+<span class="sd">        the IR channel is independent of solar illumination and must not change.</span>
+<span class="sd">    4. **Small magnitude**: for the standard geometry (satellite well outside</span>
+<span class="sd">        the terminator zone), nearly all visible patches are clearly sunlit so</span>
+<span class="sd">        the penumbra correction is negligible (&lt; 1 % relative).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">log_no_eclipse</span> <span class="o">=</span> <span class="n">_run_sim</span><span class="p">(</span><span class="n">eclipseCase</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">log_eclipse</span>    <span class="o">=</span> <span class="n">_run_sim</span><span class="p">(</span><span class="n">eclipseCase</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">alb_no_eclipse</span> <span class="o">=</span> <span class="n">log_no_eclipse</span><span class="o">.</span><span class="n">albedoFlux</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">alb_eclipse</span>    <span class="o">=</span> <span class="n">log_eclipse</span><span class="o">.</span><span class="n">albedoFlux</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">ir_no_eclipse</span>  <span class="o">=</span> <span class="n">log_no_eclipse</span><span class="o">.</span><span class="n">irFlux</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">ir_eclipse</span>     <span class="o">=</span> <span class="n">log_eclipse</span><span class="o">.</span><span class="n">irFlux</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># 1. Both channels must be positive for this geometry</span>
+    <span class="k">assert</span> <span class="n">alb_eclipse</span>    <span class="o">&gt;=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;albedoFlux with eclipse must be &gt;= 0, got </span><span class="si">{</span><span class="n">alb_eclipse</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">assert</span> <span class="n">alb_no_eclipse</span> <span class="o">&gt;</span>  <span class="mf">0.0</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;albedoFlux without eclipse must be &gt; 0, got </span><span class="si">{</span><span class="n">alb_no_eclipse</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="c1"># 2. Monotonicity: eclipse &lt;= no-eclipse</span>
+    <span class="k">assert</span> <span class="n">alb_eclipse</span> <span class="o">&lt;=</span> <span class="n">alb_no_eclipse</span> <span class="o">+</span> <span class="mf">1e-12</span><span class="p">,</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Eclipse must not increase albedo flux: &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;eclipse=</span><span class="si">{</span><span class="n">alb_eclipse</span><span class="si">:</span><span class="s2">.6e</span><span class="si">}</span><span class="s2">  no_eclipse=</span><span class="si">{</span><span class="n">alb_no_eclipse</span><span class="si">:</span><span class="s2">.6e</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+
+    <span class="c1"># 3. IR flux is independent of eclipse (emitted regardless of illumination)</span>
+    <span class="k">assert</span> <span class="nb">abs</span><span class="p">(</span><span class="n">ir_eclipse</span> <span class="o">-</span> <span class="n">ir_no_eclipse</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-12</span> <span class="o">*</span> <span class="nb">max</span><span class="p">(</span><span class="n">ir_no_eclipse</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;IR flux must be unchanged by eclipseCase: &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;eclipse=</span><span class="si">{</span><span class="n">ir_eclipse</span><span class="si">:</span><span class="s2">.6e</span><span class="si">}</span><span class="s2">  no_eclipse=</span><span class="si">{</span><span class="n">ir_no_eclipse</span><span class="si">:</span><span class="s2">.6e</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+
+    <span class="c1"># 4. For clearly-lit geometry, penumbra correction is negligible (&lt; 1 %)</span>
+    <span class="k">if</span> <span class="n">alb_no_eclipse</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="n">rel_diff</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">alb_eclipse</span> <span class="o">-</span> <span class="n">alb_no_eclipse</span><span class="p">)</span> <span class="o">/</span> <span class="n">alb_no_eclipse</span>
+        <span class="k">assert</span> <span class="n">rel_diff</span> <span class="o">&lt;</span> <span class="mf">0.01</span><span class="p">,</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Unexpected large eclipse effect for standard geometry: &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;rel_diff=</span><span class="si">{</span><span class="n">rel_diff</span><span class="si">:</span><span class="s2">.2e</span><span class="si">}</span><span class="s2"> (expected &lt; 1 %)&quot;</span>
+        <span class="p">)</span></div>
+
+
+
+<span class="c1"># ================================================================= #</span>
+<span class="c1"># Test 9: albedoDir_N = [0,0,0] when albedoFlux = 0               #</span>
+<span class="c1"># ================================================================= #</span>
+
+<div class="viewcode-block" id="test_earthRadiation_zero_albedo_direction_is_zero">
+<a class="viewcode-back" href="../Documentation/simulation/environment/earthRadiationModel/_UnitTest/test_earthRadiationModel.html#test_earthRadiationModel.test_earthRadiation_zero_albedo_direction_is_zero">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_earthRadiation_zero_albedo_direction_is_zero</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    When no patches are both sunlit and visible (albedoFlux = 0),</span>
+<span class="sd">    albedoDir_N must be [0, 0, 0].</span>
+
+<span class="sd">    Geometry: Sun on +x, satellite on -x.  Sunlit patches (outward normal toward +x)</span>
+<span class="sd">    are on the far side from the satellite; visible patches (outward normal toward -x)</span>
+<span class="sd">    face away from the Sun.  The two sets are disjoint → albedoFlux = 0.</span>
+<span class="sd">    IR flux must still be positive (emitted regardless of illumination).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">log</span> <span class="o">=</span> <span class="n">_run_sim</span><span class="p">(</span>
+        <span class="n">scPos_N</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="n">REQ_EARTH_M</span> <span class="o">-</span> <span class="n">ALT_M</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>  <span class="c1"># satellite on -x (dark side)</span>
+    <span class="p">)</span>
+
+    <span class="n">albFlux</span> <span class="o">=</span> <span class="n">log</span><span class="o">.</span><span class="n">albedoFlux</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">albDir</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">log</span><span class="o">.</span><span class="n">albedoDir_N</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">irFlux</span>  <span class="o">=</span> <span class="n">log</span><span class="o">.</span><span class="n">irFlux</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">assert</span> <span class="n">albFlux</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">),</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;albedoFlux must be 0 for satellite on dark side; got </span><span class="si">{</span><span class="n">albFlux</span><span class="si">:</span><span class="s2">.4e</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">albDir</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">),</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;albedoDir_N must be [0,0,0] when albedoFlux=0; got </span><span class="si">{</span><span class="n">albDir</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="n">irFlux</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">,</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;irFlux must be &gt; 0 even on the dark side (IR is illumination-independent); &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;got </span><span class="si">{</span><span class="n">irFlux</span><span class="si">:</span><span class="s2">.4e</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span></div>
+
+
+
+<span class="c1"># ================================================================= #</span>
+<span class="c1"># Test 10: albedoDir_N geometry check                              #</span>
+<span class="c1"># ================================================================= #</span>
+
+<div class="viewcode-block" id="test_earthRadiation_albedoDir_geometry">
+<a class="viewcode-back" href="../Documentation/simulation/environment/earthRadiationModel/_UnitTest/test_earthRadiationModel.html#test_earthRadiationModel.test_earthRadiation_albedoDir_geometry">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_earthRadiation_albedoDir_geometry</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    In the standard geometry (Sun +x, satellite +y), albedoDir_N must point</span>
+<span class="sd">    roughly toward the satellite (+y component &gt; 0).</span>
+
+<span class="sd">    Illuminated patches are in the +x hemisphere; visible patches from the +y</span>
+<span class="sd">    satellite are near the (lat=0°, lon~65°-90°) band.  The flux-weighted</span>
+<span class="sd">    direction from these patches to the satellite has a dominant +y component.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">log</span>    <span class="o">=</span> <span class="n">_run_sim</span><span class="p">(</span><span class="n">useAlbedoData</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">albDir</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">log</span><span class="o">.</span><span class="n">albedoDir_N</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="k">assert</span> <span class="n">log</span><span class="o">.</span><span class="n">albedoFlux</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s2">&quot;albedoFlux must be positive for this geometry&quot;</span>
+    <span class="k">assert</span> <span class="nb">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">albDir</span><span class="p">)</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-10</span><span class="p">,</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;albedoDir_N must be a unit vector; norm = </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">albDir</span><span class="p">)</span><span class="si">:</span><span class="s2">.6e</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="n">albDir</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">,</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;albedoDir_N[1] expected &gt; 0 (visible+sunlit patches radiate toward +y satellite); &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;got </span><span class="si">{</span><span class="n">albDir</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span></div>
+
+
+
+<span class="c1"># ================================================================= #</span>
+<span class="c1"># Test 11: solar flux distance correction                           #</span>
+<span class="c1"># ================================================================= #</span>
+
+<div class="viewcode-block" id="test_earthRadiation_solar_flux_distance_scaling">
+<a class="viewcode-back" href="../Documentation/simulation/environment/earthRadiationModel/_UnitTest/test_earthRadiationModel.html#test_earthRadiationModel.test_earthRadiation_solar_flux_distance_scaling">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_earthRadiation_solar_flux_distance_scaling</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    albedoFlux must scale as (AU / d_sun)^2; irFlux must be independent of d_sun.</span>
+
+<span class="sd">    Moving the Sun from 1 AU to 2 AU (same direction) halves the solar flux</span>
+<span class="sd">    S_sun = S0*(AU/d)^2, so albedoFlux must drop by factor 4.</span>
+<span class="sd">    The IR formula uses the constant OLR and does not contain S_sun,</span>
+<span class="sd">    so irFlux must be unchanged.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">log_1au</span> <span class="o">=</span> <span class="n">_run_sim</span><span class="p">(</span><span class="n">useAlbedoData</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">log_2au</span> <span class="o">=</span> <span class="n">_run_sim</span><span class="p">(</span>
+        <span class="n">useAlbedoData</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">sunPos_N</span><span class="o">=</span><span class="p">[</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">om</span><span class="o">.</span><span class="n">AU</span> <span class="o">*</span> <span class="mf">1000.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>  <span class="c1"># Sun at 2 AU, same direction</span>
+    <span class="p">)</span>
+
+    <span class="n">alb_1au</span> <span class="o">=</span> <span class="n">log_1au</span><span class="o">.</span><span class="n">albedoFlux</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">alb_2au</span> <span class="o">=</span> <span class="n">log_2au</span><span class="o">.</span><span class="n">albedoFlux</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">ir_1au</span>  <span class="o">=</span> <span class="n">log_1au</span><span class="o">.</span><span class="n">irFlux</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">ir_2au</span>  <span class="o">=</span> <span class="n">log_2au</span><span class="o">.</span><span class="n">irFlux</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">assert</span> <span class="n">alb_1au</span> <span class="o">&gt;</span> <span class="mf">0.0</span> <span class="ow">and</span> <span class="n">alb_2au</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s2">&quot;both albedo fluxes must be positive&quot;</span>
+
+    <span class="c1"># albedoFlux is proportional to (1/d)^2 → ratio ~ (1/2)^2 = 0.25.</span>
+    <span class="c1"># The ratio is not exact because moving the sun also slightly changes cos_sun</span>
+    <span class="c1"># for each patch (parallax from Earth&#39;s finite radius, ~R_earth/AU ~ 4e-5).</span>
+    <span class="c1"># The resulting residual is O(1e-4) in relative terms; 1e-3 tolerance is safe.</span>
+    <span class="n">expected_ratio</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+    <span class="n">actual_ratio</span>   <span class="o">=</span> <span class="n">alb_2au</span> <span class="o">/</span> <span class="n">alb_1au</span>
+    <span class="k">assert</span> <span class="n">actual_ratio</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">expected_ratio</span><span class="p">,</span> <span class="n">rel</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">),</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;albedoFlux(2 AU) / albedoFlux(1 AU) = </span><span class="si">{</span><span class="n">actual_ratio</span><span class="si">:</span><span class="s2">.6e</span><span class="si">}</span><span class="s2">, &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;expected </span><span class="si">{</span><span class="n">expected_ratio</span><span class="si">:</span><span class="s2">.6e</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+
+    <span class="c1"># IR is independent of Sun distance</span>
+    <span class="k">assert</span> <span class="n">ir_1au</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">ir_2au</span><span class="p">,</span> <span class="n">rel</span><span class="o">=</span><span class="mf">1e-10</span><span class="p">),</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;irFlux must be identical at 1 AU and 2 AU: &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;ir_1au=</span><span class="si">{</span><span class="n">ir_1au</span><span class="si">:</span><span class="s2">.6e</span><span class="si">}</span><span class="s2">  ir_2au=</span><span class="si">{</span><span class="n">ir_2au</span><span class="si">:</span><span class="s2">.6e</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">test_earthRadiation_albedoAvg_physicsChecks</span><span class="p">()</span>
+    <span class="n">test_earthRadiation_albedoData_nonzero</span><span class="p">()</span>
+    <span class="n">test_earthRadiation_direction_toward_earth</span><span class="p">()</span>
+    <span class="n">test_earthRadiation_analytical_ir</span><span class="p">()</span>
+    <span class="n">test_earthRadiation_numpy_reference</span><span class="p">(</span><span class="n">useAlbedoData</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">test_earthRadiation_numpy_reference</span><span class="p">(</span><span class="n">useAlbedoData</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">test_earthRadiation_eclipseCase_applied</span><span class="p">()</span>
+    <span class="n">test_earthRadiation_zero_albedo_direction_is_zero</span><span class="p">()</span>
+    <span class="n">test_earthRadiation_albedoDir_geometry</span><span class="p">()</span>
+    <span class="n">test_earthRadiation_solar_flux_distance_scaling</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;All manual tests passed.&quot;</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

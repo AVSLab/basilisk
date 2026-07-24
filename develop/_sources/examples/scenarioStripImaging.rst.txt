@@ -1,0 +1,13 @@
+.. _scenarioStripImaging:
+
+scenarioStripImaging
+====================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. automodule:: scenarioStripImaging
+   :members:
+   :show-inheritance:
+

@@ -1,0 +1,502 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BSK-SDK Release Guide &mdash; Basilisk 2.12.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=2ebb1c42" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=4ad2e773"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Documentation" href="../../Documentation/index.html" />
+    <link rel="prev" title="BSK Release Guide" href="bskReleaseGuide.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../Support.html">Support</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../bskReleaseNotes.html">Basilisk Release Notes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bskKnownIssues.html">Basilisk Known Issues</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../User.html">User Information</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../Developer.html">Developer Information</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="CodingGuidlines.html">Coding Guidelines</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Debugging.html">Accessing the Debugger for C/C++ Basilisk Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="deprecatingCode.html">Deprecating code in Basilisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="makingNewBskModule.html">Making a New C/C++ Basilisk Module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="addSphinxDoc.html">Using Sphinx to Document Basilisk Modules and Folders</a></li>
+<li class="toctree-l3"><a class="reference internal" href="createHtmlDocumentation.html">Creating the HTML Basilisk Documentation using Sphinx/Doxygen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskModuleCheckoutList.html">Basilisk Module Checkout List</a></li>
+<li class="toctree-l3"><a class="reference internal" href="UnderstandingBasilisk.html">Basilisk Architecture Support Documentation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migratingBskModuleToBsk2.html">Migrating Basilisk Modules from Version 1.X to 2.X</a></li>
+<li class="toctree-l3"><a class="reference internal" href="MigratingToPython3.html">Migrating BSK Scripts to Python 3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="performanceBenchmarks.html">Optional Performance Benchmarks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="addSupportData.html">Adding Support Data Files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskReleaseGuide.html">BSK Release Guide</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">BSK-SDK Release Guide</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#release-model">Release Model</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#release-workflows">Release Workflows</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#common-tasks">Common Tasks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ci-and-publishing-behavior">CI and Publishing Behavior</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../Support.html">Support</a></li>
+          <li class="breadcrumb-item"><a href="../Developer.html">Developer Information</a></li>
+      <li class="breadcrumb-item active">BSK-SDK Release Guide</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Support/Developer/bskSdkReleaseGuide.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="bsk-sdk-release-guide">
+<span id="bsksdkreleaseguide"></span><h1>BSK-SDK Release Guide<a class="headerlink" href="#bsk-sdk-release-guide" title="Link to this heading"></a></h1>
+<p>The <a class="reference external" href="https://github.com/AVSLab/bsk_sdk">bsk-sdk</a> package vendors the Basilisk
+SDK headers and runtime for extension authors. Its version is kept in sync with
+Basilisk, so a new Basilisk release requires a corresponding SDK release.</p>
+<p>This guide separates the release workflows from the common build and test
+tasks. Start with the appropriate workflow, then follow its links to the
+detailed task procedures.</p>
+<section id="release-model">
+<h2>Release Model<a class="headerlink" href="#release-model" title="Link to this heading"></a></h2>
+<p>An SDK build involves three related versions:</p>
+<ul class="simple">
+<li><p>the Basilisk source used by <code class="docutils literal notranslate"><span class="pre">tools/sync_all.py</span></code>;</p></li>
+<li><p>the versions recorded in <code class="docutils literal notranslate"><span class="pre">src/bsk_sdk/_bsk_version.txt</span></code> and
+<code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code>; and</p></li>
+<li><p>the Basilisk Python package installed while testing the SDK and example
+extension.</p></li>
+</ul>
+<p>These versions must describe the same Basilisk release, branch, or commit. The
+source checkout is only an input to <code class="docutils literal notranslate"><span class="pre">tools/sync_all.py</span></code>. CI and publishing
+use the synced files committed to the <code class="docutils literal notranslate"><span class="pre">bsk-sdk</span></code> repository, not the
+developer’s local Basilisk checkout.</p>
+<p>Use the following table to select a workflow.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">SDK workflows</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 23.0%" />
+<col style="width: 27.0%" />
+<col style="width: 30.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Workflow</p></th>
+<th class="head"><p>Basilisk source</p></th>
+<th class="head"><p>Installed Basilisk</p></th>
+<th class="head"><p>SDK branch and tag</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Major release</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">v2.X.0</span></code> tag</p></td>
+<td><p>PyPI <code class="docutils literal notranslate"><span class="pre">2.X.0</span></code></p></td>
+<td><p>Release branch, then <code class="docutils literal notranslate"><span class="pre">v2.X.0</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Patch release</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">v2.X.Y</span></code> tag</p></td>
+<td><p>PyPI <code class="docutils literal notranslate"><span class="pre">2.X.Y</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">patch/v2_X_x</span></code>, then <code class="docutils literal notranslate"><span class="pre">v2.X.Y</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Beta-cycle validation</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">develop</span></code> or matching beta branch</p></td>
+<td><p>Matching local or nightly build</p></td>
+<td><p>Beta SDK branch</p></td>
+</tr>
+<tr class="row-odd"><td><p>Feature-branch validation</p></td>
+<td><p>Exact feature branch or commit</p></td>
+<td><p>Locally built from the same source</p></td>
+<td><p>Temporary SDK test branch</p></td>
+</tr>
+</tbody>
+</table>
+<p>Final and patch SDK releases must be prepared after the corresponding Basilisk
+release is tagged and its <code class="docutils literal notranslate"><span class="pre">bsk[all]</span></code> wheels are available. During a beta
+cycle, the SDK can instead be synced from Basilisk <code class="docutils literal notranslate"><span class="pre">develop</span></code> or a matching
+feature branch using a PEP 440 pre-release version such as <code class="docutils literal notranslate"><span class="pre">2.X.0bN</span></code>.</p>
+</section>
+<section id="release-workflows">
+<h2>Release Workflows<a class="headerlink" href="#release-workflows" title="Link to this heading"></a></h2>
+<section id="major-sdk-release">
+<span id="bsk-sdk-major-release"></span><h3>Major SDK Release<a class="headerlink" href="#major-sdk-release" title="Link to this heading"></a></h3>
+<p>Use this workflow to release <code class="docutils literal notranslate"><span class="pre">2.X.0</span></code> after the corresponding Basilisk
+release is complete.</p>
+<ol class="arabic simple">
+<li><p>Create an SDK release branch from <code class="docutils literal notranslate"><span class="pre">develop</span></code>.</p></li>
+<li><p><a class="reference internal" href="#bsk-sdk-task-environment"><span class="std std-ref">Create a clean test environment</span></a>.</p></li>
+<li><p><a class="reference internal" href="#bsk-sdk-task-select-source"><span class="std std-ref">Select the Basilisk source</span></a> and check out
+the <code class="docutils literal notranslate"><span class="pre">v2.X.0</span></code> tag.</p></li>
+<li><p><a class="reference internal" href="#bsk-sdk-task-sync"><span class="std std-ref">Sync the SDK payload</span></a> from that checkout.</p></li>
+<li><p><a class="reference internal" href="#bsk-sdk-task-verify"><span class="std std-ref">Verify versions and provenance</span></a>. All version
+values must report <code class="docutils literal notranslate"><span class="pre">2.X.0</span></code>, and the source checkout must report
+<code class="docutils literal notranslate"><span class="pre">v2.X.0</span></code>.</p></li>
+<li><p><a class="reference internal" href="#bsk-sdk-install-final"><span class="std std-ref">Install Basilisk from PyPI</span></a> using
+<code class="docutils literal notranslate"><span class="pre">bsk[all]==2.X.0</span></code>.</p></li>
+<li><p><a class="reference internal" href="#bsk-sdk-task-build-sdk"><span class="std std-ref">Build and test the SDK wheel</span></a>.</p></li>
+<li><p><a class="reference internal" href="#bsk-sdk-task-test-extension"><span class="std std-ref">Build and test the example extension</span></a>.</p></li>
+<li><p><a class="reference internal" href="#bsk-sdk-task-commit"><span class="std std-ref">Commit the synced payload</span></a> and open a PR to
+<code class="docutils literal notranslate"><span class="pre">develop</span></code>. Wait for CI to pass before merging.</p></li>
+<li><p>Merge <code class="docutils literal notranslate"><span class="pre">develop</span></code> into <code class="docutils literal notranslate"><span class="pre">master</span></code>.</p></li>
+<li><p>Tag <code class="docutils literal notranslate"><span class="pre">master</span></code> with <code class="docutils literal notranslate"><span class="pre">v2.X.0</span></code> and push the tag. The tag triggers the wheel
+build and PyPI publication through GitHub Actions.</p></li>
+<li><p>Create the corresponding GitHub Release.</p></li>
+</ol>
+</section>
+<section id="patch-sdk-release">
+<span id="bsk-sdk-patch-release"></span><h3>Patch SDK Release<a class="headerlink" href="#patch-sdk-release" title="Link to this heading"></a></h3>
+<p>Use this workflow to release <code class="docutils literal notranslate"><span class="pre">2.X.Y</span></code> after the corresponding Basilisk patch
+release is complete.</p>
+<ol class="arabic simple">
+<li><p>For the first SDK patch after <code class="docutils literal notranslate"><span class="pre">v2.X.0</span></code>, create <code class="docutils literal notranslate"><span class="pre">patch/v2_X_x</span></code> from the
+<code class="docutils literal notranslate"><span class="pre">v2.X.0</span></code> SDK tag. For later patches, use the existing patch branch or
+branch from the latest <code class="docutils literal notranslate"><span class="pre">v2.X.Y</span></code> SDK tag.</p></li>
+<li><p>Cherry-pick any required SDK-specific fixes from <code class="docutils literal notranslate"><span class="pre">develop</span></code>.</p></li>
+<li><p><a class="reference internal" href="#bsk-sdk-task-environment"><span class="std std-ref">Create a clean test environment</span></a>.</p></li>
+<li><p><a class="reference internal" href="#bsk-sdk-task-select-source"><span class="std std-ref">Select the Basilisk source</span></a> and check out
+the <code class="docutils literal notranslate"><span class="pre">v2.X.Y</span></code> tag.</p></li>
+<li><p><a class="reference internal" href="#bsk-sdk-task-sync"><span class="std std-ref">Sync the SDK payload</span></a> from that checkout.</p></li>
+<li><p><a class="reference internal" href="#bsk-sdk-task-verify"><span class="std std-ref">Verify versions and provenance</span></a>. All version
+values must report <code class="docutils literal notranslate"><span class="pre">2.X.Y</span></code>, and the source checkout must report
+<code class="docutils literal notranslate"><span class="pre">v2.X.Y</span></code>.</p></li>
+<li><p><a class="reference internal" href="#bsk-sdk-install-final"><span class="std std-ref">Install Basilisk from PyPI</span></a> using
+<code class="docutils literal notranslate"><span class="pre">bsk[all]==2.X.Y</span></code>.</p></li>
+<li><p><a class="reference internal" href="#bsk-sdk-task-build-sdk"><span class="std std-ref">Build and test the SDK wheel</span></a>.</p></li>
+<li><p><a class="reference internal" href="#bsk-sdk-task-test-extension"><span class="std std-ref">Build and test the example extension</span></a>.</p></li>
+<li><p><a class="reference internal" href="#bsk-sdk-task-commit"><span class="std std-ref">Commit the synced payload</span></a> and push the patch
+branch.</p></li>
+<li><p>Manually run the <code class="docutils literal notranslate"><span class="pre">CI</span></code> action from the
+<a class="reference external" href="https://github.com/AVSLab/bsk_sdk/actions">bsk-sdk Actions page</a> and wait
+for it to pass.</p></li>
+<li><p>Tag <code class="docutils literal notranslate"><span class="pre">patch/v2_X_x</span></code> with <code class="docutils literal notranslate"><span class="pre">v2.X.Y</span></code> and push the tag. The tag triggers the
+wheel build and PyPI publication through GitHub Actions.</p></li>
+<li><p>Create the corresponding GitHub Release.</p></li>
+</ol>
+</section>
+<section id="beta-and-branch-validation">
+<span id="bsk-sdk-beta-validation"></span><h3>Beta and Branch Validation<a class="headerlink" href="#beta-and-branch-validation" title="Link to this heading"></a></h3>
+<p>Beta-cycle and feature-branch testing share the same local tasks but have
+different goals.</p>
+<p><strong>Beta-cycle validation</strong> prepares an SDK branch from Basilisk <code class="docutils literal notranslate"><span class="pre">develop</span></code> or
+a matching beta branch. The Basilisk version file must contain a PEP 440
+pre-release version such as <code class="docutils literal notranslate"><span class="pre">2.X.0bN</span></code>. CI recognizes <code class="docutils literal notranslate"><span class="pre">aN</span></code> and <code class="docutils literal notranslate"><span class="pre">bN</span></code> as
+development versions, checks out Basilisk <code class="docutils literal notranslate"><span class="pre">develop</span></code>, and installs the
+nightly <code class="docutils literal notranslate"><span class="pre">bsk[all]</span></code> package set.</p>
+<p><strong>Feature-branch validation</strong> checks compatibility with an unreleased Basilisk
+change. The installed Basilisk wheel and the source passed to
+<code class="docutils literal notranslate"><span class="pre">tools/sync_all.py</span></code> must come from the same branch or commit. This is a local
+validation workflow; it does not prepare a release wheel.</p>
+<p>For either mode:</p>
+<ol class="arabic simple">
+<li><p>Create or check out the appropriate SDK test branch.</p></li>
+<li><p><a class="reference internal" href="#bsk-sdk-task-environment"><span class="std std-ref">Create a clean test environment</span></a>.</p></li>
+<li><p><a class="reference internal" href="#bsk-sdk-task-select-source"><span class="std std-ref">Select the Basilisk source</span></a> and check out
+<code class="docutils literal notranslate"><span class="pre">develop</span></code>, the beta branch, or the feature branch being tested.</p></li>
+<li><p>For feature-branch testing, record the exact Basilisk commit so the result
+can be reproduced.</p></li>
+<li><p>Install the matching Basilisk package. For beta-cycle validation against
+current <code class="docutils literal notranslate"><span class="pre">develop</span></code>, use the <a class="reference internal" href="#bsk-sdk-install-nightly"><span class="std std-ref">nightly develop wheel</span></a>. For feature branches, or whenever the nightly
+wheel does not match the selected source, <a class="reference internal" href="#bsk-sdk-install-local"><span class="std std-ref">build and install Basilisk
+locally</span></a>.</p></li>
+<li><p><a class="reference internal" href="#bsk-sdk-task-sync"><span class="std std-ref">Sync the SDK payload</span></a> from the same checkout.</p></li>
+<li><p><a class="reference internal" href="#bsk-sdk-task-verify"><span class="std std-ref">Verify versions and provenance</span></a>.</p></li>
+<li><p><a class="reference internal" href="#bsk-sdk-task-build-sdk"><span class="std std-ref">Build and test the SDK wheel</span></a>.</p></li>
+<li><p><a class="reference internal" href="#bsk-sdk-task-test-extension"><span class="std std-ref">Build and test the example extension</span></a>, or substitute the extension under
+development and run its test suite.</p></li>
+<li><p>For a beta SDK branch, <a class="reference internal" href="#bsk-sdk-task-commit"><span class="std std-ref">commit the synced payload</span></a> and open a PR. For exploratory feature-branch
+testing, do not commit the synced payload or moved submodule pointer.</p></li>
+</ol>
+<p>When Basilisk reaches a release candidate or final release, sync the SDK again
+from the corresponding Basilisk tag and repeat the applicable release
+workflow.</p>
+</section>
+</section>
+<section id="common-tasks">
+<span id="bsk-sdk-local-testing"></span><h2>Common Tasks<a class="headerlink" href="#common-tasks" title="Link to this heading"></a></h2>
+<p>The following procedures are shared by the release and validation workflows.
+Run all commands from the root of the <code class="docutils literal notranslate"><span class="pre">bsk_sdk</span></code> repository unless noted
+otherwise.</p>
+<section id="create-a-clean-test-environment">
+<span id="bsk-sdk-task-environment"></span><h3>Create a Clean Test Environment<a class="headerlink" href="#create-a-clean-test-environment" title="Link to this heading"></a></h3>
+<p>Create the environment inside the <code class="docutils literal notranslate"><span class="pre">bsk_sdk</span></code> repository:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>.venv
+<span class="nb">source</span><span class="w"> </span>.venv/bin/activate
+python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>--upgrade<span class="w"> </span>pip
+python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>build<span class="w"> </span>pytest<span class="w"> </span>scikit-build-core<span class="w"> </span><span class="s2">&quot;cmake&gt;=3.26&quot;</span><span class="w"> </span><span class="s2">&quot;ninja&gt;=1.5&quot;</span>
+</pre></div>
+</div>
+<p>Use a newly created environment for each release validation so previously
+installed Basilisk or SDK packages cannot mask missing dependencies.</p>
+</section>
+<section id="select-the-basilisk-source">
+<span id="bsk-sdk-task-select-source"></span><h3>Select the Basilisk Source<a class="headerlink" href="#select-the-basilisk-source" title="Link to this heading"></a></h3>
+<p>Set <code class="docutils literal notranslate"><span class="pre">BSK_ROOT</span></code> to either the SDK repository’s Basilisk submodule or an
+existing local Basilisk checkout.</p>
+<p>To use the submodule, initialize it once after cloning <code class="docutils literal notranslate"><span class="pre">bsk-sdk</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>submodule<span class="w"> </span>update<span class="w"> </span>--init<span class="w"> </span>--recursive<span class="w"> </span>external/basilisk
+<span class="nv">BSK_ROOT</span><span class="o">=</span>external/basilisk
+</pre></div>
+</div>
+<p>To use an existing checkout without moving the SDK submodule pointer:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">BSK_ROOT</span><span class="o">=</span>~/Repos/basilisk
+</pre></div>
+</div>
+<p>For a tagged release, fetch tags and check out the required tag:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>-C<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$BSK_ROOT</span><span class="s2">&quot;</span><span class="w"> </span>fetch<span class="w"> </span>--tags
+git<span class="w"> </span>-C<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$BSK_ROOT</span><span class="s2">&quot;</span><span class="w"> </span>checkout<span class="w"> </span>v2.X.Y
+</pre></div>
+</div>
+<p>For beta-cycle or feature-branch testing, fetch and check out the required
+branch:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>-C<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$BSK_ROOT</span><span class="s2">&quot;</span><span class="w"> </span>fetch<span class="w"> </span>origin
+git<span class="w"> </span>-C<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$BSK_ROOT</span><span class="s2">&quot;</span><span class="w"> </span>checkout<span class="w"> </span>feature/branch_name
+git<span class="w"> </span>-C<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$BSK_ROOT</span><span class="s2">&quot;</span><span class="w"> </span>pull<span class="w"> </span>--ff-only
+git<span class="w"> </span>-C<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$BSK_ROOT</span><span class="s2">&quot;</span><span class="w"> </span>rev-parse<span class="w"> </span>HEAD
+</pre></div>
+</div>
+<p>Use <code class="docutils literal notranslate"><span class="pre">develop</span></code> in place of <code class="docutils literal notranslate"><span class="pre">feature/branch_name</span></code> for a normal beta cycle.</p>
+</section>
+<section id="sync-the-sdk-payload">
+<span id="bsk-sdk-task-sync"></span><h3>Sync the SDK Payload<a class="headerlink" href="#sync-the-sdk-payload" title="Link to this heading"></a></h3>
+<p>Sync the vendored headers, runtime support, and version metadata from the
+selected Basilisk source:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>tools/sync_all.py<span class="w"> </span>--basilisk-root<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$BSK_ROOT</span><span class="s2">&quot;</span>
+</pre></div>
+</div>
+<p>The script updates the vendored files under <code class="docutils literal notranslate"><span class="pre">src/bsk_sdk/</span></code>, including
+<code class="docutils literal notranslate"><span class="pre">src/bsk_sdk/_bsk_version.txt</span></code>, and the <code class="docutils literal notranslate"><span class="pre">[project].version</span></code> field in
+<code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code>.</p>
+</section>
+<section id="verify-versions-and-provenance">
+<span id="bsk-sdk-task-verify"></span><h3>Verify Versions and Provenance<a class="headerlink" href="#verify-versions-and-provenance" title="Link to this heading"></a></h3>
+<p>Compare the Basilisk source version with both SDK version records:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cat<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$BSK_ROOT</span><span class="s2">/docs/source/bskVersion.txt&quot;</span>
+cat<span class="w"> </span>src/bsk_sdk/_bsk_version.txt
+python<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;&#39;PY&#39;</span>
+<span class="s">from pathlib import Path</span>
+<span class="s">import re</span>
+<span class="s">text = Path(&quot;pyproject.toml&quot;).read_text()</span>
+<span class="s">print(re.search(r&#39;(?ms)^\[project\].*?^version = &quot;([^&quot;]+)&quot;&#39;, text).group(1))</span>
+<span class="s">PY</span>
+</pre></div>
+</div>
+<p>All three values must match. For a release, also confirm that the checkout is
+at the expected tag:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>-C<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$BSK_ROOT</span><span class="s2">&quot;</span><span class="w"> </span>describe<span class="w"> </span>--tags<span class="w"> </span>--exact-match
+</pre></div>
+</div>
+</section>
+<section id="install-the-matching-basilisk-package">
+<span id="bsk-sdk-task-install-basilisk"></span><h3>Install the Matching Basilisk Package<a class="headerlink" href="#install-the-matching-basilisk-package" title="Link to this heading"></a></h3>
+<p>Choose one installation method based on the workflow. The installed package
+must correspond to the source used to sync the SDK.</p>
+<section id="final-release-from-pypi">
+<span id="bsk-sdk-install-final"></span><h4>Final Release from PyPI<a class="headerlink" href="#final-release-from-pypi" title="Link to this heading"></a></h4>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>--force-reinstall<span class="w"> </span><span class="s2">&quot;bsk[all]==2.X.Y&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="release-candidate-from-testpypi">
+<span id="bsk-sdk-install-candidate"></span><h4>Release Candidate from TestPyPI<a class="headerlink" href="#release-candidate-from-testpypi" title="Link to this heading"></a></h4>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>--pre<span class="w"> </span>--force-reinstall<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--index-url<span class="w"> </span>https://test.pypi.org/simple/<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--extra-index-url<span class="w"> </span>https://pypi.org/simple/<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="s2">&quot;bsk[all]==2.X.YrcN&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="develop-nightly-wheel">
+<span id="bsk-sdk-install-nightly"></span><h4>Develop Nightly Wheel<a class="headerlink" href="#develop-nightly-wheel" title="Link to this heading"></a></h4>
+<p>For beta-cycle validation against the current Basilisk <code class="docutils literal notranslate"><span class="pre">develop</span></code> branch,
+install the latest nightly development wheel:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>--pre<span class="w"> </span>--upgrade<span class="w"> </span>--force-reinstall<span class="w"> </span>--no-cache-dir<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--index-url<span class="w"> </span>https://avslab.github.io/basilisk/nightly/<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--extra-index-url<span class="w"> </span>https://pypi.org/simple/<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="s2">&quot;bsk[all]&quot;</span>
+</pre></div>
+</div>
+<p>The nightly index supplies the Basilisk development wheels, while the PyPI
+index supplies third-party dependencies. Confirm that the installed version
+matches the version in the Basilisk source selected for <code class="docutils literal notranslate"><span class="pre">tools/sync_all.py</span></code>.
+If it does not match, use a local build from that exact source instead.</p>
+</section>
+<section id="local-beta-or-feature-branch">
+<span id="bsk-sdk-install-local"></span><h4>Local Beta or Feature Branch<a class="headerlink" href="#local-beta-or-feature-branch" title="Link to this heading"></a></h4>
+<p>Build Basilisk from <code class="docutils literal notranslate"><span class="pre">BSK_ROOT</span></code> and install that wheel into the SDK test
+environment:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>wheel<span class="w"> </span>--no-deps<span class="w"> </span>-v<span class="w"> </span>-w<span class="w"> </span>/tmp/bsk-dev-wheel<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$BSK_ROOT</span><span class="s2">&quot;</span>
+python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>--force-reinstall<span class="w"> </span>/tmp/bsk-dev-wheel/bsk-*.whl
+</pre></div>
+</div>
+<p>If the extension needs optional Basilisk components such as OpNav, build
+Basilisk with matching <code class="docutils literal notranslate"><span class="pre">CONAN_ARGS</span></code> or install matching optional-component
+wheels produced from the same Basilisk source.</p>
+</section>
+</section>
+<section id="build-and-test-the-sdk-wheel">
+<span id="bsk-sdk-task-build-sdk"></span><h3>Build and Test the SDK Wheel<a class="headerlink" href="#build-and-test-the-sdk-wheel" title="Link to this heading"></a></h3>
+<p>Build and install the SDK wheel, then run the SDK test suite:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>build<span class="w"> </span>--wheel
+python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>--force-reinstall<span class="w"> </span>dist/bsk_sdk-*.whl
+python<span class="w"> </span>-m<span class="w"> </span>pytest<span class="w"> </span>tests<span class="w"> </span>-v
+python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;import Basilisk, bsk_sdk; print(&#39;Basilisk:&#39;, Basilisk.__version__); print(&#39;SDK synced from:&#39;, bsk_sdk.bsk_version())&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="build-and-test-the-example-extension">
+<span id="bsk-sdk-task-test-extension"></span><h3>Build and Test the Example Extension<a class="headerlink" href="#build-and-test-the-example-extension" title="Link to this heading"></a></h3>
+<p>Build the example against the installed SDK and Basilisk wheels, install it,
+verify its runtime imports, and run all example tests:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>build<span class="w"> </span>--wheel<span class="w"> </span>--no-isolation<span class="w"> </span>examples/custom-atm-extension
+python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>examples/custom-atm-extension/dist/*.whl
+python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;import Basilisk, numba, custom_atm; from custom_atm import numbaAtmosphere&quot;</span>
+python<span class="w"> </span>-m<span class="w"> </span>pytest<span class="w"> </span>examples<span class="w"> </span>-v
+</pre></div>
+</div>
+<p>For an extension under development, replace <code class="docutils literal notranslate"><span class="pre">examples/custom-atm-extension</span></code>
+with that extension’s repository path and run its own test suite.</p>
+</section>
+<section id="commit-the-synced-payload">
+<span id="bsk-sdk-task-commit"></span><h3>Commit the Synced Payload<a class="headerlink" href="#commit-the-synced-payload" title="Link to this heading"></a></h3>
+<p>Review and commit the release-preparation changes produced by
+<code class="docutils literal notranslate"><span class="pre">tools/sync_all.py</span></code>. These normally include:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code>;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">src/bsk_sdk/_bsk_version.txt</span></code>; and</p></li>
+<li><p>updated vendored SDK artifacts under <code class="docutils literal notranslate"><span class="pre">src/bsk_sdk/</span></code>.</p></li>
+</ul>
+<p>If the release branch intentionally records Basilisk provenance through
+<code class="docutils literal notranslate"><span class="pre">external/basilisk</span></code>, commit the updated submodule pointer as well. A checkout
+selected with <code class="docutils literal notranslate"><span class="pre">--basilisk-root</span></code> does not otherwise alter the published SDK.</p>
+</section>
+</section>
+<section id="ci-and-publishing-behavior">
+<h2>CI and Publishing Behavior<a class="headerlink" href="#ci-and-publishing-behavior" title="Link to this heading"></a></h2>
+<p>CI reads <code class="docutils literal notranslate"><span class="pre">src/bsk_sdk/_bsk_version.txt</span></code> to select the matching Basilisk
+build. Versions containing <code class="docutils literal notranslate"><span class="pre">aN</span></code> or <code class="docutils literal notranslate"><span class="pre">bN</span></code> are treated as development builds;
+CI checks out Basilisk <code class="docutils literal notranslate"><span class="pre">develop</span></code> and installs the nightly <code class="docutils literal notranslate"><span class="pre">bsk[all]</span></code>
+package set. Final and patch versions select the corresponding published
+Basilisk release.</p>
+<p>No temporary <code class="docutils literal notranslate"><span class="pre">ci.yml</span></code> edit is needed for normal beta, major, or patch SDK
+workflows. A pushed SDK version tag triggers the GitHub Actions wheel build and
+PyPI publication. Always wait for the corresponding Basilisk release and
+package publication before preparing a final or patch SDK tag.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="bskReleaseGuide.html" class="btn btn-neutral float-left" title="BSK Release Guide" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../../Documentation/index.html" class="btn btn-neutral float-right" title="Documentation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

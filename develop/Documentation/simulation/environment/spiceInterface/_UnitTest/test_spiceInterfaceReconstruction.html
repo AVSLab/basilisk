@@ -1,0 +1,312 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_spiceInterfaceReconstruction &mdash; Basilisk 2.12.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/custom.css?v=2ebb1c42" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=4ad2e773"></script>
+      <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+    <link rel="next" title="test_spiceThreadSafety" href="test_spiceThreadSafety.html" />
+    <link rel="prev" title="test_multipleInterfaces" href="test_multipleInterfaces.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../../communication/index.html">communication</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../dynamics/index.html">dynamics</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../../index.html">environment</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../../ExponentialAtmosphere/index.html">ExponentialAtmosphere</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../MsisAtmosphere/index.html">MsisAtmosphere</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../TabularAtmosphere/index.html">TabularAtmosphere</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../ZeroWindModel/index.html">ZeroWindModel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../albedo/index.html">albedo</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../dentonFluxModel/index.html">dentonFluxModel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../earthRadiationModel/index.html">earthRadiationModel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../eclipse/index.html">eclipse</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../ephemerisConverter/index.html">ephemerisConverter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../groundLocation/index.html">groundLocation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../groundMapping/index.html">groundMapping</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../magneticFieldCenteredDipole/index.html">magneticFieldCenteredDipole</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../magneticFieldWMM/index.html">magneticFieldWMM</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../planetEphemeris/index.html">planetEphemeris</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../solarFlux/index.html">solarFlux</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../spaceWeatherData/index.html">spaceWeatherData</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../spacecraftChargingDynamics/index.html">spacecraftChargingDynamics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../spacecraftChargingEquilibrium/index.html">spacecraftChargingEquilibrium</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../spacecraftLocation/index.html">spacecraftLocation</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../index.html">spiceInterface</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../stripLocation/index.html">stripLocation</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../forceTorque/index.html">forceTorque</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../mujocoDynamics/index.html">mujocoDynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../simSynch/index.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">environment</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">spiceInterface</a></li>
+          <li class="breadcrumb-item"><a href="index.html">_UnitTest</a></li>
+      <li class="breadcrumb-item active">test_spiceInterfaceReconstruction</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../../_sources/Documentation/simulation/environment/spiceInterface/_UnitTest/test_spiceInterfaceReconstruction.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="test-spiceinterfacereconstruction">
+<span id="id1"></span><h1>test_spiceInterfaceReconstruction<a class="headerlink" href="#test-spiceinterfacereconstruction" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<p id="module-test_spiceInterfaceReconstruction">Unit tests for the opt-in SPICE query reconstruction feature of <a class="reference internal" href="../spiceInterface.html#spiceinterface"><span class="std std-ref">C++ Module: spiceInterface</span></a>.</p>
+<p>These cover the invariants that the feature promises:</p>
+<ul class="simple">
+<li><p><strong>Bit-for-bit default preservation</strong> – with nothing configured, the planet-state output is
+byte-identical to the exact per-call SPICE path.</p></li>
+<li><p><strong>Reconstruction accuracy</strong> – a Hermite-interpolated planet tracks the exact SPICE position
+to a small tolerance while querying SPICE far fewer times.</p></li>
+<li><p><strong>Query-count savings</strong> – <code class="docutils literal notranslate"><span class="pre">getPlanetSpiceQueryCount</span></code> reflects ~horizon/knotStep queries,
+not once per task step.</p></li>
+<li><p><strong>Single-knot orientation extrapolation is exact for a constant spinner</strong> (Earth’s IAU frame).</p></li>
+<li><p><strong>Channels are independent and toggle-off-able</strong> – a disabled channel emits the trivial
+default (zero position/velocity or identity orientation) without querying SPICE.</p></li>
+<li><p><strong>Derivative self-consistency</strong> – the emitted <code class="docutils literal notranslate"><span class="pre">VelocityVector</span></code> matches a finite difference
+of the reconstructed position.</p></li>
+</ul>
+<dl class="py function">
+<dt class="sig sig-object py" id="test_spiceInterfaceReconstruction.test_defaultsAreBitIdentical">
+<span class="sig-prename descclassname"><span class="pre">test_spiceInterfaceReconstruction.</span></span><span class="sig-name descname"><span class="pre">test_defaultsAreBitIdentical</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_spiceInterfaceReconstruction.html#test_defaultsAreBitIdentical"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_spiceInterfaceReconstruction.test_defaultsAreBitIdentical" title="Link to this definition"></a></dt>
+<dd><p>With nothing configured, every planet field must be byte-identical to the exact path.
+(Configuring one planet must not perturb the others, nor the default output of any field.)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_spiceInterfaceReconstruction.test_disabledChannelsEmitTrivialDefault">
+<span class="sig-prename descclassname"><span class="pre">test_spiceInterfaceReconstruction.</span></span><span class="sig-name descname"><span class="pre">test_disabledChannelsEmitTrivialDefault</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_spiceInterfaceReconstruction.html#test_disabledChannelsEmitTrivialDefault"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_spiceInterfaceReconstruction.test_disabledChannelsEmitTrivialDefault" title="Link to this definition"></a></dt>
+<dd><p>A disabled position channel emits zero pos/vel; a disabled orientation channel emits the
+identity DCM and zero rate – and neither queries SPICE.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_spiceInterfaceReconstruction.test_enablingReconstructionAfterResetAnchorsAtEpoch">
+<span class="sig-prename descclassname"><span class="pre">test_spiceInterfaceReconstruction.</span></span><span class="sig-name descname"><span class="pre">test_enablingReconstructionAfterResetAnchorsAtEpoch</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_spiceInterfaceReconstruction.html#test_enablingReconstructionAfterResetAnchorsAtEpoch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_spiceInterfaceReconstruction.test_enablingReconstructionAfterResetAnchorsAtEpoch" title="Link to this definition"></a></dt>
+<dd><p>Enabling reconstruction for the FIRST time between two ExecuteSimulation() segments (so the
+reconstruction object is created after Reset already set the epoch) must anchor knots at the
+init epoch, not J2000 ET 0. Otherwise the knot grid would query the wrong epoch and the state
+would be wildly wrong. Regression for the deferred-creation et0 anchoring.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_spiceInterfaceReconstruction.test_exactSpiceResetRestoresDefault">
+<span class="sig-prename descclassname"><span class="pre">test_spiceInterfaceReconstruction.</span></span><span class="sig-name descname"><span class="pre">test_exactSpiceResetRestoresDefault</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_spiceInterfaceReconstruction.html#test_exactSpiceResetRestoresDefault"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_spiceInterfaceReconstruction.test_exactSpiceResetRestoresDefault" title="Link to this definition"></a></dt>
+<dd><p>setPlanetExactSpice reverts both channels; output returns to the exact path bit-for-bit.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_spiceInterfaceReconstruction.test_integratorAgnosticQueryCountOnDynamicsTask">
+<span class="sig-prename descclassname"><span class="pre">test_spiceInterfaceReconstruction.</span></span><span class="sig-name descname"><span class="pre">test_integratorAgnosticQueryCountOnDynamicsTask</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_spiceInterfaceReconstruction.html#test_integratorAgnosticQueryCountOnDynamicsTask"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_spiceInterfaceReconstruction.test_integratorAgnosticQueryCountOnDynamicsTask" title="Link to this definition"></a></dt>
+<dd><p>On an MJScene dynamics task the module’s UpdateState is called once per integrator STAGE,
+so the exact path would query SPICE (stages x steps) times. With reconstruction the knot cache
+collapses those onto ~horizon/knotStep queries, and that count is the SAME for a fixed RK4 and
+an adaptive RKF45 integrator – the integrator-agnostic property the feature exists to deliver.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_spiceInterfaceReconstruction.test_misconfiguredPlanetWarnsNotThrows">
+<span class="sig-prename descclassname"><span class="pre">test_spiceInterfaceReconstruction.</span></span><span class="sig-name descname"><span class="pre">test_misconfiguredPlanetWarnsNotThrows</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_spiceInterfaceReconstruction.html#test_misconfiguredPlanetWarnsNotThrows"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_spiceInterfaceReconstruction.test_misconfiguredPlanetWarnsNotThrows" title="Link to this definition"></a></dt>
+<dd><p>A reconstruction config for a planet that was never added (or has no orientation frame)
+must WARN and keep running, not throw BasiliskError and abort the sim. The stale entry is
+pruned, so its query count reports unconfigured afterwards.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_spiceInterfaceReconstruction.test_oddKnotStencilIsCentered">
+<span class="sig-prename descclassname"><span class="pre">test_spiceInterfaceReconstruction.</span></span><span class="sig-name descname"><span class="pre">test_oddKnotStencilIsCentered</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_spiceInterfaceReconstruction.html#test_oddKnotStencilIsCentered"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_spiceInterfaceReconstruction.test_oddKnotStencilIsCentered" title="Link to this definition"></a></dt>
+<dd><p>A 3-knot interpolation stencil is centred on the current interval ([k-1, k, k+1]); a
+forward-biased [k, k+1, k+2] stencil would be less accurate. Guards buildStencil’s centering:
+3-knot reconstruction must be at least as accurate as 2-knot on the same coarse grid.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_spiceInterfaceReconstruction.test_positionReconstructionAccurateAndCheaper">
+<span class="sig-prename descclassname"><span class="pre">test_spiceInterfaceReconstruction.</span></span><span class="sig-name descname"><span class="pre">test_positionReconstructionAccurateAndCheaper</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_spiceInterfaceReconstruction.html#test_positionReconstructionAccurateAndCheaper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_spiceInterfaceReconstruction.test_positionReconstructionAccurateAndCheaper" title="Link to this definition"></a></dt>
+<dd><p>Hermite position reconstruction on a coarse grid tracks exact SPICE to well under a metre
+over a short horizon, at far fewer SPICE queries than one-per-step.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_spiceInterfaceReconstruction.test_queryCountTracksExactPathWithNoReconstruction">
+<span class="sig-prename descclassname"><span class="pre">test_spiceInterfaceReconstruction.</span></span><span class="sig-name descname"><span class="pre">test_queryCountTracksExactPathWithNoReconstruction</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_spiceInterfaceReconstruction.html#test_queryCountTracksExactPathWithNoReconstruction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_spiceInterfaceReconstruction.test_queryCountTracksExactPathWithNoReconstruction" title="Link to this definition"></a></dt>
+<dd><p>getPlanetSpiceQueryCount reports SPICE calls even when NO reconstruction is configured: a
+plain exact-path planet queries both channels once per update, so the counts equal the number of
+updates. An added-but-never-queried name reads {0, 0}; a name never added reads {-1, -1}.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_spiceInterfaceReconstruction.test_reconfiguringKnotStepClearsStaleCache">
+<span class="sig-prename descclassname"><span class="pre">test_spiceInterfaceReconstruction.</span></span><span class="sig-name descname"><span class="pre">test_reconfiguringKnotStepClearsStaleCache</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_spiceInterfaceReconstruction.html#test_reconfiguringKnotStepClearsStaleCache"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_spiceInterfaceReconstruction.test_reconfiguringKnotStepClearsStaleCache" title="Link to this definition"></a></dt>
+<dd><p>Reconfiguring a channel’s knotStep must drop the cached knots: they are keyed by integer
+index on the OLD grid, so reusing them would map indices to the wrong epochs. Reconfigure the
+grid mid-life (after one run has populated knots) and confirm a second run still tracks exact
+SPICE, i.e. it re-queried on the new grid rather than reusing the old samples.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_spiceInterfaceReconstruction.test_singleKnotDefaultsAreExactRegardlessOfInterpolateFlag">
+<span class="sig-prename descclassname"><span class="pre">test_spiceInterfaceReconstruction.</span></span><span class="sig-name descname"><span class="pre">test_singleKnotDefaultsAreExactRegardlessOfInterpolateFlag</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_spiceInterfaceReconstruction.html#test_singleKnotDefaultsAreExactRegardlessOfInterpolateFlag"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_spiceInterfaceReconstruction.test_singleKnotDefaultsAreExactRegardlessOfInterpolateFlag" title="Link to this definition"></a></dt>
+<dd><p>A single-knot stencil (nKnots=1) is the enclosing knot for BOTH interpolate settings, so
+orientation reconstruction of a constant spinner is exact even with the enabled default
+interpolate=True (regression: a naive 1-knot formula would pick the future knot k+1).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_spiceInterfaceReconstruction.test_singleKnotOrientationExtrapolationExactForConstantSpinner">
+<span class="sig-prename descclassname"><span class="pre">test_spiceInterfaceReconstruction.</span></span><span class="sig-name descname"><span class="pre">test_singleKnotOrientationExtrapolationExactForConstantSpinner</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_spiceInterfaceReconstruction.html#test_singleKnotOrientationExtrapolationExactForConstantSpinner"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_spiceInterfaceReconstruction.test_singleKnotOrientationExtrapolationExactForConstantSpinner" title="Link to this definition"></a></dt>
+<dd><p>Earth’s IAU frame is a constant-rate spinner, so extrapolating orientation from a SINGLE
+knot (nKnots=1, interpolate=False) reproduces the exact per-call sxform orientation, using
+only one sxform query for the whole run.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_spiceInterfaceReconstruction.test_velocityIsDerivativeOfReconstructedPosition">
+<span class="sig-prename descclassname"><span class="pre">test_spiceInterfaceReconstruction.</span></span><span class="sig-name descname"><span class="pre">test_velocityIsDerivativeOfReconstructedPosition</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_spiceInterfaceReconstruction.html#test_velocityIsDerivativeOfReconstructedPosition"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_spiceInterfaceReconstruction.test_velocityIsDerivativeOfReconstructedPosition" title="Link to this definition"></a></dt>
+<dd><p>The emitted VelocityVector must equal the time derivative of the reconstructed position,
+so a downstream Euler step stays self-consistent. Sampled from a single run’s recorder (a
+fine task cadence) and finite-differenced with the actual logging step.</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="test_multipleInterfaces.html" class="btn btn-neutral float-left" title="test_multipleInterfaces" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="test_spiceThreadSafety.html" class="btn btn-neutral float-right" title="test_spiceThreadSafety" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

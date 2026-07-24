@@ -1,0 +1,617 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_spiceInterfaceReconstruction &mdash; Basilisk 2.12.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=2ebb1c42" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=4ad2e773"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">test_spiceInterfaceReconstruction</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for test_spiceInterfaceReconstruction</h1><div class="highlight"><pre>
+<span></span>
+<span class="c1"># ISC License</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1"># Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1"># purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1"># copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1"># THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1"># WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1"># MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1"># ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1"># WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1"># ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1"># OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+
+<span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Unit tests for the opt-in SPICE query reconstruction feature of :ref:`spiceInterface`.</span>
+
+<span class="sd">These cover the invariants that the feature promises:</span>
+
+<span class="sd">* **Bit-for-bit default preservation** -- with nothing configured, the planet-state output is</span>
+<span class="sd">  byte-identical to the exact per-call SPICE path.</span>
+<span class="sd">* **Reconstruction accuracy** -- a Hermite-interpolated planet tracks the exact SPICE position</span>
+<span class="sd">  to a small tolerance while querying SPICE far fewer times.</span>
+<span class="sd">* **Query-count savings** -- ``getPlanetSpiceQueryCount`` reflects ~horizon/knotStep queries,</span>
+<span class="sd">  not once per task step.</span>
+<span class="sd">* **Single-knot orientation extrapolation is exact for a constant spinner** (Earth&#39;s IAU frame).</span>
+<span class="sd">* **Channels are independent and toggle-off-able** -- a disabled channel emits the trivial</span>
+<span class="sd">  default (zero position/velocity or identity orientation) without querying SPICE.</span>
+<span class="sd">* **Derivative self-consistency** -- the emitted ``VelocityVector`` matches a finite difference</span>
+<span class="sd">  of the reconstructed position.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+
+<span class="n">filename</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getframeinfo</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">())</span><span class="o">.</span><span class="n">filename</span>
+<span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk</span><span class="w"> </span><span class="kn">import</span> <span class="n">__path__</span>
+<span class="n">bskPath</span> <span class="o">=</span> <span class="n">__path__</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span><span class="p">,</span> <span class="n">macros</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">spiceInterface</span>
+
+<span class="n">DATE</span> <span class="o">=</span> <span class="s2">&quot;2021 MARCH 1 00:00:00.0 (UTC)&quot;</span>
+<span class="c1"># Names/date resolvable with the module&#39;s default DE430 kernel set (the de430.bsp SPK provides</span>
+<span class="c1"># &quot;mars barycenter&quot;, not &quot;mars&quot;). Earth carries both a position and a constant-rate IAU_EARTH</span>
+<span class="c1"># orientation, so it exercises both reconstruction channels.</span>
+<span class="n">PLANETS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;earth&quot;</span><span class="p">,</span> <span class="s2">&quot;mars barycenter&quot;</span><span class="p">,</span> <span class="s2">&quot;sun&quot;</span><span class="p">]</span>
+<span class="n">OTHERS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;mars barycenter&quot;</span><span class="p">,</span> <span class="s2">&quot;sun&quot;</span><span class="p">]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_newSpice</span><span class="p">():</span>
+    <span class="c1"># Let the module auto-configure its default kernels (naif0012/pck00010/de-403-masses/de430),</span>
+    <span class="c1"># fetched on demand by the data fetcher -- the same path the other unit tests rely on.</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">spiceInterface</span><span class="o">.</span><span class="n">SpiceInterface</span><span class="p">()</span>
+    <span class="n">s</span><span class="o">.</span><span class="n">addPlanetNames</span><span class="p">(</span><span class="n">spiceInterface</span><span class="o">.</span><span class="n">StringVector</span><span class="p">(</span><span class="n">PLANETS</span><span class="p">))</span>
+    <span class="n">s</span><span class="o">.</span><span class="n">UTCCalInit</span> <span class="o">=</span> <span class="n">DATE</span>
+    <span class="k">return</span> <span class="n">s</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_runToStop</span><span class="p">(</span><span class="n">configureFn</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build a sim with a fresh SpiceInterface on a regular task, apply configureFn(spice),</span>
+<span class="sd">    run to tf, and return {planetName: payload-copy} of the final planet states + the spice object.&quot;&quot;&quot;</span>
+    <span class="n">sim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">proc</span> <span class="o">=</span> <span class="n">sim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="s2">&quot;proc&quot;</span><span class="p">)</span>
+    <span class="n">proc</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">sim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">&quot;task&quot;</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">dt</span><span class="p">)))</span>
+    <span class="n">spice</span> <span class="o">=</span> <span class="n">_newSpice</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">configureFn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">configureFn</span><span class="p">(</span><span class="n">spice</span><span class="p">)</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;task&quot;</span><span class="p">,</span> <span class="n">spice</span><span class="p">)</span>
+    <span class="n">logs</span> <span class="o">=</span> <span class="p">[</span><span class="n">spice</span><span class="o">.</span><span class="n">planetStateOutMsgs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">PLANETS</span><span class="p">))]</span>
+    <span class="k">for</span> <span class="n">lg</span> <span class="ow">in</span> <span class="n">logs</span><span class="p">:</span>
+        <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;task&quot;</span><span class="p">,</span> <span class="n">lg</span><span class="p">)</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">tf</span><span class="p">))</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">PLANETS</span><span class="p">):</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">spice</span><span class="o">.</span><span class="n">planetStateOutMsgs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="n">out</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="n">pos</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">PositionVector</span><span class="p">),</span>
+            <span class="n">vel</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">VelocityVector</span><span class="p">),</span>
+            <span class="n">dcm</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">J20002Pfix</span><span class="p">),</span>
+            <span class="n">dcmDot</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">J20002Pfix_dot</span><span class="p">),</span>
+            <span class="n">J2000Current</span><span class="o">=</span><span class="n">p</span><span class="o">.</span><span class="n">J2000Current</span><span class="p">,</span>
+            <span class="n">computeOrient</span><span class="o">=</span><span class="n">p</span><span class="o">.</span><span class="n">computeOrient</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="nb">bytes</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">PlanetName</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;</span><span class="se">\x00</span><span class="s2">&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">PlanetName</span><span class="p">,</span> <span class="p">(</span><span class="nb">bytes</span><span class="p">,</span> <span class="nb">bytearray</span><span class="p">))</span> <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">PlanetName</span><span class="p">),</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">out</span><span class="p">,</span> <span class="n">spice</span>
+
+
+<div class="viewcode-block" id="test_defaultsAreBitIdentical">
+<a class="viewcode-back" href="../Documentation/simulation/environment/spiceInterface/_UnitTest/test_spiceInterfaceReconstruction.html#test_spiceInterfaceReconstruction.test_defaultsAreBitIdentical">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_defaultsAreBitIdentical</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;With nothing configured, every planet field must be byte-identical to the exact path.</span>
+<span class="sd">    (Configuring one planet must not perturb the others, nor the default output of any field.)&quot;&quot;&quot;</span>
+    <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">,</span> <span class="mf">300.0</span>
+    <span class="n">base</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_runToStop</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">)</span>
+
+    <span class="c1"># Reconstruct earth only; mars &amp; sun must stay bit-identical to the exact run, and earth&#39;s</span>
+    <span class="c1"># J2000Current / computeOrient / PlanetName (non-numeric fields) must also be unchanged.</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cfg</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">setPlanetPositionReconstruction</span><span class="p">(</span><span class="s2">&quot;earth&quot;</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">60.0</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">withInterp</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_runToStop</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">OTHERS</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">base</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="s2">&quot;pos&quot;</span><span class="p">],</span> <span class="n">withInterp</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="s2">&quot;pos&quot;</span><span class="p">]),</span> <span class="n">name</span>
+        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">base</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="s2">&quot;vel&quot;</span><span class="p">],</span> <span class="n">withInterp</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="s2">&quot;vel&quot;</span><span class="p">]),</span> <span class="n">name</span>
+        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">base</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="s2">&quot;dcm&quot;</span><span class="p">],</span> <span class="n">withInterp</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="s2">&quot;dcm&quot;</span><span class="p">]),</span> <span class="n">name</span>
+        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">base</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="s2">&quot;dcmDot&quot;</span><span class="p">],</span> <span class="n">withInterp</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="s2">&quot;dcmDot&quot;</span><span class="p">]),</span> <span class="n">name</span>
+
+    <span class="c1"># earth non-numeric fields unchanged</span>
+    <span class="k">assert</span> <span class="n">base</span><span class="p">[</span><span class="s2">&quot;earth&quot;</span><span class="p">][</span><span class="s2">&quot;J2000Current&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">withInterp</span><span class="p">[</span><span class="s2">&quot;earth&quot;</span><span class="p">][</span><span class="s2">&quot;J2000Current&quot;</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="n">base</span><span class="p">[</span><span class="s2">&quot;earth&quot;</span><span class="p">][</span><span class="s2">&quot;computeOrient&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">withInterp</span><span class="p">[</span><span class="s2">&quot;earth&quot;</span><span class="p">][</span><span class="s2">&quot;computeOrient&quot;</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="n">base</span><span class="p">[</span><span class="s2">&quot;earth&quot;</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">withInterp</span><span class="p">[</span><span class="s2">&quot;earth&quot;</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+
+    <span class="c1"># A completely unconfigured run twice is trivially identical (guards the exact path itself).</span>
+    <span class="n">base2</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_runToStop</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">PLANETS</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">base</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="s2">&quot;pos&quot;</span><span class="p">],</span> <span class="n">base2</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="s2">&quot;pos&quot;</span><span class="p">])</span>
+        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">base</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="s2">&quot;dcm&quot;</span><span class="p">],</span> <span class="n">base2</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="s2">&quot;dcm&quot;</span><span class="p">])</span></div>
+
+
+
+<div class="viewcode-block" id="test_positionReconstructionAccurateAndCheaper">
+<a class="viewcode-back" href="../Documentation/simulation/environment/spiceInterface/_UnitTest/test_spiceInterfaceReconstruction.html#test_spiceInterfaceReconstruction.test_positionReconstructionAccurateAndCheaper">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_positionReconstructionAccurateAndCheaper</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Hermite position reconstruction on a coarse grid tracks exact SPICE to well under a metre</span>
+<span class="sd">    over a short horizon, at far fewer SPICE queries than one-per-step.&quot;&quot;&quot;</span>
+    <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">,</span> <span class="mf">600.0</span>                      <span class="c1"># 60 steps</span>
+    <span class="n">exact</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_runToStop</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">)</span>
+
+    <span class="n">knot</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">120.0</span><span class="p">)</span>             <span class="c1"># 12x the task step</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cfg</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">setPlanetPositionReconstruction</span><span class="p">(</span><span class="s2">&quot;earth&quot;</span><span class="p">,</span> <span class="n">knot</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">recon</span><span class="p">,</span> <span class="n">spice</span> <span class="o">=</span> <span class="n">_runToStop</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">)</span>
+
+    <span class="n">err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">recon</span><span class="p">[</span><span class="s2">&quot;earth&quot;</span><span class="p">][</span><span class="s2">&quot;pos&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">exact</span><span class="p">[</span><span class="s2">&quot;earth&quot;</span><span class="p">][</span><span class="s2">&quot;pos&quot;</span><span class="p">])</span>
+    <span class="k">assert</span> <span class="n">err</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;position reconstruction error too large: </span><span class="si">{</span><span class="n">err</span><span class="si">}</span><span class="s2"> m&quot;</span>
+
+    <span class="n">nPos</span><span class="p">,</span> <span class="n">nOrient</span> <span class="o">=</span> <span class="n">spice</span><span class="o">.</span><span class="n">getPlanetSpiceQueryCount</span><span class="p">(</span><span class="s2">&quot;earth&quot;</span><span class="p">)</span>
+    <span class="c1"># ~ horizon/knot (+ small stencil slack), and certainly far below the exact 60 steps.</span>
+    <span class="k">assert</span> <span class="n">nPos</span> <span class="o">&lt;=</span> <span class="mi">12</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;expected ~horizon/knot position queries, got </span><span class="si">{</span><span class="n">nPos</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="c1"># The orientation channel is on the exact path, so it counts one SPICE call per step: many more</span>
+    <span class="c1"># than the reconstructed position channel.</span>
+    <span class="k">assert</span> <span class="n">nOrient</span> <span class="o">&gt;</span> <span class="n">nPos</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;exact orientation channel should query every step, got </span><span class="si">{</span><span class="n">nOrient</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="test_singleKnotOrientationExtrapolationExactForConstantSpinner">
+<a class="viewcode-back" href="../Documentation/simulation/environment/spiceInterface/_UnitTest/test_spiceInterfaceReconstruction.html#test_spiceInterfaceReconstruction.test_singleKnotOrientationExtrapolationExactForConstantSpinner">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_singleKnotOrientationExtrapolationExactForConstantSpinner</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Earth&#39;s IAU frame is a constant-rate spinner, so extrapolating orientation from a SINGLE</span>
+<span class="sd">    knot (nKnots=1, interpolate=False) reproduces the exact per-call sxform orientation, using</span>
+<span class="sd">    only one sxform query for the whole run.&quot;&quot;&quot;</span>
+    <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">,</span> <span class="mf">600.0</span>
+    <span class="n">exact</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_runToStop</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">cfg</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">setPlanetOrientationReconstruction</span><span class="p">(</span><span class="s2">&quot;earth&quot;</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">100000.0</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>  <span class="c1"># one knot, extrapolate</span>
+    <span class="n">recon</span><span class="p">,</span> <span class="n">spice</span> <span class="o">=</span> <span class="n">_runToStop</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">)</span>
+
+    <span class="n">dcmErr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">recon</span><span class="p">[</span><span class="s2">&quot;earth&quot;</span><span class="p">][</span><span class="s2">&quot;dcm&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">exact</span><span class="p">[</span><span class="s2">&quot;earth&quot;</span><span class="p">][</span><span class="s2">&quot;dcm&quot;</span><span class="p">]))</span>
+    <span class="k">assert</span> <span class="n">dcmErr</span> <span class="o">&lt;</span> <span class="mf">1e-9</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;single-knot orientation extrapolation not exact: max|dDCM|=</span><span class="si">{</span><span class="n">dcmErr</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="n">nPos</span><span class="p">,</span> <span class="n">nOrient</span> <span class="o">=</span> <span class="n">spice</span><span class="o">.</span><span class="n">getPlanetSpiceQueryCount</span><span class="p">(</span><span class="s2">&quot;earth&quot;</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">nOrient</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;constant spinner should need exactly one sxform query, got </span><span class="si">{</span><span class="n">nOrient</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="c1"># The position channel is on the exact path, so it counts one SPICE call per step.</span>
+    <span class="k">assert</span> <span class="n">nPos</span> <span class="o">&gt;</span> <span class="n">nOrient</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;exact position channel should query every step, got </span><span class="si">{</span><span class="n">nPos</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="test_disabledChannelsEmitTrivialDefault">
+<a class="viewcode-back" href="../Documentation/simulation/environment/spiceInterface/_UnitTest/test_spiceInterfaceReconstruction.html#test_spiceInterfaceReconstruction.test_disabledChannelsEmitTrivialDefault">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_disabledChannelsEmitTrivialDefault</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A disabled position channel emits zero pos/vel; a disabled orientation channel emits the</span>
+<span class="sd">    identity DCM and zero rate -- and neither queries SPICE.&quot;&quot;&quot;</span>
+    <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">,</span> <span class="mf">100.0</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">cfg</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">setPlanetPositionDisabled</span><span class="p">(</span><span class="s2">&quot;earth&quot;</span><span class="p">)</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">setPlanetOrientationDisabled</span><span class="p">(</span><span class="s2">&quot;earth&quot;</span><span class="p">)</span>
+    <span class="n">recon</span><span class="p">,</span> <span class="n">spice</span> <span class="o">=</span> <span class="n">_runToStop</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">recon</span><span class="p">[</span><span class="s2">&quot;earth&quot;</span><span class="p">][</span><span class="s2">&quot;pos&quot;</span><span class="p">],</span> <span class="mf">0.0</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">recon</span><span class="p">[</span><span class="s2">&quot;earth&quot;</span><span class="p">][</span><span class="s2">&quot;vel&quot;</span><span class="p">],</span> <span class="mf">0.0</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">recon</span><span class="p">[</span><span class="s2">&quot;earth&quot;</span><span class="p">][</span><span class="s2">&quot;dcm&quot;</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">recon</span><span class="p">[</span><span class="s2">&quot;earth&quot;</span><span class="p">][</span><span class="s2">&quot;dcmDot&quot;</span><span class="p">],</span> <span class="mf">0.0</span><span class="p">)</span>
+
+    <span class="n">nPos</span><span class="p">,</span> <span class="n">nOrient</span> <span class="o">=</span> <span class="n">spice</span><span class="o">.</span><span class="n">getPlanetSpiceQueryCount</span><span class="p">(</span><span class="s2">&quot;earth&quot;</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">nPos</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">nOrient</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;disabled channels must not query SPICE&quot;</span>
+
+    <span class="c1"># J2000Current / computeOrient / PlanetName are still filled as usual.</span>
+    <span class="k">assert</span> <span class="n">recon</span><span class="p">[</span><span class="s2">&quot;earth&quot;</span><span class="p">][</span><span class="s2">&quot;J2000Current&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.0</span>
+    <span class="k">assert</span> <span class="n">recon</span><span class="p">[</span><span class="s2">&quot;earth&quot;</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;earth&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="test_velocityIsDerivativeOfReconstructedPosition">
+<a class="viewcode-back" href="../Documentation/simulation/environment/spiceInterface/_UnitTest/test_spiceInterfaceReconstruction.html#test_spiceInterfaceReconstruction.test_velocityIsDerivativeOfReconstructedPosition">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_velocityIsDerivativeOfReconstructedPosition</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The emitted VelocityVector must equal the time derivative of the reconstructed position,</span>
+<span class="sd">    so a downstream Euler step stays self-consistent. Sampled from a single run&#39;s recorder (a</span>
+<span class="sd">    fine task cadence) and finite-differenced with the actual logging step.&quot;&quot;&quot;</span>
+    <span class="n">dt</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">knot</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">90.0</span><span class="p">)</span>
+    <span class="n">tf</span> <span class="o">=</span> <span class="mf">300.0</span>
+
+    <span class="n">sim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">proc</span> <span class="o">=</span> <span class="n">sim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="s2">&quot;proc&quot;</span><span class="p">)</span>
+    <span class="n">proc</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">sim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">&quot;task&quot;</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">dt</span><span class="p">)))</span>
+    <span class="n">spice</span> <span class="o">=</span> <span class="n">_newSpice</span><span class="p">()</span>
+    <span class="n">spice</span><span class="o">.</span><span class="n">setPlanetPositionReconstruction</span><span class="p">(</span><span class="s2">&quot;earth&quot;</span><span class="p">,</span> <span class="n">knot</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;task&quot;</span><span class="p">,</span> <span class="n">spice</span><span class="p">)</span>
+    <span class="n">rec</span> <span class="o">=</span> <span class="n">spice</span><span class="o">.</span><span class="n">planetStateOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>   <span class="c1"># earth</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;task&quot;</span><span class="p">,</span> <span class="n">rec</span><span class="p">)</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">tf</span><span class="p">))</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="n">pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rec</span><span class="o">.</span><span class="n">PositionVector</span><span class="p">)</span>   <span class="c1"># (N,3)</span>
+    <span class="n">vel</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rec</span><span class="o">.</span><span class="n">VelocityVector</span><span class="p">)</span>
+    <span class="c1"># central finite difference of logged position vs the logged (emitted) velocity at interior pts</span>
+    <span class="n">vFD</span> <span class="o">=</span> <span class="p">(</span><span class="n">pos</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span> <span class="o">-</span> <span class="n">pos</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">dt</span><span class="p">)</span>
+    <span class="n">vEmit</span> <span class="o">=</span> <span class="n">vel</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">relErr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">vFD</span> <span class="o">-</span> <span class="n">vEmit</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">vEmit</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="mf">1e-9</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">relErr</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-4</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;emitted velocity inconsistent with dP/dt: max relErr=</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">relErr</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="test_integratorAgnosticQueryCountOnDynamicsTask">
+<a class="viewcode-back" href="../Documentation/simulation/environment/spiceInterface/_UnitTest/test_spiceInterfaceReconstruction.html#test_spiceInterfaceReconstruction.test_integratorAgnosticQueryCountOnDynamicsTask">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_integratorAgnosticQueryCountOnDynamicsTask</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;On an MJScene dynamics task the module&#39;s UpdateState is called once per integrator STAGE,</span>
+<span class="sd">    so the exact path would query SPICE (stages x steps) times. With reconstruction the knot cache</span>
+<span class="sd">    collapses those onto ~horizon/knotStep queries, and that count is the SAME for a fixed RK4 and</span>
+<span class="sd">    an adaptive RKF45 integrator -- the integrator-agnostic property the feature exists to deliver.&quot;&quot;&quot;</span>
+    <span class="n">mujoco</span> <span class="o">=</span> <span class="n">pytest</span><span class="o">.</span><span class="n">importorskip</span><span class="p">(</span><span class="s2">&quot;Basilisk.simulation.mujoco&quot;</span><span class="p">)</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">svIntegrators</span>
+
+    <span class="n">scXml</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">    &lt;mujoco&gt;</span>
+<span class="s2">        &lt;worldbody&gt;</span>
+<span class="s2">            &lt;body name=&quot;sat&quot;&gt;&lt;freejoint/&gt;&lt;inertial pos=&quot;0 0 0&quot; mass=&quot;1&quot; diaginertia=&quot;1 1 1&quot;/&gt;&lt;/body&gt;</span>
+<span class="s2">        &lt;/worldbody&gt;</span>
+<span class="s2">    &lt;/mujoco&gt;</span>
+<span class="s2">    &quot;&quot;&quot;</span>
+    <span class="n">knot</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">120.0</span><span class="p">)</span>
+    <span class="n">tf</span> <span class="o">=</span> <span class="mf">1200.0</span>     <span class="c1"># 10 knot intervals</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">queryCount</span><span class="p">(</span><span class="n">makeIntegrator</span><span class="p">,</span> <span class="n">dt</span><span class="p">):</span>
+        <span class="n">sim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+        <span class="n">proc</span> <span class="o">=</span> <span class="n">sim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="s2">&quot;proc&quot;</span><span class="p">)</span>
+        <span class="n">proc</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">sim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">&quot;task&quot;</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">dt</span><span class="p">)))</span>
+        <span class="n">scene</span> <span class="o">=</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MJScene</span><span class="p">(</span><span class="n">scXml</span><span class="p">)</span>
+        <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;task&quot;</span><span class="p">,</span> <span class="n">scene</span><span class="p">)</span>
+        <span class="n">integ</span> <span class="o">=</span> <span class="n">makeIntegrator</span><span class="p">(</span><span class="n">scene</span><span class="p">)</span>
+        <span class="n">scene</span><span class="o">.</span><span class="n">setIntegrator</span><span class="p">(</span><span class="n">integ</span><span class="p">)</span>
+
+        <span class="n">spice</span> <span class="o">=</span> <span class="n">_newSpice</span><span class="p">()</span>
+        <span class="n">spice</span><span class="o">.</span><span class="n">setPlanetPositionReconstruction</span><span class="p">(</span><span class="s2">&quot;earth&quot;</span><span class="p">,</span> <span class="n">knot</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">scene</span><span class="o">.</span><span class="n">AddModelToDynamicsTask</span><span class="p">(</span><span class="n">spice</span><span class="p">)</span>
+
+        <span class="n">keep</span> <span class="o">=</span> <span class="p">[</span><span class="n">integ</span><span class="p">,</span> <span class="n">spice</span><span class="p">]</span>  <span class="c1"># keep Python refs alive (svIntegrator GC segfault guard)  # noqa: F841</span>
+        <span class="n">sim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+        <span class="n">sim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">tf</span><span class="p">))</span>
+        <span class="n">sim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+        <span class="n">nPos</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">spice</span><span class="o">.</span><span class="n">getPlanetSpiceQueryCount</span><span class="p">(</span><span class="s2">&quot;earth&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">nPos</span>
+
+    <span class="n">nRK4</span> <span class="o">=</span> <span class="n">queryCount</span><span class="p">(</span><span class="k">lambda</span> <span class="n">sc</span><span class="p">:</span> <span class="n">svIntegrators</span><span class="o">.</span><span class="n">svIntegratorRK4</span><span class="p">(</span><span class="n">sc</span><span class="p">),</span> <span class="mf">20.0</span><span class="p">)</span>
+    <span class="n">nRKF45</span> <span class="o">=</span> <span class="n">queryCount</span><span class="p">(</span><span class="k">lambda</span> <span class="n">sc</span><span class="p">:</span> <span class="n">svIntegrators</span><span class="o">.</span><span class="n">svIntegratorRKF45</span><span class="p">(</span><span class="n">sc</span><span class="p">),</span> <span class="mf">20.0</span><span class="p">)</span>
+
+    <span class="c1"># ~horizon/knot (+ a little stencil slack), and identical across integrators despite very</span>
+    <span class="c1"># different stage/sub-step counts.</span>
+    <span class="k">assert</span> <span class="n">nRK4</span> <span class="o">&lt;=</span> <span class="mi">15</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;expected ~horizon/knot queries on dynamics task, got </span><span class="si">{</span><span class="n">nRK4</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">assert</span> <span class="n">nRK4</span> <span class="o">==</span> <span class="n">nRKF45</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;query count must be integrator-agnostic: RK4=</span><span class="si">{</span><span class="n">nRK4</span><span class="si">}</span><span class="s2"> RKF45=</span><span class="si">{</span><span class="n">nRKF45</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="test_exactSpiceResetRestoresDefault">
+<a class="viewcode-back" href="../Documentation/simulation/environment/spiceInterface/_UnitTest/test_spiceInterfaceReconstruction.html#test_spiceInterfaceReconstruction.test_exactSpiceResetRestoresDefault">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_exactSpiceResetRestoresDefault</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;setPlanetExactSpice reverts both channels; output returns to the exact path bit-for-bit.&quot;&quot;&quot;</span>
+    <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">,</span> <span class="mf">200.0</span>
+    <span class="n">exact</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_runToStop</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">cfg</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">setPlanetPositionReconstruction</span><span class="p">(</span><span class="s2">&quot;earth&quot;</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">60.0</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">setPlanetOrientationReconstruction</span><span class="p">(</span><span class="s2">&quot;earth&quot;</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">60.0</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">setPlanetExactSpice</span><span class="p">(</span><span class="s2">&quot;earth&quot;</span><span class="p">)</span>   <span class="c1"># undo both</span>
+    <span class="n">reverted</span><span class="p">,</span> <span class="n">spice</span> <span class="o">=</span> <span class="n">_runToStop</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">exact</span><span class="p">[</span><span class="s2">&quot;earth&quot;</span><span class="p">][</span><span class="s2">&quot;pos&quot;</span><span class="p">],</span> <span class="n">reverted</span><span class="p">[</span><span class="s2">&quot;earth&quot;</span><span class="p">][</span><span class="s2">&quot;pos&quot;</span><span class="p">])</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">exact</span><span class="p">[</span><span class="s2">&quot;earth&quot;</span><span class="p">][</span><span class="s2">&quot;dcm&quot;</span><span class="p">],</span> <span class="n">reverted</span><span class="p">[</span><span class="s2">&quot;earth&quot;</span><span class="p">][</span><span class="s2">&quot;dcm&quot;</span><span class="p">])</span>
+    <span class="c1"># Both channels are back on the exact path, which counts one SPICE call per step (never knots).</span>
+    <span class="c1"># With the coarse 60 s knot grid they were configured with, a knot-only count would be tiny;</span>
+    <span class="c1"># the per-step counts here confirm the exact path is running.</span>
+    <span class="n">nPos</span><span class="p">,</span> <span class="n">nOrient</span> <span class="o">=</span> <span class="n">spice</span><span class="o">.</span><span class="n">getPlanetSpiceQueryCount</span><span class="p">(</span><span class="s2">&quot;earth&quot;</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">nPos</span> <span class="o">==</span> <span class="n">nOrient</span> <span class="ow">and</span> <span class="n">nPos</span> <span class="o">&gt;</span> <span class="n">tf</span> <span class="o">/</span> <span class="n">dt</span><span class="p">,</span> \
+        <span class="sa">f</span><span class="s2">&quot;exact-reverted channels should query every step on both channels, got </span><span class="si">{</span><span class="n">nPos</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">nOrient</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="test_singleKnotDefaultsAreExactRegardlessOfInterpolateFlag">
+<a class="viewcode-back" href="../Documentation/simulation/environment/spiceInterface/_UnitTest/test_spiceInterfaceReconstruction.html#test_spiceInterfaceReconstruction.test_singleKnotDefaultsAreExactRegardlessOfInterpolateFlag">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_singleKnotDefaultsAreExactRegardlessOfInterpolateFlag</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A single-knot stencil (nKnots=1) is the enclosing knot for BOTH interpolate settings, so</span>
+<span class="sd">    orientation reconstruction of a constant spinner is exact even with the enabled default</span>
+<span class="sd">    interpolate=True (regression: a naive 1-knot formula would pick the future knot k+1).&quot;&quot;&quot;</span>
+    <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">,</span> <span class="mf">600.0</span>
+    <span class="n">exact</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_runToStop</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">interp</span> <span class="ow">in</span> <span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">cfg</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">interp</span><span class="o">=</span><span class="n">interp</span><span class="p">):</span>
+            <span class="n">s</span><span class="o">.</span><span class="n">setPlanetOrientationReconstruction</span><span class="p">(</span><span class="s2">&quot;earth&quot;</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">100000.0</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="n">interp</span><span class="p">)</span>
+        <span class="n">recon</span><span class="p">,</span> <span class="n">spice</span> <span class="o">=</span> <span class="n">_runToStop</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">)</span>
+        <span class="n">dcmErr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">recon</span><span class="p">[</span><span class="s2">&quot;earth&quot;</span><span class="p">][</span><span class="s2">&quot;dcm&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">exact</span><span class="p">[</span><span class="s2">&quot;earth&quot;</span><span class="p">][</span><span class="s2">&quot;dcm&quot;</span><span class="p">]))</span>
+        <span class="k">assert</span> <span class="n">dcmErr</span> <span class="o">&lt;</span> <span class="mf">1e-9</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;nKnots=1 interpolate=</span><span class="si">{</span><span class="n">interp</span><span class="si">}</span><span class="s2"> not exact: max|dDCM|=</span><span class="si">{</span><span class="n">dcmErr</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">nOrient</span> <span class="o">=</span> <span class="n">spice</span><span class="o">.</span><span class="n">getPlanetSpiceQueryCount</span><span class="p">(</span><span class="s2">&quot;earth&quot;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">nOrient</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;nKnots=1 interpolate=</span><span class="si">{</span><span class="n">interp</span><span class="si">}</span><span class="s2"> should need one query, got </span><span class="si">{</span><span class="n">nOrient</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="test_oddKnotStencilIsCentered">
+<a class="viewcode-back" href="../Documentation/simulation/environment/spiceInterface/_UnitTest/test_spiceInterfaceReconstruction.html#test_spiceInterfaceReconstruction.test_oddKnotStencilIsCentered">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_oddKnotStencilIsCentered</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A 3-knot interpolation stencil is centred on the current interval ([k-1, k, k+1]); a</span>
+<span class="sd">    forward-biased [k, k+1, k+2] stencil would be less accurate. Guards buildStencil&#39;s centering:</span>
+<span class="sd">    3-knot reconstruction must be at least as accurate as 2-knot on the same coarse grid.&quot;&quot;&quot;</span>
+    <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">,</span> <span class="mf">600.0</span>
+    <span class="n">exact</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_runToStop</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">)</span>
+    <span class="n">knot</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">150.0</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">cfg2</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">setPlanetPositionReconstruction</span><span class="p">(</span><span class="s2">&quot;earth&quot;</span><span class="p">,</span> <span class="n">knot</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cfg3</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">setPlanetPositionReconstruction</span><span class="p">(</span><span class="s2">&quot;earth&quot;</span><span class="p">,</span> <span class="n">knot</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">r2</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_runToStop</span><span class="p">(</span><span class="n">cfg2</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">)</span>
+    <span class="n">r3</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_runToStop</span><span class="p">(</span><span class="n">cfg3</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">)</span>
+
+    <span class="n">err2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">r2</span><span class="p">[</span><span class="s2">&quot;earth&quot;</span><span class="p">][</span><span class="s2">&quot;pos&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">exact</span><span class="p">[</span><span class="s2">&quot;earth&quot;</span><span class="p">][</span><span class="s2">&quot;pos&quot;</span><span class="p">])</span>
+    <span class="n">err3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">r3</span><span class="p">[</span><span class="s2">&quot;earth&quot;</span><span class="p">][</span><span class="s2">&quot;pos&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">exact</span><span class="p">[</span><span class="s2">&quot;earth&quot;</span><span class="p">][</span><span class="s2">&quot;pos&quot;</span><span class="p">])</span>
+    <span class="c1"># A centred cubic (3-knot Hermite) should not be worse than the 2-knot fit; a forward-biased</span>
+    <span class="c1"># stencil would regress here. Both are tiny; require 3-knot within a small factor of 2-knot.</span>
+    <span class="k">assert</span> <span class="n">err3</span> <span class="o">&lt;=</span> <span class="nb">max</span><span class="p">(</span><span class="n">err2</span> <span class="o">*</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">1e-3</span><span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;3-knot stencil not centred: err2=</span><span class="si">{</span><span class="n">err2</span><span class="si">}</span><span class="s2"> err3=</span><span class="si">{</span><span class="n">err3</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="test_reconfiguringKnotStepClearsStaleCache">
+<a class="viewcode-back" href="../Documentation/simulation/environment/spiceInterface/_UnitTest/test_spiceInterfaceReconstruction.html#test_spiceInterfaceReconstruction.test_reconfiguringKnotStepClearsStaleCache">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_reconfiguringKnotStepClearsStaleCache</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reconfiguring a channel&#39;s knotStep must drop the cached knots: they are keyed by integer</span>
+<span class="sd">    index on the OLD grid, so reusing them would map indices to the wrong epochs. Reconfigure the</span>
+<span class="sd">    grid mid-life (after one run has populated knots) and confirm a second run still tracks exact</span>
+<span class="sd">    SPICE, i.e. it re-queried on the new grid rather than reusing the old samples.&quot;&quot;&quot;</span>
+    <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">,</span> <span class="mf">600.0</span>
+    <span class="n">exact</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_runToStop</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">)</span>
+
+    <span class="c1"># Build one spice object, run once with a coarse grid (populates knots), then reconfigure to a</span>
+    <span class="c1"># much finer grid and run again. Stale reuse would leave the fine run tracking the coarse epochs.</span>
+    <span class="n">sim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">proc</span> <span class="o">=</span> <span class="n">sim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="s2">&quot;proc&quot;</span><span class="p">)</span>
+    <span class="n">proc</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">sim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">&quot;task&quot;</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">dt</span><span class="p">)))</span>
+    <span class="n">spice</span> <span class="o">=</span> <span class="n">_newSpice</span><span class="p">()</span>
+    <span class="n">spice</span><span class="o">.</span><span class="n">setPlanetPositionReconstruction</span><span class="p">(</span><span class="s2">&quot;earth&quot;</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">300.0</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;task&quot;</span><span class="p">,</span> <span class="n">spice</span><span class="p">)</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">tf</span><span class="p">))</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="n">spice</span><span class="o">.</span><span class="n">setPlanetPositionReconstruction</span><span class="p">(</span><span class="s2">&quot;earth&quot;</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">120.0</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>  <span class="c1"># new grid</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">tf</span><span class="p">))</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="n">p</span> <span class="o">=</span> <span class="n">spice</span><span class="o">.</span><span class="n">planetStateOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="n">pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">PositionVector</span><span class="p">)</span>
+    <span class="c1"># Truth at the final time (2*tf) on the exact path.</span>
+    <span class="n">exact2</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_runToStop</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">tf</span><span class="p">)</span>
+    <span class="n">err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">pos</span> <span class="o">-</span> <span class="n">exact2</span><span class="p">[</span><span class="s2">&quot;earth&quot;</span><span class="p">][</span><span class="s2">&quot;pos&quot;</span><span class="p">])</span>
+    <span class="k">assert</span> <span class="n">err</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;reconfigured knotStep reused stale cache: </span><span class="si">{</span><span class="n">err</span><span class="si">}</span><span class="s2"> m from exact SPICE&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="test_enablingReconstructionAfterResetAnchorsAtEpoch">
+<a class="viewcode-back" href="../Documentation/simulation/environment/spiceInterface/_UnitTest/test_spiceInterfaceReconstruction.html#test_spiceInterfaceReconstruction.test_enablingReconstructionAfterResetAnchorsAtEpoch">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_enablingReconstructionAfterResetAnchorsAtEpoch</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Enabling reconstruction for the FIRST time between two ExecuteSimulation() segments (so the</span>
+<span class="sd">    reconstruction object is created after Reset already set the epoch) must anchor knots at the</span>
+<span class="sd">    init epoch, not J2000 ET 0. Otherwise the knot grid would query the wrong epoch and the state</span>
+<span class="sd">    would be wildly wrong. Regression for the deferred-creation et0 anchoring.&quot;&quot;&quot;</span>
+    <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">,</span> <span class="mf">300.0</span>
+
+    <span class="n">sim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">proc</span> <span class="o">=</span> <span class="n">sim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="s2">&quot;proc&quot;</span><span class="p">)</span>
+    <span class="n">proc</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">sim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">&quot;task&quot;</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">dt</span><span class="p">)))</span>
+    <span class="n">spice</span> <span class="o">=</span> <span class="n">_newSpice</span><span class="p">()</span>                    <span class="c1"># NOTHING configured -&gt; recon object not yet created</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;task&quot;</span><span class="p">,</span> <span class="n">spice</span><span class="p">)</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>             <span class="c1"># Reset runs here with recon still null</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">tf</span><span class="p">))</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="c1"># First enable reconstruction now, mid-run (this is when the recon object gets created).</span>
+    <span class="n">spice</span><span class="o">.</span><span class="n">setPlanetPositionReconstruction</span><span class="p">(</span><span class="s2">&quot;earth&quot;</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">120.0</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">tf</span><span class="p">))</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="n">pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">spice</span><span class="o">.</span><span class="n">planetStateOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">PositionVector</span><span class="p">)</span>
+    <span class="n">exact2</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_runToStop</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">tf</span><span class="p">)</span>
+    <span class="n">err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">pos</span> <span class="o">-</span> <span class="n">exact2</span><span class="p">[</span><span class="s2">&quot;earth&quot;</span><span class="p">][</span><span class="s2">&quot;pos&quot;</span><span class="p">])</span>
+    <span class="k">assert</span> <span class="n">err</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;reconstruction enabled after Reset anchored at wrong epoch: </span><span class="si">{</span><span class="n">err</span><span class="si">}</span><span class="s2"> m&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="test_queryCountTracksExactPathWithNoReconstruction">
+<a class="viewcode-back" href="../Documentation/simulation/environment/spiceInterface/_UnitTest/test_spiceInterfaceReconstruction.html#test_spiceInterfaceReconstruction.test_queryCountTracksExactPathWithNoReconstruction">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_queryCountTracksExactPathWithNoReconstruction</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;getPlanetSpiceQueryCount reports SPICE calls even when NO reconstruction is configured: a</span>
+<span class="sd">    plain exact-path planet queries both channels once per update, so the counts equal the number of</span>
+<span class="sd">    updates. An added-but-never-queried name reads {0, 0}; a name never added reads {-1, -1}.&quot;&quot;&quot;</span>
+    <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">,</span> <span class="mf">300.0</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">spice</span> <span class="o">=</span> <span class="n">_runToStop</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">)</span>   <span class="c1"># nothing configured: pure exact path</span>
+
+    <span class="c1"># earth carries a position and a constant-rate IAU_EARTH orientation, so both channels query</span>
+    <span class="c1"># SPICE once per update, i.e. about one per task step over the run (plus Reset&#39;s own update).</span>
+    <span class="n">steps</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">tf</span> <span class="o">/</span> <span class="n">dt</span><span class="p">))</span>
+    <span class="n">nPos</span><span class="p">,</span> <span class="n">nOrient</span> <span class="o">=</span> <span class="n">spice</span><span class="o">.</span><span class="n">getPlanetSpiceQueryCount</span><span class="p">(</span><span class="s2">&quot;earth&quot;</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">steps</span> <span class="o">&lt;=</span> <span class="n">nPos</span> <span class="o">&lt;=</span> <span class="n">steps</span> <span class="o">+</span> <span class="mi">2</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;exact-path position queries ~one per step: got </span><span class="si">{</span><span class="n">nPos</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">assert</span> <span class="n">nOrient</span> <span class="o">==</span> <span class="n">nPos</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;both exact channels query per update: pos </span><span class="si">{</span><span class="n">nPos</span><span class="si">}</span><span class="s2">, orient </span><span class="si">{</span><span class="n">nOrient</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="c1"># every added planet is tracked on the exact path: its position channel queries per update,</span>
+    <span class="c1"># and its orientation channel queries per update when it has a frame or is 0 when it does not.</span>
+    <span class="n">sPos</span><span class="p">,</span> <span class="n">sOrient</span> <span class="o">=</span> <span class="n">spice</span><span class="o">.</span><span class="n">getPlanetSpiceQueryCount</span><span class="p">(</span><span class="s2">&quot;mars barycenter&quot;</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">sPos</span> <span class="o">==</span> <span class="n">nPos</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;added planet position queries per update: got </span><span class="si">{</span><span class="n">sPos</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">assert</span> <span class="n">sOrient</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">nPos</span><span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;orientation queries are per-update or (frameless) zero: </span><span class="si">{</span><span class="n">sOrient</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="c1"># a name that was never added via addPlanetNames is the only {-1, -1} case.</span>
+    <span class="k">assert</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">spice</span><span class="o">.</span><span class="n">getPlanetSpiceQueryCount</span><span class="p">(</span><span class="s2">&quot;jupiter&quot;</span><span class="p">))</span> <span class="o">==</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_misconfiguredPlanetWarnsNotThrows">
+<a class="viewcode-back" href="../Documentation/simulation/environment/spiceInterface/_UnitTest/test_spiceInterfaceReconstruction.html#test_spiceInterfaceReconstruction.test_misconfiguredPlanetWarnsNotThrows">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_misconfiguredPlanetWarnsNotThrows</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A reconstruction config for a planet that was never added (or has no orientation frame)</span>
+<span class="sd">    must WARN and keep running, not throw BasiliskError and abort the sim. The stale entry is</span>
+<span class="sd">    pruned, so its query count reports unconfigured afterwards.&quot;&quot;&quot;</span>
+    <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">,</span> <span class="mf">100.0</span>
+
+    <span class="c1"># (a) unknown planet name: sim must complete, entry pruned.</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cfgUnknown</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">setPlanetPositionReconstruction</span><span class="p">(</span><span class="s2">&quot;jupiter&quot;</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">60.0</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">spice</span> <span class="o">=</span> <span class="n">_runToStop</span><span class="p">(</span><span class="n">cfgUnknown</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">)</span>  <span class="c1"># must not raise</span>
+    <span class="k">assert</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">spice</span><span class="o">.</span><span class="n">getPlanetSpiceQueryCount</span><span class="p">(</span><span class="s2">&quot;jupiter&quot;</span><span class="p">))</span> <span class="o">==</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> \
+        <span class="s2">&quot;stale (unadded) planet config should be pruned at Reset&quot;</span>
+
+    <span class="c1"># (b) setPlanetExactSpice on a never-configured planet must not abort the sim.</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cfgExact</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">setPlanetExactSpice</span><span class="p">(</span><span class="s2">&quot;venus&quot;</span><span class="p">)</span>
+    <span class="n">_runToStop</span><span class="p">(</span><span class="n">cfgExact</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">)</span>  <span class="c1"># must not raise</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">test_defaultsAreBitIdentical</span><span class="p">()</span>
+    <span class="n">test_positionReconstructionAccurateAndCheaper</span><span class="p">()</span>
+    <span class="n">test_singleKnotOrientationExtrapolationExactForConstantSpinner</span><span class="p">()</span>
+    <span class="n">test_disabledChannelsEmitTrivialDefault</span><span class="p">()</span>
+    <span class="n">test_velocityIsDerivativeOfReconstructedPosition</span><span class="p">()</span>
+    <span class="n">test_exactSpiceResetRestoresDefault</span><span class="p">()</span>
+    <span class="n">test_singleKnotDefaultsAreExactRegardlessOfInterpolateFlag</span><span class="p">()</span>
+    <span class="n">test_oddKnotStencilIsCentered</span><span class="p">()</span>
+    <span class="n">test_reconfiguringKnotStepClearsStaleCache</span><span class="p">()</span>
+    <span class="n">test_enablingReconstructionAfterResetAnchorsAtEpoch</span><span class="p">()</span>
+    <span class="n">test_queryCountTracksExactPathWithNoReconstruction</span><span class="p">()</span>
+    <span class="n">test_misconfiguredPlanetWarnsNotThrows</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;all reconstruction unit tests passed&quot;</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

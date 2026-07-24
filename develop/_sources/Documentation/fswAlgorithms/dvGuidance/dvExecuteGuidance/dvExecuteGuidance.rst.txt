@@ -1,0 +1,32 @@
+.. _dvExecuteGuidance:
+
+:module-type:`C` Module: dvExecuteGuidance
+==========================================
+
+Executive Summary
+-----------------
+
+This method takes its own internal variables and creates an output attitude
+command to use for burn execution.  It also flags whether the burn should
+be happening or not.
+
+Message Connection Descriptions
+-------------------------------
+The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.
+
+.. bsk-module-io:: dvExecuteGuidance
+    :caption: Module I/O Messages
+
+    output attRefOutMsg AttRefMsgPayload
+        attitude reference output message
+    input burnDataInMsg DvBurnCmdMsgPayload
+        Input message that configures the vehicle burn
+
+
+----
+
+.. autodoxygenfile:: dvExecuteGuidance.h
+   :project: dvExecuteGuidance
+

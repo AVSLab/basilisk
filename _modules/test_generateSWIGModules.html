@@ -1,0 +1,428 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_generateSWIGModules &mdash; Basilisk 2.11.0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=2ebb1c42" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=1647406f"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Plugins/overview.html">About Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Plugins/installing.html">Installing Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Plugins/writing.html">Writing a Basilisk Plugin</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">test_generateSWIGModules</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for test_generateSWIGModules</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+<span class="sd">&quot;&quot;&quot;Unit tests for message auto-source generators.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">textwrap</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+
+<span class="n">MSG_AUTO_SOURCE_DIR</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">&quot;msgAutoSource&quot;</span>
+<span class="n">NEW_MESSAGING_TEMPLATE</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">&quot;newMessaging.ih&quot;</span>
+
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">MSG_AUTO_SOURCE_DIR</span><span class="p">))</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">generatePayloadEqualityHeader</span><span class="w"> </span><span class="kn">import</span> <span class="n">generateEqualityHeader</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_generate_swig_interface</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">,</span> <span class="n">generate_c_info</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate a SWIG interface file for a simple test message payload.&quot;&quot;&quot;</span>
+
+    <span class="c1"># The generator normally consumes metadata emitted by libclang.  This test</span>
+    <span class="c1"># only needs enough metadata to exercise the Python binding templates, so a</span>
+    <span class="c1"># single scalar field keeps the fixture small while still producing a valid</span>
+    <span class="c1"># payload extension block.</span>
+    <span class="n">meta</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;complete&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s2">&quot;size_bytes&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>  <span class="c1"># [byte]</span>
+        <span class="s2">&quot;fields&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;value&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;primitive&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;ctype&quot;</span><span class="p">:</span> <span class="s2">&quot;double&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;offset_bytes&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>  <span class="c1"># [byte]</span>
+                <span class="s2">&quot;size_bytes&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>  <span class="c1"># [byte]</span>
+            <span class="p">},</span>
+        <span class="p">],</span>
+    <span class="p">}</span>
+    <span class="n">meta_path</span> <span class="o">=</span> <span class="n">tmp_path</span> <span class="o">/</span> <span class="s2">&quot;CustomMsgPayload.json&quot;</span>
+    <span class="n">output_path</span> <span class="o">=</span> <span class="n">tmp_path</span> <span class="o">/</span> <span class="s2">&quot;CustomMsgPayload.i&quot;</span>
+    <span class="n">meta_path</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">meta</span><span class="p">),</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Run the real generator instead of duplicating its formatting logic in the</span>
+    <span class="c1"># test.  The header path does not need to exist because generateSWIGModules.py</span>
+    <span class="c1"># only splices the path into the SWIG template.</span>
+    <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">executable</span><span class="p">,</span>
+            <span class="s2">&quot;generateSWIGModules.py&quot;</span><span class="p">,</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">output_path</span><span class="p">),</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">tmp_path</span> <span class="o">/</span> <span class="s2">&quot;CustomMsgPayload.h&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;CustomMsgPayload&quot;</span><span class="p">,</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">),</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">generate_c_info</span><span class="p">),</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">meta_path</span><span class="p">),</span>
+            <span class="s2">&quot;0&quot;</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="n">cwd</span><span class="o">=</span><span class="n">MSG_AUTO_SOURCE_DIR</span><span class="p">,</span>
+        <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">output_path</span><span class="o">.</span><span class="n">read_text</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_render_read_functor_namespace</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Render the generated ``ReadFunctor`` Python helpers for execution.&quot;&quot;&quot;</span>
+
+    <span class="n">template</span> <span class="o">=</span> <span class="n">NEW_MESSAGING_TEMPLATE</span><span class="o">.</span><span class="n">read_text</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="n">template</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;            def subscribeTo(self, source):&quot;</span><span class="p">)</span>
+    <span class="n">end</span> <span class="o">=</span> <span class="n">template</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;        %}&quot;</span><span class="p">,</span> <span class="n">start</span><span class="p">)</span>
+    <span class="n">read_functor_methods</span> <span class="o">=</span> <span class="n">template</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">]</span>
+    <span class="n">read_functor_methods</span> <span class="o">=</span> <span class="n">read_functor_methods</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;messageType ## _C&quot;</span><span class="p">,</span> <span class="s2">&quot;CustomMsg_C&quot;</span><span class="p">)</span>
+    <span class="n">read_functor_methods</span> <span class="o">=</span> <span class="n">read_functor_methods</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;messageTypePayload&quot;</span><span class="p">,</span> <span class="s2">&quot;CustomMsgPayload&quot;</span><span class="p">)</span>
+    <span class="n">read_functor_methods</span> <span class="o">=</span> <span class="n">read_functor_methods</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;messageType&quot;</span><span class="p">,</span> <span class="s2">&quot;CustomMsg&quot;</span><span class="p">)</span>
+    <span class="n">read_functor_methods</span> <span class="o">=</span> <span class="n">textwrap</span><span class="o">.</span><span class="n">indent</span><span class="p">(</span><span class="n">textwrap</span><span class="o">.</span><span class="n">dedent</span><span class="p">(</span><span class="n">read_functor_methods</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span> <span class="s2">&quot;    &quot;</span><span class="p">)</span>
+
+    <span class="n">namespace</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">class_source</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span>
+        <span class="s2">&quot;class CustomMsg:&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;    pass&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;class OtherMsg:&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;    pass&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;class CustomMsgReader:&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;    def __init__(self):&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;        self.subscribed_to = None&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;    def __subscribe_to(self, source):&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;        self.subscribed_to = source&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;    def __is_subscribed_to(self, source):&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;        return source is self.subscribed_to&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">read_functor_methods</span><span class="p">,</span>
+    <span class="p">])</span>
+    <span class="n">exec</span><span class="p">(</span><span class="n">class_source</span><span class="p">,</span> <span class="n">namespace</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">namespace</span>
+
+
+<div class="viewcode-block" id="test_generated_message_bindings_use_module_local_classes">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_generateSWIGModules.html#test_generateSWIGModules.test_generated_message_bindings_use_module_local_classes">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_generated_message_bindings_use_module_local_classes</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generated subscription helpers do not assume the Basilisk package path.&quot;&quot;&quot;</span>
+
+    <span class="n">generated</span> <span class="o">=</span> <span class="n">_generate_swig_interface</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">new_messaging_template</span> <span class="o">=</span> <span class="n">NEW_MESSAGING_TEMPLATE</span><span class="o">.</span><span class="n">read_text</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="s2">&quot;from Basilisk.architecture.messaging.messageType&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">new_messaging_template</span>
+    <span class="k">assert</span> <span class="s2">&quot;if type(source) == messageType ## _C:&quot;</span> <span class="ow">in</span> <span class="n">new_messaging_template</span>
+    <span class="k">assert</span> <span class="s2">&quot;from Basilisk.architecture.messaging import </span><span class="si">{type}</span><span class="s2">&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">generated</span>
+    <span class="k">assert</span> <span class="s2">&quot;elif type(source) == CustomMsg:&quot;</span> <span class="ow">in</span> <span class="n">generated</span></div>
+
+
+
+<div class="viewcode-block" id="test_generated_read_functor_without_c_interface_uses_cpp_message">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_generateSWIGModules.html#test_generateSWIGModules.test_generated_read_functor_without_c_interface_uses_cpp_message">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_generated_read_functor_without_c_interface_uses_cpp_message</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generated helpers still work when no C-interface symbol exists.&quot;&quot;&quot;</span>
+
+    <span class="n">generated</span> <span class="o">=</span> <span class="n">_generate_swig_interface</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="s2">&quot;cMsgCInterface/CustomMsg_C.h&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">generated</span>
+    <span class="k">assert</span> <span class="s2">&quot;</span><span class="si">%e</span><span class="s2">xtend CustomMsg_C&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">generated</span>
+    <span class="k">assert</span> <span class="s2">&quot;CustomMsg_C&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">generated</span>
+
+    <span class="n">namespace</span> <span class="o">=</span> <span class="n">_render_read_functor_namespace</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="s2">&quot;CustomMsg_C&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">namespace</span>
+
+    <span class="n">reader</span> <span class="o">=</span> <span class="n">namespace</span><span class="p">[</span><span class="s2">&quot;CustomMsgReader&quot;</span><span class="p">]()</span>
+    <span class="n">source</span> <span class="o">=</span> <span class="n">namespace</span><span class="p">[</span><span class="s2">&quot;CustomMsg&quot;</span><span class="p">]()</span>
+    <span class="n">reader</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">reader</span><span class="o">.</span><span class="n">subscribed_to</span> <span class="ow">is</span> <span class="n">source</span>
+    <span class="k">assert</span> <span class="n">reader</span><span class="o">.</span><span class="n">isSubscribedTo</span><span class="p">(</span><span class="n">source</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">True</span>
+
+    <span class="n">other_source</span> <span class="o">=</span> <span class="n">namespace</span><span class="p">[</span><span class="s2">&quot;OtherMsg&quot;</span><span class="p">]()</span>
+    <span class="k">assert</span> <span class="n">reader</span><span class="o">.</span><span class="n">isSubscribedTo</span><span class="p">(</span><span class="n">other_source</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">Exception</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;tried to subscribe ReadFunctor&lt;CustomMsgPayload&gt;&quot;</span><span class="p">):</span>
+        <span class="n">reader</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">other_source</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_payload_equality_generates_fixed_array_comparison">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_generateSWIGModules.html#test_generateSWIGModules.test_payload_equality_generates_fixed_array_comparison">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_payload_equality_generates_fixed_array_comparison</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generated equality compares fixed numeric array payloads element-wise.&quot;&quot;&quot;</span>
+
+    <span class="n">meta</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;fields&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;dataVector&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;array&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;shape&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+                <span class="s2">&quot;element&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;primitive&quot;</span><span class="p">,</span> <span class="s2">&quot;ctype&quot;</span><span class="p">:</span> <span class="s2">&quot;double&quot;</span><span class="p">},</span>
+            <span class="p">},</span>
+        <span class="p">],</span>
+    <span class="p">}</span>
+
+    <span class="n">generated</span> <span class="o">=</span> <span class="n">generateEqualityHeader</span><span class="p">(</span><span class="n">meta</span><span class="p">,</span> <span class="s2">&quot;CModuleTemplateMsgPayload&quot;</span><span class="p">,</span> <span class="s2">&quot;msgPayloadDefC&quot;</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">generated</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="k">assert</span> <span class="s2">&quot;std::memcmp&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">generated</span>
+    <span class="k">assert</span> <span class="s2">&quot;struct PayloadEqualityTraits&lt;CModuleTemplateMsgPayload&gt;&quot;</span> <span class="ow">in</span> <span class="n">generated</span>
+    <span class="k">assert</span> <span class="s1">&#39;#include &quot;architecture/msgPayloadDefC/CModuleTemplateMsgPayload.h&quot;&#39;</span> <span class="ow">in</span> <span class="n">generated</span>
+    <span class="k">assert</span> <span class="s2">&quot;static constexpr bool supported = true&quot;</span> <span class="ow">in</span> <span class="n">generated</span>
+    <span class="k">assert</span> <span class="s2">&quot;for (int i0 = 0; i0 &lt; 3; ++i0)&quot;</span> <span class="ow">in</span> <span class="n">generated</span>
+    <span class="k">assert</span> <span class="s2">&quot;if (!(lhs.dataVector[i0] == rhs.dataVector[i0]))&quot;</span> <span class="ow">in</span> <span class="n">generated</span>
+    <span class="k">assert</span> <span class="s2">&quot;return true;&quot;</span> <span class="ow">in</span> <span class="n">generated</span></div>
+
+
+
+<div class="viewcode-block" id="test_payload_equality_generates_nested_struct_comparison">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_generateSWIGModules.html#test_generateSWIGModules.test_payload_equality_generates_nested_struct_comparison">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_payload_equality_generates_nested_struct_comparison</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generated equality walks nested struct arrays field by field.&quot;&quot;&quot;</span>
+
+    <span class="n">meta</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;fields&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;reactionWheels&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;array&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;shape&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">36</span><span class="p">],</span>
+                <span class="s2">&quot;element&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;struct&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;typeName&quot;</span><span class="p">:</span> <span class="s2">&quot;RWConfigElementMsgPayload&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;fields&quot;</span><span class="p">:</span> <span class="p">[</span>
+                        <span class="p">{</span>
+                            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;gsHat_B&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;array&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;shape&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+                            <span class="s2">&quot;element&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;primitive&quot;</span><span class="p">,</span> <span class="s2">&quot;ctype&quot;</span><span class="p">:</span> <span class="s2">&quot;double&quot;</span><span class="p">},</span>
+                        <span class="p">},</span>
+                        <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Js&quot;</span><span class="p">,</span> <span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;primitive&quot;</span><span class="p">,</span> <span class="s2">&quot;ctype&quot;</span><span class="p">:</span> <span class="s2">&quot;double&quot;</span><span class="p">},</span>
+                    <span class="p">],</span>
+                <span class="p">},</span>
+            <span class="p">},</span>
+        <span class="p">],</span>
+    <span class="p">}</span>
+
+    <span class="n">generated</span> <span class="o">=</span> <span class="n">generateEqualityHeader</span><span class="p">(</span><span class="n">meta</span><span class="p">,</span> <span class="s2">&quot;RWConstellationMsgPayload&quot;</span><span class="p">,</span> <span class="s2">&quot;msgPayloadDefC&quot;</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">generated</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="k">assert</span> <span class="s2">&quot;for (int i0 = 0; i0 &lt; 36; ++i0)&quot;</span> <span class="ow">in</span> <span class="n">generated</span>
+    <span class="k">assert</span> <span class="s2">&quot;for (int i1 = 0; i1 &lt; 3; ++i1)&quot;</span> <span class="ow">in</span> <span class="n">generated</span>
+    <span class="k">assert</span> <span class="s2">&quot;lhs.reactionWheels[i0].gsHat_B[i1] == rhs.reactionWheels[i0].gsHat_B[i1]&quot;</span> <span class="ow">in</span> <span class="n">generated</span>
+    <span class="k">assert</span> <span class="s2">&quot;lhs.reactionWheels[i0].Js == rhs.reactionWheels[i0].Js&quot;</span> <span class="ow">in</span> <span class="n">generated</span>
+    <span class="k">assert</span> <span class="s2">&quot;return true;&quot;</span> <span class="ow">in</span> <span class="n">generated</span></div>
+
+
+
+<div class="viewcode-block" id="test_payload_equality_generates_eigen_comparison">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_generateSWIGModules.html#test_generateSWIGModules.test_payload_equality_generates_eigen_comparison">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_payload_equality_generates_eigen_comparison</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generated equality compares Eigen dimensions and coefficients.&quot;&quot;&quot;</span>
+
+    <span class="n">meta</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;fields&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;qpos&quot;</span><span class="p">,</span> <span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;unknown&quot;</span><span class="p">,</span> <span class="s2">&quot;ctype&quot;</span><span class="p">:</span> <span class="s2">&quot;Eigen::VectorXd&quot;</span><span class="p">},</span>
+        <span class="p">],</span>
+    <span class="p">}</span>
+
+    <span class="n">generated</span> <span class="o">=</span> <span class="n">generateEqualityHeader</span><span class="p">(</span><span class="n">meta</span><span class="p">,</span> <span class="s2">&quot;MJSceneStateMsgPayload&quot;</span><span class="p">,</span> <span class="s2">&quot;msgPayloadDefCpp&quot;</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">generated</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="k">assert</span> <span class="s2">&quot;lhs.qpos.rows() != rhs.qpos.rows()&quot;</span> <span class="ow">in</span> <span class="n">generated</span>
+    <span class="k">assert</span> <span class="s2">&quot;lhs.qpos.cols() != rhs.qpos.cols()&quot;</span> <span class="ow">in</span> <span class="n">generated</span>
+    <span class="k">assert</span> <span class="s2">&quot;if ((lhs.qpos.array() != rhs.qpos.array()).any())&quot;</span> <span class="ow">in</span> <span class="n">generated</span>
+    <span class="k">assert</span> <span class="s2">&quot;return true;&quot;</span> <span class="ow">in</span> <span class="n">generated</span></div>
+
+
+
+<div class="viewcode-block" id="test_payload_equality_uses_operator_equal_for_safe_stl_fields">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_generateSWIGModules.html#test_generateSWIGModules.test_payload_equality_uses_operator_equal_for_safe_stl_fields">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_payload_equality_uses_operator_equal_for_safe_stl_fields</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generated equality uses ``operator==`` for supported STL payload fields.&quot;&quot;&quot;</span>
+
+    <span class="n">meta</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;fields&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;keyboardInput&quot;</span><span class="p">,</span> <span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;unknown&quot;</span><span class="p">,</span> <span class="s2">&quot;ctype&quot;</span><span class="p">:</span> <span class="s2">&quot;std::string&quot;</span><span class="p">},</span>
+            <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;samples&quot;</span><span class="p">,</span> <span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;unknown&quot;</span><span class="p">,</span> <span class="s2">&quot;ctype&quot;</span><span class="p">:</span> <span class="s2">&quot;std::vector&lt;double&gt;&quot;</span><span class="p">},</span>
+        <span class="p">],</span>
+    <span class="p">}</span>
+
+    <span class="n">generated</span> <span class="o">=</span> <span class="n">generateEqualityHeader</span><span class="p">(</span><span class="n">meta</span><span class="p">,</span> <span class="s2">&quot;StringVectorMsgPayload&quot;</span><span class="p">,</span> <span class="s2">&quot;msgPayloadDefCpp&quot;</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">generated</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="k">assert</span> <span class="s2">&quot;if (!(lhs.keyboardInput == rhs.keyboardInput))&quot;</span> <span class="ow">in</span> <span class="n">generated</span>
+    <span class="k">assert</span> <span class="s2">&quot;if (!(lhs.samples == rhs.samples))&quot;</span> <span class="ow">in</span> <span class="n">generated</span>
+    <span class="k">assert</span> <span class="s2">&quot;return true;&quot;</span> <span class="ow">in</span> <span class="n">generated</span></div>
+
+
+
+<div class="viewcode-block" id="test_payload_equality_returns_none_for_unsupported_fields">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_generateSWIGModules.html#test_generateSWIGModules.test_payload_equality_returns_none_for_unsupported_fields">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_payload_equality_returns_none_for_unsupported_fields</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Payloads with pointer or unsupported fields return None — no specialization generated.&quot;&quot;&quot;</span>
+
+    <span class="n">meta</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;fields&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;frameNumber&quot;</span><span class="p">,</span> <span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;primitive&quot;</span><span class="p">,</span> <span class="s2">&quot;ctype&quot;</span><span class="p">:</span> <span class="s2">&quot;int&quot;</span><span class="p">},</span>
+            <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;imagePointer&quot;</span><span class="p">,</span> <span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;pointer&quot;</span><span class="p">,</span> <span class="s2">&quot;ctype&quot;</span><span class="p">:</span> <span class="s2">&quot;void *&quot;</span><span class="p">},</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;vizEventReplies&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;unknown&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;ctype&quot;</span><span class="p">:</span> <span class="s2">&quot;std::vector&lt;VizEventReply&gt;&quot;</span><span class="p">,</span>
+            <span class="p">},</span>
+            <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;lateField&quot;</span><span class="p">,</span> <span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;primitive&quot;</span><span class="p">,</span> <span class="s2">&quot;ctype&quot;</span><span class="p">:</span> <span class="s2">&quot;int&quot;</span><span class="p">},</span>
+        <span class="p">],</span>
+    <span class="p">}</span>
+
+    <span class="n">generated</span> <span class="o">=</span> <span class="n">generateEqualityHeader</span><span class="p">(</span><span class="n">meta</span><span class="p">,</span> <span class="s2">&quot;VizUserInputMsgPayload&quot;</span><span class="p">,</span> <span class="s2">&quot;msgPayloadDefCpp&quot;</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">generated</span> <span class="ow">is</span> <span class="kc">None</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

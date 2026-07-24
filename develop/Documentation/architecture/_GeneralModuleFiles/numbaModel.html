@@ -1,0 +1,364 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>numbaModel &mdash; Basilisk 2.12.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=2ebb1c42" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=4ad2e773"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="sys_model" href="sys_model.html" />
+    <link rel="prev" title="_GeneralModuleFiles" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html">architecture</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="index.html">_GeneralModuleFiles</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">numbaModel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="sys_model.html">sys_model</a></li>
+<li class="toctree-l4"><a class="reference internal" href="sys_model_task.html">sys_model_task</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../messaging/index.html">messaging</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../msgPayloadDefC/index.html">msgPayloadDefC</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../msgPayloadDefCpp/index.html">msgPayloadDefCpp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../numbaModel/index.html">numbaModel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../system_model/index.html">system_model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../utilities/index.html">utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../utilitiesSelfCheck/index.html">utilitiesSelfCheck</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../simulation/index.html">simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">architecture</a></li>
+          <li class="breadcrumb-item"><a href="index.html">_GeneralModuleFiles</a></li>
+      <li class="breadcrumb-item active">numbaModel</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/Documentation/architecture/_GeneralModuleFiles/numbaModel.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="numbamodel">
+<span id="id1"></span><h1>numbaModel<a class="headerlink" href="#numbamodel" title="Link to this heading"></a></h1>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv410ReaderSlot">
+<span id="_CPPv310ReaderSlot"></span><span id="_CPPv210ReaderSlot"></span><span id="ReaderSlot"></span><span class="target" id="struct_reader_slot"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ReaderSlot</span></span></span><a class="headerlink" href="#_CPPv410ReaderSlot" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;numbaModel.h&gt;</em></div>
+<p>Bookkeeping for one registered ReadFunctor. </p>
+<p>All three addresses remain valid for the lifetime of the corresponding Python attribute because <code class="docutils literal notranslate"><span class="pre">subscribeTo</span></code> updates the functor in place. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10ReaderSlot14payloadPtrAddrE">
+<span id="_CPPv3N10ReaderSlot14payloadPtrAddrE"></span><span id="_CPPv2N10ReaderSlot14payloadPtrAddrE"></span><span id="ReaderSlot::payloadPtrAddr__voidPP"></span><span class="target" id="struct_reader_slot_1a4420c69fa298f994ae721a43a6b10572"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">payloadPtrAddr</span></span></span><a class="headerlink" href="#_CPPv4N10ReaderSlot14payloadPtrAddrE" title="Link to this definition"></a><br /></dt>
+<dd><p>Address of <code class="docutils literal notranslate"><span class="pre">ReadFunctor::payloadPointer</span></code>. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10ReaderSlot10linkedAddrE">
+<span id="_CPPv3N10ReaderSlot10linkedAddrE"></span><span id="_CPPv2N10ReaderSlot10linkedAddrE"></span><span id="ReaderSlot::linkedAddr__uint8_tP"></span><span class="target" id="struct_reader_slot_1a3c8e7273b7177e6ee6793c22477447de"></span><span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">linkedAddr</span></span></span><a class="headerlink" href="#_CPPv4N10ReaderSlot10linkedAddrE" title="Link to this definition"></a><br /></dt>
+<dd><p>Address of <code class="docutils literal notranslate"><span class="pre">ReadFunctor::initialized</span></code>. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10ReaderSlot5dummyE">
+<span id="_CPPv3N10ReaderSlot5dummyE"></span><span id="_CPPv2N10ReaderSlot5dummyE"></span><span id="ReaderSlot::dummy__voidP"></span><span class="target" id="struct_reader_slot_1af32f60378ff153e880a024487adb6b6c"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">dummy</span></span></span><a class="headerlink" href="#_CPPv4N10ReaderSlot5dummyE" title="Link to this definition"></a><br /></dt>
+<dd><p>Zero-filled fallback payload used when not linked. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv410NumbaModel">
+<span id="_CPPv310NumbaModel"></span><span id="_CPPv210NumbaModel"></span><span id="NumbaModel"></span><span class="target" id="class_numba_model"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">NumbaModel</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><a class="reference internal" href="sys_model.html#_CPPv48SysModel" title="SysModel"><span class="n"><span class="pre">SysModel</span></span></a><a class="headerlink" href="#_CPPv410NumbaModel" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;numbaModel.h&gt;</em></div>
+<p>Base class for Python-defined Numba modules. </p>
+<p><code class="docutils literal notranslate"><a class="reference internal" href="#class_numba_model"><span class="std std-ref"><span class="pre">NumbaModel</span></span></a></code> lets Python subclasses register message readers, message writers, and auxiliary buffers, then exposes them to a compiled Numba callback through a flat pointer array. The Python layer owns the <code class="docutils literal notranslate"><span class="pre">UpdateStateImpl</span></code> implementation, while this C++ class refreshes the read pointers, updates message headers, and invokes the compiled callback every simulation tick. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N10NumbaModel13addReaderSlotE9uintptr_t9uintptr_t9uintptr_t">
+<span id="_CPPv3N10NumbaModel13addReaderSlotE9uintptr_t9uintptr_t9uintptr_t"></span><span id="_CPPv2N10NumbaModel13addReaderSlotE9uintptr_t9uintptr_t9uintptr_t"></span><span id="NumbaModel::addReaderSlot__uintptr_t.uintptr_t.uintptr_t"></span><span class="target" id="class_numba_model_1a17e861ae1079c4f34e3b0dbf4d917464"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">addReaderSlot</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uintptr_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">payloadPtrAddr</span></span>, <span class="n"><span class="pre">uintptr_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">linkedAddr</span></span>, <span class="n"><span class="pre">uintptr_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">dummyAddr</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N10NumbaModel13addReaderSlotE9uintptr_t9uintptr_t9uintptr_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Register a reader functor for dynamic payload refresh.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>payloadPtrAddr</strong> – Address of the functor payload pointer storage. </p></li>
+<li><p><strong>linkedAddr</strong> – Address of the functor linked-flag storage. </p></li>
+<li><p><strong>dummyAddr</strong> – Address of the fallback payload used when unlinked. </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N10NumbaModel18addWritePayloadPtrE9uintptr_t">
+<span id="_CPPv3N10NumbaModel18addWritePayloadPtrE9uintptr_t"></span><span id="_CPPv2N10NumbaModel18addWritePayloadPtrE9uintptr_t"></span><span id="NumbaModel::addWritePayloadPtr__uintptr_t"></span><span class="target" id="class_numba_model_1aa2dbb04fcb301436e8f0bba86e1fedc3"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">addWritePayloadPtr</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uintptr_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">ptr</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N10NumbaModel18addWritePayloadPtrE9uintptr_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Register one writable payload pointer in the flattened pointer table.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ptr</strong> – Raw payload pointer address. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N10NumbaModel17addWriteHeaderPtrE9uintptr_t">
+<span id="_CPPv3N10NumbaModel17addWriteHeaderPtrE9uintptr_t"></span><span id="_CPPv2N10NumbaModel17addWriteHeaderPtrE9uintptr_t"></span><span id="NumbaModel::addWriteHeaderPtr__uintptr_t"></span><span class="target" id="class_numba_model_1a865d329aa28b0cf9fae557821b74e521"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">addWriteHeaderPtr</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uintptr_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">ptr</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N10NumbaModel17addWriteHeaderPtrE9uintptr_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Register one writable message-header pointer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ptr</strong> – Raw message-header pointer address. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N10NumbaModel14addUserPointerE9uintptr_t">
+<span id="_CPPv3N10NumbaModel14addUserPointerE9uintptr_t"></span><span id="_CPPv2N10NumbaModel14addUserPointerE9uintptr_t"></span><span id="NumbaModel::addUserPointer__uintptr_t"></span><span class="target" id="class_numba_model_1a1eb47302ca9597b0daf04b1d3324e109"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">addUserPointer</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uintptr_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">ptr</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N10NumbaModel14addUserPointerE9uintptr_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Register one user-owned pointer in the flattened pointer table.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ptr</strong> – Raw user pointer address. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N10NumbaModel18setStateUpdateFuncE9uintptr_t">
+<span id="_CPPv3N10NumbaModel18setStateUpdateFuncE9uintptr_t"></span><span id="_CPPv2N10NumbaModel18setStateUpdateFuncE9uintptr_t"></span><span id="NumbaModel::setStateUpdateFunc__uintptr_t"></span><span class="target" id="class_numba_model_1a47a5bec5a1b729b54fe58b8570649006"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setStateUpdateFunc</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uintptr_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">funcPtr</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N10NumbaModel18setStateUpdateFuncE9uintptr_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Store the compiled Numba update function pointer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>funcPtr</strong> – Raw function pointer returned by Numba. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK10NumbaModel16getReadLinkedPtrEv">
+<span id="_CPPv3NK10NumbaModel16getReadLinkedPtrEv"></span><span id="_CPPv2NK10NumbaModel16getReadLinkedPtrEv"></span><span id="NumbaModel::getReadLinkedPtrC"></span><span class="target" id="class_numba_model_1ae252b2c6d8224531047cfe3359b0d313"></span><span class="n"><span class="pre">uintptr_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getReadLinkedPtr</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK10NumbaModel16getReadLinkedPtrEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Return the raw address of the <code class="docutils literal notranslate"><a class="reference internal" href="#class_numba_model_1a094859553eb647b4a3c87ea417b9dadf"><span class="std std-ref"><span class="pre">readLinked_</span></span></a></code> backing buffer.</p>
+<p>This buffer is typically registered once as a user pointer so the compiled callback can inspect reader linkage state. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N10NumbaModel15finalizeAllPtrsEv">
+<span id="_CPPv3N10NumbaModel15finalizeAllPtrsEv"></span><span id="_CPPv2N10NumbaModel15finalizeAllPtrsEv"></span><span id="NumbaModel::finalizeAllPtrs"></span><span class="target" id="class_numba_model_1ac6745c63814a47dee2ad6eb43f878824"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">finalizeAllPtrs</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N10NumbaModel15finalizeAllPtrsEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Assemble the flattened pointer table consumed by the compiled callback.</p>
+<p>This must be called from Python <code class="docutils literal notranslate"><a class="reference internal" href="#class_numba_model_1aca8360c99b519c4334f836782649197d"><span class="std std-ref"><span class="pre">Reset()</span></span></a></code> after <code class="docutils literal notranslate"><span class="pre">_nbm_compile()</span></code> finishes registering all reader, writer, and user pointers. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N10NumbaModel5ResetE8uint64_t">
+<span id="_CPPv3N10NumbaModel5ResetE8uint64_t"></span><span id="_CPPv2N10NumbaModel5ResetE8uint64_t"></span><span id="NumbaModel::Reset__uint64_t"></span><span class="target" id="class_numba_model_1aca8360c99b519c4334f836782649197d"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N10NumbaModel5ResetE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Prepare the model for a new simulation run.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CurrentSimNanos</strong> – Current simulation time in nanoseconds. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N10NumbaModel11UpdateStateE8uint64_t">
+<span id="_CPPv3N10NumbaModel11UpdateStateE8uint64_t"></span><span id="_CPPv2N10NumbaModel11UpdateStateE8uint64_t"></span><span id="NumbaModel::UpdateState__uint64_t"></span><span class="target" id="class_numba_model_1add826a216cc84bcc6f0c19dd33b2657f"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">UpdateState</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N10NumbaModel11UpdateStateE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Refresh registered pointers and invoke the compiled callback.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CurrentSimNanos</strong> – Current simulation time in nanoseconds. </p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10NumbaModel9bskLoggerE">
+<span id="_CPPv3N10NumbaModel9bskLoggerE"></span><span id="_CPPv2N10NumbaModel9bskLoggerE"></span><span id="NumbaModel::bskLogger__BSKLogger"></span><span class="target" id="class_numba_model_1a6b0c8a34a7635c28ad1698cf35ecb49d"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N10NumbaModel9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>Logger proxy exposed to Python-side Numba modules. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-protected-attributes">Protected Attributes</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10NumbaModel12readerSlots_E">
+<span id="_CPPv3N10NumbaModel12readerSlots_E"></span><span id="_CPPv2N10NumbaModel12readerSlots_E"></span><span id="NumbaModel::readerSlots___std::vector:ReaderSlot:"></span><span class="target" id="class_numba_model_1a2420646b9685af14507f81ece00a9ceb"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv410ReaderSlot" title="ReaderSlot"><span class="n"><span class="pre">ReaderSlot</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">readerSlots_</span></span></span><a class="headerlink" href="#_CPPv4N10NumbaModel12readerSlots_E" title="Link to this definition"></a><br /></dt>
+<dd><p>One entry per registered reader functor. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10NumbaModel11readLinked_E">
+<span id="_CPPv3N10NumbaModel11readLinked_E"></span><span id="_CPPv2N10NumbaModel11readLinked_E"></span><span id="NumbaModel::readLinked___std::vector:uint8_t:"></span><span class="target" id="class_numba_model_1a094859553eb647b4a3c87ea417b9dadf"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">uint8_t</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">readLinked_</span></span></span><a class="headerlink" href="#_CPPv4N10NumbaModel11readLinked_E" title="Link to this definition"></a><br /></dt>
+<dd><p>Per-reader linkage flags refreshed each tick. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10NumbaModel10readCount_E">
+<span id="_CPPv3N10NumbaModel10readCount_E"></span><span id="_CPPv2N10NumbaModel10readCount_E"></span><span id="NumbaModel::readCount___s"></span><span class="target" id="class_numba_model_1adae208c5cc67120b8553bd5240f62a6f"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">readCount_</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N10NumbaModel10readCount_E" title="Link to this definition"></a><br /></dt>
+<dd><p>Number of reader entries stored in <code class="docutils literal notranslate"><a class="reference internal" href="#class_numba_model_1ac24d1c325d84509e5f8bf49f5b36229f"><span class="std std-ref"><span class="pre">allPtrs_</span></span></a></code>. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10NumbaModel14writePayloads_E">
+<span id="_CPPv3N10NumbaModel14writePayloads_E"></span><span id="_CPPv2N10NumbaModel14writePayloads_E"></span><span id="NumbaModel::writePayloads___std::vector:voidP:"></span><span class="target" id="class_numba_model_1a8459b3a4e090fa50bcef687806dfc5cf"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">void</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">writePayloads_</span></span></span><a class="headerlink" href="#_CPPv4N10NumbaModel14writePayloads_E" title="Link to this definition"></a><br /></dt>
+<dd><p>Staged writable payload pointers awaiting finalization. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10NumbaModel13userPointers_E">
+<span id="_CPPv3N10NumbaModel13userPointers_E"></span><span id="_CPPv2N10NumbaModel13userPointers_E"></span><span id="NumbaModel::userPointers___std::vector:voidP:"></span><span class="target" id="class_numba_model_1aba8ceb8c6450e0203895ae1871296ed6"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">void</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">userPointers_</span></span></span><a class="headerlink" href="#_CPPv4N10NumbaModel13userPointers_E" title="Link to this definition"></a><br /></dt>
+<dd><p>Staged user pointers appended after readers and writers. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10NumbaModel8allPtrs_E">
+<span id="_CPPv3N10NumbaModel8allPtrs_E"></span><span id="_CPPv2N10NumbaModel8allPtrs_E"></span><span id="NumbaModel::allPtrs___std::vector:voidP:"></span><span class="target" id="class_numba_model_1ac24d1c325d84509e5f8bf49f5b36229f"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">void</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">allPtrs_</span></span></span><a class="headerlink" href="#_CPPv4N10NumbaModel8allPtrs_E" title="Link to this definition"></a><br /></dt>
+<dd><p>Flat pointer table laid out as <code class="docutils literal notranslate"><span class="pre">[reads</span> <span class="pre">|</span> <span class="pre">writes</span> <span class="pre">|</span> <span class="pre">user]</span></code>. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10NumbaModel13writeHeaders_E">
+<span id="_CPPv3N10NumbaModel13writeHeaders_E"></span><span id="_CPPv2N10NumbaModel13writeHeaders_E"></span><span id="NumbaModel::writeHeaders___std::vector:MsgHeaderP:"></span><span class="target" id="class_numba_model_1a91360b4574c6677a8d9c3a307078e3cb"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../messaging/msgHeader.html#_CPPv49MsgHeader" title="MsgHeader"><span class="n"><span class="pre">MsgHeader</span></span></a><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">writeHeaders_</span></span></span><a class="headerlink" href="#_CPPv4N10NumbaModel13writeHeaders_E" title="Link to this definition"></a><br /></dt>
+<dd><p>Headers corresponding to registered writable payloads. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10NumbaModel16stateUpdateFunc_E">
+<span id="_CPPv3N10NumbaModel16stateUpdateFunc_E"></span><span id="_CPPv2N10NumbaModel16stateUpdateFunc_E"></span><span class="target" id="class_numba_model_1abb8e6c5889568c6627bbea6242d60845"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">stateUpdateFunc_</span></span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">(</span></span><span class="kt"><span class="pre">void</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="n"><span class="pre">uint64_t</span></span><span class="p"><span class="pre">)</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">nullptr</span></span><a class="headerlink" href="#_CPPv4N10NumbaModel16stateUpdateFunc_E" title="Link to this definition"></a><br /></dt>
+<dd><p>Compiled Numba state update callback. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="_GeneralModuleFiles" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="sys_model.html" class="btn btn-neutral float-right" title="sys_model" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

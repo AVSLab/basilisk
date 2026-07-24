@@ -1,0 +1,798 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>C++ Module: spaceWeatherData &mdash; Basilisk 2.12.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=2ebb1c42" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=4ad2e773"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script>window.MathJax = {"svg": {"fontCache": "global"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="spaceWeatherData" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../communication/index.html">communication</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dynamics/index.html">dynamics</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">environment</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../ExponentialAtmosphere/index.html">ExponentialAtmosphere</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../MsisAtmosphere/index.html">MsisAtmosphere</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../TabularAtmosphere/index.html">TabularAtmosphere</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ZeroWindModel/index.html">ZeroWindModel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../albedo/index.html">albedo</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dentonFluxModel/index.html">dentonFluxModel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../earthRadiationModel/index.html">earthRadiationModel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../eclipse/index.html">eclipse</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ephemerisConverter/index.html">ephemerisConverter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../groundLocation/index.html">groundLocation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../groundMapping/index.html">groundMapping</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../magneticFieldCenteredDipole/index.html">magneticFieldCenteredDipole</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../magneticFieldWMM/index.html">magneticFieldWMM</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../planetEphemeris/index.html">planetEphemeris</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../solarFlux/index.html">solarFlux</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">spaceWeatherData</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraftChargingDynamics/index.html">spacecraftChargingDynamics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraftChargingEquilibrium/index.html">spacecraftChargingEquilibrium</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraftLocation/index.html">spacecraftLocation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spiceInterface/index.html">spiceInterface</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../stripLocation/index.html">stripLocation</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../forceTorque/index.html">forceTorque</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujocoDynamics/index.html">mujocoDynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../simSynch/index.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">environment</a></li>
+          <li class="breadcrumb-item"><a href="index.html">spaceWeatherData</a></li>
+      <li class="breadcrumb-item active"><span class="module-type-label module-type-cpp">C++</span> Module: spaceWeatherData</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/simulation/environment/spaceWeatherData/spaceWeatherData.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="c-module-spaceweatherdata">
+<span id="spaceweatherdata"></span><h1><span class="module-type-label module-type-cpp">C++</span> Module: spaceWeatherData<a class="headerlink" href="#c-module-spaceweatherdata" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">spaceWeatherData</span></code> module reads a CelesTrak-style space-weather CSV table and publishes the
+23 <a class="reference internal" href="../../../architecture/msgPayloadDefC/SwDataMsgPayload.html#swdatamsgpayload"><span class="std std-ref">SwDataMsgPayload</span></a> output messages required by <a class="reference internal" href="../MsisAtmosphere/msisAtmosphere.html#msisatmosphere"><span class="std std-ref">C++ Module: msisAtmosphere</span></a>.  On every simulation
+update step the module determines the current UTC calendar date and time from the linked
+<a class="reference internal" href="../../../architecture/msgPayloadDefC/EpochMsgPayload.html#epochmsgpayload"><span class="std std-ref">EpochMsgPayload</span></a>, looks up the corresponding rows in the loaded table, and assembles the
+NRLMSISE-00 / NRLMSIS 2.0 space-weather index vector before writing it to its output message array.</p>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>The following table lists all the module input and output messages.  The module msg connection is
+set by the user from Python.  The msg type contains a link to the message structure definition,
+while the description provides information on what this message is used for.</p>
+<div align="center" class="align-center"><div class="graphviz"><object data="../../../../_images/graphviz-52594d1506d34ebf7ade49169726d8c1d583a1c4.svg" type="image/svg+xml" class="graphviz">
+<p class="warning">spaceWeatherData module input and output messages</p></object></div>
+</div>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>epochInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/EpochMsgPayload.html#epochmsgpayload"><span class="std std-ref">EpochMsgPayload</span></a></p></td>
+<td><p>Simulation start epoch in UTC (year, month, day, hours, minutes, seconds).  Must be linked before <code class="docutils literal notranslate"><span class="pre">Reset</span></code> is called; an error is logged otherwise.</p></td>
+</tr>
+<tr class="row-odd"><td><p>swDataOutMsgs[0]</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/SwDataMsgPayload.html#swdatamsgpayload"><span class="std std-ref">SwDataMsgPayload</span></a></p></td>
+<td><p>Daily Ap average (<code class="docutils literal notranslate"><span class="pre">AP_AVG</span></code>) of the current day — MSIS channel <code class="docutils literal notranslate"><span class="pre">ap_24_0</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p>swDataOutMsgs[1..20]</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/SwDataMsgPayload.html#swdatamsgpayload"><span class="std std-ref">SwDataMsgPayload</span></a></p></td>
+<td><p>Twenty consecutive 3-hour Ap values stepping back from the current bin — MSIS channels <code class="docutils literal notranslate"><span class="pre">ap_3_0</span></code> through <code class="docutils literal notranslate"><span class="pre">ap_3_-57</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p>swDataOutMsgs[21]</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/SwDataMsgPayload.html#swdatamsgpayload"><span class="std std-ref">SwDataMsgPayload</span></a></p></td>
+<td><p>Centered 81-day observed F10.7 of the current day (<code class="docutils literal notranslate"><span class="pre">F10.7_OBS_CENTER81</span></code>) — MSIS channel <code class="docutils literal notranslate"><span class="pre">f107_1944_0</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p>swDataOutMsgs[22]</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/SwDataMsgPayload.html#swdatamsgpayload"><span class="std std-ref">SwDataMsgPayload</span></a></p></td>
+<td><p>Observed daily F10.7 of the previous day (<code class="docutils literal notranslate"><span class="pre">F10.7_OBS</span></code>) — MSIS channel <code class="docutils literal notranslate"><span class="pre">f107_24_-24</span></code>.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="docutils literal notranslate"><span class="pre">swDataOutMsgs</span></code> is a <code class="docutils literal notranslate"><span class="pre">std::vector</span></code> of heap-allocated <code class="docutils literal notranslate"><span class="pre">Message&lt;SwDataMsgPayload&gt;</span></code>
+pointers initialised to length 23 in the constructor.  In Python the vector elements are
+accessed by index: <code class="docutils literal notranslate"><span class="pre">swModule.swDataOutMsgs[i]</span></code>.</p>
+</div>
+</section>
+<section id="detailed-module-description">
+<h2>Detailed Module Description<a class="headerlink" href="#detailed-module-description" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">spaceWeatherData</span></code> module converts a Gregorian calendar date (year, month, day) to a signed
+Unix day number.  The resulting integer counts whole days since the Unix epoch (1970-01-01 = 0)
+and is used as the unique key when looking up rows in the loaded weather table.</p>
+<p>On every call to <code class="docutils literal notranslate"><span class="pre">UpdateState</span></code> the module performs the following steps to determine the current
+UTC calendar date:</p>
+<ol class="arabic simple">
+<li><p>Read <a class="reference internal" href="../../../architecture/msgPayloadDefC/EpochMsgPayload.html#epochmsgpayload"><span class="std std-ref">EpochMsgPayload</span></a> (<code class="docutils literal notranslate"><span class="pre">year</span></code>, <code class="docutils literal notranslate"><span class="pre">month</span></code>, <code class="docutils literal notranslate"><span class="pre">day</span></code>, <code class="docutils literal notranslate"><span class="pre">hours</span></code>, <code class="docutils literal notranslate"><span class="pre">minutes</span></code>, <code class="docutils literal notranslate"><span class="pre">seconds</span></code>).</p></li>
+<li><p>Compute <span class="math notranslate nohighlight">\(D_{\text{epoch}}\)</span> from the calendar date.</p></li>
+<li><p>Compute <span class="math notranslate nohighlight">\(t_{\text{epoch}}\)</span> from the time-of-day fields.</p></li>
+<li><p>Add the simulation time: <span class="math notranslate nohighlight">\(T_{\text{total}} = t_{\text{epoch}} + t_{\text{sim}}\)</span>.</p></li>
+<li><p>Extract the whole-day offset <span class="math notranslate nohighlight">\(\Delta D\)</span> and residual <span class="math notranslate nohighlight">\(s_{\text{day}}\)</span>.</p></li>
+<li><p>Determine the current day number <span class="math notranslate nohighlight">\(D_0 = D_{\text{epoch}} + \Delta D\)</span>.</p></li>
+<li><p>Determine the current 3-hour Ap bin <span class="math notranslate nohighlight">\(b_{\text{cur}} = \lfloor s_{\text{day}} / 10800 \rfloor\)</span>.</p></li>
+</ol>
+<p>The table below defines the symbols used above.</p>
+<table class="docutils align-default" id="id2">
+<caption><span class="caption-text">Symbol definitions</span><a class="headerlink" href="#id2" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 15.0%" />
+<col style="width: 65.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Symbol</p></th>
+<th class="head"><p>Unit</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(t_{\text{sim}}\)</span></p></td>
+<td><p>s</p></td>
+<td><p>Simulation time elapsed since the BSK epoch (<code class="docutils literal notranslate"><span class="pre">CurrentSimNanos</span></code> converted to seconds).</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(t_{\text{epoch}}\)</span></p></td>
+<td><p>s</p></td>
+<td><p>UTC seconds-of-day of the epoch (hour x 3600 + minute x 60 + second).</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(D_{\text{epoch}}\)</span></p></td>
+<td><p>day</p></td>
+<td><p>Unix day number of the epoch date (days since 1970-01-01).</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(T_{\text{total}}\)</span></p></td>
+<td><p>s</p></td>
+<td><p>Total UTC seconds elapsed from the start of the epoch calendar day:
+<span class="math notranslate nohighlight">\(T_{\text{total}} = t_{\text{epoch}} + t_{\text{sim}}\)</span>.</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\Delta D\)</span></p></td>
+<td><p>day</p></td>
+<td><p>Whole-day offset from the epoch date:
+<span class="math notranslate nohighlight">\(\Delta D = \lfloor T_{\text{total}} / 86400 \rfloor\)</span>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(s_{\text{day}}\)</span></p></td>
+<td><p>s</p></td>
+<td><p>Seconds elapsed since midnight of the current UTC day:
+<span class="math notranslate nohighlight">\(s_{\text{day}} = T_{\text{total}} - \Delta D \times 86400\)</span>.</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(D_{0}\)</span></p></td>
+<td><p>day</p></td>
+<td><p>Unix day number of the current UTC date:
+<span class="math notranslate nohighlight">\(D_{0} = D_{\text{epoch}} + \Delta D\)</span>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(b_{\text{cur}}\)</span></p></td>
+<td><p>—</p></td>
+<td><p>Index of the current 3-hour Ap bin (0-based):
+<span class="math notranslate nohighlight">\(b_{\text{cur}} = \lfloor s_{\text{day}} / 3600 / 3 \rfloor\)</span>.</p></td>
+</tr>
+</tbody>
+</table>
+<p>The 23 output channels map directly to the <code class="docutils literal notranslate"><span class="pre">sw</span></code> array consumed by the <code class="docutils literal notranslate"><span class="pre">msisAtmosphere</span></code> module.
+The mapping implemented by <code class="docutils literal notranslate"><span class="pre">computeSwState</span></code> is:</p>
+<table class="docutils align-default" id="id3">
+<caption><span class="caption-text">Output channel mapping</span><a class="headerlink" href="#id3" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 12.0%" />
+<col style="width: 30.0%" />
+<col style="width: 58.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Channel</p></th>
+<th class="head"><p>MSIS label</p></th>
+<th class="head"><p>Source column and day</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">swDataOutMsgs[0]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ap_24_0</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">AP_AVG</span></code> of day <span class="math notranslate nohighlight">\(D_0\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">swDataOutMsgs[1]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ap_3_0</span></code></p></td>
+<td><p>3-hour Ap at bin <span class="math notranslate nohighlight">\(b_{\text{cur}}\)</span> of day <span class="math notranslate nohighlight">\(D_0\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">swDataOutMsgs[2]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ap_3_-3</span></code></p></td>
+<td><p>3-hour Ap at bin <span class="math notranslate nohighlight">\(b_{\text{cur}} - 1\)</span>, wrapping to <span class="math notranslate nohighlight">\(D_{-1}\)</span> as needed</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">swDataOutMsgs[3]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ap_3_-6</span></code></p></td>
+<td><p>3-hour Ap at bin <span class="math notranslate nohighlight">\(b_{\text{cur}} - 2\)</span>, wrapping to <span class="math notranslate nohighlight">\(D_{-1}\)</span> or <span class="math notranslate nohighlight">\(D_{-2}\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>… (pattern continues)</p></td>
+<td><p>…</p></td>
+<td><p>Each subsequent channel steps back one 3-hour bin, wrapping across day boundaries up to <span class="math notranslate nohighlight">\(D_{-3}\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">swDataOutMsgs[20]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ap_3_-57</span></code></p></td>
+<td><p>3-hour Ap at bin <span class="math notranslate nohighlight">\(b_{\text{cur}} - 19\)</span>, up to day <span class="math notranslate nohighlight">\(D_{-3}\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">swDataOutMsgs[21]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">f107_1944_0</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">F10.7_OBS_CENTER81</span></code> of day <span class="math notranslate nohighlight">\(D_0\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">swDataOutMsgs[22]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">f107_24_-24</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">F10.7_OBS</span></code> of day <span class="math notranslate nohighlight">\(D_{-1}\)</span></p></td>
+</tr>
+</tbody>
+</table>
+<p>The 3-hour Ap look-back (channels 1-20) is computed starting from the current 3-hour bin
+<span class="math notranslate nohighlight">\(b_{\text{cur}}\)</span> within day <span class="math notranslate nohighlight">\(D_0\)</span>.  The module subtracts one bin index per channel.
+Whenever the bin index drops below zero it is incremented by 8 (the number of 3-hour bins per
+day) and the day offset is advanced by one.  If the resulting day offset exceeds 3 the look-up
+fails and the output retains the last published values.</p>
+<p><code class="docutils literal notranslate"><span class="pre">loadSpaceWeatherFile</span></code> performs the following actions in order:</p>
+<ol class="arabic simple">
+<li><p>Open the file; log an error and return if the file cannot be read.</p></li>
+<li><p>Parse the header row and verify that all required column names are present.  Log an error and
+return for any missing column.</p></li>
+<li><p>Parse each subsequent non-empty line into a <code class="docutils literal notranslate"><span class="pre">DailySpaceWeather</span></code> record.  Stop at the first
+line that fails to parse (see assumption 4 in <a class="reference internal" href="#module-assumptions-and-limitations">Module Assumptions and Limitations</a>).</p></li>
+<li><p>Verify that the resulting list contains at least one valid row.</p></li>
+<li><p>Verify that <code class="docutils literal notranslate"><span class="pre">DATE</span></code> values are strictly ascending and contain no duplicates.</p></li>
+<li><p>If all checks pass, store the validated list and record the loaded file path.</p></li>
+</ol>
+<p>If any validation step fails a BSK_ERROR is thrown.</p>
+<p>During <code class="docutils literal notranslate"><span class="pre">Reset</span></code> the module probes whether the simulation start date is covered by the loaded
+table; a <code class="docutils literal notranslate"><span class="pre">BSK_ERROR</span></code> is emitted immediately if it is not, rather than failing silently at run
+time.  A zero-state is always published at <code class="docutils literal notranslate"><span class="pre">Reset</span></code>.</p>
+<p>If the current simulation date (or any of the three preceding days) is missing from the table
+the module logs a warning and keeps publishing the last available data.
+This can happen only during the simulation, because the first epoch is tested at <code class="docutils literal notranslate"><span class="pre">Reset</span></code>.</p>
+</section>
+<section id="module-assumptions-and-limitations">
+<h2>Module Assumptions and Limitations<a class="headerlink" href="#module-assumptions-and-limitations" title="Link to this heading"></a></h2>
+<ol class="arabic">
+<li><p><strong>Required columns.</strong> The input CSV must contain a header row with at least the following column
+names (additional columns are ignored):</p>
+<p><code class="docutils literal notranslate"><span class="pre">DATE</span></code>, <code class="docutils literal notranslate"><span class="pre">AP1</span></code>, <code class="docutils literal notranslate"><span class="pre">AP2</span></code>, <code class="docutils literal notranslate"><span class="pre">AP3</span></code>, <code class="docutils literal notranslate"><span class="pre">AP4</span></code>, <code class="docutils literal notranslate"><span class="pre">AP5</span></code>, <code class="docutils literal notranslate"><span class="pre">AP6</span></code>, <code class="docutils literal notranslate"><span class="pre">AP7</span></code>, <code class="docutils literal notranslate"><span class="pre">AP8</span></code>,
+<code class="docutils literal notranslate"><span class="pre">AP_AVG</span></code>, <code class="docutils literal notranslate"><span class="pre">F10.7_OBS</span></code>, <code class="docutils literal notranslate"><span class="pre">F10.7_OBS_CENTER81</span></code></p>
+</li>
+<li><p><strong>Date format.</strong> Every <code class="docutils literal notranslate"><span class="pre">DATE</span></code> cell must follow the <code class="docutils literal notranslate"><span class="pre">YYYY-MM-DD</span></code> format.  Month values must
+be in [1, 12] and day values in [1, 31]; otherwise the row is treated as invalid.</p></li>
+<li><p><strong>Table ordering and uniqueness.</strong> <code class="docutils literal notranslate"><span class="pre">DATE</span></code> values must be strictly ascending and free of
+duplicates.  The loader returns an error and discards the entire file if either condition is
+violated.</p></li>
+<li><p><strong>Early termination on invalid rows.</strong> The file parser stops reading at the first row that
+cannot be fully parsed (missing, non-numeric, or numeric fields with trailing characters in AP
+or F10.7 columns, or a <code class="docutils literal notranslate"><span class="pre">DATE</span></code> token with trailing characters).  This is intentional: the
+monthly predicted section at the end of CelesTrak files omits AP values and should not be
+ingested.</p></li>
+<li><p><strong>Run-time look-up window.</strong> At each update step the module requires four consecutive calendar
+days to be present in the table: the current day, and the three preceding days.  If any of
+these four entries is absent the module outputs the preceding state and logs a warning.</p></li>
+<li><p><strong>Epoch is UTC.</strong> The simulation epoch provided through <a class="reference internal" href="../../../architecture/msgPayloadDefC/EpochMsgPayload.html#epochmsgpayload"><span class="std std-ref">EpochMsgPayload</span></a> is interpreted
+as UTC.  No leap-second or timezone correction is applied.</p></li>
+<li><p><strong>Three-hour AP bins.</strong> The table stores exactly 8 three-hour Ap indices per day
+(<code class="docutils literal notranslate"><span class="pre">AP1</span></code> … <code class="docutils literal notranslate"><span class="pre">AP8</span></code>), corresponding to the 00-03 UT, 03-06 UT, … 21-24 UT intervals.
+The module derives the current 3-hour bin from the fractional UTC time of day.</p></li>
+<li><p><strong>No interpolation.</strong> All space-weather indices are taken directly from the table; no
+interpolation between rows is performed.</p></li>
+</ol>
+</section>
+<section id="user-guide">
+<h2>User Guide<a class="headerlink" href="#user-guide" title="Link to this heading"></a></h2>
+<section id="obtaining-a-space-weather-file">
+<h3>Obtaining a space-weather file<a class="headerlink" href="#obtaining-a-space-weather-file" title="Link to this heading"></a></h3>
+<p>Download the historical + short-range predicted file directly from CelesTrak:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>https://celestrak.org/SpaceData/SW-Last5Years.csv
+</pre></div>
+</div>
+<p>The file covers the past five years of observed data followed by a short predicted section.
+Because the predicted rows omit AP values, the module’s early-termination parser automatically
+stops before ingesting them.</p>
+<p>For simulations that extend beyond the five-year window, use the complete historical archive:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>https://celestrak.org/SpaceData/SW-All.csv
+</pre></div>
+</div>
+</section>
+<section id="basic-setup">
+<h3>Basic Setup<a class="headerlink" href="#basic-setup" title="Link to this heading"></a></h3>
+<p>The minimal Python setup connects the epoch message, loads the CSV file, and subscribes each
+<code class="docutils literal notranslate"><span class="pre">msisAtmosphere</span></code> input to the corresponding output:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">msisAtmosphere</span><span class="p">,</span> <span class="n">spaceWeatherData</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">unitTestSupport</span><span class="p">,</span> <span class="n">SimulationBaseClass</span>
+
+<span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+<span class="n">dynProcess</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="s2">&quot;DynamicsProcess&quot;</span><span class="p">)</span>
+<span class="n">dynTaskName</span> <span class="o">=</span> <span class="s2">&quot;DynamicsTask&quot;</span>
+<span class="n">dynProcess</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">dynTaskName</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">10.0</span><span class="p">)))</span>
+
+<span class="c1"># --- Space-weather module ---</span>
+<span class="n">swModule</span> <span class="o">=</span> <span class="n">spaceWeatherData</span><span class="o">.</span><span class="n">SpaceWeatherData</span><span class="p">()</span>
+<span class="n">swModule</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;spaceWeatherData&quot;</span>
+<span class="n">swModule</span><span class="o">.</span><span class="n">loadSpaceWeatherFile</span><span class="p">(</span><span class="s2">&quot;SW-Last5Years.csv&quot;</span><span class="p">)</span>
+
+<span class="c1"># Connect the simulation epoch</span>
+<span class="n">timeInitString</span> <span class="o">=</span> <span class="s2">&quot;2026 March 04 21:48:00.000000&quot;</span>
+<span class="n">epochMsg</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">timeStringToGregorianUTCMsg</span><span class="p">(</span><span class="n">timeInitString</span><span class="p">)</span>
+<span class="n">swModule</span><span class="o">.</span><span class="n">epochInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">epochMsg</span><span class="p">)</span>
+
+<span class="c1"># --- Atmosphere module ---</span>
+<span class="n">atmoModule</span> <span class="o">=</span> <span class="n">msisAtmosphere</span><span class="o">.</span><span class="n">MsisAtmosphere</span><span class="p">()</span>
+<span class="n">atmoModule</span><span class="o">.</span><span class="n">epochInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">epochMsg</span><span class="p">)</span>
+<span class="n">atmoModule</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;msisAtmosphere&quot;</span>
+<span class="k">for</span> <span class="n">msgIndex</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">23</span><span class="p">):</span>
+    <span class="n">atmoModule</span><span class="o">.</span><span class="n">swDataInMsgs</span><span class="p">[</span><span class="n">msgIndex</span><span class="p">]</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">swModule</span><span class="o">.</span><span class="n">swDataOutMsgs</span><span class="p">[</span><span class="n">msgIndex</span><span class="p">])</span>
+
+<span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">dynTaskName</span><span class="p">,</span> <span class="n">swModule</span><span class="p">)</span>
+<span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">dynTaskName</span><span class="p">,</span> <span class="n">atmoModule</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="docutils literal notranslate"><span class="pre">swModule</span></code> must be added to the task <strong>before</strong> <code class="docutils literal notranslate"><span class="pre">atmoModule</span></code>, or have a higher priority,
+so that the output messages are written before the atmosphere module reads them within the
+same task step.</p>
+</div>
+</section>
+<section id="choosing-the-correct-epoch">
+<h3>Choosing the Correct Epoch<a class="headerlink" href="#choosing-the-correct-epoch" title="Link to this heading"></a></h3>
+<p>The epoch message must represent the UTC date and time at which the simulation clock reads zero.
+The module adds the BSK simulation time (in seconds) to this epoch to obtain the current UTC
+instant.  Providing a wrong epoch will shift all space-weather indices in time and may cause
+look-up failures if the resulting date falls outside the loaded table.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Epoch at J2000.0 (2000-01-01 11:58:55.816 UTC)</span>
+<span class="n">epochMsg</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">timeStringToGregorianUTCMsg</span><span class="p">(</span><span class="s2">&quot;2000 January 01 11:58:55.816000&quot;</span><span class="p">)</span>
+<span class="n">swModule</span><span class="o">.</span><span class="n">epochInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">epochMsg</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="error-conditions-and-mitigation">
+<h3>Error Conditions and Mitigation<a class="headerlink" href="#error-conditions-and-mitigation" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 45.0%" />
+<col style="width: 55.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Symptom</p></th>
+<th class="head"><p>Likely cause and remedy</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">BSK_ERROR:</span> <span class="pre">SpaceWeatherData.epochInMsg</span> <span class="pre">was</span> <span class="pre">not</span> <span class="pre">linked</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">epochInMsg</span></code> was not subscribed before <code class="docutils literal notranslate"><span class="pre">Reset</span></code>.  Subscribe to a valid
+<a class="reference internal" href="../../../architecture/msgPayloadDefC/EpochMsgPayload.html#epochmsgpayload"><span class="std std-ref">EpochMsgPayload</span></a> message before initialising the simulation.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">BSK_ERROR:</span> <span class="pre">space-weather</span> <span class="pre">table</span> <span class="pre">is</span> <span class="pre">empty</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">loadSpaceWeatherFile</span></code> was not called, or the call failed.  Check the file path and
+verify that the CSV contains all required columns.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">BSK_ERROR:</span> <span class="pre">simulation</span> <span class="pre">start</span> <span class="pre">date</span> <span class="pre">is</span> <span class="pre">not</span> <span class="pre">covered</span> <span class="pre">by</span> <span class="pre">the</span> <span class="pre">loaded</span> <span class="pre">space-weather</span> <span class="pre">table</span></code></p></td>
+<td><p>The epoch resolves to a calendar date for which the module cannot assemble a full
+look-back window (current day plus three preceding days).  Verify the epoch is
+correct and that the loaded CSV file covers the simulation start date.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">BSK_ERROR:</span> <span class="pre">missing</span> <span class="pre">required</span> <span class="pre">column</span></code></p></td>
+<td><p>The CSV header does not contain one of the mandatory column names.  Ensure the file was
+downloaded from CelesTrak and has not been manually edited.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">BSK_ERROR:</span> <span class="pre">Duplicate</span> <span class="pre">DATE</span> <span class="pre">row</span></code></p></td>
+<td><p>Two rows share the same <code class="docutils literal notranslate"><span class="pre">DATE</span></code>.  Remove the duplicate and reload.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">BSK_ERROR:</span> <span class="pre">DATE</span> <span class="pre">rows</span> <span class="pre">must</span> <span class="pre">be</span> <span class="pre">sorted</span></code></p></td>
+<td><p>Rows are not in ascending date order.  Sort the file by date and reload.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">BSK_ERROR:</span> <span class="pre">No</span> <span class="pre">valid</span> <span class="pre">weather</span> <span class="pre">rows</span> <span class="pre">were</span> <span class="pre">loaded</span></code></p></td>
+<td><p>Every data row failed to parse, leaving the table empty.  Check that the CSV is a valid
+CelesTrak file and that at least the first data row is well-formed.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">BSK_WARNING:</span> <span class="pre">Failed</span> <span class="pre">to</span> <span class="pre">retrieve</span> <span class="pre">a</span> <span class="pre">state.</span> <span class="pre">Publishing</span> <span class="pre">the</span> <span class="pre">last</span> <span class="pre">available</span> <span class="pre">data.</span> <span class="pre">This</span> <span class="pre">can</span> <span class="pre">happen</span> <span class="pre">if</span> <span class="pre">the</span> <span class="pre">date</span> <span class="pre">is</span> <span class="pre">not</span> <span class="pre">in</span> <span class="pre">the</span> <span class="pre">file</span> <span class="pre">or</span> <span class="pre">if</span> <span class="pre">the</span> <span class="pre">file</span> <span class="pre">is</span> <span class="pre">empty.</span></code></p></td>
+<td><p>The current simulation date or one of the three preceding days is absent from the table.
+Use a longer or more recent CSV file so that the look-up window falls within the loaded
+range.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">BSK_WARNING:</span> <span class="pre">Stopped</span> <span class="pre">reading</span> <span class="pre">space-weather</span> <span class="pre">table</span> <span class="pre">at</span> <span class="pre">first</span> <span class="pre">invalid</span> <span class="pre">row</span></code></p></td>
+<td><p>A data row could not be parsed (malformed <code class="docutils literal notranslate"><span class="pre">DATE</span></code> token, missing field, or a numeric
+field such as an AP or F10.7 value that contains non-numeric trailing characters).  Rows
+before this point are still loaded.  Verify the file has not been manually edited.</p></td>
+</tr>
+</tbody>
+</table>
+<hr class="docutils" />
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv416SpaceWeatherData">
+<span id="_CPPv316SpaceWeatherData"></span><span id="_CPPv216SpaceWeatherData"></span><span id="SpaceWeatherData"></span><span class="target" id="class_space_weather_data"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SpaceWeatherData</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../../../architecture/_GeneralModuleFiles/sys_model.html#_CPPv48SysModel" title="SysModel"><span class="n"><span class="pre">SysModel</span></span></a><a class="headerlink" href="#_CPPv416SpaceWeatherData" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;spaceWeatherData.h&gt;</em></div>
+<p>CelesTrak space-weather data publisher for :ref:<code class="docutils literal notranslate"><span class="pre">msisAtmosphere</span></code>. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16SpaceWeatherData16SpaceWeatherDataEv">
+<span id="_CPPv3N16SpaceWeatherData16SpaceWeatherDataEv"></span><span id="_CPPv2N16SpaceWeatherData16SpaceWeatherDataEv"></span><span id="SpaceWeatherData::SpaceWeatherData"></span><span class="target" id="class_space_weather_data_1a4159cd5dba0f01aca88e515457167539"></span><span class="sig-name descname"><span class="n"><span class="pre">SpaceWeatherData</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N16SpaceWeatherData16SpaceWeatherDataEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Constructor. Allocates the 23 heap-owned output messages and pushes their pointers into the swDataOutMsgs vector. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16SpaceWeatherDataD0Ev">
+<span id="_CPPv3N16SpaceWeatherDataD0Ev"></span><span id="_CPPv2N16SpaceWeatherDataD0Ev"></span><span id="SpaceWeatherData::~SpaceWeatherData"></span><span class="target" id="class_space_weather_data_1a795735e10b90cb926b50b2819d3a54b5"></span><span class="sig-name descname"><span class="n"><span class="pre">~SpaceWeatherData</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N16SpaceWeatherDataD0Ev" title="Link to this definition"></a><br /></dt>
+<dd><p>Destructor. Frees every output message owned by this module. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16SpaceWeatherData16SpaceWeatherDataERK16SpaceWeatherData">
+<span id="_CPPv3N16SpaceWeatherData16SpaceWeatherDataERK16SpaceWeatherData"></span><span id="_CPPv2N16SpaceWeatherData16SpaceWeatherDataERK16SpaceWeatherData"></span><span id="SpaceWeatherData::SpaceWeatherData__SpaceWeatherDataCR"></span><span class="target" id="class_space_weather_data_1a63415bba34da5641a6ee075250e489c7"></span><span class="sig-name descname"><span class="n"><span class="pre">SpaceWeatherData</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N16SpaceWeatherData16SpaceWeatherDataERK16SpaceWeatherData" title="SpaceWeatherData::SpaceWeatherData"><span class="n"><span class="pre">SpaceWeatherData</span></span></a><span class="p"><span class="pre">&amp;</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">delete</span></span><a class="headerlink" href="#_CPPv4N16SpaceWeatherData16SpaceWeatherDataERK16SpaceWeatherData" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16SpaceWeatherDataaSERK16SpaceWeatherData">
+<span id="_CPPv3N16SpaceWeatherDataaSERK16SpaceWeatherData"></span><span id="_CPPv2N16SpaceWeatherDataaSERK16SpaceWeatherData"></span><span id="SpaceWeatherData::assign-operator__SpaceWeatherDataCR"></span><span class="target" id="class_space_weather_data_1a7f7adb2fd7643c57aeabf437e2aadc7a"></span><a class="reference internal" href="#_CPPv416SpaceWeatherData" title="SpaceWeatherData"><span class="n"><span class="pre">SpaceWeatherData</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">=</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv416SpaceWeatherData" title="SpaceWeatherData"><span class="n"><span class="pre">SpaceWeatherData</span></span></a><span class="p"><span class="pre">&amp;</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">delete</span></span><a class="headerlink" href="#_CPPv4N16SpaceWeatherDataaSERK16SpaceWeatherData" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16SpaceWeatherData5ResetE8uint64_t">
+<span id="_CPPv3N16SpaceWeatherData5ResetE8uint64_t"></span><span id="_CPPv2N16SpaceWeatherData5ResetE8uint64_t"></span><span id="SpaceWeatherData::Reset__uint64_t"></span><span class="target" id="class_space_weather_data_1a18be15d26df4cfd7d5a911deb44353c3"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N16SpaceWeatherData5ResetE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Reset the module to its initial state.</p>
+<p>Verifies that epochInMsg is linked and that the space-weather table has been loaded. Probes whether the simulation start date is covered by the loaded table and emits a BSK_ERROR immediately if it is not. Publishes a zero-state message.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CurrentSimNanos</strong> – Current simulation time in nanoseconds. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16SpaceWeatherData11UpdateStateE8uint64_t">
+<span id="_CPPv3N16SpaceWeatherData11UpdateStateE8uint64_t"></span><span id="_CPPv2N16SpaceWeatherData11UpdateStateE8uint64_t"></span><span id="SpaceWeatherData::UpdateState__uint64_t"></span><span class="target" id="class_space_weather_data_1aa8f0a1a9fa1b40d216265be7439bcabc"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">UpdateState</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N16SpaceWeatherData11UpdateStateE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Update the module output messages for the current simulation time.</p>
+<p>Resolves the current UTC calendar date from the epoch message and elapsed simulation time, assembles the 23-element NRLMSISE-00 / NRLMSIS 2.0 space-weather index vector, and writes each element to the corresponding output message. If the required look-up window is not available in the loaded table a BSK_WARNING is logged and the previous output is retained.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CurrentSimNanos</strong> – Current simulation time in nanoseconds. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16SpaceWeatherData20loadSpaceWeatherFileERKNSt6stringE">
+<span id="_CPPv3N16SpaceWeatherData20loadSpaceWeatherFileERKNSt6stringE"></span><span id="_CPPv2N16SpaceWeatherData20loadSpaceWeatherFileERKNSt6stringE"></span><span id="SpaceWeatherData::loadSpaceWeatherFile__ssCR"></span><span class="target" id="class_space_weather_data_1a4b3750053afe0b16610dfeac3fbd85dd"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">loadSpaceWeatherFile</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">fileName</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N16SpaceWeatherData20loadSpaceWeatherFileERKNSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>Load and validate a CelesTrak-style space-weather CSV file.</p>
+<p>Opens the file, parses the header row, reads data rows into DailySpaceWeather records until the first unparsable line, and validates that DATE values are strictly ascending with no duplicates. On success the internal weather table is replaced with the new data. On any failure a BSK_ERROR is logged and the previously loaded table (if any) is left intact.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>fileName</strong> – Path to the space-weather CSV file (absolute or relative). </p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16SpaceWeatherData10epochInMsgE">
+<span id="_CPPv3N16SpaceWeatherData10epochInMsgE"></span><span id="_CPPv2N16SpaceWeatherData10epochInMsgE"></span><span id="SpaceWeatherData::epochInMsg__ReadFunctor:EpochMsgPayload:"></span><span class="target" id="class_space_weather_data_1a8e3f2b09fc2615e59be342518bbfc858"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/EpochMsgPayload.html#_CPPv415EpochMsgPayload" title="EpochMsgPayload"><span class="n"><span class="pre">EpochMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">epochInMsg</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N16SpaceWeatherData10epochInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>epoch input message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16SpaceWeatherData13swDataOutMsgsE">
+<span id="_CPPv3N16SpaceWeatherData13swDataOutMsgsE"></span><span id="_CPPv2N16SpaceWeatherData13swDataOutMsgsE"></span><span id="SpaceWeatherData::swDataOutMsgs__std::vector:Message:SwDataMsgPayload:P:"></span><span class="target" id="class_space_weather_data_1a982c6c36ea7da7d13d98dc7d78c0ba87"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SwDataMsgPayload.html#_CPPv416SwDataMsgPayload" title="SwDataMsgPayload"><span class="n"><span class="pre">SwDataMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">swDataOutMsgs</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N16SpaceWeatherData13swDataOutMsgsE" title="Link to this definition"></a><br /></dt>
+<dd><p>23-element MSIS SW output message vector </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16SpaceWeatherData9bskLoggerE">
+<span id="_CPPv3N16SpaceWeatherData9bskLoggerE"></span><span id="_CPPv2N16SpaceWeatherData9bskLoggerE"></span><span id="SpaceWeatherData::bskLogger__BSKLogger"></span><span class="target" id="class_space_weather_data_1a09d618915f9f1cf55959f2631be3894d"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N16SpaceWeatherData9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>BSK logging helper. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-functions">Private Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16SpaceWeatherData16publishZeroStateE8uint64_t">
+<span id="_CPPv3N16SpaceWeatherData16publishZeroStateE8uint64_t"></span><span id="_CPPv2N16SpaceWeatherData16publishZeroStateE8uint64_t"></span><span id="SpaceWeatherData::publishZeroState__uint64_t"></span><span class="target" id="class_space_weather_data_1aa6470f56ed23afca9c90fe2832862c3d"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">publishZeroState</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N16SpaceWeatherData16publishZeroStateE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Write a zero-valued payload to every output message.</p>
+<p>Called at the end of <a class="reference internal" href="#class_space_weather_data_1a18be15d26df4cfd7d5a911deb44353c3"><span class="std std-ref">Reset()</span></a> so that downstream modules always receive at least one valid message before the first <a class="reference internal" href="#class_space_weather_data_1aa8f0a1a9fa1b40d216265be7439bcabc"><span class="std std-ref">UpdateState()</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CurrentSimNanos</strong> – Current simulation time in nanoseconds. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16SpaceWeatherData14computeSwStateE8uint64_tRNSt5arrayId13numSwMessagesEE">
+<span id="_CPPv3N16SpaceWeatherData14computeSwStateE8uint64_tRNSt5arrayId13numSwMessagesEE"></span><span id="_CPPv2N16SpaceWeatherData14computeSwStateE8uint64_tRNSt5arrayId13numSwMessagesEE"></span><span id="SpaceWeatherData::computeSwState__uint64_t.std::array:double.numSwMessages:R"></span><span class="target" id="class_space_weather_data_1a2c6e0eee147bcc17dfacfb02b883a44a"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeSwState</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">array</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N16SpaceWeatherData13numSwMessagesE" title="SpaceWeatherData::numSwMessages"><span class="n"><span class="pre">numSwMessages</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">swState</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N16SpaceWeatherData14computeSwStateE8uint64_tRNSt5arrayId13numSwMessagesEE" title="Link to this definition"></a><br /></dt>
+<dd><p>Assemble the 23-element NRLMSISE-00 / NRLMSIS 2.0 space-weather state vector.</p>
+<p>Resolves the current UTC date and 3-hour Ap bin, retrieves the four required consecutive calendar-day records from the in-memory table, and fills the output array according to the channel mapping described in the module documentation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>CurrentSimNanos</strong> – Current simulation time in nanoseconds. </p></li>
+<li><p><strong>swState</strong> – <strong>[out]</strong> 23-element array to be populated with space-weather index values. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if all required table entries were found and the state was assembled successfully; false if any required day is missing or the table is empty. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16SpaceWeatherData13getEpochStateEdR7int64_tRd">
+<span id="_CPPv3N16SpaceWeatherData13getEpochStateEdR7int64_tRd"></span><span id="_CPPv2N16SpaceWeatherData13getEpochStateEdR7int64_tRd"></span><span id="SpaceWeatherData::getEpochState__double.int64_tR.doubleR"></span><span class="target" id="class_space_weather_data_1ac9affd62141fd943635984e20a82bd4a"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getEpochState</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimSeconds</span></span>, <span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">currentDay</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">secondsOfDay</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N16SpaceWeatherData13getEpochStateEdR7int64_tRd" title="Link to this definition"></a><br /></dt>
+<dd><p>Determine the current Unix day number and seconds-of-day from the epoch message and elapsed simulation time.</p>
+<p>Reads the EpochMsgPayload, converts the calendar date to a Unix day number, adds the epoch time-of-day and the simulation elapsed time, and decomposes the result into a whole-day count and a residual seconds-of-day value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>CurrentSimSeconds</strong> – Simulation time elapsed since BSK epoch, in seconds. </p></li>
+<li><p><strong>currentDay</strong> – <strong>[out]</strong> Unix day number of the current UTC date (days since 1970-01-01). </p></li>
+<li><p><strong>secondsOfDay</strong> – <strong>[out]</strong> Elapsed seconds since midnight of the current UTC day [0, 86400). </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16SpaceWeatherData11weatherDataE">
+<span id="_CPPv3N16SpaceWeatherData11weatherDataE"></span><span id="_CPPv2N16SpaceWeatherData11weatherDataE"></span><span id="SpaceWeatherData::weatherData__std::vector:DailySpaceWeather:"></span><span class="target" id="class_space_weather_data_1af3d1a0b9721099314018a7cd936e9beb"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4N16SpaceWeatherData17DailySpaceWeatherE" title="SpaceWeatherData::DailySpaceWeather"><span class="n"><span class="pre">DailySpaceWeather</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">weatherData</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N16SpaceWeatherData11weatherDataE" title="Link to this definition"></a><br /></dt>
+<dd><p>parsed weather table </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16SpaceWeatherData14loadedFileNameE">
+<span id="_CPPv3N16SpaceWeatherData14loadedFileNameE"></span><span id="_CPPv2N16SpaceWeatherData14loadedFileNameE"></span><span id="SpaceWeatherData::loadedFileName__ss"></span><span class="target" id="class_space_weather_data_1a9ead457a02500f03600391d7e703990c"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">loadedFileName</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N16SpaceWeatherData14loadedFileNameE" title="Link to this definition"></a><br /></dt>
+<dd><p>loaded CSV path </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-static-functions">Private Static Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16SpaceWeatherData20civilToUnixDayNumberEijj">
+<span id="_CPPv3N16SpaceWeatherData20civilToUnixDayNumberEijj"></span><span id="_CPPv2N16SpaceWeatherData20civilToUnixDayNumberEijj"></span><span id="SpaceWeatherData::civilToUnixDayNumber__i.unsigned.unsigned"></span><span class="target" id="class_space_weather_data_1ae5cba4c6ff9934cc2e527d6b8cac3b33"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">civilToUnixDayNumber</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">year</span></span>, <span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">month</span></span>, <span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">day</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N16SpaceWeatherData20civilToUnixDayNumberEijj" title="Link to this definition"></a><br /></dt>
+<dd><p>Convert a proleptic Gregorian calendar date to a signed Unix day number.</p>
+<p>Computes the number of whole days elapsed since 1970-01-01 (which maps to day number 0). The result is negative for dates before the Unix epoch.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>year</strong> – Gregorian year (may be negative). </p></li>
+<li><p><strong>month</strong> – Month of year in the range [1, 12]. </p></li>
+<li><p><strong>day</strong> – Day of month; valid range is [1, 28], [1, 29], [1, 30], or [1, 31] depending on the month and whether year is a leap year. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Signed count of days since 1970-01-01. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16SpaceWeatherData16parseWeatherLineERKNSt6stringERKNSt6vectorINSt6stringEEERb">
+<span id="_CPPv3N16SpaceWeatherData16parseWeatherLineERKNSt6stringERKNSt6vectorINSt6stringEEERb"></span><span id="_CPPv2N16SpaceWeatherData16parseWeatherLineERKNSt6stringERKNSt6vectorINSt6stringEEERb"></span><span id="SpaceWeatherData::parseWeatherLine__ssCR.std::vector:ss:CR.bR"></span><span class="target" id="class_space_weather_data_1a5c0af4a0e422a85ea69980c8e85c2e74"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N16SpaceWeatherData17DailySpaceWeatherE" title="SpaceWeatherData::DailySpaceWeather"><span class="n"><span class="pre">DailySpaceWeather</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">parseWeatherLine</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">line</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">headerColumns</span></span>, <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">parseOk</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N16SpaceWeatherData16parseWeatherLineERKNSt6stringERKNSt6vectorINSt6stringEEERb" title="Link to this definition"></a><br /></dt>
+<dd><p>Parse one data line of the space-weather CSV into a DailySpaceWeather record.</p>
+<p>Splits the line on commas, extracts the DATE field and all required numeric columns, and populates the output record. Sets parseOk to false and returns a default-constructed record if any field is missing, empty, or non-numeric.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>line</strong> – One non-empty data line from the CSV file (no header). </p></li>
+<li><p><strong>headerColumns</strong> – Ordered list of column name strings from the CSV header row. </p></li>
+<li><p><strong>parseOk</strong> – <strong>[out]</strong> Set to true when all required fields were parsed successfully; false otherwise. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Populated DailySpaceWeather record on success, or a default-constructed record on failure. </p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-static-attributes">Private Static Attributes</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16SpaceWeatherData13numSwMessagesE">
+<span id="_CPPv3N16SpaceWeatherData13numSwMessagesE"></span><span id="_CPPv2N16SpaceWeatherData13numSwMessagesE"></span><span id="SpaceWeatherData::numSwMessages__uint64_t"></span><span class="target" id="class_space_weather_data_1ab71f05bd2b69ed9b95f67ed2d9149d69"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">numSwMessages</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">23U</span></span><a class="headerlink" href="#_CPPv4N16SpaceWeatherData13numSwMessagesE" title="Link to this definition"></a><br /></dt>
+<dd><p>[count] number of MSIS weather channels </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16SpaceWeatherData11numApPerDayE">
+<span id="_CPPv3N16SpaceWeatherData11numApPerDayE"></span><span id="_CPPv2N16SpaceWeatherData11numApPerDayE"></span><span id="SpaceWeatherData::numApPerDay__uint64_t"></span><span class="target" id="class_space_weather_data_1a6e7923ee60b307ba7f985c91530a8fcc"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">numApPerDay</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">8U</span></span><a class="headerlink" href="#_CPPv4N16SpaceWeatherData11numApPerDayE" title="Link to this definition"></a><br /></dt>
+<dd><p>[count] number of three-hour Ap entries per day </p>
+</dd></dl>
+
+</div>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv4N16SpaceWeatherData17DailySpaceWeatherE">
+<span id="_CPPv3N16SpaceWeatherData17DailySpaceWeatherE"></span><span id="_CPPv2N16SpaceWeatherData17DailySpaceWeatherE"></span><span id="SpaceWeatherData::DailySpaceWeather"></span><span class="target" id="struct_space_weather_data_1_1_daily_space_weather"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">DailySpaceWeather</span></span></span><a class="headerlink" href="#_CPPv4N16SpaceWeatherData17DailySpaceWeatherE" title="Link to this definition"></a><br /></dt>
+<dd><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16SpaceWeatherData17DailySpaceWeather9dayNumberE">
+<span id="_CPPv3N16SpaceWeatherData17DailySpaceWeather9dayNumberE"></span><span id="_CPPv2N16SpaceWeatherData17DailySpaceWeather9dayNumberE"></span><span id="SpaceWeatherData::DailySpaceWeather::dayNumber__int64_t"></span><span class="target" id="struct_space_weather_data_1_1_daily_space_weather_1a46ee558b8dcceb21b4d0cf5319c84ce1"></span><span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dayNumber</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N16SpaceWeatherData17DailySpaceWeather9dayNumberE" title="Link to this definition"></a><br /></dt>
+<dd><p>[day] days since Unix epoch </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16SpaceWeatherData17DailySpaceWeather5ap3HrE">
+<span id="_CPPv3N16SpaceWeatherData17DailySpaceWeather5ap3HrE"></span><span id="_CPPv2N16SpaceWeatherData17DailySpaceWeather5ap3HrE"></span><span id="SpaceWeatherData::DailySpaceWeather::ap3Hr__std::array:double.numApPerDay:"></span><span class="target" id="struct_space_weather_data_1_1_daily_space_weather_1a5180931345507df1256c617710a9fd19"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">array</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N16SpaceWeatherData11numApPerDayE" title="SpaceWeatherData::numApPerDay"><span class="n"><span class="pre">numApPerDay</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ap3Hr</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N16SpaceWeatherData17DailySpaceWeather5ap3HrE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] AP1..AP8 values </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16SpaceWeatherData17DailySpaceWeather5apAvgE">
+<span id="_CPPv3N16SpaceWeatherData17DailySpaceWeather5apAvgE"></span><span id="_CPPv2N16SpaceWeatherData17DailySpaceWeather5apAvgE"></span><span id="SpaceWeatherData::DailySpaceWeather::apAvg__double"></span><span class="target" id="struct_space_weather_data_1_1_daily_space_weather_1a6f73513b4a4af90edbb0b42374ff33e7"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">apAvg</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N16SpaceWeatherData17DailySpaceWeather5apAvgE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] daily Ap average </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16SpaceWeatherData17DailySpaceWeather7f107ObsE">
+<span id="_CPPv3N16SpaceWeatherData17DailySpaceWeather7f107ObsE"></span><span id="_CPPv2N16SpaceWeatherData17DailySpaceWeather7f107ObsE"></span><span id="SpaceWeatherData::DailySpaceWeather::f107Obs__double"></span><span class="target" id="struct_space_weather_data_1_1_daily_space_weather_1ab32089f32c8ccbdde565e7b4df192df2"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">f107Obs</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N16SpaceWeatherData17DailySpaceWeather7f107ObsE" title="Link to this definition"></a><br /></dt>
+<dd><p>[sfu] daily observed F10.7 </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16SpaceWeatherData17DailySpaceWeather15f107ObsCenter81E">
+<span id="_CPPv3N16SpaceWeatherData17DailySpaceWeather15f107ObsCenter81E"></span><span id="_CPPv2N16SpaceWeatherData17DailySpaceWeather15f107ObsCenter81E"></span><span id="SpaceWeatherData::DailySpaceWeather::f107ObsCenter81__double"></span><span class="target" id="struct_space_weather_data_1_1_daily_space_weather_1ac7a61160919c42ea95538833d24606f4"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">f107ObsCenter81</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N16SpaceWeatherData17DailySpaceWeather15f107ObsCenter81E" title="Link to this definition"></a><br /></dt>
+<dd><p>[sfu] centered 81-day F10.7 average </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="spaceWeatherData" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

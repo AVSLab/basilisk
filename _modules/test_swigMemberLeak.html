@@ -1,0 +1,229 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_swigMemberLeak &mdash; Basilisk 2.11.0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=2ebb1c42" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=1647406f"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Plugins/overview.html">About Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Plugins/installing.html">Installing Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Plugins/writing.html">Writing a Basilisk Plugin</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">test_swigMemberLeak</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for test_swigMemberLeak</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+
+<span class="c1">#</span>
+<span class="c1">#   Unit Test Script</span>
+<span class="c1">#   Module Name:        utilitiesSelfCheck (SWIG member wrapping)</span>
+<span class="c1">#   Author:             robotrocketscience (https://github.com/robotrocketscience)</span>
+<span class="c1">#   Creation Date:      July 1, 2026</span>
+<span class="c1">#</span>
+<span class="c1">#   Purpose:</span>
+<span class="c1">#   Regression test for issue #422. Several modules exposed internal C++ members</span>
+<span class="c1">#   (a std::pair-keyed map, the BSKLogger, thruster operating state, a</span>
+<span class="c1">#   message-reader vector, IMU noise-model helpers, an Eigen-typed struct member)</span>
+<span class="c1">#   that SWIG wrapped without a visible destructor, so reading them from Python</span>
+<span class="c1">#   leaked an un-destructed proxy (&quot;swig/python detected a memory leak of type</span>
+<span class="c1">#   ...&quot;).  Each affected module is now instantiated in an isolated subprocess and</span>
+<span class="c1">#   all of its attributes are read; the test fails if SWIG reports any such leak.</span>
+<span class="c1">#</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+
+<span class="c1"># (import path, class name) for fixed module classes and affected wrapped data classes.</span>
+<span class="n">FIXED_MODULES</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="s2">&quot;Basilisk.simulation.spacecraft&quot;</span><span class="p">,</span> <span class="s2">&quot;Spacecraft&quot;</span><span class="p">),</span>                                 <span class="c1"># DynParamManager::sharedNoiseMap, bskLogger</span>
+    <span class="p">(</span><span class="s2">&quot;Basilisk.simulation.imuSensor&quot;</span><span class="p">,</span> <span class="s2">&quot;ImuSensor&quot;</span><span class="p">),</span>                                   <span class="c1"># Discretize/Saturate helpers</span>
+    <span class="p">(</span><span class="s2">&quot;Basilisk.simulation.sphericalHarmonicsGravityModel&quot;</span><span class="p">,</span> <span class="s2">&quot;SphericalHarmonicsGravityModel&quot;</span><span class="p">),</span>  <span class="c1"># bskLogger</span>
+    <span class="p">(</span><span class="s2">&quot;Basilisk.simulation.THRSimConfig&quot;</span><span class="p">,</span> <span class="s2">&quot;THRSimConfig&quot;</span><span class="p">),</span>                             <span class="c1"># THROperation ThrustOps</span>
+    <span class="p">(</span><span class="s2">&quot;Basilisk.simulation.dataFileToViz&quot;</span><span class="p">,</span> <span class="s2">&quot;DataFileToViz&quot;</span><span class="p">),</span>                           <span class="c1"># dataFileToViz module class</span>
+    <span class="p">(</span><span class="s2">&quot;Basilisk.simulation.dataFileToViz&quot;</span><span class="p">,</span> <span class="s2">&quot;ThrClusterMap&quot;</span><span class="p">),</span>                           <span class="c1"># Eigen::Vector3d thrOffset</span>
+    <span class="p">(</span><span class="s2">&quot;Basilisk.simulation.dataFileToViz&quot;</span><span class="p">,</span> <span class="s2">&quot;RWConfigLogMsgPayload&quot;</span><span class="p">),</span>                   <span class="c1"># RWModels enum in payload</span>
+    <span class="p">(</span><span class="s2">&quot;Basilisk.fswAlgorithms.smallBodyNavEKF&quot;</span><span class="p">,</span> <span class="s2">&quot;SmallBodyNavEKF&quot;</span><span class="p">),</span>                    <span class="c1"># ReadFunctor vector</span>
+    <span class="c1"># BSpline data sets</span>
+    <span class="p">(</span>
+        <span class="s2">&quot;Basilisk.fswAlgorithms.constrainedAttitudeManeuver&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ConstrainedAttitudeManeuver&quot;</span><span class="p">,</span>
+    <span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;Basilisk.simulation.ReactionWheelPower&quot;</span><span class="p">,</span> <span class="s2">&quot;RWConfigLogMsgPayload&quot;</span><span class="p">),</span>              <span class="c1"># RWModels enum in payload</span>
+    <span class="p">(</span><span class="s2">&quot;Basilisk.simulation.motorThermal&quot;</span><span class="p">,</span> <span class="s2">&quot;RWConfigLogMsgPayload&quot;</span><span class="p">),</span>                    <span class="c1"># RWModels enum in payload</span>
+    <span class="p">(</span><span class="s2">&quot;Basilisk.simulation.linkBudget&quot;</span><span class="p">,</span> <span class="s2">&quot;AttenuationLookupTable&quot;</span><span class="p">),</span>                     <span class="c1"># std::vector&lt;double&gt; in lookup struct</span>
+    <span class="p">(</span><span class="s2">&quot;Basilisk.simulation.simpleInstrument&quot;</span><span class="p">,</span> <span class="s2">&quot;DataStorageStatusMsgPayload&quot;</span><span class="p">),</span>          <span class="c1"># std::vector&lt;double&gt; storedData</span>
+<span class="p">]</span>
+
+<span class="c1"># Worker: import the module, instantiate the class, read every public attribute,</span>
+<span class="c1"># force garbage collection. SWIG prints the leak warning to stdout/stderr when an</span>
+<span class="c1"># un-destructed proxy is collected. Runs in a fresh interpreter per module so the</span>
+<span class="c1"># parent test is immune to any process-level fault.</span>
+<span class="n">_WORKER</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s2">&quot;import gc, importlib, sys</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="s2">&quot;mod = importlib.import_module(sys.argv[1])</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="s2">&quot;obj = getattr(mod, sys.argv[2])()</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="s2">&quot;for a in dir(obj):</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="s2">&quot;    if not a.startswith(&#39;__&#39;):</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="s2">&quot;        try:</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="s2">&quot;            v = getattr(obj, a); del v</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="s2">&quot;        except Exception:</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="s2">&quot;            pass</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="s2">&quot;del obj; gc.collect()</span><span class="se">\n</span><span class="s2">&quot;</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="test_no_swig_member_leak">
+<a class="viewcode-back" href="../Documentation/architecture/utilitiesSelfCheck/_UnitTest/test_swigMemberLeak.html#test_swigMemberLeak.test_no_swig_member_leak">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;module_path,class_name&quot;</span><span class="p">,</span> <span class="n">FIXED_MODULES</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_no_swig_member_leak</span><span class="p">(</span><span class="n">module_path</span><span class="p">,</span> <span class="n">class_name</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Instantiating the module and reading its attributes must not leak a SWIG proxy.&quot;&quot;&quot;</span>
+    <span class="n">proc</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">sys</span><span class="o">.</span><span class="n">executable</span><span class="p">,</span> <span class="s2">&quot;-c&quot;</span><span class="p">,</span> <span class="n">_WORKER</span><span class="p">,</span> <span class="n">module_path</span><span class="p">,</span> <span class="n">class_name</span><span class="p">],</span>
+        <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">120</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">combined</span> <span class="o">=</span> <span class="n">proc</span><span class="o">.</span><span class="n">stdout</span> <span class="o">+</span> <span class="n">proc</span><span class="o">.</span><span class="n">stderr</span>
+    <span class="k">assert</span> <span class="s2">&quot;detected a memory leak&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">combined</span><span class="p">,</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">module_path</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">class_name</span><span class="si">}</span><span class="s2"> leaked a SWIG proxy:</span><span class="se">\n</span><span class="si">{</span><span class="n">combined</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="n">proc</span><span class="o">.</span><span class="n">returncode</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">module_path</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">class_name</span><span class="si">}</span><span class="s2"> worker exited abnormally (rc=</span><span class="si">{</span><span class="n">proc</span><span class="o">.</span><span class="n">returncode</span><span class="si">}</span><span class="s2">):</span><span class="se">\n</span><span class="si">{</span><span class="n">combined</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

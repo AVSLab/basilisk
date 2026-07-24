@@ -1,0 +1,8 @@
+.. _svIntegratorWeakSIESME:
+
+svIntegratorWeakSIESME
+======================
+
+.. autodoxygenfile:: svIntegratorWeakSIESME.h
+   :project: _GeneralModuleFiles4
+

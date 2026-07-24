@@ -1,0 +1,13 @@
+.. _scenarioMJSceneVizard:
+
+scenarioMJSceneVizard
+=====================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. automodule:: scenarioMJSceneVizard
+   :members:
+   :show-inheritance:
+

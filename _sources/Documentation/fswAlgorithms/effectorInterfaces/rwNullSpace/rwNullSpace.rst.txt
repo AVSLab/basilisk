@@ -1,0 +1,38 @@
+.. _rwNullSpace:
+
+:module-type:`C` Module: rwNullSpace
+====================================
+
+Executive Summary
+-----------------
+
+This module uses the Reaction Wheel (RW) null space to slow down the wheels.  The resulting motor torques are super imposed on top of the attitude feedback control RW motor torques.  More information can be found in the
+:download:`PDF Description </../../src/fswAlgorithms/effectorInterfaces/rwNullSpace/_Documentation/Basilisk-rwNullSpace-20190209.pdf>`.
+
+
+Message Connection Descriptions
+-------------------------------
+The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.
+
+.. bsk-module-io:: rwNullSpace
+    :caption: Module I/O Messages
+
+    input rwMotorTorqueInMsg ArrayMotorTorqueMsgPayload
+        RW motor torque input message
+    input rwSpeedsInMsg RWSpeedMsgPayload
+        RW speed message
+    input rwDesiredSpeedsInMsg RWSpeedMsgPayload
+        (optional) Input message with the desired RW speeds
+    input rwConfigInMsg RWConstellationMsgPayload
+        RW constellation configuration input message
+    output rwMotorTorqueOutMsg ArrayMotorTorqueMsgPayload
+        RW motor torque output message
+
+
+----
+
+.. autodoxygenfile:: rwNullSpace.h
+   :project: rwNullSpace
+

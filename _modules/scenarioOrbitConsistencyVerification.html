@@ -1,0 +1,392 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scenarioOrbitConsistencyVerification &mdash; Basilisk 2.11.0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=2ebb1c42" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=1647406f"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Plugins/overview.html">About Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Plugins/installing.html">Installing Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Plugins/writing.html">Writing a Basilisk Plugin</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">scenarioOrbitConsistencyVerification</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for scenarioOrbitConsistencyVerification</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+
+<span class="c1">#</span>
+<span class="c1"># Basilisk Scenario Script and Integrated Test</span>
+<span class="c1">#</span>
+<span class="c1"># Purpose:  Verify orbit-propagation consistency for a spherical-harmonics gravity</span>
+<span class="c1">#           field and demonstrate the effect of the planet rotation on the</span>
+<span class="c1">#           tesseral/sectoral terms (issue #1352).</span>
+<span class="c1"># Author:   robotrocketscience (https://github.com/robotrocketscience)</span>
+<span class="c1"># Creation Date:  Jun. 25, 2026</span>
+<span class="c1">#</span>
+
+<span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Overview</span>
+<span class="sd">--------</span>
+
+<span class="sd">This scenario verifies that Basilisk&#39;s orbit propagation with a spherical-harmonic</span>
+<span class="sd">gravity field is consistent with independent propagators, and demonstrates *why*</span>
+<span class="sd">the planet rotation must be supplied when the gravity field contains</span>
+<span class="sd">tesseral/sectoral terms (spherical-harmonic order :math:`m \ge 1`).</span>
+
+<span class="sd">It propagates a near-circular, sun-synchronous LEO orbit (TerraSAR-X-like) under</span>
+<span class="sd">the GGM03S Earth field, twice, with identical initial conditions, integrator, and</span>
+<span class="sd">step size. The only difference is whether a planet-orientation message is</span>
+<span class="sd">connected:</span>
+
+<span class="sd">#. **Earth rotating** -- a SPICE interface is attached via the gravity body</span>
+<span class="sd">   factory&#39;s ``createSpiceInterface`` method, so the field is evaluated in the</span>
+<span class="sd">   rotating planet-fixed frame.</span>
+<span class="sd">#. **Earth non-rotating** -- no orientation message is connected, so the gravity</span>
+<span class="sd">   effector falls back to an identity planet orientation and evaluates the field</span>
+<span class="sd">   in the inertial frame.</span>
+
+<span class="sd">Background</span>
+<span class="sd">----------</span>
+
+<span class="sd">The spherical-harmonic field is evaluated in the planet-fixed frame. Zonal terms</span>
+<span class="sd">(order :math:`m = 0`, e.g. :math:`J_2`) depend only on latitude and are unaffected</span>
+<span class="sd">by the planet rotation. Tesseral and sectoral terms (order :math:`m \ge 1`, e.g.</span>
+<span class="sd">:math:`C_{22}`) depend on the body longitude. For a rotating planet these terms</span>
+<span class="sd">average out over each day and produce only small short-period effects. If the</span>
+<span class="sd">planet is (incorrectly) held fixed in inertial space, those terms no longer</span>
+<span class="sd">average out and instead force large spurious secular/long-period drift in the</span>
+<span class="sd">eccentricity vector and the inclination, while the semi-major axis and the</span>
+<span class="sd">:math:`J_2`-driven RAAN precession remain essentially unchanged.</span>
+
+<span class="sd">This is the inconsistency reported in issue #1352, where the eccentricity vector</span>
+<span class="sd">and inclination of a Basilisk LEO propagation diverged from Orekit, GMAT, and</span>
+<span class="sd">SpOCK results (which mutually agree). Those tools all model Earth rotation; the</span>
+<span class="sd">Basilisk script that produced the discrepancy did not connect a planet-orientation</span>
+<span class="sd">message. With Earth rotation connected, as in the *rotating* case here, the</span>
+<span class="sd">eccentricity and inclination remain bounded, recovering consistency with the</span>
+<span class="sd">external propagators.</span>
+
+<span class="sd">When a spherical-harmonic body that has order :math:`\ge 1` terms is used without</span>
+<span class="sd">an orientation message, :ref:`gravityEffector` now logs a ``BSK_WARNING`` at reset.</span>
+
+<span class="sd">Running the script</span>
+<span class="sd">------------------</span>
+
+<span class="sd">The script is found in the folder ``basilisk/examples`` and executed by using::</span>
+
+<span class="sd">    python3 scenarioOrbitConsistencyVerification.py</span>
+
+<span class="sd">Illustration of Simulation Results</span>
+<span class="sd">----------------------------------</span>
+
+<span class="sd">The eccentricity and inclination of the non-rotating case drift away secularly,</span>
+<span class="sd">whereas the rotating case stays bounded -- the bounded behavior is what matches</span>
+<span class="sd">the externally validated propagators.</span>
+
+<span class="sd">The figures below are generated by the integrated test with a short, low-degree,</span>
+<span class="sd">coarse-step run (``simDays = 12.0, gravDeg = 8, stepSeconds = 30.0``); a longer</span>
+<span class="sd">higher-degree run (the script default) makes the drift even more pronounced.</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioOrbitConsistencyVerification_ecc.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioOrbitConsistencyVerification_inc.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">bskLogging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">spacecraft</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span><span class="p">,</span> <span class="n">macros</span><span class="p">,</span> <span class="n">orbitalMotion</span><span class="p">,</span> <span class="n">simIncludeGravBody</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities.supportDataTools.dataFetcher</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_path</span><span class="p">,</span> <span class="n">DataFile</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">plt</span> <span class="o">=</span> <span class="kc">None</span>
+
+<span class="c1"># TerraSAR-X-like initial conditions (J2000/ECI, near-polar sun-synchronous LEO).</span>
+<span class="n">R_N</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">138514.048884</span><span class="p">,</span> <span class="o">-</span><span class="mf">888553.853077</span><span class="p">,</span> <span class="mf">6818674.278964</span><span class="p">]</span>   <span class="c1"># [m]</span>
+<span class="n">V_N</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">7306.6601</span><span class="p">,</span> <span class="mf">2126.208457</span><span class="p">,</span> <span class="mf">128.787296</span><span class="p">]</span>              <span class="c1"># [m/s]</span>
+<span class="n">EPOCH</span> <span class="o">=</span> <span class="s2">&quot;2020 DEC 04 00:58:00&quot;</span>
+
+
+<div class="viewcode-block" id="propagate">
+<a class="viewcode-back" href="../examples/scenarioOrbitConsistencyVerification.html#scenarioOrbitConsistencyVerification.propagate">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">propagate</span><span class="p">(</span><span class="n">useEarthRotation</span><span class="p">,</span> <span class="n">simDays</span><span class="p">,</span> <span class="n">gravDeg</span><span class="p">,</span> <span class="n">sampleMinutes</span><span class="p">,</span> <span class="n">stepSeconds</span><span class="o">=</span><span class="mf">10.0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Propagate the reference orbit and return arrays of (days, a, e, inc[deg]).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        useEarthRotation (bool): connect a SPICE planet-orientation message.</span>
+<span class="sd">        simDays (float): propagation duration in days.</span>
+<span class="sd">        gravDeg (int): spherical-harmonic degree/order of the GGM03S field.</span>
+<span class="sd">        sampleMinutes (float): output sampling period in minutes.</span>
+<span class="sd">        stepSeconds (float): integration time step in seconds.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">proc</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">)</span>
+    <span class="n">proc</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">&quot;t&quot;</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">stepSeconds</span><span class="p">)))</span>
+
+    <span class="n">scObject</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;tsx&quot;</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;t&quot;</span><span class="p">,</span> <span class="n">scObject</span><span class="p">)</span>
+
+    <span class="n">gravFactory</span> <span class="o">=</span> <span class="n">simIncludeGravBody</span><span class="o">.</span><span class="n">gravBodyFactory</span><span class="p">()</span>
+    <span class="n">earth</span> <span class="o">=</span> <span class="n">gravFactory</span><span class="o">.</span><span class="n">createEarth</span><span class="p">()</span>
+    <span class="n">earth</span><span class="o">.</span><span class="n">isCentralBody</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">ggm03s</span> <span class="o">=</span> <span class="n">get_path</span><span class="p">(</span><span class="n">DataFile</span><span class="o">.</span><span class="n">LocalGravData</span><span class="o">.</span><span class="n">GGM03S</span><span class="p">)</span>
+    <span class="n">earth</span><span class="o">.</span><span class="n">useSphericalHarmonicsGravityModel</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">ggm03s</span><span class="p">),</span> <span class="n">gravDeg</span><span class="p">)</span>
+    <span class="n">mu</span> <span class="o">=</span> <span class="n">earth</span><span class="o">.</span><span class="n">mu</span>
+
+    <span class="k">if</span> <span class="n">useEarthRotation</span><span class="p">:</span>
+        <span class="n">gravFactory</span><span class="o">.</span><span class="n">createSpiceInterface</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">EPOCH</span><span class="p">)</span>
+        <span class="n">gravFactory</span><span class="o">.</span><span class="n">spiceObject</span><span class="o">.</span><span class="n">zeroBase</span> <span class="o">=</span> <span class="s2">&quot;Earth&quot;</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;t&quot;</span><span class="p">,</span> <span class="n">gravFactory</span><span class="o">.</span><span class="n">spiceObject</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># The non-rotating case deliberately omits the planet-orientation message</span>
+        <span class="c1"># to demonstrate the resulting drift, so gravityEffector&#39;s reset-time</span>
+        <span class="c1"># &quot;missing planet rotation&quot; BSK_WARNING (issue #1352) is expected here.</span>
+        <span class="c1"># Raise this module&#39;s log level to BSK_ERROR so that expected warning is</span>
+        <span class="c1"># not printed when running the scenario.</span>
+        <span class="n">quietLogger</span> <span class="o">=</span> <span class="n">bskLogging</span><span class="o">.</span><span class="n">BSKLogger</span><span class="p">()</span>
+        <span class="n">quietLogger</span><span class="o">.</span><span class="n">setLogLevel</span><span class="p">(</span><span class="n">bskLogging</span><span class="o">.</span><span class="n">BSK_ERROR</span><span class="p">)</span>
+        <span class="n">scObject</span><span class="o">.</span><span class="n">gravField</span><span class="o">.</span><span class="n">bskLogger</span> <span class="o">=</span> <span class="n">quietLogger</span>
+
+    <span class="n">scObject</span><span class="o">.</span><span class="n">gravField</span><span class="o">.</span><span class="n">gravBodies</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">GravBodyVector</span><span class="p">(</span>
+        <span class="nb">list</span><span class="p">(</span><span class="n">gravFactory</span><span class="o">.</span><span class="n">gravBodies</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+    <span class="p">)</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">=</span> <span class="n">R_N</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span> <span class="o">=</span> <span class="n">V_N</span>
+
+    <span class="n">rec</span> <span class="o">=</span> <span class="n">scObject</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">sampleMinutes</span> <span class="o">*</span> <span class="mf">60.0</span><span class="p">))</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;t&quot;</span><span class="p">,</span> <span class="n">rec</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">simDays</span> <span class="o">*</span> <span class="mf">86400.0</span><span class="p">))</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="n">times</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rec</span><span class="o">.</span><span class="n">times</span><span class="p">())</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span> <span class="o">/</span> <span class="mf">86400.0</span>
+    <span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rec</span><span class="o">.</span><span class="n">r_BN_N</span><span class="p">)</span>
+    <span class="n">V</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rec</span><span class="o">.</span><span class="n">v_BN_N</span><span class="p">)</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">times</span><span class="p">))</span>
+    <span class="n">e</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">times</span><span class="p">))</span>
+    <span class="n">inc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">times</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">times</span><span class="p">)):</span>
+        <span class="n">oe</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">rv2elem</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">R</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">V</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+        <span class="n">a</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">oe</span><span class="o">.</span><span class="n">a</span>
+        <span class="n">e</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">oe</span><span class="o">.</span><span class="n">e</span>
+        <span class="n">inc</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">oe</span><span class="o">.</span><span class="n">i</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">useEarthRotation</span><span class="p">:</span>
+        <span class="n">gravFactory</span><span class="o">.</span><span class="n">unloadSpiceKernels</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">times</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">inc</span></div>
+
+
+
+<div class="viewcode-block" id="run">
+<a class="viewcode-back" href="../examples/scenarioOrbitConsistencyVerification.html#scenarioOrbitConsistencyVerification.run">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="n">show_plots</span><span class="p">,</span> <span class="n">simDays</span><span class="o">=</span><span class="mf">30.0</span><span class="p">,</span> <span class="n">gravDeg</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">stepSeconds</span><span class="o">=</span><span class="mf">10.0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Propagate the reference orbit with and without Earth rotation and compare.</span>
+
+<span class="sd">    Returns the ratio of the non-rotating to rotating eccentricity excursion</span>
+<span class="sd">    (which should be large, demonstrating the spurious drift) and the figure list.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        show_plots (bool): show the matplotlib plots.</span>
+<span class="sd">        simDays (float): propagation duration in days.</span>
+<span class="sd">        gravDeg (int): spherical-harmonic degree/order of the GGM03S field.</span>
+<span class="sd">        stepSeconds (float): integration time step in seconds.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">sampleMinutes</span> <span class="o">=</span> <span class="mf">60.0</span>   <span class="c1"># [min] output sampling period</span>
+    <span class="n">tR</span><span class="p">,</span> <span class="n">aR</span><span class="p">,</span> <span class="n">eR</span><span class="p">,</span> <span class="n">iR</span> <span class="o">=</span> <span class="n">propagate</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">simDays</span><span class="p">,</span> <span class="n">gravDeg</span><span class="p">,</span> <span class="n">sampleMinutes</span><span class="p">,</span> <span class="n">stepSeconds</span><span class="p">)</span>
+    <span class="n">tN</span><span class="p">,</span> <span class="n">aN</span><span class="p">,</span> <span class="n">eN</span><span class="p">,</span> <span class="n">iN</span> <span class="o">=</span> <span class="n">propagate</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="n">simDays</span><span class="p">,</span> <span class="n">gravDeg</span><span class="p">,</span> <span class="n">sampleMinutes</span><span class="p">,</span> <span class="n">stepSeconds</span><span class="p">)</span>
+
+    <span class="c1"># Measure the *secular* drift of the eccentricity, i.e. the net change of its</span>
+    <span class="c1"># daily mean from the first to the last day. Averaging over a day removes the</span>
+    <span class="c1"># short-period (orbital) oscillation, which is present in both cases and would</span>
+    <span class="c1"># otherwise mask the secular trend over short runs. The non-rotating case</span>
+    <span class="c1"># drifts secularly; the rotating (physically correct) case stays bounded.</span>
+    <span class="n">windowDays</span> <span class="o">=</span> <span class="mf">1.0</span>   <span class="c1"># [day] averaging window for the daily mean</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">secularDrift</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">series</span><span class="p">):</span>
+        <span class="n">first</span> <span class="o">=</span> <span class="n">series</span><span class="p">[</span><span class="n">t</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">windowDays</span><span class="p">)]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+        <span class="n">last</span> <span class="o">=</span> <span class="n">series</span><span class="p">[</span><span class="n">t</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">windowDays</span><span class="p">)]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+        <span class="k">return</span> <span class="nb">abs</span><span class="p">(</span><span class="n">last</span> <span class="o">-</span> <span class="n">first</span><span class="p">)</span>
+
+    <span class="n">eDriftRot</span> <span class="o">=</span> <span class="n">secularDrift</span><span class="p">(</span><span class="n">tR</span><span class="p">,</span> <span class="n">eR</span><span class="p">)</span>
+    <span class="n">eDriftNonRot</span> <span class="o">=</span> <span class="n">secularDrift</span><span class="p">(</span><span class="n">tN</span><span class="p">,</span> <span class="n">eN</span><span class="p">)</span>
+    <span class="n">iDriftRot</span> <span class="o">=</span> <span class="n">secularDrift</span><span class="p">(</span><span class="n">tR</span><span class="p">,</span> <span class="n">iR</span><span class="p">)</span>
+    <span class="n">iDriftNonRot</span> <span class="o">=</span> <span class="n">secularDrift</span><span class="p">(</span><span class="n">tN</span><span class="p">,</span> <span class="n">iN</span><span class="p">)</span>
+    <span class="n">driftRatio</span> <span class="o">=</span> <span class="n">eDriftNonRot</span> <span class="o">/</span> <span class="n">eDriftRot</span> <span class="k">if</span> <span class="n">eDriftRot</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;eccentricity excursion: rotating=</span><span class="si">{</span><span class="n">eDriftRot</span><span class="si">:</span><span class="s2">.3e</span><span class="si">}</span><span class="s2">, non-rotating=</span><span class="si">{</span><span class="n">eDriftNonRot</span><span class="si">:</span><span class="s2">.3e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;inclination excursion [deg]: rotating=</span><span class="si">{</span><span class="n">iDriftRot</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">, non-rotating=</span><span class="si">{</span><span class="n">iDriftNonRot</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">figureList</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="n">plt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">tR</span><span class="p">,</span> <span class="n">eR</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;tab:blue&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Earth rotating (consistent)&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">tN</span><span class="p">,</span> <span class="n">eN</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;tab:red&quot;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Earth non-rotating&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;time [days]&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;eccentricity [-]&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;upper left&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">figureList</span><span class="p">[</span><span class="s2">&quot;scenarioOrbitConsistencyVerification_ecc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">tR</span><span class="p">,</span> <span class="n">iR</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;tab:blue&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Earth rotating (consistent)&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">tN</span><span class="p">,</span> <span class="n">iN</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;tab:red&quot;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Earth non-rotating&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;time [days]&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;inclination [deg]&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;upper left&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">figureList</span><span class="p">[</span><span class="s2">&quot;scenarioOrbitConsistencyVerification_inc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">show_plots</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">driftRatio</span><span class="p">,</span> <span class="n">figureList</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">run</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">simDays</span><span class="o">=</span><span class="mf">90.0</span><span class="p">,</span> <span class="n">gravDeg</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,1067 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>C++ Module: downlinkHandling &mdash; Basilisk 2.12.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=2ebb1c42" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=4ad2e773"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script>window.MathJax = {"svg": {"fontCache": "global"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="downlinkHandling" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">communication</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">downlinkHandling</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../linkBudget/index.html">linkBudget</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../simpleAntenna/index.html">simpleAntenna</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dynamics/index.html">dynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../environment/index.html">environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../forceTorque/index.html">forceTorque</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujocoDynamics/index.html">mujocoDynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../simSynch/index.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">communication</a></li>
+          <li class="breadcrumb-item"><a href="index.html">downlinkHandling</a></li>
+      <li class="breadcrumb-item active"><span class="module-type-label module-type-cpp">C++</span> Module: downlinkHandling</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/simulation/communication/downlinkHandling/downlinkHandling.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="c-module-downlinkhandling">
+<span id="downlinkhandling"></span><h1><span class="module-type-label module-type-cpp">C++</span> Module: downlinkHandling<a class="headerlink" href="#c-module-downlinkhandling" title="Link to this heading"></a></h1>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p><span class="beta-label">[BETA] downlinkHandling</span> is a beta module in an initial public release. This module might be
+subject to changes in future releases.</p>
+</div>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>This document describes how the downlinkHandling module maps radio link quality into realistic
+data transfer outcomes.</p>
+<p>At each simulation step, the module:</p>
+<ul class="simple">
+<li><p>reads link quality from <a class="reference internal" href="../linkBudget/linkBudget.html#linkbudget"><span class="std std-ref">C++ Module: linkBudget</span></a></p></li>
+<li><p>converts CNR into BER and packet error rate</p></li>
+<li><p>applies retry-limited ARQ reliability</p></li>
+<li><p>removes data from onboard storage at the resulting effective rate when storage routing is safely actionable</p></li>
+<li><p>publishes detailed diagnostics for analysis and fault studies</p></li>
+</ul>
+<p>The module is designed to sit between RF-link modeling (<a class="reference internal" href="../simpleAntenna/simpleAntenna.html#simpleantenna"><span class="std std-ref">C++ Module: simpleAntenna</span></a>, <a class="reference internal" href="../linkBudget/linkBudget.html#linkbudget"><span class="std std-ref">C++ Module: linkBudget</span></a>)
+and onboard data-buffer dynamics (<a class="reference internal" href="../../../architecture/msgPayloadDefCpp/DataStorageStatusMsgPayload.html#datastoragestatusmsgpayload"><span class="std std-ref">DataStorageStatusMsgPayload</span></a>, <a class="reference internal" href="../../../architecture/msgPayloadDefC/DataNodeUsageMsgPayload.html#datanodeusagemsgpayload"><span class="std std-ref">DataNodeUsageMsgPayload</span></a>).</p>
+</section>
+<section id="system-role-and-data-flow">
+<h2>System Role and Data Flow<a class="headerlink" href="#system-role-and-data-flow" title="Link to this heading"></a></h2>
+<figure class="align-center" id="id1">
+<span id="downlinkhandling-figure-flow"></span><a class="reference internal image-reference" href="../../../../_images/DownlinkHandlingFlow.png"><img alt="downlinkHandling integration flow with simpleAntenna, linkBudget, and storage" src="../../../../_images/DownlinkHandlingFlow.png" style="width: 90%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Figure 1: Integration flow and message-level role of downlinkHandling.</span><a class="headerlink" href="#id1" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>The following table lists all module input and output messages.
+The message connection is set by the user from Python.</p>
+<div align="center" class="align-center"><div class="graphviz"><object data="../../../../_images/graphviz-b52204eab5d19df2ec3712e788bae837efe2ad57.svg" type="image/svg+xml" class="graphviz">
+<p class="warning">downlinkHandling module input and output messages</p></object></div>
+</div>
+<table class="docutils align-default" id="id2">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id2" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>linkBudgetInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/LinkBudgetMsgPayload.html#linkbudgetmsgpayload"><span class="std std-ref">LinkBudgetMsgPayload</span></a></p></td>
+<td><p>Link-quality input from <a class="reference internal" href="../linkBudget/linkBudget.html#linkbudget"><span class="std std-ref">C++ Module: linkBudget</span></a> (receiver states, <code class="docutils literal notranslate"><span class="pre">CNR1</span></code>, <code class="docutils literal notranslate"><span class="pre">CNR2</span></code>, overlap bandwidth). Required for non-zero downlink.</p></td>
+</tr>
+<tr class="row-odd"><td><p>storageUnitInMsgs</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefCpp/DataStorageStatusMsgPayload.html#datastoragestatusmsgpayload"><span class="std std-ref">DataStorageStatusMsgPayload</span></a></p></td>
+<td><p>Storage state input (partition names, partition bits, total storage level). Required for actual data removal; actual removal is currently limited to a single linked storage unit. Connected via <code class="docutils literal notranslate"><span class="pre">addStorageUnitToDownlink</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p>nodeDataOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/DataNodeUsageMsgPayload.html#datanodeusagemsgpayload"><span class="std std-ref">DataNodeUsageMsgPayload</span></a></p></td>
+<td><p>Data-node output inherited from <code class="docutils literal notranslate"><span class="pre">DataNodeBase</span></code>. Negative baud rate removes bits from storage.</p></td>
+</tr>
+<tr class="row-odd"><td><p>downlinkOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/DownlinkHandlingMsgPayload.html#downlinkhandlingmsgpayload"><span class="std std-ref">DownlinkHandlingMsgPayload</span></a></p></td>
+<td><p>Diagnostics output with link metrics, reliability metrics, rates, and cumulative counters.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="detailed-module-description">
+<h2>Detailed Module Description<a class="headerlink" href="#detailed-module-description" title="Link to this heading"></a></h2>
+<p>The module extends <code class="docutils literal notranslate"><span class="pre">DataNodeBase</span></code> and runs once per simulation step.</p>
+<p>The per-step sequence is:</p>
+<ol class="arabic simple">
+<li><p>Read <code class="docutils literal notranslate"><span class="pre">LinkBudgetMsgPayload</span></code> and all connected storage status messages.</p></li>
+<li><p>Select one candidate storage target (largest finite partition across all connected storage status messages; use <code class="docutils literal notranslate"><span class="pre">storageLevel</span></code> only when a message has no partition vector).</p></li>
+<li><p>Select receiver path (forced receiver index or auto mode).</p></li>
+<li><p>Convert selected CNR and overlap bandwidth into <span class="math notranslate nohighlight">\(C/N_0\)</span>.</p></li>
+<li><p>Convert <span class="math notranslate nohighlight">\(C/N_0\)</span> and requested bit rate into <span class="math notranslate nohighlight">\(E_b/N_0\)</span>.</p></li>
+<li><p>Compute BER and PER.</p></li>
+<li><p>Apply retry-limited ARQ model to obtain success/drop probability and expected attempts.</p></li>
+<li><p>Compute attempted, removed, delivered, and dropped rates.</p></li>
+<li><p>Apply packet gating and storage saturation.</p></li>
+<li><p>Write <code class="docutils literal notranslate"><span class="pre">nodeDataOutMsg</span></code> and <code class="docutils literal notranslate"><span class="pre">downlinkOutMsg</span></code>.</p></li>
+</ol>
+<p>The candidate-selection logic can inspect multiple storage status messages, but actual storage removal is intentionally conservative:
+<code class="docutils literal notranslate"><span class="pre">nodeDataOutMsg</span></code> carries only <code class="docutils literal notranslate"><span class="pre">dataName</span></code> and <code class="docutils literal notranslate"><span class="pre">baudRate</span></code>, so it cannot safely target one specific storage unit when multiple
+storage units are linked. In that case, downlinkHandling reports the selected candidate in diagnostics but forces removal to zero
+for that step to avoid silent cross-unit corruption.</p>
+<section id="configurable-parameters">
+<h3>Configurable Parameters<a class="headerlink" href="#configurable-parameters" title="Link to this heading"></a></h3>
+<table class="docutils align-default" id="id3">
+<caption><span class="caption-text">Module Parameters</span><a class="headerlink" href="#id3" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 22.0%" />
+<col style="width: 14.0%" />
+<col style="width: 14.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Unit</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bitRateRequest</span></code></p></td>
+<td><p>0.0</p></td>
+<td><p>bit/s</p></td>
+<td><p>Requested raw channel bit rate <span class="math notranslate nohighlight">\(R_b\)</span>. If <span class="math notranslate nohighlight">\(R_b \le 0\)</span>, throughput is zero.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">packetSizeBits</span></code></p></td>
+<td><p>256</p></td>
+<td><p>bit</p></td>
+<td><p>Packet length <span class="math notranslate nohighlight">\(L\)</span> for BER-to-PER conversion.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">maxRetransmissions</span></code></p></td>
+<td><p>10</p></td>
+<td></td>
+<td><p>Retry cap used in the ARQ model. Current implementation enforces <span class="math notranslate nohighlight">\(N \ge 1\)</span> and treats <span class="math notranslate nohighlight">\(N\)</span> as maximum transmission attempts.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">receiverAntenna</span></code></p></td>
+<td><p>0</p></td>
+<td></td>
+<td><p>Receiver selection: 0=auto, 1=use receiver path 1, 2=use receiver path 2.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">removalPolicy</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">REMOVE_ATTEMPTED</span></code> (0)</p></td>
+<td></td>
+<td><p>Storage removal mode: <code class="docutils literal notranslate"><span class="pre">REMOVE_ATTEMPTED</span></code> removes delivered+drop-limited bits, <code class="docutils literal notranslate"><span class="pre">REMOVE_DELIVERED_ONLY</span></code> removes only successfully delivered bits.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">requireFullPacket</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
+<td></td>
+<td><p>If <code class="docutils literal notranslate"><span class="pre">True</span></code>, downlink waits until selected storage has at least one full packet.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="configuration-interface-and-validation">
+<h3>Configuration Interface and Validation<a class="headerlink" href="#configuration-interface-and-validation" title="Link to this heading"></a></h3>
+<p>The module exposes validated setters in C++/Python:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">setBitRateRequest(bitRateRequest)</span></code> with <span class="math notranslate nohighlight">\(bitRateRequest \ge 0\)</span></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">setPacketSizeBits(packetSizeBits)</span></code> with <span class="math notranslate nohighlight">\(packetSizeBits &gt; 0\)</span></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">setMaxRetransmissions(maxRetransmissions)</span></code> with <span class="math notranslate nohighlight">\(maxRetransmissions \ge 1\)</span></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">setReceiverAntenna(receiverAntenna)</span></code> with <code class="docutils literal notranslate"><span class="pre">receiverAntenna</span> <span class="pre">in</span> <span class="pre">{0,1,2}</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">setRemovalPolicy(removalPolicy)</span></code> with <code class="docutils literal notranslate"><span class="pre">removalPolicy</span> <span class="pre">in</span> <span class="pre">{0,1}</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">setRequireFullPacket(requireFullPacket)</span></code></p></li>
+</ul>
+<p>If a setter receives an invalid value, the module rejects it and keeps the last valid value.
+Use the explicit setter/getter methods in Python to keep the interface consistent with the C++ API.</p>
+</section>
+<section id="receiver-selection-and-cnr1-cnr2-usage">
+<h3>Receiver Selection and CNR1/CNR2 Usage<a class="headerlink" href="#receiver-selection-and-cnr1-cnr2-usage" title="Link to this heading"></a></h3>
+<p>The module uses receiver-specific fields from <a class="reference internal" href="../../../architecture/msgPayloadDefC/LinkBudgetMsgPayload.html#linkbudgetmsgpayload"><span class="std std-ref">LinkBudgetMsgPayload</span></a>:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">CNR1</span></code> corresponds to receiver path 1</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">CNR2</span></code> corresponds to receiver path 2</p></li>
+</ul>
+<p>These are not duplicates. They represent two possible receiving directions/modes in the bidirectional
+link-budget result.</p>
+<p>Selection behavior:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">receiverAntenna</span> <span class="pre">=</span> <span class="pre">1</span></code>: use path 1 (only if antenna state 1 is RX or RXTX)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">receiverAntenna</span> <span class="pre">=</span> <span class="pre">2</span></code>: use path 2 (only if antenna state 2 is RX or RXTX)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">receiverAntenna</span> <span class="pre">=</span> <span class="pre">0</span></code>: auto-select valid RX path with higher CNR</p></li>
+</ul>
+<p>If no valid receiver path exists, the link is treated as inactive for that step.</p>
+</section>
+</section>
+<section id="reliability-and-throughput-model">
+<h2>Reliability and Throughput Model<a class="headerlink" href="#reliability-and-throughput-model" title="Link to this heading"></a></h2>
+<figure class="align-center" id="id4">
+<span id="downlinkhandling-figure-model"></span><a class="reference internal image-reference" href="../../../../_images/DownlinkHandlingReliabilityChain.png"><img alt="CNR to BER to PER to ARQ to effective throughput chain" src="../../../../_images/DownlinkHandlingReliabilityChain.png" style="width: 95%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Figure 2: Computation chain from RF link quality to storage removal and delivered data rates.</span><a class="headerlink" href="#id4" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>For valid inputs (linked/written link budget, selected CNR <span class="math notranslate nohighlight">\(&gt;0\)</span>, overlap bandwidth <span class="math notranslate nohighlight">\(&gt;0\)</span>,
+<span class="math notranslate nohighlight">\(R_b&gt;0\)</span>, packet size <span class="math notranslate nohighlight">\(&gt;0\)</span>):</p>
+<div class="math notranslate nohighlight">
+\[\mathrm{CNR}_{dB} = 10\log_{10}(\mathrm{CNR})\]</div>
+<div class="math notranslate nohighlight">
+\[\frac{C}{N_0}\,[dBHz] = \mathrm{CNR}_{dB} + 10\log_{10}(B_{\mathrm{overlap}})\]</div>
+<div class="math notranslate nohighlight">
+\[\frac{E_b}{N_0}\,[dB] = \frac{C}{N_0}[dBHz] - 10\log_{10}(R_b)\]</div>
+<p>Current BER model (BPSK over AWGN):</p>
+<div class="math notranslate nohighlight">
+\[\mathrm{BER} = Q\left(\sqrt{2E_b/N_0}\right)
+= \frac{1}{2}\,\mathrm{erfc}\left(\sqrt{E_b/N_0}\right)\]</div>
+<p>Packet error model (independent bit errors, any bit error fails packet):</p>
+<div class="math notranslate nohighlight">
+\[\mathrm{PER} = 1 - (1-\mathrm{BER})^L\]</div>
+<p>Let <span class="math notranslate nohighlight">\(N=\max(1,\texttt{maxRetransmissions})\)</span>. Retry-limited ARQ model:</p>
+<div class="math notranslate nohighlight">
+\[P_{\mathrm{drop}} = \mathrm{PER}^{N}\]</div>
+<div class="math notranslate nohighlight">
+\[P_{\mathrm{success}} = 1 - P_{\mathrm{drop}}\]</div>
+<p>Expected attempts per source packet (truncated geometric expectation):</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\mathbb{E}[A] =
+\begin{cases}
+\dfrac{P_{\mathrm{success}}}{1-\mathrm{PER}}, &amp; \mathrm{PER}&lt;1 \\
+N, &amp; \mathrm{PER}=1
+\end{cases}\end{split}\]</div>
+<p>Unscaled rates:</p>
+<div class="math notranslate nohighlight">
+\[R_{\mathrm{attempt,pot}} = R_b\]</div>
+<div class="math notranslate nohighlight">
+\[R_{\mathrm{remove,pot}} = \frac{R_{\mathrm{attempt,pot}}}{\mathbb{E}[A]}\]</div>
+<div class="math notranslate nohighlight">
+\[R_{\mathrm{delivered,pot}} = R_{\mathrm{remove,pot}}\,P_{\mathrm{success}}\]</div>
+<div class="math notranslate nohighlight">
+\[R_{\mathrm{dropped,pot}} = R_{\mathrm{remove,pot}} - R_{\mathrm{delivered,pot}}\]</div>
+<p>Storage and packet gating scale factor:</p>
+<div class="math notranslate nohighlight">
+\[s = \mathrm{clamp}\!\left(
+\frac{B_{\mathrm{available}}/\Delta t}{R_{\mathrm{remove,pot}}},
+0, 1\right)\]</div>
+<p>with additional logic:</p>
+<ul class="simple">
+<li><p>if <code class="docutils literal notranslate"><span class="pre">requireFullPacket</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code>, enforce <span class="math notranslate nohighlight">\(B_{\mathrm{available}} \ge L\)</span></p></li>
+<li><p>if <span class="math notranslate nohighlight">\(\Delta t \le 0\)</span> or <span class="math notranslate nohighlight">\(R_{\mathrm{remove,pot}} \le 0\)</span>, set <span class="math notranslate nohighlight">\(s=0\)</span></p></li>
+</ul>
+<p>Final rates:</p>
+<div class="math notranslate nohighlight">
+\[R_{\mathrm{attempt}} = s\,R_{\mathrm{attempt,pot}}, \quad
+R_{\mathrm{remove,modeled}} = s\,R_{\mathrm{remove,pot}}, \quad
+R_{\mathrm{delivered}} = s\,R_{\mathrm{delivered,pot}}, \quad
+R_{\mathrm{dropped}} = s\,R_{\mathrm{dropped,pot}}\]</div>
+<p>Actual storage removal follows <code class="docutils literal notranslate"><span class="pre">removalPolicy</span></code>:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}R_{\mathrm{remove}} =
+\begin{cases}
+R_{\mathrm{remove,modeled}}, &amp; \text{REMOVE\_ATTEMPTED} \\
+R_{\mathrm{delivered}}, &amp; \text{REMOVE\_DELIVERED\_ONLY}
+\end{cases}\end{split}\]</div>
+<p>The value written to storage through <code class="docutils literal notranslate"><span class="pre">nodeDataOutMsg</span></code> is then:</p>
+<div class="math notranslate nohighlight">
+\[\texttt{nodeDataOutMsg.baudRate} = -R_{\mathrm{remove}}\]</div>
+</section>
+<section id="output-diagnostics">
+<h2>Output Diagnostics<a class="headerlink" href="#output-diagnostics" title="Link to this heading"></a></h2>
+<p>The custom output <a class="reference internal" href="../../../architecture/msgPayloadDefC/DownlinkHandlingMsgPayload.html#downlinkhandlingmsgpayload"><span class="std std-ref">DownlinkHandlingMsgPayload</span></a> reports:</p>
+<ul class="simple">
+<li><p>link/selection state (<code class="docutils literal notranslate"><span class="pre">linkActive</span></code>, <code class="docutils literal notranslate"><span class="pre">receiverIndex</span></code>, antenna names, <code class="docutils literal notranslate"><span class="pre">removalPolicy</span></code>)</p></li>
+<li><p>physical-layer quality terms (CNR, <span class="math notranslate nohighlight">\(C/N_0\)</span>, <span class="math notranslate nohighlight">\(E_b/N_0\)</span>, BER, PER)</p></li>
+<li><p>ARQ reliability terms (success/drop probabilities, expected attempts)</p></li>
+<li><p>rate terms (attempted, removed, delivered, dropped)</p></li>
+<li><p>storage terms (available and estimated remaining bits)</p></li>
+<li><p>cumulative counters (attempted/removed/delivered/dropped bits)</p></li>
+</ul>
+</section>
+<section id="integration-with-simpleantenna-and-linkbudget">
+<h2>Integration with simpleAntenna and linkBudget<a class="headerlink" href="#integration-with-simpleantenna-and-linkbudget" title="Link to this heading"></a></h2>
+<p>Typical chain:</p>
+<ol class="arabic simple">
+<li><p><a class="reference internal" href="../simpleAntenna/simpleAntenna.html#simpleantenna"><span class="std std-ref">C++ Module: simpleAntenna</span></a> modules compute antenna logs.</p></li>
+<li><p><a class="reference internal" href="../linkBudget/linkBudget.html#linkbudget"><span class="std std-ref">C++ Module: linkBudget</span></a> computes overlap bandwidth and CNR per receiver path.</p></li>
+<li><p><a class="reference internal" href="#downlinkhandling"><span class="std std-ref">C++ Module: downlinkHandling</span></a> converts link quality to effective data transfer and storage removal.</p></li>
+<li><p>Storage modules consume <code class="docutils literal notranslate"><span class="pre">nodeDataOutMsg</span></code> and reduce onboard buffered data.</p></li>
+</ol>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Also important integration note:
+Do not run <code class="docutils literal notranslate"><span class="pre">spaceToGroundTransmitter</span></code> and <code class="docutils literal notranslate"><span class="pre">downlinkHandling</span></code> as competing downlink removers
+on the same storage partitions. Pick one downlink path.</p>
+</div>
+<p>This separation is useful for fault modeling: upstream RF degradation (pointing, frequency mismatch,
+atmospheric attenuation, receive-state changes) naturally propagates into BER/PER and delivered data.</p>
+</section>
+<section id="assumptions-and-current-limits">
+<h2>Assumptions and Current Limits<a class="headerlink" href="#assumptions-and-current-limits" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>BER model is analytic BPSK/AWGN.</p></li>
+<li><p>Bit errors are independent.</p></li>
+<li><p>Any bit error fails the packet.</p></li>
+<li><p>ARQ is expectation-based, not packet-by-packet Monte Carlo.</p></li>
+<li><p>No explicit ACK latency, coding gain, framing overhead, or adaptive coding/modulation.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">REMOVE_DELIVERED_ONLY</span></code> preserves dropped/undelivered bits onboard, but the module still uses an expected-rate ARQ model instead of explicit packet ACK/NACK timelines.</p></li>
+<li><p>Storage target selection prioritizes per-partition values. <code class="docutils literal notranslate"><span class="pre">storageLevel</span></code> is only used as fallback for messages that do not provide <code class="docutils literal notranslate"><span class="pre">storedData</span></code> entries.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">nodeDataOutMsg</span></code> identifies storage by <code class="docutils literal notranslate"><span class="pre">dataName</span></code> only and cannot address a specific storage unit. Accordingly, downlinkHandling forces removal to zero whenever more than one storage unit is linked through <code class="docutils literal notranslate"><span class="pre">addStorageUnitToDownlink</span></code>. Multi-storage status inspection is still supported for diagnostics and candidate selection, but actual removal currently requires a single linked storage unit.</p></li>
+<li><p>If a selected storage status message does not provide an explicit partition name, downlinkHandling also forces removal to zero for that step and emits an empty <code class="docutils literal notranslate"><span class="pre">nodeDataOutMsg.dataName</span></code> rather than emitting an aggregate negative rate that downstream storage cannot route safely.</p></li>
+</ul>
+</section>
+<section id="unit-test-coverage">
+<h2>Unit Test Coverage<a class="headerlink" href="#unit-test-coverage" title="Link to this heading"></a></h2>
+<p>Test file:</p>
+<p><code class="docutils literal notranslate"><span class="pre">src/simulation/communication/downlinkHandling/_UnitTest/test_downlinkHandling.py</span></code></p>
+<p>The tests verify:</p>
+<ul class="simple">
+<li><p>equation parity versus a Python-equivalent BER/PER/ARQ model</p></li>
+<li><p>zero-flow behavior for invalid link inputs</p></li>
+<li><p>retry-cap effects on drop probability and removal/delivery behavior</p></li>
+<li><p>removal-policy behavior (<code class="docutils literal notranslate"><span class="pre">REMOVE_ATTEMPTED</span></code> vs <code class="docutils literal notranslate"><span class="pre">REMOVE_DELIVERED_ONLY</span></code>)</p></li>
+<li><p>storage-limited rate capping and drain behavior</p></li>
+<li><p>automatic receiver selection from antenna RX states and CNR values</p></li>
+<li><p>duplicate-storage input rejection</p></li>
+<li><p>storage-target selection across multiple storage status messages</p></li>
+<li><p>conservative removal blocking when more than one storage unit is linked</p></li>
+<li><p>conservative removal blocking when a selected partition has no explicit name</p></li>
+<li><p>ambiguous duplicate partition-name behavior across multiple storage status messages</p></li>
+</ul>
+</section>
+<section id="user-guide">
+<h2>User Guide<a class="headerlink" href="#user-guide" title="Link to this heading"></a></h2>
+<p>Basic setup example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">downlinkHandling</span><span class="p">,</span> <span class="n">simpleStorageUnit</span>
+
+<span class="n">dlh</span> <span class="o">=</span> <span class="n">downlinkHandling</span><span class="o">.</span><span class="n">DownlinkHandling</span><span class="p">()</span>
+<span class="n">dlh</span><span class="o">.</span><span class="n">setBitRateRequest</span><span class="p">(</span><span class="mf">1.0e5</span><span class="p">)</span>      <span class="c1"># [bit/s]</span>
+<span class="n">dlh</span><span class="o">.</span><span class="n">setPacketSizeBits</span><span class="p">(</span><span class="mi">1024</span><span class="p">)</span>       <span class="c1"># [bit]</span>
+<span class="n">dlh</span><span class="o">.</span><span class="n">setMaxRetransmissions</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>      <span class="c1"># [-]</span>
+<span class="n">dlh</span><span class="o">.</span><span class="n">setReceiverAntenna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>         <span class="c1"># [-] auto-select valid RX path with highest CNR</span>
+<span class="n">dlh</span><span class="o">.</span><span class="n">setRemovalPolicy</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>           <span class="c1"># [-] 0=REMOVE_ATTEMPTED, 1=REMOVE_DELIVERED_ONLY</span>
+<span class="n">dlh</span><span class="o">.</span><span class="n">setRequireFullPacket</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>    <span class="c1"># [-]</span>
+
+<span class="n">storage</span> <span class="o">=</span> <span class="n">simpleStorageUnit</span><span class="o">.</span><span class="n">SimpleStorageUnit</span><span class="p">()</span>
+<span class="n">storage</span><span class="o">.</span><span class="n">storageCapacity</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mf">8e9</span><span class="p">)</span>
+<span class="n">storage</span><span class="o">.</span><span class="n">addDataNodeToModel</span><span class="p">(</span><span class="n">dlh</span><span class="o">.</span><span class="n">nodeDataOutMsg</span><span class="p">)</span>
+<span class="n">dlh</span><span class="o">.</span><span class="n">addStorageUnitToDownlink</span><span class="p">(</span><span class="n">storage</span><span class="o">.</span><span class="n">storageUnitDataOutMsg</span><span class="p">)</span>
+
+<span class="c1"># linkBudgetOutPayload is produced by the linkBudget module:</span>
+<span class="c1"># dlh.linkBudgetInMsg.subscribeTo(linkBudgetModule.linkBudgetOutPayload)</span>
+</pre></div>
+</div>
+<hr class="docutils" />
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv416DownlinkHandling">
+<span id="_CPPv316DownlinkHandling"></span><span id="_CPPv216DownlinkHandling"></span><span id="DownlinkHandling"></span><span class="target" id="class_downlink_handling"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">DownlinkHandling</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../../onboardDataHandling/_GeneralModuleFiles/dataNodeBase.html#_CPPv412DataNodeBase" title="DataNodeBase"><span class="n"><span class="pre">DataNodeBase</span></span></a><a class="headerlink" href="#_CPPv416DownlinkHandling" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;downlinkHandling.h&gt;</em></div>
+<p>Downlink data-handling model that maps link quality to reliable throughput. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-types">Public Types</p>
+<dl class="cpp enum-class">
+<dt class="sig sig-object cpp" id="_CPPv4N16DownlinkHandling13RemovalPolicyE">
+<span id="_CPPv3N16DownlinkHandling13RemovalPolicyE"></span><span id="_CPPv2N16DownlinkHandling13RemovalPolicyE"></span><span class="target" id="class_downlink_handling_1a5158982a423dbaa46dd8a50c021b0a98"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">RemovalPolicy</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">uint32_t</span></span><a class="headerlink" href="#_CPPv4N16DownlinkHandling13RemovalPolicyE" title="Link to this definition"></a><br /></dt>
+<dd><p>Storage removal policy selector. </p>
+<p><code class="docutils literal notranslate"><span class="pre">REMOVE_ATTEMPTED</span></code> removes both delivered and drop-limited data from storage. <code class="docutils literal notranslate"><span class="pre">REMOVE_DELIVERED_ONLY</span></code> removes only successfully delivered data. </p>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N16DownlinkHandling13RemovalPolicy16REMOVE_ATTEMPTEDE">
+<span id="_CPPv3N16DownlinkHandling13RemovalPolicy16REMOVE_ATTEMPTEDE"></span><span id="_CPPv2N16DownlinkHandling13RemovalPolicy16REMOVE_ATTEMPTEDE"></span><span class="target" id="class_downlink_handling_1a5158982a423dbaa46dd8a50c021b0a98afab22625cacd553fe0878d9a4774b20a"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">REMOVE_ATTEMPTED</span></span></span><a class="headerlink" href="#_CPPv4N16DownlinkHandling13RemovalPolicy16REMOVE_ATTEMPTEDE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Remove delivered + drop-limited bits (current default behavior) </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N16DownlinkHandling13RemovalPolicy21REMOVE_DELIVERED_ONLYE">
+<span id="_CPPv3N16DownlinkHandling13RemovalPolicy21REMOVE_DELIVERED_ONLYE"></span><span id="_CPPv2N16DownlinkHandling13RemovalPolicy21REMOVE_DELIVERED_ONLYE"></span><span class="target" id="class_downlink_handling_1a5158982a423dbaa46dd8a50c021b0a98a5805fe92d4fdda016306d1ac43046abb"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">REMOVE_DELIVERED_ONLY</span></span></span><a class="headerlink" href="#_CPPv4N16DownlinkHandling13RemovalPolicy21REMOVE_DELIVERED_ONLYE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Remove only successfully delivered bits </p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16DownlinkHandling16DownlinkHandlingEv">
+<span id="_CPPv3N16DownlinkHandling16DownlinkHandlingEv"></span><span id="_CPPv2N16DownlinkHandling16DownlinkHandlingEv"></span><span id="DownlinkHandling::DownlinkHandling"></span><span class="target" id="class_downlink_handling_1ab8a5efec14114bde6848c2b9f623a72b"></span><span class="sig-name descname"><span class="n"><span class="pre">DownlinkHandling</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N16DownlinkHandling16DownlinkHandlingEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Construct the downlink handling module with default parameters. </p>
+<p>Constructor </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16DownlinkHandlingD0Ev">
+<span id="_CPPv3N16DownlinkHandlingD0Ev"></span><span id="_CPPv2N16DownlinkHandlingD0Ev"></span><span id="DownlinkHandling::~DownlinkHandling"></span><span class="target" id="class_downlink_handling_1a09d4274d19fb592c7c0698112ec2d672"></span><span class="sig-name descname"><span class="n"><span class="pre">~DownlinkHandling</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">default</span></span><a class="headerlink" href="#_CPPv4N16DownlinkHandlingD0Ev" title="Link to this definition"></a><br /></dt>
+<dd><p>Default destructor. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16DownlinkHandling24addStorageUnitToDownlinkEP7MessageI27DataStorageStatusMsgPayloadE">
+<span id="_CPPv3N16DownlinkHandling24addStorageUnitToDownlinkEP7MessageI27DataStorageStatusMsgPayloadE"></span><span id="_CPPv2N16DownlinkHandling24addStorageUnitToDownlinkEP7MessageI27DataStorageStatusMsgPayloadE"></span><span id="DownlinkHandling::addStorageUnitToDownlink__Message:DataStorageStatusMsgPayload:P"></span><span class="target" id="class_downlink_handling_1a15fd69afc40462b802844b27d6b654ec"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">addStorageUnitToDownlink</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefCpp/DataStorageStatusMsgPayload.html#_CPPv427DataStorageStatusMsgPayload" title="DataStorageStatusMsgPayload"><span class="n"><span class="pre">DataStorageStatusMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">tmpStorageUnitMsg</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N16DownlinkHandling24addStorageUnitToDownlinkEP7MessageI27DataStorageStatusMsgPayloadE" title="Link to this definition"></a><br /></dt>
+<dd><p>Register a storage-status input message. </p>
+<p>Duplicate and null pointers are rejected.</p>
+<p>
+Add a storage-status message to the module input list </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>tmpStorageUnitMsg</strong> – Pointer to a storage status output message </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">true</span></code> if the message was added, <code class="docutils literal notranslate"><span class="pre">false</span></code> otherwise</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16DownlinkHandling17setBitRateRequestEd">
+<span id="_CPPv3N16DownlinkHandling17setBitRateRequestEd"></span><span id="_CPPv2N16DownlinkHandling17setBitRateRequestEd"></span><span id="DownlinkHandling::setBitRateRequest__double"></span><span class="target" id="class_downlink_handling_1a8640e3f8f2761dcb869a5e6f522c4f87"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setBitRateRequest</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">bitRateRequest</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N16DownlinkHandling17setBitRateRequestEd" title="Link to this definition"></a><br /></dt>
+<dd><p>Set requested raw channel bit rate. </p>
+<p>
+Set requested raw bit rate [bit/s] </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>bitRateRequest</strong> – Requested bit rate [bit/s], must be finite and :math:<code class="docutils literal notranslate"><span class="pre">\ge</span> <span class="pre">0</span></code></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">true</span></code> if accepted, <code class="docutils literal notranslate"><span class="pre">false</span></code> otherwise</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16DownlinkHandling17setPacketSizeBitsEd">
+<span id="_CPPv3N16DownlinkHandling17setPacketSizeBitsEd"></span><span id="_CPPv2N16DownlinkHandling17setPacketSizeBitsEd"></span><span id="DownlinkHandling::setPacketSizeBits__double"></span><span class="target" id="class_downlink_handling_1a3b8afcebba9aff6a722eb718e0bf7474"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setPacketSizeBits</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">packetSizeBits</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N16DownlinkHandling17setPacketSizeBitsEd" title="Link to this definition"></a><br /></dt>
+<dd><p>Set packet size used by BER-to-PER conversion. </p>
+<p>
+Set packet size used for BER-to-PER conversion [bit] </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>packetSizeBits</strong> – Packet size [bit], must be finite and :math:<code class="docutils literal notranslate"><span class="pre">&gt;</span> <span class="pre">0</span></code></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">true</span></code> if accepted, <code class="docutils literal notranslate"><span class="pre">false</span></code> otherwise</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16DownlinkHandling21setMaxRetransmissionsE7int64_t">
+<span id="_CPPv3N16DownlinkHandling21setMaxRetransmissionsE7int64_t"></span><span id="_CPPv2N16DownlinkHandling21setMaxRetransmissionsE7int64_t"></span><span id="DownlinkHandling::setMaxRetransmissions__int64_t"></span><span class="target" id="class_downlink_handling_1a8070de9052eec565b7376634bfad5e2c"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setMaxRetransmissions</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">maxRetransmissions</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N16DownlinkHandling21setMaxRetransmissionsE7int64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Set retry cap used by the ARQ model. </p>
+<p>
+Set retry-cap used by the ARQ expectation model [-] </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>maxRetransmissions</strong> – Maximum packet transmission attempts, must be :math:<code class="docutils literal notranslate"><span class="pre">\ge</span> <span class="pre">1</span></code></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">true</span></code> if accepted, <code class="docutils literal notranslate"><span class="pre">false</span></code> otherwise</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16DownlinkHandling18setReceiverAntennaE7int64_t">
+<span id="_CPPv3N16DownlinkHandling18setReceiverAntennaE7int64_t"></span><span id="_CPPv2N16DownlinkHandling18setReceiverAntennaE7int64_t"></span><span id="DownlinkHandling::setReceiverAntenna__int64_t"></span><span class="target" id="class_downlink_handling_1a31511210bf891684e4bbe23b9871d679"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setReceiverAntenna</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">receiverAntenna</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N16DownlinkHandling18setReceiverAntennaE7int64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Select receiver path mode. </p>
+<p>
+Set receiver-selection mode: 0=auto, 1=path1, 2=path2 [-] </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>receiverAntenna</strong> – <code class="docutils literal notranslate"><span class="pre">0</span></code> = auto, <code class="docutils literal notranslate"><span class="pre">1</span></code> = force path 1, <code class="docutils literal notranslate"><span class="pre">2</span></code> = force path 2 </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">true</span></code> if accepted, <code class="docutils literal notranslate"><span class="pre">false</span></code> otherwise</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16DownlinkHandling16setRemovalPolicyE7int64_t">
+<span id="_CPPv3N16DownlinkHandling16setRemovalPolicyE7int64_t"></span><span id="_CPPv2N16DownlinkHandling16setRemovalPolicyE7int64_t"></span><span id="DownlinkHandling::setRemovalPolicy__int64_t"></span><span class="target" id="class_downlink_handling_1ad841406f731365c2231fa9ac0d194d3f"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setRemovalPolicy</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">removalPolicy</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N16DownlinkHandling16setRemovalPolicyE7int64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Set storage-removal policy. </p>
+<p>
+Set storage-removal policy: 0=remove attempted, 1=remove delivered only </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>removalPolicy</strong> – <code class="docutils literal notranslate"><span class="pre">0</span></code> = remove attempted, <code class="docutils literal notranslate"><span class="pre">1</span></code> = remove delivered only </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">true</span></code> if accepted, <code class="docutils literal notranslate"><span class="pre">false</span></code> otherwise</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16DownlinkHandling20setRequireFullPacketEb">
+<span id="_CPPv3N16DownlinkHandling20setRequireFullPacketEb"></span><span id="_CPPv2N16DownlinkHandling20setRequireFullPacketEb"></span><span id="DownlinkHandling::setRequireFullPacket__b"></span><span class="target" id="class_downlink_handling_1a33c2dc64f50e0470cc3237b703fc09b9"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setRequireFullPacket</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">requireFullPacket</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N16DownlinkHandling20setRequireFullPacketEb" title="Link to this definition"></a><br /></dt>
+<dd><p>Set packet gating behavior. </p>
+<p>
+Set packet-gating behavior flag </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>requireFullPacket</strong> – If <code class="docutils literal notranslate"><span class="pre">true</span></code>, require at least one full packet before downlink</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK16DownlinkHandling17getBitRateRequestEv">
+<span id="_CPPv3NK16DownlinkHandling17getBitRateRequestEv"></span><span id="_CPPv2NK16DownlinkHandling17getBitRateRequestEv"></span><span id="DownlinkHandling::getBitRateRequestC"></span><span class="target" id="class_downlink_handling_1a3e5771de6ab9030d9a6eb5d67097c787"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getBitRateRequest</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK16DownlinkHandling17getBitRateRequestEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Get requested raw channel bit rate. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Requested bit rate [bit/s] </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK16DownlinkHandling17getPacketSizeBitsEv">
+<span id="_CPPv3NK16DownlinkHandling17getPacketSizeBitsEv"></span><span id="_CPPv2NK16DownlinkHandling17getPacketSizeBitsEv"></span><span id="DownlinkHandling::getPacketSizeBitsC"></span><span class="target" id="class_downlink_handling_1abec2868ffc297aac717e3de3973e1cc3"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getPacketSizeBits</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK16DownlinkHandling17getPacketSizeBitsEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Get configured packet size. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Packet size [bit] </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK16DownlinkHandling21getMaxRetransmissionsEv">
+<span id="_CPPv3NK16DownlinkHandling21getMaxRetransmissionsEv"></span><span id="_CPPv2NK16DownlinkHandling21getMaxRetransmissionsEv"></span><span id="DownlinkHandling::getMaxRetransmissionsC"></span><span class="target" id="class_downlink_handling_1abf173a3d794839e0b95c2d5c0cda9776"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getMaxRetransmissions</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK16DownlinkHandling21getMaxRetransmissionsEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Get retry cap used by ARQ model. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Maximum transmission attempts per packet [-] </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK16DownlinkHandling18getReceiverAntennaEv">
+<span id="_CPPv3NK16DownlinkHandling18getReceiverAntennaEv"></span><span id="_CPPv2NK16DownlinkHandling18getReceiverAntennaEv"></span><span id="DownlinkHandling::getReceiverAntennaC"></span><span class="target" id="class_downlink_handling_1a2cb691264be9aac5766e7929573d2a97"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getReceiverAntenna</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK16DownlinkHandling18getReceiverAntennaEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Get receiver selection mode. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">0</span></code> (auto), <code class="docutils literal notranslate"><span class="pre">1</span></code> (path 1), or <code class="docutils literal notranslate"><span class="pre">2</span></code> (path 2) </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK16DownlinkHandling16getRemovalPolicyEv">
+<span id="_CPPv3NK16DownlinkHandling16getRemovalPolicyEv"></span><span id="_CPPv2NK16DownlinkHandling16getRemovalPolicyEv"></span><span id="DownlinkHandling::getRemovalPolicyC"></span><span class="target" id="class_downlink_handling_1abcdf205858190cd027f8745aca5aa12c"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getRemovalPolicy</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK16DownlinkHandling16getRemovalPolicyEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Get storage-removal policy. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">0</span></code> (remove attempted) or <code class="docutils literal notranslate"><span class="pre">1</span></code> (remove delivered only) </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK16DownlinkHandling20getRequireFullPacketEv">
+<span id="_CPPv3NK16DownlinkHandling20getRequireFullPacketEv"></span><span id="_CPPv2NK16DownlinkHandling20getRequireFullPacketEv"></span><span id="DownlinkHandling::getRequireFullPacketC"></span><span class="target" id="class_downlink_handling_1af2e2dd7544c2c911a0a2282a3f7f2c9d"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getRequireFullPacket</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK16DownlinkHandling20getRequireFullPacketEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Get packet gating mode. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">true</span></code> if one full packet is required before downlink </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK16DownlinkHandling20getCurrentLinkActiveEv">
+<span id="_CPPv3NK16DownlinkHandling20getCurrentLinkActiveEv"></span><span id="_CPPv2NK16DownlinkHandling20getCurrentLinkActiveEv"></span><span id="DownlinkHandling::getCurrentLinkActiveC"></span><span class="target" id="class_downlink_handling_1adeabf297abe50a2a6b2dab847d8ec707"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getCurrentLinkActive</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK16DownlinkHandling20getCurrentLinkActiveEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Return 1 if link-quality inputs were valid on the last update, else 0. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK16DownlinkHandling23getCurrentReceiverIndexEv">
+<span id="_CPPv3NK16DownlinkHandling23getCurrentReceiverIndexEv"></span><span id="_CPPv2NK16DownlinkHandling23getCurrentReceiverIndexEv"></span><span id="DownlinkHandling::getCurrentReceiverIndexC"></span><span class="target" id="class_downlink_handling_1a62304bc729e64b710f0a514b448eb749"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getCurrentReceiverIndex</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK16DownlinkHandling23getCurrentReceiverIndexEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Return selected receiver index on the last update (0=no receiver, 1/2=receiver path). </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK16DownlinkHandling18getCurrentTimeStepEv">
+<span id="_CPPv3NK16DownlinkHandling18getCurrentTimeStepEv"></span><span id="_CPPv2NK16DownlinkHandling18getCurrentTimeStepEv"></span><span id="DownlinkHandling::getCurrentTimeStepC"></span><span class="target" id="class_downlink_handling_1a79365a746d5d9d68d5943716b66ec86a"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getCurrentTimeStep</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK16DownlinkHandling18getCurrentTimeStepEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Return last module time step [s]. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK16DownlinkHandling13getCurrentBerEv">
+<span id="_CPPv3NK16DownlinkHandling13getCurrentBerEv"></span><span id="_CPPv2NK16DownlinkHandling13getCurrentBerEv"></span><span id="DownlinkHandling::getCurrentBerC"></span><span class="target" id="class_downlink_handling_1ad98c44c05b9b2c5be5b0e1b8c0f67646"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getCurrentBer</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK16DownlinkHandling13getCurrentBerEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Return last computed bit-error-rate (BER) [-]. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK16DownlinkHandling13getCurrentPerEv">
+<span id="_CPPv3NK16DownlinkHandling13getCurrentPerEv"></span><span id="_CPPv2NK16DownlinkHandling13getCurrentPerEv"></span><span id="DownlinkHandling::getCurrentPerC"></span><span class="target" id="class_downlink_handling_1a8dbf54c53486217548847385bb78b673"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getCurrentPer</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK16DownlinkHandling13getCurrentPerEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Return last computed packet-error-rate (PER) [-]. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK16DownlinkHandling24getCurrentPacketDropProbEv">
+<span id="_CPPv3NK16DownlinkHandling24getCurrentPacketDropProbEv"></span><span id="_CPPv2NK16DownlinkHandling24getCurrentPacketDropProbEv"></span><span id="DownlinkHandling::getCurrentPacketDropProbC"></span><span class="target" id="class_downlink_handling_1aa5f226a5f8ff752b2814f20d8fc2fdd5"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getCurrentPacketDropProb</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK16DownlinkHandling24getCurrentPacketDropProbEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Return last packet drop probability within retry cap [-]. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK16DownlinkHandling35getCurrentExpectedAttemptsPerPacketEv">
+<span id="_CPPv3NK16DownlinkHandling35getCurrentExpectedAttemptsPerPacketEv"></span><span id="_CPPv2NK16DownlinkHandling35getCurrentExpectedAttemptsPerPacketEv"></span><span id="DownlinkHandling::getCurrentExpectedAttemptsPerPacketC"></span><span class="target" id="class_downlink_handling_1ae05579242c56a22d93f9563c48902eaa"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getCurrentExpectedAttemptsPerPacket</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK16DownlinkHandling35getCurrentExpectedAttemptsPerPacketEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Return last expected attempts per packet under retry cap [-]. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK16DownlinkHandling28getCurrentStorageRemovalRateEv">
+<span id="_CPPv3NK16DownlinkHandling28getCurrentStorageRemovalRateEv"></span><span id="_CPPv2NK16DownlinkHandling28getCurrentStorageRemovalRateEv"></span><span id="DownlinkHandling::getCurrentStorageRemovalRateC"></span><span class="target" id="class_downlink_handling_1a3b79b3ad8ee4a5fc052fa008bda5a032"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getCurrentStorageRemovalRate</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK16DownlinkHandling28getCurrentStorageRemovalRateEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Return last data-removal rate from storage [bit/s]. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK16DownlinkHandling27getCurrentDeliveredDataRateEv">
+<span id="_CPPv3NK16DownlinkHandling27getCurrentDeliveredDataRateEv"></span><span id="_CPPv2NK16DownlinkHandling27getCurrentDeliveredDataRateEv"></span><span id="DownlinkHandling::getCurrentDeliveredDataRateC"></span><span class="target" id="class_downlink_handling_1afa527fa0fd1a78250e56c8f0274f6fc6"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getCurrentDeliveredDataRate</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK16DownlinkHandling27getCurrentDeliveredDataRateEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Return last successfully delivered data rate [bit/s]. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK16DownlinkHandling25getCurrentDroppedDataRateEv">
+<span id="_CPPv3NK16DownlinkHandling25getCurrentDroppedDataRateEv"></span><span id="_CPPv2NK16DownlinkHandling25getCurrentDroppedDataRateEv"></span><span id="DownlinkHandling::getCurrentDroppedDataRateC"></span><span class="target" id="class_downlink_handling_1a1caddd58ab2dca7a503c2e2447bb2c24"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getCurrentDroppedDataRate</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK16DownlinkHandling25getCurrentDroppedDataRateEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Return last dropped data rate after retries [bit/s]. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK16DownlinkHandling36getCurrentEstimatedRemainingDataBitsEv">
+<span id="_CPPv3NK16DownlinkHandling36getCurrentEstimatedRemainingDataBitsEv"></span><span id="_CPPv2NK16DownlinkHandling36getCurrentEstimatedRemainingDataBitsEv"></span><span id="DownlinkHandling::getCurrentEstimatedRemainingDataBitsC"></span><span class="target" id="class_downlink_handling_1ac1a4d1588f3e285dc6bf5c2141f3d66e"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getCurrentEstimatedRemainingDataBits</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK16DownlinkHandling36getCurrentEstimatedRemainingDataBitsEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Return estimated remaining bits in selected data partition [bit]. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16DownlinkHandling15linkBudgetInMsgE">
+<span id="_CPPv3N16DownlinkHandling15linkBudgetInMsgE"></span><span id="_CPPv2N16DownlinkHandling15linkBudgetInMsgE"></span><span id="DownlinkHandling::linkBudgetInMsg__ReadFunctor:LinkBudgetMsgPayload:"></span><span class="target" id="class_downlink_handling_1ad8994fd3258223e91db8cc8ae1e8f6cd"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/LinkBudgetMsgPayload.html#_CPPv420LinkBudgetMsgPayload" title="LinkBudgetMsgPayload"><span class="n"><span class="pre">LinkBudgetMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">linkBudgetInMsg</span></span></span><a class="headerlink" href="#_CPPv4N16DownlinkHandling15linkBudgetInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Link-budget input message. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16DownlinkHandling14downlinkOutMsgE">
+<span id="_CPPv3N16DownlinkHandling14downlinkOutMsgE"></span><span id="_CPPv2N16DownlinkHandling14downlinkOutMsgE"></span><span id="DownlinkHandling::downlinkOutMsg__Message:DownlinkHandlingMsgPayload:"></span><span class="target" id="class_downlink_handling_1a19a0162087e4563ac8ffef0773c49126"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/DownlinkHandlingMsgPayload.html#_CPPv426DownlinkHandlingMsgPayload" title="DownlinkHandlingMsgPayload"><span class="n"><span class="pre">DownlinkHandlingMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">downlinkOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N16DownlinkHandling14downlinkOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Downlink performance output message. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16DownlinkHandling9bskLoggerE">
+<span id="_CPPv3N16DownlinkHandling9bskLoggerE"></span><span id="_CPPv2N16DownlinkHandling9bskLoggerE"></span><span id="DownlinkHandling::bskLogger__BSKLogger"></span><span class="target" id="class_downlink_handling_1a79a44935542f970ef14e82f93e903241"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N16DownlinkHandling9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>BSK logging interface. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-functions">Private Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16DownlinkHandling18customReadMessagesEv">
+<span id="_CPPv3N16DownlinkHandling18customReadMessagesEv"></span><span id="_CPPv2N16DownlinkHandling18customReadMessagesEv"></span><span id="DownlinkHandling::customReadMessages"></span><span class="target" id="class_downlink_handling_1ab6e4eb3ba2118a9f41fa29801e45f44a"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">customReadMessages</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N16DownlinkHandling18customReadMessagesEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Read custom input messages </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16DownlinkHandling19customWriteMessagesE8uint64_t">
+<span id="_CPPv3N16DownlinkHandling19customWriteMessagesE8uint64_t"></span><span id="_CPPv2N16DownlinkHandling19customWriteMessagesE8uint64_t"></span><span id="DownlinkHandling::customWriteMessages__uint64_t"></span><span class="target" id="class_downlink_handling_1acecb0d44b2f26b1429f01af6c2c3d3fb"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">customWriteMessages</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentClock</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N16DownlinkHandling19customWriteMessagesE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Write custom output messages </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16DownlinkHandling11customResetE8uint64_t">
+<span id="_CPPv3N16DownlinkHandling11customResetE8uint64_t"></span><span id="_CPPv2N16DownlinkHandling11customResetE8uint64_t"></span><span id="DownlinkHandling::customReset__uint64_t"></span><span class="target" id="class_downlink_handling_1a6d44f1164477423269468665539e8e3d"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">customReset</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentClock</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N16DownlinkHandling11customResetE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Module reset hook </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16DownlinkHandling17evaluateDataModelEP23DataNodeUsageMsgPayloadd">
+<span id="_CPPv3N16DownlinkHandling17evaluateDataModelEP23DataNodeUsageMsgPayloadd"></span><span id="_CPPv2N16DownlinkHandling17evaluateDataModelEP23DataNodeUsageMsgPayloadd"></span><span id="DownlinkHandling::evaluateDataModel__DataNodeUsageMsgPayloadP.double"></span><span class="target" id="class_downlink_handling_1a4b52b1589a90b9a7dbbcbce0506c8446"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">evaluateDataModel</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../../architecture/msgPayloadDefC/DataNodeUsageMsgPayload.html#_CPPv423DataNodeUsageMsgPayload" title="DataNodeUsageMsgPayload"><span class="n"><span class="pre">DataNodeUsageMsgPayload</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">dataUsageMsg</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">currentTime</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N16DownlinkHandling17evaluateDataModelEP23DataNodeUsageMsgPayloadd" title="Link to this definition"></a><br /></dt>
+<dd><p>Core data-model evaluation </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK16DownlinkHandling22selectStorageSelectionEv">
+<span id="_CPPv3NK16DownlinkHandling22selectStorageSelectionEv"></span><span id="_CPPv2NK16DownlinkHandling22selectStorageSelectionEv"></span><span id="DownlinkHandling::selectStorageSelectionC"></span><span class="target" id="class_downlink_handling_1ab190da2bac6ed14c0cc312f294b498a5"></span><a class="reference internal" href="#_CPPv4N16DownlinkHandling16StorageSelectionE" title="DownlinkHandling::StorageSelection"><span class="n"><span class="pre">StorageSelection</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">selectStorageSelection</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK16DownlinkHandling22selectStorageSelectionEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Select storage target with the largest finite data across linked units.</p>
+<p>The function prioritizes per-partition values when available and only falls back to aggregate <code class="docutils literal notranslate"><span class="pre">storageLevel</span></code> for messages that provide no partition vector. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK16DownlinkHandling25isStorageRemovalRouteSafeERK16StorageSelection">
+<span id="_CPPv3NK16DownlinkHandling25isStorageRemovalRouteSafeERK16StorageSelection"></span><span id="_CPPv2NK16DownlinkHandling25isStorageRemovalRouteSafeERK16StorageSelection"></span><span id="DownlinkHandling::isStorageRemovalRouteSafe__StorageSelectionCRC"></span><span class="target" id="class_downlink_handling_1ad15fca64cdebc6e7906e2b0ce71fa5ec"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">isStorageRemovalRouteSafe</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N16DownlinkHandling16StorageSelectionE" title="DownlinkHandling::StorageSelection"><span class="n"><span class="pre">StorageSelection</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">selection</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK16DownlinkHandling25isStorageRemovalRouteSafeERK16StorageSelection" title="Link to this definition"></a><br /></dt>
+<dd><p>Return true only when the selected storage route can be safely acted on via DataNodeUsageMsgPayload </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16DownlinkHandling31setDataNameFromStorageSelectionERK16StorageSelectionPcNSt6size_tE">
+<span id="_CPPv3N16DownlinkHandling31setDataNameFromStorageSelectionERK16StorageSelectionPcNSt6size_tE"></span><span id="_CPPv2N16DownlinkHandling31setDataNameFromStorageSelectionERK16StorageSelectionPcNSt6size_tE"></span><span id="DownlinkHandling::setDataNameFromStorageSelection__StorageSelectionCR.cP.std::s"></span><span class="target" id="class_downlink_handling_1adbd857f11d36900c27c6324ec300d00a"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setDataNameFromStorageSelection</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N16DownlinkHandling16StorageSelectionE" title="DownlinkHandling::StorageSelection"><span class="n"><span class="pre">StorageSelection</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">selection</span></span>, <span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">buffer</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">bufferSize</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N16DownlinkHandling31setDataNameFromStorageSelectionERK16StorageSelectionPcNSt6size_tE" title="Link to this definition"></a><br /></dt>
+<dd><p>Set data name based on selected storage unit and partition </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK16DownlinkHandling14selectReceiverEPdP8uint32_t">
+<span id="_CPPv3NK16DownlinkHandling14selectReceiverEPdP8uint32_t"></span><span id="_CPPv2NK16DownlinkHandling14selectReceiverEPdP8uint32_t"></span><span id="DownlinkHandling::selectReceiver__doubleP.uint32_tPC"></span><span class="target" id="class_downlink_handling_1a7558c78d597e1c69e0f5b7f12c6f6aae"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">selectReceiver</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">cnrLinear</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">receiverIndex</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK16DownlinkHandling14selectReceiverEPdP8uint32_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Select receiver CNR from link budget payload </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK16DownlinkHandling21validateConfigurationEv">
+<span id="_CPPv3NK16DownlinkHandling21validateConfigurationEv"></span><span id="_CPPv2NK16DownlinkHandling21validateConfigurationEv"></span><span id="DownlinkHandling::validateConfigurationC"></span><span class="target" id="class_downlink_handling_1acf6da3e5798fbb3458d5686ef70f940c"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">validateConfiguration</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK16DownlinkHandling21validateConfigurationEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Validate module configuration values </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK16DownlinkHandling8isFiniteEd">
+<span id="_CPPv3NK16DownlinkHandling8isFiniteEd"></span><span id="_CPPv2NK16DownlinkHandling8isFiniteEd"></span><span id="DownlinkHandling::isFinite__doubleC"></span><span class="target" id="class_downlink_handling_1a1b25322996e004579e3067e5d620f9f8"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">isFinite</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">value</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK16DownlinkHandling8isFiniteEd" title="Link to this definition"></a><br /></dt>
+<dd><p>Return true if <code class="docutils literal notranslate"><span class="pre">value</span></code> is finite </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK16DownlinkHandling19isFiniteNonNegativeEd">
+<span id="_CPPv3NK16DownlinkHandling19isFiniteNonNegativeEd"></span><span id="_CPPv2NK16DownlinkHandling19isFiniteNonNegativeEd"></span><span id="DownlinkHandling::isFiniteNonNegative__doubleC"></span><span class="target" id="class_downlink_handling_1adea47bfeffe329d035b168417c105a4d"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">isFiniteNonNegative</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">value</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK16DownlinkHandling19isFiniteNonNegativeEd" title="Link to this definition"></a><br /></dt>
+<dd><p>Return true if <code class="docutils literal notranslate"><span class="pre">value</span></code> is finite and &gt;= 0 </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK16DownlinkHandling16isFinitePositiveEd">
+<span id="_CPPv3NK16DownlinkHandling16isFinitePositiveEd"></span><span id="_CPPv2NK16DownlinkHandling16isFinitePositiveEd"></span><span id="DownlinkHandling::isFinitePositive__doubleC"></span><span class="target" id="class_downlink_handling_1a1c79352fef3d8e2f784ca6dfdeeb6745"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">isFinitePositive</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">value</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK16DownlinkHandling16isFinitePositiveEd" title="Link to this definition"></a><br /></dt>
+<dd><p>Return true if <code class="docutils literal notranslate"><span class="pre">value</span></code> is finite and &gt; 0 </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK16DownlinkHandling15isReceiverStateE8uint32_t">
+<span id="_CPPv3NK16DownlinkHandling15isReceiverStateE8uint32_t"></span><span id="_CPPv2NK16DownlinkHandling15isReceiverStateE8uint32_t"></span><span id="DownlinkHandling::isReceiverState__uint32_tC"></span><span class="target" id="class_downlink_handling_1a76dd9a6f344f5de19f0510a74c96c57a"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">isReceiverState</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">state</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK16DownlinkHandling15isReceiverStateE8uint32_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Check if antenna state allows receiving </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK16DownlinkHandling20computeBerFromEbN0dBEd">
+<span id="_CPPv3NK16DownlinkHandling20computeBerFromEbN0dBEd"></span><span id="_CPPv2NK16DownlinkHandling20computeBerFromEbN0dBEd"></span><span id="DownlinkHandling::computeBerFromEbN0dB__doubleC"></span><span class="target" id="class_downlink_handling_1a82b011394baed14eb15d0006c98f37ed"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeBerFromEbN0dB</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">ebN0_dB</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK16DownlinkHandling20computeBerFromEbN0dBEd" title="Link to this definition"></a><br /></dt>
+<dd><p>Compute BER for BPSK over AWGN from Eb/N0 [dB] </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK16DownlinkHandling16clampProbabilityEd">
+<span id="_CPPv3NK16DownlinkHandling16clampProbabilityEd"></span><span id="_CPPv2NK16DownlinkHandling16clampProbabilityEd"></span><span id="DownlinkHandling::clampProbability__doubleC"></span><span class="target" id="class_downlink_handling_1a0dd05dab233da7c7914a63f22a058adb"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">clampProbability</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">value</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK16DownlinkHandling16clampProbabilityEd" title="Link to this definition"></a><br /></dt>
+<dd><p>Clamp probabilities to [0, 1] </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK16DownlinkHandling19sanitizeNonNegativeEd">
+<span id="_CPPv3NK16DownlinkHandling19sanitizeNonNegativeEd"></span><span id="_CPPv2NK16DownlinkHandling19sanitizeNonNegativeEd"></span><span id="DownlinkHandling::sanitizeNonNegative__doubleC"></span><span class="target" id="class_downlink_handling_1a823f546718d02aca1d36cdec3a1fe5e7"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sanitizeNonNegative</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">value</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK16DownlinkHandling19sanitizeNonNegativeEd" title="Link to this definition"></a><br /></dt>
+<dd><p>Clamp all invalid/non-physical nonnegative outputs to 0 </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16DownlinkHandling14bitRateRequestE">
+<span id="_CPPv3N16DownlinkHandling14bitRateRequestE"></span><span id="_CPPv2N16DownlinkHandling14bitRateRequestE"></span><span id="DownlinkHandling::bitRateRequest__double"></span><span class="target" id="class_downlink_handling_1a97eff9e4d8ec4f0a461ab9a88c90d625"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bitRateRequest</span></span></span><a class="headerlink" href="#_CPPv4N16DownlinkHandling14bitRateRequestE" title="Link to this definition"></a><br /></dt>
+<dd><p>[bit/s] Raw requested channel bit-rate </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16DownlinkHandling14packetSizeBitsE">
+<span id="_CPPv3N16DownlinkHandling14packetSizeBitsE"></span><span id="_CPPv2N16DownlinkHandling14packetSizeBitsE"></span><span id="DownlinkHandling::packetSizeBits__double"></span><span class="target" id="class_downlink_handling_1a721b706b562b48f5b668d2fee48bce4a"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">packetSizeBits</span></span></span><a class="headerlink" href="#_CPPv4N16DownlinkHandling14packetSizeBitsE" title="Link to this definition"></a><br /></dt>
+<dd><p>[bit] Packet size for BER-to-PER conversion </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16DownlinkHandling18maxRetransmissionsE">
+<span id="_CPPv3N16DownlinkHandling18maxRetransmissionsE"></span><span id="_CPPv2N16DownlinkHandling18maxRetransmissionsE"></span><span id="DownlinkHandling::maxRetransmissions__uint64_t"></span><span class="target" id="class_downlink_handling_1a65c4296f02ddbf76886c08918417f77b"></span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">maxRetransmissions</span></span></span><a class="headerlink" href="#_CPPv4N16DownlinkHandling18maxRetransmissionsE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Maximum transmission attempts per packet in the ARQ model </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16DownlinkHandling15receiverAntennaE">
+<span id="_CPPv3N16DownlinkHandling15receiverAntennaE"></span><span id="_CPPv2N16DownlinkHandling15receiverAntennaE"></span><span id="DownlinkHandling::receiverAntenna__int64_t"></span><span class="target" id="class_downlink_handling_1a243668e37342bfe726db5b886d61dca1"></span><span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">receiverAntenna</span></span></span><a class="headerlink" href="#_CPPv4N16DownlinkHandling15receiverAntennaE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] 0=auto, 1=receiver antenna 1, 2=receiver antenna 2 </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16DownlinkHandling13removalPolicyE">
+<span id="_CPPv3N16DownlinkHandling13removalPolicyE"></span><span id="_CPPv2N16DownlinkHandling13removalPolicyE"></span><span id="DownlinkHandling::removalPolicy__RemovalPolicy"></span><span class="target" id="class_downlink_handling_1a043dc5ac11877ffc0753dcfd71cef62d"></span><a class="reference internal" href="#_CPPv4N16DownlinkHandling13RemovalPolicyE" title="DownlinkHandling::RemovalPolicy"><span class="n"><span class="pre">RemovalPolicy</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">removalPolicy</span></span></span><a class="headerlink" href="#_CPPv4N16DownlinkHandling13removalPolicyE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Storage-removal mode for downlinked data </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16DownlinkHandling17requireFullPacketE">
+<span id="_CPPv3N16DownlinkHandling17requireFullPacketE"></span><span id="_CPPv2N16DownlinkHandling17requireFullPacketE"></span><span id="DownlinkHandling::requireFullPacket__b"></span><span class="target" id="class_downlink_handling_1a79a29d8e7c62aa1465694e94f93db110"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">requireFullPacket</span></span></span><a class="headerlink" href="#_CPPv4N16DownlinkHandling17requireFullPacketE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] If true, wait for &gt;=1 full packet before downlinking </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16DownlinkHandling18storageUnitMsgPtrsE">
+<span id="_CPPv3N16DownlinkHandling18storageUnitMsgPtrsE"></span><span id="_CPPv2N16DownlinkHandling18storageUnitMsgPtrsE"></span><span id="DownlinkHandling::storageUnitMsgPtrs__std::vector:Message:DataStorageStatusMsgPayload:P:"></span><span class="target" id="class_downlink_handling_1ad5bd2d2a7329a326b4fc81c7e8a935f2"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefCpp/DataStorageStatusMsgPayload.html#_CPPv427DataStorageStatusMsgPayload" title="DataStorageStatusMsgPayload"><span class="n"><span class="pre">DataStorageStatusMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">storageUnitMsgPtrs</span></span></span><a class="headerlink" href="#_CPPv4N16DownlinkHandling18storageUnitMsgPtrsE" title="Link to this definition"></a><br /></dt>
+<dd><p>Storage-msg pointer list for duplicate checks. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16DownlinkHandling17storageUnitInMsgsE">
+<span id="_CPPv3N16DownlinkHandling17storageUnitInMsgsE"></span><span id="_CPPv2N16DownlinkHandling17storageUnitInMsgsE"></span><span id="DownlinkHandling::storageUnitInMsgs__std::vector:ReadFunctor:DataStorageStatusMsgPayload::"></span><span class="target" id="class_downlink_handling_1a79a24debb7a7992bbf37a1dfb27f9498"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefCpp/DataStorageStatusMsgPayload.html#_CPPv427DataStorageStatusMsgPayload" title="DataStorageStatusMsgPayload"><span class="n"><span class="pre">DataStorageStatusMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">storageUnitInMsgs</span></span></span><a class="headerlink" href="#_CPPv4N16DownlinkHandling17storageUnitInMsgsE" title="Link to this definition"></a><br /></dt>
+<dd><p>Storage status subscribers. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16DownlinkHandling21storageUnitMsgsBufferE">
+<span id="_CPPv3N16DownlinkHandling21storageUnitMsgsBufferE"></span><span id="_CPPv2N16DownlinkHandling21storageUnitMsgsBufferE"></span><span id="DownlinkHandling::storageUnitMsgsBuffer__std::vector:DataStorageStatusMsgPayload:"></span><span class="target" id="class_downlink_handling_1a03bdf418183e667c48ffc7df96f36dfe"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefCpp/DataStorageStatusMsgPayload.html#_CPPv427DataStorageStatusMsgPayload" title="DataStorageStatusMsgPayload"><span class="n"><span class="pre">DataStorageStatusMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">storageUnitMsgsBuffer</span></span></span><a class="headerlink" href="#_CPPv4N16DownlinkHandling21storageUnitMsgsBufferE" title="Link to this definition"></a><br /></dt>
+<dd><p>Local storage status buffers. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16DownlinkHandling16linkBudgetBufferE">
+<span id="_CPPv3N16DownlinkHandling16linkBudgetBufferE"></span><span id="_CPPv2N16DownlinkHandling16linkBudgetBufferE"></span><span id="DownlinkHandling::linkBudgetBuffer__LinkBudgetMsgPayload"></span><span class="target" id="class_downlink_handling_1afd1f3f82ada517b9ddf82335982afb67"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/LinkBudgetMsgPayload.html#_CPPv420LinkBudgetMsgPayload" title="LinkBudgetMsgPayload"><span class="n"><span class="pre">LinkBudgetMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">linkBudgetBuffer</span></span></span><a class="headerlink" href="#_CPPv4N16DownlinkHandling16linkBudgetBufferE" title="Link to this definition"></a><br /></dt>
+<dd><p>Local copy of link-budget message. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16DownlinkHandling15linkBudgetValidE">
+<span id="_CPPv3N16DownlinkHandling15linkBudgetValidE"></span><span id="_CPPv2N16DownlinkHandling15linkBudgetValidE"></span><span id="DownlinkHandling::linkBudgetValid__b"></span><span class="target" id="class_downlink_handling_1aca63afbd3bf95a07268a431ff856fea2"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">linkBudgetValid</span></span></span><a class="headerlink" href="#_CPPv4N16DownlinkHandling15linkBudgetValidE" title="Link to this definition"></a><br /></dt>
+<dd><p>True when linkBudget message is linked and written. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16DownlinkHandling17downlinkOutBufferE">
+<span id="_CPPv3N16DownlinkHandling17downlinkOutBufferE"></span><span id="_CPPv2N16DownlinkHandling17downlinkOutBufferE"></span><span id="DownlinkHandling::downlinkOutBuffer__DownlinkHandlingMsgPayload"></span><span class="target" id="class_downlink_handling_1acf3b96015edc5457b4527eadbd11cdf5"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/DownlinkHandlingMsgPayload.html#_CPPv426DownlinkHandlingMsgPayload" title="DownlinkHandlingMsgPayload"><span class="n"><span class="pre">DownlinkHandlingMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">downlinkOutBuffer</span></span></span><a class="headerlink" href="#_CPPv4N16DownlinkHandling17downlinkOutBufferE" title="Link to this definition"></a><br /></dt>
+<dd><p>Local copy of downlink output message. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16DownlinkHandling12previousTimeE">
+<span id="_CPPv3N16DownlinkHandling12previousTimeE"></span><span id="_CPPv2N16DownlinkHandling12previousTimeE"></span><span id="DownlinkHandling::previousTime__double"></span><span class="target" id="class_downlink_handling_1a0c3b57fa2222eeecfb63c3330b1de7a1"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">previousTime</span></span></span><a class="headerlink" href="#_CPPv4N16DownlinkHandling12previousTimeE" title="Link to this definition"></a><br /></dt>
+<dd><p>[s] previous simulation time </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16DownlinkHandling15currentTimeStepE">
+<span id="_CPPv3N16DownlinkHandling15currentTimeStepE"></span><span id="_CPPv2N16DownlinkHandling15currentTimeStepE"></span><span id="DownlinkHandling::currentTimeStep__double"></span><span class="target" id="class_downlink_handling_1a709f3aa029e8d2ca47bc4d529cbd3984"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">currentTimeStep</span></span></span><a class="headerlink" href="#_CPPv4N16DownlinkHandling15currentTimeStepE" title="Link to this definition"></a><br /></dt>
+<dd><p>[s] current integration step </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16DownlinkHandling17availableDataBitsE">
+<span id="_CPPv3N16DownlinkHandling17availableDataBitsE"></span><span id="_CPPv2N16DownlinkHandling17availableDataBitsE"></span><span id="DownlinkHandling::availableDataBits__double"></span><span class="target" id="class_downlink_handling_1a8348f2f10d6c575ebff60742f825ac7a"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">availableDataBits</span></span></span><a class="headerlink" href="#_CPPv4N16DownlinkHandling17availableDataBitsE" title="Link to this definition"></a><br /></dt>
+<dd><p>[bit] selected storage data available </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16DownlinkHandling23cumulativeAttemptedBitsE">
+<span id="_CPPv3N16DownlinkHandling23cumulativeAttemptedBitsE"></span><span id="_CPPv2N16DownlinkHandling23cumulativeAttemptedBitsE"></span><span id="DownlinkHandling::cumulativeAttemptedBits__double"></span><span class="target" id="class_downlink_handling_1aa71a6b5746a235675eb2f461efbeb263"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">cumulativeAttemptedBits</span></span></span><a class="headerlink" href="#_CPPv4N16DownlinkHandling23cumulativeAttemptedBitsE" title="Link to this definition"></a><br /></dt>
+<dd><p>[bit] attempted channel bits (includes retransmissions) </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16DownlinkHandling21cumulativeRemovedBitsE">
+<span id="_CPPv3N16DownlinkHandling21cumulativeRemovedBitsE"></span><span id="_CPPv2N16DownlinkHandling21cumulativeRemovedBitsE"></span><span id="DownlinkHandling::cumulativeRemovedBits__double"></span><span class="target" id="class_downlink_handling_1a682b66240e440678713800869b5e9e33"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">cumulativeRemovedBits</span></span></span><a class="headerlink" href="#_CPPv4N16DownlinkHandling21cumulativeRemovedBitsE" title="Link to this definition"></a><br /></dt>
+<dd><p>[bit] bits removed from storage </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16DownlinkHandling23cumulativeDeliveredBitsE">
+<span id="_CPPv3N16DownlinkHandling23cumulativeDeliveredBitsE"></span><span id="_CPPv2N16DownlinkHandling23cumulativeDeliveredBitsE"></span><span id="DownlinkHandling::cumulativeDeliveredBits__double"></span><span class="target" id="class_downlink_handling_1a5287add80b3488c8531b4589c3084af2"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">cumulativeDeliveredBits</span></span></span><a class="headerlink" href="#_CPPv4N16DownlinkHandling23cumulativeDeliveredBitsE" title="Link to this definition"></a><br /></dt>
+<dd><p>[bit] successfully delivered bits </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16DownlinkHandling21cumulativeDroppedBitsE">
+<span id="_CPPv3N16DownlinkHandling21cumulativeDroppedBitsE"></span><span id="_CPPv2N16DownlinkHandling21cumulativeDroppedBitsE"></span><span id="DownlinkHandling::cumulativeDroppedBits__double"></span><span class="target" id="class_downlink_handling_1ad3522e6eaa5f2f10650ba486d9a25b29"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">cumulativeDroppedBits</span></span></span><a class="headerlink" href="#_CPPv4N16DownlinkHandling21cumulativeDroppedBitsE" title="Link to this definition"></a><br /></dt>
+<dd><p>[bit] dropped bits after retransmission limit </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16DownlinkHandling31lastBlockedStorageRemovalReasonE">
+<span id="_CPPv3N16DownlinkHandling31lastBlockedStorageRemovalReasonE"></span><span id="_CPPv2N16DownlinkHandling31lastBlockedStorageRemovalReasonE"></span><span id="DownlinkHandling::lastBlockedStorageRemovalReason__ss"></span><span class="target" id="class_downlink_handling_1a11f2a458b1acd02181efc6b4da412870"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">lastBlockedStorageRemovalReason</span></span></span><a class="headerlink" href="#_CPPv4N16DownlinkHandling31lastBlockedStorageRemovalReasonE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] last routing warning reason emitted for blocked removal </p>
+</dd></dl>
+
+</div>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv4N16DownlinkHandling16StorageSelectionE">
+<span id="_CPPv3N16DownlinkHandling16StorageSelectionE"></span><span id="_CPPv2N16DownlinkHandling16StorageSelectionE"></span><span id="DownlinkHandling::StorageSelection"></span><span class="target" id="struct_downlink_handling_1_1_storage_selection"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">StorageSelection</span></span></span><a class="headerlink" href="#_CPPv4N16DownlinkHandling16StorageSelectionE" title="Link to this definition"></a><br /></dt>
+<dd><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16DownlinkHandling16StorageSelection16storageUnitIndexE">
+<span id="_CPPv3N16DownlinkHandling16StorageSelection16storageUnitIndexE"></span><span id="_CPPv2N16DownlinkHandling16StorageSelection16storageUnitIndexE"></span><span id="DownlinkHandling::StorageSelection::storageUnitIndex__int64_t"></span><span class="target" id="struct_downlink_handling_1_1_storage_selection_1a64757406b7195a8b82325f4ede1ea5bd"></span><span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">storageUnitIndex</span></span></span><a class="headerlink" href="#_CPPv4N16DownlinkHandling16StorageSelection16storageUnitIndexE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] storage-unit index in <code class="docutils literal notranslate"><span class="pre">storageUnitMsgsBuffer</span></code></p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16DownlinkHandling16StorageSelection14partitionIndexE">
+<span id="_CPPv3N16DownlinkHandling16StorageSelection14partitionIndexE"></span><span id="_CPPv2N16DownlinkHandling16StorageSelection14partitionIndexE"></span><span id="DownlinkHandling::StorageSelection::partitionIndex__int64_t"></span><span class="target" id="struct_downlink_handling_1_1_storage_selection_1adba722d160a301f71cf024c36b1a0432"></span><span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">partitionIndex</span></span></span><a class="headerlink" href="#_CPPv4N16DownlinkHandling16StorageSelection14partitionIndexE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] partition index in the selected storage unit </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16DownlinkHandling16StorageSelection13availableBitsE">
+<span id="_CPPv3N16DownlinkHandling16StorageSelection13availableBitsE"></span><span id="_CPPv2N16DownlinkHandling16StorageSelection13availableBitsE"></span><span id="DownlinkHandling::StorageSelection::availableBits__double"></span><span class="target" id="struct_downlink_handling_1_1_storage_selection_1a10f778ccd5a4629d8daac8a0fc47771a"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">availableBits</span></span></span><a class="headerlink" href="#_CPPv4N16DownlinkHandling16StorageSelection13availableBitsE" title="Link to this definition"></a><br /></dt>
+<dd><p>[bit] available bits in selected unit/partition </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="downlinkHandling" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

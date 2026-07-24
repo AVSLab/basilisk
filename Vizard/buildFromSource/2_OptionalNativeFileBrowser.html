@@ -1,0 +1,174 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Optional: Install Native File Browser &mdash; Basilisk 2.11.0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=2ebb1c42" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=1647406f"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Building a Stand-Alone Vizard Application" href="3_BuildVizardBinary.html" />
+    <link rel="prev" title="Building the Vizard Unity Project" href="1_CompileVizardUnityProject.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Plugins/overview.html">About Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Plugins/installing.html">Installing Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Plugins/writing.html">Writing a Basilisk Plugin</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../VizardDownload.html">Download</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Building from Source</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="0_DownloadVizardSourceCode.html">Download Vizard Source Code</a></li>
+<li class="toctree-l2"><a class="reference internal" href="1_CompileVizardUnityProject.html">Building the Vizard Unity Project</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Optional: Install Native File Browser</a></li>
+<li class="toctree-l2"><a class="reference internal" href="3_BuildVizardBinary.html">Building a Stand-Alone Vizard Application</a></li>
+<li class="toctree-l2"><a class="reference internal" href="4_ConfigureForVR.html">Configure Vizard for Virtual Reality (Windows Only)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Building from Source</a></li>
+      <li class="breadcrumb-item active">Optional: Install Native File Browser</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Vizard/buildFromSource/2_OptionalNativeFileBrowser.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="optional-install-native-file-browser">
+<h1>Optional: Install Native File Browser<a class="headerlink" href="#optional-install-native-file-browser" title="Link to this heading"></a></h1>
+<p>Vizard includes a basic built-in file browser, but installing the following Unity
+Asset Store package is recommended to provide a platform-native file browser.</p>
+<ol class="arabic">
+<li><p>If platform-native file browser support is desired, purchase the
+<a class="reference external" href="https://assetstore.unity.com/packages/tools/utilities/file-browser-pro-98713">Crosstales File Browser PRO</a>
+asset from the Unity Asset Store.</p></li>
+<li><p>In the Unity Editor, open the Package Manager through <code class="docutils literal notranslate"><span class="pre">Window</span> <span class="pre">/</span> <span class="pre">Package</span> <span class="pre">Manager</span></code>.
+Make sure the Editor is not in play mode.</p></li>
+<li><p>In the Package Manager panel, click <code class="docutils literal notranslate"><span class="pre">My</span> <span class="pre">Assets</span></code> in the left-hand list.</p></li>
+<li><p>Select <code class="docutils literal notranslate"><span class="pre">File</span> <span class="pre">Browser</span> <span class="pre">PRO</span></code>.</p></li>
+<li><p>In the right panel, click <code class="docutils literal notranslate"><span class="pre">Import</span> <span class="pre">2024.1.1</span> <span class="pre">to</span> <span class="pre">project</span></code> or a newer version if desired.</p></li>
+<li><p>In the <code class="docutils literal notranslate"><span class="pre">Import</span> <span class="pre">Unity</span> <span class="pre">Package</span></code> panel, click <code class="docutils literal notranslate"><span class="pre">Import</span></code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>It is recommended to import the entire File Browser PRO package unless you are
+already familiar with its contents.</p>
+</div>
+</li>
+<li><p>When the <code class="docutils literal notranslate"><span class="pre">FB</span> <span class="pre">PRO</span></code> panel appears, close it.</p></li>
+<li><p>Open the Unity Player settings through <code class="docutils literal notranslate"><span class="pre">Edit</span> <span class="pre">/</span> <span class="pre">Project</span> <span class="pre">Settings</span></code> and select <code class="docutils literal notranslate"><span class="pre">Player</span></code>.</p></li>
+<li><p>Scroll to <code class="docutils literal notranslate"><span class="pre">Scripting</span> <span class="pre">Define</span> <span class="pre">Symbols</span></code>, click <code class="docutils literal notranslate"><span class="pre">+</span></code>, add <code class="docutils literal notranslate"><span class="pre">USE_NATIVE_FILE_BROWSER</span></code>,
+and click <code class="docutils literal notranslate"><span class="pre">Apply</span></code>.</p></li>
+<li><p>Press <code class="docutils literal notranslate"><span class="pre">Play</span></code> in the Unity Editor and then select <code class="docutils literal notranslate"><span class="pre">Select</span></code> to test the native file browser.</p></li>
+</ol>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="1_CompileVizardUnityProject.html" class="btn btn-neutral float-left" title="Building the Vizard Unity Project" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="3_BuildVizardBinary.html" class="btn btn-neutral float-right" title="Building a Stand-Alone Vizard Application" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

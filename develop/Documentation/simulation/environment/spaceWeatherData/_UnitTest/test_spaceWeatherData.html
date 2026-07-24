@@ -1,0 +1,484 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_spaceWeatherData &mdash; Basilisk 2.12.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/custom.css?v=2ebb1c42" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=4ad2e773"></script>
+      <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+    <link rel="next" title="spacecraftChargingDynamics" href="../../spacecraftChargingDynamics/index.html" />
+    <link rel="prev" title="_UnitTest" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../../communication/index.html">communication</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../dynamics/index.html">dynamics</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../../index.html">environment</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../../ExponentialAtmosphere/index.html">ExponentialAtmosphere</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../MsisAtmosphere/index.html">MsisAtmosphere</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../TabularAtmosphere/index.html">TabularAtmosphere</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../ZeroWindModel/index.html">ZeroWindModel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../albedo/index.html">albedo</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../dentonFluxModel/index.html">dentonFluxModel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../earthRadiationModel/index.html">earthRadiationModel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../eclipse/index.html">eclipse</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../ephemerisConverter/index.html">ephemerisConverter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../groundLocation/index.html">groundLocation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../groundMapping/index.html">groundMapping</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../magneticFieldCenteredDipole/index.html">magneticFieldCenteredDipole</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../magneticFieldWMM/index.html">magneticFieldWMM</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../planetEphemeris/index.html">planetEphemeris</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../solarFlux/index.html">solarFlux</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../index.html">spaceWeatherData</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../spacecraftChargingDynamics/index.html">spacecraftChargingDynamics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../spacecraftChargingEquilibrium/index.html">spacecraftChargingEquilibrium</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../spacecraftLocation/index.html">spacecraftLocation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../spiceInterface/index.html">spiceInterface</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../stripLocation/index.html">stripLocation</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../forceTorque/index.html">forceTorque</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../mujocoDynamics/index.html">mujocoDynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../simSynch/index.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">environment</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">spaceWeatherData</a></li>
+          <li class="breadcrumb-item"><a href="index.html">_UnitTest</a></li>
+      <li class="breadcrumb-item active">test_spaceWeatherData</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../../_sources/Documentation/simulation/environment/spaceWeatherData/_UnitTest/test_spaceWeatherData.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="test-spaceweatherdata">
+<span id="id1"></span><h1>test_spaceWeatherData<a class="headerlink" href="#test-spaceweatherdata" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<dl class="py function" id="module-test_spaceWeatherData">
+<dt class="sig sig-object py" id="test_spaceWeatherData.test_failed_reload_preserves_previous_table">
+<span class="sig-prename descclassname"><span class="pre">test_spaceWeatherData.</span></span><span class="sig-name descname"><span class="pre">test_failed_reload_preserves_previous_table</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_spaceWeatherData.html#test_failed_reload_preserves_previous_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_spaceWeatherData.test_failed_reload_preserves_previous_table" title="Link to this definition"></a></dt>
+<dd><p>A failed second loadSpaceWeatherFile call must not destroy the first table.</p>
+<p><strong>Test Description</strong></p>
+<p>A valid CSV is loaded first, giving a working weather table.  A second
+call is then made with a file that has a missing required column.  The
+second load must fail (emitting <code class="docutils literal notranslate"><span class="pre">BSK_ERROR</span></code>) while leaving the module
+still able to serve data from the first load.</p>
+<p><strong>Description of Variables Being Tested</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">swDataOutMsgs[0].dataValue</span></code> equals the expected AP_AVG value from the
+first table after the failed reload.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_spaceWeatherData.test_inf_in_f107_field_rejected">
+<span class="sig-prename descclassname"><span class="pre">test_spaceWeatherData.</span></span><span class="sig-name descname"><span class="pre">test_inf_in_f107_field_rejected</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_spaceWeatherData.html#test_inf_in_f107_field_rejected"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_spaceWeatherData.test_inf_in_f107_field_rejected" title="Link to this definition"></a></dt>
+<dd><p>An Inf string in an F10.7 column must be rejected.</p>
+<p><strong>Test Description</strong></p>
+<p>A CSV row with <code class="docutils literal notranslate"><span class="pre">inf</span></code> in the <code class="docutils literal notranslate"><span class="pre">F10.7_OBS</span></code> column is loaded.  The
+strict numeric parser must reject the non-finite value.</p>
+<p><strong>Description of Variables Being Tested</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">BasiliskError</span></code> raised during <code class="docutils literal notranslate"><span class="pre">loadSpaceWeatherFile</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_spaceWeatherData.test_invalid_date_april_31_rejected">
+<span class="sig-prename descclassname"><span class="pre">test_spaceWeatherData.</span></span><span class="sig-name descname"><span class="pre">test_invalid_date_april_31_rejected</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_spaceWeatherData.html#test_invalid_date_april_31_rejected"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_spaceWeatherData.test_invalid_date_april_31_rejected" title="Link to this definition"></a></dt>
+<dd><p>April 31 does not exist — the row must be rejected.</p>
+<p><strong>Test Description</strong></p>
+<p>A CSV with a single row dated <code class="docutils literal notranslate"><span class="pre">2026-04-31</span></code> is loaded.  April has only
+30 days, so the parser must reject the row and emit <code class="docutils literal notranslate"><span class="pre">BSK_ERROR</span></code> with
+<code class="docutils literal notranslate"><span class="pre">&quot;No</span> <span class="pre">valid</span> <span class="pre">weather</span> <span class="pre">rows</span> <span class="pre">were</span> <span class="pre">loaded&quot;</span></code>.</p>
+<p><strong>Description of Variables Being Tested</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">BasiliskError</span></code> raised during <code class="docutils literal notranslate"><span class="pre">loadSpaceWeatherFile</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_spaceWeatherData.test_invalid_date_day_zero_rejected">
+<span class="sig-prename descclassname"><span class="pre">test_spaceWeatherData.</span></span><span class="sig-name descname"><span class="pre">test_invalid_date_day_zero_rejected</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_spaceWeatherData.html#test_invalid_date_day_zero_rejected"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_spaceWeatherData.test_invalid_date_day_zero_rejected" title="Link to this definition"></a></dt>
+<dd><p>Day 0 is never valid — the row must be rejected.</p>
+<p><strong>Test Description</strong></p>
+<p>A CSV with a single row dated <code class="docutils literal notranslate"><span class="pre">2026-03-00</span></code> is loaded.  Day-of-month
+zero is out of range for every month.</p>
+<p><strong>Description of Variables Being Tested</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">BasiliskError</span></code> raised during <code class="docutils literal notranslate"><span class="pre">loadSpaceWeatherFile</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_spaceWeatherData.test_invalid_date_feb_29_century_non_leap_rejected">
+<span class="sig-prename descclassname"><span class="pre">test_spaceWeatherData.</span></span><span class="sig-name descname"><span class="pre">test_invalid_date_feb_29_century_non_leap_rejected</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_spaceWeatherData.html#test_invalid_date_feb_29_century_non_leap_rejected"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_spaceWeatherData.test_invalid_date_feb_29_century_non_leap_rejected" title="Link to this definition"></a></dt>
+<dd><p>February 29 in a century year that is not a 400-multiple must be rejected.</p>
+<p><strong>Test Description</strong></p>
+<p>2100 is divisible by 4 but not by 400, so it is not a leap year and
+February has only 28 days.</p>
+<p><strong>Description of Variables Being Tested</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">BasiliskError</span></code> raised during <code class="docutils literal notranslate"><span class="pre">loadSpaceWeatherFile</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_spaceWeatherData.test_invalid_date_feb_29_non_leap_rejected">
+<span class="sig-prename descclassname"><span class="pre">test_spaceWeatherData.</span></span><span class="sig-name descname"><span class="pre">test_invalid_date_feb_29_non_leap_rejected</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_spaceWeatherData.html#test_invalid_date_feb_29_non_leap_rejected"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_spaceWeatherData.test_invalid_date_feb_29_non_leap_rejected" title="Link to this definition"></a></dt>
+<dd><p>February 29 in a non-leap year must be rejected.</p>
+<p><strong>Test Description</strong></p>
+<p>A CSV with a single row dated <code class="docutils literal notranslate"><span class="pre">2025-02-29</span></code> is loaded.  2025 is not a
+leap year (not divisible by 4), so February has only 28 days.</p>
+<p><strong>Description of Variables Being Tested</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">BasiliskError</span></code> raised during <code class="docutils literal notranslate"><span class="pre">loadSpaceWeatherFile</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_spaceWeatherData.test_invalid_date_feb_30_rejected">
+<span class="sig-prename descclassname"><span class="pre">test_spaceWeatherData.</span></span><span class="sig-name descname"><span class="pre">test_invalid_date_feb_30_rejected</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_spaceWeatherData.html#test_invalid_date_feb_30_rejected"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_spaceWeatherData.test_invalid_date_feb_30_rejected" title="Link to this definition"></a></dt>
+<dd><p>February 30 never exists — the row must be rejected.</p>
+<p><strong>Test Description</strong></p>
+<p>A CSV with a single row dated <code class="docutils literal notranslate"><span class="pre">2024-02-30</span></code> is loaded.  Even in the
+leap year 2024, February has only 29 days, so the parser must reject it.</p>
+<p><strong>Description of Variables Being Tested</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">BasiliskError</span></code> raised during <code class="docutils literal notranslate"><span class="pre">loadSpaceWeatherFile</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_spaceWeatherData.test_invalid_date_month_13_rejected">
+<span class="sig-prename descclassname"><span class="pre">test_spaceWeatherData.</span></span><span class="sig-name descname"><span class="pre">test_invalid_date_month_13_rejected</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_spaceWeatherData.html#test_invalid_date_month_13_rejected"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_spaceWeatherData.test_invalid_date_month_13_rejected" title="Link to this definition"></a></dt>
+<dd><p>Month 13 is never valid — the row must be rejected.</p>
+<p><strong>Test Description</strong></p>
+<p>A CSV with a single row dated <code class="docutils literal notranslate"><span class="pre">2026-13-01</span></code> is loaded.  Month 13 is out
+of the valid [1, 12] range.</p>
+<p><strong>Description of Variables Being Tested</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">BasiliskError</span></code> raised during <code class="docutils literal notranslate"><span class="pre">loadSpaceWeatherFile</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_spaceWeatherData.test_invalid_date_month_zero_rejected">
+<span class="sig-prename descclassname"><span class="pre">test_spaceWeatherData.</span></span><span class="sig-name descname"><span class="pre">test_invalid_date_month_zero_rejected</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_spaceWeatherData.html#test_invalid_date_month_zero_rejected"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_spaceWeatherData.test_invalid_date_month_zero_rejected" title="Link to this definition"></a></dt>
+<dd><p>Month 0 is never valid — the row must be rejected.</p>
+<p><strong>Test Description</strong></p>
+<p>A CSV with a single row dated <code class="docutils literal notranslate"><span class="pre">2026-00-15</span></code> is loaded.  Month zero is
+out of the valid [1, 12] range.</p>
+<p><strong>Description of Variables Being Tested</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">BasiliskError</span></code> raised during <code class="docutils literal notranslate"><span class="pre">loadSpaceWeatherFile</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_spaceWeatherData.test_invalid_date_november_31_rejected">
+<span class="sig-prename descclassname"><span class="pre">test_spaceWeatherData.</span></span><span class="sig-name descname"><span class="pre">test_invalid_date_november_31_rejected</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_spaceWeatherData.html#test_invalid_date_november_31_rejected"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_spaceWeatherData.test_invalid_date_november_31_rejected" title="Link to this definition"></a></dt>
+<dd><p>November 31 does not exist — the row must be rejected.</p>
+<p><strong>Test Description</strong></p>
+<p>A CSV with a single row dated <code class="docutils literal notranslate"><span class="pre">2026-11-31</span></code> is loaded.  November has only
+30 days, so the parser must reject the row and emit <code class="docutils literal notranslate"><span class="pre">BSK_ERROR</span></code>.</p>
+<p><strong>Description of Variables Being Tested</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">BasiliskError</span></code> raised during <code class="docutils literal notranslate"><span class="pre">loadSpaceWeatherFile</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_spaceWeatherData.test_nan_in_ap_field_rejected">
+<span class="sig-prename descclassname"><span class="pre">test_spaceWeatherData.</span></span><span class="sig-name descname"><span class="pre">test_nan_in_ap_field_rejected</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_spaceWeatherData.html#test_nan_in_ap_field_rejected"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_spaceWeatherData.test_nan_in_ap_field_rejected" title="Link to this definition"></a></dt>
+<dd><p>A NaN string in an AP column must be rejected.</p>
+<p><strong>Test Description</strong></p>
+<p>A CSV row with <code class="docutils literal notranslate"><span class="pre">nan</span></code> in the <code class="docutils literal notranslate"><span class="pre">AP1</span></code> column is loaded.  The strict
+numeric parser must reject the non-finite value, leaving the table empty.</p>
+<p><strong>Description of Variables Being Tested</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">BasiliskError</span></code> raised during <code class="docutils literal notranslate"><span class="pre">loadSpaceWeatherFile</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_spaceWeatherData.test_neg_inf_in_ap_avg_field_rejected">
+<span class="sig-prename descclassname"><span class="pre">test_spaceWeatherData.</span></span><span class="sig-name descname"><span class="pre">test_neg_inf_in_ap_avg_field_rejected</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_spaceWeatherData.html#test_neg_inf_in_ap_avg_field_rejected"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_spaceWeatherData.test_neg_inf_in_ap_avg_field_rejected" title="Link to this definition"></a></dt>
+<dd><p>-Inf in the AP_AVG column must be rejected.</p>
+<p><strong>Test Description</strong></p>
+<p>A CSV row with <code class="docutils literal notranslate"><span class="pre">-inf</span></code> in <code class="docutils literal notranslate"><span class="pre">AP_AVG</span></code> is loaded.  Negative infinity is
+non-finite and must be rejected by the strict numeric parser.</p>
+<p><strong>Description of Variables Being Tested</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">BasiliskError</span></code> raised during <code class="docutils literal notranslate"><span class="pre">loadSpaceWeatherFile</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_spaceWeatherData.test_reset_error_when_epoch_before_table">
+<span class="sig-prename descclassname"><span class="pre">test_spaceWeatherData.</span></span><span class="sig-name descname"><span class="pre">test_reset_error_when_epoch_before_table</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_spaceWeatherData.html#test_reset_error_when_epoch_before_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_spaceWeatherData.test_reset_error_when_epoch_before_table" title="Link to this definition"></a></dt>
+<dd><p>Validate that Reset emits BSK_ERROR when the epoch date is not in the table.</p>
+<p><strong>Test Description</strong></p>
+<p>The simulation epoch is set to 2026-02-27, one day before the first row of
+the loaded table (2026-02-28).  The <code class="docutils literal notranslate"><span class="pre">Reset</span></code> probe calls <code class="docutils literal notranslate"><span class="pre">computeSwState</span></code>
+at initialisation time; the four-day look-back window cannot be assembled and
+a <code class="docutils literal notranslate"><span class="pre">BSK_ERROR</span></code> is emitted, which Basilisk converts to a <code class="docutils literal notranslate"><span class="pre">BasiliskError</span></code>.</p>
+<p><strong>Description of Variables Being Tested</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">BasiliskError</span></code> raised during <code class="docutils literal notranslate"><span class="pre">InitializeSimulation</span></code> with the message
+<code class="docutils literal notranslate"><span class="pre">&quot;simulation</span> <span class="pre">start</span> <span class="pre">date</span> <span class="pre">is</span> <span class="pre">not</span> <span class="pre">covered&quot;</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_spaceWeatherData.test_space_weather_data_celestrak_example_columns">
+<span class="sig-prename descclassname"><span class="pre">test_spaceWeatherData.</span></span><span class="sig-name descname"><span class="pre">test_space_weather_data_celestrak_example_columns</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_spaceWeatherData.html#test_space_weather_data_celestrak_example_columns"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_spaceWeatherData.test_space_weather_data_celestrak_example_columns" title="Link to this definition"></a></dt>
+<dd><p>Validate parsing against the provided CelesTrak-style rows.</p>
+<p><strong>Test Description</strong></p>
+<p>This test uses the provided CelesTrak CSV rows and validates output values
+against the supplied ground-truth weather channel values.</p>
+<p><strong>Description of Variables Being Tested</strong></p>
+<p>The test checks all 23 outputs in <code class="docutils literal notranslate"><span class="pre">swDataOutMsgs</span></code> against known values for
+the epoch <code class="docutils literal notranslate"><span class="pre">2026-03-04</span> <span class="pre">21:48:00</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_spaceWeatherData.test_space_weather_data_duplicate_date_rows">
+<span class="sig-prename descclassname"><span class="pre">test_spaceWeatherData.</span></span><span class="sig-name descname"><span class="pre">test_space_weather_data_duplicate_date_rows</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_spaceWeatherData.html#test_space_weather_data_duplicate_date_rows"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_spaceWeatherData.test_space_weather_data_duplicate_date_rows" title="Link to this definition"></a></dt>
+<dd><p>Validate duplicate DATE rows are rejected and zero-state output is published.</p>
+<p><strong>Test Description</strong></p>
+<p>This test provides duplicate <code class="docutils literal notranslate"><span class="pre">DATE</span></code> rows in the weather table. The module
+should reject the file and publish zero outputs.</p>
+<p><strong>Description of Variables Being Tested</strong></p>
+<p>The test checks all 23 weather outputs and verifies every value is zero.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_spaceWeatherData.test_space_weather_data_epoch_update">
+<span class="sig-prename descclassname"><span class="pre">test_spaceWeatherData.</span></span><span class="sig-name descname"><span class="pre">test_space_weather_data_epoch_update</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_spaceWeatherData.html#test_space_weather_data_epoch_update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_spaceWeatherData.test_space_weather_data_epoch_update" title="Link to this definition"></a></dt>
+<dd><p>Validate internal epoch update against the provided CelesTrak-style rows.</p>
+<p><strong>Test Description</strong></p>
+<p>This test uses the provided CelesTrak CSV rows and validates output values
+at a future epoch against the supplied ground-truth weather channel values.</p>
+<p><strong>Description of Variables Being Tested</strong></p>
+<p>The test checks all 23 outputs in <code class="docutils literal notranslate"><span class="pre">swDataOutMsgs</span></code> against known values for
+the epoch <code class="docutils literal notranslate"><span class="pre">2026-03-04</span> <span class="pre">21:48:00</span></code> starting the simulation at <code class="docutils literal notranslate"><span class="pre">2026-03-03</span> <span class="pre">18:48:00</span></code>
+and propagating the simulation for 1 day and 3 hours.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_spaceWeatherData.test_space_weather_data_missing_required_column">
+<span class="sig-prename descclassname"><span class="pre">test_spaceWeatherData.</span></span><span class="sig-name descname"><span class="pre">test_space_weather_data_missing_required_column</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_spaceWeatherData.html#test_space_weather_data_missing_required_column"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_spaceWeatherData.test_space_weather_data_missing_required_column" title="Link to this definition"></a></dt>
+<dd><p>Validate missing required CSV columns lead to zero-state output publication.</p>
+<p><strong>Test Description</strong></p>
+<p>This test removes <code class="docutils literal notranslate"><span class="pre">F10.7_OBS_CENTER81</span></code> from the CSV header and checks that
+the module cannot build a valid weather table and thus publishes zeros.</p>
+<p><strong>Description of Variables Being Tested</strong></p>
+<p>The test checks all 23 weather outputs and verifies every value is zero.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_spaceWeatherData.test_space_weather_data_rejects_date_with_trailing_chars">
+<span class="sig-prename descclassname"><span class="pre">test_spaceWeatherData.</span></span><span class="sig-name descname"><span class="pre">test_space_weather_data_rejects_date_with_trailing_chars</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_spaceWeatherData.html#test_space_weather_data_rejects_date_with_trailing_chars"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_spaceWeatherData.test_space_weather_data_rejects_date_with_trailing_chars" title="Link to this definition"></a></dt>
+<dd><p>Validate that a DATE token with trailing characters is rejected.</p>
+<p><strong>Test Description</strong></p>
+<p>This test writes a CSV whose only data row has <code class="docutils literal notranslate"><span class="pre">2026-03-04junk</span></code> in the
+DATE column.  The parser must reject the row; the table is left empty and
+<code class="docutils literal notranslate"><span class="pre">loadSpaceWeatherFile</span></code> emits <code class="docutils literal notranslate"><span class="pre">BSK_ERROR</span></code>.</p>
+<p><strong>Description of Variables Being Tested</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">BasiliskError</span></code> raised during <code class="docutils literal notranslate"><span class="pre">loadSpaceWeatherFile</span></code> with the message
+<code class="docutils literal notranslate"><span class="pre">&quot;No</span> <span class="pre">valid</span> <span class="pre">weather</span> <span class="pre">rows</span> <span class="pre">were</span> <span class="pre">loaded&quot;</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_spaceWeatherData.test_space_weather_data_rejects_numeric_with_trailing_chars">
+<span class="sig-prename descclassname"><span class="pre">test_spaceWeatherData.</span></span><span class="sig-name descname"><span class="pre">test_space_weather_data_rejects_numeric_with_trailing_chars</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_spaceWeatherData.html#test_space_weather_data_rejects_numeric_with_trailing_chars"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_spaceWeatherData.test_space_weather_data_rejects_numeric_with_trailing_chars" title="Link to this definition"></a></dt>
+<dd><p>Validate that a numeric field with trailing characters is rejected.</p>
+<p><strong>Test Description</strong></p>
+<p>This test writes a CSV whose only data row has <code class="docutils literal notranslate"><span class="pre">9abc</span></code> in the <code class="docutils literal notranslate"><span class="pre">AP1</span></code>
+column.  The strict numeric parser must reject the row; the table is left
+empty and <code class="docutils literal notranslate"><span class="pre">loadSpaceWeatherFile</span></code> emits <code class="docutils literal notranslate"><span class="pre">BSK_ERROR</span></code>.</p>
+<p><strong>Description of Variables Being Tested</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">BasiliskError</span></code> raised during <code class="docutils literal notranslate"><span class="pre">loadSpaceWeatherFile</span></code> with the message
+<code class="docutils literal notranslate"><span class="pre">&quot;No</span> <span class="pre">valid</span> <span class="pre">weather</span> <span class="pre">rows</span> <span class="pre">were</span> <span class="pre">loaded&quot;</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_spaceWeatherData.test_space_weather_data_stops_at_first_invalid_row">
+<span class="sig-prename descclassname"><span class="pre">test_spaceWeatherData.</span></span><span class="sig-name descname"><span class="pre">test_space_weather_data_stops_at_first_invalid_row</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_spaceWeatherData.html#test_space_weather_data_stops_at_first_invalid_row"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_spaceWeatherData.test_space_weather_data_stops_at_first_invalid_row" title="Link to this definition"></a></dt>
+<dd><p>Validate reading stops at the first invalid row (e.g., PRM monthly line).</p>
+<p><strong>Test Description</strong></p>
+<p>This test appends invalid PRM-style rows with missing AP fields after valid
+daily rows and verifies that the valid section is still used correctly.</p>
+<p><strong>Description of Variables Being Tested</strong></p>
+<p>The test checks the 23 weather outputs against the same ground-truth values
+as the valid CelesTrak example set.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_spaceWeatherData.test_space_weather_data_unsorted_rows">
+<span class="sig-prename descclassname"><span class="pre">test_spaceWeatherData.</span></span><span class="sig-name descname"><span class="pre">test_space_weather_data_unsorted_rows</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_spaceWeatherData.html#test_space_weather_data_unsorted_rows"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_spaceWeatherData.test_space_weather_data_unsorted_rows" title="Link to this definition"></a></dt>
+<dd><p>Validate unsorted DATE rows are rejected and zero-state output is published.</p>
+<p><strong>Test Description</strong></p>
+<p>This test provides weather rows out of chronological order. The loader should
+reject the table and the module should publish zero outputs.</p>
+<p><strong>Description of Variables Being Tested</strong></p>
+<p>The test checks all 23 weather outputs and verifies every value is zero.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_spaceWeatherData.test_stale_output_retained_on_missing_day">
+<span class="sig-prename descclassname"><span class="pre">test_spaceWeatherData.</span></span><span class="sig-name descname"><span class="pre">test_stale_output_retained_on_missing_day</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_spaceWeatherData.html#test_stale_output_retained_on_missing_day"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_spaceWeatherData.test_stale_output_retained_on_missing_day" title="Link to this definition"></a></dt>
+<dd><p>Validate that outputs are not overwritten when a required day is missing.</p>
+<p><strong>Test Description</strong></p>
+<p>The simulation runs two stages with the same module instance.  In stage 1
+(t = 1 s, epoch 2026-03-04) the look-up succeeds and known values are
+written.  In stage 2 (t = 25 h + 1 s) D0 advances to 2026-03-05 which is
+absent from the table; the module must log <code class="docutils literal notranslate"><span class="pre">BSK_WARNING</span></code> and return without
+writing, leaving the outputs at the stage-1 values.</p>
+<p><strong>Description of Variables Being Tested</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">swDataOutMsgs[0]</span></code>  (<code class="docutils literal notranslate"><span class="pre">ap_24_0</span></code>, AP_AVG):        6.0 after both stages.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">swDataOutMsgs[21]</span></code> (<code class="docutils literal notranslate"><span class="pre">f107_1944_0</span></code>, F10.7c81): 138.5 after both stages.</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_spaceWeatherData.test_valid_date_feb_29_leap_accepted">
+<span class="sig-prename descclassname"><span class="pre">test_spaceWeatherData.</span></span><span class="sig-name descname"><span class="pre">test_valid_date_feb_29_leap_accepted</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_spaceWeatherData.html#test_valid_date_feb_29_leap_accepted"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_spaceWeatherData.test_valid_date_feb_29_leap_accepted" title="Link to this definition"></a></dt>
+<dd><p>February 29 in a leap year must be accepted.</p>
+<p><strong>Test Description</strong></p>
+<p>A four-row CSV that includes <code class="docutils literal notranslate"><span class="pre">2024-02-29</span></code> (2024 is a leap year) is
+loaded and the simulation is run with the epoch on <code class="docutils literal notranslate"><span class="pre">2024-03-02</span> <span class="pre">12:00:00</span></code>
+so that the look-back window covers 2024-02-29.  The table must load
+successfully and produce a finite <code class="docutils literal notranslate"><span class="pre">ap_24_0</span></code> output.</p>
+<p><strong>Description of Variables Being Tested</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">swDataOutMsgs[0].dataValue</span></code> is non-zero after a successful look-up.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_spaceWeatherData.test_valid_date_feb_29_quad_century_leap_accepted">
+<span class="sig-prename descclassname"><span class="pre">test_spaceWeatherData.</span></span><span class="sig-name descname"><span class="pre">test_valid_date_feb_29_quad_century_leap_accepted</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_spaceWeatherData.html#test_valid_date_feb_29_quad_century_leap_accepted"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_spaceWeatherData.test_valid_date_feb_29_quad_century_leap_accepted" title="Link to this definition"></a></dt>
+<dd><p>February 29 in a 400-multiple year (true leap) must be accepted.</p>
+<p><strong>Test Description</strong></p>
+<p>2000 is divisible by 400 and therefore is a leap year.  A single row
+dated <code class="docutils literal notranslate"><span class="pre">2000-02-29</span></code> must not be rejected by the date validator.
+The test loads a four-row table that includes this date and verifies
+<code class="docutils literal notranslate"><span class="pre">loadSpaceWeatherFile</span></code> succeeds (no exception raised).</p>
+<p><strong>Description of Variables Being Tested</strong></p>
+<p>No exception from <code class="docutils literal notranslate"><span class="pre">loadSpaceWeatherFile</span></code>.</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="_UnitTest" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../../spacecraftChargingDynamics/index.html" class="btn btn-neutral float-right" title="spacecraftChargingDynamics" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

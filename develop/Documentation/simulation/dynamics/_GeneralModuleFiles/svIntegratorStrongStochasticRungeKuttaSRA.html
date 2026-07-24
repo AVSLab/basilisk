@@ -1,0 +1,348 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>svIntegratorStrongStochasticRungeKuttaSRA &mdash; Basilisk 2.12.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=2ebb1c42" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=4ad2e773"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script>window.MathJax = {"svg": {"fontCache": "global"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="svIntegratorStrongStochasticRungeKuttaSRI" href="svIntegratorStrongStochasticRungeKuttaSRI.html" />
+    <link rel="prev" title="svIntegratorRungeKutta" href="svIntegratorRungeKutta.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../communication/index.html">communication</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">dynamics</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../DynOutput/index.html">DynOutput</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ExtPulsedTorque/index.html">ExtPulsedTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../FuelTank/index.html">FuelTank</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../GravityGradientEffector/index.html">GravityGradientEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../HingedRigidBodies/index.html">HingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../Integrators/index.html">Integrators</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../LinearSpringMassDamper/index.html">LinearSpringMassDamper</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../MtbEffector/index.html">MtbEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../NHingedRigidBodies/index.html">NHingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../RadiationPressure/index.html">RadiationPressure</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../Thrusters/index.html">Thrusters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../VSCMGs/index.html">VSCMGs</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../constraintEffector/index.html">constraintEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dragEffector/index.html">dragEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dualHingedRigidBodies/index.html">dualHingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../extForceTorque/index.html">extForceTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../facetDragEffector/index.html">facetDragEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../facetSRPDynamicEffector/index.html">facetSRPDynamicEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../facetedSRPEffector/index.html">facetedSRPEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../gravityEffector/index.html">gravityEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../hingedRigidBodyMotor/index.html">hingedRigidBodyMotor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../igbmNoiseStateEffector/index.html">igbmNoiseStateEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../linearTranslationalBodies/index.html">linearTranslationalBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../meanRevertingNoiseStateEffector/index.html">meanRevertingNoiseStateEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../msmForceTorque/index.html">msmForceTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../prescribedMotion/index.html">prescribedMotion</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reactionWheels/index.html">reactionWheels</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraft/index.html">spacecraft</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraftSystem/index.html">spacecraftSystem</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../sphericalPendulum/index.html">sphericalPendulum</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spinningBodies/index.html">spinningBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../stateArchitecture/index.html">stateArchitecture</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../environment/index.html">environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../forceTorque/index.html">forceTorque</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujocoDynamics/index.html">mujocoDynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../simSynch/index.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">dynamics</a></li>
+          <li class="breadcrumb-item"><a href="index.html">_GeneralModuleFiles</a></li>
+      <li class="breadcrumb-item active">svIntegratorStrongStochasticRungeKuttaSRA</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/simulation/dynamics/_GeneralModuleFiles/svIntegratorStrongStochasticRungeKuttaSRA.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="svintegratorstrongstochasticrungekuttasra">
+<span id="id1"></span><h1>svIntegratorStrongStochasticRungeKuttaSRA<a class="headerlink" href="#svintegratorstrongstochasticrungekuttasra" title="Link to this heading"></a></h1>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv4I_6size_tE15SRACoefficients">
+<span id="_CPPv3I_6size_tE15SRACoefficients"></span><span id="_CPPv2I_6size_tE15SRACoefficients"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">numberStages</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="struct_s_r_a_coefficients"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SRACoefficients</span></span></span><a class="headerlink" href="#_CPPv4I_6size_tE15SRACoefficients" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;svIntegratorStrongStochasticRungeKuttaSRA.h&gt;</em></div>
+<p>Stores the coefficients for a Roessler Stochastic Runge-Kutta method for the strong approximation of SDEs with additive noise (an “SRA” method).</p>
+<p>“Additive noise” means the diffusion <span class="math notranslate nohighlight">\(g(t)\)</span> does not depend on the state. The Butcher tableau of an <code class="docutils literal notranslate"><span class="pre">s</span></code>-stage SRA method has the form (Roessler 2010):</p>
+<p><div class="math notranslate nohighlight">
+\[\begin{split}  \begin{array}{c|cc}
+     c^{(0)} &amp; A^{(0)} &amp; B^{(0)} \\
+     c^{(1)} &amp; &amp; \\ \hline
+             &amp; \alpha  &amp; \beta^{(1)}\ \beta^{(2)}
+  \end{array}
+\end{split}\]</div>
+</p>
+<p>where <span class="math notranslate nohighlight">\(A^{(0)}, B^{(0)}\)</span> are strictly-lower-triangular (so the method is explicit). Because the noise is additive there is only a single family of stages. See <code class="docutils literal notranslate"><a class="reference internal" href="#classsv_integrator_strong_stochastic_runge_kutta_s_r_a"><span class="std std-ref"><span class="pre">svIntegratorStrongStochasticRungeKuttaSRA</span></span></a></code> for the recurrence. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-types">Public Types</p>
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv4N15SRACoefficients15StageSizedArrayE">
+<span id="_CPPv3N15SRACoefficients15StageSizedArrayE"></span><span id="_CPPv2N15SRACoefficients15StageSizedArrayE"></span><span class="target" id="struct_s_r_a_coefficients_1aaaa29446fd0ab8e0724fc3f1625b8210"></span><span class="k"><span class="pre">using</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">StageSizedArray</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">array</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I_6size_tE15SRACoefficients" title="SRACoefficients::numberStages"><span class="n"><span class="pre">numberStages</span></span></a><span class="p"><span class="pre">&gt;</span></span><a class="headerlink" href="#_CPPv4N15SRACoefficients15StageSizedArrayE" title="Link to this definition"></a><br /></dt>
+<dd><p>Array with size = numberStages </p>
+</dd></dl>
+
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv4N15SRACoefficients16StageSizedMatrixE">
+<span id="_CPPv3N15SRACoefficients16StageSizedMatrixE"></span><span id="_CPPv2N15SRACoefficients16StageSizedMatrixE"></span><span class="target" id="struct_s_r_a_coefficients_1a5aeb8b85b86a9a23746bb381a3a71556"></span><span class="k"><span class="pre">using</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">StageSizedMatrix</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">array</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4N15SRACoefficients15StageSizedArrayE" title="SRACoefficients::StageSizedArray"><span class="n"><span class="pre">StageSizedArray</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I_6size_tE15SRACoefficients" title="SRACoefficients::numberStages"><span class="n"><span class="pre">numberStages</span></span></a><span class="p"><span class="pre">&gt;</span></span><a class="headerlink" href="#_CPPv4N15SRACoefficients16StageSizedMatrixE" title="Link to this definition"></a><br /></dt>
+<dd><p>Square matrix with size = numberStages </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SRACoefficients2A0E">
+<span id="_CPPv3N15SRACoefficients2A0E"></span><span id="_CPPv2N15SRACoefficients2A0E"></span><span id="SRACoefficients::A0__StageSizedMatrix"></span><span class="target" id="struct_s_r_a_coefficients_1a78b03e0f4370168756b688ad343a9ead"></span><a class="reference internal" href="#_CPPv4N15SRACoefficients16StageSizedMatrixE" title="SRACoefficients::StageSizedMatrix"><span class="n"><span class="pre">StageSizedMatrix</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">A0</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N15SRACoefficients2A0E" title="Link to this definition"></a><br /></dt>
+<dd><p>drift coefficient matrix </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SRACoefficients2B0E">
+<span id="_CPPv3N15SRACoefficients2B0E"></span><span id="_CPPv2N15SRACoefficients2B0E"></span><span id="SRACoefficients::B0__StageSizedMatrix"></span><span class="target" id="struct_s_r_a_coefficients_1a2c3e1c9184cc497020dabb998c85ec18"></span><a class="reference internal" href="#_CPPv4N15SRACoefficients16StageSizedMatrixE" title="SRACoefficients::StageSizedMatrix"><span class="n"><span class="pre">StageSizedMatrix</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">B0</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N15SRACoefficients2B0E" title="Link to this definition"></a><br /></dt>
+<dd><p>diffusion coefficient matrix (multiplies chi2 = I(1,0)/h) </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SRACoefficients5alphaE">
+<span id="_CPPv3N15SRACoefficients5alphaE"></span><span id="_CPPv2N15SRACoefficients5alphaE"></span><span id="SRACoefficients::alpha__StageSizedArray"></span><span class="target" id="struct_s_r_a_coefficients_1a503b1db3e53ef6060669e8589fe3a411"></span><a class="reference internal" href="#_CPPv4N15SRACoefficients15StageSizedArrayE" title="SRACoefficients::StageSizedArray"><span class="n"><span class="pre">StageSizedArray</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">alpha</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N15SRACoefficients5alphaE" title="Link to this definition"></a><br /></dt>
+<dd><p>drift weights </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SRACoefficients5beta1E">
+<span id="_CPPv3N15SRACoefficients5beta1E"></span><span id="_CPPv2N15SRACoefficients5beta1E"></span><span id="SRACoefficients::beta1__StageSizedArray"></span><span class="target" id="struct_s_r_a_coefficients_1aedd66815903fcc3101ab4711ffb27f3e"></span><a class="reference internal" href="#_CPPv4N15SRACoefficients15StageSizedArrayE" title="SRACoefficients::StageSizedArray"><span class="n"><span class="pre">StageSizedArray</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">beta1</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N15SRACoefficients5beta1E" title="Link to this definition"></a><br /></dt>
+<dd><p>diffusion weights multiplying dW </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SRACoefficients5beta2E">
+<span id="_CPPv3N15SRACoefficients5beta2E"></span><span id="_CPPv2N15SRACoefficients5beta2E"></span><span id="SRACoefficients::beta2__StageSizedArray"></span><span class="target" id="struct_s_r_a_coefficients_1a8acd7e55ba4045cffd5d7e2ce5f5c023"></span><a class="reference internal" href="#_CPPv4N15SRACoefficients15StageSizedArrayE" title="SRACoefficients::StageSizedArray"><span class="n"><span class="pre">StageSizedArray</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">beta2</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N15SRACoefficients5beta2E" title="Link to this definition"></a><br /></dt>
+<dd><p>diffusion weights multiplying chi2 = I(1,0)/h </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SRACoefficients2c0E">
+<span id="_CPPv3N15SRACoefficients2c0E"></span><span id="_CPPv2N15SRACoefficients2c0E"></span><span id="SRACoefficients::c0__StageSizedArray"></span><span class="target" id="struct_s_r_a_coefficients_1a9194d6fb7a84a6597697f0a97895d20d"></span><a class="reference internal" href="#_CPPv4N15SRACoefficients15StageSizedArrayE" title="SRACoefficients::StageSizedArray"><span class="n"><span class="pre">StageSizedArray</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">c0</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N15SRACoefficients2c0E" title="Link to this definition"></a><br /></dt>
+<dd><p>“c0” node array; the row sums of A0: <span class="math notranslate nohighlight">\(c^{(0)}_i = \sum_j A^{(0)}_{ij}\)</span></p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15SRACoefficients2c1E">
+<span id="_CPPv3N15SRACoefficients2c1E"></span><span id="_CPPv2N15SRACoefficients2c1E"></span><span id="SRACoefficients::c1__StageSizedArray"></span><span class="target" id="struct_s_r_a_coefficients_1a939a444892711cbc9d84502ca70075df"></span><a class="reference internal" href="#_CPPv4N15SRACoefficients15StageSizedArrayE" title="SRACoefficients::StageSizedArray"><span class="n"><span class="pre">StageSizedArray</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">c1</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N15SRACoefficients2c1E" title="Link to this definition"></a><br /></dt>
+<dd><p>“c1” node array, used to evaluate the (state-independent) diffusion at the correct times: <span class="math notranslate nohighlight">\(g(t_n + c^{(1)}_i h)\)</span>. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv4I_6size_tE41svIntegratorStrongStochasticRungeKuttaSRA">
+<span id="_CPPv3I_6size_tE41svIntegratorStrongStochasticRungeKuttaSRA"></span><span id="_CPPv2I_6size_tE41svIntegratorStrongStochasticRungeKuttaSRA"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">numberStages</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="classsv_integrator_strong_stochastic_runge_kutta_s_r_a"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">svIntegratorStrongStochasticRungeKuttaSRA</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="stochasticRKIntegratorBase.html#_CPPv426StochasticRKIntegratorBase" title="StochasticRKIntegratorBase"><span class="n"><span class="pre">StochasticRKIntegratorBase</span></span></a><a class="headerlink" href="#_CPPv4I_6size_tE41svIntegratorStrongStochasticRungeKuttaSRA" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;svIntegratorStrongStochasticRungeKuttaSRA.h&gt;</em></div>
+<p>The <a class="reference internal" href="#classsv_integrator_strong_stochastic_runge_kutta_s_r_a"><span class="std std-ref">svIntegratorStrongStochasticRungeKuttaSRA</span></a> class implements a state integrator that provides strong (order up to 1.5) solutions to problems with stochastic dynamics (SDEs) that have additive noise (diffusion independent of the state).</p>
+<p>The method is the Roessler “SRA” family, described in: <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Roessler</span> <span class="n">A</span><span class="o">.</span><span class="p">,</span> <span class="s2">&quot;Runge-Kutta Methods for the Strong Approximation of Solutions of</span>
+<span class="n">Stochastic</span> <span class="n">Differential</span> <span class="n">Equations</span><span class="s2">&quot;, SIAM J. Numer. Anal., 48 (3), pp. 922-952.</span>
+<span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">doi</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="mf">10.1137</span><span class="o">/</span><span class="mi">09076636</span><span class="n">X</span>
+</pre></div>
+</div>
+</p>
+<p>This is an implementation of the Roessler <code class="docutils literal notranslate"><span class="pre">SRA1</span></code>/<code class="docutils literal notranslate"><span class="pre">SOSRA</span></code> family. The recurrence below follows the generic <code class="docutils literal notranslate"><span class="pre">SRA</span></code> step.</p>
+<p>With <span class="math notranslate nohighlight">\(s\)</span> stages, <span class="math notranslate nohighlight">\(m\)</span> noise sources, time step <span class="math notranslate nohighlight">\(h\)</span> and per-noise-source random variables <span class="math notranslate nohighlight">\(\Delta W \sim N(0,h)\)</span> and  <span class="math notranslate nohighlight">\(\chi_2 = (\Delta W + \Delta
+Z/\sqrt 3)/2\)</span> (with <span class="math notranslate nohighlight">\(\Delta Z \sim N(0,h)\)</span> independent):</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>--- stage definitions (explicit; sums run over j = 1..i-1) ---
+for i = 1..s:
+    H0[i] = y_n + h * sum_j A0[i][j] f(t_n + c0[j] h, H0[j])
+                +     sum_j B0[i][j] chi2[k] g_k(t_n + c1[j] h)
+
+--- state update ---
+y_{n+1} = y_n + h * sum_i alpha[i] f(t_n + c0[i] h, H0[i])
+              +     sum_k [ (beta1 . g_k) dW[k] + (beta2 . g_k) chi2[k] ]
+</pre></div>
+</div>
+<p>where g_k is the (state-independent) diffusion for noise source k, evaluated at the stage times t_n + c1[i] h.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Stochastic integration is in beta. </p>
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N41svIntegratorStrongStochasticRungeKuttaSRA41svIntegratorStrongStochasticRungeKuttaSRAEP13DynamicObjectRK15SRACoefficientsI12numberStagesE">
+<span id="_CPPv3N41svIntegratorStrongStochasticRungeKuttaSRA41svIntegratorStrongStochasticRungeKuttaSRAEP13DynamicObjectRK15SRACoefficientsI12numberStagesE"></span><span id="_CPPv2N41svIntegratorStrongStochasticRungeKuttaSRA41svIntegratorStrongStochasticRungeKuttaSRAEP13DynamicObjectRK15SRACoefficientsI12numberStagesE"></span><span id="svIntegratorStrongStochasticRungeKuttaSRA::svIntegratorStrongStochasticRungeKuttaSRA__DynamicObjectP.SRACoefficients:numberStages:CR"></span><span class="target" id="classsv_integrator_strong_stochastic_runge_kutta_s_r_a_1a8133b932c1cf90ee99b777dabb66e859"></span><span class="sig-name descname"><span class="n"><span class="pre">svIntegratorStrongStochasticRungeKuttaSRA</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="dynamicObject.html#_CPPv413DynamicObject" title="DynamicObject"><span class="n"><span class="pre">DynamicObject</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">dynIn</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I_6size_tE15SRACoefficients" title="SRACoefficients"><span class="n"><span class="pre">SRACoefficients</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I_6size_tE41svIntegratorStrongStochasticRungeKuttaSRA" title="svIntegratorStrongStochasticRungeKuttaSRA::numberStages"><span class="n"><span class="pre">numberStages</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">coefficients</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N41svIntegratorStrongStochasticRungeKuttaSRA41svIntegratorStrongStochasticRungeKuttaSRAEP13DynamicObjectRK15SRACoefficientsI12numberStagesE" title="Link to this definition"></a><br /></dt>
+<dd><p>Creates an SRA integrator for the given <a class="reference internal" href="dynamicObject.html#class_dynamic_object"><span class="std std-ref">DynamicObject</span></a> using the passed coefficients. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N41svIntegratorStrongStochasticRungeKuttaSRA9integrateEdd">
+<span id="_CPPv3N41svIntegratorStrongStochasticRungeKuttaSRA9integrateEdd"></span><span id="_CPPv2N41svIntegratorStrongStochasticRungeKuttaSRA9integrateEdd"></span><span id="svIntegratorStrongStochasticRungeKuttaSRA::integrate__double.double"></span><span class="target" id="classsv_integrator_strong_stochastic_runge_kutta_s_r_a_1a924af60b9c1c54dde648fa6279952ff6"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">integrate</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">currentTime</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">timeStep</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N41svIntegratorStrongStochasticRungeKuttaSRA9integrateEdd" title="Link to this definition"></a><br /></dt>
+<dd><p>Performs the integration of the associated dynamic objects up to time currentTime+timeStep </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-protected-functions">Protected Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N41svIntegratorStrongStochasticRungeKuttaSRA9scaledSumERKNSt5arrayId12numberStagesEERKNSt5arrayI19ExtendedStateVector12numberStagesEE6size_t">
+<span id="_CPPv3N41svIntegratorStrongStochasticRungeKuttaSRA9scaledSumERKNSt5arrayId12numberStagesEERKNSt5arrayI19ExtendedStateVector12numberStagesEE6size_t"></span><span id="_CPPv2N41svIntegratorStrongStochasticRungeKuttaSRA9scaledSumERKNSt5arrayId12numberStagesEERKNSt5arrayI19ExtendedStateVector12numberStagesEE6size_t"></span><span id="svIntegratorStrongStochasticRungeKuttaSRA::scaledSum__std::array:double.numberStages:CR.std::array:ExtendedStateVector.numberStages:CR.s"></span><span class="target" id="classsv_integrator_strong_stochastic_runge_kutta_s_r_a_1a82628f6202998b0ff70280816a90cb0d"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="extendedStateVector.html#_CPPv419ExtendedStateVector" title="ExtendedStateVector"><span class="n"><span class="pre">ExtendedStateVector</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">scaledSum</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">array</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I_6size_tE41svIntegratorStrongStochasticRungeKuttaSRA" title="svIntegratorStrongStochasticRungeKuttaSRA::numberStages"><span class="n"><span class="pre">numberStages</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">factors</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">array</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="extendedStateVector.html#_CPPv419ExtendedStateVector" title="ExtendedStateVector"><span class="n"><span class="pre">ExtendedStateVector</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I_6size_tE41svIntegratorStrongStochasticRungeKuttaSRA" title="svIntegratorStrongStochasticRungeKuttaSRA::numberStages"><span class="n"><span class="pre">numberStages</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">vectors</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">length</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N41svIntegratorStrongStochasticRungeKuttaSRA9scaledSumERKNSt5arrayId12numberStagesEERKNSt5arrayI19ExtendedStateVector12numberStagesEE6size_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Utility: result = sum_{i=0}^{length-1} factors[i] * vectors[i]. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-protected-attributes">Protected Attributes</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N41svIntegratorStrongStochasticRungeKuttaSRA12coefficientsE">
+<span id="_CPPv3N41svIntegratorStrongStochasticRungeKuttaSRA12coefficientsE"></span><span id="_CPPv2N41svIntegratorStrongStochasticRungeKuttaSRA12coefficientsE"></span><span id="svIntegratorStrongStochasticRungeKuttaSRA::coefficients__SRACoefficients:numberStages:C"></span><span class="target" id="classsv_integrator_strong_stochastic_runge_kutta_s_r_a_1aa17f01e28d14bbfcc0723d7d7ea50cb5"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I_6size_tE15SRACoefficients" title="SRACoefficients"><span class="n"><span class="pre">SRACoefficients</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I_6size_tE41svIntegratorStrongStochasticRungeKuttaSRA" title="svIntegratorStrongStochasticRungeKuttaSRA::numberStages"><span class="n"><span class="pre">numberStages</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">coefficients</span></span></span><a class="headerlink" href="#_CPPv4N41svIntegratorStrongStochasticRungeKuttaSRA12coefficientsE" title="Link to this definition"></a><br /></dt>
+<dd><p>Coefficients to be used in the method </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="svIntegratorRungeKutta.html" class="btn btn-neutral float-left" title="svIntegratorRungeKutta" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="svIntegratorStrongStochasticRungeKuttaSRI.html" class="btn btn-neutral float-right" title="svIntegratorStrongStochasticRungeKuttaSRI" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

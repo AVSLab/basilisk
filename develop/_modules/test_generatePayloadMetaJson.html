@@ -1,0 +1,773 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_generatePayloadMetaJson &mdash; Basilisk 2.12.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=2ebb1c42" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=4ad2e773"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">test_generatePayloadMetaJson</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for test_generatePayloadMetaJson</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Unit tests for generatePayloadMetaJson.py</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">textwrap</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">&quot;msgAutoSource&quot;</span><span class="p">))</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">generatePayloadMetaJson</span><span class="w"> </span><span class="kn">import</span> <span class="n">_extractComment</span><span class="p">,</span> <span class="n">_isIncomplete</span><span class="p">,</span> <span class="n">parseStruct</span>
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Helpers</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_h</span><span class="p">(</span><span class="n">src</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Dedent and strip leading newline from an inline header string.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">textwrap</span><span class="o">.</span><span class="n">dedent</span><span class="p">(</span><span class="n">src</span><span class="p">)</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="hfile">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_generatePayloadMetaJson.html#test_generatePayloadMetaJson.hfile">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">()</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">hfile</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a factory: write header content to tmp_path/&lt;name&gt; and return its Path.&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_write</span><span class="p">(</span><span class="n">content</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;TestMsg.h&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">tmp_path</span> <span class="o">/</span> <span class="n">name</span>
+        <span class="n">p</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">_h</span><span class="p">(</span><span class="n">content</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">p</span>
+    <span class="k">return</span> <span class="n">_write</span></div>
+
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_Cursor</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Minimal cursor stub for testing _extractComment in isolation.&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raw_comment</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">raw_comment</span> <span class="o">=</span> <span class="n">raw_comment</span>
+
+
+<span class="c1"># ===========================================================================</span>
+<span class="c1"># _extractComment - pure-function tests</span>
+<span class="c1"># ===========================================================================</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">TestExtractComment</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_none_returns_empty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A cursor with ``raw_comment=None`` must return an empty string.&quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">_extractComment</span><span class="p">(</span><span class="n">_Cursor</span><span class="p">(</span><span class="kc">None</span><span class="p">))</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_doxygen_exclamation_inline</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;``//!&lt;`` inline Doxygen comment is stripped to its payload text.&quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">_extractComment</span><span class="p">(</span><span class="n">_Cursor</span><span class="p">(</span><span class="s2">&quot;//!&lt; [N] thrust&quot;</span><span class="p">))</span> <span class="o">==</span> <span class="s2">&quot;[N] thrust&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_doxygen_triple_slash_inline</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;``///&lt;`` inline triple-slash comment is stripped to its payload text.&quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">_extractComment</span><span class="p">(</span><span class="n">_Cursor</span><span class="p">(</span><span class="s2">&quot;///&lt; [s] isp&quot;</span><span class="p">))</span> <span class="o">==</span> <span class="s2">&quot;[s] isp&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_cpp_triple_slash</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;``///`` non-inline triple-slash comment is stripped to its payload text.&quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">_extractComment</span><span class="p">(</span><span class="n">_Cursor</span><span class="p">(</span><span class="s2">&quot;/// description here&quot;</span><span class="p">))</span> <span class="o">==</span> <span class="s2">&quot;description here&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_c_block_comment</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A plain ``/* ... */`` block comment is unwrapped to its inner text.&quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">_extractComment</span><span class="p">(</span><span class="n">_Cursor</span><span class="p">(</span><span class="s2">&quot;/* brief desc */&quot;</span><span class="p">))</span> <span class="o">==</span> <span class="s2">&quot;brief desc&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_doxygen_block_exclamation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A ``/*! ... */`` Doxygen block comment is unwrapped to its inner text.&quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">_extractComment</span><span class="p">(</span><span class="n">_Cursor</span><span class="p">(</span><span class="s2">&quot;/*! value */&quot;</span><span class="p">))</span> <span class="o">==</span> <span class="s2">&quot;value&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_doxygen_block_inline</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A ``/*!&lt; ... */`` inline Doxygen block comment is unwrapped to its inner text.&quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">_extractComment</span><span class="p">(</span><span class="n">_Cursor</span><span class="p">(</span><span class="s2">&quot;/*!&lt; inline block */&quot;</span><span class="p">))</span> <span class="o">==</span> <span class="s2">&quot;inline block&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_multiline_joined</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Multiple ``//!&lt;`` continuation lines are joined with a single space.&quot;&quot;&quot;</span>
+        <span class="n">raw</span> <span class="o">=</span> <span class="s2">&quot;//!&lt; first line</span><span class="se">\n</span><span class="s2">//!&lt; second line&quot;</span>
+        <span class="k">assert</span> <span class="n">_extractComment</span><span class="p">(</span><span class="n">_Cursor</span><span class="p">(</span><span class="n">raw</span><span class="p">))</span> <span class="o">==</span> <span class="s2">&quot;first line second line&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_blank_continuation_lines_skipped</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Blank ``//!&lt;`` continuation lines are skipped when joining.&quot;&quot;&quot;</span>
+        <span class="n">raw</span> <span class="o">=</span> <span class="s2">&quot;//!&lt; first</span><span class="se">\n</span><span class="s2">//!&lt; </span><span class="se">\n</span><span class="s2">//!&lt; third&quot;</span>
+        <span class="k">assert</span> <span class="n">_extractComment</span><span class="p">(</span><span class="n">_Cursor</span><span class="p">(</span><span class="n">raw</span><span class="p">))</span> <span class="o">==</span> <span class="s2">&quot;first third&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_multiline_block</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A multi-line ``/*! ... */`` block comment is collapsed to a single string.&quot;&quot;&quot;</span>
+        <span class="n">raw</span> <span class="o">=</span> <span class="s2">&quot;/*! multi</span><span class="se">\n</span><span class="s2"> * line</span><span class="se">\n</span><span class="s2"> */&quot;</span>
+        <span class="k">assert</span> <span class="n">_extractComment</span><span class="p">(</span><span class="n">_Cursor</span><span class="p">(</span><span class="n">raw</span><span class="p">))</span> <span class="o">==</span> <span class="s2">&quot;multi line&quot;</span>
+
+
+<span class="c1"># ===========================================================================</span>
+<span class="c1"># _isIncomplete - pure-function tests</span>
+<span class="c1"># ===========================================================================</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">TestIsIncomplete</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_empty_field_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;An empty field list is considered complete (no unknown fields).&quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">_isIncomplete</span><span class="p">([])</span> <span class="ow">is</span> <span class="kc">False</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_all_primitives</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A list of only primitive fields is complete.&quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">_isIncomplete</span><span class="p">([{</span><span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;primitive&quot;</span><span class="p">},</span> <span class="p">{</span><span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;primitive&quot;</span><span class="p">}])</span> <span class="ow">is</span> <span class="kc">False</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_enum_field</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A single enum field is complete.&quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">_isIncomplete</span><span class="p">([{</span><span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;enum&quot;</span><span class="p">}])</span> <span class="ow">is</span> <span class="kc">False</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_single_unknown</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A single unknown field marks the struct incomplete.&quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">_isIncomplete</span><span class="p">([{</span><span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;unknown&quot;</span><span class="p">}])</span> <span class="ow">is</span> <span class="kc">True</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_unknown_at_end</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;An unknown field at the end of the list marks the struct incomplete.&quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">_isIncomplete</span><span class="p">([{</span><span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;primitive&quot;</span><span class="p">},</span> <span class="p">{</span><span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;unknown&quot;</span><span class="p">}])</span> <span class="ow">is</span> <span class="kc">True</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_nested_struct_all_known</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A nested struct whose own fields are all known is complete.&quot;&quot;&quot;</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="p">[{</span><span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;struct&quot;</span><span class="p">,</span> <span class="s2">&quot;fields&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;primitive&quot;</span><span class="p">}]}]</span>
+        <span class="k">assert</span> <span class="n">_isIncomplete</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">False</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_nested_struct_has_unknown</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A nested struct with an unknown inner field propagates incompleteness.&quot;&quot;&quot;</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="p">[{</span><span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;struct&quot;</span><span class="p">,</span> <span class="s2">&quot;fields&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;unknown&quot;</span><span class="p">}]}]</span>
+        <span class="k">assert</span> <span class="n">_isIncomplete</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">True</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_nested_struct_empty_fields_is_complete</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;An empty inner struct (zero fields) must return False, not raise.</span>
+
+<span class="sd">        Regression: the old ``or`` chain would evaluate ``[]`` as falsy and fall through.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">_isIncomplete</span><span class="p">([{</span><span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;struct&quot;</span><span class="p">,</span> <span class="s2">&quot;fields&quot;</span><span class="p">:</span> <span class="p">[]}])</span> <span class="ow">is</span> <span class="kc">False</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_array_with_primitive_element</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;An array whose element is a primitive is complete.&quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">_isIncomplete</span><span class="p">([{</span><span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;array&quot;</span><span class="p">,</span> <span class="s2">&quot;element&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;primitive&quot;</span><span class="p">}}])</span> <span class="ow">is</span> <span class="kc">False</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_array_with_unknown_element</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;An array whose element is unknown marks the struct incomplete.&quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">_isIncomplete</span><span class="p">([{</span><span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;array&quot;</span><span class="p">,</span> <span class="s2">&quot;element&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;unknown&quot;</span><span class="p">}}])</span> <span class="ow">is</span> <span class="kc">True</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_deeply_nested_struct_in_array</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;An unknown element buried inside a struct-in-array propagates incompleteness.&quot;&quot;&quot;</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="p">[{</span>
+            <span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;struct&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;fields&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;array&quot;</span><span class="p">,</span> <span class="s2">&quot;element&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;unknown&quot;</span><span class="p">}}],</span>
+        <span class="p">}]</span>
+        <span class="k">assert</span> <span class="n">_isIncomplete</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">True</span>
+
+
+<span class="c1"># ===========================================================================</span>
+<span class="c1"># parseStruct - primitive types</span>
+<span class="c1"># ===========================================================================</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">TestPrimitives</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_double</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hfile</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A ``double`` field is classified as primitive with 8-byte size at offset 0.&quot;&quot;&quot;</span>
+        <span class="n">meta</span> <span class="o">=</span> <span class="n">parseStruct</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">hfile</span><span class="p">(</span><span class="s2">&quot;typedef struct { double x; } M;&quot;</span><span class="p">)),</span> <span class="s2">&quot;M&quot;</span><span class="p">)</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;fields&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;kind&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;primitive&quot;</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;ctype&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;double&quot;</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;size_bytes&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">8</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;offset_bytes&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_float</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hfile</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A ``float`` field is classified as primitive with 4-byte size.&quot;&quot;&quot;</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">parseStruct</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">hfile</span><span class="p">(</span><span class="s2">&quot;typedef struct { float x; } M;&quot;</span><span class="p">)),</span> <span class="s2">&quot;M&quot;</span><span class="p">)[</span><span class="s2">&quot;fields&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;kind&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;primitive&quot;</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;size_bytes&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">4</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_int</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hfile</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A plain ``int`` field is classified as primitive with ctype ``&quot;int&quot;``.&quot;&quot;&quot;</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">parseStruct</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">hfile</span><span class="p">(</span><span class="s2">&quot;typedef struct { int n; } M;&quot;</span><span class="p">)),</span> <span class="s2">&quot;M&quot;</span><span class="p">)[</span><span class="s2">&quot;fields&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;kind&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;primitive&quot;</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;ctype&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;int&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_bool</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hfile</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A ``bool`` field is classified as primitive with 1-byte size.&quot;&quot;&quot;</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">parseStruct</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">hfile</span><span class="p">(</span><span class="s2">&quot;typedef struct { bool b; } M;&quot;</span><span class="p">)),</span> <span class="s2">&quot;M&quot;</span><span class="p">)[</span><span class="s2">&quot;fields&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;kind&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;primitive&quot;</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;size_bytes&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_uint32_from_stub</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hfile</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;``uint32_t`` (typedef alias from the bundled stdint.h stub) resolves to a 4-byte primitive.&quot;&quot;&quot;</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">parseStruct</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">hfile</span><span class="p">(</span><span class="s2">&quot;typedef struct { uint32_t n; } M;&quot;</span><span class="p">)),</span> <span class="s2">&quot;M&quot;</span><span class="p">)[</span><span class="s2">&quot;fields&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;kind&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;primitive&quot;</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;ctype&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;uint32_t&quot;</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;size_bytes&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">4</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_int64_from_stub</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hfile</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;``int64_t`` from the bundled stdint.h stub is classified as primitive.&quot;&quot;&quot;</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">parseStruct</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">hfile</span><span class="p">(</span><span class="s2">&quot;typedef struct { int64_t n; } M;&quot;</span><span class="p">)),</span> <span class="s2">&quot;M&quot;</span><span class="p">)[</span><span class="s2">&quot;fields&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;kind&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;primitive&quot;</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;ctype&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;int64_t&quot;</span>
+
+
+<span class="c1"># ===========================================================================</span>
+<span class="c1"># parseStruct - multi-word types</span>
+<span class="c1"># Regression: previous code compared only tokens[0] to typ.spelling, which</span>
+<span class="c1"># misfired on &quot;unsigned int&quot;, &quot;long long&quot;, &quot;long double&quot;, etc.</span>
+<span class="c1"># ===========================================================================</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">TestMultiWordTypes</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_unsigned_int</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hfile</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;``unsigned int`` must be classified as primitive, not unknown.&quot;&quot;&quot;</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">parseStruct</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">hfile</span><span class="p">(</span><span class="s2">&quot;typedef struct { unsigned int n; } M;&quot;</span><span class="p">)),</span> <span class="s2">&quot;M&quot;</span><span class="p">)[</span><span class="s2">&quot;fields&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;kind&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;primitive&quot;</span><span class="p">,</span> <span class="s2">&quot;unsigned int must NOT be classified as unknown&quot;</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;ctype&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;unsigned int&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_long_long</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hfile</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;``long long`` must be classified as primitive, not unknown.&quot;&quot;&quot;</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">parseStruct</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">hfile</span><span class="p">(</span><span class="s2">&quot;typedef struct { long long n; } M;&quot;</span><span class="p">)),</span> <span class="s2">&quot;M&quot;</span><span class="p">)[</span><span class="s2">&quot;fields&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;kind&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;primitive&quot;</span><span class="p">,</span> <span class="s2">&quot;long long must NOT be classified as unknown&quot;</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;ctype&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;long long&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_long_double</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hfile</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;``long double`` must be classified as primitive, not unknown.&quot;&quot;&quot;</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">parseStruct</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">hfile</span><span class="p">(</span><span class="s2">&quot;typedef struct { long double n; } M;&quot;</span><span class="p">)),</span> <span class="s2">&quot;M&quot;</span><span class="p">)[</span><span class="s2">&quot;fields&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;kind&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;primitive&quot;</span><span class="p">,</span> <span class="s2">&quot;long double must NOT be classified as unknown&quot;</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;ctype&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;long double&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_unsigned_long_long</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hfile</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;``unsigned long long`` must be classified as primitive with the full multi-word ctype.&quot;&quot;&quot;</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">parseStruct</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">hfile</span><span class="p">(</span><span class="s2">&quot;typedef struct { unsigned long long n; } M;&quot;</span><span class="p">)),</span> <span class="s2">&quot;M&quot;</span><span class="p">)[</span><span class="s2">&quot;fields&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;kind&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;primitive&quot;</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;ctype&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;unsigned long long&quot;</span>
+
+
+<span class="c1"># ===========================================================================</span>
+<span class="c1"># parseStruct - typedef aliases</span>
+<span class="c1"># A typedef alias for a primitive preserves the written name as ctype but</span>
+<span class="c1"># resolves to the underlying numpy dtype through the canonical type.</span>
+<span class="c1"># ===========================================================================</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">TestTypeAliases</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_typedef_alias_to_int</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hfile</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A typedef alias for ``int`` preserves the alias name as ctype while using canonical size.&quot;&quot;&quot;</span>
+        <span class="n">src</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            typedef int MyIndex;</span>
+<span class="s2">            typedef struct { MyIndex idx; } M;</span>
+<span class="s2">        &quot;&quot;&quot;</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">parseStruct</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">hfile</span><span class="p">(</span><span class="n">src</span><span class="p">)),</span> <span class="s2">&quot;M&quot;</span><span class="p">)[</span><span class="s2">&quot;fields&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;kind&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;primitive&quot;</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;ctype&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;MyIndex&quot;</span>      <span class="c1"># preserves the written alias name</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;size_bytes&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">4</span>         <span class="c1"># size still comes from canonical type</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_typedef_alias_to_double</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hfile</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A typedef alias for ``double`` preserves the alias name and resolves to 8-byte size.&quot;&quot;&quot;</span>
+        <span class="n">src</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            typedef double Scalar;</span>
+<span class="s2">            typedef struct { Scalar val; } M;</span>
+<span class="s2">        &quot;&quot;&quot;</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">parseStruct</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">hfile</span><span class="p">(</span><span class="n">src</span><span class="p">)),</span> <span class="s2">&quot;M&quot;</span><span class="p">)[</span><span class="s2">&quot;fields&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;kind&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;primitive&quot;</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;ctype&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Scalar&quot;</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;size_bytes&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">8</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_typedef_alias_to_unsigned_short</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hfile</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A typedef alias for ``unsigned short`` resolves to a 2-byte primitive.&quot;&quot;&quot;</span>
+        <span class="n">src</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            typedef unsigned short Port;</span>
+<span class="s2">            typedef struct { Port p; } M;</span>
+<span class="s2">        &quot;&quot;&quot;</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">parseStruct</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">hfile</span><span class="p">(</span><span class="n">src</span><span class="p">)),</span> <span class="s2">&quot;M&quot;</span><span class="p">)[</span><span class="s2">&quot;fields&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;kind&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;primitive&quot;</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;size_bytes&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span>
+
+
+<span class="c1"># ===========================================================================</span>
+<span class="c1"># parseStruct - arrays</span>
+<span class="c1"># ===========================================================================</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">TestArrays</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_1d_double</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hfile</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A 1-D ``double`` array is parsed with kind ``&quot;array&quot;``, shape ``[3]``, and correct sizes.&quot;&quot;&quot;</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">parseStruct</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">hfile</span><span class="p">(</span><span class="s2">&quot;typedef struct { double v[3]; } M;&quot;</span><span class="p">)),</span> <span class="s2">&quot;M&quot;</span><span class="p">)[</span><span class="s2">&quot;fields&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;kind&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;array&quot;</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;shape&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;element&quot;</span><span class="p">][</span><span class="s2">&quot;kind&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;primitive&quot;</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;element&quot;</span><span class="p">][</span><span class="s2">&quot;ctype&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;double&quot;</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;size_bytes&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">24</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;offset_bytes&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_2d_double</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hfile</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A 2-D ``double`` array is parsed with shape ``[3, 3]`` and total size 72 bytes.&quot;&quot;&quot;</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">parseStruct</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">hfile</span><span class="p">(</span><span class="s2">&quot;typedef struct { double m[3][3]; } M;&quot;</span><span class="p">)),</span> <span class="s2">&quot;M&quot;</span><span class="p">)[</span><span class="s2">&quot;fields&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;kind&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;array&quot;</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;shape&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;size_bytes&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">72</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_1d_int</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hfile</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A 1-D ``int`` array carries the correct element ctype.&quot;&quot;&quot;</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">parseStruct</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">hfile</span><span class="p">(</span><span class="s2">&quot;typedef struct { int ids[8]; } M;&quot;</span><span class="p">)),</span> <span class="s2">&quot;M&quot;</span><span class="p">)[</span><span class="s2">&quot;fields&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;kind&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;array&quot;</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;shape&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="p">[</span><span class="mi">8</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;element&quot;</span><span class="p">][</span><span class="s2">&quot;ctype&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;int&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_array_size_from_macro</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tmp_path</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;An array whose size is given by a ``#define`` from an included header resolves correctly.&quot;&quot;&quot;</span>
+        <span class="p">(</span><span class="n">tmp_path</span> <span class="o">/</span> <span class="s2">&quot;defs.h&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="s2">&quot;#pragma once</span><span class="se">\n</span><span class="s2">#define N_ITEMS 4</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="p">(</span><span class="n">tmp_path</span> <span class="o">/</span> <span class="s2">&quot;M.h&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span>
+            <span class="s1">&#39;#include &quot;defs.h&quot;</span><span class="se">\n</span><span class="s1">typedef struct { double v[N_ITEMS]; } M;</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="p">)</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">parseStruct</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">tmp_path</span> <span class="o">/</span> <span class="s2">&quot;M.h&quot;</span><span class="p">),</span> <span class="s2">&quot;M&quot;</span><span class="p">,</span> <span class="n">compiler_args</span><span class="o">=</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;-I</span><span class="si">{</span><span class="n">tmp_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">])[</span><span class="s2">&quot;fields&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;kind&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;array&quot;</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;shape&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+
+
+<span class="c1"># ===========================================================================</span>
+<span class="c1"># parseStruct - enum fields</span>
+<span class="c1"># ===========================================================================</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">TestEnums</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_basic_enum</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hfile</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A typedef&#39;d enum field is classified with kind ``&quot;enum&quot;`` and its enumerator values.&quot;&quot;&quot;</span>
+        <span class="n">src</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            typedef enum { OFF = 0, LOW = 1, HIGH = 2 } PowerLevel;</span>
+<span class="s2">            typedef struct { PowerLevel level; } M;</span>
+<span class="s2">        &quot;&quot;&quot;</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">parseStruct</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">hfile</span><span class="p">(</span><span class="n">src</span><span class="p">)),</span> <span class="s2">&quot;M&quot;</span><span class="p">)[</span><span class="s2">&quot;fields&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;kind&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;enum&quot;</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;typeName&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;PowerLevel&quot;</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;size_bytes&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">4</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;values&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="p">{</span><span class="s2">&quot;OFF&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;LOW&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;HIGH&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_enum_with_negative_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hfile</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;An enum with a negative enumerator value is represented faithfully.&quot;&quot;&quot;</span>
+        <span class="n">src</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            typedef enum { ERR = -1, OK = 0 } Status;</span>
+<span class="s2">            typedef struct { Status s; } M;</span>
+<span class="s2">        &quot;&quot;&quot;</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">parseStruct</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">hfile</span><span class="p">(</span><span class="n">src</span><span class="p">)),</span> <span class="s2">&quot;M&quot;</span><span class="p">)[</span><span class="s2">&quot;fields&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;kind&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;enum&quot;</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;values&quot;</span><span class="p">][</span><span class="s2">&quot;ERR&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;values&quot;</span><span class="p">][</span><span class="s2">&quot;OK&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span>
+
+
+<span class="c1"># ===========================================================================</span>
+<span class="c1"># parseStruct - pointer fields</span>
+<span class="c1"># ===========================================================================</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">TestPointers</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_int_pointer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hfile</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;An ``int *`` field is classified as a pointer with the correct pointee type.&quot;&quot;&quot;</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">parseStruct</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">hfile</span><span class="p">(</span><span class="s2">&quot;typedef struct { int *p; } M;&quot;</span><span class="p">)),</span> <span class="s2">&quot;M&quot;</span><span class="p">)[</span><span class="s2">&quot;fields&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;kind&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;pointer&quot;</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;ctype&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;int *&quot;</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;pointee&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;int&quot;</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;size_bytes&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">8</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_void_pointer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hfile</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A ``void *`` field is classified as pointer with 8-byte size.&quot;&quot;&quot;</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">parseStruct</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">hfile</span><span class="p">(</span><span class="s2">&quot;typedef struct { void *p; } M;&quot;</span><span class="p">)),</span> <span class="s2">&quot;M&quot;</span><span class="p">)[</span><span class="s2">&quot;fields&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;kind&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;pointer&quot;</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;size_bytes&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">8</span>
+
+
+<span class="c1"># ===========================================================================</span>
+<span class="c1"># parseStruct - nested structs</span>
+<span class="c1"># ===========================================================================</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">TestNestedStructs</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_nested_same_header</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hfile</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A nested struct defined in the same header is inlined with its own fields.&quot;&quot;&quot;</span>
+        <span class="n">src</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            typedef struct { double x; double y; double z; } Vec3;</span>
+<span class="s2">            typedef struct { Vec3 pos; Vec3 vel; } M;</span>
+<span class="s2">        &quot;&quot;&quot;</span>
+        <span class="n">meta</span> <span class="o">=</span> <span class="n">parseStruct</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">hfile</span><span class="p">(</span><span class="n">src</span><span class="p">)),</span> <span class="s2">&quot;M&quot;</span><span class="p">)</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;fields&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">pos</span><span class="p">[</span><span class="s2">&quot;kind&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;struct&quot;</span>
+        <span class="k">assert</span> <span class="n">pos</span><span class="p">[</span><span class="s2">&quot;typeName&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Vec3&quot;</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">pos</span><span class="p">[</span><span class="s2">&quot;fields&quot;</span><span class="p">])</span> <span class="o">==</span> <span class="mi">3</span>
+        <span class="k">assert</span> <span class="n">pos</span><span class="p">[</span><span class="s2">&quot;fields&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;x&quot;</span>
+        <span class="k">assert</span> <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;complete&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">True</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_nested_from_included_header</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tmp_path</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A nested struct pulled in via ``#include`` is resolved and inlined correctly.&quot;&quot;&quot;</span>
+        <span class="p">(</span><span class="n">tmp_path</span> <span class="o">/</span> <span class="s2">&quot;vec.h&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span>
+            <span class="s2">&quot;typedef struct { double x; double y; } Vec2;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+        <span class="p">(</span><span class="n">tmp_path</span> <span class="o">/</span> <span class="s2">&quot;M.h&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span>
+            <span class="s1">&#39;#include &quot;vec.h&quot;</span><span class="se">\n</span><span class="s1">typedef struct { Vec2 origin; double z; } M;</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="p">)</span>
+        <span class="n">meta</span> <span class="o">=</span> <span class="n">parseStruct</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">tmp_path</span> <span class="o">/</span> <span class="s2">&quot;M.h&quot;</span><span class="p">),</span> <span class="s2">&quot;M&quot;</span><span class="p">,</span> <span class="n">compiler_args</span><span class="o">=</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;-I</span><span class="si">{</span><span class="n">tmp_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">])</span>
+        <span class="n">origin</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;fields&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">origin</span><span class="p">[</span><span class="s2">&quot;kind&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;struct&quot;</span>
+        <span class="k">assert</span> <span class="n">origin</span><span class="p">[</span><span class="s2">&quot;typeName&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Vec2&quot;</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">origin</span><span class="p">[</span><span class="s2">&quot;fields&quot;</span><span class="p">])</span> <span class="o">==</span> <span class="mi">2</span>
+        <span class="k">assert</span> <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;complete&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">True</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_macro_from_included_header</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tmp_path</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A ``#define`` array-size macro from an included header is evaluated correctly.&quot;&quot;&quot;</span>
+        <span class="p">(</span><span class="n">tmp_path</span> <span class="o">/</span> <span class="s2">&quot;config.h&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="s2">&quot;#pragma once</span><span class="se">\n</span><span class="s2">#define MAX_N 36</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="p">(</span><span class="n">tmp_path</span> <span class="o">/</span> <span class="s2">&quot;M.h&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span>
+            <span class="s1">&#39;#include &quot;config.h&quot;</span><span class="se">\n</span><span class="s1">typedef struct { double data[MAX_N]; } M;</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="p">)</span>
+        <span class="n">meta</span> <span class="o">=</span> <span class="n">parseStruct</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">tmp_path</span> <span class="o">/</span> <span class="s2">&quot;M.h&quot;</span><span class="p">),</span> <span class="s2">&quot;M&quot;</span><span class="p">,</span> <span class="n">compiler_args</span><span class="o">=</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;-I</span><span class="si">{</span><span class="n">tmp_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">])</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;fields&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;kind&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;array&quot;</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;shape&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="p">[</span><span class="mi">36</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;complete&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">True</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_array_of_structs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hfile</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;An array whose element is a struct carries kind ``&quot;struct&quot;`` and typeName in the element dict.&quot;&quot;&quot;</span>
+        <span class="n">src</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            typedef struct { double x; double y; } Point;</span>
+<span class="s2">            typedef struct { Point pts[4]; } M;</span>
+<span class="s2">        &quot;&quot;&quot;</span>
+        <span class="n">meta</span> <span class="o">=</span> <span class="n">parseStruct</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">hfile</span><span class="p">(</span><span class="n">src</span><span class="p">)),</span> <span class="s2">&quot;M&quot;</span><span class="p">)</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;fields&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;kind&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;array&quot;</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;shape&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;element&quot;</span><span class="p">][</span><span class="s2">&quot;kind&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;struct&quot;</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;element&quot;</span><span class="p">][</span><span class="s2">&quot;typeName&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Point&quot;</span>
+        <span class="k">assert</span> <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;complete&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">True</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_incomplete_nested_propagates_to_parent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hfile</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;An unknown field inside a nested struct marks the outer struct incomplete.&quot;&quot;&quot;</span>
+        <span class="n">src</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            struct Fwd;</span>
+<span class="s2">            typedef struct { struct Fwd val; int ok; } Inner;</span>
+<span class="s2">            typedef struct { Inner inner; } Outer;</span>
+<span class="s2">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">parseStruct</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">hfile</span><span class="p">(</span><span class="n">src</span><span class="p">)),</span> <span class="s2">&quot;Outer&quot;</span><span class="p">)[</span><span class="s2">&quot;complete&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">False</span>
+
+
+<span class="c1"># ===========================================================================</span>
+<span class="c1"># parseStruct - unresolvable / incomplete types</span>
+<span class="c1"># ===========================================================================</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">TestUnresolvableTypes</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_forward_declared_struct_becomes_unknown</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hfile</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A forward-declared but never-defined struct produces an unknown field without raising.</span>
+
+<span class="sd">        The sibling field must still resolve normally and ``complete`` must be ``False``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">src</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            struct Opaque;</span>
+<span class="s2">            typedef struct {</span>
+<span class="s2">                struct Opaque val;  //!&lt; incomplete-type field</span>
+<span class="s2">                int ok;</span>
+<span class="s2">            } M;</span>
+<span class="s2">        &quot;&quot;&quot;</span>
+        <span class="n">meta</span> <span class="o">=</span> <span class="n">parseStruct</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">hfile</span><span class="p">(</span><span class="n">src</span><span class="p">)),</span> <span class="s2">&quot;M&quot;</span><span class="p">)</span>
+        <span class="n">val_f</span><span class="p">,</span> <span class="n">ok_f</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;fields&quot;</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">val_f</span><span class="p">[</span><span class="s2">&quot;kind&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;unknown&quot;</span>
+        <span class="k">assert</span> <span class="n">val_f</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;val&quot;</span>
+        <span class="k">assert</span> <span class="n">ok_f</span><span class="p">[</span><span class="s2">&quot;kind&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;primitive&quot;</span>   <span class="c1"># sibling field still resolves</span>
+        <span class="k">assert</span> <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;complete&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">False</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_pointer_to_forward_decl_is_known</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hfile</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A pointer to an incomplete type always resolves to an 8-byte pointer field.&quot;&quot;&quot;</span>
+        <span class="n">src</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            struct Opaque;</span>
+<span class="s2">            typedef struct { struct Opaque *ptr; } M;</span>
+<span class="s2">        &quot;&quot;&quot;</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">parseStruct</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">hfile</span><span class="p">(</span><span class="n">src</span><span class="p">)),</span> <span class="s2">&quot;M&quot;</span><span class="p">)[</span><span class="s2">&quot;fields&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;kind&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;pointer&quot;</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;size_bytes&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">8</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_unknown_typename_in_target_raises</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hfile</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A completely undefined type name triggers ``ValueError`` to prevent silent corruption.</span>
+
+<span class="sd">        libclang silently maps unknown type names to ``int``, which would corrupt field</span>
+<span class="sd">        sizes and types.  ``_checkDiagnostics`` intercepts this specific diagnostic when</span>
+<span class="sd">        it originates in the target file itself and raises rather than letting wrong</span>
+<span class="sd">        metadata through.  This is the only diagnostic the parser treats as fatal;</span>
+<span class="sd">        general malformed-header detection is out of scope.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">hfile</span><span class="p">(</span><span class="s2">&quot;typedef struct { NonExistentType x; int ok; } M;&quot;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;Unresolvable field types&quot;</span><span class="p">):</span>
+            <span class="n">parseStruct</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="s2">&quot;M&quot;</span><span class="p">)</span>
+
+
+<span class="c1"># ===========================================================================</span>
+<span class="c1"># parseStruct - comment extraction</span>
+<span class="c1"># ===========================================================================</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">TestFieldComments</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_doxygen_exclamation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hfile</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A ``//!&lt;`` field comment is captured in the ``&quot;comment&quot;`` key.&quot;&quot;&quot;</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">hfile</span><span class="p">(</span><span class="s2">&quot;typedef struct { double thrust; //!&lt; [N] thrust force</span><span class="se">\n</span><span class="s2">} M;&quot;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">parseStruct</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="s2">&quot;M&quot;</span><span class="p">)[</span><span class="s2">&quot;fields&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;comment&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;[N] thrust force&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_doxygen_triple_slash</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hfile</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A ``///&lt;`` field comment is captured in the ``&quot;comment&quot;`` key.&quot;&quot;&quot;</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">hfile</span><span class="p">(</span><span class="s2">&quot;typedef struct { double isp; ///&lt; [s] specific impulse</span><span class="se">\n</span><span class="s2">} M;&quot;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">parseStruct</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="s2">&quot;M&quot;</span><span class="p">)[</span><span class="s2">&quot;fields&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;comment&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;[s] specific impulse&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_block_comment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hfile</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A ``/*!&lt; ... */`` inline block comment is captured in the ``&quot;comment&quot;`` key.&quot;&quot;&quot;</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">hfile</span><span class="p">(</span><span class="s2">&quot;typedef struct { double x; /*!&lt; x position */ } M;&quot;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">parseStruct</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="s2">&quot;M&quot;</span><span class="p">)[</span><span class="s2">&quot;fields&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;comment&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;x position&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_no_comment_is_empty_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hfile</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A field with no comment produces an empty ``&quot;comment&quot;`` string.&quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">parseStruct</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">hfile</span><span class="p">(</span><span class="s2">&quot;typedef struct { double x; } M;&quot;</span><span class="p">)),</span> <span class="s2">&quot;M&quot;</span><span class="p">)[</span><span class="s2">&quot;fields&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;comment&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span>
+
+
+<span class="c1"># ===========================================================================</span>
+<span class="c1"># parseStruct - struct lookup variants</span>
+<span class="c1"># ===========================================================================</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">TestStructLookup</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_named_struct_tag_same_as_typedef</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hfile</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A struct where the tag and typedef share the same name is found by that name.&quot;&quot;&quot;</span>
+        <span class="n">meta</span> <span class="o">=</span> <span class="n">parseStruct</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">hfile</span><span class="p">(</span><span class="s2">&quot;typedef struct MyMsg { double x; } MyMsg;&quot;</span><span class="p">)),</span> <span class="s2">&quot;MyMsg&quot;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;MyMsg&quot;</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">meta</span><span class="p">[</span><span class="s2">&quot;fields&quot;</span><span class="p">])</span> <span class="o">==</span> <span class="mi">1</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_anonymous_struct_typedef</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hfile</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;An anonymous struct (no tag) is found by its typedef name.&quot;&quot;&quot;</span>
+        <span class="n">meta</span> <span class="o">=</span> <span class="n">parseStruct</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">hfile</span><span class="p">(</span><span class="s2">&quot;typedef struct { double x; double y; } AnonMsg;&quot;</span><span class="p">)),</span> <span class="s2">&quot;AnonMsg&quot;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;AnonMsg&quot;</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">meta</span><span class="p">[</span><span class="s2">&quot;fields&quot;</span><span class="p">])</span> <span class="o">==</span> <span class="mi">2</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_struct_not_found_raises</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hfile</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Requesting a struct name that does not exist in the header raises ``ValueError``.&quot;&quot;&quot;</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">hfile</span><span class="p">(</span><span class="s2">&quot;typedef struct { int x; } Foo;&quot;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;Bar&quot;</span><span class="p">):</span>
+            <span class="n">parseStruct</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="s2">&quot;Bar&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_source_file_and_kind_in_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hfile</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The top-level metadata dict includes the source filename and ``kind=&quot;struct&quot;``.&quot;&quot;&quot;</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">hfile</span><span class="p">(</span><span class="s2">&quot;typedef struct { int x; } M;&quot;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;MyPayload.h&quot;</span><span class="p">)</span>
+        <span class="n">meta</span> <span class="o">=</span> <span class="n">parseStruct</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="s2">&quot;M&quot;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;source_file&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;MyPayload.h&quot;</span>
+        <span class="k">assert</span> <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;kind&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;struct&quot;</span>
+
+
+<span class="c1"># ===========================================================================</span>
+<span class="c1"># parseStruct - memory layout (offsets &amp; sizes)</span>
+<span class="c1"># ===========================================================================</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">TestLayout</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_padding_between_int_and_double</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hfile</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;On x86-64, ``int`` + 4-byte pad + ``double`` produces offsets 0/8 and total size 16.&quot;&quot;&quot;</span>
+        <span class="n">meta</span> <span class="o">=</span> <span class="n">parseStruct</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">hfile</span><span class="p">(</span><span class="s2">&quot;typedef struct { int a; double b; } M;&quot;</span><span class="p">)),</span> <span class="s2">&quot;M&quot;</span><span class="p">)</span>
+        <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;fields&quot;</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">a</span><span class="p">[</span><span class="s2">&quot;offset_bytes&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span>
+        <span class="k">assert</span> <span class="n">a</span><span class="p">[</span><span class="s2">&quot;size_bytes&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">4</span>
+        <span class="k">assert</span> <span class="n">b</span><span class="p">[</span><span class="s2">&quot;offset_bytes&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">8</span>
+        <span class="k">assert</span> <span class="n">b</span><span class="p">[</span><span class="s2">&quot;size_bytes&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">8</span>
+        <span class="k">assert</span> <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;size_bytes&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">16</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_complete_true_all_primitives</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hfile</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A struct with only primitive fields is marked ``complete=True``.&quot;&quot;&quot;</span>
+        <span class="n">meta</span> <span class="o">=</span> <span class="n">parseStruct</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">hfile</span><span class="p">(</span><span class="s2">&quot;typedef struct { double x; int n; } M;&quot;</span><span class="p">)),</span> <span class="s2">&quot;M&quot;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;complete&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">True</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_complete_false_has_unknown</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hfile</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A struct containing an unresolvable field is marked ``complete=False``.&quot;&quot;&quot;</span>
+        <span class="n">src</span> <span class="o">=</span> <span class="s2">&quot;struct Fwd; typedef struct { struct Fwd f; } M;&quot;</span>
+        <span class="k">assert</span> <span class="n">parseStruct</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">hfile</span><span class="p">(</span><span class="n">src</span><span class="p">)),</span> <span class="s2">&quot;M&quot;</span><span class="p">)[</span><span class="s2">&quot;complete&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">False</span>
+
+
+<span class="c1"># ===========================================================================</span>
+<span class="c1"># parseStruct - C++ mode</span>
+<span class="c1"># ===========================================================================</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">TestCppMode</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_default_member_initializer_scalar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hfile</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;C++ default member initializers on scalar fields do not confuse type classification.&quot;&quot;&quot;</span>
+        <span class="n">src</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            typedef struct {</span>
+<span class="s2">                double force = 0.0;   //!&lt; [N] force magnitude</span>
+<span class="s2">                int    count = 0;     //!&lt; item count</span>
+<span class="s2">            } M;</span>
+<span class="s2">        &quot;&quot;&quot;</span>
+        <span class="n">meta</span> <span class="o">=</span> <span class="n">parseStruct</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">hfile</span><span class="p">(</span><span class="n">src</span><span class="p">)),</span> <span class="s2">&quot;M&quot;</span><span class="p">,</span> <span class="n">compiler_args</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;-x&quot;</span><span class="p">,</span> <span class="s2">&quot;c++&quot;</span><span class="p">])</span>
+        <span class="n">force</span><span class="p">,</span> <span class="n">count</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;fields&quot;</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">force</span><span class="p">[</span><span class="s2">&quot;kind&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;primitive&quot;</span>
+        <span class="k">assert</span> <span class="n">force</span><span class="p">[</span><span class="s2">&quot;ctype&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;double&quot;</span>
+        <span class="k">assert</span> <span class="n">count</span><span class="p">[</span><span class="s2">&quot;kind&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;primitive&quot;</span>
+        <span class="k">assert</span> <span class="n">count</span><span class="p">[</span><span class="s2">&quot;ctype&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;int&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_default_member_initializer_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hfile</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;C++ default member initializers on array fields do not prevent array classification.&quot;&quot;&quot;</span>
+        <span class="n">src</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            typedef struct {</span>
+<span class="s2">                double v[3] = </span><span class="si">{0.0}</span><span class="s2">;  //!&lt; direction vector</span>
+<span class="s2">            } M;</span>
+<span class="s2">        &quot;&quot;&quot;</span>
+        <span class="n">meta</span> <span class="o">=</span> <span class="n">parseStruct</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">hfile</span><span class="p">(</span><span class="n">src</span><span class="p">)),</span> <span class="s2">&quot;M&quot;</span><span class="p">,</span> <span class="n">compiler_args</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;-x&quot;</span><span class="p">,</span> <span class="s2">&quot;c++&quot;</span><span class="p">])</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;fields&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;kind&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;array&quot;</span>
+        <span class="k">assert</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;shape&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;complete&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">True</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_nested_struct_from_cpp_header</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tmp_path</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A C++ struct included from another header is resolved and inlined as a nested struct.&quot;&quot;&quot;</span>
+        <span class="p">(</span><span class="n">tmp_path</span> <span class="o">/</span> <span class="s2">&quot;state.h&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span>
+            <span class="s2">&quot;struct State { double pos[3]; double vel[3]; };</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+        <span class="p">(</span><span class="n">tmp_path</span> <span class="o">/</span> <span class="s2">&quot;M.h&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span>
+            <span class="s1">&#39;#include &quot;state.h&quot;</span><span class="se">\n</span><span class="s1">typedef struct { State s; } M;</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="p">)</span>
+        <span class="n">meta</span> <span class="o">=</span> <span class="n">parseStruct</span><span class="p">(</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">tmp_path</span> <span class="o">/</span> <span class="s2">&quot;M.h&quot;</span><span class="p">),</span> <span class="s2">&quot;M&quot;</span><span class="p">,</span>
+            <span class="n">compiler_args</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;-x&quot;</span><span class="p">,</span> <span class="s2">&quot;c++&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;-I</span><span class="si">{</span><span class="n">tmp_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">],</span>
+        <span class="p">)</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;fields&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">s</span><span class="p">[</span><span class="s2">&quot;kind&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;struct&quot;</span>
+        <span class="k">assert</span> <span class="n">s</span><span class="p">[</span><span class="s2">&quot;typeName&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;State&quot;</span>
+        <span class="k">assert</span> <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;complete&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">True</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_unresolvable_cpp_type_never_silently_primitive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hfile</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;An undeclared C++ namespaced type must not be silently classified as primitive.</span>
+
+<span class="sd">        If ``_check_diagnostics`` fires, a ``ValueError`` is acceptable.  Otherwise the</span>
+<span class="sd">        field must be ``unknown`` and ``complete`` must be ``False``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">src</span> <span class="o">=</span> <span class="s2">&quot;typedef struct { Eigen::Vector3d v; } M;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">meta</span> <span class="o">=</span> <span class="n">parseStruct</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">hfile</span><span class="p">(</span><span class="n">src</span><span class="p">)),</span> <span class="s2">&quot;M&quot;</span><span class="p">,</span> <span class="n">compiler_args</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;-x&quot;</span><span class="p">,</span> <span class="s2">&quot;c++&quot;</span><span class="p">])</span>
+            <span class="c1"># Did not raise → the field must be unknown, not a silently wrong primitive</span>
+            <span class="k">assert</span> <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;complete&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">False</span>
+            <span class="k">assert</span> <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;fields&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;kind&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;unknown&quot;</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">pass</span>  <span class="c1"># _check_diagnostics fired - also an acceptable outcome</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

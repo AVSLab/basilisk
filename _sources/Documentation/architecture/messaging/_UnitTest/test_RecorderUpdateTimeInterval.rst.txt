@@ -1,0 +1,13 @@
+.. _test_RecorderUpdateTimeInterval:
+
+test_RecorderUpdateTimeInterval
+===============================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. automodule:: test_RecorderUpdateTimeInterval
+   :members:
+   :show-inheritance:
+

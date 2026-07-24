@@ -1,0 +1,391 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Optional Performance Benchmarks &mdash; Basilisk 2.12.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=2ebb1c42" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=4ad2e773"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Adding Support Data Files" href="addSupportData.html" />
+    <link rel="prev" title="Migrating BSK Scripts to Python 3" href="MigratingToPython3.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../Support.html">Support</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../bskReleaseNotes.html">Basilisk Release Notes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bskKnownIssues.html">Basilisk Known Issues</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../User.html">User Information</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../Developer.html">Developer Information</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="CodingGuidlines.html">Coding Guidelines</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Debugging.html">Accessing the Debugger for C/C++ Basilisk Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="deprecatingCode.html">Deprecating code in Basilisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="makingNewBskModule.html">Making a New C/C++ Basilisk Module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="addSphinxDoc.html">Using Sphinx to Document Basilisk Modules and Folders</a></li>
+<li class="toctree-l3"><a class="reference internal" href="createHtmlDocumentation.html">Creating the HTML Basilisk Documentation using Sphinx/Doxygen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskModuleCheckoutList.html">Basilisk Module Checkout List</a></li>
+<li class="toctree-l3"><a class="reference internal" href="UnderstandingBasilisk.html">Basilisk Architecture Support Documentation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migratingBskModuleToBsk2.html">Migrating Basilisk Modules from Version 1.X to 2.X</a></li>
+<li class="toctree-l3"><a class="reference internal" href="MigratingToPython3.html">Migrating BSK Scripts to Python 3</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Optional Performance Benchmarks</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#dynamics-effector-benchmark">Dynamics Effector Benchmark</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#eigen-and-linearalgebra-benchmark">Eigen and <code class="docutils literal notranslate"><span class="pre">linearAlgebra</span></code> Benchmark</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#benchmark-smoke-tests">Benchmark Smoke Tests</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#guidelines-for-future-benchmarks">Guidelines for Future Benchmarks</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="addSupportData.html">Adding Support Data Files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskReleaseGuide.html">BSK Release Guide</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskSdkReleaseGuide.html">BSK-SDK Release Guide</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../Support.html">Support</a></li>
+          <li class="breadcrumb-item"><a href="../Developer.html">Developer Information</a></li>
+      <li class="breadcrumb-item active">Optional Performance Benchmarks</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Support/Developer/performanceBenchmarks.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="optional-performance-benchmarks">
+<span id="performancebenchmarks"></span><h1>Optional Performance Benchmarks<a class="headerlink" href="#optional-performance-benchmarks" title="Link to this heading"></a></h1>
+<p>Basilisk performance benchmarks are developer utilities for measuring selected
+implementation choices.  They are not numerical validation tests.  Run them when
+investigating execution speed, comparing algorithms, or checking whether a local
+change affects a performance-sensitive code path.</p>
+<p>Benchmark timing depends on the processor, compiler, build type, system load, and
+power management state.  Use a release build, run the benchmark several times from a
+quiet terminal, and compare results from the same machine and build configuration.</p>
+<section id="dynamics-effector-benchmark">
+<h2>Dynamics Effector Benchmark<a class="headerlink" href="#dynamics-effector-benchmark" title="Link to this heading"></a></h2>
+<p>The dynamics effector benchmark measures selected spacecraft, state effector, and
+dynamic effector execution speed with a shared benchmark harness, including the
+NDOF spinning-body BSM multi-body dynamics case.</p>
+<p>Source script: <a class="reference download internal" download="" href="../../_downloads/2058ac6659cc3927a9cfcc77d58d2248/benchmark_state_effectors.py"><code class="xref download docutils literal notranslate"><span class="pre">benchmark_state_effectors.py</span></code></a></p>
+<p id="module-benchmark_state_effectors"><span id="benchmark-state-effectors"></span>Benchmark selected Basilisk spacecraft dynamics effectors.</p>
+<p>This optional developer benchmark runs compact spacecraft simulations that isolate
+selected dynamics effectors.  Each trial builds a fresh
+<code class="docutils literal notranslate"><span class="pre">spacecraft.Spacecraft</span></code> object, attaches the requested effector load, disables
+recorders and plotting, runs the default RK4 integration loop, and reports
+wall-clock timing.</p>
+<p>The benchmark is intended for local before/after comparisons while optimizing
+state effectors, dynamic effectors, or the spacecraft integration path.  It is not
+a numerical validation test and it is not run by CI.</p>
+<section id="running-the-benchmark">
+<h3>Running the Benchmark<a class="headerlink" href="#running-the-benchmark" title="Link to this heading"></a></h3>
+<p>Run the benchmark from the Basilisk repository root directory after building the
+Basilisk Python package:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>/path/to/basilisk
+.venv/bin/python<span class="w"> </span>benchmarks/dynamics/benchmark_state_effectors.py<span class="w"> </span>--case<span class="w"> </span>all
+</pre></div>
+</div>
+<p>Run a single case with a longer measurement:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>.venv/bin/python<span class="w"> </span>benchmarks/dynamics/benchmark_state_effectors.py<span class="w"> </span><span class="se">\</span>
+<span class="w">   </span>--case<span class="w"> </span>SpinningBodyTwoDOFStateEffector<span class="w"> </span>--steps<span class="w"> </span><span class="m">10000</span><span class="w"> </span>--trials<span class="w"> </span><span class="m">7</span>
+</pre></div>
+</div>
+<p>Use <code class="docutils literal notranslate"><span class="pre">--components</span></code> to scale the number of repeated devices in cases that
+support repetition.  Use <code class="docutils literal notranslate"><span class="pre">--segments</span></code> to scale the per-effector body count in
+the NDOF translator and hinged-body cases:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>.venv/bin/python<span class="w"> </span>benchmarks/dynamics/benchmark_state_effectors.py<span class="w"> </span><span class="se">\</span>
+<span class="w">   </span>--case<span class="w"> </span>LinearTranslationNDOFStateEffector<span class="w"> </span>--components<span class="w"> </span><span class="m">2</span><span class="w"> </span>--segments<span class="w"> </span><span class="m">8</span>
+</pre></div>
+</div>
+</section>
+<section id="supported-cases">
+<h3>Supported Cases<a class="headerlink" href="#supported-cases" title="Link to this heading"></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">--case</span></code> option accepts either the canonical benchmark names or the
+corresponding effector class-style aliases:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">spacecraft</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">spacecraft-point-mass</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">spacecraft-orbit</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">spacecraft-point-mass-orbit</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dual-hinged-rigid-body</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">gravity-gradient</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">hinged-rigid-body</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">linear-spring-mass-damper</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">linear-translation-ndof</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">linear-translation-one-dof</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">n-hinged-rigid-body</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">prescribed-motion</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">reaction-wheel</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">spherical-pendulum</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">spinning-body-ndof</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">spinning-body-one-dof</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">spinning-body-two-dof</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">vscmg</span></code></p></li>
+</ul>
+</section>
+<section id="expected-terminal-output">
+<h3>Expected Terminal Output<a class="headerlink" href="#expected-terminal-output" title="Link to this heading"></a></h3>
+<p>The exact timings will vary by machine.  An abridged representative all-case run
+looks like:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Dynamics effector benchmark
+Cases: all
+Steps per trial: 2000
+Time step: 0.010000 s
+Simulated time per trial: 20.000 s
+Trials: 5
+Warmup steps: 200
+Components per case: 4
+Segments per NDOF case: 4
+Gravity: disabled except orbit and gravity-gradient cases
+Recorders: disabled
+Spacecraft integrator: RK4 default
+
+Case                                      median [s]   median us/step      min [s]    min us/step
+spacecraft                                  0.012345            6.173     0.012120          6.060
+hinged-rigid-body                           0.045678           22.839     0.045100         22.550
+</pre></div>
+</div>
+</section>
+<section id="interpreting-the-columns">
+<h3>Interpreting the Columns<a class="headerlink" href="#interpreting-the-columns" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">median</span> <span class="pre">[s]</span></code></dt><dd><p>Median wall-clock time across measured trials for one
+<code class="docutils literal notranslate"><span class="pre">ExecuteSimulation()</span></code> call.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">median</span> <span class="pre">us/step</span></code></dt><dd><p>Median wall-clock microseconds per integration step.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">min</span> <span class="pre">[s]</span></code></dt><dd><p>Fastest measured trial wall-clock time.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">min</span> <span class="pre">us/step</span></code></dt><dd><p>Fastest measured trial wall-clock microseconds per integration step.</p>
+</dd>
+</dl>
+</section>
+</section>
+<section id="eigen-and-linearalgebra-benchmark">
+<h2>Eigen and <code class="docutils literal notranslate"><span class="pre">linearAlgebra</span></code> Benchmark<a class="headerlink" href="#eigen-and-linearalgebra-benchmark" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">benchmark_eigen_linear_algebra</span></code> executable compares common Eigen vector and
+matrix operations against the Basilisk <code class="docutils literal notranslate"><span class="pre">linearAlgebra.c/h</span></code> utility functions.  It
+includes dot products, cross products, fixed-size matrix-vector products, fixed-size
+matrix-matrix products, dynamic matrix products, and inverse operations.</p>
+<p>Source file: <a class="reference download internal" download="" href="../../_downloads/253c162571e0fed03cd3571d64fbc462/benchmark_eigen_linear_algebra.cpp"><code class="xref download docutils literal notranslate"><span class="pre">benchmark_eigen_linear_algebra.cpp</span></code></a></p>
+<p>This benchmark is excluded from the normal build with <code class="docutils literal notranslate"><span class="pre">EXCLUDE_FROM_ALL</span></code>.  Build it
+explicitly from the Basilisk repository root directory:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>/path/to/basilisk
+.venv/bin/cmake<span class="w"> </span>-S<span class="w"> </span>src<span class="w"> </span>-B<span class="w"> </span>dist3
+.venv/bin/cmake<span class="w"> </span>--build<span class="w"> </span>dist3<span class="w"> </span>--target<span class="w"> </span>benchmark_eigen_linear_algebra<span class="w"> </span>--config<span class="w"> </span>Release
+</pre></div>
+</div>
+<p>Then run the benchmark executable:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>dist3/benchmarks/utilities/benchmark_eigen_linear_algebra
+</pre></div>
+</div>
+<p>To run a longer benchmark, pass a positive integer scale factor.  For example, the
+following command multiplies the default loop counts by <code class="docutils literal notranslate"><span class="pre">5</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>dist3/benchmarks/utilities/benchmark_eigen_linear_algebra<span class="w"> </span><span class="m">5</span>
+</pre></div>
+</div>
+<p>To run only a brief executable smoke check, use <code class="docutils literal notranslate"><span class="pre">--smoke</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>dist3/benchmarks/utilities/benchmark_eigen_linear_algebra<span class="w"> </span>--smoke
+</pre></div>
+</div>
+<section id="id1">
+<h3>Expected Terminal Output<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+<p>The exact timings will vary by machine.  A representative run looks like:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Eigen versus linearAlgebra benchmark
+Build and run this benchmark target in Release mode for meaningful timings.
+The ratio column is linearAlgebra time divided by Eigen time.
+
+Operation                           Iterations    Eigen ns/op     linearAlg ns/op      linear/Eigen     checksum diff
+v3 dot                                20000000          2.512               2.623             1.044             0.000
+v3 cross                              10000000          1.701               3.458             2.032             0.000
+3x3 multiply                           5000000          2.386               3.538             1.483             0.000
+3x3 transpose multiply                 5000000          2.761               4.241             1.536             0.000
+3x3 vector multiply                    8000000          2.213               4.164             1.881             0.000
+3x3 inverse                            1000000          2.475               4.849             1.959             0.000
+4x4 inverse                             200000          4.401              22.896             5.202             0.000
+6x6 multiply                            800000          8.622              13.384             1.552             0.000
+6x6 vector multiply                    2000000          2.387               5.347             2.240             0.000
+dynamic 6x6 multiply                    500000         68.503              50.585             0.738             0.000
+dynamic 12x12 multiply                  100000        154.105             650.041             4.218             0.000
+generic 6x6 inverse                        200        573.330           54896.460            95.750             0.000
+
+checksum sink: -1791071704.319
+</pre></div>
+</div>
+</section>
+<section id="id2">
+<h3>Interpreting the Columns<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">Eigen</span> <span class="pre">ns/op</span></code></dt><dd><p>Average Eigen execution time for the listed operation, in nanoseconds per
+operation.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">linearAlg</span> <span class="pre">ns/op</span></code></dt><dd><p>Average <code class="docutils literal notranslate"><span class="pre">linearAlgebra</span></code> execution time for the same operation, in nanoseconds
+per operation.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">linear/Eigen</span></code></dt><dd><p>Ratio of <code class="docutils literal notranslate"><span class="pre">linearAlg</span> <span class="pre">ns/op</span></code> divided by <code class="docutils literal notranslate"><span class="pre">Eigen</span> <span class="pre">ns/op</span></code>.  Values greater than
+<code class="docutils literal notranslate"><span class="pre">1.0</span></code> mean <code class="docutils literal notranslate"><span class="pre">linearAlgebra</span></code> was slower for that operation.  Values less than
+<code class="docutils literal notranslate"><span class="pre">1.0</span></code> mean <code class="docutils literal notranslate"><span class="pre">linearAlgebra</span></code> was faster.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">checksum</span> <span class="pre">diff</span></code></dt><dd><p>Relative difference between the Eigen and <code class="docutils literal notranslate"><span class="pre">linearAlgebra</span></code> checksums.  This is a
+basic guard that both loops performed comparable numerical work; it is not a
+replacement for a unit test.</p>
+</dd>
+</dl>
+</section>
+</section>
+<section id="benchmark-smoke-tests">
+<h2>Benchmark Smoke Tests<a class="headerlink" href="#benchmark-smoke-tests" title="Link to this heading"></a></h2>
+<p>The benchmark smoke tests are pass/fail freshness checks.  They do not evaluate
+performance; they only verify that the benchmark entry points still build or run with
+a minimal workload.</p>
+<p>Source test: <a class="reference download internal" download="" href="../../_downloads/5991c01b11ebe0cfd9752905f969ecd4/test_benchmark_smoke.py"><code class="xref download docutils literal notranslate"><span class="pre">test_benchmark_smoke.py</span></code></a></p>
+<p>The benchmark smoke tests are included in the default <code class="docutils literal notranslate"><span class="pre">pytest</span></code> collection paths,
+so they run when a developer invokes <code class="docutils literal notranslate"><span class="pre">pytest</span></code> from the Basilisk repository root
+directory or from the <code class="docutils literal notranslate"><span class="pre">src</span></code> directory.  To run only the benchmark smoke tests from
+the repository root directory:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>.venv/bin/pytest<span class="w"> </span>-q<span class="w"> </span>benchmarks/tests
+</pre></div>
+</div>
+<p>Or from the <code class="docutils literal notranslate"><span class="pre">src</span></code> directory:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>../.venv/bin/pytest<span class="w"> </span>-q<span class="w"> </span>../benchmarks/tests
+</pre></div>
+</div>
+<p>The Python smoke test runs the dynamics benchmark with one integration step, one
+trial, no warmup, one component, and one segment.  The C++ smoke test builds and runs
+the <code class="docutils literal notranslate"><span class="pre">benchmark_smoke_tests</span></code> CMake target, which executes the Eigen versus
+<code class="docutils literal notranslate"><span class="pre">linearAlgebra</span></code> benchmark in <code class="docutils literal notranslate"><span class="pre">--smoke</span></code> mode with capped iteration counts.  The
+C++ smoke test requires an already configured <code class="docutils literal notranslate"><span class="pre">dist3</span></code> build directory that includes
+the benchmark targets; otherwise it is skipped with a reconfigure hint.</p>
+<p>Developers can also run the C++ smoke target directly:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>.venv/bin/cmake<span class="w"> </span>--build<span class="w"> </span>dist3<span class="w"> </span>--target<span class="w"> </span>benchmark_smoke_tests<span class="w"> </span>--config<span class="w"> </span>Release
+</pre></div>
+</div>
+</section>
+<section id="guidelines-for-future-benchmarks">
+<h2>Guidelines for Future Benchmarks<a class="headerlink" href="#guidelines-for-future-benchmarks" title="Link to this heading"></a></h2>
+<p>Keep performance benchmarks opt-in unless there is a specific reason to run them in
+CI.  New benchmarks should document:</p>
+<ul class="simple">
+<li><p>The target name and source file.</p></li>
+<li><p>The build configuration used for meaningful results.</p></li>
+<li><p>The command used to run the benchmark.</p></li>
+<li><p>Representative terminal output.</p></li>
+<li><p>How to interpret each reported metric.</p></li>
+<li><p>Any known limitations that affect comparison quality.</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="MigratingToPython3.html" class="btn btn-neutral float-left" title="Migrating BSK Scripts to Python 3" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="addSupportData.html" class="btn btn-neutral float-right" title="Adding Support Data Files" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

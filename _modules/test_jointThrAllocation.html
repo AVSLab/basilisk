@@ -1,0 +1,524 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_jointThrAllocation &mdash; Basilisk 2.11.0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=2ebb1c42" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=1647406f"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Plugins/overview.html">About Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Plugins/installing.html">Installing Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Plugins/writing.html">Writing a Basilisk Plugin</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">test_jointThrAllocation</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for test_jointThrAllocation</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">bskLogging</span><span class="p">,</span> <span class="n">messaging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.fswAlgorithms</span><span class="w"> </span><span class="kn">import</span> <span class="n">jointThrAllocation</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">RigidBodyKinematics</span> <span class="k">as</span> <span class="n">rbk</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_linked_input_messages</span><span class="p">():</span>
+    <span class="n">armConfigMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">THRArmConfigMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">messaging</span><span class="o">.</span><span class="n">THRArmConfigMsgPayload</span><span class="p">())</span>
+    <span class="n">hubStatesMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsgPayload</span><span class="p">())</span>
+    <span class="n">transForceMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CmdForceInertialMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">messaging</span><span class="o">.</span><span class="n">CmdForceInertialMsgPayload</span><span class="p">())</span>
+    <span class="n">rotTorqueMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CmdTorqueBodyMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">messaging</span><span class="o">.</span><span class="n">CmdTorqueBodyMsgPayload</span><span class="p">())</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;armConfigInMsg&quot;</span><span class="p">:</span> <span class="n">armConfigMsg</span><span class="p">,</span>
+        <span class="s2">&quot;hubStatesInMsg&quot;</span><span class="p">:</span> <span class="n">hubStatesMsg</span><span class="p">,</span>
+        <span class="s2">&quot;transForceInMsg&quot;</span><span class="p">:</span> <span class="n">transForceMsg</span><span class="p">,</span>
+        <span class="s2">&quot;rotTorqueInMsg&quot;</span><span class="p">:</span> <span class="n">rotTorqueMsg</span><span class="p">,</span>
+    <span class="p">}</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_configured_allocation</span><span class="p">():</span>
+    <span class="n">allocation</span> <span class="o">=</span> <span class="n">jointThrAllocation</span><span class="o">.</span><span class="n">JointThrAllocation</span><span class="p">()</span>
+    <span class="n">allocation</span><span class="o">.</span><span class="n">nArms</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">allocation</span><span class="o">.</span><span class="n">nThr</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">allocation</span><span class="o">.</span><span class="n">nJoint</span> <span class="o">=</span> <span class="mi">8</span>
+    <span class="n">allocation</span><span class="o">.</span><span class="n">armJointCount</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">allocation</span><span class="o">.</span><span class="n">armJointStart</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">allocation</span><span class="o">.</span><span class="n">thrArmIdx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">allocation</span><span class="o">.</span><span class="n">thrArmJointIdx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">allocation</span><span class="o">.</span><span class="n">r_CP_P</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="p">[</span><span class="mf">0.79</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>  <span class="c1"># [m]</span>
+            <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>  <span class="c1"># [m]</span>
+            <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>  <span class="c1"># [m]</span>
+            <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>  <span class="c1"># [m]</span>
+            <span class="p">[</span><span class="o">-</span><span class="mf">0.79</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>  <span class="c1"># [m]</span>
+            <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>  <span class="c1"># [m]</span>
+            <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>  <span class="c1"># [m]</span>
+            <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>  <span class="c1"># [m]</span>
+        <span class="p">]</span>
+    <span class="p">)</span>
+    <span class="n">allocation</span><span class="o">.</span><span class="n">r_TP_P</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>  <span class="c1"># [m]</span>
+            <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>  <span class="c1"># [m]</span>
+        <span class="p">]</span>
+    <span class="p">)</span>
+    <span class="n">allocation</span><span class="o">.</span><span class="n">sHat_P</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+        <span class="p">]</span>
+    <span class="p">)</span>
+    <span class="n">allocation</span><span class="o">.</span><span class="n">fHat_P</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="p">[</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+            <span class="p">[</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+        <span class="p">]</span>
+    <span class="p">)</span>
+    <span class="n">arm2_base_dcm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="p">[</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
+        <span class="p">]</span>
+    <span class="p">)</span>
+    <span class="n">allocation</span><span class="o">.</span><span class="n">dcm_C0P</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span>
+            <span class="n">arm2_base_dcm</span><span class="p">,</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span>
+        <span class="p">]</span>
+    <span class="p">)</span>
+    <span class="n">allocation</span><span class="o">.</span><span class="n">hubMass</span> <span class="o">=</span> <span class="mf">980.0</span>  <span class="c1"># [kg]</span>
+    <span class="n">allocation</span><span class="o">.</span><span class="n">r_BcB_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>  <span class="c1"># [m]</span>
+    <span class="n">allocation</span><span class="o">.</span><span class="n">bodyArmIdx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">allocation</span><span class="o">.</span><span class="n">bodyJointIdx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">allocation</span><span class="o">.</span><span class="n">bodyMass</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">8.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">8.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">])</span>  <span class="c1"># [kg]</span>
+    <span class="n">allocation</span><span class="o">.</span><span class="n">r_LcP_P</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>  <span class="c1"># [m]</span>
+            <span class="p">[</span><span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>  <span class="c1"># [m]</span>
+            <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>  <span class="c1"># [m]</span>
+            <span class="p">[</span><span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>  <span class="c1"># [m]</span>
+        <span class="p">]</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">allocation</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_expected_four_joint_layout</span><span class="p">(</span><span class="n">theta</span><span class="p">):</span>
+    <span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">arm2_base_dcm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="p">[</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
+        <span class="p">]</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">rot_x</span><span class="p">(</span><span class="n">angle</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">rbk</span><span class="o">.</span><span class="n">PRV2C</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">angle</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">rot_y</span><span class="p">(</span><span class="n">angle</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">rbk</span><span class="o">.</span><span class="n">PRV2C</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">angle</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">rot_z</span><span class="p">(</span><span class="n">angle</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">rbk</span><span class="o">.</span><span class="n">PRV2C</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">angle</span><span class="p">]))</span>
+
+    <span class="n">dcm_CB</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">8</span><span class="p">)]</span>
+    <span class="n">r_CB_B</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">8</span><span class="p">)]</span>
+
+    <span class="n">dcm_CB</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">rot_x</span><span class="p">(</span><span class="n">theta</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">r_CB_B</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.79</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>  <span class="c1"># [m]</span>
+    <span class="n">dcm_CB</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">rot_y</span><span class="p">(</span><span class="n">theta</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">@</span> <span class="n">dcm_CB</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">r_CB_B</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">r_CB_B</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">dcm_CB</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">rot_z</span><span class="p">(</span><span class="n">theta</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">@</span> <span class="n">dcm_CB</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">r_CB_B</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">r_CB_B</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">dcm_CB</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>  <span class="c1"># [m]</span>
+    <span class="n">dcm_CB</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">rot_y</span><span class="p">(</span><span class="n">theta</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span> <span class="o">@</span> <span class="n">dcm_CB</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">r_CB_B</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">r_CB_B</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="n">dcm_CB</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="n">rot_x</span><span class="p">(</span><span class="n">theta</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span> <span class="o">@</span> <span class="n">arm2_base_dcm</span>
+    <span class="n">r_CB_B</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">0.79</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>  <span class="c1"># [m]</span>
+    <span class="n">dcm_CB</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">=</span> <span class="n">rot_y</span><span class="p">(</span><span class="n">theta</span><span class="p">[</span><span class="mi">5</span><span class="p">])</span> <span class="o">@</span> <span class="n">dcm_CB</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+    <span class="n">r_CB_B</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">=</span> <span class="n">r_CB_B</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">dcm_CB</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="o">=</span> <span class="n">rot_z</span><span class="p">(</span><span class="n">theta</span><span class="p">[</span><span class="mi">6</span><span class="p">])</span> <span class="o">@</span> <span class="n">dcm_CB</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
+    <span class="n">r_CB_B</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="o">=</span> <span class="n">r_CB_B</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">+</span> <span class="n">dcm_CB</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>  <span class="c1"># [m]</span>
+    <span class="n">dcm_CB</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span> <span class="o">=</span> <span class="n">rot_y</span><span class="p">(</span><span class="n">theta</span><span class="p">[</span><span class="mi">7</span><span class="p">])</span> <span class="o">@</span> <span class="n">dcm_CB</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span>
+    <span class="n">r_CB_B</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span> <span class="o">=</span> <span class="n">r_CB_B</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="n">boom_mass</span> <span class="o">=</span> <span class="mf">8.0</span>  <span class="c1"># [kg]</span>
+    <span class="n">tip_mass</span> <span class="o">=</span> <span class="mf">2.0</span>  <span class="c1"># [kg]</span>
+    <span class="n">hub_mass</span> <span class="o">=</span> <span class="mf">980.0</span>  <span class="c1"># [kg]</span>
+    <span class="n">boom_com_p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>  <span class="c1"># [m]</span>
+    <span class="n">tip_com_p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>  <span class="c1"># [m]</span>
+
+    <span class="n">com_numerator</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">com_numerator</span> <span class="o">+=</span> <span class="n">boom_mass</span> <span class="o">*</span> <span class="p">(</span><span class="n">r_CB_B</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">dcm_CB</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">boom_com_p</span><span class="p">)</span>  <span class="c1"># [kg*m]</span>
+    <span class="n">com_numerator</span> <span class="o">+=</span> <span class="n">tip_mass</span> <span class="o">*</span> <span class="p">(</span><span class="n">r_CB_B</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">+</span> <span class="n">dcm_CB</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">tip_com_p</span><span class="p">)</span>  <span class="c1"># [kg*m]</span>
+    <span class="n">com_numerator</span> <span class="o">+=</span> <span class="n">boom_mass</span> <span class="o">*</span> <span class="p">(</span><span class="n">r_CB_B</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">+</span> <span class="n">dcm_CB</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">boom_com_p</span><span class="p">)</span>  <span class="c1"># [kg*m]</span>
+    <span class="n">com_numerator</span> <span class="o">+=</span> <span class="n">tip_mass</span> <span class="o">*</span> <span class="p">(</span><span class="n">r_CB_B</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span> <span class="o">+</span> <span class="n">dcm_CB</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">tip_com_p</span><span class="p">)</span>  <span class="c1"># [kg*m]</span>
+    <span class="n">r_ComB_B</span> <span class="o">=</span> <span class="n">com_numerator</span> <span class="o">/</span> <span class="p">(</span><span class="n">hub_mass</span> <span class="o">+</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="p">(</span><span class="n">boom_mass</span> <span class="o">+</span> <span class="n">tip_mass</span><span class="p">))</span>  <span class="c1"># [m]</span>
+
+    <span class="k">return</span> <span class="n">dcm_CB</span><span class="p">,</span> <span class="n">r_CB_B</span><span class="p">,</span> <span class="n">r_ComB_B</span>
+
+
+<div class="viewcode-block" id="test_map_matrix">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/effectorInterfaces/jointThrAllocation/_UnitTest/test_jointThrAllocation.html#test_jointThrAllocation.test_map_matrix">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_map_matrix</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    **Validation Test Description**</span>
+
+<span class="sd">    This unit test verifies that :func:`jointThrAllocation.mapMatrix` maps</span>
+<span class="sd">    thruster force magnitudes into the expected stacked force and torque</span>
+<span class="sd">    wrench.</span>
+
+<span class="sd">    **Description of Variables Being Tested**</span>
+
+<span class="sd">    This unit test checks the force block and torque block of the returned</span>
+<span class="sd">    wrench mapping matrix.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">rVec_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]])</span>  <span class="c1"># [m]</span>
+    <span class="n">fHatVec_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]])</span>
+    <span class="n">r_ComB_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>  <span class="c1"># [m]</span>
+
+    <span class="n">mapping</span> <span class="o">=</span> <span class="n">jointThrAllocation</span><span class="o">.</span><span class="n">mapMatrix</span><span class="p">(</span><span class="n">rVec_B</span><span class="p">,</span> <span class="n">fHatVec_B</span><span class="p">,</span> <span class="n">r_ComB_B</span><span class="p">)</span>
+    <span class="n">expected</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+        <span class="p">]</span>
+    <span class="p">)</span>
+
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">mapping</span><span class="p">,</span> <span class="n">expected</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="test_spacecraft_layout">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/effectorInterfaces/jointThrAllocation/_UnitTest/test_jointThrAllocation.html#test_jointThrAllocation.test_spacecraft_layout">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s2">&quot;theta&quot;</span><span class="p">,</span>
+    <span class="p">[</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">8</span><span class="p">),</span>  <span class="c1"># [rad]</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]),</span>  <span class="c1"># [rad]</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">6.0</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">4.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">6.0</span><span class="p">,</span>
+                  <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">5.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">7.0</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">8.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">9.0</span><span class="p">]),</span>  <span class="c1"># [rad]</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_spacecraft_layout</span><span class="p">(</span><span class="n">theta</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    **Validation Test Description**</span>
+
+<span class="sd">    This unit test verifies that :func:`jointThrAllocation.jointPoseFromTheta`</span>
+<span class="sd">    computes the correct joint frame poses and vectors for a given set of</span>
+<span class="sd">    joint angles. It also verifies that :func:`jointThrAllocation.computeComFromTheta`</span>
+<span class="sd">    computes the correct center of mass vector for a given set of joint angles.</span>
+
+<span class="sd">    **Description of Variables Being Tested**</span>
+
+<span class="sd">    This unit test checks the DCM and position vectors for each joint. It</span>
+<span class="sd">    also checks the computed center of mass vector.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">allocation</span> <span class="o">=</span> <span class="n">_configured_allocation</span><span class="p">()</span>
+
+    <span class="n">dcm_CB</span><span class="p">,</span> <span class="n">r_CB_B</span> <span class="o">=</span> <span class="n">allocation</span><span class="o">.</span><span class="n">jointPoseFromTheta</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+    <span class="n">r_ComB_B</span> <span class="o">=</span> <span class="n">allocation</span><span class="o">.</span><span class="n">computeComFromTheta</span><span class="p">(</span><span class="n">dcm_CB</span><span class="p">,</span> <span class="n">r_CB_B</span><span class="p">)</span>
+    <span class="n">expected_dcm</span><span class="p">,</span> <span class="n">expected_r_CB_B</span><span class="p">,</span> <span class="n">expected_r_ComB_B</span> <span class="o">=</span> <span class="n">_expected_four_joint_layout</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">dcm_actual</span><span class="p">,</span> <span class="n">dcm_expected</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">dcm_CB</span><span class="p">,</span> <span class="n">expected_dcm</span><span class="p">):</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">dcm_actual</span><span class="p">,</span> <span class="n">dcm_expected</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">pos_actual</span><span class="p">,</span> <span class="n">pos_expected</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">r_CB_B</span><span class="p">,</span> <span class="n">expected_r_CB_B</span><span class="p">):</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">pos_actual</span><span class="p">,</span> <span class="n">pos_expected</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">r_ComB_B</span><span class="p">,</span> <span class="n">expected_r_ComB_B</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_spacecraft_layout_includes_hub_com_offset">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/effectorInterfaces/jointThrAllocation/_UnitTest/test_jointThrAllocation.html#test_jointThrAllocation.test_spacecraft_layout_includes_hub_com_offset">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_spacecraft_layout_includes_hub_com_offset</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    **Validation Test Description**</span>
+
+<span class="sd">    This unit test verifies that :func:`jointThrAllocation.computeComFromTheta`</span>
+<span class="sd">    includes the hub center-of-mass offset contribution when computing the</span>
+<span class="sd">    system center of mass.</span>
+
+<span class="sd">    **Description of Variables Being Tested**</span>
+
+<span class="sd">    This unit test checks the computed center-of-mass vector for a nonzero hub</span>
+<span class="sd">    center-of-mass offset.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">allocation</span> <span class="o">=</span> <span class="n">_configured_allocation</span><span class="p">()</span>
+    <span class="n">allocation</span><span class="o">.</span><span class="n">r_BcB_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.12</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.04</span><span class="p">,</span> <span class="mf">0.03</span><span class="p">])</span>  <span class="c1"># [m]</span>
+    <span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">allocation</span><span class="o">.</span><span class="n">nJoint</span><span class="p">)</span>  <span class="c1"># [rad]</span>
+
+    <span class="n">dcm_CB</span><span class="p">,</span> <span class="n">r_CB_B</span> <span class="o">=</span> <span class="n">allocation</span><span class="o">.</span><span class="n">jointPoseFromTheta</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+    <span class="n">r_ComB_B</span> <span class="o">=</span> <span class="n">allocation</span><span class="o">.</span><span class="n">computeComFromTheta</span><span class="p">(</span><span class="n">dcm_CB</span><span class="p">,</span> <span class="n">r_CB_B</span><span class="p">)</span>
+
+    <span class="n">total_mass</span> <span class="o">=</span> <span class="n">allocation</span><span class="o">.</span><span class="n">hubMass</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">allocation</span><span class="o">.</span><span class="n">bodyMass</span><span class="p">)</span>  <span class="c1"># [kg]</span>
+    <span class="n">expected_r_ComB_B</span> <span class="o">=</span> <span class="n">allocation</span><span class="o">.</span><span class="n">hubMass</span> <span class="o">*</span> <span class="n">allocation</span><span class="o">.</span><span class="n">r_BcB_B</span>  <span class="c1"># [kg*m]</span>
+    <span class="k">for</span> <span class="n">body_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">allocation</span><span class="o">.</span><span class="n">bodyMass</span><span class="o">.</span><span class="n">size</span><span class="p">):</span>
+        <span class="n">arm_idx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">allocation</span><span class="o">.</span><span class="n">bodyArmIdx</span><span class="p">[</span><span class="n">body_idx</span><span class="p">])</span>
+        <span class="n">joint_local_idx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">allocation</span><span class="o">.</span><span class="n">bodyJointIdx</span><span class="p">[</span><span class="n">body_idx</span><span class="p">])</span>
+        <span class="n">joint_flat_idx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">allocation</span><span class="o">.</span><span class="n">armJointStart</span><span class="p">[</span><span class="n">arm_idx</span><span class="p">]</span> <span class="o">+</span> <span class="n">joint_local_idx</span><span class="p">)</span>
+        <span class="n">expected_r_ComB_B</span> <span class="o">+=</span> <span class="n">allocation</span><span class="o">.</span><span class="n">bodyMass</span><span class="p">[</span><span class="n">body_idx</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span>
+            <span class="n">r_CB_B</span><span class="p">[</span><span class="n">joint_flat_idx</span><span class="p">]</span> <span class="o">+</span> <span class="n">dcm_CB</span><span class="p">[</span><span class="n">joint_flat_idx</span><span class="p">]</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">allocation</span><span class="o">.</span><span class="n">r_LcP_P</span><span class="p">[</span><span class="n">body_idx</span><span class="p">]</span>
+        <span class="p">)</span>  <span class="c1"># [kg*m]</span>
+    <span class="n">expected_r_ComB_B</span> <span class="o">=</span> <span class="n">expected_r_ComB_B</span> <span class="o">/</span> <span class="n">total_mass</span>  <span class="c1"># [m]</span>
+
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">r_ComB_B</span><span class="p">,</span> <span class="n">expected_r_ComB_B</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_spacecraft_layout_asymmetric_body_masses_shift_com">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/effectorInterfaces/jointThrAllocation/_UnitTest/test_jointThrAllocation.html#test_jointThrAllocation.test_spacecraft_layout_asymmetric_body_masses_shift_com">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_spacecraft_layout_asymmetric_body_masses_shift_com</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    **Validation Test Description**</span>
+
+<span class="sd">    This unit test verifies that :func:`jointThrAllocation.computeComFromTheta`</span>
+<span class="sd">    responds correctly to asymmetric arm-body masses by shifting the system</span>
+<span class="sd">    center of mass toward the heavier side.</span>
+
+<span class="sd">    **Description of Variables Being Tested**</span>
+
+<span class="sd">    This unit test checks the computed center-of-mass vector for an asymmetric</span>
+<span class="sd">    set of arm-body masses.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">allocation</span> <span class="o">=</span> <span class="n">_configured_allocation</span><span class="p">()</span>
+    <span class="n">allocation</span><span class="o">.</span><span class="n">bodyMass</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">12.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span>  <span class="c1"># [kg]</span>
+    <span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">allocation</span><span class="o">.</span><span class="n">nJoint</span><span class="p">)</span>  <span class="c1"># [rad]</span>
+
+    <span class="n">dcm_CB</span><span class="p">,</span> <span class="n">r_CB_B</span> <span class="o">=</span> <span class="n">allocation</span><span class="o">.</span><span class="n">jointPoseFromTheta</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+    <span class="n">r_ComB_B</span> <span class="o">=</span> <span class="n">allocation</span><span class="o">.</span><span class="n">computeComFromTheta</span><span class="p">(</span><span class="n">dcm_CB</span><span class="p">,</span> <span class="n">r_CB_B</span><span class="p">)</span>
+
+    <span class="n">total_mass</span> <span class="o">=</span> <span class="n">allocation</span><span class="o">.</span><span class="n">hubMass</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">allocation</span><span class="o">.</span><span class="n">bodyMass</span><span class="p">)</span>  <span class="c1"># [kg]</span>
+    <span class="n">expected_r_ComB_B</span> <span class="o">=</span> <span class="n">allocation</span><span class="o">.</span><span class="n">hubMass</span> <span class="o">*</span> <span class="n">allocation</span><span class="o">.</span><span class="n">r_BcB_B</span>  <span class="c1"># [kg*m]</span>
+    <span class="k">for</span> <span class="n">body_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">allocation</span><span class="o">.</span><span class="n">bodyMass</span><span class="o">.</span><span class="n">size</span><span class="p">):</span>
+        <span class="n">arm_idx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">allocation</span><span class="o">.</span><span class="n">bodyArmIdx</span><span class="p">[</span><span class="n">body_idx</span><span class="p">])</span>
+        <span class="n">joint_local_idx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">allocation</span><span class="o">.</span><span class="n">bodyJointIdx</span><span class="p">[</span><span class="n">body_idx</span><span class="p">])</span>
+        <span class="n">joint_flat_idx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">allocation</span><span class="o">.</span><span class="n">armJointStart</span><span class="p">[</span><span class="n">arm_idx</span><span class="p">]</span> <span class="o">+</span> <span class="n">joint_local_idx</span><span class="p">)</span>
+        <span class="n">expected_r_ComB_B</span> <span class="o">+=</span> <span class="n">allocation</span><span class="o">.</span><span class="n">bodyMass</span><span class="p">[</span><span class="n">body_idx</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span>
+            <span class="n">r_CB_B</span><span class="p">[</span><span class="n">joint_flat_idx</span><span class="p">]</span> <span class="o">+</span> <span class="n">dcm_CB</span><span class="p">[</span><span class="n">joint_flat_idx</span><span class="p">]</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">allocation</span><span class="o">.</span><span class="n">r_LcP_P</span><span class="p">[</span><span class="n">body_idx</span><span class="p">]</span>
+        <span class="p">)</span>  <span class="c1"># [kg*m]</span>
+    <span class="n">expected_r_ComB_B</span> <span class="o">=</span> <span class="n">expected_r_ComB_B</span> <span class="o">/</span> <span class="n">total_mass</span>  <span class="c1"># [m]</span>
+
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">r_ComB_B</span><span class="p">,</span> <span class="n">expected_r_ComB_B</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_allocation_configuration_helpers">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/effectorInterfaces/jointThrAllocation/_UnitTest/test_jointThrAllocation.html#test_jointThrAllocation.test_allocation_configuration_helpers">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_allocation_configuration_helpers</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    **Validation Test Description**</span>
+
+<span class="sd">    This unit test verifies that :class:`jointThrAllocation.JointThrAllocation`</span>
+<span class="sd">    can be constructed from the standard ``Basilisk.fswAlgorithms`` import path</span>
+<span class="sd">    and that the helper methods resolve scalar and vector configuration values.</span>
+
+<span class="sd">    **Description of Variables Being Tested**</span>
+
+<span class="sd">    This unit test checks the resolved thrust force bounds, thrust weights, and</span>
+<span class="sd">    initial decision vector shape.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">allocation</span> <span class="o">=</span> <span class="n">jointThrAllocation</span><span class="o">.</span><span class="n">JointThrAllocation</span><span class="p">()</span>
+    <span class="n">allocation</span><span class="o">.</span><span class="n">nJoint</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">allocation</span><span class="o">.</span><span class="n">nThr</span> <span class="o">=</span> <span class="mi">2</span>
+
+    <span class="n">allocation</span><span class="o">.</span><span class="n">setThrForceMax</span><span class="p">(</span><span class="mf">4.0</span><span class="p">)</span>  <span class="c1"># [N]</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">allocation</span><span class="o">.</span><span class="n">resolveThrForceMax</span><span class="p">(),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">]))</span>  <span class="c1"># [N]</span>
+
+    <span class="n">allocation</span><span class="o">.</span><span class="n">setWf</span><span class="p">(</span><span class="mf">1.0e-5</span><span class="p">)</span>
+    <span class="n">allocation</span><span class="o">.</span><span class="n">resolveWf</span><span class="p">()</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">allocation</span><span class="o">.</span><span class="n">Wf</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0e-5</span><span class="p">,</span> <span class="mf">1.0e-5</span><span class="p">]))</span>
+
+    <span class="n">allocation</span><span class="o">.</span><span class="n">initialGuesses</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">allocation</span><span class="o">.</span><span class="n">x0</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+
+    <span class="n">bounds</span> <span class="o">=</span> <span class="n">allocation</span><span class="o">.</span><span class="n">bounds</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">bounds</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">bounds</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">)</span>  <span class="c1"># [N]</span>
+    <span class="k">assert</span> <span class="n">bounds</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">)</span>  <span class="c1"># [N]</span></div>
+
+
+
+<div class="viewcode-block" id="test_reset_rejects_missing_input_message">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/effectorInterfaces/jointThrAllocation/_UnitTest/test_jointThrAllocation.html#test_jointThrAllocation.test_reset_rejects_missing_input_message">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s2">&quot;missing_msg_name&quot;</span><span class="p">,</span>
+    <span class="p">[</span>
+        <span class="s2">&quot;armConfigInMsg&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;hubStatesInMsg&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;transForceInMsg&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;rotTorqueInMsg&quot;</span><span class="p">,</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_reset_rejects_missing_input_message</span><span class="p">(</span><span class="n">missing_msg_name</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    **Validation Test Description**</span>
+
+<span class="sd">    This unit test verifies that :class:`jointThrAllocation.JointThrAllocation`</span>
+<span class="sd">    rejects reset calls when any required input message is not connected.</span>
+
+<span class="sd">    **Description of Variables Being Tested**</span>
+
+<span class="sd">    This unit test checks each required input message reader.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">allocation</span> <span class="o">=</span> <span class="n">jointThrAllocation</span><span class="o">.</span><span class="n">JointThrAllocation</span><span class="p">()</span>
+    <span class="n">allocation</span><span class="o">.</span><span class="n">bskLogger</span> <span class="o">=</span> <span class="n">bskLogging</span><span class="o">.</span><span class="n">BSKLogger</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">msgName</span><span class="p">,</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">_linked_input_messages</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">msgName</span> <span class="o">!=</span> <span class="n">missing_msg_name</span><span class="p">:</span>
+            <span class="nb">getattr</span><span class="p">(</span><span class="n">allocation</span><span class="p">,</span> <span class="n">msgName</span><span class="p">)</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">bskLogging</span><span class="o">.</span><span class="n">BasiliskError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;JointThrAllocation.</span><span class="si">{</span><span class="n">missing_msg_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">):</span>
+        <span class="n">allocation</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

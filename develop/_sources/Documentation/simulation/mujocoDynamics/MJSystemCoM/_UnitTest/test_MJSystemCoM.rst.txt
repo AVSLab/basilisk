@@ -1,0 +1,13 @@
+.. _test_MJSystemCoM:
+
+test_MJSystemCoM
+================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. automodule:: test_MJSystemCoM
+   :members:
+   :show-inheritance:
+

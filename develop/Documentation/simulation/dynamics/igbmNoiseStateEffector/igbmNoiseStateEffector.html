@@ -1,0 +1,504 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>C++ Module: igbmNoiseStateEffector &mdash; Basilisk 2.12.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=2ebb1c42" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=4ad2e773"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script>window.MathJax = {"svg": {"fontCache": "global"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="igbmNoiseStateEffector" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../communication/index.html">communication</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">dynamics</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../DynOutput/index.html">DynOutput</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ExtPulsedTorque/index.html">ExtPulsedTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../FuelTank/index.html">FuelTank</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../GravityGradientEffector/index.html">GravityGradientEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../HingedRigidBodies/index.html">HingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../Integrators/index.html">Integrators</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../LinearSpringMassDamper/index.html">LinearSpringMassDamper</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../MtbEffector/index.html">MtbEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../NHingedRigidBodies/index.html">NHingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../RadiationPressure/index.html">RadiationPressure</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../Thrusters/index.html">Thrusters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../VSCMGs/index.html">VSCMGs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../constraintEffector/index.html">constraintEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dragEffector/index.html">dragEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dualHingedRigidBodies/index.html">dualHingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../extForceTorque/index.html">extForceTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../facetDragEffector/index.html">facetDragEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../facetSRPDynamicEffector/index.html">facetSRPDynamicEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../facetedSRPEffector/index.html">facetedSRPEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../gravityEffector/index.html">gravityEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../hingedRigidBodyMotor/index.html">hingedRigidBodyMotor</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">igbmNoiseStateEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../linearTranslationalBodies/index.html">linearTranslationalBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../meanRevertingNoiseStateEffector/index.html">meanRevertingNoiseStateEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../msmForceTorque/index.html">msmForceTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../prescribedMotion/index.html">prescribedMotion</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reactionWheels/index.html">reactionWheels</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraft/index.html">spacecraft</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraftSystem/index.html">spacecraftSystem</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../sphericalPendulum/index.html">sphericalPendulum</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spinningBodies/index.html">spinningBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../stateArchitecture/index.html">stateArchitecture</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../environment/index.html">environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../forceTorque/index.html">forceTorque</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujocoDynamics/index.html">mujocoDynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../simSynch/index.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">dynamics</a></li>
+          <li class="breadcrumb-item"><a href="index.html">igbmNoiseStateEffector</a></li>
+      <li class="breadcrumb-item active"><span class="module-type-label module-type-cpp">C++</span> Module: igbmNoiseStateEffector</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/simulation/dynamics/igbmNoiseStateEffector/igbmNoiseStateEffector.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="c-module-igbmnoisestateeffector">
+<span id="igbmnoisestateeffector"></span><h1><span class="module-type-label module-type-cpp">C++</span> Module: igbmNoiseStateEffector<a class="headerlink" href="#c-module-igbmnoisestateeffector" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">IgbmNoiseStateEffector</span></code> module is a spacecraft
+<a class="reference internal" href="../_GeneralModuleFiles/stateEffector.html#stateeffector"><span class="std std-ref">StateEffector</span></a> that propagates a single scalar correction
+<span class="math notranslate nohighlight">\(\delta\)</span> whose multiplicative factor <span class="math notranslate nohighlight">\((1+\delta)\)</span> follows an
+inhomogeneous geometric Brownian motion (IGBM).</p>
+<p>It is the multiplicative-noise counterpart to
+<a class="reference internal" href="../meanRevertingNoiseStateEffector/meanRevertingNoiseStateEffector.html#meanrevertingnoisestateeffector"><span class="std std-ref">C++ Module: meanRevertingNoiseStateEffector</span></a>: the correction has the same
+<span class="math notranslate nohighlight">\((1+\delta)\)</span> form consumed by e.g. <a class="reference internal" href="../dragEffector/dragDynamicEffector.html#dragdynamiceffector"><span class="std std-ref">C++ Module: dragDynamicEffector</span></a>
+(<code class="docutils literal notranslate"><span class="pre">densityCorrectionStateName</span></code>). The exact factor <span class="math notranslate nohighlight">\(1+\delta\)</span> is positive, but the
+module integrates the SDE as written, so an explicit integrator can occasionally make it
+non-positive for a large step/increment; a consumer that needs a non-negative quantity
+clamps it downstream (<code class="docutils literal notranslate"><span class="pre">DragDynamicEffector</span></code> clamps the corrected density to be
+non-negative).</p>
+</section>
+<section id="module-description">
+<h2>Module Description<a class="headerlink" href="#module-description" title="Link to this heading"></a></h2>
+<p>The multiplicative factor <span class="math notranslate nohighlight">\(X = 1 + \delta\)</span> follows the Itô SDE</p>
+<div class="math notranslate nohighlight">
+\[\text{d}X = \frac{1}{\tau}(\mu - X)\,\text{d}t + \sigma X\,\text{d}W\]</div>
+<p>so the registered correction state evolves as</p>
+<div class="math notranslate nohighlight">
+\[\text{d}\delta = \frac{\mu - 1 - \delta}{\tau}\,\text{d}t + \sigma (1+\delta)\,\text{d}W\]</div>
+<p>Like the other IGBM/OU noise classes, the process is configured in stationary form: the
+mean level <span class="math notranslate nohighlight">\(\mu\)</span> of the factor (<code class="docutils literal notranslate"><span class="pre">setMean</span></code>, defaults to 1 for a mean-preserving
+correction), the time constant <span class="math notranslate nohighlight">\(\tau\)</span> (<code class="docutils literal notranslate"><span class="pre">setTimeConstant</span></code>), and the stationary
+standard deviation <span class="math notranslate nohighlight">\(\sigma_{st}\)</span> (<code class="docutils literal notranslate"><span class="pre">setStationaryStd</span></code>). The SDE volatility is
+derived internally as</p>
+<div class="math notranslate nohighlight">
+\[\sigma^2 = \frac{2}{\tau}\,\frac{\sigma_{st}^2}{\mu^2 + \sigma_{st}^2}\]</div>
+<p>so the factor’s stationary mean and standard deviation are exactly <span class="math notranslate nohighlight">\(\mu\)</span> and
+<span class="math notranslate nohighlight">\(\sigma_{st}\)</span>, and the IGBM stationarity condition <span class="math notranslate nohighlight">\(2/\tau &gt; \sigma^2\)</span> holds
+by construction.</p>
+<p>No module-specific input or output messages are used. Other modules can consume
+the state by reading it from the dynamics state manager by name.</p>
+<p>The registered state name can be set or queried using <code class="docutils literal notranslate"><span class="pre">setStateName(&quot;...&quot;)</span></code> and <code class="docutils literal notranslate"><span class="pre">getStateName()</span></code>.</p>
+</section>
+<section id="detailed-behavior">
+<h2>Detailed Behavior<a class="headerlink" href="#detailed-behavior" title="Link to this heading"></a></h2>
+<p>At each integrator sub-step, the module:</p>
+<ol class="arabic simple">
+<li><p>Reads the internal correction <span class="math notranslate nohighlight">\(\delta\)</span> and forms the factor <span class="math notranslate nohighlight">\(X = 1+\delta\)</span>.</p></li>
+<li><p>Sets deterministic drift <span class="math notranslate nohighlight">\(\dot{\delta} = (\mu - X)/\tau\)</span>.</p></li>
+<li><p>Sets one diffusion term with state-dependent amplitude <span class="math notranslate nohighlight">\(\sigma X\)</span>.</p></li>
+</ol>
+<p>At state registration the correction defaults to <span class="math notranslate nohighlight">\(\mu - 1\)</span> (the factor at its mean
+level), since a zero factor is degenerate for the multiplicative diffusion; override with
+<code class="docutils literal notranslate"><span class="pre">setStateValue</span></code> if desired.</p>
+</section>
+<section id="module-assumptions-and-limitations">
+<h2>Module Assumptions and Limitations<a class="headerlink" href="#module-assumptions-and-limitations" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Because the registered state has a stochastic diffusion source, a stochastic
+integrator must be used for the parent spacecraft dynamics.</p></li>
+<li><p>The diffusion is multiplicative (state-dependent), so a strong stochastic integrator
+(e.g. Euler-Maruyama or an SRI method) must be used; weak integrators do not reproduce
+the correct sample-path statistics.</p></li>
+<li><p>The module integrates the SDE as written. The exact factor <span class="math notranslate nohighlight">\(1+\delta\)</span> is positive,
+but an explicit integrator can occasionally produce a non-positive factor for a large
+step or Wiener increment; a consumer requiring positivity (e.g. a density) must clamp the
+derived quantity downstream.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">setMean(m)</span></code> requires <span class="math notranslate nohighlight">\(\mu &gt; 0\)</span>; <code class="docutils literal notranslate"><span class="pre">setTimeConstant(t)</span></code> requires
+<span class="math notranslate nohighlight">\(\tau &gt; 0\)</span>; <code class="docutils literal notranslate"><span class="pre">setStationaryStd(s)</span></code> requires <span class="math notranslate nohighlight">\(\sigma_{st} \ge 0\)</span>;
+<code class="docutils literal notranslate"><span class="pre">setStateValue</span></code> requires an initial factor <span class="math notranslate nohighlight">\(1+\delta &gt; 0\)</span>.</p></li>
+</ul>
+<hr class="docutils" />
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv422IgbmNoiseStateEffector">
+<span id="_CPPv322IgbmNoiseStateEffector"></span><span id="_CPPv222IgbmNoiseStateEffector"></span><span id="IgbmNoiseStateEffector"></span><span class="target" id="class_igbm_noise_state_effector"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">IgbmNoiseStateEffector</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../_GeneralModuleFiles/stateEffector.html#_CPPv413StateEffector" title="StateEffector"><span class="n"><span class="pre">StateEffector</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../../../architecture/_GeneralModuleFiles/sys_model.html#_CPPv48SysModel" title="SysModel"><span class="n"><span class="pre">SysModel</span></span></a><a class="headerlink" href="#_CPPv422IgbmNoiseStateEffector" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;igbmNoiseStateEffector.h&gt;</em></div>
+<p>State effector that propagates a scalar correction <span class="math notranslate nohighlight">\(\delta\)</span> whose factor <span class="math notranslate nohighlight">\((1+\delta)\)</span> follows an inhomogeneous geometric Brownian motion (IGBM). </p>
+<p>The multiplicative factor <span class="math notranslate nohighlight">\(X = 1 + \delta\)</span> follows the Ito SDE   <div class="math notranslate nohighlight">
+\[    dX = \frac{1}{\tau}(\mu - X)\,dt + \sigma X\,dW,
+\]</div>
+ so the registered correction state evolves as   <div class="math notranslate nohighlight">
+\[    d\delta = \frac{\mu - 1 - \delta}{\tau}\,dt + \sigma (1+\delta)\,dW.
+\]</div>
+ The correction form matches consumers that apply a <span class="math notranslate nohighlight">\((1+\delta)\)</span> correction (e.g. <code class="docutils literal notranslate"><span class="pre">DragDynamicEffector::densityCorrectionStateName</span></code>). The exact factor <span class="math notranslate nohighlight">\(X\)</span> is positive, but the module integrates the SDE as written (pure math), so an explicit integrator can occasionally produce <span class="math notranslate nohighlight">\(X = 1+\delta \le 0\)</span> for a large step or Wiener increment. A consumer that needs a non-negative quantity should clamp it downstream: <code class="docutils literal notranslate"><span class="pre">DragDynamicEffector</span></code> clamps the corrected density to be non-negative.</p>
+<p>Like the other IGBM/OU noise classes, the process is configured in stationary form: the mean level <span class="math notranslate nohighlight">\(\mu\)</span> of the factor, the time constant <span class="math notranslate nohighlight">\(\tau\)</span>, and the stationary standard deviation <span class="math notranslate nohighlight">\(\sigma_{\mathrm{st}}\)</span>. The SDE volatility is derived as <span class="math notranslate nohighlight">\(\sigma^2 = (2/\tau)\,\sigma_{\mathrm{st}}^2/(\mu^2 + \sigma_{\mathrm{st}}^2)\)</span> so the factor’s stationary mean and std are exactly <span class="math notranslate nohighlight">\(\mu\)</span> and <span class="math notranslate nohighlight">\(\sigma_{\mathrm{st}}\)</span>, and stationarity holds by construction. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N22IgbmNoiseStateEffector22IgbmNoiseStateEffectorEv">
+<span id="_CPPv3N22IgbmNoiseStateEffector22IgbmNoiseStateEffectorEv"></span><span id="_CPPv2N22IgbmNoiseStateEffector22IgbmNoiseStateEffectorEv"></span><span id="IgbmNoiseStateEffector::IgbmNoiseStateEffector"></span><span class="target" id="class_igbm_noise_state_effector_1a01c9bc4b80d29eb0f02220a88375ab3d"></span><span class="sig-name descname"><span class="n"><span class="pre">IgbmNoiseStateEffector</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N22IgbmNoiseStateEffector22IgbmNoiseStateEffectorEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Constructor. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N22IgbmNoiseStateEffectorD0Ev">
+<span id="_CPPv3N22IgbmNoiseStateEffectorD0Ev"></span><span id="_CPPv2N22IgbmNoiseStateEffectorD0Ev"></span><span id="IgbmNoiseStateEffector::~IgbmNoiseStateEffector"></span><span class="target" id="class_igbm_noise_state_effector_1ad17eed8c4851373e1d598b3bff460303"></span><span class="sig-name descname"><span class="n"><span class="pre">~IgbmNoiseStateEffector</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">default</span></span><a class="headerlink" href="#_CPPv4N22IgbmNoiseStateEffectorD0Ev" title="Link to this definition"></a><br /></dt>
+<dd><p>Destructor. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N22IgbmNoiseStateEffector14registerStatesER15DynParamManager">
+<span id="_CPPv3N22IgbmNoiseStateEffector14registerStatesER15DynParamManager"></span><span id="_CPPv2N22IgbmNoiseStateEffector14registerStatesER15DynParamManager"></span><span id="IgbmNoiseStateEffector::registerStates__DynParamManagerR"></span><span class="target" id="class_igbm_noise_state_effector_1a197b2bc3aab00ba173fd6fe1f7949e30"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">registerStates</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../_GeneralModuleFiles/dynParamManager.html#_CPPv415DynParamManager" title="DynParamManager"><span class="n"><span class="pre">DynParamManager</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">states</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N22IgbmNoiseStateEffector14registerStatesER15DynParamManager" title="Link to this definition"></a><br /></dt>
+<dd><p>Register this effector’s internal stochastic state with the dynamics manager. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>states</strong> – Dynamics parameter manager used to create the correction state. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N22IgbmNoiseStateEffector12linkInStatesER15DynParamManager">
+<span id="_CPPv3N22IgbmNoiseStateEffector12linkInStatesER15DynParamManager"></span><span id="_CPPv2N22IgbmNoiseStateEffector12linkInStatesER15DynParamManager"></span><span id="IgbmNoiseStateEffector::linkInStates__DynParamManagerR"></span><span class="target" id="class_igbm_noise_state_effector_1a79ff0eeb619e000191e17e1ef9840233"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">linkInStates</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../_GeneralModuleFiles/dynParamManager.html#_CPPv415DynParamManager" title="DynParamManager"><span class="n"><span class="pre">DynParamManager</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">states</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N22IgbmNoiseStateEffector12linkInStatesER15DynParamManager" title="Link to this definition"></a><br /></dt>
+<dd><p>Link any required external states and properties. </p>
+<p>
+This effector has no required external state links. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>states</strong> – states </p></li>
+<li><p><strong>states</strong> – Dynamics parameter manager.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N22IgbmNoiseStateEffector18computeDerivativesEdN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE">
+<span id="_CPPv3N22IgbmNoiseStateEffector18computeDerivativesEdN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE"></span><span id="_CPPv2N22IgbmNoiseStateEffector18computeDerivativesEdN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE"></span><span id="IgbmNoiseStateEffector::computeDerivatives__double.Eigen::Vector3d.Eigen::Vector3d.Eigen::Vector3d"></span><span class="target" id="class_igbm_noise_state_effector_1a4ba44dfe747c7720fd47800f0bf731e8"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeDerivatives</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">integTime</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">rDDot_BN_N</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">omegaDot_BN_B</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">sigma_BN</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N22IgbmNoiseStateEffector18computeDerivativesEdN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>Compute deterministic and stochastic dynamics for the correction state. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>integTime</strong> – integTime </p></li>
+<li><p><strong>rDDot_BN_N</strong> – rDDot_BN_N </p></li>
+<li><p><strong>omegaDot_BN_B</strong> – omegaDot_BN_B </p></li>
+<li><p><strong>sigma_BN</strong> – sigma_BN </p></li>
+<li><p><strong>integTime</strong> – Integration time in seconds. </p></li>
+<li><p><strong>rDDot_BN_N</strong> – Hub translational acceleration [m/s^2] (unused). </p></li>
+<li><p><strong>omegaDot_BN_B</strong> – Hub angular acceleration [rad/s^2] (unused). </p></li>
+<li><p><strong>sigma_BN</strong> – Hub attitude MRP (unused). </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N22IgbmNoiseStateEffector7setMeanEd">
+<span id="_CPPv3N22IgbmNoiseStateEffector7setMeanEd"></span><span id="_CPPv2N22IgbmNoiseStateEffector7setMeanEd"></span><span id="IgbmNoiseStateEffector::setMean__double"></span><span class="target" id="class_igbm_noise_state_effector_1a63e66742933009058820898761310c20"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setMean</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">mean</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N22IgbmNoiseStateEffector7setMeanEd" title="Link to this definition"></a><br /></dt>
+<dd><p>Set the mean level <span class="math notranslate nohighlight">\(\mu\)</span> of the multiplicative factor <span class="math notranslate nohighlight">\((1+\delta)\)</span>. </p>
+<p>
+Values less than or equal to zero are rejected. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>mean</strong> – Mean level <span class="math notranslate nohighlight">\(\mu\)</span> [-].</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK22IgbmNoiseStateEffector7getMeanEv">
+<span id="_CPPv3NK22IgbmNoiseStateEffector7getMeanEv"></span><span id="_CPPv2NK22IgbmNoiseStateEffector7getMeanEv"></span><span id="IgbmNoiseStateEffector::getMeanC"></span><span class="target" id="class_igbm_noise_state_effector_1a605bbb70ec8db0d0c27a262c80c220ea"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getMean</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK22IgbmNoiseStateEffector7getMeanEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Get the mean level <span class="math notranslate nohighlight">\(\mu\)</span> of the multiplicative factor [-]. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N22IgbmNoiseStateEffector16setStationaryStdEd">
+<span id="_CPPv3N22IgbmNoiseStateEffector16setStationaryStdEd"></span><span id="_CPPv2N22IgbmNoiseStateEffector16setStationaryStdEd"></span><span id="IgbmNoiseStateEffector::setStationaryStd__double"></span><span class="target" id="class_igbm_noise_state_effector_1ae039b5604236750827a7d898c97482ba"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setStationaryStd</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">sigmaStationary</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N22IgbmNoiseStateEffector16setStationaryStdEd" title="Link to this definition"></a><br /></dt>
+<dd><p>Set the stationary standard deviation of the factor. </p>
+<p>
+Values smaller than zero are rejected. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sigmaStationary</strong> – Stationary standard deviation, <span class="math notranslate nohighlight">\(\sigma_{\mathrm{st}}\)</span> [-].</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK22IgbmNoiseStateEffector16getStationaryStdEv">
+<span id="_CPPv3NK22IgbmNoiseStateEffector16getStationaryStdEv"></span><span id="_CPPv2NK22IgbmNoiseStateEffector16getStationaryStdEv"></span><span id="IgbmNoiseStateEffector::getStationaryStdC"></span><span class="target" id="class_igbm_noise_state_effector_1acd583f4124c75996802725f9d1467c94"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getStationaryStd</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK22IgbmNoiseStateEffector16getStationaryStdEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Get the stationary standard deviation <span class="math notranslate nohighlight">\(\sigma_{\mathrm{st}}\)</span> [-]. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N22IgbmNoiseStateEffector15setTimeConstantEd">
+<span id="_CPPv3N22IgbmNoiseStateEffector15setTimeConstantEd"></span><span id="_CPPv2N22IgbmNoiseStateEffector15setTimeConstantEd"></span><span id="IgbmNoiseStateEffector::setTimeConstant__double"></span><span class="target" id="class_igbm_noise_state_effector_1a1ea4e4e52f92582c8693238ef9907168"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setTimeConstant</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">timeConstant</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N22IgbmNoiseStateEffector15setTimeConstantEd" title="Link to this definition"></a><br /></dt>
+<dd><p>Set the IGBM time constant. </p>
+<p>
+Values less than or equal to zero are rejected. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>timeConstant</strong> – Time constant <span class="math notranslate nohighlight">\(\tau\)</span> [s].</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK22IgbmNoiseStateEffector15getTimeConstantEv">
+<span id="_CPPv3NK22IgbmNoiseStateEffector15getTimeConstantEv"></span><span id="_CPPv2NK22IgbmNoiseStateEffector15getTimeConstantEv"></span><span id="IgbmNoiseStateEffector::getTimeConstantC"></span><span class="target" id="class_igbm_noise_state_effector_1a4aa12dfbafa25ce8afd645d54c3d91a5"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getTimeConstant</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK22IgbmNoiseStateEffector15getTimeConstantEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Get the IGBM time constant <span class="math notranslate nohighlight">\(\tau\)</span> [s]. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK22IgbmNoiseStateEffector13getStateValueEv">
+<span id="_CPPv3NK22IgbmNoiseStateEffector13getStateValueEv"></span><span id="_CPPv2NK22IgbmNoiseStateEffector13getStateValueEv"></span><span id="IgbmNoiseStateEffector::getStateValueC"></span><span class="target" id="class_igbm_noise_state_effector_1ac3fc10844bcfab89fdd24323a09cf7fe"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getStateValue</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK22IgbmNoiseStateEffector13getStateValueEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Get the current state value. </p>
+<p>
+If called before state registration, this returns the configured initial value (which defaults to <span class="math notranslate nohighlight">\(\mu - 1\)</span>, i.e. the factor at its mean level). </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Current scalar correction <span class="math notranslate nohighlight">\(\delta\)</span> [-].</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N22IgbmNoiseStateEffector13setStateValueEd">
+<span id="_CPPv3N22IgbmNoiseStateEffector13setStateValueEd"></span><span id="_CPPv2N22IgbmNoiseStateEffector13setStateValueEd"></span><span id="IgbmNoiseStateEffector::setStateValue__double"></span><span class="target" id="class_igbm_noise_state_effector_1ad865841f0a1d69dff147472b8d4c856b"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setStateValue</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">val</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N22IgbmNoiseStateEffector13setStateValueEd" title="Link to this definition"></a><br /></dt>
+<dd><p>Set the state value. </p>
+<p>
+This updates the configured initial value and also updates the registered state immediately if registration has already occurred. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>val</strong> – New scalar correction <span class="math notranslate nohighlight">\(\delta\)</span> [-]. Must be greater than <span class="math notranslate nohighlight">\(-1\)</span> so the <em>initial</em> multiplicative factor <span class="math notranslate nohighlight">\(1 + \delta\)</span> is positive (the process is only well-posed from a positive factor). This constrains the initial condition; it does not guarantee the numerically-integrated factor stays positive at every later step.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK22IgbmNoiseStateEffector12getStateNameEv">
+<span id="_CPPv3NK22IgbmNoiseStateEffector12getStateNameEv"></span><span id="_CPPv2NK22IgbmNoiseStateEffector12getStateNameEv"></span><span id="IgbmNoiseStateEffector::getStateNameC"></span><span class="target" id="class_igbm_noise_state_effector_1a3090f6effb5054df1d1e316023b4e4c2"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getStateName</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK22IgbmNoiseStateEffector12getStateNameEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Get the registered state manager name. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N22IgbmNoiseStateEffector12setStateNameENSt6stringE">
+<span id="_CPPv3N22IgbmNoiseStateEffector12setStateNameENSt6stringE"></span><span id="_CPPv2N22IgbmNoiseStateEffector12setStateNameENSt6stringE"></span><span id="IgbmNoiseStateEffector::setStateName__ss"></span><span class="target" id="class_igbm_noise_state_effector_1a9a11f29d15609ed14582f092675806ff"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setStateName</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">name</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N22IgbmNoiseStateEffector12setStateNameENSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>Set the state manager name. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> – State name. </p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22IgbmNoiseStateEffector11nameOfStateE">
+<span id="_CPPv3N22IgbmNoiseStateEffector11nameOfStateE"></span><span id="_CPPv2N22IgbmNoiseStateEffector11nameOfStateE"></span><span id="IgbmNoiseStateEffector::nameOfState__ss"></span><span class="target" id="class_igbm_noise_state_effector_1a23f9eae63966f26b36fa724926020bcd"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">nameOfState</span></span></span><a class="headerlink" href="#_CPPv4N22IgbmNoiseStateEffector11nameOfStateE" title="Link to this definition"></a><br /></dt>
+<dd><p>state manager key for scalar correction <span class="math notranslate nohighlight">\(\delta\)</span></p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22IgbmNoiseStateEffector5stateE">
+<span id="_CPPv3N22IgbmNoiseStateEffector5stateE"></span><span id="_CPPv2N22IgbmNoiseStateEffector5stateE"></span><span id="IgbmNoiseStateEffector::state__StateDataP"></span><span class="target" id="class_igbm_noise_state_effector_1a855e89d27990e2e5e0b119f46e3c329e"></span><a class="reference internal" href="../_GeneralModuleFiles/stateData.html#_CPPv49StateData" title="StateData"><span class="n"><span class="pre">StateData</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">state</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">nullptr</span></span><a class="headerlink" href="#_CPPv4N22IgbmNoiseStateEffector5stateE" title="Link to this definition"></a><br /></dt>
+<dd><p>pointer to scalar state container </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22IgbmNoiseStateEffector4meanE">
+<span id="_CPPv3N22IgbmNoiseStateEffector4meanE"></span><span id="_CPPv2N22IgbmNoiseStateEffector4meanE"></span><span id="IgbmNoiseStateEffector::mean__double"></span><span class="target" id="class_igbm_noise_state_effector_1ae986e71b247f12662ccb472f1d25d801"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">mean</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">1.0</span></span><a class="headerlink" href="#_CPPv4N22IgbmNoiseStateEffector4meanE" title="Link to this definition"></a><br /></dt>
+<dd><p>mean level <span class="math notranslate nohighlight">\(\mu\)</span> of the factor <span class="math notranslate nohighlight">\((1+\delta)\)</span> [-] </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22IgbmNoiseStateEffector15sigmaStationaryE">
+<span id="_CPPv3N22IgbmNoiseStateEffector15sigmaStationaryE"></span><span id="_CPPv2N22IgbmNoiseStateEffector15sigmaStationaryE"></span><span id="IgbmNoiseStateEffector::sigmaStationary__double"></span><span class="target" id="class_igbm_noise_state_effector_1a111d230b1cf7e05d8574033bf29a49d0"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sigmaStationary</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N22IgbmNoiseStateEffector15sigmaStationaryE" title="Link to this definition"></a><br /></dt>
+<dd><p>stationary standard deviation <span class="math notranslate nohighlight">\(\sigma_{\mathrm{st}}\)</span> [-] </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22IgbmNoiseStateEffector12timeConstantE">
+<span id="_CPPv3N22IgbmNoiseStateEffector12timeConstantE"></span><span id="_CPPv2N22IgbmNoiseStateEffector12timeConstantE"></span><span id="IgbmNoiseStateEffector::timeConstant__double"></span><span class="target" id="class_igbm_noise_state_effector_1af1530bf78c5cdc72ea89ee8924a818e2"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">timeConstant</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">1.0</span></span><a class="headerlink" href="#_CPPv4N22IgbmNoiseStateEffector12timeConstantE" title="Link to this definition"></a><br /></dt>
+<dd><p>IGBM time constant <span class="math notranslate nohighlight">\(\tau\)</span> [s]. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22IgbmNoiseStateEffector9stateInitE">
+<span id="_CPPv3N22IgbmNoiseStateEffector9stateInitE"></span><span id="_CPPv2N22IgbmNoiseStateEffector9stateInitE"></span><span id="IgbmNoiseStateEffector::stateInit__double"></span><span class="target" id="class_igbm_noise_state_effector_1a2f3144704158158307c561aee7855d1e"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">stateInit</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N22IgbmNoiseStateEffector9stateInitE" title="Link to this definition"></a><br /></dt>
+<dd><p>initial value for <span class="math notranslate nohighlight">\(\delta\)</span> used at state registration </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22IgbmNoiseStateEffector12stateInitSetE">
+<span id="_CPPv3N22IgbmNoiseStateEffector12stateInitSetE"></span><span id="_CPPv2N22IgbmNoiseStateEffector12stateInitSetE"></span><span id="IgbmNoiseStateEffector::stateInitSet__b"></span><span class="target" id="class_igbm_noise_state_effector_1a7b217ec500a6670cd5896cc28d4c5b06"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">stateInitSet</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">false</span></span><a class="headerlink" href="#_CPPv4N22IgbmNoiseStateEffector12stateInitSetE" title="Link to this definition"></a><br /></dt>
+<dd><p>whether the user set an explicit initial value </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-static-attributes">Private Static Attributes</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22IgbmNoiseStateEffector10effectorIDE">
+<span id="_CPPv3N22IgbmNoiseStateEffector10effectorIDE"></span><span id="_CPPv2N22IgbmNoiseStateEffector10effectorIDE"></span><span id="IgbmNoiseStateEffector::effectorID__uint64_t"></span><span class="target" id="class_igbm_noise_state_effector_1a4130803f33b22ab445aa4495bcf68afd"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">effectorID</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">1</span></span><a class="headerlink" href="#_CPPv4N22IgbmNoiseStateEffector10effectorIDE" title="Link to this definition"></a><br /></dt>
+<dd><p>unique ID counter used to generate a distinct state name </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="igbmNoiseStateEffector" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,8 @@
+.. _svStochasticIntegratorSOSRA:
+
+svStochasticIntegratorSOSRA
+===========================
+
+.. autodoxygenfile:: svStochasticIntegratorSOSRA.h
+   :project: Integrators
+

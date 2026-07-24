@@ -1,0 +1,218 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Building the Vizard Unity Project &mdash; Basilisk 2.11.0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=2ebb1c42" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=1647406f"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Optional: Install Native File Browser" href="2_OptionalNativeFileBrowser.html" />
+    <link rel="prev" title="Download Vizard Source Code" href="0_DownloadVizardSourceCode.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Plugins/overview.html">About Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Plugins/installing.html">Installing Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Plugins/writing.html">Writing a Basilisk Plugin</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../VizardDownload.html">Download</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Building from Source</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="0_DownloadVizardSourceCode.html">Download Vizard Source Code</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Building the Vizard Unity Project</a></li>
+<li class="toctree-l2"><a class="reference internal" href="2_OptionalNativeFileBrowser.html">Optional: Install Native File Browser</a></li>
+<li class="toctree-l2"><a class="reference internal" href="3_BuildVizardBinary.html">Building a Stand-Alone Vizard Application</a></li>
+<li class="toctree-l2"><a class="reference internal" href="4_ConfigureForVR.html">Configure Vizard for Virtual Reality (Windows Only)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Building from Source</a></li>
+      <li class="breadcrumb-item active">Building the Vizard Unity Project</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Vizard/buildFromSource/1_CompileVizardUnityProject.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="building-the-vizard-unity-project">
+<h1>Building the Vizard Unity Project<a class="headerlink" href="#building-the-vizard-unity-project" title="Link to this heading"></a></h1>
+<p>These instructions allow you to compile and run Vizard within the Unity application.</p>
+<ol class="arabic">
+<li><p><strong>Install the Unity Hub.</strong> If it is not yet installed, visit <a class="reference external" href="https://unity.com">Unity</a>
+and follow the platform-specific instructions to install the Unity Hub.</p></li>
+<li><p><strong>Install the Unity 6000.0 LTS editor.</strong> Vizard is currently based on Unity
+<code class="docutils literal notranslate"><span class="pre">6000.0.68f1</span></code>.</p>
+<ol class="loweralpha simple">
+<li><p>In Unity Hub, click <code class="docutils literal notranslate"><span class="pre">Installs</span></code> on the left side.</p></li>
+<li><p>Click <code class="docutils literal notranslate"><span class="pre">Install</span> <span class="pre">Editor</span></code> in the upper-right corner.</p></li>
+<li><p>Click the <code class="docutils literal notranslate"><span class="pre">Archive</span></code> tab at the top of the panel. Click the <code class="docutils literal notranslate"><span class="pre">download</span> <span class="pre">archive</span> <span class="pre">link</span></code> to go to the Unity Archive website.</p></li>
+<li><p>On the Unity download archive webpage, make sure Unity 6 is selected and then select <code class="docutils literal notranslate"><span class="pre">LTS</span></code> from the row of options.</p></li>
+<li><p>Scroll down to the 6000.0.68f1 (released February 18, 2026) and click Install to the right.</p></li>
+<li><p>A dialog box will ask to <code class="docutils literal notranslate"><span class="pre">Open</span> <span class="pre">Unity</span> <span class="pre">Hub?</span></code> Click the <code class="docutils literal notranslate"><span class="pre">Open</span> <span class="pre">Unity</span> <span class="pre">Hub</span></code> button.</p></li>
+<li><p>Select the desired Unity Editor for your platform.</p></li>
+<li><p>A panel will open with <code class="docutils literal notranslate"><span class="pre">Install</span> <span class="pre">Unity</span> <span class="pre">6.0</span> <span class="pre">(6000.0.68f1)</span></code> at the top. There will be a list of additional installation options, including platform-specific build support. Install any desired optional components, such as:</p>
+<ul class="simple">
+<li><p>Visual Studio Code</p></li>
+<li><p>Linux Build Support (Mono)</p></li>
+<li><p>macOS Build Support (IL2CPP)</p></li>
+<li><p>Windows Build Support (Mono)</p></li>
+</ul>
+</li>
+<li><p>Click Install to have Unity Hub install the Editor and all additional download options selected.</p></li>
+</ol>
+</li>
+<li><p><strong>Open the Vizard Unity project.</strong></p>
+<ol class="loweralpha simple">
+<li><p>Start Unity Hub.</p></li>
+<li><p>Click the <code class="docutils literal notranslate"><span class="pre">Add</span></code> dropdown in the upper-right corner and select
+<code class="docutils literal notranslate"><span class="pre">Add</span> <span class="pre">Project</span> <span class="pre">From</span> <span class="pre">Disk</span></code>.</p></li>
+<li><p>Navigate to <code class="docutils literal notranslate"><span class="pre">Vizard/VizardUnityProject</span></code> and click <code class="docutils literal notranslate"><span class="pre">Open</span></code>.</p></li>
+<li><p>In the Unity Hub project list, click the newly added project to open it.</p></li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If your installed Unity 6000.0 version does not match the version last used by the
+repository, Unity will ask you to confirm opening the project in a non-matching
+editor. Click <code class="docutils literal notranslate"><span class="pre">Yes</span></code> to continue. You may need to resolve issues arising from the
+difference in  Unity Editors.</p>
+</div>
+</li>
+<li><p><strong>Load the startup scene.</strong> After <code class="docutils literal notranslate"><span class="pre">VizardUnityProject</span></code> finishes importing, type
+<code class="docutils literal notranslate"><span class="pre">VizardStartupScene</span></code> into the Project search bar and double-click the scene asset
+to open it.</p></li>
+<li><p><strong>Install the TMP Essentials Unity package.</strong> When Unity displays the <code class="docutils literal notranslate"><span class="pre">TMP</span> <span class="pre">Importer</span></code>
+panel, click <code class="docutils literal notranslate"><span class="pre">Import</span> <span class="pre">TMP</span> <span class="pre">Essentials</span></code>. The <code class="docutils literal notranslate"><span class="pre">TMP</span> <span class="pre">Examples</span> <span class="pre">&amp;</span> <span class="pre">Extras</span></code> package is
+optional and can be skipped and the panel closed.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>To force the <code class="docutils literal notranslate"><span class="pre">TMP</span> <span class="pre">Importer</span></code> panel to appear, click inside the VizardStartupScene
+hierarchy to inspect the StartUpCanvas&gt;Panel&gt;VersionText.</p>
+</div>
+</li>
+<li><p><strong>Test the local installation.</strong> Press the Unity <code class="docutils literal notranslate"><span class="pre">Play</span></code> button and, in the Game
+window, use <code class="docutils literal notranslate"><span class="pre">Select</span></code> to open a Basilisk scenario <code class="docutils literal notranslate"><span class="pre">.bin</span></code> file and confirm the
+setup works.</p></li>
+<li><p><strong>Optional: Install a C# IDE.</strong> A C# IDE is recommended for script editing. Both
+Visual Studio and JetBrains Rider provide optional packages for Unity development.</p></li>
+</ol>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>The atmosphere shader materials for Earth, Mars, and Venus, together with
+installation instructions, are available through the <code class="docutils literal notranslate"><span class="pre">Vizard_HD_Materials</span></code>
+bundle listed on <a class="reference internal" href="../VizardDownload.html#vizarddownload"><span class="std std-ref">Download</span></a>.
+The atmosphere and ring shader used in Vizard are adapted from the
+<a class="reference external" href="https://assetstore.unity.com/packages/vfx/shaders/planet-shader-and-shadowing-system-49693">Planet Shader and Shadowing System</a>
+package available in the Unity Asset Store.</p>
+</div>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="0_DownloadVizardSourceCode.html" class="btn btn-neutral float-left" title="Download Vizard Source Code" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="2_OptionalNativeFileBrowser.html" class="btn btn-neutral float-right" title="Optional: Install Native File Browser" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

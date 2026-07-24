@@ -1,0 +1,448 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scenarioVestaOrientation &mdash; Basilisk 2.12.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=2ebb1c42" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=4ad2e773"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">scenarioVestaOrientation</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for scenarioVestaOrientation</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+<span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Overview</span>
+<span class="sd">--------</span>
+<span class="sd">The companion to :ref:`scenarioSpiceReconstruction`, applying the :ref:`SpiceInterface&lt;spiceInterface&gt;`</span>
+<span class="sd">reconstruction feature (see :ref:`spiceReconstruction`) to the **orientation** channel instead of</span>
+<span class="sd">position. It illustrates the &quot;constant rotation vector&quot; case from that documentation page: for a body that spins</span>
+<span class="sd">about a fixed axis at a constant rate, orientation reconstruction is cheap and *exact*.</span>
+
+<span class="sd">A spacecraft orbits the asteroid (4) Vesta at 50 km altitude, deep in Vesta&#39;s modeled degree-8</span>
+<span class="sd">spherical-harmonic gravity field (``VESTA20H.txt``). Because :ref:`NBodyGravity&lt;NBodyGravity&gt;`</span>
+<span class="sd">rotates that aspherical field into the body-fixed frame using the source orientation ``J20002Pfix``,</span>
+<span class="sd">the attitude must be supplied continually as the orbit is integrated, and both dynamics paths call</span>
+<span class="sd">:ref:`spiceInterface` to get it. On an :ref:`MJScene&lt;MJScene&gt;` dynamics task the attitude is queried</span>
+<span class="sd">every RK4 sub-step; the classic :ref:`spacecraft` + :ref:`gravityEffector` path</span>
+<span class="sd">queries once per task step and extrapolates within the step (the same distinction as in the</span>
+<span class="sd">:ref:`companion position scenario&lt;scenarioSpiceReconstruction&gt;`). Either way, a finely stepped</span>
+<span class="sd">propagation evaluates ``sxform_c`` thousands of times per orbit.</span>
+
+<span class="sd">But Vesta&#39;s SPICE orientation ``IAU_VESTA`` is a **constant rotation vector**: a fixed spin axis and</span>
+<span class="sd">a constant rate (its IAU model is a linear ``W = W0 + Wdot*t``). SPICE returns the attitude as a</span>
+<span class="sd">DCM, and a DCM trajectory is *not* linear in time, so linearly extrapolating the DCM entries would</span>
+<span class="sd">not be exact. The reconstruction instead lifts the attitude to its **principal rotation vector**</span>
+<span class="sd">(PRV) and extrapolates *that*: for a fixed axis at a constant rate the PRV is exactly linear in</span>
+<span class="sd">time, so a first-order extrapolation from a *single* knot, mapped back to a DCM with ``PRV2C``,</span>
+<span class="sd">reproduces the attitude to machine precision for the whole run. One SPICE query serves the entire</span>
+<span class="sd">propagation.</span>
+
+<span class="sd">.. important::</span>
+
+<span class="sd">    This &quot;one query is exact&quot; simplification holds **only** while the body&#39;s angular-velocity</span>
+<span class="sd">    vector is (near) constant, i.e. a fixed spin axis at a fixed rate. That covers nearly every</span>
+<span class="sd">    catalogued small body and the planetary ``IAU_*`` frames. It does **not** hold for a tumbler</span>
+<span class="sd">    (a non-principal-axis rotator such as (99942) Apophis), whose spin axis drifts: there the</span>
+<span class="sd">    attitude has genuine curvature and single-knot extrapolation degrades quickly. Such bodies</span>
+<span class="sd">    need proper reconstruction with ``interpolate=True`` and ``nKnots &gt;= 2`` (see the &quot;choosing</span>
+<span class="sd">    knobs by body type&quot; section of :ref:`spiceReconstruction`).</span>
+
+<span class="sd">The scenario runs a fine-step exact reference, then two coarse-step runs that differ only in how</span>
+<span class="sd">the attitude is supplied, and shows their errors against the reference are identical: the</span>
+<span class="sd">integrator step sets the error, not the SPICE query cost.</span>
+
+<span class="sd">Run with::</span>
+
+<span class="sd">    python3 scenarioVestaOrientation.py</span>
+
+<span class="sd">Illustration of Results</span>
+<span class="sd">-----------------------</span>
+<span class="sd">The first figure shows the spacecraft&#39;s path around Vesta over three orbits,</span>
+<span class="sd">with Vesta drawn to scale at the origin. The orbit is low (50 km) and inclined, so it passes over</span>
+<span class="sd">a range of longitudes and is steered throughout by the aspherical, body-fixed gravity field. That</span>
+<span class="sd">is why the body&#39;s attitude enters the dynamics at all, and it is the run whose final accuracy the</span>
+<span class="sd">second figure measures.</span>
+
+<span class="sd">.. figure:: /_images/Scenarios/scenarioVestaOrientation1.svg</span>
+<span class="sd">   :align: center</span>
+<span class="sd">   :scale: 90 %</span>
+
+<span class="sd">The second figure shows the position error against time for two coarse-step runs,</span>
+<span class="sd">each differenced against the same integrator-converged fine-step reference: one queries the attitude</span>
+<span class="sd">exactly at every sub-step (thousands of SPICE calls), the other velocity-extrapolates from a single</span>
+<span class="sd">SPICE query for the whole run. The legend gives each run&#39;s query count. The two error curves lie</span>
+<span class="sd">exactly on top of each other; because Vesta is a constant-rate spinner,</span>
+<span class="sd">the single-query attitude is exact, so the only error left is the integrator&#39;s own truncation error,</span>
+<span class="sd">identical in both runs. The attitude&#39;s SPICE cost, thousands of queries versus one, does not change</span>
+<span class="sd">the result.</span>
+
+<span class="sd">Does it actually save wall-clock time? The scenario prints the runtime of each run. As in the</span>
+<span class="sd">companion :ref:`scenarioSpiceReconstruction`, reconstruction changes only the SPICE cost, and here</span>
+<span class="sd">that cost is a small share of the step: the degree-8 spherical-harmonic gravity evaluation dominates.</span>
+<span class="sd">Collapsing the ~1700 attitude queries to one shaves at most a percent or two off the runtime on</span>
+<span class="sd">either dynamics path (the classic :ref:`spacecraft` + :ref:`gravityEffector`, which queries</span>
+<span class="sd">``sxform_c`` once per step, and the :ref:`MJScene&lt;MJScene&gt;` dynamics task, which queries it once per</span>
+<span class="sd">RK4 stage).</span>
+
+<span class="sd">.. figure:: /_images/Scenarios/scenarioVestaOrientation2.svg</span>
+<span class="sd">   :align: center</span>
+<span class="sd">   :scale: 90 %</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span><span class="p">,</span> <span class="n">macros</span><span class="p">,</span> <span class="n">orbitalMotion</span><span class="p">,</span> <span class="n">simHelpers</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">mujoco</span><span class="p">,</span> <span class="n">svIntegrators</span><span class="p">,</span> <span class="n">NBodyGravity</span><span class="p">,</span>
+                                  <span class="n">sphericalHarmonicsGravityModel</span><span class="p">,</span> <span class="n">spiceInterface</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.topLevelModules</span><span class="w"> </span><span class="kn">import</span> <span class="n">pyswice</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities.supportDataTools.dataFetcher</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_path</span><span class="p">,</span> <span class="n">DataFile</span>
+
+<span class="n">fileName</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="c1"># scenario configuration</span>
+<span class="n">EPOCH</span> <span class="o">=</span> <span class="s2">&quot;2025 NOVEMBER 15 12:00:00.000&quot;</span>
+<span class="n">VESTA_SH_FILE</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">__import__</span><span class="p">(</span><span class="s2">&quot;Basilisk&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">__path__</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;supportData&quot;</span><span class="p">,</span>
+                             <span class="s2">&quot;LocalGravData&quot;</span><span class="p">,</span> <span class="s2">&quot;VESTA20H.txt&quot;</span><span class="p">)</span>
+<span class="n">SH_DEGREE</span> <span class="o">=</span> <span class="mi">8</span>
+<span class="n">TARGET</span> <span class="o">=</span> <span class="s2">&quot;vesta&quot;</span>                   <span class="c1"># SPICE body; IAU_VESTA is its constant-rate body-fixed frame</span>
+<span class="n">ORBIT_ALT</span> <span class="o">=</span> <span class="mf">50.0e3</span>                 <span class="c1"># [m] low orbit -&gt; strong dependence on the aspherical field</span>
+<span class="n">ORBIT_INC</span> <span class="o">=</span> <span class="mf">40.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>      <span class="c1"># inclined so the trajectory samples the tesseral terms</span>
+<span class="n">COARSE_DT</span> <span class="o">=</span> <span class="mf">60.0</span>                   <span class="c1"># [s] RK4 step for the two comparison runs</span>
+<span class="n">REFERENCE_DT</span> <span class="o">=</span> <span class="mf">1.0</span>                 <span class="c1"># [s] fine RK4 step for the truth reference (integrator-converged)</span>
+<span class="n">N_ORBITS</span> <span class="o">=</span> <span class="mf">3.0</span>                     <span class="c1"># propagation horizon in orbital periods</span>
+
+<span class="c1"># standard Basilisk scenario plotting colours (gist_earth map, as the other scenarios use)</span>
+<span class="n">C_EXACT</span> <span class="o">=</span> <span class="n">simHelpers</span><span class="o">.</span><span class="n">getLineColor</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">C_EXTRAP</span> <span class="o">=</span> <span class="n">simHelpers</span><span class="o">.</span><span class="n">getLineColor</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+
+<span class="n">SC_XML</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">&lt;mujoco&gt;</span>
+<span class="s2">    &lt;worldbody&gt;</span>
+<span class="s2">        &lt;body name=&quot;sc&quot;&gt;&lt;freejoint/&gt;&lt;inertial pos=&quot;0 0 0&quot; mass=&quot;1&quot; diaginertia=&quot;1 1 1&quot;/&gt;&lt;/body&gt;</span>
+<span class="s2">    &lt;/worldbody&gt;</span>
+<span class="s2">&lt;/mujoco&gt;</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="runOrbit">
+<a class="viewcode-back" href="../examples/scenarioVestaOrientation.html#scenarioVestaOrientation.runOrbit">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">runOrbit</span><span class="p">(</span><span class="n">rN</span><span class="p">,</span> <span class="n">vN</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">rEq</span><span class="p">,</span> <span class="n">kernels</span><span class="p">,</span> <span class="n">knotStep</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Propagate the Vesta orbit at RK4 step ``dt`` and record the spacecraft trajectory.</span>
+
+<span class="sd">    A SpiceInterface supplies only Vesta&#39;s orientation: Vesta sits at the frame origin as the</span>
+<span class="sd">    central body, so its position channel is disabled (identically zero, no SPK kernel needed). If</span>
+<span class="sd">    ``knotStep`` (nanoseconds) is given the orientation is reconstructed by single-knot velocity</span>
+<span class="sd">    extrapolation on that grid (one SPICE query for the whole run); otherwise it is queried exactly</span>
+<span class="sd">    at every integrator sub-step. Returns (orientation-query count, times [s], positions [m]).&quot;&quot;&quot;</span>
+    <span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">dynProcess</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="s2">&quot;simProcess&quot;</span><span class="p">)</span>
+    <span class="n">dynProcess</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">&quot;simTask&quot;</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">dt</span><span class="p">)))</span>
+
+    <span class="n">scene</span> <span class="o">=</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MJScene</span><span class="p">(</span><span class="n">SC_XML</span><span class="p">)</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;vestaScene&quot;</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;simTask&quot;</span><span class="p">,</span> <span class="n">scene</span><span class="p">)</span>
+    <span class="n">integratorObject</span> <span class="o">=</span> <span class="n">svIntegrators</span><span class="o">.</span><span class="n">svIntegratorRK4</span><span class="p">(</span><span class="n">scene</span><span class="p">)</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">setIntegrator</span><span class="p">(</span><span class="n">integratorObject</span><span class="p">)</span>
+    <span class="n">body</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">getBody</span><span class="p">(</span><span class="s2">&quot;sc&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Attitude producer: a SpiceInterface for Vesta&#39;s orientation only, position disabled. Added to</span>
+    <span class="c1"># the dynamics task BEFORE gravity so the attitude is current at every integrator stage.</span>
+    <span class="n">spiceObject</span> <span class="o">=</span> <span class="n">spiceInterface</span><span class="o">.</span><span class="n">SpiceInterface</span><span class="p">(</span><span class="n">auto_configure_kernels</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">spiceObject</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;vestaOrient&quot;</span>
+    <span class="n">spiceObject</span><span class="o">.</span><span class="n">addPlanetNames</span><span class="p">(</span><span class="n">spiceInterface</span><span class="o">.</span><span class="n">StringVector</span><span class="p">([</span><span class="n">TARGET</span><span class="p">]))</span>
+    <span class="n">spiceObject</span><span class="o">.</span><span class="n">UTCCalInit</span> <span class="o">=</span> <span class="n">EPOCH</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">kernels</span><span class="p">:</span>
+        <span class="n">spiceObject</span><span class="o">.</span><span class="n">addKernelPath</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+    <span class="n">spiceObject</span><span class="o">.</span><span class="n">setPlanetPositionDisabled</span><span class="p">(</span><span class="n">TARGET</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">knotStep</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># (knotStep, nKnots=1, useVelocity=True, interpolate=False) = single-knot velocity extrap.</span>
+        <span class="n">spiceObject</span><span class="o">.</span><span class="n">setPlanetOrientationReconstruction</span><span class="p">(</span><span class="n">TARGET</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">knotStep</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">AddModelToDynamicsTask</span><span class="p">(</span><span class="n">spiceObject</span><span class="p">)</span>
+
+    <span class="c1"># Vesta&#39;s real degree-8 spherical-harmonic field, rotated into the body frame by the supplied</span>
+    <span class="c1"># orientation. This is what makes the acceleration attitude-dependent.</span>
+    <span class="n">gravity</span> <span class="o">=</span> <span class="n">NBodyGravity</span><span class="o">.</span><span class="n">NBodyGravity</span><span class="p">()</span>
+    <span class="n">shModel</span> <span class="o">=</span> <span class="n">sphericalHarmonicsGravityModel</span><span class="o">.</span><span class="n">SphericalHarmonicsGravityModel</span><span class="p">()</span>
+    <span class="n">shModel</span><span class="o">.</span><span class="n">loadFromFile</span><span class="p">(</span><span class="n">VESTA_SH_FILE</span><span class="p">,</span> <span class="n">SH_DEGREE</span><span class="p">)</span>
+    <span class="n">shModel</span><span class="o">.</span><span class="n">muBody</span><span class="p">,</span> <span class="n">shModel</span><span class="o">.</span><span class="n">radEquator</span> <span class="o">=</span> <span class="n">mu</span><span class="p">,</span> <span class="n">rEq</span>
+    <span class="n">source</span> <span class="o">=</span> <span class="n">gravity</span><span class="o">.</span><span class="n">addGravitySource</span><span class="p">(</span><span class="n">TARGET</span><span class="p">,</span> <span class="n">shModel</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">source</span><span class="o">.</span><span class="n">stateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">spiceObject</span><span class="o">.</span><span class="n">planetStateOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">AddModelToDynamicsTask</span><span class="p">(</span><span class="n">gravity</span><span class="p">)</span>
+    <span class="n">gravity</span><span class="o">.</span><span class="n">addGravityTarget</span><span class="p">(</span><span class="s2">&quot;sc&quot;</span><span class="p">,</span> <span class="n">body</span><span class="p">)</span>
+
+    <span class="n">scRec</span> <span class="o">=</span> <span class="n">body</span><span class="o">.</span><span class="n">getOrigin</span><span class="p">()</span><span class="o">.</span><span class="n">stateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;simTask&quot;</span><span class="p">,</span> <span class="n">scRec</span><span class="p">)</span>
+    <span class="n">keep</span> <span class="o">=</span> <span class="p">[</span><span class="n">spiceObject</span><span class="p">,</span> <span class="n">gravity</span><span class="p">,</span> <span class="n">shModel</span><span class="p">,</span> <span class="n">integratorObject</span><span class="p">]</span>     <span class="c1"># noqa: F841  hold C++ refs</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">body</span><span class="o">.</span><span class="n">setPosition</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">rN</span><span class="p">));</span> <span class="n">body</span><span class="o">.</span><span class="n">setVelocity</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">vN</span><span class="p">))</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">tf</span><span class="p">))</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="c1"># Actual number of sxform_c orientation queries over the run, whether exact (once per RK4</span>
+    <span class="c1"># stage) or reconstruction (a few knot fills). getPlanetSpiceQueryCount counts both.</span>
+    <span class="n">nQ</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">spiceObject</span><span class="o">.</span><span class="n">getPlanetSpiceQueryCount</span><span class="p">(</span><span class="n">TARGET</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">ts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">scRec</span><span class="o">.</span><span class="n">times</span><span class="p">())</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span>
+    <span class="n">pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">scRec</span><span class="o">.</span><span class="n">r_BN_N</span><span class="p">)</span>
+    <span class="n">pyswice</span><span class="o">.</span><span class="n">kclear_c</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">nQ</span><span class="p">,</span> <span class="n">ts</span><span class="p">,</span> <span class="n">pos</span></div>
+
+
+
+<div class="viewcode-block" id="plotTrajectory">
+<a class="viewcode-back" href="../examples/scenarioVestaOrientation.html#scenarioVestaOrientation.plotTrajectory">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plotTrajectory</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">rEq</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;3D trajectory of the spacecraft around Vesta, with the body drawn to scale.&quot;&quot;&quot;</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="n">num</span><span class="o">=</span><span class="n">fileName</span> <span class="o">+</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="s2">&quot;constrained&quot;</span><span class="p">)</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s2">&quot;3d&quot;</span><span class="p">)</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">pos</span> <span class="o">/</span> <span class="mf">1e3</span>  <span class="c1"># km</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">p</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">p</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">p</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">C_EXTRAP</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;spacecraft trajectory&quot;</span><span class="p">)</span>
+    <span class="c1"># Vesta drawn as a sphere at the origin (mean radius).</span>
+    <span class="n">u</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mgrid</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">:</span><span class="mi">40</span><span class="n">j</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">:</span><span class="mi">20</span><span class="n">j</span><span class="p">]</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">rEq</span> <span class="o">/</span> <span class="mf">1e3</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot_surface</span><span class="p">(</span><span class="n">r</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">u</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">v</span><span class="p">),</span> <span class="n">r</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">u</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">v</span><span class="p">),</span> <span class="n">r</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">v</span><span class="p">),</span>
+                    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;0.7&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;x  [km]&quot;</span><span class="p">);</span> <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;y  [km]&quot;</span><span class="p">);</span> <span class="n">ax</span><span class="o">.</span><span class="n">set_zlabel</span><span class="p">(</span><span class="s2">&quot;z  [km]&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_box_aspect</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;upper left&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">fig</span></div>
+
+
+
+<div class="viewcode-block" id="plotErrorOverTime">
+<a class="viewcode-back" href="../examples/scenarioVestaOrientation.html#scenarioVestaOrientation.plotErrorOverTime">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plotErrorOverTime</span><span class="p">(</span><span class="n">ts</span><span class="p">,</span> <span class="n">errExact</span><span class="p">,</span> <span class="n">nQExact</span><span class="p">,</span> <span class="n">errOne</span><span class="p">,</span> <span class="n">nQOne</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Figure 2: both coarse runs have the SAME error vs. the reference.</span>
+
+<span class="sd">    The two curves overlap: the coarse-step error is set by the integrator, not by how (or how</span>
+<span class="sd">    often) the attitude is queried from SPICE.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="n">num</span><span class="o">=</span><span class="n">fileName</span> <span class="o">+</span> <span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="s2">&quot;constrained&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ts</span> <span class="o">/</span> <span class="mf">3600.0</span><span class="p">,</span> <span class="n">errExact</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">C_EXACT</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">3.5</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+            <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;exact SPICE every sub-step (</span><span class="si">{</span><span class="n">nQExact</span><span class="si">}</span><span class="s2"> queries)&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ts</span> <span class="o">/</span> <span class="mf">3600.0</span><span class="p">,</span> <span class="n">errOne</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">C_EXTRAP</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.8</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+            <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;velocity extrapolation (</span><span class="si">{</span><span class="n">nQOne</span><span class="si">}</span><span class="s2"> SPICE query)&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">ts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="mf">3600.0</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">bottom</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;time  [hr]&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;orbit error vs. </span><span class="si">{</span><span class="n">REFERENCE_DT</span><span class="si">:</span><span class="s2">g</span><span class="si">}</span><span class="s2"> s reference  [m]&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;upper left&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">fig</span></div>
+
+
+
+<div class="viewcode-block" id="run">
+<a class="viewcode-back" href="../examples/scenarioVestaOrientation.html#scenarioVestaOrientation.run">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="n">show_plots</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Run the constant-spinner orientation study and produce its figures.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        show_plots (bool): display the figures.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: ``figureList`` mapping figure name to matplotlib Figure.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Vesta gravitational parameter and reference radius, from the SH file header</span>
+    <span class="n">shModel</span> <span class="o">=</span> <span class="n">sphericalHarmonicsGravityModel</span><span class="o">.</span><span class="n">SphericalHarmonicsGravityModel</span><span class="p">()</span>
+    <span class="n">shModel</span><span class="o">.</span><span class="n">loadFromFile</span><span class="p">(</span><span class="n">VESTA_SH_FILE</span><span class="p">,</span> <span class="n">SH_DEGREE</span><span class="p">)</span>
+    <span class="n">shModel</span><span class="o">.</span><span class="n">initializeParameters</span><span class="p">()</span>
+    <span class="n">mu</span><span class="p">,</span> <span class="n">rEq</span> <span class="o">=</span> <span class="n">shModel</span><span class="o">.</span><span class="n">muBody</span><span class="p">,</span> <span class="n">shModel</span><span class="o">.</span><span class="n">radEquator</span>
+
+    <span class="c1"># leapsecond + planetary-constants (PCK) kernels; the PCK carries Vesta&#39;s IAU rotation</span>
+    <span class="n">kernels</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">get_path</span><span class="p">(</span><span class="n">DataFile</span><span class="o">.</span><span class="n">EphemerisData</span><span class="o">.</span><span class="n">naif0012</span><span class="p">)),</span>
+               <span class="nb">str</span><span class="p">(</span><span class="n">get_path</span><span class="p">(</span><span class="n">DataFile</span><span class="o">.</span><span class="n">EphemerisData</span><span class="o">.</span><span class="n">pck00010</span><span class="p">))]</span>
+
+    <span class="c1"># low circular orbit initial state (inclined so it passes over varied longitudes)</span>
+    <span class="n">oe</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">ClassicElements</span><span class="p">()</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="n">rEq</span> <span class="o">+</span> <span class="n">ORBIT_ALT</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">e</span><span class="p">,</span> <span class="n">oe</span><span class="o">.</span><span class="n">i</span><span class="p">,</span> <span class="n">oe</span><span class="o">.</span><span class="n">Omega</span><span class="p">,</span> <span class="n">oe</span><span class="o">.</span><span class="n">omega</span><span class="p">,</span> <span class="n">oe</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">ORBIT_INC</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span>
+    <span class="n">rN</span><span class="p">,</span> <span class="n">vN</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">elem2rv</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">oe</span><span class="p">)</span>
+    <span class="n">rN</span><span class="p">,</span> <span class="n">vN</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rN</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">vN</span><span class="p">)</span>
+    <span class="n">period</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">oe</span><span class="o">.</span><span class="n">a</span> <span class="o">**</span> <span class="mi">3</span> <span class="o">/</span> <span class="n">mu</span><span class="p">)</span>
+    <span class="n">tf</span> <span class="o">=</span> <span class="n">N_ORBITS</span> <span class="o">*</span> <span class="n">period</span>
+
+    <span class="c1"># Integrator-converged truth: exact SPICE attitude at a fine RK4 step, so any error left in the</span>
+    <span class="c1"># coarse runs below is the integrator&#39;s, not the attitude treatment&#39;s.</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">tRef</span><span class="p">,</span> <span class="n">posRef</span> <span class="o">=</span> <span class="n">runOrbit</span><span class="p">(</span><span class="n">rN</span><span class="p">,</span> <span class="n">vN</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">REFERENCE_DT</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">rEq</span><span class="p">,</span> <span class="n">kernels</span><span class="p">)</span>
+
+    <span class="c1"># Two coarse-step runs that differ ONLY in how the attitude is supplied, wall-clock timed so</span>
+    <span class="c1"># the SPICE-query saving can be reported as an end-to-end runtime difference:</span>
+    <span class="c1">#   - exact SPICE queried at every sub-step (the default);</span>
+    <span class="c1">#   - single-knot velocity extrapolation, one SPICE query for the whole run.</span>
+    <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+    <span class="n">nQExact</span><span class="p">,</span> <span class="n">ts</span><span class="p">,</span> <span class="n">posExact</span> <span class="o">=</span> <span class="n">runOrbit</span><span class="p">(</span><span class="n">rN</span><span class="p">,</span> <span class="n">vN</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">COARSE_DT</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">rEq</span><span class="p">,</span> <span class="n">kernels</span><span class="p">)</span>
+    <span class="n">tExact</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">-</span> <span class="n">t0</span>
+    <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+    <span class="n">nQOne</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">posOne</span> <span class="o">=</span> <span class="n">runOrbit</span><span class="p">(</span><span class="n">rN</span><span class="p">,</span> <span class="n">vN</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">COARSE_DT</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">rEq</span><span class="p">,</span> <span class="n">kernels</span><span class="p">,</span>
+                                <span class="n">knotStep</span><span class="o">=</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">10.0</span> <span class="o">*</span> <span class="n">tf</span><span class="p">))</span>
+    <span class="n">tExtrap</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">-</span> <span class="n">t0</span>
+
+    <span class="c1"># Error of each coarse run against the fine reference (reference sampled at the coarse times).</span>
+    <span class="n">refAtCoarse</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">ts</span><span class="p">,</span> <span class="n">tRef</span><span class="p">,</span> <span class="n">posRef</span><span class="p">[:,</span> <span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)])</span><span class="o">.</span><span class="n">T</span>
+    <span class="n">errExact</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">posExact</span> <span class="o">-</span> <span class="n">refAtCoarse</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">errOne</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">posOne</span> <span class="o">-</span> <span class="n">refAtCoarse</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[study] Vesta </span><span class="si">{</span><span class="n">N_ORBITS</span><span class="si">:</span><span class="s2">g</span><span class="si">}</span><span class="s2">-orbit run at </span><span class="si">{</span><span class="n">ORBIT_ALT</span><span class="o">/</span><span class="mf">1e3</span><span class="si">:</span><span class="s2">g</span><span class="si">}</span><span class="s2"> km altitude&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[study] reference: exact SPICE at </span><span class="si">{</span><span class="n">REFERENCE_DT</span><span class="si">:</span><span class="s2">g</span><span class="si">}</span><span class="s2">s step (integrator-converged)&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[study] coarse (</span><span class="si">{</span><span class="n">COARSE_DT</span><span class="si">:</span><span class="s2">g</span><span class="si">}</span><span class="s2">s) exact:  </span><span class="si">{</span><span class="n">nQExact</span><span class="si">}</span><span class="s2"> queries, peak err </span><span class="si">{</span><span class="n">errExact</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> m, </span><span class="si">{</span><span class="n">tExact</span><span class="o">*</span><span class="mf">1e3</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2"> ms&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[study] coarse (</span><span class="si">{</span><span class="n">COARSE_DT</span><span class="si">:</span><span class="s2">g</span><span class="si">}</span><span class="s2">s) extrap: </span><span class="si">{</span><span class="n">nQOne</span><span class="si">}</span><span class="s2"> query, peak err </span><span class="si">{</span><span class="n">errOne</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> m, </span><span class="si">{</span><span class="n">tExtrap</span><span class="o">*</span><span class="mf">1e3</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2"> ms&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[study] runtime: </span><span class="si">{</span><span class="mf">100.0</span><span class="o">*</span><span class="p">(</span><span class="mf">1.0</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">tExtrap</span><span class="o">/</span><span class="n">tExact</span><span class="p">)</span><span class="si">:</span><span class="s2">+.0f</span><span class="si">}</span><span class="s2">% from reconstruction &quot;</span>
+          <span class="sa">f</span><span class="s2">&quot;(within timing noise on this short run; SH gravity dominates the step, not SPICE)&quot;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;font.size&quot;</span><span class="p">:</span> <span class="mi">13</span><span class="p">,</span> <span class="s2">&quot;lines.linewidth&quot;</span><span class="p">:</span> <span class="mf">2.0</span><span class="p">,</span> <span class="s2">&quot;lines.markersize&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">})</span>
+    <span class="n">figureList</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">fileName</span> <span class="o">+</span> <span class="s2">&quot;1&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">plotTrajectory</span><span class="p">(</span><span class="n">posRef</span><span class="p">,</span> <span class="n">rEq</span><span class="p">)</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">fileName</span> <span class="o">+</span> <span class="s2">&quot;2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">plotErrorOverTime</span><span class="p">(</span><span class="n">ts</span><span class="p">,</span> <span class="n">errExact</span><span class="p">,</span> <span class="n">nQExact</span><span class="p">,</span> <span class="n">errOne</span><span class="p">,</span> <span class="n">nQOne</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">show_plots</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">figureList</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">run</span><span class="p">(</span><span class="n">show_plots</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

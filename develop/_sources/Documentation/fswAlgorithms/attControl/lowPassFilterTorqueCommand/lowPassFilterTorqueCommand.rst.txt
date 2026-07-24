@@ -1,0 +1,35 @@
+.. _lowPassFilterTorqueCommand:
+
+:module-type:`C` Module: lowPassFilterTorqueCommand
+===================================================
+
+Executive Summary
+-----------------
+
+Module applies a low pass filter to the attitude control torque command.
+
+The module
+:download:`PDF Description </../../src/fswAlgorithms/attControl/lowPassFilterTorqueCommand/_Documentation/AVS-Sim-LowPassFilterControlTorque-20160108.pdf>`
+contains further information on this module's function,
+how to run it, as well as testing.
+
+Message Connection Descriptions
+-------------------------------
+The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.
+
+.. bsk-module-io:: lowPassFilterTorqueCommand
+    :caption: Module I/O Messages
+
+    output cmdTorqueOutMsg CmdTorqueBodyMsgPayload
+        Filtered commanded torque output message
+    input cmdTorqueInMsg CmdTorqueBodyMsgPayload
+        Unfiltered commanded torque input message
+
+
+----
+
+.. autodoxygenfile:: lowPassFilterTorqueCommand.h
+   :project: lowPassFilterTorqueCommand
+

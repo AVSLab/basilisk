@@ -1,0 +1,48 @@
+.. _stochasticDragCoeff:
+
+:module-type:`C++` Module: stochasticDragCoeff
+==============================================
+
+Executive Summary
+-----------------
+The ``StochasticDragCoeff`` module applies scalar mean-reverting stochastic noise to aerodynamic drag coefficient by
+specializing :ref:`MeanRevertingNoise <meanRevertingNoise>`. It perturbs ``dragCoeff`` in a
+``DragGeometryMsgPayload`` and republishes the modified geometry message.
+
+Message Interfaces
+------------------
+.. bsk-module-io:: stochasticDragCoeff
+
+   input dragGeomInMsg DragGeometryMsgPayload
+      Input drag geometry message containing ``dragCoeff``, projected area, and center-of-pressure data.
+
+   output dragGeomOutMsg DragGeometryMsgPayload
+      Output drag geometry message with stochastic correction applied to ``dragCoeff``.
+
+Module Description
+------------------
+The inherited Ornstein-Uhlenbeck state :math:`x` evolves as
+
+.. math::
+   \text{d}x = -\frac{1}{\tau}x\,\text{d}t + \sqrt{\frac{2}{\tau}}\sigma_{st}\,\text{d}W
+
+The output drag coefficient is
+
+.. math::
+   C_{D,\text{out}} = C_{D,\text{in}}(1 + x)
+
+The remaining geometry fields are passed through unchanged.
+
+Verification and Testing
+------------------------
+The module is validated in
+``src/simulation/mujocoDynamics/stochasticDragCoeff/_UnitTest/test_stochasticDragCoeff.py``
+by checking that the output drag coefficient time series has the expected OU statistics (mean, variance, and
+correlation time) for a constant nominal drag geometry input.
+
+
+----
+
+.. autodoxygenfile:: stochasticDragCoeff.h
+   :project: stochasticDragCoeff
+

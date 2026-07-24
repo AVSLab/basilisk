@@ -1,0 +1,636 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scenarioSpiceReconstruction &mdash; Basilisk 2.12.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=2ebb1c42" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=4ad2e773"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">scenarioSpiceReconstruction</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for scenarioSpiceReconstruction</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+<span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Overview</span>
+<span class="sd">--------</span>
+<span class="sd">An example of the :ref:`SpiceInterface&lt;spiceInterface&gt;` ephemeris **reconstruction** feature</span>
+<span class="sd">(see :ref:`spiceReconstruction`), on a cislunar transfer that is targeted for a deep lunar flyby:</span>
+<span class="sd">the transfer apogee is aimed at the Moon and pulled slightly short, so the spacecraft passes about</span>
+<span class="sd">18000 km from the Moon, well inside its sphere of influence, and its trajectory is sharply bent by</span>
+<span class="sd">the encounter. That makes the Moon&#39;s position the dominant driver of the orbit, so how it is</span>
+<span class="sd">supplied to the gravity model is a significant accuracy knob. The scenario shows that reconstruction trades</span>
+<span class="sd">SPICE queries for accuracy, and that below the integrator&#39;s own error the trade is free.</span>
+
+<span class="sd">The **reference solution** every error is measured against is exact SPICE queried at every RK4</span>
+<span class="sd">sub-step, run on an :ref:`MJScene&lt;MJScene&gt;` dynamics task (the most accurate and most expensive</span>
+<span class="sd">option). Against it the scenario compares:</span>
+
+<span class="sd">#. **Reconstruction sweep**: the Moon position reconstructed from a coarse knot grid, sweeping</span>
+<span class="sd">   ``knotStep`` to trace error versus SPICE query count.</span>
+<span class="sd">#. **Default spacecraft setup**: a classic :ref:`spacecraft` with :ref:`gravityEffector`, where</span>
+<span class="sd">   :ref:`spiceInterface` is queried at the task rate and :ref:`gravityEffector` linearly</span>
+<span class="sd">   extrapolates the Moon across the sub-steps.</span>
+
+<span class="sd">Even with a perfect ephemeris the RK4 integrator has its own truncation error at the study step.</span>
+<span class="sd">The scenario measures it by rerunning the exact-SPICE case at a much finer step (``REFERENCE_DT``),</span>
+<span class="sd">treating that as converged truth, and taking the difference: whatever error the study-step run still</span>
+<span class="sd">carries is the integrator&#39;s. Reconstruction error below this level is masked by it and does not</span>
+<span class="sd">change the orbit, which is what makes coarsening the knot grid free down to that point.</span>
+
+<span class="sd">Run with::</span>
+
+<span class="sd">    python3 scenarioSpiceReconstruction.py</span>
+
+<span class="sd">Illustration of Results</span>
+<span class="sd">-----------------------</span>
+<span class="sd">The first figure is the trajectory itself, projected onto the plane of the transfer. It plots the</span>
+<span class="sd">spacecraft path and the Moon&#39;s path over the same leg, with the closest-approach points marked. The</span>
+<span class="sd">spacecraft coasts out from perigee, turns around about 18000 km from the Moon, and its arc is</span>
+<span class="sd">visibly bent by the encounter. This is the setup for everything that follows: because the flyby</span>
+<span class="sd">dominates the final state, the Moon&#39;s position is the quantity the answer is most sensitive to, so</span>
+<span class="sd">how often and how accurately it is supplied to the gravity model is what the rest of the study</span>
+<span class="sd">measures.</span>
+
+<span class="sd">.. figure:: /_images/Scenarios/scenarioSpiceReconstruction1.svg</span>
+<span class="sd">   :align: center</span>
+<span class="sd">   :scale: 90 %</span>
+
+<span class="sd">The second figure is the accuracy-vs-cost tradeoff. The x-axis is the number of SPICE queries the</span>
+<span class="sd">Moon costs over the whole run (compute cost); the y-axis is the resulting error in the final</span>
+<span class="sd">spacecraft position, measured against the exact-SPICE reference. Each blue point is one</span>
+<span class="sd">reconstruction run at a different knot spacing: coarser grids sit to the left (fewer queries, more</span>
+<span class="sd">error). The horizontal line is the integrator&#39;s own error at this step size, and the shaded band</span>
+<span class="sd">below it is the &quot;free&quot; zone, where reconstruction error is smaller than the integrator error and so</span>
+<span class="sd">does not change the orbit. The reconstruction curve drops into that band after only a few tens of</span>
+<span class="sd">queries, so coarsening the grid further buys nothing. For comparison, the exact-SPICE reference sits</span>
+<span class="sd">at the far right at its full query cost (zero error by definition, on the broken &quot;0&quot; tick), and the</span>
+<span class="sd">:ref:`spacecraft` + :ref:`gravityEffector` default sits *above* the band: a handful of</span>
+<span class="sd">reconstruction knots is both cheaper and more accurate than that default behaviour.</span>
+
+<span class="sd">.. figure:: /_images/Scenarios/scenarioSpiceReconstruction2.svg</span>
+<span class="sd">   :align: center</span>
+<span class="sd">   :scale: 90 %</span>
+
+<span class="sd">The third figure shows the position error buildup against time for three cases: the integrator error (the black</span>
+<span class="sd">curve, the run with a perfect ephemeris, which grows over the leg and jumps at the flyby), one cheap</span>
+<span class="sd">reconstruction taken from the free zone of the second figure, and the :ref:`spacecraft` default. The shaded</span>
+<span class="sd">region is again the free zone, now time-varying because the integrator error grows. The</span>
+<span class="sd">reconstruction stays inside that zone for nearly the whole leg on a handful of Moon queries, while</span>
+<span class="sd">the :ref:`spacecraft` default climbs above it early in the coast and grows to tens of kilometres.</span>
+
+<span class="sd">.. figure:: /_images/Scenarios/scenarioSpiceReconstruction3.svg</span>
+<span class="sd">   :align: center</span>
+<span class="sd">   :scale: 90 %</span>
+
+<span class="sd">Does it actually save wall-clock time? The scenario prints the runtime of each run. The cleanest</span>
+<span class="sd">way to read the effect is to hold the dynamics engine fixed and vary only SPICE: the classic</span>
+<span class="sd">:ref:`spacecraft` + :ref:`gravityEffector` path with exact SPICE (one Moon query per step) versus</span>
+<span class="sd">the same path with Moon-position reconstruction. On the author&#39;s machine, collapsing the Moon</span>
+<span class="sd">queries from ~15600 to a handful cuts the classic-path runtime by roughly **5%**. On the</span>
+<span class="sd">:ref:`MJScene&lt;MJScene&gt;` dynamics task the saving is larger, on the order of **10%**, because that</span>
+<span class="sd">path queries SPICE four times per step (once per RK4 stage) rather than once, so SPICE is a bigger</span>
+<span class="sd">share of the step.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span><span class="p">,</span> <span class="n">macros</span><span class="p">,</span> <span class="n">simHelpers</span><span class="p">,</span> <span class="n">simIncludeGravBody</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">mujoco</span><span class="p">,</span> <span class="n">svIntegrators</span><span class="p">,</span> <span class="n">spacecraft</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.topLevelModules</span><span class="w"> </span><span class="kn">import</span> <span class="n">pyswice</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities.supportDataTools.dataFetcher</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_path</span><span class="p">,</span> <span class="n">DataFile</span>
+
+<span class="n">fileName</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="c1"># scenario configuration</span>
+<span class="n">EPOCH</span> <span class="o">=</span> <span class="s2">&quot;2025 NOVEMBER 15 12:00:00.000&quot;</span>
+<span class="n">RK4_DT</span> <span class="o">=</span> <span class="mf">30.0</span>                 <span class="c1"># [s] integrator / task step for the study</span>
+<span class="n">N_STEPS</span> <span class="o">=</span> <span class="mi">15600</span>               <span class="c1"># horizon in steps -&gt; TF = 130 h, past the lunar flyby at ~115 h</span>
+<span class="n">TF</span> <span class="o">=</span> <span class="n">RK4_DT</span> <span class="o">*</span> <span class="n">N_STEPS</span>
+<span class="n">REFERENCE_DT</span> <span class="o">=</span> <span class="mf">2.0</span>            <span class="c1"># [s] fine RK4 step whose exact-SPICE run is the integrator-converged truth</span>
+<span class="c1"># Apogee radius as a fraction of the Moon&#39;s distance at arrival. Aiming the transfer apogee at the</span>
+<span class="c1"># Moon gives a bullseye impact; pulling it slightly short (0.94) makes the spacecraft turn around</span>
+<span class="c1"># ~18000 km from the Moon, a deep pass inside its ~66000 km sphere of influence that sharply bends</span>
+<span class="c1"># the trajectory without being captured.</span>
+<span class="n">APOGEE_FRACTION</span> <span class="o">=</span> <span class="mf">0.94</span>
+<span class="c1"># Reconstruction knot spacings to sweep, as integer multiples of the task step. The range is</span>
+<span class="c1"># chosen so the reconstruction-error curve crosses the integrator error floor: fine grids stay</span>
+<span class="c1"># exact, coarse grids rise above it.</span>
+<span class="n">KNOT_MULTIPLES</span> <span class="o">=</span> <span class="p">[</span><span class="mi">64</span><span class="p">,</span> <span class="mi">256</span><span class="p">,</span> <span class="mi">512</span><span class="p">,</span> <span class="mi">1024</span><span class="p">,</span> <span class="mi">1536</span><span class="p">,</span> <span class="mi">2048</span><span class="p">,</span> <span class="mi">3072</span><span class="p">,</span> <span class="mi">4096</span><span class="p">,</span> <span class="mi">6144</span><span class="p">]</span>
+
+<span class="c1"># A minimal free-flying point mass. Its own shape/mass are irrelevant; only the orbit matters.</span>
+<span class="n">SC_XML</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">&lt;mujoco&gt;</span>
+<span class="s2">    &lt;worldbody&gt;</span>
+<span class="s2">        &lt;body name=&quot;sc&quot;&gt;&lt;freejoint/&gt;&lt;inertial pos=&quot;0 0 0&quot; mass=&quot;1&quot; diaginertia=&quot;1 1 1&quot;/&gt;&lt;/body&gt;</span>
+<span class="s2">    &lt;/worldbody&gt;</span>
+<span class="s2">&lt;/mujoco&gt;</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+<span class="c1"># standard Basilisk scenario plotting colours (gist_earth map, as the other scenarios use)</span>
+<span class="n">C_RECON</span> <span class="o">=</span> <span class="n">simHelpers</span><span class="o">.</span><span class="n">getLineColor</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="n">C_CLASSIC</span> <span class="o">=</span> <span class="n">simHelpers</span><span class="o">.</span><span class="n">getLineColor</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="n">C_EXACT</span> <span class="o">=</span> <span class="n">simHelpers</span><span class="o">.</span><span class="n">getLineColor</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="runMJScene">
+<a class="viewcode-back" href="../examples/scenarioSpiceReconstruction.html#scenarioSpiceReconstruction.runMJScene">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">runMJScene</span><span class="p">(</span><span class="n">rN</span><span class="p">,</span> <span class="n">vN</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">knotStep</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">record</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Propagate the cislunar orbit in an MJScene dynamics task with Earth (central) + Moon third</span>
+<span class="sd">    body at RK4 step ``dt``. ``knotStep`` (nanoseconds), if given, reconstructs the Moon position</span>
+<span class="sd">    with cubic Hermite on that knot grid; otherwise the Moon is queried exactly at every RK4</span>
+<span class="sd">    sub-step. Returns (final position, Moon SPICE query count,</span>
+<span class="sd">    optional [times, spacecraft positions, Moon positions]).&quot;&quot;&quot;</span>
+    <span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">dynProcess</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="s2">&quot;simProcess&quot;</span><span class="p">)</span>
+    <span class="n">dynProcess</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">&quot;simTask&quot;</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">dt</span><span class="p">)))</span>
+
+    <span class="n">scene</span> <span class="o">=</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MJScene</span><span class="p">(</span><span class="n">SC_XML</span><span class="p">)</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;cislunarScene&quot;</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;simTask&quot;</span><span class="p">,</span> <span class="n">scene</span><span class="p">)</span>
+    <span class="n">integratorObject</span> <span class="o">=</span> <span class="n">svIntegrators</span><span class="o">.</span><span class="n">svIntegratorRK4</span><span class="p">(</span><span class="n">scene</span><span class="p">)</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">setIntegrator</span><span class="p">(</span><span class="n">integratorObject</span><span class="p">)</span>
+    <span class="n">body</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">getBody</span><span class="p">(</span><span class="s2">&quot;sc&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Earth (central body at the origin) and the Moon are both produced by one SpiceInterface.</span>
+    <span class="n">gravFactory</span> <span class="o">=</span> <span class="n">simIncludeGravBody</span><span class="o">.</span><span class="n">gravBodyFactory</span><span class="p">()</span>
+    <span class="n">gravFactory</span><span class="o">.</span><span class="n">createEarth</span><span class="p">()</span><span class="o">.</span><span class="n">isCentralBody</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">gravFactory</span><span class="o">.</span><span class="n">createMoon</span><span class="p">()</span>
+    <span class="n">spiceObject</span> <span class="o">=</span> <span class="n">gravFactory</span><span class="o">.</span><span class="n">createSpiceInterface</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">EPOCH</span><span class="p">)</span>
+    <span class="n">spiceObject</span><span class="o">.</span><span class="n">zeroBase</span> <span class="o">=</span> <span class="s2">&quot;Earth&quot;</span>
+    <span class="k">if</span> <span class="n">knotStep</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">spiceObject</span><span class="o">.</span><span class="n">setPlanetPositionReconstruction</span><span class="p">(</span><span class="s2">&quot;moon&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">knotStep</span><span class="p">))</span>
+
+    <span class="c1"># Add the SPICE producer to the dynamics task first so planet states are current at every</span>
+    <span class="c1"># sub-step, then let the factory build the NBodyGravity model: it registers Earth and the Moon</span>
+    <span class="c1"># as gravity sources (reusing their gravity models and SPICE connections) and applies gravity</span>
+    <span class="c1"># at the MuJoCo spacecraft. addBodiesTo returns the model, which must stay referenced.</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">AddModelToDynamicsTask</span><span class="p">(</span><span class="n">spiceObject</span><span class="p">)</span>
+    <span class="n">gravity</span> <span class="o">=</span> <span class="n">gravFactory</span><span class="o">.</span><span class="n">addBodiesTo</span><span class="p">(</span><span class="n">scene</span><span class="p">)</span>
+
+    <span class="n">scRec</span> <span class="o">=</span> <span class="n">body</span><span class="o">.</span><span class="n">getOrigin</span><span class="p">()</span><span class="o">.</span><span class="n">stateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span> <span class="k">if</span> <span class="n">record</span> <span class="k">else</span> <span class="kc">None</span>
+    <span class="n">moonRec</span> <span class="o">=</span> <span class="n">spiceObject</span><span class="o">.</span><span class="n">planetStateOutMsgs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span> <span class="k">if</span> <span class="n">record</span> <span class="k">else</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">record</span><span class="p">:</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;simTask&quot;</span><span class="p">,</span> <span class="n">scRec</span><span class="p">)</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;simTask&quot;</span><span class="p">,</span> <span class="n">moonRec</span><span class="p">)</span>
+
+    <span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">body</span><span class="o">.</span><span class="n">setPosition</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">rN</span><span class="p">));</span> <span class="n">body</span><span class="o">.</span><span class="n">setVelocity</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">vN</span><span class="p">))</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">TF</span><span class="p">))</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="n">rFinal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">body</span><span class="o">.</span><span class="n">getOrigin</span><span class="p">()</span><span class="o">.</span><span class="n">stateOutMsg</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">r_BN_N</span><span class="p">)</span>
+    <span class="n">nQ</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">spiceObject</span><span class="o">.</span><span class="n">getPlanetSpiceQueryCount</span><span class="p">(</span><span class="s2">&quot;moon&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">gravFactory</span><span class="o">.</span><span class="n">unloadSpiceKernels</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">record</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">rFinal</span><span class="p">,</span> <span class="n">nQ</span><span class="p">,</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">scRec</span><span class="o">.</span><span class="n">times</span><span class="p">())</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">scRec</span><span class="o">.</span><span class="n">r_BN_N</span><span class="p">),</span>
+                            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">moonRec</span><span class="o">.</span><span class="n">PositionVector</span><span class="p">)]</span>
+    <span class="k">return</span> <span class="n">rFinal</span><span class="p">,</span> <span class="n">nQ</span><span class="p">,</span> <span class="p">[]</span></div>
+
+
+
+<div class="viewcode-block" id="runClassicSpacecraft">
+<a class="viewcode-back" href="../examples/scenarioSpiceReconstruction.html#scenarioSpiceReconstruction.runClassicSpacecraft">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">runClassicSpacecraft</span><span class="p">(</span><span class="n">rN</span><span class="p">,</span> <span class="n">vN</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">knotStep</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">record</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Propagate the same orbit with a classic Spacecraft and gravityEffector on a regular task at</span>
+<span class="sd">    step ``dt``: SpiceInterface runs once per step and gravityEffector linearly extrapolates the</span>
+<span class="sd">    Moon across the sub-steps. ``knotStep`` (nanoseconds), if given, reconstructs the Moon position</span>
+<span class="sd">    on that knot grid instead of querying exact SPICE every step (same engine, SPICE the only change,</span>
+<span class="sd">    for the apples-to-apples runtime comparison). Returns (final position, Moon query count,</span>
+<span class="sd">    optional [times, spacecraft positions]).&quot;&quot;&quot;</span>
+    <span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">dynProcess</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="s2">&quot;simProcess&quot;</span><span class="p">)</span>
+    <span class="n">dynProcess</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">&quot;simTask&quot;</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">dt</span><span class="p">)))</span>
+
+    <span class="n">scObject</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;cislunarSat&quot;</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;simTask&quot;</span><span class="p">,</span> <span class="n">scObject</span><span class="p">)</span>
+
+    <span class="n">gravFactory</span> <span class="o">=</span> <span class="n">simIncludeGravBody</span><span class="o">.</span><span class="n">gravBodyFactory</span><span class="p">()</span>
+    <span class="n">gravFactory</span><span class="o">.</span><span class="n">createEarth</span><span class="p">()</span><span class="o">.</span><span class="n">isCentralBody</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">gravFactory</span><span class="o">.</span><span class="n">createMoon</span><span class="p">()</span>
+    <span class="n">gravFactory</span><span class="o">.</span><span class="n">addBodiesTo</span><span class="p">(</span><span class="n">scObject</span><span class="p">)</span>               <span class="c1"># attaches the gravityEffector + both bodies</span>
+    <span class="n">spiceObject</span> <span class="o">=</span> <span class="n">gravFactory</span><span class="o">.</span><span class="n">createSpiceInterface</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">EPOCH</span><span class="p">)</span>
+    <span class="n">spiceObject</span><span class="o">.</span><span class="n">zeroBase</span> <span class="o">=</span> <span class="s2">&quot;Earth&quot;</span>
+    <span class="k">if</span> <span class="n">knotStep</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">spiceObject</span><span class="o">.</span><span class="n">setPlanetPositionReconstruction</span><span class="p">(</span><span class="s2">&quot;moon&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">knotStep</span><span class="p">))</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;simTask&quot;</span><span class="p">,</span> <span class="n">spiceObject</span><span class="p">)</span>
+
+    <span class="n">scRec</span> <span class="o">=</span> <span class="n">scObject</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span> <span class="k">if</span> <span class="n">record</span> <span class="k">else</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">record</span><span class="p">:</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;simTask&quot;</span><span class="p">,</span> <span class="n">scRec</span><span class="p">)</span>
+
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">=</span> <span class="n">rN</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span> <span class="o">=</span> <span class="n">vN</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">TF</span><span class="p">))</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="n">rFinal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">scObject</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">r_BN_N</span><span class="p">)</span>
+    <span class="n">nQ</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">spiceObject</span><span class="o">.</span><span class="n">getPlanetSpiceQueryCount</span><span class="p">(</span><span class="s2">&quot;moon&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">gravFactory</span><span class="o">.</span><span class="n">unloadSpiceKernels</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">record</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">rFinal</span><span class="p">,</span> <span class="n">nQ</span><span class="p">,</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">scRec</span><span class="o">.</span><span class="n">times</span><span class="p">())</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">scRec</span><span class="o">.</span><span class="n">r_BN_N</span><span class="p">)]</span>
+    <span class="k">return</span> <span class="n">rFinal</span><span class="p">,</span> <span class="n">nQ</span><span class="p">,</span> <span class="p">[]</span></div>
+
+
+
+<div class="viewcode-block" id="moonFlybyInitialState">
+<a class="viewcode-back" href="../examples/scenarioSpiceReconstruction.html#scenarioSpiceReconstruction.moonFlybyInitialState">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">moonFlybyInitialState</span><span class="p">(</span><span class="n">muEarth</span><span class="p">,</span> <span class="n">rEq</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Initial state of a transfer from a 600 km perigee out to a lunar flyby.</span>
+
+<span class="sd">    The transfer apogee is aimed at where the Moon will be when the spacecraft arrives, in the</span>
+<span class="sd">    Moon&#39;s orbit plane, then pulled short by ``APOGEE_FRACTION`` so the spacecraft turns around a</span>
+<span class="sd">    controlled distance from the Moon rather than hitting it. The Moon state comes straight from</span>
+<span class="sd">    SPICE (``spkezr_c``); the time of flight is the perigee-to-apogee half period, iterated to</span>
+<span class="sd">    self-consistency because the apogee radius depends on where the Moon is at arrival. Returns</span>
+<span class="sd">    the inertial (position, velocity) at perigee.&quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">kernel</span> <span class="ow">in</span> <span class="p">(</span><span class="n">DataFile</span><span class="o">.</span><span class="n">EphemerisData</span><span class="o">.</span><span class="n">de430</span><span class="p">,</span> <span class="n">DataFile</span><span class="o">.</span><span class="n">EphemerisData</span><span class="o">.</span><span class="n">naif0012</span><span class="p">):</span>
+        <span class="n">pyswice</span><span class="o">.</span><span class="n">furnsh_c</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">get_path</span><span class="p">(</span><span class="n">kernel</span><span class="p">)))</span>
+    <span class="n">etArray</span> <span class="o">=</span> <span class="n">pyswice</span><span class="o">.</span><span class="n">new_doubleArray</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">pyswice</span><span class="o">.</span><span class="n">str2et_c</span><span class="p">(</span><span class="n">EPOCH</span><span class="p">,</span> <span class="n">etArray</span><span class="p">)</span>
+    <span class="n">et0</span> <span class="o">=</span> <span class="n">pyswice</span><span class="o">.</span><span class="n">doubleArray_getitem</span><span class="p">(</span><span class="n">etArray</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">moonState</span><span class="p">(</span><span class="n">etSec</span><span class="p">):</span>
+        <span class="n">state</span> <span class="o">=</span> <span class="n">pyswice</span><span class="o">.</span><span class="n">new_doubleArray</span><span class="p">(</span><span class="mi">6</span><span class="p">);</span> <span class="n">lt</span> <span class="o">=</span> <span class="n">pyswice</span><span class="o">.</span><span class="n">new_doubleArray</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">pyswice</span><span class="o">.</span><span class="n">spkezr_c</span><span class="p">(</span><span class="s2">&quot;MOON&quot;</span><span class="p">,</span> <span class="n">etSec</span><span class="p">,</span> <span class="s2">&quot;J2000&quot;</span><span class="p">,</span> <span class="s2">&quot;NONE&quot;</span><span class="p">,</span> <span class="s2">&quot;EARTH&quot;</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">lt</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">pyswice</span><span class="o">.</span><span class="n">doubleArray_getitem</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">)])</span> <span class="o">*</span> <span class="mf">1e3</span>  <span class="c1"># m, m/s</span>
+
+    <span class="n">rp</span> <span class="o">=</span> <span class="n">rEq</span> <span class="o">+</span> <span class="mf">600e3</span>                                            <span class="c1"># 600 km perigee altitude</span>
+    <span class="n">tof</span> <span class="o">=</span> <span class="mf">120.0</span> <span class="o">*</span> <span class="mf">3600.0</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">8</span><span class="p">):</span>
+        <span class="n">ra</span> <span class="o">=</span> <span class="n">APOGEE_FRACTION</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">moonState</span><span class="p">(</span><span class="n">et0</span> <span class="o">+</span> <span class="n">tof</span><span class="p">)[:</span><span class="mi">3</span><span class="p">])</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="p">(</span><span class="n">rp</span> <span class="o">+</span> <span class="n">ra</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+        <span class="n">tof</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">a</span> <span class="o">**</span> <span class="mi">3</span> <span class="o">/</span> <span class="n">muEarth</span><span class="p">)</span>                 <span class="c1"># perigee -&gt; apogee half period</span>
+
+    <span class="n">arrival</span> <span class="o">=</span> <span class="n">moonState</span><span class="p">(</span><span class="n">et0</span> <span class="o">+</span> <span class="n">tof</span><span class="p">)</span>
+    <span class="n">apoHat</span> <span class="o">=</span> <span class="n">arrival</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">arrival</span><span class="p">[:</span><span class="mi">3</span><span class="p">])</span>          <span class="c1"># apogee aimed at the arrival Moon</span>
+    <span class="n">hHat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">arrival</span><span class="p">[:</span><span class="mi">3</span><span class="p">],</span> <span class="n">arrival</span><span class="p">[</span><span class="mi">3</span><span class="p">:])</span>                   <span class="c1"># transfer in the Moon&#39;s orbit plane</span>
+    <span class="n">hHat</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">hHat</span><span class="p">)</span>
+    <span class="n">rN</span> <span class="o">=</span> <span class="o">-</span><span class="n">rp</span> <span class="o">*</span> <span class="n">apoHat</span>                                           <span class="c1"># perigee is opposite the apogee</span>
+    <span class="n">vN</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">muEarth</span> <span class="o">*</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">/</span> <span class="n">rp</span> <span class="o">-</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">a</span><span class="p">))</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">hHat</span><span class="p">,</span> <span class="o">-</span><span class="n">apoHat</span><span class="p">)</span>   <span class="c1"># prograde at perigee</span>
+    <span class="n">pyswice</span><span class="o">.</span><span class="n">kclear_c</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">rN</span><span class="p">,</span> <span class="n">vN</span></div>
+
+
+
+<div class="viewcode-block" id="run">
+<a class="viewcode-back" href="../examples/scenarioSpiceReconstruction.html#scenarioSpiceReconstruction.run">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="n">show_plots</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Run the reconstruction accuracy-vs-cost study and produce its three figures.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        show_plots (bool): display the figures.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: ``(errClassic, figureList)`` where ``figureList`` maps figure name to Figure.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># cislunar transfer targeting a deep lunar flyby (perigee 600 km, apogee near the Moon)</span>
+    <span class="n">earth</span> <span class="o">=</span> <span class="n">simIncludeGravBody</span><span class="o">.</span><span class="n">gravBodyFactory</span><span class="p">()</span><span class="o">.</span><span class="n">createEarth</span><span class="p">()</span>
+    <span class="n">rN</span><span class="p">,</span> <span class="n">vN</span> <span class="o">=</span> <span class="n">moonFlybyInitialState</span><span class="p">(</span><span class="n">earth</span><span class="o">.</span><span class="n">mu</span><span class="p">,</span> <span class="n">earth</span><span class="o">.</span><span class="n">radEquator</span><span class="p">)</span>
+
+    <span class="c1"># truth and most-expensive reference: exact SPICE queried at every RK4 sub-step (wall-clock</span>
+    <span class="c1"># timed so the reconstruction speedup can be reported end-to-end). getPlanetSpiceQueryCount</span>
+    <span class="c1"># reports the real Moon-query count for the exact path too, so nQExact is measured, not assumed</span>
+    <span class="c1"># (it comes to one spkezr_c per RK4 stage).</span>
+    <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+    <span class="n">rTruth</span><span class="p">,</span> <span class="n">nQExact</span><span class="p">,</span> <span class="p">(</span><span class="n">tTruth</span><span class="p">,</span> <span class="n">posTruth</span><span class="p">,</span> <span class="n">moonTruth</span><span class="p">)</span> <span class="o">=</span> <span class="n">runMJScene</span><span class="p">(</span><span class="n">rN</span><span class="p">,</span> <span class="n">vN</span><span class="p">,</span> <span class="n">RK4_DT</span><span class="p">,</span> <span class="n">record</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">tExactRun</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">-</span> <span class="n">t0</span>
+
+    <span class="c1"># reference: classic Spacecraft + gravityEffector (SpiceInterface once per step)</span>
+    <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+    <span class="n">rClassic</span><span class="p">,</span> <span class="n">nQClassic</span><span class="p">,</span> <span class="p">(</span><span class="n">tClassic</span><span class="p">,</span> <span class="n">posClassic</span><span class="p">)</span> <span class="o">=</span> <span class="n">runClassicSpacecraft</span><span class="p">(</span><span class="n">rN</span><span class="p">,</span> <span class="n">vN</span><span class="p">,</span> <span class="n">RK4_DT</span><span class="p">,</span> <span class="n">record</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">tClassicRun</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">-</span> <span class="n">t0</span>
+    <span class="n">errClassic</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">rClassic</span> <span class="o">-</span> <span class="n">rTruth</span><span class="p">))</span>
+
+    <span class="c1"># Integrator error over time: the exact-SPICE study step differenced against exact SPICE at the</span>
+    <span class="c1"># fine REFERENCE_DT step (the fine run interpolated onto the coarse sample times). This is the</span>
+    <span class="c1"># error the coarse integrator carries with a perfect ephemeris, so reconstruction error smaller</span>
+    <span class="c1"># than it does not affect the orbit. It grows over the leg; its final value is the floor used to</span>
+    <span class="c1"># pick the &quot;free&quot; reconstruction grid and to draw the free zone on the cost figure.</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="p">(</span><span class="n">tFine</span><span class="p">,</span> <span class="n">posFine</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="o">=</span> <span class="n">runMJScene</span><span class="p">(</span><span class="n">rN</span><span class="p">,</span> <span class="n">vN</span><span class="p">,</span> <span class="n">REFERENCE_DT</span><span class="p">,</span> <span class="n">record</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">fineAtCoarse</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">tTruth</span><span class="p">,</span> <span class="n">tFine</span><span class="p">,</span> <span class="n">posFine</span><span class="p">[:,</span> <span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)])</span><span class="o">.</span><span class="n">T</span>
+    <span class="n">integratorFloor_t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">posTruth</span> <span class="o">-</span> <span class="n">fineAtCoarse</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">integratorFloor</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">integratorFloor_t</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="c1"># reconstruction sweep: coarsen the Moon knot grid and watch error vs. query count</span>
+    <span class="n">sweep</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">KNOT_MULTIPLES</span><span class="p">:</span>
+        <span class="n">r</span><span class="p">,</span> <span class="n">nQ</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">runMJScene</span><span class="p">(</span><span class="n">rN</span><span class="p">,</span> <span class="n">vN</span><span class="p">,</span> <span class="n">RK4_DT</span><span class="p">,</span> <span class="n">knotStep</span><span class="o">=</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">m</span> <span class="o">*</span> <span class="n">RK4_DT</span><span class="p">))</span>
+        <span class="n">sweep</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">mult</span><span class="o">=</span><span class="n">m</span><span class="p">,</span> <span class="n">nQ</span><span class="o">=</span><span class="n">nQ</span><span class="p">,</span> <span class="n">err</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">r</span> <span class="o">-</span> <span class="n">rTruth</span><span class="p">))))</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[study] cislunar leg, RK4 dt=</span><span class="si">{</span><span class="n">RK4_DT</span><span class="si">:</span><span class="s2">g</span><span class="si">}</span><span class="s2">s, horizon=</span><span class="si">{</span><span class="n">TF</span><span class="o">/</span><span class="mi">3600</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">h&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[study] integrator error floor (exact SPICE, </span><span class="si">{</span><span class="n">RK4_DT</span><span class="si">:</span><span class="s2">g</span><span class="si">}</span><span class="s2">s vs </span><span class="si">{</span><span class="n">REFERENCE_DT</span><span class="si">:</span><span class="s2">g</span><span class="si">}</span><span class="s2">s): </span><span class="si">{</span><span class="n">integratorFloor</span><span class="si">:</span><span class="s2">8.1f</span><span class="si">}</span><span class="s2"> m&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[study] exact SPICE (per sub-step):  </span><span class="si">{</span><span class="n">nQExact</span><span class="si">:</span><span class="s2">6d</span><span class="si">}</span><span class="s2"> Moon queries  (truth)&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[study] classic sc + gravityEffector:</span><span class="si">{</span><span class="n">nQClassic</span><span class="si">:</span><span class="s2">6d</span><span class="si">}</span><span class="s2"> Moon queries  err=</span><span class="si">{</span><span class="n">errClassic</span><span class="si">:</span><span class="s2">8.1f</span><span class="si">}</span><span class="s2"> m&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">sweep</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[study] reconstruct knot=</span><span class="si">{</span><span class="n">s</span><span class="p">[</span><span class="s1">&#39;mult&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">4d</span><span class="si">}</span><span class="s2">xdt:  </span><span class="si">{</span><span class="n">s</span><span class="p">[</span><span class="s1">&#39;nQ&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">6d</span><span class="si">}</span><span class="s2"> Moon queries  err=</span><span class="si">{</span><span class="n">s</span><span class="p">[</span><span class="s1">&#39;err&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">8.1f</span><span class="si">}</span><span class="s2"> m&quot;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;font.size&quot;</span><span class="p">:</span> <span class="mi">13</span><span class="p">,</span> <span class="s2">&quot;lines.linewidth&quot;</span><span class="p">:</span> <span class="mf">2.0</span><span class="p">,</span> <span class="s2">&quot;lines.markersize&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">})</span>
+    <span class="n">figureList</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">fileName</span> <span class="o">+</span> <span class="s2">&quot;1&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">plotTrajectory</span><span class="p">(</span><span class="n">posTruth</span><span class="p">,</span> <span class="n">moonTruth</span><span class="p">)</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">fileName</span> <span class="o">+</span> <span class="s2">&quot;2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">plotAccuracyVsCost</span><span class="p">(</span><span class="n">sweep</span><span class="p">,</span> <span class="n">errClassic</span><span class="p">,</span> <span class="n">integratorFloor</span><span class="p">,</span>
+                                                    <span class="n">nQExact</span><span class="p">,</span> <span class="n">nQClassic</span><span class="p">)</span>
+
+    <span class="c1"># Figure 3 needs one more run: the cheapest grid whose final error still lands below the floor.</span>
+    <span class="c1"># Fall back to the finest grid swept if none clears the floor (keeps the figure well-defined).</span>
+    <span class="n">below</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">sweep</span> <span class="k">if</span> <span class="n">s</span><span class="p">[</span><span class="s2">&quot;err&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">integratorFloor</span><span class="p">]</span>
+    <span class="n">good</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">below</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="n">s</span><span class="p">[</span><span class="s2">&quot;mult&quot;</span><span class="p">])</span> <span class="k">if</span> <span class="n">below</span> <span class="k">else</span> <span class="nb">min</span><span class="p">(</span><span class="n">sweep</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="n">s</span><span class="p">[</span><span class="s2">&quot;mult&quot;</span><span class="p">])</span>
+    <span class="n">goodKnot</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">good</span><span class="p">[</span><span class="s2">&quot;mult&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">RK4_DT</span><span class="p">)</span>
+    <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">nQGood</span><span class="p">,</span> <span class="p">(</span><span class="n">tR</span><span class="p">,</span> <span class="n">posR</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="o">=</span> <span class="n">runMJScene</span><span class="p">(</span><span class="n">rN</span><span class="p">,</span> <span class="n">vN</span><span class="p">,</span> <span class="n">RK4_DT</span><span class="p">,</span> <span class="n">knotStep</span><span class="o">=</span><span class="n">goodKnot</span><span class="p">,</span> <span class="n">record</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">tReconRun</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">-</span> <span class="n">t0</span>
+
+    <span class="c1"># Apples-to-apples: the classic path with the same lossless reconstruction, so only SPICE</span>
+    <span class="c1"># changes (same engine). This isolates the wall-clock effect of collapsing the Moon queries.</span>
+    <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+    <span class="n">runClassicSpacecraft</span><span class="p">(</span><span class="n">rN</span><span class="p">,</span> <span class="n">vN</span><span class="p">,</span> <span class="n">RK4_DT</span><span class="p">,</span> <span class="n">knotStep</span><span class="o">=</span><span class="n">goodKnot</span><span class="p">)</span>
+    <span class="n">tClassicReconRun</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">-</span> <span class="n">t0</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_saving</span><span class="p">(</span><span class="n">exact</span><span class="p">,</span> <span class="n">recon</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mf">100.0</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">recon</span> <span class="o">/</span> <span class="n">exact</span><span class="p">)</span>  <span class="c1"># percent runtime removed</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[study] runtime classic path:  exact </span><span class="si">{</span><span class="n">tClassicRun</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">s -&gt; reconstruction &quot;</span>
+          <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">tClassicReconRun</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">s  (</span><span class="si">{</span><span class="n">_saving</span><span class="p">(</span><span class="n">tClassicRun</span><span class="p">,</span><span class="w"> </span><span class="n">tClassicReconRun</span><span class="p">)</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2">% less, SPICE-only change)&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[study] runtime MJScene path:  exact </span><span class="si">{</span><span class="n">tExactRun</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">s -&gt; reconstruction &quot;</span>
+          <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">tReconRun</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">s  (</span><span class="si">{</span><span class="n">_saving</span><span class="p">(</span><span class="n">tExactRun</span><span class="p">,</span><span class="w"> </span><span class="n">tReconRun</span><span class="p">)</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2">% less, 4 SPICE calls/step -&gt; few)&quot;</span><span class="p">)</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">fileName</span> <span class="o">+</span> <span class="s2">&quot;3&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">plotErrorOverTime</span><span class="p">(</span><span class="n">tTruth</span><span class="p">,</span> <span class="n">posTruth</span><span class="p">,</span> <span class="n">integratorFloor_t</span><span class="p">,</span>
+                                                   <span class="n">tR</span><span class="p">,</span> <span class="n">posR</span><span class="p">,</span> <span class="n">nQGood</span><span class="p">,</span>
+                                                   <span class="n">tClassic</span><span class="p">,</span> <span class="n">posClassic</span><span class="p">,</span> <span class="n">nQClassic</span><span class="p">,</span> <span class="n">errClassic</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">show_plots</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">errClassic</span><span class="p">,</span> <span class="n">figureList</span></div>
+
+
+
+<div class="viewcode-block" id="plotTrajectory">
+<a class="viewcode-back" href="../examples/scenarioSpiceReconstruction.html#scenarioSpiceReconstruction.plotTrajectory">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plotTrajectory</span><span class="p">(</span><span class="n">posTruth</span><span class="p">,</span> <span class="n">moonTruth</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Figure 1: the cislunar transfer in 2D, with the Moon that perturbs it.</span>
+
+<span class="sd">    Both Earth-centred trajectories are projected onto the plane that best contains the spacecraft</span>
+<span class="sd">    path (its two dominant principal directions) so the flyby geometry is planar and the deflection</span>
+<span class="sd">    is easy to see, and the closest-approach point is marked on both paths.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">principalDirs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">svd</span><span class="p">(</span><span class="n">posTruth</span> <span class="o">-</span> <span class="n">posTruth</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">full_matrices</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">e1</span><span class="p">,</span> <span class="n">e2</span> <span class="o">=</span> <span class="n">principalDirs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">principalDirs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">scXY</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">posTruth</span> <span class="o">@</span> <span class="n">e1</span><span class="p">,</span> <span class="n">posTruth</span> <span class="o">@</span> <span class="n">e2</span><span class="p">])</span> <span class="o">/</span> <span class="mf">1e3</span>        <span class="c1"># km, in-plane</span>
+    <span class="n">moonXY</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">moonTruth</span> <span class="o">@</span> <span class="n">e1</span><span class="p">,</span> <span class="n">moonTruth</span> <span class="o">@</span> <span class="n">e2</span><span class="p">])</span> <span class="o">/</span> <span class="mf">1e3</span>
+    <span class="n">ca</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">posTruth</span> <span class="o">-</span> <span class="n">moonTruth</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)))</span>   <span class="c1"># closest-approach sample</span>
+
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="n">num</span><span class="o">=</span><span class="n">fileName</span> <span class="o">+</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="s2">&quot;constrained&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">scXY</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">scXY</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">C_RECON</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;spacecraft trajectory&quot;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+    <span class="c1"># only the latter half of the Moon&#39;s path, the stretch around the encounter</span>
+    <span class="n">moonTail</span> <span class="o">=</span> <span class="n">moonXY</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">moonXY</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span><span class="p">:]</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">moonTail</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">moonTail</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;0.55&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Moon trajectory&quot;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;0.2&quot;</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Earth&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="o">*</span><span class="n">scXY</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">C_RECON</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>              <span class="c1"># spacecraft start (perigee)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="o">*</span><span class="n">moonXY</span><span class="p">[</span><span class="n">ca</span><span class="p">],</span> <span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;0.35&quot;</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Moon at closest approach&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="o">*</span><span class="n">scXY</span><span class="p">[</span><span class="n">ca</span><span class="p">],</span> <span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">C_EXACT</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span> <span class="n">markeredgecolor</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">scXY</span><span class="p">[</span><span class="n">ca</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">moonXY</span><span class="p">[</span><span class="n">ca</span><span class="p">,</span> <span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="n">scXY</span><span class="p">[</span><span class="n">ca</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">moonXY</span><span class="p">[</span><span class="n">ca</span><span class="p">,</span> <span class="mi">1</span><span class="p">]],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;in-plane distance from Earth  [km]&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;in-plane distance from Earth  [km]&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s2">&quot;equal&quot;</span><span class="p">)</span>            <span class="c1"># same scale on both axes; extents free to fit the data</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;lower left&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">fig</span></div>
+
+
+
+<div class="viewcode-block" id="plotAccuracyVsCost">
+<a class="viewcode-back" href="../examples/scenarioSpiceReconstruction.html#scenarioSpiceReconstruction.plotAccuracyVsCost">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plotAccuracyVsCost</span><span class="p">(</span><span class="n">sweep</span><span class="p">,</span> <span class="n">errClassic</span><span class="p">,</span> <span class="n">integratorFloor</span><span class="p">,</span> <span class="n">nQExact</span><span class="p">,</span> <span class="n">nQClassic</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Figure 2: the accuracy-vs-cost tradeoff, with the references + integrator floor marked.&quot;&quot;&quot;</span>
+    <span class="c1"># A coarser knot grid never queries SPICE more, so different knot spacings can land on the same</span>
+    <span class="c1"># query count; keep the lowest-error point per count so the curve is single-valued.</span>
+    <span class="n">byQ</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">sweep</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">s</span><span class="p">[</span><span class="s2">&quot;nQ&quot;</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">byQ</span> <span class="ow">or</span> <span class="n">s</span><span class="p">[</span><span class="s2">&quot;err&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">byQ</span><span class="p">[</span><span class="n">s</span><span class="p">[</span><span class="s2">&quot;nQ&quot;</span><span class="p">]]:</span>
+            <span class="n">byQ</span><span class="p">[</span><span class="n">s</span><span class="p">[</span><span class="s2">&quot;nQ&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="s2">&quot;err&quot;</span><span class="p">]</span>
+    <span class="n">nq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">byQ</span><span class="p">))</span>
+    <span class="n">err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">byQ</span><span class="p">[</span><span class="n">q</span><span class="p">]</span> <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="n">nq</span><span class="p">])</span>
+    <span class="n">top</span> <span class="o">=</span> <span class="n">errClassic</span> <span class="o">*</span> <span class="mf">3.0</span>
+    <span class="n">plotFloor</span> <span class="o">=</span> <span class="mf">1e-6</span>  <span class="c1"># [m] bottom of the log panel; the finest grids are microns from the reference</span>
+
+    <span class="c1"># Broken y-axis: a wide log panel for the error curve, and a thin panel below holding the single</span>
+    <span class="c1"># &quot;0&quot; tick where the exact-SPICE reference lives (its error is zero by definition, which cannot</span>
+    <span class="c1"># sit on a log axis).</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">axz</span><span class="p">)</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="n">num</span><span class="o">=</span><span class="n">fileName</span> <span class="o">+</span> <span class="s2">&quot;2&quot;</span><span class="p">,</span>
+                                  <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">height_ratios</span><span class="o">=</span><span class="p">[</span><span class="mi">12</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">layout</span><span class="o">=</span><span class="s2">&quot;constrained&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_yscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">plotFloor</span><span class="p">,</span> <span class="n">top</span><span class="p">)</span>
+
+    <span class="c1"># Grey &quot;free&quot; band spanning the whole panel below the black integrator-error floor line:</span>
+    <span class="c1"># reconstruction error there does not move the orbit, so query cost to shrink it is wasted.</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">axhspan</span><span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">get_ylim</span><span class="p">()[</span><span class="mi">0</span><span class="p">],</span> <span class="n">integratorFloor</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;0.85&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="n">integratorFloor</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+               <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;integrator error floor (</span><span class="si">{</span><span class="n">integratorFloor</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2"> m)&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">nq</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">err</span><span class="p">,</span> <span class="n">plotFloor</span><span class="p">),</span> <span class="s2">&quot;-o&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">C_RECON</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+              <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Moon reconstruction (cubic Hermite)&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">nQClassic</span><span class="p">,</span> <span class="n">errClassic</span><span class="p">,</span> <span class="s2">&quot;s&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">C_CLASSIC</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
+            <span class="n">label</span><span class="o">=</span><span class="s2">&quot;classic spacecraft + gravityEffector&quot;</span><span class="p">)</span>
+    <span class="c1"># proxy handle so the exact-SPICE reference (drawn in the break panel) appears in the legend</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([],</span> <span class="p">[],</span> <span class="s2">&quot;D&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">C_EXACT</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">markeredgecolor</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span>
+            <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;exact SPICE reference (</span><span class="si">{</span><span class="n">nQExact</span><span class="si">}</span><span class="s2"> queries)&quot;</span><span class="p">)</span>
+
+    <span class="c1"># The exact-SPICE reference: zero error by definition, drawn in the break panel at the &quot;0&quot; tick.</span>
+    <span class="c1"># The whole break panel is below the floor, so it continues the grey &quot;free&quot; band.</span>
+    <span class="n">axz</span><span class="o">.</span><span class="n">set_xscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
+    <span class="n">axz</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+    <span class="n">axz</span><span class="o">.</span><span class="n">axhspan</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;0.85&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">axz</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">nQExact</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s2">&quot;D&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">C_EXACT</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">markeredgecolor</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+    <span class="n">axz</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">([</span><span class="mf">0.0</span><span class="p">]);</span> <span class="n">axz</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">([</span><span class="s2">&quot;0&quot;</span><span class="p">])</span>
+
+    <span class="c1"># diagonal break marks between the two panels</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;bottom&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">);</span> <span class="n">ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">bottom</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">axz</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;top&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">breakKw</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">marker</span><span class="o">=</span><span class="p">[(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)],</span> <span class="n">ms</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">mec</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">mew</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">clip_on</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">transform</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">transAxes</span><span class="p">,</span> <span class="o">**</span><span class="n">breakKw</span><span class="p">)</span>
+    <span class="n">axz</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">transform</span><span class="o">=</span><span class="n">axz</span><span class="o">.</span><span class="n">transAxes</span><span class="p">,</span> <span class="o">**</span><span class="n">breakKw</span><span class="p">)</span>
+
+    <span class="n">axz</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">nQExact</span> <span class="o">*</span> <span class="mf">1.6</span><span class="p">)</span>
+    <span class="n">axz</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Moon SPICE queries over the run  (compute cost)&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;orbit final-position error vs. exact-SPICE reference  [m]&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s2">&quot;both&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+    <span class="n">axz</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s2">&quot;both&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;upper center&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">fig</span></div>
+
+
+
+<div class="viewcode-block" id="plotErrorOverTime">
+<a class="viewcode-back" href="../examples/scenarioSpiceReconstruction.html#scenarioSpiceReconstruction.plotErrorOverTime">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plotErrorOverTime</span><span class="p">(</span><span class="n">tTruth</span><span class="p">,</span> <span class="n">posTruth</span><span class="p">,</span> <span class="n">integratorFloor_t</span><span class="p">,</span> <span class="n">tR</span><span class="p">,</span> <span class="n">posR</span><span class="p">,</span> <span class="n">nQGood</span><span class="p">,</span>
+                      <span class="n">tClassic</span><span class="p">,</span> <span class="n">posClassic</span><span class="p">,</span> <span class="n">nQClassic</span><span class="p">,</span> <span class="n">errClassic</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Figure 3: error over time for a well-chosen reconstruction, the classic default, and the</span>
+<span class="sd">    integrator error itself (the run with a perfect ephemeris).&quot;&quot;&quot;</span>
+    <span class="n">errRecon_t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">posR</span> <span class="o">-</span> <span class="n">posTruth</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="c1"># classic run error over time (both run at the task step, so the truth samples align)</span>
+    <span class="n">errClassic_t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">posClassic</span> <span class="o">-</span> <span class="n">posTruth</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="n">num</span><span class="o">=</span><span class="n">fileName</span> <span class="o">+</span> <span class="s2">&quot;3&quot;</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="s2">&quot;constrained&quot;</span><span class="p">)</span>
+    <span class="c1"># The integrator error grows over the leg; everything below it is the &quot;free&quot; zone where</span>
+    <span class="c1"># reconstruction error does not move the orbit.</span>
+    <span class="n">floor_t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">integratorFloor_t</span><span class="p">,</span> <span class="mf">1e-6</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span><span class="n">tTruth</span> <span class="o">/</span> <span class="mf">3600.0</span><span class="p">,</span> <span class="mf">1e-6</span><span class="p">,</span> <span class="n">floor_t</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;0.85&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">tTruth</span> <span class="o">/</span> <span class="mf">3600.0</span><span class="p">,</span> <span class="n">floor_t</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                <span class="n">label</span><span class="o">=</span><span class="s2">&quot;integrator error (perfect ephemeris)&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">tR</span> <span class="o">/</span> <span class="mf">3600.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">errRecon_t</span><span class="p">,</span> <span class="mf">1e-6</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="n">C_RECON</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+                <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;reconstruction, </span><span class="si">{</span><span class="n">nQGood</span><span class="si">}</span><span class="s2"> Moon queries&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">tClassic</span> <span class="o">/</span> <span class="mf">3600.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">errClassic_t</span><span class="p">,</span> <span class="mf">1e-6</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="n">C_CLASSIC</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;classic spacecraft + gravityEffector (</span><span class="si">{</span><span class="n">nQClassic</span><span class="si">}</span><span class="s2"> queries)&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mf">1e-6</span><span class="p">,</span> <span class="n">errClassic</span> <span class="o">*</span> <span class="mf">3.0</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;time  [hr]&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;position error vs. exact SPICE  [m]&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s2">&quot;both&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;lower right&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">fig</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">run</span><span class="p">(</span><span class="n">show_plots</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,13 @@
+.. _test_thrusterPlatformState:
+
+test_thrusterPlatformState
+==========================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. automodule:: test_thrusterPlatformState
+   :members:
+   :show-inheritance:
+
