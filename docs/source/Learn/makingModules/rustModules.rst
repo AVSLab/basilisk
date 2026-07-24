@@ -768,6 +768,44 @@ Use ``type State = ();`` when the module is stateless. Rust allocates and
 destroys the complete module instance, so ordinary Rust cleanup releases
 private state automatically.
 
+Linear Algebra with ``nalgebra``
+--------------------------------
+
+Basilisk's Rust workspace provides
+`nalgebra <https://nalgebra.rs/>`__ for vector and matrix operations. In-tree
+modules select the shared, reviewed version with
+``nalgebra.workspace = true`` when they need linear algebra:
+
+.. code-block:: toml
+
+    [dependencies]
+    nalgebra.workspace = true
+
+This is the Rust equivalent of using Eigen in a C++ Basilisk module. Common
+fixed-size types include ``Vector3<f64>`` and ``Matrix3<f64>``:
+
+.. code-block:: rust
+
+    use nalgebra::{Matrix3, Vector3};
+
+    let inertia = Matrix3::from_row_slice(&vehicle_config.ISCPntB_B); // [kg*m^2]
+    let omega = Vector3::from_column_slice(&guidance.omega_BR_B); // [rad/s]
+    let angular_momentum = inertia * omega; // [N*m*s]
+
+Keep ``nalgebra`` types inside lifecycle methods or Rust-owned private state.
+Python-visible configuration and Basilisk C message payloads must retain their
+C-compatible array types. Convert an array to a matrix with
+``Matrix3::from_row_slice`` because Basilisk stores matrix payload fields in
+row-major order. Convert a result back to an array when constructing an output
+message:
+
+.. code-block:: rust
+
+    let torque: Vector3<f64> = calculate_torque(); // [N*m]
+    let output = CmdTorqueBodyMsg {
+        torqueRequestBody: [torque[0], torque[1], torque[2]],
+    };
+
 Runtime Context and Logging
 ---------------------------
 
@@ -941,8 +979,8 @@ Current Limitations
 * Arbitrary Rust methods are not exported to Python; the public interface is
   the standard Basilisk lifecycle, configuration fields, and messages.
 * The Rust utility bindings cover C-compatible Basilisk utilities and
-  constants. C++-only and Eigen-based utilities require a C-compatible wrapper
-  before Rust can use them.
+  constants. C++-only utilities require a C-compatible wrapper before Rust can
+  use them; use ``nalgebra`` for native Rust vector and matrix operations.
 * Adding or changing a message payload requires regeneration of the committed
   ``bsk-messages`` bindings.
 

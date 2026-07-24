@@ -26,8 +26,12 @@ members = [
     "moduleTemplates/rustModuleTemplate",
 ]
 
+[workspace.dependencies]
+# Use one reviewed linear-algebra version across all in-tree Rust modules.
+nalgebra = { version = "0.35.0", default-features = false, features = ["std"] }
+
 [workspace.package]
-rust-version = "1.85"
+rust-version = "1.89"
 
 # Generated module entry points use catch_unwind to contain Rust panics before
 # returning to C++. Out-of-tree module workspaces must use the same strategy;
