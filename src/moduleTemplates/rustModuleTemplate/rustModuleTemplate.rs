@@ -31,9 +31,15 @@ pub struct RustModuleTemplateConfig {
     /// [-] Optional input message
     #[bsk(input, optional)]
     pub dataInMsg: MsgReader<CModuleTemplateMsg>,
+    /// [-] Fixed-size array of optional input messages
+    #[bsk(input, optional)]
+    pub dataInMsgs: [MsgReader<CModuleTemplateMsg>; 2],
     /// [-] Output message
     #[bsk(output)]
     pub dataOutMsg: MsgWriter<CModuleTemplateMsg>,
+    /// [-] Fixed-size array of output messages
+    #[bsk(output)]
+    pub dataOutMsgs: [MsgWriter<CModuleTemplateMsg>; 2],
     /// [-] Test-only fault injection that deliberately panics during update
     pub panicOnUpdate: bool,
 }
@@ -96,6 +102,7 @@ impl BskModule for RustModuleTemplateConfig {
         context.logger().info("Variable dummy set to 0 in reset.");
         Ok(RustModuleTemplateOutputs {
             dataOutMsg: CModuleTemplateMsg::default(),
+            dataOutMsgs: core::array::from_fn(|_| CModuleTemplateMsg::default()),
         })
     }
 
@@ -111,6 +118,9 @@ impl BskModule for RustModuleTemplateConfig {
         }
 
         let mut data_out_msg = inputs.dataInMsg.unwrap_or_default();
+        let mut data_out_msgs = inputs
+            .dataInMsgs
+            .map(|input_message| input_message.unwrap_or_default());
 
         if state.mode == TemplateMode::Idle {
             context.logger().warning("Update called before reset.");
@@ -123,9 +133,13 @@ impl BskModule for RustModuleTemplateConfig {
             context.module_id()
         );
         data_out_msg.dataVector[0] += self.dummy;
+        for output_message in &mut data_out_msgs {
+            output_message.dataVector[0] += self.dummy;
+        }
 
         Ok(RustModuleTemplateOutputs {
             dataOutMsg: data_out_msg,
+            dataOutMsgs: data_out_msgs,
         })
     }
 }
@@ -138,23 +152,33 @@ mod tests {
     /// Verify that only Python-facing parameters and ports cross the config ABI.
     #[test]
     fn config_abi_contains_only_public_module_fields() {
-        assert_eq!(size_of::<RustModuleTemplateConfig>(), 168);
+        assert_eq!(size_of::<RustModuleTemplateConfig>(), 456);
         assert_eq!(align_of::<RustModuleTemplateConfig>(), 8);
         assert_eq!(offset_of!(RustModuleTemplateConfig, dummy), 0);
         assert_eq!(offset_of!(RustModuleTemplateConfig, increment), 8);
         assert_eq!(offset_of!(RustModuleTemplateConfig, dataInMsg), 16);
-        assert_eq!(offset_of!(RustModuleTemplateConfig, dataOutMsg), 88);
-        assert_eq!(offset_of!(RustModuleTemplateConfig, panicOnUpdate), 160);
+        assert_eq!(offset_of!(RustModuleTemplateConfig, dataInMsgs), 88);
+        assert_eq!(offset_of!(RustModuleTemplateConfig, dataOutMsg), 232);
+        assert_eq!(offset_of!(RustModuleTemplateConfig, dataOutMsgs), 304);
+        assert_eq!(offset_of!(RustModuleTemplateConfig, panicOnUpdate), 448);
     }
 
     /// Verify that generated input and output values use the config port names.
     #[test]
     fn generated_io_values_are_named_by_port() {
-        let inputs = RustModuleTemplateInputs { dataInMsg: None };
+        let inputs = RustModuleTemplateInputs {
+            dataInMsg: None,
+            dataInMsgs: [None; 2],
+        };
         assert!(inputs.dataInMsg.is_none());
+        assert!(inputs.dataInMsgs.iter().all(Option::is_none));
 
         let outputs = RustModuleTemplateOutputs::default();
         assert_eq!(outputs.dataOutMsg.dataVector, [0.0; 3]);
+        assert!(outputs
+            .dataOutMsgs
+            .iter()
+            .all(|message| message.dataVector == [0.0; 3]));
     }
 
     /// Show how pure Rust tests obtain framework metadata and logging services.
@@ -167,7 +191,9 @@ mod tests {
         assert_eq!(context.model_tag(), "");
         assert_eq!(context.call_counts(), 0);
         assert_eq!(context.rng_seed(), 0);
-        context.logger().info("Rust module test context is available.");
+        context
+            .logger()
+            .info("Rust module test context is available.");
     }
 
     /// Demonstrate that internal module state can use unrestricted Rust types.
@@ -179,7 +205,9 @@ mod tests {
             dummy: 99.0,    // [-]
             increment: 1.0, // [-]
             dataInMsg: MsgReader::default(),
+            dataInMsgs: core::array::from_fn(|_| MsgReader::default()),
             dataOutMsg: MsgWriter::default(),
+            dataOutMsgs: core::array::from_fn(|_| MsgWriter::default()),
             panicOnUpdate: false,
         };
         let mut state = RustModuleTemplateState::default();
@@ -195,7 +223,10 @@ mod tests {
             .update(
                 &mut state,
                 &context,
-                RustModuleTemplateInputs { dataInMsg: None },
+                RustModuleTemplateInputs {
+                    dataInMsg: None,
+                    dataInMsgs: [None; 2],
+                },
                 1, // [ns]
             )
             .expect("update must succeed");
@@ -212,7 +243,9 @@ mod tests {
             dummy: 0.0,     // [-]
             increment: 0.0, // [-]
             dataInMsg: MsgReader::default(),
+            dataInMsgs: core::array::from_fn(|_| MsgReader::default()),
             dataOutMsg: MsgWriter::default(),
+            dataOutMsgs: core::array::from_fn(|_| MsgWriter::default()),
             panicOnUpdate: false,
         };
         let mut state = RustModuleTemplateState::default();

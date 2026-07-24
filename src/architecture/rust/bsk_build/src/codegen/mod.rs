@@ -26,8 +26,15 @@ const WRITER_PREFIX: &str = "MsgWriter_";
 struct BindingMetadata {
     /// cbindgen specialization name to existing Basilisk C message-port type.
     port_types: BTreeMap<String, String>,
+    /// Fixed-size message-port arrays exposed through indexed Python views.
+    port_arrays: BTreeMap<String, PortArray>,
     /// Top-level config fields backed by ``Option<Box<T>>``.
     owned_state_fields: BTreeSet<String>,
+}
+
+#[derive(Debug, PartialEq, Eq)]
+struct PortArray {
+    c_type: String,
 }
 
 /// Generate the C header and SWIG interface for a Rust module.
@@ -225,6 +232,16 @@ fn analyze_bindings(header: &str, config_type: &str) -> BindingMetadata {
 
     for line in config_body.lines() {
         let declaration = line.trim();
+        if let Some((rust_type, field_name)) = port_array_declaration(declaration) {
+            if let Some(c_type) = metadata.port_types.get(rust_type) {
+                metadata.port_arrays.insert(
+                    field_name.to_owned(),
+                    PortArray {
+                        c_type: c_type.clone(),
+                    },
+                );
+            }
+        }
         if !declaration.contains('*') || declaration.contains(LOGGER_TYPE) {
             continue;
         }
@@ -234,6 +251,22 @@ fn analyze_bindings(header: &str, config_type: &str) -> BindingMetadata {
     }
 
     metadata
+}
+
+fn port_array_declaration(declaration: &str) -> Option<(&str, &str)> {
+    let declaration = declaration.strip_suffix(';')?;
+    let mut words = declaration.split_whitespace();
+    let rust_type = words.next()?;
+    let field = words.next()?;
+    if words.next().is_some() {
+        return None;
+    }
+    let array_start = field.find('[')?;
+    let array_end = field.rfind(']')?;
+    if array_end <= array_start + 1 || array_end + 1 != field.len() {
+        return None;
+    }
+    Some((rust_type, &field[..array_start]))
 }
 
 fn config_body<'a>(header: &'a str, config_type: &str) -> &'a str {
@@ -297,8 +330,7 @@ fn finish_header(
     }
     header = opaque_header;
 
-    let lifecycle =
-        format!("\nBSK_RUST_DECL({module_name}, {config_type}, {handle_type})\n\n");
+    let lifecycle = format!("\nBSK_RUST_DECL({module_name}, {config_type}, {handle_type})\n\n");
     let guard_end = header
         .rfind("#endif")
         .expect("bsk-build: cbindgen include guard is missing its closing #endif");
@@ -334,6 +366,52 @@ fn render_swig_interface(
         .iter()
         .map(|field| format!("%immutable {config_type}::{field};\n"))
         .collect::<String>();
+    let ignored_port_arrays = metadata
+        .port_arrays
+        .keys()
+        .map(|field| format!("%ignore {config_type}::{field};\n"))
+        .collect::<String>();
+    let port_array_accessors = metadata
+        .port_arrays
+        .iter()
+        .map(|(field_name, array)| {
+            let c_type = &array.c_type;
+            let wrapper_type = format!(
+                "RustWrapper<{config_type}, {config_type}Handle, \
+                 Create_{module_name}, Config_{module_name}, Destroy_{module_name}, \
+                 Update_{module_name}, SelfInit_{module_name}, Reset_{module_name}>"
+            );
+            let python_property = format!(
+                "\x20 %pythoncode %{{\n\
+                 \x20   @property\n\
+                 \x20   def {field_name}(self):\n\
+                 \x20       return [self.__bsk_{field_name}_at(index)\n\
+                 \x20               for index in range(self.__bsk_{field_name}_len())]\n\
+                 \x20 %}}\n"
+            );
+            format!(
+                "%extend {config_type} {{\n\
+                 \x20 {c_type} *__bsk_{field_name}_at(size_t index) {{\n\
+                 \x20   const size_t length = sizeof($self->{field_name}) / \
+                 sizeof($self->{field_name}[0]);\n\
+                 \x20   if (index >= length) {{\n\
+                 \x20     throw BasiliskError(\"{module_name}.{field_name} index is out of range\");\n\
+                 \x20   }}\n\
+                 \x20   return &$self->{field_name}[index];\n\
+                 \x20 }}\n\
+                 \x20 size_t __bsk_{field_name}_len() {{\n\
+                 \x20   return sizeof($self->{field_name}) / sizeof($self->{field_name}[0]);\n\
+                 \x20 }}\n\
+                 {python_property}\
+                 }}\n\
+                 \n\
+                 %extend {wrapper_type} {{\n\
+                 {python_property}\
+                 }}\n\
+                 \n"
+            )
+        })
+        .collect::<String>();
 
     format!(
         "%module {module_name}\n\
@@ -346,11 +424,14 @@ fn render_swig_interface(
          \n\
          {message_imports}\
          {immutable_fields}\
+         {ignored_port_arrays}\
          %nodefaultctor {config_type};\n\
          %nodefaultdtor {config_type};\n\
          %include \"{header}\"\n\
          \n\
-         %rust_wrap_2({module_name}, {config_type}, {config_type}Handle)\n"
+         %rust_wrap_2({module_name}, {config_type}, {config_type}Handle)\n\
+         \n\
+         {port_array_accessors}"
     )
 }
 
@@ -405,7 +486,9 @@ typedef Port MsgWriter_OutputMsg;
 
 typedef struct ExampleConfig {
   MsgReader_InputMsg inputInMsg;
+  MsgReader_InputMsg inputInMsgs[2];
   MsgWriter_OutputMsg outputOutMsg;
+  MsgWriter_OutputMsg outputOutMsgs[2];
   struct OwnedState *state;
 } ExampleConfig;
 "#;
@@ -418,6 +501,23 @@ typedef struct ExampleConfig {
             BTreeMap::from([
                 ("MsgReader_InputMsg".to_owned(), "InputMsg_C".to_owned()),
                 ("MsgWriter_OutputMsg".to_owned(), "OutputMsg_C".to_owned()),
+            ])
+        );
+        assert_eq!(
+            metadata.port_arrays,
+            BTreeMap::from([
+                (
+                    "inputInMsgs".to_owned(),
+                    PortArray {
+                        c_type: "InputMsg_C".to_owned(),
+                    },
+                ),
+                (
+                    "outputOutMsgs".to_owned(),
+                    PortArray {
+                        c_type: "OutputMsg_C".to_owned(),
+                    },
+                ),
             ])
         );
         assert_eq!(
@@ -457,9 +557,15 @@ typedef struct ExampleConfig {
         assert!(interface.contains("%import \"cMsgCInterface/InputMsg_C.h\""));
         assert!(interface.contains("%import \"cMsgCInterface/OutputMsg_C.h\""));
         assert!(interface.contains("%immutable ExampleConfig::state;"));
-        assert!(
-            interface.contains("%rust_wrap_2(example, ExampleConfig, ExampleConfigHandle)")
-        );
+        assert!(interface.contains("%ignore ExampleConfig::inputInMsgs;"));
+        assert!(interface.contains("%ignore ExampleConfig::outputOutMsgs;"));
+        assert!(interface.contains("%extend RustWrapper<ExampleConfig"));
+        assert!(interface.contains("%extend ExampleConfig"));
+        assert!(interface.contains("InputMsg_C *__bsk_inputInMsgs_at"));
+        assert!(interface.contains("OutputMsg_C *__bsk_outputOutMsgs_at"));
+        assert!(interface.contains("def inputInMsgs(self):"));
+        assert!(interface.contains("def outputOutMsgs(self):"));
+        assert!(interface.contains("%rust_wrap_2(example, ExampleConfig, ExampleConfigHandle)"));
         assert!(!interface.contains("%template(example)"));
     }
 

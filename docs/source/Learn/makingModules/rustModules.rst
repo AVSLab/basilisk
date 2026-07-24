@@ -172,9 +172,9 @@ Copy ``src/moduleTemplates/rustModuleTemplate`` into the desired
    `Register the Module in the Workspace`_.
 
 The template intentionally demonstrates more than a minimal control law. It
-contains an optional input, output message, Python-visible parameters,
-Rust-owned private state, logging, expected errors, Rust-native tests, and a
-test-only panic used to verify the language boundary.
+contains individual and fixed-size arrays of input and output messages,
+Python-visible parameters, Rust-owned private state, logging, expected errors,
+Rust-native tests, and a test-only panic used to verify the language boundary.
 
 Module Layout
 -------------
@@ -510,6 +510,78 @@ Any number of inputs and outputs is supported, and declaration order does not
 control message routing. Both ``reset`` and ``update`` must return a value for
 every output port.
 
+Fixed-Size Arrays of Message Ports
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Use a Rust array when a module has a fixed number of ports with the same
+message type. The array length is part of the module interface:
+
+.. code-block:: rust
+
+    /// [-] Required navigation inputs
+    #[bsk(input)]
+    pub navAttInMsgs: [MsgReader<NavAttMsg>; 2],
+
+    /// [-] Optional navigation inputs
+    #[bsk(input, optional)]
+    pub optionalNavAttInMsgs: [MsgReader<NavAttMsg>; 2],
+
+    /// [Nm] Commanded body torques
+    #[bsk(output)]
+    pub cmdTorqueOutMsgs: [MsgWriter<CmdTorqueBodyMsg>; 2],
+
+The generated lifecycle value fields preserve the same length. In this
+example, ``inputs.navAttInMsgs`` has type ``[NavAttMsg; 2]``,
+``inputs.optionalNavAttInMsgs`` has type ``[Option<NavAttMsg>; 2]``, and the
+module must return ``cmdTorqueOutMsgs: [CmdTorqueBodyMsg; 2]``. Every element
+of a required input array must be connected. An unconnected required element
+reports its array index in the resulting ``BasiliskError``.
+
+Process and return the arrays with normal Rust array operations:
+
+.. code-block:: rust
+
+    let cmd_torques = inputs.navAttInMsgs.map(|navigation| {
+        CmdTorqueBodyMsg {
+            torqueRequestBody: [
+                -self.K * navigation.sigma_BN[0],
+                -self.K * navigation.sigma_BN[1],
+                -self.K * navigation.sigma_BN[2],
+            ],
+        }
+    });
+
+    Ok(myModuleOutputs {
+        cmdTorqueOutMsgs: cmd_torques,
+    })
+
+Python returns a list containing the fixed set of normal message interfaces:
+
+.. code-block:: python
+
+    for input_port, source_message in zip(module.navAttInMsgs, source_messages):
+        input_port.subscribeTo(source_message)
+
+    output_recorders = [
+        output_port.recorder() for output_port in module.cmdTorqueOutMsgs
+    ]
+
+Each list element is a live port, so calling ``subscribeTo()`` or
+``recorder()`` affects the module directly. The property cannot be assigned.
+Adding, removing, or replacing entries in the returned Python list only
+changes that temporary list, not the module's fixed set of ports.
+
+An optional input array can represent a variable number of connected inputs
+up to a fixed maximum, as a C module commonly does with a fixed-capacity
+message array. Its lifecycle value is an array of ``Option<Msg>`` values, so
+the Rust implementation can process the connected ``Some`` entries and skip
+the unconnected ``None`` entries.
+
+Only fixed-size message-port arrays are supported in the Python-visible
+configuration. A Rust ``Vec<MsgReader<T>>`` or ``Vec<MsgWriter<T>>`` does not
+have a stable C layout and is rejected. The dynamically sized C++
+``std::vector`` message pattern does not yet have a Rust-module equivalent.
+
 Adding or Changing a Basilisk Message
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -535,7 +607,8 @@ or the public fields of a C++ module. It can contain:
 * scalar integer, floating-point, and Boolean parameters;
 * fixed-size arrays such as ``[f64; 3]`` and ``[[f64; 3]; 3]``;
 * nested, by-value ``#[repr(C)]`` parameter structs; and
-* annotated ``MsgReader<T>`` and ``MsgWriter<T>`` ports.
+* annotated ``MsgReader<T>`` and ``MsgWriter<T>`` ports, individually or in
+  fixed-size arrays.
 
 Every configuration field must implement Rust's ``Default`` behavior because
 Rust constructs the complete module before calling ``init``. Built-in scalar,

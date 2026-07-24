@@ -6,10 +6,12 @@ Executive Summary
 -----------------
 
 This basic Rust Basilisk module can be copied as a starting point for a new
-Rust module. It reads an optional input message, increments the first element,
-and writes the result to its output message. Its implementation is in
-``rustModuleTemplate.rs`` beside this documentation file, following the normal
-Basilisk module naming convention.
+Rust module. It demonstrates both an individual message connection and a
+fixed-size array of two message connections. The module reads optional input
+messages, increments each first data-vector element, and writes the results to
+the corresponding outputs. Its implementation is in ``rustModuleTemplate.rs``
+beside this documentation file, following the normal Basilisk module naming
+convention.
 
 Message Connection Descriptions
 -------------------------------
@@ -24,8 +26,16 @@ The following diagram and table list the module input and output messages.
       (optional) Input data vector. A zero vector is used when this message is
       not connected.
 
+   input dataInMsgs CModuleTemplateMsgPayload
+      (optional, two-element array) Input data vectors. A zero vector is used
+      for each element that is not connected.
+
    output dataOutMsg CModuleTemplateMsgPayload
       Input data vector with its first element incremented by the module state.
+
+   output dataOutMsgs CModuleTemplateMsgPayload
+      (two-element array) Input data vectors with each first element
+      incremented by the module state.
 
 Module Assumptions and Limitations
 ----------------------------------
@@ -33,11 +43,11 @@ Module Assumptions and Limitations
 This module is a template only and does not model a physical system. It
 demonstrates the Rust module lifecycle, explicit message-port annotations,
 named input and output values, optional message inputs, output messages, and
-logging. It also demonstrates a Python-configurable ``increment`` parameter
-that is initialized in Rust and validated during reset with ``BskResult``.
-The ``panicOnUpdate`` field is a test-only fault-injection hook used to verify
-that the generated ABI contains an unexpected Rust panic before it crosses
-into C++.
+fixed-size arrays of message ports. It also demonstrates a Python-configurable
+``increment`` parameter that is initialized in Rust and validated during reset
+with ``BskResult``. The ``panicOnUpdate`` field is a test-only fault-injection
+hook used to verify that the generated ABI contains an unexpected Rust panic
+before it crosses into C++.
 
 User Guide
 ----------
@@ -48,6 +58,7 @@ compiled Basilisk module:
 
 .. code-block:: python
 
+   from Basilisk.architecture import messaging
    from Basilisk.moduleTemplates import rustModuleTemplate
 
    module = rustModuleTemplate.rustModuleTemplate()
@@ -68,3 +79,28 @@ than adding a similar test hook.
 
 Connect ``module.dataInMsg`` when input data is available. When it is unconnected,
 the module starts from a zero vector.
+
+The ``dataInMsgs`` and ``dataOutMsgs`` fields demonstrate fixed-size arrays of
+message ports. Python exposes each as a two-element list of normal Basilisk
+message interfaces:
+
+.. code-block:: python
+
+   input_messages = [
+       messaging.CModuleTemplateMsg().write(first_payload),
+       messaging.CModuleTemplateMsg().write(second_payload),
+   ]
+   for input_port, input_message in zip(module.dataInMsgs, input_messages):
+       input_port.subscribeTo(input_message)
+
+   output_recorders = [
+       output_port.recorder() for output_port in module.dataOutMsgs
+   ]
+   for recorder in output_recorders:
+       simulation.AddModelToTask("taskName", recorder)
+
+Each element is a live port. The array length is fixed by the Rust declaration,
+and the property cannot be assigned. Changing the entries or length of the
+returned Python list does not change the module's fixed set of ports. See
+:ref:`rustModules` for required arrays, optional arrays, lifecycle value types,
+and the current fixed-size-only limitation.

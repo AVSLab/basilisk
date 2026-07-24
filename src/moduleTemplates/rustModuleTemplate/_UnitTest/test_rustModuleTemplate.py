@@ -89,7 +89,9 @@ class _ExpectedRustModuleTemplateConfig(ctypes.Structure):
         ("dummy", ctypes.c_double),
         ("increment", ctypes.c_double),
         ("data_in_msg", _ExpectedCModuleTemplatePort),
+        ("data_in_msgs", _ExpectedCModuleTemplatePort * 2),
         ("data_out_msg", _ExpectedCModuleTemplatePort),
+        ("data_out_msgs", _ExpectedCModuleTemplatePort * 2),
         ("panic_on_update", ctypes.c_bool),
     ]
 
@@ -150,7 +152,9 @@ def test_rust_module_template_python_api():
         "dummy",
         "increment",
         "dataInMsg",
+        "dataInMsgs",
         "dataOutMsg",
+        "dataOutMsgs",
         "panicOnUpdate",
     }
     expected_wrapper_methods = {"SelfInit", "Reset", "UpdateState"}
@@ -181,6 +185,17 @@ def test_rust_module_template_python_api():
     assert module.dummy == 12.5
     assert hasattr(module.dataInMsg, "subscribeTo")
     assert hasattr(module.dataOutMsg, "recorder")
+    assert len(module.dataInMsgs) == 2
+    assert len(module.dataOutMsgs) == 2
+    assert all(hasattr(port, "subscribeTo") for port in module.dataInMsgs)
+    assert all(hasattr(port, "recorder") for port in module.dataOutMsgs)
+    input_ports = module.dataInMsgs
+    input_ports.clear()
+    assert len(module.dataInMsgs) == 2
+    with pytest.raises(AttributeError):
+        module.dataInMsgs = []
+    with pytest.raises(AttributeError):
+        module.dataOutMsgs = []
     for internal_name in ("state", "update_history", "last_event", "mode"):
         assert not hasattr(module, internal_name)
         assert not hasattr(rustModuleTemplate.RustModuleTemplateConfig, internal_name)
@@ -226,13 +241,15 @@ def test_rust_module_template_abi_layout():
     assert _ExpectedCModuleTemplatePort.payload_pointer.offset == 56
     assert _ExpectedCModuleTemplatePort.header_pointer.offset == 64
 
-    assert ctypes.sizeof(_ExpectedRustModuleTemplateConfig) == 168
+    assert ctypes.sizeof(_ExpectedRustModuleTemplateConfig) == 456
     assert ctypes.alignment(_ExpectedRustModuleTemplateConfig) == 8
     assert _ExpectedRustModuleTemplateConfig.dummy.offset == 0
     assert _ExpectedRustModuleTemplateConfig.increment.offset == 8
     assert _ExpectedRustModuleTemplateConfig.data_in_msg.offset == 16
-    assert _ExpectedRustModuleTemplateConfig.data_out_msg.offset == 88
-    assert _ExpectedRustModuleTemplateConfig.panic_on_update.offset == 160
+    assert _ExpectedRustModuleTemplateConfig.data_in_msgs.offset == 88
+    assert _ExpectedRustModuleTemplateConfig.data_out_msg.offset == 232
+    assert _ExpectedRustModuleTemplateConfig.data_out_msgs.offset == 304
+    assert _ExpectedRustModuleTemplateConfig.panic_on_update.offset == 448
 
     extension = ctypes.CDLL(rustModuleTemplate._rustModuleTemplate.__file__)
     get_config = extension.Config_rustModuleTemplate
@@ -247,6 +264,8 @@ def test_rust_module_template_abi_layout():
         assert raw_config.dummy == 0.0
         assert raw_config.increment == 1.0
         assert raw_config.panic_on_update is False
+        assert all(port.header.is_linked == 0 for port in raw_config.data_in_msgs)
+        assert all(port.header.is_written == 0 for port in raw_config.data_out_msgs)
         raw_config.dummy = -3.5  # [-]
         assert raw_config.dummy == -3.5
     finally:
@@ -341,6 +360,9 @@ def test_rust_module_template_rust_owned_instance_lifecycle():
         assert raw_config.dummy == 0.0
         assert raw_config.data_out_msg.header.module_id == 7
         assert raw_config.data_out_msg.header.time_written == 10
+        for output_port in raw_config.data_out_msgs:
+            assert output_port.header.module_id == 7
+            assert output_port.header.time_written == 10
 
         raw_config.panic_on_update = True
         panic_error = update(handle, 11, ctypes.byref(context))  # [ns]
@@ -381,12 +403,26 @@ def test_rust_module_template(connect_input):
 
     input_payload = messaging.CModuleTemplateMsgPayload()
     input_payload.dataVector = [1.0, -0.5, 0.7]  # [-]
+    array_input_values = (
+        [10.0, 1.5, -2.0],
+        [-4.0, 8.0, 3.0],
+    )  # [-]
+    array_input_messages = []
     if connect_input:
         input_message = messaging.CModuleTemplateMsg().write(input_payload)
         module.dataInMsg.subscribeTo(input_message)
+        for input_port, input_values in zip(module.dataInMsgs, array_input_values):
+            array_payload = messaging.CModuleTemplateMsgPayload()
+            array_payload.dataVector = input_values
+            array_input_message = messaging.CModuleTemplateMsg().write(array_payload)
+            array_input_messages.append(array_input_message)
+            input_port.subscribeTo(array_input_message)
 
     output_log = module.dataOutMsg.recorder()
+    array_output_logs = [output_port.recorder() for output_port in module.dataOutMsgs]
     simulation.AddModelToTask("testTask", output_log)
+    for array_output_log in array_output_logs:
+        simulation.AddModelToTask("testTask", array_output_log)
 
     simulation.InitializeSimulation()
     assert module.dummy == 0.0
@@ -405,6 +441,22 @@ def test_rust_module_template(connect_input):
 
     np.testing.assert_array_equal(output_log.times(), expected_times)
     np.testing.assert_allclose(output_log.dataVector, expected_output)
+    for index, array_output_log in enumerate(array_output_logs):
+        if connect_input:
+            expected_array_output = np.repeat(
+                np.array([array_input_values[index]], dtype=float),
+                len(expected_times),
+                axis=0,
+            )
+            expected_array_output[:, 0] += np.arange(1.0, 4.0)
+        else:
+            expected_array_output = np.column_stack(
+                (np.arange(1.0, 4.0), np.zeros((3, 2)))
+            )
+        np.testing.assert_array_equal(array_output_log.times(), expected_times)
+        np.testing.assert_allclose(
+            array_output_log.dataVector, expected_array_output
+        )
     assert module.dummy == 3.0
 
 

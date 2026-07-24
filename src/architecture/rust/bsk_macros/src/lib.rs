@@ -20,8 +20,8 @@ use proc_macro::TokenStream;
 use proc_macro2::TokenStream as TokenStream2;
 use quote::{format_ident, quote};
 use syn::{
-    parse_macro_input, AngleBracketedGenericArguments, Attribute, Field, Fields, GenericArgument,
-    ItemStruct, LitStr, PathArguments, Type, Visibility,
+    parse_macro_input, AngleBracketedGenericArguments, Attribute, Expr, Field, Fields,
+    GenericArgument, ItemStruct, LitStr, PathArguments, Type, Visibility,
 };
 
 /// Mark and validate a Basilisk module's top-level configuration struct.
@@ -73,22 +73,20 @@ fn expand_module(input: ItemStruct) -> syn::Result<TokenStream2> {
                 .ident
                 .as_ref()
                 .expect("validated module config must have named fields");
-            quote!(#field_name: ::core::default::Default::default())
+            let initializer = match message_port_type(&field.ty) {
+                Some((_, _, PortShape::Array(_))) => {
+                    quote!(::core::array::from_fn(|_| {
+                        ::core::default::Default::default()
+                    }))
+                }
+                _ => quote!(::core::default::Default::default()),
+            };
+            quote!(#field_name: #initializer)
         })
         .collect();
 
     let input_names: Vec<&syn::Ident> = input_fields.iter().map(|field| &field.name).collect();
-    let input_types: Vec<TokenStream2> = input_fields
-        .iter()
-        .map(|field| {
-            let message_type = &field.message_type;
-            if field.optional {
-                quote!(::core::option::Option<#message_type>)
-            } else {
-                quote!(#message_type)
-            }
-        })
-        .collect();
+    let input_types: Vec<TokenStream2> = input_fields.iter().map(MessagePort::value_type).collect();
     let input_docs: Vec<TokenStream2> = input_fields
         .iter()
         .map(|field| {
@@ -99,8 +97,12 @@ fn expand_module(input: ItemStruct) -> syn::Result<TokenStream2> {
     let missing_input_messages: Vec<LitStr> = input_fields
         .iter()
         .map(|field| {
+            let suffix = match &field.shape {
+                PortShape::Single => " is not connected",
+                PortShape::Array(_) => "",
+            };
             LitStr::new(
-                &format!("[{module_name}] {} is not connected", field.name),
+                &format!("[{module_name}] {}{suffix}", field.name),
                 field.name.span(),
             )
         })
@@ -112,11 +114,23 @@ fn expand_module(input: ItemStruct) -> syn::Result<TokenStream2> {
         .map(|(field, missing_message)| {
             let field_name = &field.name;
             let message_type = &field.message_type;
-            quote! {
-                <#message_type as ::bsk_build::BskModuleInput<#message_type>>::validate(
-                    &mut (*config).#field_name,
-                    #missing_message,
-                )?;
+            match &field.shape {
+                PortShape::Single => quote! {
+                    <#message_type as ::bsk_build::BskModuleInput<#message_type>>::validate(
+                        &mut (*config).#field_name,
+                        #missing_message,
+                    )?;
+                },
+                PortShape::Array(_) => quote! {
+                    for (index, port) in (*config).#field_name.iter_mut().enumerate() {
+                        let missing_message =
+                            ::std::format!("{}[{}] is not connected", #missing_message, index);
+                        <#message_type as ::bsk_build::BskModuleInput<#message_type>>::validate(
+                            port,
+                            &missing_message,
+                        )?;
+                    }
+                },
             }
         });
     let read_inputs = input_fields
@@ -126,20 +140,50 @@ fn expand_module(input: ItemStruct) -> syn::Result<TokenStream2> {
         .map(|((field, input_type), missing_message)| {
             let field_name = &field.name;
             let message_type = &field.message_type;
-            quote! {
-                #field_name:
-                    <#input_type as ::bsk_build::BskModuleInput<#message_type>>::read(
-                        &mut (*config).#field_name,
-                        #missing_message,
-                    )?
+            let input_element_type = field.element_value_type();
+            match &field.shape {
+                PortShape::Single => quote! {
+                    #field_name:
+                        <#input_type as ::bsk_build::BskModuleInput<#message_type>>::read(
+                            &mut (*config).#field_name,
+                            #missing_message,
+                        )?
+                },
+                PortShape::Array(_) => quote! {
+                    #field_name: {
+                        let mut values: #input_type =
+                            ::core::array::from_fn(
+                                |_| ::core::default::Default::default()
+                            );
+                        for (index, (port, value)) in (*config)
+                            .#field_name
+                            .iter_mut()
+                            .zip(values.iter_mut())
+                            .enumerate()
+                        {
+                            let missing_message =
+                                ::std::format!("{}[{}] is not connected", #missing_message, index);
+                            *value =
+                                <#input_element_type as
+                                    ::bsk_build::BskModuleInput<#message_type>>::read(
+                                        port,
+                                        &missing_message,
+                                    )?;
+                        }
+                        values
+                    }
+                },
             }
         });
 
     let output_names: Vec<&syn::Ident> = output_fields.iter().map(|field| &field.name).collect();
-    let output_types: Vec<&Type> = output_fields
-        .iter()
-        .map(|field| &field.message_type)
-        .collect();
+    let output_types: Vec<TokenStream2> =
+        output_fields.iter().map(MessagePort::value_type).collect();
+    let output_initializers = output_fields.iter().map(|field| {
+        let field_name = &field.name;
+        let initializer = field.default_value();
+        quote!(#field_name: #initializer)
+    });
     let output_docs: Vec<TokenStream2> = output_fields
         .iter()
         .map(|field| {
@@ -149,26 +193,63 @@ fn expand_module(input: ItemStruct) -> syn::Result<TokenStream2> {
         .collect();
     let initialize_outputs = output_fields.iter().map(|field| {
         let field_name = &field.name;
-        quote!((*config).#field_name.init();)
+        match &field.shape {
+            PortShape::Single => quote!((*config).#field_name.init();),
+            PortShape::Array(_) => quote! {
+                for port in &mut (*config).#field_name {
+                    port.init();
+                }
+            },
+        }
     });
     let write_reset_outputs = output_fields.iter().map(|field| {
         let field_name = &field.name;
-        quote! {
-            (*config).#field_name.write(
-                &outputs.#field_name,
-                context.module_id(),
-                current_sim_nanos,
-            );
+        match &field.shape {
+            PortShape::Single => quote! {
+                (*config).#field_name.write(
+                    &outputs.#field_name,
+                    context.module_id(),
+                    current_sim_nanos,
+                );
+            },
+            PortShape::Array(_) => quote! {
+                for (port, value) in (*config)
+                    .#field_name
+                    .iter_mut()
+                    .zip(outputs.#field_name.iter())
+                {
+                    port.write(
+                        value,
+                        context.module_id(),
+                        current_sim_nanos,
+                    );
+                }
+            },
         }
     });
     let write_update_outputs = output_fields.iter().map(|field| {
         let field_name = &field.name;
-        quote! {
-            (*config).#field_name.write(
-                &outputs.#field_name,
-                context.module_id(),
-                current_sim_nanos,
-            );
+        match &field.shape {
+            PortShape::Single => quote! {
+                (*config).#field_name.write(
+                    &outputs.#field_name,
+                    context.module_id(),
+                    current_sim_nanos,
+                );
+            },
+            PortShape::Array(_) => quote! {
+                for (port, value) in (*config)
+                    .#field_name
+                    .iter_mut()
+                    .zip(outputs.#field_name.iter())
+                {
+                    port.write(
+                        value,
+                        context.module_id(),
+                        current_sim_nanos,
+                    );
+                }
+            },
         }
     });
 
@@ -193,12 +274,19 @@ fn expand_module(input: ItemStruct) -> syn::Result<TokenStream2> {
 
         /// Named message values returned by this module's `reset` and `update` methods.
         #[allow(non_camel_case_types, non_snake_case)]
-        #[derive(Default)]
         pub struct #outputs_type {
             #(
                 #output_docs
                 pub #output_names: #output_types,
             )*
+        }
+
+        impl ::core::default::Default for #outputs_type {
+            fn default() -> Self {
+                Self {
+                    #(#output_initializers,)*
+                }
+            }
         }
 
         /// Opaque C handle for this module's Rust-owned instance.
@@ -445,8 +533,44 @@ enum PortDirection {
 struct MessagePort {
     name: syn::Ident,
     message_type: Type,
+    shape: PortShape,
     optional: bool,
     docs: Vec<Attribute>,
+}
+
+enum PortShape {
+    Single,
+    Array(Expr),
+}
+
+impl MessagePort {
+    fn element_value_type(&self) -> TokenStream2 {
+        let message_type = &self.message_type;
+        if self.optional {
+            quote!(::core::option::Option<#message_type>)
+        } else {
+            quote!(#message_type)
+        }
+    }
+
+    fn value_type(&self) -> TokenStream2 {
+        let element_type = self.element_value_type();
+        match &self.shape {
+            PortShape::Single => element_type,
+            PortShape::Array(length) => quote!([#element_type; #length]),
+        }
+    }
+
+    fn default_value(&self) -> TokenStream2 {
+        match &self.shape {
+            PortShape::Single => quote!(::core::default::Default::default()),
+            PortShape::Array(_) => {
+                quote!(::core::array::from_fn(|_| {
+                    ::core::default::Default::default()
+                }))
+            }
+        }
+    }
 }
 
 fn extract_message_ports(
@@ -538,17 +662,18 @@ fn parse_message_port(field: &mut Field) -> syn::Result<Option<(PortDirection, M
         ));
     }
 
-    let (type_direction, message_type) = port_type.ok_or_else(|| {
+    let (type_direction, message_type, shape) = port_type.ok_or_else(|| {
         syn::Error::new_spanned(
             &field.ty,
-            "an annotated input must use `MsgReader<Message>` and an annotated \
-             output must use `MsgWriter<Message>`",
+            "an annotated input must use `MsgReader<Message>` or \
+             `[MsgReader<Message>; N]`, and an annotated output must use \
+             `MsgWriter<Message>` or `[MsgWriter<Message>; N]`",
         )
     })?;
     if direction != type_direction {
         let expected = match direction {
-            PortDirection::Input => "MsgReader<Message>",
-            PortDirection::Output => "MsgWriter<Message>",
+            PortDirection::Input => "MsgReader<Message>` or `[MsgReader<Message>; N]",
+            PortDirection::Output => "MsgWriter<Message>` or `[MsgWriter<Message>; N]",
         };
         return Err(syn::Error::new_spanned(
             &field.ty,
@@ -575,13 +700,24 @@ fn parse_message_port(field: &mut Field) -> syn::Result<Option<(PortDirection, M
         MessagePort {
             name,
             message_type,
+            shape,
             optional,
             docs,
         },
     )))
 }
 
-fn message_port_type(field_type: &Type) -> Option<(PortDirection, Type)> {
+fn message_port_type(field_type: &Type) -> Option<(PortDirection, Type, PortShape)> {
+    if let Type::Array(array) = field_type {
+        let (direction, message_type) = direct_message_port_type(&array.elem)?;
+        return Some((direction, message_type, PortShape::Array(array.len.clone())));
+    }
+
+    let (direction, message_type) = direct_message_port_type(field_type)?;
+    Some((direction, message_type, PortShape::Single))
+}
+
+fn direct_message_port_type(field_type: &Type) -> Option<(PortDirection, Type)> {
     let type_path = match field_type {
         Type::Path(type_path) => type_path,
         _ => return None,
@@ -805,6 +941,38 @@ mod tests {
     }
 
     #[test]
+    fn fixed_port_arrays_generate_named_values_and_lifecycle_loops() {
+        let input: ItemStruct = parse_quote! {
+            #[repr(C)]
+            pub struct ControllerConfig {
+                #[bsk(input)]
+                pub requiredInMsgs: [MsgReader<InputMsg>; 2],
+                #[bsk(input, optional)]
+                pub optionalInMsgs: [MsgReader<InputMsg>; 3],
+                #[bsk(output)]
+                pub outputOutMsgs: [MsgWriter<OutputMsg>; 2],
+            }
+        };
+
+        let expanded = expand_module(input)
+            .expect("fixed message-port arrays must expand")
+            .to_string();
+        assert!(expanded.contains("requiredInMsgs : [InputMsg ; 2]"));
+        assert!(
+            expanded.contains("optionalInMsgs : [:: core :: option :: Option < InputMsg > ; 3]")
+        );
+        assert!(expanded.contains("outputOutMsgs : [OutputMsg ; 2]"));
+        assert!(expanded.contains("requiredInMsgs . iter_mut () . enumerate ()"));
+        assert!(expanded.contains("optionalInMsgs . iter_mut ()"));
+        assert!(expanded.contains("zip (values . iter_mut ())"));
+        assert!(expanded.contains("for port in & mut (* config) . outputOutMsgs"));
+        assert!(expanded.contains("zip (outputs . outputOutMsgs . iter ())"));
+        assert!(expanded.contains("core :: array :: from_fn"));
+        assert!(expanded.contains("[{}] is not connected"));
+        assert!(!expanded.contains("requiredInMsgs is not connected"));
+    }
+
+    #[test]
     fn rejects_unannotated_message_port() {
         let input: ItemStruct = parse_quote! {
             #[repr(C)]
@@ -815,6 +983,33 @@ mod tests {
 
         let error = expand_module(input).expect_err("unannotated port must fail");
         assert!(error.to_string().contains("message ports require"));
+    }
+
+    #[test]
+    fn rejects_unannotated_message_port_array() {
+        let input: ItemStruct = parse_quote! {
+            #[repr(C)]
+            pub struct ControllerConfig {
+                pub inputInMsgs: [MsgReader<InputMsg>; 2],
+            }
+        };
+
+        let error = expand_module(input).expect_err("unannotated port array must fail");
+        assert!(error.to_string().contains("message ports require"));
+    }
+
+    #[test]
+    fn rejects_dynamic_message_port_collection() {
+        let input: ItemStruct = parse_quote! {
+            #[repr(C)]
+            pub struct ControllerConfig {
+                #[bsk(input)]
+                pub inputInMsgs: Vec<MsgReader<InputMsg>>,
+            }
+        };
+
+        let error = expand_module(input).expect_err("dynamic port collection must fail");
+        assert!(error.to_string().contains("[MsgReader<Message>; N]"));
     }
 
     #[test]
