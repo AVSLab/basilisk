@@ -864,8 +864,9 @@ is omitted when its generated header is unavailable.
 Test the Module
 ---------------
 
-Rust modules should have both Rust-native tests and the normal Basilisk Python
-unit test.
+Every in-tree Rust module must have the normal Basilisk Python unit test. Add
+Rust-native tests when they provide useful direct coverage of private state,
+validation, numerical helpers, or other internal Rust behavior.
 
 Rust-Native Tests
 ~~~~~~~~~~~~~~~~~
@@ -905,7 +906,12 @@ message connections, lifecycle behavior, and numerical results:
     python3 -m pytest src/fswAlgorithms/<category>/myModule/_UnitTest -v
 
 After a Rust-enabled Basilisk build, the normal ``python3 run_all_test.py``
-workflow includes the module's Python test.
+workflow includes the module's Python test. The same command also runs all
+Cargo workspace tests when ``cargo`` is installed and available on ``PATH``.
+It reports that Rust tests were skipped, without failing, when ``cargo`` is
+not available. The Cargo tests do not require Basilisk to have been configured
+with ``--rustModules True`` because they test the Rust packages directly
+without linking the generated Basilisk module library.
 
 Contributor Checks
 ~~~~~~~~~~~~~~~~~~

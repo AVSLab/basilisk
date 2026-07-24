@@ -16,7 +16,9 @@ Building Basilisk and Testing
 
 -   Do a clean build of Basilisk and make sure all code compiles as expected (see :ref:`FAQ <FAQ>` on how to do a
     clean build)
--   From the project root directory, run ``python run_all_test.py`` and ensure all python and C/C++ tests are passing
+-   From the project root directory, run ``python run_all_test.py`` and ensure
+    all Python, C/C++, and available Rust tests are passing. Rust tests are
+    skipped automatically when Cargo is not installed.
     as expected
 
 Style and Formatting
