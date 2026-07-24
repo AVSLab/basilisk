@@ -50,25 +50,25 @@ In order to run Basilisk on macOS, the following software is necessary:
 Optional Rust Toolchain
 -----------------------
 
-Native Rust module support is optional. Basilisk requires Rust 1.85 or newer
-when this support is enabled. Install the stable Rust toolchain with the
-official `rustup installer <https://rust-lang.org/tools/install/>`__:
+Native Rust module support is optional. Install the stable Rust toolchain with
+the official `rustup installer <https://rust-lang.org/tools/install/>`__.
+The minimum supported version is listed in :ref:`rustModules`.
 
 .. code-block:: bash
 
     $ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
 Follow the on-screen instructions, then open a new terminal so that the updated
-``PATH`` is available. The installer provides ``rustc``, ``cargo``, and
-``rustup``. Verify the installation with:
+``PATH`` is available. The installer provides the ``rustc`` compiler, the
+Cargo build and dependency manager, and the ``rustup`` toolchain manager.
+Verify the installation with:
 
 .. code-block:: bash
 
     $ rustc --version
     $ cargo --version
 
-If an existing Rust installation is older than version 1.85, update its stable
-toolchain with ``rustup update stable``.
+Update an existing stable toolchain with ``rustup update stable``.
 
 Install Python 3
 ----------------

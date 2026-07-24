@@ -62,7 +62,7 @@ For a Rust module:
 - Do ``init``, ``reset``, and ``update`` return ``BskResult``, with expected
   validation and runtime failures reported as ``BskError`` rather than
   panics?
-- Is its crate listed in the ``src/Cargo.toml`` workspace members?
+- Is the module package listed in the ``src/Cargo.toml`` workspace members?
 - Does its ``Cargo.toml`` inherit the workspace minimum Rust version with
   ``rust-version.workspace = true``?
 - Does its ``Cargo.toml`` contain the

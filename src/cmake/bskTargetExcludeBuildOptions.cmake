@@ -13,7 +13,8 @@ if(NOT BUILD_MUJOCO)
   list(APPEND EXCLUDED_BSK_LIBRARIES "mujocoDynamics")
 endif()
 
-# Rust module support is experimental (see docs/source/Extensions/writingRust.rst)
+# Rust module support is experimental (see
+# docs/source/Learn/makingModules/rustModules.rst).
 # and requires a Rust/Cargo toolchain that most Basilisk builds/CI images don't
 # otherwise need. Off by default so no one is forced to install Rust just to
 # build Basilisk; generate_rust_package_targets() (bskFindRustModules.cmake)

@@ -13,18 +13,14 @@
 The generated bindings intentionally cover only C ABI headers.  C++/Eigen APIs
 need a dedicated C shim and are excluded until that interface is designed.
 
-This is the canonical copy (vendored into ``bsk_sdk`` by ``tools/sync_rust.py``
-there, the same way headers/SWIG files are). It targets two include-root
-shapes so the *same* script works from either repo:
+The script accepts two include-root layouts:
 
 * Basilisk core (default here): ``--bsk-include`` points at (or defaults to)
   this repo's own ``src/`` -- headers are included bare, e.g.
   ``architecture/utilities/astroConstants.h``.
-* ``bsk_sdk``'s vendored copy: an include root with a ``Basilisk/``
-  subdirectory (``bsk_sdk.include_dir()``'s layout) -- headers are included
-  as ``Basilisk/architecture/utilities/astroConstants.h``, matching how
-  bsk_sdk's own vendored tree is laid out. Detected automatically from
-  whether ``<include-root>/Basilisk`` exists.
+* Vendored headers: an include root with a ``Basilisk/`` subdirectory. Headers
+  are included as ``Basilisk/architecture/utilities/astroConstants.h``.
+  This layout is detected when ``<include-root>/Basilisk`` exists.
 """
 
 import argparse
@@ -66,7 +62,7 @@ static const double BSK_RUST_J2_MARS = J2_MARS;
 def resolve_layout(include_root: Path) -> tuple[Path, str]:
     """Return ``(basilisk_include_dir, header_prefix)`` for this include root.
 
-    A ``bsk_sdk``-vendored root has a ``Basilisk/`` subdirectory containing
+    A vendored root has a ``Basilisk/`` subdirectory containing
     the actual headers, with the root itself on the include path so
     ``#include "Basilisk/architecture/..."`` resolves; Basilisk core's own
     ``src/`` *is* that directory already, with nothing to prefix.
@@ -83,7 +79,7 @@ def find_default_include_root() -> Path:
         return src
     raise RuntimeError(
         f"Cannot find architecture/utilities headers under {src}. "
-        "Pass --bsk-include explicitly (e.g. a bsk_sdk include root)."
+        "Pass --bsk-include explicitly when using another include root."
     )
 
 
@@ -96,7 +92,7 @@ def run_bindgen(wrapper_path: Path, include_root: Path, basilisk_dir: Path) -> s
     are always bare (e.g. ``"architecture/utilities/linearAlgebra.h"``)
     regardless of ``header_prefix``. The two are the same directory in
     Basilisk core's own layout (no prefix) and different directories for a
-    ``bsk_sdk``-vendored root (see ``resolve_layout``).
+    vendored root (see ``resolve_layout``).
     """
     if not shutil.which("bindgen"):
         sys.exit("ERROR: `bindgen` not found on $PATH; run `cargo install bindgen-cli`.")
@@ -152,7 +148,7 @@ def main() -> None:
     parser.add_argument(
         "--bsk-include",
         metavar="DIR",
-        help="Include root: this repo's root (default) or a bsk_sdk include dir.",
+        help="Include root: this repository's src directory or a vendored include root.",
     )
     parser.add_argument(
         "--out",

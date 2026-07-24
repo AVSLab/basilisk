@@ -38,7 +38,8 @@ bskModuleOptionsBool = {
     "vizInterface": [[True, False], True],
     "mujoco": [[True, False], False],
     # Experimental: build Rust modules under src/ (see
-    # src/cmake/bskFindRustModules.cmake, docs/source/Extensions/writingRust.rst).
+    # src/cmake/bskFindRustModules.cmake and
+    # docs/source/Learn/makingModules/rustModules.rst).
     # Requires a Rust/Cargo toolchain on PATH; off by default so most builds/CI
     # jobs never need one.
     "rustModules": [[True, False], False],

@@ -229,7 +229,6 @@ Related Publications
    Overview <Extensions/overview>
    Install <Extensions/installing>
    Writing an Extension <Extensions/writing>
-   Writing a Rust Extension <Extensions/writingRust>
 
 .. toctree::
    :caption: BSK_RL:

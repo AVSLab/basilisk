@@ -32,8 +32,8 @@
 //!   wrote" — it never has to work out this module's message ports/config
 //!   type name itself. Do not edit by hand.
 //!
-//! See the Basilisk documentation's "Writing a Rust Extension" page for the
-//! full usage guide; this module-level doc covers only what an extension author
+//! See the Basilisk documentation's "Making Rust Modules" page for the full
+//! usage guide; this module-level doc covers only what a module author
 //! needs to know to write the config struct correctly.
 //!
 //! # Module name

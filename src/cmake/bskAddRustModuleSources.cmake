@@ -22,11 +22,9 @@ include_guard(GLOBAL)
 # Build a Rust crate implementing a Basilisk module (see bsk_rust_module.h)
 # into a static library, and locate/generate the C header + SWIG .i file
 # that go with it. This is the language-support half of Rust module
-# building: "given a Cargo.toml, produce a .a + .h + .i". It has no opinion
-# on what happens to those three outputs — packaging them into an
-# independently distributable wheel (Python/Eigen discovery, output-dir
-# wiring, etc.) is a separate concern; see bsk-sdk's bsk_add_rust_module,
-# which calls this macro and then bsk_add_swig_module.
+# building: "given a Cargo.toml, produce a static library, header, and SWIG
+# interface." The caller attaches those outputs to the appropriate Basilisk
+# Python module target.
 #
 # architecture/rust/bsk_build's build.rs does the file codegen (parsing the crate's
 # `bsk_build::module` config struct via `syn`, emitting the header and .i);
@@ -53,9 +51,8 @@ include_guard(GLOBAL)
 #                  Defaults to CMAKE_SOURCE_DIR (this works unmodified when
 #                  called from Basilisk's own src/CMakeLists.txt, where that
 #                  already is the include root the generated headers'
-#                  #include paths resolve against). Callers building outside
-#                  this source tree (e.g. bsk-sdk, against vendored headers)
-#                  must pass this explicitly.
+#                  #include paths resolve against). Callers using another
+#                  generated-header tree must pass this explicitly.
 #   CRATE_NAME     Override the crate lib name when it differs from TARGET.
 #   CARGO_PROFILE  "release" (default) or "dev".
 #   CARGO_FEATURES Cargo feature flags to enable (list).
@@ -249,9 +246,8 @@ function(bsk_add_rust_module_sources)
   # Basilisk's in-tree workspace keeps bsk-build, bsk-macros, bsk-messages,
   # and bsk-utilities here. Without these dependencies, changing the shared
   # support layer does not rerun this output-producing custom command, so
-  # CMake can continue linking a stale Rust static library. Out-of-tree
-  # extension workspaces normally fetch these crates and have no such
-  # directory, in which case this block is intentionally a no-op.
+  # CMake can continue linking a stale Rust static library. A workspace
+  # without this in-tree support directory intentionally skips this block.
   set(_bsk_rust_support_dir "${_cargo_root_dir}/architecture/rust")
   if(IS_DIRECTORY "${_bsk_rust_support_dir}")
     file(GLOB_RECURSE _bsk_rust_support_sources CONFIGURE_DEPENDS

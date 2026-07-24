@@ -53,8 +53,8 @@ required to place accurate breakpoints/attach a debugger to C/C++ code.
 Installing Rust (Optional)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Native Rust module support is optional. Basilisk requires Rust 1.85 or newer
-when this support is enabled.
+Native Rust module support is optional. The minimum supported version is
+listed in :ref:`rustModules`.
 
 #. Download and run the ``rustup-init.exe`` installer for your architecture
    from the official `Rust installation page <https://rust-lang.org/tools/install/>`__.
@@ -62,7 +62,8 @@ when this support is enabled.
    required to build Basilisk also provide the linker required by Rust.
 
 #. Close and reopen Command Prompt so that the updated ``PATH`` is available.
-   The installer provides ``rustc``, ``cargo``, and ``rustup``. Verify the
+   The installer provides the ``rustc`` compiler, the Cargo build and
+   dependency manager, and the ``rustup`` toolchain manager. Verify the
    installation with:
 
    .. code-block:: console
@@ -70,8 +71,7 @@ when this support is enabled.
        > rustc --version
        > cargo --version
 
-If an existing Rust installation is older than version 1.85, update its stable
-toolchain with ``rustup update stable``.
+Update an existing stable toolchain with ``rustup update stable``.
 
 
 

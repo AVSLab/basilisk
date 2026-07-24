@@ -36,7 +36,7 @@
  *     called by the Basilisk task scheduler at well-defined points.
  *
  *  For Rust modules the lifecycle functions are compiled into a Rust static
- *  library linked into the SWIG extension.  ``BSK_RUST_DECL`` emits the
+ *  library linked into the SWIG-generated Python module. ``BSK_RUST_DECL`` emits the
  *  matching ``extern "C"`` *declarations* so that the C compiler and the
  *  SWIG-generated glue can find them.
  *
@@ -51,7 +51,7 @@
  *  named, typed message values and ``BskResult`` return types — no FFI
  *  boilerplate by hand. Message-port fields use ``#[bsk(input)]``,
  *  ``#[bsk(input, optional)]``, or ``#[bsk(output)]`` to declare their role
- *  explicitly. See the Basilisk documentation's "Writing a Rust Extension"
+ *  explicitly. See the Basilisk documentation's "Making Rust Modules"
  *  page for the full guide.
  *
  *  **Config struct field ordering**
@@ -77,7 +77,7 @@
  *  On the Rust side, ``attGuidInMsg``/``cmdTorqueOutMsg`` above are annotated
  *  with ``#[bsk(input)]``/``#[bsk(output)]`` and use
  *  ``MsgReader<AttGuidMsg>``/``MsgWriter<CmdTorqueBodyMsg>`` — see the
- *  "Writing a Rust Extension" documentation page for the complete Rust form.
+ *  "Making Rust Modules" documentation page for the complete Rust form.
  *
  *  **moduleID**
  *
