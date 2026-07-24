@@ -36,12 +36,12 @@ def main() -> None:
         cwd=repository_root / "dist3",
         check=True,
     )
+    run_rust_tests(repository_root)
     subprocess.run(
         ["pytest", "-n", "auto"],
         cwd=repository_root / "src",
         check=True,
     )
-    run_rust_tests(repository_root)
 
 
 if __name__ == "__main__":
