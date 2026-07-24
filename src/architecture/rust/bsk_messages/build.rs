@@ -228,21 +228,25 @@ fn render_message_trait_impls(bindings: &str) -> Result<String, Box<dyn Error>> 
     for message_type in message_types {
         writeln!(implementations, "impl Msg for {message_type} {{")?;
         writeln!(implementations, "    type Port = {message_type}_C;")?;
+        writeln!(implementations, "    #[inline(always)]")?;
         writeln!(
             implementations,
             "    fn __is_linked(port: &mut {message_type}_C) -> bool {{ unsafe {{ \
              {message_type}_C_isLinked(port) != 0 }} }}"
         )?;
+        writeln!(implementations, "    #[inline(always)]")?;
         writeln!(
             implementations,
             "    fn __read(port: &mut {message_type}_C) -> Self {{ unsafe {{ \
              {message_type}_C_read(port) }} }}"
         )?;
+        writeln!(implementations, "    #[inline(always)]")?;
         writeln!(
             implementations,
             "    fn __init(port: &mut {message_type}_C) {{ unsafe {{ \
              {message_type}_C_init(port) }} }}"
         )?;
+        writeln!(implementations, "    #[inline(always)]")?;
         writeln!(
             implementations,
             "    fn __write(data: &Self, port: &mut {message_type}_C, module_id: i64, \

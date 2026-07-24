@@ -251,6 +251,25 @@ function(generate_rust_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
       target_link_libraries(${_swig_target} PRIVATE ${LIB})
     endforeach()
     target_link_libraries(${_swig_target} PRIVATE ${PYTHON3_MODULE})
+
+    # Unix Python modules may leave symbols for the interpreter to resolve
+    # while loading the extension. Basilisk C-message functions, however,
+    # must have been resolved from cMsgCInterface during the link. Detect
+    # archive-order regressions before packaging a wheel.
+    if(UNIX)
+      add_custom_command(
+        TARGET ${_swig_target}
+        POST_BUILD
+        COMMAND
+          "${CMAKE_COMMAND}"
+          "-DBSK_RUST_MODULE_FILE=$<TARGET_FILE:${_swig_target}>"
+          "-DBSK_NM_EXECUTABLE=${CMAKE_NM}"
+          -P "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/bskCheckRustModuleSymbols.cmake"
+        COMMENT "Checking Rust module C-message linkage for '${TARGET_NAME}'"
+        VERBATIM
+      )
+    endif()
+
     if(PY_LIMITED_API AND NOT PY_LIMITED_API STREQUAL "")
       target_compile_definitions(${_swig_target} PRIVATE "Py_LIMITED_API=${PY_LIMITED_API}")
     endif()

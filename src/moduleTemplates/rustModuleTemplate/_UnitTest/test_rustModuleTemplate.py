@@ -19,6 +19,7 @@
 """Validate the Rust module template's public API, ABI, and message behavior."""
 
 import ctypes
+import sys
 
 import numpy as np
 import pytest
@@ -215,6 +216,19 @@ def test_rust_module_template_python_api():
         "Update_rustModuleTemplate",
     ):
         assert not hasattr(rustModuleTemplate, symbol)
+
+
+@pytest.mark.skipif(
+    sys.platform == "win32",
+    reason="Windows exports only the Rust module's declared ABI symbols.",
+)
+def test_rust_module_links_only_used_message_functions():
+    """Ensure unused generated C-message adapters are removed from the module."""
+    extension = ctypes.CDLL(rustModuleTemplate._rustModuleTemplate.__file__)
+
+    assert getattr(extension, "CModuleTemplateMsg_C_read") is not None
+    with pytest.raises(AttributeError):
+        getattr(extension, "LandmarkMsg_C_read")
 
 
 def test_rust_module_template_abi_layout():

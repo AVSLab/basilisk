@@ -167,7 +167,21 @@ function(bsk_add_rust_module_sources_corrosion)
       "Corrosion imported ${_rust_imported_target_count} targets for "
       "${_rust_package_name}: expected exactly one static library target")
   endif()
-  list(GET _rust_imported_targets 0 _rust_link_target)
+  list(GET _rust_imported_targets 0 _rust_target)
+
+  # corrosion_import_crate() returns the public interface target. For a
+  # staticlib-only import that target forwards to Corrosion's concrete
+  # <crate>-static target. Linking the interface target can place the actual
+  # Rust archive after later direct dependencies such as cMsgCInterface,
+  # leaving Rust's C-message references unresolved with one-pass GNU linkers.
+  # Link the concrete imported archive so CMake preserves the requested
+  # Rust-then-C-message archive order.
+  set(_rust_link_target "${_rust_target}-static")
+  if(NOT TARGET "${_rust_link_target}")
+    message(FATAL_ERROR
+      "Corrosion did not provide the expected static-library target "
+      "${_rust_link_target}")
+  endif()
 
   # CMake's Makefile generators can leave GNU Make jobserver descriptors in
   # MAKEFLAGS even though those descriptors are closed before Corrosion starts
@@ -179,7 +193,7 @@ function(bsk_add_rust_module_sources_corrosion)
   endif()
 
   corrosion_set_env_vars(
-    "${_rust_link_target}"
+    "${_rust_target}"
     ${_cargo_makeflags_env}
     "BSK_INCLUDE_DIR=${RUST_INCLUDE_DIR}"
     "BSK_HEADER_PATH=${RUST_HEADER}"
@@ -189,7 +203,7 @@ function(bsk_add_rust_module_sources_corrosion)
   )
   if(RUST_CARGO_FEATURES)
     corrosion_set_features(
-      "${_rust_link_target}"
+      "${_rust_target}"
       FEATURES ${RUST_CARGO_FEATURES}
     )
   endif()
@@ -211,7 +225,7 @@ function(bsk_add_rust_module_sources_corrosion)
     VERBATIM
   )
   add_dependencies(
-    "cargo-prebuild_${_rust_link_target}"
+    "cargo-prebuild_${_rust_target}"
     "${_bindings_prebuild_target}"
   )
 
@@ -219,7 +233,7 @@ function(bsk_add_rust_module_sources_corrosion)
   # this module's build.rs owns the generated header and SWIG interface.
   # Give CMake an explicit producer rule for those two files so Make/Ninja do
   # not reject the missing generated interface before Cargo has run.
-  set(_cargo_build_target "cargo-build_${_rust_link_target}")
+  set(_cargo_build_target "cargo-build_${_rust_target}")
   set(_bindings_target "_rust_bindings_${RUST_TARGET}")
   add_custom_command(
     OUTPUT "${RUST_HEADER}" "${RUST_INTERFACE}"
