@@ -123,6 +123,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">fuelTank</span>
 
 <span class="n">filename</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getframeinfo</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">())</span><span class="o">.</span><span class="n">filename</span>
@@ -286,40 +287,43 @@
                                    <span class="n">err_msg</span><span class="o">=</span><span class="s2">&quot;Constant density tank tank center mass position second derivative not equal&quot;</span><span class="p">)</span>
 
 
+<div class="viewcode-block" id="test_tankModelEmptying">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/FuelTank/_UnitTest/test_tank_models.html#test_tank_models.test_tankModelEmptying">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">test_tankModelEmptying</span><span class="p">(</span><span class="n">show_plots</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Verify the emptying-tank properties at empty, full, and half-full conditions.&quot;&quot;&quot;</span>
     <span class="n">__tracebackhide__</span> <span class="o">=</span> <span class="kc">True</span>
 
     <span class="n">model</span> <span class="o">=</span> <span class="n">fuelTank</span><span class="o">.</span><span class="n">FuelTankModelEmptying</span><span class="p">()</span>
-    <span class="n">model</span><span class="o">.</span><span class="n">propMassInit</span> <span class="o">=</span> <span class="mi">10</span>
-    <span class="n">model</span><span class="o">.</span><span class="n">r_TcT_TInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
-    <span class="n">model</span><span class="o">.</span><span class="n">radiusTankInit</span> <span class="o">=</span> <span class="mi">5</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">propMassInit</span> <span class="o">=</span> <span class="mi">10</span>  <span class="c1"># [kg]</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">r_TcT_TInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">]]</span>  <span class="c1"># [m]</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">radiusTankInit</span> <span class="o">=</span> <span class="mi">5</span>  <span class="c1"># [m]</span>
 
-    <span class="n">trials</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)]</span>  <span class="c1"># mFuel, mDotFuel</span>
+    <span class="n">trials</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)]</span>  <span class="c1"># [kg], [kg/s] mFuel, mDotFuel</span>
     <span class="n">true_ITankPntT_T</span> <span class="o">=</span> <span class="p">[</span>
         <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
         <span class="p">[</span><span class="mi">100</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">],</span>
         <span class="p">[</span><span class="mf">50.0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">50.0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">50</span><span class="p">]</span>
-    <span class="p">]</span>
+    <span class="p">]</span>  <span class="c1"># [kg*m^2]</span>
     <span class="n">true_IPrimeTankPntT_T</span> <span class="o">=</span> <span class="p">[</span>
         <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
         <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
         <span class="p">[</span><span class="o">-</span><span class="mf">8.75</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mf">8.75</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mf">12.5</span><span class="p">]</span>
-    <span class="p">]</span>
+    <span class="p">]</span>  <span class="c1"># [kg*m^2/s]</span>
     <span class="n">true_r_TcT_T</span> <span class="o">=</span> <span class="p">[</span>
         <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="mf">5.0</span><span class="p">],</span>
         <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
         <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="mf">15.0</span> <span class="o">/</span> <span class="mf">8.0</span><span class="p">]</span>
-    <span class="p">]</span>
+    <span class="p">]</span>  <span class="c1"># [m]</span>
     <span class="n">true_rPrime_TcT_T</span> <span class="o">=</span> <span class="p">[</span>
         <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
         <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
         <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.0</span> <span class="o">/</span> <span class="mf">8.0</span><span class="p">]</span>
-    <span class="p">]</span>
+    <span class="p">]</span>  <span class="c1"># [m/s]</span>
     <span class="n">true_rPPrime_TcT_T</span> <span class="o">=</span> <span class="p">[</span>
         <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
         <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
-        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mf">17.0</span> <span class="o">/</span> <span class="mf">30.0</span><span class="p">]</span>
-    <span class="p">]</span>
+        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span> <span class="o">/</span> <span class="mf">60.0</span><span class="p">]</span>
+    <span class="p">]</span>  <span class="c1"># [m/s^2]</span>
 
     <span class="n">accuracy</span> <span class="o">=</span> <span class="mf">1e-8</span>
     <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">trial</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">trials</span><span class="p">):</span>
@@ -358,7 +362,52 @@
         <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">dataRPPrime</span><span class="p">,</span>
                                    <span class="n">true_rPPrime_TcT_T</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span>
                                    <span class="n">rtol</span><span class="o">=</span><span class="n">accuracy</span><span class="p">,</span>
-                                   <span class="n">err_msg</span><span class="o">=</span><span class="s2">&quot;Emptying tank center of mass position second derivative not equal&quot;</span><span class="p">)</span>
+                                   <span class="n">err_msg</span><span class="o">=</span><span class="s2">&quot;Emptying tank center of mass position second derivative not equal&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_emptying_tank_derivatives_match_finite_differences">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/FuelTank/_UnitTest/test_tank_models.html#test_tank_models.test_emptying_tank_derivatives_match_finite_differences">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;fuel_mass_fraction&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_emptying_tank_derivatives_match_finite_differences</span><span class="p">(</span><span class="n">fuel_mass_fraction</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compare emptying-tank COM and inertia derivatives with centered finite differences.&quot;&quot;&quot;</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">fuelTank</span><span class="o">.</span><span class="n">FuelTankModelEmptying</span><span class="p">()</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">propMassInit</span> <span class="o">=</span> <span class="mf">200.0</span>  <span class="c1"># [kg]</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">r_TcT_TInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>  <span class="c1"># [m]</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">radiusTankInit</span> <span class="o">=</span> <span class="mf">0.5</span>  <span class="c1"># [m]</span>
+
+    <span class="n">fuel_mass</span> <span class="o">=</span> <span class="n">fuel_mass_fraction</span> <span class="o">*</span> <span class="n">model</span><span class="o">.</span><span class="n">propMassInit</span>  <span class="c1"># [kg]</span>
+    <span class="n">fuel_mass_rate</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.7</span>  <span class="c1"># [kg/s]</span>
+    <span class="n">difference_time_step</span> <span class="o">=</span> <span class="mf">1.0e-2</span>  <span class="c1"># [s]</span>
+
+    <span class="n">model</span><span class="o">.</span><span class="n">computeTankProps</span><span class="p">(</span><span class="n">fuel_mass</span><span class="p">)</span>
+    <span class="n">center_position</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">r_TcT_T</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>  <span class="c1"># [m]</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">computeTankPropDerivs</span><span class="p">(</span><span class="n">fuel_mass</span><span class="p">,</span> <span class="n">fuel_mass_rate</span><span class="p">)</span>
+    <span class="n">center_position_derivative</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">rPrime_TcT_T</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>  <span class="c1"># [m/s]</span>
+    <span class="n">center_position_second_derivative</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">rPPrime_TcT_T</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>  <span class="c1"># [m/s^2]</span>
+    <span class="n">inertia_derivative</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">IPrimeTankPntT_T</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>  <span class="c1"># [kg*m^2/s]</span>
+
+    <span class="n">model</span><span class="o">.</span><span class="n">computeTankProps</span><span class="p">(</span><span class="n">fuel_mass</span> <span class="o">+</span> <span class="n">fuel_mass_rate</span> <span class="o">*</span> <span class="n">difference_time_step</span><span class="p">)</span>
+    <span class="n">center_position_plus</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">r_TcT_T</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>  <span class="c1"># [m]</span>
+    <span class="n">inertia_plus</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">ITankPntT_T</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>  <span class="c1"># [kg*m^2]</span>
+
+    <span class="n">model</span><span class="o">.</span><span class="n">computeTankProps</span><span class="p">(</span><span class="n">fuel_mass</span> <span class="o">-</span> <span class="n">fuel_mass_rate</span> <span class="o">*</span> <span class="n">difference_time_step</span><span class="p">)</span>
+    <span class="n">center_position_minus</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">r_TcT_T</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>  <span class="c1"># [m]</span>
+    <span class="n">inertia_minus</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">ITankPntT_T</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>  <span class="c1"># [kg*m^2]</span>
+
+    <span class="n">finite_difference_center_derivative</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">center_position_plus</span> <span class="o">-</span> <span class="n">center_position_minus</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">difference_time_step</span><span class="p">)</span>  <span class="c1"># [m/s]</span>
+    <span class="n">finite_difference_center_second_derivative</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">center_position_plus</span> <span class="o">-</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">center_position</span> <span class="o">+</span> <span class="n">center_position_minus</span>
+    <span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">difference_time_step</span> <span class="o">*</span> <span class="n">difference_time_step</span><span class="p">)</span>  <span class="c1"># [m/s^2]</span>
+    <span class="n">finite_difference_inertia_derivative</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">inertia_plus</span> <span class="o">-</span> <span class="n">inertia_minus</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">difference_time_step</span><span class="p">)</span>  <span class="c1"># [kg*m^2/s]</span>
+
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">center_position_derivative</span><span class="p">,</span> <span class="n">finite_difference_center_derivative</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1.0e-5</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span>
+        <span class="n">center_position_second_derivative</span><span class="p">,</span> <span class="n">finite_difference_center_second_derivative</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1.0e-5</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">inertia_derivative</span><span class="p">,</span> <span class="n">finite_difference_inertia_derivative</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1.0e-5</span><span class="p">)</span></div>
+
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">test_tankModelUniformBurn</span><span class="p">(</span><span class="n">show_plots</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>

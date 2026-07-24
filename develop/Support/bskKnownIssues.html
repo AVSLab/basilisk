@@ -176,6 +176,15 @@ but <code class="docutils literal notranslate"><span class="pre">qObsVal</span><
 convergence tests ran at a fraction of the intended measurement noise. The tests now draw noise with
 <code class="docutils literal notranslate"><span class="pre">sigma</span> <span class="pre">=</span> <span class="pre">sqrt(qObsVal)</span></code> from a local seeded generator and check convergence against a noise-appropriate
 tolerance. This is fixed in the current version.</p></li>
+<li><p>A depleting <a class="reference internal" href="../Documentation/simulation/dynamics/FuelTank/fuelTank.html#fueltank"><span class="std std-ref">C++ Module: fuelTank</span></a> with attached fuel slosh particles expelled propellant by a factor of
+one plus the slosh mass fraction. This is fixed in the current version.</p></li>
+<li><p>The <a class="reference internal" href="../Documentation/simulation/dynamics/FuelTank/fuelTank.html#fueltank"><span class="std std-ref">C++ Module: fuelTank</span></a> mass-depletion torque treated the tank-frame fuel COM and inertia derivative
+as body-frame quantities and dropped the tank offset, so a rotated (<code class="docutils literal notranslate"><span class="pre">dcm_TB</span></code>) or offset
+(<code class="docutils literal notranslate"><span class="pre">r_TB_B</span></code>) depleting tank applied a wrong or missing torque about the hub. This is fixed in the
+current version.</p></li>
+<li><p>The <a class="reference internal" href="../Documentation/simulation/dynamics/FuelTank/fuelTank.html#fueltank"><span class="std std-ref">C++ Module: fuelTank</span></a> emptying model computed the fuel COM and transverse inertia derivatives
+incorrectly except at the half-full condition, producing wrong high-fidelity depletion torques.
+The derivative equations and their finite-difference coverage are corrected in the current version.</p></li>
 </ul>
 </section>
 <section id="version-2-11-0-july-7-2026">

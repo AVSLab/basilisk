@@ -129,8 +129,10 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">fuelTank</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">gravityEffector</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">linearSpringMassDamper</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">spacecraft</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">thrusterDynamicEffector</span><span class="p">,</span> <span class="n">thrusterStateEffector</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">RigidBodyKinematics</span> <span class="k">as</span> <span class="n">rbk</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">deprecated</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">macros</span>
@@ -323,8 +325,9 @@
 
 <div class="viewcode-block" id="test_leakyTank">
 <a class="viewcode-back" href="../Documentation/simulation/dynamics/FuelTank/_UnitTest/test_mass_depletion.html#test_mass_depletion.test_leakyTank">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">test_leakyTank</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Module Unit Test&quot;&quot;&quot;</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;sloshMass&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">,</span> <span class="mf">40.0</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_leakyTank</span><span class="p">(</span><span class="n">sloshMass</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A leaking tank sheds mDot*t from the vehicle, whatever share of it fuel slosh carries.&quot;&quot;&quot;</span>
     <span class="n">scObject</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
     <span class="n">scObject</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;spacecraftBody&quot;</span>
     <span class="n">unitTaskName</span> <span class="o">=</span> <span class="s2">&quot;unitTask&quot;</span>
@@ -348,6 +351,21 @@
     <span class="c1"># Add tank</span>
     <span class="n">scObject</span><span class="o">.</span><span class="n">addStateEffector</span><span class="p">(</span><span class="n">unitTestSim</span><span class="o">.</span><span class="n">fuelTankStateEffector</span><span class="p">)</span>
 
+    <span class="c1"># Carry part of the propellant outside the tank, in an attached fuel slosh particle</span>
+    <span class="n">particle</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">sloshMass</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="n">particle</span> <span class="o">=</span> <span class="n">linearSpringMassDamper</span><span class="o">.</span><span class="n">LinearSpringMassDamper</span><span class="p">()</span>
+        <span class="n">particle</span><span class="o">.</span><span class="n">k</span> <span class="o">=</span> <span class="mf">100.0</span>  <span class="c1"># [N/m]</span>
+        <span class="n">particle</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># [N*s/m]</span>
+        <span class="n">particle</span><span class="o">.</span><span class="n">r_PB_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>  <span class="c1"># [m]</span>
+        <span class="n">particle</span><span class="o">.</span><span class="n">pHat_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>
+        <span class="n">particle</span><span class="o">.</span><span class="n">rhoInit</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># [m]</span>
+        <span class="n">particle</span><span class="o">.</span><span class="n">rhoDotInit</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># [m/s]</span>
+        <span class="n">particle</span><span class="o">.</span><span class="n">massInit</span> <span class="o">=</span> <span class="n">sloshMass</span>  <span class="c1"># [kg]</span>
+        <span class="n">unitTestSim</span><span class="o">.</span><span class="n">fuelTankStateEffector</span><span class="o">.</span><span class="n">pushFuelSloshParticle</span><span class="p">(</span><span class="n">particle</span><span class="p">)</span>
+        <span class="n">scObject</span><span class="o">.</span><span class="n">addStateEffector</span><span class="p">(</span><span class="n">particle</span><span class="p">)</span>
+    <span class="n">totalPropellant</span> <span class="o">=</span> <span class="n">initialFuelMass</span> <span class="o">+</span> <span class="n">sloshMass</span>  <span class="c1"># [kg]</span>
+
     <span class="c1"># Make the tank leaky</span>
     <span class="n">leakRate</span> <span class="o">=</span> <span class="mf">1e-5</span>  <span class="c1"># [kg/s]</span>
     <span class="n">unitTestSim</span><span class="o">.</span><span class="n">fuelTankStateEffector</span><span class="o">.</span><span class="n">setFuelLeakRate</span><span class="p">(</span><span class="n">leakRate</span><span class="p">)</span>
@@ -368,7 +386,19 @@
     <span class="n">fuelMassDot</span> <span class="o">=</span> <span class="n">fuelLog</span><span class="o">.</span><span class="n">fuelMassDot</span>
 
     <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">fuelMassDot</span><span class="p">,</span> <span class="o">-</span><span class="n">leakRate</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">fuelMass</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">initialFuelMass</span> <span class="o">-</span> <span class="n">stopTime</span> <span class="o">*</span> <span class="n">leakRate</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">)</span></div>
+
+    <span class="c1"># The tank drains only its share of the flow, so its mass follows</span>
+    <span class="c1"># m(t) = m(0) * (1 - mDot*t/totalPropellant), which is m(0) - mDot*t when it carries it all.</span>
+    <span class="n">expectedTankMass</span> <span class="o">=</span> <span class="n">initialFuelMass</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">leakRate</span> <span class="o">*</span> <span class="n">stopTime</span> <span class="o">/</span> <span class="n">totalPropellant</span><span class="p">)</span>  <span class="c1"># [kg]</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">fuelMass</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">expectedTankMass</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">)</span>
+
+    <span class="c1"># Whatever the split, the vehicle sheds exactly mDot*t.</span>
+    <span class="n">finalTankMass</span> <span class="o">=</span> <span class="n">scObject</span><span class="o">.</span><span class="n">dynManager</span><span class="o">.</span><span class="n">getStateObject</span><span class="p">(</span>
+        <span class="n">unitTestSim</span><span class="o">.</span><span class="n">fuelTankStateEffector</span><span class="o">.</span><span class="n">getNameOfMassState</span><span class="p">())</span><span class="o">.</span><span class="n">getState</span><span class="p">()[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">finalSloshMass</span> <span class="o">=</span> <span class="mf">0.0</span> <span class="k">if</span> <span class="n">particle</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">scObject</span><span class="o">.</span><span class="n">dynManager</span><span class="o">.</span><span class="n">getStateObject</span><span class="p">(</span>
+        <span class="n">particle</span><span class="o">.</span><span class="n">nameOfMassState</span><span class="p">)</span><span class="o">.</span><span class="n">getState</span><span class="p">()[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">shed</span> <span class="o">=</span> <span class="n">totalPropellant</span> <span class="o">-</span> <span class="p">(</span><span class="n">finalTankMass</span> <span class="o">+</span> <span class="n">finalSloshMass</span><span class="p">)</span>  <span class="c1"># [kg]</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">shed</span><span class="p">,</span> <span class="n">leakRate</span> <span class="o">*</span> <span class="n">stopTime</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">)</span></div>
 
 
 
@@ -601,6 +631,134 @@
             <span class="ne">UserWarning</span><span class="p">,</span>
             <span class="n">stacklevel</span><span class="o">=</span><span class="mi">1</span>
         <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_depletionTorqueFollowsTankMounting">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/FuelTank/_UnitTest/test_mass_depletion.html#test_mass_depletion.test_depletionTorqueFollowsTankMounting">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_depletionTorqueFollowsTankMounting</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A rotated, offset, depleting tank must spin a resting hub up about r_TB_B x dcm_TB^T k3.&quot;&quot;&quot;</span>
+    <span class="n">dcm_TB</span> <span class="o">=</span> <span class="n">rbk</span><span class="o">.</span><span class="n">MRP2C</span><span class="p">([</span><span class="mf">0.15</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">])</span>
+    <span class="n">r_TB_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">])</span>  <span class="c1"># [m]</span>
+
+    <span class="n">unitTestSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">testProc</span> <span class="o">=</span> <span class="n">unitTestSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="s2">&quot;TestProcess&quot;</span><span class="p">)</span>
+    <span class="n">testProc</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">unitTestSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">&quot;unitTask&quot;</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)))</span>
+
+    <span class="n">scObject</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;spacecraftBody&quot;</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span> <span class="o">=</span> <span class="mf">500.0</span>  <span class="c1"># [kg]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_BcB_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>  <span class="c1"># [m]</span>
+    <span class="c1"># isotropic keeps the torque axis an eigenvector, so the hub rate holds exactly on it</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">IHubPntBc_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">300.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">300.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">300.0</span><span class="p">]]</span>  <span class="c1"># [kg*m^2]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">sigma_BNInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">omega_BN_BInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>  <span class="c1"># [rad/s]</span>
+
+    <span class="n">tank</span> <span class="o">=</span> <span class="n">fuelTank</span><span class="o">.</span><span class="n">FuelTank</span><span class="p">()</span>
+    <span class="n">tankModel</span> <span class="o">=</span> <span class="n">fuelTank</span><span class="o">.</span><span class="n">FuelTankModelEmptying</span><span class="p">()</span>
+    <span class="n">tankModel</span><span class="o">.</span><span class="n">propMassInit</span> <span class="o">=</span> <span class="mf">200.0</span>  <span class="c1"># [kg]</span>
+    <span class="n">tankModel</span><span class="o">.</span><span class="n">r_TcT_TInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>  <span class="c1"># [m]</span>
+    <span class="n">tankModel</span><span class="o">.</span><span class="n">radiusTankInit</span> <span class="o">=</span> <span class="mf">0.5</span>  <span class="c1"># [m]</span>
+    <span class="n">tank</span><span class="o">.</span><span class="n">setTankModel</span><span class="p">(</span><span class="n">tankModel</span><span class="p">)</span>
+    <span class="n">tank</span><span class="o">.</span><span class="n">setDcm_TB</span><span class="p">(</span><span class="n">dcm_TB</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+    <span class="n">tank</span><span class="o">.</span><span class="n">setR_TB_B</span><span class="p">(</span><span class="n">r_TB_B</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+    <span class="n">tank</span><span class="o">.</span><span class="n">setUpdateOnly</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">tank</span><span class="o">.</span><span class="n">setFuelLeakRate</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>  <span class="c1"># [kg/s]</span>
+
+    <span class="n">scObject</span><span class="o">.</span><span class="n">addStateEffector</span><span class="p">(</span><span class="n">tank</span><span class="p">)</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;unitTask&quot;</span><span class="p">,</span> <span class="n">scObject</span><span class="p">)</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;unitTask&quot;</span><span class="p">,</span> <span class="n">tank</span><span class="p">)</span>
+    <span class="n">dataLog</span> <span class="o">=</span> <span class="n">scObject</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;unitTask&quot;</span><span class="p">,</span> <span class="n">dataLog</span><span class="p">)</span>
+
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">20.0</span><span class="p">))</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="n">omega_BN_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dataLog</span><span class="o">.</span><span class="n">omega_BN_B</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># [rad/s]</span>
+    <span class="n">k3_B</span> <span class="o">=</span> <span class="n">dcm_TB</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span>
+    <span class="n">expectedAxis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">r_TB_B</span><span class="p">,</span> <span class="n">k3_B</span><span class="p">)</span>
+    <span class="n">expectedAxis</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">expectedAxis</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">omega_BN_B</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">omega_BN_B</span><span class="p">),</span> <span class="o">-</span><span class="n">expectedAxis</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">)</span>
+
+    <span class="c1"># Regression value after independently validating the emptying-model derivatives by finite differences.</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">omega_BN_B</span><span class="p">),</span>
+        <span class="mf">2.6376706988e-04</span><span class="p">,</span>  <span class="c1"># [rad/s]</span>
+        <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span>
+        <span class="n">err_msg</span><span class="o">=</span><span class="s2">&quot;depletion torque magnitude not equal&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_depletionTorqueUsesCurrentMassFlowRate">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/FuelTank/_UnitTest/test_mass_depletion.html#test_mass_depletion.test_depletionTorqueUsesCurrentMassFlowRate">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_depletionTorqueUsesCurrentMassFlowRate</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A ramping leak must drive the depletion torque from the current mass-flow rate, not the</span>
+<span class="sd">    previous integrator substep&#39;s, so an offset emptying tank under a time-varying flow reaches a</span>
+<span class="sd">    hub rate the stale substep rate would miss.&quot;&quot;&quot;</span>
+    <span class="n">dcm_TB</span> <span class="o">=</span> <span class="n">rbk</span><span class="o">.</span><span class="n">MRP2C</span><span class="p">([</span><span class="mf">0.15</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">])</span>
+    <span class="n">r_TB_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">])</span>  <span class="c1"># [m]</span>
+    <span class="n">dt</span> <span class="o">=</span> <span class="mf">0.1</span>  <span class="c1"># [s]</span>
+
+    <span class="n">unitTestSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">testProc</span> <span class="o">=</span> <span class="n">unitTestSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="s2">&quot;TestProcess&quot;</span><span class="p">)</span>
+    <span class="n">testProc</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">unitTestSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">&quot;unitTask&quot;</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">dt</span><span class="p">)))</span>
+
+    <span class="n">scObject</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;spacecraftBody&quot;</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span> <span class="o">=</span> <span class="mf">500.0</span>  <span class="c1"># [kg]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_BcB_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>  <span class="c1"># [m]</span>
+    <span class="c1"># isotropic keeps the torque axis an eigenvector, so the hub rate holds exactly on it</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">IHubPntBc_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">300.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">300.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">300.0</span><span class="p">]]</span>  <span class="c1"># [kg*m^2]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">sigma_BNInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">omega_BN_BInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>  <span class="c1"># [rad/s]</span>
+
+    <span class="n">tank</span> <span class="o">=</span> <span class="n">fuelTank</span><span class="o">.</span><span class="n">FuelTank</span><span class="p">()</span>
+    <span class="n">tankModel</span> <span class="o">=</span> <span class="n">fuelTank</span><span class="o">.</span><span class="n">FuelTankModelEmptying</span><span class="p">()</span>
+    <span class="n">tankModel</span><span class="o">.</span><span class="n">propMassInit</span> <span class="o">=</span> <span class="mf">300.0</span>  <span class="c1"># [kg]</span>
+    <span class="n">tankModel</span><span class="o">.</span><span class="n">r_TcT_TInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>  <span class="c1"># [m]</span>
+    <span class="n">tankModel</span><span class="o">.</span><span class="n">radiusTankInit</span> <span class="o">=</span> <span class="mf">0.5</span>  <span class="c1"># [m]</span>
+    <span class="n">tank</span><span class="o">.</span><span class="n">setTankModel</span><span class="p">(</span><span class="n">tankModel</span><span class="p">)</span>
+    <span class="n">tank</span><span class="o">.</span><span class="n">setDcm_TB</span><span class="p">(</span><span class="n">dcm_TB</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+    <span class="n">tank</span><span class="o">.</span><span class="n">setR_TB_B</span><span class="p">(</span><span class="n">r_TB_B</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+    <span class="n">tank</span><span class="o">.</span><span class="n">setUpdateOnly</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="c1"># Drive the leak rate from an input message so it can be ramped across the run</span>
+    <span class="n">leakPayload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">MassFlowRateMsgPayload</span><span class="p">()</span>
+    <span class="n">leakMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">MassFlowRateMsg</span><span class="p">()</span>
+    <span class="n">tank</span><span class="o">.</span><span class="n">fuelLeakRateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">leakMsg</span><span class="p">)</span>
+
+    <span class="n">scObject</span><span class="o">.</span><span class="n">addStateEffector</span><span class="p">(</span><span class="n">tank</span><span class="p">)</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;unitTask&quot;</span><span class="p">,</span> <span class="n">scObject</span><span class="p">)</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;unitTask&quot;</span><span class="p">,</span> <span class="n">tank</span><span class="p">)</span>
+    <span class="n">dataLog</span> <span class="o">=</span> <span class="n">scObject</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;unitTask&quot;</span><span class="p">,</span> <span class="n">dataLog</span><span class="p">)</span>
+
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+
+    <span class="c1"># Linearly ramp the leak rate as mDot(t) = 1 + 0.5 t [kg/s], rewriting the message each step so the</span>
+    <span class="c1"># tank mass rate changes over time and the substep lag in the mDot term becomes observable.</span>
+    <span class="n">baseRate</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># [kg/s]</span>
+    <span class="n">rampRate</span> <span class="o">=</span> <span class="mf">0.5</span>  <span class="c1"># [kg/s^2]</span>
+    <span class="n">stopTime</span> <span class="o">=</span> <span class="mf">15.0</span>  <span class="c1"># [s]</span>
+    <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">stopTime</span> <span class="o">/</span> <span class="n">dt</span><span class="p">))):</span>
+        <span class="n">leakPayload</span><span class="o">.</span><span class="n">massFlowRate</span> <span class="o">=</span> <span class="n">baseRate</span> <span class="o">+</span> <span class="n">rampRate</span> <span class="o">*</span> <span class="n">step</span> <span class="o">*</span> <span class="n">dt</span>  <span class="c1"># [kg/s]</span>
+        <span class="n">leakMsg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">leakPayload</span><span class="p">)</span>
+        <span class="n">unitTestSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">((</span><span class="n">step</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">dt</span><span class="p">))</span>
+        <span class="n">unitTestSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="n">omega_BN_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dataLog</span><span class="o">.</span><span class="n">omega_BN_B</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># [rad/s]</span>
+    <span class="n">k3_B</span> <span class="o">=</span> <span class="n">dcm_TB</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span>
+    <span class="n">expectedAxis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">r_TB_B</span><span class="p">,</span> <span class="n">k3_B</span><span class="p">)</span>
+    <span class="n">expectedAxis</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">expectedAxis</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">omega_BN_B</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">omega_BN_B</span><span class="p">),</span> <span class="o">-</span><span class="n">expectedAxis</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">)</span>
+
+    <span class="c1"># Regression value after independently validating the emptying-model derivatives by finite differences.</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">omega_BN_B</span><span class="p">),</span>
+        <span class="mf">1.5638822750e-03</span><span class="p">,</span>  <span class="c1"># [rad/s]</span>
+        <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span>
+        <span class="n">err_msg</span><span class="o">=</span><span class="s2">&quot;depletion torque did not use the current mass-flow rate&quot;</span><span class="p">)</span></div>
 
 
 

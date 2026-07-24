@@ -171,6 +171,20 @@
 <div class="toctree-wrapper compound">
 </div>
 <dl class="py function" id="module-test_mass_depletion">
+<dt class="sig sig-object py" id="test_mass_depletion.test_depletionTorqueFollowsTankMounting">
+<span class="sig-prename descclassname"><span class="pre">test_mass_depletion.</span></span><span class="sig-name descname"><span class="pre">test_depletionTorqueFollowsTankMounting</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_mass_depletion.html#test_depletionTorqueFollowsTankMounting"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_mass_depletion.test_depletionTorqueFollowsTankMounting" title="Link to this definition"></a></dt>
+<dd><p>A rotated, offset, depleting tank must spin a resting hub up about r_TB_B x dcm_TB^T k3.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_mass_depletion.test_depletionTorqueUsesCurrentMassFlowRate">
+<span class="sig-prename descclassname"><span class="pre">test_mass_depletion.</span></span><span class="sig-name descname"><span class="pre">test_depletionTorqueUsesCurrentMassFlowRate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_mass_depletion.html#test_depletionTorqueUsesCurrentMassFlowRate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_mass_depletion.test_depletionTorqueUsesCurrentMassFlowRate" title="Link to this definition"></a></dt>
+<dd><p>A ramping leak must drive the depletion torque from the current mass-flow rate, not the
+previous integrator substep’s, so an offset emptying tank under a time-varying flow reaches a
+hub rate the stale substep rate would miss.</p>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="test_mass_depletion.test_deprecatedPublicVariables">
 <span class="sig-prename descclassname"><span class="pre">test_mass_depletion.</span></span><span class="sig-name descname"><span class="pre">test_deprecatedPublicVariables</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_mass_depletion.html#test_deprecatedPublicVariables"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_mass_depletion.test_deprecatedPublicVariables" title="Link to this definition"></a></dt>
 <dd><p>Module Unit Test</p>
@@ -178,8 +192,8 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="test_mass_depletion.test_leakyTank">
-<span class="sig-prename descclassname"><span class="pre">test_mass_depletion.</span></span><span class="sig-name descname"><span class="pre">test_leakyTank</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_mass_depletion.html#test_leakyTank"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_mass_depletion.test_leakyTank" title="Link to this definition"></a></dt>
-<dd><p>Module Unit Test</p>
+<span class="sig-prename descclassname"><span class="pre">test_mass_depletion.</span></span><span class="sig-name descname"><span class="pre">test_leakyTank</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sloshMass</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_mass_depletion.html#test_leakyTank"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_mass_depletion.test_leakyTank" title="Link to this definition"></a></dt>
+<dd><p>A leaking tank sheds mDot*t from the vehicle, whatever share of it fuel slosh carries.</p>
 </dd></dl>
 
 <dl class="py function">
