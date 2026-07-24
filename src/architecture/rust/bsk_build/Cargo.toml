@@ -1,0 +1,39 @@
+[package]
+name    = "bsk-build"
+version = "0.1.0"
+edition = "2021"
+rust-version.workspace = true
+description = "Build and runtime support for native Basilisk Rust modules."
+
+[features]
+default = ["runtime"]
+
+# Enable APIs that call into the linked Basilisk runtime. Build scripts disable
+# this feature so their host executables do not require Basilisk C/C++ symbols.
+runtime = []
+
+# The build-script surface uses cbindgen to render the module's C-compatible
+# types. Runtime support and the procedural attribute remain available without
+# this feature.
+codegen = ["dep:cbindgen"]
+
+# Enable this in a module crate's [dev-dependencies] to make `bskLogger`
+# calls (debug/info/warning) print to stderr instead of calling Basilisk's C
+# symbols, which aren't linked during `cargo test`.
+#
+# [dev-dependencies]
+# bsk-build = { path = "...", features = ["test_logger"] }
+#
+# Cargo feature unification ensures the test binary gets this feature while
+# production builds do not (dev-dep features are not propagated into the
+# crate's public library artifact). After adding this, module code can call
+# `context.logger().warning(...)` without `#[cfg(not(test))]` guards.
+# The `#[bsk_build::module]` attribute automatically excludes lifecycle entry
+# points from test builds, so unit tests do not link Basilisk's C symbols.
+test_logger = ["runtime"]
+
+[dependencies]
+bsk-macros = { path = "../bsk_macros" }
+# Keep cbindgen's CLI-only clap dependency disabled; bsk-build uses its library
+# API from module build scripts.
+cbindgen = { version = "0.29.4", default-features = false, optional = true }

@@ -1,0 +1,20 @@
+[package]
+name = "mrpPDRust"
+version = "1.0.0"
+edition = "2024"
+rust-version.workspace = true
+
+[package.metadata.basilisk]
+module = true
+
+[lib]
+path = "mrpPDRust.rs"
+crate-type = ["staticlib"]
+
+[dependencies]
+bsk-messages = { path = "../../../architecture/rust/bsk_messages" }
+bsk-build = { path = "../../../architecture/rust/bsk_build" }
+nalgebra.workspace = true
+
+[build-dependencies]
+bsk-build = { path = "../../../architecture/rust/bsk_build", default-features = false, features = ["codegen"] }

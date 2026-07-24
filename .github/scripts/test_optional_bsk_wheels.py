@@ -35,9 +35,11 @@ CORE_IMPORTS = [
     "Basilisk.architecture.messaging",
     "Basilisk.utilities.SimulationBaseClass",
     "Basilisk.simulation.spacecraft",
+    "Basilisk.simulation.vizInterface",
     "Basilisk.fswAlgorithms.mrpFeedback",
     "Basilisk.simulation.mujoco",
     "Basilisk.simulation.thrOnTimeToForce",
+    "Basilisk.moduleTemplates.rustModuleTemplate",
 ]
 OPNAV_IMPORTS = [
     "Basilisk.simulation.camera",
@@ -84,9 +86,20 @@ missing = {missing!r}
 import Basilisk
 print("Basilisk:", Basilisk.__file__)
 
+build_info = Basilisk.getBuildInfo()
+build_options = build_info["diagnostics"]["build"]
+if not build_options["rustModules"]:
+    raise SystemExit("wheel was not built with Rust modules")
+if not build_info["diagnostics"]["tools"]["corrosion"]:
+    raise SystemExit("wheel did not record its Corrosion version")
+
 for name in required:
     module = importlib.import_module(name)
     print("OK import", name, "->", getattr(module, "__file__", "<builtin>"))
+
+rust_module_api = sys.modules["Basilisk.moduleTemplates.rustModuleTemplate"]
+rust_module = rust_module_api.rustModuleTemplate()
+print("OK construct Rust module", type(rust_module).__name__)
 
 for name in missing:
     if importlib.util.find_spec(name) is not None:

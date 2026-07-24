@@ -25,6 +25,12 @@ jobs:
         uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
+      - name: Set up latest stable Rust
+        run: |
+          rustup toolchain install stable --profile minimal
+          rustup default stable
+          rustc --version
+          cargo --version
       - name: Capture initial package versions
         run: |
           pip freeze > initial_versions.txt
@@ -36,7 +42,7 @@ jobs:
         uses: ./.github/actions/build
         with:
           python-version: ${{ matrix.python-version }}
-          conan-args: --opNav True --allOptPkg --mujoco True --pyPkgCanary True
+          conan-args: --opNav True --allOptPkg --mujoco True --rustModules True --pyPkgCanary True
           is-canary: true
       - name: Capture final package versions
         run: |

@@ -13,7 +13,7 @@ requires = [
     # Requirements for building Basilisk through conanfile
     "conan>=2.0.5,<=2.28.1",
     "cmake>=3.26,<=4.3.2",
-    "swig>=4.4.1,<5",  # Require SWIG ABI 5 support for Basilisk and compatible plugins.
+    "swig>=4.4.1,<5",  # Require SWIG ABI 5 support for Basilisk and compatible extensions.
     "libclang>=15.0.6.1,<=18.1.1"  # Required by generatePayloadMetaJson.py (message code generation)
 ]
 
@@ -101,7 +101,12 @@ repair-wheel-command = "python -m delvewheel repair -v --ignore-existing --analy
 
 [tool.cibuildwheel.linux]
 archs = ["native"]
-before-all = "mkdir -p ~/.conan2 && printf '%s\\n' 'tools.system.package_manager:mode=install' 'tools.system.package_manager:sudo=False' >> ~/.conan2/global.conf"
+# Rust module support (--rustModules, see src/cmake/bskFindRustModules.cmake)
+# is experimental and off by default, but the manylinux container has no
+# Rust/Cargo toolchain at all, so it is bootstrapped here unconditionally.
+# This lets nightly, test, and release wheel jobs build Rust modules through
+# the pinned Corrosion integration on every Linux wheel platform.
+before-all = "mkdir -p ~/.conan2 && printf '%s\\n' 'tools.system.package_manager:mode=install' 'tools.system.package_manager:sudo=False' >> ~/.conan2/global.conf && curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y"
 repair-wheel-command = [
   "auditwheel repair --strip -w {dest_dir} {wheel}"
 ]
@@ -111,6 +116,12 @@ manylinux-aarch64-image = "manylinux_2_28"
 # that toggles MuJoCo/OpNav aren't visible to the build unless explicitly
 # forwarded.
 environment-pass = ["CONAN_ARGS", "CMAKE_C_COMPILER_LAUNCHER", "CMAKE_CXX_COMPILER_LAUNCHER"]
+
+[tool.cibuildwheel.linux.environment]
+# rustup (installed by before-all above) puts cargo/rustc here; before-all
+# runs in its own subprocess so this can't be exported from there directly --
+# see https://cibuildwheel.pypa.io/en/stable/faq/#building-rust-wheels.
+PATH = "$HOME/.cargo/bin:$PATH"
 
 [tool.pytest.ini_options]
 testpaths = [

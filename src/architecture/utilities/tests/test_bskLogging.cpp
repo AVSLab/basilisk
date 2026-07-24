@@ -84,3 +84,20 @@ TEST(BSKLogging, cBskErrorTreatsMessageAsText)
 
     FAIL() << "Expected _bskError to throw BasiliskError.";
 }
+
+TEST(BSKLogging, noThrowAdapterReportsFatalLogWithoutUnwinding)
+{
+    BSKLogger bskLogger;
+
+    EXPECT_NO_THROW({
+        EXPECT_NE(0, _bskLogNoThrow(&bskLogger, BSK_ERROR, "contained error"));
+    });
+}
+
+TEST(BSKLogging, noThrowAdapterAcceptsNonfatalAndNullLoggerCalls)
+{
+    BSKLogger bskLogger(BSK_SILENT);
+
+    EXPECT_EQ(0, _bskLogNoThrow(&bskLogger, BSK_INFORMATION, "information"));
+    EXPECT_EQ(0, _bskLogNoThrow(nullptr, BSK_WARNING, "disabled logger"));
+}

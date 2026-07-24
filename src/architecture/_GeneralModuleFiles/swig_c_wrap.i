@@ -24,13 +24,25 @@
 
 %{
     #include "architecture/_GeneralModuleFiles/sys_model.h"
+    #include "architecture/_GeneralModuleFiles/bsk_rust_module.h"
     #include <architecture/utilities/bskLogging.h>
+    #include <cstdio>
+    #include <exception>
     #include <memory>
+    #include <string>
     #include <type_traits>
+    #include <vector>
 %}
 %include <std_string.i>
 
 %include "sys_model.i"
+
+// Forward-declare so RustWrapper's template arguments (below) type-check
+// under SWIG's parser too; the full definition is only needed by the C++
+// compiler (it is pulled in above via bsk_rust_module.h).
+typedef struct BskRustModuleRuntime BskRustModuleRuntime;
+typedef struct BskRustModuleContext BskRustModuleContext;
+typedef struct BskRustError BskRustError;
 
 %inline %{
 
@@ -57,7 +69,7 @@ class CWrapper : public SysModel {
     void Reset(uint64_t currentSimNanos){
         resetFun(this->config.get(), currentSimNanos, this->moduleID);};
 
-    // Allows accesing the elements of the config from the wrapper in Python
+    // Allows accessing the elements of the config from the wrapper in Python
     // Similar to how the smart pointers are implemented in SWIG
     TConfig* operator->() const { return this->config.get(); }
 
@@ -65,6 +77,133 @@ class CWrapper : public SysModel {
 
   private:
     std::unique_ptr<TConfig> config; //!< class variable
+};
+
+// Same role as CWrapper, but for Rust-backed modules (see bsk_rust_module.h).
+// Rust owns the opaque instance and every value behind it. This wrapper owns
+// only that handle; its config pointer is a borrowed parameter/message-port
+// view used by SWIG. Runtime metadata and logging are borrowed through a
+// BskRustModuleContext created immediately before each lifecycle call.
+template <typename TConfig,
+          typename THandle,
+          BskRustError* (*createInstanceFun)(THandle**),
+          TConfig* (*configViewFun)(THandle*),
+          BskRustError* (*getConfigFieldFun)(THandle*, size_t, void*, size_t),
+          BskRustError* (*setConfigFieldFun)(THandle*, size_t, const void*, size_t),
+          const char* (*configFieldDeprecationDateFun)(size_t),
+          const char* (*configFieldDeprecationMessageFun)(size_t),
+          BskRustError* (*destroyInstanceFun)(THandle*),
+          BskRustError* (*updateStateFun)(THandle*, uint64_t, const BskRustModuleContext*),
+          BskRustError* (*selfInitFun)(THandle*, const BskRustModuleContext*),
+          BskRustError* (*resetFun)(THandle*, uint64_t, const BskRustModuleContext*)
+          >
+class RustWrapper : public SysModel {
+  public:
+    RustWrapper()
+        : instance{RustWrapper::createOwnedInstance(), RustWrapper::destroyOwnedInstance},
+          config{configViewFun(this->instance.get())} {
+        if (this->config == nullptr) {
+            throw BasiliskError("Rust module returned a null configuration view");
+        }
+    };
+
+    BSKLogger *bskLogger = nullptr; //!< framework logger borrowed by lifecycle context
+
+    void SelfInit(){
+        BskRustModuleContext context = this->makeContext();
+        RustWrapper::throwOnRustError(selfInitFun(this->instance.get(), &context));};
+
+    void UpdateState(uint64_t currentSimNanos){
+        BskRustModuleContext context = this->makeContext();
+        RustWrapper::throwOnRustError(
+            updateStateFun(this->instance.get(), currentSimNanos, &context));};
+
+    void Reset(uint64_t currentSimNanos){
+        BskRustModuleContext context = this->makeContext();
+        RustWrapper::throwOnRustError(
+            resetFun(this->instance.get(), currentSimNanos, &context));};
+
+    // Allows accessing the elements of the config from the wrapper in Python
+    // Similar to how the smart pointers are implemented in SWIG
+    TConfig* operator->() const { return this->config; }
+
+    void __bskGetConfigField(size_t fieldIndex, void *outputValue, size_t valueSize) const {
+        RustWrapper::throwOnRustError(
+            getConfigFieldFun(this->instance.get(), fieldIndex, outputValue, valueSize));
+    }
+
+    void __bskSetConfigField(size_t fieldIndex, const void *inputValue, size_t valueSize) {
+        RustWrapper::throwOnRustError(
+            setConfigFieldFun(this->instance.get(), fieldIndex, inputValue, valueSize));
+    }
+
+    std::string __bskConfigFieldDeprecationDate(size_t fieldIndex) const {
+        const char *value = configFieldDeprecationDateFun(fieldIndex);
+        return value == nullptr ? std::string{} : std::string{value};
+    }
+
+    std::string __bskConfigFieldDeprecationMessage(size_t fieldIndex) const {
+        const char *value = configFieldDeprecationMessageFun(fieldIndex);
+        return value == nullptr ? std::string{} : std::string{value};
+    }
+
+  private:
+    static void throwOnRustError(BskRustError *error) {
+        if (error == nullptr) {
+            return;
+        }
+        std::unique_ptr<BskRustError, void (*)(BskRustError*)> ownedError{
+            error,
+            Destroy_BskRustError
+        };
+        throw BasiliskError(BskRustError_message(ownedError.get()));
+    }
+
+    static THandle *createOwnedInstance() {
+        THandle *instance = nullptr;
+        RustWrapper::throwOnRustError(createInstanceFun(&instance));
+        if (instance == nullptr) {
+            throw BasiliskError("Rust module creation returned a null handle");
+        }
+        return instance;
+    }
+
+    // C++ destructors must not throw. A Rust panic while dropping its owned
+    // instance is unrecoverable, so report the diagnostic and terminate.
+    static void destroyOwnedInstance(THandle *instance) noexcept {
+        if (instance == nullptr) {
+            return;
+        }
+        BskRustError *error = destroyInstanceFun(instance);
+        if (error == nullptr) {
+            return;
+        }
+        std::fprintf(
+            stderr,
+            "Fatal error while destroying Rust module: %s\n",
+            BskRustError_message(error)
+        );
+        Destroy_BskRustError(error);
+        std::terminate();
+    }
+
+    // modelTag points into this->ModelTag, which outlives the synchronous
+    // lifecycle call that consumes the context. bskLogger is owned by the
+    // simulation and borrowed by the wrapper for that same call.
+    BskRustModuleContext makeContext() const {
+        BskRustModuleContext context;
+        context.runtime.moduleID = this->moduleID;
+        context.runtime.modelTag = this->ModelTag.c_str();
+        context.runtime.callCounts = this->CallCounts;
+        context.runtime.rngSeed = this->RNGSeed;
+        context.bskLogger = this->bskLogger;
+        return context;
+    }
+
+    // The instance returns to Rust for destruction. Config is a non-owning
+    // view into that instance and must never be deleted by C++.
+    std::unique_ptr<THandle, void (*)(THandle*)> instance; //!< owning Rust handle
+    TConfig *config;                                      //!< borrowed config view
 };
 
 %}
@@ -132,6 +271,7 @@ class CWrapper : public SysModel {
 
 %enddef
 
+
 %define %c_wrap_2(moduleName, configName)
     // This macro expects the header file to be "[moduleName].h"
     // the 'Config' structure to be called [configName],
@@ -151,4 +291,53 @@ class CWrapper : public SysModel {
     //    Reset_[moduleName]
 
     %c_wrap_2(moduleName, moduleName ## Config)
+%enddef
+
+%define %rust_wrap_2(moduleName, configName, handleName)
+    // The Rust build layer exports these lifecycle symbols. Keep the raw
+    // functions out of Python; users interact with configName and the
+    // RustWrapper specialization below.
+    %ignore Create_ ## moduleName;
+    %ignore Config_ ## moduleName;
+    %ignore GetConfigField_ ## moduleName;
+    %ignore SetConfigField_ ## moduleName;
+    %ignore ConfigFieldDeprecationDate_ ## moduleName;
+    %ignore ConfigFieldDeprecationMessage_ ## moduleName;
+    %ignore Destroy_ ## moduleName;
+    %ignore Update_ ## moduleName;
+    %ignore SelfInit_ ## moduleName;
+    %ignore Reset_ ## moduleName;
+
+    // SWIG 4.4 requires a complete template type here and crashes when the
+    // opaque handle is only forward-declared. This parser-only empty
+    // definition is not emitted into the generated C++; nodefault prevents
+    // SWIG from generating invalid new/delete wrappers for the real opaque
+    // C handle declared by bsk_rust_module.h.
+    %ignore handleName;
+    %nodefaultctor handleName;
+    %nodefaultdtor handleName;
+    typedef struct handleName {} handleName;
+
+    /*
+    Supply the same optional Reset behavior as %c_wrap_3. A concrete
+    Reset_moduleName function takes precedence over this function template.
+    */
+    %inline %{
+      template <typename T> inline void Reset_ ## moduleName(
+          T, uint64_t, const BskRustModuleContext*) {}
+    %}
+
+    %template(moduleName) RustWrapper<
+        configName,
+        handleName,
+        Create_ ## moduleName,
+        Config_ ## moduleName,
+        GetConfigField_ ## moduleName,
+        SetConfigField_ ## moduleName,
+        ConfigFieldDeprecationDate_ ## moduleName,
+        ConfigFieldDeprecationMessage_ ## moduleName,
+        Destroy_ ## moduleName,
+        Update_ ## moduleName,
+        SelfInit_ ## moduleName,
+        Reset_ ## moduleName>;
 %enddef

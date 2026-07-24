@@ -1,0 +1,12 @@
+[package]
+name = "bsk-utilities"
+version = "0.1.0"
+edition = "2021"
+rust-version.workspace = true
+description = "Rust bindings and safe wrappers for Basilisk C ABI utilities"
+license = "ISC"
+
+# `src/raw.rs` is generated and committed by
+# `../gen_rust_utilities.py` from Basilisk's own headers.
+
+[dependencies]

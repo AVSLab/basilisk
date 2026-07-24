@@ -49,6 +49,41 @@ function(_bsk_command_name output_variable)
   set(${output_variable} "${_command_name}" PARENT_SCOPE)
 endfunction()
 
+function(_bsk_program_version output_variable executable program_name)
+  set(_version "")
+  if(executable)
+    execute_process(
+      COMMAND "${executable}" --version
+      RESULT_VARIABLE _version_result
+      OUTPUT_VARIABLE _version_output
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+      ERROR_QUIET
+    )
+    if(_version_result EQUAL 0
+       AND _version_output MATCHES "^${program_name}[ \t]+([^ \t\r\n]+)")
+      set(_version "${CMAKE_MATCH_1}")
+    endif()
+  endif()
+  set(${output_variable} "${_version}" PARENT_SCOPE)
+endfunction()
+
+function(_bsk_rust_host_target output_variable rustc_executable)
+  set(_host_target "")
+  if(rustc_executable)
+    execute_process(
+      COMMAND "${rustc_executable}" --version --verbose
+      RESULT_VARIABLE _version_result
+      OUTPUT_VARIABLE _version_output
+      ERROR_QUIET
+    )
+    if(_version_result EQUAL 0
+       AND _version_output MATCHES "(^|\n)host:[ \t]+([^\r\n]+)")
+      set(_host_target "${CMAKE_MATCH_2}")
+    endif()
+  endif()
+  set(${output_variable} "${_host_target}" PARENT_SCOPE)
+endfunction()
+
 function(_bsk_git_metadata revision_variable dirty_variable)
   set(_source_revision "")
   set(_source_dirty None)
@@ -117,14 +152,14 @@ endfunction()
 function(_bsk_wire_build_info_targets directory)
   get_property(_targets DIRECTORY "${directory}" PROPERTY BUILDSYSTEM_TARGETS)
   foreach(_target IN LISTS _targets)
-    if(_target STREQUAL "bskBuildInfoProbe" OR _target STREQUAL "bskPluginAbiSettings")
+    if(_target STREQUAL "bskBuildInfoProbe" OR _target STREQUAL "bskExtensionAbiSettings")
       continue()
     endif()
     get_target_property(_imported "${_target}" IMPORTED)
     get_target_property(_target_type "${_target}" TYPE)
     if(NOT _imported
        AND _target_type MATCHES "^(MODULE_LIBRARY|SHARED_LIBRARY|STATIC_LIBRARY|OBJECT_LIBRARY)$")
-      set_property(TARGET "${_target}" APPEND PROPERTY LINK_LIBRARIES bskPluginAbiSettings)
+      set_property(TARGET "${_target}" APPEND PROPERTY LINK_LIBRARIES bskExtensionAbiSettings)
     endif()
     # Keep this dependency on loadable modules. Adding a configuration-sensitive
     # utility dependency to static libraries makes multi-config generators attach
@@ -204,17 +239,67 @@ function(bsk_generate_build_info package_directory)
   _bsk_python_string(BSK_INFO_SWIG_VERSION "${SWIG_VERSION}")
   _bsk_python_string(BSK_INFO_PYTHON_VERSION "${Python3_VERSION}")
 
+  set(_rust_modules False)
+  set(_rustc_id "")
+  set(_rustc_executable "")
+  set(_rustc_version "")
+  set(_rust_target "")
+  set(_cargo_executable "")
+  set(_cargo_version "")
+  set(_corrosion_version "")
+  if(BUILD_RUST_MODULES)
+    set(_rust_modules True)
+    set(_rustc_id "rustc")
+    set(_rustc_executable "${Rust_COMPILER_CACHED}")
+    set(_rustc_version "${Rust_VERSION}")
+    set(_rust_target "${Rust_CARGO_TARGET_CACHED}")
+    set(_cargo_executable "${Rust_CARGO_CACHED}")
+    set(_cargo_version "${Rust_CARGO_VERSION}")
+    if(Corrosion_VERSION)
+      set(_corrosion_version "${Corrosion_VERSION}")
+    else()
+      set(_corrosion_version "${BSK_CORROSION_VERSION}")
+    endif()
+
+    if(NOT _rustc_executable)
+      find_program(_rustc_executable NAMES rustc NO_CACHE)
+    endif()
+    if(NOT _cargo_executable)
+      set(_cargo_executable "${CARGO_EXECUTABLE}")
+    endif()
+    if(NOT _cargo_executable)
+      find_program(_cargo_executable NAMES cargo NO_CACHE)
+    endif()
+    if(NOT _rustc_version)
+      _bsk_program_version(_rustc_version "${_rustc_executable}" rustc)
+    endif()
+    if(NOT _cargo_version)
+      _bsk_program_version(_cargo_version "${_cargo_executable}" cargo)
+    endif()
+    if(NOT _rust_target)
+      _bsk_rust_host_target(_rust_target "${_rustc_executable}")
+    endif()
+  endif()
+
+  _bsk_command_name(_rustc_command "${_rustc_executable}")
+  _bsk_python_string(BSK_INFO_RUSTC_ID "${_rustc_id}")
+  _bsk_python_string(BSK_INFO_RUSTC_VERSION "${_rustc_version}")
+  _bsk_python_string(BSK_INFO_RUSTC_EXECUTABLE "${_rustc_command}")
+  _bsk_python_string(BSK_INFO_RUSTC_TARGET "${_rust_target}")
+  _bsk_python_string(BSK_INFO_CARGO_VERSION "${_cargo_version}")
+  _bsk_python_string(BSK_INFO_CORROSION_VERSION "${_corrosion_version}")
+
   if(BSK_VERSION)
     set(_basilisk_version "${BSK_VERSION}")
   else()
     file(STRINGS "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/../../docs/source/bskVersion.txt" _basilisk_version LIMIT_COUNT 1)
   endif()
   _bsk_git_metadata(_source_revision _source_dirty)
-  _bsk_read_integer_define(_plugin_abi_version BSK_PLUGIN_ABI_VERSION)
+  _bsk_read_integer_define(_extension_abi_version BSK_EXTENSION_ABI_VERSION)
   _bsk_python_string(BSK_INFO_BASILISK_VERSION "${_basilisk_version}")
   _bsk_python_string(BSK_INFO_SOURCE_REVISION "${_source_revision}")
   set(BSK_INFO_SOURCE_DIRTY "${_source_dirty}")
-  set(BSK_INFO_PLUGIN_ABI_VERSION "${_plugin_abi_version}")
+  set(BSK_INFO_EXTENSION_ABI_VERSION "${_extension_abi_version}")
 
   configure_file(
     "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/bskBuildInfoData.py.in"
@@ -230,18 +315,18 @@ function(bsk_generate_build_info package_directory)
   _bsk_swig_runtime_version(_swig_runtime_version)
   # Keep ABI-affecting target properties here so Basilisk modules and the SDK
   # descriptor probe consume the same build requirements.
-  add_library(bskPluginAbiSettings INTERFACE)
-  target_compile_features(bskPluginAbiSettings INTERFACE cxx_std_17)
+  add_library(bskExtensionAbiSettings INTERFACE)
+  target_compile_features(bskExtensionAbiSettings INTERFACE cxx_std_17)
   target_include_directories(
-    bskPluginAbiSettings
+    bskExtensionAbiSettings
     INTERFACE
       "${CMAKE_SOURCE_DIR}"
       "${Python3_INCLUDE_DIRS}"
       "${Eigen3_INCLUDE_DIRS}"
   )
-  target_link_libraries(bskPluginAbiSettings INTERFACE Eigen3::Eigen3)
+  target_link_libraries(bskExtensionAbiSettings INTERFACE Eigen3::Eigen3)
   if(PY_LIMITED_API AND NOT PY_LIMITED_API STREQUAL "")
-    target_compile_definitions(bskPluginAbiSettings INTERFACE "Py_LIMITED_API=${PY_LIMITED_API}")
+    target_compile_definitions(bskExtensionAbiSettings INTERFACE "Py_LIMITED_API=${PY_LIMITED_API}")
   endif()
 
   add_executable(
@@ -250,7 +335,7 @@ function(bsk_generate_build_info package_directory)
     "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/bskBuildInfoProbe.cpp"
     "${_BSK_ABI_DESCRIPTOR_HEADER}"
   )
-  target_link_libraries(bskBuildInfoProbe PRIVATE bskPluginAbiSettings ${PYTHON3_MODULE})
+  target_link_libraries(bskBuildInfoProbe PRIVATE bskExtensionAbiSettings ${PYTHON3_MODULE})
   target_compile_definitions(
     bskBuildInfoProbe
     PRIVATE

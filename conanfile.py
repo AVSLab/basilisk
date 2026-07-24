@@ -37,6 +37,12 @@ bskModuleOptionsBool = {
     "opNav": [[True, False], False],
     "vizInterface": [[True, False], True],
     "mujoco": [[True, False], False],
+    # Experimental: build Rust modules under src/ (see
+    # src/cmake/bskFindRustModules.cmake and
+    # docs/source/Learn/makingModules/rustModules.rst).
+    # Requires a Rust/Cargo toolchain on PATH; off by default so most builds/CI
+    # jobs never need one.
+    "rustModules": [[True, False], False],
     "examples": [[True, False], True],
     "buildProject": [[True, False], True],
     "pyPkgCanary": [[True, False], False],
@@ -127,6 +133,35 @@ def clean_numba_cache_artifacts(root: Optional[Path] = None,
             print_fn(f"No Basilisk Numba model cache found at: {cache_dir}")
 
     return removed_cache_files, removed_user_cache
+
+
+def clean_rust_target_artifacts(root: Optional[Path] = None,
+                                print_fn: Optional[Callable[[str], None]] = print) -> int:
+    """Remove Cargo ``target`` directories belonging to crates under ``src``."""
+    root_path = Path.cwd() if root is None else Path(root)
+    source_path = root_path / "src"
+    if not source_path.exists():
+        return 0
+
+    manifests = [
+        manifest
+        for manifest in source_path.rglob("Cargo.toml")
+        if "target" not in manifest.relative_to(source_path).parts
+    ]
+    target_directories = sorted({manifest.parent / "target" for manifest in manifests})
+    removed_target_directories = 0
+    for target_directory in target_directories:
+        if not target_directory.is_dir() or target_directory.is_symlink():
+            continue
+        shutil.rmtree(target_directory, ignore_errors=True)
+        if not target_directory.exists():
+            removed_target_directories += 1
+
+    if print_fn is not None:
+        directory_label = "directory" if removed_target_directories == 1 else "directories"
+        print_fn(f"Removed {removed_target_directories} Cargo target {directory_label}.")
+
+    return removed_target_directories
 
 
 def resolve_py_limited_api(opt_value: Optional[str]) -> str:
@@ -290,6 +325,7 @@ class BasiliskConan(ConanFile):
             if os.path.exists(distPath):
                 shutil.rmtree(distPath, ignore_errors=True)
             clean_numba_cache_artifacts(Path(root))
+            clean_rust_target_artifacts(Path(root))
         if self.settings.get_safe("build_type") == "Debug":
             print(warningColor + "Build type is set to Debug. Performance will be significantly lower." + endColor)
 
@@ -380,6 +416,7 @@ class BasiliskConan(ConanFile):
         tc.cache_variables["BUILD_OPNAV"] = bool(self.options.get_safe("opNav"))
         tc.cache_variables["BUILD_VIZINTERFACE"] = bool(self.options.get_safe("vizInterface"))
         tc.cache_variables["BUILD_MUJOCO"] = bool(self.options.get_safe("mujoco"))
+        tc.cache_variables["BUILD_RUST_MODULES"] = bool(self.options.get_safe("rustModules"))
         tc.cache_variables["BSK_CONAN_BUILD_TYPE"] = str(self.settings.build_type)
         tc.cache_variables["BSK_VERSION"] = str(self.version).strip()
         tc.cache_variables["BSK_CONAN_VERSION"] = importlib.metadata.version("conan")
@@ -595,8 +632,8 @@ if __name__ == "__main__":
 
     # setup conan install command arguments
     conanInstallArgs = [sys.executable, "-m", "conans.conan", "install", ".", "--build=missing"]
-    conanInstallArgs.extend(["-s", "build_type=" + str(args.buildType)])
-    conanBuildOptionsList = list()  # setup list of conan build arguments
+    # setup arguments shared by conan install and conan build
+    conanBuildOptionsList = ["-s", "build_type=" + str(args.buildType)]
     conanBuildOptionsList.extend(["-s", "compiler.cppstd=17"])
     if os.name != "nt":
         conanBuildOptionsList.extend(["-s", "compiler.cstd=gnu17"])

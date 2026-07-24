@@ -17,12 +17,12 @@
 #
 
 buildInfoData = {
-    "schemaVersion": 2,
+    "schemaVersion": 5,
     "artifact": {
         "basiliskVersion": @BSK_INFO_BASILISK_VERSION@,
         "sourceRevision": @BSK_INFO_SOURCE_REVISION@,
         "sourceDirty": @BSK_INFO_SOURCE_DIRTY@,
-        "pluginAbiVersion": @BSK_INFO_PLUGIN_ABI_VERSION@,
+        "extensionAbiVersion": @BSK_INFO_EXTENSION_ABI_VERSION@,
     },
     "diagnostics": {
         "target": {
@@ -40,6 +40,7 @@ buildInfoData = {
             "generatorPlatform": @BSK_INFO_GENERATOR_PLATFORM@,
             "generatorToolset": @BSK_INFO_GENERATOR_TOOLSET@,
             "pythonLimitedApi": @BSK_INFO_PY_LIMITED_API@,
+            "rustModules": @_rust_modules@,
         },
         "compilers": {
             "c": {
@@ -66,6 +67,13 @@ buildInfoData = {
                 "standard": @BSK_INFO_CXX_STANDARD@,
                 "extensions": @BSK_INFO_CXX_EXTENSIONS@,
             },
+            "rust": {
+                "id": @BSK_INFO_RUSTC_ID@,
+                "version": @BSK_INFO_RUSTC_VERSION@,
+                "executable": @BSK_INFO_RUSTC_EXECUTABLE@,
+                "launcher": "",
+                "target": @BSK_INFO_RUSTC_TARGET@,
+            },
         },
         "conanSettings": {
             "buildType": @BSK_INFO_CONAN_BUILD_TYPE@,
@@ -79,6 +87,8 @@ buildInfoData = {
             "conan": @BSK_INFO_CONAN_VERSION@,
             "swig": @BSK_INFO_SWIG_VERSION@,
             "python": @BSK_INFO_PYTHON_VERSION@,
+            "cargo": @BSK_INFO_CARGO_VERSION@,
+            "corrosion": @BSK_INFO_CORROSION_VERSION@,
         },
     },
 }
