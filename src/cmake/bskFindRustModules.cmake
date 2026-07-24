@@ -18,6 +18,37 @@ include_guard(GLOBAL)
 include(bskAddRustModuleSources)
 include(bskAddRustModuleSourcesCorrosion)
 
+# Windows does not automatically export functions pulled into a DLL from a
+# static Rust library. Add the Rust/C boundary explicitly so low-level ABI
+# consumers see the same symbols as they do on Linux and macOS. The generated
+# module-definition file remains in the build tree; Rust module authors do not
+# need to provide or maintain one.
+function(_bsk_add_rust_windows_exports SWIG_TARGET MODULE_NAME)
+  if(NOT WIN32)
+    return()
+  endif()
+
+  set(_rust_exports
+      "Create_${MODULE_NAME}"
+      "Config_${MODULE_NAME}"
+      "Destroy_${MODULE_NAME}"
+      "SelfInit_${MODULE_NAME}"
+      "Reset_${MODULE_NAME}"
+      "Update_${MODULE_NAME}"
+      "BskRustError_kind"
+      "BskRustError_message"
+      "Destroy_BskRustError")
+  list(JOIN _rust_exports "\n    " _rust_export_lines)
+
+  set(_rust_export_file
+      "${CMAKE_CURRENT_BINARY_DIR}/rust_exports/${MODULE_NAME}.def")
+  file(GENERATE
+       OUTPUT "${_rust_export_file}"
+       CONTENT "EXPORTS\n    ${_rust_export_lines}\n")
+  set_source_files_properties("${_rust_export_file}" PROPERTIES GENERATED TRUE)
+  target_sources("${SWIG_TARGET}" PRIVATE "${_rust_export_file}")
+endfunction()
+
 # ---------------------------------------------------------------------------
 # find_rust_package_targets / generate_rust_package_targets
 #
@@ -142,6 +173,7 @@ function(generate_rust_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
     if(BSK_RUST_USE_CORROSION)
       set_target_properties(${_swig_target} PROPERTIES OUTPUT_NAME ${TARGET_NAME})
     endif()
+    _bsk_add_rust_windows_exports("${_swig_target}" "${TARGET_NAME}")
 
     # UseSWIG does not discover files included by a generated interface.
     # Re-run SWIG when either the generated Rust header or the shared wrapper
