@@ -5,7 +5,8 @@
 
 .. important::
 
-   Rust module support requires Rust 1.85 or newer.
+   Rust module support requires Rust 1.89 or newer. The current stable Rust
+   toolchain is recommended.
 
 .. sidebar:: Rust Module Support
 

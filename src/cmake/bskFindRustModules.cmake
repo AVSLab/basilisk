@@ -140,7 +140,7 @@ function(generate_rust_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
     message(FATAL_ERROR
       "BUILD_RUST_MODULES is ON but no 'cargo' executable was found on PATH; "
       "the explicitly requested Rust module(s) under ${MODULE_DIR} cannot be built: "
-      "${TARGET_LIST}. Install Rust 1.85 or newer from https://rustup.rs/ and "
+      "${TARGET_LIST}. Install a supported stable Rust toolchain from https://rustup.rs/ and "
       "make sure 'cargo' is on PATH, or configure with BUILD_RUST_MODULES=OFF.")
   endif()
 

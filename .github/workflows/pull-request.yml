@@ -24,8 +24,14 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - uses: ./.github/actions/data-cache
+      - name: Set up current stable Rust
+        run: |
+          rustup toolchain install stable --profile minimal --component clippy
+          rustup default stable
+          rustc --version
+          cargo --version
       # Pull-request CI exercises the opt-in Corrosion path on Linux, Windows,
-      # and macOS. GitHub's hosted images provide cargo/rustc on all three.
+      # and macOS.
       - uses: ./.github/actions/build
         with:
           python-version: 3.14
@@ -42,8 +48,8 @@ jobs:
           cargo test -p bsk-build --no-default-features --locked --manifest-path src/Cargo.toml
       - name: Test minimum supported Rust version
         run: |
-          rustup toolchain install 1.85.0 --profile minimal
-          cargo +1.85.0 test --workspace --all-features --locked --manifest-path src/Cargo.toml
+          rustup toolchain install 1.89.0 --profile minimal
+          cargo +1.89.0 test --workspace --all-features --locked --manifest-path src/Cargo.toml
       - name: Lint Rust workspace
         run: cargo clippy --workspace --all-targets --all-features --locked --manifest-path src/Cargo.toml -- -D warnings
       - name: Check Rust unwind policy
