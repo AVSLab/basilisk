@@ -51,7 +51,7 @@
  *  named, typed message values and ``BskResult`` return types — no FFI
  *  boilerplate by hand. Message-port fields use ``#[bsk(input)]``,
  *  ``#[bsk(input, optional)]``, or ``#[bsk(output)]`` to declare their role
- *  explicitly. See the Basilisk documentation's "Writing a Rust Plugin"
+ *  explicitly. See the Basilisk documentation's "Writing a Rust Extension"
  *  page for the full guide.
  *
  *  **Config struct field ordering**
@@ -77,7 +77,7 @@
  *  On the Rust side, ``attGuidInMsg``/``cmdTorqueOutMsg`` above are annotated
  *  with ``#[bsk(input)]``/``#[bsk(output)]`` and use
  *  ``MsgReader<AttGuidMsg>``/``MsgWriter<CmdTorqueBodyMsg>`` — see the
- *  "Writing a Rust Plugin" documentation page for the complete Rust form.
+ *  "Writing a Rust Extension" documentation page for the complete Rust form.
  *
  *  **moduleID**
  *

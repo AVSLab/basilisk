@@ -76,12 +76,12 @@ def _makeBuildInfo(
         standardLibraryFamily = "libstdc++"
     abiFamily = "msvc" if system == "Windows" else "itanium"
     return {
-        "schemaVersion": 2,
+        "schemaVersion": 3,
         "artifact": {
             "basiliskVersion": "2.12.0",
             "sourceRevision": "0123456789abcdef",
             "sourceDirty": False,
-            "pluginAbiVersion": 1,
+            "extensionAbiVersion": 1,
         },
         "diagnostics": {
             "target": {
@@ -220,12 +220,12 @@ def test_build_info():
     diagnostics = buildInfo["diagnostics"]
     abi = buildInfo["abi"]
 
-    assert buildInfo["schemaVersion"] == 2
+    assert buildInfo["schemaVersion"] == 3
     assert buildInfo["artifact"]["basiliskVersion"]
     if Basilisk.__version__ != "0.0.0":
         assert buildInfo["artifact"]["basiliskVersion"] == Basilisk.__version__
-    assert buildInfo["artifact"]["pluginAbiVersion"] == _integerDefine(
-        "BSK_PLUGIN_ABI_VERSION"
+    assert buildInfo["artifact"]["extensionAbiVersion"] == _integerDefine(
+        "BSK_EXTENSION_ABI_VERSION"
     )
     assert buildInfo["artifact"]["sourceDirty"] in (True, False, None)
     assert abi["descriptorVersion"] == _integerDefine("BSK_ABI_DESCRIPTOR_VERSION")

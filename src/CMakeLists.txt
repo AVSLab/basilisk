@@ -52,7 +52,7 @@ if(PY_LIMITED_API AND NOT PY_LIMITED_API STREQUAL "")
   # compatibility (basically, we can build a single Python wheel to
   # support all future Python versions).
   # See https://docs.python.org/3/c-api/stable.html
-  # NOTE: SWIG 4.4.1 or a newer supported 4.x release is required for SWIG ABI 5 support between Basilisk and compatible plugins.
+  # NOTE: SWIG 4.4.1 or a newer supported 4.x release is required for SWIG ABI 5 support between Basilisk and compatible extensions.
   add_definitions("-DPy_LIMITED_API=${PY_LIMITED_API}")  # Support for current Python version
 
   # Force libraries to link to the Stable ABI module instead.

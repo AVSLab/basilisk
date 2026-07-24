@@ -2,7 +2,7 @@
    :maxdepth: 1
    :hidden:
 
-.. _writingRustPlugins:
+.. _writingRustExtensions:
 
 Quick Start: Writing a Rust Basilisk Extension
 ===============================================
@@ -10,8 +10,7 @@ Quick Start: Writing a Rust Basilisk Extension
 .. sidebar:: Rust Extension Example
 
     The `bsk-sdk repository <https://github.com/AVSLab/bsk_sdk>`_ contains a
-    complete `Rust MRP extension
-    <https://github.com/AVSLab/bsk_sdk/tree/master/examples/rust-mrp-plugin>`_.
+    complete Rust MRP extension example.
 
 .. warning::
 
@@ -69,10 +68,10 @@ created in the CMake build tree, not in the crate source directory:
 
 .. code-block:: text
 
-    my-rust-plugin/
+    my-rust-extension/
     |-- pyproject.toml
     |-- CMakeLists.txt
-    |-- my_rust_plugin/             # Python package
+    |-- my_rust_extension/          # Python package
     |   `-- __init__.py
     `-- myModule/                   # Rust crate
         |-- Cargo.toml
@@ -243,7 +242,7 @@ The generated Python module class, named after the CMake target, provides the
 
 .. code-block:: python
 
-    from my_rust_plugin import myModule
+    from my_rust_extension import myModule
 
     module = myModule.myModule()
     simulation.AddModelToTask("taskName", module)

@@ -31,7 +31,7 @@
 #include "architecture/messaging/msgHeader.h"
 
 #define BSK_ABI_DESCRIPTOR_VERSION 1
-#define BSK_PLUGIN_ABI_VERSION 1
+#define BSK_EXTENSION_ABI_VERSION 1
 
 #define BSK_ABI_STRINGIFY_IMPL(value) #value
 #define BSK_ABI_STRINGIFY(value) BSK_ABI_STRINGIFY_IMPL(value)

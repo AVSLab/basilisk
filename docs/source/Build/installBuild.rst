@@ -152,7 +152,7 @@ For a concise, human-readable summary, use ``printBuildInfo()``::
 This produces output similar to::
 
     Basilisk Build Information
-      Version:        2.12.0 (plugin ABI 1)
+      Version:        2.12.0 (extension ABI 1)
       Target:         macOS arm64, 64-bit
       Build:          Release, Unix Makefiles
       C compiler:     AppleClang 21.0.0.21000101 (cc)
@@ -178,12 +178,12 @@ dictionary with three principal sections::
     from Basilisk import getBuildInfo
 
     buildInfo = getBuildInfo()
-    pluginAbiVersion = buildInfo["artifact"]["pluginAbiVersion"]
+    extensionAbiVersion = buildInfo["artifact"]["extensionAbiVersion"]
     standardLibrary = buildInfo["abi"]["cxx"]["standardLibrary"]["family"]
     compilerVersion = buildInfo["diagnostics"]["compilers"]["cxx"]["version"]
 
-``artifact`` identifies the Basilisk version, source revision when available, and plugin ABI epoch.  The epoch is
-incremented when Basilisk intentionally changes the C/C++ object contract exposed to SDK plugins.  It does not
+``artifact`` identifies the Basilisk version, source revision when available, and extension ABI epoch.  The epoch is
+incremented when Basilisk intentionally changes the C/C++ object contract exposed to SDK extensions.  It does not
 promise compatibility between different Basilisk versions; the SDK's exact-version check remains required unless a
 future compatibility policy explicitly relaxes it.
 
@@ -195,8 +195,8 @@ types.  These values are suitable inputs to a future BSK-SDK compatibility polic
 binary mismatches but do not prove semantic compatibility.
 
 The public ``architecture/utilities/bskAbiDescriptor.h`` header is the single source of truth for the descriptor and
-plugin ABI versions, canary types, and compiler-side extraction rules.  It is included by the existing BSK-SDK
-``architecture`` header synchronization, allowing Basilisk and an SDK plugin to compile the same contract rather
+extension ABI versions, canary types, and compiler-side extraction rules.  It is included by the existing BSK-SDK
+``architecture`` header synchronization, allowing Basilisk and an SDK extension to compile the same contract rather
 than maintaining parallel implementations.
 
 ``diagnostics`` contains values observed by CMake, requested Conan settings, and build-tool versions.  These remain

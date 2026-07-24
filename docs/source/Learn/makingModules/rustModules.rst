@@ -15,7 +15,7 @@ module configuration and behavior with a Rust ``#[repr(C)]`` struct marked by
 the ``#[bsk_build::module]`` attribute and the ``BskModule`` trait.
 
 This page describes modules contributed to the Basilisk source tree. For a
-separately packaged Rust extension, see :ref:`writingRustPlugins`.
+separately packaged Rust extension, see :ref:`writingRustExtensions`.
 
 The :ref:`rustModuleTemplate` module provides a minimal in-tree Rust module
 that can be copied as a starting point.
@@ -388,6 +388,6 @@ remain independent Cargo packages or workspaces and should commit their own
 Further Reading
 ---------------
 
-The :ref:`writingRustPlugins` guide covers advanced Rust configuration types,
+The :ref:`writingRustExtensions` guide covers advanced Rust configuration types,
 stateful modules, logging, and testing. It also explains how to package the
 same kind of module as an out-of-tree extension.

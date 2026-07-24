@@ -133,7 +133,11 @@ def _formatBuildInfo(buildInfo: dict[str, object]) -> str:
     buildDescription = ", ".join(value for value in (configuration, generator) if value)
 
     lines = ["Basilisk Build Information"]
-    _appendField(lines, "Version", f"{artifact['basiliskVersion']} (plugin ABI {artifact['pluginAbiVersion']})")
+    _appendField(
+        lines,
+        "Version",
+        f"{artifact['basiliskVersion']} (extension ABI {artifact['extensionAbiVersion']})",
+    )
     _appendField(lines, "Target", target)
     _appendField(lines, "Build", buildDescription)
     _appendField(lines, "C compiler", _compilerDescription(cCompiler))

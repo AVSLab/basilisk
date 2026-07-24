@@ -89,7 +89,7 @@ class BuildConanExtCommand(Command, SubCommand):
 
         # Set limited ABI compatibility by default, targeting the minimum required Python version.
         # See https://docs.python.org/3/c-api/stable.html
-        # NOTE: SWIG 4.4.1 or a newer supported 4.x release is required for SWIG ABI 5 support between Basilisk and compatible plugins.
+        # NOTE: SWIG 4.4.1 or a newer supported 4.x release is required for SWIG ABI 5 support between Basilisk and compatible extensions.
         min_version = next(self.distribution.python_requires.filter([f"3.{i}" for i in range(2, 100)])).replace(".", "")
         wheel_py_limited = f"cp{min_version}"
         bdist_wheel = self.reinitialize_command("bdist_wheel", py_limited_api=wheel_py_limited)

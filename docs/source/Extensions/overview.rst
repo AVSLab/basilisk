@@ -13,7 +13,7 @@ About Extensions
     one or more custom C, C++, or Rust modules, custom message definitions,
     and supporting code. It is installed alongside a compatible Basilisk
     release without becoming part of the core Basilisk build. Rust support is
-    experimental; see :ref:`writingRustPlugins`.
+    experimental; see :ref:`writingRustExtensions`.
 
 Basilisk ships a curated set of simulation modules for common astrodynamics
 tasks. Extensions let developers add new dynamics models, environment models,

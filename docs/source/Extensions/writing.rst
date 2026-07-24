@@ -17,7 +17,7 @@ Quick Start: Writing a Basilisk Extension
 .. note::
 
    Modules can also be implemented in Rust instead of C++/C — see
-   :ref:`writingRustPlugins` (experimental).
+   :ref:`writingRustExtensions` (experimental).
 
 This guide walks through the complete extension workflow: build the working
 example, understand its files, create a package, wrap a C++ module, generate a

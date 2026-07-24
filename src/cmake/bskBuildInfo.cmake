@@ -117,14 +117,14 @@ endfunction()
 function(_bsk_wire_build_info_targets directory)
   get_property(_targets DIRECTORY "${directory}" PROPERTY BUILDSYSTEM_TARGETS)
   foreach(_target IN LISTS _targets)
-    if(_target STREQUAL "bskBuildInfoProbe" OR _target STREQUAL "bskPluginAbiSettings")
+    if(_target STREQUAL "bskBuildInfoProbe" OR _target STREQUAL "bskExtensionAbiSettings")
       continue()
     endif()
     get_target_property(_imported "${_target}" IMPORTED)
     get_target_property(_target_type "${_target}" TYPE)
     if(NOT _imported
        AND _target_type MATCHES "^(MODULE_LIBRARY|SHARED_LIBRARY|STATIC_LIBRARY|OBJECT_LIBRARY)$")
-      set_property(TARGET "${_target}" APPEND PROPERTY LINK_LIBRARIES bskPluginAbiSettings)
+      set_property(TARGET "${_target}" APPEND PROPERTY LINK_LIBRARIES bskExtensionAbiSettings)
     endif()
     # Keep this dependency on loadable modules. Adding a configuration-sensitive
     # utility dependency to static libraries makes multi-config generators attach
@@ -210,11 +210,11 @@ function(bsk_generate_build_info package_directory)
     file(STRINGS "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/../../docs/source/bskVersion.txt" _basilisk_version LIMIT_COUNT 1)
   endif()
   _bsk_git_metadata(_source_revision _source_dirty)
-  _bsk_read_integer_define(_plugin_abi_version BSK_PLUGIN_ABI_VERSION)
+  _bsk_read_integer_define(_extension_abi_version BSK_EXTENSION_ABI_VERSION)
   _bsk_python_string(BSK_INFO_BASILISK_VERSION "${_basilisk_version}")
   _bsk_python_string(BSK_INFO_SOURCE_REVISION "${_source_revision}")
   set(BSK_INFO_SOURCE_DIRTY "${_source_dirty}")
-  set(BSK_INFO_PLUGIN_ABI_VERSION "${_plugin_abi_version}")
+  set(BSK_INFO_EXTENSION_ABI_VERSION "${_extension_abi_version}")
 
   configure_file(
     "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/bskBuildInfoData.py.in"
@@ -230,18 +230,18 @@ function(bsk_generate_build_info package_directory)
   _bsk_swig_runtime_version(_swig_runtime_version)
   # Keep ABI-affecting target properties here so Basilisk modules and the SDK
   # descriptor probe consume the same build requirements.
-  add_library(bskPluginAbiSettings INTERFACE)
-  target_compile_features(bskPluginAbiSettings INTERFACE cxx_std_17)
+  add_library(bskExtensionAbiSettings INTERFACE)
+  target_compile_features(bskExtensionAbiSettings INTERFACE cxx_std_17)
   target_include_directories(
-    bskPluginAbiSettings
+    bskExtensionAbiSettings
     INTERFACE
       "${CMAKE_SOURCE_DIR}"
       "${Python3_INCLUDE_DIRS}"
       "${Eigen3_INCLUDE_DIRS}"
   )
-  target_link_libraries(bskPluginAbiSettings INTERFACE Eigen3::Eigen3)
+  target_link_libraries(bskExtensionAbiSettings INTERFACE Eigen3::Eigen3)
   if(PY_LIMITED_API AND NOT PY_LIMITED_API STREQUAL "")
-    target_compile_definitions(bskPluginAbiSettings INTERFACE "Py_LIMITED_API=${PY_LIMITED_API}")
+    target_compile_definitions(bskExtensionAbiSettings INTERFACE "Py_LIMITED_API=${PY_LIMITED_API}")
   endif()
 
   add_executable(
@@ -250,7 +250,7 @@ function(bsk_generate_build_info package_directory)
     "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/bskBuildInfoProbe.cpp"
     "${_BSK_ABI_DESCRIPTOR_HEADER}"
   )
-  target_link_libraries(bskBuildInfoProbe PRIVATE bskPluginAbiSettings ${PYTHON3_MODULE})
+  target_link_libraries(bskBuildInfoProbe PRIVATE bskExtensionAbiSettings ${PYTHON3_MODULE})
   target_compile_definitions(
     bskBuildInfoProbe
     PRIVATE
