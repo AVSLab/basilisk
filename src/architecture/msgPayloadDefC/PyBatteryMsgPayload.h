@@ -20,7 +20,6 @@
 #ifndef PY_BATTERY_OUT_MSG_H
 #define PY_BATTERY_OUT_MSG_H
 
-#include <string>
 #include <stdint.h>
 
 

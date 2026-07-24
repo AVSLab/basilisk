@@ -111,6 +111,9 @@ fn generate_bindings() -> Result<(), Box<dyn Error>> {
     let wrapper_path = output_dir.join("bsk_messages_wrapper.h");
     fs::write(&wrapper_path, render_wrapper(&headers))?;
 
+    // Rust modules bind only Basilisk's C message ABI. Parsing these headers
+    // as C also avoids coupling bindgen's libclang version to the host C++
+    // standard-library implementation.
     let bindings = bindgen::Builder::default()
         .header(wrapper_path.display().to_string())
         .use_core()
@@ -122,7 +125,7 @@ fn generate_bindings() -> Result<(), Box<dyn Error>> {
         .opaque_type("BSKLogger")
         .clang_arg(format!("-I{}", source_root.display()))
         .clang_arg(format!("-I{}", c_message_dir.display()))
-        .clang_args(["-std=c++17", "-x", "c++"])
+        .clang_args(["-std=c11", "-x", "c"])
         .generate()
         .map_err(|_| "bindgen could not parse the generated Basilisk C message headers")?;
 

@@ -20,6 +20,7 @@
 #ifndef TYPES_TEST_MESSAGE_H
 #define TYPES_TEST_MESSAGE_H
 
+#include <stdbool.h>
 #include <stdint.h>
 
 #define TYPES_TEST_ARRAY_SIZE 3
