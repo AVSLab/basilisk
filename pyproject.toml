@@ -103,10 +103,9 @@ repair-wheel-command = "python -m delvewheel repair -v --ignore-existing --analy
 archs = ["native"]
 # Rust module support (--rustModules, see src/cmake/bskFindRustModules.cmake)
 # is experimental and off by default, but the manylinux container has no
-# Rust/Cargo toolchain at all, so it's bootstrapped here unconditionally --
-# same reasoning as pull-request.yml's Linux lane -- so a released wheel can
-# always be built with --rustModules True even if the person cutting the
-# release doesn't have Rust installed locally.
+# Rust/Cargo toolchain at all, so it is bootstrapped here unconditionally.
+# This lets nightly, test, and release wheel jobs build Rust modules through
+# the pinned Corrosion integration on every Linux wheel platform.
 before-all = "mkdir -p ~/.conan2 && printf '%s\\n' 'tools.system.package_manager:mode=install' 'tools.system.package_manager:sudo=False' >> ~/.conan2/global.conf && curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y"
 repair-wheel-command = [
   "auditwheel repair --strip -w {dest_dir} {wheel}"
