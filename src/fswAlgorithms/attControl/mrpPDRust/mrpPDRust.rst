@@ -1,6 +1,3 @@
-.. Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
-..
-.. SPDX-License-Identifier: ISC
 
 .. note::
 
@@ -91,12 +88,6 @@ cluster; this module does not perform actuator allocation.
 
 User Guide
 ----------
-
-Build Basilisk with Rust module support before importing this module:
-
-.. code-block:: console
-
-   python3 conanfile.py --rustModules True --rustCorrosion True
 
 Create the controller, configure its gains, connect both required inputs, and
 add it to a task like any other compiled Basilisk module:

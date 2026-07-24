@@ -30,18 +30,18 @@ jobs:
           rustup default stable
           rustc --version
           cargo --version
-      # Pull-request CI exercises the opt-in Corrosion path on Linux, Windows,
-      # and macOS.
+      # Pull-request CI exercises Rust modules through Corrosion on Linux,
+      # Windows, and macOS.
       - uses: ./.github/actions/build
         with:
           python-version: 3.14
-          conan-args: --opNav True --mujoco True --rustModules True --rustCorrosion True
+          conan-args: --opNav True --mujoco True --rustModules True
           save-conan-cache: true
       - name: Verify Corrosion configuration
         shell: bash
         run: |
           grep -F "BUILD_RUST_MODULES:BOOL=ON" dist3/CMakeCache.txt
-          grep -F "BSK_RUST_USE_CORROSION:BOOL=ON" dist3/CMakeCache.txt
+          python -c "from Basilisk import getBuildInfo; assert getBuildInfo()['diagnostics']['tools']['corrosion']"
       - name: Test Rust workspace
         run: |
           cargo test --workspace --all-features --locked --manifest-path src/Cargo.toml
@@ -86,13 +86,13 @@ jobs:
       - uses: ./.github/actions/build
         with:
           python-version: 3.14
-          conan-args: --opNav True --mujoco True --generator Ninja --rustModules True --rustCorrosion True
+          conan-args: --opNav True --mujoco True --generator Ninja --rustModules True
           save-conan-cache: true
       - name: Verify Corrosion configuration
         shell: bash
         run: |
           grep -F "BUILD_RUST_MODULES:BOOL=ON" dist3/CMakeCache.txt
-          grep -F "BSK_RUST_USE_CORROSION:BOOL=ON" dist3/CMakeCache.txt
+          python -c "from Basilisk import getBuildInfo; assert getBuildInfo()['diagnostics']['tools']['corrosion']"
       - name: Pytest
         shell: pwsh
         working-directory: src
@@ -124,7 +124,7 @@ jobs:
           ]
         conan_args:
           [
-            "--opNav True --mujoco True --rustModules True --rustCorrosion True",
+            "--opNav True --mujoco True --rustModules True",
           ]
         include:
           # An extra Basilisk build to test building without visualization enabled
@@ -143,11 +143,11 @@ jobs:
           python-version: ${{ matrix.python }}
           conan-args: ${{ matrix.conan_args }}
       - name: Verify Corrosion configuration
-        if: ${{ contains(matrix.conan_args, '--rustCorrosion True') }}
+        if: ${{ contains(matrix.conan_args, '--rustModules True') }}
         shell: bash
         run: |
           grep -F "BUILD_RUST_MODULES:BOOL=ON" dist3/CMakeCache.txt
-          grep -F "BSK_RUST_USE_CORROSION:BOOL=ON" dist3/CMakeCache.txt
+          python -c "from Basilisk import getBuildInfo; assert getBuildInfo()['diagnostics']['tools']['corrosion']"
       - name: Pytest
         working-directory: src
         run: |
@@ -167,7 +167,7 @@ jobs:
         uses: ./.github/actions/build
         with:
           python-version: 3.14
-          conan-args: --opNav True --allOptPkg --mujoco True --rustModules True --rustCorrosion True
+          conan-args: --opNav True --allOptPkg --mujoco True --rustModules True
           save-conan-cache: true
       - name: Build docs
         uses: ./.github/actions/docs

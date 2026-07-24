@@ -41,7 +41,7 @@ jobs:
         env:
           CIBW_BUILD: "cp314-*"
           CIBW_TEST_SKIP: "*"
-          CONAN_ARGS: "--opNav False --mujoco True --rustModules True --rustCorrosion True --clean ${{ matrix.extra-conan-args }}"
+          CONAN_ARGS: "--opNav False --mujoco True --rustModules True --clean ${{ matrix.extra-conan-args }}"
 
       - name: Build opNav-enabled bsk wheel
         uses: pypa/cibuildwheel@v3.4.1
@@ -50,7 +50,7 @@ jobs:
         env:
           CIBW_BUILD: "cp314-*"
           CIBW_TEST_SKIP: "*"
-          CONAN_ARGS: "--opNav True --mujoco True --rustModules True --rustCorrosion True --clean ${{ matrix.extra-conan-args }}"
+          CONAN_ARGS: "--opNav True --mujoco True --rustModules True --clean ${{ matrix.extra-conan-args }}"
 
       - name: Setup Python
         uses: actions/setup-python@v6
@@ -86,11 +86,11 @@ jobs:
         include:
           - wheel-kind: core
             output-dir: wheelhouse-core
-            conan-args: --opNav False --mujoco True --rustModules True --rustCorrosion True --clean
+            conan-args: --opNav False --mujoco True --rustModules True --clean
             needs_disk_cleanup: false
           - wheel-kind: opnav-full
             output-dir: wheelhouse-opnav-full
-            conan-args: --opNav True --mujoco True --rustModules True --rustCorrosion True --clean
+            conan-args: --opNav True --mujoco True --rustModules True --clean
             needs_disk_cleanup: true
 
     steps:

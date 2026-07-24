@@ -16,293 +16,240 @@
 
 include_guard(GLOBAL)
 
-# ---------------------------------------------------------------------------
-# bsk_add_rust_module_sources
-#
-# Build a Rust crate implementing a Basilisk module (see bsk_rust_module.h)
-# into a static library, and locate/generate the C header + SWIG .i file
-# that go with it. This is the language-support half of Rust module
-# building: "given a Cargo.toml, produce a static library, header, and SWIG
-# interface." The caller attaches those outputs to the appropriate Basilisk
-# Python module target.
-#
-# architecture/rust/bsk_build's build.rs does the file codegen (parsing the crate's
-# `bsk_build::module` config struct via `syn`, emitting the header and .i);
-# this macro only drives `cargo build` and tells it where to put things.
-#
-# Required arguments
-# ------------------
-#   TARGET      CMake target name (also the module/symbol name bsk-build
-#               generates against: Create_<TARGET>, SelfInit_<TARGET>, etc.).
-#   MANIFEST    Path to the crate's Cargo.toml.
-#
-# Optional arguments (header/interface overrides)
-# -------------------------------------------------
-#   HEADER      Path to the module's .h file. When omitted (recommended),
-#               bsk-build generates it under CMAKE_CURRENT_BINARY_DIR.
-#   INTERFACE   Hand-written .i file. When omitted (recommended), bsk-build
-#               generates it under CMAKE_CURRENT_BINARY_DIR.
-#
-# Optional arguments
-# ------------------
-#   INCLUDE_DIR    Directory containing the Basilisk headers a module's own
-#                  build.rs may need (e.g. for bindgen against a custom
-#                  message type). Forwarded to cargo as BSK_INCLUDE_DIR.
-#                  Defaults to CMAKE_SOURCE_DIR (this works unmodified when
-#                  called from Basilisk's own src/CMakeLists.txt, where that
-#                  already is the include root the generated headers'
-#                  #include paths resolve against). Callers using another
-#                  generated-header tree must pass this explicitly.
-#   CRATE_NAME     Override the crate lib name when it differs from TARGET.
-#   CARGO_PROFILE  "release" (default) or "dev".
-#   CARGO_FEATURES Cargo feature flags to enable (list).
-#   CARGO_ENV      Extra environment variable assignments forwarded to cargo
-#                  (e.g. "RUSTFLAGS=-C opt-level=3").
-#   CARGO_DEPENDS  Extra files that must retrigger Cargo (list).
-#
-# Cargo lock policy
-# -----------------
-# The crate must have a Cargo.lock, either beside its own manifest or at its
-# Cargo workspace root. The build always passes --locked so dependency drift
-# is reported instead of modifying a lockfile during a CMake build.
-#
-# Outputs (set in the caller's scope; pass the variable *name* you want each
-# written to)
-# ---------------------------------------------------------------------------
-#   OUT_LIB_VAR         Absolute path to the built static library.
-#   OUT_HEADER_VAR      Absolute path to the module's C header.
-#   OUT_INTERFACE_VAR   Absolute path to the module's SWIG .i file.
-#   OUT_BUILD_TARGET_VAR  Name of the custom target that runs `cargo build`;
-#                         depend on this before consuming the paths above.
-#
-# Example
-# -------
-#   bsk_add_rust_module_sources(
-#     TARGET      myModule
-#     MANIFEST    "${CMAKE_CURRENT_SOURCE_DIR}/myModule/Cargo.toml"
-#     OUT_LIB_VAR           _lib
-#     OUT_HEADER_VAR        _header
-#     OUT_INTERFACE_VAR     _interface
-#     OUT_BUILD_TARGET_VAR  _build_target
-#   )
-#   swig_add_library(myModule LANGUAGE python SOURCES "${_interface}")
-#   target_link_libraries(myModule PRIVATE "${_lib}")
-#   add_dependencies(myModule "${_build_target}")
-# ---------------------------------------------------------------------------
+set(BSK_CORROSION_VERSION "0.6.1")
+set(BSK_CORROSION_GIT_TAG "1499b14e4906a2890f5cee1547c8848db261753d")
+
+# Corrosion is needed only for Rust-enabled builds. Fetch its pinned revision
+# the first time a Rust module is configured.
+function(_bsk_load_corrosion)
+  if(COMMAND corrosion_import_crate)
+    return()
+  endif()
+
+  include(FetchContent)
+  FetchContent_Declare(
+    Corrosion
+    GIT_REPOSITORY https://github.com/corrosion-rs/corrosion.git
+    # Corrosion v0.6.1. Pin the immutable commit rather than the movable v0.6
+    # tag so a clean Basilisk configure cannot acquire different build logic.
+    GIT_TAG ${BSK_CORROSION_GIT_TAG}
+  )
+  FetchContent_MakeAvailable(Corrosion)
+endfunction()
+
+# Read the Cargo package that owns a manifest without parsing Cargo.toml.
+# Corrosion also consumes Cargo metadata internally; this small query supplies
+# the package allowlist needed to import only the requested workspace member.
+function(_bsk_rust_package_name_from_metadata MANIFEST OUT_PACKAGE_NAME)
+  get_target_property(_cargo_executable Rust::Cargo IMPORTED_LOCATION)
+  if(NOT _cargo_executable)
+    message(FATAL_ERROR
+      "Corrosion did not provide the Rust::Cargo executable target")
+  endif()
+
+  file(REAL_PATH "${MANIFEST}" _requested_manifest)
+  execute_process(
+    COMMAND
+      "${_cargo_executable}" metadata
+      --locked
+      --no-deps
+      --format-version 1
+      --manifest-path "${_requested_manifest}"
+    RESULT_VARIABLE _metadata_result
+    OUTPUT_VARIABLE _metadata_json
+    ERROR_VARIABLE _metadata_error
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    ERROR_STRIP_TRAILING_WHITESPACE
+  )
+  if(NOT _metadata_result EQUAL 0)
+    message(FATAL_ERROR
+      "Could not read Cargo metadata for ${_requested_manifest}:\n"
+      "${_metadata_error}")
+  endif()
+
+  string(JSON _package_count
+         ERROR_VARIABLE _metadata_json_error
+         LENGTH "${_metadata_json}" packages)
+  if(_metadata_json_error)
+    message(FATAL_ERROR
+      "Cargo returned invalid metadata for ${_requested_manifest}:\n"
+      "${_metadata_json_error}")
+  endif()
+  if(_package_count EQUAL 0)
+    message(FATAL_ERROR
+      "Cargo metadata contains no packages for ${_requested_manifest}")
+  endif()
+
+  set(_matching_packages 0)
+  math(EXPR _last_package_index "${_package_count} - 1")
+  foreach(_package_index RANGE 0 ${_last_package_index})
+    string(JSON _candidate_manifest
+           GET "${_metadata_json}" packages ${_package_index} manifest_path)
+    file(REAL_PATH "${_candidate_manifest}" _candidate_manifest)
+    if("${_candidate_manifest}" STREQUAL "${_requested_manifest}")
+      math(EXPR _matching_packages "${_matching_packages} + 1")
+      string(JSON _package_name
+             GET "${_metadata_json}" packages ${_package_index} name)
+    endif()
+  endforeach()
+
+  if(NOT _matching_packages EQUAL 1)
+    message(FATAL_ERROR
+      "Cargo metadata matched ${_matching_packages} packages to "
+      "${_requested_manifest}; expected exactly one")
+  endif()
+  set("${OUT_PACKAGE_NAME}" "${_package_name}" PARENT_SCOPE)
+endfunction()
+
+# Build one Rust Basilisk module through Corrosion. Cargo metadata determines
+# the package and library target names; Corrosion determines the profile and
+# platform artifact path.
 function(bsk_add_rust_module_sources)
-  set(_one  TARGET HEADER MANIFEST INTERFACE CRATE_NAME CARGO_PROFILE
-            INCLUDE_DIR OUT_LIB_VAR OUT_HEADER_VAR OUT_INTERFACE_VAR OUT_BUILD_TARGET_VAR)
-  set(_multi CARGO_FEATURES CARGO_ENV CARGO_DEPENDS)
+  set(_one
+      TARGET
+      HEADER
+      MANIFEST
+      INTERFACE
+      INCLUDE_DIR
+      OUT_LINK_TARGET_VAR
+      OUT_HEADER_VAR
+      OUT_INTERFACE_VAR
+      OUT_BUILD_TARGET_VAR)
+  set(_multi CARGO_FEATURES CARGO_ENV)
   cmake_parse_arguments(RUST "" "${_one}" "${_multi}" ${ARGN})
 
-  # ------------------------------------------------------------------
-  # Validate required arguments
-  # ------------------------------------------------------------------
   if(NOT RUST_TARGET)
-    message(FATAL_ERROR "bsk_add_rust_module_sources: TARGET is required")
+    message(FATAL_ERROR
+      "bsk_add_rust_module_sources: TARGET is required")
   endif()
   if(NOT RUST_MANIFEST)
-    message(FATAL_ERROR "bsk_add_rust_module_sources: MANIFEST (path to Cargo.toml) is required")
+    message(FATAL_ERROR
+      "bsk_add_rust_module_sources: MANIFEST is required")
   endif()
 
-  # ------------------------------------------------------------------
-  # Locate cargo
-  # ------------------------------------------------------------------
-  find_program(CARGO_EXECUTABLE cargo)
-  if(NOT CARGO_EXECUTABLE)
+  get_filename_component(_manifest "${RUST_MANIFEST}" ABSOLUTE)
+  if(NOT EXISTS "${_manifest}")
     message(FATAL_ERROR
-      "bsk_add_rust_module_sources: 'cargo' not found.\n"
-      "Install the Rust toolchain from https://rustup.rs/ and make sure "
-      "'cargo' is on PATH.")
+      "bsk_add_rust_module_sources: manifest not found: ${_manifest}")
   endif()
+  set_property(DIRECTORY APPEND PROPERTY
+               CMAKE_CONFIGURE_DEPENDS "${_manifest}")
 
   if(NOT RUST_INCLUDE_DIR)
     set(RUST_INCLUDE_DIR "${CMAKE_SOURCE_DIR}")
   endif()
-
-  # ------------------------------------------------------------------
-  # Resolve Cargo.toml and derive the staticlib output path
-  # ------------------------------------------------------------------
-  get_filename_component(_manifest "${RUST_MANIFEST}" ABSOLUTE)
-  get_filename_component(_crate_dir "${_manifest}" DIRECTORY)
-
-  execute_process(
-    COMMAND "${CARGO_EXECUTABLE}" locate-project --workspace
-            --manifest-path "${_manifest}" --message-format plain
-    RESULT_VARIABLE _cargo_locate_result
-    OUTPUT_VARIABLE _cargo_root_manifest
-    ERROR_VARIABLE _cargo_locate_error
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-    ERROR_STRIP_TRAILING_WHITESPACE
-  )
-  if(NOT _cargo_locate_result EQUAL 0)
-    message(FATAL_ERROR
-      "bsk_add_rust_module_sources: could not locate the Cargo root for ${_manifest}.\n"
-      "${_cargo_locate_error}")
+  if(NOT RUST_HEADER)
+    set(RUST_HEADER
+        "${CMAKE_CURRENT_BINARY_DIR}/rust_headers/${RUST_TARGET}.h")
   endif()
-  get_filename_component(_cargo_root_dir "${_cargo_root_manifest}" DIRECTORY)
-  set(_cargo_lock "${_cargo_root_dir}/Cargo.lock")
-  if(NOT EXISTS "${_cargo_lock}")
-    message(FATAL_ERROR
-      "bsk_add_rust_module_sources: required Cargo lockfile not found: ${_cargo_lock}\n"
-      "Generate and commit it with:\n"
-      "  cargo generate-lockfile --manifest-path ${_cargo_root_manifest}")
-  endif()
-
-  set(_generates_header FALSE)
-  if(NOT RUST_INTERFACE AND NOT RUST_HEADER)
-    # bsk-build writes this Cargo byproduct outside the source tree. Keeping
-    # its path predictable lets SWIG refer to it before the first cargo build.
-    set(_generates_header TRUE)
-    set(RUST_HEADER "${CMAKE_CURRENT_BINARY_DIR}/rust_headers/${RUST_TARGET}.h")
-    message(STATUS
-      "bsk_add_rust_module_sources: HEADER not provided; "
-      "generating bsk-build header at: ${RUST_HEADER}")
-  endif()
-  set(_extra_byproducts "")
-  if(_generates_header)
-    list(APPEND _extra_byproducts "${RUST_HEADER}")
-    set(_header_env "BSK_HEADER_PATH=${RUST_HEADER}")
-  else()
-    set(_header_env "")
-  endif()
-
-  # bsk-build (the crate's build.rs) writes the SWIG .i file itself -- see
-  # BSK_INTERFACE_PATH in its docs -- so this only has to point SWIG at a
-  # predictable path, the same way it already does for HEADER above. There
-  # is no CMake-side parsing of the crate's Rust source at all: cargo build
-  # produces the .i file as a build byproduct, exactly like the .h file.
-  set(_interface_env "")
   if(NOT RUST_INTERFACE)
-    set(_gen_i "${CMAKE_CURRENT_BINARY_DIR}/${RUST_TARGET}_rust_wrap.i")
-    set(_interface_env "BSK_INTERFACE_PATH=${_gen_i}")
-    list(APPEND _extra_byproducts "${_gen_i}")
+    set(RUST_INTERFACE
+        "${CMAKE_CURRENT_BINARY_DIR}/${RUST_TARGET}_rust_wrap.i")
   endif()
-  set(_header_byproducts BYPRODUCTS ${_extra_byproducts})
+  set(_bindings_trigger
+      "${CMAKE_CURRENT_BINARY_DIR}/rust_bindings/${RUST_TARGET}.trigger")
 
-  if(NOT RUST_CARGO_PROFILE)
-    set(RUST_CARGO_PROFILE "release")
-  endif()
+  _bsk_load_corrosion()
+  _bsk_rust_package_name_from_metadata("${_manifest}" _rust_package_name)
+  corrosion_import_crate(
+    MANIFEST_PATH "${_manifest}"
+    CRATES "${_rust_package_name}"
+    CRATE_TYPES staticlib
+    LOCKED
+    IMPORTED_CRATES _rust_imported_targets
+  )
 
-  # Cargo places the output in target/debug for profile "dev".
-  if(RUST_CARGO_PROFILE STREQUAL "dev")
-    set(_profile_dir "debug")
-    set(_profile_flag "")
-  else()
-    set(_profile_dir "${RUST_CARGO_PROFILE}")
-    set(_profile_flag "--${RUST_CARGO_PROFILE}")
+  list(LENGTH _rust_imported_targets _rust_imported_target_count)
+  if(NOT _rust_imported_target_count EQUAL 1)
+    message(FATAL_ERROR
+      "Corrosion imported ${_rust_imported_target_count} targets for "
+      "${_rust_package_name}: expected exactly one static library target")
   endif()
+  list(GET _rust_imported_targets 0 _rust_target)
 
-  # Derive the lib name: use CRATE_NAME if given, otherwise read the [lib] name
-  # or [package] name from Cargo.toml (Cargo converts hyphens to underscores in
-  # artifact names, matching the staticlib filename).
-  if(RUST_CRATE_NAME)
-    set(_lib_name "${RUST_CRATE_NAME}")
-  else()
-    # Try [lib] name first, fall back to [package] name.
-    file(READ "${_manifest}" _cargo_toml_text)
-    set(_lib_name "")
-    if(_cargo_toml_text MATCHES "\\[lib\\][^\n]*\n[^\[]*name[ \t]*=[ \t]*\"([^\"]+)\"")
-      set(_lib_name "${CMAKE_MATCH_1}")
-    endif()
-    if(NOT _lib_name AND _cargo_toml_text MATCHES "\\[package\\][^\n]*\n[^\[]*name[ \t]*=[ \t]*\"([^\"]+)\"")
-      set(_lib_name "${CMAKE_MATCH_1}")
-    endif()
-    if(NOT _lib_name)
-      message(FATAL_ERROR
-        "bsk_add_rust_module_sources: could not read crate name from ${_manifest}.\n"
-        "Set CRATE_NAME explicitly.")
-    endif()
-    # Cargo replaces hyphens with underscores in staticlib filenames.
-    string(REPLACE "-" "_" _lib_name "${_lib_name}")
+  # corrosion_import_crate() returns the public interface target. For a
+  # staticlib-only import that target forwards to Corrosion's concrete
+  # <crate>-static target. Linking the interface target can place the actual
+  # Rust archive after later direct dependencies such as cMsgCInterface,
+  # leaving Rust's C-message references unresolved with one-pass GNU linkers.
+  # Link the concrete imported archive so CMake preserves the requested
+  # Rust-then-C-message archive order.
+  set(_rust_link_target "${_rust_target}-static")
+  if(NOT TARGET "${_rust_link_target}")
+    message(FATAL_ERROR
+      "Corrosion did not provide the expected static-library target "
+      "${_rust_link_target}")
   endif()
-
-  set(_rust_target_dir "${CMAKE_CURRENT_BINARY_DIR}/rust_target")
-  set(_rust_lib "${_rust_target_dir}/${_profile_dir}/lib${_lib_name}.a")
-
-  # ------------------------------------------------------------------
-  # Feature flags
-  # ------------------------------------------------------------------
-  set(_feature_args "")
-  if(RUST_CARGO_FEATURES)
-    list(JOIN RUST_CARGO_FEATURES "," _feat_str)
-    set(_feature_args "--features" "${_feat_str}")
-  endif()
-
-  # ------------------------------------------------------------------
-  # Custom command: build the Rust crate → staticlib
-  #
-  # Cargo handles its own incremental compilation, but CMake must first know
-  # when to invoke Cargo. List the module crate, workspace metadata, and
-  # in-tree Basilisk Rust support crates as explicit dependencies; source
-  # changes then cause Cargo to produce a newer .a, which makes the downstream
-  # link step re-run automatically.
-  # ------------------------------------------------------------------
-  set(_dep_files "${_manifest}" "${_cargo_root_manifest}" "${_cargo_lock}")
-  # Also depend on all Rust source files in the module crate so CMake re-runs
-  # Cargo for either the standard src/ layout or a Basilisk-style root source.
-  file(GLOB_RECURSE _rust_sources CONFIGURE_DEPENDS "${_crate_dir}/*.rs")
-  list(FILTER _rust_sources EXCLUDE REGEX "/target/")
-  list(APPEND _dep_files ${_rust_sources})
-  # Basilisk's in-tree workspace keeps bsk-build, bsk-macros, bsk-messages,
-  # and bsk-utilities here. Without these dependencies, changing the shared
-  # support layer does not rerun this output-producing custom command, so
-  # CMake can continue linking a stale Rust static library. A workspace
-  # without this in-tree support directory intentionally skips this block.
-  set(_bsk_rust_support_dir "${_cargo_root_dir}/architecture/rust")
-  if(IS_DIRECTORY "${_bsk_rust_support_dir}")
-    file(GLOB_RECURSE _bsk_rust_support_sources CONFIGURE_DEPENDS
-         "${_bsk_rust_support_dir}/*.rs"
-         "${_bsk_rust_support_dir}/Cargo.toml")
-    list(FILTER _bsk_rust_support_sources EXCLUDE REGEX "/target/")
-    list(APPEND _dep_files ${_bsk_rust_support_sources})
-  endif()
-  # build.rs changes should also trigger a rebuild.
-  if(EXISTS "${_crate_dir}/build.rs")
-    list(APPEND _dep_files "${_crate_dir}/build.rs")
-  endif()
-  list(APPEND _dep_files ${RUST_CARGO_DEPENDS})
-  list(REMOVE_DUPLICATES _dep_files)
 
   # CMake's Makefile generators can leave GNU Make jobserver descriptors in
-  # MAKEFLAGS even though those descriptors are closed before Cargo starts.
-  # Clear the stale state so Cargo selects its own worker count without
-  # emitting a jobserver warning.
+  # MAKEFLAGS even though those descriptors are closed before Corrosion starts
+  # Cargo. Do not pass that stale jobserver state into Cargo; Cargo will select
+  # its own worker count instead of warning and falling back implicitly.
   set(_cargo_makeflags_env)
   if(CMAKE_GENERATOR MATCHES "Makefiles")
     set(_cargo_makeflags_env "MAKEFLAGS=")
   endif()
 
-  add_custom_command(
-    OUTPUT  "${_rust_lib}"
-    ${_header_byproducts}
-    COMMAND ${CMAKE_COMMAND} -E env
-            ${_cargo_makeflags_env}
-            "CARGO_TARGET_DIR=${_rust_target_dir}"
-            "BSK_INCLUDE_DIR=${RUST_INCLUDE_DIR}"
-            ${_header_env}
-            ${_interface_env}
-            ${RUST_CARGO_ENV}
-            "${CARGO_EXECUTABLE}" build --locked ${_profile_flag} ${_feature_args}
-            --manifest-path "${_manifest}"
-    DEPENDS ${_dep_files}
-    WORKING_DIRECTORY "${_crate_dir}"
-    COMMENT "Cargo: building Rust crate for BSK module '${RUST_TARGET}'"
-    VERBATIM
+  corrosion_set_env_vars(
+    "${_rust_target}"
+    ${_cargo_makeflags_env}
+    "BSK_INCLUDE_DIR=${RUST_INCLUDE_DIR}"
+    "BSK_HEADER_PATH=${RUST_HEADER}"
+    "BSK_INTERFACE_PATH=${RUST_INTERFACE}"
+    "BSK_BINDINGS_TRIGGER_PATH=${_bindings_trigger}"
+    ${RUST_CARGO_ENV}
   )
-
-  set(_rust_target_name "_rust_build_${RUST_TARGET}")
-  add_custom_target("${_rust_target_name}" DEPENDS "${_rust_lib}")
-
-  if(NOT RUST_INTERFACE)
-    set(RUST_INTERFACE "${_gen_i}")
+  if(RUST_CARGO_FEATURES)
+    corrosion_set_features(
+      "${_rust_target}"
+      FEATURES ${RUST_CARGO_FEATURES}
+    )
   endif()
 
-  # ------------------------------------------------------------------
-  # Report outputs to the caller
-  # ------------------------------------------------------------------
-  if(RUST_OUT_LIB_VAR)
-    set("${RUST_OUT_LIB_VAR}" "${_rust_lib}" PARENT_SCOPE)
+  # Corrosion intentionally exposes a pre-build hook for generators that must
+  # run before Cargo. Use it to change a build.rs-watched trigger only when a
+  # generated binding has disappeared. This restores manually deleted outputs
+  # without forcing code generation during an ordinary incremental build.
+  set(_bindings_prebuild_target "_rust_bindings_prebuild_${RUST_TARGET}")
+  add_custom_target(
+    "${_bindings_prebuild_target}"
+    COMMAND
+      "${CMAKE_COMMAND}"
+      "-DBSK_RUST_BINDINGS_TRIGGER=${_bindings_trigger}"
+      "-DBSK_RUST_HEADER=${RUST_HEADER}"
+      "-DBSK_RUST_INTERFACE=${RUST_INTERFACE}"
+      -P "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/bskEnsureRustBindings.cmake"
+    BYPRODUCTS "${_bindings_trigger}"
+    VERBATIM
+  )
+  add_dependencies(
+    "cargo-prebuild_${_rust_target}"
+    "${_bindings_prebuild_target}"
+  )
+
+  # Corrosion owns the Cargo invocation and static-library byproduct, while
+  # this module's build.rs owns the generated header and SWIG interface.
+  # Give CMake an explicit producer rule for those two files so Make/Ninja do
+  # not reject the missing generated interface before Cargo has run.
+  set(_cargo_build_target "cargo-build_${_rust_target}")
+  set(_bindings_target "_rust_bindings_${RUST_TARGET}")
+  add_custom_command(
+    OUTPUT "${RUST_HEADER}" "${RUST_INTERFACE}"
+    COMMAND "${CMAKE_COMMAND}" -E compare_files
+            "${RUST_HEADER}" "${RUST_HEADER}"
+    COMMAND "${CMAKE_COMMAND}" -E compare_files
+            "${RUST_INTERFACE}" "${RUST_INTERFACE}"
+    DEPENDS "${_cargo_build_target}"
+    COMMENT "Verifying generated Rust bindings for '${RUST_TARGET}'"
+    VERBATIM
+  )
+  add_custom_target(
+    "${_bindings_target}"
+    DEPENDS "${RUST_HEADER}" "${RUST_INTERFACE}"
+  )
+
+  if(RUST_OUT_LINK_TARGET_VAR)
+    set("${RUST_OUT_LINK_TARGET_VAR}" "${_rust_link_target}" PARENT_SCOPE)
   endif()
   if(RUST_OUT_HEADER_VAR)
     set("${RUST_OUT_HEADER_VAR}" "${RUST_HEADER}" PARENT_SCOPE)
@@ -311,6 +258,6 @@ function(bsk_add_rust_module_sources)
     set("${RUST_OUT_INTERFACE_VAR}" "${RUST_INTERFACE}" PARENT_SCOPE)
   endif()
   if(RUST_OUT_BUILD_TARGET_VAR)
-    set("${RUST_OUT_BUILD_TARGET_VAR}" "${_rust_target_name}" PARENT_SCOPE)
+    set("${RUST_OUT_BUILD_TARGET_VAR}" "${_bindings_target}" PARENT_SCOPE)
   endif()
 endfunction()

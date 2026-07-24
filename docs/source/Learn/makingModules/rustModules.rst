@@ -139,16 +139,16 @@ not need Rust modules do not need these tools. Enable Rust modules with:
 
 .. code-block:: console
 
-    python3 conanfile.py --rustModules True --rustCorrosion True
+    python3 conanfile.py --rustModules True
 
 On Windows, use ``python`` instead of ``python3`` if that is the command for
 the active Python installation.
 
 ``rustModules`` enables discovery and compilation of in-tree Rust modules.
-``rustCorrosion`` selects Corrosion, the CMake integration layer that imports
-Cargo libraries as CMake targets. Corrosion is downloaded at its pinned
-revision during configuration; it is not a separate compiler and does not
-need to be installed manually.
+Basilisk uses Corrosion, a CMake integration layer that imports Cargo
+libraries as CMake targets. Corrosion is downloaded at its pinned revision
+during the first Rust-enabled configuration; it is not a separate compiler
+and does not need to be installed manually.
 
 After the build, verify the template through its normal Python unit test:
 
@@ -988,7 +988,7 @@ Build Basilisk with Rust support before generating documentation:
 
 .. code-block:: console
 
-    python3 conanfile.py --rustModules True --rustCorrosion True
+    python3 conanfile.py --rustModules True
     cd docs
     make html
 

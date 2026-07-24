@@ -74,7 +74,7 @@ fn generate_bindings() -> Result<(), Box<dyn Error>> {
     if !c_message_dir.is_dir() {
         return Err(format!(
             "generated C message directory does not exist: {}. Run \
-             `python3 conanfile.py --rustModules True --rustCorrosion True` first",
+             `python3 conanfile.py --rustModules True` first",
             c_message_dir.display()
         )
         .into());

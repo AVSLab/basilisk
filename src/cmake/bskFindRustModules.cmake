@@ -16,7 +16,6 @@
 
 include_guard(GLOBAL)
 include(bskAddRustModuleSources)
-include(bskAddRustModuleSourcesCorrosion)
 
 # Windows does not automatically export functions pulled into a DLL from a
 # static Rust library. Add the Rust/C boundary explicitly so low-level ABI
@@ -167,11 +166,6 @@ function(generate_rust_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
     _bsk_find_python_libclang(_rust_libclang_dir)
     list(APPEND _rust_cargo_env "LIBCLANG_PATH=${_rust_libclang_dir}")
   endif()
-  file(
-    GLOB _rust_message_headers
-    CONFIGURE_DEPENDS
-    "${CMAKE_BINARY_DIR}/autoSource/cMsgCInterface/*_C.h")
-
   foreach(TARGET_FILE ${TARGET_LIST})
     get_filename_component(PARENT_DIR ${TARGET_FILE} DIRECTORY)
     get_filename_component(TARGET_NAME ${PARENT_DIR} NAME)
@@ -182,36 +176,22 @@ function(generate_rust_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
     endif()
 
     set(_rust_manifest "${CMAKE_SOURCE_DIR}/${TARGET_FILE}")
-    set(_swig_target "${TARGET_NAME}")
-    if(BSK_RUST_USE_CORROSION)
-      bsk_add_rust_module_sources_corrosion(
-        TARGET      ${TARGET_NAME}
-        MANIFEST    "${_rust_manifest}"
-        OUT_LINK_TARGET_VAR  _rust_link_target
-        OUT_HEADER_VAR       _rust_header
-        OUT_INTERFACE_VAR    _rust_interface
-        OUT_BUILD_TARGET_VAR _rust_build_target
-        CARGO_ENV             ${_rust_cargo_env}
-      )
+    bsk_add_rust_module_sources(
+      TARGET      ${TARGET_NAME}
+      MANIFEST    "${_rust_manifest}"
+      OUT_LINK_TARGET_VAR  _rust_link_target
+      OUT_HEADER_VAR       _rust_header
+      OUT_INTERFACE_VAR    _rust_interface
+      OUT_BUILD_TARGET_VAR _rust_build_target
+      CARGO_ENV             ${_rust_cargo_env}
+    )
 
-      # Corrosion names its imported CMake library after the Cargo [lib]
-      # target. Use an internal name for the SWIG target to avoid colliding
-      # with that Rust target; OUTPUT_NAME below preserves the installed
-      # Python extension and import name.
-      set(_swig_target "_bsk_python_${TARGET_NAME}")
-      set_source_files_properties("${_rust_interface}" PROPERTIES GENERATED TRUE)
-    else()
-      bsk_add_rust_module_sources(
-        TARGET      ${TARGET_NAME}
-        MANIFEST    "${_rust_manifest}"
-        OUT_LIB_VAR          _rust_link_target
-        OUT_HEADER_VAR       _rust_header
-        OUT_INTERFACE_VAR    _rust_interface
-        OUT_BUILD_TARGET_VAR _rust_build_target
-        CARGO_ENV             ${_rust_cargo_env}
-        CARGO_DEPENDS         ${_rust_message_headers}
-      )
-    endif()
+    # Corrosion names its imported CMake library after the Cargo [lib]
+    # target. Use an internal name for the SWIG target to avoid colliding
+    # with that Rust target; OUTPUT_NAME below preserves the installed
+    # Python extension and import name.
+    set(_swig_target "_bsk_python_${TARGET_NAME}")
+    set_source_files_properties("${_rust_interface}" PROPERTIES GENERATED TRUE)
 
     set_property(SOURCE ${_rust_interface} PROPERTY USE_TARGET_INCLUDE_DIRECTORIES TRUE)
     set_property(SOURCE ${_rust_interface} PROPERTY CPLUSPLUS ON)
@@ -224,9 +204,7 @@ function(generate_rust_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
       SOURCES ${_rust_interface}
       OUTFILE_DIR "${_out_dir}"
       OUTPUT_DIR  "${_out_dir}")
-    if(BSK_RUST_USE_CORROSION)
-      set_target_properties(${_swig_target} PROPERTIES OUTPUT_NAME ${TARGET_NAME})
-    endif()
+    set_target_properties(${_swig_target} PROPERTIES OUTPUT_NAME ${TARGET_NAME})
     _bsk_add_rust_windows_exports("${_swig_target}" "${TARGET_NAME}")
 
     # UseSWIG does not discover files included by a generated interface.

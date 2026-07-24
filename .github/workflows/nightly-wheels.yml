@@ -37,7 +37,7 @@ jobs:
         env:
           # Keep Rust modules in the nightly core wheel and exercise the
           # pinned Corrosion integration on every supported wheel platform.
-          CONAN_ARGS: "--opNav False --mujoco True --rustModules True --rustCorrosion True --clean ${{ matrix.extra-conan-args }}"
+          CONAN_ARGS: "--opNav False --mujoco True --rustModules True --clean ${{ matrix.extra-conan-args }}"
           CIBW_TEST_SKIP: "*"
 
       - name: Free runner disk before opNav Linux wheel
@@ -59,7 +59,7 @@ jobs:
         with:
           output-dir: wheelhouse-opnav-full
         env:
-          CONAN_ARGS: "--opNav True --mujoco True --rustModules True --rustCorrosion True --clean ${{ matrix.extra-conan-args }}"
+          CONAN_ARGS: "--opNav True --mujoco True --rustModules True --clean ${{ matrix.extra-conan-args }}"
           CIBW_TEST_SKIP: "*"
 
       - uses: actions/setup-python@v6

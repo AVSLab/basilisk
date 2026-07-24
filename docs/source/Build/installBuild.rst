@@ -105,14 +105,9 @@ The script accepts the following options to customize this process.
       - Boolean
       - False
       - :beta:`Rust Module Support` Enables discovery and compilation of
-        in-tree Rust modules. Requires Rust and Cargo. See :ref:`rustModules`
-        for the minimum supported version.
-    * - ``rustCorrosion``
-      - Boolean
-      - False
-      - Uses the pinned Corrosion integration to add Cargo libraries to the
-        CMake build. Set this to ``True`` together with ``rustModules``.
-        Corrosion is downloaded automatically.
+        in-tree Rust modules. Requires Rust and Cargo. The pinned Corrosion
+        integration is downloaded automatically. See :ref:`rustModules` for
+        the minimum supported Rust version.
     * - ``examples``
       - Boolean
       - True
@@ -147,8 +142,7 @@ Inspecting the Build Toolchain
 ------------------------------
 Every Basilisk build records the compilers, build configuration, CMake generator, and versions of the principal
 build tools in the installed Python package, including a wheel.  Rust-enabled builds also record the Rust compiler
-and target, Cargo, and Corrosion when that integration is enabled.  This information can be inspected when
-diagnosing a binary or build issue.
+and target, Cargo, and Corrosion.  This information can be inspected when diagnosing a binary or build issue.
 
 For a concise, human-readable summary, use ``printBuildInfo()``::
 
@@ -156,7 +150,7 @@ For a concise, human-readable summary, use ``printBuildInfo()``::
 
     printBuildInfo()
 
-For a Rust-enabled build using Corrosion, this produces output similar to::
+For a Rust-enabled build, this produces output similar to::
 
     Basilisk Build Information
       Version:        2.12.0 (extension ABI 1)
@@ -212,9 +206,8 @@ extension ABI versions, canary types, and compiler-side extraction rules.  It is
 than maintaining parallel implementations.
 
 ``diagnostics`` contains values observed by CMake, requested Conan settings, compiler details, and build-tool
-versions.  The ``diagnostics["build"]["rustModules"]`` and
-``diagnostics["build"]["rustCorrosion"]`` flags identify whether those optional features were used.  Rust compiler
-fields and Cargo are empty when Rust modules are disabled; Corrosion is empty when its integration is disabled.
+versions.  The ``diagnostics["build"]["rustModules"]`` flag identifies whether native Rust modules were built.
+Rust compiler, Cargo, and Corrosion fields are empty when Rust modules are disabled.
 These diagnostics remain useful when reproducing a build, but they are not all binary-compatibility requirements.
 For example, CMake and Conan versions should not be compared as part of an SDK compatibility decision.  For Xcode
 and Visual Studio, ``diagnostics["build"]`` describes the multi-config generator while

@@ -25,10 +25,10 @@ jobs:
         include:
           - name: Linux
             os: ubuntu-24.04
-            conan-args: --opNav True --mujoco True --rustModules True --rustCorrosion True
+            conan-args: --opNav True --mujoco True --rustModules True
           - name: Windows
             os: windows-2025-vs2026
-            conan-args: --opNav True --mujoco True --generator Ninja --rustModules True --rustCorrosion True
+            conan-args: --opNav True --mujoco True --generator Ninja --rustModules True
     steps:
       - uses: actions/checkout@v5
         with:
@@ -54,7 +54,7 @@ jobs:
         uses: ./.github/actions/build
         with:
           python-version: 3.14
-          conan-args: --opNav True --allOptPkg --mujoco True --rustModules True --rustCorrosion True
+          conan-args: --opNav True --allOptPkg --mujoco True --rustModules True
           save-conan-cache: true
       - name: Build docs
         uses: ./.github/actions/docs

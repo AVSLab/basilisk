@@ -71,14 +71,13 @@ def _makeBuildInfo(
     runtime="",
     runtimeType="",
     rustModules=True,
-    rustCorrosion=True,
 ):
     standardLibraryFamily = standardLibrary
     if standardLibrary.startswith("libstdc++"):
         standardLibraryFamily = "libstdc++"
     abiFamily = "msvc" if system == "Windows" else "itanium"
     return {
-        "schemaVersion": 4,
+        "schemaVersion": 5,
         "artifact": {
             "basiliskVersion": "2.12.0",
             "sourceRevision": "0123456789abcdef",
@@ -102,7 +101,6 @@ def _makeBuildInfo(
                 "generatorToolset": generatorToolset,
                 "pythonLimitedApi": "0x03090000",
                 "rustModules": rustModules,
-                "rustCorrosion": rustCorrosion,
             },
             "compilers": {
                 "c": {
@@ -150,7 +148,7 @@ def _makeBuildInfo(
                 "swig": "4.4.1",
                 "python": "3.14.6",
                 "cargo": "1.97.1" if rustModules else "",
-                "corrosion": "0.6.1" if rustCorrosion else "",
+                "corrosion": "0.6.1" if rustModules else "",
             },
         },
         "abi": {
@@ -233,7 +231,7 @@ def test_build_info():
     diagnostics = buildInfo["diagnostics"]
     abi = buildInfo["abi"]
 
-    assert buildInfo["schemaVersion"] == 4
+    assert buildInfo["schemaVersion"] == 5
     assert buildInfo["artifact"]["basiliskVersion"]
     if Basilisk.__version__ != "0.0.0":
         assert buildInfo["artifact"]["basiliskVersion"] == Basilisk.__version__
@@ -259,7 +257,6 @@ def test_build_info():
         assert diagnostics["build"]["configuration"]
     assert diagnostics["build"]["generator"]
     assert isinstance(diagnostics["build"]["rustModules"], bool)
-    assert isinstance(diagnostics["build"]["rustCorrosion"], bool)
 
     for language in ("c", "cxx"):
         compilerInfo = diagnostics["compilers"][language]
@@ -293,8 +290,7 @@ def test_build_info():
         assert rustCompilerInfo["executable"]
         assert rustCompilerInfo["target"]
         assert diagnostics["tools"]["cargo"]
-        if diagnostics["build"]["rustCorrosion"]:
-            assert diagnostics["tools"]["corrosion"]
+        assert diagnostics["tools"]["corrosion"]
     else:
         assert not any(rustCompilerInfo.values())
         assert not diagnostics["tools"]["cargo"]
@@ -471,7 +467,6 @@ def test_format_build_info_without_rust():
         "Ninja",
         standardLibrary="libstdc++11",
         rustModules=False,
-        rustCorrosion=False,
     )
 
     output = buildInfoFormatter._formatBuildInfo(buildInfo)
@@ -479,24 +474,4 @@ def test_format_build_info_without_rust():
     assert "Rust compiler:" not in output
     assert "Rust target:" not in output
     assert "Cargo:" not in output
-    assert "Corrosion:" not in output
-
-
-def test_format_build_info_without_corrosion():
-    """Verify that a direct Cargo build does not report Corrosion."""
-    buildInfo = _makeBuildInfo(
-        "Linux",
-        "x86_64",
-        "GNU",
-        "15.1.0",
-        "g++",
-        "Ninja",
-        standardLibrary="libstdc++11",
-        rustCorrosion=False,
-    )
-
-    output = buildInfoFormatter._formatBuildInfo(buildInfo)
-
-    assert "Rust compiler:" in output
-    assert "Cargo:" in output
     assert "Corrosion:" not in output

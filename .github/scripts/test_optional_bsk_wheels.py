@@ -90,8 +90,8 @@ build_info = Basilisk.getBuildInfo()
 build_options = build_info["diagnostics"]["build"]
 if not build_options["rustModules"]:
     raise SystemExit("wheel was not built with Rust modules")
-if not build_options["rustCorrosion"]:
-    raise SystemExit("wheel was not built with Corrosion")
+if not build_info["diagnostics"]["tools"]["corrosion"]:
+    raise SystemExit("wheel did not record its Corrosion version")
 
 for name in required:
     module = importlib.import_module(name)

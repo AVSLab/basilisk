@@ -17,7 +17,7 @@
 #
 
 buildInfoData = {
-    "schemaVersion": 4,
+    "schemaVersion": 5,
     "artifact": {
         "basiliskVersion": @BSK_INFO_BASILISK_VERSION@,
         "sourceRevision": @BSK_INFO_SOURCE_REVISION@,
@@ -41,7 +41,6 @@ buildInfoData = {
             "generatorToolset": @BSK_INFO_GENERATOR_TOOLSET@,
             "pythonLimitedApi": @BSK_INFO_PY_LIMITED_API@,
             "rustModules": @_rust_modules@,
-            "rustCorrosion": @_rust_corrosion@,
         },
         "compilers": {
             "c": {
