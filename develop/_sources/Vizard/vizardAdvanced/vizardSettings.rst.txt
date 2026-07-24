@@ -1139,9 +1139,12 @@ parameters are set using::
 
 .. caution::
     As a pointer to the ``GenericSensor`` structure is connected to :ref:`vizInterface`, it is
-    important that the python structure is retained in memory.  If the python structure instance
-    is created in a manner where this is not the case, use ``genericSensor.this.disown()``
-    to ensure the python structure remains intact throughout the simulation.
+    important that the python structure is retained in memory.  If the instance is
+    created inside a function or method, keep a reference that outlives the simulation
+    run, for example by appending it to a list stored at the script level.
+    Alternatively, ``genericSensor.this.disown()`` transfers ownership to C++; note this
+    memory is never freed, which matters if many simulations are created in one
+    python process (e.g. parameterized tests).
 
 The sensor location relative to the spacecraft B frame is given by ``r_SB_B``.  The sensor view axis is
 set through ``normalVector``.  The ``fieldOfView`` is a vector with up to 2 floats.  If a single positive value is provided,
@@ -1283,9 +1286,12 @@ parameters are set using::
 
 .. caution::
     As a pointer to the ``Transceiver`` structure is connected to :ref:`vizInterface`, it is
-    important that the python structure is retained in memory.  If the python structure instance
-    is created in a manner where this is not the case, use ``transceiverHUD.this.disown()``
-    to ensure the python structure remains intact throughout the simulation.
+    important that the python structure is retained in memory.  If the instance is
+    created inside a function or method, keep a reference that outlives the simulation
+    run, for example by appending it to a list stored at the script level.
+    Alternatively, ``transceiverHUD.this.disown()`` transfers ownership to C++; note this
+    memory is never freed, which matters if many simulations are created in one
+    python process (e.g. parameterized tests).
 
 The transceiver location relative to the spacecraft B frame is given by ``r_SB_B``.  The transceiver
 bore sight axis is
@@ -1486,9 +1492,12 @@ orange if the storage is more than 80% full, you could use::
 
 .. caution::
     As a pointer to the ``GenericStorage`` structure is connected to :ref:`vizInterface`, it is
-    important that the python structure is retained in memory.  If the python structure instance
-    is created in a manner where this is not the case, use ``hdDevicePanel.this.disown()``
-    to ensure the python structure remains intact throughout the simulation.
+    important that the python structure is retained in memory.  If the instance is
+    created inside a function or method, keep a reference that outlives the simulation
+    run, for example by appending it to a list stored at the script level.
+    Alternatively, ``hdDevicePanel.this.disown()`` transfers ownership to C++; note this
+    memory is never freed, which matters if many simulations are created in one
+    python process (e.g. parameterized tests).
 
 Multiple storage panel elements can be setup for each spacecraft, and multiple spacecraft are supported.  Using
 the ``vizSupport.py`` file, the generic storage structures list is sent to :ref:`vizInterface` using they keyword ``genericStorageList``::
@@ -1534,9 +1543,12 @@ parameters are set using::
 
 .. caution::
     As a pointer to the ``Light`` structure is connected to :ref:`vizInterface`, it is
-    important that the python structure is retained in memory.  If the python structure instance
-    is created in a manner where this is not the case, use ``scLight.this.disown()``
-    to ensure the python structure remains intact throughout the simulation.
+    important that the python structure is retained in memory.  If the instance is
+    created inside a function or method, keep a reference that outlives the simulation
+    run, for example by appending it to a list stored at the script level.
+    Alternatively, ``scLight.this.disown()`` transfers ownership to C++; note this
+    memory is never freed, which matters if many simulations are created in one
+    python process (e.g. parameterized tests).
 
 The light location relative to the spacecraft B frame is given by ``position``.  The light normalaxis is
 set through ``normalVector``.  The edge-to-edge ``fieldOfView`` is set in radians.
@@ -1786,9 +1798,12 @@ parameters are set using::
 
 .. caution::
     As a pointer to the ``Ellipsoid`` structure is connected to :ref:`vizInterface`, it is
-    important that the python structure is retained in memory.  If the python structure instance
-    is created in a manner where this is not the case, use ``gncEllipsoid.this.disown()``
-    to ensure the python structure remains intact throughout the simulation.
+    important that the python structure is retained in memory.  If the instance is
+    created inside a function or method, keep a reference that outlives the simulation
+    run, for example by appending it to a list stored at the script level.
+    Alternatively, ``gncEllipsoid.this.disown()`` transfers ownership to C++; note this
+    memory is never freed, which matters if many simulations are created in one
+    python process (e.g. parameterized tests).
 
 The ellipsoid location relative to the spacecraft B frame is given by ``position`` in B-frame coordinates.
 The ``semiMajorAxes`` provide the ellipsoid semi-major axes in meters.  If the flag ``useBodyFrame``

@@ -1463,9 +1463,12 @@ parameters are set using:</p>
 <div class="admonition caution">
 <p class="admonition-title">Caution</p>
 <p>As a pointer to the <code class="docutils literal notranslate"><span class="pre">GenericSensor</span></code> structure is connected to <a class="reference internal" href="../../Documentation/simulation/vizard/vizInterface/vizInterface.html#vizinterface"><span class="std std-ref">C++ Module: vizInterface</span></a>, it is
-important that the python structure is retained in memory.  If the python structure instance
-is created in a manner where this is not the case, use <code class="docutils literal notranslate"><span class="pre">genericSensor.this.disown()</span></code>
-to ensure the python structure remains intact throughout the simulation.</p>
+important that the python structure is retained in memory.  If the instance is
+created inside a function or method, keep a reference that outlives the simulation
+run, for example by appending it to a list stored at the script level.
+Alternatively, <code class="docutils literal notranslate"><span class="pre">genericSensor.this.disown()</span></code> transfers ownership to C++; note this
+memory is never freed, which matters if many simulations are created in one
+python process (e.g. parameterized tests).</p>
 </div>
 <p>The sensor location relative to the spacecraft B frame is given by <code class="docutils literal notranslate"><span class="pre">r_SB_B</span></code>.  The sensor view axis is
 set through <code class="docutils literal notranslate"><span class="pre">normalVector</span></code>.  The <code class="docutils literal notranslate"><span class="pre">fieldOfView</span></code> is a vector with up to 2 floats.  If a single positive value is provided,
@@ -1619,9 +1622,12 @@ parameters are set using:</p>
 <div class="admonition caution">
 <p class="admonition-title">Caution</p>
 <p>As a pointer to the <code class="docutils literal notranslate"><span class="pre">Transceiver</span></code> structure is connected to <a class="reference internal" href="../../Documentation/simulation/vizard/vizInterface/vizInterface.html#vizinterface"><span class="std std-ref">C++ Module: vizInterface</span></a>, it is
-important that the python structure is retained in memory.  If the python structure instance
-is created in a manner where this is not the case, use <code class="docutils literal notranslate"><span class="pre">transceiverHUD.this.disown()</span></code>
-to ensure the python structure remains intact throughout the simulation.</p>
+important that the python structure is retained in memory.  If the instance is
+created inside a function or method, keep a reference that outlives the simulation
+run, for example by appending it to a list stored at the script level.
+Alternatively, <code class="docutils literal notranslate"><span class="pre">transceiverHUD.this.disown()</span></code> transfers ownership to C++; note this
+memory is never freed, which matters if many simulations are created in one
+python process (e.g. parameterized tests).</p>
 </div>
 <p>The transceiver location relative to the spacecraft B frame is given by <code class="docutils literal notranslate"><span class="pre">r_SB_B</span></code>.  The transceiver
 bore sight axis is
@@ -1853,9 +1859,12 @@ orange if the storage is more than 80% full, you could use:</p>
 <div class="admonition caution">
 <p class="admonition-title">Caution</p>
 <p>As a pointer to the <code class="docutils literal notranslate"><span class="pre">GenericStorage</span></code> structure is connected to <a class="reference internal" href="../../Documentation/simulation/vizard/vizInterface/vizInterface.html#vizinterface"><span class="std std-ref">C++ Module: vizInterface</span></a>, it is
-important that the python structure is retained in memory.  If the python structure instance
-is created in a manner where this is not the case, use <code class="docutils literal notranslate"><span class="pre">hdDevicePanel.this.disown()</span></code>
-to ensure the python structure remains intact throughout the simulation.</p>
+important that the python structure is retained in memory.  If the instance is
+created inside a function or method, keep a reference that outlives the simulation
+run, for example by appending it to a list stored at the script level.
+Alternatively, <code class="docutils literal notranslate"><span class="pre">hdDevicePanel.this.disown()</span></code> transfers ownership to C++; note this
+memory is never freed, which matters if many simulations are created in one
+python process (e.g. parameterized tests).</p>
 </div>
 <p>Multiple storage panel elements can be setup for each spacecraft, and multiple spacecraft are supported.  Using
 the <code class="docutils literal notranslate"><span class="pre">vizSupport.py</span></code> file, the generic storage structures list is sent to <a class="reference internal" href="../../Documentation/simulation/vizard/vizInterface/vizInterface.html#vizinterface"><span class="std std-ref">C++ Module: vizInterface</span></a> using they keyword <code class="docutils literal notranslate"><span class="pre">genericStorageList</span></code>:</p>
@@ -1899,9 +1908,12 @@ parameters are set using:</p>
 <div class="admonition caution">
 <p class="admonition-title">Caution</p>
 <p>As a pointer to the <code class="docutils literal notranslate"><span class="pre">Light</span></code> structure is connected to <a class="reference internal" href="../../Documentation/simulation/vizard/vizInterface/vizInterface.html#vizinterface"><span class="std std-ref">C++ Module: vizInterface</span></a>, it is
-important that the python structure is retained in memory.  If the python structure instance
-is created in a manner where this is not the case, use <code class="docutils literal notranslate"><span class="pre">scLight.this.disown()</span></code>
-to ensure the python structure remains intact throughout the simulation.</p>
+important that the python structure is retained in memory.  If the instance is
+created inside a function or method, keep a reference that outlives the simulation
+run, for example by appending it to a list stored at the script level.
+Alternatively, <code class="docutils literal notranslate"><span class="pre">scLight.this.disown()</span></code> transfers ownership to C++; note this
+memory is never freed, which matters if many simulations are created in one
+python process (e.g. parameterized tests).</p>
 </div>
 <p>The light location relative to the spacecraft B frame is given by <code class="docutils literal notranslate"><span class="pre">position</span></code>.  The light normalaxis is
 set through <code class="docutils literal notranslate"><span class="pre">normalVector</span></code>.  The edge-to-edge <code class="docutils literal notranslate"><span class="pre">fieldOfView</span></code> is set in radians.
@@ -2172,9 +2184,12 @@ parameters are set using:</p>
 <div class="admonition caution">
 <p class="admonition-title">Caution</p>
 <p>As a pointer to the <code class="docutils literal notranslate"><span class="pre">Ellipsoid</span></code> structure is connected to <a class="reference internal" href="../../Documentation/simulation/vizard/vizInterface/vizInterface.html#vizinterface"><span class="std std-ref">C++ Module: vizInterface</span></a>, it is
-important that the python structure is retained in memory.  If the python structure instance
-is created in a manner where this is not the case, use <code class="docutils literal notranslate"><span class="pre">gncEllipsoid.this.disown()</span></code>
-to ensure the python structure remains intact throughout the simulation.</p>
+important that the python structure is retained in memory.  If the instance is
+created inside a function or method, keep a reference that outlives the simulation
+run, for example by appending it to a list stored at the script level.
+Alternatively, <code class="docutils literal notranslate"><span class="pre">gncEllipsoid.this.disown()</span></code> transfers ownership to C++; note this
+memory is never freed, which matters if many simulations are created in one
+python process (e.g. parameterized tests).</p>
 </div>
 <p>The ellipsoid location relative to the spacecraft B frame is given by <code class="docutils literal notranslate"><span class="pre">position</span></code> in B-frame coordinates.
 The <code class="docutils literal notranslate"><span class="pre">semiMajorAxes</span></code> provide the ellipsoid semi-major axes in meters.  If the flag <code class="docutils literal notranslate"><span class="pre">useBodyFrame</span></code>
