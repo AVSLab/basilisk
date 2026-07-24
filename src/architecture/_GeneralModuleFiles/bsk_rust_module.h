@@ -30,15 +30,16 @@
  *  Basilisk C modules consist of two parts:
  *
  *  1. A plain-C *config struct* that holds all parameters, message ports,
- *     and optional persistent state.  It is parsed by SWIG to produce the
- *     Python-accessible wrapper class.
+ *     and optional persistent state.
  *  2. Three *lifecycle functions* — ``SelfInit``, ``Reset``, ``Update`` —
  *     called by the Basilisk task scheduler at well-defined points.
  *
  *  For Rust modules the lifecycle functions are compiled into a Rust static
  *  library linked into the SWIG-generated Python module. ``BSK_RUST_DECL`` emits the
  *  matching ``extern "C"`` *declarations* so that the C compiler and the
- *  SWIG-generated glue can find them.
+ *  SWIG-generated glue can find them. Unlike the C-module wrapper, the Rust
+ *  wrapper hides direct parameter fields and exposes generated properties
+ *  backed by guarded Rust getters and setters.
  *
  *  **Macro-generated workflow**
  *
@@ -197,8 +198,8 @@
  *      }
  *
  *  ``bsk-build`` generates ``Vec2``'s C struct alongside ``myModuleConfig``
- *  and Python reads/writes it field-by-field like any built-in BSK module
- *  (``ctrl.target.x = 1.0``) — no special handling needed.
+ *  and Python transfers the complete nested value through the generated
+ *  getter and setter.
  *
  *  A raw pointer to one of these structs (``*mut Vec2``), or to any other
  *  type, is rejected.
@@ -209,12 +210,11 @@
  *  string or byte-buffer parameter.
  *
  *  A field also may not be a Rust ``enum``, even a fieldless ``#[repr(u8)]``
- *  (or similar) one — SWIG's setter for an enum-typed field accepts any
- *  integer, not just ones matching a declared variant, so a match on the
- *  field's value could hit undefined behavior once Python is free to write
- *  an out-of-range value. Use the underlying integer type as the field
- *  (e.g. ``pub mode: u8``) and convert it with a checked conversion inside
- *  ``update``/``reset`` instead.
+ *  (or similar) one. An invalid integer discriminant copied across an FFI
+ *  boundary would be undefined behavior before Rust could validate it. Use
+ *  the underlying integer type as the field (e.g. ``pub mode: u8``), validate
+ *  it in the generated setter, and convert it to the Rust enum only after the
+ *  value is known to be valid.
  */
 
 #ifdef __cplusplus
@@ -292,6 +292,20 @@ BSK_RUST_EXTERN_C_END
  *  ``Config_name(handle)``
  *      Returns a borrowed pointer to the instance's FFI-safe parameter and
  *      message-port view. The pointer remains valid until ``Destroy_name``.
+ *      Generated wrappers use this view only for message ports; Python-facing
+ *      configuration values use the guarded accessors below.
+ *
+ *  ``GetConfigField_name`` / ``SetConfigField_name``
+ *      Copy one generated configuration value across the C boundary. The
+ *      field index and byte size are generated from the same Rust struct.
+ *      Setters validate the complete typed value before changing it and
+ *      return an expected error without modifying the previous value when
+ *      validation fails.
+ *
+ *  ``ConfigFieldDeprecationDate_name`` /
+ *  ``ConfigFieldDeprecationMessage_name``
+ *      Return static metadata used by the generated Python getter, setter,
+ *      and property. Null means that the field is not deprecated.
  *
  *  ``Destroy_name(handle)``
  *      Runs the config and internal state's Rust drop glue and returns the
@@ -339,6 +353,10 @@ BSK_RUST_EXTERN_C_END
     BSK_RUST_EXTERN_C_BEGIN \
     BskRustError *Create_##name(handleType **outputHandle); \
     configType *Config_##name(handleType *handle); \
+    BskRustError *GetConfigField_##name(handleType *handle, size_t fieldIndex, void *outputValue, size_t valueSize); \
+    BskRustError *SetConfigField_##name(handleType *handle, size_t fieldIndex, const void *inputValue, size_t valueSize); \
+    const char *ConfigFieldDeprecationDate_##name(size_t fieldIndex); \
+    const char *ConfigFieldDeprecationMessage_##name(size_t fieldIndex); \
     BskRustError *Destroy_##name(handleType *handle); \
     BskRustError *SelfInit_##name(handleType *handle, const BskRustModuleContext *context); \
     BskRustError *Reset_##name(handleType *handle, uint64_t currentSimNanos, const BskRustModuleContext *context); \

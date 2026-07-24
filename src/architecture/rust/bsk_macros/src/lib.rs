@@ -21,7 +21,7 @@ use proc_macro2::TokenStream as TokenStream2;
 use quote::{format_ident, quote};
 use syn::{
     parse_macro_input, AngleBracketedGenericArguments, Attribute, Expr, Field, Fields,
-    GenericArgument, ItemStruct, LitStr, PathArguments, Type, Visibility,
+    GenericArgument, ItemStruct, LitStr, Path, PathArguments, Type, Visibility,
 };
 
 /// Mark and validate a Basilisk module's top-level configuration struct.
@@ -30,7 +30,10 @@ use syn::{
 /// ``#[bsk(input, optional)]``, or ``#[bsk(output)]``. For a config named
 /// ``MyModuleConfig``, this attribute generates ``MyModuleInputs`` and
 /// ``MyModuleOutputs`` with corresponding named message-value fields, plus
-/// the Basilisk C ABI construction, destruction, and lifecycle entry points.
+/// the Basilisk C ABI construction, destruction, lifecycle, and guarded
+/// configuration-accessor entry points. Non-port fields may use
+/// ``#[bsk(validate = "path")]`` and
+/// ``#[bsk(deprecated(removal_date = "...", message = "..."))]``.
 #[proc_macro_attribute]
 pub fn module(arguments: TokenStream, input: TokenStream) -> TokenStream {
     let _ = parse_macro_input!(arguments as syn::parse::Nothing);
@@ -46,6 +49,7 @@ fn expand_module(input: ItemStruct) -> syn::Result<TokenStream2> {
     let mut input = input;
     let config_type = input.ident.clone();
     let (input_fields, output_fields) = extract_message_ports(&mut input)?;
+    let config_fields = extract_config_fields(&mut input)?;
     let fields = match &input.fields {
         Fields::Named(fields) => &fields.named,
         _ => unreachable!("validated module config must have named fields"),
@@ -58,6 +62,12 @@ fn expand_module(input: ItemStruct) -> syn::Result<TokenStream2> {
     let module_name = module_name();
     let create_function = format_ident!("Create_{module_name}");
     let config_function = format_ident!("Config_{module_name}");
+    let get_config_field_function = format_ident!("GetConfigField_{module_name}");
+    let set_config_field_function = format_ident!("SetConfigField_{module_name}");
+    let config_field_deprecation_date_function =
+        format_ident!("ConfigFieldDeprecationDate_{module_name}");
+    let config_field_deprecation_message_function =
+        format_ident!("ConfigFieldDeprecationMessage_{module_name}");
     let destroy_function = format_ident!("Destroy_{module_name}");
     let self_init_function = format_ident!("SelfInit_{module_name}");
     let reset_function = format_ident!("Reset_{module_name}");
@@ -66,6 +76,10 @@ fn expand_module(input: ItemStruct) -> syn::Result<TokenStream2> {
         format_ident!("__bsk_assert_io_types_for_{}", config_type.to_string());
     let guard_instance_function =
         format_ident!("__bsk_guard_instance_for_{}", config_type.to_string());
+    let assert_config_field_types_function = format_ident!(
+        "__bsk_assert_config_field_types_for_{}",
+        config_type.to_string()
+    );
     let initialize_config_fields: Vec<TokenStream2> = fields
         .iter()
         .map(|field| {
@@ -252,6 +266,75 @@ fn expand_module(input: ItemStruct) -> syn::Result<TokenStream2> {
             },
         }
     });
+    let config_field_type_assertions = config_fields.iter().map(|field| {
+        let field_type = &field.field_type;
+        quote!(assert_copy::<#field_type>();)
+    });
+    let config_field_validator_assertions = config_fields.iter().filter_map(|field| {
+        let validator = field.validator.as_ref()?;
+        let field_type = &field.field_type;
+        Some(quote!(assert_validator::<#field_type>(#validator);))
+    });
+    let config_field_sizes = config_fields
+        .iter()
+        .enumerate()
+        .map(|(index, field)| {
+            let field_type = &field.field_type;
+            quote!(#index => ::core::mem::size_of::<#field_type>())
+        })
+        .collect::<Vec<_>>();
+    let get_config_field_arms = config_fields.iter().enumerate().map(|(index, field)| {
+        let field_name = &field.name;
+        let field_type = &field.field_type;
+        quote! {
+            #index => unsafe {
+                output_value
+                    .cast::<#field_type>()
+                    .write_unaligned(instance.config.#field_name);
+            }
+        }
+    });
+    let set_config_field_arms = config_fields.iter().enumerate().map(|(index, field)| {
+        let field_name = &field.name;
+        let field_type = &field.field_type;
+        let validate = field
+            .validator
+            .as_ref()
+            .map(|validator| quote!(#validator(&instance.config, &value)?;));
+        quote! {
+            #index => {
+                let value = unsafe {
+                    input_value.cast::<#field_type>().read_unaligned()
+                };
+                #validate
+                instance.config.#field_name = value;
+            }
+        }
+    });
+    let config_field_deprecation_dates =
+        config_fields
+            .iter()
+            .enumerate()
+            .filter_map(|(index, field)| {
+                field.deprecation.as_ref().map(|deprecation| {
+                    let removal_date = &deprecation.removal_date;
+                    quote! {
+                        #index => concat!(#removal_date, "\0").as_ptr().cast()
+                    }
+                })
+            });
+    let config_field_deprecation_messages =
+        config_fields
+            .iter()
+            .enumerate()
+            .filter_map(|(index, field)| {
+                field.deprecation.as_ref().map(|deprecation| {
+                    let message = &deprecation.message;
+                    quote! {
+                        #index => concat!(#message, "\0").as_ptr().cast()
+                    }
+                })
+            });
 
     Ok(quote! {
         #input
@@ -338,6 +421,19 @@ fn expand_module(input: ItemStruct) -> syn::Result<TokenStream2> {
             )
         }
 
+        #[doc(hidden)]
+        #[allow(dead_code, non_snake_case)]
+        fn #assert_config_field_types_function() {
+            fn assert_copy<T: ::core::marker::Copy>() {}
+            fn assert_validator<T>(
+                _validator: fn(&#config_type, &T) -> ::bsk_build::BskResult<()>,
+            ) {
+            }
+
+            #(#config_field_type_assertions)*
+            #(#config_field_validator_assertions)*
+        }
+
         #[cfg(not(test))]
         #[allow(non_snake_case)]
         #[no_mangle]
@@ -385,6 +481,146 @@ fn expand_module(input: ItemStruct) -> syn::Result<TokenStream2> {
             }
             let instance = handle.cast::<#instance_type>();
             ::core::ptr::addr_of_mut!((*instance).config)
+        }
+
+        #[cfg(not(test))]
+        #[allow(non_snake_case)]
+        #[no_mangle]
+        pub unsafe extern "C" fn #get_config_field_function(
+            handle: *mut #handle_type,
+            field_index: usize,
+            output_value: *mut ::core::ffi::c_void,
+            value_size: usize,
+        ) -> *mut ::bsk_build::BskRustError {
+            if handle.is_null() {
+                return ::bsk_build::BskRustError::__invalid_argument(concat!(
+                    stringify!(#get_config_field_function),
+                    ": module handle must not be null",
+                ));
+            }
+            if output_value.is_null() {
+                return ::bsk_build::BskRustError::__invalid_argument(concat!(
+                    stringify!(#get_config_field_function),
+                    ": output value pointer must not be null",
+                ));
+            }
+            let expected_size = match field_index {
+                #(#config_field_sizes,)*
+                _ => {
+                    return ::bsk_build::BskRustError::__invalid_argument(
+                        ::std::format!(
+                            "{}: configuration field index {} is out of range",
+                            stringify!(#get_config_field_function),
+                            field_index,
+                        ),
+                    );
+                }
+            };
+            if value_size != expected_size {
+                return ::bsk_build::BskRustError::__invalid_argument(
+                    ::std::format!(
+                        "{}: configuration field {} requires {} bytes, received {}",
+                        stringify!(#get_config_field_function),
+                        field_index,
+                        expected_size,
+                        value_size,
+                    ),
+                );
+            }
+            let instance = unsafe { &mut *handle.cast::<#instance_type>() };
+            #guard_instance_function(
+                instance,
+                stringify!(#get_config_field_function),
+                |instance| {
+                    match field_index {
+                        #(#get_config_field_arms,)*
+                        _ => unreachable!("configuration field index was validated"),
+                    }
+                    Ok(())
+                },
+            )
+        }
+
+        #[cfg(not(test))]
+        #[allow(non_snake_case)]
+        #[no_mangle]
+        pub unsafe extern "C" fn #set_config_field_function(
+            handle: *mut #handle_type,
+            field_index: usize,
+            input_value: *const ::core::ffi::c_void,
+            value_size: usize,
+        ) -> *mut ::bsk_build::BskRustError {
+            if handle.is_null() {
+                return ::bsk_build::BskRustError::__invalid_argument(concat!(
+                    stringify!(#set_config_field_function),
+                    ": module handle must not be null",
+                ));
+            }
+            if input_value.is_null() {
+                return ::bsk_build::BskRustError::__invalid_argument(concat!(
+                    stringify!(#set_config_field_function),
+                    ": input value pointer must not be null",
+                ));
+            }
+            let expected_size = match field_index {
+                #(#config_field_sizes,)*
+                _ => {
+                    return ::bsk_build::BskRustError::__invalid_argument(
+                        ::std::format!(
+                            "{}: configuration field index {} is out of range",
+                            stringify!(#set_config_field_function),
+                            field_index,
+                        ),
+                    );
+                }
+            };
+            if value_size != expected_size {
+                return ::bsk_build::BskRustError::__invalid_argument(
+                    ::std::format!(
+                        "{}: configuration field {} requires {} bytes, received {}",
+                        stringify!(#set_config_field_function),
+                        field_index,
+                        expected_size,
+                        value_size,
+                    ),
+                );
+            }
+            let instance = unsafe { &mut *handle.cast::<#instance_type>() };
+            #guard_instance_function(
+                instance,
+                stringify!(#set_config_field_function),
+                |instance| {
+                    match field_index {
+                        #(#set_config_field_arms,)*
+                        _ => unreachable!("configuration field index was validated"),
+                    }
+                    Ok(())
+                },
+            )
+        }
+
+        #[cfg(not(test))]
+        #[allow(non_snake_case)]
+        #[no_mangle]
+        pub extern "C" fn #config_field_deprecation_date_function(
+            field_index: usize,
+        ) -> *const ::core::ffi::c_char {
+            match field_index {
+                #(#config_field_deprecation_dates,)*
+                _ => ::core::ptr::null(),
+            }
+        }
+
+        #[cfg(not(test))]
+        #[allow(non_snake_case)]
+        #[no_mangle]
+        pub extern "C" fn #config_field_deprecation_message_function(
+            field_index: usize,
+        ) -> *const ::core::ffi::c_char {
+            match field_index {
+                #(#config_field_deprecation_messages,)*
+                _ => ::core::ptr::null(),
+            }
         }
 
         #[cfg(not(test))]
@@ -538,6 +774,18 @@ struct MessagePort {
     docs: Vec<Attribute>,
 }
 
+struct ConfigField {
+    name: syn::Ident,
+    field_type: Type,
+    validator: Option<Path>,
+    deprecation: Option<ConfigFieldDeprecation>,
+}
+
+struct ConfigFieldDeprecation {
+    removal_date: LitStr,
+    message: LitStr,
+}
+
 enum PortShape {
     Single,
     Array(Expr),
@@ -573,6 +821,154 @@ impl MessagePort {
     }
 }
 
+fn extract_config_fields(input: &mut ItemStruct) -> syn::Result<Vec<ConfigField>> {
+    let fields = match &mut input.fields {
+        Fields::Named(fields) => &mut fields.named,
+        _ => unreachable!("validated module config must have named fields"),
+    };
+    let mut config_fields = Vec::new();
+
+    for field in fields {
+        if message_port_type(&field.ty).is_some() {
+            continue;
+        }
+
+        let annotation_indices = field
+            .attrs
+            .iter()
+            .enumerate()
+            .filter_map(|(index, attribute)| attribute.path().is_ident("bsk").then_some(index))
+            .collect::<Vec<_>>();
+        if annotation_indices.len() > 1 {
+            return Err(syn::Error::new_spanned(
+                field,
+                "a configuration field may have at most one `#[bsk(...)]` annotation",
+            ));
+        }
+
+        let mut validator = None;
+        let mut deprecation = None;
+        if let Some(index) = annotation_indices.first().copied() {
+            let annotation = field.attrs[index].clone();
+            annotation.parse_nested_meta(|meta| {
+                if meta.path.is_ident("validate") {
+                    if validator.is_some() {
+                        return Err(meta.error("duplicate `validate` argument"));
+                    }
+                    let validator_literal: LitStr = meta.value()?.parse()?;
+                    validator =
+                        Some(syn::parse_str::<Path>(&validator_literal.value()).map_err(
+                            |error| meta.error(format!("invalid validator path: {error}")),
+                        )?);
+                    return Ok(());
+                }
+                if meta.path.is_ident("deprecated") {
+                    if deprecation.is_some() {
+                        return Err(meta.error("duplicate `deprecated` argument"));
+                    }
+                    let mut removal_date = None;
+                    let mut message = None;
+                    meta.parse_nested_meta(|deprecated_meta| {
+                        if deprecated_meta.path.is_ident("removal_date") {
+                            if removal_date.is_some() {
+                                return Err(
+                                    deprecated_meta.error("duplicate `removal_date` argument")
+                                );
+                            }
+                            removal_date = Some(deprecated_meta.value()?.parse::<LitStr>()?);
+                            return Ok(());
+                        }
+                        if deprecated_meta.path.is_ident("message") {
+                            if message.is_some() {
+                                return Err(deprecated_meta.error("duplicate `message` argument"));
+                            }
+                            message = Some(deprecated_meta.value()?.parse::<LitStr>()?);
+                            return Ok(());
+                        }
+                        Err(deprecated_meta
+                            .error("expected `removal_date` or `message` in `deprecated(...)`"))
+                    })?;
+                    let removal_date = removal_date.ok_or_else(|| {
+                        meta.error("`deprecated(...)` requires `removal_date = \"YYYY/MM/DD\"`")
+                    })?;
+                    let message = message.ok_or_else(|| {
+                        meta.error("`deprecated(...)` requires `message = \"...\"`")
+                    })?;
+                    validate_deprecation_date(&removal_date)?;
+                    validate_deprecation_literal(&message, "message")?;
+                    deprecation = Some(ConfigFieldDeprecation {
+                        removal_date,
+                        message,
+                    });
+                    return Ok(());
+                }
+                Err(meta.error("expected `validate` or `deprecated` for a configuration field"))
+            })?;
+            field.attrs.remove(index);
+        }
+
+        config_fields.push(ConfigField {
+            name: field
+                .ident
+                .clone()
+                .expect("validated module config must have named fields"),
+            field_type: field.ty.clone(),
+            validator,
+            deprecation,
+        });
+    }
+
+    Ok(config_fields)
+}
+
+fn validate_deprecation_date(literal: &LitStr) -> syn::Result<()> {
+    validate_deprecation_literal(literal, "removal date")?;
+    let value = literal.value();
+    let bytes = value.as_bytes();
+    let valid_shape = bytes.len() == 10
+        && bytes[4] == b'/'
+        && bytes[7] == b'/'
+        && bytes
+            .iter()
+            .enumerate()
+            .all(|(index, byte)| index == 4 || index == 7 || byte.is_ascii_digit());
+    if !valid_shape {
+        return Err(syn::Error::new_spanned(
+            literal,
+            "configuration field deprecation removal date must use `YYYY/MM/DD`",
+        ));
+    }
+
+    let year = value[0..4].parse::<u32>().unwrap_or_default();
+    let month = value[5..7].parse::<u32>().unwrap_or_default();
+    let day = value[8..10].parse::<u32>().unwrap_or_default();
+    let leap_year = year % 4 == 0 && (year % 100 != 0 || year % 400 == 0);
+    let days_in_month = match month {
+        1 | 3 | 5 | 7 | 8 | 10 | 12 => 31,
+        4 | 6 | 9 | 11 => 30,
+        2 if leap_year => 29,
+        2 => 28,
+        _ => 0,
+    };
+    if year == 0 || day == 0 || day > days_in_month {
+        return Err(syn::Error::new_spanned(
+            literal,
+            "configuration field deprecation removal date is not a valid calendar date",
+        ));
+    }
+    Ok(())
+}
+
+fn validate_deprecation_literal(literal: &LitStr, description: &str) -> syn::Result<()> {
+    if literal.value().contains('\0') {
+        return Err(syn::Error::new_spanned(
+            literal,
+            format!("configuration field deprecation {description} must not contain a NUL byte"),
+        ));
+    }
+    Ok(())
+}
+
 fn extract_message_ports(
     input: &mut ItemStruct,
 ) -> syn::Result<(Vec<MessagePort>, Vec<MessagePort>)> {
@@ -604,16 +1000,29 @@ fn parse_message_port(field: &mut Field) -> syn::Result<Option<(PortDirection, M
         .filter_map(|(index, attribute)| attribute.path().is_ident("bsk").then_some(index))
         .collect();
     let port_type = message_port_type(&field.ty);
+    let annotation_declares_port = annotation_indices.iter().any(|index| {
+        let mut declares_port = false;
+        let _ = field.attrs[*index].parse_nested_meta(|meta| {
+            if meta.path.is_ident("input")
+                || meta.path.is_ident("output")
+                || meta.path.is_ident("optional")
+            {
+                declares_port = true;
+            }
+            Ok(())
+        });
+        declares_port
+    });
 
-    if annotation_indices.is_empty() {
-        if port_type.is_some() {
-            return Err(syn::Error::new_spanned(
-                field,
-                "message ports require `#[bsk(input)]`, \
-                 `#[bsk(input, optional)]`, or `#[bsk(output)]`",
-            ));
-        }
+    if port_type.is_none() && !annotation_declares_port {
         return Ok(None);
+    }
+    if annotation_indices.is_empty() {
+        return Err(syn::Error::new_spanned(
+            field,
+            "message ports require `#[bsk(input)]`, \
+             `#[bsk(input, optional)]`, or `#[bsk(output)]`",
+        ));
     }
     if annotation_indices.len() > 1 {
         return Err(syn::Error::new_spanned(
@@ -876,6 +1285,10 @@ mod tests {
         for lifecycle in [
             "Create_",
             "Config_",
+            "GetConfigField_",
+            "SetConfigField_",
+            "ConfigFieldDeprecationDate_",
+            "ConfigFieldDeprecationMessage_",
             "Destroy_",
             "SelfInit_",
             "Reset_",
@@ -917,6 +1330,52 @@ mod tests {
         assert!(!expanded.contains("include !"));
         assert!(!expanded.contains("bsk (input"));
         assert!(!expanded.contains("bsk (output"));
+    }
+
+    #[test]
+    fn generates_validated_and_deprecated_config_accessors() {
+        let input: ItemStruct = parse_quote! {
+            #[repr(C)]
+            pub struct ControllerConfig {
+                #[bsk(validate = "validate_gain")]
+                pub gain: f64,
+                #[bsk(deprecated(
+                    removal_date = "2027/07/24",
+                    message = "Use gain instead."
+                ))]
+                pub oldGain: f64,
+            }
+        };
+
+        let expanded = expand_module(input)
+            .expect("configuration accessor annotations must expand")
+            .to_string();
+        assert!(expanded.contains("GetConfigField_"));
+        assert!(expanded.contains("SetConfigField_"));
+        assert!(expanded.contains("assert_validator :: < f64 > (validate_gain)"));
+        assert!(expanded.contains("validate_gain (& instance . config , & value)"));
+        assert!(expanded.contains("instance . config . gain = value"));
+        assert!(expanded.contains("2027/07/24"));
+        assert!(expanded.contains("Use gain instead."));
+        assert!(!expanded.contains("bsk (validate"));
+        assert!(!expanded.contains("bsk (deprecated"));
+    }
+
+    #[test]
+    fn rejects_invalid_config_field_deprecation_date() {
+        let input: ItemStruct = parse_quote! {
+            #[repr(C)]
+            pub struct ControllerConfig {
+                #[bsk(deprecated(
+                    removal_date = "2027/02/29",
+                    message = "Use replacement instead."
+                ))]
+                pub oldGain: f64,
+            }
+        };
+
+        let error = expand_module(input).expect_err("invalid removal date must fail");
+        assert!(error.to_string().contains("not a valid calendar date"));
     }
 
     #[test]

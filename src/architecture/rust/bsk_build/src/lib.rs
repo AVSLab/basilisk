@@ -51,8 +51,9 @@
 //! message ports. Framework metadata and logging arrive through
 //! [`BskContext`], while persistent implementation state belongs in
 //! [`BskModule::State`]. Neither appears in this FFI view. Macro-generated
-//! lifecycle code owns raw port I/O; the ``update`` function receives and
-//! returns plain message values.
+//! lifecycle code owns raw port I/O. Generated getters and setters copy
+//! complete configuration values through guarded Rust entry points; the
+//! ``update`` function receives and returns plain message values.
 //!
 //! ``///`` doc comments on structs and fields become Doxygen comments in the
 //! generated C header.
@@ -75,6 +76,24 @@
 //! calling [`BskModule::init`]. Built-in supported field types already
 //! implement `Default`; module-defined nested structs and state types must
 //! derive or implement it.
+//! Python-visible non-port fields must also implement `Copy`, which prevents
+//! the configuration boundary from duplicating Rust ownership.
+//!
+//! # Configuration accessors
+//!
+//! Every non-port configuration field receives a Python property plus
+//! ``getX`` and ``setX`` methods. Direct SWIG access to the C-compatible
+//! config view is hidden. The generated accessors copy one complete typed
+//! value and contain Rust panics before returning to C++.
+//!
+//! Add ``#[bsk(validate = "path::to::function")]`` to call a validator before
+//! assignment. Its signature is
+//! ``fn(&ConfigType, &FieldType) -> BskResult<()>``. An expected error leaves
+//! the existing field unchanged and becomes Python ``BasiliskError``.
+//!
+//! Add ``#[bsk(deprecated(removal_date = "YYYY/MM/DD", message = "..."))]``
+//! to issue Basilisk's standard dated deprecation warning from the generated
+//! property, getter, and setter.
 //!
 //! # Framework context
 //!
@@ -140,21 +159,23 @@
 //!
 //! # Nested structs
 //!
-//! A field whose type is another `#[repr(C)]` struct (by value, not a
+//! A field whose type is another `#[repr(C)] + Copy` struct (by value, not a
 //! pointer) is supported. ``cbindgen`` emits referenced structs in dependency
-//! order, and SWIG exposes the nested value field-by-field. Nesting may be
-//! arbitrarily deep, but not self-referential because C cannot represent a
-//! struct containing itself by value.
+//! order. The getter and setter transfer the complete nested value. Nesting
+//! may be arbitrarily deep, but not self-referential because C cannot
+//! represent a struct containing itself by value.
 //! Keep `MsgReader`/`MsgWriter` fields on the top-level config struct, where
 //! the module lifecycle adapter processes them. Keep internal state in
 //! [`BskModule::State`].
 //!
 //! # Fixed-size arrays
 //!
-//! A field of type ``[T; N]`` — ``T`` a primitive or nested ``#[repr(C)]``
-//! struct — maps to a C array field. Multi-dimensional arrays map in C order
-//! (outermost dimension first). SWIG wraps a 1-D array as a Python list of
-//! scalars, a 2-D array as a list of lists, and so on.
+//! A field of type ``[T; N]`` — ``T`` a primitive or nested ``#[repr(C)] +
+//! Copy`` struct — maps to a C array field. The generated Python setter
+//! accepts the complete fixed-size value and rejects a sequence with the
+//! wrong length before entering Rust. The getter returns a Python list.
+//! Multi-dimensional arrays retain C row-major memory order and appear as
+//! nested Python lists.
 //!
 //! # Identifying the module config
 //!
@@ -191,7 +212,8 @@
 ///
 /// The attribute validates that the type is a public, named ``#[repr(C)]``
 /// struct with public FFI-safe fields. It generates named input/output value
-/// structs and the C ABI lifecycle functions. Message ports must use
+/// structs plus the C ABI lifecycle and guarded configuration-accessor
+/// functions. Message ports must use
 /// ``#[bsk(input)]``,
 /// ``#[bsk(input, optional)]``, or ``#[bsk(output)]``. The module's
 /// ``build.rs`` passes this type's exact name to [`generate_bindings`] when

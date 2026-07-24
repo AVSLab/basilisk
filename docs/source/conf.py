@@ -758,7 +758,11 @@ class fileCrawler():
 
             generated_header = self._generated_rust_header(module_name)
             if generated_header:
-                project_name = module_name + "Rust"
+                # Breathe caches AutoDoxygen projects by source directory.
+                # Use one project for all generated Rust headers because they
+                # share dist3/rust_headers; separate projects can otherwise
+                # reuse another module's Doxygen input list.
+                project_name = "BasiliskRustModules"
                 lines += "Generated Module API\n--------------------\n\n"
                 lines += (
                     "This C-compatible interface is generated from the Rust "
@@ -770,9 +774,14 @@ class fileCrawler():
                     "   :sections: innerclass briefdescription "
                     "detaileddescription public-attrib public-func\n\n"
                 )
+                generated_headers = sorted(
+                    path.name
+                    for path in generated_header.parent.glob("*.h")
+                    if path.is_file()
+                )
                 sources[project_name] = (
                     str(generated_header.parent),
-                    [generated_header.name],
+                    generated_headers,
                 )
 
             if self.newFiles:

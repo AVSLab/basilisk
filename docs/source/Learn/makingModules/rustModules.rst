@@ -354,6 +354,7 @@ output, and no private state:
     #[repr(C)]
     pub struct myModuleConfig {
         /// [Nm] Proportional gain
+        #[bsk(validate = "validate_gain")]
         pub K: f64,
         /// [-] Attitude guidance input
         #[bsk(input)]
@@ -361,6 +362,16 @@ output, and no private state:
         /// [Nm] Commanded body torque output
         #[bsk(output)]
         pub cmdTorqueOutMsg: MsgWriter<CmdTorqueBodyMsg>,
+    }
+
+    fn validate_gain(
+        _config: &myModuleConfig,
+        proposed_gain: &f64,
+    ) -> BskResult<()> {
+        if !proposed_gain.is_finite() || *proposed_gain <= 0.0 {
+            return Err(BskError::new("K must be finite and positive"));
+        }
+        Ok(())
     }
 
     impl BskModule for myModuleConfig {
@@ -379,9 +390,9 @@ output, and no private state:
             _context: &BskContext<'_>,
             _current_sim_nanos: u64,
         ) -> BskResult<Self::Outputs> {
-            if self.K <= 0.0 {
-                return Err(BskError::new("K must be positive"));
-            }
+            // Retain reset-time validation for defaults, internal changes,
+            // and relationships involving multiple fields.
+            validate_gain(self, &self.K)?;
             Ok(Self::Outputs::default())
         }
 
@@ -413,16 +424,17 @@ The Rust-specific declarations mean:
 
 ``#[repr(C)]``
    Requests a C-compatible field layout for the Python-visible configuration.
-   This is required because the generated C++/SWIG wrapper accesses these
-   fields across the language boundary.
+   The generated ABI copies complete typed values between the C++/SWIG wrapper
+   and the Rust-owned module.
 
 ``#[bsk_build::module]``
    Identifies the one top-level module configuration, validates its supported
    field types, and generates the lifecycle entry points.
 
 ``pub``
-   Makes a configuration field public to the generated wrapper. These fields
-   become normal attributes on the Python module object.
+   Makes a configuration field visible to ``cbindgen``. The generated wrapper
+   hides direct field access and exposes a Rust-backed Python property plus
+   ``getX`` and ``setX`` methods.
 
 ``type State``, ``Inputs``, and ``Outputs``
    Select the private state type and the named message-value structs used by
@@ -433,6 +445,73 @@ The Rust-specific declarations mean:
 ``BskResult<T>``
    Represents either success, ``Ok(T)``, or an expected module failure,
    ``Err(BskError)``.
+
+Configuration Getters, Setters, and Validation
+----------------------------------------------
+
+Every non-port configuration field receives generated getter and setter
+methods. For a field named ``increment``, Python can use either the familiar
+property or the explicit methods:
+
+.. code-block:: python
+
+   module.increment = 2.0
+   value = module.increment
+
+   module.setIncrement(2.0)
+   value = module.getIncrement()
+
+Both forms call the same guarded Rust accessor. Fixed-size arrays are copied
+and validated as complete values. Assigning the wrong number of elements
+raises ``BasiliskError`` without changing the field.
+
+Use ``#[bsk(validate = "...")]`` when an assignment requires immediate
+validation. The named function receives the current configuration and a
+borrowed proposed value:
+
+.. code-block:: rust
+
+   #[bsk(validate = "validate_gain")]
+   pub K: f64,
+
+   fn validate_gain(
+       _config: &myModuleConfig,
+       proposed_gain: &f64,
+   ) -> BskResult<()> {
+       if !proposed_gain.is_finite() || *proposed_gain <= 0.0 {
+           return Err(BskError::new("K must be finite and positive"));
+       }
+       Ok(())
+   }
+
+The generated setter calls the validator before assignment. Returning
+``Err(BskError)`` raises Python ``BasiliskError`` and preserves the previous
+value. The first argument provides the current configuration when checks need
+to involve other fields.
+
+Module code can still update ``self.K`` directly inside Rust. Such internal
+assignments do not call the external setter. Retain appropriate reset-time
+validation for required values, relationships involving several fields, and
+configuration that may be changed internally.
+
+Data arriving through an input message also does not pass through a
+configuration setter. Validate such data after reading it in ``reset`` or
+``update``.
+
+Deprecate a configuration property without immediately breaking existing
+Python scripts by supplying a removal date and migration message:
+
+.. code-block:: rust
+
+   #[bsk(deprecated(
+       removal_date = "2027/07/24",
+       message = "Use newGain instead."
+   ))]
+   pub oldGain: f64,
+
+The generated property and its ``getOldGain`` and ``setOldGain`` methods issue
+the standard dated Basilisk deprecation warning. A deprecated field may also
+have a ``validate`` argument in the same ``#[bsk(...)]`` annotation.
 
 Module Lifecycle
 ----------------
@@ -666,10 +745,12 @@ or the public fields of a C++ module. It can contain:
   fixed-size arrays.
 
 Every configuration field must implement Rust's ``Default`` behavior because
-Rust constructs the complete module before calling ``init``. Built-in scalar,
-array, and message-port types already provide defaults. Add
-``#[derive(Default)]`` or a manual implementation to module-defined nested
-structs.
+Rust constructs the complete module before calling ``init``. Non-port fields
+must also implement ``Copy`` so the generated boundary cannot duplicate Rust
+ownership. Built-in scalar and array types already provide both traits, and
+message ports provide their required defaults. Add
+``#[derive(Clone, Copy, Default)]`` or equivalent manual implementations to
+module-defined nested structs.
 
 Configuration fields cannot contain raw pointers, Rust enums, dynamically
 sized strings, or ``Vec`` collections. These types do not have a safe,
@@ -680,7 +761,7 @@ Nested parameters can be grouped by value:
 .. code-block:: rust
 
     #[repr(C)]
-    #[derive(Default)]
+    #[derive(Clone, Copy, Default)]
     pub struct ControllerGains {
         /// [Nm] Proportional gain
         pub K: f64,
@@ -695,6 +776,15 @@ Nested parameters can be grouped by value:
         pub gains: ControllerGains,
         // Message ports follow.
     }
+
+The getter returns a copy of a nested value. Modify that copy and assign the
+complete value through the setter:
+
+.. code-block:: python
+
+    gains = module.gains
+    gains.K = 0.1  # [Nm]
+    module.gains = gains
 
 Fixed-size arrays map to normal C arrays and appear as Python lists:
 
@@ -860,9 +950,10 @@ another compiled module:
     module.attGuidInMsg.subscribeTo(attitudeGuidanceMessage)
     simulation.AddModelToTask("taskName", module)
 
-The Python object directly exposes the marked configuration fields and normal
-``SysModel`` fields. The generated ``myModuleConfig`` proxy is an
-implementation detail and should not be constructed separately.
+The Python object exposes generated properties for the marked configuration
+fields along with the normal ``SysModel`` fields. Each property uses its Rust
+getter or setter. The generated ``myModuleConfig`` proxy is an implementation
+detail and should not be constructed separately.
 
 Document the Module
 -------------------
@@ -976,13 +1067,15 @@ Current Limitations
   between Basilisk releases.
 * Python-visible configuration is limited to supported C-compatible types.
   Put dynamic Rust data in ``BskModule::State``.
-* Arbitrary Rust methods are not exported to Python; the public interface is
-  the standard Basilisk lifecycle, configuration fields, and messages.
+* Arbitrary Rust methods are not exported to Python. Configuration fields
+  receive generated getters, setters, and properties; other public methods
+  remain the standard Basilisk lifecycle and message interfaces.
 * The Rust utility bindings cover C-compatible Basilisk utilities and
   constants. C++-only utilities require a C-compatible wrapper before Rust can
   use them; use ``nalgebra`` for native Rust vector and matrix operations.
-* Adding or changing a message payload requires regeneration of the committed
-  ``bsk-messages`` bindings.
+* After adding or changing a message payload, rerun
+  ``python3 conanfile.py --rustModules True`` to regenerate the matching Rust
+  bindings in the build directory.
 
 Reference
 ---------

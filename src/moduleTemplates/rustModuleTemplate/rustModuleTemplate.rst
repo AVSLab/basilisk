@@ -44,10 +44,12 @@ This module is a template only and does not model a physical system. It
 demonstrates the Rust module lifecycle, explicit message-port annotations,
 named input and output values, optional message inputs, output messages, and
 fixed-size arrays of message ports. It also demonstrates a Python-configurable
-``increment`` parameter that is initialized in Rust and validated during reset
-with ``BskResult``. The ``panicOnUpdate`` field is a test-only fault-injection
-hook used to verify that the generated ABI contains an unexpected Rust panic
-before it crosses into C++.
+``increment`` parameter that is initialized in Rust, validated immediately by
+its generated setter, and checked again during reset. The ``legacyDummy``
+parameter demonstrates generated Basilisk deprecation warnings. The
+``panicOnUpdate`` field is a test-only fault-injection hook used to verify that
+the generated ABI contains an unexpected Rust panic before it crosses into
+C++.
 
 User Guide
 ----------
@@ -65,8 +67,16 @@ compiled Basilisk module:
    simulation.AddModelToTask("taskName", module)
 
 ``module.increment`` defaults to 1 and must be finite and strictly positive.
-An invalid value returns ``BskError`` from Rust and causes initialization to
-raise ``BasiliskError`` without using cross-language unwinding.
+Assigning an invalid value raises ``BasiliskError`` immediately and preserves
+the previous value. ``module.getIncrement()`` and
+``module.setIncrement(value)`` use the same generated Rust getter and setter
+as the ``module.increment`` property. Reset repeats the validation as a
+defensive check for defaults or changes made inside Rust.
+
+The unused ``legacyDummy`` sample parameter is deprecated in favor of
+``dummy``. Reading or writing it demonstrates the standard dated Basilisk
+deprecation warning generated from the field annotation. New modules only
+need such an annotation when retaining an old property during a migration.
 
 Leave ``module.panicOnUpdate`` set to its default value of ``False`` during
 normal use. Setting it to ``True`` deliberately panics during update so the

@@ -20,6 +20,7 @@
 
 import ctypes
 import sys
+import warnings
 
 import numpy as np
 import pytest
@@ -27,6 +28,7 @@ import pytest
 from Basilisk.architecture import messaging
 from Basilisk.architecture.bskLogging import BasiliskError
 from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import deprecated
 from Basilisk.utilities import macros
 
 rustModuleTemplate = pytest.importorskip(
@@ -93,6 +95,7 @@ class _ExpectedRustModuleTemplateConfig(ctypes.Structure):
         ("data_in_msgs", _ExpectedCModuleTemplatePort * 2),
         ("data_out_msg", _ExpectedCModuleTemplatePort),
         ("data_out_msgs", _ExpectedCModuleTemplatePort * 2),
+        ("legacy_dummy", ctypes.c_double),
         ("panic_on_update", ctypes.c_bool),
     ]
 
@@ -149,16 +152,31 @@ def _destroy_rust_instance(extension, handle):
 
 def test_rust_module_template_python_api():
     """Freeze the module-first Python API retained by the opaque-handle design."""
-    expected_fields = {
+    expected_parameter_fields = {
         "dummy",
         "increment",
+        "legacyDummy",
+        "panicOnUpdate",
+    }
+    expected_port_fields = {
         "dataInMsg",
         "dataInMsgs",
         "dataOutMsg",
         "dataOutMsgs",
-        "panicOnUpdate",
     }
-    expected_wrapper_methods = {"SelfInit", "Reset", "UpdateState"}
+    expected_wrapper_methods = {
+        "SelfInit",
+        "Reset",
+        "UpdateState",
+        "getDummy",
+        "setDummy",
+        "getIncrement",
+        "setIncrement",
+        "getLegacyDummy",
+        "setLegacyDummy",
+        "getPanicOnUpdate",
+        "setPanicOnUpdate",
+    }
     expected_framework_fields = {
         "ModelTag",
         "moduleID",
@@ -167,8 +185,15 @@ def test_rust_module_template_python_api():
         "bskLogger",
     }
 
-    assert expected_fields.issubset(rustModuleTemplate.RustModuleTemplateConfig.__dict__)
-    assert expected_fields.issubset(rustModuleTemplate.rustModuleTemplate.__dict__)
+    assert expected_parameter_fields.isdisjoint(
+        rustModuleTemplate.RustModuleTemplateConfig.__dict__
+    )
+    assert expected_port_fields.issubset(
+        rustModuleTemplate.RustModuleTemplateConfig.__dict__
+    )
+    assert (expected_parameter_fields | expected_port_fields).issubset(
+        rustModuleTemplate.rustModuleTemplate.__dict__
+    )
     assert expected_wrapper_methods.issubset(rustModuleTemplate.rustModuleTemplate.__dict__)
 
     module = rustModuleTemplate.rustModuleTemplate()
@@ -184,6 +209,24 @@ def test_rust_module_template_python_api():
     assert module.increment == 1.0
     module.dummy = 12.5  # [-]
     assert module.dummy == 12.5
+    module.setIncrement(2.5)  # [-]
+    assert module.getIncrement() == 2.5
+    with pytest.raises(
+        BasiliskError,
+        match="rustModuleTemplate.increment must be finite and strictly positive",
+    ):
+        module.increment = 0.0  # [-]
+    assert module.increment == 2.5
+    with warnings.catch_warnings(record=True) as caught_warnings:
+        warnings.simplefilter("always")
+        module.legacyDummy = 3.0  # [-]
+        assert module.legacyDummy == 3.0
+    assert len(caught_warnings) == 2
+    assert all(
+        issubclass(warning.category, deprecated.BSKDeprecationWarning)
+        for warning in caught_warnings
+    )
+    assert all("Use dummy instead." in str(warning.message) for warning in caught_warnings)
     assert hasattr(module.dataInMsg, "subscribeTo")
     assert hasattr(module.dataOutMsg, "recorder")
     assert len(module.dataInMsgs) == 2
@@ -210,6 +253,10 @@ def test_rust_module_template_python_api():
     for symbol in (
         "Create_rustModuleTemplate",
         "Config_rustModuleTemplate",
+        "GetConfigField_rustModuleTemplate",
+        "SetConfigField_rustModuleTemplate",
+        "ConfigFieldDeprecationDate_rustModuleTemplate",
+        "ConfigFieldDeprecationMessage_rustModuleTemplate",
         "Destroy_rustModuleTemplate",
         "SelfInit_rustModuleTemplate",
         "Reset_rustModuleTemplate",
@@ -255,7 +302,7 @@ def test_rust_module_template_abi_layout():
     assert _ExpectedCModuleTemplatePort.payload_pointer.offset == 56
     assert _ExpectedCModuleTemplatePort.header_pointer.offset == 64
 
-    assert ctypes.sizeof(_ExpectedRustModuleTemplateConfig) == 456
+    assert ctypes.sizeof(_ExpectedRustModuleTemplateConfig) == 464
     assert ctypes.alignment(_ExpectedRustModuleTemplateConfig) == 8
     assert _ExpectedRustModuleTemplateConfig.dummy.offset == 0
     assert _ExpectedRustModuleTemplateConfig.increment.offset == 8
@@ -263,7 +310,8 @@ def test_rust_module_template_abi_layout():
     assert _ExpectedRustModuleTemplateConfig.data_in_msgs.offset == 88
     assert _ExpectedRustModuleTemplateConfig.data_out_msg.offset == 232
     assert _ExpectedRustModuleTemplateConfig.data_out_msgs.offset == 304
-    assert _ExpectedRustModuleTemplateConfig.panic_on_update.offset == 448
+    assert _ExpectedRustModuleTemplateConfig.legacy_dummy.offset == 448
+    assert _ExpectedRustModuleTemplateConfig.panic_on_update.offset == 456
 
     extension = ctypes.CDLL(rustModuleTemplate._rustModuleTemplate.__file__)
     get_config = extension.Config_rustModuleTemplate
@@ -286,12 +334,110 @@ def test_rust_module_template_abi_layout():
         _destroy_rust_instance(extension, handle)
 
 
+def test_rust_module_template_config_accessor_abi():
+    """Exercise typed config access, validation, and deprecation metadata."""
+    extension = ctypes.CDLL(rustModuleTemplate._rustModuleTemplate.__file__)
+    get_field = extension.GetConfigField_rustModuleTemplate
+    get_field.argtypes = [
+        ctypes.c_void_p,
+        ctypes.c_size_t,
+        ctypes.c_void_p,
+        ctypes.c_size_t,
+    ]
+    get_field.restype = ctypes.c_void_p
+    set_field = extension.SetConfigField_rustModuleTemplate
+    set_field.argtypes = [
+        ctypes.c_void_p,
+        ctypes.c_size_t,
+        ctypes.c_void_p,
+        ctypes.c_size_t,
+    ]
+    set_field.restype = ctypes.c_void_p
+    deprecation_date = extension.ConfigFieldDeprecationDate_rustModuleTemplate
+    deprecation_date.argtypes = [ctypes.c_size_t]
+    deprecation_date.restype = ctypes.c_char_p
+    deprecation_message = extension.ConfigFieldDeprecationMessage_rustModuleTemplate
+    deprecation_message.argtypes = [ctypes.c_size_t]
+    deprecation_message.restype = ctypes.c_char_p
+
+    handle = _create_rust_instance(extension)
+    try:
+        increment = ctypes.c_double(2.5)  # [-]
+        _assert_no_abi_error(
+            extension,
+            set_field(handle, 1, ctypes.byref(increment), ctypes.sizeof(increment)),
+        )
+        returned_increment = ctypes.c_double()  # [-]
+        _assert_no_abi_error(
+            extension,
+            get_field(
+                handle,
+                1,
+                ctypes.byref(returned_increment),
+                ctypes.sizeof(returned_increment),
+            ),
+        )
+        assert returned_increment.value == 2.5
+
+        increment.value = 0.0  # [-]
+        expected_error = set_field(
+            handle,
+            1,
+            ctypes.byref(increment),
+            ctypes.sizeof(increment),
+        )
+        kind, message = _consume_abi_error(extension, expected_error)
+        assert kind == _BSK_RUST_ERROR_EXPECTED
+        assert "must be finite and strictly positive" in message
+
+        _assert_no_abi_error(
+            extension,
+            get_field(
+                handle,
+                1,
+                ctypes.byref(returned_increment),
+                ctypes.sizeof(returned_increment),
+            ),
+        )
+        assert returned_increment.value == 2.5
+
+        invalid_error = get_field(
+            handle,
+            99,
+            ctypes.byref(returned_increment),
+            ctypes.sizeof(returned_increment),
+        )
+        kind, message = _consume_abi_error(extension, invalid_error)
+        assert kind == _BSK_RUST_ERROR_INVALID_ARGUMENT
+        assert "field index 99 is out of range" in message
+
+        invalid_error = get_field(
+            handle,
+            1,
+            ctypes.byref(returned_increment),
+            ctypes.sizeof(ctypes.c_float),
+        )
+        kind, message = _consume_abi_error(extension, invalid_error)
+        assert kind == _BSK_RUST_ERROR_INVALID_ARGUMENT
+        assert "requires 8 bytes, received 4" in message
+
+        assert deprecation_date(0) is None
+        assert deprecation_date(2) == b"2027/07/24"
+        assert deprecation_message(2) == b"Use dummy instead."
+    finally:
+        _destroy_rust_instance(extension, handle)
+
+
 def test_rust_module_template_rust_owned_instance_lifecycle():
     """Exercise opaque instance ownership and handle-based lifecycle calls."""
     extension = ctypes.CDLL(rustModuleTemplate._rustModuleTemplate.__file__)
     expected_symbols = (
         "Create_rustModuleTemplate",
         "Config_rustModuleTemplate",
+        "GetConfigField_rustModuleTemplate",
+        "SetConfigField_rustModuleTemplate",
+        "ConfigFieldDeprecationDate_rustModuleTemplate",
+        "ConfigFieldDeprecationMessage_rustModuleTemplate",
         "Destroy_rustModuleTemplate",
         "SelfInit_rustModuleTemplate",
         "Reset_rustModuleTemplate",
@@ -483,21 +629,14 @@ def test_rust_module_template(connect_input):
 
 
 def test_rust_module_template_expected_error():
-    """Translate a Rust ``BskError`` into a Python ``BasiliskError``."""
-    simulation = SimulationBaseClass.SimBaseClass()
-    process = simulation.CreateNewProcess("testProcess")
-    task_time_step = macros.sec2nano(0.5)  # [ns]
-    process.addTask(simulation.CreateNewTask("testTask", task_time_step))
-
+    """Reject invalid Python configuration without changing the prior value."""
     module = rustModuleTemplate.rustModuleTemplate()
-    module.increment = 0.0  # [-]
-    simulation.AddModelToTask("testTask", module)
-
     with pytest.raises(
         BasiliskError,
         match="rustModuleTemplate.increment must be finite and strictly positive",
     ):
-        simulation.InitializeSimulation()
+        module.increment = 0.0  # [-]
+    assert module.increment == 1.0
 
 
 def test_rust_module_template_panic_is_contained(capfd):
@@ -514,7 +653,14 @@ def test_rust_module_template_panic_is_contained(capfd):
     ):
         module.UpdateState(0)  # [ns]
 
-    module.panicOnUpdate = False
+    with pytest.raises(
+        BasiliskError,
+        match=(
+            "Rust module instance cannot execute SetConfigField_rustModuleTemplate "
+            "after a previous panic in Update_rustModuleTemplate"
+        ),
+    ):
+        module.panicOnUpdate = False
     with pytest.raises(
         BasiliskError,
         match=(

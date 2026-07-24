@@ -27,6 +27,7 @@ pub struct RustModuleTemplateConfig {
     /// [-] Python-visible sample counter
     pub dummy: f64,
     /// [-] Positive amount added to the sample counter on each update
+    #[bsk(validate = "validate_increment")]
     pub increment: f64,
     /// [-] Optional input message
     #[bsk(input, optional)]
@@ -40,8 +41,25 @@ pub struct RustModuleTemplateConfig {
     /// [-] Output array written element-by-element from returned ``dataOutMsgs``
     #[bsk(output)]
     pub dataOutMsgs: [MsgWriter<CModuleTemplateMsg>; 2],
+    /// [-] Deprecated sample parameter retained to demonstrate migration warnings
+    #[bsk(deprecated(removal_date = "2027/07/24", message = "Use dummy instead."))]
+    pub legacyDummy: f64,
     /// [-] Test-only fault injection that deliberately panics during update
     pub panicOnUpdate: bool,
+}
+
+/// Validate a proposed value before the generated ``increment`` setter stores it.
+///
+/// :param config: Current module configuration, available for cross-field checks.
+/// :param increment: Proposed sample-counter increment [-].
+/// :returns: Success when the proposed increment is finite and positive.
+fn validate_increment(_config: &RustModuleTemplateConfig, increment: &f64) -> BskResult<()> {
+    if !increment.is_finite() || *increment <= 0.0 {
+        return Err(BskError::new(
+            "rustModuleTemplate.increment must be finite and strictly positive",
+        ));
+    }
+    Ok(())
 }
 
 /// Rust-owned state that is never exposed through C, C++, or Python.
@@ -98,11 +116,7 @@ impl BskModule for RustModuleTemplateConfig {
     ) -> BskResult<Self::Outputs> {
         // Validate Python-visible configuration before the simulation runs.
         // Return BskError for expected failures instead of panicking.
-        if !self.increment.is_finite() || self.increment <= 0.0 {
-            return Err(BskError::new(
-                "rustModuleTemplate.increment must be finite and strictly positive",
-            ));
-        }
+        validate_increment(self, &self.increment)?;
 
         // Reset both Python-visible configuration and private Rust state.
         self.dummy = 0.0; // [-]
@@ -189,7 +203,7 @@ mod tests {
     /// Verify that only Python-facing parameters and ports cross the config ABI.
     #[test]
     fn config_abi_contains_only_public_module_fields() {
-        assert_eq!(size_of::<RustModuleTemplateConfig>(), 456);
+        assert_eq!(size_of::<RustModuleTemplateConfig>(), 464);
         assert_eq!(align_of::<RustModuleTemplateConfig>(), 8);
         assert_eq!(offset_of!(RustModuleTemplateConfig, dummy), 0);
         assert_eq!(offset_of!(RustModuleTemplateConfig, increment), 8);
@@ -197,7 +211,8 @@ mod tests {
         assert_eq!(offset_of!(RustModuleTemplateConfig, dataInMsgs), 88);
         assert_eq!(offset_of!(RustModuleTemplateConfig, dataOutMsg), 232);
         assert_eq!(offset_of!(RustModuleTemplateConfig, dataOutMsgs), 304);
-        assert_eq!(offset_of!(RustModuleTemplateConfig, panicOnUpdate), 448);
+        assert_eq!(offset_of!(RustModuleTemplateConfig, legacyDummy), 448);
+        assert_eq!(offset_of!(RustModuleTemplateConfig, panicOnUpdate), 456);
     }
 
     /// Verify that generated input and output values use the config port names.
@@ -245,6 +260,7 @@ mod tests {
             dataInMsgs: core::array::from_fn(|_| MsgReader::default()),
             dataOutMsg: MsgWriter::default(),
             dataOutMsgs: core::array::from_fn(|_| MsgWriter::default()),
+            legacyDummy: 0.0, // [-]
             panicOnUpdate: false,
         };
         let mut state = RustModuleTemplateState::default();
@@ -283,6 +299,7 @@ mod tests {
             dataInMsgs: core::array::from_fn(|_| MsgReader::default()),
             dataOutMsg: MsgWriter::default(),
             dataOutMsgs: core::array::from_fn(|_| MsgWriter::default()),
+            legacyDummy: 0.0, // [-]
             panicOnUpdate: false,
         };
         let mut state = RustModuleTemplateState::default();

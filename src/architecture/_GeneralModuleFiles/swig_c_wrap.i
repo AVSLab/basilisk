@@ -29,7 +29,9 @@
     #include <cstdio>
     #include <exception>
     #include <memory>
+    #include <string>
     #include <type_traits>
+    #include <vector>
 %}
 %include <std_string.i>
 
@@ -86,6 +88,10 @@ template <typename TConfig,
           typename THandle,
           BskRustError* (*createInstanceFun)(THandle**),
           TConfig* (*configViewFun)(THandle*),
+          BskRustError* (*getConfigFieldFun)(THandle*, size_t, void*, size_t),
+          BskRustError* (*setConfigFieldFun)(THandle*, size_t, const void*, size_t),
+          const char* (*configFieldDeprecationDateFun)(size_t),
+          const char* (*configFieldDeprecationMessageFun)(size_t),
           BskRustError* (*destroyInstanceFun)(THandle*),
           BskRustError* (*updateStateFun)(THandle*, uint64_t, const BskRustModuleContext*),
           BskRustError* (*selfInitFun)(THandle*, const BskRustModuleContext*),
@@ -120,6 +126,26 @@ class RustWrapper : public SysModel {
     // Allows accessing the elements of the config from the wrapper in Python
     // Similar to how the smart pointers are implemented in SWIG
     TConfig* operator->() const { return this->config; }
+
+    void __bskGetConfigField(size_t fieldIndex, void *outputValue, size_t valueSize) const {
+        RustWrapper::throwOnRustError(
+            getConfigFieldFun(this->instance.get(), fieldIndex, outputValue, valueSize));
+    }
+
+    void __bskSetConfigField(size_t fieldIndex, const void *inputValue, size_t valueSize) {
+        RustWrapper::throwOnRustError(
+            setConfigFieldFun(this->instance.get(), fieldIndex, inputValue, valueSize));
+    }
+
+    std::string __bskConfigFieldDeprecationDate(size_t fieldIndex) const {
+        const char *value = configFieldDeprecationDateFun(fieldIndex);
+        return value == nullptr ? std::string{} : std::string{value};
+    }
+
+    std::string __bskConfigFieldDeprecationMessage(size_t fieldIndex) const {
+        const char *value = configFieldDeprecationMessageFun(fieldIndex);
+        return value == nullptr ? std::string{} : std::string{value};
+    }
 
   private:
     static void throwOnRustError(BskRustError *error) {
@@ -273,6 +299,10 @@ class RustWrapper : public SysModel {
     // RustWrapper specialization below.
     %ignore Create_ ## moduleName;
     %ignore Config_ ## moduleName;
+    %ignore GetConfigField_ ## moduleName;
+    %ignore SetConfigField_ ## moduleName;
+    %ignore ConfigFieldDeprecationDate_ ## moduleName;
+    %ignore ConfigFieldDeprecationMessage_ ## moduleName;
     %ignore Destroy_ ## moduleName;
     %ignore Update_ ## moduleName;
     %ignore SelfInit_ ## moduleName;
@@ -302,6 +332,10 @@ class RustWrapper : public SysModel {
         handleName,
         Create_ ## moduleName,
         Config_ ## moduleName,
+        GetConfigField_ ## moduleName,
+        SetConfigField_ ## moduleName,
+        ConfigFieldDeprecationDate_ ## moduleName,
+        ConfigFieldDeprecationMessage_ ## moduleName,
         Destroy_ ## moduleName,
         Update_ ## moduleName,
         SelfInit_ ## moduleName,

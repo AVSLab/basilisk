@@ -31,6 +31,10 @@ function(_bsk_add_rust_windows_exports SWIG_TARGET MODULE_NAME)
   set(_rust_exports
       "Create_${MODULE_NAME}"
       "Config_${MODULE_NAME}"
+      "GetConfigField_${MODULE_NAME}"
+      "SetConfigField_${MODULE_NAME}"
+      "ConfigFieldDeprecationDate_${MODULE_NAME}"
+      "ConfigFieldDeprecationMessage_${MODULE_NAME}"
       "Destroy_${MODULE_NAME}"
       "SelfInit_${MODULE_NAME}"
       "Reset_${MODULE_NAME}"
