@@ -70,13 +70,15 @@ def _makeBuildInfo(
     standardLibrary="",
     runtime="",
     runtimeType="",
+    rustModules=True,
+    rustCorrosion=True,
 ):
     standardLibraryFamily = standardLibrary
     if standardLibrary.startswith("libstdc++"):
         standardLibraryFamily = "libstdc++"
     abiFamily = "msvc" if system == "Windows" else "itanium"
     return {
-        "schemaVersion": 3,
+        "schemaVersion": 4,
         "artifact": {
             "basiliskVersion": "2.12.0",
             "sourceRevision": "0123456789abcdef",
@@ -99,6 +101,8 @@ def _makeBuildInfo(
                 "generatorPlatform": generatorPlatform,
                 "generatorToolset": generatorToolset,
                 "pythonLimitedApi": "0x03090000",
+                "rustModules": rustModules,
+                "rustCorrosion": rustCorrosion,
             },
             "compilers": {
                 "c": {
@@ -125,6 +129,13 @@ def _makeBuildInfo(
                     "standard": "17",
                     "extensions": "OFF",
                 },
+                "rust": {
+                    "id": "rustc" if rustModules else "",
+                    "version": "1.97.1" if rustModules else "",
+                    "executable": "rustc" if rustModules else "",
+                    "launcher": "",
+                    "target": f"{processor}-unknown-linux-gnu" if rustModules else "",
+                },
             },
             "conanSettings": {
                 "buildType": "Release",
@@ -138,6 +149,8 @@ def _makeBuildInfo(
                 "conan": "2.23.0",
                 "swig": "4.4.1",
                 "python": "3.14.6",
+                "cargo": "1.97.1" if rustModules else "",
+                "corrosion": "0.6.1" if rustCorrosion else "",
             },
         },
         "abi": {
@@ -220,7 +233,7 @@ def test_build_info():
     diagnostics = buildInfo["diagnostics"]
     abi = buildInfo["abi"]
 
-    assert buildInfo["schemaVersion"] == 3
+    assert buildInfo["schemaVersion"] == 4
     assert buildInfo["artifact"]["basiliskVersion"]
     if Basilisk.__version__ != "0.0.0":
         assert buildInfo["artifact"]["basiliskVersion"] == Basilisk.__version__
@@ -245,6 +258,8 @@ def test_build_info():
     else:
         assert diagnostics["build"]["configuration"]
     assert diagnostics["build"]["generator"]
+    assert isinstance(diagnostics["build"]["rustModules"], bool)
+    assert isinstance(diagnostics["build"]["rustCorrosion"], bool)
 
     for language in ("c", "cxx"):
         compilerInfo = diagnostics["compilers"][language]
@@ -271,6 +286,19 @@ def test_build_info():
     assert diagnostics["tools"]["cmake"]
     assert diagnostics["tools"]["swig"]
     assert diagnostics["tools"]["python"]
+    rustCompilerInfo = diagnostics["compilers"]["rust"]
+    if diagnostics["build"]["rustModules"]:
+        assert rustCompilerInfo["id"] == "rustc"
+        assert rustCompilerInfo["version"]
+        assert rustCompilerInfo["executable"]
+        assert rustCompilerInfo["target"]
+        assert diagnostics["tools"]["cargo"]
+        if diagnostics["build"]["rustCorrosion"]:
+            assert diagnostics["tools"]["corrosion"]
+    else:
+        assert not any(rustCompilerInfo.values())
+        assert not diagnostics["tools"]["cargo"]
+        assert not diagnostics["tools"]["corrosion"]
 
     buildInfo["abi"]["target"]["system"] = "modified"
     assert Basilisk.getBuildInfo()["abi"]["target"]["system"] == platform.system()
@@ -350,6 +378,8 @@ def test_print_build_info(capsys):
     assert buildInfo["artifact"]["basiliskVersion"] in output
     assert diagnostics["compilers"]["c"]["id"] in output
     assert diagnostics["compilers"]["cxx"]["id"] in output
+    if diagnostics["build"]["rustModules"]:
+        assert diagnostics["compilers"]["rust"]["version"] in output
     assert "C++17" in output
     assert standardLibraryLabel in output
     assert buildInfo["abi"]["dependencies"]["eigen"]["version"] in output
@@ -428,3 +458,45 @@ def test_format_build_info_for_supported_platforms(buildInfo, expectedText):
     for text in expectedText:
         assert text in output
     assert "''" not in output
+
+
+def test_format_build_info_without_rust():
+    """Verify that Rust details are omitted when Rust modules are disabled."""
+    buildInfo = _makeBuildInfo(
+        "Linux",
+        "x86_64",
+        "GNU",
+        "15.1.0",
+        "g++",
+        "Ninja",
+        standardLibrary="libstdc++11",
+        rustModules=False,
+        rustCorrosion=False,
+    )
+
+    output = buildInfoFormatter._formatBuildInfo(buildInfo)
+
+    assert "Rust compiler:" not in output
+    assert "Rust target:" not in output
+    assert "Cargo:" not in output
+    assert "Corrosion:" not in output
+
+
+def test_format_build_info_without_corrosion():
+    """Verify that a direct Cargo build does not report Corrosion."""
+    buildInfo = _makeBuildInfo(
+        "Linux",
+        "x86_64",
+        "GNU",
+        "15.1.0",
+        "g++",
+        "Ninja",
+        standardLibrary="libstdc++11",
+        rustCorrosion=False,
+    )
+
+    output = buildInfoFormatter._formatBuildInfo(buildInfo)
+
+    assert "Rust compiler:" in output
+    assert "Cargo:" in output
+    assert "Corrosion:" not in output

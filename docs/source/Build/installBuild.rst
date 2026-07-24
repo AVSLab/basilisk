@@ -145,9 +145,10 @@ To skip the optional example Python packages during the clone-based install, use
 
 Inspecting the Build Toolchain
 ------------------------------
-Every Basilisk build records the C and C++ compilers, build configuration, CMake generator, and versions of the
-principal build tools in the installed Python package.  This information can be inspected when diagnosing a binary
-or build issue.
+Every Basilisk build records the compilers, build configuration, CMake generator, and versions of the principal
+build tools in the installed Python package, including a wheel.  Rust-enabled builds also record the Rust compiler
+and target, Cargo, and Corrosion when that integration is enabled.  This information can be inspected when
+diagnosing a binary or build issue.
 
 For a concise, human-readable summary, use ``printBuildInfo()``::
 
@@ -155,7 +156,7 @@ For a concise, human-readable summary, use ``printBuildInfo()``::
 
     printBuildInfo()
 
-This produces output similar to::
+For a Rust-enabled build using Corrosion, this produces output similar to::
 
     Basilisk Build Information
       Version:        2.12.0 (extension ABI 1)
@@ -163,6 +164,8 @@ This produces output similar to::
       Build:          Release, Unix Makefiles
       C compiler:     AppleClang 21.0.0.21000101 (cc)
       C++ compiler:   AppleClang 21.0.0.21000101 (c++)
+      Rust compiler:  rustc 1.97.1 (rustc)
+      Rust target:    aarch64-apple-darwin
       C standard:     C17
       C++ standard:   C++17
       C++ ABI:        libc++ (210106, ABI 1), Itanium ABI
@@ -177,6 +180,8 @@ This produces output similar to::
       Conan:          2.23.0
       SWIG:           4.4.1
       Python:         3.14.6
+      Cargo:          1.97.1
+      Corrosion:      0.6.1
 
 For programmatic inspection or custom formatting, use ``getBuildInfo()``.  It returns a copy of a versioned nested
 dictionary with three principal sections::
@@ -187,6 +192,7 @@ dictionary with three principal sections::
     extensionAbiVersion = buildInfo["artifact"]["extensionAbiVersion"]
     standardLibrary = buildInfo["abi"]["cxx"]["standardLibrary"]["family"]
     compilerVersion = buildInfo["diagnostics"]["compilers"]["cxx"]["version"]
+    rustCompilerVersion = buildInfo["diagnostics"]["compilers"]["rust"]["version"]
 
 ``artifact`` identifies the Basilisk version, source revision when available, and extension ABI epoch.  The epoch is
 incremented when Basilisk intentionally changes the C/C++ object contract exposed to SDK extensions.  It does not
@@ -205,11 +211,14 @@ extension ABI versions, canary types, and compiler-side extraction rules.  It is
 ``architecture`` header synchronization, allowing Basilisk and an SDK extension to compile the same contract rather
 than maintaining parallel implementations.
 
-``diagnostics`` contains values observed by CMake, requested Conan settings, and build-tool versions.  These remain
-useful when reproducing a build, but they are not all binary-compatibility requirements.  For example, CMake and
-Conan versions should not be compared as part of an SDK compatibility decision.  For Xcode and Visual Studio,
-``diagnostics["build"]`` describes the multi-config generator while ``abi["build"]["configuration"]`` records the
-configuration that actually compiled the installed descriptor.
+``diagnostics`` contains values observed by CMake, requested Conan settings, compiler details, and build-tool
+versions.  The ``diagnostics["build"]["rustModules"]`` and
+``diagnostics["build"]["rustCorrosion"]`` flags identify whether those optional features were used.  Rust compiler
+fields and Cargo are empty when Rust modules are disabled; Corrosion is empty when its integration is disabled.
+These diagnostics remain useful when reproducing a build, but they are not all binary-compatibility requirements.
+For example, CMake and Conan versions should not be compared as part of an SDK compatibility decision.  For Xcode
+and Visual Studio, ``diagnostics["build"]`` describes the multi-config generator while
+``abi["build"]["configuration"]`` records the configuration that actually compiled the installed descriptor.
 
 The standard-library ``pprint`` module provides an indented view when all recorded fields should be displayed::
 

@@ -16,6 +16,9 @@
 
 include_guard(GLOBAL)
 
+set(BSK_CORROSION_VERSION "0.6.1")
+set(BSK_CORROSION_GIT_TAG "1499b14e4906a2890f5cee1547c8848db261753d")
+
 # Keep the Corrosion trial isolated from the existing Cargo integration until
 # its behavior has been exercised on every supported platform. FetchContent is
 # evaluated only when BSK_RUST_USE_CORROSION is enabled.
@@ -30,7 +33,7 @@ function(_bsk_load_corrosion)
     GIT_REPOSITORY https://github.com/corrosion-rs/corrosion.git
     # Corrosion v0.6.1. Pin the immutable commit rather than the movable v0.6
     # tag so a clean Basilisk configure cannot acquire different build logic.
-    GIT_TAG 1499b14e4906a2890f5cee1547c8848db261753d
+    GIT_TAG ${BSK_CORROSION_GIT_TAG}
   )
   FetchContent_MakeAvailable(Corrosion)
 endfunction()

@@ -49,6 +49,41 @@ function(_bsk_command_name output_variable)
   set(${output_variable} "${_command_name}" PARENT_SCOPE)
 endfunction()
 
+function(_bsk_program_version output_variable executable program_name)
+  set(_version "")
+  if(executable)
+    execute_process(
+      COMMAND "${executable}" --version
+      RESULT_VARIABLE _version_result
+      OUTPUT_VARIABLE _version_output
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+      ERROR_QUIET
+    )
+    if(_version_result EQUAL 0
+       AND _version_output MATCHES "^${program_name}[ \t]+([^ \t\r\n]+)")
+      set(_version "${CMAKE_MATCH_1}")
+    endif()
+  endif()
+  set(${output_variable} "${_version}" PARENT_SCOPE)
+endfunction()
+
+function(_bsk_rust_host_target output_variable rustc_executable)
+  set(_host_target "")
+  if(rustc_executable)
+    execute_process(
+      COMMAND "${rustc_executable}" --version --verbose
+      RESULT_VARIABLE _version_result
+      OUTPUT_VARIABLE _version_output
+      ERROR_QUIET
+    )
+    if(_version_result EQUAL 0
+       AND _version_output MATCHES "(^|\n)host:[ \t]+([^\r\n]+)")
+      set(_host_target "${CMAKE_MATCH_2}")
+    endif()
+  endif()
+  set(${output_variable} "${_host_target}" PARENT_SCOPE)
+endfunction()
+
 function(_bsk_git_metadata revision_variable dirty_variable)
   set(_source_revision "")
   set(_source_dirty None)
@@ -203,6 +238,60 @@ function(bsk_generate_build_info package_directory)
   _bsk_python_string(BSK_INFO_CONAN_VERSION "${BSK_CONAN_VERSION}")
   _bsk_python_string(BSK_INFO_SWIG_VERSION "${SWIG_VERSION}")
   _bsk_python_string(BSK_INFO_PYTHON_VERSION "${Python3_VERSION}")
+
+  set(_rust_modules False)
+  set(_rust_corrosion False)
+  set(_rustc_id "")
+  set(_rustc_executable "")
+  set(_rustc_version "")
+  set(_rust_target "")
+  set(_cargo_executable "")
+  set(_cargo_version "")
+  set(_corrosion_version "")
+  if(BUILD_RUST_MODULES)
+    set(_rust_modules True)
+    set(_rustc_id "rustc")
+    if(BSK_RUST_USE_CORROSION)
+      set(_rust_corrosion True)
+      set(_rustc_executable "${Rust_COMPILER_CACHED}")
+      set(_rustc_version "${Rust_VERSION}")
+      set(_rust_target "${Rust_CARGO_TARGET_CACHED}")
+      set(_cargo_executable "${Rust_CARGO_CACHED}")
+      set(_cargo_version "${Rust_CARGO_VERSION}")
+      if(Corrosion_VERSION)
+        set(_corrosion_version "${Corrosion_VERSION}")
+      else()
+        set(_corrosion_version "${BSK_CORROSION_VERSION}")
+      endif()
+    endif()
+
+    if(NOT _rustc_executable)
+      find_program(_rustc_executable NAMES rustc NO_CACHE)
+    endif()
+    if(NOT _cargo_executable)
+      set(_cargo_executable "${CARGO_EXECUTABLE}")
+    endif()
+    if(NOT _cargo_executable)
+      find_program(_cargo_executable NAMES cargo NO_CACHE)
+    endif()
+    if(NOT _rustc_version)
+      _bsk_program_version(_rustc_version "${_rustc_executable}" rustc)
+    endif()
+    if(NOT _cargo_version)
+      _bsk_program_version(_cargo_version "${_cargo_executable}" cargo)
+    endif()
+    if(NOT _rust_target)
+      _bsk_rust_host_target(_rust_target "${_rustc_executable}")
+    endif()
+  endif()
+
+  _bsk_command_name(_rustc_command "${_rustc_executable}")
+  _bsk_python_string(BSK_INFO_RUSTC_ID "${_rustc_id}")
+  _bsk_python_string(BSK_INFO_RUSTC_VERSION "${_rustc_version}")
+  _bsk_python_string(BSK_INFO_RUSTC_EXECUTABLE "${_rustc_command}")
+  _bsk_python_string(BSK_INFO_RUSTC_TARGET "${_rust_target}")
+  _bsk_python_string(BSK_INFO_CARGO_VERSION "${_cargo_version}")
+  _bsk_python_string(BSK_INFO_CORROSION_VERSION "${_corrosion_version}")
 
   if(BSK_VERSION)
     set(_basilisk_version "${BSK_VERSION}")

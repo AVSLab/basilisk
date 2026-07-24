@@ -112,6 +112,7 @@ def _formatBuildInfo(buildInfo: dict[str, object]) -> str:
     build = diagnostics["build"]
     cCompiler = diagnostics["compilers"]["c"]
     cxxCompiler = diagnostics["compilers"]["cxx"]
+    rustCompiler = diagnostics["compilers"]["rust"]
     conanSettings = diagnostics["conanSettings"]
 
     system = {"Darwin": "macOS"}.get(compiledTarget["system"], compiledTarget["system"])
@@ -142,6 +143,9 @@ def _formatBuildInfo(buildInfo: dict[str, object]) -> str:
     _appendField(lines, "Build", buildDescription)
     _appendField(lines, "C compiler", _compilerDescription(cCompiler))
     _appendField(lines, "C++ compiler", _compilerDescription(cxxCompiler))
+    if build["rustModules"]:
+        _appendField(lines, "Rust compiler", _compilerDescription(rustCompiler))
+        _appendField(lines, "Rust target", rustCompiler["target"])
     _appendField(lines, "C standard", _compiledLanguageStandard("C", abi["c"]["compiler"]["languageStandard"]))
     _appendField(lines, "C++ standard", _compiledLanguageStandard("C++", abi["cxx"]["compiler"]["languageStandard"]))
     _appendField(lines, "C++ ABI", _cxxAbiDescription(abi))
@@ -171,7 +175,14 @@ def _formatBuildInfo(buildInfo: dict[str, object]) -> str:
     _appendField(lines, "Conan profile", ", ".join(conanProfile))
 
     toolLines = []
-    for label, key in (("CMake", "cmake"), ("Conan", "conan"), ("SWIG", "swig"), ("Python", "python")):
+    for label, key in (
+        ("CMake", "cmake"),
+        ("Conan", "conan"),
+        ("SWIG", "swig"),
+        ("Python", "python"),
+        ("Cargo", "cargo"),
+        ("Corrosion", "corrosion"),
+    ):
         _appendField(toolLines, label, diagnostics["tools"][key])
     if toolLines:
         lines.extend(("", "Build Tools", *toolLines))
