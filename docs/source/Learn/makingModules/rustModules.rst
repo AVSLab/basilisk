@@ -496,7 +496,8 @@ configuration that may be changed internally.
 
 Data arriving through an input message also does not pass through a
 configuration setter. Validate such data after reading it in ``reset`` or
-``update``.
+``update``. For example, :ref:`mrpPDRust` validates its message-delivered
+spacecraft inertia during reset.
 
 Deprecate a configuration property without immediately breaking existing
 Python scripts by supplying a removal date and migration message:
@@ -895,6 +896,9 @@ message:
     let output = CmdTorqueBodyMsg {
         torqueRequestBody: [torque[0], torque[1], torque[2]],
     };
+
+See :ref:`mrpPDRust` for a complete controller that uses ``nalgebra`` while
+keeping its generated C/Python interface unchanged.
 
 Runtime Context and Logging
 ---------------------------

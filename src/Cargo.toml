@@ -23,6 +23,7 @@ members = [
     "architecture/rust/bsk_macros",
     "architecture/rust/bsk_messages",
     "architecture/rust/bsk_utilities",
+    "fswAlgorithms/attControl/mrpPDRust",
     "moduleTemplates/rustModuleTemplate",
 ]
 
