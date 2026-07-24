@@ -3,14 +3,14 @@
 :beta:`Making Rust Modules`
 ===========================
 
+.. important::
+
+   Rust module support requires Rust 1.85 or newer.
+
 .. sidebar:: Rust Module Support
 
    Rust module support is experimental. Its interface may change between
    Basilisk releases.
-
-.. important::
-
-   Rust module support requires Rust 1.85 or newer.
 
 Rust modules are compiled Basilisk modules whose lifecycle methods are written
 in Rust instead of C or C++. They use the normal ``SysModel`` lifecycle,
@@ -155,8 +155,8 @@ After the build, verify the template through its normal Python unit test:
 
     python3 -m pytest src/moduleTemplates/rustModuleTemplate/_UnitTest -v
 
-Start from ``rustModuleTemplate``
----------------------------------
+Quick-Start from ``rustModuleTemplate``
+---------------------------------------
 
 Copy ``src/moduleTemplates/rustModuleTemplate`` into the desired
 ``src/fswAlgorithms`` or ``src/simulation`` category. Then:
@@ -468,6 +468,16 @@ Message Ports and Values
 For example, the Rust ``AttGuidMsg`` corresponds to the familiar
 ``AttGuidMsgPayload`` data. A port uses one of two generic types:
 
+.. important::
+
+   Rust ports use Basilisk's generated C message interfaces, such as
+   ``AttGuidMsg_C``; Rust does not bind directly to the C++
+   ``Message<Payload>`` classes. This does not prevent C++ interoperability.
+   A Rust port can connect to a C or C++ module port with the same payload
+   type, just as existing C and C++ Basilisk modules connect to each other.
+   In Rust source, always declare ports with ``MsgReader<T>`` or
+   ``MsgWriter<T>`` from ``bsk-messages``.
+
 ``MsgReader<AttGuidMsg>``
    An input port that reads an ``AttGuidMsg`` value.
 
@@ -500,26 +510,21 @@ Any number of inputs and outputs is supported, and declaration order does not
 control message routing. Both ``reset`` and ``update`` must return a value for
 every output port.
 
-Custom Messages
-~~~~~~~~~~~~~~~
+Adding or Changing a Basilisk Message
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-An ordinary module using existing Basilisk messages needs only
-``bsk-messages``. It does not need ``bindgen`` or ``libclang``.
-
-When a contribution adds or changes a Basilisk message payload, first generate
-the normal C message interface and then regenerate the committed Rust message
-bindings:
+After adding or editing a Basilisk message payload, rerun the build with Rust
+module support enabled:
 
 .. code-block:: console
 
-    cargo install bindgen-cli
-    cmake --build dist3 --target cMsgCInterface
-    python3 src/architecture/rust/gen_rust_messages.py
+    python conanfile.py --rustModules True
 
-``bindgen-cli`` and ``libclang`` are developer tools needed only for this
-regeneration step. Review and commit the resulting
-``src/architecture/rust/bsk_messages/src/lib.rs``. The generated Rust message
-file should not be edited manually.
+This first regenerates the normal C message interfaces and then generates the
+matching Rust bindings in Cargo's build directory. No separate Rust generator
+must be run, and the generated bindings are not committed.
+
+When Rust modules are disabled, the Rust binding generator does not run.
 
 Python-Visible Configuration
 ----------------------------
