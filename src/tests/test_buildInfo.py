@@ -73,6 +73,7 @@ def _makeBuildInfo(
     runtime="",
     runtimeType="",
     features=None,
+    rustModules=True,
 ):
     if features is None:
         features = {"vizInterface": True, "opNav": False, "mujoco": True}
@@ -86,7 +87,7 @@ def _makeBuildInfo(
             "basiliskVersion": "2.12.0",
             "sourceRevision": "0123456789abcdef",
             "sourceDirty": False,
-            "pluginAbiVersion": 2,
+            "extensionAbiVersion": 2,
         },
         "features": features,
         "diagnostics": {
@@ -105,6 +106,7 @@ def _makeBuildInfo(
                 "generatorPlatform": generatorPlatform,
                 "generatorToolset": generatorToolset,
                 "pythonLimitedApi": "0x03090000",
+                "rustModules": rustModules,
             },
             "compilers": {
                 "c": {
@@ -131,6 +133,13 @@ def _makeBuildInfo(
                     "standard": "17",
                     "extensions": "OFF",
                 },
+                "rust": {
+                    "id": "rustc" if rustModules else "",
+                    "version": "1.97.1" if rustModules else "",
+                    "executable": "rustc" if rustModules else "",
+                    "launcher": "",
+                    "target": f"{processor}-unknown-linux-gnu" if rustModules else "",
+                },
             },
             "conanSettings": {
                 "buildType": "Release",
@@ -144,6 +153,8 @@ def _makeBuildInfo(
                 "conan": "2.23.0",
                 "swig": "4.4.1",
                 "python": "3.14.6",
+                "cargo": "1.97.1" if rustModules else "",
+                "corrosion": "0.6.1" if rustModules else "",
             },
         },
         "abi": {
@@ -232,8 +243,8 @@ def test_build_info():
     assert buildInfo["artifact"]["basiliskVersion"]
     if Basilisk.__version__ != "0.0.0":
         assert buildInfo["artifact"]["basiliskVersion"] == Basilisk.__version__
-    assert buildInfo["artifact"]["pluginAbiVersion"] == _integerDefine(
-        "BSK_PLUGIN_ABI_VERSION"
+    assert buildInfo["artifact"]["extensionAbiVersion"] == _integerDefine(
+        "BSK_EXTENSION_ABI_VERSION"
     )
     assert buildInfo["artifact"]["sourceDirty"] in (True, False, None)
     assert set(features) == {"vizInterface", "opNav", "mujoco"}
@@ -255,6 +266,7 @@ def test_build_info():
     else:
         assert diagnostics["build"]["configuration"]
     assert diagnostics["build"]["generator"]
+    assert isinstance(diagnostics["build"]["rustModules"], bool)
 
     for language in ("c", "cxx"):
         compilerInfo = diagnostics["compilers"][language]
@@ -281,6 +293,18 @@ def test_build_info():
     assert diagnostics["tools"]["cmake"]
     assert diagnostics["tools"]["swig"]
     assert diagnostics["tools"]["python"]
+    rustCompilerInfo = diagnostics["compilers"]["rust"]
+    if diagnostics["build"]["rustModules"]:
+        assert rustCompilerInfo["id"] == "rustc"
+        assert rustCompilerInfo["version"]
+        assert rustCompilerInfo["executable"]
+        assert rustCompilerInfo["target"]
+        assert diagnostics["tools"]["cargo"]
+        assert diagnostics["tools"]["corrosion"]
+    else:
+        assert not any(rustCompilerInfo.values())
+        assert not diagnostics["tools"]["cargo"]
+        assert not diagnostics["tools"]["corrosion"]
 
     buildInfo["abi"]["target"]["system"] = "modified"
     buildInfo["features"]["mujoco"] = not mujocoEnabled
@@ -442,6 +466,8 @@ def test_print_build_info(capsys):
         assert f"{featureName}={'on' if enabled else 'off'}" in output
     assert diagnostics["compilers"]["c"]["id"] in output
     assert diagnostics["compilers"]["cxx"]["id"] in output
+    if diagnostics["build"]["rustModules"]:
+        assert diagnostics["compilers"]["rust"]["version"] in output
     assert "C++17" in output
     assert standardLibraryLabel in output
     assert buildInfo["abi"]["dependencies"]["eigen"]["version"] in output
@@ -522,3 +548,24 @@ def test_format_build_info_for_supported_platforms(buildInfo, expectedText):
     for featureName, enabled in buildInfo["features"].items():
         assert f"{featureName}={'on' if enabled else 'off'}" in output
     assert "''" not in output
+
+
+def test_format_build_info_without_rust():
+    """Verify that Rust details are omitted when Rust modules are disabled."""
+    buildInfo = _makeBuildInfo(
+        "Linux",
+        "x86_64",
+        "GNU",
+        "15.1.0",
+        "g++",
+        "Ninja",
+        standardLibrary="libstdc++11",
+        rustModules=False,
+    )
+
+    output = buildInfoFormatter._formatBuildInfo(buildInfo)
+
+    assert "Rust compiler:" not in output
+    assert "Rust target:" not in output
+    assert "Cargo:" not in output
+    assert "Corrosion:" not in output
