@@ -57,6 +57,10 @@ For a Rust module:
   marked configuration struct name?
 - Does the configuration struct contain only public parameters and annotated
   message ports, with no runtime, logger, or raw-pointer fields?
+- Does every non-port configuration field implement ``BskConfigValue``, with
+  nested parameter structs using plain ``#[repr(C)]`` and the
+  ``bsk_build::BskConfigValue`` derive rather than a manual unsafe
+  implementation?
 - Does the ``BskModule`` implementation declare ``type State`` and keep
   internal Rust-only state there, using ``()`` when stateless?
 - Does lifecycle code obtain runtime metadata and logging through

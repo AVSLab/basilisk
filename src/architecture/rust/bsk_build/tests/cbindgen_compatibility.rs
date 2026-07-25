@@ -12,16 +12,15 @@
 //! and the narrow Basilisk-specific boundary handled by ``bsk-build``:
 //!
 //! - cbindgen renders ordinary ``#[repr(C)]`` config fields, nested structs,
-//!   arrays, aliases, mapped ``cfg`` values, concrete C message-port structs,
-//!   and optional boxed state.
+//!   arrays, aliases, mapped ``cfg`` values, and concrete C message-port
+//!   structs.
 //! - cbindgen does not resolve ``T::Port`` in the current
 //!   ``MsgReader<T>``/``MsgWriter<T>`` abstraction. It emits an undefined
 //!   ``Port`` type for that representation.
 //!
 //! Production code recognizes those generated specialization names and maps
 //! them to Basilisk's existing ``<Message>_C`` port types. It also supplies
-//! includes, lifecycle declarations, Rust-owned-state opacity, and the shared
-//! SWIG wrapper invocation.
+//! includes, lifecycle declarations, and the shared SWIG wrapper invocation.
 
 #![cfg(feature = "codegen")]
 
@@ -69,8 +68,6 @@ fn renders_c_representable_basilisk_config_fields() {
     assert!(header.contains("#if !defined(BSK_CBINDGEN_WIDE)"));
     assert!(header.contains("struct ExampleMsg_C input_port;"));
     assert!(header.contains("struct ExampleMsg_C output_port;"));
-    assert!(header.contains("struct OwnedState *state;"));
-    assert!(header.contains("Mode mode;"));
 }
 
 #[test]
