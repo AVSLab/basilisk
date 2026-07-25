@@ -21,8 +21,8 @@ use proc_macro2::TokenStream as TokenStream2;
 use quote::{format_ident, quote};
 use syn::{
     meta::ParseNestedMeta, parse::Parser, parse_macro_input, AngleBracketedGenericArguments,
-    Attribute, Expr, Field, Fields, GenericArgument, ItemStruct, LitStr, Path, PathArguments, Type,
-    Visibility,
+    Attribute, Data, DeriveInput, Expr, Field, Fields, GenericArgument, ItemStruct, LitStr, Path,
+    PathArguments, Type, Visibility,
 };
 
 /// Mark and validate a Basilisk module's top-level configuration struct.
@@ -45,6 +45,21 @@ pub fn module(arguments: TokenStream, input: TokenStream) -> TokenStream {
     };
     let input = parse_macro_input!(input as ItemStruct);
     expand_module_with_options(input, options)
+        .map(TokenStream::from)
+        .unwrap_or_else(|error| error.into_compile_error().into())
+}
+
+/// Mark a nested Python-visible configuration value as safe for the generated
+/// Rust/C++ copy boundary.
+///
+/// The derive accepts only public, named, nonempty structs using plain
+/// ``#[repr(C)]`` with no generic parameters. Every field must be public and
+/// implement ``bsk_build::BskConfigValue`` recursively. The struct must also
+/// derive or manually implement ``Copy`` and ``Default``.
+#[proc_macro_derive(BskConfigValue)]
+pub fn derive_bsk_config_value(input: TokenStream) -> TokenStream {
+    let input = parse_macro_input!(input as DeriveInput);
+    expand_bsk_config_value(input)
         .map(TokenStream::from)
         .unwrap_or_else(|error| error.into_compile_error().into())
 }
@@ -285,7 +300,7 @@ fn expand_module_with_options(
     });
     let config_field_type_assertions = config_fields.iter().map(|field| {
         let field_type = &field.field_type;
-        quote!(assert_copy::<#field_type>();)
+        quote!(assert_config_value::<#field_type>();)
     });
     let config_field_validator_assertions = config_fields.iter().filter_map(|field| {
         let validator = field.validator.as_ref()?;
@@ -457,7 +472,7 @@ fn expand_module_with_options(
         #[doc(hidden)]
         #[allow(dead_code, non_snake_case)]
         fn #assert_config_field_types_function() {
-            fn assert_copy<T: ::core::marker::Copy>() {}
+            fn assert_config_value<T: ::bsk_build::BskConfigValue>() {}
             fn assert_validator<T>(
                 _validator: fn(&#config_type, &T) -> ::bsk_build::BskResult<()>,
             ) {
@@ -1249,12 +1264,7 @@ fn validate_module_config(input: &ItemStruct) -> syn::Result<()> {
             "a Basilisk module config cannot have generic parameters",
         ));
     }
-    if !has_repr_c(input) {
-        return Err(syn::Error::new_spanned(
-            &input.ident,
-            "a Basilisk module config must use `#[repr(C)]`",
-        ));
-    }
+    validate_plain_repr_c(&input.attrs, &input.ident, "a Basilisk module config")?;
 
     let fields = match &input.fields {
         Fields::Named(fields) => &fields.named,
@@ -1291,20 +1301,109 @@ fn validate_module_config(input: &ItemStruct) -> syn::Result<()> {
     Ok(())
 }
 
-fn has_repr_c(input: &ItemStruct) -> bool {
-    input.attrs.iter().any(|attribute| {
-        if !attribute.path().is_ident("repr") {
-            return false;
-        }
-        let mut found = false;
-        let parsed = attribute.parse_nested_meta(|meta| {
-            if meta.path.is_ident("C") {
-                found = true;
+fn expand_bsk_config_value(input: DeriveInput) -> syn::Result<TokenStream2> {
+    if !matches!(input.vis, Visibility::Public(_)) {
+        return Err(syn::Error::new_spanned(
+            &input.ident,
+            "a nested Basilisk configuration struct must be declared `pub`",
+        ));
+    }
+    if !input.generics.params.is_empty() {
+        return Err(syn::Error::new_spanned(
+            &input.generics,
+            "a nested Basilisk configuration struct cannot have generic parameters",
+        ));
+    }
+    validate_plain_repr_c(
+        &input.attrs,
+        &input.ident,
+        "a nested Basilisk configuration struct",
+    )?;
+
+    let fields = match &input.data {
+        Data::Struct(data) => match &data.fields {
+            Fields::Named(fields) if !fields.named.is_empty() => &fields.named,
+            Fields::Named(_) => {
+                return Err(syn::Error::new_spanned(
+                    &input.ident,
+                    "a nested Basilisk configuration struct cannot be empty",
+                ));
             }
-            Ok(())
-        });
-        parsed.is_ok() && found
+            Fields::Unnamed(fields) => {
+                return Err(syn::Error::new_spanned(
+                    fields,
+                    "a nested Basilisk configuration struct must use named fields",
+                ));
+            }
+            Fields::Unit => {
+                return Err(syn::Error::new_spanned(
+                    &input.ident,
+                    "a nested Basilisk configuration struct must use named fields",
+                ));
+            }
+        },
+        Data::Enum(data) => {
+            return Err(syn::Error::new_spanned(
+                data.enum_token,
+                "`BskConfigValue` cannot be derived for an enum; use a validated integer field",
+            ));
+        }
+        Data::Union(data) => {
+            return Err(syn::Error::new_spanned(
+                data.union_token,
+                "`BskConfigValue` cannot be derived for a union",
+            ));
+        }
+    };
+
+    for field in fields {
+        if !matches!(field.vis, Visibility::Public(_)) {
+            return Err(syn::Error::new_spanned(
+                field,
+                "nested Basilisk configuration fields must be declared `pub`",
+            ));
+        }
+    }
+
+    let name = &input.ident;
+    let field_types = fields.iter().map(|field| &field.ty);
+    Ok(quote! {
+        unsafe impl ::bsk_build::BskConfigValue for #name
+        where
+            #(#field_types: ::bsk_build::BskConfigValue,)*
+        {
+        }
     })
+}
+
+fn validate_plain_repr_c(
+    attributes: &[Attribute],
+    target: &impl quote::ToTokens,
+    subject: &str,
+) -> syn::Result<()> {
+    let mut found_c = false;
+    for attribute in attributes {
+        if !attribute.path().is_ident("repr") {
+            continue;
+        }
+        attribute.parse_nested_meta(|meta| {
+            if meta.path.is_ident("C") {
+                found_c = true;
+                return Ok(());
+            }
+            Err(meta.error(format!(
+                "{subject} must use plain `#[repr(C)]` without `packed`, `align`, \
+                 `transparent`, or integer representation modifiers"
+            )))
+        })?;
+    }
+    if !found_c {
+        return Err(syn::Error::new_spanned(
+            target,
+            format!("{subject} must use `#[repr(C)]`"),
+        ));
+    }
+    Ok(())
 }
 
 fn module_name() -> String {
@@ -1335,6 +1434,78 @@ mod tests {
         };
 
         assert!(validate_module_config(&input).is_ok());
+    }
+
+    #[test]
+    fn derives_config_value_for_public_repr_c_struct() {
+        let input: DeriveInput = parse_quote! {
+            #[repr(C)]
+            pub struct ControllerGains {
+                pub proportional: f64,
+                pub derivative: f64,
+            }
+        };
+
+        let expanded = expand_bsk_config_value(input)
+            .expect("plain public repr(C) struct must derive")
+            .to_string();
+        assert!(expanded.contains("unsafe impl :: bsk_build :: BskConfigValue"));
+        assert!(expanded.contains("for ControllerGains"));
+        assert!(expanded.contains("f64 : :: bsk_build :: BskConfigValue"));
+    }
+
+    #[test]
+    fn config_value_derive_rejects_missing_repr_c() {
+        let input: DeriveInput = parse_quote! {
+            pub struct ControllerGains {
+                pub proportional: f64,
+            }
+        };
+
+        let error =
+            expand_bsk_config_value(input).expect_err("missing repr(C) must fail the derive");
+        assert!(error.to_string().contains("must use `#[repr(C)]`"));
+    }
+
+    #[test]
+    fn config_value_derive_rejects_non_plain_repr_c() {
+        let input: DeriveInput = parse_quote! {
+            #[repr(C, packed)]
+            pub struct ControllerGains {
+                pub proportional: f64,
+            }
+        };
+
+        let error =
+            expand_bsk_config_value(input).expect_err("packed repr(C) must fail the derive");
+        assert!(error.to_string().contains("must use plain `#[repr(C)]`"));
+    }
+
+    #[test]
+    fn config_value_derive_rejects_enum() {
+        let input: DeriveInput = parse_quote! {
+            #[repr(C)]
+            pub enum ControllerMode {
+                Idle,
+                Active,
+            }
+        };
+
+        let error = expand_bsk_config_value(input).expect_err("enum derive must fail");
+        assert!(error.to_string().contains("cannot be derived for an enum"));
+    }
+
+    #[test]
+    fn config_value_derive_rejects_private_field() {
+        let input: DeriveInput = parse_quote! {
+            #[repr(C)]
+            pub struct ControllerGains {
+                proportional: f64,
+            }
+        };
+
+        let error = expand_bsk_config_value(input).expect_err("private field must fail the derive");
+        assert!(error.to_string().contains("fields must be declared `pub`"));
     }
 
     #[test]
@@ -1396,6 +1567,7 @@ mod tests {
         assert!(expanded.contains("inputInMsg : :: core :: option :: Option < InputMsg >"));
         assert!(expanded.contains("outputOutMsg : OutputMsg"));
         assert!(expanded.contains("__bsk_assert_io_types_for_ControllerConfig"));
+        assert!(expanded.contains("assert_config_value"));
         assert!(expanded.contains("inputInMsg is not connected"));
         assert!(expanded.contains("outputOutMsg . init"));
         assert_eq!(expanded.matches("outputOutMsg . write").count(), 2);
@@ -1628,6 +1800,19 @@ mod tests {
 
         let error = validate_module_config(&input).expect_err("missing repr(C) must fail");
         assert!(error.to_string().contains("must use `#[repr(C)]`"));
+    }
+
+    #[test]
+    fn rejects_config_with_non_plain_repr_c() {
+        let input: ItemStruct = parse_quote! {
+            #[repr(C, align(16))]
+            pub struct ControllerConfig {
+                pub gain: f64,
+            }
+        };
+
+        let error = validate_module_config(&input).expect_err("aligned repr(C) config must fail");
+        assert!(error.to_string().contains("must use plain `#[repr(C)]`"));
     }
 
     #[test]

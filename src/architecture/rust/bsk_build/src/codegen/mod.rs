@@ -30,8 +30,6 @@ struct BindingMetadata {
     port_fields: BTreeSet<String>,
     /// Fixed-size message-port arrays exposed through indexed Python views.
     port_arrays: BTreeMap<String, PortArray>,
-    /// Top-level config fields backed by ``Option<Box<T>>``.
-    owned_state_fields: BTreeSet<String>,
     /// Python-visible configuration values exposed through generated accessors.
     config_fields: Vec<ConfigField>,
 }
@@ -89,7 +87,7 @@ pub fn generate_bindings(config_type: &str) {
 
     let final_config = final_cbindgen_config(config_type, &module_name, &metadata);
     let generated_header = render_bindings(&manifest_dir, final_config);
-    let generated_header = finish_header(generated_header, config_type, &module_name, &metadata);
+    let generated_header = finish_header(generated_header, config_type, &module_name);
     write_generated_file(&header_path, &generated_header, "C header");
 
     let interface = render_swig_interface(config_type, &module_name, &header_path, &metadata);
@@ -192,16 +190,6 @@ fn render_bindings(manifest_dir: &Path, config: cbindgen::Config) -> String {
 fn analyze_bindings(header: &str, config_type: &str) -> BindingMetadata {
     let config_body = config_body(header, config_type);
     let mut metadata = BindingMetadata::default();
-    let enum_types = header
-        .lines()
-        .filter_map(|line| {
-            let mut words = line.split_whitespace();
-            match (words.next(), words.next(), words.next()) {
-                (Some("enum"), Some(name), None) => Some(name.to_owned()),
-                _ => None,
-            }
-        })
-        .collect::<BTreeSet<_>>();
 
     for line in header.lines() {
         let Some(alias) = line
@@ -221,26 +209,6 @@ fn analyze_bindings(header: &str, config_type: &str) -> BindingMetadata {
         }
     }
 
-    for line in header.lines() {
-        let declaration = line.trim();
-        let declaration_words = declaration
-            .strip_suffix(';')
-            .map(|declaration| declaration.split_whitespace().collect::<Vec<_>>())
-            .unwrap_or_default();
-        let field_type = match declaration_words.as_slice() {
-            [field_type, _field_name] => Some(*field_type),
-            ["enum", field_type, _field_name] => Some(*field_type),
-            _ => None,
-        };
-        if field_type.is_some_and(|field_type| enum_types.contains(field_type)) {
-            panic!(
-                "bsk-build: `{config_type}` exposes enum field `{declaration}`.\n\
-                 Store its integer representation in the public config and \
-                 convert it to the Rust enum after validating the value."
-            );
-        }
-    }
-
     for line in config_body.lines() {
         let declaration = line.trim();
         if let Some((rust_type, field_name)) = port_array_declaration(declaration) {
@@ -254,12 +222,6 @@ fn analyze_bindings(header: &str, config_type: &str) -> BindingMetadata {
                 );
             }
         }
-        if !declaration.contains('*') || declaration.contains(LOGGER_TYPE) {
-            continue;
-        }
-        if let Some(field_name) = declaration_field_name(declaration) {
-            metadata.owned_state_fields.insert(field_name.to_owned());
-        }
     }
 
     for line in config_body.lines() {
@@ -269,9 +231,6 @@ fn analyze_bindings(header: &str, config_type: &str) -> BindingMetadata {
         };
         if metadata.port_types.contains_key(&field.c_type) {
             metadata.port_fields.insert(field.name);
-            continue;
-        }
-        if metadata.owned_state_fields.contains(&field.name) {
             continue;
         }
         metadata.config_fields.push(field);
@@ -312,16 +271,6 @@ fn config_body<'a>(header: &'a str, config_type: &str) -> &'a str {
     &header[start..start + relative_end]
 }
 
-fn declaration_field_name(declaration: &str) -> Option<&str> {
-    let field = declaration
-        .strip_suffix(';')?
-        .split_whitespace()
-        .next_back()
-        .map(|field| field.trim_start_matches('*'))
-        .filter(|field| !field.is_empty())?;
-    Some(field.split('[').next().unwrap_or(field))
-}
-
 fn config_field_declaration(declaration: &str) -> Option<ConfigField> {
     if declaration.contains('*') {
         return None;
@@ -355,41 +304,8 @@ fn config_field_declaration(declaration: &str) -> Option<ConfigField> {
     })
 }
 
-fn finish_header(
-    mut header: String,
-    config_type: &str,
-    module_name: &str,
-    metadata: &BindingMetadata,
-) -> String {
+fn finish_header(mut header: String, config_type: &str, module_name: &str) -> String {
     let handle_type = format!("{config_type}Handle");
-    let mut in_config = false;
-    let start_marker = format!("typedef struct {config_type} {{");
-    let end_marker = format!("}} {config_type};");
-    let mut opaque_header = String::with_capacity(header.len());
-
-    for line in header.lines() {
-        if line.trim() == start_marker {
-            in_config = true;
-        }
-        if in_config {
-            if let Some(field_name) = declaration_field_name(line.trim()) {
-                if metadata.owned_state_fields.contains(field_name) {
-                    let indentation = &line[..line.len() - line.trim_start().len()];
-                    opaque_header.push_str(indentation);
-                    opaque_header.push_str("void *");
-                    opaque_header.push_str(field_name);
-                    opaque_header.push_str(";\n");
-                    continue;
-                }
-            }
-        }
-        opaque_header.push_str(line);
-        opaque_header.push('\n');
-        if line.trim() == end_marker {
-            in_config = false;
-        }
-    }
-    header = opaque_header;
 
     let lifecycle = format!("\nBSK_RUST_DECL({module_name}, {config_type}, {handle_type})\n\n");
     let guard_end = header
@@ -432,11 +348,6 @@ fn render_swig_interface(
         .collect::<BTreeSet<_>>()
         .into_iter()
         .map(|c_type| format!("%import \"cMsgCInterface/{c_type}.h\"\n"))
-        .collect::<String>();
-    let immutable_fields = metadata
-        .owned_state_fields
-        .iter()
-        .map(|field| format!("%immutable {config_type}::{field};\n"))
         .collect::<String>();
     let ignored_port_arrays = metadata
         .port_arrays
@@ -532,7 +443,6 @@ fn render_swig_interface(
          %include <std_vector.i>\n\
          \n\
          {message_imports}\
-         {immutable_fields}\
          {ignored_port_arrays}\
          {ignored_config_fields}\
          %nodefaultctor {config_type};\n\
@@ -782,10 +692,6 @@ mod tests {
     use super::*;
 
     const DISCOVERED_HEADER: &str = r#"
-typedef struct OwnedState {
-  double value;
-} OwnedState;
-
 typedef Port MsgReader_InputMsg;
 typedef Port MsgWriter_OutputMsg;
 
@@ -798,7 +704,6 @@ typedef struct ExampleConfig {
   MsgReader_InputMsg inputInMsgs[2];
   MsgWriter_OutputMsg outputOutMsg;
   MsgWriter_OutputMsg outputOutMsgs[2];
-  struct OwnedState *state;
 } ExampleConfig;
 "#;
 
@@ -839,10 +744,6 @@ typedef struct ExampleConfig {
             ])
         );
         assert_eq!(
-            metadata.owned_state_fields,
-            BTreeSet::from(["state".to_owned()])
-        );
-        assert_eq!(
             metadata.config_fields,
             vec![
                 ConfigField {
@@ -870,17 +771,14 @@ typedef struct ExampleConfig {
     }
 
     #[test]
-    fn makes_owned_state_opaque_and_keeps_lifecycle_inside_guard() {
-        let metadata = analyze_bindings(DISCOVERED_HEADER, "ExampleConfig");
+    fn inserts_lifecycle_declarations_inside_header_guard() {
         let header = "#ifndef EXAMPLE_H\n#define EXAMPLE_H\n\
                       typedef struct ExampleConfig {\n\
-                      \x20 struct OwnedState *state;\n\
+                      \x20 double gain;\n\
                       } ExampleConfig;\n\
                       #endif /* EXAMPLE_H */\n";
-        let header = finish_header(header.to_owned(), "ExampleConfig", "example", &metadata);
+        let header = finish_header(header.to_owned(), "ExampleConfig", "example");
 
-        assert!(header.contains("void *state;"));
-        assert!(!header.contains("struct OwnedState *state;"));
         assert!(
             header.find("BSK_RUST_DECL(example, ExampleConfig, ExampleConfigHandle)")
                 < header.rfind("#endif")
@@ -899,7 +797,6 @@ typedef struct ExampleConfig {
 
         assert!(interface.contains("%import \"cMsgCInterface/InputMsg_C.h\""));
         assert!(interface.contains("%import \"cMsgCInterface/OutputMsg_C.h\""));
-        assert!(interface.contains("%immutable ExampleConfig::state;"));
         assert!(interface.contains("%ignore ExampleConfig::inputInMsgs;"));
         assert!(interface.contains("%ignore ExampleConfig::outputOutMsgs;"));
         assert!(interface.contains("%ignore ExampleConfig::gain;"));
@@ -940,16 +837,6 @@ typedef struct ExampleConfig {
     #[test]
     fn rejects_invalid_config_identifier() {
         let result = std::panic::catch_unwind(|| validate_identifier("not::a::type"));
-        assert!(result.is_err());
-    }
-
-    #[test]
-    fn rejects_enum_config_field() {
-        let header = "enum Mode\n{\n  First,\n};\n\
-                      typedef struct ExampleConfig {\n\
-                      \x20 Mode mode;\n\
-                      } ExampleConfig;\n";
-        let result = std::panic::catch_unwind(|| analyze_bindings(header, "ExampleConfig"));
         assert!(result.is_err());
     }
 }

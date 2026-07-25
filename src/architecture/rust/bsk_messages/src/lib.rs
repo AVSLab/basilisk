@@ -25,8 +25,8 @@
 )]
 
 pub use bsk_build::{
-    BskContext, BskError, BskLoggerRef, BskModule, BskModuleRuntime, BskResult, Msg, MsgReader,
-    MsgWriter,
+    BskConfigValue, BskContext, BskError, BskLoggerRef, BskModule, BskModuleRuntime, BskResult,
+    Msg, MsgReader, MsgWriter,
 };
 
 include!(concat!(env!("OUT_DIR"), "/bsk_message_bindings.rs"));

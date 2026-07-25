@@ -75,9 +75,9 @@
 //! field and the associated [`BskModule::State`] through ``Default`` before
 //! calling [`BskModule::init`]. Built-in supported field types already
 //! implement `Default`; module-defined nested structs and state types must
-//! derive or implement it.
-//! Python-visible non-port fields must also implement `Copy`, which prevents
-//! the configuration boundary from duplicating Rust ownership.
+//! derive or implement it. Every Python-visible non-port field must implement
+//! [`BskConfigValue`], which restricts the raw-copy boundary to approved
+//! scalars, fixed arrays, and recursively checked nested structures.
 //!
 //! # Module deprecation
 //!
@@ -182,23 +182,24 @@
 //!
 //! # Nested structs
 //!
-//! A field whose type is another `#[repr(C)] + Copy` struct (by value, not a
-//! pointer) is supported. ``cbindgen`` emits referenced structs in dependency
-//! order. The getter and setter transfer the complete nested value. Nesting
-//! may be arbitrarily deep, but not self-referential because C cannot
-//! represent a struct containing itself by value.
+//! A field whose type is another plain ``#[repr(C)]`` struct (by value, not a
+//! pointer) is supported when it derives ``Clone``, ``Copy``, ``Default``, and
+//! [`BskConfigValue`]. The derive checks that every nested field is itself an
+//! approved configuration value. ``cbindgen`` emits referenced structs in
+//! dependency order. The getter and setter transfer the complete nested
+//! value. Nesting may be arbitrarily deep, but not self-referential because C
+//! cannot represent a struct containing itself by value.
 //! Keep `MsgReader`/`MsgWriter` fields on the top-level config struct, where
 //! the module lifecycle adapter processes them. Keep internal state in
 //! [`BskModule::State`].
 //!
 //! # Fixed-size arrays
 //!
-//! A field of type ``[T; N]`` — ``T`` a primitive or nested ``#[repr(C)] +
-//! Copy`` struct — maps to a C array field. The generated Python setter
-//! accepts the complete fixed-size value and rejects a sequence with the
-//! wrong length before entering Rust. The getter returns a Python list.
-//! Multi-dimensional arrays retain C row-major memory order and appear as
-//! nested Python lists.
+//! A field of type ``[T; N]`` maps to a C array when ``T`` implements
+//! [`BskConfigValue`]. The generated Python setter accepts the complete
+//! fixed-size value and rejects a sequence with the wrong length before
+//! entering Rust. The getter returns a Python list. Multi-dimensional arrays
+//! retain C row-major memory order and appear as nested Python lists.
 //!
 //! # Identifying the module config
 //!
@@ -241,7 +242,89 @@
 /// ``#[bsk(input, optional)]``, or ``#[bsk(output)]``. The module's
 /// ``build.rs`` passes this type's exact name to [`generate_bindings`] when
 /// generating the C header and wrapper artifacts.
-pub use bsk_macros::module;
+pub use bsk_macros::{module, BskConfigValue};
+
+/// Value that can be copied safely between a generated C++ wrapper and Rust.
+///
+/// The generated setters receive bytes from a concrete cbindgen/SWIG value
+/// and construct the corresponding Rust value directly. Implementations must
+/// therefore guarantee all of the following:
+///
+/// * the Rust and generated C/C++ types have the same size, alignment, and
+///   field layout;
+/// * every bit pattern that the generated C++ type can supply is a valid Rust
+///   value;
+/// * copying the value cannot duplicate ownership or a borrowed reference;
+/// * the value has a deterministic Rust default used during module creation.
+///
+/// Basilisk implements this trait for supported scalar types and recursively
+/// for fixed-size arrays. Nested structs should use plain ``#[repr(C)]`` and
+/// derive ``Clone``, ``Copy``, ``Default``, and ``BskConfigValue``:
+///
+/// ```rust
+/// use bsk_build::BskConfigValue;
+///
+/// #[repr(C)]
+/// #[derive(Clone, Copy, Default, BskConfigValue)]
+/// pub struct ControllerGains {
+///     pub proportional: f64,
+///     pub derivative: f64,
+/// }
+///
+/// fn require_config_value<T: BskConfigValue>() {}
+/// require_config_value::<ControllerGains>();
+/// require_config_value::<[ControllerGains; 2]>();
+/// ```
+///
+/// Types without a universally valid C representation are rejected:
+///
+/// ```compile_fail
+/// fn require_config_value<T: bsk_build::BskConfigValue>() {}
+/// require_config_value::<char>();
+/// ```
+///
+/// The nested-struct derive applies the same restriction recursively:
+///
+/// ```compile_fail
+/// use bsk_build::BskConfigValue;
+///
+/// #[repr(C)]
+/// #[derive(Clone, Copy, Default, BskConfigValue)]
+/// pub struct InvalidNestedValue {
+///     pub character: char,
+/// }
+/// ```
+///
+/// # Safety
+///
+/// A manual implementation asserts that the type satisfies the complete
+/// cross-language representation contract above. Prefer the derive macro;
+/// keep strings, vectors, enums, pointers, references, and owning Rust types
+/// in [`BskModule::State`].
+pub unsafe trait BskConfigValue: Copy + Default {}
+
+macro_rules! impl_bsk_config_value {
+    ($($value_type:ty),+ $(,)?) => {
+        $(
+            // SAFETY: Each primitive has the same cbindgen C representation,
+            // accepts every bit pattern produced by that C type, and owns no data.
+            unsafe impl BskConfigValue for $value_type {}
+        )+
+    };
+}
+
+impl_bsk_config_value!(
+    bool, f32, f64, i8, i16, i32, i64, u8, u16, u32, u64,
+);
+
+// SAFETY: A fixed array has C-contiguous layout, owns no data when its
+// elements own no data, and is valid for every element pattern allowed by T.
+unsafe impl<T, const LENGTH: usize> BskConfigValue for [T; LENGTH]
+where
+    T: BskConfigValue,
+    [T; LENGTH]: Default,
+{
+}
 
 /// An expected failure reported by a Rust Basilisk module.
 ///

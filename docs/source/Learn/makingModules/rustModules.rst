@@ -726,28 +726,38 @@ or the public fields of a C++ module. It can contain:
 
 * scalar integer, floating-point, and Boolean parameters;
 * fixed-size arrays such as ``[f64; 3]`` and ``[[f64; 3]; 3]``;
-* nested, by-value ``#[repr(C)]`` parameter structs; and
+* nested, by-value ``#[repr(C)]`` parameter structs that derive
+  ``bsk_build::BskConfigValue``; and
 * annotated ``MsgReader<T>`` and ``MsgWriter<T>`` ports, individually or in
   fixed-size arrays.
 
 Every configuration field must implement Rust's ``Default`` behavior because
-Rust constructs the complete module before calling ``init``. Non-port fields
-must also implement ``Copy`` so the generated boundary cannot duplicate Rust
-ownership. Built-in scalar and array types already provide both traits, and
-message ports provide their required defaults. Add
-``#[derive(Clone, Copy, Default)]`` or equivalent manual implementations to
-module-defined nested structs.
+Rust constructs the complete module before calling ``init``. Every non-port
+field must also implement ``BskConfigValue``. This safety contract restricts
+the generated raw-copy boundary to types with matching Rust and C++ layouts,
+valid bit patterns, and no Rust ownership or borrowed references.
+
+Basilisk provides ``BskConfigValue`` for Boolean, fixed-width integer, and
+floating-point scalars and recursively for fixed-size arrays. A type alias for
+one of these types inherits the implementation. Module-defined nested structs
+must use plain ``#[repr(C)]`` and derive ``Clone``, ``Copy``, ``Default``, and
+``bsk_build::BskConfigValue``. The derive verifies that the struct and all of
+its fields satisfy the same boundary contract.
 
 Configuration fields cannot contain raw pointers, Rust enums, dynamically
-sized strings, or ``Vec`` collections. These types do not have a safe,
-general Python/C representation. Put them in private Rust state instead.
+sized strings, ``Vec`` collections, references, characters, or other owning
+Rust types. These types do not have a safe, general Python/C representation.
+Put them in private Rust state instead. Do not manually implement the unsafe
+``BskConfigValue`` trait merely to bypass a compiler error; a manual
+implementation assumes responsibility for every cross-language layout and
+bit-validity guarantee enforced by the derive.
 
 Nested parameters can be grouped by value:
 
 .. code-block:: rust
 
     #[repr(C)]
-    #[derive(Clone, Copy, Default)]
+    #[derive(Clone, Copy, Default, bsk_build::BskConfigValue)]
     pub struct ControllerGains {
         /// [Nm] Proportional gain
         pub K: f64,
