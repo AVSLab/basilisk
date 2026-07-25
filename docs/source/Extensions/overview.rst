@@ -21,7 +21,7 @@ without modifying the Basilisk source tree.
 
 An extension can own:
 
-* one or more C or C++ modules that use Basilisk base classes and APIs;
+* one or more C or C++ modules that use Basilisk module APIs;
 * custom message payloads and their generated Python bindings;
 * shared support code used by those modules;
 * pure-Python helpers and modules; and

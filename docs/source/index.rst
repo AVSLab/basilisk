@@ -51,10 +51,10 @@ Basilisk, or BSK for short, is a software framework
 capable of both faster-than realtime spacecraft simulations, including repeatable
 Monte-Carlo simulation options, as well as providing real-time options
 for hardware-in-the-loop simulations. The Basilisk package is designed
-as a set of Python modules written in C/C++ which allows for the ease of
-scripting and reconfigurability of Python while still providing the
-execution speed of C/C++. The software is being developed jointly by the
-University of Colorado `AVS
+as a Python package containing modules implemented in C, C++, Python,
+and Rust. This provides the scripting and reconfigurability of Python
+while compiled C, C++, and Rust modules provide high execution speed.
+The software is being developed jointly by the University of Colorado `AVS
 Lab <http://hanspeterschaub.info/AVSlab.html>`__ and the `Laboratory for
 Atmospheric and Space Physics <http://lasp.colorado.edu/home/>`__
 (LASP). The resulting framework is targeted for both astrodynamics
@@ -105,10 +105,11 @@ The Basilisk framework is being designed from inception to support
 several different (often competing) requirements.
 
 -  **Speed:** Even though the system is operated through a Python
-   interface, the underlying simulation executes entirely in C/C++ which
-   allows for maximum execution speed. For example, a goal is to
-   simulate a mission year with sufficiently accurate vehicle 6-DOF
-   dynamics with at least a 365x speed-up (i.e. *a year in a day*).
+   interface, performance-critical simulation modules can execute in C,
+   C++, or Rust without Python interpreter overhead. For example, a goal
+   is to simulate a mission year with sufficiently accurate vehicle
+   6-DOF dynamics with at least a 365x speed-up (i.e. *a year in a
+   day*).
 
 -  **Reconfiguration:** The user interface executes natively in Python
    which allows the user to change task-rates, model/algorithm
@@ -127,14 +128,15 @@ several different (often competing) requirements.
    package to synchronize itself to one or more timing frames in order
    to provide deterministic behavior in a realtime environment.
 
--  **Scriptability:** The Python user interface to the C/C++ layer
-   relies on the `Simplified Wrapper and Interface
+-  **Scriptability:** The Python user interface to the compiled C, C++,
+   and Rust layers relies on the `Simplified Wrapper and Interface
    Generator <http://swig.org>`__ (SWIG) software, a cross-platform,
-   open-source software tasked solely with interfacing C/C++ with
-   scripting languages. This Python layer allows the simulation to be
-   easily reconfigured which allows the user complete freedom in
-   creating their own simulation modules and flight software (FSW)
-   algorithm modules. Further, the Python layer abstracts
+   open-source software for exposing compiled interfaces to scripting
+   languages. Native Rust modules use a generated C-compatible interface
+   with the common C++/SWIG wrapper. This Python layer allows the
+   simulation to be easily reconfigured which allows the user complete
+   freedom in creating their own simulation modules and flight software
+   (FSW) algorithm modules. Further, the Python layer abstracts
    logging/analysis which allows a single compilation of the source code
    to support completely different simulations.
 

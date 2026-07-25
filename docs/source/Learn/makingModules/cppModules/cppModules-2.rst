@@ -38,7 +38,7 @@ The input message object has the following support methods:
     Returns the simulation time when the connected message was written as a ``uint64_t`` time value in nano-seconds.
 
 ``moduleID()``
-    Returns the ``int64_t`` ID value of the module which wrote the message.  Note that C/C++ module ID's are strictly positive, while Python module ID's are strictly negative.
+    Returns the ``int64_t`` ID value of the module that wrote the message. C, C++, Python, and Rust ``SysModel`` modules receive unique positive IDs. A message written directly from Python defaults to module ID 0 unless the writer supplies another value.
 
 ``zeroMsgPayload``
     Zero'd structure copy of the message type associated with this input message.

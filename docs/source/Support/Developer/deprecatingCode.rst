@@ -279,3 +279,146 @@ If a C++ structure or one of its fields are renamed, an alias can be used to dep
 If a field is renamed, the top chunk creates a wrapper that contains the old field name and handles deprecation warnings and getter/setter behavior. The ``typeConversion`` parameter can be set to ``"scalarTo3D"`` to deprecate a scalar variable and alias to a new 3D variable with repeated values.
 
 If a structure is renamed, the second chunk creates a wrapper that generates an alias using the old structure name for continued support.
+
+Deprecating Rust Code
+---------------------
+Native Rust Basilisk modules have two deprecation mechanisms with different
+audiences:
+
+* Basilisk's dated module and field annotations generate runtime warnings for
+  Python users.
+* Rust's standard ``#[deprecated]`` attribute generates a compiler warning for
+  Rust code that uses a deprecated Rust item.
+
+The standard Rust attribute does not generate a warning when a user imports or
+uses the generated Python module, and it does not implement Basilisk's dated
+urgent-warning behavior. It is therefore not a substitute for
+``#[bsk(deprecated(...))]`` on a Python-visible interface. Choose the mechanism
+based on whether the deprecated interface is visible to Python users or only
+to other Rust code.
+
+Python-Visible Rust Modules
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Deprecate construction of an entire native Rust Basilisk module by adding
+deprecation metadata to its module annotation:
+
+.. code-block:: rust
+
+    #[bsk_build::module(
+        deprecated(
+            removal_date = "2099/05/05",
+            message = "Use replacementModule instead."
+        )
+    )]
+    #[repr(C)]
+    pub struct oldModuleConfig {
+        // Configuration fields and message ports
+    }
+
+Constructing ``oldModule.oldModule()`` from Python then issues the standard
+Basilisk deprecation warning. The warning does not prevent the module from
+being configured, connected, or scheduled during its deprecation period. It
+becomes ``BSKUrgentDeprecationWarning`` on or after the removal date.
+
+Python-Visible Configuration Fields
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+A non-message-port configuration field in a native Rust Basilisk module can be
+deprecated as follows:
+
+.. code-block:: rust
+
+    #[bsk(deprecated(
+        removal_date = "2099/05/05",
+        message = "Use newGain instead."
+    ))]
+    pub oldGain: f64,
+
+Reading or assigning ``oldGain`` from Python issues Basilisk's standard dated
+deprecation warning. The generated ``getOldGain()`` and ``setOldGain()`` methods
+issue the same warning. The field remains functional during the deprecation
+period, so existing scripts do not immediately break.
+
+The generated wrapper calls the same ``deprecated.deprecationWarn()`` function
+used by the C++ deprecation wrappers. Before the removal date it emits
+``BSKDeprecationWarning``. On or after that date it automatically emits the
+bold-red ``BSKUrgentDeprecationWarning``.
+
+The removal date must use ``YYYY/MM/DD``. As with Python and C++ deprecations,
+the message should name the preferred replacement and provide enough
+information for users to migrate. A deprecated field may also retain a
+validator:
+
+.. code-block:: rust
+
+    #[bsk(
+        validate = "validate_old_gain",
+        deprecated(
+            removal_date = "2099/05/05",
+            message = "Use newGain instead."
+        )
+    )]
+    pub oldGain: f64,
+
+The ``#[bsk(deprecated(...))]`` annotation currently applies only to
+Python-visible, non-port configuration fields. Direct access to the field from
+within Rust does not issue this Python runtime warning.
+
+Rust-Only Modules, Methods, and Other Items
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Use Rust's standard `deprecated attribute
+<https://doc.rust-lang.org/reference/attributes/diagnostics.html#the-deprecated-attribute>`__
+for an API consumed by other Rust code:
+
+.. code-block:: rust
+
+    #[deprecated(
+        since = "2.13.0",
+        note = "Use calculate_new_control instead."
+    )]
+    pub fn calculate_old_control() {
+        // Retained implementation
+    }
+
+Rust emits a compiler warning when Rust code uses this function, and
+``rustdoc`` identifies it as deprecated. The attribute can also be applied to
+an inherent method, type, structure field, or Rust module. Deprecating a Rust
+module causes its child items to inherit the deprecation.
+
+Do not apply ``#[deprecated]`` to the ``init``, ``reset``, or ``update``
+methods in a ``BskModule`` trait implementation. These are Basilisk framework
+callbacks rather than user-facing methods, and Rust deprecation attributes
+cannot usefully deprecate individual trait implementation methods.
+
+Current Support Summary
+~~~~~~~~~~~~~~~~~~~~~~~
+
+.. list-table::
+   :header-rows: 1
+   :widths: 34 30 36
+
+   * - Interface
+     - Current mechanism
+     - Warning audience
+   * - Python-visible Rust configuration field
+     - ``#[bsk(deprecated(...))]``
+     - Python property, getter, and setter users
+   * - Rust helper function, inherent method, type, or Rust module
+     - ``#[deprecated(...)]``
+     - Rust callers during compilation
+   * - Entire Python-visible Rust Basilisk module
+     - ``#[bsk_build::module(deprecated(...))]``
+     - Python users constructing the module
+   * - Python-visible Rust message port
+     - Not currently generated
+     - Document the deprecation until port-level wrapper support is added
+   * - Python-visible custom Rust method
+     - Not currently generated
+     - Generated configuration getters and setters are covered by their field
+
+Thus, a user-settable Rust module parameter can be deprecated today with a
+Basilisk runtime warning, as can construction of an entire Rust Basilisk
+module. Rust-only modules and methods can be deprecated for Rust callers.
+Message ports and future custom methods exposed through the generated Python
+wrapper require additional generator support. Adding ``#[deprecated]`` to the
+Rust configuration structure alone is not a substitute because Python users
+will not see that compiler warning.

@@ -125,6 +125,29 @@ Fedora
 
 #. A Git compatible version control tool like `SourceTree <http://sourcetreeapp.com>`__ should be used to :ref:`pull/clone <pullCloneBSK>` the Basilisk repository.
 
+Optional Rust Toolchain
+-----------------------
+
+Native Rust module support is optional. Install the stable Rust toolchain with
+the official `rustup installer <https://rust-lang.org/tools/install/>`__.
+The minimum supported version is listed in :ref:`rustModules`.
+
+.. code-block:: bash
+
+    $ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+
+Follow the on-screen instructions, then open a new terminal so that the updated
+``PATH`` is available. The installer provides the ``rustc`` compiler, the
+Cargo build and dependency manager, and the ``rustup`` toolchain manager.
+Verify the installation with:
+
+.. code-block:: bash
+
+    $ rustc --version
+    $ cargo --version
+
+Update an existing stable toolchain with ``rustup update stable``.
+
 Python Environment
 ------------------
 
@@ -182,6 +205,14 @@ Build Process via Terminal
    from the root Basilisk folder use::
 
         (.venv) $ python3 conanfile.py
+
+   To include native Rust modules, use the Rust-enabled configuration instead::
+
+        (.venv) $ python3 conanfile.py --rustModules True
+
+   The build downloads the pinned Corrosion CMake integration automatically;
+   no separate Corrosion installation is required. See :ref:`rustModules` for
+   details about creating and testing Rust modules.
 
    For other configure and build options, see :ref:`configureBuild`.
    This process will verify that the minimum required Basilisk python packages are installed, and that
