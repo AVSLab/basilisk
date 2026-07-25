@@ -1038,9 +1038,27 @@ mod runtime_abi_tests {
 /// A Basilisk message value, e.g. ``AttGuidMsg`` or ``CmdTorqueBodyMsg``.
 ///
 /// Implemented once per Basilisk message type by ``bsk-messages`` (generated
-/// from the vendored headers). Module authors never call these methods
-/// directly — read/write messages through [`MsgReader`]/[`MsgWriter`] instead.
-pub trait Msg: Sized + Copy {
+/// from Basilisk's generated C-message headers). Module authors never call
+/// these methods or implement this trait directly — read and write messages
+/// through [`MsgReader`]/[`MsgWriter`] instead.
+///
+/// # Safety
+///
+/// An implementation used by a generated Basilisk module must preserve the
+/// complete C-message ABI contract:
+///
+/// * `Self` must be the Rust binding of the corresponding C message payload;
+/// * [`Msg::Port`] must have exactly the size, alignment, field layout, and
+///   valid bit patterns of the generated `<Message>_C` port type selected by
+///   `bsk-build`;
+/// * each operation must call the matching generated C-message function and
+///   obey that function's pointer, ownership, and lifetime requirements.
+///
+/// A mismatched port representation lets the generated C++ wrapper access the
+/// Rust allocation with the wrong layout and can cause undefined behavior.
+/// `bsk-messages` generates and audits these implementations; ordinary module
+/// authors should not implement this trait manually.
+pub unsafe trait Msg: Sized + Copy {
     /// The C-interface port type this message is read from / written to.
     type Port: Default;
     #[doc(hidden)]
@@ -1152,7 +1170,11 @@ mod module_input_tests {
         value: TestMessage,
     }
 
-    impl Msg for TestMessage {
+    // SAFETY: This test-only implementation never crosses the generated C++
+    // boundary. `TestPort` is the sole representation used by the exercised
+    // `MsgReader`, and every operation below accesses that representation
+    // according to its Rust layout.
+    unsafe impl Msg for TestMessage {
         type Port = TestPort;
 
         fn __is_linked(port: &mut Self::Port) -> bool {

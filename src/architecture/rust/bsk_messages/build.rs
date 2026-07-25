@@ -226,7 +226,15 @@ fn render_message_trait_impls(bindings: &str) -> Result<String, Box<dyn Error>> 
     let mut implementations =
         String::from("// Auto-generated `Msg` trait impl for every Basilisk message type.\n");
     for message_type in message_types {
-        writeln!(implementations, "impl Msg for {message_type} {{")?;
+        writeln!(
+            implementations,
+            "// SAFETY: bindgen generated both `{message_type}` and `{message_type}_C` from the"
+        )?;
+        writeln!(
+            implementations,
+            "// same Basilisk C-message header, and every method delegates to its matching C function."
+        )?;
+        writeln!(implementations, "unsafe impl Msg for {message_type} {{")?;
         writeln!(implementations, "    type Port = {message_type}_C;")?;
         writeln!(implementations, "    #[inline(always)]")?;
         writeln!(

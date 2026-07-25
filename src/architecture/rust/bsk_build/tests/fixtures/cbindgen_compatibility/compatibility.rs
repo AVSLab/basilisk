@@ -62,7 +62,12 @@ pub struct CompatibleConfig {
 pub extern "C" fn use_compatible_config(_config: *mut CompatibleConfig) {}
 
 /// Minimal model of the associated-port abstraction used by ``bsk-build``.
-pub trait Msg {
+///
+/// # Safety
+///
+/// `Port` must be the concrete C-compatible port representation associated
+/// with the implementing message payload.
+pub unsafe trait Msg {
     /// Concrete C-interface port associated with a Rust message value.
     type Port;
 }
@@ -78,7 +83,9 @@ pub struct ExampleMsg {
     pub value: f64,
 }
 
-impl Msg for ExampleMsg {
+// SAFETY: `ExampleMsg_C` is the fixture's concrete C-compatible port
+// representation for `ExampleMsg`.
+unsafe impl Msg for ExampleMsg {
     type Port = ExampleMsg_C;
 }
 
