@@ -57,7 +57,7 @@ jobs:
       - name: Check committed Rust utility bindings are up to date
         run: |
           sudo apt-get update && sudo apt-get install -y libclang-dev
-          cargo install bindgen-cli --locked
+          cargo install bindgen-cli --version '=0.72.1' --locked
           python3 src/architecture/rust/gen_rust_utilities.py
           if ! git diff --exit-code -- src/architecture/rust/bsk_utilities/src/raw.rs; then
             echo "::error::src/architecture/rust/bsk_utilities/src/raw.rs is stale (it does not match the utility headers in this PR). Regenerate it locally and commit the result."
