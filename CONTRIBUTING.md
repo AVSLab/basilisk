@@ -84,6 +84,11 @@ pre-commit installed at .git/hooks/pre-commit
 pre-commit installed at .git/hooks/commit-msg
 ```
 Now ```pre-commit``` will run automatically whenever you run ```git commit```!
+When Rust source is included in a commit, the hook also runs the Rust
+`cargo fmt --check` command across the Basilisk Rust workspace. Install Rust
+through `rustup` so that the `cargo` and `rustfmt` commands are available. If
+they are not installed, the local hook reports that the Rust check was skipped;
+continuous integration always installs and runs the formatter.
 
 When ```pre-commit``` decides to edit some of your files,
 you will need to add those changes to your commit and commit again.

@@ -313,9 +313,7 @@ macro_rules! impl_bsk_config_value {
     };
 }
 
-impl_bsk_config_value!(
-    bool, f32, f64, i8, i16, i32, i64, u8, u16, u32, u64,
-);
+impl_bsk_config_value!(bool, f32, f64, i8, i16, i32, i64, u8, u16, u32, u64,);
 
 // SAFETY: A fixed array has C-contiguous layout, owns no data when its
 // elements own no data, and is valid for every element pattern allowed by T.
@@ -618,9 +616,9 @@ pub fn __ffi_boundary_with_status(
 #[cfg(test)]
 mod error_tests {
     use super::{
-        BskError, BskResult, BskRustError, BskRustErrorKind, BskRustError_kind,
+        __ffi_boundary, __ffi_boundary_with_status, inside_ffi_boundary, BskError,
+        BskFfiPanicHookGuard, BskResult, BskRustError, BskRustErrorKind, BskRustError_kind,
         BskRustError_message, Destroy_BskRustError, LIVE_BSK_RUST_ERRORS,
-        BskFfiPanicHookGuard, __ffi_boundary, __ffi_boundary_with_status, inside_ffi_boundary,
     };
     use core::sync::atomic::Ordering;
     use std::ffi::CStr;
@@ -720,10 +718,7 @@ mod error_tests {
         let _lock = ERROR_HANDLE_TEST_LOCK.lock().expect("test lock");
         let error = BskRustError::__poisoned("sample::update", "sample::reset");
 
-        assert_eq!(
-            unsafe { BskRustError_kind(error) },
-            BskRustErrorKind::Panic
-        );
+        assert_eq!(unsafe { BskRustError_kind(error) }, BskRustErrorKind::Panic);
         assert_eq!(
             handle_message(error),
             "Rust module instance cannot execute sample::update after a previous panic in \
@@ -793,10 +788,7 @@ mod error_tests {
         let _lock = ERROR_HANDLE_TEST_LOCK.lock().expect("test lock");
         let error = __ffi_boundary("sample::update", || panic!("index out of range"));
 
-        assert_eq!(
-            unsafe { BskRustError_kind(error) },
-            BskRustErrorKind::Panic
-        );
+        assert_eq!(unsafe { BskRustError_kind(error) }, BskRustErrorKind::Panic);
         assert_eq!(
             handle_message(error),
             "Rust panic in sample::update: index out of range"
@@ -865,11 +857,17 @@ pub struct BskModuleRuntime {
 
 impl BskModuleRuntime {
     /// Framework-assigned message-writer identifier (``SysModel::moduleID``).
-    pub const fn module_id(&self) -> i64 { self.module_id }
+    pub const fn module_id(&self) -> i64 {
+        self.module_id
+    }
     /// Step counter (``SysModel::CallCounts``).
-    pub const fn call_counts(&self) -> u64 { self.call_counts }
+    pub const fn call_counts(&self) -> u64 {
+        self.call_counts
+    }
     /// Random seed (``SysModel::RNGSeed``).
-    pub const fn rng_seed(&self) -> u32 { self.rng_seed }
+    pub const fn rng_seed(&self) -> u32 {
+        self.rng_seed
+    }
     /// Python-assigned module name (``SysModel::ModelTag``).
     ///
     /// Borrowed from `&self`, which in turn is only ever handed to module
@@ -926,19 +924,29 @@ pub struct BskContext<'a> {
 
 impl<'a> BskContext<'a> {
     /// Framework-assigned message-writer identifier.
-    pub const fn module_id(&self) -> i64 { self.runtime.module_id() }
+    pub const fn module_id(&self) -> i64 {
+        self.runtime.module_id()
+    }
 
     /// Python-assigned module name.
-    pub fn model_tag(&self) -> &str { self.runtime.model_tag() }
+    pub fn model_tag(&self) -> &str {
+        self.runtime.model_tag()
+    }
 
     /// Number of times the module has been called by the scheduler.
-    pub const fn call_counts(&self) -> u64 { self.runtime.call_counts() }
+    pub const fn call_counts(&self) -> u64 {
+        self.runtime.call_counts()
+    }
 
     /// Random seed inherited from the module's ``SysModel`` wrapper.
-    pub const fn rng_seed(&self) -> u32 { self.runtime.rng_seed() }
+    pub const fn rng_seed(&self) -> u32 {
+        self.runtime.rng_seed()
+    }
 
     /// Borrow the module's Basilisk logger for this lifecycle call.
-    pub const fn logger(&self) -> BskLoggerRef<'a> { self.logger }
+    pub const fn logger(&self) -> BskLoggerRef<'a> {
+        self.logger
+    }
 
     /// Construct an empty context for a pure Rust module unit test.
     ///
@@ -972,9 +980,7 @@ impl<'a> BskContext<'a> {
 
 #[cfg(all(test, target_pointer_width = "64"))]
 mod runtime_abi_tests {
-    use super::{
-        BskContext, BskModuleContext, BskModuleRuntime, BSKLogger,
-    };
+    use super::{BSKLogger, BskContext, BskModuleContext, BskModuleRuntime};
     use core::mem::{align_of, offset_of, size_of};
     use std::ffi::CString;
 
@@ -1057,14 +1063,20 @@ pub trait Msg: Sized + Copy {
 pub struct MsgReader<T: Msg>(T::Port);
 
 impl<T: Msg> Default for MsgReader<T> {
-    fn default() -> Self { Self(T::Port::default()) }
+    fn default() -> Self {
+        Self(T::Port::default())
+    }
 }
 
 impl<T: Msg> MsgReader<T> {
     /// Whether another module has subscribed this port to a source message.
-    pub fn is_linked(&mut self) -> bool { T::__is_linked(&mut self.0) }
+    pub fn is_linked(&mut self) -> bool {
+        T::__is_linked(&mut self.0)
+    }
     /// Read the current message value.
-    pub fn read(&mut self) -> T { T::__read(&mut self.0) }
+    pub fn read(&mut self) -> T {
+        T::__read(&mut self.0)
+    }
 }
 
 /// An output message port — writes a [`Msg`] for other modules to read.
@@ -1075,13 +1087,17 @@ impl<T: Msg> MsgReader<T> {
 pub struct MsgWriter<T: Msg>(T::Port);
 
 impl<T: Msg> Default for MsgWriter<T> {
-    fn default() -> Self { Self(T::Port::default()) }
+    fn default() -> Self {
+        Self(T::Port::default())
+    }
 }
 
 impl<T: Msg> MsgWriter<T> {
     /// Claim ownership of this output message. Called automatically from the
     /// generated ``SelfInit`` — module code does not need to call this.
-    pub fn init(&mut self) { T::__init(&mut self.0) }
+    pub fn init(&mut self) {
+        T::__init(&mut self.0)
+    }
     /// Write a new message value.
     pub fn write(&mut self, data: &T, module_id: i64, current_sim_nanos: u64) {
         T::__write(data, &mut self.0, module_id, current_sim_nanos)
@@ -1090,21 +1106,12 @@ impl<T: Msg> MsgWriter<T> {
 
 #[doc(hidden)]
 pub trait BskModuleInput<Message: Msg>: Sized {
-    fn validate(
-        port: &mut MsgReader<Message>,
-        missing_message: &str,
-    ) -> BskResult<()>;
-    fn read(
-        port: &mut MsgReader<Message>,
-        missing_message: &str,
-    ) -> BskResult<Self>;
+    fn validate(port: &mut MsgReader<Message>, missing_message: &str) -> BskResult<()>;
+    fn read(port: &mut MsgReader<Message>, missing_message: &str) -> BskResult<Self>;
 }
 
 impl<Message: Msg> BskModuleInput<Message> for Message {
-    fn validate(
-        port: &mut MsgReader<Message>,
-        missing_message: &str,
-    ) -> BskResult<()> {
+    fn validate(port: &mut MsgReader<Message>, missing_message: &str) -> BskResult<()> {
         if port.is_linked() {
             Ok(())
         } else {
@@ -1112,28 +1119,23 @@ impl<Message: Msg> BskModuleInput<Message> for Message {
         }
     }
 
-    fn read(
-        port: &mut MsgReader<Message>,
-        missing_message: &str,
-    ) -> BskResult<Self> {
+    fn read(port: &mut MsgReader<Message>, missing_message: &str) -> BskResult<Self> {
         Self::validate(port, missing_message)?;
         Ok(port.read())
     }
 }
 
 impl<Message: Msg> BskModuleInput<Message> for Option<Message> {
-    fn validate(
-        _port: &mut MsgReader<Message>,
-        _missing_message: &str,
-    ) -> BskResult<()> {
+    fn validate(_port: &mut MsgReader<Message>, _missing_message: &str) -> BskResult<()> {
         Ok(())
     }
 
-    fn read(
-        port: &mut MsgReader<Message>,
-        _missing_message: &str,
-    ) -> BskResult<Self> {
-        Ok(if port.is_linked() { Some(port.read()) } else { None })
+    fn read(port: &mut MsgReader<Message>, _missing_message: &str) -> BskResult<Self> {
+        Ok(if port.is_linked() {
+            Some(port.read())
+        } else {
+            None
+        })
     }
 }
 
@@ -1153,21 +1155,23 @@ mod module_input_tests {
     impl Msg for TestMessage {
         type Port = TestPort;
 
-        fn __is_linked(port: &mut Self::Port) -> bool { port.linked }
-        fn __read(port: &mut Self::Port) -> Self { port.value }
+        fn __is_linked(port: &mut Self::Port) -> bool {
+            port.linked
+        }
+        fn __read(port: &mut Self::Port) -> Self {
+            port.value
+        }
         fn __init(_port: &mut Self::Port) {}
-        fn __write(
-            _data: &Self,
-            _port: &mut Self::Port,
-            _module_id: i64,
-            _current_sim_nanos: u64,
-        ) {
+        fn __write(_data: &Self, _port: &mut Self::Port, _module_id: i64, _current_sim_nanos: u64) {
         }
     }
 
     #[test]
     fn required_input_reads_linked_message() {
-        let mut reader = MsgReader(TestPort { linked: true, value: TestMessage(42) });
+        let mut reader = MsgReader(TestPort {
+            linked: true,
+            value: TestMessage(42),
+        });
         let value = <TestMessage as BskModuleInput<TestMessage>>::read(
             &mut reader,
             "missing required input",
