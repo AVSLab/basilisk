@@ -26,6 +26,8 @@ const WRITER_PREFIX: &str = "MsgWriter_";
 struct BindingMetadata {
     /// cbindgen specialization name to existing Basilisk C message-port type.
     port_types: BTreeMap<String, String>,
+    /// Top-level scalar and fixed-size-array message-port field names.
+    port_fields: BTreeSet<String>,
     /// Fixed-size message-port arrays exposed through indexed Python views.
     port_arrays: BTreeMap<String, PortArray>,
     /// Top-level config fields backed by ``Option<Box<T>>``.
@@ -243,6 +245,7 @@ fn analyze_bindings(header: &str, config_type: &str) -> BindingMetadata {
         let declaration = line.trim();
         if let Some((rust_type, field_name)) = port_array_declaration(declaration) {
             if let Some(c_type) = metadata.port_types.get(rust_type) {
+                metadata.port_fields.insert(field_name.to_owned());
                 metadata.port_arrays.insert(
                     field_name.to_owned(),
                     PortArray {
@@ -264,9 +267,11 @@ fn analyze_bindings(header: &str, config_type: &str) -> BindingMetadata {
         let Some(field) = config_field_declaration(declaration) else {
             continue;
         };
-        if metadata.port_types.contains_key(&field.c_type)
-            || metadata.owned_state_fields.contains(&field.name)
-        {
+        if metadata.port_types.contains_key(&field.c_type) {
+            metadata.port_fields.insert(field.name);
+            continue;
+        }
+        if metadata.owned_state_fields.contains(&field.name) {
             continue;
         }
         metadata.config_fields.push(field);
@@ -463,6 +468,22 @@ fn render_swig_interface(
         .enumerate()
         .map(|(index, field)| render_config_accessor(field, index, module_name, &wrapper_type))
         .collect::<String>();
+    let embedded_message_values = metadata
+        .port_fields
+        .iter()
+        .map(|field| format!("\x20           self.{field},\n"))
+        .collect::<String>();
+    let embedded_message_accessor = format!(
+        "%extend {wrapper_type} {{\n\
+         \x20 %pythoncode %{{\n\
+         \x20   def _bskEmbeddedMessages(self):\n\
+         \x20       return [\n\
+         {embedded_message_values}\
+         \x20       ]\n\
+         \x20 %}}\n\
+         }}\n\
+         \n"
+    );
     let port_array_accessors = metadata
         .port_arrays
         .iter()
@@ -522,6 +543,7 @@ fn render_swig_interface(
          %rust_wrap_2({module_name}, {config_type}, {config_type}Handle)\n\
          \n\
          {config_accessors}\
+         {embedded_message_accessor}\
          {port_array_accessors}"
     )
 }
@@ -791,6 +813,15 @@ typedef struct ExampleConfig {
             ])
         );
         assert_eq!(
+            metadata.port_fields,
+            BTreeSet::from([
+                "inputInMsg".to_owned(),
+                "inputInMsgs".to_owned(),
+                "outputOutMsg".to_owned(),
+                "outputOutMsgs".to_owned(),
+            ])
+        );
+        assert_eq!(
             metadata.port_arrays,
             BTreeMap::from([
                 (
@@ -881,6 +912,11 @@ typedef struct ExampleConfig {
         assert!(interface.contains("OutputMsg_C *__bsk_outputOutMsgs_at"));
         assert!(interface.contains("def inputInMsgs(self):"));
         assert!(interface.contains("def outputOutMsgs(self):"));
+        assert!(interface.contains("def _bskEmbeddedMessages(self):"));
+        assert!(interface.contains("self.inputInMsg,"));
+        assert!(interface.contains("self.inputInMsgs,"));
+        assert!(interface.contains("self.outputOutMsg,"));
+        assert!(interface.contains("self.outputOutMsgs,"));
         assert!(interface.contains("def getGain(self):"));
         assert!(interface.contains("def setGain(self, value):"));
         assert!(interface.contains("gain = property(getGain, setGain)"));

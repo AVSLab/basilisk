@@ -107,18 +107,27 @@ class _OwnerHandle:
             lease.owner = owner
 
 
-def registerModule(module):
+def registerModule(module, embedded_messages=None):
     """Register the embedded ``Msg_C`` fields owned by ``module`` or a config.
 
     The C-module and config SWIG wrappers call this from their Python constructors.
     SWIG returns fresh non-owning proxies for embedded C messages on each attribute
     access, so this registry lets later ``subscribeTo()`` calls recover the storage
     owner from an embedded message's stable C address.
+
+    Rust wrappers supply ``embedded_messages`` explicitly because their generated
+    configuration properties include fixed-size message arrays and unrelated
+    Python-visible fields. C wrappers omit it and retain the established property
+    discovery behavior.
+
+    :param module: Python object that owns the embedded C-message storage.
+    :param embedded_messages: Optional nested list or tuple containing only the
+        embedded, non-owning ``Msg_C`` proxies owned by ``module``.
     """
     if hasattr(module, _MODULE_ADDRS_ATTR):
         return
 
-    _register_owner(module, _OwnerHandle(module), {})
+    _register_owner(module, _OwnerHandle(module), {}, embedded_messages)
 
 
 def transferModuleOwner(config, module):
@@ -231,10 +240,15 @@ def _owner_handle_of(msg):
     return handle_ref()
 
 
-def _register_owner(owner, handle, pins):
+def _register_owner(owner, handle, pins, embedded_messages=None):
     """Register ``owner`` and its embedded message addresses with ``handle``."""
     token = object()
-    addresses = tuple(int(msg.this) for msg in _embedded_c_msgs(owner))
+    messages = (
+        _embedded_c_msgs(owner)
+        if embedded_messages is None
+        else _explicit_c_msgs(embedded_messages)
+    )
+    addresses = tuple(dict.fromkeys(int(msg.this) for msg in messages))
 
     object.__setattr__(owner, _MODULE_OWNER_HANDLE_ATTR, handle)
     object.__setattr__(owner, _MODULE_TOKEN_ATTR, token)
@@ -262,6 +276,19 @@ def _embedded_c_msgs(module):
                 continue
             if _looks_like_c_msg(value) and not getattr(value, "thisown", False):
                 yield value
+
+
+def _explicit_c_msgs(values):
+    """Yield non-owning embedded messages from an explicit nested sequence."""
+    for value in values:
+        if isinstance(value, (list, tuple)):
+            yield from _explicit_c_msgs(value)
+            continue
+        if not _looks_like_c_msg(value) or getattr(value, "thisown", False):
+            raise TypeError(
+                "explicit embedded message registration requires non-owning Msg_C proxies"
+            )
+        yield value
 
 
 def _looks_like_c_msg(value):

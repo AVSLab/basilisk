@@ -342,6 +342,8 @@ class RustWrapper : public SysModel {
     %}
 
     %pythonappend RustWrapper::RustWrapper %{
+        from Basilisk.architecture.messaging import _msgKeepAlive
+        _msgKeepAlive.registerModule(self, self._bskEmbeddedMessages())
         removal_date = self.__bskModuleDeprecationDate()
         if removal_date:
             from Basilisk.utilities import deprecated
