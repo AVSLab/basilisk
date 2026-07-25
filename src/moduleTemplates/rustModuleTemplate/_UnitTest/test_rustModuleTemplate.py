@@ -240,7 +240,11 @@ def test_rust_module_template_python_api():
         assert module.legacyDummy == 3.0
     assert len(caught_warnings) == 2
     assert all(
-        issubclass(warning.category, deprecated.BSKDeprecationWarning)
+        warning.category
+        in (
+            deprecated.BSKDeprecationWarning,
+            deprecated.BSKUrgentDeprecationWarning,
+        )
         for warning in caught_warnings
     )
     assert all("Use dummy instead." in str(warning.message) for warning in caught_warnings)

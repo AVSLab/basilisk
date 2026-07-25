@@ -1050,7 +1050,17 @@ Rust-Native Tests
 ~~~~~~~~~~~~~~~~~
 
 Place ``#[cfg(test)]`` tests in ``myModule.rs`` or in the package's Rust test
-layout. Run them from the module directory:
+layout. These tests do not link the compiled Basilisk library, so that library
+does not need to be built with ``--rustModules True``. However,
+``bsk-messages`` generates its Rust bindings from the normal C-message headers
+under ``dist3/autoSource/cMsgCInterface``. Configure Basilisk at least once to
+generate those headers; either a normal or Rust-enabled configuration works:
+
+.. code-block:: console
+
+    python3 conanfile.py
+
+Then run the Rust-native tests from the module directory:
 
 .. code-block:: console
 
@@ -1087,9 +1097,11 @@ After a Rust-enabled Basilisk build, the normal ``python3 run_all_test.py``
 workflow includes the module's Python test. The same command also runs all
 Cargo workspace tests when ``cargo`` is installed and available on ``PATH``.
 It reports that Rust tests were skipped, without failing, when ``cargo`` is
-not available. The Cargo tests do not require Basilisk to have been configured
-with ``--rustModules True`` because they test the Rust packages directly
-without linking the generated Basilisk module library.
+not available. The Cargo tests exercise the Rust packages directly without
+linking the generated Basilisk module library, but they still require the
+C-message headers produced by a previous Basilisk configuration. The build
+performed before ``run_all_test.py`` supplies that prerequisite even when
+Rust modules are disabled.
 
 Contributor Checks
 ~~~~~~~~~~~~~~~~~~

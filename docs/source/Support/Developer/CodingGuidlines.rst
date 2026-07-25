@@ -244,12 +244,13 @@ Next, run the command::
 
     $ python run_all_test.py
 
-This executes the ``pytest`` and ``gtest`` checks. When Cargo is available on
-``PATH``, it also executes all Rust workspace tests. If Cargo is not installed,
-the script reports that the Rust tests were skipped and continues. All tests
-that run should pass. If not all Basilisk modules are built (i.e. the build
-process turned off the ``opNav`` option), then some Python tests will show up
-as skipped.
+This executes the ``pytest`` and ``gtest`` checks. It also executes all Rust
+workspace tests when Basilisk was configured with ``--rustModules True`` and
+Cargo is available on ``PATH``. If either condition is not met, the script
+reports that the Rust tests were skipped and continues. All tests that run
+should pass. If not all Basilisk modules are built (i.e. the build process
+turned off the ``opNav`` option), then some Python tests will show up as
+skipped.
 
 Guarding Tests for Optional Build Features
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

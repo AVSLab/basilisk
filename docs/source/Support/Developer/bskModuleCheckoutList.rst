@@ -4,7 +4,7 @@
 Basilisk Module Checkout List
 =============================
 
-This documents contains a series of action items that should be checked
+This document contains a series of action items that should be checked
 before a Basilisk (BSK) module is approved.
 
 Branch Must Be Up to Date
@@ -18,8 +18,9 @@ Building Basilisk and Testing
     clean build)
 -   From the project root directory, run ``python run_all_test.py`` and ensure
     all Python, C/C++, and available Rust tests are passing. Rust tests are
-    skipped automatically when Cargo is not installed.
-    as expected
+    run when the clean build above enables ``--rustModules True`` and Cargo is
+    available on ``PATH``. Otherwise, the test runner reports that Rust tests
+    were skipped and continues without failing.
 
 Style and Formatting
 --------------------
