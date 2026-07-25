@@ -57,7 +57,7 @@ function(_bsk_add_rust_windows_exports SWIG_TARGET MODULE_NAME)
   _bsk_rust_export_symbols("${MODULE_NAME}" _rust_exports)
   list(JOIN _rust_exports "\n    " _rust_export_lines)
   set(_rust_export_file
-      "${CMAKE_CURRENT_BINARY_DIR}/rust_exports/${MODULE_NAME}.def")
+      "${CMAKE_BINARY_DIR}/rust/exports/${MODULE_NAME}.def")
   file(GENERATE
        OUTPUT "${_rust_export_file}"
        CONTENT "EXPORTS\n    ${_rust_export_lines}\n")
@@ -184,16 +184,17 @@ function(bsk_add_rust_module_sources)
   if(NOT RUST_INCLUDE_DIR)
     set(RUST_INCLUDE_DIR "${CMAKE_SOURCE_DIR}")
   endif()
+  set(_rust_artifact_directory "${CMAKE_BINARY_DIR}/rust")
   if(NOT RUST_HEADER)
     set(RUST_HEADER
-        "${CMAKE_CURRENT_BINARY_DIR}/rust_headers/${RUST_TARGET}.h")
+        "${_rust_artifact_directory}/include/${RUST_TARGET}.h")
   endif()
   if(NOT RUST_INTERFACE)
     set(RUST_INTERFACE
-        "${CMAKE_CURRENT_BINARY_DIR}/${RUST_TARGET}_rust_wrap.i")
+        "${_rust_artifact_directory}/swig/${RUST_TARGET}_rust_wrap.i")
   endif()
   set(_bindings_trigger
-      "${CMAKE_CURRENT_BINARY_DIR}/rust_bindings/${RUST_TARGET}.trigger")
+      "${_rust_artifact_directory}/bindings/${RUST_TARGET}.trigger")
 
   _bsk_load_corrosion()
   _bsk_rust_package_name_from_metadata("${_manifest}" _rust_package_name)
@@ -212,6 +213,19 @@ function(bsk_add_rust_module_sources)
       "${_rust_package_name}: expected exactly one static library target")
   endif()
   list(GET _rust_imported_targets 0 _rust_target)
+
+  # Corrosion copies Cargo's static-library byproduct into the importing
+  # target's CMake archive directory. Keep those per-module intermediates out
+  # of the build root alongside the generated headers and SWIG interfaces.
+  set(_rust_archive_directory "${_rust_artifact_directory}/lib")
+  set_property(TARGET "${_rust_target}" PROPERTY
+               ARCHIVE_OUTPUT_DIRECTORY "${_rust_archive_directory}")
+  foreach(_config IN LISTS CMAKE_CONFIGURATION_TYPES)
+    string(TOUPPER "${_config}" _config_upper)
+    set_property(TARGET "${_rust_target}" PROPERTY
+                 "ARCHIVE_OUTPUT_DIRECTORY_${_config_upper}"
+                 "${_rust_archive_directory}")
+  endforeach()
 
   # corrosion_import_crate() returns the public interface target. For a
   # staticlib-only import that target forwards to Corrosion's concrete
