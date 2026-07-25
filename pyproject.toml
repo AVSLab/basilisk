@@ -101,7 +101,12 @@ repair-wheel-command = "python -m delvewheel repair -v --ignore-existing --analy
 
 [tool.cibuildwheel.linux]
 archs = ["native"]
-before-all = "python -m pip install 'conan>=2.0.5,<=2.28.1' && python -m conans.conan profile detect --force && conan_home=\"${CONAN_HOME:-$HOME/.conan2}\" && mkdir -p \"$conan_home\" && touch \"$conan_home/global.conf\" && for setting in 'tools.system.package_manager:mode=install' 'tools.system.package_manager:sudo=False'; do grep -qxF \"$setting\" \"$conan_home/global.conf\" || printf '%s\\n' \"$setting\" >> \"$conan_home/global.conf\"; done"
+# Rust module support (--rustModules, see src/cmake/bskFindRustModules.cmake)
+# is experimental and off by default, but the manylinux container has no
+# Rust/Cargo toolchain at all, so it is bootstrapped here unconditionally.
+# This lets nightly, test, and release wheel jobs build Rust modules through
+# the pinned Corrosion integration on every Linux wheel platform.
+before-all = "python -m pip install 'conan>=2.0.5,<=2.28.1' && python -m conans.conan profile detect --force && conan_home=\"${CONAN_HOME:-$HOME/.conan2}\" && mkdir -p \"$conan_home\" && touch \"$conan_home/global.conf\" && for setting in 'tools.system.package_manager:mode=install' 'tools.system.package_manager:sudo=False'; do grep -qxF \"$setting\" \"$conan_home/global.conf\" || printf '%s\\n' \"$setting\" >> \"$conan_home/global.conf\"; done && curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y"
 repair-wheel-command = [
   "auditwheel repair --strip -w {dest_dir} {wheel}"
 ]
@@ -111,6 +116,12 @@ manylinux-aarch64-image = "manylinux_2_28"
 # that toggles MuJoCo/OpNav aren't visible to the build unless explicitly
 # forwarded.
 environment-pass = ["CONAN_ARGS", "CMAKE_C_COMPILER_LAUNCHER", "CMAKE_CXX_COMPILER_LAUNCHER"]
+
+[tool.cibuildwheel.linux.environment]
+# rustup (installed by before-all above) puts cargo/rustc here; before-all
+# runs in its own subprocess so this can't be exported from there directly --
+# see https://cibuildwheel.pypa.io/en/stable/faq/#building-rust-wheels.
+PATH = "$HOME/.cargo/bin:$PATH"
 
 [tool.pytest.ini_options]
 testpaths = [
