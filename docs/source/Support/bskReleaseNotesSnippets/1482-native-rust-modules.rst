@@ -1,0 +1,1 @@
+- :beta:`Native Rust Modules`: Added optional support for developing and building Basilisk modules in Rust, including generated Python and C-message interfaces, Cargo and Corrosion build integration, module templates, documentation, and CI and wheel coverage.
