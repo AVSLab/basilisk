@@ -14,9 +14,11 @@ crate-type = ["staticlib"]
 [dependencies]
 bsk-messages = { path = "../../architecture/rust/bsk_messages" }
 bsk-build = { path = "../../architecture/rust/bsk_build" }
+bsk-utilities.workspace = true
 
 [dev-dependencies]
 bsk-build = { path = "../../architecture/rust/bsk_build", features = ["test_logger"] }
+bsk-utilities = { workspace = true, features = ["ffi-tests"] }
 
 [build-dependencies]
 bsk-build = { path = "../../architecture/rust/bsk_build", default-features = false, features = ["codegen"] }

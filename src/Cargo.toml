@@ -28,6 +28,8 @@ members = [
 ]
 
 [workspace.dependencies]
+# Use the shared Basilisk C-utility wrappers from in-tree Rust modules.
+bsk-utilities = { path = "architecture/rust/bsk_utilities" }
 # Use one reviewed linear-algebra version across all in-tree Rust modules.
 nalgebra = { version = "0.35.0", default-features = false, features = ["std"] }
 

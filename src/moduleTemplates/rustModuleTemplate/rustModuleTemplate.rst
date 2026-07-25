@@ -49,7 +49,9 @@ its generated setter, and checked again during reset. The ``legacyDummy``
 parameter demonstrates generated Basilisk deprecation warnings. The
 ``panicOnUpdate`` field is a test-only fault-injection hook used to verify that
 the generated ABI contains an unexpected Rust panic before it crosses into
-C++.
+C++. The private module state also calls the safe
+``bsk_utilities::attitude::wrap_to_pi`` wrapper, illustrating access to
+Basilisk's existing C utility implementation without exposing raw pointers.
 
 User Guide
 ----------

@@ -161,3 +161,81 @@ mod tests {
         assert_eq!(constants::J2_EARTH, 1082.616e-6); // [-]
     }
 }
+
+#[cfg(all(test, feature = "ffi-tests"))]
+mod ffi_tests {
+    use super::{attitude, constants, orbital};
+    use std::f64::consts::PI;
+
+    fn assert_close(actual: f64, expected: f64, tolerance: f64) {
+        assert!(
+            (actual - expected).abs() <= tolerance,
+            "expected {expected}, received {actual}"
+        );
+    }
+
+    fn assert_angle_close(actual: f64, expected: f64, tolerance: f64) {
+        let difference = (actual - expected + PI).rem_euclid(2.0 * PI) - PI; // [rad]
+        assert_close(difference, 0.0, tolerance);
+    }
+
+    /// Execute every safe orbital wrapper against the Basilisk C utilities.
+    #[test]
+    fn orbital_wrappers_execute_linked_c_functions() {
+        let original = orbital::ClassicElements {
+            a: 7_000.0,  // [km]
+            e: 0.1,      // [-]
+            i: 0.2,      // [rad]
+            Omega: 0.3,  // [rad]
+            omega: -0.4, // [rad]
+            f: 0.5,      // [rad]
+            ..Default::default()
+        };
+        let mut elements = original;
+        let (position, velocity) = orbital::elements_to_state(constants::MU_EARTH, &mut elements);
+        assert!(position.iter().all(|value| value.is_finite()));
+        assert!(velocity.iter().all(|value| value.is_finite()));
+
+        let recovered = orbital::state_to_elements(constants::MU_EARTH, position, velocity);
+        assert_close(recovered.a, original.a, 1.0e-9); // [km]
+        assert_close(recovered.e, original.e, 1.0e-12); // [-]
+        assert_close(recovered.i, original.i, 1.0e-12); // [rad]
+        assert_angle_close(recovered.Omega, original.Omega, 1.0e-12); // [rad]
+        assert_angle_close(recovered.omega, original.omega, 1.0e-12); // [rad]
+        assert_angle_close(recovered.f, original.f, 1.0e-12); // [rad]
+
+        let mean_anomaly = 0.4; // [rad]
+        let eccentricity = 0.2; // [-]
+        let eccentric_anomaly = orbital::mean_to_eccentric_anomaly(mean_anomaly, eccentricity);
+        assert_close(
+            eccentric_anomaly - eccentricity * eccentric_anomaly.sin(),
+            mean_anomaly,
+            1.0e-13, // [rad]
+        );
+        let true_anomaly = orbital::eccentric_to_true_anomaly(eccentric_anomaly, eccentricity);
+        let expected_true_anomaly = 2.0
+            * (((1.0 + eccentricity) / (1.0 - eccentricity)).sqrt()
+                * (eccentric_anomaly / 2.0).tan())
+            .atan(); // [rad]
+        assert_close(true_anomaly, expected_true_anomaly, 1.0e-13); // [rad]
+    }
+
+    /// Execute every safe attitude wrapper against the Basilisk C utilities.
+    #[test]
+    fn attitude_wrappers_execute_linked_c_functions() {
+        let sigma = [0.1, -0.2, 0.3]; // [-]
+        let dcm = attitude::mrp_to_dcm(sigma);
+        let recovered = attitude::dcm_to_mrp(dcm);
+        for (actual, expected) in recovered.into_iter().zip(sigma) {
+            assert_close(actual, expected, 1.0e-13); // [-]
+        }
+
+        let composed = attitude::add_mrp([0.1, 0.0, 0.0], [0.2, 0.0, 0.0]); // [-]
+        assert_close(composed[0], 0.306_122_448_979_591_84, 1.0e-15); // [-]
+        assert_close(composed[1], 0.0, 0.0); // [-]
+        assert_close(composed[2], 0.0, 0.0); // [-]
+
+        let wrapped = attitude::wrap_to_pi(4.0); // [rad]
+        assert_close(wrapped, 4.0 - 2.0 * PI, 1.0e-15); // [rad]
+    }
+}
