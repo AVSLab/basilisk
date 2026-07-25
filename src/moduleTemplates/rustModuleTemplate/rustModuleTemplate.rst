@@ -45,8 +45,11 @@ demonstrates the Rust module lifecycle, explicit message-port annotations,
 named input and output values, optional message inputs, output messages, and
 fixed-size arrays of message ports. It also demonstrates a Python-configurable
 ``increment`` parameter that is initialized in Rust, validated immediately by
-its generated setter, and checked again during reset. The ``legacyDummy``
-parameter demonstrates generated Basilisk deprecation warnings. The
+its generated setter, and checked again during reset. The nested
+``sampleParameters`` value and two-dimensional ``sampleMatrix`` array exercise
+composite configuration types through the generated Rust, C++, SWIG, and
+Python interfaces. The ``legacyDummy`` parameter demonstrates generated
+Basilisk deprecation warnings. The
 ``panicOnUpdate`` field is a test-only fault-injection hook used to verify that
 the generated ABI contains an unexpected Rust panic before it crosses into
 C++. The private module state also calls the safe
@@ -74,6 +77,25 @@ the previous value. ``module.getIncrement()`` and
 ``module.setIncrement(value)`` use the same generated Rust getter and setter
 as the ``module.increment`` property. Reset repeats the validation as a
 defensive check for defaults or changes made inside Rust.
+
+The template also exposes grouped parameters and a fixed-size matrix. Nested
+configuration getters return a copy, so modify the copy and assign the whole
+value back to the module. Multidimensional Rust arrays appear as nested Python
+lists:
+
+.. code-block:: python
+
+   parameters = module.sampleParameters
+   parameters.gain = 2.5  # [-]
+   parameters.offset = -0.25  # [-]
+   module.sampleParameters = parameters
+
+   module.sampleMatrix = [[1.0, 2.0, 3.0],   # [-]
+                          [4.0, 5.0, 6.0]]
+
+Both setters reject non-finite components, and the array setter also rejects a
+value with anything other than six total elements. A failed setter preserves
+the preceding configuration value.
 
 The unused ``legacyDummy`` sample parameter is deprecated in favor of
 ``dummy``. Reading or writing it demonstrates the standard dated Basilisk

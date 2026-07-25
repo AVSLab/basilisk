@@ -818,6 +818,10 @@ changing an element:
     values[0] = 0.005  # [Nm]
     module.maxTorques = values
 
+The :ref:`rustModuleTemplate` module exercises both a nested configuration
+struct and a multidimensional fixed-size array through the complete generated
+Rust, C++, SWIG, and Python interface.
+
 Rust-Owned Private State
 ------------------------
 
