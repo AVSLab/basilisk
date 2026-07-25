@@ -1,0 +1,22 @@
+[package]
+name = "rustModuleTemplate"
+version = "0.1.0"
+edition = "2021"
+rust-version.workspace = true
+
+[package.metadata.basilisk]
+module = true
+
+[lib]
+path = "rustModuleTemplate.rs"
+crate-type = ["staticlib"]
+
+[dependencies]
+bsk-messages = { path = "../../architecture/rust/bsk_messages" }
+bsk-build = { path = "../../architecture/rust/bsk_build" }
+
+[dev-dependencies]
+bsk-build = { path = "../../architecture/rust/bsk_build", features = ["test_logger"] }
+
+[build-dependencies]
+bsk-build = { path = "../../architecture/rust/bsk_build", default-features = false, features = ["codegen"] }

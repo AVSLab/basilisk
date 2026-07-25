@@ -131,6 +131,11 @@ figure {
     color: #fff;
 }
 
+.module-type-rust {
+    background-color: #CE422B;
+    color: #fff;
+}
+
 @media (prefers-color-scheme: dark) {
 	.wy-nav-content, .wy-body-for-nav, .wy-nav-content-wrap, math, span[id*='MathJax-Span'] {
 		background-color: black;
