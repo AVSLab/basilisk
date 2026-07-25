@@ -760,7 +760,7 @@ class fileCrawler():
             if generated_header:
                 # Breathe caches AutoDoxygen projects by source directory.
                 # Use one project for all generated Rust headers because they
-                # share dist3/rust_headers; separate projects can otherwise
+                # share dist3/rust/include; separate projects can otherwise
                 # reuse another module's Doxygen input list.
                 project_name = "BasiliskRustModules"
                 lines += "Generated Module API\n--------------------\n\n"
@@ -838,7 +838,7 @@ officialSrc = "../../src"
 officialDoc = "./Documentation/"
 
 default_rust_header_dir = (
-    Path(__file__).resolve().parents[2] / "dist3" / "rust_headers"
+    Path(__file__).resolve().parents[2] / "dist3" / "rust" / "include"
 )
 rust_header_dir = os.environ.get("BSK_RUST_HEADER_DIR", default_rust_header_dir)
 fileCrawler = fileCrawler(rebuild, rust_header_dir)

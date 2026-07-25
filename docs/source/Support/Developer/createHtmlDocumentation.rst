@@ -79,14 +79,14 @@ module support before running Sphinx:
     cd docs
     make html
 
-Sphinx looks for the generated headers in ``dist3/rust_headers`` and sends
+Sphinx looks for the generated headers in ``dist3/rust/include`` and sends
 each available module header through the existing Doxygen/Breathe pipeline.
 
 The generated API sections are omitted when a Rust module header is
 unavailable, so Rust remains optional for normal documentation builds.
 
 If Basilisk was built in a non-default directory, set
-``BSK_RUST_HEADER_DIR`` to that build's ``rust_headers`` directory before
+``BSK_RUST_HEADER_DIR`` to that build's ``rust/include`` directory before
 running Sphinx.
 
 Rendering a Single Documentation Page
