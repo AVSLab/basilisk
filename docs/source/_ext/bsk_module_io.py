@@ -40,6 +40,11 @@ MODULE_TYPE_STYLES = {
         "fillcolor": "#7FAF8C",
         "fontcolor": "white",
     },
+    "Rust": {
+        "css_class": "module-type-rust",
+        "fillcolor": "#CE422B",
+        "fontcolor": "white",
+    },
 }
 
 
@@ -73,6 +78,8 @@ def _canonical_module_type(module_type: str) -> str:
         return "C"
     if normalized_type in ("python", "py"):
         return "Python"
+    if normalized_type in ("rust", "rs"):
+        return "Rust"
     return "Python"
 
 
