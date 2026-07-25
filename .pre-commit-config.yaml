@@ -12,6 +12,12 @@ repos:
       -   id: debug-statements
 -   repo: local
     hooks:
+      -   id: rustfmt
+          name: Check Rust formatting
+          entry: python src/utilities/preCommitTools/checkRustFormatting.py
+          language: python
+          files: '(^|/)(.*\.rs|\.?rustfmt\.toml)$'
+          pass_filenames: false
       -   id: check-supportdata-registry
           name: Ensure supportData registrySnippet.py is updated
           entry: python src/utilities/supportDataTools/checkSync.py

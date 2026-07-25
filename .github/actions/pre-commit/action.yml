@@ -8,6 +8,12 @@ runs:
       with:
         python-version: 3.11
 
+    - name: Set up Rust formatter
+      shell: bash
+      run: |
+        rustup toolchain install stable --profile minimal --component rustfmt
+        rustup default stable
+
     - id: file_changes
       uses: tj-actions/changed-files@v44
     - uses: pre-commit/action@v3.0.1

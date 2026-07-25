@@ -1050,13 +1050,18 @@ repository root:
 
 .. code-block:: console
 
+    cargo fmt --all --check --manifest-path src/Cargo.toml
     cargo test --workspace --all-features --locked --manifest-path src/Cargo.toml
     cargo test -p bsk-build --no-default-features --locked --manifest-path src/Cargo.toml
     cargo clippy --workspace --all-targets --all-features --locked \
         --manifest-path src/Cargo.toml -- -D warnings
 
-Pull-request CI also checks the minimum supported Rust version and verifies
-that generated language boundaries retain panic containment. Follow the
+The repository's local pre-commit hook runs the same Rust formatting check
+whenever Rust source is changed. The local hook reports a skip instead of
+failing when Cargo or ``rustfmt`` is not installed, keeping Rust optional for
+non-Rust development. Pull-request CI installs and always runs the formatter,
+checks the minimum supported Rust version, and verifies that generated
+language boundaries retain panic containment. Follow the
 :ref:`bskModuleCheckoutList` for the remaining module review requirements.
 
 Current Limitations
