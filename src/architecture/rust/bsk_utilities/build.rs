@@ -33,7 +33,16 @@ fn main() {
     ];
 
     let mut build = cc::Build::new();
-    build.include(&source_root).std("c17").warnings(false);
+    build.include(&source_root).warnings(false);
+    if env::var("CARGO_CFG_TARGET_ENV").as_deref() == Ok("msvc") {
+        // Match the definition applied by Basilisk's CMake configuration so
+        // MSVC's math header exposes constants such as M_PI.
+        build.std("c17").define("_USE_MATH_DEFINES", None);
+    } else {
+        // Basilisk's GCC and Clang builds use GNU C17. The GNU extensions
+        // expose the math constants used by the existing C utilities.
+        build.std("gnu17");
+    }
     for source in &sources {
         println!("cargo:rerun-if-changed={}", source.display());
         build.file(source);
