@@ -17,6 +17,96 @@
 include_guard(GLOBAL)
 include(bskAddRustModuleSources)
 
+function(_bsk_find_cargo OUT_VAR)
+  find_program(_BSK_CARGO_EXECUTABLE NAMES cargo)
+  if(NOT _BSK_CARGO_EXECUTABLE)
+    message(FATAL_ERROR
+      "BUILD_RUST_MODULES is ON but no 'cargo' executable was found on PATH. "
+      "Install a supported stable Rust toolchain from https://rustup.rs/ and "
+      "make sure 'cargo' is on PATH, or configure with BUILD_RUST_MODULES=OFF.")
+  endif()
+  set("${OUT_VAR}" "${_BSK_CARGO_EXECUTABLE}" PARENT_SCOPE)
+endfunction()
+
+# Ask Cargo for the typed workspace/package model once per configure. This
+# avoids duplicating Cargo.toml syntax, workspace inheritance, or metadata
+# semantics in CMake.
+function(_bsk_rust_workspace_metadata OUT_VAR)
+  get_property(
+    _metadata_cached
+    GLOBAL PROPERTY BSK_RUST_WORKSPACE_METADATA
+    SET)
+  if(_metadata_cached)
+    get_property(
+      _metadata_json
+      GLOBAL PROPERTY BSK_RUST_WORKSPACE_METADATA)
+    set("${OUT_VAR}" "${_metadata_json}" PARENT_SCOPE)
+    return()
+  endif()
+
+  _bsk_find_cargo(_cargo_executable)
+  set(_workspace_manifest "${CMAKE_SOURCE_DIR}/Cargo.toml")
+  set(_workspace_lockfile "${CMAKE_SOURCE_DIR}/Cargo.lock")
+  if(NOT EXISTS "${_workspace_manifest}")
+    message(FATAL_ERROR
+      "Rust module discovery requires the workspace manifest: "
+      "${_workspace_manifest}")
+  endif()
+  set_property(
+    DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS
+    "${_workspace_manifest}"
+    "${_workspace_lockfile}")
+
+  execute_process(
+    COMMAND
+      "${_cargo_executable}" metadata
+      --locked
+      --no-deps
+      --format-version 1
+      --manifest-path "${_workspace_manifest}"
+    RESULT_VARIABLE _metadata_result
+    OUTPUT_VARIABLE _metadata_json
+    ERROR_VARIABLE _metadata_error
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    ERROR_STRIP_TRAILING_WHITESPACE)
+  if(NOT _metadata_result EQUAL 0)
+    message(FATAL_ERROR
+      "Cargo metadata failed during Rust module discovery:\n"
+      "${_metadata_error}")
+  endif()
+
+  string(
+    JSON _package_count
+    ERROR_VARIABLE _metadata_json_error
+    LENGTH "${_metadata_json}" packages)
+  if(_metadata_json_error)
+    message(FATAL_ERROR
+      "Cargo returned invalid workspace metadata during Rust module discovery:\n"
+      "${_metadata_json_error}")
+  endif()
+
+  # Reconfigure when an existing workspace member changes its marker. A new
+  # member must also be registered in the root workspace manifest, which is
+  # already watched above.
+  if(_package_count GREATER 0)
+    math(EXPR _last_package_index "${_package_count} - 1")
+    set(_workspace_package_manifests "")
+    foreach(_package_index RANGE 0 ${_last_package_index})
+      string(
+        JSON _package_manifest
+        GET "${_metadata_json}" packages ${_package_index} manifest_path)
+      list(APPEND _workspace_package_manifests "${_package_manifest}")
+    endforeach()
+    set_property(
+      DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS
+      ${_workspace_package_manifests})
+  endif()
+
+  set_property(
+    GLOBAL PROPERTY BSK_RUST_WORKSPACE_METADATA "${_metadata_json}")
+  set("${OUT_VAR}" "${_metadata_json}" PARENT_SCOPE)
+endfunction()
+
 # rust-bindgen uses libclang at Cargo build time. On Linux and Windows,
 # Basilisk's Python libclang package provides that native library without
 # requiring another user-installed dependency. macOS instead lets clang-sys
@@ -46,14 +136,13 @@ endfunction()
 # Counterpart of find_package_targets()/generate_package_targets() (see
 # src/CMakeLists.txt) for modules implemented in Rust. Same discovery
 # convention -- one target per module directory -- but keyed on a crate's
-# Cargo.toml and an explicit `[package.metadata.basilisk] module = true`
+# Cargo metadata and an explicit `[package.metadata.basilisk] module = true`
 # marker instead of a hand-written .i file. The marker distinguishes BSK
 # modules from support crates such as architecture/rust/bsk_build. A Rust
 # module's .i file is a `cargo build` *byproduct* (bsk-build generates it from
-# the crate's source), not something committed to disk. find_package_targets()'s
-# glob runs at CMake *configure* time, before any build step has run, so it
-# can never see a not-yet-generated .i file -- hence the separate discovery
-# function here instead of teaching the existing one to also match Cargo.toml.
+# the crate's source), not something committed to disk. find_package_targets()
+# runs at CMake *configure* time, before any build step has run, so it can never
+# see a not-yet-generated .i file -- hence the separate discovery function.
 #
 # generate_rust_package_targets() is a no-op unless BUILD_RUST_MODULES is ON
 # (see bskTargetExcludeBuildOptions.cmake) -- Rust module support is
@@ -62,34 +151,61 @@ endfunction()
 # ---------------------------------------------------------------------------
 
 function(find_rust_package_targets PKG_DIR ALL_TARGET_LIST)
-  file(
-    GLOB_RECURSE RUST_MANIFESTS
-    CONFIGURE_DEPENDS
-    RELATIVE ${CMAKE_SOURCE_DIR}
-    "${PKG_DIR}/Cargo.toml")
+  if(NOT BUILD_RUST_MODULES)
+    set("${ALL_TARGET_LIST}" "" PARENT_SCOPE)
+    return()
+  endif()
+
+  file(REAL_PATH "${PKG_DIR}" _package_root)
+  _bsk_rust_workspace_metadata(_metadata_json)
+  string(JSON _package_count LENGTH "${_metadata_json}" packages)
 
   set(RUST_TARGETS "")
-  foreach(RUST_MANIFEST IN LISTS RUST_MANIFESTS)
-    if(RUST_MANIFEST MATCHES "(^|/)target(/|$)")
+  if(_package_count EQUAL 0)
+    set("${ALL_TARGET_LIST}" "" PARENT_SCOPE)
+    return()
+  endif()
+
+  math(EXPR _last_package_index "${_package_count} - 1")
+  foreach(_package_index RANGE 0 ${_last_package_index})
+    string(
+      JSON _manifest_path
+      GET "${_metadata_json}" packages ${_package_index} manifest_path)
+    file(REAL_PATH "${_manifest_path}" _manifest_path)
+    cmake_path(
+      IS_PREFIX _package_root "${_manifest_path}"
+      NORMALIZE _manifest_is_in_package)
+    if(NOT _manifest_is_in_package)
       continue()
     endif()
-    file(STRINGS "${CMAKE_SOURCE_DIR}/${RUST_MANIFEST}" CARGO_MANIFEST_LINES)
-    set(IN_BASILISK_METADATA FALSE)
-    foreach(CARGO_LINE IN LISTS CARGO_MANIFEST_LINES)
-      string(STRIP "${CARGO_LINE}" CARGO_LINE)
-      if(CARGO_LINE MATCHES "^\\[package\\.metadata\\.basilisk\\][ \\t]*(#.*)?$")
-        set(IN_BASILISK_METADATA TRUE)
-      elseif(CARGO_LINE MATCHES "^\\[.*\\]")
-        set(IN_BASILISK_METADATA FALSE)
-      elseif(IN_BASILISK_METADATA AND
-             CARGO_LINE MATCHES "^module[ \\t]*=[ \\t]*true([ \\t]*(#.*)?)?$")
-        list(APPEND RUST_TARGETS "${RUST_MANIFEST}")
-        break()
-      endif()
-    endforeach()
-  endforeach()
 
-  set(${ALL_TARGET_LIST}
+    string(
+      JSON _module_metadata_type
+      ERROR_VARIABLE _module_metadata_error
+      TYPE "${_metadata_json}"
+      packages ${_package_index} metadata basilisk module)
+    if(_module_metadata_error)
+      continue()
+    endif()
+    if(NOT _module_metadata_type STREQUAL "BOOLEAN")
+      message(FATAL_ERROR
+        "Rust package marker must be a Boolean: "
+        "[package.metadata.basilisk] module = true in ${_manifest_path}")
+    endif()
+    string(
+      JSON _is_basilisk_module
+      GET "${_metadata_json}"
+      packages ${_package_index} metadata basilisk module)
+    if(_is_basilisk_module)
+      file(
+        RELATIVE_PATH _relative_manifest
+        "${CMAKE_SOURCE_DIR}" "${_manifest_path}")
+      list(APPEND RUST_TARGETS "${_relative_manifest}")
+    endif()
+  endforeach()
+  list(SORT RUST_TARGETS)
+
+  set("${ALL_TARGET_LIST}"
       ${RUST_TARGETS}
       PARENT_SCOPE)
 endfunction(find_rust_package_targets)
@@ -103,14 +219,7 @@ function(generate_rust_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
     return()
   endif()
 
-  find_program(CARGO_EXECUTABLE cargo)
-  if(NOT CARGO_EXECUTABLE)
-    message(FATAL_ERROR
-      "BUILD_RUST_MODULES is ON but no 'cargo' executable was found on PATH; "
-      "the explicitly requested Rust module(s) under ${MODULE_DIR} cannot be built: "
-      "${TARGET_LIST}. Install a supported stable Rust toolchain from https://rustup.rs/ and "
-      "make sure 'cargo' is on PATH, or configure with BUILD_RUST_MODULES=OFF.")
-  endif()
+  _bsk_find_cargo(_cargo_executable)
 
   set(_rust_cargo_env
       "BSK_CMSG_DIR=${CMAKE_BINARY_DIR}/autoSource/cMsgCInterface"

@@ -251,7 +251,10 @@ The important entries are:
 ``[package.metadata.basilisk]``
    Marks this Cargo package as a Basilisk module. Support libraries under
    ``src/architecture/rust`` are Cargo packages too, but they do not have this
-   marker and are not exposed as Python modules.
+   marker and are not exposed as Python modules. During CMake configuration,
+   Basilisk asks Cargo for workspace metadata and reads this typed Boolean
+   marker from Cargo's package model; Basilisk does not interpret
+   ``Cargo.toml`` syntax itself.
 
 ``[lib] path``
    Selects ``myModule.rs`` as the library source. Cargo would otherwise expect
@@ -307,7 +310,10 @@ Register the Module in the Workspace
 
 All in-tree Rust packages belong to the Cargo workspace rooted at
 ``src/Cargo.toml``. The workspace gives Basilisk one dependency resolution and
-one committed ``src/Cargo.lock``.
+one committed ``src/Cargo.lock``. Workspace registration is also required for
+module discovery: CMake considers the packages returned by ``cargo metadata``
+and selects those whose ``[package.metadata.basilisk]`` ``module`` value is
+``true``.
 
 Add the new module's path, relative to ``src``, to the explicit member list:
 
