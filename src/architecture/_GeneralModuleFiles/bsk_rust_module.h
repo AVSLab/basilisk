@@ -19,6 +19,7 @@
 #ifndef BSK_RUST_MODULE_H
 #define BSK_RUST_MODULE_H
 
+#include <stddef.h>
 #include <stdint.h>
 #include "architecture/utilities/bskLogging.h"
 
