@@ -56,6 +56,15 @@ void printDefaultLogLevel();
 #endif
 #endif
 
+#ifndef BSK_NOEXCEPT
+// SWIG and C do not understand the C++ noexcept specifier.
+#if defined(SWIG) || !defined(__cplusplus)
+#define BSK_NOEXCEPT
+#else
+#define BSK_NOEXCEPT noexcept
+#endif
+#endif
+
 #ifdef __cplusplus
 #include <map>
 #include <string>
@@ -155,6 +164,15 @@ EXTERN void _printLogLevel(BSKLogger*);
 EXTERN void _setLogLevel(BSKLogger*, logLevel_t);
 EXTERN void _bskLog(BSKLogger*, logLevel_t, const char*);
 EXTERN_NORETURN void _bskError(BSKLogger*, const char*);
+#ifndef SWIG
+/*! Log through the C++ logger without allowing an exception to cross the C ABI.
+ *
+ *  This adapter is intended for foreign runtimes that cannot safely receive a
+ *  C++ exception. It returns zero on success and a nonzero value when logging
+ *  throws. A null logger is treated as logging-disabled success.
+ */
+EXTERN int _bskLogNoThrow(BSKLogger*, logLevel_t, const char*) BSK_NOEXCEPT;
+#endif
 
 
 /// \endcond
