@@ -854,6 +854,40 @@ Use ``type State = ();`` when the module is stateless. Rust allocates and
 destroys the complete module instance, so ordinary Rust cleanup releases
 private state automatically.
 
+Basilisk C Utilities
+--------------------
+
+The ``bsk-utilities`` package provides safe Rust wrappers around selected
+Basilisk utilities that already have a C interface. An in-tree module enables
+the shared workspace dependency in ``Cargo.toml``:
+
+.. code-block:: toml
+
+    [dependencies]
+    bsk-utilities.workspace = true
+
+    [dev-dependencies]
+    bsk-utilities = { workspace = true, features = ["ffi-tests"] }
+
+Import and call the wrappers with ordinary Rust values:
+
+.. code-block:: rust
+
+    use bsk_utilities::attitude;
+
+    let sigma = attitude::dcm_to_mrp(dcm); // [-]
+    let wrapped_angle = attitude::wrap_to_pi(angle); // [rad]
+
+The safe wrappers convert fixed-size Rust arrays to the pointers expected by
+the existing C functions. The Basilisk build links their implementation from
+``ArchitectureUtilities``. The ``ffi-tests`` development feature compiles the
+same C sources into Rust test executables, allowing ``cargo test`` to execute
+utility-backed module code without a configured CMake build. Module code
+should not call functions in the generated ``bsk_utilities::raw`` module
+directly. See
+:ref:`rustModuleTemplate` for an in-tree module that calls a safe utility
+wrapper from its update method.
+
 Linear Algebra with ``nalgebra``
 --------------------------------
 

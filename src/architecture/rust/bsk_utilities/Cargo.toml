@@ -9,4 +9,12 @@ license = "ISC"
 # `src/raw.rs` is generated and committed by
 # `../gen_rust_utilities.py` from Basilisk's own headers.
 
+[features]
+# Compile the real Basilisk C utility sources into Rust test executables.
+# Production modules instead resolve these symbols from ArchitectureUtilities.
+ffi-tests = []
+
 [dependencies]
+
+[build-dependencies]
+cc = "1.2"

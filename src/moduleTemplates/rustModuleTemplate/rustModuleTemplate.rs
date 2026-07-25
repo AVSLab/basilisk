@@ -70,6 +70,10 @@ fn validate_increment(_config: &RustModuleTemplateConfig, increment: &f64) -> Bs
 pub struct RustModuleTemplateState {
     /// [-] History retained across update calls
     update_history: Vec<f64>,
+    /// [rad] Sample angle used to demonstrate a safe Basilisk utility
+    sample_angle: f64,
+    /// [rad] Sample angle mapped into the principal interval
+    wrapped_angle: f64,
     /// Description of the most recent lifecycle event
     last_event: String,
     /// Internal operating mode represented by a Rust enum
@@ -86,6 +90,8 @@ impl Default for RustModuleTemplateState {
     fn default() -> Self {
         Self {
             update_history: Vec::new(),
+            sample_angle: 4.0,  // [rad]
+            wrapped_angle: 0.0, // [rad]
             last_event: String::from("created"),
             mode: TemplateMode::Idle,
         }
@@ -163,6 +169,7 @@ impl BskModule for RustModuleTemplateConfig {
         // Update both public sample data and unrestricted private Rust state.
         self.dummy += self.increment;
         state.update_history.push(self.dummy);
+        state.wrapped_angle = bsk_utilities::attitude::wrap_to_pi(state.sample_angle);
         state.last_event = format!(
             "module {} updated at {current_sim_nanos} ns",
             context.module_id()
@@ -284,6 +291,8 @@ mod tests {
             )
             .expect("update must succeed");
         assert_eq!(state.update_history, vec![1.0]);
+        let expected_wrapped_angle = 4.0 - 2.0 * core::f64::consts::PI; // [rad]
+        assert_eq!(state.wrapped_angle, expected_wrapped_angle);
         assert_eq!(state.last_event, "module 0 updated at 1 ns");
     }
 

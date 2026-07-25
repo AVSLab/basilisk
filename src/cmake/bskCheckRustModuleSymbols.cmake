@@ -46,3 +46,17 @@ if(_unresolved_message_symbols)
     "Rust module ${BSK_RUST_MODULE_FILE} contains unresolved Basilisk "
     "C-message symbols:\n  ${_unresolved_message_list}")
 endif()
+
+string(
+  REGEX MATCHALL
+  "(E2f|M2E|elem2rv|rv2elem|MRP2C|C2MRP|addMRP|wrapToPi)"
+  _unresolved_utility_symbols
+  "${_nm_output}")
+if(_unresolved_utility_symbols)
+  list(REMOVE_DUPLICATES _unresolved_utility_symbols)
+  list(SORT _unresolved_utility_symbols)
+  list(JOIN _unresolved_utility_symbols "\n  " _unresolved_utility_list)
+  message(FATAL_ERROR
+    "Rust module ${BSK_RUST_MODULE_FILE} contains unresolved Basilisk "
+    "C-utility symbols:\n  ${_unresolved_utility_list}")
+endif()
