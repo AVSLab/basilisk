@@ -549,6 +549,11 @@ Message Ports and Values
 For example, the Rust ``AttGuidMsg`` corresponds to the familiar
 ``AttGuidMsgPayload`` data. A port uses one of two generic types:
 
+The support crate also generates the low-level, unsafe ``Msg`` implementation
+that associates each Rust payload with its exact C message-port layout and
+functions. Module authors should not implement ``Msg`` manually; declare ports
+with the generated message types described below.
+
 .. important::
 
    Rust ports use Basilisk's generated C message interfaces, such as
