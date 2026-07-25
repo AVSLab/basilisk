@@ -30,8 +30,8 @@ from docutils import nodes
 from docutils.parsers.rst import roles
 
 def beta_role(name, rawtext, text, lineno, inliner, options={}, content=[]):
-    node = nodes.inline(rawtext, f"[BETA] {text}", classes=['beta-label'])
-    return [node], []
+    label = nodes.inline(rawtext, "[BETA]", classes=['beta-label'])
+    return [label, nodes.Text(f" {text}")], []
 
 roles.register_local_role('beta', beta_role)
 

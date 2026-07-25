@@ -47,14 +47,14 @@ In the above python script, the tutorial C++ :ref:`cppModuleTemplate` is importe
 
 .. note::
 
-    Basilisk assigns unique positive ID numbers to C/C++/Python modules upon their creation.  Thus, in the above simulation code the modules 1, 2 and 3 will have the corresponding ID numbers 1, 2 and 3 because that is the order in which they are created.
+    Basilisk assigns unique positive ID numbers to C, C++, Python, and Rust modules upon their creation.  Thus, in the above simulation code the modules 1, 2 and 3 will have the corresponding ID numbers 1, 2 and 3 because that is the order in which they are created.
 
 
 Looking at the above simulation code, note that ``Module1`` is added to the task list without any priority specified.  In contrasts, ``Module2`` and ``Module3`` have the priorities 10 and 5 assigned.  The higher the module priority, the earlier it is evaluated.
 
 .. note::
 
-    The task list can contain, C, C++ and even Python based Basilisk modules at the same time. Python modules are discussed in :ref:`pyModules`.
+    A task list can contain C, C++, Python, and Rust Basilisk modules at the same time. Python modules are discussed in :ref:`pyModules`, and Rust modules are discussed in :ref:`rustModules`.
 
 If you execute this python code you should see the following terminal output:
 

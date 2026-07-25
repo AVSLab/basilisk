@@ -24,7 +24,7 @@ The source code is shown below.  As we are going to be using the Basilisk messag
    :linenos:
    :lines: 18-
 
-The method ``.subscribeTo()`` connects an output message (variable name ending with ``OutMsg``) to an input message (variable name ending with ``InMsg``), as shown in lines 36-37 above.  While C modules contain message objects with a C interface, and C++ modules contain C++ message objects, the ``.subscribeTo()`` method is set up such that the user doesn't have to worry about this distinction.  Rather, this method connects C to C, C to C++, C++ to C++ and C++ to C message connections.
+The method ``.subscribeTo()`` connects an output message (variable name ending with ``OutMsg``) to an input message (variable name ending with ``InMsg``), as shown in lines 36-37 above.  C modules contain message objects with a C interface, C++ modules contain C++ message objects, and Rust modules use the C-compatible message interface. The ``.subscribeTo()`` method is set up such that the user doesn't have to worry about this distinction.  Rather, this method connects C to C, C to C++, C++ to C++ and C++ to C message connections.
 
 Thus, a module output message ``anotherModule.xxxOutMsg`` is connected to a module input message ``someModule.xxxInMsg`` using the ``.subscribeTo()`` method as follows::
 

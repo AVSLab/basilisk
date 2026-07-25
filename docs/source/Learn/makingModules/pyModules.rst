@@ -7,10 +7,10 @@ Making Python Modules
 
     The Python code shown below can be downloaded :download:`here </../../docs/source/codeSamples/making-pyModules.py>`.
 
-Python modules are a good alternative to C and C++ modules for quick prototyping.
+Python modules are a good alternative to compiled C, C++, and Rust modules for quick prototyping.
 They are defined entirely in a Python script, which means that there is no need
 for a header (``.h``), definition (``.cpp``), or SWIG interface file (``.i``). However, they
-are much slower than C or C++ modules, which will significantly slow down your simulation.
+are much slower than C, C++, or Rust modules, which will significantly slow down your simulation.
 
 Python modules are implemented by subclassing ``SysModel`` from ``Basilisk.architecture.sysModel``.
 Then, one can implement the ``__init__``,
@@ -18,8 +18,8 @@ Then, one can implement the ``__init__``,
 implement these methods in C++. Remember to always call ``__init__`` of
 the parent class ``SysModel`` if you are implementing your own ``__init__``.
 
-The ``ModelTag`` value of these python BSK modules will be a unique positive number,
-same as with C/C++ BSK modules.
+The ``moduleID`` value of these Python BSK modules will be a unique positive number,
+same as with C, C++, and Rust BSK modules.
 
 .. note::
 

@@ -54,8 +54,9 @@ C++.
 User Guide
 ----------
 
-Enable Rust module support when configuring Basilisk. Import and add the
-module to a task like any other compiled Basilisk module:
+Enable Rust module support when configuring Basilisk as described in
+:ref:`rustModules`. Import and add the module to a task like any other
+compiled Basilisk module:
 
 .. code-block:: python
 
@@ -129,5 +130,6 @@ message interfaces:
 
 Each element is a live port. The array length is fixed by the Rust declaration,
 and the property cannot be assigned. Changing the entries or length of the
-returned Python list does not change the module's fixed set of ports. Rust
-message-port arrays currently have a fixed size.
+returned Python list does not change the module's fixed set of ports. See
+:ref:`rustModules` for required arrays, optional arrays, lifecycle value types,
+and the current fixed-size-only limitation.

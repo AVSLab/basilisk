@@ -23,7 +23,7 @@ The figure above illustrates a sample Basilisk simulation.  The single test modu
 
 .. note::
 
-    The method of recording a message is the same, regardless if it is a C or C++ module, or the message has a C or C++ interface.
+    The method of recording a message is the same whether it is produced by a C, C++, Python, or Rust module, and whether the message has a C or C++ interface.
 
 The simulation code is included below.  As the recorded message data will be plotted in this script, the ``matplotlib`` library is included at the top, as well as the helper package ``unitTestSupport`` from ``Basilisk.utilities``.
 

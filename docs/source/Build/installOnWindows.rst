@@ -50,6 +50,29 @@ required to place accurate breakpoints/attach a debugger to C/C++ code.
       :align: center
       :scale: 75%
 
+Installing Rust (Optional)
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Native Rust module support is optional. The minimum supported version is
+listed in :ref:`rustModules`.
+
+#. Download and run the ``rustup-init.exe`` installer for your architecture
+   from the official `Rust installation page <https://rust-lang.org/tools/install/>`__.
+   Accept the default stable MSVC toolchain. The Visual Studio C++ tools already
+   required to build Basilisk also provide the linker required by Rust.
+
+#. Close and reopen Command Prompt so that the updated ``PATH`` is available.
+   The installer provides the ``rustc`` compiler, the Cargo build and
+   dependency manager, and the ``rustup`` toolchain manager. Verify the
+   installation with:
+
+   .. code-block:: console
+
+       > rustc --version
+       > cargo --version
+
+Update an existing stable toolchain with ``rustup update stable``.
+
 
 
 Configuring User Variables
@@ -137,6 +160,14 @@ When all the prerequisite installations are complete, the project can be built a
    from the root Basilisk folder use::
 
     (.venv) $ python conanfile.py
+
+   To include native Rust modules, use the Rust-enabled configuration instead::
+
+    (.venv) $ python conanfile.py --rustModules True
+
+   The build downloads the pinned Corrosion CMake integration automatically;
+   no separate Corrosion installation is required. See :ref:`rustModules` for
+   details about creating and testing Rust modules.
 
    This creates the Visual Studio 17 2022 IDE project in ``dist3`` and builds the project.
    You can also specify the generator directly in this build process and select other versions of Visual Studio.

@@ -16,7 +16,9 @@ Building Basilisk and Testing
 
 -   Do a clean build of Basilisk and make sure all code compiles as expected (see :ref:`FAQ <FAQ>` on how to do a
     clean build)
--   From the project root directory, run ``python run_all_test.py`` and ensure all python and C/C++ tests are passing
+-   From the project root directory, run ``python run_all_test.py`` and ensure
+    all Python, C/C++, and available Rust tests are passing. Rust tests are
+    skipped automatically when Cargo is not installed.
     as expected
 
 Style and Formatting
@@ -45,10 +47,42 @@ Module Programming
 - Is the module using the :ref:`bskLogging` Basilisk logging function?
   A general support library, i.e. non-Basilisk module, should use ``BSK_PRINT()`` instead.
 
+For a Rust module:
+
+- Is the top-level configuration struct marked with
+  ``#[bsk_build::module]``?
+- Does the module implementation use the ``<moduleName>.rs`` root source
+  layout, with a matching ``[lib] path``?
+- Does ``build.rs`` call ``bsk_build::generate_bindings()`` with the exact
+  marked configuration struct name?
+- Does the configuration struct contain only public parameters and annotated
+  message ports, with no runtime, logger, or raw-pointer fields?
+- Does the ``BskModule`` implementation declare ``type State`` and keep
+  internal Rust-only state there, using ``()`` when stateless?
+- Does lifecycle code obtain runtime metadata and logging through
+  ``BskContext`` rather than retaining borrowed framework pointers?
+- Do ``init``, ``reset``, and ``update`` return ``BskResult``, with expected
+  validation and runtime failures reported as ``BskError`` rather than
+  panics?
+- Is the module package listed in the ``src/Cargo.toml`` workspace members?
+- Does its ``Cargo.toml`` inherit the workspace minimum Rust version with
+  ``rust-version.workspace = true``?
+- Does its ``Cargo.toml`` contain the
+  ``[package.metadata.basilisk]`` ``module = true`` marker?
+- Was the shared ``src/Cargo.lock`` updated and reviewed after dependency
+  changes, with no module-local ``Cargo.lock`` added?
+- Does the full workspace command from :ref:`rustModules` pass with
+  ``--all-features --locked``, along with a Basilisk build using
+  ``--rustModules True``?
+- Do the feature-minimal ``bsk-build`` tests and strict workspace Clippy check
+  documented in :ref:`rustModules` pass?
+- Does the workspace retain ``panic="unwind"`` for development and release
+  profiles so generated boundaries can contain Rust panics?
+
 Module Documentation
 --------------------
 
-Does the module contain a restructured text documentation file ``xxxx.rst``, where ``xxxx`` should be the same name as the module C or C++ file name.  The :ref:`cModuleTemplate` module contains a sample documentation set for a Basilisk module.   The required sections include:
+Does the module contain a restructured text documentation file ``xxxx.rst``, where ``xxxx`` matches the module name? The :ref:`cModuleTemplate` and :ref:`rustModuleTemplate` modules contain sample documentation sets for a Basilisk module. The required sections include:
 
 -   Executive Summary
 -   Module Assumptions and Limitations
