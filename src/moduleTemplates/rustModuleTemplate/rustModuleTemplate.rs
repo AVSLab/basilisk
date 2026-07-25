@@ -20,6 +20,16 @@
 
 use bsk_messages::*;
 
+/// Nested Python-visible parameters used to demonstrate grouped configuration.
+#[repr(C)]
+#[derive(Clone, Copy, Default, bsk_build::BskConfigValue)]
+pub struct RustModuleTemplateParameters {
+    /// [-] Multiplicative sample coefficient
+    pub gain: f64,
+    /// [-] Additive sample coefficient
+    pub offset: f64,
+}
+
 /// Rust module configuration and message ports.
 #[bsk_build::module]
 #[repr(C)]
@@ -29,6 +39,12 @@ pub struct RustModuleTemplateConfig {
     /// [-] Positive amount added to the sample counter on each update
     #[bsk(validate = "validate_increment")]
     pub increment: f64,
+    /// [-] Nested, by-value sample configuration
+    #[bsk(validate = "validate_sample_parameters")]
+    pub sampleParameters: RustModuleTemplateParameters,
+    /// [-] Two-dimensional sample configuration array
+    #[bsk(validate = "validate_sample_matrix")]
+    pub sampleMatrix: [[f64; 3]; 2],
     /// [-] Optional input message
     #[bsk(input, optional)]
     pub dataInMsg: MsgReader<CModuleTemplateMsg>,
@@ -57,6 +73,44 @@ fn validate_increment(_config: &RustModuleTemplateConfig, increment: &f64) -> Bs
     if !increment.is_finite() || *increment <= 0.0 {
         return Err(BskError::new(
             "rustModuleTemplate.increment must be finite and strictly positive",
+        ));
+    }
+    Ok(())
+}
+
+/// Validate nested sample parameters before the generated setter stores them.
+///
+/// :param config: Current module configuration, available for cross-field checks.
+/// :param parameters: Proposed grouped sample parameters [-].
+/// :returns: Success when every parameter is finite.
+fn validate_sample_parameters(
+    _config: &RustModuleTemplateConfig,
+    parameters: &RustModuleTemplateParameters,
+) -> BskResult<()> {
+    if !parameters.gain.is_finite() || !parameters.offset.is_finite() {
+        return Err(BskError::new(
+            "rustModuleTemplate.sampleParameters components must be finite",
+        ));
+    }
+    Ok(())
+}
+
+/// Validate a two-dimensional sample array before storing it.
+///
+/// :param config: Current module configuration, available for cross-field checks.
+/// :param matrix: Proposed two-by-three sample matrix [-].
+/// :returns: Success when every matrix element is finite.
+fn validate_sample_matrix(
+    _config: &RustModuleTemplateConfig,
+    matrix: &[[f64; 3]; 2],
+) -> BskResult<()> {
+    if matrix
+        .iter()
+        .flatten()
+        .any(|component| !component.is_finite())
+    {
+        return Err(BskError::new(
+            "rustModuleTemplate.sampleMatrix components must be finite",
         ));
     }
     Ok(())
@@ -123,6 +177,8 @@ impl BskModule for RustModuleTemplateConfig {
         // Validate Python-visible configuration before the simulation runs.
         // Return BskError for expected failures instead of panicking.
         validate_increment(self, &self.increment)?;
+        validate_sample_parameters(self, &self.sampleParameters)?;
+        validate_sample_matrix(self, &self.sampleMatrix)?;
 
         // Reset both Python-visible configuration and private Rust state.
         self.dummy = 0.0; // [-]
@@ -210,16 +266,23 @@ mod tests {
     /// Verify that only Python-facing parameters and ports cross the config ABI.
     #[test]
     fn config_abi_contains_only_public_module_fields() {
-        assert_eq!(size_of::<RustModuleTemplateConfig>(), 464);
+        assert_eq!(size_of::<RustModuleTemplateParameters>(), 16);
+        assert_eq!(align_of::<RustModuleTemplateParameters>(), 8);
+        assert_eq!(offset_of!(RustModuleTemplateParameters, gain), 0);
+        assert_eq!(offset_of!(RustModuleTemplateParameters, offset), 8);
+
+        assert_eq!(size_of::<RustModuleTemplateConfig>(), 528);
         assert_eq!(align_of::<RustModuleTemplateConfig>(), 8);
         assert_eq!(offset_of!(RustModuleTemplateConfig, dummy), 0);
         assert_eq!(offset_of!(RustModuleTemplateConfig, increment), 8);
-        assert_eq!(offset_of!(RustModuleTemplateConfig, dataInMsg), 16);
-        assert_eq!(offset_of!(RustModuleTemplateConfig, dataInMsgs), 88);
-        assert_eq!(offset_of!(RustModuleTemplateConfig, dataOutMsg), 232);
-        assert_eq!(offset_of!(RustModuleTemplateConfig, dataOutMsgs), 304);
-        assert_eq!(offset_of!(RustModuleTemplateConfig, legacyDummy), 448);
-        assert_eq!(offset_of!(RustModuleTemplateConfig, panicOnUpdate), 456);
+        assert_eq!(offset_of!(RustModuleTemplateConfig, sampleParameters), 16);
+        assert_eq!(offset_of!(RustModuleTemplateConfig, sampleMatrix), 32);
+        assert_eq!(offset_of!(RustModuleTemplateConfig, dataInMsg), 80);
+        assert_eq!(offset_of!(RustModuleTemplateConfig, dataInMsgs), 152);
+        assert_eq!(offset_of!(RustModuleTemplateConfig, dataOutMsg), 296);
+        assert_eq!(offset_of!(RustModuleTemplateConfig, dataOutMsgs), 368);
+        assert_eq!(offset_of!(RustModuleTemplateConfig, legacyDummy), 512);
+        assert_eq!(offset_of!(RustModuleTemplateConfig, panicOnUpdate), 520);
     }
 
     /// Verify that generated input and output values use the config port names.
@@ -263,6 +326,8 @@ mod tests {
         let mut config = RustModuleTemplateConfig {
             dummy: 99.0,    // [-]
             increment: 1.0, // [-]
+            sampleParameters: RustModuleTemplateParameters::default(),
+            sampleMatrix: [[0.0; 3]; 2], // [-]
             dataInMsg: MsgReader::default(),
             dataInMsgs: core::array::from_fn(|_| MsgReader::default()),
             dataOutMsg: MsgWriter::default(),
@@ -304,6 +369,8 @@ mod tests {
         let mut config = RustModuleTemplateConfig {
             dummy: 0.0,     // [-]
             increment: 0.0, // [-]
+            sampleParameters: RustModuleTemplateParameters::default(),
+            sampleMatrix: [[0.0; 3]; 2], // [-]
             dataInMsg: MsgReader::default(),
             dataInMsgs: core::array::from_fn(|_| MsgReader::default()),
             dataOutMsg: MsgWriter::default(),

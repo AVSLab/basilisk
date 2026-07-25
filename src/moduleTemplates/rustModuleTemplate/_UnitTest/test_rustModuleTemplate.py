@@ -85,12 +85,23 @@ class _ExpectedCModuleTemplatePort(ctypes.Structure):
     ]
 
 
+class _ExpectedRustModuleTemplateParameters(ctypes.Structure):
+    """Mirror the nested Rust sample-parameter ABI."""
+
+    _fields_ = [
+        ("gain", ctypes.c_double),
+        ("offset", ctypes.c_double),
+    ]
+
+
 class _ExpectedRustModuleTemplateConfig(ctypes.Structure):
     """Mirror the intended 64-bit Rust/C++ config layout."""
 
     _fields_ = [
         ("dummy", ctypes.c_double),
         ("increment", ctypes.c_double),
+        ("sample_parameters", _ExpectedRustModuleTemplateParameters),
+        ("sample_matrix", (ctypes.c_double * 3) * 2),
         ("data_in_msg", _ExpectedCModuleTemplatePort),
         ("data_in_msgs", _ExpectedCModuleTemplatePort * 2),
         ("data_out_msg", _ExpectedCModuleTemplatePort),
@@ -155,6 +166,8 @@ def test_rust_module_template_python_api():
     expected_parameter_fields = {
         "dummy",
         "increment",
+        "sampleParameters",
+        "sampleMatrix",
         "legacyDummy",
         "panicOnUpdate",
     }
@@ -172,6 +185,10 @@ def test_rust_module_template_python_api():
         "setDummy",
         "getIncrement",
         "setIncrement",
+        "getSampleParameters",
+        "setSampleParameters",
+        "getSampleMatrix",
+        "setSampleMatrix",
         "getLegacyDummy",
         "setLegacyDummy",
         "getPanicOnUpdate",
@@ -265,6 +282,56 @@ def test_rust_module_template_python_api():
         assert not hasattr(rustModuleTemplate, symbol)
 
 
+def test_rust_module_template_composite_configuration():
+    """Round-trip nested structs and multidimensional arrays through Python."""
+    module = rustModuleTemplate.rustModuleTemplate()
+
+    parameters = module.sampleParameters
+    assert parameters.gain == 0.0
+    assert parameters.offset == 0.0
+    parameters.gain = 2.5  # [-]
+    parameters.offset = -0.25  # [-]
+    assert module.sampleParameters.gain == 0.0
+    assert module.sampleParameters.offset == 0.0
+    module.sampleParameters = parameters
+
+    returned_parameters = module.getSampleParameters()
+    assert returned_parameters.gain == 2.5
+    assert returned_parameters.offset == -0.25
+
+    invalid_parameters = module.sampleParameters
+    invalid_parameters.gain = float("nan")  # [-]
+    with pytest.raises(
+        BasiliskError,
+        match="rustModuleTemplate.sampleParameters components must be finite",
+    ):
+        module.setSampleParameters(invalid_parameters)
+    assert module.sampleParameters.gain == 2.5
+    assert module.sampleParameters.offset == -0.25
+
+    sample_matrix = [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]]  # [-]
+    module.sampleMatrix = sample_matrix
+    assert module.getSampleMatrix() == sample_matrix
+    returned_matrix = module.sampleMatrix
+    returned_matrix[0][0] = 99.0  # [-]
+    assert module.sampleMatrix == sample_matrix
+
+    invalid_matrix = [[1.0, 2.0, 3.0], [4.0, float("inf"), 6.0]]  # [-]
+    with pytest.raises(
+        BasiliskError,
+        match="rustModuleTemplate.sampleMatrix components must be finite",
+    ):
+        module.setSampleMatrix(invalid_matrix)
+    assert module.sampleMatrix == sample_matrix
+
+    with pytest.raises(
+        BasiliskError,
+        match="rustModuleTemplate.sampleMatrix has the wrong number of values",
+    ):
+        module.sampleMatrix = [[1.0, 2.0, 3.0]]  # [-]
+    assert module.sampleMatrix == sample_matrix
+
+
 if sys.platform != "win32":
 
     def test_rust_module_links_only_used_message_functions():
@@ -300,16 +367,23 @@ def test_rust_module_template_abi_layout():
     assert _ExpectedCModuleTemplatePort.payload_pointer.offset == 56
     assert _ExpectedCModuleTemplatePort.header_pointer.offset == 64
 
-    assert ctypes.sizeof(_ExpectedRustModuleTemplateConfig) == 464
+    assert ctypes.sizeof(_ExpectedRustModuleTemplateParameters) == 16
+    assert ctypes.alignment(_ExpectedRustModuleTemplateParameters) == 8
+    assert _ExpectedRustModuleTemplateParameters.gain.offset == 0
+    assert _ExpectedRustModuleTemplateParameters.offset.offset == 8
+
+    assert ctypes.sizeof(_ExpectedRustModuleTemplateConfig) == 528
     assert ctypes.alignment(_ExpectedRustModuleTemplateConfig) == 8
     assert _ExpectedRustModuleTemplateConfig.dummy.offset == 0
     assert _ExpectedRustModuleTemplateConfig.increment.offset == 8
-    assert _ExpectedRustModuleTemplateConfig.data_in_msg.offset == 16
-    assert _ExpectedRustModuleTemplateConfig.data_in_msgs.offset == 88
-    assert _ExpectedRustModuleTemplateConfig.data_out_msg.offset == 232
-    assert _ExpectedRustModuleTemplateConfig.data_out_msgs.offset == 304
-    assert _ExpectedRustModuleTemplateConfig.legacy_dummy.offset == 448
-    assert _ExpectedRustModuleTemplateConfig.panic_on_update.offset == 456
+    assert _ExpectedRustModuleTemplateConfig.sample_parameters.offset == 16
+    assert _ExpectedRustModuleTemplateConfig.sample_matrix.offset == 32
+    assert _ExpectedRustModuleTemplateConfig.data_in_msg.offset == 80
+    assert _ExpectedRustModuleTemplateConfig.data_in_msgs.offset == 152
+    assert _ExpectedRustModuleTemplateConfig.data_out_msg.offset == 296
+    assert _ExpectedRustModuleTemplateConfig.data_out_msgs.offset == 368
+    assert _ExpectedRustModuleTemplateConfig.legacy_dummy.offset == 512
+    assert _ExpectedRustModuleTemplateConfig.panic_on_update.offset == 520
 
     extension = ctypes.CDLL(rustModuleTemplate._rustModuleTemplate.__file__)
     get_config = extension.Config_rustModuleTemplate
@@ -323,6 +397,13 @@ def test_rust_module_template_abi_layout():
         raw_config = _ExpectedRustModuleTemplateConfig.from_address(config_address)
         assert raw_config.dummy == 0.0
         assert raw_config.increment == 1.0
+        assert raw_config.sample_parameters.gain == 0.0
+        assert raw_config.sample_parameters.offset == 0.0
+        assert all(
+            component == 0.0
+            for row in raw_config.sample_matrix
+            for component in row
+        )
         assert raw_config.panic_on_update is False
         assert all(port.header.is_linked == 0 for port in raw_config.data_in_msgs)
         assert all(port.header.is_written == 0 for port in raw_config.data_out_msgs)
@@ -420,8 +501,8 @@ def test_rust_module_template_config_accessor_abi():
         assert "requires 8 bytes, received 4" in message
 
         assert deprecation_date(0) is None
-        assert deprecation_date(2) == b"2027/07/24"
-        assert deprecation_message(2) == b"Use dummy instead."
+        assert deprecation_date(4) == b"2027/07/24"
+        assert deprecation_message(4) == b"Use dummy instead."
     finally:
         _destroy_rust_instance(extension, handle)
 
@@ -483,6 +564,13 @@ def test_rust_module_template_rust_owned_instance_lifecycle():
         raw_config = _ExpectedRustModuleTemplateConfig.from_address(config_address)
         assert raw_config.dummy == 0.0
         assert raw_config.increment == 1.0
+        assert raw_config.sample_parameters.gain == 0.0
+        assert raw_config.sample_parameters.offset == 0.0
+        assert all(
+            component == 0.0
+            for row in raw_config.sample_matrix
+            for component in row
+        )
         assert raw_config.panic_on_update is False
         raw_config.dummy = 42.0  # [-]
         context = _ExpectedBskModuleContext(
