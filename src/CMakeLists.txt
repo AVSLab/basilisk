@@ -23,6 +23,7 @@ list(APPEND CMAKE_PREFIX_PATH "${CMAKE_BINARY_DIR}/conan")
 
 include(bskTargetExcludeBuildOptions)
 include(bskBuildInfo)
+include(bskFindRustModules)
 
 # Find necessary packages
 find_package(Python3 ${PYTHON_VERSION} EXACT REQUIRED COMPONENTS Interpreter Development.Module OPTIONAL_COMPONENTS Development.SABIModule)
@@ -51,7 +52,7 @@ if(PY_LIMITED_API AND NOT PY_LIMITED_API STREQUAL "")
   # compatibility (basically, we can build a single Python wheel to
   # support all future Python versions).
   # See https://docs.python.org/3/c-api/stable.html
-  # NOTE: SWIG 4.4.1 or a newer supported 4.x release is required for SWIG ABI 5 support between Basilisk and compatible plugins.
+  # NOTE: SWIG 4.4.1 or a newer supported 4.x release is required for SWIG ABI 5 support between Basilisk and compatible extensions.
   add_definitions("-DPy_LIMITED_API=${PY_LIMITED_API}")  # Support for current Python version
 
   # Force libraries to link to the Stable ABI module instead.
@@ -225,6 +226,9 @@ function(find_package_targets PKG_DIR ALL_TARGET_LIST)
     GLOB_RECURSE SWIG_TARGETS
     RELATIVE ${CMAKE_SOURCE_DIR}
     "${PKG_DIR}/*.i")
+  # Direct Cargo commands can generate SWIG interfaces below a crate's
+  # target/ directory. Those are build products, not source modules.
+  list(FILTER SWIG_TARGETS EXCLUDE REGEX "(^|/)target(/|$)")
   set(${ALL_TARGET_LIST}
       ${SWIG_TARGETS}
       PARENT_SCOPE)
@@ -589,6 +593,16 @@ set(ARCHITECTURE_LIBS architectureLib ArchitectureUtilities ModuleIdGenerator cM
 find_package_targets("${CMAKE_SOURCE_DIR}/architecture" ARCHITECTURE_TARGETS)
 generate_package_targets("${ARCHITECTURE_TARGETS}" "${ARCHITECTURE_LIBS};" "architecture")
 
+# Rust modules (experimental, opt-in via BUILD_RUST_MODULES -- see
+# bskTargetExcludeBuildOptions.cmake). Discovery is coarser than the C/C++
+# calls above/below -- one call per top-level module root rather than one per
+# sub-package -- since there are no Rust modules under this root yet to
+# motivate splitting LIB_DEP_LIST any finer; a future module needing more
+# than ARCHITECTURE_LIBS can get its own call added the same way e.g.
+# DYN_TARGETS does below.
+find_rust_package_targets("${CMAKE_SOURCE_DIR}/architecture" ARCHITECTURE_RUST_TARGETS)
+generate_rust_package_targets("${ARCHITECTURE_RUST_TARGETS}" "${ARCHITECTURE_LIBS};" "architecture")
+
 # SIMULATION
 # TODO: Move the following commands into a seperate CMakeList.txt s.t. this file is just configuration (problem:
 # currently when I do this the targets argument in generate_package_targets gets interpreted differently) TODO: Automate
@@ -638,6 +652,12 @@ generate_package_targets("${VIZ_INTERFACE_TARGETS}" "${ARCHITECTURE_LIBS};" "sim
 generate_package_targets("${THERMAL_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
 generate_package_targets("${COMMUNICATION_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
 
+# Rust modules under simulation/ -- see the "ARCHITECTURE" section above for
+# why this is one coarse call instead of mirroring every DYN_TARGETS-style
+# sub-package split.
+find_rust_package_targets("${CMAKE_SOURCE_DIR}/simulation" SIMULATION_RUST_TARGETS)
+generate_rust_package_targets("${SIMULATION_RUST_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
+
 # FSW ALGORITHMS
 find_package_targets("${CMAKE_SOURCE_DIR}/fswAlgorithms/attControl" ATT_CONTROL_TARGETS)
 find_package_targets("${CMAKE_SOURCE_DIR}/fswAlgorithms/attDetermination" ATT_DET_TARGETS)
@@ -673,10 +693,17 @@ generate_package_targets("${ORBIT_CONTROL_TARGETS}" "${ARCHITECTURE_LIBS};" "fsw
 generate_package_targets("${TRANS_DET_TARGETS}" "transDeterminationLib;${ARCHITECTURE_LIBS};" "fswAlgorithms")
 generate_package_targets("${VEH_CONFIG_TARGETS}" "${ARCHITECTURE_LIBS};" "fswAlgorithms")
 
+# Rust modules under fswAlgorithms/ -- see the "ARCHITECTURE" section above.
+find_rust_package_targets("${CMAKE_SOURCE_DIR}/fswAlgorithms" FSW_RUST_TARGETS)
+generate_rust_package_targets("${FSW_RUST_TARGETS}" "${ARCHITECTURE_LIBS};" "fswAlgorithms")
+
 # TEMPLATE MODULES
 find_package_targets("${CMAKE_SOURCE_DIR}/moduleTemplates" TEMPLATE_MODULES_TARGETS)
 
 generate_package_targets("${TEMPLATE_MODULES_TARGETS}" "${ARCHITECTURE_LIBS};" "moduleTemplates")
+
+find_rust_package_targets("${CMAKE_SOURCE_DIR}/moduleTemplates" TEMPLATE_MODULES_RUST_TARGETS)
+generate_rust_package_targets("${TEMPLATE_MODULES_RUST_TARGETS}" "${ARCHITECTURE_LIBS};" "moduleTemplates")
 
 # MESSAGES
 add_message_headers()
