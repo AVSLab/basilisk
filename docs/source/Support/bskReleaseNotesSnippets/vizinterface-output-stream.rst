@@ -1,0 +1,1 @@
+- :ref:`vizInterface` now owns and closes its protobuf output stream, preventing file-handle leaks and Windows cleanup failures after saving Vizard data.
