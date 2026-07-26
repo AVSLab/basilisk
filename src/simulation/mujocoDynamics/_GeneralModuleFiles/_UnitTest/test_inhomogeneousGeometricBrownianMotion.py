@@ -167,6 +167,7 @@ def test_inhomogeneousGeometricBrownianMotion_rejectsNonPositiveState():
     assert igbm.getStateValue() == 0.5
 
 
+@pytest.mark.skipif(not couldImportMujoco, reason="Compiled Basilisk without --mujoco")
 def test_inhomogeneousGeometricBrownianMotion_rejectsBadParameters():
     """The parameter setters reject values outside their valid range."""
     from Basilisk.architecture import bskLogging
