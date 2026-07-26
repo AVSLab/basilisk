@@ -35,6 +35,7 @@ CORE_IMPORTS = [
     "Basilisk.architecture.messaging",
     "Basilisk.utilities.SimulationBaseClass",
     "Basilisk.simulation.spacecraft",
+    "Basilisk.simulation.vizInterface",
     "Basilisk.fswAlgorithms.mrpFeedback",
     "Basilisk.simulation.mujoco",
     "Basilisk.simulation.thrOnTimeToForce",
@@ -45,6 +46,10 @@ OPNAV_IMPORTS = [
     "Basilisk.fswAlgorithms.houghCircles",
     "Basilisk.fswAlgorithms.limbFinding",
 ]
+PROTOBUF_CONSUMERS = (
+    ("Basilisk.fswAlgorithms.centerRadiusCNN", "CenterRadiusCNN"),
+    ("Basilisk.simulation.vizInterface", "VizInterface"),
+)
 
 
 def venv_python(venv_path: Path) -> Path:
@@ -105,6 +110,32 @@ def run_import_check(
     run([python, "-c", import_check_script(required, missing)], env=env)
 
 
+def protobuf_consumer_check_script(consumers: tuple[tuple[str, str], ...]) -> str:
+    """Return a worker script that holds both protobuf consumers through shutdown."""
+    return f"""
+import importlib
+
+consumers = {consumers!r}
+instances = []
+for module_name, class_name in consumers:
+    module = importlib.import_module(module_name)
+    instances.append(getattr(module, class_name)())
+"""
+
+
+def run_protobuf_consumer_checks(python: Path, env: dict[str, str]) -> None:
+    """Check both protobuf-consumer import orders in isolated interpreters."""
+    import_orders = (PROTOBUF_CONSUMERS, tuple(reversed(PROTOBUF_CONSUMERS)))
+    for import_order in import_orders:
+        run([
+            python,
+            "-X",
+            "faulthandler",
+            "-c",
+            protobuf_consumer_check_script(import_order),
+        ], env=env)
+
+
 def install_extra(python: Path, wheelhouse: Path, extra: str) -> None:
     run([
         python,
@@ -149,6 +180,7 @@ def test_optional_wheels(wheelhouse: Path) -> None:
             missing=[],
             env=test_env,
         )
+        run_protobuf_consumer_checks(python, test_env)
 
         run([python, "-m", "pip", "uninstall", "-y", "bsk-opnav"])
         run_import_check(
@@ -166,6 +198,7 @@ def test_optional_wheels(wheelhouse: Path) -> None:
             missing=[],
             env=test_env,
         )
+        run_protobuf_consumer_checks(python, test_env)
 
 
 def parse_args() -> argparse.Namespace:

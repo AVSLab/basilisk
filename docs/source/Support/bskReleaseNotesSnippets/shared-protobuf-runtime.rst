@@ -1,0 +1,1 @@
+- macOS builds now use a shared protobuf dependency, preventing interpreter-shutdown crashes when OpenCV-backed OpNav modules and :ref:`vizInterface` are loaded in the same process.
