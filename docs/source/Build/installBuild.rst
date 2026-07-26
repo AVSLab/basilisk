@@ -184,10 +184,15 @@ incremented when Basilisk intentionally changes the C/C++ object contract expose
 promise compatibility between different Basilisk versions; the SDK's exact-version check remains required unless a
 future compatibility policy explicitly relaxes it.
 
-``features`` reports whether ``vizInterface``, ``opNav``, and ``mujoco`` were enabled when CMake configured the
-installed package.  The same values can be queried with ``hasBuildFeature()``.  Feature names are case-sensitive,
-and an unknown name raises ``KeyError``.  These values describe compiled Basilisk capabilities; they do not report
-the availability of external applications such as Vizard.
+``features`` records whether ``vizInterface``, ``opNav``, and ``mujoco`` were enabled when CMake configured the core
+artifact.  ``hasBuildFeature()`` answers whether the installed Basilisk environment provides a capability: it
+combines those core values with capabilities supplied by installed optional Basilisk distributions such as
+``bsk-opnav``.  Optional distributions declare their capabilities through package entry-point metadata and must
+have the same version as the core artifact.  A mismatched provider raises ``RuntimeError`` instead of exposing an
+incompatible compiled extension.  This distinction lets ``getBuildInfo()`` retain the core artifact's provenance
+while feature guards continue to work when Basilisk is distributed across multiple wheels.  Feature names are
+case-sensitive, and an unknown name raises ``KeyError``.  These values describe compiled Basilisk capabilities;
+they do not report the availability of external applications such as Vizard.
 
 ``abi`` is captured by C and C++ translation units compiled with the selected Basilisk build configuration.  It
 records the actual target architecture, endianness, C and C++ language modes, compiler ABI, standard-library ABI and

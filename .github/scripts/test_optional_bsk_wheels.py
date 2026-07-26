@@ -77,7 +77,11 @@ def create_venv(parent: Path, name: str) -> Path:
     return venv_path
 
 
-def import_check_script(required: list[str], missing: list[str]) -> str:
+def import_check_script(
+    required: list[str],
+    missing: list[str],
+    expected_features: dict[str, bool],
+) -> str:
     return f"""
 import importlib
 import importlib.util
@@ -85,9 +89,18 @@ import sys
 
 required = {required!r}
 missing = {missing!r}
+expected_features = {expected_features!r}
 
 import Basilisk
 print("Basilisk:", Basilisk.__file__)
+
+for name, expected in expected_features.items():
+    actual = Basilisk.hasBuildFeature(name)
+    if actual is not expected:
+        raise SystemExit(
+            f"unexpected build feature {{name}}={{actual}}; expected {{expected}}"
+        )
+    print("OK feature", name, "->", actual)
 
 for name in required:
     module = importlib.import_module(name)
@@ -105,9 +118,13 @@ def run_import_check(
     *,
     required: list[str],
     missing: list[str],
+    expected_features: dict[str, bool],
     env: dict[str, str],
 ) -> None:
-    run([python, "-c", import_check_script(required, missing)], env=env)
+    run(
+        [python, "-c", import_check_script(required, missing, expected_features)],
+        env=env,
+    )
 
 
 def protobuf_consumer_check_script(consumers: tuple[tuple[str, str], ...]) -> str:
@@ -169,6 +186,7 @@ def test_optional_wheels(wheelhouse: Path) -> None:
             python,
             required=CORE_IMPORTS,
             missing=OPNAV_IMPORTS,
+            expected_features={"vizInterface": True, "opNav": False, "mujoco": True},
             env=test_env,
         )
 
@@ -178,6 +196,7 @@ def test_optional_wheels(wheelhouse: Path) -> None:
             python,
             required=CORE_IMPORTS + OPNAV_IMPORTS,
             missing=[],
+            expected_features={"vizInterface": True, "opNav": True, "mujoco": True},
             env=test_env,
         )
         run_protobuf_consumer_checks(python, test_env)
@@ -187,6 +206,7 @@ def test_optional_wheels(wheelhouse: Path) -> None:
             python,
             required=CORE_IMPORTS,
             missing=OPNAV_IMPORTS,
+            expected_features={"vizInterface": True, "opNav": False, "mujoco": True},
             env=test_env,
         )
 
@@ -196,6 +216,7 @@ def test_optional_wheels(wheelhouse: Path) -> None:
             python,
             required=CORE_IMPORTS + OPNAV_IMPORTS,
             missing=[],
+            expected_features={"vizInterface": True, "opNav": True, "mujoco": True},
             env=test_env,
         )
         run_protobuf_consumer_checks(python, test_env)

@@ -22,7 +22,9 @@
 from __future__ import annotations
 
 import argparse
+import ast
 import base64
+import copy
 import csv
 import hashlib
 import io
@@ -37,6 +39,8 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_VERSION_FILE = REPO_ROOT / "docs/source/bskVersion.txt"
 BASE_DISTRIBUTION = "bsk"
+BUILD_INFO_DATA_PATH = "Basilisk/_buildInfoData.py"
+BUILD_FEATURE_ENTRY_POINT_GROUP = "basilisk.build_features"
 NATIVE_PAYLOAD_SUFFIXES = (".a", ".dll", ".dylib", ".lib", ".pyd", ".so")
 NATIVE_PAYLOAD_PREFIXES = ("bsk.libs/",)
 PRE_RELEASE_ALIASES = {
@@ -59,6 +63,7 @@ PRE_RELEASE_VERSION_PATTERN = re.compile(
 @dataclass(frozen=True)
 class OptionalComponent:
     distribution: str
+    build_feature: str
     summary: str
     description: str
     cmake_include: str
@@ -68,6 +73,7 @@ class OptionalComponent:
 COMPONENTS = {
     "opnav": OptionalComponent(
         distribution="bsk-opnav",
+        build_feature="opNav",
         summary="Basilisk optical navigation extension modules",
         description="Optional optical navigation extension modules for Basilisk.",
         # Basilisk treats OpenCV-backed modules as optical navigation modules.
@@ -250,12 +256,89 @@ def warn_changed_native_payloads(changed: list[str]) -> None:
     )
 
 
+def parse_build_info_data(data: bytes) -> dict[str, object]:
+    """Parse the generated build-information dictionary without executing it."""
+    tree = ast.parse(data.decode("utf-8"), filename=BUILD_INFO_DATA_PATH)
+    assignments = [
+        node
+        for node in tree.body
+        if isinstance(node, ast.Assign)
+        and len(node.targets) == 1
+        and isinstance(node.targets[0], ast.Name)
+        and node.targets[0].id == "buildInfoData"
+    ]
+    if len(assignments) != 1:
+        raise ValueError(
+            f"Expected one buildInfoData assignment in {BUILD_INFO_DATA_PATH}."
+        )
+
+    build_info = ast.literal_eval(assignments[0].value)
+    if not isinstance(build_info, dict):
+        raise ValueError(f"Expected a dictionary in {BUILD_INFO_DATA_PATH}.")
+    return build_info
+
+
+def validate_build_feature_metadata(
+    base_archive: zipfile.ZipFile,
+    component_archive: zipfile.ZipFile,
+    component: OptionalComponent,
+) -> None:
+    """Validate the intentional feature difference between wheel build inputs."""
+    base_build_info = parse_build_info_data(base_archive.read(BUILD_INFO_DATA_PATH))
+    component_build_info = parse_build_info_data(
+        component_archive.read(BUILD_INFO_DATA_PATH)
+    )
+
+    base_features = base_build_info.get("features")
+    component_features = component_build_info.get("features")
+    if not isinstance(base_features, dict) or not isinstance(component_features, dict):
+        raise ValueError(
+            f"Expected a features dictionary in {BUILD_INFO_DATA_PATH}."
+        )
+
+    try:
+        base_enabled = base_features[component.build_feature]
+        component_enabled = component_features[component.build_feature]
+    except KeyError as err:
+        raise ValueError(
+            f"Missing build feature {component.build_feature!r} in "
+            f"{BUILD_INFO_DATA_PATH}."
+        ) from err
+
+    if base_enabled is not False or component_enabled is not True:
+        raise ValueError(
+            f"Expected {component.build_feature!r} to be disabled in the base build "
+            "and enabled in the component build."
+        )
+
+    normalized_component_info = copy.deepcopy(component_build_info)
+    normalized_component_info["features"] = {
+        **component_features,
+        component.build_feature: base_enabled,
+    }
+    if normalized_component_info != base_build_info:
+        raise ValueError(
+            f"{BUILD_INFO_DATA_PATH} differs between the base and component builds "
+            f"beyond the expected {component.build_feature!r} feature value."
+        )
+
+
 def validate_common_payloads(
     base_archive: zipfile.ZipFile,
     component_archive: zipfile.ZipFile,
     base_payload: set[str],
     component_payload: set[str],
+    component: OptionalComponent,
 ) -> None:
+    if (
+        BUILD_INFO_DATA_PATH not in base_payload
+        or BUILD_INFO_DATA_PATH not in component_payload
+    ):
+        raise ValueError(
+            f"Both wheel build inputs must contain {BUILD_INFO_DATA_PATH}."
+        )
+    validate_build_feature_metadata(base_archive, component_archive, component)
+
     changed = []
     for name in sorted(base_payload & component_payload):
         base_digest = archive_payload_digest(base_archive, name)
@@ -266,6 +349,9 @@ def validate_common_payloads(
     native_changed = [name for name in changed if is_native_payload(name)]
     non_native_changed = [name for name in changed if not is_native_payload(name)]
     warn_changed_native_payloads(native_changed)
+
+    if BUILD_INFO_DATA_PATH in non_native_changed:
+        non_native_changed.remove(BUILD_INFO_DATA_PATH)
 
     if non_native_changed:
         details = "\n  ".join(non_native_changed)
@@ -398,6 +484,10 @@ def build_wheel_file(
             version,
             include_license_file=license_data is not None,
         )
+        entry_points = (
+            f"[{BUILD_FEATURE_ENTRY_POINT_GROUP}]\n"
+            f"{component.build_feature} = Basilisk\n"
+        ).encode("utf-8")
 
         with zipfile.ZipFile(output_wheel, "w", compression=zipfile.ZIP_DEFLATED) as output:
             for name in payload:
@@ -408,6 +498,7 @@ def build_wheel_file(
 
             add_bytes(output, records, f"{dist_info}/METADATA", metadata)
             add_bytes(output, records, f"{dist_info}/WHEEL", wheel_data)
+            add_bytes(output, records, f"{dist_info}/entry_points.txt", entry_points)
             add_bytes(output, records, f"{dist_info}/top_level.txt", b"Basilisk\n")
 
             record_name = f"{dist_info}/RECORD"
@@ -454,6 +545,7 @@ def build_optional_wheel(
             component_archive,
             base_payload,
             component_payload,
+            component,
         )
         payload = validate_delta(base_payload, component_payload, component)
 
