@@ -70,19 +70,23 @@ def _makeBuildInfo(
     standardLibrary="",
     runtime="",
     runtimeType="",
+    features=None,
 ):
+    if features is None:
+        features = {"vizInterface": True, "opNav": False, "mujoco": True}
     standardLibraryFamily = standardLibrary
     if standardLibrary.startswith("libstdc++"):
         standardLibraryFamily = "libstdc++"
     abiFamily = "msvc" if system == "Windows" else "itanium"
     return {
-        "schemaVersion": 2,
+        "schemaVersion": 3,
         "artifact": {
             "basiliskVersion": "2.12.0",
             "sourceRevision": "0123456789abcdef",
             "sourceDirty": False,
             "pluginAbiVersion": 1,
         },
+        "features": features,
         "diagnostics": {
             "target": {
                 "system": system,
@@ -217,10 +221,12 @@ def _makeBuildInfo(
 def test_build_info():
     """Verify that Basilisk exposes compiled and diagnostic build metadata."""
     buildInfo = Basilisk.getBuildInfo()
+    features = buildInfo["features"]
+    mujocoEnabled = features["mujoco"]
     diagnostics = buildInfo["diagnostics"]
     abi = buildInfo["abi"]
 
-    assert buildInfo["schemaVersion"] == 2
+    assert buildInfo["schemaVersion"] == 3
     assert buildInfo["artifact"]["basiliskVersion"]
     if Basilisk.__version__ != "0.0.0":
         assert buildInfo["artifact"]["basiliskVersion"] == Basilisk.__version__
@@ -228,6 +234,8 @@ def test_build_info():
         "BSK_PLUGIN_ABI_VERSION"
     )
     assert buildInfo["artifact"]["sourceDirty"] in (True, False, None)
+    assert set(features) == {"vizInterface", "opNav", "mujoco"}
+    assert all(isinstance(enabled, bool) for enabled in features.values())
     assert abi["descriptorVersion"] == _integerDefine("BSK_ABI_DESCRIPTOR_VERSION")
     assert abi["capture"] == "compiled"
     assert abi["contractHeader"] == "architecture/utilities/bskAbiDescriptor.h"
@@ -273,7 +281,21 @@ def test_build_info():
     assert diagnostics["tools"]["python"]
 
     buildInfo["abi"]["target"]["system"] = "modified"
+    buildInfo["features"]["mujoco"] = not mujocoEnabled
     assert Basilisk.getBuildInfo()["abi"]["target"]["system"] == platform.system()
+    assert Basilisk.getBuildInfo()["features"]["mujoco"] == mujocoEnabled
+
+
+def test_build_feature_query(monkeypatch):
+    """Verify configured features can be queried and unknown names are rejected."""
+    features = {"vizInterface": True, "opNav": False, "mujoco": True}
+    monkeypatch.setitem(buildInfoFormatter._buildInfoData, "features", features)
+
+    for featureName, enabled in features.items():
+        assert Basilisk.hasBuildFeature(featureName) is enabled
+
+    with pytest.raises(KeyError, match="unknownFeature"):
+        Basilisk.hasBuildFeature("unknownFeature")
 
 
 def test_shared_abi_contract_header():
@@ -348,6 +370,8 @@ def test_print_build_info(capsys):
     assert "Basilisk Build Information" in output
     assert "Build Tools" in output
     assert buildInfo["artifact"]["basiliskVersion"] in output
+    for featureName, enabled in buildInfo["features"].items():
+        assert f"{featureName}={'on' if enabled else 'off'}" in output
     assert diagnostics["compilers"]["c"]["id"] in output
     assert diagnostics["compilers"]["cxx"]["id"] in output
     assert "C++17" in output
@@ -427,4 +451,6 @@ def test_format_build_info_for_supported_platforms(buildInfo, expectedText):
 
     for text in expectedText:
         assert text in output
+    for featureName, enabled in buildInfo["features"].items():
+        assert f"{featureName}={'on' if enabled else 'off'}" in output
     assert "''" not in output

@@ -26,6 +26,15 @@ function(_bsk_python_string output_variable value)
   set(${output_variable} "\"${_escaped_value}\"" PARENT_SCOPE)
 endfunction()
 
+function(_bsk_python_bool output_variable value)
+  if(value)
+    set(_bool_literal True)
+  else()
+    set(_bool_literal False)
+  endif()
+  set(${output_variable} "${_bool_literal}" PARENT_SCOPE)
+endfunction()
+
 function(_bsk_python_list output_variable)
   set(_list_literal "[")
   foreach(_value IN LISTS ARGN)
@@ -215,6 +224,9 @@ function(bsk_generate_build_info package_directory)
   _bsk_python_string(BSK_INFO_SOURCE_REVISION "${_source_revision}")
   set(BSK_INFO_SOURCE_DIRTY "${_source_dirty}")
   set(BSK_INFO_PLUGIN_ABI_VERSION "${_plugin_abi_version}")
+  _bsk_python_bool(BSK_INFO_FEATURE_VIZINTERFACE "${BUILD_VIZINTERFACE}")
+  _bsk_python_bool(BSK_INFO_FEATURE_OPNAV "${BUILD_OPNAV}")
+  _bsk_python_bool(BSK_INFO_FEATURE_MUJOCO "${BUILD_MUJOCO}")
 
   configure_file(
     "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/bskBuildInfoData.py.in"

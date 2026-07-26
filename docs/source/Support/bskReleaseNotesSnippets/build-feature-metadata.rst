@@ -1,0 +1,1 @@
+- Added optional ``vizInterface``, ``opNav``, and ``mujoco`` capability flags to ``Basilisk.getBuildInfo()`` and the new ``Basilisk.hasBuildFeature()`` query.

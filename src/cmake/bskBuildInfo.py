@@ -27,14 +27,33 @@ _buildInfoData = {**_buildInfoData, "abi": _buildAbiData}
 def getBuildInfo() -> dict[str, object]:
     """Return metadata describing the Basilisk binary and its build.
 
-    Values under ``abi`` are captured by compiled C and C++ probes. Values
-    under ``diagnostics`` describe CMake observations, build tools, and the
-    requested Conan profile.
+    Values under ``features`` identify configured optional build capabilities.
+    Values under ``abi`` are captured by compiled C and C++ probes. Values under
+    ``diagnostics`` describe CMake observations, build tools, and the requested
+    Conan profile.
 
     :return: A copy of the build metadata.
     :rtype: dict[str, object]
     """
     return _deepcopy(_buildInfoData)
+
+
+def hasBuildFeature(featureName: str) -> bool:
+    """Return whether an optional Basilisk build feature is enabled.
+
+    :param featureName: Name from the ``features`` section of :func:`getBuildInfo`.
+    :return: ``True`` when the feature was enabled when Basilisk was configured.
+    :raises KeyError: If ``featureName`` is not a known build feature.
+    """
+    features = _buildInfoData["features"]
+    try:
+        return features[featureName]
+    except KeyError:
+        availableFeatures = ", ".join(sorted(features))
+        raise KeyError(
+            f"Unknown Basilisk build feature '{featureName}'. "
+            f"Available features: {availableFeatures}"
+        ) from None
 
 
 def _appendField(lines: list[str], label: str, value: str) -> None:
@@ -136,6 +155,11 @@ def _formatBuildInfo(buildInfo: dict[str, object]) -> str:
     _appendField(lines, "Version", f"{artifact['basiliskVersion']} (plugin ABI {artifact['pluginAbiVersion']})")
     _appendField(lines, "Target", target)
     _appendField(lines, "Build", buildDescription)
+    featureDescription = ", ".join(
+        f"{featureName}={'on' if enabled else 'off'}"
+        for featureName, enabled in buildInfo["features"].items()
+    )
+    _appendField(lines, "Features", featureDescription)
     _appendField(lines, "C compiler", _compilerDescription(cCompiler))
     _appendField(lines, "C++ compiler", _compilerDescription(cxxCompiler))
     _appendField(lines, "C standard", _compiledLanguageStandard("C", abi["c"]["compiler"]["languageStandard"]))
@@ -185,4 +209,4 @@ def printBuildInfo() -> None:
     print(_formatBuildInfo(_buildInfoData))
 
 
-__all__ = ["getBuildInfo", "printBuildInfo"]
+__all__ = ["getBuildInfo", "hasBuildFeature", "printBuildInfo"]

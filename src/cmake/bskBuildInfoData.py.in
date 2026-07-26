@@ -17,12 +17,17 @@
 #
 
 buildInfoData = {
-    "schemaVersion": 2,
+    "schemaVersion": 3,
     "artifact": {
         "basiliskVersion": @BSK_INFO_BASILISK_VERSION@,
         "sourceRevision": @BSK_INFO_SOURCE_REVISION@,
         "sourceDirty": @BSK_INFO_SOURCE_DIRTY@,
         "pluginAbiVersion": @BSK_INFO_PLUGIN_ABI_VERSION@,
+    },
+    "features": {
+        "vizInterface": @BSK_INFO_FEATURE_VIZINTERFACE@,
+        "opNav": @BSK_INFO_FEATURE_OPNAV@,
+        "mujoco": @BSK_INFO_FEATURE_MUJOCO@,
     },
     "diagnostics": {
         "target": {
