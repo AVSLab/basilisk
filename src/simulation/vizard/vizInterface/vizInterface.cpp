@@ -235,11 +235,15 @@ void VizInterface::Reset(uint64_t CurrentSimNanos)
     }
 
     this->FrameNumber=-1;
+    if (this->outputStream.is_open()) {
+        this->outputStream.close();
+    }
+    this->outputStream.clear();
     if (this->saveFile) {
-        this->outputStream = new std::ofstream(this->protoFilename, std::ios::out |std::ios::binary);
+        this->outputStream.open(this->protoFilename, std::ios::out | std::ios::binary);
 
         /* check if file could be opened */
-        if (!this->outputStream->is_open()) {
+        if (!this->outputStream.is_open()) {
             this->saveFile = false; // turn off save file flag
             bskLogger.bskError("VizInterface: Unable to open file %s for writing.", this->protoFilename.c_str());
         } else {
@@ -1200,7 +1204,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             unsigned long varIntBytes = (unsigned long) (end - varIntBuffer);
             // Save message to file if saveFile flag is true, and if Vizard is not being terminated
             if (this->saveFile && !this->liveSettings.terminateVizard) {
-                this->outputStream->write(reinterpret_cast<char* > (varIntBuffer), (int) varIntBytes);
+                this->outputStream.write(reinterpret_cast<char*>(varIntBuffer), static_cast<int>(varIntBytes));
             }
             serialized_message = malloc(byteCount);
             message->SerializeToArray(serialized_message, (int) byteCount);
@@ -1304,10 +1308,10 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
 
         }
         /*!  Write protobuffer to file */
-        if (!this->saveFile  || !message->SerializeToOstream(this->outputStream)) {
+        if (!this->saveFile || !message->SerializeToOstream(&this->outputStream)) {
             return;
         }
-        this->outputStream->flush();
+        this->outputStream.flush();
     }
 
     delete message;

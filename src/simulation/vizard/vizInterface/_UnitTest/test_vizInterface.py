@@ -26,8 +26,10 @@
 
 import inspect
 import os
-import pytest
+import tempfile
+
 import numpy as np
+import pytest
 
 # Protobuffer-specific modules are generated with vizInterface.
 from Basilisk import hasBuildFeature
@@ -75,21 +77,20 @@ if vizInterfaceEnabled:
 # matters for the documentation in that it impacts the order in which the test arguments are shown.
 # The first parametrize arguments are shown last in the pytest argument list
 @pytest.mark.parametrize("accuracy", [1e-8])
-def test_vizInterface(show_plots, accuracy):
+def test_vizInterface(show_plots, accuracy, tmp_path):
     r"""
     **Validation Test Description**
 
-    This unit test script tests the vizInterface module. Though this module is largely hand-tested due to its
-    interactive nature, this script tests the packed protobuffers that are produces in the saved binary file to ensure
-    all elements are captured as expected.
+    This unit test script tests the ``vizInterface`` module. Though this module is largely hand-tested due to its
+    interactive nature, this script tests the packed protocol buffers in the saved binary file to ensure all elements
+    are captured as expected.
 
-    **Test Parameters**
-
-    Args:
-        accuracy (float): absolute accuracy value used in the validation tests
-
+    :param show_plots: Flag controlling whether validation plots are displayed.
+    :param accuracy: Absolute accuracy used in the validation checks.
+    :param tmp_path: Temporary directory for the generated protobuf file.
     """
-    [testResults, testMessage] = vizInterfaceTest(show_plots, accuracy)
+    output_file = tmp_path / "testVizInterface_UnityViz.bin"
+    [testResults, testMessage] = vizInterfaceTest(show_plots, accuracy, output_file)
     assert testResults < 1, testMessage
 
 
@@ -114,7 +115,32 @@ def test_vizInterface_long_gravity_body_name_reset():
         viz.Reset(reset_time)
 
 
-def vizInterfaceTest(show_plots, accuracy):
+def test_vizInterface_closes_output_files(tmp_path):
+    """Verify that output files are released on reset and module destruction.
+
+    Windows does not permit removing a file while the writing process still
+    holds it open, so these removals also exercise the stream lifetime.
+
+    :param tmp_path: Temporary directory for the generated protobuf files.
+    """
+    first_output = tmp_path / "first.bin"
+    second_output = tmp_path / "second.bin"
+    reset_time = 0  # [ns]
+
+    viz = vizInterface.VizInterface()
+    viz.saveFile = True
+    viz.protoFilename = str(first_output)
+    viz.Reset(reset_time)
+
+    viz.protoFilename = str(second_output)
+    viz.Reset(reset_time)
+    first_output.unlink()
+
+    del viz
+    second_output.unlink()
+
+
+def vizInterfaceTest(show_plots, accuracy, output_file):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
@@ -185,9 +211,8 @@ def vizInterfaceTest(show_plots, accuracy):
     scState_dataRec = scObject.scStateOutMsg.recorder(samplingTime)
     unitTestSim.AddModelToTask(unitTaskName, scState_dataRec)
 
-    sName = "testVizInterface"
     viz = vizSupport.enableUnityVisualization(unitTestSim, unitTaskName, scObject
-                                              , saveFile=sName)
+                                              , saveFile=str(output_file))
 
     viz.settings.orbitLinesOn = 1
     viz.settings.spacecraftCSon = 1
@@ -201,7 +226,7 @@ def vizInterfaceTest(show_plots, accuracy):
     unitTestSim.ExecuteSimulation()
 
     # Read in binary save file, parse message list
-    msgList = read_protobuf_messages("./_VizFiles/" + sName + "_UnityViz.bin")
+    msgList = read_protobuf_messages(output_file)
 
     # Assert file size
     assert len(msgList) == frames, "File is missing messages"
@@ -214,9 +239,6 @@ def vizInterfaceTest(show_plots, accuracy):
 
     # Check settings
     checkSettings(msgList, testProcessRate)
-
-    # Delete binary file
-    os.remove("./_VizFiles/" + sName + "_UnityViz.bin")
 
     # Each test method requires a single assert method to be called
     # This check below just makes sure no subtest failures were found
@@ -332,12 +354,16 @@ def checkSettings(msgList, testProcessRate):
 
 
 #
-# Run this unitTest as a stand-along python script
+# Run this unit test as a stand-alone Python script
 #
 if __name__ == "__main__":
     if not vizInterfaceEnabled:
         raise RuntimeError("Requires Basilisk built with --vizInterface True")
-    test_vizInterface(
-        False,  # show_plots
-        1e-8    # accuracy
-    )
+    with tempfile.TemporaryDirectory() as temporary_directory:
+        output_file = os.path.join(temporary_directory, "testVizInterface_UnityViz.bin")
+        [testResults, testMessage] = vizInterfaceTest(
+            False,  # show_plots
+            1e-8,   # [-] accuracy
+            output_file,
+        )
+        assert testResults < 1, testMessage

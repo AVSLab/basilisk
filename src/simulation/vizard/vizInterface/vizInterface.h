@@ -109,7 +109,7 @@ private:
 
     std::vector<MsgCurrStatus>spiceInMsgStatus;             //!< status of the incoming planets' spice data messages
     std::vector <SpicePlanetStateMsgPayload> spiceMessage;  //!< Spice message copies
-    std::ofstream *outputStream;                            //!< Output file stream opened in reset
+    std::ofstream outputStream;                             //!< Output file stream owned by this module
     int64_t now;                                            //!< Current system time stamp
     int64_t lastSettingsSendTime;                           //!< System time stamp when settings message was last sent to broadcast socket
 
