@@ -133,9 +133,9 @@ To skip the optional example Python packages during the clone-based install, use
 
 Inspecting the Build Toolchain
 ------------------------------
-Every Basilisk build records the C and C++ compilers, build configuration, CMake generator, and versions of the
-principal build tools in the installed Python package.  This information can be inspected when diagnosing a binary
-or build issue.
+Every Basilisk build records its configured optional features, C and C++ compilers, build configuration, CMake
+generator, and versions of the principal build tools in the installed Python package.  This information can be
+inspected when diagnosing a binary or build issue.
 
 For a concise, human-readable summary, use ``printBuildInfo()``::
 
@@ -149,6 +149,7 @@ This produces output similar to::
       Version:        2.12.0 (plugin ABI 1)
       Target:         macOS arm64, 64-bit
       Build:          Release, Unix Makefiles
+      Features:       vizInterface=on, opNav=off, mujoco=off
       C compiler:     AppleClang 21.0.0.21000101 (cc)
       C++ compiler:   AppleClang 21.0.0.21000101 (c++)
       C standard:     C17
@@ -167,11 +168,13 @@ This produces output similar to::
       Python:         3.14.6
 
 For programmatic inspection or custom formatting, use ``getBuildInfo()``.  It returns a copy of a versioned nested
-dictionary with three principal sections::
+dictionary with four principal sections::
 
-    from Basilisk import getBuildInfo
+    from Basilisk import getBuildInfo, hasBuildFeature
 
     buildInfo = getBuildInfo()
+    mujocoEnabled = buildInfo["features"]["mujoco"]
+    opNavEnabled = hasBuildFeature("opNav")
     pluginAbiVersion = buildInfo["artifact"]["pluginAbiVersion"]
     standardLibrary = buildInfo["abi"]["cxx"]["standardLibrary"]["family"]
     compilerVersion = buildInfo["diagnostics"]["compilers"]["cxx"]["version"]
@@ -180,6 +183,11 @@ dictionary with three principal sections::
 incremented when Basilisk intentionally changes the C/C++ object contract exposed to SDK plugins.  It does not
 promise compatibility between different Basilisk versions; the SDK's exact-version check remains required unless a
 future compatibility policy explicitly relaxes it.
+
+``features`` reports whether ``vizInterface``, ``opNav``, and ``mujoco`` were enabled when CMake configured the
+installed package.  The same values can be queried with ``hasBuildFeature()``.  Feature names are case-sensitive,
+and an unknown name raises ``KeyError``.  These values describe compiled Basilisk capabilities; they do not report
+the availability of external applications such as Vizard.
 
 ``abi`` is captured by C and C++ translation units compiled with the selected Basilisk build configuration.  It
 records the actual target architecture, endianness, C and C++ language modes, compiler ABI, standard-library ABI and
