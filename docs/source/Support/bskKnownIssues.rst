@@ -10,6 +10,9 @@ Basilisk Known Issues
 
 Version |release| (July 7, 2026)
 --------------------------------
+- :ref:`vizInterface` left its protobuf output stream open after the module was destroyed. On Windows, this could
+  prevent saved Vizard data files from being removed until the Python process exited. The stream is now owned and
+  closed automatically by the module. This is fixed in the current version.
 - SWIG 4.4.0 caused Basilisk build failures in some Python 3.13+ source-build configurations.
   Basilisk now requires SWIG 4.4.1 or a newer supported 4.x release, which provides SWIG ABI 5 support
   for Basilisk and compatible extensions. If source builds fail with SWIG 4.4.0 or emit
