@@ -223,6 +223,7 @@ def test_igbmAtmDensity_clampsNegativeDensity():
     assert np.any(dens == 0.0), "expected the non-negativity clamp to engage for these increments"
 
 
+@pytest.mark.skipif(not couldImportMujoco, reason="Compiled Basilisk without --mujoco")
 def test_igbmAtmDensity_rejectsBadParameters():
     """The inherited parameter setters reject values outside their valid range."""
     from Basilisk.architecture import bskLogging
