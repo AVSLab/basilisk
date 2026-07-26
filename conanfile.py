@@ -307,6 +307,9 @@ class BasiliskConan(ConanFile):
 
         # Other dependency options
         if self.options.get_safe("vizInterface") or self.options.get_safe("opNav"):
+            if self.settings.get_safe("os") == "Macos":
+                # Avoid loading separate protobuf runtimes through OpenCV and vizInterface.
+                self.options["protobuf"].shared = True
             self.options['zeromq'].encryption = False # Basilisk does not use data streaming encryption.
 
 
