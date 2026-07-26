@@ -29,13 +29,17 @@ import os
 import pytest
 import numpy as np
 
-# Protobuffer specific
-try:
-    import vizMessage_pb2
+# Protobuffer-specific modules are generated with vizInterface.
+from Basilisk import hasBuildFeature
+
+vizInterfaceEnabled = hasBuildFeature("vizInterface")
+pytestmark = pytest.mark.skipif(
+    not vizInterfaceEnabled,
+    reason="Requires Basilisk built with --vizInterface True",
+)
+if vizInterfaceEnabled:
+    from Basilisk.utilities.vizProtobuffer import vizMessage_pb2
     import google.protobuf.internal.decoder as decoder
-    protoFound = True
-except ModuleNotFoundError:
-    protoFound = False
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -56,12 +60,9 @@ from Basilisk.utilities import simHelpers
 from Basilisk.simulation import spacecraft
 from Basilisk.architecture import messaging, bskLogging
 from Basilisk.simulation import thrusterDynamicEffector
-import pytest
 import time
-try:
+if vizInterfaceEnabled:
     from Basilisk.simulation import vizInterface
-except ImportError:
-    pass
 
 
 # Uncomment this line if this test is to be skipped in the global unit test run, adjust message as needed.
@@ -100,9 +101,6 @@ def test_vizInterface_long_gravity_body_name_reset():
     ``SpicePlanetStateMsgPayload.PlanetName`` storage.  The full body name remains available to the Vizard
     protocol buffer path, while the default SPICE payload name must be copied without overflowing its backing array.
     """
-    if not vizSupport.vizFound:
-        pytest.skip("vizInterface is not configured.")
-
     reset_time = 0  # [ns]
     long_body_name = "body_" + "x" * 128
 
@@ -119,10 +117,6 @@ def test_vizInterface_long_gravity_body_name_reset():
 def vizInterfaceTest(show_plots, accuracy):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
-
-    # Early quit if protobuf or Vizard not configured
-    if not protoFound or not vizSupport.vizFound:
-        return [testFailCount, ''.join(testMessages)]
 
     # Create simulation variable names
     unitTaskName = "unitTask"  # arbitrary name (don't change)
@@ -341,6 +335,8 @@ def checkSettings(msgList, testProcessRate):
 # Run this unitTest as a stand-along python script
 #
 if __name__ == "__main__":
+    if not vizInterfaceEnabled:
+        raise RuntimeError("Requires Basilisk built with --vizInterface True")
     test_vizInterface(
         False,  # show_plots
         1e-8    # accuracy

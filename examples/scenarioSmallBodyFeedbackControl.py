@@ -86,12 +86,6 @@ from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeRW
 from Basilisk.utilities import simHelpers
 
-try:
-    from Basilisk.simulation import vizInterface
-    vizFound = True
-except ImportError:
-    vizFound = False
-
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
 fileName = os.path.basename(os.path.splitext(__file__)[0])
@@ -490,15 +484,15 @@ def run(show_plots):
     fileName = 'scenarioSmallBodyFeedbackControl'
 
     if vizSupport.vizFound:
-        vizInterface = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
-                                                                # , saveFile=fileName
-                                                                )
-        vizSupport.createStandardCamera(vizInterface, setMode=0, bodyTarget='bennu', setView=0)
+        viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scObject
+                                                        # , saveFile=fileName
+                                                        )
+        vizSupport.createStandardCamera(viz, setMode=0, bodyTarget='bennu', setView=0)
 
-        # vizInterface.settings.showSpacecraftLabels = 1
-        vizInterface.settings.showCSLabels = 1
-        vizInterface.settings.planetCSon = 1
-        vizInterface.settings.orbitLinesOn = -1
+        # viz.settings.showSpacecraftLabels = 1
+        viz.settings.showCSLabels = 1
+        viz.settings.planetCSon = 1
+        viz.settings.orbitLinesOn = -1
 
     # initialize Simulation
     scSim.InitializeSimulation()

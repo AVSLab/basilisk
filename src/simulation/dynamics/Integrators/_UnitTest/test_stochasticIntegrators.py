@@ -36,17 +36,20 @@ import numpy.typing as npt
 import numpy.testing
 import matplotlib.pyplot as plt
 
+from Basilisk import hasBuildFeature
 from Basilisk.utilities import macros
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import pythonVariableLogger
 from Basilisk.simulation import svIntegrators
 from Basilisk.simulation import dynParamManager
 
-try:
+mujocoEnabled = hasBuildFeature("mujoco")
+pytestmark = pytest.mark.skipif(
+    not mujocoEnabled,
+    reason="Requires Basilisk built with --mujoco True",
+)
+if mujocoEnabled:
     from Basilisk.simulation import mujoco
-    couldImportMujoco = True
-except:
-    couldImportMujoco = False
 
 # This module provides the Euler-Maruyama coverage (single-path Ornstein-Uhlenbeck
 # agreement and Monte-Carlo weak-convergence checks) plus the DETERMINISTIC-LIMIT check
@@ -402,7 +405,6 @@ def estimateErrorAndEmpiricalVariance(
     return muHatAvg, sigmaMuSquared
 
 
-@pytest.mark.skipif(not couldImportMujoco, reason="Compiled Basilisk without --mujoco")
 @pytest.mark.parametrize("method", METHODS)
 def test_deterministic(method: Method, plot: bool = False):
     """
@@ -461,7 +463,6 @@ def test_deterministic(method: Method, plot: bool = False):
     )
 
 
-@pytest.mark.skipif(not couldImportMujoco, reason="Compiled Basilisk without --mujoco")
 @pytest.mark.parametrize("integratorClassName", ALL_INTEGRATORS)
 def test_deterministicLimitAllIntegrators(integratorClassName: str):
     """Every stochastic integrator must reduce to a correct ODE solver when there is no
@@ -511,7 +512,6 @@ def test_deterministicLimitAllIntegrators(integratorClassName: str):
     )
 
 
-@pytest.mark.skipif(not couldImportMujoco, reason="Compiled Basilisk without --mujoco")
 @pytest.mark.parametrize("method", METHODS)
 def test_ou(method: Method, plot: bool = False):
     """
@@ -557,7 +557,6 @@ def test_ou(method: Method, plot: bool = False):
         rtol=0
     )
 
-@pytest.mark.skipif(not couldImportMujoco, reason="Compiled Basilisk without --mujoco")
 @pytest.mark.parametrize("method", METHODS)
 def test_ouComplex(method: Method, plot: bool = False):
     """
@@ -604,7 +603,6 @@ def test_ouComplex(method: Method, plot: bool = False):
         rtol=0
     )
 
-@pytest.mark.skipif(not couldImportMujoco, reason="Compiled Basilisk without --mujoco")
 @pytest.mark.parametrize("method", METHODS)
 def test_example1(method: Method, plot: bool = False):
     """
@@ -651,7 +649,6 @@ def test_example1(method: Method, plot: bool = False):
         rtol=0
     )
 
-@pytest.mark.skipif(not couldImportMujoco, reason="Compiled Basilisk without --mujoco")
 @pytest.mark.flaky(reruns=6)
 @pytest.mark.parametrize("method", METHODS)
 @pytest.mark.parametrize("figureOfMerit", ["mean", "variance"])
@@ -723,7 +720,6 @@ def test_validateOu(
 
 # when running in pytest, we use skipAssert=True, because the test
 # keeps failing for low tf and we can't afford a high tf at CI testing time
-@pytest.mark.skipif(not couldImportMujoco, reason="Compiled Basilisk without --mujoco")
 @pytest.mark.flaky(reruns=6)
 @pytest.mark.parametrize("method", METHODS)
 def test_validateExample1(method: Method, tf: float = 0.1, skipAssert: bool = True):

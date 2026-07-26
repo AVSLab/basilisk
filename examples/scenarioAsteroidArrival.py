@@ -206,10 +206,8 @@ from Basilisk.simulation import spacecraft, extForceTorque, simpleNav, ephemeris
 from Basilisk.fswAlgorithms import mrpFeedback, attTrackingError, velocityPoint, locationPointing
 from Basilisk.architecture import messaging, astroConstants
 
-try:
+if vizSupport.vizFound:
     from Basilisk.simulation import vizInterface
-except ImportError:
-    pass
 
 # The path to the location of Basilisk
 # Used to get the location of supporting data.

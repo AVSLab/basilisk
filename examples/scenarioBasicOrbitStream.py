@@ -106,10 +106,8 @@ from Basilisk.architecture import messaging
 from Basilisk.simulation import thrusterDynamicEffector
 from Basilisk.utilities.supportDataTools.dataFetcher import get_path, DataFile
 
-try:
+if vizSupport.vizFound:
     from Basilisk.simulation import vizInterface
-except ImportError:
-    pass
 
 
 def run(

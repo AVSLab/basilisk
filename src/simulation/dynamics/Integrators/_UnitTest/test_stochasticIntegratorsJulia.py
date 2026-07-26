@@ -48,15 +48,17 @@ import numpy as np
 import numpy.testing
 import pytest
 
+from Basilisk import hasBuildFeature
 from Basilisk.utilities import macros
 from Basilisk.simulation import svIntegrators
 
-try:
+mujocoEnabled = hasBuildFeature("mujoco")
+pytestmark = pytest.mark.skipif(
+    not mujocoEnabled,
+    reason="Requires Basilisk built with --mujoco True",
+)
+if mujocoEnabled:
     from Basilisk.simulation import mujoco
-
-    couldImportMujoco = True
-except Exception:
-    couldImportMujoco = False
 
 REFERENCE_FILE = os.path.join(
     os.path.dirname(__file__), "juliaReference", "reference_trajectories.json"
@@ -112,7 +114,6 @@ def _referenceCases():
     return [(f"{c['method']}-{c['problem']}", c) for c in data["cases"]]
 
 
-@pytest.mark.skipif(not couldImportMujoco, reason="Compiled Basilisk without --mujoco")
 @pytest.mark.parametrize("caseId,case", _referenceCases())
 def test_juliaEquivalence(caseId: str, case: dict):
     """Basilisk must reproduce the StochasticDiffEq.jl trajectory for the same noise."""

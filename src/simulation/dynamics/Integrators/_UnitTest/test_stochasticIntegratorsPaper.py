@@ -43,18 +43,20 @@ import numpy as np
 import numpy.testing
 import pytest
 
+from Basilisk import hasBuildFeature
 from Basilisk.utilities import macros
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import pythonVariableLogger
 from Basilisk.simulation import svIntegrators
 from Basilisk.simulation import dynParamManager
 
-try:
+mujocoEnabled = hasBuildFeature("mujoco")
+pytestmark = pytest.mark.skipif(
+    not mujocoEnabled,
+    reason="Requires Basilisk built with --mujoco True",
+)
+if mujocoEnabled:
     from Basilisk.simulation import mujoco
-
-    couldImportMujoco = True
-except Exception:
-    couldImportMujoco = False
 
 REFERENCE_FILES = [
     os.path.join(os.path.dirname(__file__), "paperReference",
@@ -152,7 +154,6 @@ def _referenceCases():
     return cases
 
 
-@pytest.mark.skipif(not couldImportMujoco, reason="Compiled Basilisk without --mujoco")
 @pytest.mark.parametrize("caseId,case", _referenceCases())
 def test_paperEquivalence(caseId: str, case: dict):
     """Basilisk RS1/RS2/DRI1 must reproduce the paper-faithful multi-noise references."""

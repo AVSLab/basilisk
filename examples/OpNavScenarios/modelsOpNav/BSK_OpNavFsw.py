@@ -33,7 +33,7 @@ import math
 from pathlib import Path
 
 import numpy as np
-from Basilisk import __path__
+from Basilisk import __path__, hasBuildFeature
 from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import (
     attTrackingError,
@@ -53,17 +53,10 @@ from Basilisk.utilities import deprecated, fswSetupRW, macros, orbitalMotion
 
 bskPath = __path__[0]
 
-try:
-    from Basilisk.fswAlgorithms import houghCircles, limbFinding  # FSW for OpNav
-except ImportError:
-    print("OpNav Modules Missing, check build options")
+if not hasBuildFeature("opNav"):
+    raise RuntimeError("This scenario requires Basilisk built with --opNav True")
 
-try:
-    from Basilisk.fswAlgorithms import centerRadiusCNN  # FSW for OpNav
-    centerRadiusCNNIncluded = True
-except ImportError:
-    centerRadiusCNNIncluded = False
-
+from Basilisk.fswAlgorithms import centerRadiusCNN, houghCircles, limbFinding
 
 def get_repo_root(start: Path = Path(__file__).resolve()) -> Path:
     for parent in [start] + list(start.parents):
@@ -111,9 +104,8 @@ class BSKFswModels():
         self.imageProcessing = houghCircles.HoughCircles()
         self.imageProcessing.ModelTag = "houghCircles"
 
-        if centerRadiusCNNIncluded:
-            self.opNavCNN = centerRadiusCNN.CenterRadiusCNN()
-            self.opNavCNN.ModelTag = "opNavCNN"
+        self.opNavCNN = centerRadiusCNN.CenterRadiusCNN()
+        self.opNavCNN.ModelTag = "opNavCNN"
 
         self.pixelLine = pixelLineConverter.pixelLineConverter()
         self.pixelLine.ModelTag = "pixelLine"
@@ -198,8 +190,7 @@ class BSKFswModels():
         SimBase.AddModelToTask("opNavAttODTask", self.opNavPoint, 10)
         SimBase.AddModelToTask("opNavAttODTask", self.relativeOD, 9)
 
-        if centerRadiusCNNIncluded:
-            SimBase.AddModelToTask("cnnAttODTask", self.opNavCNN, 15)
+        SimBase.AddModelToTask("cnnAttODTask", self.opNavCNN, 15)
         SimBase.AddModelToTask("cnnAttODTask", self.pixelLine, 14)
         SimBase.AddModelToTask("cnnAttODTask", self.opNavPoint, 10)
         SimBase.AddModelToTask("cnnAttODTask", self.relativeOD, 9)
@@ -222,14 +213,13 @@ class BSKFswModels():
         SimBase.AddModelToTask("opNavFaultDet", self.opNavFault, 14)
         SimBase.AddModelToTask("opNavFaultDet", self.relativeOD, 9)
 
-        if centerRadiusCNNIncluded:
-            SimBase.AddModelToTask("cnnFaultDet", self.opNavCNN, 25)
-            SimBase.AddModelToTask("cnnFaultDet", self.pixelLine, 20)
-            SimBase.AddModelToTask("cnnFaultDet", self.imageProcessing, 18)
-            SimBase.AddModelToTask("cnnFaultDet", self.pixelLine, 16)
-            SimBase.AddModelToTask("cnnFaultDet", self.opNavFault, 14)
-            SimBase.AddModelToTask("cnnFaultDet", self.opNavPoint, 10)
-            SimBase.AddModelToTask("cnnFaultDet", self.relativeOD, 9)
+        SimBase.AddModelToTask("cnnFaultDet", self.opNavCNN, 25)
+        SimBase.AddModelToTask("cnnFaultDet", self.pixelLine, 20)
+        SimBase.AddModelToTask("cnnFaultDet", self.imageProcessing, 18)
+        SimBase.AddModelToTask("cnnFaultDet", self.pixelLine, 16)
+        SimBase.AddModelToTask("cnnFaultDet", self.opNavFault, 14)
+        SimBase.AddModelToTask("cnnFaultDet", self.opNavPoint, 10)
+        SimBase.AddModelToTask("cnnFaultDet", self.relativeOD, 9)
 
         # Create events to be called for triggering GN&C maneuvers
         SimBase.fswProc.disableAllTasks()
@@ -671,8 +661,7 @@ class BSKFswModels():
         self.SetImageProcessing(SimBase)
         self.SetPixelLineConversion(SimBase)
 
-        if centerRadiusCNNIncluded:
-            self.SetCNNOpNav(SimBase)
+        self.SetCNNOpNav(SimBase)
         self.SetRelativeODFilter()
         self.SetFaultDetection(SimBase)
 

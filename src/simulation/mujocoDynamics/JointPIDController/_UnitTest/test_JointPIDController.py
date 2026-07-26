@@ -2,21 +2,22 @@ import pytest
 import numpy as np
 import matplotlib.pyplot as plt
 
+from Basilisk import hasBuildFeature
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.simulation import svIntegrators
 from Basilisk.architecture import messaging
 from Basilisk.utilities import macros
 from Basilisk.utilities import pythonVariableLogger
 
-try:
+mujocoEnabled = hasBuildFeature("mujoco")
+pytestmark = pytest.mark.skipif(
+    not mujocoEnabled,
+    reason="Requires Basilisk built with --mujoco True",
+)
+if mujocoEnabled:
     from Basilisk.simulation import mujoco
     from Basilisk.simulation import MJJointPIDController
 
-    couldImportMujoco = True
-except:
-    couldImportMujoco = False
-
-@pytest.mark.skipif(not couldImportMujoco, reason="Compiled Basilisk without --mujoco")
 def test_jointPIDController(showPlots: bool = False):
     """
     Unit test for JointPIDController.

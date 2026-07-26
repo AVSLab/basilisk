@@ -28,14 +28,14 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
 import pytest
+from Basilisk import hasBuildFeature
 from Basilisk.utilities import simHelpers
 
-try:
-    from Basilisk.simulation import mujoco
-
-    couldImportMujoco = True
-except:
-    couldImportMujoco = False
+mujocoEnabled = hasBuildFeature("mujoco")
+pytestmark = pytest.mark.skipif(
+    not mujocoEnabled,
+    reason="Requires Basilisk built with --mujoco True",
+)
 
 THIS_FOLDER = os.path.dirname(__file__)
 SCENARIO_FOLDER = os.path.join(
@@ -63,7 +63,6 @@ OPTIONAL_EXAMPLE_DEPENDENCIES = {"scipy"}
 sys.path.append(SCENARIO_FOLDER)
 
 
-@pytest.mark.skipif(not couldImportMujoco, reason="Compiled Basilisk without --mujoco")
 @pytest.mark.parametrize("scenario", SCENARIO_FILES)
 @pytest.mark.scenarioTest
 def test_scenarios(scenario: str):

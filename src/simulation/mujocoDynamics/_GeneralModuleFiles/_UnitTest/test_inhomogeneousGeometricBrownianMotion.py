@@ -40,20 +40,21 @@ import numpy as np
 import numpy.testing as npt
 import matplotlib.pyplot as plt
 
+from Basilisk import hasBuildFeature
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.simulation import svIntegrators
 from Basilisk.utilities import macros
 
-try:
+mujocoEnabled = hasBuildFeature("mujoco")
+pytestmark = pytest.mark.skipif(
+    not mujocoEnabled,
+    reason="Requires Basilisk built with --mujoco True",
+)
+if mujocoEnabled:
     from Basilisk.simulation import mujoco
     from Basilisk.simulation import MJInhomogeneousGeometricBrownianMotion as MJIGBM
 
-    couldImportMujoco = True
-except Exception:
-    couldImportMujoco = False
 
-
-@pytest.mark.skipif(not couldImportMujoco, reason="Compiled Basilisk without --mujoco")
 def test_inhomogeneousGeometricBrownianMotion(showPlots: bool = False):
     """Verify IGBM reproduces the analytic stationary mean and variance, and stays positive."""
     dt = 0.001  # [s] small step for the multiplicative-noise Euler-Maruyama path
@@ -137,7 +138,6 @@ def test_inhomogeneousGeometricBrownianMotion(showPlots: bool = False):
     npt.assert_allclose(varEst, varTarget, rtol=0.20)
 
 
-@pytest.mark.skipif(not couldImportMujoco, reason="Compiled Basilisk without --mujoco")
 def test_inhomogeneousGeometricBrownianMotion_rejectsNonPositiveState():
     """setStateValue must reject a non-positive initial state: the multiplicative process
     is only well-posed from a positive state."""
@@ -167,7 +167,6 @@ def test_inhomogeneousGeometricBrownianMotion_rejectsNonPositiveState():
     assert igbm.getStateValue() == 0.5
 
 
-@pytest.mark.skipif(not couldImportMujoco, reason="Compiled Basilisk without --mujoco")
 def test_inhomogeneousGeometricBrownianMotion_rejectsBadParameters():
     """The parameter setters reject values outside their valid range."""
     from Basilisk.architecture import bskLogging
@@ -189,5 +188,6 @@ def test_inhomogeneousGeometricBrownianMotion_rejectsBadParameters():
 
 
 if __name__ == "__main__":
-    assert couldImportMujoco
+    if not mujocoEnabled:
+        raise RuntimeError("Requires Basilisk built with --mujoco True")
     test_inhomogeneousGeometricBrownianMotion(True)

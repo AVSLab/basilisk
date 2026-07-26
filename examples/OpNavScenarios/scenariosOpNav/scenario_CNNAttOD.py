@@ -307,7 +307,4 @@ def run(showPlots, simTime=None):
     return figureList
 
 if __name__ == "__main__":
-    if not BSK_OpNavFsw.centerRadiusCNNIncluded:
-        print("centerRadiusCNN module is not built, so this scenario can't run.")
-        exit(1)
     run(True)

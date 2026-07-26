@@ -19,15 +19,17 @@ import os
 import pytest
 import time
 
+from Basilisk import hasBuildFeature
 from Basilisk.architecture import messaging
 
-try:
+mujocoEnabled = hasBuildFeature("mujoco")
+pytestmark = pytest.mark.skipif(
+    not mujocoEnabled,
+    reason="Requires Basilisk built with --mujoco True",
+)
+if mujocoEnabled:
     from Basilisk.simulation import mujoco
     from Basilisk.simulation import NBodyGravity
-
-    couldImportMujoco = True
-except:
-    couldImportMujoco = False
 
 
 from Basilisk.simulation import pointMassGravityModel
@@ -60,7 +62,6 @@ XML_PATH_BALL = f"{TEST_FOLDER}/test_ball.xml"
 XML_PATH_DUMBBELL = f"{TEST_FOLDER}/test_dumbbell.xml"
 
 
-@pytest.mark.skipif(not couldImportMujoco, reason="Compiled Basilisk without --mujoco")
 @pytest.mark.parametrize("showPlots", [False])
 def test_pointMass(showPlots):
     """Test that the gravity model with point-mass gravity conserves the
@@ -165,7 +166,6 @@ def test_pointMass(showPlots):
             assert getattr(oePost, attr) == pytest.approx(getattr(oe, attr), 1e-4)
 
 
-@pytest.mark.skipif(not couldImportMujoco, reason="Compiled Basilisk without --mujoco")
 def test_factory_source_without_attitude():
     """Verify that a position-only factory ephemeris uses an inertial attitude.
 
@@ -246,7 +246,6 @@ def test_factory_source_without_attitude():
     np.testing.assert_allclose(actualForce_S, expectedForce_S, rtol=1.0e-12, atol=0.0)
 
 
-@pytest.mark.skipif(not couldImportMujoco, reason="Compiled Basilisk without --mujoco")
 @pytest.mark.parametrize(
     "showPlots, initialAngularRate", [(False, False), (False, True)]
 )
@@ -510,7 +509,6 @@ def loadSatelliteTrajectory(utcCalInit: str, stopTimeSeconds: float, dtSeconds: 
     return state
 
 
-@pytest.mark.skipif(not couldImportMujoco, reason="Compiled Basilisk without --mujoco")
 @pytest.mark.parametrize(
     "showPlots, useSphericalHarmonics, useThirdBodies",
     [(False, False, False), (False, True, False), (False, True, True)],
@@ -660,7 +658,6 @@ def test_gps(showPlots: bool, useSphericalHarmonics: bool, useThirdBodies: bool)
         assert lastBsk == pytest.approx(lastSpice, abs=30)
 
 
-@pytest.mark.skipif(not couldImportMujoco, reason="Compiled Basilisk without --mujoco")
 @pytest.mark.parametrize(
     "showPlots, useSpice, useSphericalHarmonics, useThirdBodies",
     [

@@ -52,7 +52,7 @@ from typing import (
     runtime_checkable,
 )
 
-from Basilisk import __path__
+from Basilisk import __path__, hasBuildFeature
 from Basilisk.architecture import astroConstants
 from Basilisk.architecture import messaging
 from Basilisk.simulation import gravityEffector
@@ -290,16 +290,16 @@ class gravBodyFactory:
 
     def _addBodiesToMJScene(self, scene: Any) -> Any:
         """Create and attach an ``NBodyGravity`` model for a MuJoCo scene."""
-        # MuJoCo is an optional Basilisk build feature. Import it only after the
-        # conventional gravity-effector path has been ruled out.
-        try:
-            from Basilisk.simulation import NBodyGravity
-            from Basilisk.simulation import mujoco
-        except ImportError as error:
+        # MuJoCo is optional. Check the recorded build configuration before
+        # importing its modules so an enabled but broken build still fails.
+        if not hasBuildFeature("mujoco"):
             raise TypeError(
                 "The supplied object does not support gravity-body attachment, "
                 "and this Basilisk build does not include MuJoCo."
-            ) from error
+            )
+
+        from Basilisk.simulation import NBodyGravity
+        from Basilisk.simulation import mujoco
 
         if not isinstance(scene, mujoco.MJScene):
             raise TypeError(

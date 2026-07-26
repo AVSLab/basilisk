@@ -20,16 +20,20 @@ import os
 import sys
 
 import pytest
+from Basilisk import hasBuildFeature
 from Basilisk.utilities import simHelpers
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 sys.path.append(path + "/../../examples")
 
-# The scenario imports Basilisk.simulation.mujoco at module load, so skip collection entirely on
-# a build compiled without optional MuJoCo support.
-pytest.importorskip("Basilisk.simulation.mujoco")
-import scenarioSpiceReconstruction
+mujocoEnabled = hasBuildFeature("mujoco")
+pytestmark = pytest.mark.skipif(
+    not mujocoEnabled,
+    reason="Requires Basilisk built with --mujoco True",
+)
+if mujocoEnabled:
+    import scenarioSpiceReconstruction
 
 
 @pytest.mark.scenarioTest

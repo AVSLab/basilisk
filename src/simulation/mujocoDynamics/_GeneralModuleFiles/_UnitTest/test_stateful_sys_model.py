@@ -15,20 +15,21 @@
 #  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-from Basilisk.utilities import macros
-from Basilisk.utilities import SimulationBaseClass
+import numpy as np
+import pytest
 
-try:
+from Basilisk import hasBuildFeature
+from Basilisk.utilities import SimulationBaseClass, macros
+
+mujocoEnabled = hasBuildFeature("mujoco")
+pytestmark = pytest.mark.skipif(
+    not mujocoEnabled,
+    reason="Requires Basilisk built with --mujoco True",
+)
+if mujocoEnabled:
     from Basilisk.simulation import mujoco
     from Basilisk.simulation import StatefulSysModel
-    couldImportMujoco = True
-except:
-    couldImportMujoco = False
 
-import pytest
-import numpy as np
-
-@pytest.mark.skipif(not couldImportMujoco, reason="Compiled Basilisk without --mujoco")
 def test_stateful():
     """Tests that ``StatefulSysModel`` works as expected.
 

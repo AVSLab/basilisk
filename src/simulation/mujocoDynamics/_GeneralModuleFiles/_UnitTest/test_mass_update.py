@@ -18,12 +18,15 @@
 import os
 import pytest
 
-try:
-    from Basilisk.simulation import mujoco
+from Basilisk import hasBuildFeature
 
-    couldImportMujoco = True
-except:
-    couldImportMujoco = False
+mujocoEnabled = hasBuildFeature("mujoco")
+pytestmark = pytest.mark.skipif(
+    not mujocoEnabled,
+    reason="Requires Basilisk built with --mujoco True",
+)
+if mujocoEnabled:
+    from Basilisk.simulation import mujoco
 
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
@@ -39,7 +42,6 @@ XML_PATH_CHANGED_MASS = f"{TEST_FOLDER}/test_sat_2_changed_mass.xml"
 XML_PATH_BALL = f"{TEST_FOLDER}/test_ball.xml"
 
 
-@pytest.mark.skipif(not couldImportMujoco, reason="Compiled Basilisk without --mujoco")
 def test_continuouslyChangingMass(showPlots: bool = False):
     """A ball with mass ``m`` is at rest, then accelerated with constant thrust T=100
     for 25 units of time in the positive x-axis direction. The initial mass ``m_0`` is that

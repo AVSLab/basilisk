@@ -106,11 +106,8 @@ from Basilisk.utilities import simIncludeGravBody
 # attempt to import vizard
 from Basilisk.utilities import vizSupport
 
-try:
+if vizSupport.vizFound:
     from Basilisk.simulation import vizInterface
-
-except ImportError:
-    pass
 
 # The path to the location of Basilisk
 # Used to get the location of supporting data.

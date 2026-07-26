@@ -7,15 +7,18 @@ from Basilisk.architecture import messaging
 from Basilisk.utilities import macros
 from Basilisk.utilities import RigidBodyKinematics as rbk
 
-try:
+from Basilisk import hasBuildFeature
+
+mujocoEnabled = hasBuildFeature("mujoco")
+pytestmark = pytest.mark.skipif(
+    not mujocoEnabled,
+    reason="Requires Basilisk built with --mujoco True",
+)
+if mujocoEnabled:
     from Basilisk.simulation import mujoco
     from Basilisk.simulation import MJCmdForceInertialToForceAtSite
-    couldImportMujoco = True
-except Exception:
-    couldImportMujoco = False
 
 
-@pytest.mark.skipif(not couldImportMujoco, reason="Compiled Basilisk without --mujoco")
 def test_cmdForceInertialToForceAtSiteSCStates():
     dt = 1.0  # [s]
 
@@ -54,7 +57,6 @@ def test_cmdForceInertialToForceAtSiteSCStates():
     npt.assert_allclose(F_S, F_S_exp, rtol=0.0, atol=1e-12)
 
 
-@pytest.mark.skipif(not couldImportMujoco, reason="Compiled Basilisk without --mujoco")
 def test_cmdForceInertialToForceAtSiteNavAtt():
     dt = 1.0  # [s]
 
@@ -97,6 +99,7 @@ def test_cmdForceInertialToForceAtSiteNavAtt():
 
 
 if __name__ == "__main__":
-    assert couldImportMujoco
+    if not mujocoEnabled:
+        raise RuntimeError("Requires Basilisk built with --mujoco True")
     test_cmdForceInertialToForceAtSiteSCStates()
     test_cmdForceInertialToForceAtSiteNavAtt()

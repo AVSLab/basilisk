@@ -102,6 +102,11 @@ import time
 import numpy as np
 import matplotlib.pyplot as plt
 
+from Basilisk import hasBuildFeature
+
+if not hasBuildFeature("mujoco"):
+    raise RuntimeError("This scenario requires Basilisk built with --mujoco True")
+
 from Basilisk.utilities import SimulationBaseClass, macros, simHelpers, simIncludeGravBody
 from Basilisk.simulation import mujoco, svIntegrators, spacecraft
 from Basilisk.topLevelModules import pyswice

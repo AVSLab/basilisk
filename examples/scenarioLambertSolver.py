@@ -110,12 +110,6 @@ from Basilisk.utilities import (SimulationBaseClass, macros, simIncludeGravBody,
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simHelpers
 
-try:
-    from Basilisk.simulation import vizInterface
-    vizFound = True
-except ImportError:
-    vizFound = False
-
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
 bskPath = __path__[0]
@@ -280,7 +274,7 @@ def run(show_plots):
     # line from the python scenario script.  This will cause the BSK simulation data to
     # be stored in a binary file inside the _VizFiles sub-folder with the scenario folder.  This file can be read in by
     # Vizard and played back after running the BSK simulation.
-    if vizFound:
+    if vizSupport.vizFound:
         viz = vizSupport.enableUnityVisualization(scSim, dynTaskName, scObject,
                                                   # saveFile=fileName
                                                   )

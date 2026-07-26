@@ -22,17 +22,19 @@ import numpy as np
 import tempfile
 import pytest
 
+from Basilisk import hasBuildFeature
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport
 from Basilisk.architecture import messaging
 from Basilisk.utilities import macros
-try:
+mujocoEnabled = hasBuildFeature("mujoco")
+pytestmark = pytest.mark.skipif(
+    not mujocoEnabled,
+    reason="Requires Basilisk built with --mujoco True",
+)
+if mujocoEnabled:
     from Basilisk.simulation import mujoco
     from Basilisk.simulation import MJSystemCoM
-
-    couldImportMujoco = True
-except:
-    couldImportMujoco = False
 
 # Common parameters used in both XML and truth calc
 HUB_MASS = 50.0
@@ -157,7 +159,6 @@ def _expected_com(model: str, r_root, v_root):
 
     return rC, vC
 
-@pytest.mark.skipif(not couldImportMujoco, reason="Compiled Basilisk without --mujoco")
 @pytest.mark.parametrize("model", ["single", "straight", "angled"])
 @pytest.mark.parametrize("moving", [True, False])
 @pytest.mark.parametrize("displaced", [True, False])
