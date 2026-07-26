@@ -18,7 +18,7 @@ on:
 
 jobs:
   build-wheels:
-    name: Build Basilisk Wheels (${{ matrix.os }})
+    name: Build Wheel Input (${{ matrix.wheel-kind }}, ${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -28,7 +28,18 @@ jobs:
           - ubuntu-24.04 # x86_64
           - ubuntu-24.04-arm # ARM64
           - windows-2025-vs2026 # x86_64
+        wheel-kind:
+          - core
+          - opnav-full
         include:
+          - wheel-kind: core
+            output-dir: wheelhouse-core
+            conan-args: --opNav False --mujoco True --clean
+            save-conan-cache: "false"
+          - wheel-kind: opnav-full
+            output-dir: wheelhouse-opnav-full
+            conan-args: --opNav True --mujoco True --clean
+            save-conan-cache: "true"
           - os: windows-2025-vs2026
             extra-conan-args: --generator Ninja
 
@@ -54,19 +65,8 @@ jobs:
           } >> "$GITHUB_ENV"
           echo "Using CA: $CA"
 
-      - name: Setup system dependencies
-        uses: ./.github/actions/setup
-
-      - name: Build core bsk wheel
-        uses: pypa/cibuildwheel@v3.4.1
-        with:
-          output-dir: wheelhouse-core
-        env:
-          CONAN_ARGS: "--opNav False --mujoco True --clean ${{ matrix.extra-conan-args }}"
-          CIBW_TEST_SKIP: "*"
-
-      - name: Free runner disk before opNav Linux wheel
-        if: ${{ matrix.os == 'ubuntu-24.04' }}
+      - name: Free runner disk for heavy optional Linux wheel
+        if: ${{ matrix.os == 'ubuntu-24.04' && matrix.wheel-kind == 'opnav-full' }}
         shell: bash
         run: |
           echo "Disk space before cleanup:"
@@ -79,17 +79,60 @@ jobs:
           echo "Disk space after cleanup:"
           df -h
 
-      - name: Build opNav-enabled bsk wheel
-        uses: pypa/cibuildwheel@v3.4.1
+      - name: Build ${{ matrix.wheel-kind }} bsk wheel
+        uses: ./.github/actions/build-wheel
         with:
-          output-dir: wheelhouse-opnav-full
-        env:
-          CONAN_ARGS: "--opNav True --mujoco True --clean ${{ matrix.extra-conan-args }}"
-          CIBW_TEST_SKIP: "*"
+          output-dir: ${{ matrix.output-dir }}
+          conan-args: ${{ matrix.conan-args }} ${{ matrix.extra-conan-args }}
+          save-conan-cache: ${{ matrix.save-conan-cache }}
+
+      - name: Upload wheel input
+        uses: actions/upload-artifact@v6
+        with:
+          name: cibw-wheel-input-${{ matrix.os }}-${{ matrix.wheel-kind }}
+          path: ${{ matrix.output-dir }}/*.whl
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 1
+
+  package-wheels:
+    name: Test and Package Wheels (${{ matrix.os }})
+    needs: build-wheels
+    if: ${{ !cancelled() }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - macos-26 # ARM64
+          - ubuntu-24.04 # x86_64
+          - ubuntu-24.04-arm # ARM64
+          - windows-2025-vs2026 # x86_64
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.ref }}
+
+      - name: Setup system dependencies
+        uses: ./.github/actions/setup
 
       - uses: actions/setup-python@v6
         with:
           python-version: 3.14
+
+      - name: Download core wheel input
+        uses: actions/download-artifact@v6
+        with:
+          name: cibw-wheel-input-${{ matrix.os }}-core
+          path: wheelhouse-core
+
+      - name: Download opNav-enabled wheel input
+        uses: actions/download-artifact@v6
+        with:
+          name: cibw-wheel-input-${{ matrix.os }}-opnav-full
+          path: wheelhouse-opnav-full
 
       - name: Generate and test optional wheel installs
         shell: bash
@@ -111,7 +154,7 @@ jobs:
       - name: Upload wheels
         uses: actions/upload-artifact@v6
         with:
-          name: cibw-wheels-${{ matrix.os }}-${{ strategy.job-index }}
+          name: cibw-wheels-${{ matrix.os }}
           path: ./wheelhouse-publish/*.whl
 
   make_sdist:
@@ -158,7 +201,7 @@ jobs:
 
   publish:
     name: Publish
-    needs: [build-wheels, test-sdist]
+    needs: [package-wheels, test-sdist]
     runs-on: ubuntu-24.04
     permissions:
       id-token: write

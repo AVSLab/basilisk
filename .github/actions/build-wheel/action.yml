@@ -1,0 +1,119 @@
+name: build wheel
+description: Build a Basilisk wheel with compiler and Conan caching.
+inputs:
+  output-dir:
+    description: Directory that receives the built wheel.
+    required: true
+  conan-args:
+    description: Conan arguments passed to the Basilisk wheel build.
+    required: true
+  cibw-build:
+    description: Optional cibuildwheel build selector.
+    required: false
+    default: ""
+  save-conan-cache:
+    description: Save the platform cache; enable only for the full dependency producer.
+    required: false
+    default: "false"
+
+runs:
+  using: composite
+  steps:
+    - name: Setup system dependencies
+      uses: ./.github/actions/setup
+
+    - name: Setup sccache
+      uses: mozilla-actions/sccache-action@v0.0.10
+      continue-on-error: true
+      with:
+        disable_annotations: true
+
+    - name: Configure wheel build caches
+      shell: bash
+      run: |
+        mkdir -p "${HOME}/.conan2"
+
+        if [[ "${{ runner.os }}" == "Linux" ]]; then
+          echo "CONAN_HOME=/host${HOME}/.conan2" >> "${GITHUB_ENV}"
+          linux_environment_pass="CONAN_ARGS CONAN_HOME"
+        fi
+
+        if command -v sccache >/dev/null 2>&1; then
+          compiler_launcher="sccache"
+          if [[ "${{ runner.os }}" == "Linux" ]]; then
+            compiler_launcher="/host$(command -v sccache)"
+            linux_environment_pass+=" CMAKE_C_COMPILER_LAUNCHER CMAKE_CXX_COMPILER_LAUNCHER SCCACHE_GHA_ENABLED ACTIONS_CACHE_SERVICE_V2 ACTIONS_RESULTS_URL ACTIONS_RUNTIME_TOKEN"
+          fi
+          {
+            echo "SCCACHE_GHA_ENABLED=true"
+            echo "CMAKE_C_COMPILER_LAUNCHER=${compiler_launcher}"
+            echo "CMAKE_CXX_COMPILER_LAUNCHER=${compiler_launcher}"
+          } >> "${GITHUB_ENV}"
+        else
+          echo "sccache is unavailable; continuing without compiler caching"
+        fi
+
+        if [[ "${{ runner.os }}" == "Linux" ]]; then
+          echo "CIBW_ENVIRONMENT_PASS_LINUX=${linux_environment_pass}" >> "${GITHUB_ENV}"
+        fi
+
+    - name: Reset sccache statistics
+      continue-on-error: true
+      shell: bash
+      run: |
+        if command -v sccache >/dev/null 2>&1; then
+          sccache --zero-stats
+        fi
+
+    - name: Restore Conan cache
+      id: conan-cache
+      continue-on-error: true
+      uses: actions/cache/restore@v5
+      with:
+        path: ~/.conan2
+        key: conan-wheel-v1-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('conan.lock', 'conanfile.py', 'libs/**', 'pyproject.toml') }}
+        restore-keys: |
+          conan-wheel-v1-${{ runner.os }}-${{ runner.arch }}-
+
+    - name: Build wheel
+      if: ${{ inputs.cibw-build == '' }}
+      uses: pypa/cibuildwheel@v3.4.1
+      with:
+        output-dir: ${{ inputs.output-dir }}
+      env:
+        CIBW_TEST_SKIP: "*"
+        CONAN_ARGS: ${{ inputs.conan-args }}
+
+    - name: Build selected wheel
+      if: ${{ inputs.cibw-build != '' }}
+      uses: pypa/cibuildwheel@v3.4.1
+      with:
+        output-dir: ${{ inputs.output-dir }}
+      env:
+        CIBW_BUILD: ${{ inputs.cibw-build }}
+        CIBW_TEST_SKIP: "*"
+        CONAN_ARGS: ${{ inputs.conan-args }}
+
+    - name: Normalize Linux Conan cache ownership
+      id: conan-cache-ownership
+      if: ${{ runner.os == 'Linux' && success() && inputs.save-conan-cache == 'true' && steps.conan-cache.outcome == 'success' && steps.conan-cache.outputs.cache-hit != 'true' }}
+      continue-on-error: true
+      shell: bash
+      run: sudo chown -R "$(id -u):$(id -g)" "${HOME}/.conan2"
+
+    - name: Save Conan cache
+      if: ${{ success() && inputs.save-conan-cache == 'true' && steps.conan-cache.outcome == 'success' && steps.conan-cache.outputs.cache-hit != 'true' && (runner.os != 'Linux' || steps.conan-cache-ownership.outcome == 'success') }}
+      continue-on-error: true
+      uses: actions/cache/save@v5
+      with:
+        path: ~/.conan2
+        key: ${{ steps.conan-cache.outputs.cache-primary-key }}
+
+    - name: Show sccache statistics
+      if: ${{ always() }}
+      continue-on-error: true
+      shell: bash
+      run: |
+        if command -v sccache >/dev/null 2>&1; then
+          sccache --show-stats
+        fi
