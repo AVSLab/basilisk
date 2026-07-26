@@ -101,7 +101,7 @@ repair-wheel-command = "python -m delvewheel repair -v --ignore-existing --analy
 
 [tool.cibuildwheel.linux]
 archs = ["native"]
-before-all = "mkdir -p ~/.conan2 && printf '%s\\n' 'tools.system.package_manager:mode=install' 'tools.system.package_manager:sudo=False' >> ~/.conan2/global.conf"
+before-all = "conan_home=\"${CONAN_HOME:-$HOME/.conan2}\" && mkdir -p \"$conan_home\" && touch \"$conan_home/global.conf\" && for setting in 'tools.system.package_manager:mode=install' 'tools.system.package_manager:sudo=False'; do grep -qxF \"$setting\" \"$conan_home/global.conf\" || printf '%s\\n' \"$setting\" >> \"$conan_home/global.conf\"; done"
 repair-wheel-command = [
   "auditwheel repair --strip -w {dest_dir} {wheel}"
 ]
