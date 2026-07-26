@@ -85,11 +85,11 @@ jobs:
           ]
         conan_args: ["--opNav True --mujoco True"]
         include:
-          # An extra Basilisk build to test building without visualization enabled
+          # An extra plain Basilisk build without optional opNav, MuJoCo, or visualization support
           - python: "3.14"
             python_label: "MAX Python"
             pytest_flags: -n auto -m "not ciSkip" -rs --timeout=300 --timeout-method=thread --durations=25 -v
-            conan_args: --opNav True --mujoco True --vizInterface False
+            conan_args: --opNav False --mujoco False --vizInterface False
             job_suffix: "--vizInterface False"
 
     name: macOS (${{ matrix.python_label }}) ${{ matrix.job_suffix }}
