@@ -16,23 +16,23 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
-import importlib.util
 import subprocess
 import sys
 
 import pytest
+
+from Basilisk import hasBuildFeature
 
 
 _PROTOBUF_CONSUMERS = (
     ("Basilisk.fswAlgorithms.centerRadiusCNN", "CenterRadiusCNN"),
     ("Basilisk.simulation.vizInterface", "VizInterface"),
 )
-_CONSUMERS_AVAILABLE = all(
-    importlib.util.find_spec(module_name) is not None
-    for module_name, _ in _PROTOBUF_CONSUMERS
+_PROTOBUF_CONSUMERS_ENABLED = (
+    hasBuildFeature("opNav") and hasBuildFeature("vizInterface")
 )
 pytestmark = pytest.mark.skipif(
-    not _CONSUMERS_AVAILABLE,
+    not _PROTOBUF_CONSUMERS_ENABLED,
     reason="Requires Basilisk built with --opNav True and --vizInterface True",
 )
 

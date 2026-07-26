@@ -1,0 +1,1 @@
+- ``Basilisk.hasBuildFeature()`` now aggregates capabilities from the core artifact and compatible installed optional Basilisk distributions, allowing the same feature guards to work with monolithic and split-wheel installations.

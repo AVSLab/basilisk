@@ -17,11 +17,33 @@
 #
 
 from copy import deepcopy as _deepcopy
+from functools import lru_cache as _lruCache
+from importlib.metadata import distributions as _distributions
 
 from Basilisk._buildAbiData import buildAbiData as _buildAbiData
 from Basilisk._buildInfoData import buildInfoData as _buildInfoData
 
 _buildInfoData = {**_buildInfoData, "abi": _buildAbiData}
+_buildFeatureEntryPointGroup = "basilisk.build_features"
+
+
+@_lruCache(maxsize=1)
+def _installedBuildFeatureProviders() -> dict[str, tuple[tuple[str, str], ...]]:
+    """Return optional feature providers discovered from distribution metadata."""
+    providers: dict[str, set[tuple[str, str]]] = {}
+    for distribution in _distributions():
+        distributionName = distribution.metadata.get("Name") or "<unknown>"
+        distributionVersion = distribution.version or "<unknown>"
+        for entryPoint in distribution.entry_points:
+            if entryPoint.group == _buildFeatureEntryPointGroup:
+                providers.setdefault(entryPoint.name, set()).add(
+                    (distributionName, distributionVersion)
+                )
+
+    return {
+        featureName: tuple(sorted(featureProviders))
+        for featureName, featureProviders in providers.items()
+    }
 
 
 def getBuildInfo() -> dict[str, object]:
@@ -39,21 +61,44 @@ def getBuildInfo() -> dict[str, object]:
 
 
 def hasBuildFeature(featureName: str) -> bool:
-    """Return whether an optional Basilisk build feature is enabled.
+    """Return whether the installed Basilisk distributions provide a build feature.
 
     :param featureName: Name from the ``features`` section of :func:`getBuildInfo`.
-    :return: ``True`` when the feature was enabled when Basilisk was configured.
+    :return: ``True`` when the core build or an installed optional Basilisk
+        distribution provides the feature.
     :raises KeyError: If ``featureName`` is not a known build feature.
+    :raises RuntimeError: If an optional feature provider is incompatible with
+        the installed Basilisk core version.
     """
     features = _buildInfoData["features"]
     try:
-        return features[featureName]
+        configured = features[featureName]
     except KeyError:
         availableFeatures = ", ".join(sorted(features))
         raise KeyError(
             f"Unknown Basilisk build feature '{featureName}'. "
             f"Available features: {availableFeatures}"
         ) from None
+
+    providers = _installedBuildFeatureProviders().get(featureName, ())
+    coreVersion = _buildInfoData["artifact"]["basiliskVersion"]
+    incompatibleProviders = sorted(
+        (distributionName, version)
+        for distributionName, version in providers
+        if version != coreVersion
+    )
+    if incompatibleProviders:
+        details = ", ".join(
+            f"{distributionName}=={version}"
+            for distributionName, version in incompatibleProviders
+        )
+        raise RuntimeError(
+            f"Basilisk build feature '{featureName}' is provided by an incompatible "
+            f"optional distribution ({details}); install a provider matching "
+            f"bsk=={coreVersion}."
+        )
+
+    return configured or bool(providers)
 
 
 def _appendField(lines: list[str], label: str, value: str) -> None:

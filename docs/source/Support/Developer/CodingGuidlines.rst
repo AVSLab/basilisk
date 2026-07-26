@@ -256,6 +256,13 @@ metadata with ``Basilisk.hasBuildFeature()``.  Do not infer build capabilities b
 catching ``ImportError``.  Import probing can hide a broken build where a feature was
 enabled but its module failed to import.
 
+``hasBuildFeature()`` reports capabilities supplied either by the core Basilisk artifact
+or by an installed optional Basilisk distribution.  The same guard therefore works for a
+monolithic source build and for a split-wheel installation.  Optional distributions must
+match the core version; a mismatch raises ``RuntimeError`` rather than silently skipping
+the affected tests.  Once the guard reports that a feature is present, import its module
+normally so a broken installation still fails during test collection.
+
 If every test in a file requires the same optional feature, use a module-level
 ``pytestmark`` and import the optional modules conditionally:
 
