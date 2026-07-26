@@ -28,6 +28,8 @@ pytestmark = pytest.mark.skipif(
 )
 if mujocoEnabled:
     from Basilisk.simulation import mujoco
+
+    pytest.importorskip("numba")
     from Basilisk.simulation import StatefulNumbaModel
 
 
