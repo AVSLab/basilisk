@@ -248,6 +248,74 @@ This will execute ``pytest`` and ``gtest`` checks.  All tests should pass.  If n
 Basilisk modules are built (i.e. the build process turned off ``opNav`` option), then
 some tests will show up as skipped.
 
+Guarding Tests for Optional Build Features
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Tests that require an optional Basilisk build feature must query the configured build
+metadata with ``Basilisk.hasBuildFeature()``.  Do not infer build capabilities by
+catching ``ImportError``.  Import probing can hide a broken build where a feature was
+enabled but its module failed to import.
+
+If every test in a file requires the same optional feature, use a module-level
+``pytestmark`` and import the optional modules conditionally:
+
+.. code-block:: python
+
+    import pytest
+
+    from Basilisk import hasBuildFeature
+
+    mujocoEnabled = hasBuildFeature("mujoco")
+    pytestmark = pytest.mark.skipif(
+        not mujocoEnabled,
+        reason="Requires Basilisk built with --mujoco True",
+    )
+    if mujocoEnabled:
+        from Basilisk.simulation import mujoco
+
+
+    def test_mujoco_feature():
+        scene = mujoco.MJScene("<mujoco/>")
+        # Test the feature.
+
+A module-level ``pytestmark`` applies to every test collected from that file, including
+parameterized tests.  It does not stop module-level statements from running during test
+collection, which is why the optional import must still be conditional.  When the feature
+is enabled, import it normally and allow import failures to surface.
+
+If a file contains both core tests and tests for an optional feature, guard only the
+feature-specific tests:
+
+.. code-block:: python
+
+    import pytest
+
+    from Basilisk import hasBuildFeature
+
+    mujocoEnabled = hasBuildFeature("mujoco")
+    if mujocoEnabled:
+        from Basilisk.simulation import mujoco
+
+
+    def test_core_feature():
+        # This test runs in every build configuration.
+        pass
+
+
+    @pytest.mark.skipif(
+        not mujocoEnabled,
+        reason="Requires Basilisk built with --mujoco True",
+    )
+    def test_mujoco_feature():
+        scene = mujoco.MJScene("<mujoco/>")
+        # Test the optional feature.
+
+Scenario test wrappers must also conditionally import a scenario when the scenario imports
+an unavailable optional module at module scope.  The supported feature names are
+``vizInterface``, ``opNav``, and ``mujoco``.  Required Python dependencies, such as Pillow,
+must be imported normally; a missing required dependency is an environment error and must
+not cause the test to be skipped.
+
 Optional developer performance benchmarks are documented separately in
 :ref:`performanceBenchmarks`.  Benchmark timing runs are opt-in speed
 investigations.  The lightweight benchmark smoke tests only check that benchmark
