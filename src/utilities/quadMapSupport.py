@@ -19,13 +19,14 @@
 
 # Import required resources
 import numpy as np
+from Basilisk import hasBuildFeature
+from Basilisk.architecture import messaging
 from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.utilities import vizSupport
-try:
+
+vizInterfaceEnabled = hasBuildFeature("vizInterface")
+if vizInterfaceEnabled:
     from Basilisk.simulation import vizInterface
-except ImportError:
-    pass
-from Basilisk.architecture import messaging
 
 def computeRectMesh(parentBody, latBounds, lonBounds, maxAngWidth):
     """
@@ -127,7 +128,7 @@ def computeCamFOVBox(parentBody, spiceObject, scObject, cam):
     PC = []
     FOV = 0
     # -- Standard camera
-    if isinstance(cam, vizInterface.StdCameraSettings):
+    if vizInterfaceEnabled and isinstance(cam, vizInterface.StdCameraSettings):
         r_CB_B = cam.position_B
         r_CB_N = np.matmul(np.transpose(BN), r_CB_B)
         r_CB_P = np.matmul(PN, r_CB_N)

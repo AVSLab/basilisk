@@ -20,14 +20,17 @@
 import numpy as np
 import pytest
 
+from Basilisk import hasBuildFeature
 from Basilisk.utilities import SimulationBaseClass, macros
 from Basilisk.architecture import messaging
-try:
-    from Basilisk.simulation import MJJointReactionForces, mujoco
 
-    couldImportMujoco = True
-except:
-    couldImportMujoco = False
+mujocoEnabled = hasBuildFeature("mujoco")
+pytestmark = pytest.mark.skipif(
+    not mujocoEnabled,
+    reason="Requires Basilisk built with --mujoco True",
+)
+if mujocoEnabled:
+    from Basilisk.simulation import MJJointReactionForces, mujoco
 
 # Constants used throughout tests
 MASS1 = 1.0
@@ -127,7 +130,6 @@ xmlThruster =  f"""<mujoco>
   </actuator>
 </mujoco>"""
 
-@pytest.mark.skipif(not couldImportMujoco, reason="Compiled Basilisk without --mujoco")
 @pytest.mark.parametrize("modelName, xml, jointTreeIdx, jointParentBodyIdx, jointTypes, jointDOFStart", [
     ("Fixed Base", xmlFixedBase2r, [0, 0], [2,3], [3,3], [0,1]),
     ("One SC", xmlFreeBaseDampedHinge, [0, 0], [1,2], [0,3], [0,6]),

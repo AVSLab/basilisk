@@ -28,6 +28,8 @@ import os
 
 import numpy as np
 import pytest
+from PIL import Image, ImageDraw
+from Basilisk import hasBuildFeature
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -35,24 +37,18 @@ bskName = 'Basilisk'
 splitPath = path.split(bskName)
 
 # Import all of the modules that we are going to be called in this simulation
-importErr = False
-reasonErr = ""
-try:
-    from PIL import Image, ImageDraw
-except ImportError:
-    importErr = True
-    reasonErr = "python Pillow package not installed---can't test CenterRadiusCNN module"
-
-# Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.architecture import messaging
 
-try:
+opNavEnabled = hasBuildFeature("opNav")
+if opNavEnabled:
     from Basilisk.fswAlgorithms import centerRadiusCNN
-except ImportError:
-    importErr = True
-    reasonErr = "CenterRadiusCNN not built---check opNav option"
+
+pytestmark = pytest.mark.skipif(
+    not opNavEnabled,
+    reason="Requires Basilisk built with --opNav True",
+)
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
 # @pytest.mark.skipif(conditionstring)
@@ -60,7 +56,6 @@ except ImportError:
 # @pytest.mark.xfail(conditionstring)
 # Provide a unique test method name, starting with 'test_'.
 
-@pytest.mark.skipif(importErr, reason= reasonErr)
 @pytest.mark.parametrize("image, saveImage", [
                     ("mars.jpg", False),
                    ("mars2.jpg", False),
@@ -177,7 +172,6 @@ def cnnTest(show_plots, image, saveImage):
 # stand-along python script
 #
 if __name__ == "__main__":
-    if importErr:
-        print(reasonErr)
-        exit(1)
+    if not opNavEnabled:
+        raise RuntimeError("Requires Basilisk built with --opNav True")
     cnnTest(True, "mars.jpg", True) # mars images

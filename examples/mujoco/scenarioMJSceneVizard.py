@@ -53,15 +53,14 @@ from Basilisk.simulation import mujoco
 from Basilisk.simulation import spacecraft
 from Basilisk.simulation import StatefulSysModel
 from Basilisk.simulation import svIntegrators
-try:
+from Basilisk.utilities import vizSupport
+
+if vizSupport.vizFound:
     from Basilisk.simulation import vizInterface
-except ImportError:
-    pass
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeGravBody
-from Basilisk.utilities import vizSupport
 
 CURRENT_FOLDER = os.path.dirname(__file__)
 PRIMARY_XML_PATH = os.path.join(CURRENT_FOLDER, "sat_w_deployable_panels.xml")

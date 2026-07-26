@@ -16,22 +16,23 @@
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 import os
+import pytest
 
-try:
+from Basilisk import hasBuildFeature
+
+mujocoEnabled = hasBuildFeature("mujoco")
+pytestmark = pytest.mark.skipif(
+    not mujocoEnabled,
+    reason="Requires Basilisk built with --mujoco True",
+)
+if mujocoEnabled:
     from Basilisk.simulation import mujoco
     from Basilisk.simulation import svIntegrators
-
-    couldImportMujoco = True
-except:
-    couldImportMujoco = False
-
-import pytest
 
 TEST_FOLDER = os.path.dirname(__file__)
 XML_PATH = f"{TEST_FOLDER}/test_sat.xml"
 
 
-@pytest.mark.skipif(not couldImportMujoco, reason="Compiled Basilisk without --mujoco")
 def test_loading():
     """Tests that MJObject are created from the XML as expected"""
 
@@ -75,7 +76,6 @@ def test_loading():
     scene.UpdateState(1)
 
 
-@pytest.mark.skipif(not couldImportMujoco, reason="Compiled Basilisk without --mujoco")
 def test_adaptive_free_joint_translation_tolerances_are_stage_independent():
     """Tests MJScene zeroes bulk relTol for a free body through the adaptive-integrator interface.
 

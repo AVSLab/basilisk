@@ -117,10 +117,6 @@ from Basilisk.utilities import simHelpers
 
 # attempt to import vizard
 from Basilisk.utilities import vizSupport
-try:
-    from Basilisk.simulation import vizInterface
-except ImportError:
-    pass
 
 from Basilisk import __path__
 from Basilisk.utilities import RigidBodyKinematics

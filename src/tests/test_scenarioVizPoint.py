@@ -32,20 +32,23 @@ import os
 import sys
 
 import pytest
+from Basilisk import hasBuildFeature
 from Basilisk.utilities import simHelpers
 
 # Get current file path
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-try:
-    from Basilisk.simulation import vizInterface
-except ImportError:
-    pytestmark = pytest.mark.skip(reason="viz interface not built without required libraries")
+vizInterfaceEnabled = hasBuildFeature("vizInterface")
+pytestmark = pytest.mark.skipif(
+    not vizInterfaceEnabled,
+    reason="Requires Basilisk built with --vizInterface True",
+)
 
 
 sys.path.append(path + '/../../examples')
-import scenarioVizPoint
+if vizInterfaceEnabled:
+    import scenarioVizPoint
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)

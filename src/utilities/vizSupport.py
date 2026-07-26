@@ -19,7 +19,7 @@
 import os
 
 import numpy as np
-from Basilisk import __path__
+from Basilisk import __path__, hasBuildFeature
 from Basilisk.architecture import messaging
 from Basilisk.simulation import spacecraft
 from Basilisk.utilities import deprecated
@@ -28,21 +28,14 @@ from Basilisk.utilities import simHelpers
 from matplotlib import colors
 from matplotlib.colors import is_color_like
 from typing import Optional, Sequence
-from Basilisk.utilities import deprecated
 
-try:
+vizFound = hasBuildFeature("vizInterface")
+if vizFound:
     from Basilisk.simulation import vizInterface
 
-    vizFound = True
-except ImportError:
-    vizFound = False
-
-try:
+mujocoFound = hasBuildFeature("mujoco")
+if mujocoFound:
     from Basilisk.simulation import mujoco
-
-    mujocoFound = True
-except ImportError:
-    mujocoFound = False
 
 pauseFlag = False
 endFlag = False

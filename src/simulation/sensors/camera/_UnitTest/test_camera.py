@@ -25,7 +25,9 @@ import os
 
 import numpy as np
 import pytest
+from PIL import Image, ImageDraw
 
+from Basilisk import hasBuildFeature
 from Basilisk.architecture.bskLogging import BasiliskError
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -34,23 +36,18 @@ bskName = 'Basilisk'
 splitPath = path.split(bskName)
 
 # Import all of the modules that we are going to be called in this simulation
-importErr = False
-reasonErr = ""
-try:
-    from PIL import Image, ImageDraw
-except ImportError:
-    importErr = True
-    reasonErr = "python Pillow package not installed---can't test Cameras module"
-
-# Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.architecture import messaging
-try:
+
+opNavEnabled = hasBuildFeature("opNav")
+if opNavEnabled:
     from Basilisk.simulation import camera
-except ImportError:
-    importErr = True
-    reasonErr += "\nCamera not built---check OpenCV option"
+
+pytestmark = pytest.mark.skipif(
+    not opNavEnabled,
+    reason="Requires Basilisk built with --opNav True",
+)
 
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
@@ -59,7 +56,6 @@ except ImportError:
 # @pytest.mark.xfail(conditionstring)
 # Provide a unique test method name, starting with 'test_'.
 
-@pytest.mark.skipif(importErr, reason=reasonErr)
 def test_no_image_zero_msg():
     """
     **Validation Test Description**
@@ -143,7 +139,6 @@ def test_no_image_zero_msg():
     assert testFailCount == 0, testMessages
 
 
-@pytest.mark.skipif(importErr, reason=reasonErr)
 def test_filename_metadata():
     """
     **Validation Test Description**
@@ -233,7 +228,6 @@ def test_filename_metadata():
     assert testFailCount == 0, testMessages
 
 
-@pytest.mark.skipif(importErr, reason=reasonErr)
 def test_invalid_filename_error():
     """
     **Validation Test Description**
@@ -281,7 +275,6 @@ def test_invalid_filename_error():
         unitTestSim.ExecuteSimulation()
 
 
-@pytest.mark.skipif(importErr, reason=reasonErr)
 @pytest.mark.parametrize("gauss, darkCurrent, saltPepper, cosmic, blurSize", [
     (0, 0, 0, 0, 0)
     , (2, 2, 2, 1, 3)
@@ -335,9 +328,8 @@ def test_module(show_plots, gauss, darkCurrent, saltPepper, cosmic, blurSize):
 
 
 def cameraTest(show_plots, image, gauss, darkCurrent, saltPepper, cosmic, blurSize):
-    if importErr:
-        print(reasonErr)
-        exit()
+    if not opNavEnabled:
+        raise RuntimeError("Requires Basilisk built with --opNav True")
 
     # Truth values from python
     imagePath = path + '/' + image

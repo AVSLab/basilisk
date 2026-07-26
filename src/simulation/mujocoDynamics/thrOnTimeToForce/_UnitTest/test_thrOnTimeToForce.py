@@ -22,14 +22,17 @@ import pytest
 from Basilisk.architecture import messaging
 from Basilisk.utilities import SimulationBaseClass, macros
 
-try:
+from Basilisk import hasBuildFeature
+
+mujocoEnabled = hasBuildFeature("mujoco")
+pytestmark = pytest.mark.skipif(
+    not mujocoEnabled,
+    reason="Requires Basilisk built with --mujoco True",
+)
+if mujocoEnabled:
     from Basilisk.simulation import thrOnTimeToForce
-    couldImportThrOnTimeToForce = True
-except Exception:
-    couldImportThrOnTimeToForce = False
 
 
-@pytest.mark.skipif(not couldImportThrOnTimeToForce, reason="Compiled Basilisk without thrOnTimeToForce")
 def test_thrOnTimeToForceCountdown():
     """
     Validate pulse realization and timer countdown with fixed-step updates.
@@ -76,7 +79,6 @@ def test_thrOnTimeToForceCountdown():
     np.testing.assert_allclose(thr1, [3.0, 3.0, 3.0, 0.0, 0.0], atol=1e-12)
 
 
-@pytest.mark.skipif(not couldImportThrOnTimeToForce, reason="Compiled Basilisk without thrOnTimeToForce")
 def test_thrOnTimeToForceGapThenFire():
     """
     Validate behavior when module is disabled during a gap between message write time and

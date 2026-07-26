@@ -21,6 +21,7 @@ import pytest
 import numpy as np
 import numpy.testing as npt
 
+from Basilisk import hasBuildFeature
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.architecture import messaging
 from Basilisk.utilities import macros
@@ -30,12 +31,9 @@ from Basilisk.utilities import orbitalMotion
 from Basilisk.simulation import exponentialAtmosphere
 from Basilisk.simulation import cannonballDrag
 
-try:
+mujocoEnabled = hasBuildFeature("mujoco")
+if mujocoEnabled:
     from Basilisk.simulation import mujoco
-
-    couldImportMujoco = True
-except:
-    couldImportMujoco = False
 
 def test_cannonballDrag():
     """
@@ -126,7 +124,10 @@ def test_cannonballDrag():
     npt.assert_allclose(force_S, F_exp_S, rtol=0.0, atol=1e-12)
     npt.assert_allclose(torque_S, T_exp_S, rtol=0.0, atol=1e-12)
 
-@pytest.mark.skipif(not couldImportMujoco, reason="Compiled Basilisk without --mujoco")
+@pytest.mark.skipif(
+    not mujocoEnabled,
+    reason="Requires Basilisk built with --mujoco True",
+)
 @pytest.mark.parametrize("orbitCase", ["LPO", "LTO"])
 @pytest.mark.parametrize("planetCase", ["earth", "mars"])
 def test_orbit(orbitCase: Literal["LPO", "LTO"], planetCase: Literal["earth", "mars"], showPlots = False):
@@ -472,6 +473,7 @@ def test_cannonballDragAtmosphereRelativeVelocityWhenWindLinked():
 
 
 if __name__ == "__main__":
-    assert couldImportMujoco
+    if not mujocoEnabled:
+        raise RuntimeError("Requires Basilisk built with --mujoco True")
     # test_cannonballDrag()
     test_orbit("LTO","earth",True)

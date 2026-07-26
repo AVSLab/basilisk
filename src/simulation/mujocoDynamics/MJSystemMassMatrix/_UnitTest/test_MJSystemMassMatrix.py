@@ -20,13 +20,16 @@
 import numpy as np
 import pytest
 
+from Basilisk import hasBuildFeature
 from Basilisk.utilities import SimulationBaseClass, macros
-try:
-    from Basilisk.simulation import MJSystemMassMatrix, mujoco
 
-    couldImportMujoco = True
-except:
-    couldImportMujoco = False
+mujocoEnabled = hasBuildFeature("mujoco")
+pytestmark = pytest.mark.skipif(
+    not mujocoEnabled,
+    reason="Requires Basilisk built with --mujoco True",
+)
+if mujocoEnabled:
+    from Basilisk.simulation import MJSystemMassMatrix, mujoco
 
 # Constants used throughout tests
 HUB_MASS  = 50.0
@@ -156,7 +159,6 @@ def sliderMassMatrix(hubMass, hubInertia, armMass, armInertia, armLength=0.6):
     return M
 
 
-@pytest.mark.skipif(not couldImportMujoco, reason="Compiled Basilisk without --mujoco")
 @pytest.mark.parametrize("modelName, xml, nSC, scStartIdx, jointTypes", [
     ("One SC",              xmlSingle,              1,  [0], [0]),
     ("One Hinge",           xmlOneHinge,            1,  [0], [0,3]),

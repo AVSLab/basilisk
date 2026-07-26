@@ -1,1 +1,1 @@
-- Added optional ``vizInterface``, ``opNav``, and ``mujoco`` capability flags to ``Basilisk.getBuildInfo()`` and the new ``Basilisk.hasBuildFeature()`` query.
+- Added optional ``vizInterface``, ``opNav``, and ``mujoco`` capability flags to ``Basilisk.getBuildInfo()`` and the new ``Basilisk.hasBuildFeature()`` query. Scenarios and tests now use these flags to guard optional imports and skip cleanly when a capability was not built.

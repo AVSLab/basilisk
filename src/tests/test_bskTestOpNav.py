@@ -33,6 +33,7 @@ import os
 import sys
 
 import pytest
+from Basilisk import hasBuildFeature
 from Basilisk.architecture import bskLogging
 from Basilisk.utilities import simHelpers
 
@@ -49,10 +50,32 @@ Requirements:
     - Basilisk built with ZMQ, protobuffers, and OpenCV
 """
 
-import BSK_OpNav
-SimBase = BSK_OpNav.BSKSim(1, 1)
-if not os.path.exists(SimBase.vizPath):
-    pytestmark = pytest.mark.skip(reason="Vizard App not found: modify app in examples/OpNavScenarios/BSK_OpNav.py")
+opNavEnabled = hasBuildFeature("opNav")
+vizInterfaceEnabled = hasBuildFeature("vizInterface")
+vizardAppFound = False
+if opNavEnabled and vizInterfaceEnabled:
+    import BSK_OpNav
+
+    SimBase = BSK_OpNav.BSKSim(1, 1)
+    vizardAppFound = os.path.exists(SimBase.vizPath)
+
+pytestmark = [
+    pytest.mark.skipif(
+        not opNavEnabled,
+        reason="Requires Basilisk built with --opNav True",
+    ),
+    pytest.mark.skipif(
+        not vizInterfaceEnabled,
+        reason="Requires Basilisk built with --vizInterface True",
+    ),
+    pytest.mark.skipif(
+        opNavEnabled and vizInterfaceEnabled and not vizardAppFound,
+        reason=(
+            "Vizard App not found: modify app in "
+            "examples/OpNavScenarios/BSK_OpNav.py"
+        ),
+    ),
+]
 
 testScripts = [
       'scenario_faultDetOpNav'
@@ -65,14 +88,6 @@ testScripts = [
     , 'scenario_OpNavPointLimb'
     , 'scenario_CNNAttOD'
 ]
-
-
-try:
-    from Basilisk.simulation import vizInterface, camera
-    from Basilisk.fswAlgorithms import houghCircles, limbFinding
-except ImportError:
-    pytestmark = pytest.mark.skip(reason="OpNav Algorithms not built: use opNav behavior in build")
-
 
 @pytest.mark.slowtest
 @pytest.mark.scenarioTest

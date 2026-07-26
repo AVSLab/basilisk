@@ -28,6 +28,8 @@ import os
 
 import numpy as np
 import pytest
+from PIL import Image, ImageDraw
+from Basilisk import hasBuildFeature
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -35,24 +37,18 @@ bskName = 'Basilisk'
 splitPath = path.split(bskName)
 
 # Import all of the modules that we are going to be called in this simulation
-importErr = False
-reasonErr = ""
-try:
-    from PIL import Image, ImageDraw
-except ImportError:
-    importErr = True
-    reasonErr = "python Pillow package not installed---can't test HoughCircle module"
-
-# Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.architecture import messaging
 
-try:
+opNavEnabled = hasBuildFeature("opNav")
+if opNavEnabled:
     from Basilisk.fswAlgorithms import houghCircles
-except ImportError:
-    importErr = True
-    reasonErr = "Hough Circles not built---check OpenCV option"
+
+pytestmark = pytest.mark.skipif(
+    not opNavEnabled,
+    reason="Requires Basilisk built with --opNav True",
+)
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
 # @pytest.mark.skipif(conditionstring)
@@ -60,7 +56,6 @@ except ImportError:
 # @pytest.mark.xfail(conditionstring)
 # Provide a unique test method name, starting with 'test_'.
 
-@pytest.mark.skipif(importErr, reason= reasonErr)
 @pytest.mark.parametrize("image, blur, maxCircles, minDist, minRad, cannyLow, cannyHigh, dp, saveImage", [
                     ("mars.png",    5,          1,      50,     20,       20,       200,   1, False), #Mars image
                    ("moons.png",    5,         10,      25,     10,       20,       200,   1, False) # Moon images
@@ -192,4 +187,6 @@ def houghCirclesTest(show_plots, image, blur, maxCircles , minDist , minRad, can
 # stand-along python script
 #
 if __name__ == "__main__":
+    if not opNavEnabled:
+        raise RuntimeError("Requires Basilisk built with --opNav True")
     houghCirclesTest(True, "moons.png",     5,         10,      25,     10,       20,       200,   1, True) # Moon images

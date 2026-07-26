@@ -16,13 +16,17 @@
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 import os
+import pytest
 
-try:
+from Basilisk import hasBuildFeature
+
+mujocoEnabled = hasBuildFeature("mujoco")
+pytestmark = pytest.mark.skipif(
+    not mujocoEnabled,
+    reason="Requires Basilisk built with --mujoco True",
+)
+if mujocoEnabled:
     from Basilisk.simulation import mujoco
-
-    couldImportMujoco = True
-except:
-    couldImportMujoco = False
 
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
@@ -34,7 +38,6 @@ TEST_FOLDER = os.path.dirname(__file__)
 XML_PATH = f"{TEST_FOLDER}/sat_hub_only.xml"
 
 
-@pytest.mark.skipif(not couldImportMujoco, reason="Compiled Basilisk without --mujoco")
 def test_siteVelocity():
     """Test the velocity output of sites."""
 

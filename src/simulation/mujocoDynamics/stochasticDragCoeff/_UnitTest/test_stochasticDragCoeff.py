@@ -23,15 +23,17 @@ from Basilisk.simulation import svIntegrators
 from Basilisk.architecture import messaging
 from Basilisk.utilities import macros
 
-try:
+from Basilisk import hasBuildFeature
+
+mujocoEnabled = hasBuildFeature("mujoco")
+pytestmark = pytest.mark.skipif(
+    not mujocoEnabled,
+    reason="Requires Basilisk built with --mujoco True",
+)
+if mujocoEnabled:
     from Basilisk.simulation import mujoco
     from Basilisk.simulation import MJStochasticDragCoeff
 
-    couldImportMujoco = True
-except:
-    couldImportMujoco = False
-
-@pytest.mark.skipif(not couldImportMujoco, reason="Compiled Basilisk without --mujoco")
 def test_stochasticDragCoeff(showPlots: bool = False):
     """
     Unit test for StochasticDragCoeff.
@@ -102,5 +104,6 @@ def test_stochasticDragCoeff(showPlots: bool = False):
 
 
 if __name__ == "__main__":
-    assert couldImportMujoco
+    if not mujocoEnabled:
+        raise RuntimeError("Requires Basilisk built with --mujoco True")
     test_stochasticDragCoeff(True)

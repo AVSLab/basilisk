@@ -42,7 +42,7 @@ import pytest
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-from Basilisk import __path__
+from Basilisk import __path__, hasBuildFeature
 bskPath = __path__[0]
 from Basilisk.utilities import SimulationBaseClass, macros
 from Basilisk.simulation import spiceInterface
@@ -224,7 +224,10 @@ def test_integratorAgnosticQueryCountOnDynamicsTask():
     so the exact path would query SPICE (stages x steps) times. With reconstruction the knot cache
     collapses those onto ~horizon/knotStep queries, and that count is the SAME for a fixed RK4 and
     an adaptive RKF45 integrator -- the integrator-agnostic property the feature exists to deliver."""
-    mujoco = pytest.importorskip("Basilisk.simulation.mujoco")
+    if not hasBuildFeature("mujoco"):
+        pytest.skip("Requires Basilisk built with --mujoco True")
+
+    from Basilisk.simulation import mujoco
     from Basilisk.simulation import svIntegrators
 
     scXml = """

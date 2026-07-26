@@ -18,13 +18,16 @@
 import os
 import pytest
 
-try:
+from Basilisk import hasBuildFeature
+
+mujocoEnabled = hasBuildFeature("mujoco")
+pytestmark = pytest.mark.skipif(
+    not mujocoEnabled,
+    reason="Requires Basilisk built with --mujoco True",
+)
+if mujocoEnabled:
     from Basilisk.simulation import mujoco
     from Basilisk.simulation import svIntegrators
-
-    couldImportMujoco = True
-except:
-    couldImportMujoco = False
 
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
@@ -38,7 +41,6 @@ XML_PATH = f"{TEST_FOLDER}/test_sat.xml"
 REFERENCE_DATA = f"{TEST_FOLDER}/test_sat_qpos_reference.txt"
 
 
-@pytest.mark.skipif(not couldImportMujoco, reason="Compiled Basilisk without --mujoco")
 def test_integration(showPlots: bool = False):
     """Tests that integration with RK4 in Basilisk is equal to integration
     with RK4 in MuJoCo.
@@ -171,7 +173,6 @@ def _runFreeSpin(highOrder, dt, tf, omega):
     return rbk.MRP2EP(np.array(rec.sigma_BN)[-1])  # (w,x,y,z)
 
 
-@pytest.mark.skipif(not couldImportMujoco, reason="Compiled Basilisk without --mujoco")
 def test_highOrderQuaternionConvergesFasterThanDefault():
     """High-order attitude integration converges at a higher order than the
     default exponential-map path.
@@ -199,7 +200,6 @@ def test_highOrderQuaternionConvergesFasterThanDefault():
     assert ratioLo < 6.0  # close to 4 (second order)
 
 
-@pytest.mark.skipif(not couldImportMujoco, reason="Compiled Basilisk without --mujoco")
 @pytest.mark.parametrize("highOrder", [False, True])
 def test_quaternionStaysNormalized(highOrder):
     """The orientation quaternion stays unit-norm after many integration steps in
@@ -208,7 +208,6 @@ def test_quaternionStaysNormalized(highOrder):
     assert np.sqrt(w * w + x * x + y * y + z * z) == pytest.approx(1.0, abs=1e-10)
 
 
-@pytest.mark.skipif(not couldImportMujoco, reason="Compiled Basilisk without --mujoco")
 def test_repeatedResetSucceeds():
     """A scene can be reset more than once. ``test_sat.xml`` has nq != nv (free
     joint plus hinges), so the bulk states must be registered at their compiled

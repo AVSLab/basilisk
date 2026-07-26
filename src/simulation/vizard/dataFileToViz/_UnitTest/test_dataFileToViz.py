@@ -31,6 +31,7 @@ import sys
 
 import numpy as np
 import pytest
+from Basilisk import hasBuildFeature
 from Basilisk.architecture import bskLogging
 from Basilisk.architecture import messaging
 from Basilisk.simulation import dataFileToViz
@@ -43,10 +44,9 @@ from Basilisk.utilities import simIncludeGravBody
 from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import vizSupport
 
-try:
+vizInterfaceEnabled = hasBuildFeature("vizInterface")
+if vizInterfaceEnabled:
     from Basilisk.simulation import vizInterface
-except ImportError:
-    pass
 
 path = os.path.dirname(os.path.abspath(__file__))
 
@@ -83,6 +83,10 @@ assert viz_thr_vector[0].thrTag == "dv"
     "from Basilisk.simulation import dataFileToViz, vizInterface",
     "from Basilisk.simulation import vizInterface, dataFileToViz"
 ])
+@pytest.mark.skipif(
+    not vizInterfaceEnabled,
+    reason="Requires Basilisk built with --vizInterface True",
+)
 def test_data_file_to_viz_viz_interface_import_order(import_statement):
     """Verify compatible SWIG wrappers across ``dataFileToViz`` and ``vizInterface``.
 
@@ -101,8 +105,6 @@ def test_data_file_to_viz_viz_interface_import_order(import_statement):
     - ``dataFileToViz.VizThrConfig``
 
     """
-    pytest.importorskip("Basilisk.simulation.vizInterface")
-
     result = _run_python_import_order_check(import_statement)
     assert result.returncode == 0, result.stderr
 

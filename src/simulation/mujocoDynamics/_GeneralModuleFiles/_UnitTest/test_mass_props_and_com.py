@@ -34,13 +34,15 @@
 import os
 
 import pytest
+from Basilisk import hasBuildFeature
 
-try:
+mujocoEnabled = hasBuildFeature("mujoco")
+pytestmark = pytest.mark.skipif(
+    not mujocoEnabled,
+    reason="Requires Basilisk built with --mujoco True",
+)
+if mujocoEnabled:
     from Basilisk.simulation import mujoco
-
-    couldImportMujoco = True
-except Exception:
-    couldImportMujoco = False
 
 from Basilisk.architecture import messaging
 from Basilisk.utilities import SimulationBaseClass
@@ -80,7 +82,6 @@ _ROTOR_XML = """
 """
 
 
-@pytest.mark.skipif(not couldImportMujoco, reason="Compiled Basilisk without --mujoco")
 def test_com_site_reports_true_center_of_mass():
     """The ``_com`` site must sit at the true CoM (offset from the body origin)
     and keep the body-origin frame orientation, not the principal-inertia frame.
@@ -123,7 +124,6 @@ def test_com_site_reports_true_center_of_mass():
     np.testing.assert_allclose(sigma_com, sigma_origin, atol=1e-12)
 
 
-@pytest.mark.skipif(not couldImportMujoco, reason="Compiled Basilisk without --mujoco")
 def test_inertia_rescales_with_mass():
     """When the body mass changes, the rotational inertia must scale with it.
 

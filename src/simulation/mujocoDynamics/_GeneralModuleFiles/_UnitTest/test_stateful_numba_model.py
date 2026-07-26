@@ -15,21 +15,22 @@
 #  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-from Basilisk.utilities import macros
-from Basilisk.utilities import SimulationBaseClass
+import numpy as np
+import pytest
 
-try:
+from Basilisk import hasBuildFeature
+from Basilisk.utilities import SimulationBaseClass, macros
+
+mujocoEnabled = hasBuildFeature("mujoco")
+pytestmark = pytest.mark.skipif(
+    not mujocoEnabled,
+    reason="Requires Basilisk built with --mujoco True",
+)
+if mujocoEnabled:
     from Basilisk.simulation import mujoco
     from Basilisk.simulation import StatefulNumbaModel
-    couldImport = True
-except Exception:
-    couldImport = False
-
-import pytest
-import numpy as np
 
 
-@pytest.mark.skipif(not couldImport, reason="Compiled Basilisk without --mujoco or numba not available")
 def test_StatefulNumbaOscillator():
     """Tests that StatefulNumbaModel works as expected in MJScene.
 
@@ -117,7 +118,6 @@ def test_StatefulNumbaOscillator():
     np.testing.assert_allclose(vel, expectedVel, atol=1e-5)
 
 
-@pytest.mark.skipif(not couldImport, reason="Compiled Basilisk without --mujoco or numba not available")
 def test_StatefulNumbaStateNames():
     """Tests that state names are prefixed with model tag and ID."""
 
@@ -157,7 +157,6 @@ def test_StatefulNumbaStateNames():
     )
 
 
-@pytest.mark.skipif(not couldImport, reason="Compiled Basilisk without --mujoco or numba not available")
 def test_StatefulNumbaDiffusion():
     """Tests that xStateDiffusionN correctly wires to the StateData diffusion buffer.
 

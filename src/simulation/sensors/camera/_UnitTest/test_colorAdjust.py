@@ -26,6 +26,8 @@ import math
 import os
 import numpy as np
 import pytest
+from PIL import Image, ImageDraw
+from Basilisk import hasBuildFeature
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -33,24 +35,18 @@ bskName = 'Basilisk'
 splitPath = path.split(bskName)
 
 # Import all of the modules that we are going to be called in this simulation
-importErr = False
-reasonErr = ""
-try:
-    from PIL import Image, ImageDraw
-except ImportError:
-    importErr = True
-    reasonErr = "python Pillow package not installed---can't test Cameras module"
-
-# Import all of the modules that we are going to be called in this simulation
 from Basilisk.architecture import messaging
 from Basilisk.utilities import macros
 from Basilisk.utilities import SimulationBaseClass
 
-try:
+opNavEnabled = hasBuildFeature("opNav")
+if opNavEnabled:
     from Basilisk.simulation import camera
-except ImportError:
-    importErr = True
-    reasonErr += "\nCamera not built---check OpenCV option"
+
+pytestmark = pytest.mark.skipif(
+    not opNavEnabled,
+    reason="Requires Basilisk built with --opNav True",
+)
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
 # @pytest.mark.skipif(conditionstring)
@@ -58,7 +54,6 @@ except ImportError:
 # @pytest.mark.xfail(conditionstring)
 # Provide a unique test method name, starting with 'test_'.
 
-@pytest.mark.skipif(importErr, reason= reasonErr)
 @pytest.mark.parametrize("HSV", [
     [0, 0, 0]
     , [1.0, 20.0, -30.0]
@@ -110,9 +105,8 @@ def cameraColorTest(image, HSV, BGR):
     :param BGR: 3d vector of BGR adjustments
 
     """
-    if importErr:
-        print(reasonErr)
-        exit()
+    if not opNavEnabled:
+        raise RuntimeError("Requires Basilisk built with --opNav True")
 
     # Truth values from python
     imagePath = path + '/' + image

@@ -24,14 +24,17 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 
-try:
+from Basilisk import hasBuildFeature
+
+mujocoEnabled = hasBuildFeature("mujoco")
+pytestmark = pytest.mark.skipif(
+    not mujocoEnabled,
+    reason="Requires Basilisk built with --mujoco True",
+)
+if mujocoEnabled:
     from Basilisk.simulation import mujoco
     from Basilisk.simulation import MJLinearTimeInvariantSystem
-    couldImportMujoco = True
-except Exception:
-    couldImportMujoco = False
 
-@pytest.mark.skipif(not couldImportMujoco, reason="Compiled Basilisk without --mujoco")
 @pytest.mark.parametrize("integral", (True, False))
 def test_orbitalElementControl(integral: bool):
     """Checks that the MJLinearTimeInvariantSystem.OrbitalElementControl behaves
@@ -178,5 +181,6 @@ def test_orbitalElementControl(integral: bool):
 
 
 if __name__ == "__main__":
-    assert couldImportMujoco
+    if not mujocoEnabled:
+        raise RuntimeError("Requires Basilisk built with --mujoco True")
     test_orbitalElementControl(True)

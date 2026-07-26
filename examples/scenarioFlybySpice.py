@@ -258,10 +258,8 @@ from Basilisk.utilities import vizSupport
 from Basilisk.utilities import simHelpers
 
 # import general simulation support files
-try:
+if vizSupport.vizFound:
     from Basilisk.simulation import vizInterface
-except ImportError:
-    pass
 
 # import FSW Algorithm related support
 from Basilisk.fswAlgorithms import hillPoint
