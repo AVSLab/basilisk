@@ -22,6 +22,17 @@ runs:
     - name: Setup system dependencies
       uses: ./.github/actions/setup
 
+    - name: Setup Python for Conan cache context
+      if: ${{ runner.os != 'Linux' }}
+      uses: actions/setup-python@v6
+      with:
+        python-version: "3.14"
+
+    - name: Install Conan cache tooling
+      if: ${{ runner.os != 'Linux' }}
+      shell: bash
+      run: python -m pip install "conan>=2.0.5,<=2.28.1"
+
     - name: Setup sccache
       uses: mozilla-actions/sccache-action@v0.0.10
       continue-on-error: true
@@ -65,15 +76,35 @@ runs:
           sccache --zero-stats
         fi
 
+    - name: Prepare Conan cache context
+      id: conan-context
+      shell: bash
+      env:
+        RUNNER_ARCH: ${{ runner.arch }}
+      run: |
+        if [[ "${{ runner.os }}" == "Linux" ]]; then
+          # The short image name resolves to an image pinned by cibuildwheel.
+          # Hashing this action and pyproject.toml below invalidates the cache
+          # when either the cibuildwheel version or image selection changes.
+          echo "fingerprint=manylinux-2-28-${RUNNER_ARCH}" >> "${GITHUB_OUTPUT}"
+        else
+          python .github/scripts/configure_conan_profile.py --emit-cache-fingerprint
+        fi
+
     - name: Restore Conan cache
       id: conan-cache
       continue-on-error: true
       uses: actions/cache/restore@v5
       with:
         path: ~/.conan2
-        key: conan-wheel-v1-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('conan.lock', 'conanfile.py', 'libs/**', 'pyproject.toml') }}
+        key: conan-wheel-v2-${{ runner.os }}-${{ runner.arch }}-${{ steps.conan-context.outputs.fingerprint }}-${{ hashFiles('conan.lock', 'conanfile.py', 'libs/**', 'pyproject.toml', '.github/actions/build-wheel/action.yml', '.github/scripts/configure_conan_profile.py') }}
         restore-keys: |
-          conan-wheel-v1-${{ runner.os }}-${{ runner.arch }}-
+          conan-wheel-v2-${{ runner.os }}-${{ runner.arch }}-${{ steps.conan-context.outputs.fingerprint }}-
+
+    - name: Refresh Conan profile
+      if: ${{ runner.os != 'Linux' }}
+      shell: bash
+      run: python .github/scripts/configure_conan_profile.py
 
     - name: Build wheel
       if: ${{ inputs.cibw-build == '' }}
