@@ -18,9 +18,10 @@
 //!   ``MsgReader<T>``/``MsgWriter<T>`` abstraction. It emits an undefined
 //!   ``Port`` type for that representation.
 //!
-//! Production code recognizes those generated specialization names and maps
-//! them to Basilisk's existing ``<Message>_C`` port types. It also supplies
-//! includes, lifecycle declarations, and the shared SWIG wrapper invocation.
+//! Before its single cbindgen invocation, production code builds a complete
+//! specialization-to-port map from Basilisk's generated ``<Message>_C.h``
+//! interfaces. It also supplies the needed includes, lifecycle declarations,
+//! and the shared SWIG wrapper invocation.
 
 #![cfg(feature = "codegen")]
 
