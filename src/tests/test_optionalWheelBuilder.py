@@ -199,8 +199,4 @@ def test_optional_wheel_declares_build_feature(tmp_path, monkeypatch):
         "_distributions",
         lambda: installedDistributions,
     )
-    buildInfoFormatter._installedBuildFeatureProviders.cache_clear()
-    try:
-        assert buildInfoFormatter.hasBuildFeature("opNav") is True
-    finally:
-        buildInfoFormatter._installedBuildFeatureProviders.cache_clear()
+    assert buildInfoFormatter.hasBuildFeature("opNav") is True
