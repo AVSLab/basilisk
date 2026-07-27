@@ -51,6 +51,13 @@ PROTOBUF_CONSUMERS = (
     ("Basilisk.fswAlgorithms.centerRadiusCNN", "CenterRadiusCNN"),
     ("Basilisk.simulation.vizInterface", "VizInterface"),
 )
+CORE_FEATURES = {
+    "vizInterface": True,
+    "opNav": False,
+    "mujoco": True,
+    "rustModules": True,
+}
+OPNAV_FEATURES = {**CORE_FEATURES, "opNav": True}
 
 
 def venv_python(venv_path: Path) -> Path:
@@ -104,9 +111,6 @@ for name, expected in expected_features.items():
     print("OK feature", name, "->", actual)
 
 build_info = Basilisk.getBuildInfo()
-build_options = build_info["diagnostics"]["build"]
-if not build_options["rustModules"]:
-    raise SystemExit("wheel was not built with Rust modules")
 if not build_info["diagnostics"]["tools"]["corrosion"]:
     raise SystemExit("wheel did not record its Corrosion version")
 
@@ -198,7 +202,7 @@ def test_optional_wheels(wheelhouse: Path) -> None:
             python,
             required=CORE_IMPORTS,
             missing=OPNAV_IMPORTS,
-            expected_features={"vizInterface": True, "opNav": False, "mujoco": True},
+            expected_features=CORE_FEATURES,
             env=test_env,
         )
 
@@ -208,7 +212,7 @@ def test_optional_wheels(wheelhouse: Path) -> None:
             python,
             required=CORE_IMPORTS + OPNAV_IMPORTS,
             missing=[],
-            expected_features={"vizInterface": True, "opNav": True, "mujoco": True},
+            expected_features=OPNAV_FEATURES,
             env=test_env,
         )
         run_protobuf_consumer_checks(python, test_env)
@@ -218,7 +222,7 @@ def test_optional_wheels(wheelhouse: Path) -> None:
             python,
             required=CORE_IMPORTS,
             missing=OPNAV_IMPORTS,
-            expected_features={"vizInterface": True, "opNav": False, "mujoco": True},
+            expected_features=CORE_FEATURES,
             env=test_env,
         )
 
@@ -228,7 +232,7 @@ def test_optional_wheels(wheelhouse: Path) -> None:
             python,
             required=CORE_IMPORTS + OPNAV_IMPORTS,
             missing=[],
-            expected_features={"vizInterface": True, "opNav": True, "mujoco": True},
+            expected_features=OPNAV_FEATURES,
             env=test_env,
         )
         run_protobuf_consumer_checks(python, test_env)

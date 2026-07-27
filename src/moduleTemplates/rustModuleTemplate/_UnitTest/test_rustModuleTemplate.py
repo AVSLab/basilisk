@@ -25,16 +25,20 @@ import warnings
 import numpy as np
 import pytest
 
+from Basilisk import hasBuildFeature
 from Basilisk.architecture import messaging
 from Basilisk.architecture.bskLogging import BasiliskError
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import deprecated
 from Basilisk.utilities import macros
 
-rustModuleTemplate = pytest.importorskip(
-    "Basilisk.moduleTemplates.rustModuleTemplate",
-    reason="Rust modules were not enabled for this Basilisk build.",
+rustModulesEnabled = hasBuildFeature("rustModules")
+pytestmark = pytest.mark.skipif(
+    not rustModulesEnabled,
+    reason="Requires Basilisk built with --rustModules True",
 )
+if rustModulesEnabled:
+    from Basilisk.moduleTemplates import rustModuleTemplate
 
 
 class _ExpectedBskModuleRuntime(ctypes.Structure):

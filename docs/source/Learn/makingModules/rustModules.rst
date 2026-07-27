@@ -1093,15 +1093,32 @@ message connections, lifecycle behavior, and numerical results:
 
     python3 -m pytest src/fswAlgorithms/<category>/myModule/_UnitTest -v
 
+Guard the test before importing its generated wrapper. This skips the test in
+a Rust-disabled Basilisk build, while still reporting a missing wrapper as a
+failure when Rust support was requested:
+
+.. code-block:: python
+
+    import pytest
+
+    from Basilisk import hasBuildFeature
+
+    rustModulesEnabled = hasBuildFeature("rustModules")
+    pytestmark = pytest.mark.skipif(
+        not rustModulesEnabled,
+        reason="Requires Basilisk built with --rustModules True",
+    )
+    if rustModulesEnabled:
+        from Basilisk.fswAlgorithms import myModule
+
 After a Rust-enabled Basilisk build, the normal ``python3 run_all_test.py``
 workflow includes the module's Python test. The same command also runs all
 Cargo workspace tests when ``cargo`` is installed and available on ``PATH``.
-It reports that Rust tests were skipped, without failing, when ``cargo`` is
-not available. The Cargo tests exercise the Rust packages directly without
-linking the generated Basilisk module library, but they still require the
-C-message headers produced by a previous Basilisk configuration. The build
-performed before ``run_all_test.py`` supplies that prerequisite even when
-Rust modules are disabled.
+It reports that Rust tests were skipped, without failing, when Rust support is
+disabled or ``cargo`` is not available. The Cargo tests exercise the Rust
+packages directly without linking the generated Basilisk module library, but
+they still require the C-message headers produced by the Rust-enabled
+Basilisk configuration performed before ``run_all_test.py``.
 
 Contributor Checks
 ~~~~~~~~~~~~~~~~~~

@@ -210,7 +210,7 @@ def _formatBuildInfo(buildInfo: dict[str, object]) -> str:
     _appendField(lines, "Features", featureDescription)
     _appendField(lines, "C compiler", _compilerDescription(cCompiler))
     _appendField(lines, "C++ compiler", _compilerDescription(cxxCompiler))
-    if build["rustModules"]:
+    if buildInfo["features"]["rustModules"]:
         _appendField(lines, "Rust compiler", _compilerDescription(rustCompiler))
         _appendField(lines, "Rust target", rustCompiler["target"])
     _appendField(lines, "C standard", _compiledLanguageStandard("C", abi["c"]["compiler"]["languageStandard"]))

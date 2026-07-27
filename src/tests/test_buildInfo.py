@@ -76,7 +76,12 @@ def _makeBuildInfo(
     rustModules=True,
 ):
     if features is None:
-        features = {"vizInterface": True, "opNav": False, "mujoco": True}
+        features = {
+            "vizInterface": True,
+            "opNav": False,
+            "mujoco": True,
+            "rustModules": rustModules,
+        }
     standardLibraryFamily = standardLibrary
     if standardLibrary.startswith("libstdc++"):
         standardLibraryFamily = "libstdc++"
@@ -106,7 +111,6 @@ def _makeBuildInfo(
                 "generatorPlatform": generatorPlatform,
                 "generatorToolset": generatorToolset,
                 "pythonLimitedApi": "0x03090000",
-                "rustModules": rustModules,
             },
             "compilers": {
                 "c": {
@@ -247,7 +251,7 @@ def test_build_info():
         "BSK_EXTENSION_ABI_VERSION"
     )
     assert buildInfo["artifact"]["sourceDirty"] in (True, False, None)
-    assert set(features) == {"vizInterface", "opNav", "mujoco"}
+    assert set(features) == {"vizInterface", "opNav", "mujoco", "rustModules"}
     assert all(isinstance(enabled, bool) for enabled in features.values())
     assert abi["descriptorVersion"] == _integerDefine("BSK_ABI_DESCRIPTOR_VERSION")
     assert abi["capture"] == "compiled"
@@ -266,8 +270,6 @@ def test_build_info():
     else:
         assert diagnostics["build"]["configuration"]
     assert diagnostics["build"]["generator"]
-    assert isinstance(diagnostics["build"]["rustModules"], bool)
-
     for language in ("c", "cxx"):
         compilerInfo = diagnostics["compilers"][language]
         assert compilerInfo["id"]
@@ -294,7 +296,7 @@ def test_build_info():
     assert diagnostics["tools"]["swig"]
     assert diagnostics["tools"]["python"]
     rustCompilerInfo = diagnostics["compilers"]["rust"]
-    if diagnostics["build"]["rustModules"]:
+    if features["rustModules"]:
         assert rustCompilerInfo["id"] == "rustc"
         assert rustCompilerInfo["version"]
         assert rustCompilerInfo["executable"]
@@ -314,7 +316,12 @@ def test_build_info():
 
 def test_build_feature_query(monkeypatch):
     """Verify configured and installed optional features can be queried."""
-    features = {"vizInterface": True, "opNav": False, "mujoco": True}
+    features = {
+        "vizInterface": True,
+        "opNav": False,
+        "mujoco": True,
+        "rustModules": False,
+    }
     monkeypatch.setitem(buildInfoFormatter._buildInfoData, "features", features)
 
     coreVersion = buildInfoFormatter._buildInfoData["artifact"]["basiliskVersion"]
@@ -342,8 +349,9 @@ def test_build_feature_query(monkeypatch):
     assert Basilisk.hasBuildFeature("vizInterface") is True
     assert Basilisk.hasBuildFeature("opNav") is True
     assert Basilisk.hasBuildFeature("mujoco") is True
+    assert Basilisk.hasBuildFeature("rustModules") is False
     assert Basilisk.getBuildInfo()["features"] == features
-    assert distributionQueries == [True, True, True]
+    assert distributionQueries == [True, True, True, True]
 
     with pytest.raises(KeyError, match="unknownFeature"):
         Basilisk.hasBuildFeature("unknownFeature")
@@ -351,7 +359,12 @@ def test_build_feature_query(monkeypatch):
 
 def test_optional_build_feature_environment_changes(monkeypatch, tmp_path):
     """Verify provider changes are detected within a running process."""
-    features = {"vizInterface": True, "opNav": False, "mujoco": True}
+    features = {
+        "vizInterface": True,
+        "opNav": False,
+        "mujoco": True,
+        "rustModules": False,
+    }
     monkeypatch.setitem(buildInfoFormatter._buildInfoData, "features", features)
     coreVersion = buildInfoFormatter._buildInfoData["artifact"]["basiliskVersion"]
     monkeypatch.setattr(
@@ -466,7 +479,7 @@ def test_print_build_info(capsys):
         assert f"{featureName}={'on' if enabled else 'off'}" in output
     assert diagnostics["compilers"]["c"]["id"] in output
     assert diagnostics["compilers"]["cxx"]["id"] in output
-    if diagnostics["build"]["rustModules"]:
+    if buildInfo["features"]["rustModules"]:
         assert diagnostics["compilers"]["rust"]["version"] in output
     assert "C++17" in output
     assert standardLibraryLabel in output

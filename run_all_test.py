@@ -5,7 +5,9 @@ import re
 import shutil
 import subprocess
 import sys
+from importlib.util import find_spec
 from pathlib import Path
+from runpy import run_path
 
 from colorama import Fore, Style, just_fix_windows_console
 
@@ -36,9 +38,65 @@ def _color_status(text: str, color: str) -> str:
     return f"{Style.BRIGHT}{color}{text}{Style.RESET_ALL}"
 
 
+def _rust_modules_enabled(repository_root: Path) -> bool:
+    """Return whether the active Basilisk build includes Rust modules.
+
+    Read the generated data module directly so this inexpensive feature check
+    does not initialize the complete Basilisk package. A source or editable
+    build keeps the file under ``dist3``. The package lookup is a fallback for
+    an otherwise relocated installation and also avoids importing Basilisk.
+
+    :param repository_root: Root of the Basilisk source checkout.
+    :return: ``True`` when Rust module support was compiled into Basilisk.
+    :raises FileNotFoundError: If no generated build-information file exists.
+    :raises RuntimeError: If the generated feature entry is malformed.
+    """
+    local_build_info = repository_root / "dist3" / "Basilisk" / "_buildInfoData.py"
+    candidates = [local_build_info]
+
+    package_spec = find_spec("Basilisk")
+    if package_spec is not None and package_spec.submodule_search_locations is not None:
+        candidates.extend(
+            Path(location) / "_buildInfoData.py"
+            for location in package_spec.submodule_search_locations
+        )
+
+    checked_paths = []
+    for build_info_path in dict.fromkeys(candidates):
+        checked_paths.append(str(build_info_path))
+        if not build_info_path.is_file():
+            continue
+        namespace = run_path(str(build_info_path))
+        try:
+            enabled = namespace["buildInfoData"]["features"]["rustModules"]
+        except (KeyError, TypeError) as error:
+            raise RuntimeError(
+                f"Malformed Rust feature metadata in {build_info_path}"
+            ) from error
+        if not isinstance(enabled, bool):
+            raise RuntimeError(
+                f"Rust feature metadata in {build_info_path} must be a Boolean"
+            )
+        return enabled
+
+    raise FileNotFoundError(
+        "Basilisk build information was not found; checked " + ", ".join(checked_paths)
+    )
+
+
 def run_rust_tests(repository_root: Path) -> None:
     """Run and summarize Cargo tests when the Rust toolchain is available."""
     print(f"\n{_RUST_TEST_SEPARATOR}", flush=True)
+    if not _rust_modules_enabled(repository_root):
+        print(
+            _color_status(
+                "Basilisk was built without Rust module support; skipping Rust tests.",
+                Fore.YELLOW,
+            ),
+            flush=True,
+        )
+        return
+
     cargo = shutil.which("cargo")
     if cargo is None:
         print(

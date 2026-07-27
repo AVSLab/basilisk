@@ -157,7 +157,7 @@ For a Rust-enabled build, this produces output similar to::
       Version:        2.12.0 (extension ABI 2)
       Target:         macOS arm64, 64-bit
       Build:          Release, Unix Makefiles
-      Features:       vizInterface=on, opNav=off, mujoco=off
+      Features:       vizInterface=on, opNav=off, mujoco=off, rustModules=on
       C compiler:     AppleClang 21.0.0.21000101 (cc)
       C++ compiler:   AppleClang 21.0.0.21000101 (c++)
       Rust compiler:  rustc 1.97.1 (rustc)
@@ -187,6 +187,7 @@ dictionary with four principal sections::
     buildInfo = getBuildInfo()
     mujocoEnabled = buildInfo["features"]["mujoco"]
     opNavEnabled = hasBuildFeature("opNav")
+    rustModulesEnabled = hasBuildFeature("rustModules")
     extensionAbiVersion = buildInfo["artifact"]["extensionAbiVersion"]
     standardLibrary = buildInfo["abi"]["cxx"]["standardLibrary"]["family"]
     compilerVersion = buildInfo["diagnostics"]["compilers"]["cxx"]["version"]
@@ -197,15 +198,15 @@ incremented when Basilisk intentionally changes the C/C++ object contract expose
 promise compatibility between different Basilisk versions; the SDK's exact-version check remains required unless a
 future compatibility policy explicitly relaxes it.
 
-``features`` records whether ``vizInterface``, ``opNav``, and ``mujoco`` were enabled when CMake configured the core
-artifact.  ``hasBuildFeature()`` answers whether the installed Basilisk environment provides a capability: it
-combines those core values with capabilities supplied by installed optional Basilisk distributions such as
-``bsk-opnav``.  Optional distributions declare their capabilities through package entry-point metadata and must
-have the same version as the core artifact.  A mismatched provider raises ``RuntimeError`` instead of exposing an
-incompatible compiled extension.  This distinction lets ``getBuildInfo()`` retain the core artifact's provenance
-while feature guards continue to work when Basilisk is distributed across multiple wheels.  Feature names are
-case-sensitive, and an unknown name raises ``KeyError``.  These values describe compiled Basilisk capabilities;
-they do not report the availability of external applications such as Vizard.
+``features`` records whether ``vizInterface``, ``opNav``, ``mujoco``, and ``rustModules`` were enabled when CMake
+configured the core artifact.  ``hasBuildFeature()`` answers whether the installed Basilisk environment provides a
+capability: it combines those core values with capabilities supplied by installed optional Basilisk distributions
+such as ``bsk-opnav``.  Optional distributions declare their capabilities through package entry-point metadata and
+must have the same version as the core artifact.  A mismatched provider raises ``RuntimeError`` instead of exposing
+an incompatible compiled extension.  This distinction lets ``getBuildInfo()`` retain the core artifact's
+provenance while feature guards continue to work when Basilisk is distributed across multiple wheels.  Feature
+names are case-sensitive, and an unknown name raises ``KeyError``.  These values describe compiled Basilisk
+capabilities; they do not report the availability of external applications such as Vizard.
 
 ``abi`` is captured by C and C++ translation units compiled with the selected Basilisk build configuration.  It
 records the actual target architecture, endianness, C and C++ language modes, compiler ABI, standard-library ABI and
@@ -220,8 +221,7 @@ extension ABI versions, canary types, and compiler-side extraction rules.  It is
 than maintaining parallel implementations.
 
 ``diagnostics`` contains values observed by CMake, requested Conan settings, compiler details, and build-tool
-versions.  The ``diagnostics["build"]["rustModules"]`` flag identifies whether native Rust modules were built.
-Rust compiler, Cargo, and Corrosion fields are empty when Rust modules are disabled.
+versions.  Rust compiler, Cargo, and Corrosion fields are empty when Rust modules are disabled.
 These diagnostics remain useful when reproducing a build, but they are not all binary-compatibility requirements.
 For example, CMake and Conan versions should not be compared as part of an SDK compatibility decision.  For Xcode
 and Visual Studio, ``diagnostics["build"]`` describes the multi-config generator while

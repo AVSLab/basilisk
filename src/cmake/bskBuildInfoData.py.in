@@ -28,6 +28,7 @@ buildInfoData = {
         "vizInterface": @BSK_INFO_FEATURE_VIZINTERFACE@,
         "opNav": @BSK_INFO_FEATURE_OPNAV@,
         "mujoco": @BSK_INFO_FEATURE_MUJOCO@,
+        "rustModules": @BSK_INFO_FEATURE_RUST_MODULES@,
     },
     "diagnostics": {
         "target": {
@@ -45,7 +46,6 @@ buildInfoData = {
             "generatorPlatform": @BSK_INFO_GENERATOR_PLATFORM@,
             "generatorToolset": @BSK_INFO_GENERATOR_TOOLSET@,
             "pythonLimitedApi": @BSK_INFO_PY_LIMITED_API@,
-            "rustModules": @_rust_modules@,
         },
         "compilers": {
             "c": {

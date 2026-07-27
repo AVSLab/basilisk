@@ -20,12 +20,16 @@ import ctypes
 
 import pytest
 
+from Basilisk import hasBuildFeature
 from Basilisk.utilities import deprecated
 
-rustModuleTemplate = pytest.importorskip(
-    "Basilisk.moduleTemplates.rustModuleTemplate",
-    reason="Rust module support is not enabled in this Basilisk build",
+rustModulesEnabled = hasBuildFeature("rustModules")
+pytestmark = pytest.mark.skipif(
+    not rustModulesEnabled,
+    reason="Requires Basilisk built with --rustModules True",
 )
+if rustModulesEnabled:
+    from Basilisk.moduleTemplates import rustModuleTemplate
 
 
 @pytest.mark.parametrize(
