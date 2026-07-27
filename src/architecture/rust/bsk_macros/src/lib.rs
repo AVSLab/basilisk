@@ -1201,21 +1201,10 @@ fn parse_message_port(field: &mut Field) -> syn::Result<Option<(PortDirection, M
         .filter_map(|(index, attribute)| attribute.path().is_ident("bsk").then_some(index))
         .collect();
     let port_type = message_port_type(&field.ty);
-    let has_legacy_direction = annotation_indices
-        .iter()
-        .any(|index| annotation_mentions(&field.attrs[*index], &["input", "output"]));
     let has_optional = annotation_indices
         .iter()
         .any(|index| annotation_mentions(&field.attrs[*index], &["optional"]));
 
-    if has_legacy_direction {
-        return Err(syn::Error::new_spanned(
-            field,
-            "message direction is inferred from `MsgReader` or `MsgWriter`; \
-             remove `input` or `output` and use only `#[bsk(optional)]` for an \
-             optional input",
-        ));
-    }
     if port_type.is_none() {
         if contains_message_port_type(&field.ty) {
             return Err(syn::Error::new_spanned(
@@ -1253,7 +1242,10 @@ fn parse_message_port(field: &mut Field) -> syn::Result<Option<(PortDirection, M
                 optional = true;
                 Ok(())
             } else {
-                Err(meta.error("expected only `optional` on a message input"))
+                Err(meta.error(
+                    "message direction is inferred from `MsgReader` or `MsgWriter`; \
+                     only `optional` is supported on a message input",
+                ))
             }
         })?;
     }
