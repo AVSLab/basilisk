@@ -351,7 +351,7 @@ validator:
 .. code-block:: rust
 
     #[bsk(
-        validate = "validate_old_gain",
+        validate = validate_old_gain,
         deprecated(
             removal_date = "2099/05/05",
             message = "Use newGain instead."
