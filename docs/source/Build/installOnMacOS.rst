@@ -134,9 +134,7 @@ When all the prerequisite installations are complete, the project can be built a
 
         (.venv) $ python3 conanfile.py --rustModules True
 
-   The build downloads the pinned Corrosion CMake integration automatically;
-   no separate Corrosion installation is required. See :ref:`rustModules` for
-   details about creating and testing Rust modules.
+   See :ref:`rustModules` for details about creating and testing Rust modules.
 
    For other configure and build options, see :ref:`configureBuild`.  This creates the Xcode project in
    ``dist3``.

@@ -105,9 +105,8 @@ The script accepts the following options to customize this process.
       - Boolean
       - False
       - :beta:`Rust Module Support` Enables discovery and compilation of
-        in-tree Rust modules. Requires Rust and Cargo. The pinned Corrosion
-        integration is downloaded automatically. See :ref:`rustModules` for
-        the minimum supported Rust version.
+        in-tree Rust modules. Requires Rust and Cargo. See :ref:`rustModules`
+        for the minimum supported Rust version and setup details.
     * - ``examples``
       - Boolean
       - True
