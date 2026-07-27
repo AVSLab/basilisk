@@ -595,7 +595,28 @@ def test_rust_module_template_rust_owned_instance_lifecycle():
         assert kind == _BSK_RUST_ERROR_INVALID_ARGUMENT
         assert "module handle must not be null" in message
 
+        uninitialized_error = reset(handle, 8, ctypes.byref(context))  # [ns]
+        kind, message = _consume_abi_error(extension, uninitialized_error)
+        assert kind == _BSK_RUST_ERROR_EXPECTED
+        assert (
+            message
+            == "cannot write a Basilisk output message before SelfInit initializes "
+            "its port"
+        )
+
+        # Repeating SelfInit must preserve the recorded stable port bindings.
         _assert_no_abi_error(extension, self_init(handle, ctypes.byref(context)))
+        _assert_no_abi_error(extension, self_init(handle, ctypes.byref(context)))
+        raw_config.data_in_msg.header.is_linked = 1
+        invalid_reader_error = update(handle, 8, ctypes.byref(context))  # [ns]
+        kind, message = _consume_abi_error(extension, invalid_reader_error)
+        assert kind == _BSK_RUST_ERROR_EXPECTED
+        assert (
+            message
+            == "cannot read a Basilisk input message with uninitialized port pointers"
+        )
+        raw_config.data_in_msg.header.is_linked = 0
+
         raw_config.increment = 0.0  # [-]
         expected_error = reset(handle, 9, ctypes.byref(context))  # [ns]
         kind, message = _consume_abi_error(extension, expected_error)
@@ -618,8 +639,32 @@ def test_rust_module_template_rust_owned_instance_lifecycle():
             assert output_port.header.module_id == 7
             assert output_port.header.time_written == 10
 
+        original_payload_pointer = raw_config.data_out_msg.payload_pointer
+        raw_config.data_out_msg.payload_pointer = 1
+        rebound_error = reset(handle, 11, ctypes.byref(context))  # [ns]
+        kind, message = _consume_abi_error(extension, rebound_error)
+        assert kind == _BSK_RUST_ERROR_EXPECTED
+        assert (
+            message
+            == "Basilisk output message port `rustModuleTemplate.dataOutMsg` "
+            "was moved or rebound after SelfInit"
+        )
+        raw_config.data_out_msg.payload_pointer = original_payload_pointer
+
+        original_array_header_pointer = raw_config.data_out_msgs[1].header_pointer
+        raw_config.data_out_msgs[1].header_pointer = 1
+        array_rebound_error = reset(handle, 11, ctypes.byref(context))  # [ns]
+        kind, message = _consume_abi_error(extension, array_rebound_error)
+        assert kind == _BSK_RUST_ERROR_EXPECTED
+        assert (
+            message
+            == "Basilisk output message port `rustModuleTemplate.dataOutMsgs[1]` "
+            "was moved or rebound after SelfInit"
+        )
+        raw_config.data_out_msgs[1].header_pointer = original_array_header_pointer
+
         raw_config.panic_on_update = True
-        panic_error = update(handle, 11, ctypes.byref(context))  # [ns]
+        panic_error = update(handle, 12, ctypes.byref(context))  # [ns]
         kind, message = _consume_abi_error(extension, panic_error)
         assert kind == _BSK_RUST_ERROR_PANIC
         assert (
@@ -629,7 +674,7 @@ def test_rust_module_template_rust_owned_instance_lifecycle():
         )
 
         raw_config.panic_on_update = False
-        poisoned_error = reset(handle, 12, ctypes.byref(context))  # [ns]
+        poisoned_error = reset(handle, 13, ctypes.byref(context))  # [ns]
         kind, message = _consume_abi_error(extension, poisoned_error)
         assert kind == _BSK_RUST_ERROR_PANIC
         assert (
@@ -640,6 +685,21 @@ def test_rust_module_template_rust_owned_instance_lifecycle():
         assert raw_config.dummy == 0.0
     finally:
         _destroy_rust_instance(extension, handle)
+
+
+def test_rust_module_template_supports_output_coauthors():
+    """Preserve a valid output coauthor configured before ``SelfInit``."""
+    module = rustModuleTemplate.rustModuleTemplate()
+    shared_output = messaging.CModuleTemplateMsg_C()
+    shared_output.write(messaging.CModuleTemplateMsgPayload())
+    messaging.CModuleTemplateMsg_C_addAuthor(module.dataOutMsg, shared_output)
+
+    module.SelfInit()
+    module.Reset(42)  # [ns]
+
+    assert shared_output.header.isWritten == 1
+    assert shared_output.header.timeWritten == 42
+    np.testing.assert_allclose(shared_output.read().dataVector, np.zeros(3))
 
 
 @pytest.mark.parametrize("connect_input", [False, True])
@@ -737,6 +797,7 @@ def test_rust_module_template_panic_is_contained(capfd):
     """Translate a Rust panic once without emitting the default hook report."""
     module = rustModuleTemplate.rustModuleTemplate()
     module.panicOnUpdate = True
+    module.SelfInit()
 
     with pytest.raises(
         BasiliskError,

@@ -1045,8 +1045,10 @@ mod runtime_abi_tests {
 ///
 /// Implemented once per Basilisk message type by ``bsk-messages`` (generated
 /// from Basilisk's generated C-message headers). Module authors never call
-/// these methods or implement this trait directly — read and write messages
-/// through [`MsgReader`]/[`MsgWriter`] instead.
+/// these methods or implement this trait directly. Read a port explicitly
+/// through [`MsgReader`] when a lifecycle method needs it; return named output
+/// payloads from [`BskModule::reset`] and [`BskModule::update`] for the
+/// generated lifecycle to publish through [`MsgWriter`] fields.
 ///
 /// # Safety
 ///
@@ -1058,7 +1060,10 @@ mod runtime_abi_tests {
 ///   valid bit patterns of the generated `<Message>_C` port type selected by
 ///   `bsk-build`;
 /// * each operation must call the matching generated C-message function and
-///   obey that function's pointer, ownership, and lifetime requirements.
+///   obey that function's pointer, ownership, and lifetime requirements;
+/// * [`Msg::__is_initialized`] and [`Msg::__port_pointers`] must report the
+///   actual C payload and header pointer state without dereferencing either
+///   pointer.
 ///
 /// A mismatched port representation lets the generated C++ wrapper access the
 /// Rust allocation with the wrong layout and can cause undefined behavior.
@@ -1070,11 +1075,26 @@ pub unsafe trait Msg: Sized + Copy {
     #[doc(hidden)]
     fn __is_linked(port: &mut Self::Port) -> bool;
     #[doc(hidden)]
-    fn __read(port: &mut Self::Port) -> Self;
+    fn __is_initialized(port: &Self::Port) -> bool;
     #[doc(hidden)]
-    fn __init(port: &mut Self::Port);
+    fn __port_pointers(port: &Self::Port) -> (*const (), *const ());
+    /// Read through the underlying C message interface.
+    ///
+    /// # Safety
+    ///
+    /// The port must be linked and initialized with valid payload and header
+    /// pointers.
     #[doc(hidden)]
-    fn __write(data: &Self, port: &mut Self::Port, module_id: i64, current_sim_nanos: u64);
+    unsafe fn __read(port: &mut Self::Port) -> Self;
+    #[doc(hidden)]
+    unsafe fn __init(port: &mut Self::Port);
+    /// Write through the underlying C message interface.
+    ///
+    /// # Safety
+    ///
+    /// The port must be initialized with valid payload and header pointers.
+    #[doc(hidden)]
+    unsafe fn __write(data: &Self, port: &mut Self::Port, module_id: i64, current_sim_nanos: u64);
 }
 
 /// An input message port — reads a [`Msg`] written by another module.
@@ -1099,17 +1119,50 @@ impl<T: Msg> MsgReader<T> {
         T::__is_linked(&mut self.0)
     }
     /// Read the current message value.
-    pub fn read(&mut self) -> T {
-        T::__read(&mut self.0)
+    ///
+    /// Returns an error instead of calling the C message interface when the
+    /// input is unlinked or its port pointers have not been initialized.
+    pub fn read(&mut self) -> BskResult<T> {
+        if !self.is_linked() {
+            return Err(BskError::new(
+                "cannot read an unlinked Basilisk input message",
+            ));
+        }
+        if !T::__is_initialized(&self.0) {
+            return Err(BskError::new(
+                "cannot read a Basilisk input message with uninitialized port pointers",
+            ));
+        }
+        // SAFETY: The private generated port representation prevents safe Rust
+        // code from changing these pointers. The checks above establish that
+        // they are non-null; the Basilisk subscription FFI guarantees that a
+        // linked port points to a live source message.
+        Ok(unsafe { T::__read(&mut self.0) })
     }
 }
 
-/// An output message port — writes a [`Msg`] for other modules to read.
+/// An output message port managed by the generated lifecycle.
 ///
 /// Use as a config struct field, e.g.
-/// ``pub cmdTorqueOutMsg: MsgWriter<CmdTorqueBodyMsg>``.
+/// ``pub cmdTorqueOutMsg: MsgWriter<CmdTorqueBodyMsg>``. Module code returns
+/// payloads through [`BskModule::Outputs`] rather than writing this port
+/// directly.
 #[repr(transparent)]
 pub struct MsgWriter<T: Msg>(T::Port);
+
+/// Identity of an output port at the point generated ``SelfInit`` binds it.
+///
+/// The fields are private so safe module code cannot manufacture a binding for
+/// an output port that the generated lifecycle has not initialized. The
+/// generated module instance retains these values outside the C-visible
+/// configuration and verifies them before every write.
+#[doc(hidden)]
+#[derive(Clone, Copy, PartialEq, Eq)]
+pub struct BskMessagePortBinding {
+    port: *const (),
+    data: *const (),
+    header: *const (),
+}
 
 impl<T: Msg> Default for MsgWriter<T> {
     fn default() -> Self {
@@ -1118,14 +1171,71 @@ impl<T: Msg> Default for MsgWriter<T> {
 }
 
 impl<T: Msg> MsgWriter<T> {
-    /// Claim ownership of this output message. Called automatically from the
-    /// generated ``SelfInit`` — module code does not need to call this.
-    pub fn init(&mut self) {
-        T::__init(&mut self.0)
+    fn current_binding(&self) -> BskMessagePortBinding {
+        let (data, header) = T::__port_pointers(&self.0);
+        BskMessagePortBinding {
+            port: core::ptr::addr_of!(self.0).cast(),
+            data,
+            header,
+        }
     }
-    /// Write a new message value.
-    pub fn write(&mut self, data: &T, module_id: i64, current_sim_nanos: u64) {
-        T::__write(data, &mut self.0, module_id, current_sim_nanos)
+
+    /// Initialize this output in its final storage location and return its
+    /// private lifecycle binding.
+    ///
+    /// # Safety
+    ///
+    /// The writer must reside in its final C-visible configuration field. It
+    /// must not be moved or rebound while the returned binding remains in use.
+    /// Generated lifecycle code enforces these requirements; module code must
+    /// not call this method.
+    #[doc(hidden)]
+    pub unsafe fn __initialize(&mut self) -> BskMessagePortBinding {
+        unsafe { T::__init(&mut self.0) };
+        self.current_binding()
+    }
+
+    /// Confirm that this writer still matches its ``SelfInit`` binding.
+    #[doc(hidden)]
+    pub fn __validate_binding(
+        &self,
+        expected: &BskMessagePortBinding,
+        port_name: &str,
+        port_index: Option<usize>,
+    ) -> BskResult<()> {
+        if !T::__is_initialized(&self.0) {
+            return Err(BskError::new(
+                "cannot write a Basilisk output message before SelfInit initializes its port",
+            ));
+        }
+        if self.current_binding() != *expected {
+            let port_label = match port_index {
+                Some(index) => format!("{port_name}[{index}]"),
+                None => port_name.to_owned(),
+            };
+            return Err(BskError::new(format!(
+                "Basilisk output message port `{port_label}` was moved or rebound after SelfInit"
+            )));
+        }
+        Ok(())
+    }
+
+    /// Write through a binding retained by the generated module instance.
+    #[doc(hidden)]
+    pub fn __write_bound(
+        &mut self,
+        expected: &BskMessagePortBinding,
+        port_name: &str,
+        port_index: Option<usize>,
+        data: &T,
+        module_id: i64,
+        current_sim_nanos: u64,
+    ) -> BskResult<()> {
+        self.__validate_binding(expected, port_name, port_index)?;
+        // SAFETY: The unforgeable binding verifies the writer's address and
+        // both C pointers against the values recorded by generated SelfInit.
+        unsafe { T::__write(data, &mut self.0, module_id, current_sim_nanos) };
+        Ok(())
     }
 }
 
@@ -1146,7 +1256,7 @@ impl<Message: Msg> BskModuleInput<Message> for Message {
 
     fn read(port: &mut MsgReader<Message>, missing_message: &str) -> BskResult<Self> {
         Self::validate(port, missing_message)?;
-        Ok(port.read())
+        port.read()
     }
 }
 
@@ -1156,11 +1266,11 @@ impl<Message: Msg> BskModuleInput<Message> for Option<Message> {
     }
 
     fn read(port: &mut MsgReader<Message>, _missing_message: &str) -> BskResult<Self> {
-        Ok(if port.is_linked() {
-            Some(port.read())
+        if port.is_linked() {
+            port.read().map(Some)
         } else {
-            None
-        })
+            Ok(None)
+        }
     }
 }
 
@@ -1174,6 +1284,8 @@ mod module_input_tests {
     #[derive(Default)]
     struct TestPort {
         linked: bool,
+        initialized: bool,
+        bound_address: usize,
         value: TestMessage,
     }
 
@@ -1187,11 +1299,27 @@ mod module_input_tests {
         fn __is_linked(port: &mut Self::Port) -> bool {
             port.linked
         }
-        fn __read(port: &mut Self::Port) -> Self {
+        fn __is_initialized(port: &Self::Port) -> bool {
+            port.initialized
+        }
+        fn __port_pointers(port: &Self::Port) -> (*const (), *const ()) {
+            let pointer = port.bound_address as *const ();
+            (pointer, pointer)
+        }
+        unsafe fn __read(port: &mut Self::Port) -> Self {
             port.value
         }
-        fn __init(_port: &mut Self::Port) {}
-        fn __write(_data: &Self, _port: &mut Self::Port, _module_id: i64, _current_sim_nanos: u64) {
+        unsafe fn __init(port: &mut Self::Port) {
+            port.initialized = true;
+            port.bound_address = core::ptr::addr_of!(*port) as usize;
+        }
+        unsafe fn __write(
+            data: &Self,
+            port: &mut Self::Port,
+            _module_id: i64,
+            _current_sim_nanos: u64,
+        ) {
+            port.value = *data;
         }
     }
 
@@ -1199,7 +1327,9 @@ mod module_input_tests {
     fn required_input_reads_linked_message() {
         let mut reader = MsgReader(TestPort {
             linked: true,
+            initialized: true,
             value: TestMessage(42),
+            ..TestPort::default()
         });
         let value = <TestMessage as BskModuleInput<TestMessage>>::read(
             &mut reader,
@@ -1234,6 +1364,54 @@ mod module_input_tests {
         )
         .expect_err("an unlinked required input must fail validation");
         assert_eq!(error, BskError::new("missing required input"));
+    }
+
+    #[test]
+    fn safe_read_rejects_unlinked_and_uninitialized_ports() {
+        let mut unlinked = MsgReader::<TestMessage>(TestPort::default());
+        let error = unlinked
+            .read()
+            .expect_err("a safe read must reject an unlinked port");
+        assert_eq!(
+            error,
+            BskError::new("cannot read an unlinked Basilisk input message")
+        );
+
+        let mut uninitialized = MsgReader::<TestMessage>(TestPort {
+            linked: true,
+            ..TestPort::default()
+        });
+        let error = uninitialized
+            .read()
+            .expect_err("a safe read must reject invalid port pointers");
+        assert_eq!(
+            error,
+            BskError::new("cannot read a Basilisk input message with uninitialized port pointers")
+        );
+    }
+
+    #[test]
+    fn bound_write_rejects_a_moved_output_port() {
+        let mut writer = Box::new(MsgWriter::<TestMessage>(TestPort::default()));
+        let value = TestMessage(42);
+        // SAFETY: The boxed writer remains at a stable address while this
+        // binding is used for the first write.
+        let binding = unsafe { writer.__initialize() };
+        writer
+            .__write_bound(&binding, "testOutMsg", None, &value, 7, 11)
+            .expect("an initialized output must be writable");
+        assert_eq!(writer.0.value, value);
+
+        let mut moved = *writer;
+        let error = moved
+            .__write_bound(&binding, "testOutMsgs", Some(2), &value, 7, 12)
+            .expect_err("moving an initialized output must invalidate its binding");
+        assert_eq!(
+            error,
+            BskError::new(
+                "Basilisk output message port `testOutMsgs[2]` was moved or rebound after SelfInit"
+            )
+        );
     }
 }
 
