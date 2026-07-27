@@ -46,16 +46,14 @@ pub struct RustModuleTemplateConfig {
     #[bsk(validate = "validate_sample_matrix")]
     pub sampleMatrix: [[f64; 3]; 2],
     /// [-] Optional input message
-    #[bsk(input, optional)]
+    #[bsk(optional)]
     pub dataInMsg: MsgReader<CModuleTemplateMsg>,
     /// [-] Fixed-size array of optional input messages
-    #[bsk(input, optional)]
+    #[bsk(optional)]
     pub dataInMsgs: [MsgReader<CModuleTemplateMsg>; 2],
     /// [-] Individual output written from the returned ``dataOutMsg`` value
-    #[bsk(output)]
     pub dataOutMsg: MsgWriter<CModuleTemplateMsg>,
     /// [-] Output array written element-by-element from returned ``dataOutMsgs``
-    #[bsk(output)]
     pub dataOutMsgs: [MsgWriter<CModuleTemplateMsg>; 2],
     /// [-] Deprecated sample parameter retained to demonstrate migration warnings
     #[bsk(deprecated(removal_date = "2027/07/24", message = "Use dummy instead."))]

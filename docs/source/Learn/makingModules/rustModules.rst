@@ -454,10 +454,8 @@ output, and no private state:
         #[bsk(validate = "validate_gain")]
         pub K: f64,
         /// [-] Attitude guidance input
-        #[bsk(input)]
         pub attGuidInMsg: MsgReader<AttGuidMsg>,
         /// [Nm] Commanded body torque output
-        #[bsk(output)]
         pub cmdTorqueOutMsg: MsgWriter<CmdTorqueBodyMsg>,
     }
 
@@ -661,20 +659,20 @@ with the generated message types described below.
 ``MsgWriter<CmdTorqueBodyMsg>``
    An output port that writes a ``CmdTorqueBodyMsg`` value.
 
-Every port must be annotated. Required and optional inputs are explicit:
+The port type declares its direction: ``MsgReader<T>`` is an input and
+``MsgWriter<T>`` is an output. Required readers and all writers need no port
+annotation. Add ``#[bsk(optional)]`` only when an input may be unconnected:
 
 .. code-block:: rust
 
     /// [-] Required attitude input
-    #[bsk(input)]
     pub navAttInMsg: MsgReader<NavAttMsg>,
 
     /// [Nm] Optional disturbance estimate
-    #[bsk(input, optional)]
+    #[bsk(optional)]
     pub disturbanceInMsg: MsgReader<CmdTorqueBodyMsg>,
 
     /// [Nm] Commanded body torque
-    #[bsk(output)]
     pub cmdTorqueOutMsg: MsgWriter<CmdTorqueBodyMsg>,
 
 A required input causes ``Reset`` or ``UpdateState`` to fail with
@@ -693,7 +691,7 @@ Writing Output Messages
 Rust module logic returns message payload values in its generated ``Outputs``
 struct. It does not call ``MsgWriter`` or fill in a Basilisk message header
 directly. Each returned field is matched by name to the corresponding
-``#[bsk(output)]`` configuration field. For example, the return value
+``MsgWriter<T>`` configuration field. For example, the return value
 
 .. code-block:: rust
 
@@ -735,15 +733,13 @@ message type. The array length is part of the module interface:
 .. code-block:: rust
 
     /// [-] Required navigation inputs
-    #[bsk(input)]
     pub navAttInMsgs: [MsgReader<NavAttMsg>; 2],
 
     /// [-] Optional navigation inputs
-    #[bsk(input, optional)]
+    #[bsk(optional)]
     pub optionalNavAttInMsgs: [MsgReader<NavAttMsg>; 2],
 
     /// [Nm] Commanded body torques
-    #[bsk(output)]
     pub cmdTorqueOutMsgs: [MsgWriter<CmdTorqueBodyMsg>; 2],
 
 The generated lifecycle value fields preserve the same length. In this
@@ -830,8 +826,8 @@ or the public fields of a C++ module. It can contain:
 * fixed-size arrays such as ``[f64; 3]`` and ``[[f64; 3]; 3]``;
 * nested, by-value ``#[repr(C)]`` parameter structs that derive
   ``bsk_build::BskConfigValue``; and
-* annotated ``MsgReader<T>`` and ``MsgWriter<T>`` ports, individually or in
-  fixed-size arrays.
+* ``MsgReader<T>`` and ``MsgWriter<T>`` ports, individually or in fixed-size
+  arrays.
 
 Every configuration field must implement Rust's ``Default`` behavior because
 Rust constructs the complete module before calling ``init``. Every non-port

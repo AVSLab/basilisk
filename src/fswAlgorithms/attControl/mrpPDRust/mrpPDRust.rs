@@ -36,13 +36,10 @@ pub struct MrpPDRustConfig {
     #[bsk(validate = "validate_known_torque")]
     pub knownTorquePntB_B: [f64; 3],
     /// [N*m] Commanded external control torque
-    #[bsk(output)]
     pub cmdTorqueOutMsg: MsgWriter<CmdTorqueBodyMsg>,
     /// [-] Attitude and angular-rate tracking errors
-    #[bsk(input)]
     pub guidInMsg: MsgReader<AttGuidMsg>,
     /// [-] Spacecraft mass properties
-    #[bsk(input)]
     pub vehConfigInMsg: MsgReader<VehicleConfigMsg>,
 }
 
