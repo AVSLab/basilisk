@@ -61,7 +61,7 @@ Given a Basilisk source checkout and one external project root, the build
 system produces a single ``Basilisk`` Python package containing:
 
 * the selected core Basilisk modules and optional components;
-* custom modules under ``Basilisk.ExternalModules``;
+* custom C, C++, and Rust modules under ``Basilisk.ExternalModules``;
 * custom payload types under ``Basilisk.architecture.messaging``; and
 * generated C message interfaces for custom C payloads.
 
@@ -81,6 +81,9 @@ Before continuing:
 #. Create or obtain an external project root with the layout described below.
 #. Follow :ref:`makingModules` and the :ref:`Basilisk module checkout list
    <bskModuleCheckoutList>` when implementing and testing each module.
+
+Building an external Rust module additionally requires the supported Rust
+toolchain described in :ref:`rustModules` and the ``rustModules`` build option.
 
 The external project may be stored in a separate repository and placed anywhere
 that the build environment can access. An absolute path is the clearest choice
@@ -102,6 +105,8 @@ fixed names because the Basilisk build discovers them automatically:
 .. code-block:: text
 
    External/
+   |-- Cargo.toml                         # when external Rust modules are present
+   |-- Cargo.lock                         # committed external dependency resolution
    |-- ExternalModules/
    |   |-- CustomCppModule/
    |   |   |-- customCppModule.h
@@ -112,6 +117,12 @@ fixed names because the Basilisk build discovers them automatically:
    |   |   |-- customCModule.h
    |   |   |-- customCModule.c
    |   |   |-- customCModule.i
+   |   |   `-- _UnitTest/
+   |   |-- customRustModule/
+   |   |   |-- Cargo.toml
+   |   |   |-- build.rs
+   |   |   |-- customRustModule.rs
+   |   |   |-- customRustModule.rst
    |   |   `-- _UnitTest/
    |   `-- _GeneralModuleFiles/
    |-- msgPayloadDefC/
@@ -124,9 +135,18 @@ The same layout is illustrated below.
    :alt: Required directory structure for an integrated external-module build
 
 ``ExternalModules``
-   Required. Each child directory contains one normal Basilisk C or C++ module,
-   including its SWIG interface and tests. The directory name must be exactly
+   Required. Each child directory contains one normal Basilisk C, C++, or Rust
+   module and its tests. C and C++ modules provide a SWIG interface. Rust
+   modules instead provide ``Cargo.toml`` and ``build.rs``; their interface is
+   generated during the build. The directory name must be exactly
    ``ExternalModules``.
+
+``Cargo.toml`` and ``Cargo.lock``
+   Recommended at the external project root when Rust modules are present.
+   They define one external Cargo workspace and locked dependency resolution.
+   An independent Rust package directly under ``ExternalModules`` may instead
+   commit its own ``Cargo.lock``. See :ref:`rustModules` for the manifests and
+   Basilisk support-crate dependencies.
 
 ``ExternalModules/_GeneralModuleFiles``
    Optional. Place C, C++, header, and SWIG support files shared by multiple
@@ -170,6 +190,7 @@ example:
 
    python3 conanfile.py \
      --clean \
+     --rustModules True \
      --mujoco True \
      --opNav False \
      --pathToExternalModules "/absolute/path/to/External"
@@ -200,6 +221,14 @@ Import an external module and its generated messages:
    print(module)
    print(payload)
 
+An external Rust module uses the same namespace:
+
+.. code-block:: python
+
+   from Basilisk.ExternalModules import customRustModule
+
+   module = customRustModule.customRustModule()
+
 Run the external module tests from the Basilisk source root:
 
 .. code-block:: bash
@@ -207,6 +236,7 @@ Run the external module tests from the Basilisk source root:
    python -m pytest \
      ../External/ExternalModules/CustomCppModule/_UnitTest/ \
      ../External/ExternalModules/CustomCModule/_UnitTest/ \
+     ../External/ExternalModules/customRustModule/_UnitTest/ \
      -v
 
 Run the broader Basilisk test suite before distributing the combined build.
@@ -233,6 +263,10 @@ options, or when generated files and build configuration may be stale:
    python3 conanfile.py \
      --clean \
      --pathToExternalModules "../External"
+
+Repeat ``--rustModules True`` on each command when the external project
+contains Rust modules. Build options are not inferred from the external source
+files.
 
 Changing a custom payload has a larger build impact than changing ordinary
 module implementation code. The payload participates in the combined message
@@ -289,7 +323,7 @@ through ``CONAN_ARGS`` while building from the Basilisk source root:
 
 .. code-block:: bash
 
-   CONAN_ARGS="--clean --pathToExternalModules='/absolute/path/to/External'" \
+   CONAN_ARGS="--clean --rustModules True --pathToExternalModules='/absolute/path/to/External'" \
      python -m pip wheel --no-deps -v .
 
 Install and test the resulting ``bsk-*.whl`` in a clean environment before
@@ -322,8 +356,12 @@ Troubleshooting
 
 ``Basilisk.ExternalModules`` does not contain the module
    Confirm that ``--pathToExternalModules`` points to the root containing the
-   exact ``ExternalModules`` directory. Verify that the module has a SWIG ``.i``
-   file, rerun configuration, and inspect the build output for the target name.
+   exact ``ExternalModules`` directory. For C and C++, verify that the module
+   has a SWIG ``.i`` file. For Rust, verify that ``rustModules`` is enabled,
+   the module has a ``Cargo.toml`` file with
+   ``[package.metadata.basilisk] module = true``, and its workspace or package
+   lockfile is current. Rerun configuration and inspect the build output for
+   the target name.
 
 A custom message is missing from ``Basilisk.architecture.messaging``
    Confirm that its header is directly under ``msgPayloadDefC`` or

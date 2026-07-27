@@ -628,10 +628,14 @@ if(NOT "${EXTERNAL_MODULES_PATH}" STREQUAL "")
   string(REPLACE "\\" "/" EXTERNAL_MODULES_PATH "${EXTERNAL_MODULES_PATH}")
   include_directories("${EXTERNAL_MODULES_PATH}")
   find_package_targets("${EXTERNAL_MODULES_PATH}" EXTERNAL_MODULE_TARGETS)
+  find_external_rust_package_targets(
+    "${EXTERNAL_MODULES_PATH}" EXTERNAL_RUST_MODULE_TARGETS)
   if(EXISTS "${EXTERNAL_MODULES_PATH}/ExternalModules/_GeneralModuleFiles")
     generate_package_libraries("${EXTERNAL_MODULES_PATH}" "${AllLibs}")
   endif()
   generate_package_targets("${EXTERNAL_MODULE_TARGETS}" "${AllLibs}" "ExternalModules")
+  generate_rust_package_targets(
+    "${EXTERNAL_RUST_MODULE_TARGETS}" "${AllLibs}" "ExternalModules")
 endif(NOT "${EXTERNAL_MODULES_PATH}" STREQUAL "")
 
 # The quotations around DYN_TARGETS informs function that it is a list

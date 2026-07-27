@@ -28,30 +28,38 @@ function(_bsk_find_cargo OUT_VAR)
   set("${OUT_VAR}" "${_BSK_CARGO_EXECUTABLE}" PARENT_SCOPE)
 endfunction()
 
-# Ask Cargo for the typed workspace/package model once per configure. This
-# avoids duplicating Cargo.toml syntax, workspace inheritance, or metadata
-# semantics in CMake.
-function(_bsk_rust_workspace_metadata OUT_VAR)
+# Ask Cargo for the typed workspace/package model once per discovery manifest
+# and configure. This avoids duplicating Cargo.toml syntax, workspace
+# inheritance, or metadata semantics in CMake, while allowing an integrated
+# external-module project to keep its own Cargo workspace and lockfile.
+function(_bsk_rust_workspace_metadata WORKSPACE_MANIFEST OUT_VAR)
+  get_filename_component(
+    _workspace_manifest "${WORKSPACE_MANIFEST}" ABSOLUTE)
+  if(NOT EXISTS "${_workspace_manifest}")
+    message(FATAL_ERROR
+      "Rust module discovery requires the Cargo manifest: "
+      "${_workspace_manifest}")
+  endif()
+  file(REAL_PATH "${_workspace_manifest}" _workspace_manifest)
+  string(MD5 _metadata_cache_key "${_workspace_manifest}")
+  set(_metadata_property
+      "BSK_RUST_WORKSPACE_METADATA_${_metadata_cache_key}")
+
   get_property(
     _metadata_cached
-    GLOBAL PROPERTY BSK_RUST_WORKSPACE_METADATA
+    GLOBAL PROPERTY "${_metadata_property}"
     SET)
   if(_metadata_cached)
     get_property(
       _metadata_json
-      GLOBAL PROPERTY BSK_RUST_WORKSPACE_METADATA)
+      GLOBAL PROPERTY "${_metadata_property}")
     set("${OUT_VAR}" "${_metadata_json}" PARENT_SCOPE)
     return()
   endif()
 
   _bsk_find_cargo(_cargo_executable)
-  set(_workspace_manifest "${CMAKE_SOURCE_DIR}/Cargo.toml")
-  set(_workspace_lockfile "${CMAKE_SOURCE_DIR}/Cargo.lock")
-  if(NOT EXISTS "${_workspace_manifest}")
-    message(FATAL_ERROR
-      "Rust module discovery requires the workspace manifest: "
-      "${_workspace_manifest}")
-  endif()
+  get_filename_component(_workspace_directory "${_workspace_manifest}" DIRECTORY)
+  set(_workspace_lockfile "${_workspace_directory}/Cargo.lock")
   set_property(
     DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS
     "${_workspace_manifest}"
@@ -103,7 +111,7 @@ function(_bsk_rust_workspace_metadata OUT_VAR)
   endif()
 
   set_property(
-    GLOBAL PROPERTY BSK_RUST_WORKSPACE_METADATA "${_metadata_json}")
+    GLOBAL PROPERTY "${_metadata_property}" "${_metadata_json}")
   set("${OUT_VAR}" "${_metadata_json}" PARENT_SCOPE)
 endfunction()
 
@@ -157,58 +165,90 @@ function(find_rust_package_targets PKG_DIR ALL_TARGET_LIST)
   endif()
 
   file(REAL_PATH "${PKG_DIR}" _package_root)
-  _bsk_rust_workspace_metadata(_metadata_json)
-  string(JSON _package_count LENGTH "${_metadata_json}" packages)
-
-  set(RUST_TARGETS "")
-  if(_package_count EQUAL 0)
-    set("${ALL_TARGET_LIST}" "" PARENT_SCOPE)
-    return()
+  set(_discovery_manifests ${ARGN})
+  if(NOT _discovery_manifests)
+    set(_discovery_manifests "${CMAKE_SOURCE_DIR}/Cargo.toml")
   endif()
 
-  math(EXPR _last_package_index "${_package_count} - 1")
-  foreach(_package_index RANGE 0 ${_last_package_index})
-    string(
-      JSON _manifest_path
-      GET "${_metadata_json}" packages ${_package_index} manifest_path)
-    file(REAL_PATH "${_manifest_path}" _manifest_path)
-    cmake_path(
-      IS_PREFIX _package_root "${_manifest_path}"
-      NORMALIZE _manifest_is_in_package)
-    if(NOT _manifest_is_in_package)
+  set(RUST_TARGETS "")
+  foreach(_discovery_manifest IN LISTS _discovery_manifests)
+    _bsk_rust_workspace_metadata("${_discovery_manifest}" _metadata_json)
+    string(JSON _package_count LENGTH "${_metadata_json}" packages)
+
+    if(_package_count EQUAL 0)
       continue()
     endif()
 
-    string(
-      JSON _module_metadata_type
-      ERROR_VARIABLE _module_metadata_error
-      TYPE "${_metadata_json}"
-      packages ${_package_index} metadata basilisk module)
-    if(_module_metadata_error)
-      continue()
-    endif()
-    if(NOT _module_metadata_type STREQUAL "BOOLEAN")
-      message(FATAL_ERROR
-        "Rust package marker must be a Boolean: "
-        "[package.metadata.basilisk] module = true in ${_manifest_path}")
-    endif()
-    string(
-      JSON _is_basilisk_module
-      GET "${_metadata_json}"
-      packages ${_package_index} metadata basilisk module)
-    if(_is_basilisk_module)
-      file(
-        RELATIVE_PATH _relative_manifest
-        "${CMAKE_SOURCE_DIR}" "${_manifest_path}")
-      list(APPEND RUST_TARGETS "${_relative_manifest}")
-    endif()
+    math(EXPR _last_package_index "${_package_count} - 1")
+    foreach(_package_index RANGE 0 ${_last_package_index})
+      string(
+        JSON _manifest_path
+        GET "${_metadata_json}" packages ${_package_index} manifest_path)
+      file(REAL_PATH "${_manifest_path}" _manifest_path)
+      cmake_path(
+        IS_PREFIX _package_root "${_manifest_path}"
+        NORMALIZE _manifest_is_in_package)
+      if(NOT _manifest_is_in_package)
+        continue()
+      endif()
+
+      string(
+        JSON _module_metadata_type
+        ERROR_VARIABLE _module_metadata_error
+        TYPE "${_metadata_json}"
+        packages ${_package_index} metadata basilisk module)
+      if(_module_metadata_error)
+        continue()
+      endif()
+      if(NOT _module_metadata_type STREQUAL "BOOLEAN")
+        message(FATAL_ERROR
+          "Rust package marker must be a Boolean: "
+          "[package.metadata.basilisk] module = true in ${_manifest_path}")
+      endif()
+      string(
+        JSON _is_basilisk_module
+        GET "${_metadata_json}"
+        packages ${_package_index} metadata basilisk module)
+      if(_is_basilisk_module)
+        file(
+          RELATIVE_PATH _relative_manifest
+          "${CMAKE_SOURCE_DIR}" "${_manifest_path}")
+        list(APPEND RUST_TARGETS "${_relative_manifest}")
+      endif()
+    endforeach()
   endforeach()
+  list(REMOVE_DUPLICATES RUST_TARGETS)
   list(SORT RUST_TARGETS)
 
   set("${ALL_TARGET_LIST}"
       ${RUST_TARGETS}
       PARENT_SCOPE)
 endfunction(find_rust_package_targets)
+
+# Discover Rust modules supplied through EXTERNAL_MODULES_PATH. Prefer one
+# Cargo workspace at the external project root, but also accept independent
+# packages directly under ExternalModules/<module>. Cargo remains the source
+# of truth for package metadata in both layouts.
+function(find_external_rust_package_targets EXTERNAL_ROOT ALL_TARGET_LIST)
+  if(NOT BUILD_RUST_MODULES)
+    set("${ALL_TARGET_LIST}" "" PARENT_SCOPE)
+    return()
+  endif()
+
+  file(GLOB _external_rust_manifests CONFIGURE_DEPENDS
+       "${EXTERNAL_ROOT}/Cargo.toml"
+       "${EXTERNAL_ROOT}/ExternalModules/*/Cargo.toml")
+  if(NOT _external_rust_manifests)
+    set("${ALL_TARGET_LIST}" "" PARENT_SCOPE)
+    return()
+  endif()
+
+  find_rust_package_targets(
+    "${EXTERNAL_ROOT}/ExternalModules"
+    _external_rust_targets
+    ${_external_rust_manifests})
+  set("${ALL_TARGET_LIST}" ${_external_rust_targets} PARENT_SCOPE)
+endfunction(find_external_rust_package_targets)
 
 function(generate_rust_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
   if(NOT TARGET_LIST)
@@ -240,16 +280,20 @@ function(generate_rust_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
     _bsk_find_python_libclang(_rust_libclang_dir)
     list(APPEND _rust_cargo_env "LIBCLANG_PATH=${_rust_libclang_dir}")
   endif()
-  foreach(TARGET_FILE ${TARGET_LIST})
-    get_filename_component(PARENT_DIR ${TARGET_FILE} DIRECTORY)
-    get_filename_component(TARGET_NAME ${PARENT_DIR} NAME)
+  foreach(TARGET_FILE IN LISTS TARGET_LIST)
+    get_filename_component(PARENT_DIR "${TARGET_FILE}" DIRECTORY)
+    get_filename_component(TARGET_NAME "${PARENT_DIR}" NAME)
 
-    if(${TARGET_NAME} IN_LIST EXCLUDED_BSK_TARGETS)
+    if("${TARGET_NAME}" IN_LIST EXCLUDED_BSK_TARGETS)
       message("Skipped Target: ${TARGET_NAME}")
       continue()
     endif()
 
-    set(_rust_manifest "${CMAKE_SOURCE_DIR}/${TARGET_FILE}")
+    if(IS_ABSOLUTE "${TARGET_FILE}")
+      set(_rust_manifest "${TARGET_FILE}")
+    else()
+      set(_rust_manifest "${CMAKE_SOURCE_DIR}/${TARGET_FILE}")
+    endif()
     bsk_add_rust_module_sources(
       TARGET      ${TARGET_NAME}
       MANIFEST    "${_rust_manifest}"
@@ -330,7 +374,11 @@ function(generate_rust_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
       target_compile_definitions(${_swig_target} PRIVATE "Py_LIMITED_API=${PY_LIMITED_API}")
     endif()
 
-    set_target_properties(${_swig_target} PROPERTIES FOLDER ${PARENT_DIR})
+    if("${MODULE_DIR}" STREQUAL "ExternalModules")
+      set_target_properties(${_swig_target} PROPERTIES FOLDER ${MODULE_DIR})
+    else()
+      set_target_properties(${_swig_target} PROPERTIES FOLDER ${PARENT_DIR})
+    endif()
     foreach(_prop LIBRARY_OUTPUT_DIRECTORY RUNTIME_OUTPUT_DIRECTORY ARCHIVE_OUTPUT_DIRECTORY)
       set_target_properties(${_swig_target} PROPERTIES
         ${_prop}            "${_out_dir}"
