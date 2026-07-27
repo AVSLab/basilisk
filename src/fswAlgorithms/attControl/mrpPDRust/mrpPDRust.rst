@@ -71,10 +71,10 @@ During reset, the module validates both required input connections and caches
 ``vehConfigInMsg.ISCPntB_B`` as a fixed-size ``nalgebra`` matrix in Rust-owned
 private state. Because inertia arrives through a message rather than a
 configuration setter, reset verifies that it is finite, symmetric, and
-positive definite before caching it. Each update converts the C-compatible
-guidance arrays to ``nalgebra`` vectors, evaluates the control law, and
-returns the commanded torque as a message array. The inertia remains fixed
-until the next reset, matching the C implementation.
+positive definite before caching it. Reset does not publish an output, matching
+the C implementation. Each update converts the C-compatible guidance arrays
+to ``nalgebra`` vectors, evaluates the control law, and returns the commanded
+torque as a message array. The inertia remains fixed until the next reset.
 
 Module Assumptions and Limitations
 ----------------------------------

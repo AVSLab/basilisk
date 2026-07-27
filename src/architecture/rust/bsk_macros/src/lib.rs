@@ -32,9 +32,11 @@ const CONFIG_TYPE_ENV: &str = "BSK_RUST_CONFIG_TYPE";
 /// ``MsgReader<T>`` fields are inputs and ``MsgWriter<T>`` fields are outputs.
 /// Add ``#[bsk(optional)]`` only to an input that may be unlinked. For a config
 /// named ``MyModuleConfig``, this attribute generates ``MyModuleInputs`` and
-/// ``MyModuleOutputs`` with corresponding named message-value fields, plus the
-/// Basilisk C ABI construction, destruction, lifecycle, and guarded
-/// configuration-accessor entry points. Non-port fields may use
+/// ``MyModuleOutputs`` with corresponding named message-value fields. Output
+/// fields use ``Option<Message>`` so each lifecycle call can select which
+/// ports to publish. The attribute also generates the Basilisk C ABI
+/// construction, destruction, lifecycle, and guarded configuration-accessor
+/// entry points. Non-port fields may use
 /// ``#[bsk(validate = path)]`` and
 /// ``#[bsk(deprecated(removal_date = "...", message = "..."))]``.
 /// An entire Python-visible module may use
@@ -231,11 +233,13 @@ fn expand_module_with_options(
         });
 
     let output_names: Vec<&syn::Ident> = output_fields.iter().map(|field| &field.name).collect();
-    let output_types: Vec<TokenStream2> =
-        output_fields.iter().map(MessagePort::value_type).collect();
+    let output_types: Vec<TokenStream2> = output_fields
+        .iter()
+        .map(MessagePort::output_value_type)
+        .collect();
     let output_initializers = output_fields.iter().map(|field| {
         let field_name = &field.name;
-        let initializer = field.default_value();
+        let initializer = field.output_default_value();
         quote!(#field_name: #initializer)
     });
     let output_docs: Vec<TokenStream2> = output_fields
@@ -288,80 +292,53 @@ fn expand_module_with_options(
             },
         }
     });
-    let write_reset_outputs = output_fields.iter().map(|field| {
-        let field_name = &field.name;
-        let port_name = LitStr::new(&format!("{module_name}.{}", field.name), field.name.span());
-        match &field.shape {
-            PortShape::Single => quote! {
-                (*config).#field_name.__write_bound(
-                    output_bindings
+    let write_outputs: Vec<TokenStream2> = output_fields
+        .iter()
+        .map(|field| {
+            let field_name = &field.name;
+            let port_name =
+                LitStr::new(&format!("{module_name}.{}", field.name), field.name.span());
+            match &field.shape {
+                PortShape::Single => quote! {
+                    let binding = output_bindings
                         .next()
-                        .expect("generated output binding count must match the module ports"),
-                    #port_name,
-                    ::core::option::Option::None,
-                    &outputs.#field_name,
-                    context.module_id(),
-                    current_sim_nanos,
-                )?;
-            },
-            PortShape::Array(_) => quote! {
-                for (index, (port, value)) in (*config)
-                    .#field_name
-                    .iter_mut()
-                    .zip(outputs.#field_name.iter())
-                    .enumerate()
-                {
-                    port.__write_bound(
-                        output_bindings
+                        .expect("generated output binding count must match the module ports");
+                    if let ::core::option::Option::Some(value) = outputs.#field_name.as_ref() {
+                        (*config).#field_name.__write_bound(
+                            binding,
+                            #port_name,
+                            ::core::option::Option::None,
+                            value,
+                            context.module_id(),
+                            current_sim_nanos,
+                        )?;
+                    }
+                },
+                PortShape::Array(_) => quote! {
+                    for (index, (port, value)) in (*config)
+                        .#field_name
+                        .iter_mut()
+                        .zip(outputs.#field_name.iter())
+                        .enumerate()
+                    {
+                        let binding = output_bindings
                             .next()
-                            .expect("generated output binding count must match the module ports"),
-                        #port_name,
-                        ::core::option::Option::Some(index),
-                        value,
-                        context.module_id(),
-                        current_sim_nanos,
-                    )?;
-                }
-            },
-        }
-    });
-    let write_update_outputs = output_fields.iter().map(|field| {
-        let field_name = &field.name;
-        let port_name = LitStr::new(&format!("{module_name}.{}", field.name), field.name.span());
-        match &field.shape {
-            PortShape::Single => quote! {
-                (*config).#field_name.__write_bound(
-                    output_bindings
-                        .next()
-                        .expect("generated output binding count must match the module ports"),
-                    #port_name,
-                    ::core::option::Option::None,
-                    &outputs.#field_name,
-                    context.module_id(),
-                    current_sim_nanos,
-                )?;
-            },
-            PortShape::Array(_) => quote! {
-                for (index, (port, value)) in (*config)
-                    .#field_name
-                    .iter_mut()
-                    .zip(outputs.#field_name.iter())
-                    .enumerate()
-                {
-                    port.__write_bound(
-                        output_bindings
-                            .next()
-                            .expect("generated output binding count must match the module ports"),
-                        #port_name,
-                        ::core::option::Option::Some(index),
-                        value,
-                        context.module_id(),
-                        current_sim_nanos,
-                    )?;
-                }
-            },
-        }
-    });
+                            .expect("generated output binding count must match the module ports");
+                        if let ::core::option::Option::Some(value) = value.as_ref() {
+                            port.__write_bound(
+                                binding,
+                                #port_name,
+                                ::core::option::Option::Some(index),
+                                value,
+                                context.module_id(),
+                                current_sim_nanos,
+                            )?;
+                        }
+                    }
+                },
+            }
+        })
+        .collect();
     let config_field_type_assertions = config_fields.iter().map(|field| {
         let field_type = &field.field_type;
         quote!(assert_config_value::<#field_type>();)
@@ -467,7 +444,9 @@ fn expand_module_with_options(
             )*
         }
 
-        /// Named message values returned by this module's `reset` and `update` methods.
+        /// Named optional message values returned by this module's `reset` and
+        /// `update` methods. A `Some(payload)` field is published; `None` leaves
+        /// that output port unchanged for the lifecycle call.
         #[allow(non_camel_case_types, non_snake_case)]
         pub struct #outputs_type {
             #(
@@ -876,7 +855,7 @@ fn expand_module_with_options(
                         )?;
                     #validate_output_bindings_function(config, output_binding_slice)?;
                     let mut output_bindings = output_binding_slice.iter();
-                    #(#write_reset_outputs)*
+                    #(#write_outputs)*
                     Ok(())
                 },
             )
@@ -933,7 +912,7 @@ fn expand_module_with_options(
                         )?;
                     #validate_output_bindings_function(config, output_binding_slice)?;
                     let mut output_bindings = output_binding_slice.iter();
-                    #(#write_update_outputs)*
+                    #(#write_outputs)*
                     Ok(())
                 },
             )
@@ -996,13 +975,20 @@ impl MessagePort {
         }
     }
 
-    fn default_value(&self) -> TokenStream2 {
+    fn output_value_type(&self) -> TokenStream2 {
+        let message_type = &self.message_type;
+        let element_type = quote!(::core::option::Option<#message_type>);
         match &self.shape {
-            PortShape::Single => quote!(::core::default::Default::default()),
+            PortShape::Single => element_type,
+            PortShape::Array(length) => quote!([#element_type; #length]),
+        }
+    }
+
+    fn output_default_value(&self) -> TokenStream2 {
+        match &self.shape {
+            PortShape::Single => quote!(::core::option::Option::None),
             PortShape::Array(_) => {
-                quote!(::core::array::from_fn(|_| {
-                    ::core::default::Default::default()
-                }))
+                quote!(::core::array::from_fn(|_| ::core::option::Option::None))
             }
         }
     }
@@ -1729,7 +1715,8 @@ mod tests {
         assert!(expanded.contains("struct ControllerInputs"));
         assert!(expanded.contains("struct ControllerOutputs"));
         assert!(expanded.contains("inputInMsg : :: core :: option :: Option < InputMsg >"));
-        assert!(expanded.contains("outputOutMsg : OutputMsg"));
+        assert!(expanded.contains("outputOutMsg : :: core :: option :: Option < OutputMsg >"));
+        assert!(expanded.contains("outputs . outputOutMsg . as_ref ()"));
         assert!(expanded.contains("__bsk_assert_io_types_for_ControllerConfig"));
         assert!(expanded.contains("assert_config_value"));
         assert!(expanded.contains("inputInMsg is not connected"));
@@ -1871,13 +1858,16 @@ mod tests {
         assert!(
             expanded.contains("optionalInMsgs : [:: core :: option :: Option < InputMsg > ; 3]")
         );
-        assert!(expanded.contains("outputOutMsgs : [OutputMsg ; 2]"));
+        assert!(
+            expanded.contains("outputOutMsgs : [:: core :: option :: Option < OutputMsg > ; 2]")
+        );
         assert!(expanded.contains("requiredInMsgs . iter_mut () . enumerate ()"));
         assert!(expanded.contains("optionalInMsgs . iter_mut ()"));
         assert!(expanded.contains("zip (values . iter_mut ())"));
         assert!(expanded.contains("for port in & mut (* config) . outputOutMsgs"));
         assert!(expanded.contains("port . __validate_binding"));
         assert!(expanded.contains("zip (outputs . outputOutMsgs . iter ())"));
+        assert!(expanded.contains("value . as_ref ()"));
         assert!(expanded.contains("core :: array :: from_fn"));
         assert!(expanded.contains("[{}] is not connected"));
         assert!(!expanded.contains("requiredInMsgs is not connected"));

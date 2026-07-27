@@ -498,13 +498,13 @@ output, and no private state:
         ) -> BskResult<Self::Outputs> {
             let guidance = inputs.attGuidInMsg;
             Ok(MyModuleOutputs {
-                cmdTorqueOutMsg: CmdTorqueBodyMsg {
+                cmdTorqueOutMsg: Some(CmdTorqueBodyMsg {
                     torqueRequestBody: [
                         -self.K * guidance.sigma_BR[0],
                         -self.K * guidance.sigma_BR[1],
                         -self.K * guidance.sigma_BR[2],
                     ],
-                },
+                }),
             })
         }
     }
@@ -615,13 +615,15 @@ The generated wrapper provides ``SelfInit()``, ``Reset()``, and
 
 ``reset(state, context, current_sim_nanos) -> BskResult<Outputs>``
    Runs at simulation start and on every Basilisk ``Reset()``. Use it for
-   parameter validation, private-state reset, and non-zero initial output
-   values. The default returns zero/default output values.
+   parameter validation and private-state reset. The default returns an
+   ``Outputs`` value containing ``None`` for every port and therefore does not
+   publish during reset. Override it to return ``Some(payload)`` for any port
+   that requires an explicit reset value.
 
 ``update(state, context, inputs, current_sim_nanos) -> BskResult<Outputs>``
    Runs on each task update. It receives message values through ``inputs`` and
-   returns all output message values. The generated wrapper performs the
-   actual message reads and writes. ``update`` has no default and must be
+   selects output messages through ``outputs``. The generated wrapper performs
+   the actual message reads and writes. ``update`` has no default and must be
    implemented.
 
 If ``reset`` or ``update`` returns ``Err(BskError::new("..."))``, the wrapper
@@ -674,8 +676,9 @@ and ``None`` when unconnected.
 
 The generated input and output structs use the same field names as the ports.
 Any number of inputs and outputs is supported, and declaration order does not
-control message routing. Both ``reset`` and ``update`` must return a value for
-every output port.
+control message routing. Each output field has type ``Option<Msg>``:
+``Some(payload)`` publishes that port and ``None`` leaves it unchanged for the
+current lifecycle call.
 
 Writing Output Messages
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -688,33 +691,35 @@ directly. Each returned field is matched by name to the corresponding
 .. code-block:: rust
 
     Ok(RustModuleTemplateOutputs {
-        dataOutMsg: data_out_msg,
-        dataOutMsgs: data_out_msgs,
+        dataOutMsg: Some(data_out_msg),
+        dataOutMsgs: data_out_msgs.map(Some),
     })
 
-writes ``data_out_msg`` to ``dataOutMsg`` and each element of
-``data_out_msgs`` to the same-index element of ``dataOutMsgs``. Additional
-individual output ports are handled by adding their named payload values to
-the same generated output struct.
+writes ``data_out_msg`` to ``dataOutMsg`` and each wrapped element of
+``data_out_msgs`` to the same-index element of ``dataOutMsgs``. Return ``None``
+for any individual field or array element that should not publish. Additional
+output ports are handled by adding their named optional payloads to the same
+generated output struct. ``Outputs::default()`` sets every field and array
+element to ``None``, which is useful when a lifecycle call publishes nothing.
 
 After ``reset`` or ``update`` returns ``Ok(...)``, the generated lifecycle
-code publishes every declared output and completes its message header
-automatically:
+code publishes each selected ``Some(payload)`` output and completes its
+message header automatically:
 
 * ``moduleID`` is the unique ID assigned when the Python/C++ module wrapper is
-  constructed. Every output from that module receives this ID.
+  constructed. Every output published by that module receives this ID.
 * ``timeWritten`` is the ``current_sim_nanos`` value for that ``Reset`` or
-  ``UpdateState`` call [ns]. All outputs from one lifecycle call receive the
-  same timestamp.
+  ``UpdateState`` call [ns]. All outputs published by one lifecycle call
+  receive the same timestamp.
 * ``isWritten`` is set to true by the normal Basilisk C message write
   interface.
 
 Thus, these header values do not appear in the Rust ``Outputs`` value and the
 module developer should not set them. ``SelfInit`` initializes the output
 ports but does not publish payloads. A lifecycle call that returns ``Err(...)``
-does not write any output. Under the current interface, every successful
-``reset`` and ``update`` writes every declared output port because both
-methods must return a complete ``Outputs`` value.
+does not write any output. A successful call may publish all outputs, only a
+subset, or none. A skipped port retains its previous payload and message-header
+state.
 
 Fixed-Size Arrays of Message Ports
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -737,9 +742,9 @@ message type. The array length is part of the module interface:
 The generated lifecycle value fields preserve the same length. In this
 example, ``inputs.navAttInMsgs`` has type ``[NavAttMsg; 2]``,
 ``inputs.optionalNavAttInMsgs`` has type ``[Option<NavAttMsg>; 2]``, and the
-module must return ``cmdTorqueOutMsgs: [CmdTorqueBodyMsg; 2]``. Every element
-of a required input array must be connected. An unconnected required element
-reports its array index in the resulting ``BasiliskError``.
+output field has type ``cmdTorqueOutMsgs: [Option<CmdTorqueBodyMsg>; 2]``.
+Every element of a required input array must be connected. An unconnected
+required element reports its array index in the resulting ``BasiliskError``.
 
 Process and return the arrays with normal Rust array operations:
 
@@ -756,11 +761,13 @@ Process and return the arrays with normal Rust array operations:
     });
 
     Ok(MyModuleOutputs {
-        cmdTorqueOutMsgs: cmd_torques,
+        cmdTorqueOutMsgs: cmd_torques.map(Some),
     })
 
-Construct the required ``[MessageType; N]`` value with a literal array,
-``core::array::from_fn``, or the array ``map`` method.
+Construct the ``[Option<MessageType>; N]`` value with a literal array,
+``core::array::from_fn``, or the array ``map`` method. Each element is
+independent; for example, ``[Some(first_torque), None]`` publishes only array
+element zero.
 
 Python returns a list containing the fixed set of normal message interfaces:
 

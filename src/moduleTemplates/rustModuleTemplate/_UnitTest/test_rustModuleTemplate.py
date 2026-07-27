@@ -633,6 +633,16 @@ def test_rust_module_template_rust_owned_instance_lifecycle():
             reset(handle, 10, ctypes.byref(context)),  # [ns]
         )
         assert raw_config.dummy == 0.0
+        assert raw_config.data_out_msg.header.is_written == 0
+        assert all(
+            output_port.header.is_written == 0
+            for output_port in raw_config.data_out_msgs
+        )
+
+        _assert_no_abi_error(
+            extension,
+            update(handle, 10, ctypes.byref(context)),  # [ns]
+        )
         assert raw_config.data_out_msg.header.module_id == 7
         assert raw_config.data_out_msg.header.time_written == 10
         for output_port in raw_config.data_out_msgs:
@@ -682,7 +692,7 @@ def test_rust_module_template_rust_owned_instance_lifecycle():
             == "Rust module instance cannot execute Reset_rustModuleTemplate "
             "after a previous panic in Update_rustModuleTemplate"
         )
-        assert raw_config.dummy == 0.0
+        assert raw_config.dummy == 1.0
     finally:
         _destroy_rust_instance(extension, handle)
 
@@ -695,11 +705,14 @@ def test_rust_module_template_supports_output_coauthors():
     messaging.CModuleTemplateMsg_C_addAuthor(module.dataOutMsg, shared_output)
 
     module.SelfInit()
-    module.Reset(42)  # [ns]
+    module.Reset(41)  # [ns]
+    assert shared_output.header.timeWritten == 0
+
+    module.UpdateState(42)  # [ns]
 
     assert shared_output.header.isWritten == 1
     assert shared_output.header.timeWritten == 42
-    np.testing.assert_allclose(shared_output.read().dataVector, np.zeros(3))
+    np.testing.assert_allclose(shared_output.read().dataVector, [1.0, 0.0, 0.0])
 
 
 @pytest.mark.parametrize("connect_input", [False, True])
@@ -738,13 +751,14 @@ def test_rust_module_template(connect_input):
     for array_output_log in array_output_logs:
         simulation.AddModelToTask("testTask", array_output_log)
 
+    output_ports = [module.dataOutMsg, *module.dataOutMsgs]
     simulation.InitializeSimulation()
     assert module.dummy == 0.0
+    assert all(not output_port.header.isWritten for output_port in output_ports)
     simulation.ConfigureStopTime(macros.sec2nano(1.0))  # [ns]
     simulation.ExecuteSimulation()
 
     expected_times = np.array([0, 500000000, 1000000000], dtype=np.uint64)  # [ns]
-    output_ports = [module.dataOutMsg, *module.dataOutMsgs]
     for output_port in output_ports:
         assert output_port.header.moduleID == module.moduleID
         assert output_port.header.timeWritten == expected_times[-1]
