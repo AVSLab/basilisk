@@ -449,7 +449,7 @@ output, and no private state:
     #[repr(C)]
     pub struct MyModuleConfig {
         /// [Nm] Proportional gain
-        #[bsk(validate = "validate_gain")]
+        #[bsk(validate = validate_gain)]
         pub K: f64,
         /// [-] Attitude guidance input
         pub attGuidInMsg: MsgReader<AttGuidMsg>,
@@ -558,13 +558,13 @@ Both forms call the same guarded Rust accessor. Fixed-size arrays are copied
 and validated as complete values. Assigning the wrong number of elements
 raises ``BasiliskError`` without changing the field.
 
-Use ``#[bsk(validate = "...")]`` when an assignment requires immediate
+Use ``#[bsk(validate = function_name)]`` when an assignment requires immediate
 validation. The named function receives the current configuration and a
 borrowed proposed value:
 
 .. code-block:: rust
 
-   #[bsk(validate = "validate_gain")]
+   #[bsk(validate = validate_gain)]
    pub K: f64,
 
    fn validate_gain(

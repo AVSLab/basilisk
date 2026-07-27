@@ -114,7 +114,7 @@
 //! config view is hidden. The generated accessors copy one complete typed
 //! value and contain Rust panics before returning to C++.
 //!
-//! Add ``#[bsk(validate = "path::to::function")]`` to call a validator before
+//! Add ``#[bsk(validate = path::to::function)]`` to call a validator before
 //! assignment. Its signature is
 //! ``fn(&ConfigType, &FieldType) -> BskResult<()>``. An expected error leaves
 //! the existing field unchanged and becomes Python ``BasiliskError``.

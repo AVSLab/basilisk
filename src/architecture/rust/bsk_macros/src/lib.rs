@@ -35,7 +35,7 @@ const CONFIG_TYPE_ENV: &str = "BSK_RUST_CONFIG_TYPE";
 /// ``MyModuleOutputs`` with corresponding named message-value fields, plus the
 /// Basilisk C ABI construction, destruction, lifecycle, and guarded
 /// configuration-accessor entry points. Non-port fields may use
-/// ``#[bsk(validate = "path")]`` and
+/// ``#[bsk(validate = path)]`` and
 /// ``#[bsk(deprecated(removal_date = "...", message = "..."))]``.
 /// An entire Python-visible module may use
 /// ``#[bsk_build::module(deprecated(removal_date = "...", message = "..."))]``.
@@ -977,11 +977,7 @@ fn extract_config_fields(input: &mut ItemStruct) -> syn::Result<Vec<ConfigField>
                     if validator.is_some() {
                         return Err(meta.error("duplicate `validate` argument"));
                     }
-                    let validator_literal: LitStr = meta.value()?.parse()?;
-                    validator =
-                        Some(syn::parse_str::<Path>(&validator_literal.value()).map_err(
-                            |error| meta.error(format!("invalid validator path: {error}")),
-                        )?);
+                    validator = Some(meta.value()?.parse::<Path>()?);
                     return Ok(());
                 }
                 if meta.path.is_ident("deprecated") {
@@ -1641,7 +1637,7 @@ mod tests {
         let input: ItemStruct = parse_quote! {
             #[repr(C)]
             pub struct ControllerConfig {
-                #[bsk(validate = "validate_gain")]
+                #[bsk(validate = validate_gain)]
                 pub gain: f64,
                 #[bsk(deprecated(
                     removal_date = "2027/07/24",

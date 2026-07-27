@@ -27,13 +27,13 @@ use nalgebra::{Matrix3, Vector3};
 #[repr(C)]
 pub struct MrpPDRustConfig {
     /// [N*m] Proportional gain applied to the MRP attitude error
-    #[bsk(validate = "validate_proportional_gain")]
+    #[bsk(validate = validate_proportional_gain)]
     pub K: f64,
     /// [N*m*s] Derivative gain applied to the angular-rate tracking error
-    #[bsk(validate = "validate_derivative_gain")]
+    #[bsk(validate = validate_derivative_gain)]
     pub P: f64,
     /// [N*m] Known external torque about point B, expressed in body components
-    #[bsk(validate = "validate_known_torque")]
+    #[bsk(validate = validate_known_torque)]
     pub knownTorquePntB_B: [f64; 3],
     /// [N*m] Commanded external control torque
     pub cmdTorqueOutMsg: MsgWriter<CmdTorqueBodyMsg>,

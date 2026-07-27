@@ -37,13 +37,13 @@ pub struct RustModuleTemplateConfig {
     /// [-] Python-visible sample counter
     pub dummy: f64,
     /// [-] Positive amount added to the sample counter on each update
-    #[bsk(validate = "validate_increment")]
+    #[bsk(validate = validate_increment)]
     pub increment: f64,
     /// [-] Nested, by-value sample configuration
-    #[bsk(validate = "validate_sample_parameters")]
+    #[bsk(validate = validate_sample_parameters)]
     pub sampleParameters: RustModuleTemplateParameters,
     /// [-] Two-dimensional sample configuration array
-    #[bsk(validate = "validate_sample_matrix")]
+    #[bsk(validate = validate_sample_matrix)]
     pub sampleMatrix: [[f64; 3]; 2],
     /// [-] Optional input message
     #[bsk(optional)]
