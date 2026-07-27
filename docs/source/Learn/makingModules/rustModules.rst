@@ -289,16 +289,25 @@ The complete ``build.rs`` file is normally:
 .. code-block:: rust
 
     fn main() {
-        bsk_build::generate_bindings("myModuleConfig");
+        bsk_build::generate_bindings("MyModuleConfig");
     }
 
 Pass the exact name of the struct marked with ``#[bsk_build::module]``.
+Cargo compiles and runs ``build.rs`` as a separate host program before it
+compiles the module crate, so the build script cannot refer to
+``MyModuleConfig`` as a Rust type. ``generate_bindings()`` passes the selected
+identifier into the subsequent Rust compilation, where the procedural
+attribute verifies that both names match. A stale or misspelled name therefore
+produces a compile error.
+
 During the build:
 
 #. Cargo runs ``build.rs``.
-#. ``bsk-build`` finds the marked configuration and its message annotations.
+#. ``bsk-build`` selects the explicitly named configuration for ``cbindgen``.
 #. ``cbindgen`` generates a C-compatible header from the Rust declarations.
 #. ``bsk-build`` generates the module-specific SWIG interface.
+#. Rust compiles the module, and ``#[bsk_build::module]`` verifies the selected
+   configuration name while generating the lifecycle boundary.
 #. CMake links the Rust static library and generated wrapper into the normal
    Basilisk Python package.
 
@@ -440,7 +449,7 @@ output, and no private state:
 
     #[bsk_build::module]
     #[repr(C)]
-    pub struct myModuleConfig {
+    pub struct MyModuleConfig {
         /// [Nm] Proportional gain
         #[bsk(validate = "validate_gain")]
         pub K: f64,
@@ -453,7 +462,7 @@ output, and no private state:
     }
 
     fn validate_gain(
-        _config: &myModuleConfig,
+        _config: &MyModuleConfig,
         proposed_gain: &f64,
     ) -> BskResult<()> {
         if !proposed_gain.is_finite() || *proposed_gain <= 0.0 {
@@ -462,10 +471,10 @@ output, and no private state:
         Ok(())
     }
 
-    impl BskModule for myModuleConfig {
+    impl BskModule for MyModuleConfig {
         type State = ();
-        type Inputs = myModuleInputs;
-        type Outputs = myModuleOutputs;
+        type Inputs = MyModuleInputs;
+        type Outputs = MyModuleOutputs;
 
         fn init(&mut self, _state: &mut Self::State) -> BskResult<()> {
             self.K = 1.0; // [Nm]
@@ -492,7 +501,7 @@ output, and no private state:
             _current_sim_nanos: u64,
         ) -> BskResult<Self::Outputs> {
             let guidance = inputs.attGuidInMsg;
-            Ok(myModuleOutputs {
+            Ok(MyModuleOutputs {
                 cmdTorqueOutMsg: CmdTorqueBodyMsg {
                     torqueRequestBody: [
                         -self.K * guidance.sigma_BR[0],
@@ -527,8 +536,8 @@ The Rust-specific declarations mean:
 ``type State``, ``Inputs``, and ``Outputs``
    Select the private state type and the named message-value structs used by
    the lifecycle methods. The input and output types are generated from the
-   annotated ports. For ``myModuleConfig`` they are named
-   ``myModuleInputs`` and ``myModuleOutputs``.
+   annotated ports. For ``MyModuleConfig`` they are named
+   ``MyModuleInputs`` and ``MyModuleOutputs``.
 
 ``BskResult<T>``
    Represents either success, ``Ok(T)``, or an expected module failure,
@@ -563,7 +572,7 @@ borrowed proposed value:
    pub K: f64,
 
    fn validate_gain(
-       _config: &myModuleConfig,
+       _config: &MyModuleConfig,
        proposed_gain: &f64,
    ) -> BskResult<()> {
        if !proposed_gain.is_finite() || *proposed_gain <= 0.0 {
@@ -758,7 +767,7 @@ Process and return the arrays with normal Rust array operations:
         }
     });
 
-    Ok(myModuleOutputs {
+    Ok(MyModuleOutputs {
         cmdTorqueOutMsgs: cmd_torques,
     })
 
@@ -860,7 +869,7 @@ Nested parameters can be grouped by value:
 
     #[bsk_build::module]
     #[repr(C)]
-    pub struct myModuleConfig {
+    pub struct MyModuleConfig {
         /// [-] Controller parameters
         pub gains: ControllerGains,
         // Message ports follow.
@@ -928,10 +937,10 @@ such as ``Vec``, ``String``, enums, and smart pointers:
         Running,
     }
 
-    impl BskModule for myModuleConfig {
+    impl BskModule for MyModuleConfig {
         type State = MyState;
-        type Inputs = myModuleInputs;
-        type Outputs = myModuleOutputs;
+        type Inputs = MyModuleInputs;
+        type Outputs = MyModuleOutputs;
 
         fn update(
             &mut self,
@@ -1082,7 +1091,7 @@ another compiled module:
 
 The Python object exposes generated properties for the marked configuration
 fields along with the normal ``SysModel`` fields. Each property uses its Rust
-getter or setter. The generated ``myModuleConfig`` proxy is an implementation
+getter or setter. The generated ``MyModuleConfig`` proxy is an implementation
 detail and should not be constructed separately.
 
 Document the Module

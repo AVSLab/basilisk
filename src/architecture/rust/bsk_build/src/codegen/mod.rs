@@ -21,6 +21,7 @@ const RUNTIME_C_TYPE: &str = "BskRustModuleRuntime";
 const LOGGER_TYPE: &str = "BSKLogger";
 const READER_PREFIX: &str = "MsgReader_";
 const WRITER_PREFIX: &str = "MsgWriter_";
+const CONFIG_TYPE_ENV: &str = "BSK_RUST_CONFIG_TYPE";
 
 #[derive(Debug, Default, PartialEq, Eq)]
 struct BindingMetadata {
@@ -51,9 +52,17 @@ struct ConfigField {
 /// ``config_type`` is the exact Rust identifier of the
 /// ``#[bsk_build::module]`` configuration struct. The build script is a
 /// separate Cargo crate and cannot name the module crate's Rust type directly,
-/// so this explicit string is the only module metadata it supplies.
+/// so this explicit string is the only module metadata it supplies. The value
+/// is forwarded to rustc, where the procedural attribute verifies that it
+/// matches the struct it marks.
 pub fn generate_bindings(config_type: &str) {
     validate_identifier(config_type);
+
+    // A build script runs before the module crate is compiled, so it cannot
+    // refer to the marked Rust type directly. Forward the selected identifier
+    // into rustc so the procedural macro can reject a stale or misspelled
+    // duplicate before emitting the language boundary.
+    println!("cargo:rustc-env={CONFIG_TYPE_ENV}={config_type}");
 
     let manifest_dir = PathBuf::from(
         std::env::var("CARGO_MANIFEST_DIR")

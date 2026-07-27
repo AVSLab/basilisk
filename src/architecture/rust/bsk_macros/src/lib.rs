@@ -25,6 +25,8 @@ use syn::{
     PathArguments, Type, Visibility,
 };
 
+const CONFIG_TYPE_ENV: &str = "BSK_RUST_CONFIG_TYPE";
+
 /// Mark and validate a Basilisk module's top-level configuration struct.
 ///
 /// Message fields must use ``#[bsk(input)]``,
@@ -74,6 +76,8 @@ fn expand_module_with_options(
     options: ModuleOptions,
 ) -> syn::Result<TokenStream2> {
     validate_module_config(&input)?;
+    let configured_type = std::env::var(CONFIG_TYPE_ENV).ok();
+    validate_config_type_name(&input, configured_type.as_deref())?;
 
     let mut input = input;
     let config_type = input.ident.clone();
@@ -1251,6 +1255,27 @@ fn io_type_name(config_type: &syn::Ident, suffix: &str) -> syn::Ident {
     format_ident!("{module_name}{suffix}", span = config_type.span())
 }
 
+fn validate_config_type_name(input: &ItemStruct, configured_type: Option<&str>) -> syn::Result<()> {
+    let Some(configured_type) = configured_type else {
+        // The macro crate's own unit tests and non-Cargo tooling do not run a
+        // module build script. Ordinary Basilisk module builds always receive
+        // this value from bsk_build::generate_bindings().
+        return Ok(());
+    };
+    if input.ident == configured_type {
+        return Ok(());
+    }
+
+    Err(syn::Error::new_spanned(
+        &input.ident,
+        format!(
+            "`#[bsk_build::module]` marks `{}`, but build.rs passed `{configured_type}` to \
+             `bsk_build::generate_bindings`; use the same configuration struct name in both places",
+            input.ident
+        ),
+    ))
+}
+
 fn validate_module_config(input: &ItemStruct) -> syn::Result<()> {
     if !matches!(input.vis, Visibility::Public(_)) {
         return Err(syn::Error::new_spanned(
@@ -1434,6 +1459,34 @@ mod tests {
         };
 
         assert!(validate_module_config(&input).is_ok());
+    }
+
+    #[test]
+    fn accepts_matching_build_script_config_type() {
+        let input: ItemStruct = parse_quote! {
+            #[repr(C)]
+            pub struct ControllerConfig {
+                pub gain: f64,
+            }
+        };
+
+        assert!(validate_config_type_name(&input, Some("ControllerConfig")).is_ok());
+    }
+
+    #[test]
+    fn rejects_mismatched_build_script_config_type() {
+        let input: ItemStruct = parse_quote! {
+            #[repr(C)]
+            pub struct ControllerConfig {
+                pub gain: f64,
+            }
+        };
+
+        let error = validate_config_type_name(&input, Some("StaleConfig"))
+            .expect_err("a stale build.rs configuration type must fail");
+        let message = error.to_string();
+        assert!(message.contains("`#[bsk_build::module]` marks `ControllerConfig`"));
+        assert!(message.contains("build.rs passed `StaleConfig`"));
     }
 
     #[test]

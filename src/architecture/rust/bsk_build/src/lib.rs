@@ -16,6 +16,12 @@
 //! }
 //! ```
 //!
+//! Cargo compiles and runs ``build.rs`` as a separate host program before it
+//! compiles the module crate, so the script cannot refer to ``MyModuleConfig``
+//! as a Rust type. [`generate_bindings`] forwards the selected identifier into
+//! the module compilation, and ``#[bsk_build::module]`` rejects a mismatch
+//! before emitting the language boundary.
+//!
 //! ``cbindgen`` reads the crate's C-compatible types and emits two build
 //! artifacts. The ``#[bsk_build::module]`` procedural attribute emits named
 //! message I/O values and the Rust lifecycle entry points.
@@ -206,7 +212,8 @@
 //! Add ``#[bsk_build::module]`` to the top-level configuration struct. The
 //! attribute explicitly distinguishes the module config from ordinary Rust
 //! data and asks rustc to validate its basic ABI requirements. Pass the same
-//! type name to [`generate_bindings`] in ``build.rs``.
+//! type name to [`generate_bindings`] in ``build.rs``; the attribute verifies
+//! that the two identifiers match.
 //!
 //! # Add `bsk-build` as a plain dependency too
 //!
