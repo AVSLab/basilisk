@@ -112,6 +112,10 @@ fn expand_module_with_options(
         format_ident!("__bsk_assert_io_types_for_{}", config_type.to_string());
     let guard_instance_function =
         format_ident!("__bsk_guard_instance_for_{}", config_type.to_string());
+    let validate_output_bindings_function = format_ident!(
+        "__bsk_validate_output_bindings_for_{}",
+        config_type.to_string()
+    );
     let assert_config_field_types_function = format_ident!(
         "__bsk_assert_config_field_types_for_{}",
         config_type.to_string()
@@ -244,60 +248,116 @@ fn expand_module_with_options(
     let initialize_outputs = output_fields.iter().map(|field| {
         let field_name = &field.name;
         match &field.shape {
-            PortShape::Single => quote!((*config).#field_name.init();),
+            PortShape::Single => quote! {
+                // SAFETY: The configuration is stored in its final heap
+                // allocation. Its binding is retained and checked before use.
+                output_bindings.push(unsafe { (*config).#field_name.__initialize() });
+            },
             PortShape::Array(_) => quote! {
                 for port in &mut (*config).#field_name {
-                    port.init();
+                    // SAFETY: Every array element is in its final heap
+                    // allocation. Its binding is retained and checked before use.
+                    output_bindings.push(unsafe { port.__initialize() });
+                }
+            },
+        }
+    });
+    let validate_output_bindings = output_fields.iter().map(|field| {
+        let field_name = &field.name;
+        let port_name = LitStr::new(&format!("{module_name}.{}", field.name), field.name.span());
+        match &field.shape {
+            PortShape::Single => quote! {
+                (*config).#field_name.__validate_binding(
+                    output_bindings
+                        .next()
+                        .expect("generated output binding count must match the module ports"),
+                    #port_name,
+                    ::core::option::Option::None,
+                )?;
+            },
+            PortShape::Array(_) => quote! {
+                for (index, port) in (*config).#field_name.iter().enumerate() {
+                    port.__validate_binding(
+                        output_bindings
+                            .next()
+                            .expect("generated output binding count must match the module ports"),
+                        #port_name,
+                        ::core::option::Option::Some(index),
+                    )?;
                 }
             },
         }
     });
     let write_reset_outputs = output_fields.iter().map(|field| {
         let field_name = &field.name;
+        let port_name = LitStr::new(&format!("{module_name}.{}", field.name), field.name.span());
         match &field.shape {
             PortShape::Single => quote! {
-                (*config).#field_name.write(
+                (*config).#field_name.__write_bound(
+                    output_bindings
+                        .next()
+                        .expect("generated output binding count must match the module ports"),
+                    #port_name,
+                    ::core::option::Option::None,
                     &outputs.#field_name,
                     context.module_id(),
                     current_sim_nanos,
-                );
+                )?;
             },
             PortShape::Array(_) => quote! {
-                for (port, value) in (*config)
+                for (index, (port, value)) in (*config)
                     .#field_name
                     .iter_mut()
                     .zip(outputs.#field_name.iter())
+                    .enumerate()
                 {
-                    port.write(
+                    port.__write_bound(
+                        output_bindings
+                            .next()
+                            .expect("generated output binding count must match the module ports"),
+                        #port_name,
+                        ::core::option::Option::Some(index),
                         value,
                         context.module_id(),
                         current_sim_nanos,
-                    );
+                    )?;
                 }
             },
         }
     });
     let write_update_outputs = output_fields.iter().map(|field| {
         let field_name = &field.name;
+        let port_name = LitStr::new(&format!("{module_name}.{}", field.name), field.name.span());
         match &field.shape {
             PortShape::Single => quote! {
-                (*config).#field_name.write(
+                (*config).#field_name.__write_bound(
+                    output_bindings
+                        .next()
+                        .expect("generated output binding count must match the module ports"),
+                    #port_name,
+                    ::core::option::Option::None,
                     &outputs.#field_name,
                     context.module_id(),
                     current_sim_nanos,
-                );
+                )?;
             },
             PortShape::Array(_) => quote! {
-                for (port, value) in (*config)
+                for (index, (port, value)) in (*config)
                     .#field_name
                     .iter_mut()
                     .zip(outputs.#field_name.iter())
+                    .enumerate()
                 {
-                    port.write(
+                    port.__write_bound(
+                        output_bindings
+                            .next()
+                            .expect("generated output binding count must match the module ports"),
+                        #port_name,
+                        ::core::option::Option::Some(index),
                         value,
                         context.module_id(),
                         current_sim_nanos,
-                    );
+                    )?;
                 }
             },
         }
@@ -435,7 +495,25 @@ fn expand_module_with_options(
         struct #instance_type {
             config: #config_type,
             state: <#config_type as ::bsk_build::BskModule>::State,
+            output_bindings: ::core::option::Option<
+                ::std::vec::Vec<::bsk_build::BskMessagePortBinding>
+            >,
             poisoned_by: ::core::option::Option<&'static str>,
+        }
+
+        #[doc(hidden)]
+        fn #validate_output_bindings_function(
+            config: &#config_type,
+            bindings: &[::bsk_build::BskMessagePortBinding],
+        ) -> ::bsk_build::BskResult<()> {
+            let mut output_bindings = bindings.iter();
+            #(#validate_output_bindings)*
+            if output_bindings.next().is_some() {
+                return ::core::result::Result::Err(::bsk_build::BskError::new(
+                    "generated output binding count exceeds the module port count",
+                ));
+            }
+            Ok(())
         }
 
         #[doc(hidden)]
@@ -507,6 +585,7 @@ fn expand_module_with_options(
                         #(#initialize_config_fields,)*
                     },
                     state: ::core::default::Default::default(),
+                    output_bindings: ::core::option::Option::None,
                     poisoned_by: ::core::option::Option::None,
                 });
                 <#config_type as ::bsk_build::BskModule>::init(
@@ -730,9 +809,20 @@ fn expand_module_with_options(
                 instance,
                 stringify!(#self_init_function),
                 |instance| {
+                    if let ::core::option::Option::Some(output_bindings) =
+                        instance.output_bindings.as_deref()
+                    {
+                        #validate_output_bindings_function(
+                            &instance.config,
+                            output_bindings,
+                        )?;
+                    }
                     let config = &mut instance.config;
                     let _context = unsafe { ::bsk_build::BskContext::__from_raw(context) };
+                    let mut output_bindings = ::std::vec::Vec::new();
                     #(#initialize_outputs)*
+                    instance.output_bindings =
+                        ::core::option::Option::Some(output_bindings);
                     Ok(())
                 },
             )
@@ -763,16 +853,29 @@ fn expand_module_with_options(
                 instance,
                 stringify!(#reset_function),
                 |instance| {
-                    let config = &mut instance.config;
+                    let #instance_type {
+                        config,
+                        state,
+                        output_bindings,
+                        ..
+                    } = instance;
+                    let output_binding_slice = output_bindings
+                        .as_deref()
+                        .ok_or_else(|| ::bsk_build::BskError::new(
+                            "cannot write a Basilisk output message before SelfInit initializes its port",
+                        ))?;
+                    #validate_output_bindings_function(config, output_binding_slice)?;
                     let context = unsafe { ::bsk_build::BskContext::__from_raw(context) };
                     #(#validate_inputs)*
                     let outputs: #outputs_type =
                         <#config_type as ::bsk_build::BskModule>::reset(
                             config,
-                            &mut instance.state,
+                            state,
                             &context,
                             current_sim_nanos,
                         )?;
+                    #validate_output_bindings_function(config, output_binding_slice)?;
+                    let mut output_bindings = output_binding_slice.iter();
                     #(#write_reset_outputs)*
                     Ok(())
                 },
@@ -804,7 +907,18 @@ fn expand_module_with_options(
                 instance,
                 stringify!(#update_function),
                 |instance| {
-                    let config = &mut instance.config;
+                    let #instance_type {
+                        config,
+                        state,
+                        output_bindings,
+                        ..
+                    } = instance;
+                    let output_binding_slice = output_bindings
+                        .as_deref()
+                        .ok_or_else(|| ::bsk_build::BskError::new(
+                            "cannot write a Basilisk output message before SelfInit initializes its port",
+                        ))?;
+                    #validate_output_bindings_function(config, output_binding_slice)?;
                     let context = unsafe { ::bsk_build::BskContext::__from_raw(context) };
                     let inputs: #inputs_type = #inputs_type {
                         #(#read_inputs,)*
@@ -812,11 +926,13 @@ fn expand_module_with_options(
                     let outputs: #outputs_type =
                         <#config_type as ::bsk_build::BskModule>::update(
                             config,
-                            &mut instance.state,
+                            state,
                             &context,
                             inputs,
                             current_sim_nanos,
                         )?;
+                    #validate_output_bindings_function(config, output_binding_slice)?;
+                    let mut output_bindings = output_binding_slice.iter();
                     #(#write_update_outputs)*
                     Ok(())
                 },
@@ -1625,8 +1741,10 @@ mod tests {
         assert!(expanded.contains("__bsk_assert_io_types_for_ControllerConfig"));
         assert!(expanded.contains("assert_config_value"));
         assert!(expanded.contains("inputInMsg is not connected"));
-        assert!(expanded.contains("outputOutMsg . init"));
-        assert_eq!(expanded.matches("outputOutMsg . write").count(), 2);
+        assert!(expanded.contains("outputOutMsg . __initialize"));
+        assert!(expanded.contains("output_bindings"));
+        assert!(expanded.contains("__bsk_validate_output_bindings_for_ControllerConfig"));
+        assert_eq!(expanded.matches("outputOutMsg . __write_bound").count(), 2);
         assert!(!expanded.contains("include !"));
         assert!(!expanded.contains("bsk (input"));
         assert!(!expanded.contains("bsk (output"));
@@ -1766,6 +1884,7 @@ mod tests {
         assert!(expanded.contains("optionalInMsgs . iter_mut ()"));
         assert!(expanded.contains("zip (values . iter_mut ())"));
         assert!(expanded.contains("for port in & mut (* config) . outputOutMsgs"));
+        assert!(expanded.contains("port . __validate_binding"));
         assert!(expanded.contains("zip (outputs . outputOutMsgs . iter ())"));
         assert!(expanded.contains("core :: array :: from_fn"));
         assert!(expanded.contains("[{}] is not connected"));

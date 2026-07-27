@@ -245,19 +245,32 @@ fn render_message_trait_impls(bindings: &str) -> Result<String, Box<dyn Error>> 
         writeln!(implementations, "    #[inline(always)]")?;
         writeln!(
             implementations,
-            "    fn __read(port: &mut {message_type}_C) -> Self {{ unsafe {{ \
+            "    fn __is_initialized(port: &{message_type}_C) -> bool {{ \
+             !port.dataPointer.is_null() && !port.headerPointer.is_null() }}"
+        )?;
+        writeln!(implementations, "    #[inline(always)]")?;
+        writeln!(
+            implementations,
+            "    fn __port_pointers(port: &{message_type}_C) -> (*const (), *const ()) {{ \
+             (port.dataPointer.cast::<()>() as *const (), \
+              port.headerPointer.cast::<()>() as *const ()) }}"
+        )?;
+        writeln!(implementations, "    #[inline(always)]")?;
+        writeln!(
+            implementations,
+            "    unsafe fn __read(port: &mut {message_type}_C) -> Self {{ unsafe {{ \
              {message_type}_C_read(port) }} }}"
         )?;
         writeln!(implementations, "    #[inline(always)]")?;
         writeln!(
             implementations,
-            "    fn __init(port: &mut {message_type}_C) {{ unsafe {{ \
+            "    unsafe fn __init(port: &mut {message_type}_C) {{ unsafe {{ \
              {message_type}_C_init(port) }} }}"
         )?;
         writeln!(implementations, "    #[inline(always)]")?;
         writeln!(
             implementations,
-            "    fn __write(data: &Self, port: &mut {message_type}_C, module_id: i64, \
+            "    unsafe fn __write(data: &Self, port: &mut {message_type}_C, module_id: i64, \
              current_sim_nanos: u64) {{"
         )?;
         writeln!(
