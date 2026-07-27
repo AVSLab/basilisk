@@ -21,16 +21,20 @@
 import numpy as np
 import pytest
 
+from Basilisk import hasBuildFeature
 from Basilisk.architecture import messaging
 from Basilisk.architecture.bskLogging import BasiliskError
 from Basilisk.fswAlgorithms import mrpPD
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 
-mrpPDRust = pytest.importorskip(
-    "Basilisk.fswAlgorithms.mrpPDRust",
-    reason="Rust modules were not enabled for this Basilisk build.",
+rustModulesEnabled = hasBuildFeature("rustModules")
+pytestmark = pytest.mark.skipif(
+    not rustModulesEnabled,
+    reason="Requires Basilisk built with --rustModules True",
 )
+if rustModulesEnabled:
+    from Basilisk.fswAlgorithms import mrpPDRust
 
 
 @pytest.mark.parametrize("set_external_torque", [False, True])

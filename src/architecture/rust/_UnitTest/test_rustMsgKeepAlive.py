@@ -24,12 +24,16 @@ import weakref
 
 import pytest
 
+from Basilisk import hasBuildFeature
 from Basilisk.architecture import messaging
 
-rustModuleTemplate = pytest.importorskip(
-    "Basilisk.moduleTemplates.rustModuleTemplate",
-    reason="Rust modules were not enabled for this Basilisk build.",
+rustModulesEnabled = hasBuildFeature("rustModules")
+pytestmark = pytest.mark.skipif(
+    not rustModulesEnabled,
+    reason="Requires Basilisk built with --rustModules True",
 )
+if rustModulesEnabled:
+    from Basilisk.moduleTemplates import rustModuleTemplate
 
 
 def test_rust_port_registration_does_not_read_configuration_properties():

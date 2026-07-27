@@ -248,7 +248,6 @@ function(bsk_generate_build_info package_directory)
   _bsk_python_string(BSK_INFO_SWIG_VERSION "${SWIG_VERSION}")
   _bsk_python_string(BSK_INFO_PYTHON_VERSION "${Python3_VERSION}")
 
-  set(_rust_modules False)
   set(_rustc_id "")
   set(_rustc_executable "")
   set(_rustc_version "")
@@ -257,7 +256,6 @@ function(bsk_generate_build_info package_directory)
   set(_cargo_version "")
   set(_corrosion_version "")
   if(BUILD_RUST_MODULES)
-    set(_rust_modules True)
     set(_rustc_id "rustc")
     set(_rustc_executable "${Rust_COMPILER_CACHED}")
     set(_rustc_version "${Rust_VERSION}")
@@ -312,6 +310,7 @@ function(bsk_generate_build_info package_directory)
   _bsk_python_bool(BSK_INFO_FEATURE_VIZINTERFACE "${BUILD_VIZINTERFACE}")
   _bsk_python_bool(BSK_INFO_FEATURE_OPNAV "${BUILD_OPNAV}")
   _bsk_python_bool(BSK_INFO_FEATURE_MUJOCO "${BUILD_MUJOCO}")
+  _bsk_python_bool(BSK_INFO_FEATURE_RUST_MODULES "${BUILD_RUST_MODULES}")
 
   configure_file(
     "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/bskBuildInfoData.py.in"
