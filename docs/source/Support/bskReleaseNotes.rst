@@ -22,11 +22,18 @@ Basilisk Release Notes
     - More effector and sensor fault modeling
     - integrating the `MuJoCo <https://mujoco.org>`_ library as an alternate dynamics engine
 
-Version |release| (July 7, 2026)
---------------------------------
 
-..
-   .. include:: bskReleaseNotesSnippets/_compiled_latest.rst
+Version 2.11.1 (July 27, 2026)
+------------------------------
+- Fixed :ref:`sphericalPendulum` fuel-slosh damping which omitted the pendulum moment arm (issue #1484).
+- Added initialization validation requiring the :ref:`sphericalPendulum` damping matrix ``D`` to be symmetric positive semidefinite.
+- Fixed :ref:`FuelTank` propellant depletion when fuel slosh particles are attached. The tank and each slosh particle now drain their correct share of the mass flow regardless of how the propellant is partitioned.
+- Fixed the :ref:`FuelTank` mass-depletion torque ignoring the tank orientation (``dcm_TB``) and offset (``r_TB_B``). The depletion torque is now formed so a rotated or offset depleting tank produces the correct attitude dynamics.
+- Corrected :ref:`FuelTank` emptying-model center-of-mass and inertia derivatives away from the half-full condition, including the second derivative of the moving fuel center of mass.
+
+
+Version 2.11.0 (July 7, 2026)
+-----------------------------
 
 - Split off the ``opNav`` build from the core BSK distribution wheels to reduce the wheel file size to be less than 100Mb.
   Updated documentation to discuss how to use ``pip`` install with ``opNav`` modules.
