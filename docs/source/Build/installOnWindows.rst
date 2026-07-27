@@ -165,9 +165,7 @@ When all the prerequisite installations are complete, the project can be built a
 
     (.venv) $ python conanfile.py --rustModules True
 
-   The build downloads the pinned Corrosion CMake integration automatically;
-   no separate Corrosion installation is required. See :ref:`rustModules` for
-   details about creating and testing Rust modules.
+   See :ref:`rustModules` for details about creating and testing Rust modules.
 
    This creates the Visual Studio 17 2022 IDE project in ``dist3`` and builds the project.
    You can also specify the generator directly in this build process and select other versions of Visual Studio.

@@ -145,11 +145,11 @@ On Windows, use ``python`` instead of ``python3`` if that is the command for
 the active Python installation.
 
 ``rustModules`` enables discovery and compilation of in-tree Rust modules and
-Rust modules supplied through ``pathToExternalModules``. Basilisk uses
-Corrosion, a CMake integration layer that imports Cargo libraries as CMake
-targets. Corrosion is downloaded at its pinned revision during the first
-Rust-enabled configuration; it is not a separate compiler and does not need to
-be installed manually.
+Rust modules supplied through ``pathToExternalModules``. Cargo builds the Rust
+code, while Corrosion connects Cargo packages to Basilisk's CMake build as
+ordinary CMake targets. Basilisk downloads a pinned Corrosion version
+automatically during the first Rust-enabled configuration, so developers only
+need to install Rust and Cargo.
 
 After the build, verify the template through its normal Python unit test:
 
@@ -303,17 +303,15 @@ produces a compile error.
 During the build:
 
 #. Cargo runs ``build.rs``.
-#. ``bsk-build`` selects the explicitly named configuration for ``cbindgen``.
-#. ``cbindgen`` generates a C-compatible header from the Rust declarations.
+#. ``bsk-build`` uses ``cbindgen`` to generate a C-compatible header for the
+   selected configuration.
 #. ``bsk-build`` generates the module-specific SWIG interface.
 #. Rust compiles the module, and ``#[bsk_build::module]`` verifies the selected
    configuration name while generating the lifecycle boundary.
 #. CMake links the Rust static library and generated wrapper into the normal
    Basilisk Python package.
 
-``cbindgen`` is a Rust-to-C header generator used internally by this process.
-It is obtained as a Cargo dependency; module authors do not install or invoke
-it separately. Do not edit the generated header or SWIG file.
+The generated header and SWIG interface are build products; do not edit them.
 
 Register the Module in the Workspace
 ------------------------------------
@@ -607,10 +605,9 @@ The generated wrapper provides ``SelfInit()``, ``Reset()``, and
    state. Rust first initializes every configuration and state field through
    its ``Default`` implementation. The default ``init`` returns ``Ok(())``.
 
-   This typed initialization provides the familiar zero initial values for
-   primitive configuration fields: numeric fields start at zero, booleans at
-   ``false``, arrays are initialized element-by-element, and message ports
-   start empty. Rust does not apply a raw-memory ``memset`` to the module.
+   ``Default`` provides the familiar initial values for primitive
+   configuration fields: numeric fields start at zero, booleans at ``false``,
+   arrays are initialized element-by-element, and message ports start empty.
    Custom Rust-owned state uses its own ``Default`` implementation and may
    therefore begin with non-zero values, allocated collections, strings, or
    enum variants. Use ``init`` for any non-zero Python-visible configuration
@@ -637,11 +634,6 @@ Message Ports and Values
 ``bsk-messages`` provides a Rust value type for each built-in Basilisk message.
 For example, the Rust ``AttGuidMsg`` corresponds to the familiar
 ``AttGuidMsgPayload`` data. A port uses one of two generic types:
-
-The support crate also generates the low-level, unsafe ``Msg`` implementation
-that associates each Rust payload with its exact C message-port layout and
-functions. Module authors should not implement ``Msg`` manually; declare ports
-with the generated message types described below.
 
 .. important::
 
@@ -767,11 +759,8 @@ Process and return the arrays with normal Rust array operations:
         cmdTorqueOutMsgs: cmd_torques,
     })
 
-The generated wrapper pairs array element ``i`` with output port ``i`` and
-writes all elements. Each element receives the module ID and current
-simulation timestamp described above. A literal array,
-``core::array::from_fn``, and the array ``map`` method are all convenient ways
-to construct the required ``[MessageType; N]`` value.
+Construct the required ``[MessageType; N]`` value with a literal array,
+``core::array::from_fn``, or the array ``map`` method.
 
 Python returns a list containing the fixed set of normal message interfaces:
 

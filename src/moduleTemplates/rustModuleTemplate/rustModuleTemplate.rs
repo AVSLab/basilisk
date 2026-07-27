@@ -158,10 +158,9 @@ impl BskModule for RustModuleTemplateConfig {
     fn init(&mut self, _state: &mut Self::State) -> BskResult<()> {
         // Before init runs, every configuration field and the private state
         // have been initialized through Rust's Default trait. Numeric fields
-        // are zero, booleans are false, and message ports are empty. This is
-        // typed initialization rather than a raw-memory memset; custom state
-        // can define other defaults. Set non-zero configuration defaults here
-        // before Python configures the module.
+        // are zero, booleans are false, and message ports are empty. Custom
+        // state can define other defaults. Set non-zero configuration defaults
+        // here before Python configures the module.
         self.increment = 1.0; // [-]
         Ok(())
     }

@@ -210,9 +210,7 @@ Build Process via Terminal
 
         (.venv) $ python3 conanfile.py --rustModules True
 
-   The build downloads the pinned Corrosion CMake integration automatically;
-   no separate Corrosion installation is required. See :ref:`rustModules` for
-   details about creating and testing Rust modules.
+   See :ref:`rustModules` for details about creating and testing Rust modules.
 
    For other configure and build options, see :ref:`configureBuild`.
    This process will verify that the minimum required Basilisk python packages are installed, and that
