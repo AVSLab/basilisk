@@ -153,9 +153,9 @@ impl BskModule for MrpPDRustConfig {
         ); // [N*m]
 
         Ok(MrpPDRustOutputs {
-            cmdTorqueOutMsg: CmdTorqueBodyMsg {
+            cmdTorqueOutMsg: Some(CmdTorqueBodyMsg {
                 torqueRequestBody: requested_torque,
-            },
+            }),
         })
     }
 }

@@ -168,6 +168,7 @@ def _run_controller(module_factory, set_external_torque):
     simulation.AddModelToTask("controlTask", recorder)
 
     simulation.InitializeSimulation()
+    assert not controller.cmdTorqueOutMsg.header.isWritten
     simulation.ConfigureStopTime(macros.sec2nano(1.0))  # [ns]
     simulation.ExecuteSimulation()
 

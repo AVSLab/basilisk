@@ -1430,10 +1430,10 @@ mod module_input_tests {
 ///   └─ returns BskResult<()>         Override to set non-zero defaults.
 ///
 /// reset(state, context, time)      — at sim start and on every Reset().
-///   └─ returns BskResult<Outputs>    Framework writes them to output ports.
+///   └─ returns BskResult<Outputs>    Framework writes selected output ports.
 ///
 /// update(state, context, inputs, time) — every tick.
-///   └─ returns BskResult<Outputs>    Framework reads inputs, writes outputs.
+///   └─ returns BskResult<Outputs>    Framework reads inputs, writes selected outputs.
 /// ```
 pub trait BskModule {
     /// Arbitrary Rust-owned state retained between lifecycle calls.
@@ -1455,16 +1455,17 @@ pub trait BskModule {
         Ok(())
     }
 
-    /// Called during `Reset()`. Must return initialized values for every
-    /// output message port; the generated lifecycle code writes them so
-    /// they are valid before the first `UpdateState` tick.
+    /// Called during `Reset()`. Each generated output field is an
+    /// `Option<Message>`: `Some(payload)` publishes that port and `None`
+    /// leaves it unchanged. Fixed-size output arrays select each element
+    /// independently.
     ///
-    /// The default implementation returns
-    /// `Ok(Self::Outputs::default())`, which works for modules whose output
-    /// payload types all implement `Default` (all built-in Basilisk message
-    /// payloads do). Override this method whenever reset needs to write
-    /// non-zero initial outputs, validate parameters, or reset internal
-    /// state. No output is written when this method returns an error.
+    /// The default implementation returns `Ok(Self::Outputs::default())`.
+    /// Generated output defaults contain `None` for every port, so reset
+    /// publishes nothing unless an override returns selected payloads. Override
+    /// this method to validate parameters, reset internal state, or publish
+    /// explicit reset values. No output is written when this method returns an
+    /// error.
     fn reset(
         &mut self,
         _state: &mut Self::State,
@@ -1478,8 +1479,9 @@ pub trait BskModule {
     }
 
     /// Called every simulation tick. Receives named input message values and
-    /// returns named output message values for the framework to write. No
-    /// output is written when this method returns an error.
+    /// returns named optional output values. The framework publishes each
+    /// `Some(payload)` field and skips each `None` field. No output is written
+    /// when this method returns an error.
     fn update(
         &mut self,
         state: &mut Self::State,

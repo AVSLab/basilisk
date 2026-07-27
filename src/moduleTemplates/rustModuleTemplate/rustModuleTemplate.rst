@@ -117,18 +117,18 @@ fixed-size output array are published together:
 .. code-block:: rust
 
    Ok(RustModuleTemplateOutputs {
-       dataOutMsg: data_out_msg,
-       dataOutMsgs: data_out_msgs,
+       dataOutMsg: Some(data_out_msg),
+       dataOutMsgs: data_out_msgs.map(Some),
    })
 
-The generated lifecycle code writes ``data_out_msg`` to ``dataOutMsg``. It
-also writes ``data_out_msgs[0]`` and ``data_out_msgs[1]`` to the corresponding
-elements of ``dataOutMsgs``. The returned values contain only
-``CModuleTemplateMsg`` payload data. Basilisk automatically stamps every
-published message with this module's ``moduleID`` and the current simulation
-time, and sets its ``isWritten`` flag. Both reset and update return a complete
-``RustModuleTemplateOutputs`` value, so all three output messages are
-published after each successful call.
+The generated lifecycle writes each ``Some(payload)`` to its corresponding
+port. Here it writes ``data_out_msg`` to ``dataOutMsg`` and both elements of
+``data_out_msgs`` to the matching elements of ``dataOutMsgs``. Returning
+``None`` for an individual field or array element skips that output for the
+current call. Basilisk automatically stamps each published message with this
+module's ``moduleID`` and current simulation time and sets its ``isWritten``
+flag. The template returns the default all-``None`` output value from reset,
+so it begins publishing only when update runs.
 
 Connect ``module.dataInMsg`` when input data is available. When it is unconnected,
 the module starts from a zero vector.

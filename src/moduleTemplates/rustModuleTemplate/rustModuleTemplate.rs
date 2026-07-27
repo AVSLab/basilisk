@@ -184,12 +184,10 @@ impl BskModule for RustModuleTemplateConfig {
         state.mode = TemplateMode::Running;
         context.logger().info("Variable dummy set to 0 in reset.");
 
-        // Reset returns the initial output payloads. The generated lifecycle
-        // publishes these values with the reset time and module ID.
-        Ok(RustModuleTemplateOutputs {
-            dataOutMsg: CModuleTemplateMsg::default(),
-            dataOutMsgs: core::array::from_fn(|_| CModuleTemplateMsg::default()),
-        })
+        // Default outputs contain None for every port, so reset changes state
+        // without publishing a message. Return Some(payload) for any output
+        // that should instead receive an explicit reset value.
+        Ok(RustModuleTemplateOutputs::default())
     }
 
     fn update(
@@ -234,12 +232,12 @@ impl BskModule for RustModuleTemplateConfig {
             output_message.dataVector[0] += self.dummy;
         }
 
-        // The generated lifecycle writes these named payload values to the
-        // corresponding ports and supplies the module ID, current timestamp,
-        // and isWritten flag.
+        // Some(payload) publishes that named output; None would leave the port
+        // unchanged for this update. Array elements are selected independently.
+        // The generated lifecycle supplies module ID, timestamp, and isWritten.
         Ok(RustModuleTemplateOutputs {
-            dataOutMsg: data_out_msg,
-            dataOutMsgs: data_out_msgs,
+            dataOutMsg: Some(data_out_msg),
+            dataOutMsgs: data_out_msgs.map(Some),
         })
     }
 }
@@ -293,11 +291,8 @@ mod tests {
         assert!(inputs.dataInMsgs.iter().all(Option::is_none));
 
         let outputs = RustModuleTemplateOutputs::default();
-        assert_eq!(outputs.dataOutMsg.dataVector, [0.0; 3]);
-        assert!(outputs
-            .dataOutMsgs
-            .iter()
-            .all(|message| message.dataVector == [0.0; 3]));
+        assert!(outputs.dataOutMsg.is_none());
+        assert!(outputs.dataOutMsgs.iter().all(Option::is_none));
     }
 
     /// Show how pure Rust tests obtain framework metadata and logging services.
@@ -334,9 +329,11 @@ mod tests {
         };
         let mut state = RustModuleTemplateState::default();
 
-        config
+        let reset_outputs = config
             .reset(&mut state, &context, 0) // [ns]
             .expect("valid parameters must reset");
+        assert!(reset_outputs.dataOutMsg.is_none());
+        assert!(reset_outputs.dataOutMsgs.iter().all(Option::is_none));
         assert_eq!(state.mode, TemplateMode::Running);
         assert!(state.update_history.is_empty());
         assert_eq!(state.last_event, "reset at 0 ns");
