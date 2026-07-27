@@ -209,7 +209,11 @@ def test_payload_equality_generates_fixed_array_comparison():
         ],
     }
 
-    generated = generateEqualityHeader(meta, "CModuleTemplateMsgPayload", "msgPayloadDefC")
+    generated = generateEqualityHeader(
+        meta,
+        "CModuleTemplateMsgPayload",
+        "architecture/msgPayloadDefC/CModuleTemplateMsgPayload.h",
+    )
 
     assert generated is not None
     assert "std::memcmp" not in generated
@@ -247,7 +251,11 @@ def test_payload_equality_generates_nested_struct_comparison():
         ],
     }
 
-    generated = generateEqualityHeader(meta, "RWConstellationMsgPayload", "msgPayloadDefC")
+    generated = generateEqualityHeader(
+        meta,
+        "RWConstellationMsgPayload",
+        "architecture/msgPayloadDefC/RWConstellationMsgPayload.h",
+    )
 
     assert generated is not None
     assert "for (int i0 = 0; i0 < 36; ++i0)" in generated
@@ -266,7 +274,11 @@ def test_payload_equality_generates_eigen_comparison():
         ],
     }
 
-    generated = generateEqualityHeader(meta, "MJSceneStateMsgPayload", "msgPayloadDefCpp")
+    generated = generateEqualityHeader(
+        meta,
+        "MJSceneStateMsgPayload",
+        "architecture/msgPayloadDefCpp/MJSceneStateMsgPayload.h",
+    )
 
     assert generated is not None
     assert "lhs.qpos.rows() != rhs.qpos.rows()" in generated
@@ -285,7 +297,11 @@ def test_payload_equality_uses_operator_equal_for_safe_stl_fields():
         ],
     }
 
-    generated = generateEqualityHeader(meta, "StringVectorMsgPayload", "msgPayloadDefCpp")
+    generated = generateEqualityHeader(
+        meta,
+        "StringVectorMsgPayload",
+        "architecture/msgPayloadDefCpp/StringVectorMsgPayload.h",
+    )
 
     assert generated is not None
     assert "if (!(lhs.keyboardInput == rhs.keyboardInput))" in generated
@@ -309,6 +325,29 @@ def test_payload_equality_returns_none_for_unsupported_fields():
         ],
     }
 
-    generated = generateEqualityHeader(meta, "VizUserInputMsgPayload", "msgPayloadDefCpp")
+    generated = generateEqualityHeader(
+        meta,
+        "VizUserInputMsgPayload",
+        "architecture/msgPayloadDefCpp/VizUserInputMsgPayload.h",
+    )
 
     assert generated is None
+
+
+def test_payload_equality_uses_external_header_include():
+    """Generated equality includes an external payload from its public root."""
+
+    meta = {
+        "fields": [
+            {"name": "value", "kind": "primitive", "ctype": "double"},
+        ],
+    }
+
+    generated = generateEqualityHeader(
+        meta,
+        "CustomModuleMsgPayload",
+        "msgPayloadDefC/CustomModuleMsgPayload.h",
+    )
+
+    assert generated is not None
+    assert '#include "msgPayloadDefC/CustomModuleMsgPayload.h"' in generated

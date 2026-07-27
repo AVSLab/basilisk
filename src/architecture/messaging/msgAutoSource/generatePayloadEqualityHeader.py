@@ -105,7 +105,7 @@ def _appendPayloadComparison(
     return False  # pointer or unsupported unknown type
 
 
-def generateEqualityHeader(meta: dict, payloadType: str, searchDir: str) -> str | None:
+def generateEqualityHeader(meta: dict, payloadType: str, headerInclude: str) -> str | None:
     """
     Generate a C++ header with a PayloadEqualityTraits<payloadType> specialization.
 
@@ -122,7 +122,7 @@ def generateEqualityHeader(meta: dict, payloadType: str, searchDir: str) -> str 
         "// AUTO-GENERATED — DO NOT EDIT",
         "#pragma once",
         '#include "architecture/messaging/payloadEqualityTraits.h"',
-        f'#include "architecture/{searchDir}/{payloadType}.h"',
+        f'#include "{headerInclude}"',
         "",
         "template<>",
         f"struct PayloadEqualityTraits<{payloadType}> {{",
@@ -142,12 +142,12 @@ if __name__ == "__main__":
     outputPath = sys.argv[1]
     metaJsonPath = sys.argv[2]
     payloadTypeName = sys.argv[3]
-    searchDir = sys.argv[4]
+    headerInclude = sys.argv[4]
 
     with open(metaJsonPath) as f:
         meta = json.load(f)
 
-    content = generateEqualityHeader(meta, payloadTypeName, searchDir)
+    content = generateEqualityHeader(meta, payloadTypeName, headerInclude)
 
     with open(outputPath, "w") as f:
         if content is not None:

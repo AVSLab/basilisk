@@ -40,11 +40,28 @@ function(generate_messages searchDir generateCCode)
     )
 
     set(EQUALITY_OUT_NAME "${CMAKE_BINARY_DIR}/autoSource/${TARGET_NAME}_equality.h")
+    get_filename_component(
+      MESSAGE_HEADER_ABSOLUTE "${msgFile}" ABSOLUTE
+      BASE_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
+    set(MESSAGE_IS_EXTERNAL FALSE)
+    if(NOT "${EXTERNAL_MODULES_PATH}" STREQUAL "")
+      cmake_path(
+        IS_PREFIX EXTERNAL_MODULES_PATH "${MESSAGE_HEADER_ABSOLUTE}"
+        NORMALIZE MESSAGE_IS_EXTERNAL)
+    endif()
+    if(MESSAGE_IS_EXTERNAL)
+      file(RELATIVE_PATH MESSAGE_HEADER_INCLUDE
+           "${EXTERNAL_MODULES_PATH}" "${MESSAGE_HEADER_ABSOLUTE}")
+    else()
+      file(RELATIVE_PATH MESSAGE_HEADER_INCLUDE
+           "${CMAKE_SOURCE_DIR}" "${MESSAGE_HEADER_ABSOLUTE}")
+    endif()
     add_custom_command(
       OUTPUT ${EQUALITY_OUT_NAME}
       COMMAND ${Python3_EXECUTABLE}
               msgAutoSource/generatePayloadEqualityHeader.py
-              ${EQUALITY_OUT_NAME} ${MSG_META_OUTPUT} ${TARGET_NAME} ${searchDir}
+              ${EQUALITY_OUT_NAME} ${MSG_META_OUTPUT} ${TARGET_NAME}
+              ${MESSAGE_HEADER_INCLUDE}
       DEPENDS ${MSG_META_OUTPUT} msgAutoSource/generatePayloadEqualityHeader.py
       WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/"
       COMMENT "Generating payload equality header for ${TARGET_NAME}"

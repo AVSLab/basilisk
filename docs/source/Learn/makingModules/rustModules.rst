@@ -144,11 +144,12 @@ not need Rust modules do not need these tools. Enable Rust modules with:
 On Windows, use ``python`` instead of ``python3`` if that is the command for
 the active Python installation.
 
-``rustModules`` enables discovery and compilation of in-tree Rust modules.
-Basilisk uses Corrosion, a CMake integration layer that imports Cargo
-libraries as CMake targets. Corrosion is downloaded at its pinned revision
-during the first Rust-enabled configuration; it is not a separate compiler
-and does not need to be installed manually.
+``rustModules`` enables discovery and compilation of in-tree Rust modules and
+Rust modules supplied through ``pathToExternalModules``. Basilisk uses
+Corrosion, a CMake integration layer that imports Cargo libraries as CMake
+targets. Corrosion is downloaded at its pinned revision during the first
+Rust-enabled configuration; it is not a separate compiler and does not need to
+be installed manually.
 
 After the build, verify the template through its normal Python unit test:
 
@@ -345,6 +346,87 @@ the workspace lockfile, and module-local lockfiles are ignored.
 Normal Basilisk and CI builds pass ``--locked`` to Cargo. A locked build fails
 when ``Cargo.toml`` and ``src/Cargo.lock`` disagree instead of silently
 selecting new dependency versions.
+
+Integrated External Rust Modules
+--------------------------------
+
+Rust modules can remain in a separate source repository while participating
+in an integrated Basilisk build through ``pathToExternalModules``. Place each
+module directly under the external project's ``ExternalModules`` directory:
+
+.. code-block:: text
+
+    External/
+    |-- Cargo.toml
+    |-- Cargo.lock
+    `-- ExternalModules/
+        `-- myRustModule/
+            |-- Cargo.toml
+            |-- build.rs
+            |-- myRustModule.rs
+            |-- myRustModule.rst
+            `-- _UnitTest/
+                `-- test_myRustModule.py
+
+A Cargo workspace at ``External/Cargo.toml`` is recommended so all Rust
+modules in that project share one dependency resolution and lockfile:
+
+.. code-block:: toml
+
+    [workspace]
+    resolver = "2"
+    members = ["ExternalModules/myRustModule"]
+
+    [workspace.package]
+    rust-version = "1.89"
+
+    [profile.dev]
+    panic = "unwind"
+
+    [profile.release]
+    panic = "unwind"
+
+An external module uses the same package marker, static-library crate type,
+source layout, and ``build.rs`` as an in-tree module. Its dependencies must
+point to the support crates in the Basilisk checkout used for the integrated
+build. For example:
+
+.. code-block:: toml
+
+    [dependencies]
+    bsk-messages = { path = "/path/to/basilisk/src/architecture/rust/bsk_messages" }
+    bsk-build = { path = "/path/to/basilisk/src/architecture/rust/bsk_build" }
+
+    [build-dependencies]
+    bsk-build = { path = "/path/to/basilisk/src/architecture/rust/bsk_build",
+                  default-features = false, features = ["codegen"] }
+
+Use paths relative to the external project when its location relative to the
+Basilisk checkout is controlled; this keeps the project portable between
+machines. Until the Basilisk Rust support crates are distributed separately,
+the Cargo dependency paths couple the external module to that checkout.
+
+Generate and commit the external workspace's lockfile, then enable both build
+options:
+
+.. code-block:: console
+
+    cargo generate-lockfile --manifest-path /path/to/External/Cargo.toml
+    python3 conanfile.py --clean --rustModules True \
+        --pathToExternalModules "/path/to/External"
+
+The resulting module is imported from ``Basilisk.ExternalModules``. External
+C payload headers under ``External/msgPayloadDefC`` are included in the normal
+C-message generation step and are therefore available through
+``bsk-messages``. Rerun the same ``conanfile.py`` command after adding or
+editing one of those payloads.
+
+For a project containing only one Rust module, the module may instead be an
+independent Cargo package with its own committed ``Cargo.lock`` and no
+workspace manifest at the external root. Basilisk discovers marked
+``Cargo.toml`` files directly under ``ExternalModules/<module>``. A shared
+external workspace is preferred when the project contains multiple Rust
+packages.
 
 Write the Module
 ----------------
