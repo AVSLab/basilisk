@@ -17,7 +17,6 @@
 #
 
 from copy import deepcopy as _deepcopy
-from functools import lru_cache as _lruCache
 from importlib.metadata import distributions as _distributions
 
 from Basilisk._buildAbiData import buildAbiData as _buildAbiData
@@ -27,7 +26,6 @@ _buildInfoData = {**_buildInfoData, "abi": _buildAbiData}
 _buildFeatureEntryPointGroup = "basilisk.build_features"
 
 
-@_lruCache(maxsize=1)
 def _installedBuildFeatureProviders() -> dict[str, tuple[tuple[str, str], ...]]:
     """Return optional feature providers discovered from distribution metadata."""
     providers: dict[str, set[tuple[str, str]]] = {}

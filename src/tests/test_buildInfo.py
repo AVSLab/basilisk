@@ -19,6 +19,7 @@
 import ctypes
 import platform
 import re
+from importlib.metadata import distributions
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -31,14 +32,6 @@ import Basilisk._buildInfo as buildInfoFormatter
 ABI_CONTRACT_HEADER = (
     Path(__file__).parents[1] / "architecture" / "utilities" / "bskAbiDescriptor.h"
 )
-
-
-@pytest.fixture(autouse=True)
-def clearBuildFeatureProviderCache():
-    """Clear cached distribution metadata around each build-information test."""
-    buildInfoFormatter._installedBuildFeatureProviders.cache_clear()
-    yield
-    buildInfoFormatter._installedBuildFeatureProviders.cache_clear()
 
 
 def _integerDefine(name):
@@ -326,45 +319,51 @@ def test_build_feature_query(monkeypatch):
     assert Basilisk.hasBuildFeature("opNav") is True
     assert Basilisk.hasBuildFeature("mujoco") is True
     assert Basilisk.getBuildInfo()["features"] == features
-    assert distributionQueries == [True]
+    assert distributionQueries == [True, True, True]
 
     with pytest.raises(KeyError, match="unknownFeature"):
         Basilisk.hasBuildFeature("unknownFeature")
 
 
-def test_missing_optional_build_feature(monkeypatch):
-    """Verify a feature is unavailable when neither core nor an extension provides it."""
+def test_optional_build_feature_environment_changes(monkeypatch, tmp_path):
+    """Verify provider changes are detected within a running process."""
     features = {"vizInterface": True, "opNav": False, "mujoco": True}
     monkeypatch.setitem(buildInfoFormatter._buildInfoData, "features", features)
-
-    monkeypatch.setattr(buildInfoFormatter, "_distributions", lambda: [])
-
-    assert Basilisk.hasBuildFeature("opNav") is False
-
-
-def test_incompatible_optional_build_feature(monkeypatch):
-    """Verify an incompatible optional feature provider is rejected."""
-    features = {"vizInterface": True, "opNav": True, "mujoco": True}
-    monkeypatch.setitem(buildInfoFormatter._buildInfoData, "features", features)
     coreVersion = buildInfoFormatter._buildInfoData["artifact"]["basiliskVersion"]
-    incompatibleVersion = "0" if coreVersion != "0" else "1"
-    entryPoint = SimpleNamespace(
-        group=buildInfoFormatter._buildFeatureEntryPointGroup,
-        name="opNav",
-    )
-    optionalDistribution = SimpleNamespace(
-        entry_points=[entryPoint],
-        metadata={"Name": "bsk-opnav"},
-        version=incompatibleVersion,
-    )
     monkeypatch.setattr(
         buildInfoFormatter,
         "_distributions",
-        lambda: [optionalDistribution],
+        lambda: distributions(path=[tmp_path]),
     )
 
+    assert Basilisk.hasBuildFeature("opNav") is False
+
+    providerPath = tmp_path / f"bsk_opnav-{coreVersion}.dist-info"
+    providerPath.mkdir()
+    metadataPath = providerPath / "METADATA"
+    metadataPath.write_text(
+        f"Metadata-Version: 2.4\nName: bsk-opnav\nVersion: {coreVersion}\n",
+        encoding="utf-8",
+    )
+    entryPointPath = providerPath / "entry_points.txt"
+    entryPointPath.write_text(
+        f"[{buildInfoFormatter._buildFeatureEntryPointGroup}]\nopNav = Basilisk\n",
+        encoding="utf-8",
+    )
+    assert Basilisk.hasBuildFeature("opNav") is True
+
+    incompatibleVersion = "0" if coreVersion != "0" else "1"
+    metadataPath.write_text(
+        f"Metadata-Version: 2.4\nName: bsk-opnav\nVersion: {incompatibleVersion}\n",
+        encoding="utf-8",
+    )
     with pytest.raises(RuntimeError, match=r"bsk-opnav.*install a provider matching"):
         Basilisk.hasBuildFeature("opNav")
+
+    metadataPath.unlink()
+    entryPointPath.unlink()
+    providerPath.rmdir()
+    assert Basilisk.hasBuildFeature("opNav") is False
 
 
 def test_shared_abi_contract_header():
