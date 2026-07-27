@@ -135,14 +135,14 @@
 //!
 //! # Messaging
 //!
-//! Annotate each message-port field so its role is explicit:
+//! Message-port direction follows directly from its Rust type:
 //!
-//! * ``#[bsk(input)]`` on ``MsgReader<Foo>`` creates a required ``Foo`` field
-//!   in the generated named input struct.
-//! * ``#[bsk(input, optional)]`` creates an ``Option<Foo>`` field that is
-//!   ``None`` when the port is unlinked.
-//! * ``#[bsk(output)]`` on ``MsgWriter<Foo>`` creates a ``Foo`` field in the
-//!   generated named output struct.
+//! * ``MsgReader<Foo>`` creates a required ``Foo`` field in the generated
+//!   named input struct.
+//! * ``#[bsk(optional)]`` on a ``MsgReader<Foo>`` creates an ``Option<Foo>``
+//!   field that is ``None`` when the port is unlinked.
+//! * ``MsgWriter<Foo>`` creates a ``Foo`` field in the generated named output
+//!   struct.
 //!
 //! Given ``MyModuleConfig``, the attribute names those structs
 //! ``MyModuleInputs`` and ``MyModuleOutputs``. Set ``BskModule::Inputs`` and
@@ -244,11 +244,10 @@
 /// The attribute validates that the type is a public, named ``#[repr(C)]``
 /// struct with public FFI-safe fields. It generates named input/output value
 /// structs plus the C ABI lifecycle and guarded configuration-accessor
-/// functions. Message ports must use
-/// ``#[bsk(input)]``,
-/// ``#[bsk(input, optional)]``, or ``#[bsk(output)]``. The module's
-/// ``build.rs`` passes this type's exact name to [`generate_bindings`] when
-/// generating the C header and wrapper artifacts.
+/// functions. ``MsgReader<T>`` fields are inputs and ``MsgWriter<T>`` fields
+/// are outputs. Add ``#[bsk(optional)]`` only to an input that may be
+/// unlinked. The module's ``build.rs`` passes this type's exact name to
+/// [`generate_bindings`] when generating the C header and wrapper artifacts.
 pub use bsk_macros::{module, BskConfigValue};
 
 /// Value that can be copied safely between a generated C++ wrapper and Rust.
@@ -1080,10 +1079,11 @@ pub unsafe trait Msg: Sized + Copy {
 
 /// An input message port — reads a [`Msg`] written by another module.
 ///
-/// Use as an annotated config struct field, e.g.
-/// ``#[bsk(input)] pub attGuidInMsg: MsgReader<AttGuidMsg>``. Has the same
-/// memory layout as the message's C-interface port struct, so the generated C
-/// header sees a plain ``AttGuidMsg_C`` field.
+/// Use as a config struct field, e.g.
+/// ``pub attGuidInMsg: MsgReader<AttGuidMsg>``. Add ``#[bsk(optional)]`` when
+/// the input may be unlinked. Has the same memory layout as the message's
+/// C-interface port struct, so the generated C header sees a plain
+/// ``AttGuidMsg_C`` field.
 #[repr(transparent)]
 pub struct MsgReader<T: Msg>(T::Port);
 
@@ -1106,8 +1106,8 @@ impl<T: Msg> MsgReader<T> {
 
 /// An output message port — writes a [`Msg`] for other modules to read.
 ///
-/// Use as an annotated config struct field, e.g.
-/// ``#[bsk(output)] pub cmdTorqueOutMsg: MsgWriter<CmdTorqueBodyMsg>``.
+/// Use as a config struct field, e.g.
+/// ``pub cmdTorqueOutMsg: MsgWriter<CmdTorqueBodyMsg>``.
 #[repr(transparent)]
 pub struct MsgWriter<T: Msg>(T::Port);
 

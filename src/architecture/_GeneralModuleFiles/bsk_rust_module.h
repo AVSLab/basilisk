@@ -51,10 +51,10 @@
  *  read/write messages around the module's own ``update``. The user
  *  implements ``init``, ``reset``, and ``update`` in safe Rust with
  *  named, typed message values and ``BskResult`` return types — no FFI
- *  boilerplate by hand. Message-port fields use ``#[bsk(input)]``,
- *  ``#[bsk(input, optional)]``, or ``#[bsk(output)]`` to declare their role
- *  explicitly. See the Basilisk documentation's "Making Rust Modules"
- *  page for the full guide.
+ *  boilerplate by hand. A ``MsgReader<T>`` field is an input, a
+ *  ``MsgWriter<T>`` field is an output, and only an input that may be
+ *  unlinked needs the ``#[bsk(optional)]`` annotation. See the Basilisk
+ *  documentation's "Making Rust Modules" page for the full guide.
  *
  *  **Config struct field ordering**
  *
@@ -76,10 +76,10 @@
  *
  *      BSK_RUST_DECL(myModule, myModuleConfig, myModuleConfigHandle)
  *
- *  On the Rust side, ``attGuidInMsg``/``cmdTorqueOutMsg`` above are annotated
- *  with ``#[bsk(input)]``/``#[bsk(output)]`` and use
- *  ``MsgReader<AttGuidMsg>``/``MsgWriter<CmdTorqueBodyMsg>`` — see the
- *  "Making Rust Modules" documentation page for the complete Rust form.
+ *  On the Rust side, ``attGuidInMsg``/``cmdTorqueOutMsg`` above use
+ *  ``MsgReader<AttGuidMsg>``/``MsgWriter<CmdTorqueBodyMsg>``. Those types
+ *  identify the port direction without another annotation — see the "Making
+ *  Rust Modules" documentation page for the complete Rust form.
  *
  *  **moduleID**
  *
@@ -128,28 +128,26 @@
  *
  *  **Message port patterns**
  *
- *  Annotate each Rust config field so the port role is explicit. The
- *  procedural attribute generates named input and output value structs whose
- *  fields retain those config field names::
+ *  The Rust field type identifies the port role. The procedural attribute
+ *  generates named input and output value structs whose fields retain those
+ *  config field names::
  *
- *      #[bsk(input)]
  *      pub attGuidInMsg: MsgReader<AttGuidMsg>,
- *      #[bsk(input, optional)]
+ *      #[bsk(optional)]
  *      pub disturbanceInMsg: MsgReader<CmdTorqueBodyMsg>,
- *      #[bsk(output)]
  *      pub cmdTorqueOutMsg: MsgWriter<CmdTorqueBodyMsg>,
  *
- *  *Required input* — ``#[bsk(input)]`` checks connectivity in ``Reset`` and
- *  before each ``Update`` read; a missing connection returns an expected
- *  Rust error that the C++ wrapper translates into ``BasiliskError``.
+ *  *Required input* — an unannotated ``MsgReader<T>`` checks connectivity in
+ *  ``Reset`` and before each ``Update`` read; a missing connection returns an
+ *  expected Rust error that the C++ wrapper translates into
+ *  ``BasiliskError``.
  *
- *  *Optional input* — ``#[bsk(input, optional)]`` gives the generated input
- *  field type ``Option<Msg>`` (``None`` when unlinked) instead of raising an
- *  error.
+ *  *Optional input* — ``#[bsk(optional)]`` on a ``MsgReader<T>`` gives the
+ *  generated input field type ``Option<Msg>`` (``None`` when unlinked)
+ *  instead of raising an error.
  *
- *  *Output* — ``#[bsk(output)]`` is initialized automatically in
- *  ``SelfInit`` and written from the same named field returned by ``reset``
- *  or ``update``.
+ *  *Output* — a ``MsgWriter<T>`` is initialized automatically in ``SelfInit``
+ *  and written from the same named field returned by ``reset`` or ``update``.
  *
  *  **Python wiring** (same as any BSK C module)::
  *

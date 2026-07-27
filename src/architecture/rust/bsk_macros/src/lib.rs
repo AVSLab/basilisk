@@ -29,11 +29,11 @@ const CONFIG_TYPE_ENV: &str = "BSK_RUST_CONFIG_TYPE";
 
 /// Mark and validate a Basilisk module's top-level configuration struct.
 ///
-/// Message fields must use ``#[bsk(input)]``,
-/// ``#[bsk(input, optional)]``, or ``#[bsk(output)]``. For a config named
-/// ``MyModuleConfig``, this attribute generates ``MyModuleInputs`` and
-/// ``MyModuleOutputs`` with corresponding named message-value fields, plus
-/// the Basilisk C ABI construction, destruction, lifecycle, and guarded
+/// ``MsgReader<T>`` fields are inputs and ``MsgWriter<T>`` fields are outputs.
+/// Add ``#[bsk(optional)]`` only to an input that may be unlinked. For a config
+/// named ``MyModuleConfig``, this attribute generates ``MyModuleInputs`` and
+/// ``MyModuleOutputs`` with corresponding named message-value fields, plus the
+/// Basilisk C ABI construction, destruction, lifecycle, and guarded
 /// configuration-accessor entry points. Non-port fields may use
 /// ``#[bsk(validate = "path")]`` and
 /// ``#[bsk(deprecated(removal_date = "...", message = "..."))]``.
@@ -1089,93 +1089,69 @@ fn parse_message_port(field: &mut Field) -> syn::Result<Option<(PortDirection, M
         .filter_map(|(index, attribute)| attribute.path().is_ident("bsk").then_some(index))
         .collect();
     let port_type = message_port_type(&field.ty);
-    let annotation_declares_port = annotation_indices.iter().any(|index| {
-        let mut declares_port = false;
-        let _ = field.attrs[*index].parse_nested_meta(|meta| {
-            if meta.path.is_ident("input")
-                || meta.path.is_ident("output")
-                || meta.path.is_ident("optional")
-            {
-                declares_port = true;
-            }
-            Ok(())
-        });
-        declares_port
-    });
+    let has_legacy_direction = annotation_indices
+        .iter()
+        .any(|index| annotation_mentions(&field.attrs[*index], &["input", "output"]));
+    let has_optional = annotation_indices
+        .iter()
+        .any(|index| annotation_mentions(&field.attrs[*index], &["optional"]));
 
-    if port_type.is_none() && !annotation_declares_port {
-        return Ok(None);
-    }
-    if annotation_indices.is_empty() {
+    if has_legacy_direction {
         return Err(syn::Error::new_spanned(
             field,
-            "message ports require `#[bsk(input)]`, \
-             `#[bsk(input, optional)]`, or `#[bsk(output)]`",
+            "message direction is inferred from `MsgReader` or `MsgWriter`; \
+             remove `input` or `output` and use only `#[bsk(optional)]` for an \
+             optional input",
         ));
+    }
+    if port_type.is_none() {
+        if contains_message_port_type(&field.ty) {
+            return Err(syn::Error::new_spanned(
+                &field.ty,
+                "message ports must use `MsgReader<Message>`, \
+                 `[MsgReader<Message>; N]`, `MsgWriter<Message>`, or \
+                 `[MsgWriter<Message>; N]`; dynamically sized message-port \
+                 collections are not supported",
+            ));
+        }
+        if has_optional {
+            return Err(syn::Error::new_spanned(
+                field,
+                "`#[bsk(optional)]` is valid only for a `MsgReader<Message>` \
+                 input or a fixed-size array of readers",
+            ));
+        }
+        return Ok(None);
     }
     if annotation_indices.len() > 1 {
         return Err(syn::Error::new_spanned(
             field,
-            "a message port must have exactly one `#[bsk(...)]` annotation",
+            "a message port may have at most one `#[bsk(optional)]` annotation",
         ));
     }
 
-    let annotation = field.attrs[annotation_indices[0]].clone();
-    let mut direction = None;
     let mut optional = false;
-    annotation.parse_nested_meta(|meta| {
-        let candidate = if meta.path.is_ident("input") {
-            Some(PortDirection::Input)
-        } else if meta.path.is_ident("output") {
-            Some(PortDirection::Output)
-        } else if meta.path.is_ident("optional") {
-            if optional {
-                return Err(meta.error("duplicate `optional` argument"));
+    if let Some(index) = annotation_indices.first() {
+        let annotation = field.attrs[*index].clone();
+        annotation.parse_nested_meta(|meta| {
+            if meta.path.is_ident("optional") {
+                if optional {
+                    return Err(meta.error("duplicate `optional` argument"));
+                }
+                optional = true;
+                Ok(())
+            } else {
+                Err(meta.error("expected only `optional` on a message input"))
             }
-            optional = true;
-            return Ok(());
-        } else {
-            return Err(meta.error("expected `input`, `output`, or `optional` in this annotation"));
-        };
-
-        if direction
-            .replace(candidate.expect("direction candidate"))
-            .is_some()
-        {
-            return Err(meta.error("choose exactly one of `input` or `output`"));
-        }
-        Ok(())
-    })?;
-
-    let direction = direction.ok_or_else(|| {
-        syn::Error::new_spanned(
-            &annotation,
-            "a message port annotation requires `input` or `output`",
-        )
-    })?;
-    if optional && direction != PortDirection::Input {
-        return Err(syn::Error::new_spanned(
-            &annotation,
-            "`optional` is valid only for an input port",
-        ));
+        })?;
     }
 
-    let (type_direction, message_type, shape) = port_type.ok_or_else(|| {
-        syn::Error::new_spanned(
-            &field.ty,
-            "an annotated input must use `MsgReader<Message>` or \
-             `[MsgReader<Message>; N]`, and an annotated output must use \
-             `MsgWriter<Message>` or `[MsgWriter<Message>; N]`",
-        )
-    })?;
-    if direction != type_direction {
-        let expected = match direction {
-            PortDirection::Input => "MsgReader<Message>` or `[MsgReader<Message>; N]",
-            PortDirection::Output => "MsgWriter<Message>` or `[MsgWriter<Message>; N]",
-        };
+    let (direction, message_type, shape) = port_type.expect("message port type was checked above");
+    if optional && direction != PortDirection::Input {
+        let annotation = &field.attrs[annotation_indices[0]];
         return Err(syn::Error::new_spanned(
-            &field.ty,
-            format!("this annotation requires `{expected}`"),
+            annotation,
+            "`optional` is valid only for a `MsgReader` input",
         ));
     }
 
@@ -1203,6 +1179,38 @@ fn parse_message_port(field: &mut Field) -> syn::Result<Option<(PortDirection, M
             docs,
         },
     )))
+}
+
+fn annotation_mentions(attribute: &Attribute, names: &[&str]) -> bool {
+    let mut found = false;
+    let _ = attribute.parse_nested_meta(|meta| {
+        if names.iter().any(|name| meta.path.is_ident(name)) {
+            found = true;
+        }
+        Ok(())
+    });
+    found
+}
+
+fn contains_message_port_type(field_type: &Type) -> bool {
+    if direct_message_port_type(field_type).is_some() {
+        return true;
+    }
+
+    match field_type {
+        Type::Array(array) => contains_message_port_type(&array.elem),
+        Type::Path(type_path) => type_path.path.segments.iter().any(|segment| {
+            let PathArguments::AngleBracketed(arguments) = &segment.arguments else {
+                return false;
+            };
+            arguments.args.iter().any(|argument| {
+                matches!(argument, GenericArgument::Type(argument_type) if contains_message_port_type(argument_type))
+            })
+        }),
+        Type::Reference(reference) => contains_message_port_type(&reference.elem),
+        Type::Tuple(tuple) => tuple.elems.iter().any(contains_message_port_type),
+        _ => false,
+    }
 }
 
 fn message_port_type(field_type: &Type) -> Option<(PortDirection, Type, PortShape)> {
@@ -1566,9 +1574,8 @@ mod tests {
         let input: ItemStruct = parse_quote! {
             #[repr(C)]
             pub struct ControllerConfig {
-                #[bsk(input, optional)]
+                #[bsk(optional)]
                 pub inputInMsg: MsgReader<InputMsg>,
-                #[bsk(output)]
                 pub outputOutMsg: MsgWriter<OutputMsg>,
             }
         };
@@ -1719,11 +1726,11 @@ mod tests {
     }
 
     #[test]
-    fn named_inputs_are_generated_for_every_annotated_port() {
+    fn named_inputs_are_generated_for_every_inferred_port() {
         let mut fields = String::new();
         for index in 0..12 {
             fields.push_str(&format!(
-                "#[bsk(input)] pub input{index}InMsg: MsgReader<Input{index}Msg>,"
+                "pub input{index}InMsg: MsgReader<Input{index}Msg>,"
             ));
         }
         let input: ItemStruct = syn::parse_str(&format!(
@@ -1744,11 +1751,9 @@ mod tests {
         let input: ItemStruct = parse_quote! {
             #[repr(C)]
             pub struct ControllerConfig {
-                #[bsk(input)]
                 pub requiredInMsgs: [MsgReader<InputMsg>; 2],
-                #[bsk(input, optional)]
+                #[bsk(optional)]
                 pub optionalInMsgs: [MsgReader<InputMsg>; 3],
-                #[bsk(output)]
                 pub outputOutMsgs: [MsgWriter<OutputMsg>; 2],
             }
         };
@@ -1772,7 +1777,7 @@ mod tests {
     }
 
     #[test]
-    fn rejects_unannotated_message_port() {
+    fn infers_required_input_port_from_reader_type() {
         let input: ItemStruct = parse_quote! {
             #[repr(C)]
             pub struct ControllerConfig {
@@ -1780,12 +1785,15 @@ mod tests {
             }
         };
 
-        let error = expand_module(input).expect_err("unannotated port must fail");
-        assert!(error.to_string().contains("message ports require"));
+        let expanded = expand_module(input)
+            .expect("reader type must identify a required input")
+            .to_string();
+        assert!(expanded.contains("inputInMsg : InputMsg"));
+        assert!(expanded.contains("inputInMsg is not connected"));
     }
 
     #[test]
-    fn rejects_unannotated_message_port_array() {
+    fn infers_required_input_array_from_reader_type() {
         let input: ItemStruct = parse_quote! {
             #[repr(C)]
             pub struct ControllerConfig {
@@ -1793,8 +1801,11 @@ mod tests {
             }
         };
 
-        let error = expand_module(input).expect_err("unannotated port array must fail");
-        assert!(error.to_string().contains("message ports require"));
+        let expanded = expand_module(input)
+            .expect("reader array type must identify required inputs")
+            .to_string();
+        assert!(expanded.contains("inputInMsgs : [InputMsg ; 2]"));
+        assert!(expanded.contains("[{}] is not connected"));
     }
 
     #[test]
@@ -1802,13 +1813,14 @@ mod tests {
         let input: ItemStruct = parse_quote! {
             #[repr(C)]
             pub struct ControllerConfig {
-                #[bsk(input)]
                 pub inputInMsgs: Vec<MsgReader<InputMsg>>,
             }
         };
 
         let error = expand_module(input).expect_err("dynamic port collection must fail");
-        assert!(error.to_string().contains("[MsgReader<Message>; N]"));
+        assert!(error
+            .to_string()
+            .contains("dynamically sized message-port collections are not supported"));
     }
 
     #[test]
@@ -1816,7 +1828,7 @@ mod tests {
         let input: ItemStruct = parse_quote! {
             #[repr(C)]
             pub struct ControllerConfig {
-                #[bsk(output, optional)]
+                #[bsk(optional)]
                 pub outputOutMsg: MsgWriter<OutputMsg>,
             }
         };
@@ -1824,23 +1836,39 @@ mod tests {
         let error = expand_module(input).expect_err("optional output must fail");
         assert!(error
             .to_string()
-            .contains("`optional` is valid only for an input port"));
+            .contains("`optional` is valid only for a `MsgReader` input"));
     }
 
     #[test]
-    fn rejects_annotation_that_disagrees_with_port_type() {
+    fn rejects_explicit_direction_annotation() {
         let input: ItemStruct = parse_quote! {
             #[repr(C)]
             pub struct ControllerConfig {
-                #[bsk(output)]
+                #[bsk(input)]
                 pub inputInMsg: MsgReader<InputMsg>,
             }
         };
 
-        let error = expand_module(input).expect_err("mismatched annotation must fail");
+        let error = expand_module(input).expect_err("explicit direction must fail");
         assert!(error
             .to_string()
-            .contains("this annotation requires `MsgWriter<Message>`"));
+            .contains("message direction is inferred from `MsgReader` or `MsgWriter`"));
+    }
+
+    #[test]
+    fn rejects_optional_annotation_on_configuration_field() {
+        let input: ItemStruct = parse_quote! {
+            #[repr(C)]
+            pub struct ControllerConfig {
+                #[bsk(optional)]
+                pub gain: f64,
+            }
+        };
+
+        let error = expand_module(input).expect_err("optional config field must fail");
+        assert!(error
+            .to_string()
+            .contains("`#[bsk(optional)]` is valid only for a `MsgReader<Message>`"));
     }
 
     #[test]
