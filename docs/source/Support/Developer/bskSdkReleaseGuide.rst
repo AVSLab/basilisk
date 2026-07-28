@@ -333,7 +333,8 @@ environment:
 
 .. code-block:: bash
 
-   python -m pip wheel --no-deps -v -w /tmp/bsk-dev-wheel "$BSK_ROOT"
+   rm -rf /tmp/bsk-dev-wheel/bsk*.whl # Remove wheels left by previous builds
+   CONAN_ARGS="--clean" python -m pip wheel --no-deps -v -w /tmp/bsk-dev-wheel "$BSK_ROOT"
    python -m pip install --force-reinstall /tmp/bsk-dev-wheel/bsk-*.whl
 
 If the extension needs optional Basilisk components such as OpNav, build
@@ -349,6 +350,7 @@ Build and install the SDK wheel, then run the SDK test suite:
 
 .. code-block:: bash
 
+   rm -rf dist/bsk_sdk-*.whl # Remove wheels left by previous builds
    python -m build --wheel
    python -m pip install --force-reinstall dist/bsk_sdk-*.whl
    python -m pytest tests -v
@@ -365,7 +367,7 @@ verify its runtime imports, and run all example tests:
 .. code-block:: bash
 
    python -m build --wheel --no-isolation examples/custom-atm-extension
-   python -m pip install examples/custom-atm-extension/dist/*.whl
+   python -m pip install --force-reinstall examples/custom-atm-extension/dist/*.whl
    python -c "import Basilisk, numba, custom_atm; from custom_atm import numbaAtmosphere"
    python -m pytest examples -v
 
