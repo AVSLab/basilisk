@@ -74,8 +74,8 @@ private:
     std::vector<HingedPanel> PanelVec; //!< -- vector containing all the info on the different panels
     Eigen::MatrixXd matrixADHRB;    //!< [-] term needed for back substitution
     Eigen::MatrixXd matrixEDHRB;    //!< [-] term needed for back substitution
-    Eigen::MatrixXd matrixFDHRB;    //!< [-] term needed for back substitution
-    Eigen::MatrixXd matrixGDHRB;    //!< [-] term needed for back substitution
+    Eigen::MatrixX3d matrixFDHRB;   //!< [-] term needed for back substitution
+    Eigen::MatrixX3d matrixGDHRB;   //!< [-] term needed for back substitution
     Eigen::MatrixXd matrixHDHRB;    //!< [-] term needed for back substitution
     Eigen::MatrixXd matrixKDHRB;    //!< [-] term needed for back substitution
     Eigen::MatrixXd matrixLDHRB;    //!< [-] term needed for back substitution
