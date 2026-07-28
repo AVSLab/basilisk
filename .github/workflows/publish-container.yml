@@ -71,7 +71,8 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha,scope=container-${{ matrix.arch }}
-          cache-to: type=gha,mode=max,scope=container-${{ matrix.arch }}
+          # Cache export is best-effort and must not invalidate a published image.
+          cache-to: type=gha,mode=max,scope=container-${{ matrix.arch }},ignore-error=true
 
   publish:
     name: Publish Multi-Arch Manifests
