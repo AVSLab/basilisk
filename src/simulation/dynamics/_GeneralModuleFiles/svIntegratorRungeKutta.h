@@ -20,8 +20,8 @@
 #ifndef svIntegratorRungeKutta_h
 #define svIntegratorRungeKutta_h
 
-#include "../_GeneralModuleFiles/dynamicObject.h"
 #include "../_GeneralModuleFiles/dynParamManager.h"
+#include "../_GeneralModuleFiles/dynamicObject.h"
 #include "../_GeneralModuleFiles/stateVecIntegrator.h"
 #include "extendedStateVector.h"
 #include <array>
@@ -29,6 +29,7 @@
 #include <memory>
 #include <stdint.h>
 #include <unordered_map>
+#include <utility>
 
 #include <iostream>
 
@@ -214,7 +215,7 @@ ExtendedStateVector svIntegratorRungeKutta<numberStages>::propagateStateWithKVec
 
         auto scaledKVector = kVectors.at(stageIndex) * coefficients.at(stageIndex);
         if (derivative.empty()) {
-            derivative = scaledKVector;
+            derivative = std::move(scaledKVector);
         }
         else {
             derivative += scaledKVector;

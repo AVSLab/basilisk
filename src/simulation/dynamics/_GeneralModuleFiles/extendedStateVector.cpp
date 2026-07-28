@@ -84,7 +84,8 @@ void ExtendedStateVector::modify(
     }
 }
 
-ExtendedStateVector ExtendedStateVector::operator+=(const ExtendedStateVector& rhs)
+ExtendedStateVector&
+ExtendedStateVector::operator+=(const ExtendedStateVector& rhs)
 {
     this->modify([&rhs](const size_t& dynObjIndex,
                         const std::string& stateName,

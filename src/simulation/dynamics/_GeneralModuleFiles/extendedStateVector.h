@@ -146,7 +146,7 @@ class ExtendedStateVector
      *
      * This functions as a state-wise addition operation.
      */
-    ExtendedStateVector operator+=(const ExtendedStateVector& rhs);
+    ExtendedStateVector& operator+=(const ExtendedStateVector& rhs);
 
     /** Subtracts the values of `rhs` to from this
      *
