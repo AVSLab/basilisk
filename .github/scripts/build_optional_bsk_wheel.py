@@ -33,7 +33,7 @@ import sys
 import zipfile
 from dataclasses import dataclass
 from email.parser import Parser
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -416,11 +416,29 @@ def add_bytes(
     records.append((name, *digest_record(data)))
 
 
+def read_license_files(
+    archive: zipfile.ZipFile,
+    license_prefix: str,
+) -> dict[str, bytes]:
+    """Return safe relative paths and contents for wheel legal files."""
+    license_files = {}
+    for name in archive.namelist():
+        if not name.startswith(license_prefix) or name.endswith("/"):
+            continue
+
+        relative_path = name.removeprefix(license_prefix)
+        parsed_path = PurePosixPath(relative_path)
+        if parsed_path.is_absolute() or ".." in parsed_path.parts:
+            raise ValueError(f"Invalid wheel license path: {relative_path!r}")
+        license_files[relative_path] = archive.read(name)
+    return license_files
+
+
 def build_metadata(
     base_metadata: dict[str, list[str]],
     component: OptionalComponent,
     version: str,
-    include_license_file: bool,
+    license_files: list[str],
 ) -> bytes:
     lines = [
         "Metadata-Version: 2.4",
@@ -439,8 +457,8 @@ def build_metadata(
     for value in base_metadata.get("Classifier", []):
         lines.append(f"Classifier: {value}")
 
-    if include_license_file:
-        lines.append("License-File: LICENSE")
+    for license_file in sorted(license_files):
+        lines.append(f"License-File: {license_file}")
 
     lines.extend([
         f"Requires-Dist: {BASE_DISTRIBUTION}=={version}",
@@ -473,16 +491,14 @@ def build_wheel_file(
         ]
         wheel_data = ("\n".join(wheel_metadata) + "\n").encode("utf-8")
 
-        license_name = next(
-            (name for name in source.namelist() if name.endswith(".dist-info/licenses/LICENSE")),
-            None,
-        )
-        license_data = source.read(license_name) if license_name else None
+        source_dist_info = wheel_name.removesuffix("WHEEL")
+        license_prefix = f"{source_dist_info}licenses/"
+        license_files = read_license_files(source, license_prefix)
         metadata = build_metadata(
             base_metadata,
             component,
             version,
-            include_license_file=license_data is not None,
+            license_files=list(license_files),
         )
         entry_points = (
             f"[{BUILD_FEATURE_ENTRY_POINT_GROUP}]\n"
@@ -493,8 +509,8 @@ def build_wheel_file(
             for name in payload:
                 add_bytes(output, records, name, source.read(name))
 
-            if license_data is not None:
-                add_bytes(output, records, f"{dist_info}/licenses/LICENSE", license_data)
+            for relative_path, data in sorted(license_files.items()):
+                add_bytes(output, records, f"{dist_info}/licenses/{relative_path}", data)
 
             add_bytes(output, records, f"{dist_info}/METADATA", metadata)
             add_bytes(output, records, f"{dist_info}/WHEEL", wheel_data)

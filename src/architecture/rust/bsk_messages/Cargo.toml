@@ -3,8 +3,8 @@ name = "bsk-messages"
 version = "0.1.0"
 edition = "2021"
 rust-version.workspace = true
+license.workspace = true
 description = "Auto-generated Rust FFI bindings for Basilisk C message types"
-license = "ISC"
 
 # build.rs generates the message bindings into Cargo's OUT_DIR from Basilisk's
 # generated cMsgCInterface headers. CMake supplies those headers whenever Rust

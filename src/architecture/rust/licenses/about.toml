@@ -1,0 +1,35 @@
+# ISC License
+#
+# Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+
+# List every license currently selected from the locked Rust dependency graph.
+# For OR expressions, cargo-about selects the first acceptable alternative.
+accepted = [
+    "Apache-2.0",
+    "MIT",
+    "BSD-3-Clause",
+    "ISC",
+    "MPL-2.0",
+    "Unicode-3.0",
+    "Unlicense",
+    "Zlib",
+]
+
+# Development-only test dependencies are not compiled into distributed
+# Basilisk wheels. Build dependencies remain in the report so source builds
+# also receive their license terms.
+ignore-dev-dependencies = true
+
+# Resolve target-specific dependencies for every platform on which Basilisk
+# publishes wheels. This keeps one report valid across all wheel variants.
+targets = [
+    "aarch64-apple-darwin",
+    "aarch64-unknown-linux-gnu",
+    "x86_64-apple-darwin",
+    "x86_64-pc-windows-msvc",
+    "x86_64-unknown-linux-gnu",
+]

@@ -63,6 +63,11 @@ jobs:
             echo "::error::src/architecture/rust/bsk_utilities/src/raw.rs is stale (it does not match the utility headers in this PR). Regenerate it locally and commit the result."
             exit 1
           fi
+      - name: Check committed Rust third-party licenses are up to date
+        run: |
+          cargo fetch --locked --manifest-path src/Cargo.toml
+          cargo install cargo-about --version '=0.9.1' --locked --features cli
+          python3 src/architecture/rust/generate_rust_licenses.py --check --require-tool
       - name: Pytest
         working-directory: src
         run: |

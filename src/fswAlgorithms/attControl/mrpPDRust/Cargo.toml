@@ -3,6 +3,7 @@ name = "mrpPDRust"
 version = "1.0.0"
 edition = "2024"
 rust-version.workspace = true
+license.workspace = true
 
 [package.metadata.basilisk]
 module = true
