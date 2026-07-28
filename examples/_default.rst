@@ -241,11 +241,13 @@ Comparing the Back-Substitution and MuJoCo Dynamics Engines
 -----------------------------------------------------------
 These scenarios validate and benchmark the back-substitution :ref:`spacecraft`
 against the MuJoCo-based :ref:`MJScene<MJScene>` on equivalent problems of increasing
-complexity, best studied in order.
+complexity, best studied in order. Start with the overview for build requirements,
+execution order, expected artifacts, approximate runtimes, and interpretation limits.
 
 .. toctree::
   :maxdepth: 1
 
+  Comparison Overview and Execution Guide <dynamicsComparison/runAllComparisons>
   Keplerian Orbit Baseline <dynamicsComparison/scenarioCompareOrbit>
   Rigid Body with Constant Torque <dynamicsComparison/scenarioCompareTorque>
   Hub with Reaction Wheels and Hinged Panels <dynamicsComparison/scenarioCompareRwPanels>
@@ -254,7 +256,22 @@ complexity, best studied in order.
   Variable-Mass Fuel Slosh and Depletion <dynamicsComparison/scenarioCompareVariableMass>
   Accuracy vs Runtime Pareto Front (Reaction Wheels and Panels) <dynamicsComparison/scenarioCompareParetoRwPanels>
   Accuracy vs Runtime Pareto Front (Stiff Flexible Panels) <dynamicsComparison/scenarioCompareParetoFlexPanels>
-  Convenience Runner for All Comparisons <dynamicsComparison/runAllComparisons>
+
+Research Sweeps and Publication Tools
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+These drivers probe numerical mechanisms, parameter sensitivity, and publication
+artifacts rather than serving as introductory tutorials.
+
+.. toctree::
+  :maxdepth: 1
+
+  Integrator-Step Sweep (Keplerian Orbit) <dynamicsComparison/sweepOrbitDt>
+  Velocity-Regime Round-Off Sweep (Constant Torque) <dynamicsComparison/sweepTorqueArtifact>
+  Torque-Artifact Mechanism Checks <dynamicsComparison/sweepTorqueMechanismChecks>
+  Bookkeeping-Mass Sweep (Reaction Wheels) <dynamicsComparison/sweepRwBookkeepingMass>
+  Slosh-Displacement Metric (Variable Mass) <dynamicsComparison/sweepSloshDisplacement>
+  Pendulum-Inertia and Step Sweep (Variable Mass) <dynamicsComparison/sweepVariableMassPendulumInertia>
+  Paper Figure Rendering <dynamicsComparison/paperFigures>
 
 Constrained Spacecraft Dynamics Simulations
 -------------------------------------------
