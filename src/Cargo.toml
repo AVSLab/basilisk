@@ -34,6 +34,7 @@ bsk-utilities = { path = "architecture/rust/bsk_utilities" }
 nalgebra = { version = "0.35.0", default-features = false, features = ["std"] }
 
 [workspace.package]
+license = "ISC"
 rust-version = "1.89"
 
 # Generated module entry points use catch_unwind to contain Rust panics before

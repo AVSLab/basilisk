@@ -125,6 +125,10 @@ runs:
         CIBW_TEST_SKIP: "*"
         CONAN_ARGS: ${{ inputs.conan-args }}
 
+    - name: Verify wheel license files
+      shell: bash
+      run: python .github/scripts/check_wheel_licenses.py "${{ inputs.output-dir }}"
+
     - name: Normalize Linux Conan cache ownership
       id: conan-cache-ownership
       if: ${{ runner.os == 'Linux' && success() && inputs.save-conan-cache == 'true' && steps.conan-cache.outcome == 'success' && steps.conan-cache.outputs.cache-hit != 'true' }}

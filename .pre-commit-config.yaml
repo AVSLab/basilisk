@@ -18,6 +18,12 @@ repos:
           language: python
           files: '(^|/)(.*\.rs|\.?rustfmt\.toml)$'
           pass_filenames: false
+      -   id: rust-third-party-licenses
+          name: Check Rust third-party license report
+          entry: python src/architecture/rust/generate_rust_licenses.py --check
+          language: python
+          files: '^(src/Cargo\.(toml|lock)|src/.*/Cargo\.toml|src/architecture/rust/(generate_rust_licenses\.py|licenses/about\.toml)|LICENSES/RUST-THIRD-PARTY\.txt)$'
+          pass_filenames: false
       -   id: check-supportdata-registry
           name: Ensure supportData registrySnippet.py is updated
           entry: python src/utilities/supportDataTools/checkSync.py

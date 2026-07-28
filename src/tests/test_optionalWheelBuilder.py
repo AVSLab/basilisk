@@ -171,6 +171,11 @@ def test_optional_wheel_declares_build_feature(tmp_path, monkeypatch):
             f"{sourceDistInfo}/WHEEL",
             "Wheel-Version: 1.0\nGenerator: test\nRoot-Is-Purelib: false\n",
         )
+        archive.writestr(f"{sourceDistInfo}/licenses/LICENSE", b"Basilisk license\n")
+        archive.writestr(
+            f"{sourceDistInfo}/licenses/LICENSES/RUST-THIRD-PARTY.txt",
+            b"Rust dependency licenses\n",
+        )
 
     WHEEL_BUILDER.build_wheel_file(
         sourceWheel,
@@ -185,11 +190,20 @@ def test_optional_wheel_declares_build_feature(tmp_path, monkeypatch):
     entryPointPath = f"{optionalDistInfo}/entry_points.txt"
     with zipfile.ZipFile(outputWheel) as archive:
         entryPointData = archive.read(entryPointPath).decode("utf-8")
+        metadataData = archive.read(f"{optionalDistInfo}/METADATA").decode("utf-8")
         recordData = archive.read(f"{optionalDistInfo}/RECORD").decode("utf-8")
+        licenseData = archive.read(f"{optionalDistInfo}/licenses/LICENSE")
+        rustLicenseData = archive.read(
+            f"{optionalDistInfo}/licenses/LICENSES/RUST-THIRD-PARTY.txt"
+        )
         installPath = tmp_path / "installed"
         archive.extractall(installPath)
 
     assert entryPointData == "[basilisk.build_features]\nopNav = Basilisk\n"
+    assert "License-File: LICENSE\n" in metadataData
+    assert "License-File: LICENSES/RUST-THIRD-PARTY.txt\n" in metadataData
+    assert licenseData == b"Basilisk license\n"
+    assert rustLicenseData == b"Rust dependency licenses\n"
     assert entryPointPath in recordData
 
     installedDistributions = list(distributions(path=[installPath]))
@@ -200,3 +214,17 @@ def test_optional_wheel_declares_build_feature(tmp_path, monkeypatch):
         lambda: installedDistributions,
     )
     assert buildInfoFormatter.hasBuildFeature("opNav") is True
+
+
+def test_optional_wheel_rejects_unsafe_license_path():
+    """Verify legal files cannot escape the wheel license directory."""
+    with io.BytesIO() as buffer:
+        with zipfile.ZipFile(buffer, "w") as archive:
+            archive.writestr("example.dist-info/licenses/../../payload", b"invalid\n")
+        buffer.seek(0)
+        with zipfile.ZipFile(buffer) as archive:
+            with pytest.raises(ValueError, match="Invalid wheel license path"):
+                WHEEL_BUILDER.read_license_files(
+                    archive,
+                    "example.dist-info/licenses/",
+                )
