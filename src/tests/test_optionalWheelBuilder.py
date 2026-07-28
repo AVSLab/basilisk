@@ -23,6 +23,7 @@ import zipfile
 from contextlib import contextmanager
 from importlib.metadata import distributions
 from pathlib import Path
+from types import ModuleType
 
 import pytest
 
@@ -31,6 +32,7 @@ import Basilisk._buildInfo as buildInfoFormatter
 
 REPO_ROOT = Path(__file__).parents[2]
 WHEEL_BUILDER_PATH = REPO_ROOT / ".github/scripts/build_optional_bsk_wheel.py"
+WHEEL_TESTER_PATH = REPO_ROOT / ".github/scripts/test_optional_bsk_wheels.py"
 
 
 def _loadWheelBuilder():
@@ -44,7 +46,19 @@ def _loadWheelBuilder():
     return module
 
 
+def _loadWheelTester():
+    moduleName = "bskOptionalWheelTesterUnderTest"
+    spec = importlib.util.spec_from_file_location(moduleName, WHEEL_TESTER_PATH)
+    assert spec is not None
+    assert spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[moduleName] = module
+    spec.loader.exec_module(module)
+    return module
+
+
 WHEEL_BUILDER = _loadWheelBuilder()
+WHEEL_TESTER = _loadWheelTester()
 
 
 def _buildInfoData(opNavEnabled, *, schemaVersion=3):
@@ -214,6 +228,54 @@ def test_optional_wheel_declares_build_feature(tmp_path, monkeypatch):
         lambda: installedDistributions,
     )
     assert buildInfoFormatter.hasBuildFeature("opNav") is True
+
+
+@pytest.mark.parametrize(
+    "expectedFeatures",
+    [
+        pytest.param(WHEEL_TESTER.CORE_FEATURES, id="core"),
+        pytest.param(WHEEL_TESTER.OPNAV_FEATURES, id="opnav"),
+    ],
+)
+def test_optional_wheel_import_check_uses_public_feature_api(
+    monkeypatch,
+    expectedFeatures,
+):
+    """Verify the generated import check queries the public feature API.
+
+    :param monkeypatch: Pytest fixture used to install isolated fake modules.
+    :param expectedFeatures: Expected build-feature values for the wheel variant.
+    """
+    queriedFeatures = []
+
+    class FakeRustModule:
+        pass
+
+    def hasBuildFeature(name):
+        queriedFeatures.append(name)
+        return expectedFeatures[name]
+
+    fakeBasilisk = ModuleType("Basilisk")
+    fakeBasilisk.__file__ = "fake/Basilisk/__init__.py"
+    fakeBasilisk.hasBuildFeature = hasBuildFeature
+    fakeBasilisk.getBuildInfo = lambda: {
+        "diagnostics": {"tools": {"corrosion": "test-version"}}
+    }
+
+    fakeRustModuleApi = ModuleType("Basilisk.moduleTemplates.rustModuleTemplate")
+    fakeRustModuleApi.rustModuleTemplate = FakeRustModule
+
+    monkeypatch.setitem(sys.modules, "Basilisk", fakeBasilisk)
+    monkeypatch.setitem(
+        sys.modules,
+        "Basilisk.moduleTemplates.rustModuleTemplate",
+        fakeRustModuleApi,
+    )
+
+    script = WHEEL_TESTER.import_check_script([], [], expectedFeatures)
+    exec(script, {})
+
+    assert queriedFeatures == list(expectedFeatures)
 
 
 def test_optional_wheel_rejects_unsafe_license_path():
