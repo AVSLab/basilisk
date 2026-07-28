@@ -381,9 +381,10 @@ void NHingedRigidBodyStateEffector::updateContributions(double integTime, BackSu
         }
 
         sumTerm2 = pow(sumThetaDot,2)*(2*((int) this->PanelVec.size() - j)+1)*PanelIt->mass*PanelIt->d*PanelIt->sHat1_B;
-        backSubContr.matrixA += sumTerm1*this->matrixEDHRB.row(j-1)*this->matrixFDHRB;
-        backSubContr.matrixB += sumTerm1*this->matrixEDHRB.row(j-1)*this->matrixGDHRB;
-        backSubContr.vecTrans += -sumTerm2 - sumTerm1*this->matrixEDHRB.row(j-1)*this->vectorVDHRB;
+        const auto eRow = this->matrixEDHRB.row(j - 1);
+        backSubContr.matrixA += sumTerm1 * (eRow * this->matrixFDHRB);
+        backSubContr.matrixB += sumTerm1 * (eRow * this->matrixGDHRB);
+        backSubContr.vecTrans += -sumTerm2 - sumTerm1 * (eRow * this->vectorVDHRB);
         j += 1;
     }
     Eigen::Vector3d aTheta;
@@ -431,9 +432,10 @@ void NHingedRigidBodyStateEffector::updateContributions(double integTime, BackSu
         sumTerm2 = PanelIt->mass*this->omegaLoc_BN_B.cross(PanelIt->r_SB_B.cross(PanelIt->rPrime_SB_B))
         + pow(sumThetaDot,2)*PanelIt->mass*PanelIt->d*(PanelIt->r_SB_B.cross(PanelIt->sHat1_B) + sumTerm3)
         + PanelIt->IPntS_S(1,1)*sumThetaDot*this->omegaLoc_BN_B.cross(PanelIt->sHat2_B);
-        backSubContr.matrixC += sumTerm1*this->matrixEDHRB.row(j-1)*this->matrixFDHRB;
-        backSubContr.matrixD += sumTerm1*this->matrixEDHRB.row(j-1)*this->matrixGDHRB;
-        backSubContr.vecRot += -sumTerm2 - sumTerm1*this->matrixEDHRB.row(j-1)*this->vectorVDHRB;
+        const auto eRow = this->matrixEDHRB.row(j - 1);
+        backSubContr.matrixC += sumTerm1 * (eRow * this->matrixFDHRB);
+        backSubContr.matrixD += sumTerm1 * (eRow * this->matrixGDHRB);
+        backSubContr.vecRot += -sumTerm2 - sumTerm1 * (eRow * this->vectorVDHRB);
         j += 1;
     }
 
