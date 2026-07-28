@@ -1,7 +1,3 @@
-.. Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
-..
-.. SPDX-License-Identifier: ISC
-
 Executive Summary
 -----------------
 
