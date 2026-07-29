@@ -39,6 +39,7 @@ fn main() {
 fn generate_bindings() -> Result<(), Box<dyn Error>> {
     for variable in [
         "BSK_CMSG_DIR",
+        "BSK_CMSG_DIRS",
         "BSK_SRC_ROOT",
         "BSK_C_SYSTEM_INCLUDE_DIRS",
         "LIBCLANG_PATH",
@@ -56,13 +57,29 @@ fn generate_bindings() -> Result<(), Box<dyn Error>> {
         env::var_os("CARGO_MANIFEST_DIR")
             .ok_or("Cargo did not provide CARGO_MANIFEST_DIR to the bsk-messages build script")?,
     );
-    let repository_root = manifest_dir
-        .ancestors()
-        .nth(4)
-        .ok_or("bsk-messages is not located under the Basilisk src tree")?;
-    let source_root = env_path("BSK_SRC_ROOT").unwrap_or_else(|| repository_root.join("src"));
-    let c_message_dir = env_path("BSK_CMSG_DIR")
-        .unwrap_or_else(|| repository_root.join("dist3/autoSource/cMsgCInterface"));
+    let explicit_source_root = env_path("BSK_SRC_ROOT");
+    let explicit_c_message_dirs =
+        env_paths("BSK_CMSG_DIRS").or_else(|| env_path("BSK_CMSG_DIR").map(|path| vec![path]));
+    let repository_root = if explicit_source_root.is_none() || explicit_c_message_dirs.is_none() {
+        Some(
+            manifest_dir
+                .ancestors()
+                .nth(4)
+                .ok_or("bsk-messages is not located under the Basilisk src tree")?,
+        )
+    } else {
+        None
+    };
+    let source_root = explicit_source_root.unwrap_or_else(|| {
+        repository_root
+            .expect("repository fallback required for the Basilisk source root")
+            .join("src")
+    });
+    let c_message_dirs = explicit_c_message_dirs.unwrap_or_else(|| {
+        vec![repository_root
+            .expect("repository fallback required for generated C messages")
+            .join("dist3/autoSource/cMsgCInterface")]
+    });
 
     if !source_root.is_dir() {
         return Err(format!(
@@ -71,36 +88,60 @@ fn generate_bindings() -> Result<(), Box<dyn Error>> {
         )
         .into());
     }
-    if !c_message_dir.is_dir() {
-        return Err(format!(
-            "generated C message directory does not exist: {}. Run \
-             `python3 conanfile.py` first; Rust modules need not be enabled",
-            c_message_dir.display()
-        )
-        .into());
+    let mut headers_by_name = std::collections::BTreeMap::<String, PathBuf>::new();
+    for c_message_dir in &c_message_dirs {
+        if !c_message_dir.is_dir() {
+            return Err(format!(
+                "generated C message directory does not exist: {}. Run \
+                 `python3 conanfile.py` first; Rust modules need not be enabled",
+                c_message_dir.display()
+            )
+            .into());
+        }
+        // Watching the directory catches newly added or removed message headers;
+        // watching each file below catches content changes with precise paths in
+        // Cargo's diagnostics.
+        println!("cargo:rerun-if-changed={}", c_message_dir.display());
+        for header in fs::read_dir(c_message_dir)?
+            .filter_map(Result::ok)
+            .map(|entry| entry.path())
+            .filter(|path| {
+                path.extension() == Some(OsStr::new("h"))
+                    && path
+                        .file_stem()
+                        .is_some_and(|stem| stem.to_string_lossy().ends_with("_C"))
+            })
+        {
+            let name = header
+                .file_name()
+                .and_then(OsStr::to_str)
+                .ok_or_else(|| {
+                    format!(
+                        "generated C message header has a non-UTF-8 name: {}",
+                        header.display()
+                    )
+                })?
+                .to_owned();
+            if let Some(existing) = headers_by_name.insert(name.clone(), header.clone()) {
+                return Err(format!(
+                    "duplicate C message interface `{name}` was found at {} and {}",
+                    existing.display(),
+                    header.display()
+                )
+                .into());
+            }
+        }
     }
-    // Watching the directory catches newly added or removed message headers;
-    // watching each file below catches content changes with precise paths in
-    // Cargo's diagnostics.
-    println!("cargo:rerun-if-changed={}", c_message_dir.display());
-
-    let mut headers = fs::read_dir(&c_message_dir)?
-        .filter_map(Result::ok)
-        .map(|entry| entry.path())
-        .filter(|path| {
-            path.extension() == Some(OsStr::new("h"))
-                && path
-                    .file_stem()
-                    .is_some_and(|stem| stem.to_string_lossy().ends_with("_C"))
-        })
-        .collect::<Vec<_>>();
-    headers.sort();
+    let headers = headers_by_name.into_values().collect::<Vec<_>>();
     if headers.is_empty() {
-        return Err(format!(
-            "no generated *_C.h message headers were found under {}",
-            c_message_dir.display()
-        )
-        .into());
+        let searched = c_message_dirs
+            .iter()
+            .map(|path| path.display().to_string())
+            .collect::<Vec<_>>()
+            .join(", ");
+        return Err(
+            format!("no generated *_C.h message headers were found under {searched}").into(),
+        );
     }
     for header in &headers {
         println!("cargo:rerun-if-changed={}", header.display());
@@ -117,6 +158,10 @@ fn generate_bindings() -> Result<(), Box<dyn Error>> {
     // standard-library implementation.
     let mut bindings_builder = bindgen::Builder::default()
         .header(wrapper_path.display().to_string())
+        // Track every header libclang reads, including payload headers included
+        // transitively by generated *_C.h files. Without these callbacks Cargo
+        // can reuse bindings after an extension edits an existing payload.
+        .parse_callbacks(Box::new(bindgen::CargoCallbacks::new()))
         .use_core()
         .prepend_enum_name(false)
         .merge_extern_blocks(true)
@@ -125,8 +170,10 @@ fn generate_bindings() -> Result<(), Box<dyn Error>> {
         .allowlist_function(".*Msg_C_.*")
         .opaque_type("BSKLogger")
         .clang_arg(format!("-I{}", source_root.display()))
-        .clang_arg(format!("-I{}", c_message_dir.display()))
         .clang_args(["-std=c11", "-x", "c"]);
+    for c_message_dir in &c_message_dirs {
+        bindings_builder = bindings_builder.clang_arg(format!("-I{}", c_message_dir.display()));
+    }
     if let Some(include_dirs) = env::var_os("BSK_C_SYSTEM_INCLUDE_DIRS") {
         for include_dir in env::split_paths(&include_dirs) {
             bindings_builder = bindings_builder
@@ -198,6 +245,12 @@ fn env_path(variable: &str) -> Option<PathBuf> {
     env::var_os(variable)
         .filter(|value| !value.is_empty())
         .map(PathBuf::from)
+}
+
+fn env_paths(variable: &str) -> Option<Vec<PathBuf>> {
+    env::var_os(variable)
+        .filter(|value| !value.is_empty())
+        .map(|value| env::split_paths(&value).collect())
 }
 
 fn render_wrapper(headers: &[PathBuf]) -> String {
