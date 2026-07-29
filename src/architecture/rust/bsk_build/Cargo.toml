@@ -20,6 +20,8 @@ version = "0.1.0"
 edition = "2021"
 rust-version.workspace = true
 license.workspace = true
+repository.workspace = true
+homepage.workspace = true
 description = "Build and runtime support for native Basilisk Rust modules."
 
 [features]
@@ -50,7 +52,7 @@ codegen = ["dep:cbindgen"]
 test_logger = ["runtime"]
 
 [dependencies]
-bsk-macros = { path = "../bsk_macros" }
+bsk-macros = { version = "=0.1.0", path = "../bsk_macros" }
 # Keep cbindgen's CLI-only clap dependency disabled; bsk-build uses its library
 # API from module build scripts.
 cbindgen = { version = "0.29.4", default-features = false, optional = true }

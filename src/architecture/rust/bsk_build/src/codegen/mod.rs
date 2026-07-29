@@ -24,6 +24,7 @@ const READER_PREFIX: &str = "MsgReader_";
 const WRITER_PREFIX: &str = "MsgWriter_";
 const CONFIG_TYPE_ENV: &str = "BSK_RUST_CONFIG_TYPE";
 const MESSAGE_INCLUDE_MARKER: &str = "/* BSK_RUST_MESSAGE_INCLUDES */";
+const RUST_MODULE_ABI_VERSION: u32 = 1;
 
 #[derive(Debug, Default, PartialEq, Eq)]
 struct MessageCatalog {
@@ -411,7 +412,17 @@ fn finish_header(
     if !header.contains(MESSAGE_INCLUDE_MARKER) {
         panic!("bsk-build: cbindgen message-include marker is missing");
     }
-    header = header.replacen(MESSAGE_INCLUDE_MARKER, &message_includes, 1);
+    let abi_check = format!(
+        "\n#ifndef SWIG\n\
+         #if !defined(BSK_RUST_MODULE_ABI_VERSION)\n\
+         #error \"The Basilisk Rust module ABI version is unavailable\"\n\
+         #elif BSK_RUST_MODULE_ABI_VERSION != {RUST_MODULE_ABI_VERSION}\n\
+         #error \"bsk-build is incompatible with this Basilisk/bsk-sdk Rust module ABI\"\n\
+         #endif\n\
+         #endif\n"
+    );
+    let includes_and_abi = format!("{message_includes}{abi_check}");
+    header = header.replacen(MESSAGE_INCLUDE_MARKER, &includes_and_abi, 1);
 
     let lifecycle = format!("\nBSK_RUST_DECL({module_name}, {config_type}, {handle_type})\n\n");
     let guard_end = header
@@ -913,6 +924,8 @@ typedef struct ExampleConfig {
         assert!(header.contains("#include \"cMsgCInterface/InputMsg_C.h\""));
         assert!(header.contains("#include \"cMsgCInterface/OutputMsg_C.h\""));
         assert!(!header.contains(MESSAGE_INCLUDE_MARKER));
+        assert!(header.contains("#ifndef SWIG"));
+        assert!(header.contains("BSK_RUST_MODULE_ABI_VERSION != 1"));
         assert!(
             header.find("BSK_RUST_DECL(example, ExampleConfig, ExampleConfigHandle)")
                 < header.rfind("#endif")

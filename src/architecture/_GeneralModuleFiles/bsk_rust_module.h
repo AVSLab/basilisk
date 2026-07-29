@@ -23,6 +23,9 @@
 #include <stdint.h>
 #include "architecture/utilities/bskLogging.h"
 
+/*! Version of the generated Rust-module C ABI used by bsk-build and bsk-sdk. */
+#define BSK_RUST_MODULE_ABI_VERSION 1
+
 /*! @brief Declares Rust-owned module allocation plus the three BSK lifecycle
  *  entry points for a module implemented in Rust.
  *
