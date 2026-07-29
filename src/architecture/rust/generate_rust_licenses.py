@@ -16,12 +16,14 @@
 # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-"""Generate the Rust third-party license report shipped with Basilisk.
+"""Generate a deterministic Rust third-party license report.
 
+Defaults produce the report shipped with Basilisk. SDK extension projects can
+override the manifest, policy, output, project name, and project-license text.
 The report is derived from the locked Cargo workspace dependency graph. Use
 ``--check`` in automation to verify that the committed report is current. A
-normal local check skips cleanly when the pinned generator is unavailable;
-CI uses ``--require-tool`` so that the same condition is an error there.
+normal local check skips cleanly when the pinned generator is unavailable; CI
+uses ``--require-tool`` so that the same condition is an error there.
 """
 
 from __future__ import annotations
@@ -40,7 +42,11 @@ from typing import Any
 CARGO_ABOUT_VERSION = "0.9.1"
 REPOSITORY_ROOT = Path(__file__).resolve().parents[3]
 WORKSPACE_MANIFEST = REPOSITORY_ROOT / "src" / "Cargo.toml"
-ABOUT_CONFIG = Path(__file__).resolve().parent / "licenses" / "about.toml"
+SCRIPT_DIRECTORY = Path(__file__).resolve().parent
+ABOUT_CONFIG = SCRIPT_DIRECTORY / "licenses" / "about.toml"
+if not ABOUT_CONFIG.is_file():
+    # bsk-sdk installs the synchronized generator beside its policy file.
+    ABOUT_CONFIG = SCRIPT_DIRECTORY / "about.toml"
 LICENSE_REPORT = REPOSITORY_ROOT / "LICENSES" / "RUST-THIRD-PARTY.txt"
 
 
@@ -72,7 +78,9 @@ def find_cargo_about(require_tool: bool) -> str | None:
     return executable
 
 
-def cargo_about_data(executable: str) -> dict[str, Any]:
+def cargo_about_data(
+    executable: str, workspace_manifest: Path, about_config: Path
+) -> dict[str, Any]:
     """Return cargo-about's JSON report for the locked workspace."""
     with tempfile.TemporaryDirectory(prefix="bsk-rust-licenses-") as directory:
         output_path = Path(directory) / "licenses.json"
@@ -85,16 +93,16 @@ def cargo_about_data(executable: str) -> dict[str, Any]:
                 "--offline",
                 "--fail",
                 "--manifest-path",
-                str(WORKSPACE_MANIFEST),
+                str(workspace_manifest),
                 "--config",
-                str(ABOUT_CONFIG),
+                str(about_config),
                 "--format",
                 "json",
                 "--output-file",
                 str(output_path),
             ],
             check=True,
-            cwd=REPOSITORY_ROOT,
+            cwd=workspace_manifest.parent,
         )
         return json.loads(output_path.read_text(encoding="utf-8"))
 
@@ -134,19 +142,30 @@ def normalize_newlines(text: str) -> str:
     return text.replace("\r\n", "\n").replace("\r", "\n")
 
 
-def render_report(data: dict[str, Any]) -> str:
+def render_report(
+    data: dict[str, Any],
+    project_name: str = "Basilisk",
+    manifest_label: str = "src/Cargo.lock",
+    generator_label: str = "src/architecture/rust/generate_rust_licenses.py",
+    project_license: str = "ISC License in the repository's LICENSE file.",
+) -> str:
     """Render a deterministic, human-readable third-party license report."""
     entries = third_party_licenses(data)
+    title = f"{project_name} Rust Third-Party Licenses"
+    underline_length = 35 if project_name == "Basilisk" else len(title)
     lines = [
-        "Basilisk Rust Third-Party Licenses",
-        "===================================",
+        title,
+        "=" * underline_length,
         "",
-        "This file is generated from src/Cargo.lock by",
-        "src/architecture/rust/generate_rust_licenses.py. Do not edit it by hand.",
+        f"This file is generated from {manifest_label} by",
+        f"{generator_label}. Do not edit it by hand.",
         "",
         "It covers non-development Rust dependencies used to build or included in",
-        "Basilisk's native Rust modules. Basilisk itself remains licensed under the",
-        "ISC License in the repository's LICENSE file.",
+        (
+            f"{project_name}'s native Rust modules. {project_name} itself remains "
+            "licensed under the"
+        ),
+        project_license,
         "",
     ]
 
@@ -169,24 +188,24 @@ def render_report(data: dict[str, Any]) -> str:
     return "\n".join(lines).rstrip() + "\n"
 
 
-def check_report(expected: str) -> bool:
+def check_report(expected: str, license_report: Path = LICENSE_REPORT) -> bool:
     """Return whether the committed report matches ``expected``."""
-    actual = LICENSE_REPORT.read_text(encoding="utf-8") if LICENSE_REPORT.exists() else ""
+    actual = license_report.read_text(encoding="utf-8") if license_report.exists() else ""
     if actual == expected:
-        print(f"Rust third-party license report is current: {LICENSE_REPORT}")
+        print(f"Rust third-party license report is current: {license_report}")
         return True
 
     difference = difflib.unified_diff(
         actual.splitlines(),
         expected.splitlines(),
-        fromfile=str(LICENSE_REPORT),
+        fromfile=str(license_report),
         tofile="generated report",
         lineterm="",
     )
     print("\n".join(difference))
     print(
         "Rust third-party license report is stale; run "
-        "`python src/architecture/rust/generate_rust_licenses.py`.",
+        "the Rust license generator without `--check`.",
         file=sys.stderr,
     )
     return False
@@ -195,11 +214,58 @@ def check_report(expected: str) -> bool:
 def main() -> int:
     """Generate or check the committed Rust third-party license report."""
     parser = argparse.ArgumentParser(description=__doc__)
+    has_basilisk_defaults = WORKSPACE_MANIFEST.is_file()
     parser.add_argument("--check", action="store_true", help="verify rather than update the report")
     parser.add_argument(
         "--require-tool",
         action="store_true",
         help="fail instead of skipping when cargo-about is unavailable",
+    )
+    parser.add_argument(
+        "--manifest-path",
+        type=Path,
+        default=WORKSPACE_MANIFEST if has_basilisk_defaults else None,
+        required=not has_basilisk_defaults,
+        help=(
+            "Cargo workspace manifest to inspect; required outside the "
+            "Basilisk source tree"
+        ),
+    )
+    parser.add_argument(
+        "--config",
+        type=Path,
+        default=ABOUT_CONFIG,
+        help="cargo-about policy file",
+    )
+    parser.add_argument(
+        "--output",
+        type=Path,
+        default=LICENSE_REPORT if has_basilisk_defaults else None,
+        required=not has_basilisk_defaults,
+        help=(
+            "third-party license report path; required outside the Basilisk "
+            "source tree"
+        ),
+    )
+    parser.add_argument(
+        "--project-name",
+        default="Basilisk",
+        help="project name displayed in the report",
+    )
+    parser.add_argument(
+        "--project-license",
+        default="ISC License in the repository's LICENSE file.",
+        help="project-license sentence displayed after the dependency overview",
+    )
+    parser.add_argument(
+        "--manifest-label",
+        default=None,
+        help="stable Cargo.lock label written into the report",
+    )
+    parser.add_argument(
+        "--generator-label",
+        default=None,
+        help="stable generator label written into the report",
     )
     arguments = parser.parse_args()
 
@@ -207,7 +273,32 @@ def main() -> int:
         executable = find_cargo_about(arguments.require_tool)
         if executable is None:
             return 0
-        report = render_report(cargo_about_data(executable))
+        workspace_manifest = arguments.manifest_path.resolve()
+        about_config = arguments.config.resolve()
+        output = arguments.output.resolve()
+        using_basilisk_defaults = (
+            workspace_manifest == WORKSPACE_MANIFEST.resolve()
+            and about_config == ABOUT_CONFIG.resolve()
+            and output == LICENSE_REPORT.resolve()
+            and arguments.project_name == "Basilisk"
+        )
+        report = render_report(
+            cargo_about_data(executable, workspace_manifest, about_config),
+            project_name=arguments.project_name,
+            project_license=arguments.project_license,
+            manifest_label=(
+                arguments.manifest_label
+                or ("src/Cargo.lock" if using_basilisk_defaults else "Cargo.lock")
+            ),
+            generator_label=(
+                arguments.generator_label
+                or (
+                    "src/architecture/rust/generate_rust_licenses.py"
+                    if using_basilisk_defaults
+                    else "the bsk-sdk Rust license generator"
+                )
+            ),
+        )
     except (
         OSError,
         RuntimeError,
@@ -219,11 +310,11 @@ def main() -> int:
         return 1
 
     if arguments.check:
-        return 0 if check_report(report) else 1
+        return 0 if check_report(report, output) else 1
 
-    LICENSE_REPORT.parent.mkdir(parents=True, exist_ok=True)
-    LICENSE_REPORT.write_text(report, encoding="utf-8")
-    print(f"Generated {LICENSE_REPORT}")
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(report, encoding="utf-8")
+    print(f"Generated {output}")
     return 0
 
 
