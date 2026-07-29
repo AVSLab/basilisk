@@ -177,8 +177,10 @@ class ExtendedStateVector
     ) const;
 
   private:
-    static ExtendedStateVector fromStateData(const std::vector<DynamicObject*>& dynPtrs,
-                                             std::function<Eigen::MatrixXd(const StateData&)>);
+    /** Returns a reference to one of the matrices owned by a StateData, without copying it */
+    using StateAccessor = std::function<const Eigen::MatrixXd&(const StateData&)>;
+
+    static ExtendedStateVector fromStateData(const std::vector<DynamicObject*>& dynPtrs, const StateAccessor& functor);
 };
 
 // ostream<< overload, useful for easily printing the ExtendedStateVector
