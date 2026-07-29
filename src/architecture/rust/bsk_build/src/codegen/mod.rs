@@ -87,6 +87,7 @@ pub fn generate_bindings(config_type: &str) {
     println!("cargo:rerun-if-env-changed=BSK_INTERFACE_PATH");
     println!("cargo:rerun-if-env-changed=BSK_BINDINGS_TRIGGER_PATH");
     println!("cargo:rerun-if-env-changed=BSK_CMSG_DIR");
+    println!("cargo:rerun-if-env-changed=BSK_CMSG_DIRS");
     if let Some(trigger_path) = std::env::var_os("BSK_BINDINGS_TRIGGER_PATH") {
         println!(
             "cargo:rerun-if-changed={}",
@@ -106,8 +107,8 @@ pub fn generate_bindings(config_type: &str) {
     // Build the complete message-port rename map from Basilisk's canonical
     // generated C interfaces before invoking cbindgen, then inspect only the
     // final rendered configuration to determine which ports this module uses.
-    let c_message_dir = c_message_directory(&manifest_dir);
-    let message_catalog = load_message_catalog(&c_message_dir);
+    let c_message_dirs = c_message_directories(&manifest_dir);
+    let message_catalog = load_message_catalog(&c_message_dirs);
     let final_config = final_cbindgen_config(config_type, &module_name, &message_catalog);
     let generated_header = render_bindings(&manifest_dir, final_config);
     let metadata = analyze_bindings(&generated_header, config_type, &message_catalog.c_types);
@@ -144,63 +145,93 @@ fn module_name(config_type: &str) -> String {
         .replace('-', "_")
 }
 
-fn c_message_directory(manifest_dir: &Path) -> PathBuf {
+fn c_message_directories(manifest_dir: &Path) -> Vec<PathBuf> {
+    if let Some(paths) = std::env::var_os("BSK_CMSG_DIRS").filter(|value| !value.is_empty()) {
+        let directories = std::env::split_paths(&paths).collect::<Vec<_>>();
+        if directories.is_empty() {
+            panic!("bsk-build: BSK_CMSG_DIRS did not contain any message directories");
+        }
+        return directories;
+    }
     if let Some(path) = std::env::var_os("BSK_CMSG_DIR") {
-        return PathBuf::from(path);
+        return vec![PathBuf::from(path)];
     }
 
-    manifest_dir
+    vec![manifest_dir
         .ancestors()
         .map(|ancestor| ancestor.join("dist3/autoSource/cMsgCInterface"))
         .find(|candidate| candidate.is_dir())
         .unwrap_or_else(|| {
             panic!(
                 "bsk-build: generated C message directory was not found. Set \
-                 BSK_CMSG_DIR or run `python3 conanfile.py` before building \
+                 BSK_CMSG_DIRS or BSK_CMSG_DIR, or run `python3 conanfile.py` before building \
                  Rust modules"
             )
-        })
+        })]
 }
 
-fn load_message_catalog(c_message_dir: &Path) -> MessageCatalog {
-    if !c_message_dir.is_dir() {
-        panic!(
-            "bsk-build: generated C message directory does not exist: {}",
-            c_message_dir.display()
-        );
-    }
-    println!("cargo:rerun-if-changed={}", c_message_dir.display());
+fn load_message_catalog(c_message_dirs: &[PathBuf]) -> MessageCatalog {
+    let mut headers_by_name = BTreeMap::<String, PathBuf>::new();
+    for c_message_dir in c_message_dirs {
+        if !c_message_dir.is_dir() {
+            panic!(
+                "bsk-build: generated C message directory does not exist: {}",
+                c_message_dir.display()
+            );
+        }
+        println!("cargo:rerun-if-changed={}", c_message_dir.display());
 
-    let entries = std::fs::read_dir(c_message_dir).unwrap_or_else(|error| {
-        panic!(
-            "bsk-build: could not inspect generated C message directory {}: {error}",
-            c_message_dir.display()
-        )
-    });
-    let mut headers = entries
-        .map(|entry| {
-            entry
-                .unwrap_or_else(|error| {
+        let entries = std::fs::read_dir(c_message_dir).unwrap_or_else(|error| {
+            panic!(
+                "bsk-build: could not inspect generated C message directory {}: {error}",
+                c_message_dir.display()
+            )
+        });
+        for header in entries
+            .map(|entry| {
+                entry
+                    .unwrap_or_else(|error| {
+                        panic!(
+                            "bsk-build: could not inspect an entry under {}: {error}",
+                            c_message_dir.display()
+                        )
+                    })
+                    .path()
+            })
+            .filter(|path| {
+                path.extension() == Some(OsStr::new("h"))
+                    && path
+                        .file_stem()
+                        .is_some_and(|stem| stem.to_string_lossy().ends_with("_C"))
+            })
+        {
+            let name = header
+                .file_name()
+                .and_then(OsStr::to_str)
+                .unwrap_or_else(|| {
                     panic!(
-                        "bsk-build: could not inspect an entry under {}: {error}",
-                        c_message_dir.display()
+                        "bsk-build: generated C message header has a non-UTF-8 name: {}",
+                        header.display()
                     )
                 })
-                .path()
-        })
-        .filter(|path| {
-            path.extension() == Some(OsStr::new("h"))
-                && path
-                    .file_stem()
-                    .is_some_and(|stem| stem.to_string_lossy().ends_with("_C"))
-        })
-        .collect::<Vec<_>>();
-    headers.sort();
+                .to_owned();
+            if let Some(existing) = headers_by_name.insert(name.clone(), header.clone()) {
+                panic!(
+                    "bsk-build: duplicate C message interface `{name}` was found at {} and {}",
+                    existing.display(),
+                    header.display()
+                );
+            }
+        }
+    }
+    let headers = headers_by_name.into_values().collect::<Vec<_>>();
     if headers.is_empty() {
-        panic!(
-            "bsk-build: no generated *_C.h message headers were found under {}",
-            c_message_dir.display()
-        );
+        let searched = c_message_dirs
+            .iter()
+            .map(|path| path.display().to_string())
+            .collect::<Vec<_>>()
+            .join(", ");
+        panic!("bsk-build: no generated *_C.h message headers were found under {searched}");
     }
     for header in &headers {
         println!("cargo:rerun-if-changed={}", header.display());
@@ -844,6 +875,22 @@ typedef struct ExampleConfig {
                 ("MsgWriter_OutputMsg".to_owned(), "OutputMsg_C".to_owned()),
             ])
         );
+    }
+
+    #[test]
+    fn loads_message_headers_from_multiple_directories() {
+        let temporary = tempfile::tempdir().expect("create temporary message tree");
+        let core_directory = temporary.path().join("core");
+        let extension_directory = temporary.path().join("extension");
+        std::fs::create_dir_all(&core_directory).expect("create core message directory");
+        std::fs::create_dir_all(&extension_directory).expect("create extension message directory");
+        std::fs::write(core_directory.join("InputMsg_C.h"), "").expect("write core message header");
+        std::fs::write(extension_directory.join("OutputMsg_C.h"), "")
+            .expect("write extension message header");
+
+        let catalog = load_message_catalog(&[core_directory, extension_directory]);
+
+        assert_eq!(catalog.c_types, message_c_types());
     }
 
     #[test]
