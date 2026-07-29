@@ -14,9 +14,11 @@ Basilisk and integrated external-folder modules.
 
 An extension is normally distributed as a Python wheel. A compatible prebuilt
 wheel can be installed without a compiler, a Basilisk source checkout, or
-``bsk-sdk``. The wheel still depends on a specific Basilisk version and must
-support the user's operating system, processor architecture, and Python
-version.
+``bsk-sdk``. This remains true when the extension contains Rust modules: the
+prebuilt wheel already contains their native code, so Rust, Cargo, and
+Corrosion are not runtime requirements. The wheel still depends on a specific
+Basilisk version and must support the user's operating system, processor
+architecture, and Python version.
 
 Create a Clean Environment
 --------------------------
@@ -149,8 +151,8 @@ modules, required message connections, and any initialization test.
 Version and ABI Compatibility
 -----------------------------
 
-An extension wheel contains native code compiled against a specific Basilisk
-C/C++ and SWIG interface. Its compatible Basilisk version is determined when
+An extension wheel contains native code compiled against specific Basilisk
+C/C++/Rust and SWIG interfaces. Its compatible Basilisk version is determined when
 the wheel is built, not when the extension is imported.
 
 For example, ``my-atm-extension==1.4.0`` might have been built with
@@ -162,7 +164,9 @@ Compatibility is enforced differently depending on how the extension is
 obtained:
 
 * **Prebuilt wheel:** ``pip`` uses the extension's declared ``bsk`` dependency
-  to select a compatible Basilisk release.
+  to select a compatible Basilisk release. Extensions following the SDK
+  template also check the embedded version and extension ABI on import, catching
+  forced upgrades or other changes made after installation.
 * **Source build:** ``bsk-sdk`` checks the installed Basilisk version and SWIG
   runtime while CMake configures the extension.
 
@@ -182,7 +186,8 @@ If no compatible wheel is available, ``pip`` may report ``No matching
 distribution found`` or download a source archive and attempt a local build. A
 source build requires the tools described in :ref:`writingExtensions`,
 including a C++17 compiler, CMake, ``bsk-sdk``, and the matching Basilisk
-release.
+release. A source distribution containing Rust modules also requires the Rust
+version stated by that extension.
 
 Users who only want to run the extension should normally request a compatible
 wheel from its publisher rather than setting up a native development

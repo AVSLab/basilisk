@@ -10,7 +10,7 @@ About Extensions
 .. sidebar:: What is an Extension?
 
     A Basilisk extension is an independently built Python package containing
-    one or more custom C or C++ modules, custom message definitions, and
+    one or more custom C, C++, or Rust modules, custom message definitions, and
     supporting code. It is installed alongside a compatible Basilisk release
     without becoming part of the core Basilisk build.
 
@@ -21,7 +21,7 @@ without modifying the Basilisk source tree.
 
 An extension can own:
 
-* one or more C or C++ modules that use Basilisk module APIs;
+* one or more C, C++, or Rust modules that use Basilisk module APIs;
 * custom message payloads and their generated Python bindings;
 * shared support code used by those modules;
 * pure-Python helpers and modules; and
@@ -33,7 +33,7 @@ evolve as separate projects. Extension developers do not need to place files
 inside Basilisk, modify core modules, or carry local source changes that can
 conflict when updating the Basilisk checkout. An extension must still be
 rebuilt when moving to a different Basilisk version because it uses Basilisk's
-compiled C/C++ and SWIG interfaces.
+compiled C/C++/Rust and SWIG interfaces.
 
 Why the Package Boundary Matters
 --------------------------------
@@ -65,7 +65,7 @@ The package boundary is a build and distribution boundary, not a process
 boundary. Extension modules and Basilisk run in the same Python process and
 exchange compatible Basilisk objects and messages directly. There is no IPC
 or serialization step on each module update, so a compiled extension retains
-the native execution characteristics of a built-in C or C++ module.
+the native execution characteristics of a built-in C, C++, or Rust module.
 
 Distribution
 ~~~~~~~~~~~~
@@ -143,7 +143,7 @@ contains a versioned subset of Basilisk needed for out-of-tree development:
 
 * public headers and SWIG interface files;
 * custom-message generation tools;
-* CMake helpers for C and C++ modules; and
+* CMake helpers for C, C++, and Rust modules; and
 * a small set of Basilisk runtime and utility sources compiled into extension
   targets.
 
