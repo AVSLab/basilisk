@@ -14,20 +14,11 @@
 # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-[package]
-name = "bsk-macros"
-version = "0.1.0"
-edition = "2021"
-rust-version.workspace = true
-license.workspace = true
-repository.workspace = true
-homepage.workspace = true
-description = "Procedural macros for native Basilisk Rust modules."
+# Single source of truth shared with bsk-sdk for the Rust build integration.
+# Keep BSK_RUST_MIN_VERSION aligned with workspace.package.rust-version in
+# src/Cargo.toml and the crate version aligned across the bsk-* support crates.
+set(BSK_RUST_MIN_VERSION "1.89")
+set(BSK_RUST_SUPPORT_CRATE_VERSION "0.1.0")
 
-[lib]
-proc-macro = true
-
-[dependencies]
-proc-macro2 = "1"
-quote = "1"
-syn = { version = "2", features = ["full"] }
+set(BSK_CORROSION_VERSION "0.6.1")
+set(BSK_CORROSION_GIT_TAG "1499b14e4906a2890f5cee1547c8848db261753d")

@@ -15,9 +15,7 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 include_guard(GLOBAL)
-
-set(BSK_CORROSION_VERSION "0.6.1")
-set(BSK_CORROSION_GIT_TAG "1499b14e4906a2890f5cee1547c8848db261753d")
+include("${CMAKE_CURRENT_LIST_DIR}/bskRustSupportVersions.cmake")
 
 # Return the complete C ABI exported by every generated Rust module. Keeping
 # this list beside the shared Cargo integration prevents Basilisk and extension

@@ -20,6 +20,8 @@ version = "0.1.0"
 edition = "2021"
 rust-version.workspace = true
 license.workspace = true
+repository.workspace = true
+homepage.workspace = true
 description = "Auto-generated Rust FFI bindings for Basilisk C message types"
 
 # build.rs generates the message bindings into Cargo's OUT_DIR from Basilisk's
@@ -30,7 +32,7 @@ description = "Auto-generated Rust FFI bindings for Basilisk C message types"
 [dependencies]
 # BskModuleRuntime/Msg/MsgReader/MsgWriter/BskModule/BskLoggerRef are
 # hand-written, not generated. This crate re-exports them from bsk-build.
-bsk-build = { path = "../bsk_build" }
+bsk-build = { version = "=0.1.0", path = "../bsk_build" }
 
 [build-dependencies]
 bindgen = { version = "0.72.1", default-features = false, features = ["prettyplease", "runtime"] }
