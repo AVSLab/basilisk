@@ -21,12 +21,14 @@
 
 ExtendedStateVector ExtendedStateVector::fromStates(const std::vector<DynamicObject*>& dynPtrs)
 {
-    return fromStateData(dynPtrs, [](const StateData& data) { return data.getState(); });
+    return fromStateData(dynPtrs,
+                         [](const StateData& data) -> const Eigen::MatrixXd& { return data.getStateReference(); });
 }
 
 ExtendedStateVector ExtendedStateVector::fromStateDerivs(const std::vector<DynamicObject*>& dynPtrs)
 {
-    return fromStateData(dynPtrs, [](const StateData& data) { return data.getStateDeriv(); });
+    return fromStateData(dynPtrs,
+                         [](const StateData& data) -> const Eigen::MatrixXd& { return data.getStateDerivReference(); });
 }
 
 ExtendedStateVector
@@ -156,10 +158,15 @@ void ExtendedStateVector::setDiffusions(
 }
 
 ExtendedStateVector
-ExtendedStateVector::fromStateData(const std::vector<DynamicObject*>& dynPtrs,
-                                   std::function<Eigen::MatrixXd(const StateData&)> functor)
+ExtendedStateVector::fromStateData(const std::vector<DynamicObject*>& dynPtrs, const StateAccessor& functor)
 {
     ExtendedStateVector result;
+
+    size_t stateCount = 0;
+    for (const auto* dynPtr : dynPtrs) {
+        stateCount += dynPtr->dynManager.stateContainer.stateMap.size();
+    }
+    result.reserve(stateCount);
 
     for (size_t dynIndex = 0; dynIndex < dynPtrs.size(); dynIndex++) {
         for (auto&& [stateName, stateData] :
