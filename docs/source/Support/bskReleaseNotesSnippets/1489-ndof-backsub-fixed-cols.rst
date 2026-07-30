@@ -1,0 +1,1 @@
+- Sped up high-DOF dynamics by giving back-substitution coefficient matrices a compile-time column count in the spinning, translating, and hinged state effectors.
