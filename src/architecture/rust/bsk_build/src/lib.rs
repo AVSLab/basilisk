@@ -11,9 +11,12 @@
 //! A Rust module crate's ``build.rs`` names its marked configuration type:
 //!
 //! ```rust,no_run
+//! # #[cfg(feature = "codegen")]
 //! fn main() {
 //!     bsk_build::generate_bindings("MyModuleConfig");
 //! }
+//! # #[cfg(not(feature = "codegen"))]
+//! # fn main() {}
 //! ```
 //!
 //! Cargo compiles and runs ``build.rs`` as a separate host program before it
