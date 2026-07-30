@@ -146,7 +146,7 @@ For a concise, human-readable summary, use ``printBuildInfo()``::
 This produces output similar to::
 
     Basilisk Build Information
-      Version:        2.12.0 (plugin ABI 1)
+      Version:        2.12.0 (plugin ABI 2)
       Target:         macOS arm64, 64-bit
       Build:          Release, Unix Makefiles
       Features:       vizInterface=on, opNav=off, mujoco=off
