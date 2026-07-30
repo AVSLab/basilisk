@@ -1,0 +1,1 @@
+- Sped up low-DOF simulations by removing repeated whole-map copies and rehashing of the integrator state container on every Runge-Kutta stage.
