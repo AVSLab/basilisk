@@ -1,1 +1,1 @@
-- Sped up low-DOF simulations by removing repeated whole-map copies and rehashing of the integrator state container on every Runge-Kutta stage.
+- Sped up low-DOF simulations by removing repeated whole-map copies and rehashing of the integrator state container on every Runge-Kutta stage. Changing the return type of ``ExtendedStateVector::operator+=`` increments the SDK plugin ABI to version 2.

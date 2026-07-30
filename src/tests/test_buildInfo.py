@@ -86,7 +86,7 @@ def _makeBuildInfo(
             "basiliskVersion": "2.12.0",
             "sourceRevision": "0123456789abcdef",
             "sourceDirty": False,
-            "pluginAbiVersion": 1,
+            "pluginAbiVersion": 2,
         },
         "features": features,
         "diagnostics": {
