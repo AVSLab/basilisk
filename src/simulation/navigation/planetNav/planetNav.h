@@ -57,7 +57,9 @@ public:
     BSKLogger bskLogger;              //!< -- BSK Logging
 
 private:
-    Eigen::MatrixXd AMatrix;           //!< -- The matrix used to propagate the state
+    static constexpr int numStates = 12;  //!< -- Number of states
+    using StateMatrix = Eigen::Matrix<double, numStates, numStates>;
+    StateMatrix AMatrix;               //!< -- The matrix used to propagate the state
     GaussMarkov errorModel;            //!< -- Gauss-markov error states
     uint64_t prevTime;                 //!< -- Previous simulation time observed
 

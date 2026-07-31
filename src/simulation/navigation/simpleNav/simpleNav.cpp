@@ -35,11 +35,11 @@ SimpleNav::SimpleNav()
     this->trueAttState = this->attOutMsg.zeroMsgPayload;
     this->estTransState = this->transOutMsg.zeroMsgPayload;
     this->trueTransState = this->transOutMsg.zeroMsgPayload;
-    this->PMatrix.resize(18,18);
+    this->PMatrix.resize(this->numStates, this->numStates);
     this->PMatrix.fill(0.0);
-    this->walkBounds.resize(18);
+    this->walkBounds.resize(this->numStates);
     this->walkBounds.fill(0.0);
-    this->errorModel =  GaussMarkov(18, this->RNGSeed);
+    this->errorModel =  GaussMarkov(this->numStates, this->RNGSeed);
 }
 
 /*! Destructor.  Nothing here. */
@@ -69,7 +69,7 @@ void SimpleNav::Reset(uint64_t CurrentSimNanos)
     }
 
     //! - Initialize the propagation matrix to default values for use in update
-    this->AMatrix.setIdentity(this->numStates, this->numStates);
+    this->AMatrix.setIdentity();
     this->AMatrix(0,3) = this->AMatrix(1,4) = this->AMatrix(2,5) = this->crossTrans ? 1.0 : 0.0;
     this->AMatrix(6,9) = this->AMatrix(7,10) = this->AMatrix(8, 11) = this->crossAtt ? 1.0 : 0.0;
 
@@ -169,16 +169,16 @@ void SimpleNav::computeTrueOutput(uint64_t Clock)
 void SimpleNav::computeErrors(uint64_t CurrentSimNanos)
 {
     double timeStep;
-    Eigen::MatrixXd localProp = this->AMatrix;
+    StateMatrix localProp = this->AMatrix;
     //! - Compute timestep since the last call
-    timeStep = (CurrentSimNanos - this->prevTime)*1.0E-9;
+    timeStep = (CurrentSimNanos - this->prevTime) * NANO2SEC;
 
-    localProp(0,3) *= timeStep; //postion/velocity cross correlation terms
-    localProp(1,4) *= timeStep; //postion/velocity cross correlation terms
-    localProp(2,5) *= timeStep; //postion/velocity cross correlation terms
-    localProp(6,9) *= timeStep; //attitude/attitude rate cross correlation terms
-    localProp(7,10) *= timeStep; //attitude/attitude rate cross correlation terms
-    localProp(8,11) *= timeStep; //attitude/attitude rate cross correlation terms
+    localProp(0, 3) *= timeStep; // position/velocity cross correlation terms
+    localProp(1, 4) *= timeStep; // position/velocity cross correlation terms
+    localProp(2, 5) *= timeStep; // position/velocity cross correlation terms
+    localProp(6, 9) *= timeStep; // attitude/attitude rate cross correlation terms
+    localProp(7, 10) *= timeStep; // attitude/attitude rate cross correlation terms
+    localProp(8, 11) *= timeStep; // attitude/attitude rate cross correlation terms
 
     //! - Set the GaussMarkov propagation matrix and compute errors
     if (this->PMatrix.size() != this->numStates*this->numStates) {
