@@ -87,7 +87,7 @@ def _makeBuildInfo(
         standardLibraryFamily = "libstdc++"
     abiFamily = "msvc" if system == "Windows" else "itanium"
     return {
-        "schemaVersion": 3,
+        "schemaVersion": 4,
         "artifact": {
             "basiliskVersion": "2.12.0",
             "sourceRevision": "0123456789abcdef",
@@ -162,7 +162,6 @@ def _makeBuildInfo(
             },
         },
         "abi": {
-            "descriptorVersion": 1,
             "capture": "compiled",
             "contractHeader": "architecture/utilities/bskAbiDescriptor.h",
             "build": {
@@ -243,7 +242,7 @@ def test_build_info():
     diagnostics = buildInfo["diagnostics"]
     abi = buildInfo["abi"]
 
-    assert buildInfo["schemaVersion"] == 3
+    assert buildInfo["schemaVersion"] == 4
     assert buildInfo["artifact"]["basiliskVersion"]
     if Basilisk.__version__ != "0.0.0":
         assert buildInfo["artifact"]["basiliskVersion"] == Basilisk.__version__
@@ -253,7 +252,6 @@ def test_build_info():
     assert buildInfo["artifact"]["sourceDirty"] in (True, False, None)
     assert set(features) == {"vizInterface", "opNav", "mujoco", "rustModules"}
     assert all(isinstance(enabled, bool) for enabled in features.values())
-    assert abi["descriptorVersion"] == _integerDefine("BSK_ABI_DESCRIPTOR_VERSION")
     assert abi["capture"] == "compiled"
     assert abi["contractHeader"] == "architecture/utilities/bskAbiDescriptor.h"
     assert abi["build"]["configuration"]
