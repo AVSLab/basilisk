@@ -1,0 +1,1 @@
+- Upgraded the bundled MuJoCo dependency from 3.7.0 to 3.11.0.

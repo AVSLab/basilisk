@@ -89,7 +89,7 @@ void MJSystemMassMatrix::UpdateState(uint64_t CurrentSimNanos)
     // Build dense M matrix from MuJoCo
     const std::size_t NN = (this->nDOF) * this->nDOF;
     std::vector<mjtNum> Mdense(NN, mjtNum(0));
-    mj_fullM(model, Mdense.data(), data->qM);
+    mj_fullM(model, data, Mdense.data());
 
 
     // write to the output message
