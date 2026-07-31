@@ -61,7 +61,7 @@ WHEEL_BUILDER = _loadWheelBuilder()
 WHEEL_TESTER = _loadWheelTester()
 
 
-def _buildInfoData(opNavEnabled, *, schemaVersion=3):
+def _buildInfoData(opNavEnabled, *, schemaVersion=4):
     buildInfo = {
         "schemaVersion": schemaVersion,
         "artifact": {"basiliskVersion": "test-version"},
@@ -109,13 +109,13 @@ def test_expected_build_feature_metadata_difference():
             id="feature-not-enabled",
         ),
         pytest.param(
-            _buildInfoData(True, schemaVersion=4),
+            _buildInfoData(True, schemaVersion=5),
             "beyond the expected 'opNav' feature value",
             id="unrelated-metadata-drift",
         ),
         pytest.param(
             (
-                b'buildInfoData = {"schemaVersion": 3, "artifact": '
+                b'buildInfoData = {"schemaVersion": 4, "artifact": '
                 b'{"basiliskVersion": "test-version"}, "features": '
                 b'{"vizInterface": True, "mujoco": True}}\n'
             ),

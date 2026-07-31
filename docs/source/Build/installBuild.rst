@@ -192,6 +192,9 @@ dictionary with four principal sections::
     compilerVersion = buildInfo["diagnostics"]["compilers"]["cxx"]["version"]
     rustCompilerVersion = buildInfo["diagnostics"]["compilers"]["rust"]["version"]
 
+The top-level ``schemaVersion`` identifies the format of the complete dictionary, including the nested ``abi``
+section.
+
 ``artifact`` identifies the Basilisk version, source revision when available, and extension ABI epoch.  The epoch is
 incremented when Basilisk intentionally changes the C/C++ object contract exposed to SDK extensions.  It does not
 promise compatibility between different Basilisk versions; the SDK's exact-version check remains required unless a
@@ -214,8 +217,8 @@ settings.  It also contains size, alignment, and field-offset canaries for impor
 types.  These values are suitable inputs to a future BSK-SDK compatibility policy.  Layout canaries detect common
 binary mismatches but do not prove semantic compatibility.
 
-The public ``architecture/utilities/bskAbiDescriptor.h`` header is the single source of truth for the descriptor and
-extension ABI versions, canary types, and compiler-side extraction rules.  It is included by the existing BSK-SDK
+The public ``architecture/utilities/bskAbiDescriptor.h`` header is the single source of truth for the extension ABI
+version, canary types, and compiler-side extraction rules.  It is included by the existing BSK-SDK
 ``architecture`` header synchronization, allowing Basilisk and an SDK extension to compile the same contract rather
 than maintaining parallel implementations.
 
