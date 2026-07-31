@@ -24,25 +24,54 @@
 #include "avsEigenMRP.h"
 
 
-//!@brief General conversion between any Eigen matrix and output array
-void eigenMatrixXd2CArray(Eigen::MatrixXd inMat, double *outArray);
-//!@brief General conversion between any Eigen matrix and output array
-void eigenMatrixXi2CArray(Eigen::MatrixXi inMat, int *outArray);
-//!@brief Rapid conversion between 3-vector and output array
-void eigenVector3d2CArray(Eigen::Vector3d & inMat, double *outArray);
-//!@brief Rapid conversion between MRP and output array
-void eigenMRPd2CArray(Eigen::Vector3d& inMat, double* outArray);
-//!@brief Rapid conversion between 3x3 matrix and output array
-void eigenMatrix3d2CArray(Eigen::Matrix3d & inMat, double *outArray);
-//!@brief General conversion between a C array and an Eigen matrix
+//! General conversion between any Eigen matrix and output array.
+void eigenMatrixXd2CArray(const Eigen::MatrixXd& inMat, double *outArray);
+//! General conversion between any integer Eigen matrix and output array.
+void eigenMatrixXi2CArray(const Eigen::MatrixXi& inMat, int *outArray);
+#ifndef SWIG
+/*! Copy any double-precision Eigen expression into a row-major C array
+    without first converting it to a dynamic matrix.
+
+    @param inMat Source Eigen expression.
+    @param outArray Destination array sized by the caller.
+*/
+template<typename Derived>
+void eigenMatrixXd2CArray(const Eigen::MatrixBase<Derived>& inMat, double *outArray)
+{
+    using RowMajorMatrixXd = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
+    Eigen::Map<RowMajorMatrixXd> outMat(outArray, inMat.rows(), inMat.cols());
+    outMat = inMat;
+}
+
+/*! Copy any integer Eigen expression into a row-major C array without first
+    converting it to a dynamic matrix.
+
+    @param inMat Source Eigen expression.
+    @param outArray Destination array sized by the caller.
+*/
+template<typename Derived>
+void eigenMatrixXi2CArray(const Eigen::MatrixBase<Derived>& inMat, int *outArray)
+{
+    using RowMajorMatrixXi = Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
+    Eigen::Map<RowMajorMatrixXi> outMat(outArray, inMat.rows(), inMat.cols());
+    outMat = inMat;
+}
+#endif
+//! Rapid conversion between 3-vector and output array.
+void eigenVector3d2CArray(const Eigen::Vector3d& inMat, double *outArray);
+//! Rapid conversion between MRP and output array.
+void eigenMRPd2CArray(const Eigen::Vector3d& inMat, double* outArray);
+//! Rapid conversion between 3x3 matrix and output array.
+void eigenMatrix3d2CArray(const Eigen::Matrix3d& inMat, double *outArray);
+//! General conversion between a C array and an Eigen matrix.
 Eigen::MatrixXd cArray2EigenMatrixXd(double *inArray, int nRows, int nCols);
-//!@brief Specific conversion between a C array and an Eigen 3-vector
+//! Specific conversion between a C array and an Eigen 3-vector.
 Eigen::Vector3d cArray2EigenVector3d(double *inArray);
-//!@brief Specific conversion between a C array and an Eigen MRPs
+//! Specific conversion between a C array and an Eigen MRP.
 Eigen::MRPd cArray2EigenMRPd(double* inArray);
-//!@brief Specfici conversion between a C array and an Eigen 3x3 matrix
+//! Specific conversion between a C array and an Eigen 3x3 matrix.
 Eigen::Matrix3d cArray2EigenMatrix3d(double *inArray);
-//!@brief Specfici conversion between a C 2D array and an Eigen 3x3 matrix
+//! Specific conversion between a C 2D array and an Eigen 3x3 matrix.
 Eigen::Matrix3d c2DArray2EigenMatrix3d(double in2DArray[3][3]);
 //!@brief returns the first axis DCM with the input angle
 Eigen::Matrix3d eigenM1(double angle);
