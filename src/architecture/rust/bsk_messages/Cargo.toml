@@ -36,7 +36,7 @@ bsk-build = { version = "=0.1.0", path = "../bsk_build" }
 
 [build-dependencies]
 bindgen = { version = "0.72.1", default-features = false, features = ["prettyplease", "runtime"] }
-prettyplease = "0.2.37"
-proc-macro2 = "1.0.107"
 regex = "1.12.3"
-syn = { version = "2.0.119", features = ["full"] }
+
+[dev-dependencies]
+bindgen = { version = "0.72.1", default-features = false, features = ["prettyplease", "runtime"] }

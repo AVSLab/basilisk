@@ -29,4 +29,8 @@ pub use bsk_build::{
     Msg, MsgReader, MsgWriter,
 };
 
+#[cfg(test)]
+#[path = "../build_support.rs"]
+mod build_support;
+
 include!(concat!(env!("OUT_DIR"), "/bsk_message_bindings.rs"));

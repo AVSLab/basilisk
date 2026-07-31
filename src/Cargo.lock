@@ -75,10 +75,7 @@ version = "0.1.0"
 dependencies = [
  "bindgen",
  "bsk-build",
- "prettyplease",
- "proc-macro2",
  "regex",
- "syn 2.0.119",
 ]
 
 [[package]]
