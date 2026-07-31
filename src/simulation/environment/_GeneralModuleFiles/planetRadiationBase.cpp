@@ -281,7 +281,7 @@ std::vector<PatchResult> PlanetGrid::computePatches(
     // Convert the SPICE J2000->P rotation matrix into an Eigen matrix.
     // Due to row-major/column-major interpretation, this yields J20002Pfixᵀ,
     // i.e. the rotation from planet-fixed frame P to inertial frame N.
-    const Eigen::Matrix3d dcm_NP = cArray2EigenMatrixXd(*J20002Pfix, 3, 3);  // [-]
+    const Eigen::Matrix3d dcm_NP = cArray2EigenMatrix3d(*J20002Pfix).transpose();  // [-]
 
     // Relative position vectors from planet center to satellite and Sun (in inertial N frame)
     const Eigen::Vector3d rs(r_sat_N[0]-r_planet_N[0], r_sat_N[1]-r_planet_N[1], r_sat_N[2]-r_planet_N[2]);  // [m]

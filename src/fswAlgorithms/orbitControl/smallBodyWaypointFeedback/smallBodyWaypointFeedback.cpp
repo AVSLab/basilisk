@@ -31,7 +31,7 @@ SmallBodyWaypointFeedback::SmallBodyWaypointFeedback()
     this->o_hat_3_tilde(0, 1) = -1;
     this->o_hat_3_tilde(1, 0) = 1;
     this->o_hat_1 << 1, 0, 0;
-    this->I.setIdentity(3,3);
+    this->I.setIdentity();
     this->C_SRP = 1.0;
     this->P_0 = 4.56e-6;
     this->rho = 0.4;
@@ -97,7 +97,7 @@ void SmallBodyWaypointFeedback::computeControl(uint64_t CurrentSimNanos){
     /* Compute the hill frame DCM of the small body */
     double dcm_ON_array[3][3];
     hillFrame(asteroidEphemerisInMsgBuffer.r_BdyZero_N, asteroidEphemerisInMsgBuffer.v_BdyZero_N, dcm_ON_array);
-    dcm_ON = cArray2EigenMatrixXd(*dcm_ON_array, 3, 3).transpose();
+    dcm_ON = cArray2EigenMatrix3d(*dcm_ON_array);
 
     /* Compute the direction of the sun from the asteroid in the small body's hill frame, assumes heliocentric frame
      * centered at the origin of the sun, not the solar system's barycenter */
@@ -109,7 +109,7 @@ void SmallBodyWaypointFeedback::computeControl(uint64_t CurrentSimNanos){
     double dcm_BN[3][3];
     MRP2C(navAttInMsgBuffer.sigma_BN, dcm_BN);
     Eigen::Matrix3d dcm_OB;
-    dcm_OB = dcm_ON * (cArray2EigenMatrixXd(*dcm_BN, 3, 3));
+    dcm_OB = dcm_ON * cArray2EigenMatrix3d(*dcm_BN).transpose();
 
     /* Compute x1, x2 from the input messages */
     double r_BO_O[3];

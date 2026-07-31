@@ -102,8 +102,6 @@ void MtbEffector::computeForceTorque(double integTime, double timeStep)
     Eigen::Matrix3d dcm_BN;
     Eigen::Vector3d magField_B;
     Eigen::Matrix3d bTilde;
-    Eigen::MatrixXd GtMatrix_B;
-    Eigen::VectorXd muCmd_T;
     Eigen::Vector3d mtbTorque_B;
     Eigen::Vector3d magField_N;
 
@@ -131,13 +129,12 @@ void MtbEffector::computeForceTorque(double integTime, double timeStep)
 
     /*
      * Compute torque produced by magnetic torque bars in body frame components.
-     * Since cArray2EigenMatrixXd expects a column major input, we need to
-     * transpose GtMatrix_B.
+     * Transpose the row-major payload into column-major storage for the Eigen map.
      */
     double GtColMajor[3*MAX_EFF_CNT];
     mSetZero(GtColMajor, 3, this->mtbConfigParams.numMTB);
     mTranspose(this->mtbConfigParams.GtMatrix_B, 3, this->mtbConfigParams.numMTB, GtColMajor);
-    GtMatrix_B = cArray2EigenMatrixXd(GtColMajor, 3, this->mtbConfigParams.numMTB);
+    const Eigen::Map<const Eigen::Matrix3Xd> GtMatrix_B(GtColMajor, 3, this->mtbConfigParams.numMTB);
 
     /* check if dipole commands are saturating the effector */
     for (int i=0; i<this->mtbConfigParams.numMTB; i++) {
@@ -148,8 +145,9 @@ void MtbEffector::computeForceTorque(double integTime, double timeStep)
         }
     }
 
-    muCmd_T = Eigen::Map<Eigen::VectorXd>(this->mtbCmdInMsgBuffer.mtbDipoleCmds, this->mtbConfigParams.numMTB, 1);
-    mtbTorque_B = - bTilde * GtMatrix_B * muCmd_T;
+    const Eigen::Map<const Eigen::VectorXd> muCmd_T(this->mtbCmdInMsgBuffer.mtbDipoleCmds,
+                                                    this->mtbConfigParams.numMTB);
+    mtbTorque_B = -bTilde * (GtMatrix_B * muCmd_T);
     this->torqueExternalPntB_B = mtbTorque_B;
 
     return;
