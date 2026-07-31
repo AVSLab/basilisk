@@ -16,7 +16,6 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
-use proc_macro2::{Group, Ident, Literal, TokenStream, TokenTree};
 use regex::Regex;
 use std::{
     collections::BTreeSet,
@@ -27,6 +26,10 @@ use std::{
     fs,
     path::{Path, PathBuf},
 };
+
+mod build_support;
+
+use build_support::MessageBindingCallbacks;
 
 const GENERATED_BINDINGS_FILE: &str = "bsk_message_bindings.rs";
 
@@ -162,6 +165,7 @@ fn generate_bindings() -> Result<(), Box<dyn Error>> {
         // transitively by generated *_C.h files. Without these callbacks Cargo
         // can reuse bindings after an extension edits an existing payload.
         .parse_callbacks(Box::new(bindgen::CargoCallbacks::new()))
+        .parse_callbacks(Box::new(MessageBindingCallbacks))
         .use_core()
         .prepend_enum_name(false)
         .merge_extern_blocks(true)
@@ -185,60 +189,12 @@ fn generate_bindings() -> Result<(), Box<dyn Error>> {
         .generate()
         .map_err(|_| "bindgen could not parse the generated Basilisk C message headers")?;
 
-    let mut generated = rewrite_binding_names(&bindings.to_string())?;
+    let mut generated = bindings.to_string();
     generated.push('\n');
     generated.push_str(&render_message_trait_impls(&generated)?);
 
     fs::write(output_dir.join(GENERATED_BINDINGS_FILE), generated)?;
     Ok(())
-}
-
-fn rewrite_binding_names(bindings: &str) -> Result<String, Box<dyn Error>> {
-    let tokens = bindings.parse::<TokenStream>()?;
-    let rewritten = rewrite_token_stream(tokens);
-    let syntax = syn::parse2::<syn::File>(rewritten)?;
-    Ok(prettyplease::unparse(&syntax))
-}
-
-fn rewrite_token_stream(tokens: TokenStream) -> TokenStream {
-    tokens
-        .into_iter()
-        .map(|token| match token {
-            TokenTree::Group(group) => {
-                let mut rewritten =
-                    Group::new(group.delimiter(), rewrite_token_stream(group.stream()));
-                rewritten.set_span(group.span());
-                TokenTree::Group(rewritten)
-            }
-            TokenTree::Ident(identifier) => {
-                let original = identifier.to_string();
-                let rewritten = match original.as_str() {
-                    "payload" => "data".to_owned(),
-                    "payloadPointer" => "dataPointer".to_owned(),
-                    _ => original
-                        .strip_suffix("MsgPayload")
-                        .map_or(original.clone(), |prefix| format!("{prefix}Msg")),
-                };
-                TokenTree::Ident(Ident::new(&rewritten, identifier.span()))
-            }
-            TokenTree::Literal(literal) => TokenTree::Literal(rewrite_string_literal(literal)),
-            other => other,
-        })
-        .collect()
-}
-
-fn rewrite_string_literal(literal: Literal) -> Literal {
-    let Ok(value) = syn::parse_str::<syn::LitStr>(&literal.to_string()) else {
-        return literal;
-    };
-    let rewritten = value
-        .value()
-        .replace("MsgPayload", "Msg")
-        .replace("::payloadPointer", "::dataPointer")
-        .replace("::payload", "::data");
-    let mut rewritten_literal = Literal::string(&rewritten);
-    rewritten_literal.set_span(literal.span());
-    rewritten_literal
 }
 
 fn env_path(variable: &str) -> Option<PathBuf> {
@@ -299,13 +255,13 @@ fn render_message_trait_impls(bindings: &str) -> Result<String, Box<dyn Error>> 
         writeln!(
             implementations,
             "    fn __is_initialized(port: &{message_type}_C) -> bool {{ \
-             !port.dataPointer.is_null() && !port.headerPointer.is_null() }}"
+             !port.payloadPointer.is_null() && !port.headerPointer.is_null() }}"
         )?;
         writeln!(implementations, "    #[inline(always)]")?;
         writeln!(
             implementations,
             "    fn __port_pointers(port: &{message_type}_C) -> (*const (), *const ()) {{ \
-             (port.dataPointer.cast::<()>() as *const (), \
+             (port.payloadPointer.cast::<()>() as *const (), \
               port.headerPointer.cast::<()>() as *const ()) }}"
         )?;
         writeln!(implementations, "    #[inline(always)]")?;
