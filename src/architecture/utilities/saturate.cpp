@@ -24,6 +24,7 @@
 /*! The constructor initialies the random number generator used for the walks*/
 Saturate::Saturate()
 {
+    this->numStates = 0;
 }
 
 Saturate::Saturate(int64_t size) : Saturate() {
@@ -35,13 +36,12 @@ Saturate::~Saturate()
 {
 }
 
-/*!
-    @brief This method should be used as the standard way to saturate an output. It will also be utilized by
-other utilities
-    @param unsaturatedStates a vector of the unsaturated states
-    @return saturatedStates
- */
-Eigen::VectorXd Saturate::saturate(Eigen::VectorXd unsaturatedStates)
+/*! Saturate an output vector using the configured bounds.
+
+    @param unsaturatedStates Vector of unsaturated states.
+    @return Vector of saturated states.
+*/
+Eigen::VectorXd Saturate::saturate(const Eigen::Ref<const Eigen::VectorXd>& unsaturatedStates)
 {
     Eigen::VectorXd workingStates;
     workingStates.resize(this->numStates);
@@ -53,10 +53,10 @@ Eigen::VectorXd Saturate::saturate(Eigen::VectorXd unsaturatedStates)
 
 }
 
-/*!
-    @brief sets upper and lower bounds for each state
-    @param bounds one row for each state. lower bounds in left column, upper in right column
- */
-void Saturate::setBounds(Eigen::MatrixXd bounds) {
+/*! Set the lower and upper bounds for each state.
+
+    @param bounds One row per state, with lower and upper bounds in the two columns.
+*/
+void Saturate::setBounds(const Eigen::Ref<const Eigen::MatrixX2d>& bounds) {
     this->stateBounds = bounds;
 }

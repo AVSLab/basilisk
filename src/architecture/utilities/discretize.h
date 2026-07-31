@@ -44,10 +44,11 @@ public:
 //    /*!@brief Method determines the size of an output data bin (bit-value) making sure that zero is
 //     a possible output and giving proportionate numbers of bits to the size of max and min void*/
 
-    /*!@brief Avoid calculating bit value (bin size) and just set it because a resolution is known
-       @param givenLSB
-     */
-    void setLSB(Eigen::VectorXd givenLSB) {this->LSB = givenLSB;}
+    /*! Set a known least-significant-bit resolution directly.
+
+        @param givenLSB Resolution for each state.
+    */
+    void setLSB(const Eigen::Ref<const Eigen::VectorXd>& givenLSB) {this->LSB = givenLSB;}
 
     void setRoundDirection(roundDirection_t direction);
 
@@ -56,14 +57,14 @@ public:
      */
     void setCarryError(bool carryErrorIn){this->carryError = carryErrorIn;}
 
-    /*!@brief Discretizes the given truth vector according to a least significant bit (binSize)
-       @param undiscretizedVector
-       @return vector of discretized values*/
-    Eigen::VectorXd discretize(Eigen::VectorXd undiscretizedVector);
+    //! Discretize a truth vector according to the least-significant-bit resolution.
+    Eigen::VectorXd discretize(const Eigen::Ref<const Eigen::VectorXd>& undiscretizedVector);
 
-    /*!@brief Get the discretization errors
-     @return the errors due to discretization in a corresponding vector*/
-    Eigen::VectorXd getDiscretizationErrors(){return(this->discErrors);}
+    /*! Get the current discretization errors.
+
+        @return Reference to the error vector.
+    */
+    const Eigen::VectorXd& getDiscretizationErrors() const {return this->discErrors;}
 
     Eigen::VectorXd LSB;                //!< -- size of bin, bit value, least significant bit
 

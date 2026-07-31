@@ -119,8 +119,7 @@ void ImuSensor::Reset(uint64_t CurrentSimNanos)
     this->errorModelGyro.setNoiseMatrix(this->PMatrixGyro);
     this->errorModelGyro.setRNGSeed(this->RNGSeed);
 
-    Eigen::MatrixXd oSatBounds;
-    oSatBounds.resize(this->numStates, 2);
+    Eigen::Matrix<double, 3, 2> oSatBounds;
     oSatBounds(0,0) = -this->senRotMax;
     oSatBounds(0,1) = this->senRotMax;
     oSatBounds(1,0) = -this->senRotMax;
@@ -129,8 +128,7 @@ void ImuSensor::Reset(uint64_t CurrentSimNanos)
     oSatBounds(2,1) = this->senRotMax;
     this->oSat.setBounds(oSatBounds);
 
-    Eigen::MatrixXd aSatBounds;
-    aSatBounds.resize(this->numStates, 2);
+    Eigen::Matrix<double, 3, 2> aSatBounds;
     aSatBounds(0,0) = -this->senTransMax;
     aSatBounds(0,1) = this->senTransMax;
     aSatBounds(1,0) = -this->senTransMax;

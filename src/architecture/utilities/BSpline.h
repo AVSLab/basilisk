@@ -23,23 +23,23 @@
 #include "architecture/utilities/macroDefinitions.h"
 
 
-//! @brief The InputDataSet class contains the information about the points that must be interpolated.
-//! It is used as a data structure to intialize the inputs that are passed to the interpolating function.
+//! The InputDataSet class contains the information about the points that must be interpolated.
+//! It is used as a data structure to initialize the inputs that are passed to the interpolating function.
 
 class InputDataSet {
 public:
     InputDataSet();
-    InputDataSet(Eigen::VectorXd X1, Eigen::VectorXd X2, Eigen::VectorXd X3);
+    InputDataSet(const Eigen::VectorXd& X1, const Eigen::VectorXd& X2, const Eigen::VectorXd& X3);
     ~InputDataSet();
 
     void setXDot_0(Eigen::Vector3d XDot_0);
     void setXDot_N(Eigen::Vector3d XDot_N);
     void setXDDot_0(Eigen::Vector3d XDDot_0);
     void setXDDot_N(Eigen::Vector3d XDDot_N);
-    void setT(Eigen::VectorXd T);
-    void setW(Eigen::VectorXd W);
+    void setT(const Eigen::VectorXd& T);
+    void setW(const Eigen::VectorXd& W);
     void setAvgXDot(double AvgXDot);
-    
+
     double AvgXDot;                  //!< desired average velocity norm
     Eigen::VectorXd T;               //!< time tags: specifies at what time each waypoint is hit
     Eigen::VectorXd W;               //!< weight vector for the LS approximation
@@ -59,7 +59,7 @@ public:
     bool XDDot_N_flag;               //!< indicates that second derivative at final point has been specified
 };
 
-//! @brief The OutputDataSet class is used as a data structure to contain the interpolated function and its first- and 
+//! @brief The OutputDataSet class is used as a data structure to contain the interpolated function and its first- and
 //! second-order derivatives, together with the time-tag vector T.
 class OutputDataSet {
 public:
@@ -67,7 +67,7 @@ public:
     ~OutputDataSet();
     void getData(double t, double x[3], double xDot[3], double xDDot[3]);
     double getStates(double t, int derivative,  int index);
-    
+
     Eigen::VectorXd T;               //!< time tags for each point of the interpolated trajectory
     Eigen::VectorXd X1;              //!< coordinate #1 of the interpolated trajectory
     Eigen::VectorXd X2;              //!< coordinate #2 of the interpolated trajectory
@@ -86,8 +86,8 @@ public:
     Eigen::VectorXd C3;              //!< coordinate #3 of the control points
 };
 
-void interpolate(InputDataSet Input, int Num, int P, OutputDataSet *Output);
+void interpolate(const InputDataSet& Input, int Num, int P, OutputDataSet *Output);
 
-void approximate(InputDataSet Input, int Num, int Q, int P, OutputDataSet *Output);
+void approximate(const InputDataSet& Input, int Num, int Q, int P, OutputDataSet *Output);
 
-void basisFunction(double t, Eigen::VectorXd U, int I, int P, double *NN, double *NN1, double *NN2);
+void basisFunction(double t, const Eigen::VectorXd& U, int I, int P, double *NN, double *NN1, double *NN2);

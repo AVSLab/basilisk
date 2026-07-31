@@ -26,8 +26,7 @@ TEST(Saturate, testSaturate) {
     Eigen::Vector3d states;
     states << -555, 1.27, 5000000.;
     auto saturator = Saturate(3);
-    Eigen::MatrixXd bounds;
-    bounds.resize(3,2);
+    Eigen::Matrix<double, 3, 2> bounds;
     bounds << -400., 0, 5, 10, -1, 5000001;
     saturator.setBounds(bounds);
     states = saturator.saturate(states);

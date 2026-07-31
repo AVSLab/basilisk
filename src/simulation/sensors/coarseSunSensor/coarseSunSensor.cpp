@@ -167,8 +167,7 @@ void CoarseSunSensor::Reset(uint64_t CurrentSimNanos)
     pMatrixFault(0,0) = 1.0; // propagation matrix
     this->faultNoiseModel.setPropMatrix(pMatrixFault);
 
-    Eigen::MatrixXd satBounds;
-    satBounds.resize(1, 2);
+    Eigen::Matrix<double, 1, 2> satBounds;
     satBounds(0,0) = this->minOutput;
     satBounds(0,1) = this->maxOutput;
     this->saturateUtility.setBounds(satBounds);

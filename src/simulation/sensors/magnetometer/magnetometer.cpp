@@ -104,8 +104,7 @@ void Magnetometer::Reset(uint64_t CurrentSimNanos)
     }
 
     // Set saturation bounds
-    Eigen::MatrixXd satBounds;
-    satBounds.resize(this->numStates, 2);
+    Eigen::Matrix<double, 3, 2> satBounds;
     satBounds(0, 0) = this->minOutput;
     satBounds(0, 1) = this->maxOutput;
     satBounds(1, 0) = this->minOutput;

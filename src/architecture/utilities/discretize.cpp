@@ -58,17 +58,23 @@ void Discretize::setRoundDirection(roundDirection_t direction){
 }
 
 
-/*!@brief Discretizes the given truth vector according to a least significant bit (binSize)
- @param undiscretizedVector
- @return vector of discretized values*/
-Eigen::VectorXd Discretize::discretize(Eigen::VectorXd undiscretizedVector){
+/*! Discretize a truth vector according to the least-significant-bit resolution.
+
+    @param undiscretizedVector Truth values to discretize.
+    @return Vector of discretized values.
+*/
+Eigen::VectorXd Discretize::discretize(const Eigen::Ref<const Eigen::VectorXd>& undiscretizedVector){
+
+    Eigen::VectorXd workingVector = undiscretizedVector;
 
     if (this->carryError){
-        undiscretizedVector += this->discErrors;
+        workingVector += this->discErrors;
     }
 
+    this->discErrors = workingVector;
+
     //discretize the data
-    Eigen::VectorXd workingVector = undiscretizedVector.cwiseQuotient(this->LSB);
+    workingVector = workingVector.cwiseQuotient(this->LSB);
     workingVector = workingVector.cwiseAbs();
 
     if (this->roundDirection == TO_ZERO){
@@ -87,9 +93,9 @@ Eigen::VectorXd Discretize::discretize(Eigen::VectorXd undiscretizedVector){
 
     workingVector = workingVector.cwiseProduct(this->LSB);
     for (uint8_t i = 0; i < this->numStates; i++){
-        workingVector[i] = copysign(workingVector[i], undiscretizedVector[i]);
+        workingVector[i] = copysign(workingVector[i], this->discErrors[i]);
     }
-    this->discErrors = undiscretizedVector - workingVector;
+    this->discErrors -= workingVector;
 
     return workingVector;
 }
