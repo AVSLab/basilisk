@@ -259,7 +259,7 @@ void GravityEffector::updateInertialPosAndVel(Eigen::Vector3d r_BF_N, Eigen::Vec
         Eigen::Vector3d r_CN_N = getEulerSteppedGravBodyPosition(this->centralBody);
         *this->inertialPositionProperty = r_CN_N + r_BF_N;
         *this->inertialVelocityProperty =
-            cArray2EigenMatrixXd(this->centralBody->localPlanet.VelocityVector, 3, 1) + rDot_BF_N;
+            cArray2EigenVector3d(this->centralBody->localPlanet.VelocityVector) + rDot_BF_N;
     }
     else {
         *this->inertialPositionProperty = r_BF_N;

@@ -171,7 +171,7 @@ void GroundMapping::updateInertialPositions()
     this->r_BP_N = cArray2EigenVector3d(scStateInMsgBuffer.r_BN_N) - this->r_PN_N;
     double dcm_BN[3][3];
     MRP2C(scStateInMsgBuffer.sigma_BN, dcm_BN);
-    this->dcm_NB = cArray2EigenMatrixXd(*dcm_BN, 3, 3);
+    this->dcm_NB = cArray2EigenMatrix3d(*dcm_BN).transpose();
 
     // Get planet frame angular velocity vector
     Eigen::Matrix3d w_tilde_PN = - this->dcm_PN_dot * this->dcm_PN.transpose();
