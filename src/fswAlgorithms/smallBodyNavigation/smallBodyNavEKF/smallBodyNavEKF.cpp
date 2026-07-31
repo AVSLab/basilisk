@@ -28,38 +28,37 @@
     values and initializes the various parts of the model */
 SmallBodyNavEKF::SmallBodyNavEKF()
 {
-    this->numStates = 12;
     this->mu_sun = 1.327124e20;
     this->o_hat_3_tilde.setZero();
     this->o_hat_3_tilde(0, 1) = -1;
     this->o_hat_3_tilde(1, 0) = 1;
     this->o_hat_1 << 1, 0, 0;
-    this->I.setIdentity(3,3);
-    this->I_full.setIdentity(this->numStates, this->numStates);
+    this->I.setIdentity();
+    this->I_full.setIdentity();
     this->C_SRP = 1.0;
     this->P_0 = 4.56e-6;
     this->rho = 0.4;
-    this->x_hat_dot_k.setZero(this->numStates);
-    this->x_hat_k1_.setZero(this->numStates);
-    this->x_hat_k1.setZero(this->numStates);
-    this->x_hat_k.setZero(this->numStates);
-    this->P_dot_k.setZero(this->numStates, this->numStates);
-    this->P_k1_.setZero(this->numStates, this->numStates);
-    this->P_k1.setZero(this->numStates, this->numStates);
-    this->A_k.setIdentity(this->numStates, this->numStates);
-    this->Phi_k.setIdentity(this->numStates, this->numStates);
-    this->Phi_dot_k.setZero(this->numStates, this->numStates);
-    this->L.setIdentity(this->numStates, this->numStates);
-    this->M.setIdentity(this->numStates, this->numStates);
-    this->H_k1.setIdentity(this->numStates, this->numStates);
-    this->k1.setZero(this->numStates);
-    this->k2.setZero(this->numStates);
-    this->k3.setZero(this->numStates);
-    this->k4.setZero(this->numStates);
-    this->k1_phi.setZero(this->numStates, this->numStates);
-    this->k2_phi.setZero(this->numStates, this->numStates);
-    this->k3_phi.setZero(this->numStates, this->numStates);
-    this->k4_phi.setZero(this->numStates, this->numStates);
+    this->x_hat_dot_k.setZero();
+    this->x_hat_k1_.setZero();
+    this->x_hat_k1.setZero();
+    this->x_hat_k.setZero(stateSize);
+    this->P_dot_k.setZero();
+    this->P_k1_.setZero();
+    this->P_k1.setZero();
+    this->A_k.setIdentity();
+    this->Phi_k.setIdentity();
+    this->Phi_dot_k.setZero();
+    this->L.setIdentity();
+    this->M.setIdentity();
+    this->H_k1.setIdentity();
+    this->k1.setZero();
+    this->k2.setZero();
+    this->k3.setZero();
+    this->k4.setZero();
+    this->k1_phi.setZero();
+    this->k2_phi.setZero();
+    this->k3_phi.setZero();
+    this->k4_phi.setZero();
     this->prevTime = 0;
     return;
 }
@@ -158,7 +157,7 @@ void SmallBodyNavEKF::predict(uint64_t CurrentSimNanos){
     /* Compute the hill frame DCM of the small body */
     double dcm_ON_array[3][3];
     hillFrame(asteroidEphemerisInMsgBuffer.r_BdyZero_N, asteroidEphemerisInMsgBuffer.v_BdyZero_N, dcm_ON_array);
-    dcm_ON = cArray2EigenMatrixXd(*dcm_ON_array, 3, 3).transpose();
+    dcm_ON = cArray2EigenMatrix3d(*dcm_ON_array);
 
     /* Compute the direction of the sun from the asteroid in the small body's hill frame, assumes heliocentric frame
      * centered at the origin of the sun, not the solar system's barycenter*/
@@ -191,28 +190,30 @@ void SmallBodyNavEKF::predict(uint64_t CurrentSimNanos){
 
 */
 void SmallBodyNavEKF::aprioriState(uint64_t CurrentSimNanos){
+    const StateVector currentState = x_hat_k;
+
     /* First RK4 step */
-    computeEquationsOfMotion(x_hat_k, Phi_k);
+    computeEquationsOfMotion(currentState, Phi_k);
     k1 = (CurrentSimNanos-prevTime)*NANO2SEC*x_hat_dot_k;
     k1_phi = (CurrentSimNanos-prevTime)*NANO2SEC*Phi_dot_k;
 
     /* Second RK4 step */
-    computeEquationsOfMotion(x_hat_k + k1/2, Phi_k + k1_phi/2);
+    computeEquationsOfMotion(currentState + k1/2, Phi_k + k1_phi/2);
     k2 = (CurrentSimNanos-prevTime)*NANO2SEC*x_hat_dot_k;
     k2_phi = (CurrentSimNanos-prevTime)*NANO2SEC*Phi_dot_k;
 
     /* Third RK4 step */
-    computeEquationsOfMotion(x_hat_k + k2/2, Phi_k + k2_phi/2);
+    computeEquationsOfMotion(currentState + k2/2, Phi_k + k2_phi/2);
     k3 = (CurrentSimNanos-prevTime)*NANO2SEC*x_hat_dot_k;
     k3_phi = (CurrentSimNanos-prevTime)*NANO2SEC*Phi_dot_k;
 
     /* Fourth RK4 step */
-    computeEquationsOfMotion(x_hat_k + k3, Phi_k + k3_phi);
+    computeEquationsOfMotion(currentState + k3, Phi_k + k3_phi);
     k4 = (CurrentSimNanos-prevTime)*NANO2SEC*x_hat_dot_k;
     k4_phi = (CurrentSimNanos-prevTime)*NANO2SEC*Phi_dot_k;
 
     /* Perform the RK4 integration on the dynamics and STM */
-    x_hat_k1_ = x_hat_k + (k1 + 2*k2 + 2*k3 + k4)/6;
+    x_hat_k1_ = currentState + (k1 + 2*k2 + 2*k3 + k4)/6;
     Phi_k = Phi_k + (k1_phi + 2*k2_phi + 2*k3_phi + k4_phi)/6;
 }
 
@@ -221,7 +222,7 @@ void SmallBodyNavEKF::aprioriState(uint64_t CurrentSimNanos){
     @param Phi
 
 */
-void SmallBodyNavEKF::computeEquationsOfMotion(Eigen::VectorXd x_hat, Eigen::MatrixXd Phi){
+void SmallBodyNavEKF::computeEquationsOfMotion(const StateVector& x_hat, const StateMatrix& Phi){
     /* Create temporary state vectors for readability */
     Eigen::Vector3d x_1;
     Eigen::Vector3d x_2;
@@ -241,7 +242,7 @@ void SmallBodyNavEKF::computeEquationsOfMotion(Eigen::VectorXd x_hat, Eigen::Mat
     double dcm_BN_meas[3][3];
     MRP2C(this->navAttInMsgBuffer.sigma_BN, dcm_BN_meas);
     Eigen::Matrix3d dcm_OB;
-    dcm_OB = dcm_ON*(cArray2EigenMatrixXd(*dcm_BN_meas, 3, 3));
+    dcm_OB = dcm_ON*cArray2EigenMatrix3d(*dcm_BN_meas).transpose();
     /* Now compute x2_dot */
     x_hat_dot_k.segment(3,3) =
             -F_ddot*o_hat_3_tilde*x_1 - 2*F_dot*o_hat_3_tilde*x_2 -pow(F_dot,2)*o_hat_3_tilde*o_hat_3_tilde*x_1
@@ -267,8 +268,11 @@ void SmallBodyNavEKF::computeEquationsOfMotion(Eigen::VectorXd x_hat, Eigen::Mat
 
 */
 void SmallBodyNavEKF::aprioriCovar(uint64_t CurrentSimNanos){
+    const StateMatrix currentCovariance = P_k;
+    const StateMatrix processNoise = Q;
+
     /* Compute the apriori covariance */
-    P_k1_ = Phi_k*P_k*Phi_k.transpose() + L*Q*L.transpose();
+    P_k1_ = Phi_k*currentCovariance*Phi_k.transpose() + L*processNoise*L.transpose();
 }
 
 /*! This method checks the propagated MRP states to see if they exceed a norm of 1. If they do, the appropriate
@@ -281,12 +285,10 @@ void SmallBodyNavEKF::checkMRPSwitching(){
     sigma_AN << x_hat_k1_.segment(6,3);
 
     /* Create a shadow covariance matrix */
-    Eigen::MatrixXd P_k1_s;
-    P_k1_s.setZero(this->numStates, this->numStates);
+    StateMatrix P_k1_s = StateMatrix::Zero();
 
     /* Initialize Lambda, set it to zero, set diagonal 3x3 state blocks to identity */
-    Eigen::MatrixXd Lambda;
-    Lambda.setZero(this->numStates, this->numStates);
+    StateMatrix Lambda = StateMatrix::Zero();
     Lambda.block(0, 0, 3, 3).setIdentity();
     Lambda.block(3, 3, 3, 3).setIdentity();
     Lambda.block(6, 6, 3, 3).setIdentity();
@@ -311,14 +313,13 @@ void SmallBodyNavEKF::checkMRPSwitching(){
 */
 void SmallBodyNavEKF::measurementUpdate(){
     /* Compute Kalman gain */
-    Eigen::MatrixXd K_k1;
-    K_k1.setZero(this->numStates, this->numStates);
-    K_k1 = P_k1_*H_k1.transpose() * (H_k1*P_k1_*H_k1.transpose() + M*R*M.transpose()).inverse();
+    const StateMatrix measurementNoise = R;
+    StateMatrix K_k1 = P_k1_*H_k1.transpose()
+        * (H_k1*P_k1_*H_k1.transpose() + M*measurementNoise*M.transpose()).inverse();
 
     /* Grab the measurements from the input messages */
     /* Subtract the asteroid position from the spacecraft position and rotate it into the small body's hill frame*/
-    Eigen::VectorXd y_k1;
-    y_k1.setZero(this->numStates);
+    StateVector y_k1 = StateVector::Zero();
     y_k1.segment(0, 3) = dcm_ON*(cArray2EigenVector3d(navTransInMsgBuffer.r_BN_N)
             - cArray2EigenVector3d(asteroidEphemerisInMsgBuffer.r_BdyZero_N));
 
@@ -346,7 +347,8 @@ void SmallBodyNavEKF::measurementUpdate(){
     x_hat_k1 = x_hat_k1_ + K_k1*(y_k1 - x_hat_k1_);
 
     /* Update the covariance */
-    P_k1 = (I_full - K_k1*H_k1)*P_k1_*(I_full - K_k1*H_k1).transpose() + K_k1*M*R*M.transpose()*K_k1.transpose();
+    P_k1 = (I_full - K_k1*H_k1)*P_k1_*(I_full - K_k1*H_k1).transpose()
+        + K_k1*M*measurementNoise*M.transpose()*K_k1.transpose();
 
     /* Assign the state estimate and covariance to k for the next iteration */
     x_hat_k = x_hat_k1;
@@ -356,7 +358,7 @@ void SmallBodyNavEKF::measurementUpdate(){
 /*! This method computes the state dynamics matrix, A, for the next iteration
 
 */
-void SmallBodyNavEKF::computeDynamicsMatrix(Eigen::VectorXd x_hat){
+void SmallBodyNavEKF::computeDynamicsMatrix(const StateVector& x_hat){
     /* Create temporary state vectors for readability */
     Eigen::Vector3d x_1;
     Eigen::Vector3d x_2;
@@ -369,7 +371,7 @@ void SmallBodyNavEKF::computeDynamicsMatrix(Eigen::VectorXd x_hat){
     x_4 << x_hat.segment(9,3);
 
     /* First set the matrix to zero (many indices are zero) */
-    A_k.setZero(this->numStates, this->numStates);
+    A_k.setZero();
 
     /* x_1 partial */
     A_k.block(0, 3, 3, 3).setIdentity();
