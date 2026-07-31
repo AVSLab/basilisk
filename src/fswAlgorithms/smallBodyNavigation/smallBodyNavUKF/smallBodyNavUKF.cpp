@@ -27,23 +27,20 @@
     values and initializes the various parts of the model */
 SmallBodyNavUKF::SmallBodyNavUKF()
 {
-    this->numStates = 9;
-    this->numMeas = 3;
-    this->numSigmas = 2*this->numStates + 1;
-    this->x_hat_k1_.setZero(this->numStates);
-    this->P_k1_.setZero(this->numStates, this->numStates);
-    this->x_hat_k1.setZero(this->numStates);
-    this->P_k1.setZero(this->numStates, this->numStates);
-    this->X_sigma_k1_.setZero(this->numStates, this->numSigmas);
-    this->wm_sigma.setZero(this->numSigmas);
-    this->wc_sigma.setZero(this->numSigmas);
-    this->y_hat_k1_.setZero(this->numMeas);
-    this->R_k1_.setZero(this->numMeas, this->numMeas);
-    this->Y_sigma_k1_.setZero(this->numMeas, this->numSigmas);
-    this->H.setZero(this->numStates, this->numMeas);
-    this->K.setZero(this->numStates, this->numMeas);
-    this->dcm_AN.setIdentity(3,3);
-    this->omega_AN_A.setZero(3);
+    this->x_hat_k1_.setZero();
+    this->P_k1_.setZero();
+    this->x_hat_k1.setZero();
+    this->P_k1.setZero();
+    this->X_sigma_k1_.setZero();
+    this->wm_sigma.setZero();
+    this->wc_sigma.setZero();
+    this->y_hat_k1_.setZero();
+    this->R_k1_.setZero();
+    this->Y_sigma_k1_.setZero();
+    this->H.setZero();
+    this->K.setZero();
+    this->dcm_AN.setIdentity();
+    this->omega_AN_A.setZero();
     this->alpha = 0;
     this->beta = 2;
     this->kappa = 1e-3;
@@ -75,14 +72,14 @@ void SmallBodyNavUKF::Reset(uint64_t CurrentSimNanos)
     }
 
     /* compute UT weights to be used in the UT */
-    this->wm_sigma(0) = this->kappa / (this->kappa + this->numStates);
+    this->wm_sigma(0) = this->kappa / (this->kappa + stateSize);
     this->wc_sigma(0) = this->wm_sigma(0) + 1 - pow(this->alpha,2) + this->beta;
-    for (uint64_t i = 0; i < this->numStates; i++) {
+    for (int i = 0; i < stateSize; i++) {
         /* Assign weigths */
-        this->wm_sigma(i+1) = 1 / (2*(this->numStates + this->kappa));
-        this->wm_sigma(numStates+i+1) = this->wm_sigma(i+1);
+        this->wm_sigma(i+1) = 1 / (2*(stateSize + this->kappa));
+        this->wm_sigma(stateSize+i+1) = this->wm_sigma(i+1);
         this->wc_sigma(i+1) = this->wm_sigma(i+1);
-        this->wc_sigma(numStates+i+1) = this->wm_sigma(i+1);
+        this->wc_sigma(stateSize+i+1) = this->wm_sigma(i+1);
     }
 }
 
@@ -103,49 +100,43 @@ void SmallBodyNavUKF::processUT(uint64_t CurrentSimNanos){
     /* Read angular velocity of the small body fixed frame */
     this->omega_AN_A = cArray2EigenVector3d(this->asteroidEphemerisInMsgBuffer.omega_BN_B);
 
-    /* Declare matrix to store sigma points spread */
-    Eigen::MatrixXd X_sigma_k;
-    Eigen::MatrixXd X_sigma_dot_k;
-
     /* Set sigma points related matrices and vectors to zero */
-    X_sigma_k.setZero(this->numStates, this->numSigmas);
-    X_sigma_dot_k.setZero(this->numStates, this->numSigmas);
+    StateSigmaMatrix X_sigma_k = StateSigmaMatrix::Zero();
 
     /* Compute square root matrix of covariance */
-    Eigen::MatrixXd Psqrt_k;
-    Psqrt_k = this->P_k.llt().matrixL();
+    const StateVector currentState = this->x_hat_k;
+    const StateMatrix currentCovariance = this->P_k;
+    StateMatrix Psqrt_k = currentCovariance.llt().matrixL();
 
     /* Assign mean to central sigma point */
-    X_sigma_k.col(0) = this->x_hat_k;
+    X_sigma_k.col(0) = currentState;
 
     /* Loop to generate remaining sigma points */
-    for (uint64_t i = 0; i < this->numStates; i++) {
+    for (int i = 0; i < stateSize; i++) {
         /* Generate sigma points */
-        X_sigma_k.col(i+1) = this->x_hat_k
-            - sqrt(this->numStates + this->kappa) * Psqrt_k.col(i);
-        X_sigma_k.col(numStates+i+1) = x_hat_k
-            + sqrt(this->numStates + this->kappa) * Psqrt_k.col(i);
+        X_sigma_k.col(i+1) = currentState
+            - sqrt(stateSize + this->kappa) * Psqrt_k.col(i);
+        X_sigma_k.col(stateSize+i+1) = currentState
+            + sqrt(stateSize + this->kappa) * Psqrt_k.col(i);
     }
 
     /* Loop to propagate sigma points and compute mean */
-    Eigen::VectorXd x_sigma_k;
-    Eigen::VectorXd x_sigma_dot_k;
+    StateVector x_sigma_k = StateVector::Zero();
+    StateVector x_sigma_dot_k = StateVector::Zero();
     Eigen::Vector3d r_sigma_k;
     Eigen::Vector3d v_sigma_k;
     Eigen::Vector3d a_sigma_k;
-    x_sigma_k.setZero(this->numStates);
-    x_sigma_dot_k.setZero(this->numStates);
-    this->x_hat_k1_.setZero(this->numStates);
-    for (uint64_t i = 0; i < this->numSigmas; i++) {
+    this->x_hat_k1_.setZero();
+    for (int i = 0; i < sigmaCount; i++) {
         /* Extract sigma point */
         x_sigma_k = X_sigma_k.col(i);
 
         /* Compute dynamics derivative */
-        r_sigma_k << x_sigma_k.segment(0,3);
-        v_sigma_k << x_sigma_k.segment(3,3);
-        a_sigma_k << x_sigma_k.segment(6,3);
-        x_sigma_dot_k.segment(0,3) = v_sigma_k;
-        x_sigma_dot_k.segment(3,3) = - 2*this->omega_AN_A.cross(v_sigma_k)
+        r_sigma_k = x_sigma_k.segment<3>(0);
+        v_sigma_k = x_sigma_k.segment<3>(3);
+        a_sigma_k = x_sigma_k.segment<3>(6);
+        x_sigma_dot_k.segment<3>(0) = v_sigma_k;
+        x_sigma_dot_k.segment<3>(3) = - 2*this->omega_AN_A.cross(v_sigma_k)
                                      - this->omega_AN_A.cross(this->omega_AN_A.cross(r_sigma_k))
                                      - this->mu_ast*r_sigma_k/pow(r_sigma_k.norm(), 3)
                                      + a_sigma_k;
@@ -158,10 +149,9 @@ void SmallBodyNavUKF::processUT(uint64_t CurrentSimNanos){
     }
 
     /* Loop to compute covariance */
-    Eigen::VectorXd x_sigma_dev_k1_;
-    x_sigma_dev_k1_.setZero(this->numStates);
-    this->P_k1_.setZero(this->numStates, this->numStates);
-    for (uint64_t i = 0; i < numSigmas; i++) {
+    StateVector x_sigma_dev_k1_ = StateVector::Zero();
+    this->P_k1_.setZero();
+    for (int i = 0; i < sigmaCount; i++) {
         /* Compute deviation of sigma from the mean */
         x_sigma_dev_k1_ = this->X_sigma_k1_.col(i) - this->x_hat_k1_;
 
@@ -170,7 +160,8 @@ void SmallBodyNavUKF::processUT(uint64_t CurrentSimNanos){
     }
 
     /* Add process noise covariance */
-    this->P_k1_ = this->P_k1_ + this->P_proc;
+    const StateMatrix processNoise = this->P_proc;
+    this->P_k1_ = this->P_k1_ + processNoise;
 }
 
 /*! This method does the UT to the a-priori state to compute the a-priori measurements
@@ -178,44 +169,40 @@ void SmallBodyNavUKF::processUT(uint64_t CurrentSimNanos){
 */
 void SmallBodyNavUKF::measurementUT(){
     /* Compute square root matrix of covariance */
-    Eigen::MatrixXd Psqrt_k1_;
-    Psqrt_k1_ = P_k1_.llt().matrixL();
+    StateMatrix Psqrt_k1_ = P_k1_.llt().matrixL();
 
     /* Assign mean to central sigma point */
     this->X_sigma_k1_.col(0) = this->x_hat_k1_;
 
     /* Loop to generate remaining sigma points */
-    for (uint64_t i = 0; i < this->numStates; i++) {
+    for (int i = 0; i < stateSize; i++) {
         /* Generate sigma points */
         this->X_sigma_k1_.col(i+1) = this->x_hat_k1_
-            - sqrt(this->numStates + this->kappa) * Psqrt_k1_.col(i);
-        this->X_sigma_k1_.col(this->numStates+i+1) = this->x_hat_k1_
-            + sqrt(this->numStates + this->kappa) * Psqrt_k1_.col(i);
+            - sqrt(stateSize + this->kappa) * Psqrt_k1_.col(i);
+        this->X_sigma_k1_.col(stateSize+i+1) = this->x_hat_k1_
+            + sqrt(stateSize + this->kappa) * Psqrt_k1_.col(i);
     }
 
     /* Loop to propagate sigma points and compute mean */
-    Eigen::VectorXd x_sigma_k1_;
-    x_sigma_k1_.setZero(this->numStates);
-    this->y_hat_k1_.setZero(this->numMeas);
-    for (uint64_t i = 0; i < this->numSigmas; i++) {
+    StateVector x_sigma_k1_ = StateVector::Zero();
+    this->y_hat_k1_.setZero();
+    for (int i = 0; i < sigmaCount; i++) {
         /* Extract sigma point */
         x_sigma_k1_ = this->X_sigma_k1_.col(i);
 
         /* Assign correlation between state and measurement */
-        this->Y_sigma_k1_.col(i) = x_sigma_k1_.segment(0,3);
+        this->Y_sigma_k1_.col(i) = x_sigma_k1_.segment<3>(0);
 
         /* Compute average */
         this->y_hat_k1_ = this->y_hat_k1_ + this->wm_sigma(i)*this->Y_sigma_k1_.col(i);
     }
 
     /* Loop to compute measurements covariance and cross-correlation */
-    Eigen::VectorXd x_sigma_dev_k1_;
-    Eigen::VectorXd y_sigma_dev_k1_;
-    x_sigma_dev_k1_.setZero(this->numStates);
-    y_sigma_dev_k1_.setZero(this->numStates);
-    this->R_k1_.setZero(this->numMeas, this->numMeas);
-    this->H.setZero(this->numStates, this->numMeas);
-    for (uint64_t i = 0; i < this->numSigmas; i++) {
+    StateVector x_sigma_dev_k1_ = StateVector::Zero();
+    Eigen::Vector3d y_sigma_dev_k1_ = Eigen::Vector3d::Zero();
+    this->R_k1_.setZero();
+    this->H.setZero();
+    for (int i = 0; i < sigmaCount; i++) {
         /* Compute deviation of measurement sigma from the mean */
         x_sigma_dev_k1_ = this->X_sigma_k1_.col(i) - this->x_hat_k1_;
         y_sigma_dev_k1_ = this->Y_sigma_k1_.col(i) - this->y_hat_k1_;
@@ -231,7 +218,8 @@ void SmallBodyNavUKF::measurementUT(){
     this->dcm_AN = cArray2EigenMatrix3d(*dcm_AN_array);
 
     /* Add process noise covariance */
-    this->R_k1_ = this->R_k1_ + this->dcm_AN * this->R_meas * this->dcm_AN.transpose();
+    const Eigen::Matrix3d measurementNoise = this->R_meas;
+    this->R_k1_ = this->R_k1_ + this->dcm_AN * measurementNoise * this->dcm_AN.transpose();
 }
 
 /*! This method collects the measurements and updates the estimation
@@ -243,17 +231,14 @@ void SmallBodyNavUKF::kalmanUpdate(){
     sigma_AN = cArray2EigenVector3d(asteroidEphemerisInMsgBuffer.sigma_BN);
 
     /* Subtract the asteroid position from the spacecraft position */
-    Eigen::VectorXd y_k1;
-    y_k1.setZero(this->numMeas);
-    y_k1.segment(0, 3) = this->dcm_AN*(cArray2EigenVector3d(navTransInMsgBuffer.r_BN_N) -  cArray2EigenVector3d(asteroidEphemerisInMsgBuffer.r_BdyZero_N));
+    Eigen::Vector3d y_k1 = this->dcm_AN*(cArray2EigenVector3d(navTransInMsgBuffer.r_BN_N)
+        - cArray2EigenVector3d(asteroidEphemerisInMsgBuffer.r_BdyZero_N));
 
     /* Compute Kalman gain */
     this->K = this->H*this->R_k1_.inverse();
 
     /* Compute the Kalman innovation */
-    Eigen::VectorXd w_k1;
-    w_k1.setZero(this->numStates);
-    w_k1 = this->K * (y_k1 - this->y_hat_k1_);
+    StateVector w_k1 = this->K * (y_k1 - this->y_hat_k1_);
 
     /* Update state estimation and covariance */
     this->x_hat_k1 = this->x_hat_k1_ + w_k1;
