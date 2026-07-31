@@ -45,6 +45,7 @@ mod tests {
     #[test]
     fn payload_and_data_fields_remain_distinct() {
         let bindings = bindgen::Builder::default()
+            .formatter(bindgen::Formatter::Prettyplease)
             .header_contents(
                 "CollisionMsgPayload.h",
                 "typedef struct {\n\
