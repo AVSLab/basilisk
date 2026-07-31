@@ -160,6 +160,7 @@ fn generate_bindings() -> Result<(), Box<dyn Error>> {
     // as C also avoids coupling bindgen's libclang version to the host C++
     // standard-library implementation.
     let mut bindings_builder = bindgen::Builder::default()
+        .formatter(bindgen::Formatter::Prettyplease)
         .header(wrapper_path.display().to_string())
         // Track every header libclang reads, including payload headers included
         // transitively by generated *_C.h files. Without these callbacks Cargo
