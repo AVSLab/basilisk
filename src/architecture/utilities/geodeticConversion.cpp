@@ -27,8 +27,8 @@
 @return pcpfPosition: [m] Position vector in PCPF coordinates
 */
 Eigen::Vector3d PCI2PCPF(Eigen::Vector3d pciPosition, double J20002Pfix[3][3]){
-    // cArray2EigenMatrixd expects a column major input, thus the result is transposed
-    Eigen::MatrixXd dcm_PN = cArray2EigenMatrixXd(*J20002Pfix,3,3).transpose();
+    // The source DCM is stored in row-major order.
+    Eigen::Matrix3d dcm_PN = cArray2EigenMatrix3d(*J20002Pfix);
     Eigen::Vector3d pcpfPosition = dcm_PN * pciPosition;
 
     return pcpfPosition;
@@ -131,8 +131,8 @@ Eigen::Vector3d LLA2PCPF(Eigen::Vector3d llaPosition, double planetEqRad, double
 */
 Eigen::Vector3d PCPF2PCI(Eigen::Vector3d pcpfPosition, double J20002Pfix[3][3])
 {
-    // cArray2EigenMatrixd expects a column major input, thus the result is transposed
-    Eigen::MatrixXd dcm_NP = cArray2EigenMatrixXd(*J20002Pfix,3,3);
+    // Transpose the row-major source DCM for the inverse transformation.
+    Eigen::Matrix3d dcm_NP = cArray2EigenMatrix3d(*J20002Pfix).transpose();
     Eigen::Vector3d pciPosition = dcm_NP * pcpfPosition;
 
     return pciPosition;
@@ -162,7 +162,7 @@ Eigen::Matrix3d C_PCPF2SEZ(double lat, double longitude)
      Euler2(M_PI_2-lat, m1);
      Euler3(longitude, m2);
 
-     Eigen::MatrixXd rot2 = cArray2EigenMatrix3d(*m1);
-     Eigen::MatrixXd rot3 = cArray2EigenMatrix3d(*m2);
+     Eigen::Matrix3d rot2 = cArray2EigenMatrix3d(*m1);
+     Eigen::Matrix3d rot3 = cArray2EigenMatrix3d(*m2);
      return rot2*rot3;
 }

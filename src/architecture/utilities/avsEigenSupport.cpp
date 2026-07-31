@@ -30,141 +30,119 @@
 
  */
 
-/*! This function provides a general conversion between an Eigen matrix and
-an output C array. Note that this routine would convert an inbound type
-to a MatrixXd and then transpose the matrix which would be inefficient
-in a lot of cases.
-@return void
-@param inMat The source Eigen matrix that we are converting
-@param outArray The destination array (sized by the user!) we copy into
+/*! Copy a dynamic Eigen matrix into a row-major C array without an intermediate
+    transpose.
+
+    @param inMat Source Eigen matrix.
+    @param outArray Destination array sized by the caller.
 */
-void eigenMatrixXd2CArray(Eigen::MatrixXd inMat, double *outArray)
+void eigenMatrixXd2CArray(const Eigen::MatrixXd& inMat, double *outArray)
 {
-	Eigen::MatrixXd tempMat = inMat.transpose();
-	memcpy(outArray, tempMat.data(), inMat.rows()*inMat.cols()*sizeof(double));
+    using RowMajorMatrixXd = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
+    Eigen::Map<RowMajorMatrixXd> outMat(outArray, inMat.rows(), inMat.cols());
+    outMat = inMat;
 }
 
-/*! This function provides a general conversion between an Eigen matrix and
-an output C array. Note that this routine would convert an inbound type
-to a MatrixXd and then transpose the matrix which would be inefficient
-in a lot of cases.
+/*! Copy a dynamic integer Eigen matrix into a row-major C array without an
+    intermediate transpose.
 
-@param inMat The source Eigen matrix that we are converting
-@param outArray The destination array (sized by the user!) we copy into
+    @param inMat Source Eigen matrix.
+    @param outArray Destination array sized by the caller.
 */
-void eigenMatrixXi2CArray(Eigen::MatrixXi inMat, int *outArray)
+void eigenMatrixXi2CArray(const Eigen::MatrixXi& inMat, int *outArray)
 {
-    Eigen::MatrixXi tempMat = inMat.transpose();
-    memcpy(outArray, tempMat.data(), inMat.rows()*inMat.cols()*sizeof(int));
+    using RowMajorMatrixXi = Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
+    Eigen::Map<RowMajorMatrixXi> outMat(outArray, inMat.rows(), inMat.cols());
+    outMat = inMat;
 }
 
 
-/*! This function provides a direct conversion between a 3-vector and an
-output C array. We are providing this function to save on the  inline conversion
-and the transpose that would have been performed by the general case.
-@return void
-@param inMat The source Eigen matrix that we are converting
-@param outArray The destination array we copy into
+/*! Copy an Eigen 3-vector into a C array.
+
+    @param inMat Source Eigen vector.
+    @param outArray Destination three-element array.
 */
-void eigenVector3d2CArray(Eigen::Vector3d & inMat, double *outArray)
+void eigenVector3d2CArray(const Eigen::Vector3d& inMat, double *outArray)
 {
-	memcpy(outArray, inMat.data(), 3 * sizeof(double));
+    Eigen::Map<Eigen::Vector3d> outVector(outArray);
+    outVector = inMat;
 }
 
-/*! This function provides a direct conversion between an MRP and an
-output C array. We are providing this function to save on the inline conversion
-and the transpose that would have been performed by the general case.
-@return void
-@param inMat The source Eigen MRP that we are converting
-@param outArray The destination array we copy into
+/*! Copy an Eigen MRP vector into a C array.
+
+    @param inMat Source Eigen MRP vector.
+    @param outArray Destination three-element array.
 */
-void eigenMRPd2CArray(Eigen::Vector3d& inMat, double* outArray)
+void eigenMRPd2CArray(const Eigen::Vector3d& inMat, double* outArray)
 {
-    memcpy(outArray, inMat.data(), 3 * sizeof(double));
+    Eigen::Map<Eigen::Vector3d> outVector(outArray);
+    outVector = inMat;
 }
 
-/*! This function provides a direct conversion between a 3x3 matrix and an
-output C array. We are providing this function to save on the inline conversion
-that would have been performed by the general case.
-@return void
-@param inMat The source Eigen matrix that we are converting
-@param outArray The destination array we copy into
+/*! Copy an Eigen 3x3 matrix into a row-major C array.
+
+    @param inMat Source Eigen matrix.
+    @param outArray Destination nine-element array.
 */
-void eigenMatrix3d2CArray(Eigen::Matrix3d & inMat, double *outArray)
+void eigenMatrix3d2CArray(const Eigen::Matrix3d& inMat, double *outArray)
 {
-	Eigen::MatrixXd tempMat = inMat.transpose();
-	memcpy(outArray, tempMat.data(), 9 * sizeof(double));
+    using RowMajorMatrix3d = Eigen::Matrix<double, 3, 3, Eigen::RowMajor>;
+    Eigen::Map<RowMajorMatrix3d> outMat(outArray);
+    outMat = inMat;
 }
 
-/*! This function performs the general conversion between an input C array
-and an Eigen matrix. Note that to use this function the user MUST size
-the Eigen matrix ahead of time so that the internal map call has enough
-information to ingest the C array.
-@return Eigen::MatrixXd
-@param inArray The input array (row-major)
-@param nRows
-@param nCols
+/*! Convert a column-major C array into a dynamic Eigen matrix.
+
+    @param inArray Source array.
+    @param nRows Number of matrix rows.
+    @param nCols Number of matrix columns.
+    @return Dynamic Eigen matrix containing the source values.
 */
 Eigen::MatrixXd cArray2EigenMatrixXd(double *inArray, int nRows, int nCols)
 {
-    Eigen::MatrixXd outMat;
-    outMat.resize(nRows, nCols);
-	outMat = Eigen::Map<Eigen::MatrixXd>(inArray, outMat.rows(), outMat.cols());
-    return outMat;
+    return Eigen::Map<Eigen::MatrixXd>(inArray, nRows, nCols);
 }
 
-/*! This function performs the conversion between an input C array
-3-vector and an output Eigen vector3d. This function is provided
-in order to save an unnecessary conversion between types.
-@return Eigen::Vector3d
-@param inArray The input array (row-major)
+/*! Convert a C array into an Eigen 3-vector.
+
+    @param inArray Source three-element array.
+    @return Eigen vector containing the source values.
 */
 Eigen::Vector3d cArray2EigenVector3d(double *inArray)
 {
     return Eigen::Map<Eigen::Vector3d>(inArray, 3, 1);
 }
 
-/*! This function performs the conversion between an input C array
-3-vector and an output Eigen MRPd. This function is provided
-in order to save an unnecessary conversion between types.
-@return Eigen::MRPd
-@param inArray The input array (row-major)
+/*! Convert a C array into an Eigen MRP.
+
+    @param inArray Source three-element array.
+    @return Eigen MRP containing the source values.
 */
 Eigen::MRPd cArray2EigenMRPd(double* inArray)
 {
-    Eigen::MRPd sigma_Eigen;
-    sigma_Eigen = cArray2EigenVector3d(inArray);
-
-    return sigma_Eigen;
+    return Eigen::MRPd(cArray2EigenVector3d(inArray));
 }
 
-/*! This function performs the conversion between an input C array
-3x3-matrix and an output Eigen vector3d. This function is provided
-in order to save an unnecessary conversion between types.
-@return Eigen::Matrix3d
-@param inArray The input array (row-major)
+/*! Convert a row-major C array into an Eigen 3x3 matrix.
+
+    @param inArray Source nine-element array.
+    @return Eigen matrix containing the source values.
 */
 Eigen::Matrix3d cArray2EigenMatrix3d(double *inArray)
 {
-	return Eigen::Map<Eigen::Matrix3d>(inArray, 3, 3).transpose();
+    using RowMajorMatrix3d = Eigen::Matrix<double, 3, 3, Eigen::RowMajor>;
+    return Eigen::Map<RowMajorMatrix3d>(inArray);
 }
 
-/*! This function performs the conversion between an input C 3x3
-2D-array and an output Eigen vector3d. This function is provided
-in order to save an unnecessary conversion between types
-@return Eigen::Matrix3d
-@param in2DArray The input 2D-array
+/*! Convert a C 3x3 array into an Eigen 3x3 matrix.
+
+    @param in2DArray Source 3x3 array.
+    @return Eigen matrix containing the source values.
 */
 Eigen::Matrix3d c2DArray2EigenMatrix3d(double in2DArray[3][3])
 {
-    Eigen::Matrix3d outMat;
-    for (int i = 0; i < 3; i++) {
-        for (int j = 0; j < 3; j++) {
-            outMat(i, j) = in2DArray[i][j];
-        }
-    }
-
-    return outMat;
+    using RowMajorMatrix3d = Eigen::Matrix<double, 3, 3, Eigen::RowMajor>;
+    return Eigen::Map<RowMajorMatrix3d>(&in2DArray[0][0]);
 }
 
 /*! This function returns the Eigen DCM that corresponds to a 1-axis rotation
@@ -412,9 +390,9 @@ bool eigenIsValidInertiaMatrix(const Eigen::Matrix3d& inertia, double tolerance)
     The tolerance bounds both the deviation from symmetry and small negative
     eigenvalues caused by roundoff.
 
-    :param matrix: matrix to test
-    :param tolerance: allowed deviation from symmetry and positive semidefiniteness
-    :return: ``true`` when the matrix is symmetric positive semidefinite
+    @param matrix matrix to test
+    @param tolerance allowed deviation from symmetry and positive semidefiniteness
+    @return ``true`` when the matrix is symmetric positive semidefinite
  */
 bool eigenIsPositiveSemidefiniteMatrix(const Eigen::Matrix3d& matrix, double tolerance)
 {
