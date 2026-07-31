@@ -66,7 +66,7 @@ VscmgVelocitySteering::Reset(uint64_t CurrentSimNanos)
     for (int i = 0; i < vscmgConfigParams.numVSCMG; i++) {
         this->h_bar[i] = vscmgConfigParams.JsList[i] * vscmgConfigParams.Omega0List[i];
     }
-    Eigen::VectorXd h_bar_vec = Eigen::Map<Eigen::VectorXd>(this->h_bar.data(), this->h_bar.size());
+    const Eigen::Map<const Eigen::VectorXd> h_bar_vec(this->h_bar.data(), vscmgConfigParams.numVSCMG);
     double mean_h_bar = 0.0;
     for (int i = 0; i < vscmgConfigParams.numVSCMG; i++) {
         mean_h_bar += h_bar_vec[i];
@@ -94,13 +94,13 @@ VscmgVelocitySteering::UpdateState(uint64_t CurrentSimNanos)
     Eigen::Matrix3d GG0;                                    /*![-] DCM between gimbal frame and gimbal frame when rotation angle is zero */
     Eigen::Matrix3d BG;                                     /*![-] DCM between body frame and gimbal frame */
     Eigen::Matrix3d QWQT;
-    Eigen::MatrixXd D0(3, vscmgConfigParams.numVSCMG);
-    Eigen::MatrixXd D1(3, vscmgConfigParams.numVSCMG);
-    Eigen::MatrixXd D2(3, vscmgConfigParams.numVSCMG);
-    Eigen::MatrixXd D3(3, vscmgConfigParams.numVSCMG);
-    Eigen::MatrixXd D4(3, vscmgConfigParams.numVSCMG);
-    Eigen::MatrixXd D(3, vscmgConfigParams.numVSCMG);
-    Eigen::MatrixXd Q(3, 2 * vscmgConfigParams.numVSCMG);
+    Eigen::Matrix3Xd D0(3, vscmgConfigParams.numVSCMG);
+    Eigen::Matrix3Xd D1(3, vscmgConfigParams.numVSCMG);
+    Eigen::Matrix3Xd D2(3, vscmgConfigParams.numVSCMG);
+    Eigen::Matrix3Xd D3(3, vscmgConfigParams.numVSCMG);
+    Eigen::Matrix3Xd D4(3, vscmgConfigParams.numVSCMG);
+    Eigen::Matrix3Xd D(3, vscmgConfigParams.numVSCMG);
+    Eigen::Matrix3Xd Q(3, 2 * vscmgConfigParams.numVSCMG);
     Eigen::MatrixXd W(2 * vscmgConfigParams.numVSCMG, 2 * vscmgConfigParams.numVSCMG);
     CmdTorqueBodyMsgPayload Lr;
     NavAttMsgPayload hubAttState;
