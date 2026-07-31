@@ -32,6 +32,10 @@
 #include "architecture/messaging/messaging.h"
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/astroConstants.h"
+#include <array>
+#include <functional>
+#include <utility>
+#include <vector>
 
 #define NUM_INITIALSTATES 27 // number of initial states
 
@@ -93,21 +97,27 @@ public:
     bool getIgnoreConstraintViolations() const {return this->ignoreConstraintViolations;}
 
 private:
+    static constexpr int stateSize = 6;
+    using StateVector = Eigen::Matrix<double, stateSize, 1>;
+    using StateMatrix = Eigen::Matrix<double, stateSize, stateSize>;
+    using EquationsOfMotion = std::function<StateVector(double, const StateVector&)>;
+    using PropagationResult = std::pair<std::vector<double>, std::vector<StateVector>>;
+    using InitialStates = std::array<StateVector, NUM_INITIALSTATES>;
+
     void readMessages();
     void writeMessages(uint64_t currentSimNanos);
-    std::array<Eigen::VectorXd, NUM_INITIALSTATES> getInitialStates();
-    void countViolations(std::array<Eigen::VectorXd, NUM_INITIALSTATES> initialStates);
-    void checkConstraintViolations(std::vector<double> t, std::vector<Eigen::VectorXd> X);
+    InitialStates getInitialStates();
+    void countViolations(const InitialStates& initialStates);
+    void checkConstraintViolations(const std::vector<double>& t, const std::vector<StateVector>& X);
     bool checkPerformance() const;
-    std::pair<std::vector<double>, std::vector<Eigen::VectorXd>> propagate(
-            const std::function<Eigen::VectorXd(double, Eigen::VectorXd)>& EOM,
-            std::array<double, 2> interval,
-            const Eigen::VectorXd& X0,
-            double dt);
-    Eigen::VectorXd RK4(const std::function<Eigen::VectorXd(double, Eigen::VectorXd)>& ODEfunction,
-                        const Eigen::VectorXd& X0,
-                        double t0,
-                        double dt);
+    PropagationResult propagate(const EquationsOfMotion& EOM,
+                                std::array<double, 2> interval,
+                                const StateVector& X0,
+                                double dt);
+    StateVector RK4(const EquationsOfMotion& ODEfunction,
+                    const StateVector& X0,
+                    double t0,
+                    double dt);
 
     double lambertSolutionSpecifier = 1; //!< [-] which Lambert solution (1 or 2), if applicable, should be used
     double finalTime{}; //!< [s] time at which target position should be reached
@@ -137,7 +147,7 @@ private:
     int violationsDistanceTarget = 0; //!< [-] number of violations of the maxDistanceTarget constraint
     int violationsOrbitRadius = 0; //!< [-] number of violations of the minOrbitRadius constraint
     double timestep = 10.; //!< [s] time step used for RK4 propagation
-    std::function<Eigen::VectorXd(double, Eigen::VectorXd)> EOM_2BP; //!< equations of motion to be used for RK4
+    EquationsOfMotion EOM_2BP; //!< equations of motion to be used for RK4
     int maxNumIterLambert = 6; //!< [-] maximum number of iterations for Lambert solver root finder to find x
     double xToleranceLambert = 1e-8; //!< [-] tolerance for Lambert solver root finder to find x
     double xConvergenceTolerance = 1e-2; //!< [-] tolerance on difference between x solutions between time steps

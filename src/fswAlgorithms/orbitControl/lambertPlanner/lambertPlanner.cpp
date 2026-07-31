@@ -59,30 +59,28 @@ void LambertPlanner::UpdateState(uint64_t currentSimNanos)
     this->readMessages();
 
     // initial state vector
-    Eigen::VectorXd X0(this->r_N.rows()+this->v_N.rows(), this->r_N.cols());
+    StateVector X0;
     X0 << this->r_N,
             this->v_N;
 
     // equations of motion (assuming two body point mass gravity)
-    std::function<Eigen::VectorXd(double, Eigen::VectorXd)> EOM = [this](double t, Eigen::VectorXd state)
+    EquationsOfMotion EOM = [this](double, const StateVector& state)
     {
-        Eigen::VectorXd stateDerivative(state.size());
+        StateVector stateDerivative;
 
-        stateDerivative.segment(0,3) = state.segment(3, 3);
-        stateDerivative.segment(3, 3) = -this->mu/(pow(state.head(3).norm(),3)) * state.head(3);
+        stateDerivative.head<3>() = state.tail<3>();
+        stateDerivative.tail<3>() = -this->mu/(pow(state.head<3>().norm(),3)) * state.head<3>();
 
         return stateDerivative;
     };
 
     // propagate to obtain expected position at maneuver time tm
-    std::pair<std::vector<double>, std::vector<Eigen::VectorXd>> states = this->propagate(
+    PropagationResult states = this->propagate(
             EOM,
             {this->time, this->maneuverTime},
             X0,
             10);
-    std::vector<Eigen::VectorXd> X = states.second;
-    Eigen::VectorXd Xm = X.back();
-    this->rm_N = Xm.head(3);
+    this->rm_N = states.second.back().head<3>();
 
     // write messages
     this->writeMessages(currentSimNanos);
@@ -144,23 +142,24 @@ void LambertPlanner::writeMessages(uint64_t currentSimNanos)
 
 /*! This method integrates the provided equations of motion using Runge-Kutta 4 (RK4) and returns the time steps and
     state vectors at each time step.
-    @param EOM equations of motion function to be propagated
-    @param interval integration interval
-    @param X0 initial state
-    @param dt time step
-    @return std::pair<std::vector<double>, std::vector<Eigen::VectorXd>>
+
+    @param EOM Equations of motion function to propagate.
+    @param interval Integration interval.
+    @param X0 Initial state.
+    @param dt Time step.
+    @return Time values and corresponding six-element state vectors.
 */
-std::pair<std::vector<double>, std::vector<Eigen::VectorXd>> LambertPlanner::propagate(
-        const std::function<Eigen::VectorXd(double, Eigen::VectorXd)>& EOM,
+LambertPlanner::PropagationResult LambertPlanner::propagate(
+        const EquationsOfMotion& EOM,
         std::array<double, 2> interval,
-        const Eigen::VectorXd& X0,
+        const StateVector& X0,
         double dt)
 {
     double t0 = interval[0];
     double tf = interval[1];
 
     std::vector<double> t = {t0};
-    std::vector<Eigen::VectorXd> X = {X0};
+    std::vector<StateVector> X = {X0};
 
     // propagate forward to tf
     double N = ceil(abs(tf-t0)/dt);
@@ -171,37 +170,36 @@ std::pair<std::vector<double>, std::vector<Eigen::VectorXd>> LambertPlanner::pro
             step = -step;
         }
 
-        Eigen::VectorXd Xnew = this->RK4(EOM, X.at(c), t.at(c), step);
+        StateVector Xnew = this->RK4(EOM, X.at(c), t.at(c), step);
         double tnew = t.at(c) + step;
 
         t.push_back(tnew);
         X.push_back(Xnew);
     }
-    std::pair<std::vector<double>, std::vector<Eigen::VectorXd>> statesOut = {t,X};
-
-    return statesOut;
+    return {std::move(t), std::move(X)};
 }
 
 /*! This method provides the 4th order Runge-Kutta (RK4)
-    @param ODEfunction function handle that includes the equations of motion
-    @param X0 initial state
-    @param t0 initial time
-    @param dt time step
-    @return Eigen::VectorXd
+
+    @param ODEfunction Function handle that includes the equations of motion.
+    @param X0 Initial state.
+    @param t0 Initial time.
+    @param dt Time step.
+    @return Integrated six-element state vector.
 */
-Eigen::VectorXd LambertPlanner::RK4(const std::function<Eigen::VectorXd(double, Eigen::VectorXd)>& ODEfunction,
-                                    const Eigen::VectorXd& X0,
-                                    double t0,
-                                    double dt)
+LambertPlanner::StateVector LambertPlanner::RK4(const EquationsOfMotion& ODEfunction,
+                                                const StateVector& X0,
+                                                double t0,
+                                                double dt)
 {
     double h = dt;
 
-    Eigen::VectorXd k1 = ODEfunction(t0, X0);
-    Eigen::VectorXd k2 = ODEfunction(t0 + h/2., X0 + h*k1/2.);
-    Eigen::VectorXd k3 = ODEfunction(t0 + h/2., X0 + h*k2/2.);
-    Eigen::VectorXd k4 = ODEfunction(t0 + h, X0 + h*k3);
+    StateVector k1 = ODEfunction(t0, X0);
+    StateVector k2 = ODEfunction(t0 + h/2., X0 + h*k1/2.);
+    StateVector k3 = ODEfunction(t0 + h/2., X0 + h*k2/2.);
+    StateVector k4 = ODEfunction(t0 + h, X0 + h*k3);
 
-    Eigen::VectorXd X = X0 + 1./6.*h*(k1 + 2.*k2 + 2.*k3 + k4);
+    StateVector X = X0 + 1./6.*h*(k1 + 2.*k2 + 2.*k3 + k4);
 
     return X;
 }
