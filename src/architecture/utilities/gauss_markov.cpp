@@ -42,6 +42,9 @@ GaussMarkov::GaussMarkov(uint64_t size, uint64_t newSeed)
     this->noiseMatrix.fill(0.0);
     this->stateBounds.resize((int64_t) size);
     this->stateBounds.fill(DEFAULT_BOUND);
+    this->randomValues.resize((int64_t) size);
+    this->stateNoise.resize((int64_t) size);
+    this->propagatedState.resize((int64_t) size);
 }
 
 void GaussMarkov::initializeRNG() {
@@ -63,9 +66,6 @@ GaussMarkov::~GaussMarkov()
 */
 void GaussMarkov::computeNextState()
 {
-    Eigen::VectorXd errorVector;
-    Eigen::VectorXd ranNums;
-
     //! - Check for consistent sizes
     if((this->propMatrix.size() != this->noiseMatrix.size()) ||
        ((uint64_t) this->propMatrix.size() != this->numStates*this->numStates))
@@ -78,19 +78,18 @@ void GaussMarkov::computeNextState()
     }
 
     //! - Generate base random numbers
-    ranNums.resize((int64_t) this->numStates);
     for(size_t i = 0; i < this->numStates; i++) {
-        ranNums[i] = this->rNum(rGen);
+        this->randomValues[i] = this->rNum(rGen);
     }
 
     //! - Apply noise first
-    errorVector = this->noiseMatrix * ranNums;
+    this->stateNoise.noalias() = this->noiseMatrix * this->randomValues;
 
     //! - Then propagate previous state
-    this->currentState = this->propMatrix * this->currentState;
+    this->propagatedState.noalias() = this->propMatrix * this->currentState;
 
     //! - Add noise to propagated state
-    this->currentState += errorVector;
+    this->currentState = this->propagatedState + this->stateNoise;
 
     //! - Apply bounds if needed
     for(size_t i = 0; i < this->numStates; i++) {

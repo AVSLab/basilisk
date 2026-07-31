@@ -47,14 +47,17 @@ public:
      */
     void setRNGSeed(uint64_t newSeed) {rGen.seed((unsigned int)newSeed); RNGSeed = newSeed;}
 
-    /*!@brief Method returns the current random walk state from model
-       @return The private currentState which is the vector of random walk values*/
-    Eigen::VectorXd getCurrentState() {return(currentState);}
+    /*! Method returns the current random walk state from the model.
 
-    /*!@brief Set the upper bounds on the random walk to newBounds
-       @param newBounds the bounds to put on the random walk states
-     */
-    void setUpperBounds(Eigen::VectorXd newBounds) {
+        @return Reference to the vector of random walk values.
+    */
+    const Eigen::VectorXd& getCurrentState() const {return currentState;}
+
+    /*! Set the upper bounds on the random walk.
+
+        @param newBounds Bounds to put on the random walk states.
+    */
+    void setUpperBounds(const Eigen::Ref<const Eigen::VectorXd>& newBounds) {
         // For normal distribution, ~99.7% of values fall within ±3σ
         // So bounds should be at least 3x the standard deviation
         for(int i = 0; i < noiseMatrix.rows(); i++) {
@@ -67,15 +70,17 @@ public:
         stateBounds = newBounds;
     }
 
-    /*!@brief Set the noiseMatrix that is used to define error sigmas
-       @param noise The new value to use for the noiseMatrix variable (error sigmas)
-     */
-    void setNoiseMatrix(Eigen::MatrixXd noise){noiseMatrix = noise;}
+    /*! Set the matrix used to define error sigmas.
 
-    /*!@brief Set the propagation matrix that is used to propagate the state.
-       @param prop The new value for the state propagation matrix
-     */
-    void setPropMatrix(Eigen::MatrixXd prop){propMatrix = prop;}
+        @param noise New value for the noise matrix.
+    */
+    void setNoiseMatrix(const Eigen::Ref<const Eigen::MatrixXd>& noise) {noiseMatrix = noise;}
+
+    /*! Set the matrix used to propagate the state.
+
+        @param prop New value for the state propagation matrix.
+    */
+    void setPropMatrix(const Eigen::Ref<const Eigen::MatrixXd>& prop) {propMatrix = prop;}
 
     Eigen::VectorXd stateBounds;  //!< -- Upper bounds to use for markov
     Eigen::VectorXd currentState;  //!< -- State of the markov model
@@ -85,6 +90,9 @@ public:
 
 private:
     void initializeRNG();
+    Eigen::VectorXd randomValues;        //!< -- Reusable standard-normal samples
+    Eigen::VectorXd stateNoise;          //!< -- Reusable process-noise workspace
+    Eigen::VectorXd propagatedState;     //!< -- Reusable propagation workspace
     uint64_t RNGSeed;                 //!< -- Seed for random number generator
     std::minstd_rand rGen; //!< -- Random number generator for model
     std::normal_distribution<double> rNum;  //!< -- Random number distribution for model
