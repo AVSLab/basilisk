@@ -28,20 +28,19 @@
 */
 class Saturate
 {
-    
+
 public:
     Saturate();
-    Saturate(int64_t size);     //!< class constructor 
+    Saturate(int64_t size);     //!< class constructor
     ~Saturate();
-    void setBounds(Eigen::MatrixXd bounds);
-    Eigen::VectorXd saturate(Eigen::VectorXd unsaturatedStates);
-    /*!@brief Saturates the given unsaturated states
-       @param unsaturated States, a vector of the unsaturated states
-       @return saturatedStates*/
-    
+    //! Set lower and upper bounds for each state.
+    void setBounds(const Eigen::Ref<const Eigen::MatrixX2d>& bounds);
+    //! Saturate the given states.
+    Eigen::VectorXd saturate(const Eigen::Ref<const Eigen::VectorXd>& unsaturatedStates);
+
 private:
     int64_t numStates;              //!< -- Number of states to generate noise for
-    Eigen::MatrixXd stateBounds;    //!< -- one row for each state. lower bounds in left column, upper in right column
+    Eigen::MatrixX2d stateBounds;   //!< -- one row for each state. lower bounds in left column, upper in right column
 };
 
 

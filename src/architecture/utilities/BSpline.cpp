@@ -29,7 +29,7 @@ InputDataSet::InputDataSet()
 }
 
 /*! The constructor requires 3 N-dimensional vectors containing the coordinates of the waypoints */
-InputDataSet::InputDataSet(Eigen::VectorXd X1, Eigen::VectorXd X2, Eigen::VectorXd X3)
+InputDataSet::InputDataSet(const Eigen::VectorXd& X1, const Eigen::VectorXd& X2, const Eigen::VectorXd& X3)
 {
     this->X1 = X1;
     this->X2 = X2;
@@ -72,13 +72,13 @@ void InputDataSet::setXDDot_0(Eigen::Vector3d XDDot_0) {this->XDDot_0 = XDDot_0;
 void InputDataSet::setXDDot_N(Eigen::Vector3d XDDot_N) {this->XDDot_N = XDDot_N; this->XDDot_N_flag = true; return;}
 
 /*! Set the time tags for each waypoint (optional). Cannot be imposed together with avg velocity norm below */
-void InputDataSet::setT(Eigen::VectorXd T) {this->T = T; this->T_flag = true; this->AvgXDot_flag = false; return;}
+void InputDataSet::setT(const Eigen::VectorXd& T) {this->T = T; this->T_flag = true; this->AvgXDot_flag = false; return;}
 
 /*! Set the average velocity norm (optional). Cannot be imposed together with time tag vector above */
 void InputDataSet::setAvgXDot(double AvgXDot) {this->AvgXDot = AvgXDot; this->AvgXDot_flag = true; this->T_flag = false; return;}
 
 /*! Set the weights for each waypoint. Weights are used in the LS approximation */
-void InputDataSet::setW(Eigen::VectorXd W) {this->W = W; this->W_flag = true; return;}
+void InputDataSet::setW(const Eigen::VectorXd& W) {this->W = W; this->W_flag = true; return;}
 
 /*! This constructor initializes an Output structure for BSpline interpolation */
 OutputDataSet::OutputDataSet()
@@ -231,7 +231,7 @@ double OutputDataSet::getStates(double T, int derivative, int index)
 }
 
 /*! This function takes the Input structure, performs the BSpline interpolation and outputs the result into Output structure */
-void interpolate(InputDataSet Input, int Num, int P, OutputDataSet *Output)
+void interpolate(const InputDataSet& Input, int Num, int P, OutputDataSet *Output)
 {
     Output->P = P;
 
@@ -410,7 +410,7 @@ void interpolate(InputDataSet Input, int Num, int P, OutputDataSet *Output)
 }
 
 /*! This function takes the Input structure, performs the BSpline LS approximation and outputs the result into Output structure */
-void approximate(InputDataSet Input, int Num, int Q, int P, OutputDataSet *Output)
+void approximate(const InputDataSet& Input, int Num, int Q, int P, OutputDataSet *Output)
 {
     Output->P = P;
 
@@ -677,7 +677,7 @@ void approximate(InputDataSet Input, int Num, int Q, int P, OutputDataSet *Outpu
 }
 
 /*! This function calculates the basis functions NN of order P, and derivatives NN1, NN2, for a given time t and knot vector U */
-void basisFunction(double t, Eigen::VectorXd U, int I, int P, double *NN, double *NN1, double *NN2)
+void basisFunction(double t, const Eigen::VectorXd& U, int I, int P, double *NN, double *NN1, double *NN2)
 {
     Eigen::MatrixXd N(I, P+1);
     Eigen::MatrixXd N1(I, P+1);
