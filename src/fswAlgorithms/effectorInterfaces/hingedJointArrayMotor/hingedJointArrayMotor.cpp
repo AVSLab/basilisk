@@ -179,8 +179,8 @@ void HingedJointArrayMotor::UpdateState(uint64_t CurrentSimNanos)
 
         // Extract the submatrices
         Eigen::Matrix3d Mtt = Mfull.block<3, 3>(0, 0);
-        Eigen::MatrixXd Mtth = Mfull.block(0, nTransDOF, 3, nHingeJoints);
-        Eigen::MatrixXd Mtht = Mfull.block(nTransDOF, 0, nHingeJoints, 3);
+        Eigen::Matrix3Xd Mtth = Mfull.block(0, nTransDOF, 3, nHingeJoints);
+        Eigen::MatrixX3d Mtht = Mfull.block(nTransDOF, 0, nHingeJoints, 3);
         Eigen::MatrixXd Mthth = Mfull.block(nTransDOF, nTransDOF, nHingeJoints, nHingeJoints);
 
         // Build the non-actuator force vectors

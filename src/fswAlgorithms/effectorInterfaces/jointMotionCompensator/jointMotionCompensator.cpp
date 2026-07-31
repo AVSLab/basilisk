@@ -145,9 +145,9 @@ void JointMotionCompensator::UpdateState(uint64_t CurrentSimNanos)
 
         Eigen::Matrix3d Mtt  = Mfull.block<3,3>(0, 0);
         Eigen::Matrix3d Mrt  = Mfull.block<3,3>(3, 0);
-        Eigen::MatrixXd Mtth = Mfull.block(0, 6, 3, nHingeJoints);
-        Eigen::MatrixXd Mrth = Mfull.block(3, 6, 3, nHingeJoints);
-        Eigen::MatrixXd Mtht = Mfull.block(6, 0, nHingeJoints, 3);
+        Eigen::Matrix3Xd Mtth = Mfull.block(0, 6, 3, nHingeJoints);
+        Eigen::Matrix3Xd Mrth = Mfull.block(3, 6, 3, nHingeJoints);
+        Eigen::MatrixX3d Mtht = Mfull.block(6, 0, nHingeJoints, 3);
         Eigen::MatrixXd Mthth= Mfull.block(6, 6, nHingeJoints, nHingeJoints);
 
         // Build the non-actuator force vectors
@@ -172,7 +172,7 @@ void JointMotionCompensator::UpdateState(uint64_t CurrentSimNanos)
         // compute the hub torque
         Eigen::LDLT<Eigen::Matrix3d> ldltMtt(Mtt);
         Eigen::Vector3d temp1 = ldltMtt.solve(baseTransBias);
-        Eigen::MatrixXd temp2 = ldltMtt.solve(Mtth);
+        Eigen::Matrix3Xd temp2 = ldltMtt.solve(Mtth);
         Eigen::MatrixXd temp3 = Mthth - Mtht*temp2;
         Eigen::VectorXd thetaDDot = temp3.ldlt().solve(jointBias + treeMotorTorque - Mtht*temp1);
         Eigen::Vector3d rDDot = temp1 - temp2*thetaDDot;
