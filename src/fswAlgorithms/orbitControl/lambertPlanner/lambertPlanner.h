@@ -28,6 +28,9 @@
 #include "architecture/messaging/messaging.h"
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/astroConstants.h"
+#include <array>
+#include <functional>
+#include <utility>
 #include <vector>
 
 /*! @brief This module creates the LambertProblemMsg to be used for the LambertSolver module
@@ -70,17 +73,21 @@ public:
     int getNumRevolutions() const {return this->numRevolutions;}
 
 private:
+    static constexpr int stateSize = 6;
+    using StateVector = Eigen::Matrix<double, stateSize, 1>;
+    using EquationsOfMotion = std::function<StateVector(double, const StateVector&)>;
+    using PropagationResult = std::pair<std::vector<double>, std::vector<StateVector>>;
+
     void readMessages();
     void writeMessages(uint64_t currentSimNanos);
-    std::pair<std::vector<double>, std::vector<Eigen::VectorXd>> propagate(
-            const std::function<Eigen::VectorXd(double, Eigen::VectorXd)>& EOM,
-            std::array<double, 2> interval,
-            const Eigen::VectorXd& X0,
-            double dt);
-    Eigen::VectorXd RK4(const std::function<Eigen::VectorXd(double, Eigen::VectorXd)>& ODEfunction,
-                        const Eigen::VectorXd& X0,
-                        double t0,
-                        double dt);
+    PropagationResult propagate(const EquationsOfMotion& EOM,
+                                std::array<double, 2> interval,
+                                const StateVector& X0,
+                                double dt);
+    StateVector RK4(const EquationsOfMotion& ODEfunction,
+                    const StateVector& X0,
+                    double t0,
+                    double dt);
 
     Eigen::Vector3d r_TN_N; //!< [m] targeted position vector with respect to celestial body at finalTime, in N frame
     double finalTime{}; //!< [s] time at which target position should be reached

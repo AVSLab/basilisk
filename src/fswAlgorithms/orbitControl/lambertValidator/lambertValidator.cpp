@@ -72,31 +72,30 @@ void LambertValidator::UpdateState(uint64_t currentSimNanos)
     this->readMessages();
 
     // initial state vector
-    Eigen::VectorXd X0(this->r_N.rows()+this->v_N.rows(), this->r_N.cols());
+    StateVector X0;
     X0 << this->r_N,
             this->v_N;
 
     // equations of motion (assuming two body point mass gravity)
-    this->EOM_2BP = [this](double t, Eigen::VectorXd state)
+    this->EOM_2BP = [this](double, const StateVector& state)
     {
-        Eigen::VectorXd stateDerivative(state.size());
+        StateVector stateDerivative;
 
-        stateDerivative.segment(0,3) = state.segment(3, 3);
-        stateDerivative.segment(3, 3) = -this->mu/(pow(state.head(3).norm(),3)) * state.head(3);
+        stateDerivative.head<3>() = state.tail<3>();
+        stateDerivative.tail<3>() = -this->mu/(pow(state.head<3>().norm(),3)) * state.head<3>();
 
         return stateDerivative;
     };
 
     // propagate to obtain expected position at maneuver time
-    std::pair<std::vector<double>, std::vector<Eigen::VectorXd>> states = this->propagate(
+    PropagationResult states = this->propagate(
             this->EOM_2BP,
             {this->time, this->maneuverTime},
             X0,
             10);
-    std::vector<Eigen::VectorXd> X = states.second;
-    Eigen::VectorXd Xm = X.back();
-    this->rm_N = Xm.head(3);
-    this->vm_N = Xm.tail(3);
+    const StateVector& finalState = states.second.back();
+    this->rm_N = finalState.head<3>();
+    this->vm_N = finalState.tail<3>();
 
     // compute required Delta-V vector
     this->dv_N = this->vLambert_N - this->vm_N;
@@ -104,7 +103,7 @@ void LambertValidator::UpdateState(uint64_t currentSimNanos)
     // only propagate the perturbed initial states if Lambert solution is valid in order to safe computation effort
     // also skip propagation of perturbed initial states if the constraint violations should be ignored anyway
     if (this->validLambert == 1 && !this->ignoreConstraintViolations) {
-        std::array<Eigen::VectorXd, NUM_INITIALSTATES> initialStates = this->getInitialStates();
+        InitialStates initialStates = this->getInitialStates();
         // check if any of the perturbed initial states violates the given constraints
         this->countViolations(initialStates);
     }
@@ -238,13 +237,11 @@ void LambertValidator::writeMessages(uint64_t currentSimNanos)
 }
 
 /*! This method creates the initial state vectors that will be propagated by the module
-    @return std::array<Eigen::VectorXd, NUM_INITIALSTATES>
-*/
-std::array<Eigen::VectorXd, NUM_INITIALSTATES> LambertValidator::getInitialStates()
-{
-    // size of state vector
-    int N = 6;
 
+    @return Fixed-size initial state vectors to propagate.
+*/
+LambertValidator::InitialStates LambertValidator::getInitialStates()
+{
     // get direction cosine matrix (DCM) from inertial frame N to Hill frame H
     double rc_N[3];
     double vc_N[3];
@@ -261,27 +258,26 @@ std::array<Eigen::VectorXd, NUM_INITIALSTATES> LambertValidator::getInitialState
     Eigen::Vector3d dvHat_H = dv_H.normalized();
 
     // DCM block matrix that can be used on entire 6x1 state vector
-    Eigen::MatrixXd dcm_HN_state(N, N);
+    StateMatrix dcm_HN_state;
     dcm_HN_state << this->dcm_HN, Eigen::Matrix3d::Zero(),
                     Eigen::Matrix3d::Zero(), this->dcm_HN;
 
     // nominal state vector (not perturbed) in Hill frame
-    Eigen::VectorXd X0nom_H(N, 1);
+    StateVector X0nom_H;
     X0nom_H << rm_H,
             vm_H;
 
     // square root of uncertainty covariance matrix
-    Eigen::MatrixXd Psqrt(N,N);
-    Psqrt = this->uncertaintyStates;
+    StateMatrix Psqrt = this->uncertaintyStates;
 
     // Create initial state vectors.
     // Perturb all states in + and - direction, and for each case use min and max expected DV magnitude
-    std::array<Eigen::VectorXd, NUM_INITIALSTATES> initialStates;
-    for (int c1=0; c1 < N; c1++) {
+    InitialStates initialStates;
+    for (int c1=0; c1 < stateSize; c1++) {
         for (int c2=0; c2 < 2; c2++) {
-            Eigen::VectorXd X0_H(N, 1);
-            Eigen::VectorXd X0minDV_H(N, 1);
-            Eigen::VectorXd X0maxDV_H(N, 1);
+            StateVector X0_H;
+            StateVector X0minDV_H;
+            StateVector X0maxDV_H;
 
             double multiplier;
             if (c2 == 0) {
@@ -299,15 +295,15 @@ std::array<Eigen::VectorXd, NUM_INITIALSTATES> LambertValidator::getInitialState
             X0minDV_H.segment(3, 3) += dv_H - this->uncertaintyDV * dvHat_H;
             X0maxDV_H.segment(3, 3) += dv_H + this->uncertaintyDV * dvHat_H;
 
-            initialStates.at(c2*N + c1) = dcm_HN_state.transpose() * X0minDV_H;
-            initialStates.at(2*N + c2*N + c1) = dcm_HN_state.transpose() * X0maxDV_H;
+            initialStates.at(c2*stateSize + c1) = dcm_HN_state.transpose() * X0minDV_H;
+            initialStates.at(2*stateSize + c2*stateSize + c1) = dcm_HN_state.transpose() * X0maxDV_H;
         }
     }
 
     // 3 more initial states for unperturbed state, only DV perturbation
-    Eigen::VectorXd X0_H(N, 1);
-    Eigen::VectorXd X0minDV_H(N, 1);
-    Eigen::VectorXd X0maxDV_H(N, 1);
+    StateVector X0_H;
+    StateVector X0minDV_H;
+    StateVector X0maxDV_H;
 
     X0_H = X0nom_H;
     X0minDV_H = X0_H;
@@ -317,9 +313,9 @@ std::array<Eigen::VectorXd, NUM_INITIALSTATES> LambertValidator::getInitialState
     X0minDV_H.segment(3, 3) += dv_H - this->uncertaintyDV * dvHat_H;
     X0maxDV_H.segment(3, 3) += dv_H + this->uncertaintyDV * dvHat_H;
 
-    initialStates.at(4*N) = dcm_HN_state.transpose() * X0_H;
-    initialStates.at(4*N + 1) = dcm_HN_state.transpose() * X0minDV_H;
-    initialStates.at(4*N + 2) = dcm_HN_state.transpose() * X0maxDV_H;
+    initialStates.at(4*stateSize) = dcm_HN_state.transpose() * X0_H;
+    initialStates.at(4*stateSize + 1) = dcm_HN_state.transpose() * X0minDV_H;
+    initialStates.at(4*stateSize + 2) = dcm_HN_state.transpose() * X0maxDV_H;
 
     return initialStates;
 }
@@ -328,24 +324,21 @@ std::array<Eigen::VectorXd, NUM_INITIALSTATES> LambertValidator::getInitialState
     @param initialStates array of initial state vectors to be propagated
 
 */
-void LambertValidator::countViolations(std::array<Eigen::VectorXd, NUM_INITIALSTATES> initialStates)
+void LambertValidator::countViolations(const InitialStates& initialStates)
 {
     this->violationsDistanceTarget = 0;
     this->violationsOrbitRadius = 0;
 
     // propagate each initial condition from maneuver time to final time and check if constraints are violated
     for (int c=0; c < NUM_INITIALSTATES; c++) {
-        Eigen::VectorXd X0 = initialStates.at(c);
+        const StateVector& X0 = initialStates.at(c);
 
-        std::pair<std::vector<double>, std::vector<Eigen::VectorXd>> states = this->propagate(
+        PropagationResult states = this->propagate(
                 this->EOM_2BP,
                 {this->maneuverTime, this->finalTime},
                 X0,
                 this->timestep);
-        std::vector<double> t = states.first;
-        std::vector<Eigen::VectorXd> X = states.second;
-
-        this->checkConstraintViolations(t, X);
+        this->checkConstraintViolations(states.first, states.second);
     }
 }
 
@@ -354,17 +347,18 @@ void LambertValidator::countViolations(std::array<Eigen::VectorXd, NUM_INITIALST
     @param X state for each time step
 
 */
-void LambertValidator::checkConstraintViolations(std::vector<double> t, std::vector<Eigen::VectorXd> X)
+void LambertValidator::checkConstraintViolations(const std::vector<double>& t,
+                                                 const std::vector<StateVector>& X)
 {
     // check maximum distance from target at final time constraint
-    Eigen::Vector3d rf_BN_N = X.back().head(3);
+    Eigen::Vector3d rf_BN_N = X.back().head<3>();
     Eigen::Vector3d rf_BT_N = rf_BN_N - this->r_TN_N;
     if (rf_BT_N.norm() > this->maxDistanceTarget) {
         this->violationsDistanceTarget++;
     }
     // check minimum orbit radius constraint
     for (size_t c = 0; c < t.size(); ++c) {
-        Eigen::Vector3d r_BN_N = X.at(c).head(3);
+        Eigen::Vector3d r_BN_N = X.at(c).head<3>();
         if (r_BN_N.norm() < this->minOrbitRadius) {
             this->violationsOrbitRadius++;
             break;
@@ -406,23 +400,24 @@ bool LambertValidator::checkPerformance() const
 
 /*! This method integrates the provided equations of motion using Runge-Kutta 4 (RK4) and returns the time steps
     and state vectors at each time step.
-    @param EOM equations of motion function to be propagated
-    @param interval integration interval
-    @param X0 initial state
-    @param dt time step
-    @return std::pair<std::vector<double>, std::vector<Eigen::VectorXd>>
+
+    @param EOM Equations of motion function to propagate.
+    @param interval Integration interval.
+    @param X0 Initial state.
+    @param dt Time step.
+    @return Time values and corresponding six-element state vectors.
 */
-std::pair<std::vector<double>, std::vector<Eigen::VectorXd>> LambertValidator::propagate(
-        const std::function<Eigen::VectorXd(double, Eigen::VectorXd)>& EOM,
+LambertValidator::PropagationResult LambertValidator::propagate(
+        const EquationsOfMotion& EOM,
         std::array<double, 2> interval,
-        const Eigen::VectorXd& X0,
+        const StateVector& X0,
         double dt)
 {
     double t0 = interval[0];
     double tf = interval[1];
 
     std::vector<double> t = {t0};
-    std::vector<Eigen::VectorXd> X = {X0};
+    std::vector<StateVector> X = {X0};
 
     // propagate forward to tf
     double N = ceil(abs(tf-t0)/dt);
@@ -433,37 +428,36 @@ std::pair<std::vector<double>, std::vector<Eigen::VectorXd>> LambertValidator::p
             step = -step;
         }
 
-        Eigen::VectorXd Xnew = this->RK4(EOM, X.at(c), t.at(c), step);
+        StateVector Xnew = this->RK4(EOM, X.at(c), t.at(c), step);
         double tnew = t.at(c) + step;
 
         t.push_back(tnew);
         X.push_back(Xnew);
     }
-    std::pair<std::vector<double>, std::vector<Eigen::VectorXd>> statesOut = {t,X};
-
-    return statesOut;
+    return {std::move(t), std::move(X)};
 }
 
 /*! This method provides the 4th order Runge-Kutta (RK4)
-    @param ODEfunction function handle that includes the equations of motion
-    @param X0 initial state
-    @param t0 initial time
-    @param dt time step
-    @return Eigen::VectorXd
+
+    @param ODEfunction Function handle that includes the equations of motion.
+    @param X0 Initial state.
+    @param t0 Initial time.
+    @param dt Time step.
+    @return Integrated six-element state vector.
 */
-Eigen::VectorXd LambertValidator::RK4(const std::function<Eigen::VectorXd(double, Eigen::VectorXd)>& ODEfunction,
-                                      const Eigen::VectorXd& X0,
-                                      double t0,
-                                      double dt)
+LambertValidator::StateVector LambertValidator::RK4(const EquationsOfMotion& ODEfunction,
+                                                    const StateVector& X0,
+                                                    double t0,
+                                                    double dt)
 {
     double h = dt;
 
-    Eigen::VectorXd k1 = ODEfunction(t0, X0);
-    Eigen::VectorXd k2 = ODEfunction(t0 + h/2., X0 + h*k1/2.);
-    Eigen::VectorXd k3 = ODEfunction(t0 + h/2., X0 + h*k2/2.);
-    Eigen::VectorXd k4 = ODEfunction(t0 + h, X0 + h*k3);
+    StateVector k1 = ODEfunction(t0, X0);
+    StateVector k2 = ODEfunction(t0 + h/2., X0 + h*k1/2.);
+    StateVector k3 = ODEfunction(t0 + h/2., X0 + h*k2/2.);
+    StateVector k4 = ODEfunction(t0 + h, X0 + h*k3);
 
-    Eigen::VectorXd X = X0 + 1./6.*h*(k1 + 2.*k2 + 2.*k3 + k4);
+    StateVector X = X0 + 1./6.*h*(k1 + 2.*k2 + 2.*k3 + k4);
 
     return X;
 }
