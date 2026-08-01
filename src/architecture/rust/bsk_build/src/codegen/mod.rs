@@ -88,6 +88,7 @@ pub fn generate_bindings(config_type: &str) {
     println!("cargo:rerun-if-env-changed=BSK_BINDINGS_TRIGGER_PATH");
     println!("cargo:rerun-if-env-changed=BSK_CMSG_DIR");
     println!("cargo:rerun-if-env-changed=BSK_CMSG_DIRS");
+    println!("cargo:rerun-if-env-changed=BSK_CMSG_DIRS_FILE");
     if let Some(trigger_path) = std::env::var_os("BSK_BINDINGS_TRIGGER_PATH") {
         println!(
             "cargo:rerun-if-changed={}",
@@ -146,6 +147,12 @@ fn module_name(config_type: &str) -> String {
 }
 
 fn c_message_directories(manifest_dir: &Path) -> Vec<PathBuf> {
+    if let Some(path) = std::env::var_os("BSK_CMSG_DIRS_FILE").filter(|value| !value.is_empty()) {
+        let path = PathBuf::from(path);
+        println!("cargo:rerun-if-changed={}", path.display());
+        return read_message_directory_file(&path)
+            .unwrap_or_else(|error| panic!("bsk-build: {error}"));
+    }
     if let Some(paths) = std::env::var_os("BSK_CMSG_DIRS").filter(|value| !value.is_empty()) {
         let directories = std::env::split_paths(&paths).collect::<Vec<_>>();
         if directories.is_empty() {
@@ -164,10 +171,33 @@ fn c_message_directories(manifest_dir: &Path) -> Vec<PathBuf> {
         .unwrap_or_else(|| {
             panic!(
                 "bsk-build: generated C message directory was not found. Set \
-                 BSK_CMSG_DIRS or BSK_CMSG_DIR, or run `python3 conanfile.py` before building \
-                 Rust modules"
+                 BSK_CMSG_DIRS_FILE, BSK_CMSG_DIRS, or BSK_CMSG_DIR, or run \
+                 `python3 conanfile.py` before building Rust modules"
             )
         })]
+}
+
+fn read_message_directory_file(path: &Path) -> Result<Vec<PathBuf>, String> {
+    // CMake supplies one path per line so native path-list separators never
+    // have to cross its command/list boundary.
+    let contents = std::fs::read_to_string(path).map_err(|error| {
+        format!(
+            "could not read C-message directory file {}: {error}",
+            path.display()
+        )
+    })?;
+    let directories = contents
+        .lines()
+        .filter(|line| !line.trim().is_empty())
+        .map(PathBuf::from)
+        .collect::<Vec<_>>();
+    if directories.is_empty() {
+        return Err(format!(
+            "C-message directory file {} did not contain any paths",
+            path.display()
+        ));
+    }
+    Ok(directories)
 }
 
 fn load_message_catalog(c_message_dirs: &[PathBuf]) -> MessageCatalog {
@@ -891,6 +921,39 @@ typedef struct ExampleConfig {
         let catalog = load_message_catalog(&[core_directory, extension_directory]);
 
         assert_eq!(catalog.c_types, message_c_types());
+    }
+
+    #[test]
+    fn reads_message_directories_from_response_file() {
+        let temporary = tempfile::tempdir().expect("create temporary message tree");
+        let core_directory = temporary.path().join("core messages");
+        let extension_directory = temporary.path().join("extension;messages");
+        let response_file = temporary.path().join("message-directories.txt");
+        std::fs::write(
+            &response_file,
+            format!(
+                "{}\n{}\n",
+                core_directory.display(),
+                extension_directory.display()
+            ),
+        )
+        .expect("write message directory response file");
+
+        assert_eq!(
+            read_message_directory_file(&response_file).expect("read response file"),
+            vec![core_directory, extension_directory]
+        );
+    }
+
+    #[test]
+    fn rejects_empty_message_directory_response_file() {
+        let temporary = tempfile::tempdir().expect("create temporary message tree");
+        let response_file = temporary.path().join("message-directories.txt");
+        std::fs::write(&response_file, "\n").expect("write empty response file");
+
+        let error = read_message_directory_file(&response_file)
+            .expect_err("an empty response file must be rejected");
+        assert!(error.contains("did not contain any paths"));
     }
 
     #[test]

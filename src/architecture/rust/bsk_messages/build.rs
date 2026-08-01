@@ -43,6 +43,7 @@ fn generate_bindings() -> Result<(), Box<dyn Error>> {
     for variable in [
         "BSK_CMSG_DIR",
         "BSK_CMSG_DIRS",
+        "BSK_CMSG_DIRS_FILE",
         "BSK_SRC_ROOT",
         "BSK_C_SYSTEM_INCLUDE_DIRS",
         "LIBCLANG_PATH",
@@ -61,8 +62,12 @@ fn generate_bindings() -> Result<(), Box<dyn Error>> {
             .ok_or("Cargo did not provide CARGO_MANIFEST_DIR to the bsk-messages build script")?,
     );
     let explicit_source_root = env_path("BSK_SRC_ROOT");
-    let explicit_c_message_dirs =
-        env_paths("BSK_CMSG_DIRS").or_else(|| env_path("BSK_CMSG_DIR").map(|path| vec![path]));
+    let explicit_c_message_dirs = match env_path("BSK_CMSG_DIRS_FILE") {
+        Some(path) => Some(read_message_directory_file(&path)?),
+        None => {
+            env_paths("BSK_CMSG_DIRS").or_else(|| env_path("BSK_CMSG_DIR").map(|path| vec![path]))
+        }
+    };
     let repository_root = if explicit_source_root.is_none() || explicit_c_message_dirs.is_none() {
         Some(
             manifest_dir
@@ -208,6 +213,31 @@ fn env_paths(variable: &str) -> Option<Vec<PathBuf>> {
     env::var_os(variable)
         .filter(|value| !value.is_empty())
         .map(|value| env::split_paths(&value).collect())
+}
+
+fn read_message_directory_file(path: &Path) -> Result<Vec<PathBuf>, Box<dyn Error>> {
+    // CMake supplies one path per line so native path-list separators never
+    // have to cross its command/list boundary.
+    println!("cargo:rerun-if-changed={}", path.display());
+    let contents = fs::read_to_string(path).map_err(|error| {
+        format!(
+            "could not read C-message directory file {}: {error}",
+            path.display()
+        )
+    })?;
+    let directories = contents
+        .lines()
+        .filter(|line| !line.trim().is_empty())
+        .map(PathBuf::from)
+        .collect::<Vec<_>>();
+    if directories.is_empty() {
+        return Err(format!(
+            "C-message directory file {} did not contain any paths",
+            path.display()
+        )
+        .into());
+    }
+    Ok(directories)
 }
 
 fn render_wrapper(headers: &[PathBuf]) -> String {
