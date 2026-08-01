@@ -39,6 +39,7 @@ from pathlib import Path, PurePosixPath
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_VERSION_FILE = REPO_ROOT / "docs/source/bskVersion.txt"
 BASE_DISTRIBUTION = "bsk"
+BUILD_ABI_DATA_PATH = "Basilisk/_buildAbiData.py"
 BUILD_INFO_DATA_PATH = "Basilisk/_buildInfoData.py"
 BUILD_FEATURE_ENTRY_POINT_GROUP = "basilisk.build_features"
 NATIVE_PAYLOAD_SUFFIXES = (".a", ".dll", ".dylib", ".lib", ".pyd", ".so")
@@ -58,6 +59,8 @@ PRE_RELEASE_VERSION_PATTERN = re.compile(
     r"(?P<label>a|alpha|b|beta|c|pre|preview|rc)(?P<number>\d*))$",
     re.IGNORECASE,
 )
+VERSION_MAJOR_MINOR_PATTERN = re.compile(r"^(?P<major>\d+)\.(?P<minor>\d+)(?:\.|$)")
+COMPILER_VERSION_FIELDS = ("version", "simulatedVersion")
 
 
 @dataclass(frozen=True)
@@ -256,34 +259,266 @@ def warn_changed_native_payloads(changed: list[str]) -> None:
     )
 
 
-def parse_build_info_data(data: bytes) -> dict[str, object]:
-    """Parse the generated build-information dictionary without executing it."""
-    tree = ast.parse(data.decode("utf-8"), filename=BUILD_INFO_DATA_PATH)
+def compatible_major_minor_version(
+    base_version: object,
+    component_version: object,
+) -> str | None:
+    """Return the shared major/minor version for compatible diagnostics."""
+    if not isinstance(base_version, str) or not isinstance(component_version, str):
+        return None
+    if base_version == component_version:
+        return None
+
+    base_match = VERSION_MAJOR_MINOR_PATTERN.match(base_version)
+    component_match = VERSION_MAJOR_MINOR_PATTERN.match(component_version)
+    if base_match is None or component_match is None:
+        return None
+
+    base_prefix = (base_match.group("major"), base_match.group("minor"))
+    component_prefix = (
+        component_match.group("major"),
+        component_match.group("minor"),
+    )
+    if base_prefix != component_prefix:
+        return None
+    return ".".join(base_prefix)
+
+
+def normalize_compatible_version_field(
+    base_values: dict[str, object],
+    component_values: dict[str, object],
+    field: str,
+    path: str,
+    differences: list[str],
+) -> None:
+    """Normalize one compatible diagnostic version and record its warning."""
+    base_version = base_values.get(field)
+    component_version = component_values.get(field)
+    compatible_version = compatible_major_minor_version(
+        base_version,
+        component_version,
+    )
+    if compatible_version is None:
+        return
+
+    base_values[field] = compatible_version
+    component_values[field] = compatible_version
+    differences.append(f"{path}: {base_version!r} versus {component_version!r}")
+
+
+def normalize_compatible_diagnostic_versions(
+    base_build_info: dict[str, object],
+    component_build_info: dict[str, object],
+) -> list[str]:
+    """Normalize compatible patch/build differences in diagnostic versions.
+
+    Optional wheel inputs are built by independent GitHub runners. During a
+    runner-image rollout, those machines can carry different patch releases of
+    otherwise compatible compilers and build tools. ABI-relevant metadata is
+    still compared exactly by :func:`validate_build_feature_metadata`.
+    """
+    differences: list[str] = []
+    base_diagnostics = base_build_info.get("diagnostics")
+    component_diagnostics = component_build_info.get("diagnostics")
+    if not isinstance(base_diagnostics, dict) or not isinstance(
+        component_diagnostics,
+        dict,
+    ):
+        return differences
+
+    base_compilers = base_diagnostics.get("compilers")
+    component_compilers = component_diagnostics.get("compilers")
+    if isinstance(base_compilers, dict) and isinstance(component_compilers, dict):
+        for compiler_name in sorted(base_compilers.keys() & component_compilers.keys()):
+            base_compiler = base_compilers[compiler_name]
+            component_compiler = component_compilers[compiler_name]
+            if not isinstance(base_compiler, dict) or not isinstance(
+                component_compiler,
+                dict,
+            ):
+                continue
+            for field in COMPILER_VERSION_FIELDS:
+                normalize_compatible_version_field(
+                    base_compiler,
+                    component_compiler,
+                    field,
+                    f"diagnostics.compilers.{compiler_name}.{field}",
+                    differences,
+                )
+
+    base_tools = base_diagnostics.get("tools")
+    component_tools = component_diagnostics.get("tools")
+    if isinstance(base_tools, dict) and isinstance(component_tools, dict):
+        for tool_name in sorted(base_tools.keys() & component_tools.keys()):
+            normalize_compatible_version_field(
+                base_tools,
+                component_tools,
+                tool_name,
+                f"diagnostics.tools.{tool_name}",
+                differences,
+            )
+
+    return differences
+
+
+def warn_compatible_diagnostic_versions(differences: list[str]) -> None:
+    """Report compatible compiler and build-tool version differences."""
+    if not differences:
+        return
+
+    details = "\n  ".join(differences)
+    print(
+        "warning: base and component wheels use compatible patch/build "
+        "versions from independent runners:\n"
+        f"  {details}",
+        file=sys.stderr,
+    )
+
+
+def parse_generated_dictionary(
+    data: bytes,
+    path: str,
+    variable: str,
+) -> dict[str, object]:
+    """Parse one generated dictionary assignment without executing it."""
+    tree = ast.parse(data.decode("utf-8"), filename=path)
     assignments = [
         node
         for node in tree.body
         if isinstance(node, ast.Assign)
         and len(node.targets) == 1
         and isinstance(node.targets[0], ast.Name)
-        and node.targets[0].id == "buildInfoData"
+        and node.targets[0].id == variable
     ]
     if len(assignments) != 1:
-        raise ValueError(
-            f"Expected one buildInfoData assignment in {BUILD_INFO_DATA_PATH}."
-        )
+        raise ValueError(f"Expected one {variable} assignment in {path}.")
 
-    build_info = ast.literal_eval(assignments[0].value)
-    if not isinstance(build_info, dict):
-        raise ValueError(f"Expected a dictionary in {BUILD_INFO_DATA_PATH}.")
-    return build_info
+    value = ast.literal_eval(assignments[0].value)
+    if not isinstance(value, dict):
+        raise ValueError(f"Expected a dictionary in {path}.")
+    return value
+
+
+def parse_build_info_data(data: bytes) -> dict[str, object]:
+    """Parse the generated build-information dictionary without executing it."""
+    return parse_generated_dictionary(data, BUILD_INFO_DATA_PATH, "buildInfoData")
+
+
+def parse_build_abi_data(data: bytes) -> dict[str, object]:
+    """Parse the generated ABI dictionary without executing it."""
+    return parse_generated_dictionary(data, BUILD_ABI_DATA_PATH, "buildAbiData")
+
+
+def normalize_compatible_abi_compiler_versions(
+    base_abi: dict[str, object],
+    component_abi: dict[str, object],
+) -> list[str]:
+    """Normalize raw compiler build revisions with equal ABI version fields."""
+    differences: list[str] = []
+    compatibility_fields = ("id", "majorVersion", "minorVersion")
+    for language in ("c", "cxx"):
+        base_language = base_abi.get(language)
+        component_language = component_abi.get(language)
+        if not isinstance(base_language, dict) or not isinstance(
+            component_language,
+            dict,
+        ):
+            continue
+
+        base_compiler = base_language.get("compiler")
+        component_compiler = component_language.get("compiler")
+        if not isinstance(base_compiler, dict) or not isinstance(
+            component_compiler,
+            dict,
+        ):
+            continue
+        if any(
+            base_compiler.get(field) != component_compiler.get(field)
+            for field in compatibility_fields
+        ):
+            continue
+
+        base_patch_version = base_compiler.get("patchVersion")
+        component_patch_version = component_compiler.get("patchVersion")
+        if (
+            isinstance(base_patch_version, int)
+            and isinstance(component_patch_version, int)
+            and base_patch_version != component_patch_version
+        ):
+            base_compiler["patchVersion"] = 0
+            component_compiler["patchVersion"] = 0
+            differences.append(
+                f"{BUILD_ABI_DATA_PATH}:{language}.compiler.patchVersion: "
+                f"{base_patch_version!r} versus {component_patch_version!r}"
+            )
+
+        base_version = base_compiler.get("version")
+        component_version = component_compiler.get("version")
+        if (
+            isinstance(base_version, str)
+            and isinstance(component_version, str)
+            and base_version != component_version
+        ):
+            base_compiler["version"] = "compatible-build-version"
+            component_compiler["version"] = "compatible-build-version"
+            differences.append(
+                f"{BUILD_ABI_DATA_PATH}:{language}.compiler.version: "
+                f"{base_version!r} versus {component_version!r}"
+            )
+
+        base_full_version = base_compiler.get("msvcFullVersion")
+        component_full_version = component_compiler.get("msvcFullVersion")
+        msvc_abi_matches = (
+            base_compiler.get("abiFamily") == "msvc"
+            and component_compiler.get("abiFamily") == "msvc"
+            and base_compiler.get("abiVersion")
+            == component_compiler.get("abiVersion")
+        )
+        if (
+            msvc_abi_matches
+            and isinstance(base_full_version, int)
+            and isinstance(component_full_version, int)
+            and base_full_version > 0
+            and component_full_version > 0
+            and base_full_version != component_full_version
+        ):
+            base_compiler["msvcFullVersion"] = 0
+            component_compiler["msvcFullVersion"] = 0
+            differences.append(
+                f"{BUILD_ABI_DATA_PATH}:{language}.compiler.msvcFullVersion: "
+                f"{base_full_version!r} versus {component_full_version!r}"
+            )
+
+    return differences
+
+
+def validate_build_abi_metadata(
+    base_archive: zipfile.ZipFile,
+    component_archive: zipfile.ZipFile,
+) -> list[str]:
+    """Validate ABI metadata and return compatible compiler revisions."""
+    base_abi = parse_build_abi_data(base_archive.read(BUILD_ABI_DATA_PATH))
+    component_abi = parse_build_abi_data(component_archive.read(BUILD_ABI_DATA_PATH))
+    normalized_base_abi = copy.deepcopy(base_abi)
+    normalized_component_abi = copy.deepcopy(component_abi)
+    version_differences = normalize_compatible_abi_compiler_versions(
+        normalized_base_abi,
+        normalized_component_abi,
+    )
+    if normalized_component_abi != normalized_base_abi:
+        raise ValueError(
+            f"{BUILD_ABI_DATA_PATH} differs between the base and component builds "
+            "beyond compatible compiler patch/build versions."
+        )
+    return version_differences
 
 
 def validate_build_feature_metadata(
     base_archive: zipfile.ZipFile,
     component_archive: zipfile.ZipFile,
     component: OptionalComponent,
-) -> None:
-    """Validate the intentional feature difference between wheel build inputs."""
+) -> list[str]:
+    """Validate feature metadata and return compatible diagnostic revisions."""
     base_build_info = parse_build_info_data(base_archive.read(BUILD_INFO_DATA_PATH))
     component_build_info = parse_build_info_data(
         component_archive.read(BUILD_INFO_DATA_PATH)
@@ -311,16 +546,22 @@ def validate_build_feature_metadata(
             "and enabled in the component build."
         )
 
+    normalized_base_info = copy.deepcopy(base_build_info)
     normalized_component_info = copy.deepcopy(component_build_info)
     normalized_component_info["features"] = {
         **component_features,
         component.build_feature: base_enabled,
     }
-    if normalized_component_info != base_build_info:
+    version_differences = normalize_compatible_diagnostic_versions(
+        normalized_base_info,
+        normalized_component_info,
+    )
+    if normalized_component_info != normalized_base_info:
         raise ValueError(
             f"{BUILD_INFO_DATA_PATH} differs between the base and component builds "
             f"beyond the expected {component.build_feature!r} feature value."
         )
+    return version_differences
 
 
 def validate_common_payloads(
@@ -337,7 +578,23 @@ def validate_common_payloads(
         raise ValueError(
             f"Both wheel build inputs must contain {BUILD_INFO_DATA_PATH}."
         )
-    validate_build_feature_metadata(base_archive, component_archive, component)
+    version_differences = validate_build_feature_metadata(
+        base_archive,
+        component_archive,
+        component,
+    )
+    base_has_abi_data = BUILD_ABI_DATA_PATH in base_payload
+    component_has_abi_data = BUILD_ABI_DATA_PATH in component_payload
+    if base_has_abi_data != component_has_abi_data:
+        raise ValueError(
+            f"Both wheel build inputs must contain {BUILD_ABI_DATA_PATH} when "
+            "either input provides it."
+        )
+    if base_has_abi_data:
+        version_differences.extend(
+            validate_build_abi_metadata(base_archive, component_archive)
+        )
+    warn_compatible_diagnostic_versions(version_differences)
 
     changed = []
     for name in sorted(base_payload & component_payload):
@@ -352,6 +609,8 @@ def validate_common_payloads(
 
     if BUILD_INFO_DATA_PATH in non_native_changed:
         non_native_changed.remove(BUILD_INFO_DATA_PATH)
+    if BUILD_ABI_DATA_PATH in non_native_changed:
+        non_native_changed.remove(BUILD_ABI_DATA_PATH)
 
     if non_native_changed:
         details = "\n  ".join(non_native_changed)
