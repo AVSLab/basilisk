@@ -1,0 +1,1 @@
+- Added optional desired-time bounds to :ref:`simpleInstrumentController` for constraining when an image may be captured.
