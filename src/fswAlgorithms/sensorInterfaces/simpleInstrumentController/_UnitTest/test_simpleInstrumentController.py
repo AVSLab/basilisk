@@ -104,8 +104,115 @@ def test_simple_instrument_controller(show_plots, use_rate_limit, rate_limit, om
 
     assert testResults < 1, testMessage
 
+# Tuple: timeToleranceLower [s], timeToleranceUpper [s], imagingTime [s], expected_result
+timeWindowTests = [
+    (0.0, 0.0, 2.0, [1, 0, 0, 1, 0]),  # zero tolerances disable the time criteria
+    (
+        1.0,
+        0.0,
+        2.0,
+        [0, 1, 0, 1, 0],
+    ),  # lower tolerance only: image at or after imagingTime - lower
+    (
+        0.0,
+        0.5,
+        2.0,
+        [1, 0, 0, 0, 0],
+    ),  # upper tolerance only: do not image after imagingTime + upper
+    (1.0, 1.0, 2.0, [0, 1, 0, 1, 0]),  # two-sided interval: image within [1s, 3s]
+    (
+        3.0,
+        1.0,
+        2.0,
+        [1, 0, 0, 1, 0],
+    ),  # lower tolerance larger than imagingTime should not underflow
+]
 
-def simpleInstrumentControllerTestFunction(show_plots, use_rate_limit=1, rate_limit=0.01, omega_mag=0.001, deviceStatus=None, controlStatus=None, useDuration=None, imagingTimes=None, expected_result=None):
+
+@pytest.mark.parametrize(
+    "timeToleranceLower,timeToleranceUpper,imagingTime,expected_result", timeWindowTests
+)
+def test_simple_instrument_controller_time_window(
+    show_plots, timeToleranceLower, timeToleranceUpper, imagingTime, expected_result
+):
+    r"""
+    **Validation Test Description**
+
+    Unit test for simpleInstrumentController time-interval imaging criteria. The unit test covers:
+
+    1. If zero lower and upper tolerances preserve the prior behavior and do not constrain imaging time
+
+    2. If a lower tolerance prevents imaging before the desired imaging window
+
+    3. If an upper tolerance prevents imaging after the desired imaging window
+
+    4. If lower and upper tolerances create an inclusive two-sided imaging window
+
+    5. If a lower tolerance larger than the desired imaging time does not cause unsigned integer underflow
+    """
+    [testResults, testMessage] = simpleInstrumentControllerTestFunction(
+        show_plots,
+        timeToleranceLower=timeToleranceLower,
+        timeToleranceUpper=timeToleranceUpper,
+        imagingTime=imagingTime,
+        expected_result=expected_result,
+    )
+
+    assert testResults < 1, testMessage
+
+
+# Tuple: acquisitionTime [s], allowedTime [s], expected_result
+durationTimeWindowTests = [
+    (1.0, 3.0, [0, 0, 1, 0, 0]),  # acquisition completes before the capture window opens
+    (2.0, 3.0, [0, 0, 1, 0, 0]),  # acquisition completes inside the capture window
+    (
+        3.0,
+        4.0,
+        [0, 0, 0, 0, 0],
+    ),  # acquisition completes after the capture window closes
+]
+
+
+@pytest.mark.parametrize(
+    "acquisitionTime,allowedTime,expected_result", durationTimeWindowTests
+)
+def test_simple_instrument_controller_duration_time_window(
+    show_plots, acquisitionTime, allowedTime, expected_result
+):
+    r"""
+    **Validation Test Description**
+
+    Verify that duration-based imaging accumulates valid constraints before the capture window opens. An acquisition
+    that completes before or inside the [1.5, 2.5] second window must capture, while one that completes after it closes
+    must not.
+    """
+    [testResults, testMessage] = simpleInstrumentControllerTestFunction(
+        show_plots,
+        useDuration=1,
+        imagingTimes=[acquisitionTime, allowedTime],
+        timeToleranceLower=0.5,
+        timeToleranceUpper=0.5,
+        imagingTime=2.0,
+        expected_result=expected_result,
+    )
+
+    assert testResults < 1, testMessage
+
+
+def simpleInstrumentControllerTestFunction(
+    show_plots,
+    use_rate_limit=1,
+    rate_limit=0.01,
+    omega_mag=0.001,
+    deviceStatus=None,
+    controlStatus=None,
+    useDuration=None,
+    imagingTimes=None,
+    expected_result=None,
+    timeToleranceLower=None,
+    timeToleranceUpper=None,
+    imagingTime=None,
+):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"
@@ -161,6 +268,13 @@ def simpleInstrumentControllerTestFunction(show_plots, use_rate_limit=1, rate_li
         allowedTime = imagingTimes[1]
         module.acquisitionTime = macros.sec2nano(acquisitionTime)  # convert to nanoseconds
         module.allowedTime = macros.sec2nano(allowedTime)  # convert to nanoseconds
+
+    if timeToleranceLower is not None:
+        module.timeToleranceLower = macros.sec2nano(timeToleranceLower)
+    if timeToleranceUpper is not None:
+        module.timeToleranceUpper = macros.sec2nano(timeToleranceUpper)
+    if imagingTime is not None:
+        module.imagingTime = macros.sec2nano(imagingTime)
 
     # Setup logging on the test module output message so that we get all the writes to it
     dataLog = module.deviceCmdOutMsg.recorder()
