@@ -54,4 +54,10 @@ If the user desires to make the instrument controller inactive, the ``controller
 This may be done if the controller is to match the status of corresponding instrument data and power modules. This
 may also be accomplished by writing out a :ref:`DeviceStatusMsgPayload` to the ``deviceStatusInMsg``.
 
+Optionally, imaging can be limited to a desired time window. Set ``imagingTime`` in nanoseconds as the desired
+imaging time. A nonzero ``timeToleranceLower`` permits imaging no earlier than
+``imagingTime - timeToleranceLower``, while a nonzero ``timeToleranceUpper`` permits imaging no later than
+``imagingTime + timeToleranceUpper``. Each bound is enabled independently; a tolerance of zero disables that bound,
+which preserves the default behavior without time-based constraints.
+
 The ``useDurationImaging`` flag enables duration-based imaging, where the instrument must maintain valid constraints for a specified period before capturing an image. By default, this feature is disabled. The ``acquisitionTime`` (optional, in nanoseconds) specifies how long the constraints must remain satisfied to trigger an image capture. The ``allowedTime`` (optional, in nanoseconds) defines the maximum period during which the system will attempt imaging. If ``acquisitionTime`` is less than or equal to ``allowedTime``, the image will be captured once the required duration is met. If ``acquisitionTime`` exceeds ``allowedTime``, the image will not be captured, although the system will continue attempting for the full ``allowedTime`` period. If either ``acquisitionTime`` or ``allowedTime`` is negative or not set, the value is automatically capped to zero.
