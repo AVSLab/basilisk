@@ -164,6 +164,26 @@ def clean_rust_target_artifacts(root: Optional[Path] = None,
     return removed_target_directories
 
 
+def should_scan_windows_dll_directory(root: str, build_folder: str) -> bool:
+    """Return whether a build directory can contain runtime DLLs.
+
+    Cargo's target tree contains build-time procedural-macro DLLs. They are
+    loaded only by ``rustc`` and must not be copied into the Basilisk wheel.
+    """
+    normalized_root = os.path.normcase(os.path.abspath(root))
+    excluded_roots = (
+        os.path.normcase(os.path.abspath(os.path.join(build_folder, "Basilisk"))),
+        os.path.normcase(os.path.abspath(os.path.join(build_folder, "cargo"))),
+    )
+    for excluded_root in excluded_roots:
+        try:
+            if os.path.commonpath([normalized_root, excluded_root]) == excluded_root:
+                return False
+        except ValueError:
+            continue
+    return True
+
+
 def resolve_py_limited_api(opt_value: Optional[str]) -> str:
     """Use explicit --pyLimitedAPI if provided, else cp39."""
     if opt_value:
@@ -492,9 +512,10 @@ class BasiliskConan(ConanFile):
                             self.output.warning(f"Failed to copy DLLs from {src}: {e}")
 
                 # As a fallback, scan the build tree for any remaining DLLs.
-                for root, _dirs, files in os.walk(self.build_folder):
-                    # Skip the destination to avoid self-copy
-                    if os.path.commonpath([root, basilisk_dst_root]) == basilisk_dst_root:
+                for root, dirs, files in os.walk(self.build_folder):
+                    # Skip the destination and Cargo's build-only proc-macro DLLs.
+                    if not should_scan_windows_dll_directory(root, self.build_folder):
+                        dirs.clear()
                         continue
                     if any(f.lower().endswith(".dll") for f in files):
                         try:

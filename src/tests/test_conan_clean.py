@@ -105,3 +105,25 @@ def test_clean_rust_target_artifacts(tmp_path, monkeypatch):
     for crate_directory in crate_directories:
         assert not (crate_directory / "target").exists()
     assert unrelated_target.exists()
+
+
+def test_windows_dll_scan_excludes_cargo_build_artifacts(tmp_path, monkeypatch):
+    """The Windows wheel scan ignores Cargo compiler plugins and its output."""
+    repo_root = Path(__file__).resolve().parents[2]
+    monkeypatch.chdir(repo_root)
+    monkeypatch.syspath_prepend(str(repo_root))
+    conanfile = importlib.import_module("conanfile")
+    build_folder = tmp_path / "dist3"
+
+    assert conanfile.should_scan_windows_dll_directory(
+        str(build_folder / "bin"),
+        str(build_folder),
+    )
+    assert not conanfile.should_scan_windows_dll_directory(
+        str(build_folder / "Basilisk"),
+        str(build_folder),
+    )
+    assert not conanfile.should_scan_windows_dll_directory(
+        str(build_folder / "cargo" / "workspace" / "release" / "deps"),
+        str(build_folder),
+    )
