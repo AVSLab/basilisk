@@ -196,10 +196,13 @@ Create the environment inside the ``bsk_sdk`` repository:
    python3 -m venv .venv
    source .venv/bin/activate
    python -m pip install --upgrade pip
-   python -m pip install build pytest scikit-build-core "cmake>=3.26" "ninja>=1.5"
+   python -m pip install build pytest scikit-build-core numba \
+     "cmake>=3.26" "ninja>=1.5"
 
 Use a newly created environment for each release validation so previously
-installed Basilisk or SDK packages cannot mask missing dependencies.
+installed Basilisk or SDK packages cannot mask missing dependencies. Numba is
+installed here because the bundled example extension requires it and is later
+reinstalled with ``--no-deps`` to preserve the selected Basilisk package.
 
 .. _bsk-sdk-task-select-source:
 
