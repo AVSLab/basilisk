@@ -165,6 +165,7 @@ def test_simple_instrument_controller_time_window(
 durationTimeWindowTests = [
     (1.0, 3.0, [0, 0, 1, 0, 0]),  # acquisition completes before the capture window opens
     (2.0, 3.0, [0, 0, 1, 0, 0]),  # acquisition completes inside the capture window
+    (1.0, 1.5, [0, 0, 0, 0, 0]),  # allowed time expires before the capture window opens
     (
         3.0,
         4.0,
@@ -183,8 +184,8 @@ def test_simple_instrument_controller_duration_time_window(
     **Validation Test Description**
 
     Verify that duration-based imaging accumulates valid constraints before the capture window opens. An acquisition
-    that completes before or inside the [1.5, 2.5] second window must capture, while one that completes after it closes
-    must not.
+    that completes before or inside the [1.5, 2.5] second window must capture, while an acquisition that completes
+    after the window closes or whose allowed time expires before the window opens must not.
     """
     [testResults, testMessage] = simpleInstrumentControllerTestFunction(
         show_plots,
