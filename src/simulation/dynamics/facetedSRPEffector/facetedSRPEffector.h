@@ -41,7 +41,7 @@ public:
     void computeForceTorque(double callTime, double timeStep) override;  //!< Method for computing the total SRP force and torque about point B
     void Reset(uint64_t currentSimNanos) override;  //!< Reset method
     void setNumFacets(const uint64_t numFacets);  //!< Setter method for total number of spacecraft facets
-    const uint64_t getNumFacets() const;  //!< Getter method for total number of spacecraft facets
+    uint64_t getNumFacets() const;  //!< Getter method for total number of spacecraft facets
 
     std::vector<ReadFunctor<FacetElementBodyMsgPayload>> facetElementBodyInMsgs;  //!< List of facet geometry input data (Expressed in hub B frame)
     std::vector<ReadFunctor<ProjectedAreaMsgPayload>> facetProjectedAreaInMsgs;  //!< List of facet projected area input messages

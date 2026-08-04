@@ -524,7 +524,7 @@ bool PlanetRadiationBase::isPatchEclipsed(const PatchResult&                patc
                               this->currentR_SP_N) < 0.001;
 }
 
-const bool PlanetRadiationBase::getEclipseCase() {
+bool PlanetRadiationBase::getEclipseCase() {
     static bool warned = false;
     if (this->m_eclipseCase != this->eclipseCase) {
         if (!warned) {

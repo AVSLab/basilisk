@@ -39,7 +39,7 @@ public:
     void writeOutputMessages(uint64_t callTime);  //!< Method to write output messages
     void addArticulatedFacet(Message<HingedRigidBodyMsgPayload> *tmpMsg);  //!< Method required to add articulated facets
     void setNumTotalFacets(const uint64_t numFacets);  //!< Setter method for total number of spacecraft facets
-    const uint64_t getNumTotalFacets() const;  //!< Getter method for total number of spacecraft facets
+    uint64_t getNumTotalFacets() const;  //!< Getter method for total number of spacecraft facets
 
     std::vector<ReadFunctor<HingedRigidBodyMsgPayload>> articulatedFacetDataInMsgs;  //!< Articulated facet angle data input message
     std::vector<ReadFunctor<FacetElementMsgPayload>> facetElementInMsgs;  //!< Facet geometry data input message (Expressed in facet frames)

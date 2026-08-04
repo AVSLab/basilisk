@@ -219,6 +219,6 @@ void FacetedSpacecraftProjectedArea::setNumFacets(const uint64_t numFacets) {
 }
 
 /*! Getter method for the total number of spacecraft facets.
- @return const uint64_t
+ @return Total number of spacecraft facets.
 */
-const uint64_t FacetedSpacecraftProjectedArea::getNumFacets() const { return this->numFacets; }
+uint64_t FacetedSpacecraftProjectedArea::getNumFacets() const { return this->numFacets; }

@@ -130,7 +130,7 @@ public:
     void addPlanetEntry(ReadFunctor<SpicePlanetStateMsgPayload> msg,
                         const PlanetGrid&                       gridConfig);
 
-    const bool getEclipseCase();  //!< @brief getter for the eclipseCase flag
+    bool getEclipseCase();  //!< @brief getter for the eclipseCase flag
     void setEclipseCase(bool value);  //!< @brief setter for the eclipseCase flag
 
     int    defaultNumLat = 180;   //!< [-] default number of latitude grid points
