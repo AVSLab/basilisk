@@ -102,7 +102,11 @@ typedef struct
 BSK_ABI_INLINE BskCAbiInfo
 bskCreateCAbiInfo(void)
 {
+#ifdef __cplusplus
+    BskCAbiInfo info{};
+#else
     BskCAbiInfo info = { 0 };
+#endif
     const uint16_t endianValue = 1;
 
 #if defined(__apple_build_version__) && defined(__clang__)
