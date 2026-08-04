@@ -107,6 +107,9 @@ function(generate_messages searchDir generateCCode)
       SOURCES ${COMP_OUT_NAME} OUTFILE_DIR "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/"
               OUTPUT_DIR "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/")
 
+    bsk_suppress_strict_warnings_for_sources(
+      "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/${TARGET_NAME}PYTHON_wrap.cxx")
+
     set_property(TARGET ${TARGET_NAME} APPEND PROPERTY SWIG_DEPENDS
                  "${CMAKE_CURRENT_SOURCE_DIR}/newMessaging.ih"
                  "${CMAKE_CURRENT_SOURCE_DIR}/messaging.h"

@@ -76,6 +76,11 @@ The script accepts the following options to customize this process.
       - Release
       - Sets the build type.  This does not apply to the IDE project like Xcode and Visual Studio which
         control the build type through their interface.
+    * - ``strictWarnings``
+      - Boolean
+      - False
+      - Enables additional compiler diagnostics for Basilisk C and C++ sources.  See
+        :ref:`strictCompilerWarnings`.
     * - ``generator``
       - see `here <https://cmake.org/cmake/help/latest/manual/cmake-generators.7.html>`__
       - ``XCode`` (macOS), ``Visual Studio 16 2019`` (Windows), ``None`` (Linux)
@@ -129,6 +134,31 @@ Likewise, the ``examples`` argument is optional as its default value is ``True``
 To skip the optional example Python packages during the clone-based install, use::
 
     python3 conanfile.py --examples False
+
+.. _strictCompilerWarnings:
+
+Strict Compiler Warnings
+------------------------
+Developers can enable additional compiler diagnostics with::
+
+    python3 conanfile.py --buildProject True --strictWarnings True
+
+The option is disabled by default and does not change the warning policy of a normal Basilisk build.  When enabled,
+Clang and GCC builds check additional cases involving numeric conversions, signedness, selected shadowed local
+declarations, format strings, implicit fallthrough, unused parameters, double promotion, and other potentially unsafe
+constructs.  Intentionally unused interface parameters are marked explicitly, and intentional numeric conversions
+are made explicit in the source.  Clang builds also diagnose implicit 64-bit to 32-bit conversions.  MSVC builds use
+warning level ``/W4`` and enable its size-conversion diagnostic.  Warnings remain warnings; this option does not enable
+``-Werror`` or otherwise make every warning a build failure.
+
+For example, a clean MuJoCo-enabled build with the additional diagnostics is created with::
+
+    python3 conanfile.py --clean --mujoco True --strictWarnings True
+
+The warning policy is defined in CMake so it is consistent across supported CMake generators, including Unix
+Makefiles, Ninja, and Xcode.  SWIG and Protocol Buffer generated source, Conan-provided dependencies, imported model
+implementations, and other third-party targets are not part of the Basilisk warning baseline.  Developers invoking
+CMake directly can enable the same policy with ``-DBSK_STRICT_WARNINGS=ON``.
 
 .. warning::
 

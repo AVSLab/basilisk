@@ -322,6 +322,8 @@ function(generate_rust_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
       SOURCES ${_rust_interface}
       OUTFILE_DIR "${_out_dir}"
       OUTPUT_DIR  "${_out_dir}")
+    bsk_suppress_strict_warnings_for_sources(
+      "${_out_dir}/${_swig_target}PYTHON_wrap.cxx")
     set_target_properties(${_swig_target} PROPERTIES OUTPUT_NAME ${TARGET_NAME})
     _bsk_add_rust_windows_exports("${_swig_target}" "${TARGET_NAME}")
 

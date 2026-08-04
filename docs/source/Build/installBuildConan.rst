@@ -65,6 +65,11 @@ Note that the option names for groupings of Basilisk modules are the same as wit
       - Release, Debug
       - Release
       - Specifies the build type
+    * - ``-o strictWarnings``
+      - Boolean
+      - False
+      - Enables the additional Basilisk compiler diagnostics described in
+        :ref:`strictCompilerWarnings`
     * - ``-o generator``
       - see `here <https://cmake.org/cmake/help/latest/manual/cmake-generators.7.html>`__
       - ``XCode`` (macOS), ``Visual Studio 16 2019`` (Windows), ``None`` (Linux)
@@ -128,6 +133,9 @@ they are not used, then the shown default behaviors are used.
     * - ``BUILD_OPNAV``
       - ``OFF``
       - will create the OpenCL dependent optical navigation related modules
+    * - ``BSK_STRICT_WARNINGS``
+      - ``OFF``
+      - enables additional compiler diagnostics for Basilisk C and C++ sources
 
 macOS Example
 ~~~~~~~~~~~~~

@@ -1,0 +1,1 @@
+- Added an opt-in ``--strictWarnings True`` build mode that applies additional compiler diagnostics consistently across CMake generators.
