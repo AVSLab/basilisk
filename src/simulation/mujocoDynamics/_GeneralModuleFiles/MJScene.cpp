@@ -35,6 +35,7 @@
 #include <vector>
 
 using MJBasilisk::detail::logAndThrow;
+using MJBasilisk::detail::checkedMjtSizeCast;
 
 MJScene::MJScene(std::string xml, const std::vector<std::string>& files)
   : spec(*this, xml, files)
@@ -114,11 +115,15 @@ MJScene::initializeDynamics()
     // compiled model dimensions so a repeated Reset re-registers them at a
     // matching size.
     mjModel* model = this->spec.getMujocoModel();
-    this->qposState = this->dynManager.registerState<MJQPosStateData>(model->nq, 1, "mujocoQpos");
-    this->qvelState = this->dynManager.registerState(model->nv, 1, "mujocoQvel");
-    this->massState = this->dynManager.registerState(model->nbody, 1, "mujocoMass");
-    if (model->na > 0) {
-        this->actState = this->dynManager.registerState(model->na, 1, "mujocoAct");
+    const auto nq = checkedMjtSizeCast<uint32_t>(model->nq, "nq");
+    const auto nv = checkedMjtSizeCast<uint32_t>(model->nv, "nv");
+    const auto nbody = checkedMjtSizeCast<uint32_t>(model->nbody, "nbody");
+    const auto na = checkedMjtSizeCast<uint32_t>(model->na, "na");
+    this->qposState = this->dynManager.registerState<MJQPosStateData>(nq, 1, "mujocoQpos");
+    this->qvelState = this->dynManager.registerState(nv, 1, "mujocoQvel");
+    this->massState = this->dynManager.registerState(nbody, 1, "mujocoMass");
+    if (na > 0) {
+        this->actState = this->dynManager.registerState(na, 1, "mujocoAct");
     }
 
     // The bulk position state advances quaternion blocks on SO(3).

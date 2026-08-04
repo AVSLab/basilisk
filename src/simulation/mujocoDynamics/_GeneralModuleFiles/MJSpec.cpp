@@ -24,6 +24,8 @@
 
 #include "MJScene.h"
 
+using MJBasilisk::detail::checkedMjtSizeCast;
+
 namespace
 {
 std::vector<std::string> readCustomSingleSplit(mjSpec* spec, const std::string& key, char delimiter)
@@ -329,25 +331,26 @@ void MJSpec::configure()
     // values: configure() runs on every recompile, and the stored state must
     // survive it. conservativeResize keeps existing entries when the size is
     // unchanged.
-    auto resizeState = [](StateData* s, int n) {
-        s->state.conservativeResize(n, 1);
-        s->stateDeriv.conservativeResize(n, 1);
+    auto resizeState = [](StateData* s, mjtSize n, const std::string& quantityName) {
+        const auto stateSize = checkedMjtSizeCast<Eigen::Index>(n, quantityName);
+        s->state.conservativeResize(stateSize, 1);
+        s->stateDeriv.conservativeResize(stateSize, 1);
     };
 
     // getQposState()->configure() sizes qpos to nq and records the location of
     // every orientation quaternion in it.
     this->scene.getQposState()->configure(this->model.get());
-    resizeState(this->scene.getQvelState(), this->model->nv);
+    resizeState(this->scene.getQvelState(), this->model->nv, "nv");
 
     // The bodies seed their own mass entries below; the world body (index 0) has
     // no MJBody, so seed it here to keep the whole vector well-defined.
-    resizeState(this->scene.getMassState(), this->model->nbody);
+    resizeState(this->scene.getMassState(), this->model->nbody, "nbody");
     this->scene.getMassState()->stateDeriv.setZero();
     this->scene.getMassState()->state(0) = this->model->body_mass[0];
 
     // The act state exists only when na > 0.
     if (this->scene.getActState()) {
-        resizeState(this->scene.getActState(), this->model->na);
+        resizeState(this->scene.getActState(), this->model->na, "na");
     }
 
     // Configure the bodies, which caches the body id corresponding to the name,

@@ -18,13 +18,18 @@
  */
 
 #include "linearTimeInvariantSystem.h"
+
+#include <limits>
 #include <string>
 
 void LinearTimeInvariantSystem::registerStates(DynParamRegisterer registerer)
 {
     const size_t stateSize = this->getStateSize();
     if (stateSize > 0) {
-        xState = registerer.registerState(stateSize, 1, "x");
+        if (stateSize > static_cast<size_t>(std::numeric_limits<uint32_t>::max())) {
+            bskLogger.bskError("LinearTimeInvariantSystem state size exceeds the dynamics framework limit");
+        }
+        xState = registerer.registerState(static_cast<uint32_t>(stateSize), 1, "x");
         xState->setState(Eigen::VectorXd::Constant(stateSize, 0.0)); // default to x0 = 0
     }
 }

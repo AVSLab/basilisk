@@ -20,10 +20,13 @@
 #ifndef MJUTILS_H
 #define MJUTILS_H
 
+#include <cstdint>
 #include <iomanip>
 #include <iostream>
+#include <limits>
 #include <stdexcept>
 #include <string>
+#include <type_traits>
 #include <vector>
 
 #include <mujoco/mujoco.h>
@@ -91,6 +94,26 @@ template <typename ExceptionType = std::runtime_error>
 {
     BSKLogger{}.bskError("%s", message.c_str());
     throw ExceptionType(message);
+}
+
+/**
+ * Converts a nonnegative MuJoCo size to another integral size type.
+ *
+ * @tparam Target Destination integral type.
+ * @param value MuJoCo size to convert.
+ * @param quantityName Name used to identify the quantity in an error message.
+ * @return The converted size.
+ * @throws std::overflow_error If @p value is negative or exceeds the destination range.
+ */
+template <typename Target>
+inline Target checkedMjtSizeCast(mjtSize value, const std::string& quantityName)
+{
+    static_assert(std::is_integral_v<Target>, "MuJoCo sizes can only be converted to integral types");
+    if (value < 0 || static_cast<uint64_t>(value) >
+                         static_cast<uint64_t>(std::numeric_limits<Target>::max())) {
+        logAndThrow<std::overflow_error>("MuJoCo size '" + quantityName + "' is outside the supported range");
+    }
+    return static_cast<Target>(value);
 }
 
 } // namespace MJBasilisk::detail
