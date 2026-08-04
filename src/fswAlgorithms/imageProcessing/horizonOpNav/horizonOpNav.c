@@ -102,7 +102,7 @@ void Update_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime, int64_
         planetRad_Pol = planetRad_Eq;
         opNavMsgOut.planetID = configData->planetTarget;
     }
-    m33Set(1/planetRad_Eq, 0, 0, 0, 1/planetRad_Eq, 0, 0, 0, 1/planetRad_Eq, Q);
+    m33Set(1/planetRad_Eq, 0, 0, 0, 1/planetRad_Eq, 0, 0, 0, 1/planetRad_Pol, Q);
 
     /* Set the number of limb points for ease of use*/
     int32_t numPoints;

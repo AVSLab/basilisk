@@ -92,11 +92,9 @@ void Update_prescribedRot2DOF(PrescribedRot2DOFConfig *configData, uint64_t call
     // Create buffer messages
     HingedRigidBodyMsgPayload spinningBodyRef1In;
     HingedRigidBodyMsgPayload spinningBodyRef2In;
-    HingedRigidBodyMsgPayload spinningBodyOut;
     PrescribedRotationMsgPayload prescribedRotationOut;
 
     // Zero the output messages
-    spinningBodyOut = HingedRigidBodyMsg_C_zeroMsgPayload();
     prescribedRotationOut = PrescribedRotationMsg_C_zeroMsgPayload();
 
     // Read the input messages

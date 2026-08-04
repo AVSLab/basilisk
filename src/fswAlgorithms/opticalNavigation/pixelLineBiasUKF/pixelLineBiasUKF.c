@@ -136,7 +136,6 @@ void Update_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, uint64_t callTi
                         int64_t moduleId)
 {
     double newTimeTag = 0.0;  /* [s] Local Time-tag variable*/
-    int32_t trackerValid; /* [-] Indicates whether the star tracker was valid*/
     double yBar[PIXLINE_N_MEAS], tempYVec[PIXLINE_N_MEAS];
     uint64_t i;
     int computePostFits;
@@ -158,7 +157,6 @@ void Update_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, uint64_t callTi
     configData->attInfo = NavAttMsg_C_read(&configData->attInMsg);
 
     /*! - Handle initializing time in filter and discard initial messages*/
-    trackerValid = 0;
     /*! - If the time tag from the measured data is new compared to previous step,
      propagate and update the filter*/
     newTimeTag = NavAttMsg_C_timeWritten(&configData->attInMsg) * NANO2SEC;

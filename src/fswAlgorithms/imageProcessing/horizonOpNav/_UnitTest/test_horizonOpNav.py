@@ -291,8 +291,8 @@ def horizonOpNav_update():
     ############################
     Q = np.eye(3)
     B = np.zeros([3,3])
-    Q *= 1/(3396.19*1E3)  # km
-    # Q[2,2] = 1/(3376.2*1E3)
+    Q *= 1 / (3396.19 * 1E3)  # [1/m]
+    Q[2, 2] = 1 / (3376.2 * 1E3)  # [1/m]
 
     numPoints = int(len(inputPoints)/2)
 

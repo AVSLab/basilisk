@@ -51,7 +51,6 @@ void SelfInit_thrMomentumDumping(thrMomentumDumpingConfig *configData, int64_t m
 void Reset_thrMomentumDumping(thrMomentumDumpingConfig *configData, uint64_t callTime, int64_t moduleID)
 {
     THRArrayConfigMsgPayload    localThrusterData;     /* local copy of the thruster data message */
-    CmdTorqueBodyMsgPayload     DeltaHInMsg;
     int                         i;
 
     /*! - reset the prior time flag state.  If set to zero, the control time step is not evaluated on the
@@ -84,7 +83,6 @@ void Reset_thrMomentumDumping(thrMomentumDumpingConfig *configData, uint64_t cal
 
     /*! - set the time tag of the last Delta_p message */
     if (CmdTorqueBodyMsg_C_isWritten(&configData->deltaHInMsg)) {
-        DeltaHInMsg = CmdTorqueBodyMsg_C_read(&configData->deltaHInMsg);
         /* prior message has been written, copy its time tag as the last prior message */
         configData->lastDeltaHInMsgTime = CmdTorqueBodyMsg_C_timeWritten(&configData->deltaHInMsg);
     } else {
@@ -114,7 +112,6 @@ void Update_thrMomentumDumping(thrMomentumDumpingConfig *configData, uint64_t ca
     double              *tOnOut;                        /*        pointer to vector of requested thruster on times per dumping cycle */
     THRArrayOnTimeCmdMsgPayload thrOnTimeOut;           /* []     output message container */
     THRArrayCmdForceMsgPayload thrusterImpulseInMsg;    /* []     thruster inpulse input message */
-    CmdTorqueBodyMsgPayload  DeltaHInMsg;               /* []     commanded Delta_H input message */
     uint64_t            timeOfDeltaHMsg;
     int                 i;
 
@@ -135,7 +132,6 @@ void Update_thrMomentumDumping(thrMomentumDumpingConfig *configData, uint64_t ca
 
         /*! - check if the thruster impulse input message time tag is identical to current values (continue
          with current momentum dumping) */
-        DeltaHInMsg = CmdTorqueBodyMsg_C_read(&configData->deltaHInMsg);
         timeOfDeltaHMsg = CmdTorqueBodyMsg_C_timeWritten(&configData->deltaHInMsg);
         if (configData->lastDeltaHInMsgTime == timeOfDeltaHMsg){
             /* identical net thruster impulse request case, continue with existing RW momentum dumping */
