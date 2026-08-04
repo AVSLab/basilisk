@@ -141,7 +141,7 @@ int32_t ukfLUD(double *sourceMat, int32_t nRow, int32_t nCol,
 	double *destMat, int32_t *indx)
 {
 	double vv[UKF_MAX_DIM];
-	int32_t rowIndicator, i, j, k, imax;
+	int32_t i, j, k, imax;
 	double big, dum, sum, temp;
 	double TINY = 1.0E-14;
 
@@ -157,7 +157,6 @@ int32_t ukfLUD(double *sourceMat, int32_t nRow, int32_t nCol,
 	}
 	mCopy(sourceMat, (size_t) nRow, (size_t) nCol, destMat);
 	vSetZero(vv, (size_t) nRow);
-	rowIndicator = 1;
 	for (i = 0; i < nRow; i++)
 	{
 		big = 0.0;
@@ -209,7 +208,6 @@ int32_t ukfLUD(double *sourceMat, int32_t nRow, int32_t nCol,
 				destMat[imax*nRow + k] = destMat[j*nRow + k];
 				destMat[j*nRow + k] = dum;
 			}
-			rowIndicator += 1;
 			vv[imax] = vv[j];
 		}
 		indx[j] = imax;
@@ -353,7 +351,7 @@ int32_t ukfCholDownDate(double *rMat, double *xVec, double beta, int32_t nStates
 	int i, j;
 	double wVec[UKF_MAX_DIM];
     double rEl2, bParam, gamma;
-	
+
     vCopy(xVec, (size_t) nStates, wVec);
     mSetZero(rOut, (size_t) nStates, (size_t) nStates);
 
@@ -375,7 +373,7 @@ int32_t ukfCholDownDate(double *rMat, double *xVec, double beta, int32_t nStates
         }
         bParam += beta * wVec[i]*wVec[i]/rEl2;
 	}
-	
+
 
 	return 0;
 }

@@ -402,6 +402,8 @@ class moduleGenerator:
             defFile += f'    {msg["var"]}Buffer = this->{msg["var"]}();\n'
         defFile += '\n'
         defFile += '    // do some math and stuff to populate the output messages\n'
+        for msg in inMsgList:
+            defFile += f'    (void) {msg["var"]}Buffer;\n'
         defFile += '\n'
         defFile += '    // write to the output messages\n'
         for msg in outMsgList:
@@ -622,6 +624,8 @@ class moduleGenerator:
             defFile += f'    {msg["var"]}Buffer = {msg["type"]}_C_read(&configData->{msg["var"]});\n'
         defFile += '\n'
         defFile += '    // do some math and stuff to populate the output messages\n'
+        for msg in inMsgList:
+            defFile += f'    (void) {msg["var"]}Buffer;\n'
         defFile += '\n'
         defFile += '    // write to the output messages\n'
         for msg in outMsgList:

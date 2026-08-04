@@ -135,7 +135,6 @@ void Update_relODuKF(RelODuKFConfig *configData, uint64_t callTime,
                         int64_t moduleId)
 {
     double newTimeTag = 0.0;  /* [s] Local Time-tag variable*/
-    int32_t trackerValid; /* [-] Indicates whether the star tracker was valid*/
     double yBar[3], tempYVec[3];
     uint32_t i;
     int computePostFits;
@@ -153,7 +152,6 @@ void Update_relODuKF(RelODuKFConfig *configData, uint64_t callTime,
     v3Scale(1E-3, inputRelOD.r_BN_N, inputRelOD.r_BN_N);
     vScale(1E-6, inputRelOD.covar_N, ODUKF_N_MEAS*ODUKF_N_MEAS,inputRelOD.covar_N);
     /*! - Handle initializing time in filter and discard initial messages*/
-    trackerValid = 0;
     /*! - If the time tag from the measured data is new compared to previous step,
      propagate and update the filter*/
     newTimeTag = OpNavMsg_C_timeWritten(&configData->opNavInMsg) * NANO2SEC;

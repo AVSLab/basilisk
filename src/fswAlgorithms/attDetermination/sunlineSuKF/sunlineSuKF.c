@@ -426,7 +426,6 @@ void sunlineSuKFMeasModel(SunlineSuKFConfig *configData)
     uint32_t i, j, obsCounter;
     double sensorNormal[3];
     double normalizedState[3];
-    double stateNorm;
     double expectedMeas;
     double kellDelta;
 
@@ -435,7 +434,6 @@ void sunlineSuKFMeasModel(SunlineSuKFConfig *configData)
     for(i=0; i<configData->numCSSTotal; i++)
     {
         v3Scale(configData->CBias[i], &(configData->cssNHat_B[i*3]), sensorNormal);
-        stateNorm = v3Norm(configData->state);
         v3Normalize(configData->state, normalizedState);
         expectedMeas = v3Dot(normalizedState, sensorNormal);
         expectedMeas = expectedMeas > 0.0 ? expectedMeas : 0.0;
@@ -458,7 +456,6 @@ void sunlineSuKFMeasModel(SunlineSuKFConfig *configData)
             configData->obs[obsCounter] = configData->cssSensorInBuffer.CosValue[i];
             for(j=0; j<configData->countHalfSPs*2+1; j++)
             {
-                stateNorm = v3Norm(&(configData->SP[j*SKF_N_STATES_SWITCH]));
                 v3Normalize(&(configData->SP[j*SKF_N_STATES_SWITCH]), normalizedState);
                 expectedMeas = v3Dot(normalizedState, sensorNormal);
                 expectedMeas = expectedMeas > 0.0 ? expectedMeas : 0.0;
