@@ -76,7 +76,7 @@ public:
  */
 class RandomGaussianNoiseGenerator : public GaussianNoiseGenerator {
 public:
-    void setSeed(size_t seed) override { this->rng.seed(seed); }
+    void setSeed(size_t seed) override { this->rng.seed(static_cast<std::mt19937::result_type>(seed)); }
 
     GaussianNoiseSample generate(size_t m, double h) override
     {
