@@ -163,18 +163,18 @@ Update_simpleInstrumentController(simpleInstrumentControllerConfig* configData, 
                                                   : configData->acquisitionTime;
 
                     if (elapsedTime >= effectiveImageTime) {
-                        // If full effective duration passed, set imaged
-                        if (configData->acquisitionTime <= configData->allowedTime) {
-                            if (timeControl) {
-                                configData->imaged = 1; // Success
-                                deviceCmdOutMsgBuffer.deviceCmd = 1;
-                                configData->constraintsActive = 0; // Reset timer
-                            }
-                        } else {
-                            // Failed because required time > allowed duration
+                        // Capture only while the acquisition and imaging window remain within the allowed duration
+                        if (configData->acquisitionTime <= configData->allowedTime && timeControl &&
+                            elapsedTime <= configData->allowedTime) {
+                            configData->imaged = 1; // Success
+                            deviceCmdOutMsgBuffer.deviceCmd = 1;
+                            configData->constraintsActive = 0; // Reset timer
+                        } else if (elapsedTime >= configData->allowedTime) {
+                            // Failed because the required acquisition or capture-window wait exceeded the
+                            // allowed duration
                             configData->imaged = 0;
                             deviceCmdOutMsgBuffer.deviceCmd = 0;
-                            configData->controllerStatus = 0; // Disable further attempts
+                            configData->controllerStatus = 0;  // Disable further attempts
                             configData->constraintsActive = 0; // Reset timer
                         }
                     }
