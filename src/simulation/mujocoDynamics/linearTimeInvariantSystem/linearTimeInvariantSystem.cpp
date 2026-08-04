@@ -99,6 +99,7 @@ void LinearTimeInvariantSystem::Reset(uint64_t /*CurrentSimNanos*/)
         if (A_rows != stateSize || A_cols != stateSize) {
             bskLogger.bskLog(
                 BSK_ERROR,
+                "%s",
                 (
                     std::string("LinearTimeInvariantSystem::Reset: matrix A has inconsistent dimensions. ") +
                     "Expected size [" +
@@ -121,6 +122,7 @@ void LinearTimeInvariantSystem::Reset(uint64_t /*CurrentSimNanos*/)
         if (B_rows != stateSize || B_cols != inputSize) {
             bskLogger.bskLog(
                 BSK_ERROR,
+                "%s",
                 (
                     std::string("LinearTimeInvariantSystem::Reset: matrix B has inconsistent dimensions. ") +
                     "Expected size [" +
@@ -143,6 +145,7 @@ void LinearTimeInvariantSystem::Reset(uint64_t /*CurrentSimNanos*/)
         if (C_rows != outputSize || C_cols != stateSize) {
             bskLogger.bskLog(
                 BSK_ERROR,
+                "%s",
                 (
                     std::string("LinearTimeInvariantSystem::Reset: matrix C has inconsistent dimensions. ") +
                     "Expected size [" +
@@ -165,6 +168,7 @@ void LinearTimeInvariantSystem::Reset(uint64_t /*CurrentSimNanos*/)
         if (D_rows != outputSize || D_cols != inputSize) {
             bskLogger.bskLog(
                 BSK_ERROR,
+                "%s",
                 (
                     std::string("LinearTimeInvariantSystem::Reset: matrix D has inconsistent dimensions. ") +
                     "Expected size [" +
@@ -268,6 +272,7 @@ void LinearTimeInvariantSystem::configureSecondOrder(const Eigen::VectorXd &wn,
     if (zeta.size() != n || k.size() != n) {
         bskLogger.bskLog(
             BSK_ERROR,
+            "%s",
             (
                 std::string("LinearTimeInvariantSystem::configureSecondOrder(MIMO): size mismatch. ") +
                 "Expected wn, zeta, k to all have length " + std::to_string(static_cast<long long>(n)) + ". "
@@ -287,6 +292,7 @@ void LinearTimeInvariantSystem::configureSecondOrder(const Eigen::VectorXd &wn,
         if (wn_i <= 0.0) {
             bskLogger.bskLog(
                 BSK_ERROR,
+                "%s",
                 (
                     std::string("LinearTimeInvariantSystem::configureSecondOrder(MIMO): wn(") +
                     std::to_string(static_cast<long long>(i)) +
@@ -299,6 +305,7 @@ void LinearTimeInvariantSystem::configureSecondOrder(const Eigen::VectorXd &wn,
         if (zeta_i < 0.0) {
             bskLogger.bskLog(
                 BSK_ERROR,
+                "%s",
                 (
                     std::string("LinearTimeInvariantSystem::configureSecondOrder(MIMO): zeta(") +
                     std::to_string(static_cast<long long>(i)) +

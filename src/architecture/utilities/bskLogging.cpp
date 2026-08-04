@@ -27,6 +27,9 @@
 logLevel_t LogLevel = BSK_DEBUG;
 
 namespace {
+#if defined(__clang__) || defined(__GNUC__)
+__attribute__((format(printf, 1, 0)))
+#endif
 std::string formatLogMessage(const char* info, va_list args)
 {
     char formatMessage[MAX_LOGGING_LENGTH];

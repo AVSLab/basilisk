@@ -99,8 +99,9 @@ public:
         mjtObj mjObjectTypeInt = mjsObject->element->elemtype;
         auto idOrFail = mj_name2id(mujocoModel, mjObjectTypeInt, this->name.c_str());
         if (idOrFail < 0) {
+            const std::string objectTypeName{MJBasilisk::detail::getObjectTypeName<mjsObjectType>()};
             BSKLogger{}.bskError("Could not find %s in MuJoCo with name: %s",
-                MJBasilisk::detail::getObjectTypeName<mjsObjectType>(), this->name.c_str());
+                objectTypeName.c_str(), this->name.c_str());
         }
 
         this->id = size_t(idOrFail);

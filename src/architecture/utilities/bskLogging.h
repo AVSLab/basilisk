@@ -65,6 +65,15 @@ void printDefaultLogLevel();
 #endif
 #endif
 
+#ifndef BSK_PRINTF_FORMAT
+#if !defined(SWIG) && (defined(__clang__) || defined(__GNUC__))
+#define BSK_PRINTF_FORMAT(formatIndex, firstArgument) \
+    __attribute__((format(printf, formatIndex, firstArgument)))
+#else
+#define BSK_PRINTF_FORMAT(formatIndex, firstArgument)
+#endif
+#endif
+
 #ifdef __cplusplus
 #include <map>
 #include <string>
@@ -98,9 +107,9 @@ class BSKLogger
         void setLogLevel(logLevel_t logLevel);
         void printLogLevel();
         int getLogLevel();
-        void bskLog(logLevel_t targetLevel, const char* info, ...);
+        void bskLog(logLevel_t targetLevel, const char* info, ...) BSK_PRINTF_FORMAT(3, 4);
 #ifndef SWIG
-        BSK_NORETURN void bskError(const char* info, ...);
+        BSK_NORETURN void bskError(const char* info, ...) BSK_PRINTF_FORMAT(2, 3);
 #endif
 
     //Provides a mapping from log level enum to str

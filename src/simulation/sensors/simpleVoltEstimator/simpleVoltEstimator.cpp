@@ -68,10 +68,14 @@ void SimpleVoltEstimator::Reset(uint64_t CurrentSimNanos)
 
     //! - Alert the user and stop if the noise matrix is the wrong size.  That'd be bad.
     if (this->PMatrix.size() != numStates*numStates) {
-        bskLogger.bskError("Your process noise matrix (PMatrix) is not %ld*%ld. Size is %ld.  Quitting", numStates, numStates, this->PMatrix.size());
+        bskLogger.bskError("Your process noise matrix (PMatrix) is not %lld*%lld. Size is %lld.  Quitting",
+                           static_cast<long long>(numStates),
+                           static_cast<long long>(numStates),
+                           static_cast<long long>(this->PMatrix.size()));
     }
     if (this->walkBounds.size() != numStates) {
-        bskLogger.bskError("Your walkbounds vector  is not %ld elements. Quitting", numStates);
+        bskLogger.bskError("Your walkbounds vector is not %lld elements. Quitting",
+                           static_cast<long long>(numStates));
     }
 
     //! - Update the noise model parameters
