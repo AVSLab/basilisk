@@ -42,7 +42,7 @@ public:
     bool readInputMessages(); //!< Method to read input messages
     void writeOutputMessages(uint64_t callTime);  //!< Method to write output messages
     void setNumFacets(const uint64_t numFacets);  //!< Setter method for total number of spacecraft facets
-    const uint64_t getNumFacets() const;  //!< Getter method for total number of spacecraft facets
+    uint64_t getNumFacets() const;  //!< Getter method for total number of spacecraft facets
 
     ReadFunctor<SCStatesMsgPayload> spacecraftStateInMsg;  //!< Spacecraft state input message
     ReadFunctor<SpicePlanetStateMsgPayload> sunStateInMsg;  //!< Sun spice ephemeris input message
