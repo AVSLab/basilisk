@@ -30,6 +30,10 @@ if(BUILD_VIZINTERFACE)
              "${CMAKE_CURRENT_SOURCE_DIR}/${PROTO_TARGET}.pb.cc"
          )
 
+         bsk_suppress_strict_warnings_for_sources(
+             "${CMAKE_CURRENT_SOURCE_DIR}/${PROTO_TARGET}.pb.cc"
+         )
+
          target_include_directories(${PROTO_TARGET}
              PUBLIC
                  "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"

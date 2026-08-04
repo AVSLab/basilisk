@@ -178,6 +178,10 @@ function(generate_package_libraries INIT_DIRECTORY AllLibs)
     # Add Target
     add_library(${LIB_NAME} SHARED ${C_FILES} ${BSK_FWK_FILES})
 
+    if(NOT "${INIT_DIRECTORY}" STREQUAL "${CMAKE_SOURCE_DIR}")
+      bsk_suppress_strict_warnings_for_sources(${C_FILES})
+    endif()
+
     # Add to list of library
     list(APPEND AllLibs ${LIB_NAME})
 
@@ -350,6 +354,19 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
               "${CMAKE_BINARY_DIR}/Basilisk/${MODULE_DIR}" # _wrap.c/.cxx file
               OUTPUT_DIR
               "${CMAKE_BINARY_DIR}/Basilisk/${MODULE_DIR}") # generated .py file
+
+    bsk_suppress_strict_warnings_for_sources(
+      "${CMAKE_BINARY_DIR}/Basilisk/${MODULE_DIR}/${TARGET_NAME}PYTHON_wrap.cxx")
+
+    if("${MODULE_DIR}" STREQUAL "ExternalModules")
+      bsk_suppress_strict_warnings_for_sources(${C_FILES})
+    else()
+      foreach(THIRD_PARTY_SOURCE IN LISTS BSK_THIRD_PARTY_SOURCE_FILES)
+        if(THIRD_PARTY_SOURCE IN_LIST C_FILES)
+          bsk_suppress_strict_warnings_for_sources("${THIRD_PARTY_SOURCE}")
+        endif()
+      endforeach()
+    endif()
 
     # Collect any external dependencies
     if(EXISTS "${CMAKE_SOURCE_DIR}/${PARENT_DIR}/Custom.cmake")
@@ -530,6 +547,78 @@ endif()
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-register")
+endif()
+
+option(BSK_STRICT_WARNINGS "Enable additional compiler warnings for Basilisk sources" OFF)
+
+# Keep strict diagnostics focused on source maintained by Basilisk. Generated
+# wrappers, imported source, and external modules are excluded from the strict
+# warning baseline.
+function(bsk_suppress_strict_warnings_for_sources)
+  if(NOT BSK_STRICT_WARNINGS)
+    return()
+  endif()
+
+  if(MSVC)
+    set(SUPPRESS_WARNING_OPTION /w)
+  elseif(CMAKE_CXX_COMPILER_ID MATCHES "AppleClang|Clang|GNU")
+    set(SUPPRESS_WARNING_OPTION -w)
+  else()
+    return()
+  endif()
+
+  foreach(SOURCE_FILE IN LISTS ARGN)
+    set_property(SOURCE "${SOURCE_FILE}" APPEND PROPERTY COMPILE_OPTIONS "${SUPPRESS_WARNING_OPTION}")
+  endforeach()
+endfunction()
+
+set(BSK_THIRD_PARTY_SOURCE_FILES
+  "${CMAKE_SOURCE_DIR}/simulation/environment/magneticFieldWMM/GeomagnetismLibrary.c"
+  "${CMAKE_SOURCE_DIR}/simulation/environment/MsisAtmosphere/nrlmsise-00.c"
+  "${CMAKE_SOURCE_DIR}/simulation/environment/MsisAtmosphere/nrlmsise-00_data.c")
+
+if(BSK_STRICT_WARNINGS)
+  message(STATUS "Basilisk strict compiler warnings are enabled")
+
+  if(CMAKE_CXX_COMPILER_ID MATCHES "AppleClang|Clang|GNU")
+    foreach(language C CXX)
+      add_compile_options(
+        $<$<COMPILE_LANGUAGE:${language}>:-Wall>
+        $<$<COMPILE_LANGUAGE:${language}>:-Wextra>
+        $<$<COMPILE_LANGUAGE:${language}>:-Wpedantic>
+        $<$<COMPILE_LANGUAGE:${language}>:-Wconversion>
+        $<$<COMPILE_LANGUAGE:${language}>:-Wsign-conversion>
+        $<$<COMPILE_LANGUAGE:${language}>:-Wformat=2>
+        $<$<COMPILE_LANGUAGE:${language}>:-Wundef>
+        $<$<COMPILE_LANGUAGE:${language}>:-Wimplicit-fallthrough>
+        $<$<COMPILE_LANGUAGE:${language}>:-Wno-unused-parameter>)
+    endforeach()
+
+    add_compile_options(
+      $<$<COMPILE_LANGUAGE:CXX>:-Wnon-virtual-dtor>
+      $<$<COMPILE_LANGUAGE:CXX>:-Woverloaded-virtual>)
+
+    if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+      add_compile_options(
+        $<$<COMPILE_LANGUAGE:C>:-Wshadow>
+        $<$<COMPILE_LANGUAGE:CXX>:-Wshadow=compatible-local>)
+    else()
+      # Clang does not provide a general local-only shadow diagnostic. This
+      # narrower group catches lambda-related local shadowing without warning
+      # on the common `this->member = member` setter pattern.
+      add_compile_options(
+        $<$<COMPILE_LANGUAGE:C>:-Wshadow>
+        $<$<COMPILE_LANGUAGE:CXX>:-Wshadow-uncaptured-local>)
+    endif()
+
+    if(CMAKE_CXX_COMPILER_ID MATCHES "AppleClang|Clang")
+      add_compile_options(
+        $<$<COMPILE_LANGUAGE:C>:-Wshorten-64-to-32>
+        $<$<COMPILE_LANGUAGE:CXX>:-Wshorten-64-to-32>)
+    endif()
+  elseif(MSVC)
+    add_compile_options(/W4 /w14267 /wd4100 /wd4458)
+  endif()
 endif()
 
 if(CMAKE_SIZEOF_VOID_P EQUAL 8)
