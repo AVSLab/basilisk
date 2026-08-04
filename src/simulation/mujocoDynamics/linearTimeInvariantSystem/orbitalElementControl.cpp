@@ -164,6 +164,7 @@ OrbitalElementControl::setProportionalGain(const Eigen::MatrixXd& K)
     if (K_rows != 6 || K_cols != 6) {
         bskLogger.bskLog(
             BSK_ERROR,
+            "%s",
             (
                 std::string("OrbitalElementControl::setProportionalGain: gain has inconsistent dimensions. ") +
                 "Expected size [6x6], but received [" +
@@ -190,6 +191,7 @@ OrbitalElementControl::setIntegralGain(const Eigen::MatrixXd& K)
     if (K_rows != 6 || K_cols != 6) {
         bskLogger.bskLog(
             BSK_ERROR,
+            "%s",
             (
                 std::string("OrbitalElementControl::setIntegralGain: gain K has inconsistent dimensions. ") +
                 "Expected size [6x6], but received [" +

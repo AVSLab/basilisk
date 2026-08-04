@@ -48,21 +48,21 @@ MsmForceTorque::~MsmForceTorque()
 void MsmForceTorque::Reset(uint64_t CurrentSimNanos)
 {
     // check that required input messages are connected
-    for (long unsigned int c=0; c < this->scStateInMsgs.size(); c++ ){
+    for (size_t c=0; c < this->scStateInMsgs.size(); c++ ){
         if (!this->scStateInMsgs.at(c).isLinked()) {
-            bskLogger.bskError("MsmForceTorque.scStateInMsgs[%d] was not linked.", c);
+            bskLogger.bskError("MsmForceTorque.scStateInMsgs[%zu] was not linked.", c);
         }
     }
 
-    for (long unsigned int c=0; c < this->voltInMsgs.size(); c++) {
+    for (size_t c=0; c < this->voltInMsgs.size(); c++) {
         if (!this->voltInMsgs.at(c).isLinked()) {
-            bskLogger.bskError("MsmForceTorque.voltInMsgs[%d] was not linked.", c);
+            bskLogger.bskError("MsmForceTorque.voltInMsgs[%zu] was not linked.", c);
         }
     }
 
     this->numSat = (uint32_t) this->scStateInMsgs.size();
     if (this->numSat < 2) {
-        bskLogger.bskError("MsmForceTorque must have 2 or more spacecraft components added. You added %lu.", this->numSat);
+        bskLogger.bskError("MsmForceTorque must have 2 or more spacecraft components added. You added %u.", this->numSat);
     }
 
     /* determine number of spheres being modeled */

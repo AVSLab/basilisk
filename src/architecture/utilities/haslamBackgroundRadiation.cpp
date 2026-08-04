@@ -145,6 +145,7 @@ bool HaslamMap::loadHaslamMap() {
     }
 
     this->bskLogger.bskLog(BSK_INFORMATION,
+        "%s",
         ("HaslamMap: Loaded NSIDE=" + std::to_string(this->nside) + ", NPIX=" + std::to_string(this->npix)).c_str());
     closeFile();
     return true;

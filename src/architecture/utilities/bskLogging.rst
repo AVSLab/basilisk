@@ -128,6 +128,17 @@ Within the ``*.cpp`` file, the ``bskLog()`` method can be called with:
 
     bskLogger.bskLog(BSK_INFORMATION, "%d %d", arg1, arg2);
 
+In C++, both ``bskLog()`` and ``bskError()`` use ``printf``-style formatting.
+Provide the format as a string literal and ensure that each conversion specifier
+matches the corresponding argument type.  Clang and GCC validate annotated
+logging calls at compile time.  Pass prebuilt strings through a literal ``"%s"``
+format instead of using the string contents as the format:
+
+.. code-block:: cpp
+
+    std::string message = "The configured value is invalid.";
+    bskLogger.bskLog(BSK_WARNING, "%s", message.c_str());
+
 For fatal C++ errors, use ``bskError()``.  This method raises ``BasiliskError`` like
 ``bskLog(BSK_ERROR, ...)``, but is also declared as non-returning so compilers can
 reason correctly about control flow after the call.

@@ -316,13 +316,13 @@ void SpacecraftChargingEquilibrium::Reset(uint64_t CurrentSimNanos)
 
     for (unsigned int c = 0; c < this->scStateInMsgs.size(); c++) {
         if (!this->scStateInMsgs[c].isLinked()) {
-            this->bskLogger.bskError("SpacecraftChargingEquilibrium.scStateInMsgs[%d] was not linked.", c);
+            this->bskLogger.bskError("SpacecraftChargingEquilibrium.scStateInMsgs[%u] was not linked.", c);
         }
     }
 
     this->numSat = static_cast<unsigned int>(this->scStateInMsgs.size());
     if (this->numSat != 2) {
-        this->bskLogger.bskError("SpacecraftChargingEquilibrium requires exactly 2 spacecraft (index 0 servicer, index 1 target). You added %lu.",
+        this->bskLogger.bskError("SpacecraftChargingEquilibrium requires exactly 2 spacecraft (index 0 servicer, index 1 target). You added %u.",
             this->numSat);
     }
 
@@ -350,7 +350,7 @@ void SpacecraftChargingEquilibrium::Reset(uint64_t CurrentSimNanos)
 void SpacecraftChargingEquilibrium::UpdateState(uint64_t CurrentSimNanos)
 {
     if (this->numSat != 2) {
-        this->bskLogger.bskError("SpacecraftChargingEquilibrium.UpdateState called with numSat=%lu. Exactly two spacecraft are required.",
+        this->bskLogger.bskError("SpacecraftChargingEquilibrium.UpdateState called with numSat=%u. Exactly two spacecraft are required.",
             this->numSat);
     }
     if (!this->validateSolveConfiguration()) {
@@ -365,8 +365,8 @@ void SpacecraftChargingEquilibrium::UpdateState(uint64_t CurrentSimNanos)
     if (this->yieldSEEelectron.size() < this->energies.size() ||
         this->yieldSEEion.size() < this->energies.size() ||
         this->yieldBackscattered.size() < this->energies.size()) {
-        this->bskLogger.bskError("SpacecraftChargingEquilibrium.UpdateState: yield vectors must have at least %d entries to match the plasma energy grid.",
-            this->energies.size());
+        this->bskLogger.bskError("SpacecraftChargingEquilibrium.UpdateState: yield vectors must have at least %lld entries to match the plasma energy grid.",
+            static_cast<long long>(this->energies.size()));
     }
 
     if (this->enableDebugPrints && this->energies.size() > 0) {
