@@ -60,7 +60,7 @@ void Reset_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, uint64_t callTim
     double tempMatrix[PIXLINE_N_STATES*PIXLINE_N_STATES];
 
     /*! - Initialize filter parameters to max values */
-    configData->timeTag = callTime*NANO2SEC;
+    configData->timeTag = nanoToSec(callTime);
     configData->dt = 0.0;
     configData->numStates = PIXLINE_N_STATES;
     configData->countHalfSPs = PIXLINE_N_STATES;
@@ -80,18 +80,18 @@ void Reset_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, uint64_t callTim
 
     /*! - Set lambda/gamma to standard value for unscented kalman filters */
     configData->lambdaVal = configData->alpha*configData->alpha*
-    (configData->numStates + configData->kappa) - configData->numStates;
-    configData->gamma = sqrt(configData->numStates + configData->lambdaVal);
+    ((double) configData->numStates + configData->kappa) - (double) configData->numStates;
+    configData->gamma = sqrt((double) configData->numStates + configData->lambdaVal);
 
 
     /*! - Set the wM/wC vectors to standard values for unscented kalman filters*/
-    configData->wM[0] = configData->lambdaVal / (configData->numStates +
+    configData->wM[0] = configData->lambdaVal / ((double) configData->numStates +
                                                  configData->lambdaVal);
-    configData->wC[0] = configData->lambdaVal / (configData->numStates +
+    configData->wC[0] = configData->lambdaVal / ((double) configData->numStates +
                                                  configData->lambdaVal) + (1 - configData->alpha*configData->alpha + configData->beta);
     for (i = 1; i<configData->countHalfSPs * 2 + 1; i++)
     {
-        configData->wM[i] = 1.0 / 2.0*1.0 / (configData->numStates + configData->lambdaVal);
+        configData->wM[i] = 1.0 / 2.0*1.0 / ((double) configData->numStates + configData->lambdaVal);
         configData->wC[i] = configData->wM[i];
     }
 
@@ -159,7 +159,7 @@ void Update_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, uint64_t callTi
     /*! - Handle initializing time in filter and discard initial messages*/
     /*! - If the time tag from the measured data is new compared to previous step,
      propagate and update the filter*/
-    newTimeTag = NavAttMsg_C_timeWritten(&configData->attInMsg) * NANO2SEC;
+    newTimeTag = nanoToSec(NavAttMsg_C_timeWritten(&configData->attInMsg));
     if(newTimeTag >= configData->timeTag && NavAttMsg_C_isWritten(&configData->attInMsg) && inputCircles.valid ==1)
     {
         configData->circlesInBuffer = inputCircles;
@@ -170,7 +170,7 @@ void Update_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, uint64_t callTi
     }
     /*! - If current clock time is further ahead than the measured time, then
      propagate to this current time-step*/
-    newTimeTag = callTime*NANO2SEC;
+    newTimeTag = nanoToSec(callTime);
     if(newTimeTag > configData->timeTag)
     {
         pixelLineBiasUKFTimeUpdate(configData, newTimeTag);
@@ -643,13 +643,13 @@ void pixelLineBiasUKFCleanUpdate(PixelLineBiasUKFConfig *configData){
     mCopy(configData->covarPrev, configData->numStates, configData->numStates, configData->covar);
 
     /*! - Reset the wM/wC vectors to standard values for unscented kalman filters*/
-    configData->wM[0] = configData->lambdaVal / (configData->numStates +
+    configData->wM[0] = configData->lambdaVal / ((double) configData->numStates +
                                                  configData->lambdaVal);
-    configData->wC[0] = configData->lambdaVal / (configData->numStates +
+    configData->wC[0] = configData->lambdaVal / ((double) configData->numStates +
                                                  configData->lambdaVal) + (1 - configData->alpha*configData->alpha + configData->beta);
     for (i = 1; i<configData->countHalfSPs * 2 + 1; i++)
     {
-        configData->wM[i] = 1.0 / 2.0*1.0 / (configData->numStates +
+        configData->wM[i] = 1.0 / 2.0*1.0 / ((double) configData->numStates +
                                              configData->lambdaVal);
         configData->wC[i] = configData->wM[i];
     }

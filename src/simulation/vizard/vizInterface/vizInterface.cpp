@@ -505,7 +505,8 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
 
     /*! Send the Vizard settings according to interval set by broadcastSettingsSendDelay field */
     this->now = time(0);
-    if (this->broadcastStream && (this->now - this->lastSettingsSendTime) >= this->broadcastSettingsSendDelay) {
+    if (this->broadcastStream &&
+        static_cast<double>(this->now - this->lastSettingsSendTime) >= this->broadcastSettingsSendDelay) {
         this->settings.dataFresh = true;
     }
     if (this->settings.dataFresh) {

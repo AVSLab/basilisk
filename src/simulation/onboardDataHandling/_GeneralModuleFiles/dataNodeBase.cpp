@@ -115,7 +115,7 @@ void DataNodeBase::UpdateState(uint64_t CurrentSimNanos)
     //! - Only update the data status if we were able to read in messages.
     if(this->readMessages())
     {
-        this->computeDataStatus(CurrentSimNanos*NANO2SEC);
+        this->computeDataStatus(nanoToSec(CurrentSimNanos));
     } else {
         //! - If the read was not successful then zero the output message
         this->nodeDataMsg = this->nodeDataOutMsg.zeroMsgPayload;

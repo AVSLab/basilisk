@@ -25,6 +25,7 @@
 
 /* modify the path to reflect the new module names */
 #include "centerRadiusCNN.h"
+#include "architecture/utilities/macroDefinitions.h"
 #include <opencv2/dnn/dnn.hpp>
 #include <fstream>
 
@@ -82,7 +83,7 @@ void CenterRadiusCNN::UpdateState(uint64_t CurrentSimNanos)
     CameraImageMsgPayload imageBuffer;
     OpNavCirclesMsgPayload circleBuffer;
     cv::Mat imageCV, blurred;
-    filenamePre = "PreprocessedImage_" + std::to_string(CurrentSimNanos*1E-9) + ".jpg";
+    filenamePre = "PreprocessedImage_" + std::to_string(nanoToSec(CurrentSimNanos)) + ".jpg";
 
     /*! - Load in the trained CNN model*/
 
@@ -121,7 +122,9 @@ void CenterRadiusCNN::UpdateState(uint64_t CurrentSimNanos)
     float rad_pred = output.at<float>(0,2);
 
     /*!- If no circles are found do not validate the image as a measurement */
-    if (x_pred != imageCV.rows/2 && y_pred != imageCV.cols/2 && rad_pred != imageCV.cols/4){
+    if (x_pred != static_cast<float>(imageCV.rows) / 2.0F &&
+        y_pred != static_cast<float>(imageCV.cols) / 2.0F &&
+        rad_pred != static_cast<float>(imageCV.cols) / 4.0F){
         circleBuffer.valid = 1;
         circleBuffer.cameraID = 1;
         circleBuffer.planetIds[0] = 2;

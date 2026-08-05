@@ -270,7 +270,8 @@ double WaypointReference::pullScalar(std::istringstream *iss) {
 /*! linearly interpolate between two vectors v_a and v_b
 */
 void WaypointReference::linearInterpolation(uint64_t t_a, double v_a[3], uint64_t t_b, double v_b[3], uint64_t t, double *v) {
+	const double interpolationFraction = diffNanoToSec(t, t_a) / diffNanoToSec(t_b, t_a);
 	for (int i = 0; i < 3; i++) {
-        *(v+i) = v_a[i] + (v_b[i] - v_a[i]) / (t_b - t_a) * (t - t_a);
+        *(v+i) = v_a[i] + (v_b[i] - v_a[i]) * interpolationFraction;
     }
 }

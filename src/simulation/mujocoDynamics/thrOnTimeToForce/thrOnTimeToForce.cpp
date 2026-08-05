@@ -43,13 +43,13 @@ void ThrOnTimeToForce::Reset(uint64_t CurrentSimNanos)
     }
 
     this->firingTimeRemaining.assign(this->numThr, 0.0);
-    this->previousUpdateTimeSec = CurrentSimNanos * NANO2SEC;
+    this->previousUpdateTimeSec = nanoToSec(CurrentSimNanos);
     this->prevCommandWriteNanos = 0xFFFFFFFFFFFFFFFF;
 }
 
 void ThrOnTimeToForce::UpdateState(uint64_t CurrentSimNanos)
 {
-    const double currentTimeSec = CurrentSimNanos * NANO2SEC;
+    const double currentTimeSec = nanoToSec(CurrentSimNanos);
     bool newOnTimeCmd = false;
 
     // if a new on-time command message has been written since the last update, latch the new command and reset timers

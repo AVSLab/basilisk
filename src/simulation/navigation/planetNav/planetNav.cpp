@@ -117,7 +117,7 @@ void PlanetNav::computeErrors(uint64_t CurrentSimNanos)
     double timeStep;
     StateMatrix localProp = this->AMatrix;
     //! - Compute timestep since the last call
-    timeStep = (CurrentSimNanos - this->prevTime) * NANO2SEC;
+    timeStep = diffNanoToSec(CurrentSimNanos, this->prevTime);
 
     localProp(0, 3) *= timeStep; // position/velocity cross correlation terms
     localProp(1, 4) *= timeStep; // position/velocity cross correlation terms

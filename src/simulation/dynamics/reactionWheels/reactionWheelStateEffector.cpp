@@ -558,7 +558,7 @@ void ReactionWheelStateEffector::UpdateState(uint64_t CurrentSimNanos)
 {
 	//! - Read the inputs and then call ConfigureRWRequests to set up dynamics
 	ReadInputs();
-    ConfigureRWRequests(CurrentSimNanos*NANO2SEC);
+    ConfigureRWRequests(nanoToSec(CurrentSimNanos));
     WriteOutputMessages(CurrentSimNanos);
 //
 }

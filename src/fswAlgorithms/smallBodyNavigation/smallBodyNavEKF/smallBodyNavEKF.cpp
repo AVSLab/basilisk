@@ -191,26 +191,27 @@ void SmallBodyNavEKF::predict(uint64_t CurrentSimNanos){
 */
 void SmallBodyNavEKF::aprioriState(uint64_t CurrentSimNanos){
     const StateVector currentState = x_hat_k;
+    const double timeStep = diffNanoToSec(CurrentSimNanos, prevTime);
 
     /* First RK4 step */
     computeEquationsOfMotion(currentState, Phi_k);
-    k1 = (CurrentSimNanos-prevTime)*NANO2SEC*x_hat_dot_k;
-    k1_phi = (CurrentSimNanos-prevTime)*NANO2SEC*Phi_dot_k;
+    k1 = timeStep*x_hat_dot_k;
+    k1_phi = timeStep*Phi_dot_k;
 
     /* Second RK4 step */
     computeEquationsOfMotion(currentState + k1/2, Phi_k + k1_phi/2);
-    k2 = (CurrentSimNanos-prevTime)*NANO2SEC*x_hat_dot_k;
-    k2_phi = (CurrentSimNanos-prevTime)*NANO2SEC*Phi_dot_k;
+    k2 = timeStep*x_hat_dot_k;
+    k2_phi = timeStep*Phi_dot_k;
 
     /* Third RK4 step */
     computeEquationsOfMotion(currentState + k2/2, Phi_k + k2_phi/2);
-    k3 = (CurrentSimNanos-prevTime)*NANO2SEC*x_hat_dot_k;
-    k3_phi = (CurrentSimNanos-prevTime)*NANO2SEC*Phi_dot_k;
+    k3 = timeStep*x_hat_dot_k;
+    k3_phi = timeStep*Phi_dot_k;
 
     /* Fourth RK4 step */
     computeEquationsOfMotion(currentState + k3, Phi_k + k3_phi);
-    k4 = (CurrentSimNanos-prevTime)*NANO2SEC*x_hat_dot_k;
-    k4_phi = (CurrentSimNanos-prevTime)*NANO2SEC*Phi_dot_k;
+    k4 = timeStep*x_hat_dot_k;
+    k4_phi = timeStep*Phi_dot_k;
 
     /* Perform the RK4 integration on the dynamics and STM */
     x_hat_k1_ = currentState + (k1 + 2*k2 + 2*k3 + k4)/6;

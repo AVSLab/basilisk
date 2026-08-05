@@ -117,7 +117,7 @@ void PowerNodeBase::UpdateState(uint64_t CurrentSimNanos)
     //! - Only update the power status if we were able to read in messages.
     if(this->readMessages())
     {
-        this->computePowerStatus(CurrentSimNanos*NANO2SEC);
+        this->computePowerStatus(nanoToSec(CurrentSimNanos));
     } else {
         /* if the read was not successful then zero the output message */
         this->nodePowerMsg = this->nodePowerOutMsg.zeroMsgPayload;

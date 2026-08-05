@@ -65,7 +65,7 @@ void PrescribedLinearTranslation::UpdateState(uint64_t callTime) {
     The parameters used to profile the translation are updated in this statement. */
     if (this->linearTranslationRigidBodyInMsg.timeWritten() <= callTime && this->convergence) {
         // Update the initial time as the current simulation time
-        this->tInit = callTime * NANO2SEC;
+        this->tInit = nanoToSec(callTime);
 
         // Update the initial hub-relative position
         this->transPosInit = this->transPos;
@@ -85,7 +85,7 @@ void PrescribedLinearTranslation::UpdateState(uint64_t callTime) {
     }
 
     // Compute the scalar translational states at the current simulation time
-    this->computeCurrentState(callTime * NANO2SEC);
+    this->computeCurrentState(nanoToSec(callTime));
 
     // Write the module output messages
     this->writeOutputMessages(callTime);

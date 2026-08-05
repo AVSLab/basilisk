@@ -34,6 +34,7 @@
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/astroConstants.h"
+#include "architecture/utilities/macroDefinitions.h"
 
 /*! The constructor for the Camera module. It also sets some default values at its creation.  */
 Camera::Camera()
@@ -168,8 +169,10 @@ void Camera::addSaltPepper(const cv::Mat& mSrc, cv::Mat &mDst, float pa, float p
     cv::RNG rng;
 
     /*!  Determines the amount of hot/dead pixels based on the input probabilities.*/
-    int amount1 = (int) (mSrc.rows * mSrc.cols * pa);
-    int amount2 = (int) (mSrc.rows * mSrc.cols * pb);
+    int amount1 = static_cast<int>(static_cast<float>(mSrc.rows) *
+                                   static_cast<float>(mSrc.cols) * pa);
+    int amount2 = static_cast<int>(static_cast<float>(mSrc.rows) *
+                                   static_cast<float>(mSrc.cols) * pb);
 
     cv::Mat mSaltPepper = cv::Mat(mSrc.size(), mSrc.type());
     mSrc.convertTo(mSaltPepper, mSrc.type());
@@ -210,7 +213,8 @@ void Camera::addSaltPepper(const cv::Mat& mSrc, cv::Mat &mDst, float pa, float p
 void Camera::addCosmicRay(const cv::Mat& mSrc, cv::Mat &mDst, float probThreshhold, double randOffset, int maxSize){
     /*! Uses the current sim time and the random offset to ensure a different ray every time.*/
     uint64 initValue = this->localCurrentSimNanos;
-    cv::RNG rng((uint64) (initValue + time(0) + randOffset));
+    uint64 wallClockTime = static_cast<uint64>(time(nullptr));
+    cv::RNG rng(initValue + wallClockTime + static_cast<uint64>(randOffset));
 
     float prob = (float) (rng.uniform(0.0, 1.0));
     if (prob > probThreshhold) {
@@ -354,7 +358,7 @@ void Camera::UpdateState(uint64_t currentSimNanos)
     cv::Mat blurred;
     bool usingFilename = false;
     if (this->saveDir != ""){
-        localPath = this->saveDir + std::to_string(currentSimNanos*1E-9) + ".png";
+        localPath = this->saveDir + std::to_string(nanoToSec(currentSimNanos)) + ".png";
     }
     /*! - Read in the bitmap*/
     if(this->imageInMsg.isLinked())
@@ -411,18 +415,18 @@ void Camera::UpdateState(uint64_t currentSimNanos)
     if (usingFilename) {
         imageOut.timeTag = currentSimNanos;
         imageOut.cameraID = this->cameraID;
-        imageOut.imageType = blurred.channels();
+        imageOut.imageType = static_cast<int8_t>(blurred.channels());
     } else {
         imageOut.timeTag = imageBuffer.timeTag;
         imageOut.cameraID = imageBuffer.cameraID;
         imageOut.imageType = imageBuffer.imageType;
     }
-    imageOut.imageBufferLength = (int32_t)buf.size();
-    this->pointImageOut = malloc(imageOut.imageBufferLength*sizeof(char));
+    imageOut.imageBufferLength = static_cast<int32_t>(buf.size());
+    this->pointImageOut = malloc(buf.size() * sizeof(char));
     if (this->pointImageOut == nullptr) {
         bskLogger.bskError("camera: failed to allocate image output buffer.");
     }
-    memcpy(this->pointImageOut, buf.data(), imageOut.imageBufferLength*sizeof(char));
+    memcpy(this->pointImageOut, buf.data(), buf.size() * sizeof(char));
     imageOut.imagePointer = this->pointImageOut;
 
     this->imageOutMsg.write(&imageOut, this->moduleID, currentSimNanos);

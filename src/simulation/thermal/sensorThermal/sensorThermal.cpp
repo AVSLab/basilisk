@@ -110,7 +110,7 @@ void SensorThermal::UpdateState(uint64_t CurrentSimNanos)
     this->readMessages();
 
     //! - Evaluate model
-    this->evaluateThermalModel(CurrentSimNanos*NANO2SEC);
+    this->evaluateThermalModel(nanoToSec(CurrentSimNanos));
 
     //! - Write output
     this->writeMessages(CurrentSimNanos);
@@ -176,7 +176,8 @@ void SensorThermal::evaluateThermalModel(double CurrentSimSeconds) {
     this->computeSunData();
 
     //! - Compute Q_in
-    this->Q_in = this->illuminationFactor * this->S * this->projectedArea * this->sensorAbsorptivity + this->sensorPowerDraw * this->sensorPowerStatus;
+    this->Q_in = this->illuminationFactor * this->S * this->projectedArea * this->sensorAbsorptivity
+                 + this->sensorPowerDraw * static_cast<double>(this->sensorPowerStatus);
 
     //! - Compute Q_out
     this->Q_out = this->sensorArea * this->sensorEmissivity * this->boltzmannConst * pow((this->sensorTemp + 273.15), 4);

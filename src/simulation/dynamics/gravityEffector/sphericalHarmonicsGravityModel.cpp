@@ -41,16 +41,18 @@ std::optional<std::string> SphericalHarmonicsGravityModel::initializeParameters(
         // Diagonal elements of A_bar
         if (i == 0) { aRow[i] = 1.0; }
         else {
-            aRow[i] = sqrt(double((2 * i + 1) * getK(i)) / (2 * i * getK(i - 1))) *
+            aRow[i] = sqrt(static_cast<double>(2 * i + 1) * getK(i) /
+                           (static_cast<double>(2 * i) * getK(i - 1))) *
                       this->aBar[i - 1][i - 1];
         }
         n1Row.resize(i + 1, 0.0);
         n2Row.resize(i + 1, 0.0);
         for (size_t m = 0; m <= i; m++) {
             if (i >= m + 2) {
-                n1Row[m] = sqrt(double((2 * i + 1) * (2 * i - 1)) / ((i - m) * (i + m)));
-                n2Row[m] = sqrt(double((i + m - 1) * (2 * i + 1) * (i - m - 1)) /
-                                ((i + m) * (i - m) * (2 * i - 3)));
+                n1Row[m] = sqrt(static_cast<double>((2 * i + 1) * (2 * i - 1)) /
+                                static_cast<double>((i - m) * (i + m)));
+                n2Row[m] = sqrt(static_cast<double>((i + m - 1) * (2 * i + 1) * (i - m - 1)) /
+                                static_cast<double>((i + m) * (i - m) * (2 * i - 3)));
             }
         }
         this->n1.push_back(n1Row);
@@ -64,9 +66,14 @@ std::optional<std::string> SphericalHarmonicsGravityModel::initializeParameters(
         nq1Row.resize(l + 1, 0.0);
         nq2Row.resize(l + 1, 0.0);
         for (size_t m = 0; m <= l; m++) {
-            if (m < l) { nq1Row[m] = sqrt(double((l - m) * getK(m) * (l + m + 1)) / getK(m + 1)); }
-            nq2Row[m] = sqrt(double((l + m + 2) * (l + m + 1) * (2 * l + 1) * getK(m)) /
-                             ((2 * l + 3) * getK(m + 1)));
+            if (m < l) {
+                nq1Row[m] = sqrt(static_cast<double>(l - m) * getK(m) *
+                                 static_cast<double>(l + m + 1) / getK(m + 1));
+            }
+            nq2Row[m] = sqrt(static_cast<double>(l + m + 2) *
+                             static_cast<double>(l + m + 1) *
+                             static_cast<double>(2 * l + 1) * getK(m) /
+                             (static_cast<double>(2 * l + 3) * getK(m + 1)));
         }
         this->nQuot1.push_back(nq1Row);
         this->nQuot2.push_back(nq2Row);
@@ -120,7 +127,8 @@ SphericalHarmonicsGravityModel::computeField(const Eigen::Vector3d& position_pla
     for (size_t l = 1; l <= degree + 1; l++) {
         // Diagonal terms are computed in initializeParameters()
         //  Low diagonal terms
-        this->aBar[l][l - 1] = sqrt(double((2 * l) * getK(l - 1)) / getK(l)) * this->aBar[l][l] * u;
+        this->aBar[l][l - 1] = sqrt(static_cast<double>(2 * l) * getK(l - 1) / getK(l)) *
+                               this->aBar[l][l] * u;
     }
 
     // Lower terms of A_bar
@@ -181,8 +189,8 @@ SphericalHarmonicsGravityModel::computeField(const Eigen::Vector3d& position_pla
                 F = this->sBar[l][m] * rE[m - 1] - this->cBar[l][m] * iM[m - 1];
             }
 
-            sum_a1 = sum_a1 + m * this->aBar[l][m] * E;
-            sum_a2 = sum_a2 + m * this->aBar[l][m] * F;
+            sum_a1 = sum_a1 + static_cast<double>(m) * this->aBar[l][m] * E;
+            sum_a2 = sum_a2 + static_cast<double>(m) * this->aBar[l][m] * F;
             if (m < l) { sum_a3 = sum_a3 + this->nQuot1[l][m] * this->aBar[l][m + 1] * D; }
             sum_a4 = sum_a4 + this->nQuot2[l][m] * this->aBar[l + 1][m + 1] * D;
         }

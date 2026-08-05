@@ -214,7 +214,7 @@ void ImuSensor::setRoundDirection(roundDirection_t aRound, roundDirection_t oRou
 void ImuSensor::applySensorDiscretization(uint64_t CurrentTime)
 {
 
-    double dt = (CurrentTime - this->PreviousTime)*1.0E-9;
+    double dt = diffNanoToSec(CurrentTime, this->PreviousTime);
 
     if(this->aDisc.LSB.any()) //If aLSB has been set.
     {
@@ -268,7 +268,7 @@ void ImuSensor::applySensorErrors(uint64_t CurrentTime)
     Eigen::Vector3d AccelErrors; //linear noise plus bias
     double dt; // [s] time step
 
-    dt = (CurrentTime - this->PreviousTime)*1.0E-9;
+    dt = diffNanoToSec(CurrentTime, this->PreviousTime);
 
     OmegaErrors = this->navErrorsGyro + this->senRotBias;
     this->omega_PN_P_out += OmegaErrors;
@@ -301,7 +301,7 @@ void ImuSensor::computeSensorErrors()
  */
 void ImuSensor::applySensorSaturation(uint64_t CurrentTime)
 {
-	double  dt = (CurrentTime - PreviousTime)*1.0E-9;
+	double  dt = diffNanoToSec(CurrentTime, PreviousTime);
 
     Eigen::Vector3d omega_PN_P_in = this->omega_PN_P_out;
     this->omega_PN_P_out = this->oSat.saturate(omega_PN_P_in);

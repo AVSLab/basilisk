@@ -279,7 +279,7 @@ void StripLocation::updateTargetPositionPCPF(uint64_t currentClock)
         }
 
         double line_speed_ratio = this->lengthCentralLineUpdated / this->acquisitionSpeed;
-        double tau = this->durationStripImaging / line_speed_ratio;
+        double tau = static_cast<double>(this->durationStripImaging) / line_speed_ratio;
         double tauClamped = std::max(0.0, std::min(1.0, tau));
 
         //Update of the position vector of the target point on the central line an update the dcm_LP
@@ -344,7 +344,7 @@ void StripLocation::computeAccess()
             accessMsgIt->el_dot = (v_BL_L[2]/xy_norm - r_BL_L[2]*(r_BL_L[0]*v_BL_L[0] + r_BL_L[1]*v_BL_L[1])/pow(xy_norm,3))/(1+pow(r_BL_L[2]/xy_norm,2));
         }
 
-        if( (viewAngle > this->minimumElevation) && (r_BL_mag <= this->maximumRange || this->maximumRange < 0)&& (this->durationStripImaging >= this->preImagingTime)){
+        if( (viewAngle > this->minimumElevation) && (r_BL_mag <= this->maximumRange || this->maximumRange < 0)&& (static_cast<double>(this->durationStripImaging) >= this->preImagingTime)){
             accessMsgIt->hasAccess = 1;
         }
         else

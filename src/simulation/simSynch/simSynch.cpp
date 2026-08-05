@@ -78,7 +78,8 @@ void ClockSynch::UpdateState(uint64_t currentSimNanos)
 	}
 
     //! - Compute the number of nanoseconds that have elapsed in the simulation
-    simTimeNano = (int64_t) ((currentSimNanos - this->startSimTimeNano)/this->accelFactor);
+    simTimeNano = static_cast<int64_t>(static_cast<double>(currentSimNanos - this->startSimTimeNano) /
+                                       this->accelFactor);
 
     //! - Compute the current time and get the actually elapsed nanoseconds since init time
 	currentTime = std::chrono::high_resolution_clock::now();
@@ -91,7 +92,7 @@ void ClockSynch::UpdateState(uint64_t currentSimNanos)
     {
         this->outputData.overrunCounter++;
     }
-	this->outputData.initTimeDelta = initTimeDeltaNano * NANO2SEC;
+	this->outputData.initTimeDelta = static_cast<double>(initTimeDeltaNano) * NANO2SEC;
 
     /*! - Loop behavior is fairly straightforward.  While we haven't reached the specified accuracy:
             -# Compute the current time
@@ -117,6 +118,6 @@ void ClockSynch::UpdateState(uint64_t currentSimNanos)
 
 	if (this->displayTime)
 	{
-        bskLogger.bskLog(BSK_INFORMATION, "Seconds Elapsed: %f", currentSimNanos*NANO2SEC);
+        bskLogger.bskLog(BSK_INFORMATION, "Seconds Elapsed: %f", nanoToSec(currentSimNanos));
 	}
 }

@@ -269,7 +269,7 @@ void MagneticFieldBase::UpdateState(uint64_t CurrentSimNanos)
     //! - update local neutral density information
     if(this->readMessages())
     {
-        updateLocalMagField(CurrentSimNanos*NANO2SEC);
+        updateLocalMagField(nanoToSec(CurrentSimNanos));
     }
 
     //! - write out neutral density message

@@ -109,11 +109,11 @@ void Update_opNavPoint(OpNavPointConfig *configData, uint64_t callTime,
     localImuDataInBuffer = NavAttMsg_C_read(&configData->imuInMsg);
     cameraSpecs = CameraConfigMsg_C_read(&configData->cameraConfigInMsg);
 
-    if (configData->lastTime==0){
-        configData->lastTime=callTime*1E-9;
+    if (configData->lastTime == 0) {
+        configData->lastTime = callTime;
         v3SetZero(configData->currentHeading_N);
     }
-    timeWithoutMeas = callTime*1E-9 - configData->lastTime;
+    timeWithoutMeas = diffNanoToSec(callTime, configData->lastTime);
 
     v3Copy(localImuDataInBuffer.omega_BN_B, omega_BN_B);
     MRP2C(localImuDataInBuffer.sigma_BN, dcm_BN);
@@ -123,7 +123,7 @@ void Update_opNavPoint(OpNavPointConfig *configData, uint64_t callTime,
     if((opNavMsg.valid == 1 || v3IsZero(configData->currentHeading_N, 1E-10) == 0) && (timeWithoutMeas < configData->timeOut)){
         /*! - If a valid image is in save the heading direction for future use*/
         if (opNavMsg.valid == 1){
-            configData->lastTime = callTime*1E-9;
+            configData->lastTime = callTime;
             v3Copy(opNavMsg.r_BN_C, currentHeading_C);
             m33tMultV3(dcm_CN, opNavMsg.r_BN_C, configData->currentHeading_N);
             v3Scale(-1, currentHeading_C, currentHeading_C);

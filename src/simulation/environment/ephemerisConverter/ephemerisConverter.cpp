@@ -84,7 +84,7 @@ void EphemerisConverter::convertEphemData(uint64_t clockNow)
         v3Copy(this->spiceInBuffers.at(c).VelocityVector,
                this->ephemOutBuffers.at(c).v_BdyZero_N);
 
-        this->ephemOutBuffers.at(c).timeTag = this->spiceInMsgs.at(c).timeWritten()*1.0E-9;
+        this->ephemOutBuffers.at(c).timeTag = nanoToSec(this->spiceInMsgs.at(c).timeWritten());
 
         /* Compute sigma_BN */
         dcm_BN = cArray2EigenMatrix3d(*this->spiceInBuffers.at(c).J20002Pfix);

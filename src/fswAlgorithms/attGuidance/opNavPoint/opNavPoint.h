@@ -42,7 +42,7 @@ typedef struct {
     double smallAngle;       /*!< -- rad An angle value that specifies what is near 0 or 180 degrees */
     double eHat180_B[3];     /*!< -- Eigen axis to use if commanded axis is 180 from opNav axis */
     double opNavMnvrVec[3];    /*!< -- The eigen axis that we want to rotate on to see target*/
-    double lastTime; /*!< -- Last time a measurement came in to integrate pointing */
+    uint64_t lastTime; /*!< [ns] Last time a measurement came in to integrate pointing */
     double timeOut;  /*!< -- If no images were seen in this much time, stop using past values */
     double alignAxis_C[3];    /*!< -- Desired camera vector to point at target*/
     double currentHeading_N[3];   /*!< -- Previous heading command in intertial Frame*/
@@ -56,7 +56,7 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
     void SelfInit_opNavPoint(OpNavPointConfig *configData, int64_t moduleID);
     void Update_opNavPoint(OpNavPointConfig *configData, uint64_t callTime,
         int64_t moduleID);

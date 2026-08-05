@@ -71,7 +71,7 @@ void Reset_headingSuKF(HeadingSuKFConfig *configData, uint64_t callTime,
 
 
     /*! - Initialize filter parameters to max values */
-    configData->timeTag = callTime*NANO2SEC;
+    configData->timeTag = nanoToSec(callTime);
     configData->dt = 0.0;
     configData->numStates = HEAD_N_STATES_SWITCH;
     configData->countHalfSPs = HEAD_N_STATES_SWITCH;
@@ -178,7 +178,7 @@ void Update_headingSuKF(HeadingSuKFConfig *configData, uint64_t callTime,
 
     /*! - If the time tag from the measured data is new compared to previous step,
           propagate and update the filter*/
-    newTimeTag = ClockTime * NANO2SEC;
+    newTimeTag = nanoToSec(ClockTime);
     if(newTimeTag >= configData->timeTag && isWritten && configData->opnavInBuffer.valid ==1)
     {
         headingSuKFTimeUpdate(configData, newTimeTag);
@@ -187,7 +187,7 @@ void Update_headingSuKF(HeadingSuKFConfig *configData, uint64_t callTime,
 
     /*! - If current clock time is further ahead than the measured time, then
           propagate to this current time-step*/
-    newTimeTag = callTime*NANO2SEC;
+    newTimeTag = nanoToSec(callTime);
     if(newTimeTag > configData->timeTag)
     {
         headingSuKFTimeUpdate(configData, newTimeTag);

@@ -432,7 +432,7 @@ void CSSConstellation::UpdateState(uint64_t CurrentSimNanos)
         this->outputBuffer.CosValue[itp - this->sensorList.begin()] = it->sensedValue;
 
     }
-    this->outputBuffer.timeTag = (double) (CurrentSimNanos * NANO2SEC);
+    this->outputBuffer.timeTag = nanoToSec(CurrentSimNanos);
     this->constellationOutMsg.write(&this->outputBuffer, this->moduleID, CurrentSimNanos);
 }
 

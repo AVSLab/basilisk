@@ -30,6 +30,7 @@
 
 /* Support files.  Be sure to use the absolute path relative to Basilisk directory. */
 #include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 
 
@@ -57,7 +58,7 @@ void Update_rasterManager(rasterManagerConfig *configData, uint64_t callTime, in
         configData->mnvrStartTime = callTime;
         configData->mnvrActive = 1;
     }
-    currentMnvrTime = (callTime - configData->mnvrStartTime) * 1E-9;
+    currentMnvrTime = diffNanoToSec(callTime, configData->mnvrStartTime);
     if (currentMnvrTime < configData->rasterTimes[configData->scanSelector])
     {
         v3Copy(&configData->scanningAngles[3 * configData->scanSelector], configData->attOutSet.state);

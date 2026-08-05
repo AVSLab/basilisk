@@ -200,7 +200,7 @@ void Update_dvAccumulation(DVAccumulationData *configData, uint64_t callTime, in
 
     /*! - Create output message */
 
-    outputData.timeTag = configData->previousTime*NANO2SEC;
+    outputData.timeTag = nanoToSec(configData->previousTime);
     v3Copy(configData->vehAccumDV_B, outputData.vehAccumDV);
 
     /*! - write accumulated Dv message */

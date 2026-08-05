@@ -1217,7 +1217,8 @@ double mDeterminant(void *mx, size_t dim)
                     ii++;
                 }
             }
-            result += pow(-1.0, 1.0 + k + 1.0) * m_mx[MXINDEX(dim, 0, k)] * mDeterminant(mxTemp, dim - 1);
+            double cofactorSign = k % 2 == 0 ? 1.0 : -1.0;
+            result += cofactorSign * m_mx[MXINDEX(dim, 0, k)] * mDeterminant(mxTemp, dim - 1);
         }
     }
     return(result);
@@ -1265,7 +1266,8 @@ void mCofactor(void *mx, size_t dim, void *result)
             det = mDeterminant(m_mxij, dim - 1);
 
             /* Fill in the elements of the cofactor */
-            m_result[MXINDEX(dim, i, j)] = pow(-1.0, i + j + 2.0) * det;
+            double cofactorSign = (i + j) % 2 == 0 ? 1.0 : -1.0;
+            m_result[MXINDEX(dim, i, j)] = cofactorSign * det;
         }
     }
 

@@ -167,6 +167,7 @@ long HaslamMap::ang2pix_ring(double theta, double phi) const {
     double z  = std::cos(theta);
     double za = std::abs(z);
     double tt = phi / (0.5 * M_PI);
+    const double nside = static_cast<double>(this->nside);
 
     long nl2  = 2 * this->nside;
     long nl4  = 4 * this->nside;
@@ -175,8 +176,8 @@ long HaslamMap::ang2pix_ring(double theta, double phi) const {
 
     if (za <= 2.0/3.0) {
         // Equatorial region
-        long jp     = long(this->nside * (0.5 + tt - z * 0.75));
-        long jm     = long(this->nside * (0.5 + tt + z * 0.75));
+        long jp     = long(nside * (0.5 + tt - z * 0.75));
+        long jm     = long(nside * (0.5 + tt + z * 0.75));
         long ir     = this->nside + 1 + jp - jm;
         long kshift = (ir % 2 == 0) ? 1 : 0;
         long ip     = ((jp + jm - this->nside + kshift + 1) / 2) + 1;
@@ -186,10 +187,10 @@ long HaslamMap::ang2pix_ring(double theta, double phi) const {
         // Polar caps
         double tp  = tt - std::floor(tt);
         double tmp = std::sqrt(3.0 * (1.0 - za));
-        long jp    = std::min(this->nside - 1, long(this->nside * tp * tmp));
-        long jm    = std::min(this->nside - 1, long(this->nside * (1.0 - tp) * tmp));
+        long jp    = std::min(this->nside - 1, long(nside * tp * tmp));
+        long jm    = std::min(this->nside - 1, long(nside * (1.0 - tp) * tmp));
         long ir    = jp + jm + 1;
-        long ip    = long(tt * ir) + 1;
+        long ip    = long(tt * static_cast<double>(ir)) + 1;
         if (ip > 4 * ir) ip -= 4 * ir;
 
         if (z > 0) {
@@ -205,28 +206,31 @@ void HaslamMap::pix2ang_ring(long ipix, double& theta, double& phi) const {
     long nl2  = 2 * this->nside;
     long nl4  = 4 * this->nside;
     long ncap = nl2 * (this->nside - 1);
+    const double nside = static_cast<double>(this->nside);
 
     if (ipix < ncap) {
         // North polar cap
-        long iring = long(0.5 * (1 + std::sqrt(1 + 2 * ipix)));
+        long iring = long(0.5 * (1.0 + std::sqrt(1.0 + 2.0 * static_cast<double>(ipix))));
         long iphi  = ipix + 1 - 2 * iring * (iring - 1);
-        theta      = std::acos(1.0 - iring * iring / (3.0 * this->nside * this->nside));
-        phi        = (iphi - 0.5) * M_PI / (2.0 * iring);
+        const double iringDouble = static_cast<double>(iring);
+        theta      = std::acos(1.0 - iringDouble * iringDouble / (3.0 * nside * nside));
+        phi        = (static_cast<double>(iphi) - 0.5) * M_PI / (2.0 * iringDouble);
     } else if (ipix < this->npix - ncap) {
         // Equatorial region
         long ip     = ipix - ncap;
         long iring  = ip / nl4 + this->nside;
         long iphi   = ip % nl4 + 1;
         double fodd = ((iring + this->nside) % 2) ? 1.0 : 0.5;
-        theta       = std::acos((nl2 - iring) / (1.5 * this->nside));
-        phi         = (iphi - fodd) * M_PI / nl2;
+        theta       = std::acos(static_cast<double>(nl2 - iring) / (1.5 * nside));
+        phi         = (static_cast<double>(iphi) - fodd) * M_PI / static_cast<double>(nl2);
     } else {
         // South polar cap
         long ip    = this->npix - ipix;
-        long iring = long(0.5 * (1 + std::sqrt(2 * ip - 1)));
+        long iring = long(0.5 * (1.0 + std::sqrt(2.0 * static_cast<double>(ip) - 1.0)));
         long iphi  = 4 * iring + 1 - (ip - 2 * iring * (iring - 1));
-        theta      = std::acos(-1.0 + iring * iring / (3.0 * this->nside * this->nside));
-        phi        = (iphi - 0.5) * M_PI / (2.0 * iring);
+        const double iringDouble = static_cast<double>(iring);
+        theta      = std::acos(-1.0 + iringDouble * iringDouble / (3.0 * nside * nside));
+        phi        = (static_cast<double>(iphi) - 0.5) * M_PI / (2.0 * iringDouble);
     }
 }
 

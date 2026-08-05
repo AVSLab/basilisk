@@ -27,6 +27,7 @@
 
 /* modify the path to reflect the new module names */
 #include "houghCircles.h"
+#include "architecture/utilities/macroDefinitions.h"
 
 
 /*! The constructor for the HoughCircles module. It also sets some default values at its creation.  */
@@ -82,9 +83,9 @@ void HoughCircles::UpdateState(uint64_t CurrentSimNanos)
     cv::Mat imageCV, blurred;
     int circlesFound=0;
     if (this->saveDir != ""){
-        dirName = this->saveDir + std::to_string(CurrentSimNanos*1E-9) + ".jpg";
+        dirName = this->saveDir + std::to_string(nanoToSec(CurrentSimNanos)) + ".jpg";
     }
-    else{dirName = "./"+ std::to_string(CurrentSimNanos*1E-9) + ".jpg";}
+    else{dirName = "./"+ std::to_string(nanoToSec(CurrentSimNanos)) + ".jpg";}
     /*! - Read in the bitmap*/
     if(this->imageInMsg.isLinked())
     {

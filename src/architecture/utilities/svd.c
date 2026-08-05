@@ -74,7 +74,7 @@ int svdcmp(double *mx, size_t dim1, size_t dim2, double *w, double *v) {
         if (i < dim1) {
             for (k = i; k < dim1; k++)
                 scale += fabs(mx[MXINDEX(dim2, k, i)]);
-            if (scale) {
+            if (scale != 0.0) {
                 for (k = i; k < dim1; k++) {
                     mx[MXINDEX(dim2, k, i)] /= scale;
                     s += mx[MXINDEX(dim2, k, i)] * mx[MXINDEX(dim2, k, i)];
@@ -99,7 +99,7 @@ int svdcmp(double *mx, size_t dim1, size_t dim2, double *w, double *v) {
         if (i < dim1 && i != dim2 - 1) {
             for (k = l; k < dim2; k++)
                 scale += fabs(mx[MXINDEX(dim2, i, k)]);
-            if (scale) {
+            if (scale != 0.0) {
                 for (k = l; k < dim2; k++) {
                     mx[MXINDEX(dim2, i, k)] /= scale;
                     s += mx[MXINDEX(dim2, i, k)] * mx[MXINDEX(dim2, i, k)];
@@ -125,7 +125,7 @@ int svdcmp(double *mx, size_t dim1, size_t dim2, double *w, double *v) {
 
     for (i = (int) dim2 - 1; i >= 0; i--) {
         if (i < dim2 - 1) {
-            if (g) {
+            if (g != 0.0) {
                 for (j = l; j < dim2; j++)
                     v[MXINDEX(dim2, j, i)] = (mx[MXINDEX(dim2, i, j)] / mx[MXINDEX(dim2, i, l)]) / g;
                 for (j = l; j < dim2; j++) {
@@ -148,7 +148,7 @@ int svdcmp(double *mx, size_t dim1, size_t dim2, double *w, double *v) {
         g = w[i];
         for (j = l; j < dim2; j++)
             mx[MXINDEX(dim2, i, j)] = 0.0;
-        if (g) {
+        if (g != 0.0) {
             g = 1.0 / g;
             for (j = l; j < dim2; j++) {
                 for (s = 0.0, k = l; k < dim1; k++)
@@ -241,7 +241,7 @@ int svdcmp(double *mx, size_t dim1, size_t dim2, double *w, double *v) {
                 }
                 z = pythag(f, h);
                 w[j] = z;
-                if (z) {
+                if (z != 0.0) {
                     z = 1.0 / z;
                     c = f * z;
                     s = h * z;
