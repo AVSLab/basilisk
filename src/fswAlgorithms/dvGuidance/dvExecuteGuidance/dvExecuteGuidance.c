@@ -83,7 +83,7 @@ void Update_dvExecuteGuidance(dvExecuteGuidanceConfig *configData, uint64_t call
     navData = NavTransMsg_C_read(&configData->navDataInMsg);
     localBurnData = DvBurnCmdMsg_C_read(&configData->burnDataInMsg);
 
-    burnTime = ((int64_t) callTime - (int64_t) localBurnData.burnStartTime)*1.0E-9;
+    burnTime = diffNanoToSec(callTime, localBurnData.burnStartTime);
     v3SetZero(burnAccum);
     if((configData->burnExecuting == 0 && burnTime >= 0.0)
         && configData->burnComplete != 1)

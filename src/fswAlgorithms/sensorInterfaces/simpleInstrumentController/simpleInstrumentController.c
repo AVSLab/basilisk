@@ -155,7 +155,7 @@ Update_simpleInstrumentController(simpleInstrumentControllerConfig* configData, 
                                 "simpleInstrumentController: allowedTime is negative and has been set to zero.");
                     }
 
-                    double elapsedTime = callTime - configData->constraintStartTime;
+                    double elapsedTime = (double) callTime - configData->constraintStartTime;
 
                     // Determine the effective time to image: cannot exceed allowedTime
                     double effectiveImageTime = (configData->acquisitionTime > configData->allowedTime)

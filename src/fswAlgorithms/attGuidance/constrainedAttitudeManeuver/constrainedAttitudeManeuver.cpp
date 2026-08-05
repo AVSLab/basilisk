@@ -262,7 +262,7 @@ trajectory and writes the output message.
  */
 void ConstrainedAttitudeManeuver::UpdateState(uint64_t CurrentSimNanos)
 {
-	double t = CurrentSimNanos * 1e-9;
+	double t = nanoToSec(CurrentSimNanos);
 	double sigma_RN[3], sigmaDot_RN[3], sigmaDDot_RN[3], omega_RN_R[3], omegaDot_RN_R[3];
 	this->Output.getData(t, sigma_RN, sigmaDot_RN, sigmaDDot_RN);
 

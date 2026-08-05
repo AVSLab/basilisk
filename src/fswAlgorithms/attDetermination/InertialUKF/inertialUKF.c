@@ -71,7 +71,7 @@ void Reset_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
     configData->localConfigData = VehicleConfigMsg_C_read(&configData->massPropsInMsg);
 
     /*! - Initialize filter parameters to max values */
-    configData->timeTag = callTime*NANO2SEC;  /* [s] */
+    configData->timeTag = nanoToSec(callTime);  /* [s] */
     configData->dt = 0.0;  /* [s] */
     configData->numStates = AKF_N_STATES;     /* [-] */
     configData->countHalfSPs = AKF_N_STATES;  /* [-] */
@@ -91,18 +91,18 @@ void Reset_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
 
     /*! - Set lambda/gamma to standard value for unscented Kalman filters */
     configData->lambdaVal = configData->alpha*configData->alpha*
-        (configData->numStates + configData->kappa) - configData->numStates;  /* [-] */
-    configData->gamma = sqrt(configData->numStates + configData->lambdaVal);  /* [-] */
+        ((double) configData->numStates + configData->kappa) - (double) configData->numStates;  /* [-] */
+    configData->gamma = sqrt((double) configData->numStates + configData->lambdaVal);  /* [-] */
 
 
     /*! - Set the wM/wC vectors to standard values for unscented Kalman filters*/
-    configData->wM[0] = configData->lambdaVal / (configData->numStates +
+    configData->wM[0] = configData->lambdaVal / ((double) configData->numStates +
                                                  configData->lambdaVal);  /* [-] */
-    configData->wC[0] = configData->lambdaVal / (configData->numStates +
+    configData->wC[0] = configData->lambdaVal / ((double) configData->numStates +
                                                  configData->lambdaVal) + (1 - configData->alpha*configData->alpha + configData->beta);  /* [-] */
     for (i = 1; i<configData->countHalfSPs * 2 + 1; i++)
     {
-        configData->wM[i] = 1.0 / 2.0*1.0 / (configData->numStates +
+        configData->wM[i] = 1.0 / 2.0*1.0 / ((double) configData->numStates +
                                              configData->lambdaVal);  /* [-] */
         configData->wC[i] = configData->wM[i];  /* [-] */
     }
@@ -226,9 +226,9 @@ void Update_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
         for (i=0; i<configData->STDatasStruct.numST; i++)
         {
             if(configData->isFreshST[configData->stSensorOrder[i]] &&
-               configData->stSensorIn[configData->stSensorOrder[i]].timeTag*NANO2SEC > newTimeTag)
+               nanoToSec(configData->stSensorIn[configData->stSensorOrder[i]].timeTag) > newTimeTag)
             {
-                newTimeTag = configData->stSensorIn[configData->stSensorOrder[i]].timeTag*NANO2SEC;  /* [s] */
+                newTimeTag = nanoToSec(configData->stSensorIn[configData->stSensorOrder[i]].timeTag);  /* [s] */
                 /*! - If any ST message is valid mark initialization complete*/
                 configData->firstPassComplete = 1;
             }
@@ -241,14 +241,14 @@ void Update_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
         configData->timeTag = newTimeTag;  /* [s] */
     }
 
-    configData->speedDt = (timeOfRWSpeeds - configData->timeWheelPrev)*NANO2SEC;  /* [s] */
+    configData->speedDt = diffNanoToSec(timeOfRWSpeeds, configData->timeWheelPrev);  /* [s] */
     configData->timeWheelPrev = timeOfRWSpeeds;  /* [ns] */
 
     inertialDataOutBuffer.numObs = 0;
     trackerValid = 0;
     for (i = 0; i < configData->STDatasStruct.numST; i++)
     {
-        newTimeTag = configData->stSensorIn[configData->stSensorOrder[i]].timeTag * NANO2SEC;  /* [s] */
+        newTimeTag = nanoToSec(configData->stSensorIn[configData->stSensorOrder[i]].timeTag);  /* [s] */
         int isFresh = configData->isFreshST[configData->stSensorOrder[i]];  /* [-] */
 
         /*! - If the star tracker has provided a new message compared to last time,
@@ -269,7 +269,7 @@ void Update_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
     }
     /*! - If current clock time is further ahead than the measured time, then
      propagate to this current time-step*/
-    newTimeTag = callTime*NANO2SEC;  /* [s] */
+    newTimeTag = nanoToSec(callTime);  /* [s] */
     if(trackerValid < 1)
     {
         /*! - If no star tracker measurement was available, propagate the state
@@ -577,7 +577,7 @@ void inertialUKFAggGyrData(InertialUKFConfig *configData, double prevTime,
           in the future compared to prevTime*/
     for(i=0; i<MAX_ACC_BUF_PKT; i++)
     {
-        measTime = gyrData->accPkts[i].measTime*NANO2SEC;  /* [s] */
+        measTime = nanoToSec(gyrData->accPkts[i].measTime);  /* [s] */
         if(measTime > prevTime && (measTime < minFutTime || minFutTime < 0.0))
         {
             minFutInd = (uint32_t) i;
@@ -610,7 +610,7 @@ void inertialUKFAggGyrData(InertialUKFConfig *configData, double prevTime,
         /*% operator used because gyro buffer is a ring-buffer and this operator
             wraps the index back to zero when we overflow.*/
         minFutInd = (minFutInd + 1)%MAX_ACC_BUF_PKT;
-        minFutTime = gyrData->accPkts[minFutInd].measTime*NANO2SEC;  /* [s] */
+        minFutTime = nanoToSec(gyrData->accPkts[minFutInd].measTime);  /* [s] */
         /*! - Apply low-pass filter to gyro measurements to get smoothed body rate*/
         for(j=0; j<3; j++)
         {
@@ -781,13 +781,13 @@ void inertialUKFCleanUpdate(InertialUKFConfig *configData){
     mCopy(configData->covarPrev, configData->numStates, configData->numStates, configData->covar);
 
     /*! - Reset the wM/wC vectors to standard values for unscented Kalman filters*/
-    configData->wM[0] = configData->lambdaVal / (configData->numStates +
+    configData->wM[0] = configData->lambdaVal / ((double) configData->numStates +
                                                  configData->lambdaVal);  /* [-] */
-    configData->wC[0] = configData->lambdaVal / (configData->numStates +
+    configData->wC[0] = configData->lambdaVal / ((double) configData->numStates +
                                                  configData->lambdaVal) + (1 - configData->alpha*configData->alpha + configData->beta);  /* [-] */
     for (i = 1; i<configData->countHalfSPs * 2 + 1; i++)
     {
-        configData->wM[i] = 1.0 / 2.0*1.0 / (configData->numStates +
+        configData->wM[i] = 1.0 / 2.0*1.0 / ((double) configData->numStates +
                                              configData->lambdaVal);  /* [-] */
         configData->wC[i] = configData->wM[i];  /* [-] */
     }

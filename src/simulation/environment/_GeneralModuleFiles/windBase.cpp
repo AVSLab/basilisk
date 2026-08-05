@@ -208,7 +208,7 @@ void WindBase::UpdateState(uint64_t CurrentSimNanos)
     this->envOutBuffer.clear();
 
     if (this->readMessages()) {
-        this->updateLocalWind(CurrentSimNanos * NANO2SEC);
+        this->updateLocalWind(nanoToSec(CurrentSimNanos));
     } else {
         // Zero outputs when message reads fail to avoid stale data
         for (size_t c = 0; c < this->envOutMsgs.size(); c++) {

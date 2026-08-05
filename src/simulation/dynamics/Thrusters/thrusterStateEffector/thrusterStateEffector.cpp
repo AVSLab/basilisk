@@ -102,10 +102,10 @@ bool ThrusterStateEffector::ReadInputs()
         dataGood = this->cmdsInMsg.isWritten();
 
         //! - Check if message has already been read, if so then stale return
-        if(abs(this->prevCommandTime - this->cmdsInMsg.timeWritten() * NANO2SEC) < 1E-9 || !dataGood) {
+        if(abs(this->prevCommandTime - nanoToSec(this->cmdsInMsg.timeWritten())) < 1E-9 || !dataGood) {
             return(false);
         }
-        this->prevCommandTime = this->cmdsInMsg.timeWritten() * NANO2SEC;
+        this->prevCommandTime = nanoToSec(this->cmdsInMsg.timeWritten());
     } else {
         this->incomingCmdBuffer = this->cmdsInMsg.zeroMsgPayload;
         this->prevCommandTime = 0.0;

@@ -281,7 +281,7 @@ void AtmosphereBase::UpdateState(uint64_t CurrentSimNanos)
     //! - update local neutral density information
     if(this->readMessages())
     {
-        this->updateLocalAtmosphere(CurrentSimNanos*NANO2SEC);
+        this->updateLocalAtmosphere(nanoToSec(CurrentSimNanos));
     }
 
     //! - write out neutral density message

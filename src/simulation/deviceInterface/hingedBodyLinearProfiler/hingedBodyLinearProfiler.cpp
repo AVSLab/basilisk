@@ -45,7 +45,8 @@ void HingedBodyLinearProfiler::Reset(uint64_t CurrentSimNanos)
 {
     // check that required input messages are connected
     if(this->endTime-this->startTime > 0){
-        this->deploymentSlope = (this->endTheta-this->startTheta) / ((this->endTime-this->startTime) * NANO2SEC);
+        this->deploymentSlope = (this->endTheta-this->startTheta) /
+                                diffNanoToSec(this->endTime, this->startTime);
     } else{
         bskLogger.bskError("Delta between end time and start time of deployment must exist and be positive.");
     }
@@ -70,7 +71,7 @@ void HingedBodyLinearProfiler::UpdateState(uint64_t CurrentSimNanos)
         refThetaDot = 0.0;
     } else if (CurrentSimNanos <= this->endTime){ //!< if deployment is in progress
         refThetaDot = this->deploymentSlope;
-        refTheta = this->startTheta + ((CurrentSimNanos-this->startTime) * NANO2SEC) * refThetaDot;
+        refTheta = this->startTheta + diffNanoToSec(CurrentSimNanos, this->startTime) * refThetaDot;
 
     } else { //!< if deployment is over
         refTheta = this->endTheta;

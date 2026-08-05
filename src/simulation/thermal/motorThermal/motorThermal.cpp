@@ -18,6 +18,7 @@
  */
 #include "simulation/thermal/motorThermal/motorThermal.h"
 #include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/macroDefinitions.h"
 #include <math.h>
 
 /*! This is the constructor for the module class.  It sets default variable
@@ -115,7 +116,7 @@ void MotorThermal::computeTemperature(uint64_t CurrentSimNanos)
     double timeStep;
 
     // set the time step for conversion from power to heat
-    timeStep = (CurrentSimNanos - this->prevTime) * 1.0E-9;
+    timeStep = diffNanoToSec(CurrentSimNanos, this->prevTime);
 
     // compute the mechanical power needed
     wheelPower = this->rwStateBuffer.Omega * this->rwStateBuffer.u_current;

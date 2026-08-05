@@ -53,10 +53,11 @@ void StepperMotor::UpdateState(uint64_t callTime) {
     // Read the input message
     if (this->motorStepCommandInMsg.isWritten()) {
         motorStepCommandIn = this->motorStepCommandInMsg();
+        const double writtenTime = static_cast<double>(this->motorStepCommandInMsg.timeWritten());
         // Store the number of commanded motor steps when a new message is written
-        if (this->previousWrittenTime < this->motorStepCommandInMsg.timeWritten()) {
+        if (this->previousWrittenTime < writtenTime) {
             this->stepsCommanded = motorStepCommandIn.stepsCommanded;
-            this->previousWrittenTime = static_cast<double>(this->motorStepCommandInMsg.timeWritten());
+            this->previousWrittenTime = writtenTime;
 
             // Update booleans
             this->newMsg = true;
@@ -75,7 +76,7 @@ void StepperMotor::UpdateState(uint64_t callTime) {
     }
 
     // Actuate the motor only if a current actuation segment is not complete
-    double t = callTime * NANO2SEC;
+    double t = nanoToSec(callTime);
     if (!(this->actuationComplete)) {
         // Reset the motor immediately after a new non-interrupting request is received
         if ((this->newMsg && !this->interruptMsg) || (this->interruptMsg && this->stepComplete)) {

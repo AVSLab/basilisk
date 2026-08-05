@@ -81,7 +81,7 @@ void DataStorageUnitBase::UpdateState(uint64_t CurrentSimNanos)
     //! - update data information
     if(this->readMessages())
     {
-        this->integrateDataStatus(CurrentSimNanos*NANO2SEC);
+        this->integrateDataStatus(nanoToSec(CurrentSimNanos));
     } else {
         //! - Zero the output message if no input messages were received.
         this->storageStatusMsg = this->storageUnitDataOutMsg.zeroMsgPayload;
@@ -171,14 +171,15 @@ void DataStorageUnitBase::integrateDataStatus(double currentTime){
                              sizeof(it->dataName));
         }
         index = messageInStoredData(&(*it));
+        const int64_t dataDelta = static_cast<int64_t>(round(it->baudRate * this->currentTimestep));
 
         //! - If the storage capacity has not been reached or the baudRate is less than 0 and won't take below 0, then add the data
-       if ((this->storedDataSum + round(it->baudRate * this->currentTimestep) <= this->storageCapacity) || (it->baudRate < 0)) {
+       if ((this->storedDataSum + dataDelta <= this->storageCapacity) || (it->baudRate < 0)) {
            //! - if a dataNode exists in storedData vector, integrate and add to current amount
            if (index != -1) {
                //! If this operation takes the sum below zero, set it to zero
-               if ((this->storedData[(size_t)index].dataInstanceSum + it->baudRate * this->currentTimestep) >= 0) {
-                   this->storedData[(size_t)index].dataInstanceSum += static_cast<int64_t>(round(it->baudRate * this->currentTimestep));
+               if ((this->storedData[(size_t)index].dataInstanceSum + dataDelta) >= 0) {
+                   this->storedData[(size_t)index].dataInstanceSum += dataDelta;
                } else {
                    this->storedData[(size_t)index].dataInstanceSum = 0;
                }
@@ -189,7 +190,7 @@ void DataStorageUnitBase::integrateDataStatus(double currentTime){
                              sizeof(tmpDataInstance.dataInstanceName),
                              "%s",
                              it->dataName);
-               tmpDataInstance.dataInstanceSum = static_cast<int64_t>(round(it->baudRate * (this->currentTimestep)));
+               tmpDataInstance.dataInstanceSum = dataDelta;
                this->storedData.push_back(tmpDataInstance);
            }
        }

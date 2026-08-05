@@ -159,7 +159,7 @@ void PowerStorageBase::UpdateState(uint64_t currentSimNanos)
     //! - update net power information
     if(this->readMessages())
     {
-        this->integratePowerStatus(currentSimNanos*NANO2SEC);
+        this->integratePowerStatus(nanoToSec(currentSimNanos));
     } else {
         /* zero the output message if no input messages were received. */
         this->storageStatusMsg = this->batPowerOutMsg.zeroMsgPayload;

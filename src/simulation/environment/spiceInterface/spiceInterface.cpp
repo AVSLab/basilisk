@@ -402,7 +402,7 @@ private:
             return true;  // already have a good knot; a stored fallback (ok==false) falls through
         }
         // knotStep is in nanoseconds; the knot ET (seconds past J2000) is et0 + k*knotStep.
-        double et = this->et0 + static_cast<double>(k) * pi.posCfg.knotStep * NANO2SEC;
+        double et = this->et0 + static_cast<double>(k) * nanoToSec(pi.posCfg.knotStep);
         double lighttime;
         double localState[6];
         // Reconstruction may request a future knot (interpolate=true); guard against a query past
@@ -437,7 +437,7 @@ private:
         if (it != pi.orientKnots.end() && it->second.ok) {
             return true;  // already have a good knot; a stored fallback (ok==false) falls through
         }
-        double et = this->et0 + static_cast<double>(k) * pi.orientCfg.knotStep * NANO2SEC;
+        double et = this->et0 + static_cast<double>(k) * nanoToSec(pi.orientCfg.knotStep);
         double aux[6][6];
         SpiceErrorModeGuard guard;
         sxform_c(owner.referenceBase.c_str(), planetFrame.c_str(), et, aux);
@@ -836,7 +836,7 @@ void SpiceInterface::writeOutputMessages(uint64_t CurrentClock)
 void SpiceInterface::UpdateState(uint64_t CurrentSimNanos)
 {
     //! - Increment the J2000 elapsed time based on init value and Current sim
-    this->J2000Current = this->J2000ETInit + CurrentSimNanos*NANO2SEC;
+    this->J2000Current = this->J2000ETInit + nanoToSec(CurrentSimNanos);
 
     //! - Compute the current Julian Date string and cast it over to the double
     et2utc_c(this->J2000Current, "J", 14, this->charBufferSize - 1, reinterpret_cast<SpiceChar*>

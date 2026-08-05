@@ -88,7 +88,7 @@ void Spacecraft::Reset(uint64_t CurrentSimNanos)
         (*it)->writeOutputStateMessages(CurrentSimNanos);
     }
 
-    this->timeBefore = CurrentSimNanos * NANO2SEC;
+    this->timeBefore = static_cast<double>(CurrentSimNanos) * NANO2SEC;
     this->timeBeforeNanos = CurrentSimNanos;
 }
 
@@ -614,12 +614,12 @@ void Spacecraft::preIntegration(uint64_t integrateToThisTimeNanos) {
  */
 void Spacecraft::postIntegration(uint64_t integrateToThisTimeNanos) {
     this->timeBeforeNanos = integrateToThisTimeNanos;     // - copy the current time into previous time for next integrate state call
-    this->timeBefore = integrateToThisTimeNanos*NANO2SEC;
+    this->timeBefore = static_cast<double>(integrateToThisTimeNanos) * NANO2SEC;
     if (this->pointMassTranslationalOnly) {
         return;
     }
 
-    double integrateToThisTime = integrateToThisTimeNanos*NANO2SEC; // - convert to seconds
+    double integrateToThisTime = static_cast<double>(integrateToThisTimeNanos) * NANO2SEC; // - convert to seconds
 
     // - Call mass properties to get current info on the mass props of the spacecraft
     this->updateSCMassProps(integrateToThisTime);

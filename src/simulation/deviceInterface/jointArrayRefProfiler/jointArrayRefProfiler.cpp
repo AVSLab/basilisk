@@ -175,8 +175,8 @@ void JointArrayRefProfiler::computeLowPassFilter(uint64_t CurrentSimNanos, const
 
 void JointArrayRefProfiler::computeLinearProfile(uint64_t CurrentSimNanos, const JointArrayStateMsgPayload& desJointStatesIn)
 {
-    double timeSec = CurrentSimNanos * NANO2SEC; // convert current time to seconds
-    double tau = timeSec - (this->profileStartTime * NANO2SEC); // time since profile start in seconds
+    double timeSec = nanoToSec(CurrentSimNanos); // convert current time to seconds
+    double tau = timeSec - nanoToSec(this->profileStartTime); // time since profile start in seconds
 
     this->refJointAngles.setZero(this->numHingedJoints);
     this->refJointRates.setZero(this->numHingedJoints);
@@ -204,8 +204,8 @@ void JointArrayRefProfiler::computeLinearProfile(uint64_t CurrentSimNanos, const
 
 void JointArrayRefProfiler::computeCubicProfile(uint64_t CurrentSimNanos, const JointArrayStateMsgPayload& desJointStatesIn)
 {
-    double timeSec = CurrentSimNanos * NANO2SEC; // convert current time to seconds
-    double tau = timeSec - (this->profileStartTime * NANO2SEC); // time since profile start in seconds
+    double timeSec = nanoToSec(CurrentSimNanos); // convert current time to seconds
+    double tau = timeSec - nanoToSec(this->profileStartTime); // time since profile start in seconds
 
     this->refJointAngles.setZero(this->numHingedJoints);
     this->refJointRates.setZero(this->numHingedJoints);
@@ -240,8 +240,8 @@ void JointArrayRefProfiler::computeCubicProfile(uint64_t CurrentSimNanos, const 
 
 void JointArrayRefProfiler::computeQuinticProfile(uint64_t CurrentSimNanos, const JointArrayStateMsgPayload& desJointStatesIn)
 {
-    double timeSec = CurrentSimNanos * NANO2SEC; // convert current time to seconds
-    double tau = timeSec - (this->profileStartTime * NANO2SEC); // time since profile start in seconds
+    double timeSec = nanoToSec(CurrentSimNanos); // convert current time to seconds
+    double tau = timeSec - nanoToSec(this->profileStartTime); // time since profile start in seconds
 
     this->refJointAngles.setZero(this->numHingedJoints);
     this->refJointRates.setZero(this->numHingedJoints);
