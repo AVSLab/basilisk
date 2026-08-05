@@ -452,15 +452,15 @@ void approximate(const InputDataSet& Input, int Num, int Q, int P, OutputDataSet
     // build knot vector U of size Q + P + 2
     Eigen::VectorXd U(Q+P+2);
     double d, alpha;
-    int i;
+    int knotIndex;
     d = ((double)(N+1)) / ((double)abs(Q-P+1));
     for (int p = 0; p < P+1; p++) {
         U[p] = 0;
     }
     for (int j = 1; j < Q-P+1; j++) {
-        i = int(j*d);
-        alpha = j*d - i;
-        U[P+j] = (1-alpha)*uk[i-1] + alpha*uk[i];
+        knotIndex = int(j*d);
+        alpha = j*d - knotIndex;
+        U[P+j] = (1-alpha)*uk[knotIndex-1] + alpha*uk[knotIndex];
     }
     for (int p = 0; p < P+1; p++) {
         U[Q+p+1] = 1;
@@ -485,55 +485,55 @@ void approximate(const InputDataSet& Input, int Num, int Q, int P, OutputDataSet
     }
     Eigen::VectorXd NN(Q+1), NN1(Q+1), NN2(Q+1);
     basisFunction(uk[0], U, Q+1, P, &NN[0], &NN1[0], &NN2[0]);
-    int n = 0;
+    int constraintIndex = 0;
     MD(0,0) = NN[0];
     T1[0] = Input.X1[0];
     T2[0] = Input.X2[0];
     T3[0] = Input.X3[0];
     // constrain first derivative at starting point
     if (Input.XDot_0_flag == true) {
-        n += 1;
-        MD(n,0) = NN1[0];
-        MD(n,1) = NN1[1];
-        T1[n] = Input.XDot_0[0] * Ttot;
-        T2[n] = Input.XDot_0[1] * Ttot;
-        T3[n] = Input.XDot_0[2] * Ttot;
+        constraintIndex += 1;
+        MD(constraintIndex,0) = NN1[0];
+        MD(constraintIndex,1) = NN1[1];
+        T1[constraintIndex] = Input.XDot_0[0] * Ttot;
+        T2[constraintIndex] = Input.XDot_0[1] * Ttot;
+        T3[constraintIndex] = Input.XDot_0[2] * Ttot;
     }
     // constrain second derivative at starting point
     if (Input.XDDot_0_flag == true) {
-        n += 1;
-        MD(n,0) = NN2[0];
-        MD(n,1) = NN2[1];
-        MD(n,2) = NN2[2];
-        T1[n] = Input.XDDot_0[0] * pow(Ttot,2);
-        T2[n] = Input.XDDot_0[1] * pow(Ttot,2);
-        T3[n] = Input.XDDot_0[2] * pow(Ttot,2);
+        constraintIndex += 1;
+        MD(constraintIndex,0) = NN2[0];
+        MD(constraintIndex,1) = NN2[1];
+        MD(constraintIndex,2) = NN2[2];
+        T1[constraintIndex] = Input.XDDot_0[0] * pow(Ttot,2);
+        T2[constraintIndex] = Input.XDDot_0[1] * pow(Ttot,2);
+        T3[constraintIndex] = Input.XDDot_0[2] * pow(Ttot,2);
     }
     basisFunction(uk[N], U, Q+1, P, &NN[0], &NN1[0], &NN2[0]);
     // constrain second derivative at ending point
     if (Input.XDDot_N_flag == true) {
-        n += 1;
-        MD(n,K-1) = NN2[Q-2];
-        MD(n,K)   = NN2[Q-1];
-        MD(n,K+1) = NN2[Q];
+        constraintIndex += 1;
+        MD(constraintIndex,K-1) = NN2[Q-2];
+        MD(constraintIndex,K)   = NN2[Q-1];
+        MD(constraintIndex,K+1) = NN2[Q];
         T1[K-1] = Input.XDDot_N[0] * pow(Ttot,2);
         T2[K]   = Input.XDDot_N[1] * pow(Ttot,2);
         T3[K+1] = Input.XDDot_N[2] * pow(Ttot,2);
     }
     // constrain first derivative at ending point
     if (Input.XDot_N_flag == true) {
-        n += 1;
-        MD(n,K)   = NN1[Q-1];
-        MD(n,K+1) = NN1[Q];
-        T1[n] = Input.XDot_N[0] * Ttot;
-        T2[n] = Input.XDot_N[1] * Ttot;
-        T3[n] = Input.XDot_N[2] * Ttot;
+        constraintIndex += 1;
+        MD(constraintIndex,K)   = NN1[Q-1];
+        MD(constraintIndex,K+1) = NN1[Q];
+        T1[constraintIndex] = Input.XDot_N[0] * Ttot;
+        T2[constraintIndex] = Input.XDot_N[1] * Ttot;
+        T3[constraintIndex] = Input.XDot_N[2] * Ttot;
     }
-    n += 1;
-    MD(n,K+1) = NN[Q];
-    T1[n] = Input.X1[N];
-    T2[n] = Input.X2[N];
-    T3[n] = Input.X3[N];
+    constraintIndex += 1;
+    MD(constraintIndex,K+1) = NN[Q];
+    T1[constraintIndex] = Input.X1[N];
+    T2[constraintIndex] = Input.X2[N];
+    T3[constraintIndex] = Input.X3[N];
 
     // solve linear systems
     Eigen::MatrixXd B = MD.inverse();
@@ -616,29 +616,43 @@ void approximate(const InputDataSet& Input, int Num, int Q, int P, OutputDataSet
 
     // build control point vectors C
     Eigen::VectorXd C1(Q+1), C2(Q+1), C3(Q+1);
-    n = 0;
-    C1[n] = C1_1[n];  C2[n] = C2_1[n];  C3[n] = C3_1[n];
+    constraintIndex = 0;
+    C1[constraintIndex] = C1_1[constraintIndex];
+    C2[constraintIndex] = C2_1[constraintIndex];
+    C3[constraintIndex] = C3_1[constraintIndex];
     if (Input.XDot_0_flag == true) {
-        n += 1;
-        C1[n] = C1_1[n];  C2[n] = C2_1[n];  C3[n] = C3_1[n];
+        constraintIndex += 1;
+        C1[constraintIndex] = C1_1[constraintIndex];
+        C2[constraintIndex] = C2_1[constraintIndex];
+        C3[constraintIndex] = C3_1[constraintIndex];
     }
     if (Input.XDDot_0_flag == true) {
-        n += 1;
-        C1[n] = C1_1[n];  C2[n] = C2_1[n];  C3[n] = C3_1[n];
+        constraintIndex += 1;
+        C1[constraintIndex] = C1_1[constraintIndex];
+        C2[constraintIndex] = C2_1[constraintIndex];
+        C3[constraintIndex] = C3_1[constraintIndex];
     }
     for (int q = 0; q < Q-K-1; q++) {
-        C1[n+q+1] = C1_2[q];  C2[n+q+1] = C2_2[q];  C3[n+q+1] = C3_2[q];
+        C1[constraintIndex+q+1] = C1_2[q];
+        C2[constraintIndex+q+1] = C2_2[q];
+        C3[constraintIndex+q+1] = C3_2[q];
     }
     if (Input.XDDot_N_flag == true) {
-        n += 1;
-        C1[Q-K-1+n] = C1_1[n];  C2[Q-K-1+n] = C2_1[n];  C3[Q-K-1+n] = C3_1[n];
+        constraintIndex += 1;
+        C1[Q-K-1+constraintIndex] = C1_1[constraintIndex];
+        C2[Q-K-1+constraintIndex] = C2_1[constraintIndex];
+        C3[Q-K-1+constraintIndex] = C3_1[constraintIndex];
     }
     if (Input.XDot_N_flag == true) {
-        n += 1;
-        C1[Q-K-1+n] = C1_1[n];  C2[Q-K-1+n] = C2_1[n];  C3[Q-K-1+n] = C3_1[n];
+        constraintIndex += 1;
+        C1[Q-K-1+constraintIndex] = C1_1[constraintIndex];
+        C2[Q-K-1+constraintIndex] = C2_1[constraintIndex];
+        C3[Q-K-1+constraintIndex] = C3_1[constraintIndex];
     }
-    n += 1;
-    C1[Q-K-1+n] = C1_1[n];  C2[Q-K-1+n] = C2_1[n];  C3[Q-K-1+n] = C3_1[n];
+    constraintIndex += 1;
+    C1[Q-K-1+constraintIndex] = C1_1[constraintIndex];
+    C2[Q-K-1+constraintIndex] = C2_1[constraintIndex];
+    C3[Q-K-1+constraintIndex] = C3_1[constraintIndex];
 
     Output->U = U;
     Output->C1 = C1;

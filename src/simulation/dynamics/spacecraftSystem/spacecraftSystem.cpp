@@ -573,17 +573,17 @@ void SpacecraftSystem::updateSystemMassProps(double time)
         (*this->primaryCentralSpacecraft.c_B) += (*spacecraftConnectedIt)->hub.effProps.mEff*(*spacecraftConnectedIt)->hub.effProps.rEff_CB_B;
 
         // - Loop through state effectors to get mass props
-        std::vector<StateEffector*>::iterator it;
-        for(it = (*spacecraftConnectedIt)->states.begin(); it != (*spacecraftConnectedIt)->states.end(); it++)
+        std::vector<StateEffector*>::iterator connectedStateIt;
+        for(connectedStateIt = (*spacecraftConnectedIt)->states.begin(); connectedStateIt != (*spacecraftConnectedIt)->states.end(); connectedStateIt++)
         {
-            (*it)->updateEffectorMassProps(time);
+            (*connectedStateIt)->updateEffectorMassProps(time);
             // - Add in effectors mass props into mass props of this->primaryCentralSpacecraft
-            (*this->primaryCentralSpacecraft.m_SC)(0,0) += (*it)->effProps.mEff;
-            (*this->primaryCentralSpacecraft.mDot_SC)(0,0) += (*it)->effProps.mEffDot;
-            (*this->primaryCentralSpacecraft.ISCPntB_B) += (*it)->effProps.IEffPntB_B;
-            (*this->primaryCentralSpacecraft.c_B) += (*it)->effProps.mEff*(*it)->effProps.rEff_CB_B;
-            (*this->primaryCentralSpacecraft.ISCPntBPrime_B) += (*it)->effProps.IEffPrimePntB_B;
-            (*this->primaryCentralSpacecraft.cPrime_B) += (*it)->effProps.mEff*(*it)->effProps.rEffPrime_CB_B;
+            (*this->primaryCentralSpacecraft.m_SC)(0,0) += (*connectedStateIt)->effProps.mEff;
+            (*this->primaryCentralSpacecraft.mDot_SC)(0,0) += (*connectedStateIt)->effProps.mEffDot;
+            (*this->primaryCentralSpacecraft.ISCPntB_B) += (*connectedStateIt)->effProps.IEffPntB_B;
+            (*this->primaryCentralSpacecraft.c_B) += (*connectedStateIt)->effProps.mEff*(*connectedStateIt)->effProps.rEff_CB_B;
+            (*this->primaryCentralSpacecraft.ISCPntBPrime_B) += (*connectedStateIt)->effProps.IEffPrimePntB_B;
+            (*this->primaryCentralSpacecraft.cPrime_B) += (*connectedStateIt)->effProps.mEff*(*connectedStateIt)->effProps.rEffPrime_CB_B;
             // For high fidelity mass depletion, this is left out: += (*it)->effProps.mEffDot*(*it)->effProps.rEff_CB_B
         }
     }
@@ -1154,15 +1154,15 @@ void SpacecraftSystem::computeEnergyMomentumSystem(double time)
         this->primaryCentralSpacecraft.totRotEnergy += this->primaryCentralSpacecraft.rotEnergyContr;
 
         // - Loop over stateEffectors to get their contributions to energy and momentum
-        std::vector<StateEffector*>::iterator it;
-        for(it = (*spacecraftConnectedIt)->states.begin(); it != (*spacecraftConnectedIt)->states.end(); it++)
+        std::vector<StateEffector*>::iterator connectedStateIt;
+        for(connectedStateIt = (*spacecraftConnectedIt)->states.begin(); connectedStateIt != (*spacecraftConnectedIt)->states.end(); connectedStateIt++)
         {
             // - Set the matrices to zero
             this->primaryCentralSpacecraft.rotAngMomPntCContr_B.setZero();
             this->primaryCentralSpacecraft.rotEnergyContr = 0.0;
 
             // - Call energy and momentum calulations for stateEffectors
-            (*it)->updateEnergyMomContributions(time, this->primaryCentralSpacecraft.rotAngMomPntCContr_B, this->primaryCentralSpacecraft.rotEnergyContr, this->primaryCentralSpacecraft.hubOmega_BN_B->getState());
+            (*connectedStateIt)->updateEnergyMomContributions(time, this->primaryCentralSpacecraft.rotAngMomPntCContr_B, this->primaryCentralSpacecraft.rotEnergyContr, this->primaryCentralSpacecraft.hubOmega_BN_B->getState());
             totRotAngMomPntC_B += this->primaryCentralSpacecraft.rotAngMomPntCContr_B;
             this->primaryCentralSpacecraft.totRotEnergy += this->primaryCentralSpacecraft.rotEnergyContr;
         }
