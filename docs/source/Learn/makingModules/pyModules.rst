@@ -18,6 +18,35 @@ Then, one can implement the ``__init__``,
 implement these methods in C++. Remember to always call ``__init__`` of
 the parent class ``SysModel`` if you are implementing your own ``__init__``.
 
+Simulation Time
+---------------
+
+Basilisk passes the current simulation time to ``Reset()`` and
+``UpdateState()`` as the integer ``CurrentSimNanos`` in nanoseconds.  Convert
+an absolute timestamp to seconds with ``macros.NANO2SEC``:
+
+.. code-block:: python
+
+    from Basilisk.utilities import macros
+
+    absolute_time_sec = float(CurrentSimNanos) * macros.NANO2SEC  # [s]
+
+Python integers preserve the complete timestamp, while the conversion to a
+floating-point value may lose individual nanoseconds during long simulations.
+The result nevertheless remains finite beyond :math:`2^{53}` nanoseconds,
+approximately 104 days.
+
+For a relative time, subtract the integer timestamps before converting.  This
+retains the precision of a small elapsed interval even when the absolute
+simulation time is large:
+
+.. code-block:: python
+
+    elapsed_time_sec = (CurrentSimNanos - self.previous_time_nanos) * macros.NANO2SEC  # [s]
+
+Store ``previous_time_nanos`` as a Python integer and update it only after the
+elapsed-time calculation.
+
 The ``moduleID`` value of these Python BSK modules will be a unique positive number,
 same as with C, C++, and Rust BSK modules.
 

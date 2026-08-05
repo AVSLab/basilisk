@@ -1027,6 +1027,39 @@ message:
 See :ref:`mrpPDRust` for a complete controller that uses ``nalgebra`` while
 keeping its generated C/Python interface unchanged.
 
+Simulation Time
+---------------
+
+Basilisk passes the current simulation time to ``reset()`` and ``update()`` as
+the ``u64`` value ``current_sim_nanos`` in nanoseconds.  Convert an absolute
+timestamp to seconds with ``NANO2SEC``:
+
+.. code-block:: rust
+
+    use bsk_messages::BskError;
+    use bsk_utilities::constants::NANO2SEC;
+
+    let absolute_time_sec = current_sim_nanos as f64 * NANO2SEC; // [s]
+
+This conversion remains finite during simulations longer than
+:math:`2^{53}` nanoseconds, approximately 104 days, although an ``f64`` can no
+longer preserve every individual nanosecond at that scale.
+
+For a relative time, subtract the integer timestamps before converting.  Use
+``checked_sub()`` when the stored timestamp is expected to precede the current
+time:
+
+.. code-block:: rust
+
+    let elapsed_nanos = current_sim_nanos
+        .checked_sub(previous_sim_nanos)
+        .ok_or_else(|| BskError::new("simulation time moved backwards"))?;
+    let elapsed_time_sec = elapsed_nanos as f64 * NANO2SEC; // [s]
+
+Performing the subtraction first retains the precision of a small elapsed
+interval even when the absolute simulation time is large.  Store the previous
+timestamp as a ``u64`` and update it only after the elapsed-time calculation.
+
 Runtime Context and Logging
 ---------------------------
 
