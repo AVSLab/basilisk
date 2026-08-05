@@ -76,8 +76,9 @@ void MJSystemCoM::UpdateState(uint64_t CurrentSimNanos)
     // calculate CoM velocity
     if (model->nv > 0 && massSC > 0.0) {
         // jacp = linear 3×nv, jacr = angular 3×nv
-        std::vector<double> jacp(3*model->nv, 0.0);
-        std::vector<double> jacr(3*model->nv, 0.0);
+        const size_t jacobianSize = static_cast<size_t>(3 * model->nv);
+        std::vector<double> jacp(jacobianSize, 0.0);
+        std::vector<double> jacr(jacobianSize, 0.0);
 
         Eigen::Map<const Eigen::VectorXd> qv(data->qvel, model->nv);
 

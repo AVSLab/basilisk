@@ -37,7 +37,7 @@ void ThrJointCompensation::Reset(uint64_t CurrentSimNanos)
     if (this->jointStatesInMsgs.empty()) {
         bskLogger.bskError("ThrJointCompensation.jointStatesInMsgs vector is empty.");
     } else {
-        if (this->jointStatesInMsgs.size() != static_cast<std::size_t>(this->numHingedJoints)) {
+        if (this->jointStatesInMsgs.size() != this->numHingedJoints) {
             bskLogger.bskError("ThrJointCompensation.jointStatesInMsgs size does not match numHingedJoints.");
         }
         for (std::size_t i = 0; i < this->jointStatesInMsgs.size(); ++i) {
@@ -49,7 +49,7 @@ void ThrJointCompensation::Reset(uint64_t CurrentSimNanos)
     if (this->thrForcesInMsgs.empty()) {
         bskLogger.bskError("ThrJointCompensation.thrForcesInMsgs vector is empty.");
     } else {
-        if (this->thrForcesInMsgs.size() != static_cast<std::size_t>(this->numThrusters)) {
+        if (this->thrForcesInMsgs.size() != this->numThrusters) {
             bskLogger.bskError("ThrJointCompensation.thrForcesInMsgs size does not match numThrusters.");
         }
         for (std::size_t i = 0; i < this->thrForcesInMsgs.size(); ++i) {
@@ -74,9 +74,12 @@ void ThrJointCompensation::Reset(uint64_t CurrentSimNanos)
     this->kinCfg.dcm_C0P = cfg.dcm_C0P;
 
     // resize the joint pose struct
-    int nFlat = 0;
+    size_t nFlat = 0;
     for (int cnt : this->kinCfg.armJointCount) {
-        nFlat += cnt;
+        if (cnt < 0) {
+            bskLogger.bskError("ThrJointCompensation: arm joint counts cannot be negative.");
+        }
+        nFlat += static_cast<size_t>(cnt);
     }
     this->jointPoseFlat.resize(nFlat);
     for (auto& jp : this->jointPoseFlat) {
@@ -84,7 +87,7 @@ void ThrJointCompensation::Reset(uint64_t CurrentSimNanos)
         jp.r_CB_B.setZero();
     }
     this->kinCfg.armJointStart.assign(this->kinCfg.armJointCount.size(), 0);
-    this->kinCfg.armHingeGlobalIdx.assign(nFlat, -1);
+    this->kinCfg.armHingeGlobalIdx.assign(nFlat, 0);
 }
 
 void ThrJointCompensation::UpdateState(uint64_t CurrentSimNanos)
@@ -97,7 +100,7 @@ void ThrJointCompensation::UpdateState(uint64_t CurrentSimNanos)
         this->numKinematicTrees = 0;
         this->treeMap.clear();
         this->hingeToTree.assign(this->numHingedJoints, -1);
-        int nextHingeIdx = 0;
+        size_t nextHingeIdx = 0;
         for (std::size_t joint = 0; joint < reactionForcesIn.jointTreeIdx.size(); ++joint) {
             const int tree = reactionForcesIn.jointTreeIdx[joint];
             const int jointType = reactionForcesIn.jointTypes[joint];
@@ -117,7 +120,7 @@ void ThrJointCompensation::UpdateState(uint64_t CurrentSimNanos)
                 if (jointType != 3) {
                     bskLogger.bskError("ThrJointCompensation: joint %zu in kinematic tree %d is not a hinged joint.", joint, tree);
                 }
-                info.hingeJointIdxs.push_back(static_cast<int>(joint));
+                info.hingeJointIdxs.push_back(joint);
                 info.hingeGlobalIdxs.push_back(nextHingeIdx);
                 this->hingeToTree[nextHingeIdx] = tree;
                 ++nextHingeIdx;
@@ -132,38 +135,42 @@ void ThrJointCompensation::UpdateState(uint64_t CurrentSimNanos)
                 this->kinCfg.armTreeIdx.size(), this->kinCfg.armJointCount.size());
         }
 
-        const int nArms = static_cast<int>(this->kinCfg.armJointCount.size());
+        const size_t nArms = this->kinCfg.armJointCount.size();
         this->kinCfg.armJointStart.assign(nArms, 0);
-        int nFlat = 0;
-        for (int a = 0; a < nArms; ++a) {
+        size_t nFlat = 0;
+        for (size_t a = 0; a < nArms; ++a) {
             this->kinCfg.armJointStart[a] = nFlat;
             const int cnt = this->kinCfg.armJointCount[a];
-            nFlat += cnt;
+            if (cnt < 0) {
+                bskLogger.bskError("ThrJointCompensation: arm joint counts cannot be negative.");
+            }
+            nFlat += static_cast<size_t>(cnt);
         }
 
-        this->kinCfg.armHingeGlobalIdx.assign(nFlat, -1);
-        std::unordered_map<int, int> treeCursor;
+        this->kinCfg.armHingeGlobalIdx.assign(nFlat, 0);
+        std::unordered_map<int, size_t> treeCursor;
         treeCursor.reserve(this->treeMap.size());
         for (const auto& [treeId, info] : this->treeMap) {
             treeCursor[treeId] = 0;
         }
-        for (int a = 0; a < nArms; ++a) {
+        for (size_t a = 0; a < nArms; ++a) {
             const int treeId = this->kinCfg.armTreeIdx[a];
             const int cnt    = this->kinCfg.armJointCount[a];
-            const int start  = this->kinCfg.armJointStart[a];
+            const size_t start = this->kinCfg.armJointStart[a];
 
             auto itTree = this->treeMap.find(treeId);
             if (itTree == this->treeMap.end()) {
-                bskLogger.bskError("ThrJointCompensation: treeId %d for arm %d was not found in joint reaction tree data.",
+                bskLogger.bskError("ThrJointCompensation: treeId %d for arm %zu was not found in joint reaction tree data.",
                     treeId, a);
             }
             const auto& hinges = itTree->second.hingeGlobalIdxs;
-            int& cur = treeCursor[treeId];
-            if (cur + cnt > static_cast<int>(hinges.size())) {
-                bskLogger.bskError("ThrJointCompensation: arm %d expects %d hinge joints in tree %d, but only %zu are available (cursor=%d).",
+            size_t& cur = treeCursor[treeId];
+            const size_t jointCount = static_cast<size_t>(cnt);
+            if (cur + jointCount > hinges.size()) {
+                bskLogger.bskError("ThrJointCompensation: arm %zu expects %d hinge joints in tree %d, but only %zu are available (cursor=%zu).",
                     a, cnt, treeId, hinges.size(), cur);
             }
-            for (int j = 0; j < cnt; ++j) {
+            for (size_t j = 0; j < jointCount; ++j) {
                 this->kinCfg.armHingeGlobalIdx[start + j] = hinges[cur++];
             }
         }
@@ -172,39 +179,40 @@ void ThrJointCompensation::UpdateState(uint64_t CurrentSimNanos)
     }
 
     // Loop through the joint states input messages
-    Eigen::VectorXd jointStates(this->numHingedJoints);
+    const Eigen::Index numHingedJointsEigen = static_cast<Eigen::Index>(this->numHingedJoints);
+    Eigen::VectorXd jointStates(numHingedJointsEigen);
     jointStates.setZero();
     for (size_t i = 0; i < this->jointStatesInMsgs.size(); ++i) {
         ScalarJointStateMsgPayload jointStateIn = this->jointStatesInMsgs[i]();
-        jointStates(i) = jointStateIn.state;
+        jointStates(static_cast<Eigen::Index>(i)) = jointStateIn.state;
 
     }
 
     // Loop through the thruster force input messages
-    Eigen::VectorXd thrForces(this->numThrusters);
+    Eigen::VectorXd thrForces(static_cast<Eigen::Index>(this->numThrusters));
     thrForces.setZero();
     for (size_t i = 0; i < this->thrForcesInMsgs.size(); ++i) {
         SingleActuatorMsgPayload thrForceIn = this->thrForcesInMsgs[i]();
-        thrForces(i) = thrForceIn.input;
+        thrForces(static_cast<Eigen::Index>(i)) = thrForceIn.input;
     }
 
     // Determine current system configuration
-    const int nArms = static_cast<int>(this->kinCfg.armJointCount.size());
-    for (int arm = 0; arm < nArms; ++arm) {
+    const size_t nArms = this->kinCfg.armJointCount.size();
+    for (size_t arm = 0; arm < nArms; ++arm) {
 
-        int start = this->kinCfg.armJointStart[arm];
-        int count = this->kinCfg.armJointCount[arm];
+        const size_t start = this->kinCfg.armJointStart[arm];
+        const size_t count = static_cast<size_t>(this->kinCfg.armJointCount[arm]);
 
-        for (int jLocal = 0; jLocal < count; ++jLocal) {
+        for (size_t jLocal = 0; jLocal < count; ++jLocal) {
 
-            int kFlat = start + jLocal;
+            const size_t kFlat = start + jLocal;
             Eigen::Matrix3d dcm_PB;
             Eigen::Vector3d r_PB_B;
             if (jLocal == 0) {
                 dcm_PB = Eigen::Matrix3d::Identity();
                 r_PB_B = Eigen::Vector3d::Zero();
             } else {
-                int kFlatPrior = kFlat - 1;
+                const size_t kFlatPrior = kFlat - 1;
                 dcm_PB = this->jointPoseFlat[kFlatPrior].dcm_CB;
                 r_PB_B = this->jointPoseFlat[kFlatPrior].r_CB_B;
             }
@@ -227,8 +235,8 @@ void ThrJointCompensation::UpdateState(uint64_t CurrentSimNanos)
                     p[1], p[4], p[7],
                     p[2], p[5], p[8];
 
-            int hGlobal = this->kinCfg.armHingeGlobalIdx[kFlat];
-            double Phi = jointStates(hGlobal);
+            const size_t hGlobal = this->kinCfg.armHingeGlobalIdx[kFlat];
+            double Phi = jointStates(static_cast<Eigen::Index>(hGlobal));
 
             Eigen::Matrix3d sTilde;
             sTilde <<     0, -shat_P(2),  shat_P(1),
@@ -257,13 +265,18 @@ void ThrJointCompensation::UpdateState(uint64_t CurrentSimNanos)
         treeForce_B[treeId]  = Eigen::Vector3d::Zero();
         treeTorque_B[treeId] = Eigen::Vector3d::Zero();
     }
-    Eigen::VectorXd tauJoint = Eigen::VectorXd::Zero(this->numHingedJoints);
+    Eigen::VectorXd tauJoint = Eigen::VectorXd::Zero(numHingedJointsEigen);
 
-    const int nThr = static_cast<int>(this->kinCfg.thrArmIdx.size());
-    for (int i = 0; i < nThr; ++i){
-        const int arm    = this->kinCfg.thrArmIdx[i];
-        const int jLocal = this->kinCfg.thrArmJointIdx[i];
-        const int kFlat  = this->kinCfg.armJointStart[arm] + jLocal;
+    const size_t nThr = this->kinCfg.thrArmIdx.size();
+    for (size_t i = 0; i < nThr; ++i){
+        const int armValue = this->kinCfg.thrArmIdx[i];
+        const int jointValue = this->kinCfg.thrArmJointIdx[i];
+        if (armValue < 0 || jointValue < 0) {
+            bskLogger.bskError("ThrJointCompensation: thruster arm and joint indices cannot be negative.");
+        }
+        const size_t arm = static_cast<size_t>(armValue);
+        const size_t jLocal = static_cast<size_t>(jointValue);
+        const size_t kFlat = this->kinCfg.armJointStart[arm] + jLocal;
 
         const Eigen::Matrix3d& dcm_CB = this->jointPoseFlat[kFlat].dcm_CB;
         const Eigen::Vector3d& r_CB_B = this->jointPoseFlat[kFlat].r_CB_B;
@@ -273,7 +286,7 @@ void ThrJointCompensation::UpdateState(uint64_t CurrentSimNanos)
             this->kinCfg.fhat_P[3*i + 1],
             this->kinCfg.fhat_P[3*i + 2]
         );
-        const double Fcmd = thrForces(i);
+        const double Fcmd = thrForces(static_cast<Eigen::Index>(i));
         const Eigen::Vector3d f_B = dcm_CB.transpose() * (fhat_P * Fcmd);
 
         Eigen::Vector3d r_TP_P(
@@ -282,17 +295,17 @@ void ThrJointCompensation::UpdateState(uint64_t CurrentSimNanos)
             this->kinCfg.r_TP_P[3*i + 2]
         );
         const Eigen::Vector3d r_TB_B = r_CB_B + dcm_CB.transpose() * r_TP_P;
-        const int hAttachGlobal = this->kinCfg.armHingeGlobalIdx[kFlat];
+        const size_t hAttachGlobal = this->kinCfg.armHingeGlobalIdx[kFlat];
         const int treeId = this->hingeToTree[hAttachGlobal];
 
         treeForce_B[treeId]  += f_B;
         treeTorque_B[treeId] += r_TB_B.cross(f_B);
 
-        const int start = this->kinCfg.armJointStart[arm];
-        for (int j = 0; j <= jLocal; ++j)
+        const size_t start = this->kinCfg.armJointStart[arm];
+        for (size_t j = 0; j <= jLocal; ++j)
         {
-            const int kJ = start + j;
-            const int hGlobal = this->kinCfg.armHingeGlobalIdx[kJ];
+            const size_t kJ = start + j;
+            const size_t hGlobal = this->kinCfg.armHingeGlobalIdx[kJ];
             const Eigen::Matrix3d& dcm_JB = this->jointPoseFlat[kJ].dcm_CB;
             const Eigen::Vector3d& r_JB_B = this->jointPoseFlat[kJ].r_CB_B;
 
@@ -304,104 +317,120 @@ void ThrJointCompensation::UpdateState(uint64_t CurrentSimNanos)
 
             const Eigen::Vector3d s_B = dcm_JB.transpose() * shat_P;
             const Eigen::Vector3d r_TJ_B = r_TB_B - r_JB_B;
-            tauJoint(hGlobal) += s_B.dot(r_TJ_B.cross(f_B));
+            tauJoint(static_cast<Eigen::Index>(hGlobal)) += s_B.dot(r_TJ_B.cross(f_B));
         }
     }
 
     // Calculate the motor torque needed to prevent joint motion
-    Eigen::VectorXd uH(this->numHingedJoints);
+    Eigen::VectorXd uH(numHingedJointsEigen);
     uH.setZero();
-    const int nDOF = static_cast<int>(reactionForcesIn.biasForces.size());
-    Eigen::VectorXd nonActuatorForces(nDOF);
+    const size_t nDOF = reactionForcesIn.biasForces.size();
+    Eigen::VectorXd nonActuatorForces(static_cast<Eigen::Index>(nDOF));
     nonActuatorForces.setZero();
-    for (int k = 0; k < nDOF; ++k) {
-        nonActuatorForces(k) = reactionForcesIn.passiveForces[k] + reactionForcesIn.constraintForces[k] +
-                               reactionForcesIn.appliedForces[k] - reactionForcesIn.biasForces[k];
+    for (size_t k = 0; k < nDOF; ++k) {
+        nonActuatorForces(static_cast<Eigen::Index>(k)) = reactionForcesIn.passiveForces[k]
+                                                        + reactionForcesIn.constraintForces[k]
+                                                        + reactionForcesIn.appliedForces[k]
+                                                        - reactionForcesIn.biasForces[k];
     }
 
-    constexpr int nBaseDOF = 6;
+    constexpr size_t nBaseDOF = 6;
+    constexpr Eigen::Index nBaseDOFEigen = static_cast<Eigen::Index>(nBaseDOF);
     for (const auto& [treeId, info] : this->treeMap) {
         const int freeJointIdx = info.freeJointIdx;
         const auto& hingeJointIdxs = info.hingeJointIdxs;
         const auto& hingeGlobalIdxs = info.hingeGlobalIdxs;
-        const int nHingeJoints = static_cast<int>(hingeJointIdxs.size());
+        const size_t nHingeJoints = hingeJointIdxs.size();
+        const Eigen::Index nHingeJointsEigen = static_cast<Eigen::Index>(nHingeJoints);
 
         if (nHingeJoints == 0) {
             continue; // no hinged joints in this tree
         }
 
-        std::vector<int> dofIdx;
+        std::vector<size_t> dofIdx;
         dofIdx.reserve(nBaseDOF + nHingeJoints);
 
-        const int freeStart = reactionForcesIn.jointDOFStart[freeJointIdx];
-        for (int i = 0; i < nBaseDOF; ++i) {
+        const int freeStartValue = reactionForcesIn.jointDOFStart[static_cast<size_t>(freeJointIdx)];
+        if (freeStartValue < 0) {
+            bskLogger.bskError("ThrJointCompensation: free-joint degree-of-freedom index cannot be negative.");
+        }
+        const size_t freeStart = static_cast<size_t>(freeStartValue);
+        for (size_t i = 0; i < nBaseDOF; ++i) {
             dofIdx.push_back(freeStart + i);
         }
-        for (int mhJointIdx : hingeJointIdxs) {
+        for (size_t mhJointIdx : hingeJointIdxs) {
             const int hingeStart = reactionForcesIn.jointDOFStart[mhJointIdx];
-            dofIdx.push_back(hingeStart); // hinged joints have 1 DOF
+            if (hingeStart < 0) {
+                bskLogger.bskError("ThrJointCompensation: hinge degree-of-freedom index cannot be negative.");
+            }
+            dofIdx.push_back(static_cast<size_t>(hingeStart)); // hinged joints have 1 DOF
         }
 
-        const int nTreeDOF = static_cast<int>(dofIdx.size());
-        Eigen::MatrixXd Mfull(nTreeDOF, nTreeDOF);
+        const size_t nTreeDOF = dofIdx.size();
+        const Eigen::Index nTreeDOFEigen = static_cast<Eigen::Index>(nTreeDOF);
+        Eigen::MatrixXd Mfull(nTreeDOFEigen, nTreeDOFEigen);
         Mfull.setZero();
         const auto& massMatrixData = massMatrixIn.massMatrix;
 
-        for (int r = 0; r < nTreeDOF; ++r) {
-            const int rowIdx = dofIdx[r];
-            for (int c = 0; c < nTreeDOF; ++c) {
-                const int colIdx = dofIdx[c];
-                Mfull(r, c) = massMatrixData[rowIdx * nDOF + colIdx];
+        for (size_t r = 0; r < nTreeDOF; ++r) {
+            const size_t rowIdx = dofIdx[r];
+            for (size_t c = 0; c < nTreeDOF; ++c) {
+                const size_t colIdx = dofIdx[c];
+                Mfull(static_cast<Eigen::Index>(r), static_cast<Eigen::Index>(c)) =
+                    massMatrixData[rowIdx * nDOF + colIdx];
             }
         }
 
-        Eigen::MatrixXd Mbase = Mfull.block(0,0, nBaseDOF, nBaseDOF);
-        Eigen::MatrixXd Mthb = Mfull.block(nBaseDOF, 0, nHingeJoints, nBaseDOF);
+        Eigen::MatrixXd Mbase = Mfull.block(0, 0, nBaseDOFEigen, nBaseDOFEigen);
+        Eigen::MatrixXd Mthb = Mfull.block(nBaseDOFEigen, 0, nHingeJointsEigen, nBaseDOFEigen);
 
-        Eigen::VectorXd baseBias(nBaseDOF);
-        for (int i = 0; i < nBaseDOF; ++i) {
-            baseBias(i) = nonActuatorForces(dofIdx[i]);
+        Eigen::VectorXd baseBias(nBaseDOFEigen);
+        for (size_t i = 0; i < nBaseDOF; ++i) {
+            baseBias(static_cast<Eigen::Index>(i)) =
+                nonActuatorForces(static_cast<Eigen::Index>(dofIdx[i]));
         }
 
-        Eigen::VectorXd baseThr(nBaseDOF);
+        Eigen::VectorXd baseThr(nBaseDOFEigen);
         baseThr.setZero();
         baseThr.segment<3>(0) = treeForce_B[treeId];
         baseThr.segment<3>(3) = treeTorque_B[treeId];
         Eigen::VectorXd baseAccel = Mbase.ldlt().solve(baseThr + baseBias);
 
-        Eigen::VectorXd jointBias(nHingeJoints);
-        for (int i = 0; i < nHingeJoints; ++i) {
-            jointBias(i) = nonActuatorForces(dofIdx[nBaseDOF + i]);
+        Eigen::VectorXd jointBias(nHingeJointsEigen);
+        for (size_t i = 0; i < nHingeJoints; ++i) {
+            jointBias(static_cast<Eigen::Index>(i)) =
+                nonActuatorForces(static_cast<Eigen::Index>(dofIdx[nBaseDOF + i]));
         }
 
-        Eigen::VectorXd tauThrTree(nHingeJoints);
+        Eigen::VectorXd tauThrTree(nHingeJointsEigen);
         tauThrTree.setZero();
-        for (int i = 0; i < nHingeJoints; ++i) {
-            const int hGlobal = hingeGlobalIdxs[i];
-            tauThrTree(i) = tauJoint(hGlobal);
+        for (size_t i = 0; i < nHingeJoints; ++i) {
+            const Eigen::Index hGlobal = static_cast<Eigen::Index>(hingeGlobalIdxs[i]);
+            tauThrTree(static_cast<Eigen::Index>(i)) = tauJoint(hGlobal);
         }
         Eigen::VectorXd uH_tree = (Mthb * baseAccel) - jointBias - tauThrTree;
 
-        for (int i = 0; i < nHingeJoints; ++i) {
-            const int hGlobal = hingeGlobalIdxs[i];
-            uH(hGlobal) = uH_tree(i);
+        for (size_t i = 0; i < nHingeJoints; ++i) {
+            const Eigen::Index hGlobal = static_cast<Eigen::Index>(hingeGlobalIdxs[i]);
+            uH(hGlobal) = uH_tree(static_cast<Eigen::Index>(i));
         }
     }
 
     // Apply torque limits if specified
     if (!this->uMax.empty()) {
-        if (static_cast<int>(this->uMax.size()) != this->numHingedJoints) {
+        if (this->uMax.size() != this->numHingedJoints) {
             bskLogger.bskError("ThrJointCompensation: size of uMax does not match numHingedJoints.");
         }
-        for (int i = 0; i < this->numHingedJoints; ++i) {
-            uH(i) = std::max(-this->uMax[i], std::min(this->uMax[i], uH(i)));
+        for (size_t i = 0; i < this->numHingedJoints; ++i) {
+            const Eigen::Index eigenIndex = static_cast<Eigen::Index>(i);
+            uH(eigenIndex) = std::max(-this->uMax[i], std::min(this->uMax[i], uH(eigenIndex)));
         }
     }
 
     // Write to the output messages
-    for (int i = 0; i < this->numHingedJoints; ++i) {
+    for (size_t i = 0; i < this->numHingedJoints; ++i) {
         SingleActuatorMsgPayload motorTorquesOutMsg = this->motorTorquesOutMsgs[i]->zeroMsgPayload;
-        motorTorquesOutMsg.input = uH(i);
+        motorTorquesOutMsg.input = uH(static_cast<Eigen::Index>(i));
         this->motorTorquesOutMsgs[i]->write(&motorTorquesOutMsg, this->moduleID, CurrentSimNanos);
     }
 }

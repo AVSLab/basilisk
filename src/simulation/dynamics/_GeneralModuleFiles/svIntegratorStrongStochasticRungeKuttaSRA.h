@@ -149,15 +149,17 @@ void svIntegratorStrongStochasticRungeKuttaSRA<numberStages>::integrate(double c
 
     const std::vector<StateIdToIndexMap>& stateIdToNoiseIndexMaps = noiseIndexMaps();
     const size_t m = stateIdToNoiseIndexMaps.size();
+    const Eigen::Index noiseCount = static_cast<Eigen::Index>(m);
 
     const GaussianNoiseSample sample = this->rvGenerator->generate(m, timeStep);
     const Eigen::VectorXd& dW = sample.dW;
     const Eigen::VectorXd& dZ = sample.dZ;
 
     const double sqrt3 = std::sqrt(3.0);
-    Eigen::VectorXd chi2(m); // I_(1,0)/h
+    Eigen::VectorXd chi2(noiseCount); // I_(1,0)/h
     for (size_t k = 0; k < m; k++) {
-        chi2(k) = (dW(k) + dZ(k) / sqrt3) / 2.0;
+        const Eigen::Index eigenK = static_cast<Eigen::Index>(k);
+        chi2(eigenK) = (dW(eigenK) + dZ(eigenK) / sqrt3) / 2.0;
     }
 
     // f_H0[i]     = f(t_n + c0[i] h, H0[i])

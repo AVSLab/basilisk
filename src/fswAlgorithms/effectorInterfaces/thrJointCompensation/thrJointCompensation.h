@@ -72,13 +72,13 @@ public:
     void addThruster();
 
 private:
-    int numHingedJoints = 0;  //!< number of hinged joints in the system
-    int numThrusters = 0;  //!< number of thrusters in the system
+    size_t numHingedJoints = 0;  //!< number of hinged joints in the system
+    size_t numThrusters = 0;  //!< number of thrusters in the system
     std::vector<double> uMax = {};  //!< [Nm] (optional) maximum joint motor torque
     struct TreeInfo {
         int freeJointIdx = -1;
-        std::vector<int> hingeJointIdxs;
-        std::vector<int> hingeGlobalIdxs;
+        std::vector<size_t> hingeJointIdxs;
+        std::vector<size_t> hingeGlobalIdxs;
     };                                  //!< struct to hold info about each kinematic tree
     bool treeInfoInitialized = false;   //!< flag indicating if tree info has been initialized
     int numKinematicTrees = 0; //!< number of kinematic trees in the system
@@ -93,9 +93,9 @@ private:
         std::vector<int> thrArmIdx;
         std::vector<int> thrArmJointIdx;
         std::vector<int> armTreeIdx;
-        std::vector<int> armJointStart;
+        std::vector<size_t> armJointStart;
         std::vector<int> armJointCount;
-        std::vector<int> armHingeGlobalIdx;
+        std::vector<size_t> armHingeGlobalIdx;
         std::vector<double> r_CP_P;
         std::vector<double> r_TP_P;
         std::vector<double> shat_P;

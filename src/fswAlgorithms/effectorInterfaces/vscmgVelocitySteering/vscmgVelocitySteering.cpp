@@ -64,7 +64,8 @@ VscmgVelocitySteering::Reset(uint64_t CurrentSimNanos)
     this->vscmgConfigParams = this->vscmgParamsInMsg();
 
     for (int i = 0; i < vscmgConfigParams.numVSCMG; i++) {
-        this->h_bar[i] = vscmgConfigParams.JsList[i] * vscmgConfigParams.Omega0List[i];
+        this->h_bar[static_cast<size_t>(i)] =
+            vscmgConfigParams.JsList[i] * vscmgConfigParams.Omega0List[i];
     }
     const Eigen::Map<const Eigen::VectorXd> h_bar_vec(this->h_bar.data(), vscmgConfigParams.numVSCMG);
     double mean_h_bar = 0.0;
@@ -168,9 +169,10 @@ VscmgVelocitySteering::UpdateState(uint64_t CurrentSimNanos)
     delta = ((1.0 / this->h_bar_squared) * (D1 * D1.transpose())).determinant();
 
     for (int i = 0; i < vscmgConfigParams.numVSCMG; i++) {
-        W_si = this->W0_s[i] * exp(-this->mu * delta);
+        const size_t vscmgIndex = static_cast<size_t>(i);
+        W_si = this->W0_s[vscmgIndex] * exp(-this->mu * delta);
         W(i, i) = W_si;
-        W(i + vscmgConfigParams.numVSCMG, i + vscmgConfigParams.numVSCMG) = this->W_g[i];
+        W(i + vscmgConfigParams.numVSCMG, i + vscmgConfigParams.numVSCMG) = this->W_g[vscmgIndex];
     }
 
     Eigen::Vector3d torqueVec = Eigen::Map<const Eigen::Vector3d>(Lr.torqueRequestBody);

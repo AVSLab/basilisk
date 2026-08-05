@@ -17,6 +17,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <limits>
 #include <cmath>
 #include <cstdint>
 #include <cstdio>
@@ -184,15 +185,13 @@ void VizInterface::Reset(uint64_t CurrentSimNanos)
             MsgCurrStatus thrStatus;
             thrStatus.dataFresh = false;
             thrStatus.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
-            int thrCounter = 0;
-
-            for (thrCounter = 0; thrCounter < (int) scIt->thrInMsgs.size(); thrCounter++) {
+            for (size_t thrCounter = 0; thrCounter < scIt->thrInMsgs.size(); thrCounter++) {
                 if (scIt->thrInMsgs.at(thrCounter).isLinked()) {
                     scIt->thrMsgStatus.push_back(thrStatus);
                     THROutputMsgPayload logMsg;
                     scIt->thrOutputMessage.push_back(logMsg);
                 } else {
-                    bskLogger.bskError("vizInterface: TH(%d) msg requested but not found.", thrCounter);
+                    bskLogger.bskError("vizInterface: TH(%zu) msg requested but not found.", thrCounter);
                 }
             }
             if (scIt->thrInfo.size() != scIt->thrInMsgs.size()) {
@@ -437,7 +436,8 @@ void VizInterface::ReadBSKMessages()
                     msmChargeMsgBuffer = scIt->msmInfo.msmChargeInMsg();
                     if ((size_t) msmChargeMsgBuffer.q.size() == scIt->msmInfo.msmList.size()) {
                         for (size_t idx=0;idx< (size_t) scIt->msmInfo.msmList.size(); idx++) {
-                            scIt->msmInfo.msmList[idx]->currentValue = msmChargeMsgBuffer.q[idx];
+                            scIt->msmInfo.msmList[idx]->currentValue =
+                                msmChargeMsgBuffer.q[static_cast<Eigen::Index>(idx)];
                         }
                     } else {
                         bskLogger.bskError("vizInterface: the number of charged in MSM message and the number of msm vizInterface spheres must be the same.");
@@ -1518,28 +1518,31 @@ void VizInterface::requestImage(size_t camCounter, uint64_t CurrentSimNanos)
 
     int32_t *lengthPoint= (int32_t *)zmq_msg_data(&length);
     void *imagePoint= zmq_msg_data(&image);
-    int32_t length_unswapped = *lengthPoint;
+    const uint32_t lengthUnswapped = static_cast<uint32_t>(*lengthPoint);
     /*! --  Endianness switch for the length of the buffer */
-    int32_t imageBufferLength =((length_unswapped>>24)&0xff) | // move byte 3 to byte 0
-                                ((length_unswapped<<8)&0xff0000) | // move byte 1 to byte 2
-                                ((length_unswapped>>8)&0xff00) | // move byte 2 to byte 1
-                                ((length_unswapped<<24)&0xff000000); // byte 0 to byte 3
+    const uint32_t imageBufferLengthUnsigned =((lengthUnswapped>>24)&0xffU) | // move byte 3 to byte 0
+                                               ((lengthUnswapped<<8)&0xff0000U) | // move byte 1 to byte 2
+                                               ((lengthUnswapped>>8)&0xff00U) | // move byte 2 to byte 1
+                                               ((lengthUnswapped<<24)&0xff000000U); // byte 0 to byte 3
 
-    if (imageBufferLength < 0 || (size_t)imageBufferLength != zmq_msg_size(&image)) {
+    if (imageBufferLengthUnsigned > static_cast<uint32_t>(std::numeric_limits<int32_t>::max()) ||
+        static_cast<size_t>(imageBufferLengthUnsigned) != zmq_msg_size(&image)) {
         zmq_msg_close(&length);
         zmq_msg_close(&image);
         bskLogger.bskError("Vizard image response buffer length is invalid.");
     }
+    const int32_t imageBufferLength = static_cast<int32_t>(imageBufferLengthUnsigned);
+    const size_t imageBufferSize = static_cast<size_t>(imageBufferLengthUnsigned);
 
     /*!-Copy the image buffer pointer, so that it does not get freed by ZMQ*/
     if (imageBufferLength > 0) {
-        this->bskImagePtrs[camCounter] = malloc(imageBufferLength*sizeof(char));
+        this->bskImagePtrs[camCounter] = malloc(imageBufferSize * sizeof(char));
         if (this->bskImagePtrs[camCounter] == NULL) {
             zmq_msg_close(&length);
             zmq_msg_close(&image);
             bskLogger.bskError("Vizard image response buffer allocation failed.");
         }
-        memcpy(this->bskImagePtrs[camCounter], imagePoint, imageBufferLength*sizeof(char));
+        memcpy(this->bskImagePtrs[camCounter], imagePoint, imageBufferSize * sizeof(char));
     }
 
     /*! -- Write out the image information to the Image message */

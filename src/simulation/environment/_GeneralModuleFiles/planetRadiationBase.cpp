@@ -117,20 +117,27 @@ void PlanetGrid::initialize(BSKLogger bskLogger)
     const int halfLon = this->nLon / 2;
 
     // Create grid point coordinates: centered at origin, spanning -180 to 180 deg lon, -90 to 90 deg lat
-    std::vector<double> gdlat(this->nLat), gdlon(this->nLon);// Normalised area = solid angle of patch on unit sphere: dOmega = dlon * (sin(lat1) - sin(lat2))
-    for (int i = 0; i < this->nLat; ++i) { gdlat[i] = (i - halfLat + 0.5) * this->latDiff; }
-    for (int j = 0; j < this->nLon; ++j) { gdlon[j] = (j - halfLon + 0.5) * this->lonDiff; }
+    const size_t latitudeCount = static_cast<size_t>(this->nLat);
+    const size_t longitudeCount = static_cast<size_t>(this->nLon);
+    std::vector<double> gdlat(latitudeCount), gdlon(longitudeCount);// Normalised area = solid angle of patch on unit sphere: dOmega = dlon * (sin(lat1) - sin(lat2))
+    for (int i = 0; i < this->nLat; ++i) {
+        gdlat[static_cast<size_t>(i)] = (i - halfLat + 0.5) * this->latDiff;
+    }
+    for (int j = 0; j < this->nLon; ++j) {
+        gdlon[static_cast<size_t>(j)] = (j - halfLon + 0.5) * this->lonDiff;
+    }
 
     // --- Precompute patch directions (P frame) and normalised areas ---
     // For each grid cell, compute the unit direction vector from planet center to patch center
     // and the normalised area (solid angle) of the patch on the unit sphere.
-    const int nPatches = this->nLat * this->nLon;
-    this->patchDirs_P.resize(nPatches);
-    this->normAreas.resize(nPatches);
-    this->patchAlbedo.resize(nPatches);
+    const size_t patchCount = latitudeCount * longitudeCount;
+    this->patchDirs_P.resize(patchCount);
+    this->normAreas.resize(patchCount);
+    this->patchAlbedo.resize(patchCount);
 
     for (int ilat = 0; ilat < this->nLat; ++ilat) {
-        const double lat  = gdlat[ilat];  // [rad]
+        const size_t latitudeIndex = static_cast<size_t>(ilat);
+        const double lat  = gdlat[latitudeIndex];  // [rad]
         // Latitude bounds of this grid cell
         double lat1 = lat + 0.5 * this->latDiff;  // [rad]
         double lat2 = lat - 0.5 * this->latDiff;  // [rad]
@@ -147,13 +154,16 @@ void PlanetGrid::initialize(BSKLogger bskLogger)
         const double cosLat = std::cos(lat), sinLat = std::sin(lat);  // [-]
 
         for (int ilon = 0; ilon < this->nLon; ++ilon) {
-            const int k = ilat * this->nLon + ilon;
-            const double lon = gdlon[ilon];  // [rad]
+            const size_t longitudeIndex = static_cast<size_t>(ilon);
+            const size_t patchIndex = latitudeIndex * longitudeCount + longitudeIndex;
+            const double lon = gdlon[longitudeIndex];  // [rad]
             // Unit vector from planet center to patch center in planet frame P
-            this->patchDirs_P[k] = {cosLat*std::cos(lon), cosLat*std::sin(lon), sinLat};  // [-]
-            this->normAreas[k]   = normArea;  // [sr]
+            this->patchDirs_P[patchIndex] = {cosLat*std::cos(lon), cosLat*std::sin(lon), sinLat};  // [-]
+            this->normAreas[patchIndex]   = normArea;  // [sr]
             // Assign albedo value: from CSV data if loaded, otherwise use constant average
-            this->patchAlbedo[k] = this->useAlbedoData ? albGrid[ilat][ilon] : this->albedoAvg;  // [-]
+            this->patchAlbedo[patchIndex] = this->useAlbedoData
+                ? albGrid[latitudeIndex][longitudeIndex]
+                : this->albedoAvg;  // [-]
         }
     }
 
@@ -268,11 +278,11 @@ std::vector<PatchResult> PlanetGrid::computePatches(
     double       R_planet,
     const double S_sun) const
 {
-    const int nPatches = this->nLat * this->nLon;
+    const size_t patchCount = static_cast<size_t>(this->nLat) * static_cast<size_t>(this->nLon);
     if (!this->initialized ||
-        this->patchDirs_P.size() != static_cast<size_t>(nPatches) ||
-        this->normAreas.size() != static_cast<size_t>(nPatches) ||
-        this->patchAlbedo.size() != static_cast<size_t>(nPatches)) {
+        this->patchDirs_P.size() != patchCount ||
+        this->normAreas.size() != patchCount ||
+        this->patchAlbedo.size() != patchCount) {
         throw BasiliskError(
             "PlanetGrid::computePatches(): grid is not initialized. "
             "Call PlanetGrid::initialize() after configuring the grid before computePatches().");
@@ -291,12 +301,12 @@ std::vector<PatchResult> PlanetGrid::computePatches(
 
     std::vector<PatchResult> results;
     // Reserve approximate storage; only visible patches contribute.
-    results.reserve(static_cast<size_t>(nPatches) / 2);
+    results.reserve(patchCount / 2);
 
     // Iterate over all patches and compute radiation contributions
-    for (int k = 0; k < nPatches; ++k) {
+    for (size_t patchIndex = 0; patchIndex < patchCount; ++patchIndex) {
         // Patch direction in planet frame P
-        const Eigen::Vector3d dir_P(this->patchDirs_P[k][0], this->patchDirs_P[k][1], this->patchDirs_P[k][2]);  // [-]
+        const Eigen::Vector3d dir_P(this->patchDirs_P[patchIndex][0], this->patchDirs_P[patchIndex][1], this->patchDirs_P[patchIndex][2]);  // [-]
         // Rotate patch direction to inertial frame N and scale by planet radius
         const Eigen::Vector3d r_dAP_N = R_planet * (dcm_NP * dir_P);  // [m]
         const Eigen::Vector3d rHat_dAP_N = r_dAP_N / r_dAP_N.norm();  // [-]
@@ -312,7 +322,7 @@ std::vector<PatchResult> PlanetGrid::computePatches(
         if (f2 <= 0.0) { continue; }
 
         // Actual patch area on the planet surface (normalised area * planet radius squared)
-        const double dArea    = this->normAreas[k] * R2;  // [m^2]
+        const double dArea    = this->normAreas[patchIndex] * R2;  // [m^2]
         // IR contribution assuming Lambertian emission.
         // M_1_PI accounts for Lambert's cosine law.
         const double dF_ir = this->irFluxMean * M_1_PI * f2 * dArea / pow(d, 2);  // [W/m^2]
@@ -326,7 +336,7 @@ std::vector<PatchResult> PlanetGrid::computePatches(
         const double f1 = rHat_dAP_N.dot(r_SdA_N / r_SdA_norm);  // [-]
         if (f1 > 0.0) {
             // Reflected solar (albedo) contribution assuming Lambertian reflection.
-            dF_alb = (S_sun * M_1_PI) * this->patchAlbedo[k] * f1 * f2 * dArea / pow(d, 2);  // [W/m^2]
+            dF_alb = (S_sun * M_1_PI) * this->patchAlbedo[patchIndex] * f1 * f2 * dArea / pow(d, 2);  // [W/m^2]
         }
 
         PatchResult pr;
@@ -382,7 +392,7 @@ void PlanetRadiationBase::Reset(uint64_t CurrentSimNanos)
     }
 
     for (int i = 0; i < static_cast<int>(this->planets.size()); ++i) {
-        PlanetEntry& e = this->planets[i];
+        PlanetEntry& e = this->planets[static_cast<size_t>(i)];
 
         SpicePlanetStateMsgPayload pm = e.planetMsg();
 

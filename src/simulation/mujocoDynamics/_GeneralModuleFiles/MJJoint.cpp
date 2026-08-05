@@ -108,25 +108,29 @@ void MJScalarJoint::writeJointStateMessage(uint64_t CurrentSimNanos)
     auto& scene = body.getSpec().getScene();
 
     ScalarJointStateMsgPayload stateOutMsgPayload;
-    stateOutMsgPayload.state = scene.getQposState()->state(this->qposAdr.value());
+    stateOutMsgPayload.state =
+        scene.getQposState()->state(static_cast<Eigen::Index>(this->qposAdr.value()));
     this->stateOutMsg.write(&stateOutMsgPayload, scene.moduleID, CurrentSimNanos);
 
     ScalarJointStateMsgPayload stateDotOutMsgPayload;
-    stateDotOutMsgPayload.state = scene.getQvelState()->state(this->qvelAdr.value());
+    stateDotOutMsgPayload.state =
+        scene.getQvelState()->state(static_cast<Eigen::Index>(this->qvelAdr.value()));
     this->stateDotOutMsg.write(&stateDotOutMsgPayload, scene.moduleID, CurrentSimNanos);
 }
 
 void MJScalarJoint::setPosition(double value)
 {
     checkInitialized();
-    this->body.getSpec().getScene().getQposState()->state(this->qposAdr.value()) = value;
+    this->body.getSpec().getScene().getQposState()->state(
+        static_cast<Eigen::Index>(this->qposAdr.value())) = value;
     this->body.getSpec().getScene().markKinematicsAsStale();
 }
 
 void MJScalarJoint::setVelocity(double value)
 {
     checkInitialized();
-    this->body.getSpec().getScene().getQvelState()->state(this->qvelAdr.value()) = value;
+    this->body.getSpec().getScene().getQvelState()->state(
+        static_cast<Eigen::Index>(this->qvelAdr.value())) = value;
     this->body.getSpec().getScene().markKinematicsAsStale();
 }
 
@@ -144,7 +148,7 @@ void MJFreeJoint::setPosition(const Eigen::Vector3d& position)
 {
     checkInitialized();
     auto& qpos = this->body.getSpec().getScene().getQposState()->state;
-    auto i = this->qposAdr.value();
+    const Eigen::Index i = static_cast<Eigen::Index>(this->qposAdr.value());
     qpos.middleRows(i, 3) = position;
     this->body.getSpec().getScene().markKinematicsAsStale();
 }
@@ -153,7 +157,7 @@ void MJFreeJoint::setVelocity(const Eigen::Vector3d& velocity)
 {
     checkInitialized();
     auto& qvel = this->body.getSpec().getScene().getQvelState()->state;
-    auto i = this->qvelAdr.value();
+    const Eigen::Index i = static_cast<Eigen::Index>(this->qvelAdr.value());
     qvel.middleRows(i, 3) = velocity;
     this->body.getSpec().getScene().markKinematicsAsStale();
 }
@@ -164,7 +168,7 @@ void MJFreeJoint::setAttitude(const Eigen::MRPd& attitude)
     auto mat  = attitude.toRotationMatrix();
     auto quat = Eigen::Quaterniond(mat);
     auto& qpos = this->body.getSpec().getScene().getQposState()->state;
-    auto i = this->qposAdr.value();
+    const Eigen::Index i = static_cast<Eigen::Index>(this->qposAdr.value());
     // The free joint quaternion is stored three entries after the translation.
     qpos(i + 3) = quat.w();
     qpos(i + 4) = quat.x();
@@ -177,7 +181,7 @@ void MJFreeJoint::setAttitudeRate(const Eigen::Vector3d& attitudeRate)
 {
     checkInitialized();
     auto& qvel = this->body.getSpec().getScene().getQvelState()->state;
-    auto i = this->qvelAdr.value();
+    const Eigen::Index i = static_cast<Eigen::Index>(this->qvelAdr.value());
     qvel.middleRows(i + 3, 3) = attitudeRate;
     this->body.getSpec().getScene().markKinematicsAsStale();
 }

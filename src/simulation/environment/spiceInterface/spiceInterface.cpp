@@ -582,7 +582,7 @@ SpiceInterface::SpiceInterface()
     GPSSeconds = 0.0;
     GPSWeek = 0;
     GPSRollovers = 0;
-    spiceBuffer = new uint8_t[charBufferSize];
+    spiceBuffer = new uint8_t[static_cast<size_t>(charBufferSize)];
     timeDataInit = false;
     JDGPSEpoch = 0.0;
     GPSEpochTime = "1980 January 6, 00:00:00.0";
@@ -683,7 +683,7 @@ void SpiceInterface::Reset(uint64_t CurrenSimNanos)
     std::vector<SpicePlanetStateMsgPayload>::iterator planit;
     size_t c = 0;  // celestial object counter
     int autoFrame;  // flag to set the frame automatically
-    SpiceChar *name = new SpiceChar[this->charBufferSize];
+    SpiceChar *name = new SpiceChar[static_cast<size_t>(this->charBufferSize)];
     SpiceBoolean frmFound;
     SpiceInt frmCode;
     for(planit = this->planetData.begin(); planit != planetData.end(); planit++)
@@ -888,7 +888,7 @@ void SpiceInterface::addPlanetNames(std::vector<std::string> planetNames) {
     spacecraft state output messages and the vector of spacecraft state message payloads */
 void SpiceInterface::addSpacecraftNames(std::vector<std::string> spacecraftNames) {
     std::vector<std::string>::iterator it;
-    SpiceChar *name = new SpiceChar[this->charBufferSize];
+    SpiceChar *name = new SpiceChar[static_cast<size_t>(this->charBufferSize)];
     SpiceBoolean frmFound;
     SpiceInt frmCode;
 
@@ -1166,7 +1166,7 @@ std::string SpiceInterface::getCurrentTimeString()
         bskLogger.bskError("The output format string is not long enough. It should be much larger than 5 characters.  It is currently: %s", this->timeOutPicture.c_str());
 	}
 
-	spiceOutputBuffer = new char[allowedOutputLength];
+	spiceOutputBuffer = new char[static_cast<size_t>(allowedOutputLength)];
 	timout_c(this->J2000Current, this->timeOutPicture.c_str(), (SpiceInt) allowedOutputLength,
 		spiceOutputBuffer);
 	std::string returnTimeString = spiceOutputBuffer;

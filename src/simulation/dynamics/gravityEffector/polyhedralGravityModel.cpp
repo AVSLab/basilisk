@@ -64,8 +64,8 @@ std::optional<std::string> PolyhedralGravityModel::initializeParameters(const Gr
 Eigen::Vector3d
 PolyhedralGravityModel::computeField(const Eigen::Vector3d& pos_BP_P) const
 {
-    const size_t nFacet = this->orderFacet.rows();
-    const size_t nEdge = int(3*nFacet/2);
+    const Eigen::Index nFacet = this->orderFacet.rows();
+    const Eigen::Index nEdge = 3 * nFacet / 2;
 
     // For the facet in loop: declare vertex indexes
     // and relative positions w.r.t. spacecraft
@@ -91,9 +91,10 @@ PolyhedralGravityModel::computeField(const Eigen::Vector3d& pos_BP_P) const
     dUf.setZero(3);
 
     // Loop through edges
-    for (unsigned int n = 0; n < nEdge; n++){
+    for (Eigen::Index n = 0; n < nEdge; n++){
+        const size_t collectionIndex = static_cast<size_t>(n);
         // Get edge dyad matrix
-        Ee = this->EeDyad[n];
+        Ee = this->EeDyad[collectionIndex];
 
         // Compute vector from spacecraft to an edge point
         re = this->xyzVertex.row(this->edgeVertex(n,0)).transpose()
@@ -113,7 +114,7 @@ PolyhedralGravityModel::computeField(const Eigen::Vector3d& pos_BP_P) const
         // Loop through facets
         if (n < nFacet){
             // Get facet dyad matrix
-            Ff = this->FfDyad[n];
+            Ff = this->FfDyad[collectionIndex];
 
             // Obtain vertex indexes of the facet
             v = this->orderFacet.row(n);
@@ -147,8 +148,8 @@ PolyhedralGravityModel::computeField(const Eigen::Vector3d& pos_BP_P) const
 double
 PolyhedralGravityModel::computePotentialEnergy(const Eigen::Vector3d& pos_BP_P) const
 {
-    const size_t nFacet = this->orderFacet.rows();
-    const size_t nEdge = int(3*nFacet/2);
+    const Eigen::Index nFacet = this->orderFacet.rows();
+    const Eigen::Index nEdge = 3 * nFacet / 2;
 
     // For the facet in loop: declare vertex indexes
     // and positions
@@ -174,9 +175,10 @@ PolyhedralGravityModel::computePotentialEnergy(const Eigen::Vector3d& pos_BP_P) 
     Uf = 0;
 
     // Loop through edges
-    for (unsigned int n = 0; n < nEdge; n++){
+    for (Eigen::Index n = 0; n < nEdge; n++){
+        const size_t collectionIndex = static_cast<size_t>(n);
         // Get edge dyad matrix
-        Ee = this->EeDyad[n];
+        Ee = this->EeDyad[collectionIndex];
 
         // Compute vector from spacecraft to an edge point
         re = this->xyzVertex.row(this->edgeVertex(n,0)).transpose()
@@ -196,7 +198,7 @@ PolyhedralGravityModel::computePotentialEnergy(const Eigen::Vector3d& pos_BP_P) 
         // Loop through facets
         if (n < nFacet){
             // Get facet dyad matrix
-            Ff = this->FfDyad[n];
+            Ff = this->FfDyad[collectionIndex];
 
             // Obtain vertex indexes of the facet
             v = this->orderFacet.row(n);
@@ -230,8 +232,8 @@ PolyhedralGravityModel::computePotentialEnergy(const Eigen::Vector3d& pos_BP_P) 
 
 void PolyhedralGravityModel::initializeFacets()
 {
-    const size_t nFacet = this->orderFacet.rows();
-    const size_t nEdge = int(3*nFacet/2);
+    const Eigen::Index nFacet = this->orderFacet.rows();
+    const Eigen::Index nEdge = 3 * nFacet / 2;
 
     // Preallocate facet normal and center
     Eigen::Vector3d nf;
@@ -259,10 +261,10 @@ void PolyhedralGravityModel::initializeFacets()
     // Declare flag telling if an edge has been already
     // stored. Initialize non-repeated edges index
     bool isEdgeRepeat;
-    int idxEdge = 0;
+    Eigen::Index idxEdge = 0;
 
     // Loop through each facet
-    for (unsigned int m = 0; m < nFacet; m++)
+    for (Eigen::Index m = 0; m < nFacet; m++)
     {
         // Obtain vertex indexes of the facet
         v = this->orderFacet.row(m);
@@ -294,10 +296,10 @@ void PolyhedralGravityModel::initializeFacets()
             k, i;
 
         // Loop through each facet edge
-        for (unsigned int n = 0; n < 3; n++){
+        for (Eigen::Index n = 0; n < 3; n++){
             // Add edge if non-repeated */
             isEdgeRepeat = this->addEdge(edgeCurrentFacet.row(n),
-                                         idxEdge, m);
+                                         idxEdge, static_cast<int>(m));
 
             // If not repeated, advance edge index
             if (isEdgeRepeat == false){
@@ -309,8 +311,8 @@ void PolyhedralGravityModel::initializeFacets()
 
 void PolyhedralGravityModel::initializeEdges()
 {
-    const size_t nFacet = this->orderFacet.rows();
-    const size_t nEdge = int(3*nFacet/2);
+    const Eigen::Index nFacet = this->orderFacet.rows();
+    const Eigen::Index nEdge = 3 * nFacet / 2;
 
     // Declare shared-facet normals, edge line
     // and outward normals to edge-facet
@@ -321,7 +323,7 @@ void PolyhedralGravityModel::initializeEdges()
     this->edgeLength.setZero(nEdge);
 
     // Loop through edges
-    for (unsigned int n = 0; n < nEdge; n++){
+    for (Eigen::Index n = 0; n < nEdge; n++){
         // Obtain normal of facets sharing the edge
         nFA = this->normalFacet.row(this->edgeFacet(n, 0)).transpose();
         nFB = this->normalFacet.row(this->edgeFacet(n, 1)).transpose();
@@ -341,13 +343,13 @@ void PolyhedralGravityModel::initializeEdges()
     }
 }
 
-bool PolyhedralGravityModel::addEdge(Eigen::Vector2i edge, int idxEdge, int idxFacet)
+bool PolyhedralGravityModel::addEdge(Eigen::Vector2i edge, Eigen::Index idxEdge, int idxFacet)
 {
     // Flag telling if an edge is already stored
     bool isEdgeRepeat = false;
 
     // Loop through previously stored edges
-    for (int i = 0; i < idxEdge; i++){
+    for (Eigen::Index i = 0; i < idxEdge; i++){
         // Check if the edge is already stored
         if ((this->edgeVertex(i, 0) == edge(0) && this->edgeVertex(i, 1) == edge(1))
             || (this->edgeVertex(i, 1) == edge(0) && this->edgeVertex(i, 0) == edge(1))){

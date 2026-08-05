@@ -482,7 +482,8 @@ void sunlineEKFUpdate(double kalmanGain[SKF_N_STATES*MAX_N_CSS_MEAS], double cov
 
 void sunlineHMatrixYMeas(double states[SKF_N_STATES], int numCSS, double cssSensorCos[MAX_N_CSS_MEAS], double sensorUseThresh, double cssNHat_B[MAX_NUM_CSS_SENSORS*3], double CBias[MAX_NUM_CSS_SENSORS], double *obs, double *yMeas, int *numObs, double *measMat)
 {
-    int i, obsCounter;
+    int i;
+    size_t obsCounter;
     double sensorNormal[3];
 
     v3SetZero(sensorNormal);

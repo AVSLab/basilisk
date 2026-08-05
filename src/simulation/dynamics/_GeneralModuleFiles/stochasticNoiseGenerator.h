@@ -84,13 +84,14 @@ public:
         this->normal_rv.reset();
 
         const double sqh = std::sqrt(h);
+        const Eigen::Index noiseCount = static_cast<Eigen::Index>(m);
         GaussianNoiseSample sample;
-        sample.dW.resize(m);
-        sample.dZ.resize(m);
-        for (size_t i = 0; i < m; i++) {
+        sample.dW.resize(noiseCount);
+        sample.dZ.resize(noiseCount);
+        for (Eigen::Index i = 0; i < noiseCount; i++) {
             sample.dW(i) = sqh * this->normal_rv(this->rng);
         }
-        for (size_t i = 0; i < m; i++) {
+        for (Eigen::Index i = 0; i < noiseCount; i++) {
             sample.dZ(i) = sqh * this->normal_rv(this->rng);
         }
         return sample;

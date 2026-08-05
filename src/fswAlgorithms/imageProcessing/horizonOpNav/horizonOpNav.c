@@ -111,6 +111,10 @@ void Update_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime, int64_
     if (numPoints > LINEAR_ALGEBRA_MAX_ARRAY_SIZE/3) {
         numPoints = LINEAR_ALGEBRA_MAX_ARRAY_SIZE/3;
     }
+    if (numPoints <= 0) {
+        _bskError(configData->bskLogger, "horizonOpNav: numLimbPoints must be positive.");
+    }
+    const size_t pointCount = (size_t) numPoints;
     sigma_pix = configData->noiseSF*cameraSpecs.resolution[0]/(numPoints);
 
     /*! Build DCMs */
@@ -150,7 +154,7 @@ void Update_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime, int64_
     /*! Rotate R_s with B eq (52) in Journal*/
     m33MultM33(B, R_s, R_s);
     m33MultM33t(R_s, B, R_s);
-    mSetZero(R_yInv, numPoints, numPoints);
+    mSetZero(R_yInv, pointCount, pointCount);
 
 
     /*! Create the H matrix. This is the stacked vector of all the limb points eq (33) in Engineering Note attached*/
@@ -181,11 +185,11 @@ void Update_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime, int64_
     ones = malloc(MAX_LIMB_PNTS*sizeof(double));
 
     /*! - QR decomp */
-    QRDecomp(H, numPoints, Q_decomp, R_decomp);
+    QRDecomp(H, pointCount, Q_decomp, R_decomp);
     /*! Backsub to get n */
     v3SetZero(RHS_vec);
-    vSetOnes(ones, numPoints);
-    mtMultV(Q_decomp, numPoints, 3, ones, RHS_vec);
+    vSetOnes(ones, pointCount);
+    mtMultV(Q_decomp, pointCount, 3, ones, RHS_vec);
     BackSub(R_decomp, RHS_vec, 3, n);
 
     /*! - With all the s_bar terms, and n, we can compute J eq(50) in journal, and get uncertainty */
@@ -211,8 +215,8 @@ void Update_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime, int64_
     Rtemp = malloc(MAX_LIMB_PNTS*3*sizeof(double));
 
     m33SetIdentity(Pn);
-    mMultM(R_yInv, numPoints, numPoints, H, numPoints, 3, Rtemp);
-    mtMultM(H, numPoints, 3, Rtemp, numPoints, 3, Pn);
+    mMultM(R_yInv, pointCount, pointCount, H, pointCount, 3, Rtemp);
+    mtMultM(H, pointCount, 3, Rtemp, pointCount, 3, Pn);
     m33Inverse(Pn, Pn);
 
     /*! - Compute Scale factor now that n is computed */
@@ -273,9 +277,9 @@ void Update_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime, int64_
  @param Q     The output Q matrix (numbLimb x 3)
  @param R     The output R matrix (3 x 3)
  */
-void QRDecomp(double *inMat, int32_t nRow, double *Q , double *R)
+void QRDecomp(double *inMat, size_t nRow, double *Q , double *R)
 {
-    int32_t i, j;
+    size_t i, j;
     double *sourceMatT, *QT;
     double* proj;
     proj = malloc(nRow*sizeof(double));
@@ -322,7 +326,7 @@ void BackSub(double *R, double *inVec, int32_t nRow, double *n)
     int32_t i, j;
     double sum;
 
-    vSetZero(n, nRow);
+    vSetZero(n, (size_t) nRow);
     n[nRow-1] = inVec[nRow-1]/R[nRow*nRow-1];
     for (i = nRow-2; i>=0; i--)
     {

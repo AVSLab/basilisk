@@ -75,7 +75,7 @@ void ThrusterDynamicEffector::Reset(uint64_t CurrentSimNanos)
  */
 void ThrusterDynamicEffector::writeOutputMessages(uint64_t CurrentClock)
 {
-    int idx = 0;
+    size_t idx = 0;
     std::vector<std::shared_ptr<THRSimConfig>>::iterator itp;
     std::shared_ptr<THRSimConfig> it;
 
@@ -209,7 +209,7 @@ void ThrusterDynamicEffector::UpdateThrusterProperties()
 
     // Loop through all thrusters
     std::vector<ReadFunctor<SCStatesMsgPayload>>::iterator it;
-    int index;
+    size_t index;
     for (it = this->attachedBodyInMsgs.begin(), index = 0; it != this->attachedBodyInMsgs.end(); it++, index++)
     {
         // Check if the message is linked, and if so do the conversion

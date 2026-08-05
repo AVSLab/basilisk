@@ -71,7 +71,7 @@ void ReactionWheelStateEffector::registerStates(DynParamManager& states)
         if (rw.RWModel == JitterSimple || rw.RWModel == JitterFullyCoupled) {
             this->numRWJitter++;
         }
-        omegasForInit(i, 0) = rw.Omega;
+        omegasForInit(static_cast<Eigen::Index>(i), 0) = rw.Omega;
         this->numRW++;
     }
 
@@ -104,7 +104,7 @@ void ReactionWheelStateEffector::updateEffectorMassProps(double integTime)
     for (std::size_t i = 0; i < ReactionWheelData.size(); ++i)
     {
         auto& rw = *ReactionWheelData[i];
-		rw.Omega = omegasVector(i, 0);
+		rw.Omega = omegasVector(static_cast<Eigen::Index>(i), 0);
 
 		if (rw.RWModel == JitterFullyCoupled) {
 			rw.theta = (*thetaVector)(thetaCount, 0);
@@ -292,34 +292,35 @@ void ReactionWheelStateEffector::computeDerivatives(double integTime, Eigen::Vec
     for (std::size_t i = 0; i < ReactionWheelData.size(); ++i)
     {
         auto& rw = *ReactionWheelData[i];
+        const Eigen::Index wheelIndex = static_cast<Eigen::Index>(i);
         if(rw.RWModel == JitterFullyCoupled || rw.RWModel == JitterSimple) {
             // - Set trivial kinemetic derivative
             thetasDot(thetaCount,0) = rw.Omega;
             thetaCount++;
         }
 		if (rw.RWModel == BalancedWheels || rw.RWModel == JitterSimple) {
-			OmegasDot(i,0) = (rw.u_current + rw.frictionTorque)/rw.Js - rw.gsHat_B.transpose()*omegaDotBNLoc_B;
+			OmegasDot(wheelIndex,0) = (rw.u_current + rw.frictionTorque)/rw.Js - rw.gsHat_B.transpose()*omegaDotBNLoc_B;
 
             // Check for numerical instability due to excessive wheel acceleration
-            if (std::abs(OmegasDot(i,0)) > this->maxWheelAcceleration) {
-                bskLogger.bskLog(BSK_WARNING, "Excessive reaction wheel acceleration detected (%.2e rad/s^2). This may be caused by using unlimited torque (useMaxTorque=False) with a small spacecraft inertia. Consider using torque limits or increasing spacecraft inertia.", std::abs(OmegasDot(i,0)));
+            if (std::abs(OmegasDot(wheelIndex,0)) > this->maxWheelAcceleration) {
+                bskLogger.bskLog(BSK_WARNING, "Excessive reaction wheel acceleration detected (%.2e rad/s^2). This may be caused by using unlimited torque (useMaxTorque=False) with a small spacecraft inertia. Consider using torque limits or increasing spacecraft inertia.", std::abs(OmegasDot(wheelIndex,0)));
 
                 // Safety mechanism: limit the wheel acceleration to prevent numerical instability
-                OmegasDot(i,0) = std::copysign(this->maxWheelAcceleration, OmegasDot(i,0));
+                OmegasDot(wheelIndex,0) = std::copysign(this->maxWheelAcceleration, OmegasDot(wheelIndex,0));
 
                 // Recalculate the effective torque for consistency
-                double effectiveTorque = OmegasDot(i,0) * rw.Js + rw.gsHat_B.transpose()*omegaDotBNLoc_B;
+                double effectiveTorque = OmegasDot(wheelIndex,0) * rw.Js + rw.gsHat_B.transpose()*omegaDotBNLoc_B;
                 rw.u_current = effectiveTorque - rw.frictionTorque;
             }
         } else if(rw.RWModel == JitterFullyCoupled) {
-			OmegasDot(i,0) = rw.aOmega.dot(rDDotBNLoc_B) + rw.bOmega.dot(omegaDotBNLoc_B) + rw.cOmega;
+			OmegasDot(wheelIndex,0) = rw.aOmega.dot(rDDotBNLoc_B) + rw.bOmega.dot(omegaDotBNLoc_B) + rw.cOmega;
 
             // Check for numerical instability in fully coupled model as well
-            if (std::abs(OmegasDot(i,0)) > this->maxWheelAcceleration) {
-                bskLogger.bskLog(BSK_WARNING, "Excessive reaction wheel acceleration detected (%.2e rad/s^2). This may be caused by using unlimited torque (useMaxTorque=False) with a small spacecraft inertia. Consider using torque limits or increasing spacecraft inertia.", std::abs(OmegasDot(i,0)));
+            if (std::abs(OmegasDot(wheelIndex,0)) > this->maxWheelAcceleration) {
+                bskLogger.bskLog(BSK_WARNING, "Excessive reaction wheel acceleration detected (%.2e rad/s^2). This may be caused by using unlimited torque (useMaxTorque=False) with a small spacecraft inertia. Consider using torque limits or increasing spacecraft inertia.", std::abs(OmegasDot(wheelIndex,0)));
 
                 // Safety mechanism: limit the wheel acceleration to prevent numerical instability
-                OmegasDot(i,0) = std::copysign(this->maxWheelAcceleration, OmegasDot(i,0));
+                OmegasDot(wheelIndex,0) = std::copysign(this->maxWheelAcceleration, OmegasDot(wheelIndex,0));
             }
 		}
 	}
@@ -419,7 +420,7 @@ void ReactionWheelStateEffector::WriteOutputMessages(uint64_t CurrentClock)
             rw.theta = (*thetaVector)(thetaCount, 0);
             thetaCount++;
         }
-        rw.Omega = omegasVector(i, 0);
+        rw.Omega = omegasVector(static_cast<Eigen::Index>(i), 0);
 
         RWConfigLogMsgPayload tmpRW = this->rwOutMsgs[i]->zeroMsgPayload;
 		tmpRW.theta = rw.theta;
@@ -460,7 +461,7 @@ void ReactionWheelStateEffector::writeOutputStateMessages(uint64_t integTimeNano
             this->rwSpeedMsgBuffer.wheelThetas[i] = rw.theta;
             thetaCount++;
         }
-        rw.Omega = omegasVector(i, 0);
+        rw.Omega = omegasVector(static_cast<Eigen::Index>(i), 0);
         this->rwSpeedMsgBuffer.wheelSpeeds[i] = rw.Omega;
     }
 

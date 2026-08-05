@@ -414,7 +414,7 @@ void relODuKFMeasModel(RelODuKFConfig *configData)
     for(j=0; j<configData->countHalfSPs*2+1; j++)
     {
         for(i=0; i<3; i++)
-            configData->yMeas[i*((int) configData->countHalfSPs*2+1) + j] =
+            configData->yMeas[i * (configData->countHalfSPs * 2 + 1) + j] =
             configData->SP[i + j*ODUKF_N_STATES];
     }
 

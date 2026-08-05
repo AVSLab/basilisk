@@ -89,10 +89,11 @@ void SimpleTransmitter::evaluateDataModel(DataNodeUsageMsgPayload *dataUsageSimM
 
     //! - If we have not transmitted any of the packet, we select a new type of data to downlink
     if (this->currentIndex != -1) {
+        const size_t currentPosition = static_cast<size_t>(this->currentIndex);
         if (this->packetTransmitted == 0.0) {
 
             // Set nodeDataName to the maximum data name
-            const std::string& storedDataName = this->storageUnitMsgs.back().storedDataName[this->currentIndex];
+            const std::string& storedDataName = this->storageUnitMsgs.back().storedDataName[currentPosition];
             if (storedDataName.size() >= sizeof(this->nodeDataName)) {
                 bskLogger.bskError("SimpleTransmitter: storedDataName is %zu characters, but nodeDataName "
                                  "supports at most %zu characters.",
@@ -113,7 +114,7 @@ void SimpleTransmitter::evaluateDataModel(DataNodeUsageMsgPayload *dataUsageSimM
             // Check to see if maxVal is less than packet size.
             // If so, set the output message baudRate to zero
             // We do not want to start downlinking until we have enough data for one packet
-            if (this->storageUnitMsgs.back().storedData[this->currentIndex] < (-1 * (this->packetSize))) {
+            if (this->storageUnitMsgs.back().storedData[currentPosition] < (-1 * (this->packetSize))) {
                 dataUsageSimMsg->baudRate = 0;
                 this->packetTransmitted = 0;
             }

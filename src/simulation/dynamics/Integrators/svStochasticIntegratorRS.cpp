@@ -83,6 +83,7 @@ void svStochasticIntegratorRS::integrate(double currentTime, double timeStep)
     const ExtendedStateVector currentState = ExtendedStateVector::fromStates(dynPtrs);
     const std::vector<StateIdToIndexMap>& maps = noiseIndexMaps();
     const size_t m = maps.size();
+    const Eigen::Index noiseCount = static_cast<Eigen::Index>(m);
 
     const GaussianNoiseSample sample = this->rvGenerator->generate(m, timeStep);
     const double h = timeStep;
@@ -92,19 +93,23 @@ void svStochasticIntegratorRS::integrate(double currentTime, double timeStep)
     // ({+-sqrt(3h) w.p. 1/6, 0 w.p. 2/3}); Itilde[k], k=0..m-2, is two-point ({+-sqrt(h)
     // w.p. 1/2}). Only 2m-1 independent variables are used. Both are deterministic
     // functions of the Gaussian dW/dZ, so the prescribed-noise test harness drives them.
-    Eigen::VectorXd Ihat(m);
+    Eigen::VectorXd Ihat(noiseCount);
     for (size_t k = 0; k < m; k++) {
-        Ihat(k) = stochasticWeakRV::threePoint(sample.dW(k), h);
+        const Eigen::Index eigenK = static_cast<Eigen::Index>(k);
+        Ihat(eigenK) = stochasticWeakRV::threePoint(sample.dW(eigenK), h);
     }
-    Eigen::VectorXd Itilde = Eigen::VectorXd::Zero(m); // index m-1 unused
+    Eigen::VectorXd Itilde = Eigen::VectorXd::Zero(noiseCount); // index m-1 unused
     for (size_t k = 0; k + 1 < m; k++) {
-        Itilde(k) = stochasticWeakRV::twoPoint(sample.dZ(k), sqh);
+        const Eigen::Index eigenK = static_cast<Eigen::Index>(k);
+        Itilde(eigenK) = stochasticWeakRV::twoPoint(sample.dZ(eigenK), sqh);
     }
     // Mixed iterated integral, eq. (5.2): Ihat2(k,l) = Ihat[k] Itilde[l] if l<k,
     //                                                 -Ihat[l] Itilde[k] if k<l.
     auto Ihat2 = [&](size_t k, size_t l) -> double {
-        if (l < k) return Ihat(k) * Itilde(l);
-        return -Ihat(l) * Itilde(k); // k < l
+        const Eigen::Index eigenK = static_cast<Eigen::Index>(k);
+        const Eigen::Index eigenL = static_cast<Eigen::Index>(l);
+        if (l < k) return Ihat(eigenK) * Itilde(eigenL);
+        return -Ihat(eigenL) * Itilde(eigenK); // k < l
     };
 
     // scaledSum4(coefRow, stages, upto): sum_j coefRow[j] * stages[j] over j < upto,
@@ -193,11 +198,11 @@ void svStochasticIntegratorRS::integrate(double currentTime, double timeStep)
                 // and accumulate only the cross-noise (l != k) contributions. The pseudo-step
                 // for source k stays 0 (propagateState with timeStep 0 adds no drift).
                 currentState.setStates(dynPtrs);
-                Eigen::VectorXd step = Eigen::VectorXd::Zero(m);
+                Eigen::VectorXd step = Eigen::VectorXd::Zero(noiseCount);
                 for (size_t l = 0; l < m; l++) {
                     if (l == k) continue;
                     scaledSum4(B2.at(i), b_Hk.at(l), i).setDiffusions(dynPtrs, maps.at(l));
-                    step(l) = Ihat2(k, l) / sqh;
+                    step(static_cast<Eigen::Index>(l)) = Ihat2(k, l) / sqh;
                 }
                 propagateState(0, step, maps);
                 b_Hhat.at(k).at(i) = computeDiffusion(currentTime, timeStep, maps.at(k));
@@ -231,8 +236,8 @@ void svStochasticIntegratorRS::integrate(double currentTime, double timeStep)
         for (size_t k = 0; k < m; k++) {
             scaledSum4(beta2, b_Hhat.at(k), 4).setDiffusions(dynPtrs, maps.at(k));
         }
-        Eigen::VectorXd step(m);
-        for (size_t k = 0; k < m; k++) step(k) = sqh;
+        Eigen::VectorXd step(noiseCount);
+        for (Eigen::Index k = 0; k < noiseCount; k++) step(k) = sqh;
         propagateState(0, step, maps);
     }
 

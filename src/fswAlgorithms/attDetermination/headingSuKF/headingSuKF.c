@@ -451,7 +451,11 @@ void headingSuKFMeasUpdate(HeadingSuKFConfig *configData, double updateTime)
     ukfCholDecomp(configData->qObs, OPNAV_MEAS, OPNAV_MEAS, qChol);
     memcpy(&(AT[2*configData->countHalfSPs*OPNAV_MEAS]),
            qChol, OPNAV_MEAS*OPNAV_MEAS*sizeof(double));
-    mScale(configData->noiseSF , AT, 2*configData->countHalfSPs, OPNAV_MEAS, AT);
+    mScale(configData->noiseSF,
+           AT,
+           (size_t) (2 * configData->countHalfSPs),
+           OPNAV_MEAS,
+           AT);
     /*! - Perform QR decomposition (only R again) of the above matrix to obtain the
           current Sy matrix*/
     ukfQRDJustR(AT, 2*configData->countHalfSPs+OPNAV_MEAS,
@@ -476,7 +480,7 @@ void headingSuKFMeasUpdate(HeadingSuKFConfig *configData, double updateTime)
         vScale(-1.0, yBar, OPNAV_MEAS, tempYVec);
         vAdd(tempYVec, OPNAV_MEAS,
              &(configData->yMeas[i*OPNAV_MEAS]), tempYVec);
-        vSubtract(&(configData->SP[i* (size_t) configData->numStates]), (size_t) configData->numStates,
+        vSubtract(&(configData->SP[(size_t) i * (size_t) configData->numStates]), (size_t) configData->numStates,
                   configData->xBar, xHat);
         vScale(configData->wC[i], xHat, (size_t) configData->numStates, xHat);
         mMultM(xHat, (size_t) configData->numStates, 1, tempYVec, 1, OPNAV_MEAS,
@@ -512,7 +516,7 @@ void headingSuKFMeasUpdate(HeadingSuKFConfig *configData, double updateTime)
           get the total shifted S matrix (called sBar in internal parameters*/
     for(int i=0; i<OPNAV_MEAS; i++)
     {
-        vCopy(&(pXY[i* (size_t) configData->numStates]), (size_t) configData->numStates, tempYVec);
+        vCopy(&(pXY[(size_t) i * (size_t) configData->numStates]), (size_t) configData->numStates, tempYVec);
         ukfCholDownDate(configData->sBar, tempYVec, -1.0, configData->numStates, sBarT);
         mCopy(sBarT, (size_t) configData->numStates, (size_t) configData->numStates,
             configData->sBar);

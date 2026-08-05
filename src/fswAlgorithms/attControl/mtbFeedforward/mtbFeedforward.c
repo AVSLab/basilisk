@@ -92,7 +92,11 @@ void Update_mtbFeedforward(mtbFeedforwardConfig *configData, uint64_t callTime, 
     CmdTorqueBodyMsgPayload vehControlOutMsgBuffer = CmdTorqueBodyMsg_C_read(&configData->vehControlInMsg);
 
     /*! -  Compute net torque produced on the vehicle from the torque bars.*/
-    mMultV(configData->mtbArrayConfigParams.GtMatrix_B, 3, configData->mtbArrayConfigParams.numMTB, dipoleRequestMtbInMsgBuffer.mtbDipoleCmds, mtbDipoleCmd_B);
+    mMultV(configData->mtbArrayConfigParams.GtMatrix_B,
+           3,
+           (size_t) configData->mtbArrayConfigParams.numMTB,
+           dipoleRequestMtbInMsgBuffer.mtbDipoleCmds,
+           mtbDipoleCmd_B);
     v3Cross(mtbDipoleCmd_B, tamSensorBodyInMsgBuffer.tam_B, tauMtbFF_B);
 
     /*! -  Negate the net rod torque to spin wheels in appropriate direction. */

@@ -18,6 +18,7 @@
  */
 
 #include <math.h>
+#include <limits>
 #include "gauss_markov.h"
 #include "linearAlgebra.h"
 
@@ -31,20 +32,24 @@ GaussMarkov::GaussMarkov()
 
 GaussMarkov::GaussMarkov(uint64_t size, uint64_t newSeed)
 {
+    if (size > static_cast<uint64_t>(std::numeric_limits<Eigen::Index>::max())) {
+        this->bskLogger.bskError("Gauss Markov state count exceeds the Eigen index range");
+    }
+    const Eigen::Index stateCount = static_cast<Eigen::Index>(size);
     this->RNGSeed = newSeed;
     this->numStates = size;
     initializeRNG();
-    this->propMatrix.resize(size,size);
+    this->propMatrix.resize(stateCount, stateCount);
     this->propMatrix.fill(0.0);
-    this->currentState.resize((int64_t) size);
+    this->currentState.resize(stateCount);
     this->currentState.fill(0.0);
-    this->noiseMatrix.resize((int64_t) size, (int64_t) size);
+    this->noiseMatrix.resize(stateCount, stateCount);
     this->noiseMatrix.fill(0.0);
-    this->stateBounds.resize((int64_t) size);
+    this->stateBounds.resize(stateCount);
     this->stateBounds.fill(DEFAULT_BOUND);
-    this->randomValues.resize((int64_t) size);
-    this->stateNoise.resize((int64_t) size);
-    this->propagatedState.resize((int64_t) size);
+    this->randomValues.resize(stateCount);
+    this->stateNoise.resize(stateCount);
+    this->propagatedState.resize(stateCount);
 }
 
 void GaussMarkov::initializeRNG() {
@@ -78,7 +83,7 @@ void GaussMarkov::computeNextState()
     }
 
     //! - Generate base random numbers
-    for(size_t i = 0; i < this->numStates; i++) {
+    for(Eigen::Index i = 0; i < this->randomValues.size(); i++) {
         this->randomValues[i] = this->rNum(rGen);
     }
 
@@ -92,7 +97,7 @@ void GaussMarkov::computeNextState()
     this->currentState = this->propagatedState + this->stateNoise;
 
     //! - Apply bounds if needed
-    for(size_t i = 0; i < this->numStates; i++) {
+    for(Eigen::Index i = 0; i < this->stateBounds.size(); i++) {
         if(this->stateBounds[i] > 0.0) {
             if(fabs(this->currentState[i]) > this->stateBounds[i]) {
                 this->currentState[i] = copysign(this->stateBounds[i], this->currentState[i]);

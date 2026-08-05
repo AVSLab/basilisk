@@ -19,6 +19,7 @@
 
 #include "svd.h"
 #include "architecture/utilities/linearAlgebra.h"
+#include <limits.h>
 #include <math.h>
 #include <stdio.h>
 
@@ -60,11 +61,16 @@ double pythag(double a, double b) {
  returns.  The diagonal matrix W is output as a vector w[dim2].
  V (not V transpose) is output as the matrix V[dim2 * dim2].
  */
-int svdcmp(double *mx, size_t dim1, size_t dim2, double *w, double *v) {
+int svdcmp(double *mx, size_t dim1Value, size_t dim2Value, double *w, double *v) {
+    if (dim1Value > INT_MAX || dim2Value > INT_MAX) {
+        return -1;
+    }
+    const int dim1 = (int) dim1Value;
+    const int dim2 = (int) dim2Value;
     int flag, i, its, j, jj, k, l, nm, cm;
     double anorm, c, f, g, h, s, scale, x, y, z, max;
     double rv1[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
-    vSetZero(rv1, dim2);
+    vSetZero(rv1, dim2Value);
 
     g = scale = anorm = 0.0;
     for (i = 0; i < dim2; i++) {
@@ -300,7 +306,7 @@ void solveSVD(double *mx, size_t dim1, size_t dim2, double *x, double *b, double
     double uTranspose[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
     double wInvDiag[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
     double temp[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
-    int j;
+    size_t j;
 
     vSetZero(w, dim2);
     mSetZero(v, dim2, dim2);

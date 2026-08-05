@@ -98,7 +98,7 @@ void CppModuleTemplate::setDummy(double value)
 void CppModuleTemplate::setDumVector(std::array<double, 3> value)
 {
     // check that value is in acceptable range
-    for (int i = 0; i < 3; i++) {
+    for (size_t i = 0; i < value.size(); i++) {
         if (value[i] <= 0.0) {
             bskLogger.bskError("CppModuleTemplate: dumVariable variables must be strictly positive");
         }

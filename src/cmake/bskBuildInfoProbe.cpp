@@ -48,7 +48,8 @@ pythonString(const std::string& value)
 {
     std::ostringstream result;
     result << '"';
-    for (const unsigned char character : value) {
+    for (const char rawCharacter : value) {
+        const auto character = static_cast<unsigned char>(rawCharacter);
         switch (character) {
             case '\\':
                 result << "\\\\";

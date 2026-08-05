@@ -87,7 +87,8 @@ StateVecStochasticIntegrator::propagateState(
     {
         for (auto&& [stateId, noiseIndex] : stateIdToNoiseIndexMaps.at(k))
         {
-            getLocalPseudoTForState(stateId.first, stateId.second).at(noiseIndex) = pseudoTimeSteps[k];
+            getLocalPseudoTForState(stateId.first, stateId.second).at(noiseIndex) =
+                pseudoTimeSteps(static_cast<Eigen::Index>(k));
         }
     }
 

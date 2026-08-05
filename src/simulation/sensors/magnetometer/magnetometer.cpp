@@ -50,7 +50,7 @@ Magnetometer::Magnetometer()
     this->scaleFactor = 1.0;
     this->maxOutput = 1e200; // Tesla
     this->minOutput = -1e200; // Tesla
-    this->saturateUtility = Saturate(this->numStates);
+    this->saturateUtility = Saturate(static_cast<int64_t>(this->numStates));
     this->dcm_SB.setIdentity(3, 3);
     this->AMatrix.setIdentity();
     this->faultStateAxis[0] = NOMINAL;

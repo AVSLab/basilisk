@@ -30,7 +30,7 @@ void LinearTimeInvariantSystem::registerStates(DynParamRegisterer registerer)
             bskLogger.bskError("LinearTimeInvariantSystem state size exceeds the dynamics framework limit");
         }
         xState = registerer.registerState(static_cast<uint32_t>(stateSize), 1, "x");
-        xState->setState(Eigen::VectorXd::Constant(stateSize, 0.0)); // default to x0 = 0
+        xState->setState(Eigen::VectorXd::Constant(static_cast<Eigen::Index>(stateSize), 0.0)); // default to x0 = 0
     }
 }
 

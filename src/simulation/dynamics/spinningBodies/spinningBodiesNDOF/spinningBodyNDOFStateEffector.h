@@ -226,10 +226,10 @@ private:
 
     void readInputMessages();
     void computeSpinningBodyInertialStates();
-    void computeAttitudeProperties(std::shared_ptr<SpinningBody> spinningBody, int spinningBodyIndex) const;
-    void computeAngularVelocityProperties(std::shared_ptr<SpinningBody> spinningBody, int spinningBodyIndex) const;
-    void computePositionProperties(std::shared_ptr<SpinningBody> spinningBody, int spinningBodyIndex) const;
-    void computeVelocityProperties(std::shared_ptr<SpinningBody> spinningBody, int spinningBodyIndex) const;
+    void computeAttitudeProperties(std::shared_ptr<SpinningBody> spinningBody, size_t spinningBodyIndex) const;
+    void computeAngularVelocityProperties(std::shared_ptr<SpinningBody> spinningBody, size_t spinningBodyIndex) const;
+    void computePositionProperties(std::shared_ptr<SpinningBody> spinningBody, size_t spinningBodyIndex) const;
+    void computeVelocityProperties(std::shared_ptr<SpinningBody> spinningBody, size_t spinningBodyIndex) const;
     void computeInertiaProperties(std::shared_ptr<SpinningBody> spinningBody) const;
     void computeMTheta(Eigen::MatrixXd& MTheta);
     void computeAThetaStar(Eigen::MatrixX3d& AThetaStar);

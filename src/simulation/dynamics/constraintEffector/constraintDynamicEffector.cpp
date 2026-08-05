@@ -250,10 +250,11 @@ void ConstraintDynamicEffector::linkInStates(DynParamManager& states)
         stateIdx = this->parent2.idx;
     }
 
-    this->hubSigma.push_back(states.getStateObject(this->stateNameOfSigma[stateIdx]));
-	this->hubOmega.push_back(states.getStateObject(this->stateNameOfOmega[stateIdx]));
-    this->hubPosition.push_back(states.getStateObject(this->stateNameOfPosition[stateIdx]));
-    this->hubVelocity.push_back(states.getStateObject(this->stateNameOfVelocity[stateIdx]));
+    const size_t statePosition = static_cast<size_t>(stateIdx);
+    this->hubSigma.push_back(states.getStateObject(this->stateNameOfSigma[statePosition]));
+	this->hubOmega.push_back(states.getStateObject(this->stateNameOfOmega[statePosition]));
+    this->hubPosition.push_back(states.getStateObject(this->stateNameOfPosition[statePosition]));
+    this->hubVelocity.push_back(states.getStateObject(this->stateNameOfVelocity[statePosition]));
 
     this->scInitCounter++;
 }
@@ -286,10 +287,15 @@ void ConstraintDynamicEffector::linkInProperties(DynParamManager& properties){
         propIdx = this->parent2.idx;
     }
 
-    this->inertialAttitudeProperty.push_back(properties.getPropertyReference(this->propName_inertialAttitude[propIdx]));
-    this->inertialAngVelocityProperty.push_back(properties.getPropertyReference(this->propName_inertialAngVelocity[propIdx]));
-    this->inertialPositionProperty.push_back(properties.getPropertyReference(this->propName_inertialPosition[propIdx]));
-    this->inertialVelocityProperty.push_back(properties.getPropertyReference(this->propName_inertialVelocity[propIdx]));
+    const size_t propertyPosition = static_cast<size_t>(propIdx);
+    this->inertialAttitudeProperty.push_back(
+        properties.getPropertyReference(this->propName_inertialAttitude[propertyPosition]));
+    this->inertialAngVelocityProperty.push_back(
+        properties.getPropertyReference(this->propName_inertialAngVelocity[propertyPosition]));
+    this->inertialPositionProperty.push_back(
+        properties.getPropertyReference(this->propName_inertialPosition[propertyPosition]));
+    this->inertialVelocityProperty.push_back(
+        properties.getPropertyReference(this->propName_inertialVelocity[propertyPosition]));
 
     this->scInitCounter++;
 }
@@ -311,29 +317,31 @@ void ConstraintDynamicEffector::computeForceTorque(double integTime, double time
             Eigen::Vector3d rDot_B2N_N;
             Eigen::Vector3d omega_B2N_B2;
             Eigen::MRPd sigma_B2N;
+            const size_t parent1Index = static_cast<size_t>(parent1.idx);
+            const size_t parent2Index = static_cast<size_t>(parent2.idx);
             if (this->parent1.parentType == "hub") {
                 // - Collect states from parent spacecraft hub
-                r_B1N_N = this->hubPosition[parent1.idx]->getState();
-                rDot_B1N_N = this->hubVelocity[parent1.idx]->getState();
-                omega_B1N_B1 = this->hubOmega[parent1.idx]->getState();
-                sigma_B1N = Eigen::MRPd(this->hubSigma[parent1.idx]->getState().data());
+                r_B1N_N = this->hubPosition[parent1Index]->getState();
+                rDot_B1N_N = this->hubVelocity[parent1Index]->getState();
+                omega_B1N_B1 = this->hubOmega[parent1Index]->getState();
+                sigma_B1N = Eigen::MRPd(this->hubSigma[parent1Index]->getState().data());
             } else if (this->parent1.parentType == "effector") {
                 // - Collect properties from parent effector
-                r_B1N_N = *this->inertialPositionProperty[parent1.idx];
-                rDot_B1N_N = *this->inertialVelocityProperty[parent1.idx];
-                omega_B1N_B1 = *this->inertialAngVelocityProperty[parent1.idx];
-                sigma_B1N = Eigen::MRPd(this->inertialAttitudeProperty[parent1.idx]->data());
+                r_B1N_N = *this->inertialPositionProperty[parent1Index];
+                rDot_B1N_N = *this->inertialVelocityProperty[parent1Index];
+                omega_B1N_B1 = *this->inertialAngVelocityProperty[parent1Index];
+                sigma_B1N = Eigen::MRPd(this->inertialAttitudeProperty[parent1Index]->data());
             }
             if (this->parent2.parentType == "hub") {
-                r_B2N_N = this->hubPosition[parent2.idx]->getState();
-                rDot_B2N_N = this->hubVelocity[parent2.idx]->getState();
-                omega_B2N_B2 = this->hubOmega[parent2.idx]->getState();
-                sigma_B2N = Eigen::MRPd(this->hubSigma[parent2.idx]->getState().data());
+                r_B2N_N = this->hubPosition[parent2Index]->getState();
+                rDot_B2N_N = this->hubVelocity[parent2Index]->getState();
+                omega_B2N_B2 = this->hubOmega[parent2Index]->getState();
+                sigma_B2N = Eigen::MRPd(this->hubSigma[parent2Index]->getState().data());
             } else if (this->parent2.parentType == "effector") {
-                r_B2N_N = *this->inertialPositionProperty[parent2.idx];
-                rDot_B2N_N = *this->inertialVelocityProperty[parent2.idx];
-                omega_B2N_B2 = *this->inertialAngVelocityProperty[parent2.idx];
-                sigma_B2N = Eigen::MRPd(this->inertialAttitudeProperty[parent2.idx]->data());
+                r_B2N_N = *this->inertialPositionProperty[parent2Index];
+                rDot_B2N_N = *this->inertialVelocityProperty[parent2Index];
+                omega_B2N_B2 = *this->inertialAngVelocityProperty[parent2Index];
+                sigma_B2N = Eigen::MRPd(this->inertialAttitudeProperty[parent2Index]->data());
             }
 
             // computing direction constraint psi in the N frame

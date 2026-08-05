@@ -93,7 +93,7 @@ void JointMotionCompensator::UpdateState(uint64_t CurrentSimNanos)
     jointTorques.setZero();
     for (size_t i=0; i<this->jointTorqueInMsgs.size(); ++i) {
         SingleActuatorMsgPayload jointTorqueIn = this->jointTorqueInMsgs[i]();
-        jointTorques(i) = jointTorqueIn.input;
+        jointTorques(static_cast<Eigen::Index>(i)) = jointTorqueIn.input;
     }
 
     // compute the hub torques needed to negate the reaction torques induced by moving joints
@@ -103,8 +103,11 @@ void JointMotionCompensator::UpdateState(uint64_t CurrentSimNanos)
     Eigen::VectorXd nonActuatorForces(nDOF);
     nonActuatorForces.setZero();
     for (int k = 0; k < nDOF; ++k) {
-        nonActuatorForces(k) = reactionForcesIn.passiveForces[k] + reactionForcesIn.constraintForces[k] +
-                               reactionForcesIn.appliedForces[k] - reactionForcesIn.biasForces[k];
+        const size_t dofIndex = static_cast<size_t>(k);
+        nonActuatorForces(k) = reactionForcesIn.passiveForces[dofIndex]
+                               + reactionForcesIn.constraintForces[dofIndex]
+                               + reactionForcesIn.appliedForces[dofIndex]
+                               - reactionForcesIn.biasForces[dofIndex];
     }
 
     for (const auto& [treeId, info] : this->treeMap) {
@@ -119,15 +122,15 @@ void JointMotionCompensator::UpdateState(uint64_t CurrentSimNanos)
         }
 
         std::vector<int> dofIdx;
-        dofIdx.reserve(6 + nHingeJoints);
+        dofIdx.reserve(static_cast<size_t>(6 + nHingeJoints));
 
-        const int freeStart = reactionForcesIn.jointDOFStart[freeJointIdx];
+        const int freeStart = reactionForcesIn.jointDOFStart[static_cast<size_t>(freeJointIdx)];
 
         for (int i = 0; i < 6; ++i) {
             dofIdx.push_back(freeStart + i);
         }
         for (int hJointIdx : hingeJointIdxs) {
-            const int hingeStart = reactionForcesIn.jointDOFStart[hJointIdx];
+            const int hingeStart = reactionForcesIn.jointDOFStart[static_cast<size_t>(hJointIdx)];
             dofIdx.push_back(hingeStart); // hinge joint torque DOF
         }
 
@@ -136,10 +139,10 @@ void JointMotionCompensator::UpdateState(uint64_t CurrentSimNanos)
         Mfull.setZero();
         const auto& massMatrixData = massMatrixIn.massMatrix;
         for (int r = 0; r < nTreeDOF; ++r) {
-            const int rowIdx = dofIdx[r];
+            const int rowIdx = dofIdx[static_cast<size_t>(r)];
             for (int c = 0; c < nTreeDOF; ++c) {
-                const int colIdx = dofIdx[c];
-                Mfull(r, c) = massMatrixData[rowIdx * nDOF + colIdx];
+                const int colIdx = dofIdx[static_cast<size_t>(c)];
+                Mfull(r, c) = massMatrixData[static_cast<size_t>(rowIdx * nDOF + colIdx)];
             }
         }
 
@@ -160,12 +163,12 @@ void JointMotionCompensator::UpdateState(uint64_t CurrentSimNanos)
         Eigen::VectorXd treeMotorTorque(nHingeJoints);
         treeMotorTorque.setZero();
         for (int i = 0; i < 3; ++i) {
-            baseTransBias(i) = nonActuatorForces(dofIdx[i]);
-            baseRotBias(i) = nonActuatorForces(dofIdx[3 + i]);
+            baseTransBias(i) = nonActuatorForces(dofIdx[static_cast<size_t>(i)]);
+            baseRotBias(i) = nonActuatorForces(dofIdx[static_cast<size_t>(3 + i)]);
         }
         for (int i = 0; i < nHingeJoints; ++i) {
-            jointBias(i) = nonActuatorForces(dofIdx[6 + i]);
-            const int globalHingeIdx = hingeGlobalIdxs[i];
+            jointBias(i) = nonActuatorForces(dofIdx[static_cast<size_t>(6 + i)]);
+            const int globalHingeIdx = hingeGlobalIdxs[static_cast<size_t>(i)];
             treeMotorTorque(i) = jointTorques(globalHingeIdx);
         }
 
@@ -189,7 +192,9 @@ void JointMotionCompensator::UpdateState(uint64_t CurrentSimNanos)
             bskLogger.bskError("JointMotionCompensator: size of uMax does not match 3 x number of spacecraft.");
         }
         for (int i = 0; i < this->numSpacecraft * 3; ++i) {
-            hubTorques(i) = std::max(-this->uMax[i], std::min(this->uMax[i], hubTorques(i)));
+            const size_t torqueIndex = static_cast<size_t>(i);
+            hubTorques(i) = std::max(-this->uMax[torqueIndex],
+                                     std::min(this->uMax[torqueIndex], hubTorques(i)));
         }
     }
     // write to the output messages
@@ -197,7 +202,10 @@ void JointMotionCompensator::UpdateState(uint64_t CurrentSimNanos)
         for (int axis = 0; axis < 3; ++axis) {
             SingleActuatorMsgPayload hubTorqueOut;
             hubTorqueOut.input = hubTorques(sc * 3 + axis);
-            this->hubTorqueOutMsgs[sc * 3 + axis]->write(&hubTorqueOut, this->moduleID, CurrentSimNanos);
+            this->hubTorqueOutMsgs[static_cast<size_t>(sc * 3 + axis)]->write(
+                &hubTorqueOut,
+                this->moduleID,
+                CurrentSimNanos);
         }
     }
 }

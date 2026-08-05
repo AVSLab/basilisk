@@ -383,7 +383,8 @@ void inertialStateProp(InertialUKFConfig *configData, double *stateInOut, double
 int inertialUKFTimeUpdate(InertialUKFConfig *configData, double updateTime)
 {
     size_t i;
-    int Index, k;
+    size_t Index;
+    int k;
 	double sBarT[AKF_N_STATES*AKF_N_STATES];               /* [-] */
 	double xComp[AKF_N_STATES];                            /* [-] */
 	double AT[(2 * AKF_N_STATES + AKF_N_STATES)*AKF_N_STATES]; /* [-] */
@@ -418,18 +419,18 @@ int inertialUKFTimeUpdate(InertialUKFConfig *configData, double updateTime)
 	for (i = 0; i<configData->countHalfSPs; i++)
 	{
         /*! - Adding covariance columns from sigma points*/
-		Index = (int) i + 1;
-		spPtr = &(configData->SP[Index* (int) configData->numStates]);
-		vCopy(&sBarT[i* (int) configData->numStates], configData->numStates, spPtr);
+		Index = i + 1;
+		spPtr = &(configData->SP[Index * configData->numStates]);
+		vCopy(&sBarT[i * configData->numStates], configData->numStates, spPtr);
 		vScale(configData->gamma, spPtr, configData->numStates, spPtr);
 		vAdd(spPtr, configData->numStates, configData->state, spPtr);
 		inertialStateProp(configData, spPtr, configData->dt);
 		vScale(configData->wM[Index], spPtr, configData->numStates, xComp);
 		vAdd(xComp, configData->numStates, configData->xBar, configData->xBar);
 		/*! - Subtracting covariance columns from sigma points*/
-		Index = (int) i + 1 + (int) configData->countHalfSPs;
-        spPtr = &(configData->SP[Index* (int) configData->numStates]);
-        vCopy(&sBarT[i* (int) configData->numStates], configData->numStates, spPtr);
+		Index = i + 1 + configData->countHalfSPs;
+        spPtr = &(configData->SP[Index * configData->numStates]);
+        vCopy(&sBarT[i * configData->numStates], configData->numStates, spPtr);
         vScale(-configData->gamma, spPtr, configData->numStates, spPtr);
         vAdd(spPtr, configData->numStates, configData->state, spPtr);
         inertialStateProp(configData, spPtr, configData->dt);
@@ -446,13 +447,13 @@ int inertialUKFTimeUpdate(InertialUKFConfig *configData, double updateTime)
 	{
         vScale(-1.0, configData->xBar, configData->numStates, aRow);
         vAdd(aRow, configData->numStates,
-             &(configData->SP[(i+1)* (int) configData->numStates]), aRow);
+             &(configData->SP[(i + 1) * configData->numStates]), aRow);
         /*Check sign of wC to know if the sqrt will fail*/
         if (configData->wC[i+1]<=0){
             inertialUKFCleanUpdate(configData);
             return -1;}
         vScale(sqrt(configData->wC[i+1]), aRow, configData->numStates, aRow);
-		memcpy((void *)&AT[i* (int) configData->numStates], (void *)aRow,
+		memcpy((void *)&AT[i * configData->numStates], (void *)aRow,
 			configData->numStates*sizeof(double));
 
 	}

@@ -34,11 +34,11 @@ class BSKSemaphore
 
 public:
     /*! method description */
-    BSKSemaphore(int count_in = 0)
+    BSKSemaphore(size_t count_in = 0)
         : count(count_in)
     {
     }
-    
+
     /*! release the lock */
     inline void release()
     {
@@ -49,7 +49,7 @@ public:
         }
         cv.notify_one();
     }
-    
+
     /*! aquire the lock */
     inline void acquire()
     {
