@@ -395,13 +395,14 @@ void LinearTranslationOneDOFStateEffector::computeTranslatingBodyInertialStates(
     Eigen::Matrix3d dcm_FN = this->dcm_FB * this->dcm_BN;
     const Eigen::MRPd sigma_FN = eigenC2MRP(dcm_FN);
     *this->sigma_FN = sigma_FN.coeffs();
-    *this->omega_FN_F = this->dcm_FB.transpose() * this->omega_BN_B;
+    *this->omega_FN_F = this->dcm_FB * this->omega_BN_B;
 
     this->r_FcN_N = (Eigen::Vector3d)*this->inertialPositionProperty + this->dcm_BN.transpose() * this->r_FcB_B;
     *this->r_FN_N = this->r_FcN_N - dcm_FN.transpose() * this->r_FcF_F;
     Eigen::Vector3d rDot_FcB_B = this->rPrime_FcB_B + this->omega_BN_B.cross(this->r_FcB_B);
     this->v_FcN_N = (Eigen::Vector3d)*this->inertialVelocityProperty + this->dcm_BN.transpose() * rDot_FcB_B;
-    *this->v_FN_N = this->dcm_BN.transpose() * (this->rPrime_FcB_B + this->omega_BN_B.cross(
+    *this->v_FN_N = (Eigen::Vector3d)*this->inertialVelocityProperty
+                    + this->dcm_BN.transpose() * (this->rPrime_FcB_B + this->omega_BN_B.cross(
                     this->r_FcB_B - this->dcm_FB.transpose() * this->r_FcF_F));
 }
 
