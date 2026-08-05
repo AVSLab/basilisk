@@ -7,3 +7,4 @@
 - Fixed the :ref:`linearTranslationOneDOFStateEffector` inertial velocity and angular velocity properties, which were wrong for attached effectors.
 - Fixed state effector identifier reuse that could give two live effectors colliding state names.
 - Branching parents now publish their attachment frame kinematics at the current integrator substep rather than once per task step.
+- Attached dynamic effectors' inertial-frame force is now applied by every state effector that can act as a parent.

@@ -444,19 +444,22 @@ def effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dynamic
         if idx == 0:
             dV[idx,:] = [0.0, 0.0, 0.0]
         else:
-            dV[idx,:] = (dV[idx-1,:] + (dcm_NS @ np.array(dynamicEff.extForce_B).flatten())
+            dV[idx,:] = (dV[idx-1,:] + (dcm_NS @ np.array(dynamicEff.extForce_B).flatten()
+                        + np.array(dynamicEff.extForce_N).flatten())
                        / (scObject.hub.mHub + stateEffProps.totalMass) * timestep)
         # Compute the total external torque on the vehicle
         extTorque[idx,:] = (dcm_NS @ np.array(dynamicEff.extTorquePntB_B).flatten()
                             + np.cross(r_ScN_N_log[idx,:] - dcm_NS
                             @ np.array(stateEffProps.r_PcP_P).flatten()
                             - datLog.r_CN_N[idx,:], dcm_NS
-                            @ np.array(dynamicEff.extForce_B).flatten()))
+                            @ np.array(dynamicEff.extForce_B).flatten()
+                            + np.array(dynamicEff.extForce_N).flatten()))
 
     rotPower = np.empty(n)
     for idx in range(n):
         dcm_NS = np.transpose(rbk.MRP2C(sigma_SN_log[idx,:]))
-        F_N = dcm_NS @ np.array(dynamicEff.extForce_B).flatten()
+        F_N = (dcm_NS @ np.array(dynamicEff.extForce_B).flatten()
+               + np.array(dynamicEff.extForce_N).flatten())
         tau_N = dcm_NS @ np.array(dynamicEff.extTorquePntB_B).flatten()
         omega_SN_N = dcm_NS @ omega_SN_log[idx,:]
         # the load acts at the parent frame origin, r_PcP_P from the segment center of mass
@@ -564,6 +567,7 @@ def getModernStateEffInertialPropName(scObject, segment, propType, handedPropNam
 def setup_extForceTorque():
     extFT = extForceTorque.ExtForceTorque()
     extFT.extForce_B = [[1.0], [1.0], [1.0]]
+    extFT.extForce_N = [[1.0], [1.0], [1.0]]  # [N]
     extFT.extTorquePntB_B = [[1.0], [1.0], [1.0]]
     extFT.ModelTag = "extForceTorque"
 

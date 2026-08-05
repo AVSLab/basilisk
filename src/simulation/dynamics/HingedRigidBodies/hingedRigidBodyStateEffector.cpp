@@ -248,7 +248,8 @@ void HingedRigidBodyStateEffector::updateContributions(double integTime, BackSub
     {
         // - Compute the force and torque contributions from the dynamicEffectors
         (*dynIt)->computeForceTorque(integTime, double(0.0));
-        attBodyForce_S += (*dynIt)->forceExternal_B; // here parent frame is S, not B because dynamic effector attached to state effector not hub
+        // a child's "_B" loads are already in this parent's S frame, so only "_N" is rotated
+        attBodyForce_S += (*dynIt)->forceExternal_B + this->dcm_SP * dcm_PN * (*dynIt)->forceExternal_N;
         attBodyTorquePntS_S+= (*dynIt)->torqueExternalPntB_B;
     }
 
