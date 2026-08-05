@@ -191,10 +191,13 @@ def fuelSloshTest(show_plots,useFlag,testCase):
     unitTestSim.AddModelToTask(unitTaskName, scObjectLog)
 
     if testCase == 'MassDepletion':
+        mass1Name = unitTestSim.particle1.nameOfMassState
+        mass2Name = unitTestSim.particle2.nameOfMassState
+        mass3Name = unitTestSim.particle3.nameOfMassState
         stateLog = pythonVariableLogger.PythonVariableLogger({
-            "mass1": lambda _: scObject.dynManager.getStateObject('linearSpringMassDamperMass1').getState(),
-            "mass2": lambda _: scObject.dynManager.getStateObject('linearSpringMassDamperMass2').getState(),
-            "mass3": lambda _: scObject.dynManager.getStateObject('linearSpringMassDamperMass3').getState(),
+            "mass1": lambda _: scObject.dynManager.getStateObject(mass1Name).getState(),
+            "mass2": lambda _: scObject.dynManager.getStateObject(mass2Name).getState(),
+            "mass3": lambda _: scObject.dynManager.getStateObject(mass3Name).getState(),
         })
         unitTestSim.AddModelToTask(unitTaskName, stateLog)
 

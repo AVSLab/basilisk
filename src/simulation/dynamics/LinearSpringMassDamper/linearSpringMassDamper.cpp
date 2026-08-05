@@ -52,7 +52,6 @@ uint64_t LinearSpringMassDamper::effectorID = 1;
 /*! This is the destructor, nothing to report here */
 LinearSpringMassDamper::~LinearSpringMassDamper()
 {
-    this->effectorID = 1;    /* reset the panel ID*/
     return;
 }
 

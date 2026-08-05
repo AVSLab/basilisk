@@ -59,7 +59,6 @@ uint64_t SpinningBodyOneDOFStateEffector::effectorID = 1;
 /*! This is the destructor, nothing to report here */
 SpinningBodyOneDOFStateEffector::~SpinningBodyOneDOFStateEffector()
 {
-    SpinningBodyOneDOFStateEffector::effectorID = 1;
 }
 
 /*! This method is used to reset the module. */

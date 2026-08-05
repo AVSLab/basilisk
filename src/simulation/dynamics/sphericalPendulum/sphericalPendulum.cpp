@@ -63,7 +63,6 @@ uint64_t SphericalPendulum::effectorID = 1;
 /*! This is the destructor, nothing to report here */
 SphericalPendulum::~SphericalPendulum()
 {
-    this->effectorID = 1;    /* reset the panel ID*/
 	return;
 }
 

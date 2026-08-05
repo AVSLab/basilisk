@@ -5,3 +5,4 @@
 - Fixed the :ref:`dualHingedRigidBodyStateEffector` second hinge motor torque, which was applied without its reaction on panel 1.
 - Fixed the sign of an attached effector's upper body torque in the :ref:`spinningBodyTwoDOFStateEffector` lower body equation of motion.
 - Fixed the :ref:`linearTranslationOneDOFStateEffector` inertial velocity and angular velocity properties, which were wrong for attached effectors.
+- Fixed state effector identifier reuse that could give two live effectors colliding state names.

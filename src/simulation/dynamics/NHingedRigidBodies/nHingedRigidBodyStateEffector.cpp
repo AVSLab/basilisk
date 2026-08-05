@@ -44,7 +44,6 @@ uint64_t NHingedRigidBodyStateEffector::effectorID = 1;
 /*! This is the destructor, nothing to report here */
 NHingedRigidBodyStateEffector::~NHingedRigidBodyStateEffector()
 {
-    this->effectorID = 1;    /* reset the panel ID*/
     return;
 }
 

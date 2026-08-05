@@ -41,7 +41,6 @@ uint64_t SpinningBodyNDOFStateEffector::effectorID = 1;
 
 SpinningBodyNDOFStateEffector::~SpinningBodyNDOFStateEffector()
 {
-    SpinningBodyNDOFStateEffector::effectorID --;    /* reset the panel ID*/
 }
 
 void SpinningBodyNDOFStateEffector::Reset(uint64_t CurrentClock [[maybe_unused]])

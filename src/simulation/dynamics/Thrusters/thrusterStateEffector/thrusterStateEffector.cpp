@@ -65,8 +65,6 @@ ThrusterStateEffector::~ThrusterStateEffector()
         delete this->thrusterOutMsgs.at(c);
     }
 
-    this->effectorID = 1;    /* reset the panel ID*/
-
     return;
 }
 

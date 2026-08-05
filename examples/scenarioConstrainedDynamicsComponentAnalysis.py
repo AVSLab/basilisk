@@ -589,17 +589,23 @@ def log_data(scSim, component_list):
         scSim.AddModelToTask(scSim.simTaskName, scSim.sp4Log)
 
     if "slosh" in component_list:
+        rho1Name = scSim.particle1.nameOfRhoState
+        rho2Name = scSim.particle2.nameOfRhoState
+        rho3Name = scSim.particle3.nameOfRhoState
         scSim.rhoLog = pythonVariableLogger.PythonVariableLogger({
-            "rho1": lambda _: scSim.scObject1.dynManager.getStateObject('linearSpringMassDamperRho1').getState(),
-            "rho2": lambda _: scSim.scObject1.dynManager.getStateObject('linearSpringMassDamperRho2').getState(),
-            "rho3": lambda _: scSim.scObject1.dynManager.getStateObject('linearSpringMassDamperRho3').getState(),
+            "rho1": lambda _: scSim.scObject1.dynManager.getStateObject(rho1Name).getState(),
+            "rho2": lambda _: scSim.scObject1.dynManager.getStateObject(rho2Name).getState(),
+            "rho3": lambda _: scSim.scObject1.dynManager.getStateObject(rho3Name).getState(),
         })
         scSim.AddModelToTask(scSim.simTaskName, scSim.rhoLog)
 
+        rho4Name = scSim.particle4.nameOfRhoState
+        rho5Name = scSim.particle5.nameOfRhoState
+        rho6Name = scSim.particle6.nameOfRhoState
         scSim.rhoTLog = pythonVariableLogger.PythonVariableLogger({
-            "rho4": lambda _: scSim.scObjectT.dynManager.getStateObject('linearSpringMassDamperRho4').getState(),
-            "rho5": lambda _: scSim.scObjectT.dynManager.getStateObject('linearSpringMassDamperRho5').getState(),
-            "rho6": lambda _: scSim.scObjectT.dynManager.getStateObject('linearSpringMassDamperRho6').getState(),
+            "rho4": lambda _: scSim.scObjectT.dynManager.getStateObject(rho4Name).getState(),
+            "rho5": lambda _: scSim.scObjectT.dynManager.getStateObject(rho5Name).getState(),
+            "rho6": lambda _: scSim.scObjectT.dynManager.getStateObject(rho6Name).getState(),
         })
         scSim.AddModelToTask(scSim.simTaskName, scSim.rhoTLog)
 

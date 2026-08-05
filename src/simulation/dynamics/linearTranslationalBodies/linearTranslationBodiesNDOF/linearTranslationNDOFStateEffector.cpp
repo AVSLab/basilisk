@@ -42,7 +42,6 @@ uint64_t LinearTranslationNDOFStateEffector::effectorID = 1;
 /*! This is the destructor, nothing to report here */
 LinearTranslationNDOFStateEffector::~LinearTranslationNDOFStateEffector()
 {
-    LinearTranslationNDOFStateEffector::effectorID --;    /* reset the panel ID*/
 }
 
 void TranslatingBody::setMass(double mass) {
