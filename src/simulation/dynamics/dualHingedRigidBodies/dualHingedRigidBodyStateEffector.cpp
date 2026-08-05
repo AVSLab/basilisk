@@ -211,8 +211,6 @@ void DualHingedRigidBodyStateEffector::updateContributions(double integTime [[ma
     Eigen::MRPd sigmaPNLocal;
     Eigen::Matrix3d dcmPN;                        /* direction cosine matrix from N to B */
     Eigen::Matrix3d dcmNP;                        /* direction cosine matrix from B to N */
-    Eigen::Vector3d gravityTorquePntH1_P;          /* torque of gravity on HRB about Pnt H */
-    Eigen::Vector3d gravityTorquePntH2_P;          /* torque of gravity on HRB about Pnt H */
     Eigen::Vector3d gLocal_N;                          /* gravitational acceleration in N frame */
     Eigen::Vector3d g_P;                          /* gravitational acceleration in B frame */
     gLocal_N = *this->g_N;
@@ -226,9 +224,9 @@ void DualHingedRigidBodyStateEffector::updateContributions(double integTime [[ma
     g_P = dcmPN*gLocal_N;
 
     // - Define gravity terms
-    Eigen::Vector3d gravTorquePan1PntH1 = -this->d1*this->sHat11_P.cross(this->mass1*g_P);
-    Eigen::Vector3d gravForcePan2 = this->mass2*g_P;
-    Eigen::Vector3d gravTorquePan2PntH2 = -this->d2*this->sHat21_P.cross(this->mass2*g_P);
+    Eigen::Vector3d gravTorquePan1PntH1_P = -this->d1*this->sHat11_P.cross(this->mass1*g_P);
+    Eigen::Vector3d gravForcePan2_P = this->mass2*g_P;
+    Eigen::Vector3d gravTorquePan2PntH2_P = -this->d2*this->sHat21_P.cross(this->mass2*g_P);
 
     // - Define omegaBN_S
     this->omega_BN_B = omega_BN_B;
@@ -237,8 +235,6 @@ void DualHingedRigidBodyStateEffector::updateContributions(double integTime [[ma
     this->omega_PN_S2 = this->dcm_S2P*this->omega_PNLoc_P;
 
     // - Define matrices needed for back substitution
-    //gravityTorquePntH1_B = -this->d1*this->sHat11_B.cross(this->mass1*g_B); //Need to review these equations and implement them - SJKC
-    //gravityTorquePntH2_B = -this->d2*this->sHat21_B.cross(this->mass2*g_B); //Need to review these equations and implement them - SJKC
     this->matrixADHRB(0,0) = this->IPntS1_S1(1,1) + this->mass1*this->d1*this->d1 + this->mass2*this->l1*this->l1 + this->mass2*this->l1*this->d2*this->sHat13_P.transpose()*(this->sHat23_P);
     this->matrixADHRB(0,1) = this->mass2*this->l1*this->d2*this->sHat13_P.transpose()*(this->sHat23_P);
     this->matrixADHRB(1,0) = IPntS2_S2(1,1) + this->mass2*this->d2*this->d2 + this->mass2*this->l1*this->d2*this->sHat23_P.transpose()*this->sHat13_P;
@@ -254,7 +250,7 @@ void DualHingedRigidBodyStateEffector::updateContributions(double integTime [[ma
                                  - this->mass2*this->d2*this->sHat23_P.cross(this->r_S2P_P).transpose());
 
     this->vectorVDHRB(0) =  -(this->IPntS1_S1(0,0) - this->IPntS1_S1(2,2))*this->omega_PN_S1(2)*this->omega_PN_S1(0)
-                            + this->u1 - this->u2 - this->k1*this->theta1 - this->c1*this->theta1Dot + this->k2*this->theta2 + this->c2*this->theta2Dot + this->sHat12_P.dot(gravTorquePan1PntH1) + this->l1*this->sHat13_P.dot(gravForcePan2) -
+                            + this->u1 - this->u2 - this->k1*this->theta1 - this->c1*this->theta1Dot + this->k2*this->theta2 + this->c2*this->theta2Dot + this->sHat12_P.dot(gravTorquePan1PntH1_P) + this->l1*this->sHat13_P.dot(gravForcePan2_P) -
                             this->mass1*this->d1*this->sHat13_P.dot(2*this->omega_PNLoc_P.cross(this->rPrimeS1P_P)
                             + this->omega_PNLoc_P.cross(this->omega_PNLoc_P.cross(this->r_S1P_P)))
                             - this->mass2*this->l1*this->sHat13_P.dot(2*this->omega_PNLoc_P.cross(this->rPrimeS2P_P)
@@ -263,7 +259,7 @@ void DualHingedRigidBodyStateEffector::updateContributions(double integTime [[ma
                             + this->d2*(this->theta1Dot + this->theta2Dot)*(this->theta1Dot + this->theta2Dot)*this->sHat21_P); //still missing torque and force terms - SJKC
 
     this->vectorVDHRB(1) =  -(this->IPntS2_S2(0,0) - this->IPntS2_S2(2,2))*this->omega_PN_S2(2)*this->omega_PN_S2(0)
-                            + this->u2 - this->k2*this->theta2 - this->c2*this->theta2Dot + this->sHat22_P.dot(gravTorquePan2PntH2) - this->mass2*this->d2*this->sHat23_P.dot(2*this->omega_PNLoc_P.cross(this->rPrimeS2P_P)
+                            + this->u2 - this->k2*this->theta2 - this->c2*this->theta2Dot + this->sHat22_P.dot(gravTorquePan2PntH2_P) - this->mass2*this->d2*this->sHat23_P.dot(2*this->omega_PNLoc_P.cross(this->rPrimeS2P_P)
                             + this->omega_PNLoc_P.cross(this->omega_PNLoc_P.cross(this->r_S2P_P)) + this->l1*this->theta1Dot*this->theta1Dot*this->sHat11_P); // still missing torque term. - SJKC
 
     // - Start defining them good old contributions - start with translation

@@ -17,7 +17,6 @@
 
  */
 
-
 #ifndef DUAL_HINGED_RIGID_BODY_STATE_EFFECTOR_H
 #define DUAL_HINGED_RIGID_BODY_STATE_EFFECTOR_H
 
@@ -34,28 +33,25 @@
 #include "architecture/msgPayloadDefC/HingedRigidBodyMsgPayload.h"
 #include "architecture/messaging/messaging.h"
 
-
-
-
 /*! @brief dual hinged rigid body state effector */
 class DualHingedRigidBodyStateEffector : public StateEffector, public SysModel {
 public:
     DualHingedRigidBodyStateEffector();
     ~DualHingedRigidBodyStateEffector();
-    void registerStates(DynParamManager& statesIn);     //!< class method
-    void linkInStates(DynParamManager& states);         //!< class method
-    void updateEffectorMassProps(double integTime);     //!< class method
-    void updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::MRPd sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N);  //!< -- Back-sub contributions
+    void registerStates(DynParamManager& statesIn) override;     //!< class method
+    void linkInStates(DynParamManager& states) override;         //!< class method
+    void updateEffectorMassProps(double integTime) override;     //!< class method
+    void updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::MRPd sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N) override;  //!< -- Back-sub contributions
     void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
-                                              double & rotEnergyContr, Eigen::Vector3d omega_BN_B);  //!< -- Energy and momentum calculations
-    void computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN);  //!< -- Method for each stateEffector to calculate derivatives
-    void Reset(uint64_t CurrentSimNanos);
-    void UpdateState(uint64_t CurrentSimNanos);
-    void writeOutputStateMessages(uint64_t CurrentClock);
+                                              double & rotEnergyContr, Eigen::Vector3d omega_BN_B) override;  //!< -- Energy and momentum calculations
+    void computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN) override;  //!< -- Method for each stateEffector to calculate derivatives
+    void Reset(uint64_t CurrentSimNanos) override;
+    void UpdateState(uint64_t CurrentSimNanos) override;
+    void writeOutputStateMessages(uint64_t CurrentClock) override;
 
 private:
     void computePanelInertialStates();
-    void prependSpacecraftNameToStates(); //!< class method
+    void prependSpacecraftNameToStates() override; //!< class method used for multiple spacecraft
 
 public:
     double mass1;                     //!< [kg] mass of 1st hinged rigid body
