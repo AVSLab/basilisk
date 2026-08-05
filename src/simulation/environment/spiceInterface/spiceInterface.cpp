@@ -836,7 +836,7 @@ void SpiceInterface::writeOutputMessages(uint64_t CurrentClock)
 void SpiceInterface::UpdateState(uint64_t CurrentSimNanos)
 {
     //! - Increment the J2000 elapsed time based on init value and Current sim
-    this->J2000Current = this->J2000ETInit + nanoToSec(CurrentSimNanos);
+    this->J2000Current = this->J2000ETInit + static_cast<double>(CurrentSimNanos) * NANO2SEC;
 
     //! - Compute the current Julian Date string and cast it over to the double
     et2utc_c(this->J2000Current, "J", 14, this->charBufferSize - 1, reinterpret_cast<SpiceChar*>

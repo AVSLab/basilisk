@@ -81,7 +81,7 @@ void Reset_okeefeEKF(okeefeEKFConfig *configData, uint64_t callTime,
     configData->numCSSTotal = cssConfigInBuffer.nCSS;
 
     /*! - Initialize filter parameters to max values */
-    configData->timeTag = nanoToSec(callTime);
+    configData->timeTag = (double) callTime * NANO2SEC;
     configData->dt = 0.0;
     configData->numStates = SKF_N_STATES_HALF;
     configData->numObs = MAX_N_CSS_MEAS;
@@ -129,7 +129,7 @@ void Update_okeefeEKF(okeefeEKFConfig *configData, uint64_t callTime,
 
     /*! - If the time tag from the measured data is new compared to previous step,
           propagate and update the filter*/
-    newTimeTag = nanoToSec(timeOfMsgWritten);
+    newTimeTag = (double) timeOfMsgWritten * NANO2SEC;
     if(newTimeTag >= configData->timeTag && isWritten)
     {
         sunlineTimeUpdate(configData, newTimeTag);
@@ -138,7 +138,7 @@ void Update_okeefeEKF(okeefeEKFConfig *configData, uint64_t callTime,
 
     /*! - If current clock time is further ahead than the measured time, then
           propagate to this current time-step*/
-    newTimeTag = nanoToSec(callTime);
+    newTimeTag = (double) callTime * NANO2SEC;
     if(newTimeTag > configData->timeTag)
     {
         sunlineTimeUpdate(configData, newTimeTag);

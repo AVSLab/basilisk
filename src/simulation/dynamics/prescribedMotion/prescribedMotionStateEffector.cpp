@@ -532,7 +532,7 @@ void PrescribedMotionStateEffector::computePrescribedMotionInertialStates()
 void PrescribedMotionStateEffector::UpdateState(uint64_t currentSimNanos)
 {
     // Store the current simulation time
-    this->currentSimTimeSec = nanoToSec(currentSimNanos);
+    this->currentSimTimeSec = static_cast<double>(currentSimNanos) * NANO2SEC;
 
     // Read the translational input message if it is linked and written
     if (this->prescribedTranslationInMsg.isLinked() && this->prescribedTranslationInMsg.isWritten())

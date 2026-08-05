@@ -73,7 +73,7 @@ void Reset_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
     configData->localConfigData = VehicleConfigMsg_C_read(&configData->massPropsInMsg);
 
     /*! - Initialize filter parameters to max values */
-    configData->timeTag = nanoToSec(callTime);  /* [s] */
+    configData->timeTag = (double) callTime * NANO2SEC;  /* [s] */
     configData->dt = 0.0;  /* [s] */
     configData->numStates = AKF_N_STATES;     /* [-] */
     configData->countHalfSPs = AKF_N_STATES;  /* [-] */
@@ -228,9 +228,9 @@ void Update_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
         for (i=0; i<configData->STDatasStruct.numST; i++)
         {
             if(configData->isFreshST[configData->stSensorOrder[i]] &&
-               nanoToSec(configData->stSensorIn[configData->stSensorOrder[i]].timeTag) > newTimeTag)
+               (double) configData->stSensorIn[configData->stSensorOrder[i]].timeTag * NANO2SEC > newTimeTag)
             {
-                newTimeTag = nanoToSec(configData->stSensorIn[configData->stSensorOrder[i]].timeTag);  /* [s] */
+                newTimeTag = (double) configData->stSensorIn[configData->stSensorOrder[i]].timeTag * NANO2SEC;  /* [s] */
                 /*! - If any ST message is valid mark initialization complete*/
                 configData->firstPassComplete = 1;
             }
@@ -250,7 +250,7 @@ void Update_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
     trackerValid = 0;
     for (i = 0; i < configData->STDatasStruct.numST; i++)
     {
-        newTimeTag = nanoToSec(configData->stSensorIn[configData->stSensorOrder[i]].timeTag);  /* [s] */
+        newTimeTag = (double) configData->stSensorIn[configData->stSensorOrder[i]].timeTag * NANO2SEC;  /* [s] */
         int isFresh = configData->isFreshST[configData->stSensorOrder[i]];  /* [-] */
 
         /*! - If the star tracker has provided a new message compared to last time,
@@ -271,7 +271,7 @@ void Update_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
     }
     /*! - If current clock time is further ahead than the measured time, then
      propagate to this current time-step*/
-    newTimeTag = nanoToSec(callTime);  /* [s] */
+    newTimeTag = (double) callTime * NANO2SEC;  /* [s] */
     if(trackerValid < 1)
     {
         /*! - If no star tracker measurement was available, propagate the state
@@ -581,7 +581,7 @@ void inertialUKFAggGyrData(InertialUKFConfig *configData, double prevTime,
           in the future compared to prevTime*/
     for(i=0; i<MAX_ACC_BUF_PKT; i++)
     {
-        measTime = nanoToSec(gyrData->accPkts[i].measTime);  /* [s] */
+        measTime = (double) gyrData->accPkts[i].measTime * NANO2SEC;  /* [s] */
         if(measTime > prevTime && (measTime < minFutTime || minFutTime < 0.0))
         {
             minFutInd = (uint32_t) i;
@@ -614,7 +614,7 @@ void inertialUKFAggGyrData(InertialUKFConfig *configData, double prevTime,
         /*% operator used because gyro buffer is a ring-buffer and this operator
             wraps the index back to zero when we overflow.*/
         minFutInd = (minFutInd + 1)%MAX_ACC_BUF_PKT;
-        minFutTime = nanoToSec(gyrData->accPkts[minFutInd].measTime);  /* [s] */
+        minFutTime = (double) gyrData->accPkts[minFutInd].measTime * NANO2SEC;  /* [s] */
         /*! - Apply low-pass filter to gyro measurements to get smoothed body rate*/
         for(j=0; j<3; j++)
         {

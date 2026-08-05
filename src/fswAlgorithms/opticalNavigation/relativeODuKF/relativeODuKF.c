@@ -56,7 +56,7 @@ void Reset_relODuKF(RelODuKFConfig *configData, uint64_t callTime,
     double tempMatrix[ODUKF_N_STATES*ODUKF_N_STATES];
 
     /*! - Initialize filter parameters to max values */
-    configData->timeTag = nanoToSec(callTime);
+    configData->timeTag = (double) callTime * NANO2SEC;
     configData->dt = 0.0;
     configData->numStates = ODUKF_N_STATES;
     configData->countHalfSPs = ODUKF_N_STATES;
@@ -156,7 +156,7 @@ void Update_relODuKF(RelODuKFConfig *configData, uint64_t callTime,
     /*! - Handle initializing time in filter and discard initial messages*/
     /*! - If the time tag from the measured data is new compared to previous step,
      propagate and update the filter*/
-    newTimeTag = nanoToSec(OpNavMsg_C_timeWritten(&configData->opNavInMsg));
+    newTimeTag = (double) OpNavMsg_C_timeWritten(&configData->opNavInMsg) * NANO2SEC;
     if(newTimeTag >= configData->timeTag && OpNavMsg_C_isWritten(&configData->opNavInMsg) && inputRelOD.valid ==1)
     {
         configData->opNavInBuffer = inputRelOD;
@@ -167,7 +167,7 @@ void Update_relODuKF(RelODuKFConfig *configData, uint64_t callTime,
     }
     /*! - If current clock time is further ahead than the measured time, then
      propagate to this current time-step*/
-    newTimeTag = nanoToSec(callTime);
+    newTimeTag = (double) callTime * NANO2SEC;
     if(newTimeTag >= configData->timeTag)
     {
         relODuKFTimeUpdate(configData, newTimeTag);

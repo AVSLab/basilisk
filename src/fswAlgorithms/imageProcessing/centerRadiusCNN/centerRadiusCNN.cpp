@@ -84,7 +84,8 @@ void CenterRadiusCNN::UpdateState(uint64_t CurrentSimNanos)
     CameraImageMsgPayload imageBuffer;
     OpNavCirclesMsgPayload circleBuffer;
     cv::Mat imageCV, blurred;
-    filenamePre = "PreprocessedImage_" + std::to_string(nanoToSec(CurrentSimNanos)) + ".jpg";
+    filenamePre = "PreprocessedImage_" +
+                  std::to_string(static_cast<double>(CurrentSimNanos) * NANO2SEC) + ".jpg";
 
     /*! - Load in the trained CNN model*/
 

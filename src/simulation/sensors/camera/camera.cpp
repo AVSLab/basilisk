@@ -359,7 +359,8 @@ void Camera::UpdateState(uint64_t currentSimNanos)
     cv::Mat blurred;
     bool usingFilename = false;
     if (this->saveDir != ""){
-        localPath = this->saveDir + std::to_string(nanoToSec(currentSimNanos)) + ".png";
+        localPath = this->saveDir +
+                    std::to_string(static_cast<double>(currentSimNanos) * NANO2SEC) + ".png";
     }
     /*! - Read in the bitmap*/
     if(this->imageInMsg.isLinked())

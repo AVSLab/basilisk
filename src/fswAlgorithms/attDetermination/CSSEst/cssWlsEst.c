@@ -268,7 +268,7 @@ void Update_cssWlsEst(CSSWLSConfig *configData, uint64_t callTime,
     /*! - If the residual fit output message is set, then compute the residuals and stor them in the output message */
     if (SunlineFilterMsg_C_isLinked(&configData->cssWLSFiltResOutMsg)) {
         configData->filtStatus.numObs = (int) configData->numActiveCss;
-        configData->filtStatus.timeTag = nanoToSec(callTime);
+        configData->filtStatus.timeTag = (double) callTime * NANO2SEC;
         v3Copy(sunlineOutBuffer.vehSunPntBdy, configData->filtStatus.state);
         SunlineFilterMsg_C_write(&configData->filtStatus, &configData->cssWLSFiltResOutMsg, moduleID, callTime);
 

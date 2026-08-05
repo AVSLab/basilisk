@@ -111,7 +111,7 @@ void SensorThermal::UpdateState(uint64_t CurrentSimNanos)
     this->readMessages();
 
     //! - Evaluate model
-    this->evaluateThermalModel(nanoToSec(CurrentSimNanos));
+    this->evaluateThermalModel(static_cast<double>(CurrentSimNanos) * NANO2SEC);
 
     //! - Write output
     this->writeMessages(CurrentSimNanos);

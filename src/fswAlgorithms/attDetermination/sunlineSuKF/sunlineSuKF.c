@@ -85,7 +85,7 @@ void Reset_sunlineSuKF(SunlineSuKFConfig *configData, uint64_t callTime,
 
     /*! - Initialize filter parameters to max values */
     configData->dt = 0.0;
-    configData->timeTag = nanoToSec(callTime);
+    configData->timeTag = (double) callTime * NANO2SEC;
     configData->numStates = SKF_N_STATES_SWITCH;
     configData->countHalfSPs = SKF_N_STATES_SWITCH;
     configData->numObs = MAX_N_CSS_MEAS;
@@ -217,7 +217,7 @@ void Update_sunlineSuKF(SunlineSuKFConfig *configData, uint64_t callTime,
 
     /*! - If the time tag from the measured data is new compared to previous step,
           propagate and update the filter*/
-    newTimeTag = nanoToSec(timeOfMsgWritten);
+    newTimeTag = (double) timeOfMsgWritten * NANO2SEC;
     if(newTimeTag >= configData->timeTag && isWritten)
     {
         sunlineSuKFTimeUpdate(configData, newTimeTag);
@@ -226,7 +226,7 @@ void Update_sunlineSuKF(SunlineSuKFConfig *configData, uint64_t callTime,
     v3Normalize(configData->state, configData->state);
     /*! - If current clock time is further ahead than the measured time, then
           propagate to this current time-step*/
-    newTimeTag = nanoToSec(callTime);
+    newTimeTag = (double) callTime * NANO2SEC;
     if(newTimeTag > configData->timeTag)
     {
         sunlineSuKFTimeUpdate(configData, newTimeTag);

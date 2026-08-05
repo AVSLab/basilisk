@@ -37,7 +37,7 @@ SpacecraftChargingDynamics::SpacecraftChargingDynamics() {
 void SpacecraftChargingDynamics::Reset(uint64_t CurrentSimNanos) {
     this->initializeDynamics();
     this->writeOutputStateMessages(CurrentSimNanos);
-    this->timeBefore = nanoToSec(CurrentSimNanos);
+    this->timeBefore = static_cast<double>(CurrentSimNanos) * NANO2SEC;
     this->timeBeforeNanos = CurrentSimNanos;
 }
 
@@ -315,7 +315,7 @@ void SpacecraftChargingDynamics::preIntegration(uint64_t integrateToThisTimeNano
 */
 void SpacecraftChargingDynamics::postIntegration(uint64_t integrateToThisTimeNanos) {
     this->timeBeforeNanos = integrateToThisTimeNanos;
-    this->timeBefore = nanoToSec(integrateToThisTimeNanos);
+    this->timeBefore = static_cast<double>(integrateToThisTimeNanos) * NANO2SEC;
 }
 
 /*! Setter for the initial servicer potential.
