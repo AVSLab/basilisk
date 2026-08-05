@@ -10,6 +10,9 @@ Basilisk Known Issues
 
 Version |release| (July 7, 2026)
 --------------------------------
+- State effectors wound their static ``effectorID`` counter back in the destructor, so destroying
+  one effector made a later one reuse an identifier still held by a live effector. This is fixed
+  in the current version, and the counter now only ever increases.
 - The :ref:`linearTranslationOneDOFStateEffector` published two of its inertial properties incorrectly.
   The translating frame velocity omitted the hub's inertial velocity entirely, and the translating frame
   angular velocity was rotated by the transpose of ``dcm_FB``. This is fixed in the current version.

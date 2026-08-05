@@ -76,7 +76,6 @@ uint64_t PrescribedMotionStateEffector::effectorID = 1;
 /*! This is the destructor. */
 PrescribedMotionStateEffector::~PrescribedMotionStateEffector()
 {
-    PrescribedMotionStateEffector::effectorID = 1;
 }
 
 /*! This method is used to reset the module.

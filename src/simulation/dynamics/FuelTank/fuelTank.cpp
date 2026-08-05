@@ -40,7 +40,6 @@ FuelTank::FuelTank() {
 uint64_t FuelTank::effectorID = 1;
 
 FuelTank::~FuelTank() {
-    FuelTank::effectorID = 1;
 }
 
 /*! optionally set the name of the mass state to be used by the state manager */

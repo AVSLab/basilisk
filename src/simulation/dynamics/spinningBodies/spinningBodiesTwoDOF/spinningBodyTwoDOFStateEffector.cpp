@@ -72,7 +72,6 @@ uint64_t SpinningBodyTwoDOFStateEffector::effectorID = 1;
 /*! This is the destructor, nothing to report here */
 SpinningBodyTwoDOFStateEffector::~SpinningBodyTwoDOFStateEffector()
 {
-    SpinningBodyTwoDOFStateEffector::effectorID --;    /* reset the panel ID*/
 }
 
 /*! This method is used to reset the module. */

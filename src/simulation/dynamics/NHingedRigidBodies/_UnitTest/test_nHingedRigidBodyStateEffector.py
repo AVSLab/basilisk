@@ -174,9 +174,11 @@ def nHingedRigidBody(show_plots, testCase):
     scObjectLog = scObject.logger(["totOrbEnergy", "totOrbAngMomPntN_N", "totRotAngMomPntC_N", "totRotEnergy"])
     unitTestSim.AddModelToTask(unitTaskName, scObjectLog)
 
+    theta1Name = unitTestSim.effector1.nameOfThetaState
+    theta2Name = unitTestSim.effector2.nameOfThetaState
     stateLog = pythonVariableLogger.PythonVariableLogger({
-        "theta1": lambda _: scObject.dynManager.getStateObject(f'nHingedRigidBody1Theta').getState(),
-        "theta2": lambda _: scObject.dynManager.getStateObject(f'nHingedRigidBody2Theta').getState(),
+        "theta1": lambda _: scObject.dynManager.getStateObject(theta1Name).getState(),
+        "theta2": lambda _: scObject.dynManager.getStateObject(theta2Name).getState(),
     })
     unitTestSim.AddModelToTask(unitTaskName, stateLog)
 

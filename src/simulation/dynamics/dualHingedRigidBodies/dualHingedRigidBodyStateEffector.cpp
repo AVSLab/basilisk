@@ -84,7 +84,6 @@ DualHingedRigidBodyStateEffector::~DualHingedRigidBodyStateEffector()
         delete this->dualHingedRigidBodyConfigLogOutMsgs.at(c);
     }
 
-    this->effectorID = 1;    /* reset the panel ID*/
     return;
 }
 

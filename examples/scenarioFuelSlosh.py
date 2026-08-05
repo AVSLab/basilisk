@@ -327,9 +327,11 @@ def run(show_plots, damping_parameter, timeStep):
 
     damperRhoLog = None
     if damping_parameter != 0.0:
+        rhoNames = [scSim.particle1.nameOfRhoState, scSim.particle2.nameOfRhoState,
+                    scSim.particle3.nameOfRhoState]
+
         def get_rho(CurrentSimNanos, i):
-            stateName = f'linearSpringMassDamperRho{i}'
-            return scObject.dynManager.getStateObject(stateName).getState()[0][0]
+            return scObject.dynManager.getStateObject(rhoNames[i - 1]).getState()[0][0]
 
         damperRhoLog = pythonVariableLogger.PythonVariableLogger({
                 "damperRho1": lambda CurrentSimNanos: get_rho(CurrentSimNanos, 1),

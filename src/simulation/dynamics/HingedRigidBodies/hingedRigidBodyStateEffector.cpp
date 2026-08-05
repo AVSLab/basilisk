@@ -61,7 +61,6 @@ uint64_t HingedRigidBodyStateEffector::effectorID = 1;
 /*! This is the destructor, nothing to report here */
 HingedRigidBodyStateEffector::~HingedRigidBodyStateEffector()
 {
-    this->effectorID = 1;    /* reset the panel ID*/
     return;
 }
 

@@ -24,6 +24,7 @@
 
 import inspect
 import os
+import re
 import matplotlib.pyplot as plt
 import numpy as np
 import pytest
@@ -339,11 +340,15 @@ def effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dynamic
     # Check that properties are being handed correctly from state effector to dynamic effector
     if (stateEffector == "spinningBodiesNDOF" or stateEffector == "linearTranslationBodiesOneDOF"
         or stateEffector == "linearTranslationBodiesNDOF"):
-        # Newer effector classes keep all variables private and so we check with the dynParamManager
-        positionName = getModernStateEffInertialPropName(scObject, segment, stateEff, "Position")
-        velocityName = getModernStateEffInertialPropName(scObject, segment, stateEff, "Velocity")
-        attitudeName = getModernStateEffInertialPropName(scObject, segment, stateEff, "Attitude")
-        angvelocityName = getModernStateEffInertialPropName(scObject, segment, stateEff, "AngVelocity")
+        # newer effector classes keep their names private, so validate the name handed to the child
+        positionName = getModernStateEffInertialPropName(
+            scObject, segment, "Position", getDynEffInertialPropName(dynamicEffector, dynamicEff, "Position"))
+        velocityName = getModernStateEffInertialPropName(
+            scObject, segment, "Velocity", getDynEffInertialPropName(dynamicEffector, dynamicEff, "Velocity"))
+        attitudeName = getModernStateEffInertialPropName(
+            scObject, segment, "Attitude", getDynEffInertialPropName(dynamicEffector, dynamicEff, "Attitude"))
+        angvelocityName = getModernStateEffInertialPropName(
+            scObject, segment, "AngVelocity", getDynEffInertialPropName(dynamicEffector, dynamicEff, "AngVelocity"))
     else:
         # older effector classes have public variable names that are simply checked directly
         positionName = getStateEffInertialPropName(segment, stateEff, "Position")
@@ -484,25 +489,20 @@ def getStateEffInertialPropName(segment, stateEff, propType):
         return getattr(stateEff, f"nameOfInertial{propType}Property")
     elif segment == 2:
         return getattr(stateEff, f"nameOfInertial{propType}Property2")
-    elif segment == 4:
-        try:
-            propName = stateEff.ModelTag + "Inertial" + propType + "1_4"
-            scObject.dynManager.getPropertyReference(propName)
-        except BasiliskError:
-            return "notHandedCorrectly"
-        return propName
 
-def getModernStateEffInertialPropName(scObject, segment, stateEff, propType):
+def getModernStateEffInertialPropName(scObject, segment, propType, handedPropName):
+    # a generated name ends in a process-global counter, so validate the handed name instead of rebuilding it
+    if segment == 1:
+        pattern = "linearTranslationInertial" + propType + r"[0-9]+"
+    else:
+        pattern = "spinningBodyInertial" + propType + r"[0-9]+_" + str(segment)
     try:
-        if segment == 1:
-            propName = stateEff.ModelTag + "Inertial" + propType + "1"
-            scObject.dynManager.getPropertyReference(propName)
-        elif segment == 4:
-            propName = stateEff.ModelTag + "Inertial" + propType + "1_4"
-            scObject.dynManager.getPropertyReference(propName)
+        scObject.dynManager.getPropertyReference(handedPropName)
     except BasiliskError:
         return "notHandedCorrectly"
-    return propName
+    if re.fullmatch(pattern, handedPropName) is None:
+        return "notHandedCorrectly"
+    return handedPropName
 
 def setup_extForceTorque():
     extFT = extForceTorque.ExtForceTorque()

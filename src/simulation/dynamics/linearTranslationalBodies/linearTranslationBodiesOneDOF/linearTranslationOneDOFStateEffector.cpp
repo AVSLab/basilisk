@@ -41,7 +41,6 @@ uint64_t LinearTranslationOneDOFStateEffector::effectorID = 1;
 
 LinearTranslationOneDOFStateEffector::~LinearTranslationOneDOFStateEffector()
 {
-    LinearTranslationOneDOFStateEffector::effectorID = 1;
 }
 
 void LinearTranslationOneDOFStateEffector::Reset(uint64_t CurrentClock [[maybe_unused]]) {
