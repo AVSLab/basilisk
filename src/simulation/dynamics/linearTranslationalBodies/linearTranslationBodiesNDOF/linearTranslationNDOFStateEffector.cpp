@@ -489,7 +489,7 @@ void LinearTranslationNDOFStateEffector::computeTranslatingBodyInertialStates()
         Eigen::Matrix3d dcm_FN;
         dcm_FN = translatingBody->dcm_FB * this->dcm_BN;
         translatingBody->sigma_FN = eigenC2MRP(dcm_FN);
-        translatingBody->omega_FN_F = translatingBody->dcm_FB.transpose().transpose() * translatingBody->omega_FN_B;
+        translatingBody->omega_FN_F = translatingBody->dcm_FB * translatingBody->omega_FN_B;
 
         // Compute the translation properties
         translatingBody->r_FcN_N = (Eigen::Vector3d)*this->inertialPositionProperty + this->dcm_BN.transpose() * translatingBody->r_FcB_B;
