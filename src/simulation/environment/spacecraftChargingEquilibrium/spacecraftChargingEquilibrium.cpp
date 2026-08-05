@@ -151,7 +151,7 @@ void SpacecraftChargingEquilibrium::setSunlitAreaDefault(unsigned int spacecraft
 double SpacecraftChargingEquilibrium::getSunlitAreaDefault(unsigned int spacecraftIndex) const
 {
     if (spacecraftIndex >= this->scSunlitAreaDefaults.size()) {
-        return NAN;
+        return std::numeric_limits<double>::quiet_NaN();
     }
     return this->scSunlitAreaDefaults[spacecraftIndex];
 }
@@ -837,7 +837,7 @@ double SpacecraftChargingEquilibrium::photoelectricCurrent(double phi, double A)
         photoelectricCurrentValue = this->photoelectronFlux * A;
     } else {
         this->bskLogger.bskError("SpacecraftChargingEquilibrium.photoelectricCurrent: phi not a real number");
-        photoelectricCurrentValue = NAN;
+        photoelectricCurrentValue = std::numeric_limits<double>::quiet_NaN();
     }
     return photoelectricCurrentValue;
 }
@@ -855,7 +855,7 @@ double SpacecraftChargingEquilibrium::electronBeamCurrent(double phiS, double ph
             iBeamServicer = 0.;
         } else {
             this->bskLogger.bskError("SpacecraftChargingEquilibrium.electronBeamCurrent: EEB not a real number");
-            iBeamServicer = NAN;
+            iBeamServicer = std::numeric_limits<double>::quiet_NaN();
         }
         return iBeamServicer;
     } else if (craftType == "target") {
@@ -865,7 +865,7 @@ double SpacecraftChargingEquilibrium::electronBeamCurrent(double phiS, double ph
             iBeamTarget = 0.;
         } else {
             this->bskLogger.bskError("SpacecraftChargingEquilibrium.electronBeamCurrent: EEB not a real number");
-            iBeamTarget = NAN;
+            iBeamTarget = std::numeric_limits<double>::quiet_NaN();
         }
         return iBeamTarget;
     } else {

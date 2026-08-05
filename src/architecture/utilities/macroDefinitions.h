@@ -35,7 +35,7 @@
 
 #include <stdint.h>  // For uint64_t
 #include <float.h>   // For DBL_MANT_DIG
-#include <math.h>    // For NAN, fabs()
+#include <math.h>    // For nan(), fabs()
 #include <stdio.h>
 #include <inttypes.h>
 
@@ -52,7 +52,7 @@ static inline  double nanoToSec(uint64_t nanos) {
             "[nano_to_sec] ERROR: Input %" PRIu64
             " exceeds safe conversion limit (~%" PRIu64 "). Precision may be lost. Returning NAN.\n",
             nanos, MAX_SAFE_UINT64_FOR_DOUBLE);
-        return NAN;  // Indicate precision loss
+        return nan("");  // Indicate precision loss
     }
 
     return (double)nanos * NANO2SEC;  // Convert to seconds

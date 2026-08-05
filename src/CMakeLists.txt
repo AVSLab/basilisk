@@ -588,6 +588,7 @@ if(BSK_STRICT_WARNINGS)
         $<$<COMPILE_LANGUAGE:${language}>:-Wpedantic>
         $<$<COMPILE_LANGUAGE:${language}>:-Wconversion>
         $<$<COMPILE_LANGUAGE:${language}>:-Wsign-conversion>
+        $<$<COMPILE_LANGUAGE:${language}>:-Wdouble-promotion>
         $<$<COMPILE_LANGUAGE:${language}>:-Wformat=2>
         $<$<COMPILE_LANGUAGE:${language}>:-Wundef>
         $<$<COMPILE_LANGUAGE:${language}>:-Wimplicit-fallthrough>

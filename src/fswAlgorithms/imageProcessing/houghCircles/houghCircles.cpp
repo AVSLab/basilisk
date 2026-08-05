@@ -128,11 +128,12 @@ void HoughCircles::UpdateState(uint64_t CurrentSimNanos)
          i < circles.size();
          i++)
     {
-        circleBuffer.circlesCenters[2*i] = circles[i][0];
-        circleBuffer.circlesCenters[2*i+1] = circles[i][1];
-        circleBuffer.circlesRadii[i] = circles[i][2];
+        circleBuffer.circlesCenters[2*i] = static_cast<double>(circles[i][0]);
+        circleBuffer.circlesCenters[2*i+1] = static_cast<double>(circles[i][1]);
+        circleBuffer.circlesRadii[i] = static_cast<double>(circles[i][2]);
         for(int j=0; j<3; j++){
-            circleBuffer.uncertainty[j+3*j] = this->noiseSF*circles[i][3]/this->voteThresh;
+            circleBuffer.uncertainty[j+3*j] =
+                this->noiseSF * static_cast<double>(circles[i][3]) / this->voteThresh;
         }
         circlesFound+=1;
     }

@@ -26,7 +26,7 @@
 /*! This is the constructor.  It sets some default initializers that can be
  overriden by the user.*/
 RadiationPressure::RadiationPressure()
-    :area(0.0f)
+    :area(0.0)  // [m^2]
     ,coefficientReflection(1.2)
     ,srpModel(SRP_CANNONBALL_MODEL)
     ,stateRead(false)

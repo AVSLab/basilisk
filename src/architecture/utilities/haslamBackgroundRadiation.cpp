@@ -260,7 +260,8 @@ std::vector<long> HaslamMap::query_disc(double theta0, double phi0, double radiu
 
 double HaslamMap::getPixelTemperature(long ipix) const {
     if (ipix < 0 || ipix >= this->npix) return 0.0;
-    float val = this->brightnessTemperatures[static_cast<size_t>(ipix)];
+    const double val =
+        static_cast<double>(this->brightnessTemperatures[static_cast<size_t>(ipix)]);  // [K]
     if (val < -1.0e30) return 0.0;  // BAD_DATA sentinel
     return val;
 }
