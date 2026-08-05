@@ -116,6 +116,7 @@ void DualHingedRigidBodyStateEffector::linkInStates(DynParamManager& statesIn)
     this->inertialPositionProperty = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + this->propName_inertialPosition);
     this->inertialVelocityProperty = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + this->propName_inertialVelocity);
     this->v_BN_NState = statesIn.getStateObject(this->nameOfSpacecraftAttachedTo + this->stateNameOfVelocity);
+    this->hubSigmaState = statesIn.getStateObject(this->nameOfSpacecraftAttachedTo + this->stateNameOfSigma);
 
     return;
 }
@@ -382,6 +383,7 @@ void DualHingedRigidBodyStateEffector::updateEnergyMomContributions(double integ
  */
 void DualHingedRigidBodyStateEffector::writeOutputStateMessages(uint64_t CurrentClock)
 {
+    this->computePanelInertialStates();
 
     HingedRigidBodyMsgPayload panelOutputStates;  //!< instance of messaging system message struct
 
@@ -423,9 +425,6 @@ void DualHingedRigidBodyStateEffector::UpdateState(uint64_t CurrentSimNanos)
         this->u2 = incomingCmdBuffer.motorTorque[1];
     }
 
-    /* compute panel inertial states */
-    this->computePanelInertialStates();
-
     this->writeOutputStateMessages(CurrentSimNanos);
 
     return;
@@ -436,9 +435,11 @@ void DualHingedRigidBodyStateEffector::UpdateState(uint64_t CurrentSimNanos)
  */
 void DualHingedRigidBodyStateEffector::computePanelInertialStates()
 {
-    // inertial attitudes
-    Eigen::MRPd sigmaPN;
-    sigmaPN = this->sigma_BN;
+    // - read live: the cached copy lags half a step at write time, unless a prescribed body set it
+    if (this->prescribedAttitudeProperty == nullptr) {
+        this->sigma_BN = Eigen::MRPd(this->hubSigmaState->getStateReference().data());
+    }
+    Eigen::MRPd sigmaPN = this->sigma_BN;
     Eigen::Matrix3d dcm_NP = sigmaPN.toRotationMatrix();
     this->sigma_SN[0] = eigenC2MRP(this->dcm_S1P*dcm_NP.transpose());
     this->sigma_SN[1] = eigenC2MRP(this->dcm_S2P*dcm_NP.transpose());

@@ -154,6 +154,8 @@ void LinearTranslationNDOFStateEffector::readInputMessages()
 /*! This method takes the computed rho states and outputs them to the messaging system. */
 void LinearTranslationNDOFStateEffector::writeOutputStateMessages(uint64_t CurrentClock)
 {
+    this->computeTranslatingBodyInertialStates();
+
     // Write out the translating body output messages
     size_t i = 0;
     LinearTranslationRigidBodyMsgPayload translatingBodyBuffer;
@@ -500,6 +502,5 @@ void LinearTranslationNDOFStateEffector::computeTranslatingBodyInertialStates()
 void LinearTranslationNDOFStateEffector::UpdateState(uint64_t CurrentSimNanos)
 {
     this->readInputMessages();
-    this->computeTranslatingBodyInertialStates();
     this->writeOutputStateMessages(CurrentSimNanos);
 }

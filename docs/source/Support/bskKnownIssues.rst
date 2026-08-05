@@ -10,6 +10,9 @@ Basilisk Known Issues
 
 Version |release| (July 7, 2026)
 --------------------------------
+- Every state effector acting as a parent published the inertial state of its attachment frame once
+  per task step from its own ``UpdateState()``. A child effector therefore evaluated its loads against
+  kinematics a full task step old. These are now refreshed within the integration.
 - State effectors wound their static ``effectorID`` counter back in the destructor, so destroying
   one effector made a later one reuse an identifier still held by a live effector. This is fixed
   in the current version, and the counter now only ever increases.

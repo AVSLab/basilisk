@@ -6,3 +6,4 @@
 - Fixed the sign of an attached effector's upper body torque in the :ref:`spinningBodyTwoDOFStateEffector` lower body equation of motion.
 - Fixed the :ref:`linearTranslationOneDOFStateEffector` inertial velocity and angular velocity properties, which were wrong for attached effectors.
 - Fixed state effector identifier reuse that could give two live effectors colliding state names.
+- Branching parents now publish their attachment frame kinematics at the current integrator substep rather than once per task step.

@@ -72,6 +72,7 @@ HingedRigidBodyStateEffector::~HingedRigidBodyStateEffector()
  */
 void HingedRigidBodyStateEffector::writeOutputStateMessages(uint64_t CurrentClock)
 {
+    this->computePanelInertialStates();
 
     if (this->hingedRigidBodyOutMsg.isLinked()) {
         this->HRBoutputStates = this->hingedRigidBodyOutMsg.zeroMsgPayload;
@@ -114,6 +115,7 @@ void HingedRigidBodyStateEffector::linkInStates(DynParamManager& statesIn)
 
     this->inertialPositionProperty = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + this->propName_inertialPosition);
     this->inertialVelocityProperty = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + this->propName_inertialVelocity);
+    this->hubSigmaState = statesIn.getStateObject(this->nameOfSpacecraftAttachedTo + this->stateNameOfSigma);
 
     return;
 }
@@ -232,6 +234,11 @@ void HingedRigidBodyStateEffector::updateContributions(double integTime, BackSub
     Eigen::Vector3d g_P;
     gLocal_N = g_N;
     g_P = dcm_PN*gLocal_N;
+
+    if (!this->dynEffectors.empty()) {
+        this->omega_BN_B = omega_BN_B;
+        this->computePanelInertialStates();
+    }
 
     // Loop through to collect forces and torques from any connected dynamic effectors
     Eigen::Vector3d attBodyForce_S = Eigen::Vector3d::Zero();
@@ -361,9 +368,6 @@ void HingedRigidBodyStateEffector::UpdateState(uint64_t CurrentSimNanos)
         this->thetaDotRef = incomingRefBuffer.thetaDot;
     }
 
-    /* compute panel inertial states */
-    this->computePanelInertialStates();
-
     this->writeOutputStateMessages(CurrentSimNanos);
 
     return;
@@ -418,9 +422,11 @@ void HingedRigidBodyStateEffector::calcForceTorqueOnBody(double integTime [[mayb
  */
 void HingedRigidBodyStateEffector::computePanelInertialStates()
 {
-    // inertial attitude
-    Eigen::MRPd sigmaBN;
-    sigmaBN = this->sigma_BN;
+    // - read live: the cached copy lags half a step at write time, unless a prescribed body set it
+    if (this->prescribedAttitudeProperty == nullptr) {
+        this->sigma_BN = Eigen::MRPd(this->hubSigmaState->getStateReference().data());
+    }
+    Eigen::MRPd sigmaBN = this->sigma_BN;
     Eigen::Matrix3d dcm_NP = sigmaBN.toRotationMatrix();  // assumes P and B are idential
     Eigen::Matrix3d dcm_SN;
     dcm_SN = this->dcm_SP*dcm_NP.transpose();

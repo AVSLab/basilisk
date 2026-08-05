@@ -87,6 +87,7 @@ void LinearTranslationOneDOFStateEffector::linkInStates(DynParamManager& statesI
     // Get access to properties needed for dynamic coupling (Hub or prescribed)
     this->inertialPositionProperty = statesIn.getPropertyReference(this->propName_inertialPosition);
     this->inertialVelocityProperty = statesIn.getPropertyReference(this->propName_inertialVelocity);
+    this->hubSigmaState = statesIn.getStateObject(this->nameOfSpacecraftAttachedTo + this->stateNameOfSigma);
     this->g_N = statesIn.getPropertyReference("g_N");
 }
 
@@ -170,6 +171,8 @@ void LinearTranslationOneDOFStateEffector::readInputMessages()
 
 void LinearTranslationOneDOFStateEffector::writeOutputStateMessages(uint64_t currentSimNanos)
 {
+    this->computeTranslatingBodyInertialStates();
+
     if (this->translatingBodyOutMsg.isLinked()) {
         LinearTranslationRigidBodyMsgPayload translatingBodyBuffer;
         translatingBodyBuffer = this->translatingBodyOutMsg.zeroMsgPayload;
@@ -238,6 +241,10 @@ void LinearTranslationOneDOFStateEffector::computeBackSubContributions(BackSubMa
                                                                        const Eigen::Vector3d& F_g,
                                                                        double integTime)
 {
+    if (!this->dynEffectors.empty()) {
+        this->computeTranslatingBodyInertialStates();
+    }
+
     // Loop through to collect forces and torques from any connected dynamic effectors
     Eigen::Vector3d attBodyForce_F = Eigen::Vector3d::Zero();
     Eigen::Vector3d attBodyTorquePntF_F = Eigen::Vector3d::Zero();
@@ -391,6 +398,12 @@ void LinearTranslationOneDOFStateEffector::updateEnergyMomContributions(double i
 
 void LinearTranslationOneDOFStateEffector::computeTranslatingBodyInertialStates()
 {
+    // - read live: the cached copy lags half a step at write time, unless a prescribed body set it
+    if (this->prescribedAttitudeProperty == nullptr) {
+        const Eigen::MRPd sigmaHub_BN(this->hubSigmaState->getStateReference().data());
+        this->dcm_BN = sigmaHub_BN.toRotationMatrix().transpose();
+    }
+
     Eigen::Matrix3d dcm_FN = this->dcm_FB * this->dcm_BN;
     const Eigen::MRPd sigma_FN = eigenC2MRP(dcm_FN);
     *this->sigma_FN = sigma_FN.coeffs();
@@ -408,6 +421,5 @@ void LinearTranslationOneDOFStateEffector::computeTranslatingBodyInertialStates(
 void LinearTranslationOneDOFStateEffector::UpdateState(uint64_t currentSimNanos)
 {
     this->readInputMessages();
-    this->computeTranslatingBodyInertialStates();
     this->writeOutputStateMessages(currentSimNanos);
 }

@@ -122,6 +122,8 @@ void SpinningBodyTwoDOFStateEffector::Reset(uint64_t CurrentClock [[maybe_unused
 /*! This method takes the computed theta states and outputs them to the messaging system. */
 void SpinningBodyTwoDOFStateEffector::writeOutputStateMessages(uint64_t CurrentClock)
 {
+    this->computeSpinningBodyInertialStates();
+
     // Write out the spinning body output messages
     HingedRigidBodyMsgPayload spinningBodyBuffer;
     if (this->spinningBodyOutMsgs[0]->isLinked()) {
@@ -180,6 +182,7 @@ void SpinningBodyTwoDOFStateEffector::linkInStates(DynParamManager& statesIn)
 
     this->inertialPositionProperty = statesIn.getPropertyReference(this->propName_inertialPosition);
     this->inertialVelocityProperty = statesIn.getPropertyReference(this->propName_inertialVelocity);
+    this->hubSigmaState = statesIn.getStateObject(this->nameOfSpacecraftAttachedTo + this->stateNameOfSigma);
 }
 
 /*! This method is used to link prescribed motion properties */
@@ -355,6 +358,16 @@ void SpinningBodyTwoDOFStateEffector::updateContributions(double integTime, Back
     gLocal_N = g_N;
     g_B = this->dcm_BN * gLocal_N;
 
+    // Update omega_BN_B
+    this->omega_BN_B = omega_BN_B;
+    this->omegaTilde_BN_B = eigenTilde(this->omega_BN_B);
+    this->omega_S1N_B = this->omega_S1B_B + this->omega_BN_B;
+    this->omega_S2N_B = this->omega_S2B_B + this->omega_BN_B;
+
+    if (!this->dynEffectors.empty()) {
+        this->computeSpinningBodyInertialStates();
+    }
+
     // Loop through to collect forces and torques from any connected dynamic effectors
     Eigen::Vector3d attBodyForce_S1 = Eigen::Vector3d::Zero();
     Eigen::Vector3d attBodyTorquePntS1_S1 = Eigen::Vector3d::Zero();
@@ -376,12 +389,6 @@ void SpinningBodyTwoDOFStateEffector::updateContributions(double integTime, Back
             attBodyTorquePntS2_S2 += (*dynIt)->torqueExternalPntB_B;
         }
     }
-
-    // Update omega_BN_B
-    this->omega_BN_B = omega_BN_B;
-    this->omegaTilde_BN_B = eigenTilde(this->omega_BN_B);
-    this->omega_S1N_B = this->omega_S1B_B + this->omega_BN_B;
-    this->omega_S2N_B = this->omega_S2B_B + this->omega_BN_B;
 
     // Define auxiliary position vectors
     Eigen::Vector3d r_ScS1_B = (this->mass1 * this->r_Sc1S1_B + this->mass2 * this->r_Sc2S1_B) / this->mass;
@@ -686,6 +693,12 @@ void SpinningBodyTwoDOFStateEffector::updateEnergyMomContributions(double integT
 /*! This method computes the spinning body states relative to the inertial frame */
 void SpinningBodyTwoDOFStateEffector::computeSpinningBodyInertialStates()
 {
+    // - read live: the cached copy lags half a step at write time, unless a prescribed body set it
+    if (this->prescribedAttitudeProperty == nullptr) {
+        const Eigen::MRPd sigmaHub_BN(this->hubSigmaState->getStateReference().data());
+        this->dcm_BN = sigmaHub_BN.toRotationMatrix().transpose();
+    }
+
     // Compute the inertial attitude
     Eigen::Matrix3d dcm_S1N;
     Eigen::Matrix3d dcm_S2N;
@@ -745,9 +758,6 @@ void SpinningBodyTwoDOFStateEffector::UpdateState(uint64_t CurrentSimNanos)
         this->theta2Ref = incomingRefBuffer.theta;
         this->theta2DotRef = incomingRefBuffer.thetaDot;
     }
-
-    /* Compute spinning body inertial states */
-    this->computeSpinningBodyInertialStates();
 
     /* Write output messages*/
     this->writeOutputStateMessages(CurrentSimNanos);
