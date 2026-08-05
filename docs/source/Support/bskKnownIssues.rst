@@ -10,6 +10,8 @@ Basilisk Known Issues
 
 Version |release| (July 7, 2026)
 --------------------------------
+- The :ref:`dualHingedRigidBodyStateEffector` applied the second hinge's motor torque to panel 2 without
+  the equal and opposite reaction on panel 1. This is fixed in the current version.
 - The :ref:`dualHingedRigidBodyStateEffector` computed panel 2's inertial angular velocity with
   panel 1's attitude and omitted the first hinge rate. This is fixed in the current version.
 - The :ref:`dualHingedRigidBodyStateEffector` wrote its panel center-of-mass velocities into the panel

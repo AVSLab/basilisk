@@ -390,7 +390,7 @@ def dualHingedRigidBodyMotorTorque(show_plots, useScPlus):
     unitTestSim.AddModelToTask(unitTaskName, data21Log)
 
     if useScPlus:
-        scLog = scObject.logger("totRotAngMomPntC_N")
+        scLog = scObject.logger(["totRotAngMomPntC_N", "totOrbEnergy", "totRotEnergy"])
     else:
         scLog = pythonVariableLogger.PythonVariableLogger({
             "totRotAngMomPntC_N": lambda _: scObject.primaryCentralSpacecraft.totRotAngMomPntC_N
@@ -420,6 +420,16 @@ def dualHingedRigidBodyMotorTorque(show_plots, useScPlus):
     oB2N = data21Log.omega_BN_B[0]
 
     rotAngMom_N = simHelpers.addTimeColumn(scLog.times(), scLog.totRotAngMomPntC_N)
+
+    # Momentum is blind to a missing motor reaction, energy is not. Motor power is torque times
+    # the relative hinge rate, and with no dampers it must match the mechanical energy change.
+    if useScPlus:
+        motorPower = (motorMsgData.motorTorque[0] * numpy.array(dataPanel10Log.thetaDot)
+                      + motorMsgData.motorTorque[1] * numpy.array(dataPanel11Log.thetaDot))
+        dt = numpy.diff(dataPanel10Log.times()) * macros.NANO2SEC
+        motorWork = numpy.sum(0.5 * (motorPower[1:] + motorPower[:-1]) * dt)
+        totalEnergy = numpy.array(scLog.totOrbEnergy) + numpy.array(scLog.totRotEnergy)
+        deltaEnergy = totalEnergy[-1] - totalEnergy[0]
 
     # Get the last sigma and position
     dataPos = [rOut_CN_N[-1]]
@@ -490,6 +500,12 @@ def dualHingedRigidBodyMotorTorque(show_plots, useScPlus):
         if not unitTestSupport.isArrayEqual(dataPos[i], truePos[i], 3, accuracy):
             testFailCount += 1
             testMessages.append("FAILED:  Hinged Rigid Body integrated test failed position test")
+
+    # tolerance is set by the trapezoid error on the work integral at this 10 ms step
+    if useScPlus and abs(deltaEnergy - motorWork) > 1e-5 * abs(motorWork):
+        testFailCount += 1
+        testMessages.append("FAILED: Dual Hinged Rigid Body motor torque energy work balance, "
+                            "dE = %.6f J but the motors did %.6f J of work" % (deltaEnergy, motorWork))
 
     for i in range(0, len(initialRotAngMom_N)):
         # check a vector values
