@@ -367,13 +367,13 @@ def effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dynamic
     scObject.setIntegrator(integratorObject)
 
     # Define mass properties of the rigid hub of the spacecraft
-    scObject.hub.mHub = 750.0
-    scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
+    scObject.hub.mHub = 750.0  # [kg]
+    scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]  # [kg*m^2]
 
     # Set the initial values for the states
-    scObject.hub.r_CN_NInit = [[-4020338.690396649], [7490566.741852513], [5248299.211589362]]
-    scObject.hub.v_CN_NInit = [[-5199.77710904224], [-3436.681645356935], [1041.576797498721]]
-    scObject.hub.omega_BN_BInit = [[0.1], [0.1], [0.1]]
+    scObject.hub.r_CN_NInit = [[-4020338.690396649], [7490566.741852513], [5248299.211589362]]  # [m]
+    scObject.hub.v_CN_NInit = [[-5199.77710904224], [-3436.681645356935], [1041.576797498721]]  # [m/s]
+    scObject.hub.omega_BN_BInit = [[0.1], [0.1], [0.1]]  # [rad/s]
 
     # Add Earth gravity to the simulation
     earthGravBody = gravityEffector.GravBodyData()
@@ -405,7 +405,7 @@ def effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dynamic
         pytest.fail("ERROR: Effector branching integrated test using unrecognized state effector input.")
 
     # Compute r_BcB_B such that point B and initial total COM coincide
-    scObject.hub.r_BcB_B = stateEffProps.mr_PcB_B / scObject.hub.mHub
+    scObject.hub.r_BcB_B = stateEffProps.mr_PcB_B / scObject.hub.mHub  # [m]
 
     # Create the dynamic effector of interest
     if dynamicEffector == "extForceTorque":
@@ -659,9 +659,9 @@ def getModernStateEffInertialPropName(scObject, segment, propType, handedPropNam
 
 def setup_extForceTorque():
     extFT = extForceTorque.ExtForceTorque()
-    extFT.extForce_B = [[1.0], [1.0], [1.0]]
+    extFT.extForce_B = [[1.0], [1.0], [1.0]]  # [N]
     extFT.extForce_N = [[1.0], [1.0], [1.0]]  # [N]
-    extFT.extTorquePntB_B = [[1.0], [1.0], [1.0]]
+    extFT.extTorquePntB_B = [[1.0], [1.0], [1.0]]  # [N*m]
     extFT.ModelTag = "extForceTorque"
 
     return(extFT)
@@ -670,7 +670,7 @@ def setup_extPulseTorque():
     extPT = ExtPulsedTorque.ExtPulsedTorque()
     extPT.countOnPulse = 1
     extPT.countOff = 1
-    extPT.pulsedTorqueExternalPntB_B = [[1], [1], [1]]
+    extPT.pulsedTorqueExternalPntB_B = [[1], [1], [1]]  # [N*m]
     extPT.ModelTag = "extPulseTorque"
 
     return(extPT)
@@ -694,8 +694,8 @@ def setup_constraintEffector(scObject1):
     # Sync dynamics integration across both spacecraft
     scObject1.syncDynamicsIntegration(scObject2)
 
-    scObject2.hub.mHub = 750.0
-    scObject2.hub.IHubPntBc_B = [[600.0, 0.0, 0.0], [0.0, 600.0, 0.0], [0.0, 0.0, 600.0]]
+    scObject2.hub.mHub = 750.0  # [kg]
+    scObject2.hub.IHubPntBc_B = [[600.0, 0.0, 0.0], [0.0, 600.0, 0.0], [0.0, 0.0, 600.0]]  # [kg*m^2]
 
     scObject2.gravField.gravBodies = scObject1.gravField.gravBodies
 
@@ -833,16 +833,16 @@ def setup_spinningBodiesOneDOF():
     spinningBody = spinningBodyOneDOFStateEffector.SpinningBodyOneDOFStateEffector()
 
     # Define properties of spinning body
-    spinningBody.mass = 50.0
-    spinningBody.IPntSc_S = [[50.0, 0.0, 0.0], [0.0, 30.0, 0.0], [0.0, 0.0, 40.0]]
+    spinningBody.mass = 50.0  # [kg]
+    spinningBody.IPntSc_S = [[50.0, 0.0, 0.0], [0.0, 30.0, 0.0], [0.0, 0.0, 40.0]]  # [kg*m^2]
     spinningBody.dcm_S0B = [[0.0, -1.0, 0.0], [0.0, .0, -1.0], [1.0, 0.0, 0.0]]
-    spinningBody.r_ScS_S = [[1.0], [0.0], [-1.0]]
-    spinningBody.r_SB_B = [[0.5], [-1.5], [-0.5]]
+    spinningBody.r_ScS_S = [[1.0], [0.0], [-1.0]]  # [m]
+    spinningBody.r_SB_B = [[0.5], [-1.5], [-0.5]]  # [m]
     spinningBody.sHat_S = [[0], [-1], [0]]
-    spinningBody.thetaInit = 5.0 * macros.D2R
-    spinningBody.thetaDotInit = -1.0 * macros.D2R
-    spinningBody.k = 100.0
-    spinningBody.c = 0.0  # [N-m-s/rad]
+    spinningBody.thetaInit = 5.0 * macros.D2R  # [rad]
+    spinningBody.thetaDotInit = -1.0 * macros.D2R  # [rad/s]
+    spinningBody.k = 100.0  # [N*m/rad]
+    spinningBody.c = 0.0  # [N*m*s/rad]
     spinningBody.ModelTag = "SpinningBody"
 
     # Compute COM offset contribution, to be divided by the hub mass
@@ -861,24 +861,24 @@ def setup_spinningBodiesTwoDOF():
     spinningBody = spinningBodyTwoDOFStateEffector.SpinningBodyTwoDOFStateEffector()
 
     # Define properties of spinning body
-    spinningBody.mass1 = 100.0
-    spinningBody.mass2 = 50.0
-    spinningBody.IS1PntSc1_S1 = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
-    spinningBody.IS2PntSc2_S2 = [[50.0, 0.0, 0.0], [0.0, 30.0, 0.0], [0.0, 0.0, 40.0]]
+    spinningBody.mass1 = 100.0  # [kg]
+    spinningBody.mass2 = 50.0  # [kg]
+    spinningBody.IS1PntSc1_S1 = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]  # [kg*m^2]
+    spinningBody.IS2PntSc2_S2 = [[50.0, 0.0, 0.0], [0.0, 30.0, 0.0], [0.0, 0.0, 40.0]]  # [kg*m^2]
     spinningBody.dcm_S10B = [[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]]
     spinningBody.dcm_S20S1 = [[0.0, -1.0, 0.0], [0.0, .0, -1.0], [1.0, 0.0, 0.0]]
-    spinningBody.r_Sc1S1_S1 = [[1.0], [-0.5], [0.0]]
-    spinningBody.r_Sc2S2_S2 = [[1.0], [0.0], [-1.0]]
-    spinningBody.r_S1B_B = [[-1.0], [0.5], [-1.0]]
-    spinningBody.r_S2S1_S1 = [[0.5], [-0.5], [-0.5]]
+    spinningBody.r_Sc1S1_S1 = [[1.0], [-0.5], [0.0]]  # [m]
+    spinningBody.r_Sc2S2_S2 = [[1.0], [0.0], [-1.0]]  # [m]
+    spinningBody.r_S1B_B = [[-1.0], [0.5], [-1.0]]  # [m]
+    spinningBody.r_S2S1_S1 = [[0.5], [-0.5], [-0.5]]  # [m]
     spinningBody.s1Hat_S1 = [[0], [0], [1]]
     spinningBody.s2Hat_S2 = [[0], [-1], [0]]
-    spinningBody.theta1DotInit = 1.0 * macros.D2R
-    spinningBody.theta2DotInit = 1.0 * macros.D2R
-    spinningBody.k1 = 1000.0
-    spinningBody.k2 = 500.0
-    spinningBody.c1 = 0.0  # [N-m-s/rad]
-    spinningBody.c2 = 0.0  # [N-m-s/rad]
+    spinningBody.theta1DotInit = 1.0 * macros.D2R  # [rad/s]
+    spinningBody.theta2DotInit = 1.0 * macros.D2R  # [rad/s]
+    spinningBody.k1 = 1000.0  # [N*m/rad]
+    spinningBody.k2 = 500.0  # [N*m/rad]
+    spinningBody.c1 = 0.0  # [N*m*s/rad]
+    spinningBody.c2 = 0.0  # [N*m*s/rad]
     spinningBody.ModelTag = "SpinningBody"
 
     # Compute COM offset contribution, to be divided by the hub mass
@@ -900,10 +900,10 @@ def setup_spinningBodiesTwoDOF():
 def setup_spinningBodiesNDOF():
     spinningBodyEffector = spinningBodyNDOFStateEffector.SpinningBodyNDOFStateEffector()
     numberOfSegments = 3 # 3 segments of 2DOF joints is really 6 spinning bodies here
-    massSubPanel = 100.0 / numberOfSegments
-    lengthSubPanel = 18.0 / numberOfSegments
-    widthSubPanel =  3.0
-    thicknessSubPanel = 0.3
+    massSubPanel = 100.0 / numberOfSegments  # [kg]
+    lengthSubPanel = 18.0 / numberOfSegments  # [m]
+    widthSubPanel =  3.0  # [m]
+    thicknessSubPanel = 0.3  # [m]
     r_ScB_B = np.array([[0.0], [0.0], [0.0]])
     dcm_SB = np.array([[1.0, 0.0, 0.0],
                        [0.0, 1.0, 0.0],
@@ -912,8 +912,8 @@ def setup_spinningBodiesNDOF():
 
     for idx in range(numberOfSegments):
         spinningBody = spinningBodyNDOFStateEffector.SpinningBody()
-        spinningBody.setMass(0.0)
-        spinningBody.setISPntSc_S([[0.0, 0.0, 0.0],
+        spinningBody.setMass(0.0)  # [kg]
+        spinningBody.setISPntSc_S([[0.0, 0.0, 0.0],  # [kg*m^2]
                                    [0.0, 0.0, 0.0],
                                    [0.0, 0.0, 0.0]])
         spinningBody.setDCM_S0P([[1.0, 0.0, 0.0],
@@ -921,33 +921,33 @@ def setup_spinningBodiesNDOF():
                                  [0.0, 0.0, 1.0]])
         spinningBody.setR_ScS_S([[0.0], [lengthSubPanel / 2], [0.0]])
         if idx == 0:
-            spinningBody.setR_SP_P([[0.0], [3 / 2], [3 / 2 - thicknessSubPanel / 2]])
+            spinningBody.setR_SP_P([[0.0], [3 / 2], [3 / 2 - thicknessSubPanel / 2]])  # [m]
         else:
-            spinningBody.setR_SP_P([[0.0], [lengthSubPanel], 0.0])
+            spinningBody.setR_SP_P([[0.0], [lengthSubPanel], 0.0])  # [m]
         spinningBody.setSHat_S([[1], [0], [0]])
         spinningBody.setThetaInit(2.0 * macros.D2R)
         spinningBody.setThetaDotInit(-0.5 * macros.D2R)
-        spinningBody.setK(10)
-        spinningBody.setC(0.0)  # [N-m-s/rad]
+        spinningBody.setK(10)  # [N*m/rad]
+        spinningBody.setC(0.0)  # [N*m*s/rad]
         spinningBodyEffector.addSpinningBody(spinningBody)
         r_ScB_B += dcm_SB.transpose() @ spinningBody.getR_SP_P()
         dcm_SB = rbk.PRV2C(spinningBody.getThetaInit() * np.array(spinningBody.getSHat_S())) @ spinningBody.getDCM_S0P() @ dcm_SB
 
         spinningBody = spinningBodyNDOFStateEffector.SpinningBody()
         spinningBody.setMass(massSubPanel)
-        spinningBody.setISPntSc_S([[massSubPanel / 12 * (lengthSubPanel ** 2 + thicknessSubPanel ** 2), 0.0, 0.0],
+        spinningBody.setISPntSc_S([[massSubPanel / 12 * (lengthSubPanel ** 2 + thicknessSubPanel ** 2), 0.0, 0.0],  # [kg*m^2]
                                    [0.0, massSubPanel / 12 * (widthSubPanel ** 2 + thicknessSubPanel ** 2), 0.0],
                                    [0.0, 0.0, massSubPanel / 12 * (widthSubPanel ** 2 + lengthSubPanel ** 2)]])
         spinningBody.setDCM_S0P([[1.0, 0.0, 0.0],
                                  [0.0, 1.0, 0.0],
                                  [0.0, 0.0, 1.0]])
         spinningBody.setR_ScS_S([[0.0], [lengthSubPanel / 2], [0.0]])
-        spinningBody.setR_SP_P([[0.0], [0.0], [0.0]])
+        spinningBody.setR_SP_P([[0.0], [0.0], [0.0]])  # [m]
         spinningBody.setSHat_S([[0], [1], [0]])
         spinningBody.setThetaInit(2.0 * macros.D2R)
         spinningBody.setThetaDotInit(-0.5 * macros.D2R)
-        spinningBody.setK(1)
-        spinningBody.setC(0.0)  # [N-m-s/rad]
+        spinningBody.setK(1)  # [N*m/rad]
+        spinningBody.setC(0.0)  # [N*m*s/rad]
         spinningBodyEffector.addSpinningBody(spinningBody)
         dcm_SB = rbk.PRV2C(spinningBody.getThetaInit() * np.array(spinningBody.getSHat_S())) @ spinningBody.getDCM_S0P() @ dcm_SB
 
@@ -969,15 +969,15 @@ def setup_hingedRigidBodyStateEffector():
     hingedBody = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
 
     # Define properties of HRB
-    hingedBody.mass = 50.0
-    hingedBody.IPntS_S = [[50.0, 0.0, 0.0], [0.0, 30.0, 0.0], [0.0, 0.0, 40.0]]
-    hingedBody.d = 1.0
-    hingedBody.k = 100.0
-    hingedBody.c = 0.0  # [N-m-s/rad]
+    hingedBody.mass = 50.0  # [kg]
+    hingedBody.IPntS_S = [[50.0, 0.0, 0.0], [0.0, 30.0, 0.0], [0.0, 0.0, 40.0]]  # [kg*m^2]
+    hingedBody.d = 1.0  # [m]
+    hingedBody.k = 100.0  # [N*m/rad]
+    hingedBody.c = 0.0  # [N*m*s/rad]
     hingedBody.dcm_HB = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
-    hingedBody.r_HB_B = [[0.5], [-1.5], [-0.5]]
-    hingedBody.thetaInit = 5 * macros.D2R
-    hingedBody.thetaDotInit = -1 * macros.D2R
+    hingedBody.r_HB_B = [[0.5], [-1.5], [-0.5]]  # [m]
+    hingedBody.thetaInit = 5 * macros.D2R  # [rad]
+    hingedBody.thetaDotInit = -1 * macros.D2R  # [rad/s]
     hingedBody.ModelTag = "HingedRigidBody"
 
     # Compute COM offset contribution, to be divided by the hub mass
@@ -999,15 +999,15 @@ def setup_translatingBodiesOneDOF():
     translatingBody = linearTranslationOneDOFStateEffector.LinearTranslationOneDOFStateEffector()
 
     # Define properties of translating body
-    translatingBody.setMass(20.0)
-    translatingBody.setK(100.0)
-    translatingBody.setC(0.0)  # [N-s/m]
-    translatingBody.setRhoInit(1.0)
-    translatingBody.setRhoDotInit(0.05)
+    translatingBody.setMass(20.0)  # [kg]
+    translatingBody.setK(100.0)  # [N/m]
+    translatingBody.setC(0.0)  # [N*s/m]
+    translatingBody.setRhoInit(1.0)  # [m]
+    translatingBody.setRhoDotInit(0.05)  # [m/s]
     translatingBody.setFHat_B([[3.0 / 5.0], [4.0 / 5.0], [0.0]])
-    translatingBody.setR_FcF_F([[-1.0], [1.0], [0.0]])
-    translatingBody.setR_F0B_B([[-1.0], [1.0], [0.0]])
-    translatingBody.setIPntFc_F([[50.0, 0.0, 0.0],
+    translatingBody.setR_FcF_F([[-1.0], [1.0], [0.0]])  # [m]
+    translatingBody.setR_F0B_B([[-1.0], [1.0], [0.0]])  # [m]
+    translatingBody.setIPntFc_F([[50.0, 0.0, 0.0],  # [kg*m^2]
                                  [0.0, 80.0, 0.0],
                                  [0.0, 0.0, 60.0]])
     translatingBody.setDCM_FB([[0.0, -1.0, 0.0],
@@ -1022,7 +1022,7 @@ def setup_translatingBodiesOneDOF():
     stateEffProps = stateEffectorProperties()
     stateEffProps.totalMass = translatingBody.getMass()
     stateEffProps.mr_PcB_B = mr_ScB_B
-    stateEffProps.r_PB_B = translatingBody.getR_F0B_B()
+    stateEffProps.r_PB_B = translatingBody.getR_F0B_B()  # [m]
     stateEffProps.r_PcP_P = translatingBody.getR_FcF_F()
     stateEffProps.inertialPropLogName = "translatingBodyConfigLogOutMsg"
 
@@ -1030,13 +1030,13 @@ def setup_translatingBodiesOneDOF():
 
 def setup_linearSpringMassDamper():
     linearSpring = linearSpringMassDamper.LinearSpringMassDamper()
-    linearSpring.massInit = 50.0
-    linearSpring.k = 100.0
-    linearSpring.c = 0.0  # [N-s/m]
-    linearSpring.r_PB_B = [[1.0], [0.0], [0.0]]
+    linearSpring.massInit = 50.0  # [kg]
+    linearSpring.k = 100.0  # [N/m]
+    linearSpring.c = 0.0  # [N*s/m]
+    linearSpring.r_PB_B = [[1.0], [0.0], [0.0]]  # [m]
     linearSpring.pHat_B = [[1.0], [0.0], [0.0]]
-    linearSpring.rhoInit = 0.0
-    linearSpring.rhoDotInit = 0.5
+    linearSpring.rhoInit = 0.0  # [m]
+    linearSpring.rhoDotInit = 0.5  # [m/s]
     linearSpring.ModelTag = "linearSpringMassDamper"
 
     # Compute COM offset contribution, to be divided by the hub mass
