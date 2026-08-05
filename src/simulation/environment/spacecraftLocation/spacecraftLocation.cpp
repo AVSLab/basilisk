@@ -58,9 +58,8 @@ SpacecraftLocation::~SpacecraftLocation()
 
 /*! Resets the internal position to the specified initial position.*/
 void
-SpacecraftLocation::Reset(uint64_t CurrentSimNanos)
+SpacecraftLocation::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
-    (void) CurrentSimNanos;
     if (this->scStateInMsgs.size() == 0) {
         bskLogger.bskError("SpacecraftLocation module must have at least one spacecraft added through `addSpacecraftToModel`");
     }

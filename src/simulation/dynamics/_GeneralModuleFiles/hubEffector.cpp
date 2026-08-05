@@ -140,9 +140,8 @@ void HubEffector::registerAttitudeStates(DynParamManager& states)
 }
 
 /*! This method allows the hub to give its mass properties to the spacecraft */
-void HubEffector::updateEffectorMassProps(double integTime)
+void HubEffector::updateEffectorMassProps(double integTime [[maybe_unused]])
 {
-    (void) integTime;
     // - Give the mass to mass props
     this->effProps.mEff = this->mHub;
 
@@ -166,11 +165,8 @@ void HubEffector::updateEffectorMassProps(double integTime)
 
 /*! This method is for computing the derivatives of the hub: rDDot_BN_N and omegaDot_BN_B, along with the kinematic
  derivatives */
-void HubEffector::computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN)
+void HubEffector::computeDerivatives(double integTime [[maybe_unused]], Eigen::Vector3d rDDot_BN_N [[maybe_unused]], Eigen::Vector3d omegaDot_BN_B [[maybe_unused]], Eigen::MRPd sigma_BN)
 {
-    (void) integTime;
-    (void) rDDot_BN_N;
-    (void) omegaDot_BN_B;
     // - Get variables from state manager
     Eigen::Vector3d rDotLocal_BN_N;
     Eigen::MRPd sigmaLocal_BN = sigma_BN;
@@ -243,11 +239,9 @@ void HubEffector::computeHubOnlyDerivatives(const Eigen::Vector3d& forceExternal
 }
 
 /*! This method is for computing the energy and momentum contributions from the hub */
-void HubEffector::updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
-                                               double & rotEnergyContr, Eigen::Vector3d omega_BN_B)
+void HubEffector::updateEnergyMomContributions(double integTime [[maybe_unused]], Eigen::Vector3d & rotAngMomPntCContr_B,
+                                               double & rotEnergyContr, Eigen::Vector3d omega_BN_B [[maybe_unused]])
 {
-    (void) integTime;
-    (void) omega_BN_B;
     // - Get variables needed for energy momentum calcs
     Eigen::Vector3d omegaLocal_BN_B;
     omegaLocal_BN_B = omegaState->getStateReference();
@@ -264,9 +258,8 @@ void HubEffector::updateEnergyMomContributions(double integTime, Eigen::Vector3d
 }
 
 /*! This method is for switching the MRPs */
-void HubEffector::modifyStates(double integTime)
+void HubEffector::modifyStates(double integTime [[maybe_unused]])
 {
-    (void) integTime;
     // Lets switch those MRPs!!
     Eigen::MRPd sigmaBNLoc(this->sigmaState->getStateReference().data());
     if (sigmaBNLoc.norm() > 1) {

@@ -44,9 +44,8 @@ TabularAtmosphere::~TabularAtmosphere()
 /*! Reset method checks that the data lists for altitude, density, and temperature have been defined with equal nonzero lengths.
 *
 */
-void TabularAtmosphere::customReset(uint64_t CurrentClock)
+void TabularAtmosphere::customReset(uint64_t CurrentClock [[maybe_unused]])
 {
-    (void) CurrentClock;
     this->altList_length = (int) this->altList.size();
     this->rhoList_length = (int) this->rhoList.size();
     this->tempList_length = (int) this->tempList.size();
@@ -70,9 +69,8 @@ void TabularAtmosphere::customReset(uint64_t CurrentClock)
 /*! evaluate function interpolates from given data lists. Sets density and temp to 0 if altitude outside bounds of input lists OR if outside bounds of envMinReach and envMaxReach.
 *
 */
-void TabularAtmosphere::evaluateAtmosphereModel(AtmoPropsMsgPayload *msg, double currentTime)
+void TabularAtmosphere::evaluateAtmosphereModel(AtmoPropsMsgPayload *msg, double currentTime [[maybe_unused]])
 {
-    (void) currentTime;
     if ((this->orbitAltitude < this->altList[0]) || (this->orbitAltitude > this->altList.back())) {
         msg->neutralDensity = 0.0;
         msg->localTemp = 0.0;

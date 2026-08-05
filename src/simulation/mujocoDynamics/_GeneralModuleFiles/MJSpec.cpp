@@ -28,9 +28,8 @@ using MJBasilisk::detail::checkedMjtSizeCast;
 
 namespace
 {
-std::vector<std::string> readCustomSingleSplit(mjSpec* spec, const std::string& key, char delimiter)
+std::vector<std::string> readCustomSingleSplit(mjSpec* spec, const std::string& key, char delimiter [[maybe_unused]])
 {
-    (void) delimiter;
     std::string value;
 
     for (auto element = mjs_firstElement(spec, mjOBJ_TEXT); element;

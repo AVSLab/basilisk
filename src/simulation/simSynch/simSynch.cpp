@@ -45,9 +45,8 @@ ClockSynch::~ClockSynch()
     @param currentSimNanos
 
 */
-void ClockSynch::Reset(uint64_t currentSimNanos)
+void ClockSynch::Reset(uint64_t currentSimNanos [[maybe_unused]])
 {
-    (void) currentSimNanos;
     this->timeInitialized = false;
     //! - Set the overrun counter to zero
     this->outputData.overrunCounter = 0;

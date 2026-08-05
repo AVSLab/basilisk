@@ -40,9 +40,8 @@ LambertValidator::~LambertValidator() = default;
     @param currentSimNanos current simulation time in nano-seconds
 
 */
-void LambertValidator::Reset(uint64_t currentSimNanos)
+void LambertValidator::Reset(uint64_t currentSimNanos [[maybe_unused]])
 {
-    (void) currentSimNanos;
     // check that required input messages are connected
     if (!this->navTransInMsg.isLinked()) {
         bskLogger.bskError("lambertValidator.navTransInMsg was not linked.");

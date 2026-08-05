@@ -29,8 +29,7 @@ FacetedSpacecraftModel::~FacetedSpacecraftModel() {
 /*! This method resets required module variables and checks the input messages to ensure they are linked.
  @param callTime [ns] Time the method is called
 */
-void FacetedSpacecraftModel::Reset(uint64_t callTime) {
-    (void) callTime;
+void FacetedSpacecraftModel::Reset(uint64_t callTime [[maybe_unused]]) {
     if (this->numArticulatedFacets > this->numFacets) {
         this->bskLogger->bskError("FacetedSpacecraftModel: numArticulatedFacets cannot be greater than total numFacets");
     }

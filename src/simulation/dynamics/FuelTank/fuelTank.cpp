@@ -227,15 +227,11 @@ void FuelTank::updateEffectorMassProps(double integTime) {
 }
 
 /*! Fuel tank adds its contributions to the matrices for the back-sub method. */
-void FuelTank::updateContributions(double integTime,
+void FuelTank::updateContributions(double integTime [[maybe_unused]],
                                    BackSubMatrices &backSubContr,
-                                   Eigen::MRPd sigma_BN,
-                                   Eigen::Vector3d omega_BN_B,
-                                   Eigen::Vector3d g_N) {
-    (void) integTime;
-    (void) sigma_BN;
-    (void) omega_BN_B;
-    (void) g_N;
+                                   Eigen::MRPd sigma_BN [[maybe_unused]],
+                                   Eigen::Vector3d omega_BN_B [[maybe_unused]],
+                                   Eigen::Vector3d g_N [[maybe_unused]]) {
     Eigen::Vector3d omega_BN_BLocal;
 
     // Zero some matrices
@@ -268,14 +264,10 @@ void FuelTank::updateContributions(double integTime,
 }
 
 /*! Fuel tank computes its derivative */
-void FuelTank::computeDerivatives(double integTime,
-                                  Eigen::Vector3d rDDot_BN_N,
-                                  Eigen::Vector3d omegaDot_BN_B,
-                                  Eigen::MRPd sigma_BN) {
-                                      (void) integTime;
-                                      (void) rDDot_BN_N;
-                                      (void) omegaDot_BN_B;
-                                      (void) sigma_BN;
+void FuelTank::computeDerivatives(double integTime [[maybe_unused]],
+                                  Eigen::Vector3d rDDot_BN_N [[maybe_unused]],
+                                  Eigen::Vector3d omegaDot_BN_B [[maybe_unused]],
+                                  Eigen::MRPd sigma_BN [[maybe_unused]]) {
     Eigen::MatrixXd conv(1, 1);
     double massLocal = this->massState->getState()(0, 0);
     double tankFuelConsumptionLocal = this->tankFuelConsumption;
@@ -287,12 +279,10 @@ void FuelTank::computeDerivatives(double integTime,
 }
 
 /*! Fuel tank contributes to the energy and momentum calculations */
-void FuelTank::updateEnergyMomContributions(double integTime,
+void FuelTank::updateEnergyMomContributions(double integTime [[maybe_unused]],
                                             Eigen::Vector3d &rotAngMomPntCContr_B,
                                             double &rotEnergyContr,
-                                            Eigen::Vector3d omega_BN_B) {
-                                                (void) integTime;
-                                                (void) omega_BN_B;
+                                            Eigen::Vector3d omega_BN_B [[maybe_unused]]) {
     // Get variables needed for energy momentum calcs
     Eigen::Vector3d omegaLocal_BN_B;
     omegaLocal_BN_B = this->omegaState->getState();

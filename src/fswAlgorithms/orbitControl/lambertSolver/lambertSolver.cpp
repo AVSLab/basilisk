@@ -32,9 +32,8 @@ LambertSolver::~LambertSolver() = default;
     @param currentSimNanos current simulation time in nano-seconds
 
 */
-void LambertSolver::Reset(uint64_t currentSimNanos)
+void LambertSolver::Reset(uint64_t currentSimNanos [[maybe_unused]])
 {
-    (void) currentSimNanos;
     // check that required input messages are connected
     if (!this->lambertProblemInMsg.isLinked()) {
         bskLogger.bskError("lambertSolver.lambertProblemInMsg was not linked.");

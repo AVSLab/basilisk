@@ -89,9 +89,8 @@ void ReactionWheelStateEffector::registerStates(DynParamManager& states)
     }
 }
 
-void ReactionWheelStateEffector::updateEffectorMassProps(double integTime)
+void ReactionWheelStateEffector::updateEffectorMassProps(double integTime [[maybe_unused]])
 {
-    (void) integTime;
     // - Zero the mass props information because these will be accumulated during this call
     this->effProps.mEff = 0.;
     this->effProps.rEff_CB_B.setZero();
@@ -167,10 +166,8 @@ void ReactionWheelStateEffector::updateEffectorMassProps(double integTime)
     }
 }
 
-void ReactionWheelStateEffector::updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::MRPd sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N)
+void ReactionWheelStateEffector::updateContributions(double integTime [[maybe_unused]], BackSubMatrices & backSubContr, Eigen::MRPd sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N [[maybe_unused]])
 {
-    (void) integTime;
-    (void) g_N;
 	Eigen::Vector3d omegaLoc_BN_B;
 	Eigen::Vector3d tempF;
 	double omegas;
@@ -271,9 +268,8 @@ void ReactionWheelStateEffector::updateContributions(double integTime, BackSubMa
 	}
 }
 
-void ReactionWheelStateEffector::computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN)
+void ReactionWheelStateEffector::computeDerivatives(double integTime [[maybe_unused]], Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN)
 {
-    (void) integTime;
 	Eigen::MatrixXd OmegasDot(this->numRW,1);
     Eigen::MatrixXd thetasDot(this->numRWJitter,1);
 	Eigen::Vector3d omegaDotBNLoc_B;
@@ -335,10 +331,9 @@ void ReactionWheelStateEffector::computeDerivatives(double integTime, Eigen::Vec
     }
 }
 
-void ReactionWheelStateEffector::updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
+void ReactionWheelStateEffector::updateEnergyMomContributions(double integTime [[maybe_unused]], Eigen::Vector3d & rotAngMomPntCContr_B,
                                                               double & rotEnergyContr, Eigen::Vector3d omega_BN_B)
 {
-    (void) integTime;
 	Eigen::MRPd sigmaBNLocal;
 	Eigen::Matrix3d dcm_BN;                        /*! direction cosine matrix from N to B */
 	Eigen::Matrix3d dcm_NB;                        /*! direction cosine matrix from B to N */
@@ -380,9 +375,8 @@ void ReactionWheelStateEffector::addReactionWheel(std::shared_ptr<RWConfigPayloa
 /*! Reset the module to origina configuration values.
 
  */
-void ReactionWheelStateEffector::Reset(uint64_t CurrenSimNanos)
+void ReactionWheelStateEffector::Reset(uint64_t CurrenSimNanos [[maybe_unused]])
 {
-    (void) CurrenSimNanos;
     RWCmdMsgPayload RWCmdInitializer;
     RWCmdInitializer.u_cmd = 0.0;
 
@@ -505,9 +499,8 @@ void ReactionWheelStateEffector::ReadInputs()
 
  @param CurrentTime The current simulation time converted to a double
  */
-void ReactionWheelStateEffector::ConfigureRWRequests(double CurrentTime)
+void ReactionWheelStateEffector::ConfigureRWRequests(double CurrentTime [[maybe_unused]])
 {
-    (void) CurrentTime;
     for (std::size_t i = 0; i < NewRWCmds.size(); ++i)
 	{
         auto& cmd = NewRWCmds[i];

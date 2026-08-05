@@ -137,9 +137,8 @@ void AtmosphereBase::customSetEpochFromVariable()
 /*! Custom Reset() method.  This allows a child class to add additional functionality to the Reset() method
 
  */
-void AtmosphereBase::customReset(uint64_t CurrentClock)
+void AtmosphereBase::customReset(uint64_t CurrentClock [[maybe_unused]])
 {
-    (void) CurrentClock;
     return;
 }
 
@@ -163,9 +162,8 @@ void AtmosphereBase::writeMessages(uint64_t CurrentClock)
 /*! Custom output message writing method.  This allows a child class to add additional functionality.
 
  */
-void AtmosphereBase::customWriteMessages(uint64_t CurrentClock)
+void AtmosphereBase::customWriteMessages(uint64_t CurrentClock [[maybe_unused]])
 {
-    (void) CurrentClock;
     return;
 }
 

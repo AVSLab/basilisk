@@ -34,9 +34,8 @@ GravBodyData::GravBodyData()
 {
 }
 
-void GravBodyData::initBody(int64_t moduleID)
+void GravBodyData::initBody(int64_t moduleID [[maybe_unused]])
 {
-    (void) moduleID;
     std::optional<std::string> errorMessage;
     if (this->gravityModel) {
         this->gravityModel->bskLogger = &bskLogger;
@@ -113,9 +112,8 @@ void GravBodyData::registerProperties(DynParamManager& statesIn)
                                 c2DArray2EigenMatrix3d(this->localPlanet.J20002Pfix_dot));
 }
 
-void GravityEffector::Reset(uint64_t currentSimNanos)
+void GravityEffector::Reset(uint64_t currentSimNanos [[maybe_unused]])
 {
-    (void) currentSimNanos;
     // Initializes the bodies
     for (auto&& body : this->gravBodies) {
         body->initBody(this->moduleID);
@@ -206,9 +204,8 @@ void GravityEffector::linkInStates(DynParamManager& statesIn)
     this->timeCorr = statesIn.getPropertyReference(this->systemTimeCorrPropName);
 }
 
-void GravityEffector::computeGravityField(Eigen::Vector3d r_cF_N, Eigen::Vector3d rDot_cF_N)
+void GravityEffector::computeGravityField(Eigen::Vector3d r_cF_N, Eigen::Vector3d rDot_cF_N [[maybe_unused]])
 {
-    (void) rDot_cF_N;
     uint64_t systemClock = (uint64_t)this->timeCorr->data()[0];
     Eigen::Vector3d r_cN_N; // position of s/c CoM wrt N
     Eigen::Vector3d r_CN_N; // inertial position of central body if there is one. Big C is

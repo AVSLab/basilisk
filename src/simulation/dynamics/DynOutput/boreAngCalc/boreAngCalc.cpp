@@ -41,9 +41,8 @@ BoreAngCalc::~BoreAngCalc() = default;
 /*! This method is used to reset the module.
 
  */
-void BoreAngCalc::Reset(uint64_t CurrentSimNanos)
+void BoreAngCalc::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
-    (void) CurrentSimNanos;
     // check if required input messages have not been included
     if (!this->scStateInMsg.isLinked()) {
         bskLogger.bskError("boreAngCalc.scStateInMsg was not linked.");

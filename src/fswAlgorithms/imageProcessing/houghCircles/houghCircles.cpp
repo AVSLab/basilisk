@@ -59,9 +59,8 @@ HoughCircles::~HoughCircles()
 
  @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void HoughCircles::Reset(uint64_t CurrentSimNanos)
+void HoughCircles::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
-    (void) CurrentSimNanos;
     // check that the required message has not been connected
     if (!this->imageInMsg.isLinked()) {
         bskLogger.bskError("HoughCircles.imageInMsg wasn't connected.");

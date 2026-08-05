@@ -49,9 +49,8 @@ HingedRigidBodyMotorSensor::~HingedRigidBodyMotorSensor()
 /*! This method is used to reset the module and checks that required input messages are connect.
 
 */
-void HingedRigidBodyMotorSensor::Reset(uint64_t CurrentSimNanos)
+void HingedRigidBodyMotorSensor::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
-    (void) CurrentSimNanos;
     //!< check that required input messages are connected
     if (!this->hingedRigidBodyMotorSensorInMsg.isLinked()) {
         bskLogger.bskError("HingedRigidBodyMotorSensor.hingedRigidBodyMotorSensorInMsg was not linked.");

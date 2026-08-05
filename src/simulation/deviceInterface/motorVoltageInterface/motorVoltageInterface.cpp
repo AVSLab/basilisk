@@ -43,9 +43,8 @@ MotorVoltageInterface::~MotorVoltageInterface()
 /*! Reset the module to original configuration values.
 
  */
-void MotorVoltageInterface::Reset(uint64_t CurrenSimNanos)
+void MotorVoltageInterface::Reset(uint64_t CurrenSimNanos [[maybe_unused]])
 {
-    (void) CurrenSimNanos;
     if(!this->motorVoltageInMsg.isLinked())
     {
         bskLogger.bskLog(BSK_WARNING, "motorVoltageInterface.motorVoltageInMsg is not linked.");

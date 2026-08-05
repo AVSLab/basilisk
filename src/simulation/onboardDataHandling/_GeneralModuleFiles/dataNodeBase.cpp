@@ -129,18 +129,16 @@ void DataNodeBase::UpdateState(uint64_t CurrentSimNanos)
 /*! Custom Reset() method.  This allows a child class to add additional functionality to the Reset() method
 
  */
-void DataNodeBase::customReset(uint64_t CurrentClock)
+void DataNodeBase::customReset(uint64_t CurrentClock [[maybe_unused]])
 {
-    (void) CurrentClock;
     return;
 }
 
 /*! custom Write method, similar to customSelfInit.
 
  */
-void DataNodeBase::customWriteMessages(uint64_t CurrentClock)
+void DataNodeBase::customWriteMessages(uint64_t CurrentClock [[maybe_unused]])
 {
-    (void) CurrentClock;
     return;
 }
 

@@ -22,9 +22,8 @@
 #include <iostream>
 #include <cstring>
 
-void ThrJointCompensation::Reset(uint64_t CurrentSimNanos)
+void ThrJointCompensation::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
-    (void) CurrentSimNanos;
     // check that required input messages are connected
     if (!this->armConfigInMsg.isLinked()) {
         bskLogger.bskError("ThrJointCompensation.armConfigInMsg was not linked.");

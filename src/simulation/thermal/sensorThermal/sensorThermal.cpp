@@ -35,8 +35,7 @@ SensorThermal::~SensorThermal(){
 
 /*! Thermal sensor reset function
  */
-void SensorThermal::Reset(uint64_t CurrentClock) {
-    (void) CurrentClock;
+void SensorThermal::Reset(uint64_t CurrentClock [[maybe_unused]]) {
 
     this->illuminationFactor = 1.0;
 

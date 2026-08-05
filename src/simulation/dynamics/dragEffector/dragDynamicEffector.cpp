@@ -47,9 +47,8 @@ DragDynamicEffector::~DragDynamicEffector()
 /*! This method is used to reset the module.
 
  */
-void DragDynamicEffector::Reset(uint64_t CurrentSimNanos)
+void DragDynamicEffector::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
-    (void) CurrentSimNanos;
     // check if input message has not been included
     if (!this->atmoDensInMsg.isLinked()) {
         bskLogger.bskError("dragDynamicEffector.atmoDensInMsg was not linked.");
@@ -59,9 +58,8 @@ void DragDynamicEffector::Reset(uint64_t CurrentSimNanos)
 /*! The DragEffector does not write output messages to the rest of the sim.
 
  */
-void DragDynamicEffector::WriteOutputMessages(uint64_t CurrentClock)
+void DragDynamicEffector::WriteOutputMessages(uint64_t CurrentClock [[maybe_unused]])
 {
-    (void) CurrentClock;
 	return;
 }
 
@@ -166,9 +164,7 @@ void DragDynamicEffector::cannonballDrag(){
 /*! This method computes the body forces and torques for the dragEffector in a simulation loop,
 selecting the model type based on the settable attribute "modelType."
 */
-void DragDynamicEffector::computeForceTorque(double integTime, double timeStep){
-    (void) integTime;
-    (void) timeStep;
+void DragDynamicEffector::computeForceTorque(double integTime [[maybe_unused]], double timeStep [[maybe_unused]]){
 	updateDragDir();
 	if(this->modelType == "cannonball"){
 		cannonballDrag();
@@ -181,9 +177,8 @@ Naturally, this means that conditions are held piecewise-constant over an integr
 
  @param CurrentSimNanos The current simulation time in nanoseconds
  */
-void DragDynamicEffector::UpdateState(uint64_t CurrentSimNanos)
+void DragDynamicEffector::UpdateState(uint64_t CurrentSimNanos [[maybe_unused]])
 {
-    (void) CurrentSimNanos;
 	ReadInputs();
 	return;
 }

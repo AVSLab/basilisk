@@ -37,9 +37,8 @@ ConstraintDynamicEffector::~ConstraintDynamicEffector()
 }
 
 /*! This method is used to reset the module */
-void ConstraintDynamicEffector::Reset(uint64_t CurrentSimNanos)
+void ConstraintDynamicEffector::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
-    (void) CurrentSimNanos;
     // check if any individual gains are not specified
     bool gainset = this->k_d != 0 || this->c_d != 0 || this->k_a != 0 || this->c_a != 0;
     if (this->alpha <= 0 && !gainset) {
@@ -305,10 +304,8 @@ void ConstraintDynamicEffector::linkInProperties(DynParamManager& properties){
  @param integTime Integration time
  @param timeStep Current integration time step used
  */
-void ConstraintDynamicEffector::computeForceTorque(double integTime, double timeStep)
+void ConstraintDynamicEffector::computeForceTorque(double integTime [[maybe_unused]], double timeStep [[maybe_unused]])
 {
-    (void) integTime;
-    (void) timeStep;
     if (this->scInitCounter == 2) { // only proceed once both spacecraft are added
         // alternate assigning the constraint force and torque
         if (this->scID == 0) { // compute all forces and torques once, assign to spacecraft 1 and store for spacecraft 2
@@ -435,9 +432,8 @@ void ConstraintDynamicEffector::UpdateState(uint64_t CurrentSimNanos)
 /*! Filtering method to calculate filtered Constraint Force
  @param CurrentClock The current simulation time (used for time stamping)
  */
-void ConstraintDynamicEffector::computeFilteredForce(uint64_t CurrentClock)
+void ConstraintDynamicEffector::computeFilteredForce(uint64_t CurrentClock [[maybe_unused]])
 {
-    (void) CurrentClock;
     double F_t[3];
     eigenVector3d2CArray(this->Fc_N,F_t);
     this->F_mag_t = std::sqrt(pow(F_t[0],2)+pow(F_t[1],2)+pow(F_t[2],2));
@@ -453,9 +449,8 @@ void ConstraintDynamicEffector::computeFilteredForce(uint64_t CurrentClock)
 /*! Filtering method to calculate filtered Constraint Torque
  @param CurrentClock The current simulation time (used for time stamping)
  */
-void ConstraintDynamicEffector::computeFilteredTorque(uint64_t CurrentClock)
+void ConstraintDynamicEffector::computeFilteredTorque(uint64_t CurrentClock [[maybe_unused]])
 {
-    (void) CurrentClock;
     double T_t1[3];
     eigenVector3d2CArray(this->T_B1,T_t1);
     this->T1_mag_t = std::sqrt(pow(T_t1[0],2)+pow(T_t1[1],2)+pow(T_t1[2],2));

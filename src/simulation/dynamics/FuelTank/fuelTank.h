@@ -68,8 +68,7 @@ public:
         this->ITankPntT_T = 2.0 / 5.0 * mFuel * this->radiusTankInit * this->radiusTankInit * Eigen::Matrix3d::Identity();
     }
 
-    void computeTankPropDerivs(double mFuel, double mDotFuel) override {
-        (void) mFuel;
+    void computeTankPropDerivs(double mFuel [[maybe_unused]], double mDotFuel) override {
         this->IPrimeTankPntT_T = 2.0 / 5.0 * mDotFuel * this->radiusTankInit * this->radiusTankInit * Eigen::Matrix3d::Identity();
         this->rPrime_TcT_T.setZero();
         this->rPPrime_TcT_T.setZero();
@@ -92,8 +91,7 @@ public:
         this->ITankPntT_T = 2.0 / 5.0 * mFuel * this->radiusTank * this->radiusTank * Eigen::Matrix3d::Identity();
     }
 
-    void computeTankPropDerivs(double mFuel, double mDotFuel) override {
-        (void) mFuel;
+    void computeTankPropDerivs(double mFuel [[maybe_unused]], double mDotFuel) override {
         this->IPrimeTankPntT_T = 2.0 / 3.0 * mDotFuel * this->radiusTank * this->radiusTank * Eigen::Matrix3d::Identity();
         this->rPrime_TcT_T.setZero();
         this->rPPrime_TcT_T.setZero();
@@ -222,8 +220,7 @@ public:
         this->ITankPntT_T(2, 2) = mFuel * this->radiusTankInit * this->radiusTankInit / 2;
     }
 
-    void computeTankPropDerivs(double mFuel, double mDotFuel) override {
-        (void) mFuel;
+    void computeTankPropDerivs(double mFuel [[maybe_unused]], double mDotFuel) override {
         this->IPrimeTankPntT_T.setZero();
         this->IPrimeTankPntT_T(0, 0) = this->IPrimeTankPntT_T(1, 1) =
                 mDotFuel * (this->radiusTankInit * this->radiusTankInit / 4.0 + this->lengthTank * this->lengthTank / 12.0);
@@ -257,8 +254,7 @@ public:
                 this->radiusInner * this->radiusInner) / 2;
     }
 
-    void computeTankPropDerivs(double mFuel, double mDotFuel) override {
-        (void) mFuel;
+    void computeTankPropDerivs(double mFuel [[maybe_unused]], double mDotFuel) override {
         this->IPrimeTankPntT_T.setZero();
         this->IPrimeTankPntT_T(0, 0) = this->IPrimeTankPntT_T(1, 1) =
                 mDotFuel * (this->radiusInner * this->radiusInner / 2.0 + this->lengthTank * this->lengthTank / 12.0);

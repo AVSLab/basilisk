@@ -181,12 +181,9 @@ protected:
      *  @param grid       PlanetGrid to fill in.
      *  @param idx        Index of this planet entry.
      */
-    virtual void resolvePlanetEntry(const SpicePlanetStateMsgPayload& planetMsg,
-                                    PlanetGrid& grid,
-                                    int         idx) {
-                                        (void) planetMsg;
-                                        (void) grid;
-                                        (void) idx;
+    virtual void resolvePlanetEntry(const SpicePlanetStateMsgPayload& planetMsg [[maybe_unused]],
+                                    PlanetGrid& grid [[maybe_unused]],
+                                    int         idx [[maybe_unused]]) {
                                     }
 
     /*! Called at the start of UpdateState(), before the planet loop.
@@ -197,12 +194,9 @@ protected:
      *  @param sunMsg  Sun state message.
      *  @param nanos   Current simulation time (ns).
      */
-    virtual void onUpdateBegin(const SCStatesMsgPayload&         scMsg,
-                               const SpicePlanetStateMsgPayload& sunMsg,
-                               uint64_t                          nanos) {
-                                   (void) scMsg;
-                                   (void) sunMsg;
-                                   (void) nanos;
+    virtual void onUpdateBegin(const SCStatesMsgPayload&         scMsg [[maybe_unused]],
+                               const SpicePlanetStateMsgPayload& sunMsg [[maybe_unused]],
+                               uint64_t                          nanos [[maybe_unused]]) {
                                }
 
     /*! Called after the planet loop in UpdateState().
@@ -211,8 +205,7 @@ protected:
      *
      *  @param nanos  Current simulation time (ns).
      */
-    virtual void onUpdateEnd(uint64_t nanos) {
-        (void) nanos;
+    virtual void onUpdateEnd(uint64_t nanos [[maybe_unused]]) {
     }
 
     /*! Called at the end of Reset().
@@ -221,8 +214,7 @@ protected:
      *
      *  @param nanos  Current simulation time (ns).
      */
-    virtual void customReset(uint64_t nanos) {
-        (void) nanos;
+    virtual void customReset(uint64_t nanos [[maybe_unused]]) {
     }
 
     /*! Return true to enable the single-planet backward-compat fallback in Reset():

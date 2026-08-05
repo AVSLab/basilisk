@@ -239,18 +239,16 @@ int64_t DataStorageUnitBase::sumAllData(){
 /*! Custom Reset() method.  This allows a child class to add additional functionality to the Reset() method
 
  */
-void DataStorageUnitBase::customReset(uint64_t CurrentClock)
+void DataStorageUnitBase::customReset(uint64_t CurrentClock [[maybe_unused]])
 {
-    (void) CurrentClock;
     return;
 }
 
 /*! custom Write method, similar to customSelfInit.
 
  */
-void DataStorageUnitBase::customWriteMessages(uint64_t CurrentClock)
+void DataStorageUnitBase::customWriteMessages(uint64_t CurrentClock [[maybe_unused]])
 {
-    (void) CurrentClock;
     return;
 }
 

@@ -51,9 +51,8 @@ StarTracker::~StarTracker()
 /*! This method is used to reset the module.
  @param CurrentSimNanos The current simulation time from the architecture
   */
-void StarTracker::Reset(uint64_t CurrentSimNanos)
+void StarTracker::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
-    (void) CurrentSimNanos;
     // check if input message has not been included
     if (!this->scStateInMsg.isLinked()) {
         bskLogger.bskError("starTracker.scStateInMsg was not linked.");

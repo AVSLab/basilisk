@@ -41,9 +41,8 @@ HingedBodyLinearProfiler::~HingedBodyLinearProfiler()
 /*! This method is used to reset the module and checks that required input messages are connected.
 
 */
-void HingedBodyLinearProfiler::Reset(uint64_t CurrentSimNanos)
+void HingedBodyLinearProfiler::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
-    (void) CurrentSimNanos;
     // check that required input messages are connected
     if(this->endTime-this->startTime > 0){
         this->deploymentSlope = (this->endTheta-this->startTheta) /

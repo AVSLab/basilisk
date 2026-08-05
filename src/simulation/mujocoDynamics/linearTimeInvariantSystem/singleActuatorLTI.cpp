@@ -1,8 +1,7 @@
 #include "singleActuatorLTI.h"
 
-Eigen::VectorXd SingleActuatorLTI::readInput(uint64_t CurrentSimNanos)
+Eigen::VectorXd SingleActuatorLTI::readInput(uint64_t CurrentSimNanos [[maybe_unused]])
 {
-    (void) CurrentSimNanos;
     return Eigen::VectorXd::Constant(1, this->inMsg().input);
 }
 

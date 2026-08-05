@@ -30,8 +30,7 @@ const double solarRadFlux = 1368.0;  // [W/m^2] Solar radiation flux at 1 AU
 
  @param currentSimNanos [ns] Time the method is called
 */
-void FacetSRPDynamicEffector::Reset(uint64_t currentSimNanos) {
-    (void) currentSimNanos;
+void FacetSRPDynamicEffector::Reset(uint64_t currentSimNanos [[maybe_unused]]) {
     if (!this->sunInMsg.isLinked()) {
         bskLogger.bskError("FacetSRPDynamicEffector.sunInMsg was not linked.");
     }
@@ -127,9 +126,7 @@ void FacetSRPDynamicEffector::ReadMessages() {
  @param callTime [s] Time the method is called
  @param timeStep [s] Simulation time step
 */
-void FacetSRPDynamicEffector::computeForceTorque(double callTime, double timeStep) {
-    (void) callTime;
-    (void) timeStep;
+void FacetSRPDynamicEffector::computeForceTorque(double callTime [[maybe_unused]], double timeStep [[maybe_unused]]) {
     // Read the input messages
     ReadMessages();
 

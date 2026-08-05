@@ -630,6 +630,28 @@ If ``reset`` or ``update`` returns ``Err(BskError::new("..."))``, the wrapper
 raises the normal Python ``BasiliskError`` after Rust returns. No output
 message is written for the failed lifecycle call.
 
+Unused Lifecycle Parameters
+---------------------------
+
+The ``BskModule`` trait fixes the lifecycle method signatures.  Keep an unused
+argument in the implementation and prefix its binding with an underscore to
+tell the Rust compiler that it is intentionally unused:
+
+.. code-block:: rust
+
+   fn reset(
+       &mut self,
+       _state: &mut Self::State,
+       _context: &BskContext<'_>,
+       _current_sim_nanos: u64,
+   ) -> BskResult<Self::Outputs> {
+       Ok(Self::Outputs::default())
+   }
+
+Use a descriptive underscore-prefixed name instead of a bare ``_`` so the
+argument's purpose remains clear.  Remove the underscore if the implementation
+later uses the value.
+
 Message Ports and Values
 ------------------------
 

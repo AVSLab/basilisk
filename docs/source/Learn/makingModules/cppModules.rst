@@ -42,6 +42,24 @@ timestamp when exact nanosecond resolution is required across a long-running
 simulation.
 
 
+Unused Lifecycle Parameters
+---------------------------
+
+Basilisk base classes define the lifecycle method signatures.  When an
+implementation never uses one of these parameters, retain the parameter name
+and mark it with the C++17 ``[[maybe_unused]]`` attribute:
+
+.. code-block:: cpp
+
+   void MyModule::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+   {
+       // Reset the module state.
+   }
+
+Keeping the name allows Doxygen ``@param`` documentation to remain associated
+with the argument.  Remove the attribute if the implementation later uses the
+parameter.
+
 
 .. toctree::
    :maxdepth: 2

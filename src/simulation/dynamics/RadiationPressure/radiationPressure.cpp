@@ -51,9 +51,8 @@ RadiationPressure::~RadiationPressure()
 /*! Reset the module to origina configuration values.
 
  */
-void RadiationPressure::Reset(uint64_t CurrenSimNanos)
+void RadiationPressure::Reset(uint64_t CurrenSimNanos [[maybe_unused]])
 {
-    (void) CurrenSimNanos;
     if(!this->sunEphmInMsg.isLinked())
     {
         bskLogger.bskError("Did not find a valid sun ephemeris message connection.");
@@ -95,10 +94,8 @@ void RadiationPressure::readInputMessages()
  @param integTime Current simulation integration time
  @param timeStep Current integration time step used
  */
-void RadiationPressure::computeForceTorque(double integTime, double timeStep)
+void RadiationPressure::computeForceTorque(double integTime [[maybe_unused]], double timeStep [[maybe_unused]])
 {
-    (void) integTime;
-    (void) timeStep;
     this->forceExternal_N.setZero();
     this->forceExternal_B.setZero();
     this->torqueExternalPntB_B.setZero();
@@ -128,9 +125,8 @@ void RadiationPressure::computeForceTorque(double integTime, double timeStep)
 
  @param CurrentSimNanos current simulation time in nanoseconds
  */
-void RadiationPressure::UpdateState(uint64_t CurrentSimNanos)
+void RadiationPressure::UpdateState(uint64_t CurrentSimNanos [[maybe_unused]])
 {
-    (void) CurrentSimNanos;
     this->readInputMessages();
 }
 

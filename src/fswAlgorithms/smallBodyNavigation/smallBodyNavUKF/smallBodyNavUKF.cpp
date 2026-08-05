@@ -61,9 +61,8 @@ void SmallBodyNavUKF::SelfInit(){
 /*! This method is used to reset the module, check that required input messages are connect and compute weigths.
 
 */
-void SmallBodyNavUKF::Reset(uint64_t CurrentSimNanos)
+void SmallBodyNavUKF::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
-    (void) CurrentSimNanos;
     /* check that required input messages are connected */
     if (!this->navTransInMsg.isLinked()) {
         bskLogger.bskError("SmallBodyNavUKF.navTransInMsg was not linked.");

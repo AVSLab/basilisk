@@ -79,9 +79,8 @@ void TranslatingBody::setC(double c) {
 }
 
 /*! This method is used to reset the module. */
-void LinearTranslationNDOFStateEffector::Reset(uint64_t CurrentClock)
+void LinearTranslationNDOFStateEffector::Reset(uint64_t CurrentClock [[maybe_unused]])
 {
-    (void) CurrentClock;
     for(auto& translatingBody: this->translatingBodyVec) {
         if (translatingBody->fHat_P.norm() > 0.0) {
             translatingBody->fHat_P.normalize();
@@ -217,9 +216,8 @@ void LinearTranslationNDOFStateEffector::registerStates(DynParamManager& states)
 
 /*! This method allows the TB state effector to provide its contributions to the mass props and mass prop rates of the
  spacecraft */
-void LinearTranslationNDOFStateEffector::updateEffectorMassProps(double integTime)
+void LinearTranslationNDOFStateEffector::updateEffectorMassProps(double integTime [[maybe_unused]])
 {
-    (void) integTime;
     this->effProps.mEff = 0.0;
     this->effProps.rEff_CB_B = Eigen::Vector3d::Zero();
     this->effProps.rEffPrime_CB_B = Eigen::Vector3d::Zero();
@@ -303,9 +301,8 @@ void LinearTranslationNDOFStateEffector::updateEffectorMassProps(double integTim
 
 /*! This method allows the TB state effector to give its contributions to the matrices needed for the back-sub
  method */
-void LinearTranslationNDOFStateEffector::updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::MRPd sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N)
+void LinearTranslationNDOFStateEffector::updateContributions(double integTime [[maybe_unused]], BackSubMatrices & backSubContr, Eigen::MRPd sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N)
 {
-    (void) integTime;
     // Find the DCM from N to B frames
     this->sigma_BN = sigma_BN;
     this->dcm_BN = (this->sigma_BN.toRotationMatrix()).transpose();
@@ -441,10 +438,8 @@ void LinearTranslationNDOFStateEffector::computeBackSubContributions(BackSubMatr
 }
 
 /*! This method is used to find the derivatives for the TB stateEffector: rhoDDot and the kinematic derivative */
-void LinearTranslationNDOFStateEffector::computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN)
+void LinearTranslationNDOFStateEffector::computeDerivatives(double integTime [[maybe_unused]], Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN [[maybe_unused]])
 {
-    (void) integTime;
-    (void) sigma_BN;
     // Find rDDotLoc_BN_B
     const Eigen::Vector3d& rDDotLocal_BN_N = rDDot_BN_N;
     Eigen::Vector3d rDDotLocal_BN_B = this->dcm_BN * rDDotLocal_BN_N;
@@ -456,12 +451,11 @@ void LinearTranslationNDOFStateEffector::computeDerivatives(double integTime, Ei
 }
 
 /*! This method is for calculating the contributions of the TB state effector to the energy and momentum of the spacecraft */
-void LinearTranslationNDOFStateEffector::updateEnergyMomContributions(double integTime,
+void LinearTranslationNDOFStateEffector::updateEnergyMomContributions(double integTime [[maybe_unused]],
                                                                       Eigen::Vector3d & rotAngMomPntCContr_B,
                                                                       double & rotEnergyContr,
                                                                       Eigen::Vector3d omega_BN_B)
 {
-    (void) integTime;
     this->omega_BN_B = omega_BN_B;
 
     rotAngMomPntCContr_B = Eigen::Vector3d::Zero();

@@ -54,9 +54,8 @@ LimbFinding::~LimbFinding()
 
  @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void LimbFinding::Reset(uint64_t CurrentSimNanos)
+void LimbFinding::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
-    (void) CurrentSimNanos;
     // check that the required message has not been connected
     if (!this->imageInMsg.isLinked()) {
         bskLogger.bskError("LimbFinding.imageInMsg wasn't connected.");

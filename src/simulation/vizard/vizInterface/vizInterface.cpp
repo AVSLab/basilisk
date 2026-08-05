@@ -78,9 +78,8 @@ VizInterface::~VizInterface()
 /*! A Reset method to put the module back into a clean state
  @param CurrentSimNanos The current sim time in nanoseconds
  */
-void VizInterface::Reset(uint64_t CurrentSimNanos)
+void VizInterface::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
-    (void) CurrentSimNanos;
     if (this->broadcastStream) {
         // Setup ZMQ for broadcast socket
         this->publisher_context = zmq_ctx_new();
@@ -1568,8 +1567,7 @@ void VizInterface::requestImage(size_t camCounter, uint64_t CurrentSimNanos)
  @param data The current sim time in nanoseconds
  @param hint
  */
-void message_buffer_deallocate(void *data, void *hint)
+void message_buffer_deallocate(void *data, void * hint [[maybe_unused]])
 {
-    (void) hint;
     free (data);
 }

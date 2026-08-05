@@ -117,9 +117,8 @@ void CoarseSunSensor::setBodyToPlatformDCM(double yaw, double pitch, double roll
 /*! This method is used to reset the module.
  @param CurrentSimNanos The current simulation time from the architecture
   */
-void CoarseSunSensor::Reset(uint64_t CurrentSimNanos)
+void CoarseSunSensor::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
-    (void) CurrentSimNanos;
     //! - If either messages is not valid, send a warning message
     if(!this->sunInMsg.isLinked()) {
         bskLogger.bskError("CoarseSunSensor: Failed to link a sun sensor input message");

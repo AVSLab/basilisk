@@ -32,9 +32,8 @@ LambertSurfaceRelativeVelocity::~LambertSurfaceRelativeVelocity() = default;
     @param currentSimNanos current simulation time in nano-seconds
 
 */
-void LambertSurfaceRelativeVelocity::Reset(uint64_t currentSimNanos)
+void LambertSurfaceRelativeVelocity::Reset(uint64_t currentSimNanos [[maybe_unused]])
 {
-    (void) currentSimNanos;
     // check that required input messages are connected
     if (!this->lambertProblemInMsg.isLinked()) {
         bskLogger.bskError("lambertSurfaceRelativeVelocity.lambertProblemInMsg was not linked.");

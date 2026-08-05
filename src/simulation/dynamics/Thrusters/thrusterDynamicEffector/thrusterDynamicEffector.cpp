@@ -58,9 +58,8 @@ ThrusterDynamicEffector::~ThrusterDynamicEffector()
 /*! This method is used to reset the module.
 
  */
-void ThrusterDynamicEffector::Reset(uint64_t CurrentSimNanos)
+void ThrusterDynamicEffector::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
-    (void) CurrentSimNanos;
     //! Clear out any currently firing thrusters and re-init cmd array
     NewThrustCmds.clear();
     NewThrustCmds.insert(this->NewThrustCmds.begin(), this->thrusterData.size(), 0.0);
@@ -269,9 +268,8 @@ void ThrusterDynamicEffector::linkInProperties(DynParamManager& properties){
  @param integTime Integration time
  @param timeStep Current integration time step used
  */
-void ThrusterDynamicEffector::computeForceTorque(double integTime, double timeStep)
+void ThrusterDynamicEffector::computeForceTorque(double integTime, double timeStep [[maybe_unused]])
 {
-    (void) timeStep;
     // Save omega_BN_B
     Eigen::Vector3d omegaLocal_BN_B;
     if (!this->stateNameOfSigma.empty()) {
@@ -466,8 +464,7 @@ void ThrusterDynamicEffector::computeBlowDownDecay(std::shared_ptr<THRSimConfig>
 }
 
 /*! This method computes contributions to the fuel mass depletion. */
-void ThrusterDynamicEffector::computeStateContribution(double integTime){
-    (void) integTime;
+void ThrusterDynamicEffector::computeStateContribution(double integTime [[maybe_unused]]){
 
     std::vector<std::shared_ptr<THRSimConfig>>::iterator itp;
     std::shared_ptr<THRSimConfig> it;

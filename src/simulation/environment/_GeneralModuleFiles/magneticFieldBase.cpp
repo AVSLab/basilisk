@@ -117,9 +117,8 @@ void MagneticFieldBase::Reset(uint64_t CurrentSimNanos)
 /*! Custom Reset() method.  This allows a child class to add additional functionality to the Reset() method
 
  */
-void MagneticFieldBase::customReset(uint64_t CurrentClock)
+void MagneticFieldBase::customReset(uint64_t CurrentClock [[maybe_unused]])
 {
-    (void) CurrentClock;
     return;
 }
 
@@ -151,9 +150,8 @@ void MagneticFieldBase::writeMessages(uint64_t CurrentClock)
 /*! Custom output message writing method.  This allows a child class to add additional functionality.
 
  */
-void MagneticFieldBase::customWriteMessages(uint64_t CurrentClock)
+void MagneticFieldBase::customWriteMessages(uint64_t CurrentClock [[maybe_unused]])
 {
-    (void) CurrentClock;
     return;
 }
 

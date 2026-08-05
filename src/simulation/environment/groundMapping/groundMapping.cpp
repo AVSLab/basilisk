@@ -56,9 +56,8 @@ GroundMapping::~GroundMapping()
 /*! This method is used to reset the module and checks that required input messages are connect.
 
 */
-void GroundMapping::Reset(uint64_t CurrentSimNanos)
+void GroundMapping::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
-    (void) CurrentSimNanos;
     // check that required input messages are connected
     if (!this->scStateInMsg.isLinked()) {
         bskLogger.bskError("GroundMapping.scStateInMsg was not linked.");

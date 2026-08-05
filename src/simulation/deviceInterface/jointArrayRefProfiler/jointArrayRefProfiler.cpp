@@ -19,9 +19,8 @@
 
 #include "simulation/deviceInterface/jointArrayRefProfiler/jointArrayRefProfiler.h"
 
-void JointArrayRefProfiler::Reset(uint64_t CurrentSimNanos)
+void JointArrayRefProfiler::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
-    (void) CurrentSimNanos;
     // check that required input messages are connected
     if (this->jointStatesInMsgs.empty()) {
         bskLogger.bskError("JointArrayRefProfiler.jointStatesInMsgs vector is empty.");
@@ -161,9 +160,8 @@ void JointArrayRefProfiler::UpdateState(uint64_t CurrentSimNanos)
     this->desJointStatesOutMsg.write(&desJointStatesOut, this->moduleID, CurrentSimNanos);
 }
 
-void JointArrayRefProfiler::computeLowPassFilter(uint64_t CurrentSimNanos, const JointArrayStateMsgPayload& desJointStatesIn)
+void JointArrayRefProfiler::computeLowPassFilter(uint64_t CurrentSimNanos [[maybe_unused]], const JointArrayStateMsgPayload& desJointStatesIn)
 {
-    (void) CurrentSimNanos;
     double beta = 1.0 - std::exp(-this->wc * this->filterDt);
 
     Eigen::VectorXd prevRefJointAngles = this->refJointAngles;

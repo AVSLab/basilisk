@@ -372,12 +372,10 @@ class moduleGenerator:
 
         defFile += '}\n'
         defFile += '\n'
-        defFile += '/*! This method is used to reset the module and checks that required input messages are connect.\n'
+        defFile += '/*! This method is used to reset the module and checks that required input messages are connected.\n'
         defFile += '*/\n'
-        defFile += f'void {self._className}::Reset(uint64_t CurrentSimNanos)\n'
+        defFile += f'void {self._className}::Reset(uint64_t CurrentSimNanos [[maybe_unused]])\n'
         defFile += '{\n'
-        defFile += '    (void) CurrentSimNanos;\n'
-        defFile += '\n'
         defFile += '    // check that required input messages are connected\n'
         for msg in inMsgList:
             defFile += f'    if (!this->{msg["var"]}.isLinked()) {{\n'
