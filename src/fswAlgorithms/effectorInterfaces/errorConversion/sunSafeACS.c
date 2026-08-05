@@ -30,6 +30,7 @@
  */
 void SelfInit_sunSafeACS(sunSafeACSConfig *configData, int64_t moduleID)
 {
+    (void) moduleID;
     THRArrayOnTimeCmdMsg_C_init(&configData->thrData.thrOnTimeOutMsg);
 }
 
@@ -42,6 +43,8 @@ void SelfInit_sunSafeACS(sunSafeACSConfig *configData, int64_t moduleID)
 void Reset_sunSafeACS(sunSafeACSConfig *configData, uint64_t callTime,
                         int64_t moduleID)
 {
+    (void) callTime;
+    (void) moduleID;
     // check if the required input messages are included
     if (!CmdTorqueBodyMsg_C_isLinked(&configData->cmdTorqueBodyInMsg)) {
         _bskError(configData->bskLogger, "Error: sunSafeACS.cmdTorqueBodyInMsg wasn't connected.");

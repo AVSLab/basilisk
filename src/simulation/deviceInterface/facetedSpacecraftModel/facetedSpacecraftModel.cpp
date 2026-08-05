@@ -30,6 +30,7 @@ FacetedSpacecraftModel::~FacetedSpacecraftModel() {
  @param callTime [ns] Time the method is called
 */
 void FacetedSpacecraftModel::Reset(uint64_t callTime) {
+    (void) callTime;
     if (this->numArticulatedFacets > this->numFacets) {
         this->bskLogger->bskError("FacetedSpacecraftModel: numArticulatedFacets cannot be greater than total numFacets");
     }

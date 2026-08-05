@@ -28,6 +28,7 @@
  */
 void SelfInit_ephemNavConverter(EphemNavConverterData *configData, int64_t moduleID)
 {
+    (void) moduleID;
     NavTransMsg_C_init(&configData->stateOutMsg);
 }
 
@@ -40,6 +41,8 @@ void SelfInit_ephemNavConverter(EphemNavConverterData *configData, int64_t modul
  */
 void Reset_ephemNavConverter(EphemNavConverterData *configData, uint64_t callTime, int64_t moduleID)
 {
+    (void) callTime;
+    (void) moduleID;
     // check if the required message has not been connected
     if (!EphemerisMsg_C_isLinked(&configData->ephInMsg)) {
         _bskError(configData->bskLogger, "Error: ephemNavConverter.ephInMsg wasn't connected.");

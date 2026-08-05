@@ -37,6 +37,7 @@
  */
 void SelfInit_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, int64_t moduleID)
 {
+    (void) moduleID;
     CmdTorqueBodyMsg_C_init(&configData->cmdTorqueOutMsg);
 }
 
@@ -50,6 +51,8 @@ void SelfInit_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, i
  */
 void Reset_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uint64_t callTime, int64_t moduleID)
 {
+    (void) callTime;
+    (void) moduleID;
     /*! - Read the input messages */
     int i;
     VehicleConfigMsgPayload sc;

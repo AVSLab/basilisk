@@ -31,6 +31,7 @@
  */
 void SelfInit_oeStateEphem(OEStateEphemData *configData, int64_t moduleID)
 {
+    (void) moduleID;
     EphemerisMsg_C_init(&configData->stateFitOutMsg);
 }
 
@@ -44,6 +45,8 @@ void SelfInit_oeStateEphem(OEStateEphemData *configData, int64_t moduleID)
 void Reset_oeStateEphem(OEStateEphemData *configData, uint64_t callTime,
                          int64_t moduleID)
 {
+    (void) callTime;
+    (void) moduleID;
     // check if the required message has not been connected
     if (!TDBVehicleClockCorrelationMsg_C_isLinked(&configData->clockCorrInMsg)) {
         _bskError(configData->bskLogger, "Error: oeStateEphem.clockCorrInMsg wasn't connected.");

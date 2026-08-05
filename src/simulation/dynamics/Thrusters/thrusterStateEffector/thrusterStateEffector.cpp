@@ -75,6 +75,7 @@ ThrusterStateEffector::~ThrusterStateEffector()
  */
 void ThrusterStateEffector::Reset(uint64_t CurrentSimNanos)
 {
+    (void) CurrentSimNanos;
     // Clear out any currently firing thrusters and re-init cmd array
     this->NewThrustCmds.clear();
     this->NewThrustCmds.insert(this->NewThrustCmds.begin(), this->thrusterData.size(), 0.0);
@@ -323,6 +324,9 @@ void ThrusterStateEffector::registerStates(DynParamManager& states)
 /*! This method is used to find the derivatives for the thruster stateEffector */
 void ThrusterStateEffector::computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN)
 {
+    (void) rDDot_BN_N;
+    (void) omegaDot_BN_B;
+    (void) sigma_BN;
     std::vector<std::shared_ptr<THRSimConfig>>::iterator itp;
     std::shared_ptr<THRSimConfig> it;
     THROperation* ops;
@@ -356,6 +360,7 @@ void ThrusterStateEffector::computeDerivatives(double integTime, Eigen::Vector3d
 
 void ThrusterStateEffector::calcForceTorqueOnBody(double integTime, Eigen::Vector3d omega_BN_B)
 {
+    (void) integTime;
     // Save omega_BN_B
     Eigen::Vector3d omegaLocal_BN_B = omega_BN_B;
 
@@ -439,6 +444,10 @@ void ThrusterStateEffector::calcForceTorqueOnBody(double integTime, Eigen::Vecto
 
 void ThrusterStateEffector::updateContributions(double integTime, BackSubMatrices& backSubContr, Eigen::MRPd sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N)
 {
+    (void) integTime;
+    (void) sigma_BN;
+    (void) omega_BN_B;
+    (void) g_N;
     // Define the translational and rotational contributions from the computed force and torque
     backSubContr.vecTrans = this->forceOnBody_B;
     backSubContr.vecRot = this->torqueOnBodyPntB_B;
@@ -447,6 +456,7 @@ void ThrusterStateEffector::updateContributions(double integTime, BackSubMatrice
 
 /*! This is the method for the thruster effector to add its contributions to the mass props and mass prop rates of the vehicle */
 void ThrusterStateEffector::updateEffectorMassProps(double integTime) {
+    (void) integTime;
 
     std::vector<std::shared_ptr<THRSimConfig>>::iterator itp;
     std::shared_ptr<THRSimConfig> it;

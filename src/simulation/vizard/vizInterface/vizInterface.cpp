@@ -80,6 +80,7 @@ VizInterface::~VizInterface()
  */
 void VizInterface::Reset(uint64_t CurrentSimNanos)
 {
+    (void) CurrentSimNanos;
     if (this->broadcastStream) {
         // Setup ZMQ for broadcast socket
         this->publisher_context = zmq_ctx_new();
@@ -1569,5 +1570,6 @@ void VizInterface::requestImage(size_t camCounter, uint64_t CurrentSimNanos)
  */
 void message_buffer_deallocate(void *data, void *hint)
 {
+    (void) hint;
     free (data);
 }

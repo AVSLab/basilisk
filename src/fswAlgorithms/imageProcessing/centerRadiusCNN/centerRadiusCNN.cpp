@@ -55,6 +55,7 @@ CenterRadiusCNN::~CenterRadiusCNN()
  */
 void CenterRadiusCNN::Reset(uint64_t CurrentSimNanos)
 {
+    (void) CurrentSimNanos;
     // check that the required message has not been connected
     if (!this->imageInMsg.isLinked()) {
         bskLogger.bskError("CenterRadiusCNN.imageInMsg wasn't connected.");

@@ -32,6 +32,7 @@
  */
 void SelfInit_sunlineEphem(sunlineEphemConfig *configData, int64_t moduleID)
 {
+    (void) moduleID;
     NavAttMsg_C_init(&configData->navStateOutMsg);
 }
 
@@ -45,6 +46,9 @@ void SelfInit_sunlineEphem(sunlineEphemConfig *configData, int64_t moduleID)
  */
 void Reset_sunlineEphem(sunlineEphemConfig *configData, uint64_t callTime, int64_t moduleID)
 {
+    (void) configData;
+    (void) callTime;
+    (void) moduleID;
 
 }
 

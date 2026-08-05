@@ -32,6 +32,7 @@
  */
 void SelfInit_inertialUKF(InertialUKFConfig *configData, int64_t moduleId)
 {
+    (void) moduleId;
     NavAttMsg_C_init(&configData->navStateOutMsg);
     InertialFilterMsg_C_init(&configData->filtDataOutMsg);
 }
@@ -47,6 +48,7 @@ void SelfInit_inertialUKF(InertialUKFConfig *configData, int64_t moduleId)
 void Reset_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
                       int64_t moduleId)
 {
+    (void) moduleId;
 
     size_t i;
     int32_t badUpdate=0; /* Negative badUpdate is faulty, */
@@ -558,6 +560,7 @@ void inertialUKFMeasModel(InertialUKFConfig *configData, int currentST)
 void inertialUKFAggGyrData(InertialUKFConfig *configData, double prevTime,
     double propTime, AccDataMsgPayload *gyrData)
 {
+    (void) propTime;
     uint32_t minFutInd;  /* [-] Index in buffer that is the oldest new meas*/
     int i, j;
     double minFutTime;   /* [s] smallest future measurement time-tag*/

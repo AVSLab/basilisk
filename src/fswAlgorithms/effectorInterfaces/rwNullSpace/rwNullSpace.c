@@ -33,6 +33,7 @@
  */
 void SelfInit_rwNullSpace(rwNullSpaceConfig *configData, int64_t moduleID)
 {
+    (void) moduleID;
     ArrayMotorTorqueMsg_C_init(&configData->rwMotorTorqueOutMsg);
 }
 
@@ -46,6 +47,8 @@ void SelfInit_rwNullSpace(rwNullSpaceConfig *configData, int64_t moduleID)
 void Reset_rwNullSpace(rwNullSpaceConfig *configData, uint64_t callTime,
                         int64_t moduleID)
 {
+    (void) callTime;
+    (void) moduleID;
     double GsMatrix[3*MAX_EFF_CNT];                 /* [-]  [Gs] projection matrix where gs_hat_B RW spin axis form each colum */
     double GsTranspose[3 * MAX_EFF_CNT];            /* [-]  [Gs]^T */
     double GsInvHalf[3 * 3];                        /* [-]  ([Gs][Gs]^T)^-1 */

@@ -62,6 +62,7 @@ void MagneticFieldWMM::configureWMMFile(const std::string& file)
  */
 void MagneticFieldWMM::customReset(uint64_t CurrentClock)
 {
+    (void) CurrentClock;
     if (this->magneticModel != nullptr) {
         /* clean up the prior initialization */
         cleanupEarthMagFieldModel();
@@ -88,6 +89,7 @@ void MagneticFieldWMM::customSetEpochFromVariable()
  */
 void MagneticFieldWMM::decimalYear2Gregorian(double fractionalYear, struct tm *gregorian)
 {
+    (void) fractionalYear;
     //! -Use the WMM routine to get the year, month and day information
     MAGtype_Date calendar;
     char Error[255];

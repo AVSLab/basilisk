@@ -39,6 +39,7 @@
  */
 void SelfInit_inertial3D(inertial3DConfig *configData, int64_t moduleID)
 {
+    (void) moduleID;
     AttRefMsg_C_init(&configData->attRefOutMsg);
 }
 
@@ -51,6 +52,9 @@ void SelfInit_inertial3D(inertial3DConfig *configData, int64_t moduleID)
 */
 void Reset_inertial3D(inertial3DConfig *configData, uint64_t callTime, int64_t moduleID)
 {
+    (void) configData;
+    (void) callTime;
+    (void) moduleID;
 
 }
 

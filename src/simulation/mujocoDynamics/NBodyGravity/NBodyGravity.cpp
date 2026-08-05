@@ -60,6 +60,7 @@ readState(GravitySource& source, BSKLogger& bskLogger)
 void
 NBodyGravity::Reset(uint64_t CurrentSimNanos)
 {
+    (void) CurrentSimNanos;
     std::string errorPrefix = "In NBodyGravity '" + ModelTag + "': ";
     for (auto&& [name, target] : targets)
     {

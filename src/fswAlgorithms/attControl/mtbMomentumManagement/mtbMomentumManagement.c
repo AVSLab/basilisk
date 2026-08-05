@@ -34,6 +34,7 @@
  */
 void SelfInit_mtbMomentumManagement(mtbMomentumManagementConfig *configData, int64_t moduleID)
 {
+    (void) moduleID;
     MTBCmdMsg_C_init(&configData->mtbCmdOutMsg);
     ArrayMotorTorqueMsg_C_init(&configData->rwMotorTorqueOutMsg);
 
@@ -51,6 +52,8 @@ void SelfInit_mtbMomentumManagement(mtbMomentumManagementConfig *configData, int
 */
 void Reset_mtbMomentumManagement(mtbMomentumManagementConfig *configData, uint64_t callTime, int64_t moduleID)
 {
+    (void) callTime;
+    (void) moduleID;
     /*
      * Check if the required input messages are linked.
      */

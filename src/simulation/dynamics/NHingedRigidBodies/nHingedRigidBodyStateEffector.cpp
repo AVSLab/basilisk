@@ -62,6 +62,7 @@ void NHingedRigidBodyStateEffector::readInputMessages()
  */
 void NHingedRigidBodyStateEffector::WriteOutputMessages(uint64_t CurrentClock)
 {
+    (void) CurrentClock;
     return;
 }
 
@@ -103,6 +104,7 @@ void NHingedRigidBodyStateEffector::registerStates(DynParamManager& states)
  spacecraft */
 void NHingedRigidBodyStateEffector::updateEffectorMassProps(double integTime)
 {
+    (void) integTime;
     // - Define summation variables
     double sum_Theta = 0;
     double sum_ThetaDot = 0;
@@ -208,6 +210,8 @@ double NHingedRigidBodyStateEffector::HeaviFunc(double cond)
  method */
 void NHingedRigidBodyStateEffector::updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::MRPd sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N)
 {
+    (void) integTime;
+    (void) g_N;
     // - Find dcm_BN
     Eigen::MRPd sigmaLocal_BN;
     Eigen::Matrix3d dcm_BN;
@@ -446,6 +450,7 @@ void NHingedRigidBodyStateEffector::updateContributions(double integTime, BackSu
 /*! This method is used to find the derivatives for the HRB stateEffector: thetaDDot and the kinematic derivative */
 void NHingedRigidBodyStateEffector::computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN)
 {
+    (void) integTime;
     // - Grab necessarry values from manager (these have been previously computed in hubEffector)
     Eigen::Vector3d rDDotLoc_BN_N;
     Eigen::MRPd sigmaLocal_BN;
@@ -481,6 +486,7 @@ void NHingedRigidBodyStateEffector::computeDerivatives(double integTime, Eigen::
 void NHingedRigidBodyStateEffector::updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
                                                                  double & rotEnergyContr, Eigen::Vector3d omega_BN_B)
 {
+    (void) integTime;
     // - Get the current omega state
     Eigen::Vector3d omegaLocal_BN_B;
     omegaLocal_BN_B = omega_BN_B;

@@ -49,6 +49,7 @@ MagneticFieldCenteredDipole::~MagneticFieldCenteredDipole()
  */
 void MagneticFieldCenteredDipole::evaluateMagneticFieldModel(MagneticFieldMsgPayload *msg, double currentTime)
 {
+    (void) currentTime;
     Eigen::Vector3d magField_P;         // [T] magnetic field in Planet fixed frame
     Eigen::Vector3d rHat_P;             // [] normalized position vector in E frame components
     Eigen::Vector3d dipoleCoefficients; // [] The first 3 IGRF coefficient that define the magnetic dipole

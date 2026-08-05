@@ -59,6 +59,7 @@ DataFileToViz::~DataFileToViz()
  */
 void DataFileToViz::Reset(uint64_t CurrentSimNanos)
 {
+    (void) CurrentSimNanos;
     if (this->dataFileName.length() == 0) {
         bskLogger.bskError("DataFileToViz: dataFileName must be an non-empty string.");
     }

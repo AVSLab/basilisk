@@ -40,6 +40,7 @@
  */
 void SelfInit_rwConfigData(rwConfigData_Config *configData, int64_t moduleID)
 {
+    (void) moduleID;
     RWArrayConfigMsg_C_init(&configData->rwParamsOutMsg);
 }
 
@@ -82,6 +83,9 @@ void Reset_rwConfigData(rwConfigData_Config *configData, uint64_t callTime, int6
  */
 void Update_rwConfigData(rwConfigData_Config *configData, uint64_t callTime, int64_t moduleID)
 {
+    (void) configData;
+    (void) callTime;
+    (void) moduleID;
     /*! Nothing done in this method.  Make sure this is still true!*/
     return;
 }

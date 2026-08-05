@@ -184,6 +184,8 @@ void SpacecraftChargingDynamics::writeOutputStateMessages(uint64_t clockTime) {
 
 /*! Method for the charging equations of motion */
 void SpacecraftChargingDynamics::equationsOfMotion(double integTimeSeconds, double timeStep) {
+    (void) integTimeSeconds;
+    (void) timeStep;
     this->servicerPotential = this->servicerPotentialState->getState()(0, 0);
     this->targetPotential = this->targetPotentialState->getState()(0, 0);
 

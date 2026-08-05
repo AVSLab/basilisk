@@ -25,6 +25,7 @@
  @param callTime [ns] Time the method is called
 */
 void StepperMotor::Reset(uint64_t callTime) {
+    (void) callTime;
     assert(this->motorStepCommandInMsg.isLinked());
 
     // Reset required module parameters

@@ -31,6 +31,7 @@
  */
 void SelfInit_cssProcessTelem(CSSConfigData *configData, int64_t moduleID)
 {
+    (void) moduleID;
     CSSArraySensorMsg_C_init(&configData->cssArrayOutMsg);
 }
 
@@ -44,6 +45,8 @@ void SelfInit_cssProcessTelem(CSSConfigData *configData, int64_t moduleID)
  */
 void Reset_cssProcessTelem(CSSConfigData *configData, uint64_t callTime, int64_t moduleID)
 {
+    (void) callTime;
+    (void) moduleID;
     // check if the required message has not been connected
     if (!CSSArraySensorMsg_C_isLinked(&configData->sensorListInMsg)) {
         _bskError(configData->bskLogger, "Error: cssComm.sensorListInMsg wasn't connected.");

@@ -34,6 +34,7 @@
  */
 void SelfInit_locationPointing(locationPointingConfig  *configData, int64_t moduleID)
 {
+    (void) moduleID;
     AttGuidMsg_C_init(&configData->attGuidOutMsg);
     AttRefMsg_C_init(&configData->attRefOutMsg);
 }
@@ -49,6 +50,7 @@ void SelfInit_locationPointing(locationPointingConfig  *configData, int64_t modu
 */
 void Reset_locationPointing(locationPointingConfig *configData, uint64_t callTime, int64_t moduleID)
 {
+    (void) moduleID;
 
     // check if the required message has not been connected
     if (!NavAttMsg_C_isLinked(&configData->scAttInMsg)) {

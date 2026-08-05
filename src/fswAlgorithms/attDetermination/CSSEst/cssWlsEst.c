@@ -29,6 +29,7 @@
  */
 void SelfInit_cssWlsEst(CSSWLSConfig *configData, int64_t moduleID)
 {
+    (void) moduleID;
     NavAttMsg_C_init(&configData->navStateOutMsg);
     if (SunlineFilterMsg_C_isLinked(&configData->cssWLSFiltResOutMsg)) {
         SunlineFilterMsg_C_init(&configData->cssWLSFiltResOutMsg);
@@ -45,6 +46,8 @@ void SelfInit_cssWlsEst(CSSWLSConfig *configData, int64_t moduleID)
  */
 void Reset_cssWlsEst(CSSWLSConfig *configData, uint64_t callTime, int64_t moduleID)
 {
+    (void) callTime;
+    (void) moduleID;
 
     // check that required messages have been included
     if (!CSSConfigMsg_C_isLinked(&configData->cssConfigInMsg)) {

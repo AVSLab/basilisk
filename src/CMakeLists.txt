@@ -591,7 +591,7 @@ if(BSK_STRICT_WARNINGS)
         $<$<COMPILE_LANGUAGE:${language}>:-Wformat=2>
         $<$<COMPILE_LANGUAGE:${language}>:-Wundef>
         $<$<COMPILE_LANGUAGE:${language}>:-Wimplicit-fallthrough>
-        $<$<COMPILE_LANGUAGE:${language}>:-Wno-unused-parameter>)
+        $<$<COMPILE_LANGUAGE:${language}>:-Wunused-parameter>)
     endforeach()
 
     add_compile_options(

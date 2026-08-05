@@ -65,6 +65,7 @@ SimpleAntenna::SimpleAntenna()
 */
 void SimpleAntenna::Reset(uint64_t CurrentSimNanos)
 {
+    (void) CurrentSimNanos;
     // ERRORS
     // check that required input messages are connected
     if (!this->scStateInMsg.isLinked() && !this->groundStateInMsg.isLinked()) {

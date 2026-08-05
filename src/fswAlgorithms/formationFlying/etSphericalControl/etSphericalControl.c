@@ -45,6 +45,7 @@
  */
 void SelfInit_etSphericalControl(etSphericalControlConfig *configData, int64_t moduleID)
 {
+    (void) moduleID;
     CmdForceInertialMsg_C_init(&configData->forceInertialOutMsg);
     CmdForceBodyMsg_C_init(&configData->forceBodyOutMsg);
 }
@@ -59,6 +60,8 @@ void SelfInit_etSphericalControl(etSphericalControlConfig *configData, int64_t m
 */
 void Reset_etSphericalControl(etSphericalControlConfig *configData, uint64_t callTime, int64_t moduleID)
 {
+    (void) callTime;
+    (void) moduleID;
     // check if the required input messages are included
     if (!NavTransMsg_C_isLinked(&configData->servicerTransInMsg)) {
         _bskError(configData->bskLogger, "Error: etSphericalControl.servicerTransInMsg wasn't connected.");

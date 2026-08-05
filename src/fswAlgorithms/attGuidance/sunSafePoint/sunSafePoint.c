@@ -33,6 +33,7 @@
  */
 void SelfInit_sunSafePoint(sunSafePointConfig *configData, int64_t moduleID)
 {
+    (void) moduleID;
     AttGuidMsg_C_init(&configData->attGuidanceOutMsg);
 
 }
@@ -47,6 +48,8 @@ void SelfInit_sunSafePoint(sunSafePointConfig *configData, int64_t moduleID)
  */
 void Reset_sunSafePoint(sunSafePointConfig *configData, uint64_t callTime, int64_t moduleID)
 {
+    (void) callTime;
+    (void) moduleID;
     double v1[3];
 
     // check if the required input messages are included

@@ -32,6 +32,7 @@
  */
 void SelfInit_chebyPosEphem(ChebyPosEphemData *configData, int64_t moduleID)
 {
+    (void) moduleID;
     EphemerisMsg_C_init(&configData->posFitOutMsg);
 }
 
@@ -47,6 +48,8 @@ void SelfInit_chebyPosEphem(ChebyPosEphemData *configData, int64_t moduleID)
 void Reset_chebyPosEphem(ChebyPosEphemData *configData, uint64_t callTime,
                          int64_t moduleID)
 {
+    (void) callTime;
+    (void) moduleID;
     // check if the required message has not been connected
     if (!TDBVehicleClockCorrelationMsg_C_isLinked(&configData->clockCorrInMsg)) {
         _bskError(configData->bskLogger, "Error: chebyPosEphem.clockCorrInMsg wasn't connected.");

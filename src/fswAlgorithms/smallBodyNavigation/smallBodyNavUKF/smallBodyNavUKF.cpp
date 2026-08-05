@@ -63,6 +63,7 @@ void SmallBodyNavUKF::SelfInit(){
 */
 void SmallBodyNavUKF::Reset(uint64_t CurrentSimNanos)
 {
+    (void) CurrentSimNanos;
     /* check that required input messages are connected */
     if (!this->navTransInMsg.isLinked()) {
         bskLogger.bskError("SmallBodyNavUKF.navTransInMsg was not linked.");

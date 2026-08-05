@@ -75,6 +75,7 @@ void PlanetHeading::writeMessages(uint64_t CurrentSimNanos) {
  */
 void PlanetHeading::Reset(uint64_t CurrentSimNanos)
 {
+    (void) CurrentSimNanos;
 
     // check if input message has not been included
     if (!this->planetPositionInMsg.isLinked()) {

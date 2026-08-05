@@ -33,6 +33,7 @@
  */
 void SelfInit_hingedRigidBodyPIDMotor(hingedRigidBodyPIDMotorConfig *configData, int64_t moduleID)
 {
+    (void) moduleID;
     ArrayMotorTorqueMsg_C_init(&configData->motorTorqueOutMsg);
 }
 
@@ -46,6 +47,8 @@ void SelfInit_hingedRigidBodyPIDMotor(hingedRigidBodyPIDMotorConfig *configData,
 */
 void Reset_hingedRigidBodyPIDMotor(hingedRigidBodyPIDMotorConfig *configData, uint64_t callTime, int64_t moduleID)
 {
+    (void) callTime;
+    (void) moduleID;
     if (!HingedRigidBodyMsg_C_isLinked(&configData->hingedRigidBodyInMsg)) {
         _bskError(configData->bskLogger, "Error: solarArrayAngle.hingedRigidBodyInMsg wasn't connected.");
     }

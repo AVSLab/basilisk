@@ -40,6 +40,7 @@ VscmgGimbalRateServo::VscmgGimbalRateServo()
 void
 VscmgGimbalRateServo::Reset(uint64_t CurrentSimNanos)
 {
+    (void) CurrentSimNanos;
     if (!this->vsmcgParamsInMsg.isLinked()) {
         bskLogger.bskError("VscmgGimbalRateServo.vsmcgParamsInMsg was not linked.");
     }

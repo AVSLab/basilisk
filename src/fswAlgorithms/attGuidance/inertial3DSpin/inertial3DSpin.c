@@ -47,6 +47,7 @@
  */
 void SelfInit_inertial3DSpin(inertial3DSpinConfig *configData, int64_t moduleID)
 {
+    (void) moduleID;
     /*! - Create output message for module */
     AttRefMsg_C_init(&configData->attRefOutMsg);
 }
@@ -61,6 +62,8 @@ void SelfInit_inertial3DSpin(inertial3DSpinConfig *configData, int64_t moduleID)
  */
 void Reset_inertial3DSpin(inertial3DSpinConfig *configData, uint64_t callTime, int64_t moduleID)
 {
+    (void) callTime;
+    (void) moduleID;
 
     configData->priorTime = 0;              /* reset the prior time flag state.  If set
                                              to zero, the control time step is not evaluated on the

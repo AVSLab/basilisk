@@ -58,6 +58,7 @@ GroundMapping::~GroundMapping()
 */
 void GroundMapping::Reset(uint64_t CurrentSimNanos)
 {
+    (void) CurrentSimNanos;
     // check that required input messages are connected
     if (!this->scStateInMsg.isLinked()) {
         bskLogger.bskError("GroundMapping.scStateInMsg was not linked.");

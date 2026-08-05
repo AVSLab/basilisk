@@ -36,6 +36,7 @@ void ThrustCMEstimation::SelfInit(){
  */
 void ThrustCMEstimation::Reset(uint64_t CurrentSimNanos)
 {
+    (void) CurrentSimNanos;
     /*! - Check if the required message has not been connected */
     if (!this->thrusterConfigBInMsg.isLinked()) {
         bskLogger.bskError(" thrusterConfigInMsg wasn't connected.");

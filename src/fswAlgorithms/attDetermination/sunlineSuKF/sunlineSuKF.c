@@ -32,6 +32,7 @@
  */
 void SelfInit_sunlineSuKF(SunlineSuKFConfig *configData, int64_t moduleID)
 {
+    (void) moduleID;
     NavAttMsg_C_init(&configData->navStateOutMsg);
     SunlineFilterMsg_C_init(&configData->filtDataOutMsg);
 }
@@ -47,6 +48,7 @@ void SelfInit_sunlineSuKF(SunlineSuKFConfig *configData, int64_t moduleID)
 void Reset_sunlineSuKF(SunlineSuKFConfig *configData, uint64_t callTime,
                       int64_t moduleID)
 {
+    (void) moduleID;
 
     CSSConfigMsgPayload cssConfigInBuffer;
     int32_t badUpdate;
@@ -493,6 +495,7 @@ void sunlineSuKFMeasModel(SunlineSuKFConfig *configData)
  */
 int sunlineSuKFMeasUpdate(SunlineSuKFConfig *configData, double updateTime)
 {
+    (void) updateTime;
     uint32_t i;
     int32_t badUpdate;
     double yBar[MAX_N_CSS_MEAS], syInv[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS];

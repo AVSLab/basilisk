@@ -38,6 +38,7 @@ OrbElemConvert::~OrbElemConvert()
  */
 void OrbElemConvert::Reset(uint64_t CurrentSimNanos)
 {
+    (void) CurrentSimNanos;
     int numInputs = 0;      //!< number of input messages connected
     int numOutputs = 0;     //!< number of output messages connected
 

@@ -44,6 +44,7 @@ Eclipse::~Eclipse()
  */
 void Eclipse::Reset(uint64_t CurrenSimNanos)
 {
+    (void) CurrenSimNanos;
     if (!this->sunInMsg.isLinked()) {
         bskLogger.bskError("Eclipse: sunInMsg must be linked to sun Spice state message.");
     }

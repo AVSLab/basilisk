@@ -33,6 +33,7 @@
 */
 void SelfInit_mrpSteering(mrpSteeringConfig *configData, int64_t moduleID)
 {
+    (void) moduleID;
     RateCmdMsg_C_init(&configData->rateCmdOutMsg);
 }
 
@@ -46,6 +47,8 @@ void SelfInit_mrpSteering(mrpSteeringConfig *configData, int64_t moduleID)
 */
 void Reset_mrpSteering(mrpSteeringConfig *configData, uint64_t callTime, int64_t moduleID)
 {
+    (void) callTime;
+    (void) moduleID;
     // check for required input message
     if (!AttGuidMsg_C_isLinked(&configData->guidInMsg)) {
         _bskError(configData->bskLogger, "Error: mrpSteering.guidInMsg wasn't connected.");

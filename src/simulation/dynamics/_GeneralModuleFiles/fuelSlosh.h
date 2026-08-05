@@ -28,7 +28,9 @@ class FuelSlosh {
 public:
     FuelSlosh(){return;};                  //!< -- Contructor
     virtual ~FuelSlosh(){return;};         //!< -- Destructor
-    virtual void retrieveMassValue(double integTime){return;}; //!< -- retrieve current mass value of fuelSlosh particle
+    virtual void retrieveMassValue(double integTime){
+        (void) integTime;
+        return;}; //!< -- retrieve current mass value of fuelSlosh particle
 
 public:
     double fuelMass = 0.0;                 //!< [kg] mass of fuelSlosh particle

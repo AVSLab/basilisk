@@ -53,6 +53,7 @@ RadiationPressure::~RadiationPressure()
  */
 void RadiationPressure::Reset(uint64_t CurrenSimNanos)
 {
+    (void) CurrenSimNanos;
     if(!this->sunEphmInMsg.isLinked())
     {
         bskLogger.bskError("Did not find a valid sun ephemeris message connection.");
@@ -96,6 +97,8 @@ void RadiationPressure::readInputMessages()
  */
 void RadiationPressure::computeForceTorque(double integTime, double timeStep)
 {
+    (void) integTime;
+    (void) timeStep;
     this->forceExternal_N.setZero();
     this->forceExternal_B.setZero();
     this->torqueExternalPntB_B.setZero();
@@ -127,6 +130,7 @@ void RadiationPressure::computeForceTorque(double integTime, double timeStep)
  */
 void RadiationPressure::UpdateState(uint64_t CurrentSimNanos)
 {
+    (void) CurrentSimNanos;
     this->readInputMessages();
 }
 

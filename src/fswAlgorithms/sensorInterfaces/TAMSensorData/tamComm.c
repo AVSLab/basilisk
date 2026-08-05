@@ -31,6 +31,7 @@
  */
 void SelfInit_tamProcessTelem(tamConfigData *configData, int64_t moduleID)
 {
+    (void) moduleID;
     TAMSensorBodyMsg_C_init(&configData->tamOutMsg);
 }
 
@@ -44,6 +45,8 @@ void SelfInit_tamProcessTelem(tamConfigData *configData, int64_t moduleID)
  */
 void Reset_tamProcessTelem(tamConfigData* configData, uint64_t callTime, int64_t moduleID)
 {
+    (void) callTime;
+    (void) moduleID;
     // check if the required message has not been connected
     if (!TAMSensorMsg_C_isLinked(&configData->tamInMsg)) {
         _bskError(configData->bskLogger, "Error: tamComm.tamInMsg wasn't connected.");

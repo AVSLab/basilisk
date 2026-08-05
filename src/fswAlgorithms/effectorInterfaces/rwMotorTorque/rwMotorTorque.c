@@ -33,6 +33,7 @@
  */
 void SelfInit_rwMotorTorque(rwMotorTorqueConfig *configData, int64_t moduleID)
 {
+    (void) moduleID;
     ArrayMotorTorqueMsg_C_init(&configData->rwMotorTorqueOutMsg);
 }
 
@@ -46,6 +47,8 @@ void SelfInit_rwMotorTorque(rwMotorTorqueConfig *configData, int64_t moduleID)
  */
 void Reset_rwMotorTorque(rwMotorTorqueConfig *configData, uint64_t callTime, int64_t moduleID)
 {
+    (void) callTime;
+    (void) moduleID;
     double *pAxis;                 /* pointer to the current control axis */
     int i;
 

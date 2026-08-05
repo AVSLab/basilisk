@@ -46,6 +46,7 @@ TabularAtmosphere::~TabularAtmosphere()
 */
 void TabularAtmosphere::customReset(uint64_t CurrentClock)
 {
+    (void) CurrentClock;
     this->altList_length = (int) this->altList.size();
     this->rhoList_length = (int) this->rhoList.size();
     this->tempList_length = (int) this->tempList.size();
@@ -71,6 +72,7 @@ void TabularAtmosphere::customReset(uint64_t CurrentClock)
 */
 void TabularAtmosphere::evaluateAtmosphereModel(AtmoPropsMsgPayload *msg, double currentTime)
 {
+    (void) currentTime;
     if ((this->orbitAltitude < this->altList[0]) || (this->orbitAltitude > this->altList.back())) {
         msg->neutralDensity = 0.0;
         msg->localTemp = 0.0;

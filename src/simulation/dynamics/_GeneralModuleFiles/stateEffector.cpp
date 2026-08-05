@@ -49,6 +49,7 @@ StateEffector::~StateEffector()
  allows for the dynamicObject to have access to the total mass, and inerita, mass and inertia rates*/
 void StateEffector::updateEffectorMassProps(double integTime)
 {
+    (void) integTime;
     return;
 }
 
@@ -65,6 +66,11 @@ void StateEffector::receiveMotherSpacecraftData(Eigen::Vector3d rSC_BP_P, Eigen:
  effectors. Then computeDerivatives is called to compute the stateEffectors derivatives using rDDot_BN_N omegaDot_BN_B*/
 void StateEffector::updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::MRPd sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N)
 {
+    (void) integTime;
+    (void) backSubContr;
+    (void) sigma_BN;
+    (void) omega_BN_B;
+    (void) g_N;
     return;
 }
 
@@ -75,6 +81,7 @@ void StateEffector::updateContributions(double integTime, BackSubMatrices & back
  */
 void StateEffector::addPrescribedMotionCouplingContributions(BackSubMatrices& backSubContr)
 {
+    (void) backSubContr;
     return;
 }
 
@@ -84,42 +91,54 @@ void StateEffector::addPrescribedMotionCouplingContributions(BackSubMatrices& ba
 void StateEffector::updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
                                                  double & rotEnergyContr, Eigen::Vector3d omega_BN_B)
 {
+    (void) integTime;
+    (void) rotAngMomPntCContr_B;
+    (void) rotEnergyContr;
+    (void) omega_BN_B;
     return;
 }
 
 /*! This method allows for an individual stateEffector to modify their states after integration*/
 void StateEffector::modifyStates(double integTime)
 {
+    (void) integTime;
     return;
 }
 
 /*! This method allows for an individual stateEffector to find the force and torque that the stateEffector is placing on to the body */
 void StateEffector::calcForceTorqueOnBody(double integTime, Eigen::Vector3d omega_BN_B)
 {
+    (void) integTime;
+    (void) omega_BN_B;
     return;
 }
 
 /*! This method ensures that all dynamics states have their messages written after integation */
 void StateEffector::writeOutputStateMessages(uint64_t integTimeNanos)
 {
+    (void) integTimeNanos;
     return;
 }
 
 /*! This method allows the effector to register its properties */
 void StateEffector::registerProperties(DynParamManager& states)
 {
+    (void) states;
     return;
 }
 
 /*! This method can only be called for a state effector with override definition set up to support attached dynamic effectors */
 void StateEffector::addDynamicEffector(DynamicEffector *newDynamicEffector, int segment)
 {
+    (void) newDynamicEffector;
+    (void) segment;
     bskLogger.bskError("StateEffector: This effector is not compatible with attached effectors");
 }
 
 /*! This method allows the state effector to link in prescribed motion properties */
 void StateEffector::linkInPrescribedMotionProperties(DynParamManager& properties)
 {
+    (void) properties;
     bskLogger.bskError("StateEffector: This effector is not compatible for attachment to prescribed motion.");
 }
 

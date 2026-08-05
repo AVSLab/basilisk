@@ -36,6 +36,7 @@
 */
 void SelfInit_prvSteering(PrvSteeringConfig *configData, int64_t moduleID)
 {
+    (void) moduleID;
     RateCmdMsg_C_init(&configData->rateCmdOutMsg);
 }
 
@@ -49,6 +50,8 @@ void SelfInit_prvSteering(PrvSteeringConfig *configData, int64_t moduleID)
 */
 void Reset_prvSteering(PrvSteeringConfig *configData, uint64_t callTime, int64_t moduleID)
 {
+    (void) callTime;
+    (void) moduleID;
     if (!AttGuidMsg_C_isLinked(&configData->guidInMsg)) {
         _bskError(configData->bskLogger, "Error: prvSteering.guidInMsg wasn't connected.");
     }

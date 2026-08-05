@@ -39,6 +39,7 @@ ExtPulsedTorque::~ExtPulsedTorque()
 /*! link the states */
 void ExtPulsedTorque::linkInStates(DynParamManager& statesIn)
 {
+    (void) statesIn;
     return;
 }
 
@@ -49,6 +50,7 @@ void ExtPulsedTorque::linkInStates(DynParamManager& statesIn)
  */
 void ExtPulsedTorque::writeOutputMessages(uint64_t currentClock)
 {
+    (void) currentClock;
     return;
 }
 
@@ -68,6 +70,8 @@ void ExtPulsedTorque::readInputMessages()
  */
 void ExtPulsedTorque::computeForceTorque(double integTime, double timeStep)
 {
+    (void) integTime;
+    (void) timeStep;
     /* zero the output vector */
     this->torqueExternalPntB_B.fill(0.0);
 
@@ -91,5 +95,6 @@ void ExtPulsedTorque::computeForceTorque(double integTime, double timeStep)
  */
 void ExtPulsedTorque::UpdateState(uint64_t CurrentSimNanos)
 {
+    (void) CurrentSimNanos;
     return;
 }

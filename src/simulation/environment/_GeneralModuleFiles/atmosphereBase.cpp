@@ -139,6 +139,7 @@ void AtmosphereBase::customSetEpochFromVariable()
  */
 void AtmosphereBase::customReset(uint64_t CurrentClock)
 {
+    (void) CurrentClock;
     return;
 }
 
@@ -164,6 +165,7 @@ void AtmosphereBase::writeMessages(uint64_t CurrentClock)
  */
 void AtmosphereBase::customWriteMessages(uint64_t CurrentClock)
 {
+    (void) CurrentClock;
     return;
 }
 

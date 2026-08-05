@@ -32,6 +32,7 @@
  */
 void SelfInit_dvAccumulation(DVAccumulationData *configData, int64_t moduleID)
 {
+    (void) moduleID;
     NavTransMsg_C_init(&configData->dvAcumOutMsg);
 }
 
@@ -39,6 +40,8 @@ void SelfInit_dvAccumulation(DVAccumulationData *configData, int64_t moduleID)
 void Reset_dvAccumulation(DVAccumulationData *configData, uint64_t callTime,
                           int64_t moduleID)
 {
+    (void) callTime;
+    (void) moduleID;
     /*! - Configure accumulator to reset itself*/
     AccDataMsgPayload inputAccData;
     int i;

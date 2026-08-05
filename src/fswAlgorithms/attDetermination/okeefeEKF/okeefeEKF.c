@@ -32,6 +32,7 @@
  */
 void SelfInit_okeefeEKF(okeefeEKFConfig *configData, int64_t moduleID)
 {
+    (void) moduleID;
     NavAttMsg_C_init(&configData->navStateOutMsg);
     SunlineFilterMsg_C_init(&configData->filtDataOutMsg);
 }
@@ -47,6 +48,7 @@ void SelfInit_okeefeEKF(okeefeEKFConfig *configData, int64_t moduleID)
 void Reset_okeefeEKF(okeefeEKFConfig *configData, uint64_t callTime,
                       int64_t moduleID)
 {
+    (void) moduleID;
 
     CSSConfigMsgPayload cssConfigInBuffer;
 
@@ -317,6 +319,7 @@ void sunlineStateSTMProp(double dynMat[SKF_N_STATES_HALF*SKF_N_STATES_HALF], dou
 
 void sunlineDynMatrixOkeefe(double omega[SKF_N_STATES_HALF], double dt, double *dynMat)
 {
+    (void) dt;
     double skewOmega[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
     double negskewOmega[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
 
@@ -337,6 +340,7 @@ void sunlineDynMatrixOkeefe(double omega[SKF_N_STATES_HALF], double dt, double *
  */
 void sunlineMeasUpdate(okeefeEKFConfig *configData, double updateTime)
 {
+    (void) updateTime;
     /*! - Compute the valid observations and the measurement model for all observations*/
     int numObsInt = (int) configData->numObs;
     sunlineHMatrixYMeas(configData->state, configData->numCSSTotal, configData->cssSensorInBuffer.CosValue, configData->sensorUseThresh, configData->cssNHat_B,

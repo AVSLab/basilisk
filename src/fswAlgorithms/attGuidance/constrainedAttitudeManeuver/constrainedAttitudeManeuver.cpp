@@ -228,6 +228,7 @@ void ConstrainedAttitudeManeuver::appendKeepInDirection(double direction[3], dou
 the grid is generated and the graph search is performed. */
 void ConstrainedAttitudeManeuver::Reset(uint64_t CurrentSimNanos)
 {
+    (void) CurrentSimNanos;
 	ReadInputs();
 
 	Node startNode = Node(this->scStateMsgBuffer.sigma_BN, this->constraints, this->boresights);
@@ -746,6 +747,7 @@ void ConstrainedAttitudeManeuver::computeTorque(int n, double I[9], double L[3])
  */
 double ConstrainedAttitudeManeuver::computeTorqueNorm(int n, double I[9])
 {
+    (void) I;
 	double L[3];
 	computeTorque(n, this->vehicleConfigMsgBuffer.ISCPntB_B, L);
 

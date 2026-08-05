@@ -26,6 +26,7 @@
  */
 void SolarFlux::Reset(uint64_t CurrentSimNanos)
 {
+    (void) CurrentSimNanos;
     // check if input message has not been included
     if (!this->sunPositionInMsg.isLinked()) {
         bskLogger.bskError("solarFlux.sunPositionInMsg was not linked.");

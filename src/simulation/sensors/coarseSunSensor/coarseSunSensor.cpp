@@ -119,6 +119,7 @@ void CoarseSunSensor::setBodyToPlatformDCM(double yaw, double pitch, double roll
   */
 void CoarseSunSensor::Reset(uint64_t CurrentSimNanos)
 {
+    (void) CurrentSimNanos;
     //! - If either messages is not valid, send a warning message
     if(!this->sunInMsg.isLinked()) {
         bskLogger.bskError("CoarseSunSensor: Failed to link a sun sensor input message");

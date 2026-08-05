@@ -28,6 +28,7 @@
  */
 void SelfInit_scanningInstrumentController(scanningInstrumentControllerConfig  *configData, int64_t moduleID)
 {
+    (void) moduleID;
     DeviceCmdMsg_C_init(&configData->deviceCmdOutMsg);
 }
 
@@ -39,6 +40,8 @@ void SelfInit_scanningInstrumentController(scanningInstrumentControllerConfig  *
 */
 void Reset_scanningInstrumentController(scanningInstrumentControllerConfig *configData, uint64_t callTime, int64_t moduleID)
 {
+    (void) callTime;
+    (void) moduleID;
     // check if the required message has not been connected
     if (!AccessMsg_C_isLinked(&configData->accessInMsg)) {
         _bskError(configData->bskLogger, "Error: scanningInstrumentController.accessInMsg was not connected.");

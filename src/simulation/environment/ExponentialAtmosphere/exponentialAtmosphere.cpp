@@ -49,6 +49,7 @@ ExponentialAtmosphere::~ExponentialAtmosphere()
  */
 void ExponentialAtmosphere::evaluateAtmosphereModel(AtmoPropsMsgPayload *msg, double currentTime)
 {
+    (void) currentTime;
     msg->neutralDensity = this->baseDensity * exp(-(this->orbitAltitude) / this->scaleHeight);
     msg->localTemp = this->localTemp;
 

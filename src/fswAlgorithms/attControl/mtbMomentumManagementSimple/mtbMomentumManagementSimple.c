@@ -30,6 +30,7 @@
  */
 void SelfInit_mtbMomentumManagementSimple(mtbMomentumManagementSimpleConfig  *configData, int64_t moduleID)
 {
+    (void) moduleID;
     /*
      * Initialize the output message.
      */
@@ -49,6 +50,8 @@ void SelfInit_mtbMomentumManagementSimple(mtbMomentumManagementSimpleConfig  *co
 */
 void Reset_mtbMomentumManagementSimple(mtbMomentumManagementSimpleConfig *configData, uint64_t callTime, int64_t moduleID)
 {
+    (void) callTime;
+    (void) moduleID;
     /*
      * Check if the required input messages are connected.
      */

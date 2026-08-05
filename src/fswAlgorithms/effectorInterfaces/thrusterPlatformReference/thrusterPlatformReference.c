@@ -32,6 +32,7 @@ const double epsilon = 1e-12;                           // module tolerance for 
  */
 void SelfInit_thrusterPlatformReference(ThrusterPlatformReferenceConfig *configData, int64_t moduleID)
 {
+    (void) moduleID;
     HingedRigidBodyMsg_C_init(&configData->hingedRigidBodyRef1OutMsg);
     HingedRigidBodyMsg_C_init(&configData->hingedRigidBodyRef2OutMsg);
     BodyHeadingMsg_C_init(&configData->bodyHeadingOutMsg);

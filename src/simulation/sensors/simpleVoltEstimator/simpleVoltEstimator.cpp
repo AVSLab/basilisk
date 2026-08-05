@@ -59,6 +59,7 @@ SimpleVoltEstimator::~SimpleVoltEstimator()
  */
 void SimpleVoltEstimator::Reset(uint64_t CurrentSimNanos)
 {
+    (void) CurrentSimNanos;
     // check if input message has not been included
     if (!this->voltInMsg.isLinked()) {
         bskLogger.bskError("SimpleVoltEstimator.voltInMsg was not linked.");

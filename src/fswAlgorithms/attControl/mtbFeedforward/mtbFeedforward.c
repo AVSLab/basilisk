@@ -30,6 +30,7 @@
  */
 void SelfInit_mtbFeedforward(mtbFeedforwardConfig  *configData, int64_t moduleID)
 {
+    (void) moduleID;
     /*
      * Initialize the output message.
      */
@@ -47,6 +48,8 @@ void SelfInit_mtbFeedforward(mtbFeedforwardConfig  *configData, int64_t moduleID
 */
 void Reset_mtbFeedforward(mtbFeedforwardConfig *configData, uint64_t callTime, int64_t moduleID)
 {
+    (void) callTime;
+    (void) moduleID;
     /*
      * Check if the required input messages are connected.
      */

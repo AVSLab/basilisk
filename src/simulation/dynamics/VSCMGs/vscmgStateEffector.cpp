@@ -102,6 +102,7 @@ void VSCMGStateEffector::registerStates(DynParamManager& states)
 
 void VSCMGStateEffector::updateEffectorMassProps(double integTime)
 {
+    (void) integTime;
     // - Zero the mass props information because these will be accumulated during this call
     this->effProps.mEff = 0.;
     this->effProps.rEff_CB_B.setZero();
@@ -264,6 +265,8 @@ void VSCMGStateEffector::updateEffectorMassProps(double integTime)
 
 void VSCMGStateEffector::updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::MRPd sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N)
 {
+    (void) integTime;
+    (void) g_N;
 	Eigen::Vector3d omegaLoc_BN_B;
 	Eigen::Vector3d tempF;
 	double omegas;
@@ -393,6 +396,7 @@ void VSCMGStateEffector::updateContributions(double integTime, BackSubMatrices &
 
 void VSCMGStateEffector::computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN)
 {
+    (void) integTime;
 	Eigen::MatrixXd OmegasDot(this->numVSCMG,1);
     Eigen::MatrixXd thetasDot(this->numVSCMGJitter,1);
 	Eigen::MatrixXd gammasDot(this->numVSCMG,1);
@@ -452,6 +456,8 @@ void VSCMGStateEffector::computeDerivatives(double integTime, Eigen::Vector3d rD
 void VSCMGStateEffector::updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
                                                       double & rotEnergyContr, Eigen::Vector3d omega_BN_B)
 {
+    (void) integTime;
+    (void) omega_BN_B;
 	Eigen::MRPd sigmaBNLocal;
 	Eigen::Matrix3d dcm_BN;                        /* direction cosine matrix from N to B */
 	Eigen::Matrix3d dcm_NB;                        /* direction cosine matrix from B to N */
@@ -488,6 +494,7 @@ void VSCMGStateEffector::updateEnergyMomContributions(double integTime, Eigen::V
  */
 void VSCMGStateEffector::Reset(uint64_t CurrenSimNanos)
 {
+    (void) CurrenSimNanos;
     VSCMGCmdMsgPayload VSCMGCmdInitializer;
     VSCMGCmdInitializer.u_s_cmd = 0.0;
     VSCMGCmdInitializer.u_g_cmd = 0.0;
@@ -643,6 +650,7 @@ void VSCMGStateEffector::ReadInputs()
  */
 void VSCMGStateEffector::ConfigureVSCMGRequests(double CurrentTime)
 {
+    (void) CurrentTime;
 	std::vector<VSCMGCmdMsgPayload>::iterator CmdIt;
 	size_t it = 0;
 	double u_s;

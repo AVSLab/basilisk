@@ -47,6 +47,7 @@ MsmForceTorque::~MsmForceTorque()
 */
 void MsmForceTorque::Reset(uint64_t CurrentSimNanos)
 {
+    (void) CurrentSimNanos;
     // check that required input messages are connected
     for (size_t c=0; c < this->scStateInMsgs.size(); c++ ){
         if (!this->scStateInMsgs.at(c).isLinked()) {

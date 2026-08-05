@@ -44,6 +44,7 @@ VscmgVelocitySteering::VscmgVelocitySteering()
 void
 VscmgVelocitySteering::Reset(uint64_t CurrentSimNanos)
 {
+    (void) CurrentSimNanos;
     // check that required input messages are connected
     if (!this->vscmgParamsInMsg.isLinked()) {
         bskLogger.bskError("VscmgVelocitySteering.vscmgParamsInMsg was not linked.");

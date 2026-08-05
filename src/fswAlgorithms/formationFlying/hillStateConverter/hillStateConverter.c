@@ -34,6 +34,7 @@
  */
 void SelfInit_hillStateConverter(HillStateConverterConfig *configData, int64_t moduleID)
 {
+    (void) moduleID;
     HillRelStateMsg_C_init(&configData->hillStateOutMsg);
 }
 
@@ -45,6 +46,8 @@ void SelfInit_hillStateConverter(HillStateConverterConfig *configData, int64_t m
 */
 void Reset_hillStateConverter(HillStateConverterConfig *configData, uint64_t callTime, int64_t moduleID)
 {
+    (void) callTime;
+    (void) moduleID;
     // check if the required input messages are included
     if (!NavTransMsg_C_isLinked(&configData->chiefStateInMsg)) {
         _bskError(configData->bskLogger, "Error: hillStateConverter.chiefStateInMsg wasn't connected.");

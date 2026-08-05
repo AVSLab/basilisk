@@ -52,6 +52,7 @@ PinholeCamera::~PinholeCamera()
 /*! Resets the module.*/
 void PinholeCamera::Reset(uint64_t CurrentSimNanos)
 {
+    (void) CurrentSimNanos;
     /* Get number of landmarks */
     this->n = int(this->r_LP_P.size());
 

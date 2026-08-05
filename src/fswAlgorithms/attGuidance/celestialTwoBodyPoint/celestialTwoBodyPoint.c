@@ -34,6 +34,7 @@
 void SelfInit_celestialTwoBodyPoint(celestialTwoBodyPointConfig *configData,
     int64_t moduleID)
 {
+    (void) moduleID;
     AttRefMsg_C_init(&configData->attRefOutMsg);
     return;
 
@@ -42,6 +43,8 @@ void SelfInit_celestialTwoBodyPoint(celestialTwoBodyPointConfig *configData,
 
 void Reset_celestialTwoBodyPoint(celestialTwoBodyPointConfig *configData, uint64_t callTime, int64_t moduleID)
 {
+    (void) callTime;
+    (void) moduleID;
     configData->secCelBodyIsLinked = EphemerisMsg_C_isLinked(&configData->secCelBodyInMsg);
 
     // check if required input messages have been included
@@ -84,6 +87,7 @@ void Update_celestialTwoBodyPoint(celestialTwoBodyPointConfig *configData,
  */
 void parseInputMessages(celestialTwoBodyPointConfig *configData, int64_t moduleID)
 {
+    (void) moduleID;
     NavTransMsgPayload navData;
     EphemerisMsgPayload primPlanet;
     EphemerisMsgPayload secPlanet;
@@ -141,6 +145,7 @@ void parseInputMessages(celestialTwoBodyPointConfig *configData, int64_t moduleI
  */
 void computeCelestialTwoBodyPoint(celestialTwoBodyPointConfig *configData, uint64_t callTime)
 {
+    (void) callTime;
     double temp3[3];        /* Temporary vector */
     double temp3_1[3];      /* Temporary vector 1 */
     double temp3_2[3];      /* Temporary vector 2 */

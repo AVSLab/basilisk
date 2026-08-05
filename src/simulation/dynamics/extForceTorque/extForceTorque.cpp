@@ -49,6 +49,7 @@ ExtForceTorque::~ExtForceTorque()
  */
 void ExtForceTorque::Reset(uint64_t CurrentSimNanos)
 {
+    (void) CurrentSimNanos;
     /* zero the input messages */
     this->incomingCmdTorqueBuffer = this->cmdTorqueInMsg.zeroMsgPayload;
     this->incomingCmdForceBodyBuffer = this->cmdForceBodyInMsg.zeroMsgPayload;
@@ -58,6 +59,7 @@ void ExtForceTorque::Reset(uint64_t CurrentSimNanos)
 
 void ExtForceTorque::linkInStates(DynParamManager& statesIn)
 {
+    (void) statesIn;
 
 }
 
@@ -68,6 +70,7 @@ void ExtForceTorque::linkInStates(DynParamManager& statesIn)
  */
 void ExtForceTorque::writeOutputMessages(uint64_t currentClock)
 {
+    (void) currentClock;
 
 }
 
@@ -96,6 +99,8 @@ void ExtForceTorque::readInputMessages()
  */
 void ExtForceTorque::computeForceTorque(double integTime, double timeStep)
 {
+    (void) integTime;
+    (void) timeStep;
 	Eigen::Vector3d cmdVec;
 
     /* add the cmd force in inertial frame components set via Python */
@@ -127,5 +132,6 @@ void ExtForceTorque::computeForceTorque(double integTime, double timeStep)
 
 void ExtForceTorque::UpdateState(uint64_t CurrentSimNanos)
 {
+    (void) CurrentSimNanos;
     this->readInputMessages();
 }

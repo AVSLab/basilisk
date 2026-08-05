@@ -27,6 +27,7 @@
 
 void MJSystemMassMatrix::Reset(uint64_t CurrentSimNanos)
 {
+    (void) CurrentSimNanos;
     if (!scene) {
         bskLogger.bskError("MJSystemMassMatrix: scene pointer not set!");
     }

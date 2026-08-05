@@ -29,6 +29,7 @@
  */
 void SelfInit_vehicleConfigData(VehConfigInputData *configData, int64_t moduleID)
 {
+    (void) moduleID;
     VehicleConfigMsg_C_init(&configData->vecConfigOutMsg);
 }
 
@@ -63,6 +64,9 @@ void Reset_vehicleConfigData(VehConfigInputData *configData, uint64_t callTime, 
  */
 void Update_vehicleConfigData(VehConfigInputData *configData, uint64_t callTime, int64_t moduleID)
 {
+    (void) configData;
+    (void) callTime;
+    (void) moduleID;
     /*! Nothing done in this method.  Make sure this is still true!*/
     return;
 }

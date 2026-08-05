@@ -32,6 +32,7 @@
  */
 void SelfInit_sunlineEKF(sunlineEKFConfig *configData, int64_t moduleID)
 {
+    (void) moduleID;
     NavAttMsg_C_init(&configData->navStateOutMsg);
     SunlineFilterMsg_C_init(&configData->filtDataOutMsg);
 }
@@ -47,6 +48,7 @@ void SelfInit_sunlineEKF(sunlineEKFConfig *configData, int64_t moduleID)
 void Reset_sunlineEKF(sunlineEKFConfig *configData, uint64_t callTime,
                       int64_t moduleID)
 {
+    (void) moduleID;
 
     CSSConfigMsgPayload cssConfigInBuffer;
 
@@ -327,6 +329,7 @@ void sunlineDynMatrix(double states[SKF_N_STATES], double dt, double *dynMat)
  */
 void sunlineMeasUpdate(sunlineEKFConfig *configData, double updateTime)
 {
+    (void) updateTime;
     /*! - Compute the valid observations and the measurement model for all observations*/
     sunlineHMatrixYMeas(configData->state, (int) configData->numCSSTotal, configData->cssSensorInBuffer.CosValue, configData->sensorUseThresh, configData->cssNHat_B, configData->CBias, configData->obs, configData->yMeas, &(configData->numObs), configData->measMat);
 

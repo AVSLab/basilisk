@@ -43,6 +43,7 @@
  */
 void SelfInit_eulerRotation(eulerRotationConfig *configData, int64_t moduleID)
 {
+    (void) moduleID;
     AttRefMsg_C_init(&configData->attRefOutMsg);
 }
 
@@ -55,6 +56,8 @@ void SelfInit_eulerRotation(eulerRotationConfig *configData, int64_t moduleID)
  */
 void Reset_eulerRotation(eulerRotationConfig *configData, uint64_t callTime, int64_t moduleID)
 {
+    (void) callTime;
+    (void) moduleID;
     // check if the required input message is included
     if (!AttRefMsg_C_isLinked(&configData->attRefInMsg)) {
         _bskError(configData->bskLogger, "Error: eulerRotation.attRefInMsg wasn't connected.");

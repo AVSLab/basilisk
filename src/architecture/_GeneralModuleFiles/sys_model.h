@@ -41,10 +41,14 @@ public:
     virtual void IntegratedInit(){};
 
     /** Reads incoming messages, performs module actions, writes output messages */
-    virtual void UpdateState(uint64_t CurrentSimNanos){};
+    virtual void UpdateState(uint64_t CurrentSimNanos){
+        (void) CurrentSimNanos;
+    };
 
     /** Called at simulation initialization, resets module to specified time */
-    virtual void Reset(uint64_t CurrentSimNanos){};
+    virtual void Reset(uint64_t CurrentSimNanos){
+        (void) CurrentSimNanos;
+    };
 
     std::string ModelTag = "";     //!< Basilisk module tag name
     uint64_t CallCounts = 0;       //!< Counts on the model being called

@@ -119,6 +119,7 @@ void MagneticFieldBase::Reset(uint64_t CurrentSimNanos)
  */
 void MagneticFieldBase::customReset(uint64_t CurrentClock)
 {
+    (void) CurrentClock;
     return;
 }
 
@@ -152,6 +153,7 @@ void MagneticFieldBase::writeMessages(uint64_t CurrentClock)
  */
 void MagneticFieldBase::customWriteMessages(uint64_t CurrentClock)
 {
+    (void) CurrentClock;
     return;
 }
 

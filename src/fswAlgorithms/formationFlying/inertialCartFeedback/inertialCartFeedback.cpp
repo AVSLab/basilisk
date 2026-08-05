@@ -26,6 +26,7 @@ void InertialCartFeedback::SelfInit()
 
 void InertialCartFeedback::Reset(uint64_t CurrentSimNanos)
 {
+    (void) CurrentSimNanos;
     if (!this->deputyNavInMsg.isLinked()) {
         bskLogger.bskError("InertialCartFeedback.deputyNavInMsg was not linked.");
     }

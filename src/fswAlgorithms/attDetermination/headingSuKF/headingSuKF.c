@@ -34,6 +34,7 @@
  */
 void SelfInit_headingSuKF(HeadingSuKFConfig *configData, int64_t moduleID)
 {
+    (void) moduleID;
     OpNavMsg_C_init(&configData->opnavDataOutMsg);
     /*! - Create filter states output message which is mostly for debug*/
     HeadingFilterMsg_C_init(&configData->filtDataOutMsg);
@@ -50,6 +51,7 @@ void SelfInit_headingSuKF(HeadingSuKFConfig *configData, int64_t moduleID)
 void Reset_headingSuKF(HeadingSuKFConfig *configData, uint64_t callTime,
                       int64_t moduleID)
 {
+    (void) moduleID;
 
     int32_t i;
     double tempMatrix[HEAD_N_STATES_SWITCH*HEAD_N_STATES_SWITCH];
@@ -406,6 +408,7 @@ void headingSuKFMeasModel(HeadingSuKFConfig *configData)
  */
 void headingSuKFMeasUpdate(HeadingSuKFConfig *configData, double updateTime)
 {
+    (void) updateTime;
     double yBar[OPNAV_MEAS], syInv[OPNAV_MEAS*OPNAV_MEAS];
     double kMat[HEAD_N_STATES_SWITCH*OPNAV_MEAS];
     double xHat[HEAD_N_STATES_SWITCH], sBarT[HEAD_N_STATES_SWITCH*HEAD_N_STATES_SWITCH], tempYVec[OPNAV_MEAS];

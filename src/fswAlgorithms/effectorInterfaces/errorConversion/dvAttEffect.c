@@ -31,6 +31,7 @@
  */
 void SelfInit_dvAttEffect(dvAttEffectConfig *configData, int64_t moduleID)
 {
+    (void) moduleID;
     uint32_t i;
 
     /*! - Loop over number of thruster blocks and create output messages */

@@ -35,6 +35,7 @@ DentonFluxModel::~DentonFluxModel() = default;
 */
 void DentonFluxModel::Reset(uint64_t CurrentSimNanos)
 {
+    (void) CurrentSimNanos;
     // Check that required input messages are connected
     if (!this->scStateInMsg.isLinked())
     {

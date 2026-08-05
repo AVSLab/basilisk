@@ -30,6 +30,7 @@
  */
 void SelfInit_aggregateNav(NavAggregateData *configData, int64_t moduleID)
 {
+    (void) moduleID;
     NavAttMsg_C_init(&configData->navAttOutMsg);
     NavTransMsg_C_init(&configData->navTransOutMsg);
 }
@@ -43,6 +44,8 @@ void SelfInit_aggregateNav(NavAggregateData *configData, int64_t moduleID)
  */
 void Reset_aggregateNav(NavAggregateData *configData, uint64_t callTime, int64_t moduleID)
 {
+    (void) callTime;
+    (void) moduleID;
 
     /*! - ensure incoming message counters are not larger than MAX_AGG_NAV_MSG */
     if (configData->attMsgCount > MAX_AGG_NAV_MSG) {

@@ -31,6 +31,7 @@
  */
 void SelfInit_attTrackingError(attTrackingErrorConfig *configData, int64_t moduleID)
 {
+    (void) moduleID;
     AttGuidMsg_C_init(&configData->attGuidOutMsg);
 }
 
@@ -43,6 +44,8 @@ void SelfInit_attTrackingError(attTrackingErrorConfig *configData, int64_t modul
  */
 void Reset_attTrackingError(attTrackingErrorConfig *configData, uint64_t callTime, int64_t moduleID)
 {
+    (void) callTime;
+    (void) moduleID;
     // check if the required input messages are included
     if (!AttRefMsg_C_isLinked(&configData->attRefInMsg)) {
         _bskError(configData->bskLogger, "Error: attTrackingError.attRefInMsg wasn't connected.");

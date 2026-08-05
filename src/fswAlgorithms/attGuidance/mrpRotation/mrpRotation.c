@@ -36,6 +36,7 @@
  */
 void SelfInit_mrpRotation(mrpRotationConfig *configData, int64_t moduleID)
 {
+    (void) moduleID;
     AttRefMsg_C_init(&configData->attRefOutMsg);
 
     return;
@@ -50,6 +51,8 @@ void SelfInit_mrpRotation(mrpRotationConfig *configData, int64_t moduleID)
  */
 void Reset_mrpRotation(mrpRotationConfig *configData, uint64_t callTime, int64_t moduleID)
 {
+    (void) callTime;
+    (void) moduleID;
     // check if the required input messages are included
     if (!AttRefMsg_C_isLinked(&configData->attRefInMsg)) {
         _bskError(configData->bskLogger, "Error: mrpRotation.attRefInMsg wasn't connected.");

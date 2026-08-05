@@ -65,6 +65,7 @@ SpinningBodyOneDOFStateEffector::~SpinningBodyOneDOFStateEffector()
 /*! This method is used to reset the module. */
 void SpinningBodyOneDOFStateEffector::Reset(uint64_t CurrentClock)
 {
+    (void) CurrentClock;
     // Normalize the sHat vector
     if (this->sHat_S.norm() > 0.01) {
         this->sHat_S.normalize();
@@ -199,6 +200,7 @@ void SpinningBodyOneDOFStateEffector::registerProperties(DynParamManager& states
  spacecraft */
 void SpinningBodyOneDOFStateEffector::updateEffectorMassProps(double integTime)
 {
+    (void) integTime;
     // Give the mass of the spinning body to the effProps mass
     this->effProps.mEff = this->mass;
 
@@ -415,6 +417,7 @@ void SpinningBodyOneDOFStateEffector::computeDerivatives(double integTime,
                                                          Eigen::Vector3d omegaDot_BN_B,
                                                          Eigen::MRPd sigma_BN)
 {
+    (void) integTime;
     // Update dcm_BN
     this->sigma_BN = sigma_BN;
     this->dcm_BN = (this->sigma_BN.toRotationMatrix()).transpose();
@@ -442,6 +445,7 @@ void SpinningBodyOneDOFStateEffector::updateEnergyMomContributions(double integT
                                                                    double & rotEnergyContr,
                                                                    Eigen::Vector3d omega_BN_B)
 {
+    (void) integTime;
     // Update omega_BN_B and omega_SN_B
     this->omega_BN_B = omega_BN_B;
     this->omegaTilde_BN_B = eigenTilde(this->omega_BN_B);

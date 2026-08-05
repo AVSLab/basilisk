@@ -2,6 +2,7 @@
 
 Eigen::VectorXd SingleActuatorLTI::readInput(uint64_t CurrentSimNanos)
 {
+    (void) CurrentSimNanos;
     return Eigen::VectorXd::Constant(1, this->inMsg().input);
 }
 

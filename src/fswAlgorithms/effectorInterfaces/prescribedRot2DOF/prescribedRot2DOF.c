@@ -33,6 +33,7 @@
  */
 void SelfInit_prescribedRot2DOF(PrescribedRot2DOFConfig *configData, int64_t moduleID)
 {
+    (void) moduleID;
     PrescribedRotationMsg_C_init(&configData->prescribedRotationOutMsg);
 }
 
@@ -46,6 +47,7 @@ void SelfInit_prescribedRot2DOF(PrescribedRot2DOFConfig *configData, int64_t mod
 */
 void Reset_prescribedRot2DOF(PrescribedRot2DOFConfig *configData, uint64_t callTime, int64_t moduleID)
 {
+    (void) moduleID;
     // Check if the required input messages are linked */
     if (!HingedRigidBodyMsg_C_isLinked(&configData->spinningBodyRef1InMsg)) {
         _bskError(configData->bskLogger, "prescribedRot2DOF.spinningBodyRef1InMsg wasn't connected.");

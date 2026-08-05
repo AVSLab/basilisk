@@ -43,6 +43,7 @@ BoreAngCalc::~BoreAngCalc() = default;
  */
 void BoreAngCalc::Reset(uint64_t CurrentSimNanos)
 {
+    (void) CurrentSimNanos;
     // check if required input messages have not been included
     if (!this->scStateInMsg.isLinked()) {
         bskLogger.bskError("boreAngCalc.scStateInMsg was not linked.");

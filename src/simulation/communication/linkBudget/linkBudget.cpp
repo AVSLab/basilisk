@@ -70,6 +70,7 @@ LinkBudget::LinkBudget()
 */
 void LinkBudget::Reset(uint64_t CurrentSimNanos)
 {
+    (void) CurrentSimNanos;
     // check that required input messages are connected
     if (!this->antennaInPayload_1.isLinked()) {
         bskLogger.bskError("LinkBudget.antennaInPayload_1 was not linked.");
