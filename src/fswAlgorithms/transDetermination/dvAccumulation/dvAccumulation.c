@@ -110,7 +110,7 @@ void dvAccumulation_QuickSort (AccPktDataMsgPayload *A, int start, int end)
     int stack[MAX_ACC_BUF_PKT];
     if((end-start + 1) > MAX_ACC_BUF_PKT)
     {
-        BSK_PRINT(MSG_ERROR,"dvAccumulation_QuickSort: Stack insufficiently sized for quick-sort somehow.");
+        BSK_PRINT(MSG_ERROR, "%s", "dvAccumulation_QuickSort: Stack insufficiently sized for quick-sort somehow.");
     }
 
     /*! - initialize the index of the top of the stack */
