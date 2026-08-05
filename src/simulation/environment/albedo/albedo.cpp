@@ -230,7 +230,7 @@ void Albedo::evaluatePlanet(const SCStatesMsgPayload&         /*scMsg*/,
     const Eigen::Vector3d r_PN_N(planetMsg.PositionVector);  // [m]
     const Eigen::Vector3d r_SP_N = this->r_SN_N - r_PN_N;  // [m]
 
-    for (int instIdx = 0; instIdx < static_cast<int>(this->albOutMsgs.size()); instIdx++) {
+    for (size_t instIdx = 0; instIdx < this->albOutMsgs.size(); instIdx++) {
         double alb_I = 0.0, alb_Imax = 0.0;
         const Eigen::Vector3d r_IB_N = this->dcm_BN.transpose() * this->r_IB_Bs[instIdx];  // [m]
         const Eigen::Vector3d r_IP_N = r_IB_N + this->r_BN_N - r_PN_N;  // [m]

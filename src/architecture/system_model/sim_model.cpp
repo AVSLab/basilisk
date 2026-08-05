@@ -522,9 +522,7 @@ void SimModel::assignRemainingProcs() {
  @param threadSel The thread index in the thread-pool that the process gets added
                   to
  */
-void SimModel::addProcessToThread(SysProcess *newProc, uint64_t threadSel)
+void SimModel::addProcessToThread(SysProcess *newProc, size_t threadSel)
 {
-    std::vector<SimThreadExecution*>::iterator thrIt;
-    thrIt=threadList.begin() + threadSel;
-    (*thrIt)->addNewProcess(newProc);
+    this->threadList.at(threadSel)->addNewProcess(newProc);
 }

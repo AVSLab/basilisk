@@ -387,7 +387,8 @@ bool SpaceWeatherData::computeSwState(uint64_t CurrentSimNanos, std::array<doubl
         if (dayOffset > 3 || apBin >= static_cast<int>(numApPerDay)) {
             return false;
         }
-        swState[1 + apIndex] = apByDay[dayOffset][static_cast<size_t>(apBin)];
+        swState[static_cast<size_t>(1 + apIndex)] =
+            apByDay[static_cast<size_t>(dayOffset)][static_cast<size_t>(apBin)];
     }
     swState[21] = day0.f107ObsCenter81;
     swState[22] = dayMinus1.f107Obs;
@@ -450,19 +451,23 @@ SpaceWeatherData::DailySpaceWeather SpaceWeatherData::parseWeatherLine(const std
     if (static_cast<int>(values.size()) <= maxIndex) {
         return row;
     }
+    const size_t datePosition = static_cast<size_t>(dateIndex);
+    const size_t apAvgPosition = static_cast<size_t>(apAvgIndex);
+    const size_t f107ObsPosition = static_cast<size_t>(f107ObsIndex);
+    const size_t f107CenterPosition = static_cast<size_t>(f107CenterIndex);
 
     int year = 0;
     int month = 0;
     int day = 0;
     char extra;
-    if (std::sscanf(values[dateIndex].c_str(), "%d-%d-%d%c", &year, &month, &day, &extra) != 3) {
+    if (std::sscanf(values[datePosition].c_str(), "%d-%d-%d%c", &year, &month, &day, &extra) != 3) {
         return row;
     }
     if (month < 1 || month > 12 || day < 1 || day > daysInMonth(year, month)) {
         return row;
     }
 
-    if (values[apAvgIndex].empty() || values[f107ObsIndex].empty() || values[f107CenterIndex].empty()) {
+    if (values[apAvgPosition].empty() || values[f107ObsPosition].empty() || values[f107CenterPosition].empty()) {
         return row;
     }
 
@@ -473,7 +478,7 @@ SpaceWeatherData::DailySpaceWeather SpaceWeatherData::parseWeatherLine(const std
         if (keyIndex < 0 || static_cast<int>(values.size()) <= keyIndex) {
             return row;
         }
-        if (values[keyIndex].empty()) {
+        if (values[static_cast<size_t>(keyIndex)].empty()) {
             return row;
         }
     }
@@ -482,14 +487,14 @@ SpaceWeatherData::DailySpaceWeather SpaceWeatherData::parseWeatherLine(const std
         for (uint64_t apIndex = 0U; apIndex < numApPerDay; apIndex++) {
             const std::string key = "AP" + std::to_string(apIndex + 1U);
             const int keyIndex = findHeaderIndex(headerColumns, key);
-            apValues[apIndex] = parseDouble(values[keyIndex]);
+            apValues[apIndex] = parseDouble(values[static_cast<size_t>(keyIndex)]);
         }
 
         row.dayNumber = civilToUnixDayNumber(year, static_cast<unsigned>(month), static_cast<unsigned>(day));
         row.ap3Hr = apValues;
-        row.apAvg = parseDouble(values[apAvgIndex]);
-        row.f107Obs = parseDouble(values[f107ObsIndex]);
-        row.f107ObsCenter81 = parseDouble(values[f107CenterIndex]);
+        row.apAvg = parseDouble(values[apAvgPosition]);
+        row.f107Obs = parseDouble(values[f107ObsPosition]);
+        row.f107ObsCenter81 = parseDouble(values[f107CenterPosition]);
     } catch (const std::invalid_argument&) {
         return row;
     } catch (const std::out_of_range&) {

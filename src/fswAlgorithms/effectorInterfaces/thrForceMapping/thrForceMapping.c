@@ -107,7 +107,7 @@ void Reset_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime,
  */
 void Update_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime, int64_t moduleID)
 {
-    int         counterPosForces;             /* []      counter for number of positive thruster forces */
+    uint32_t    counterPosForces;             /* []      counter for number of positive thruster forces */
     double      F[MAX_EFF_CNT];               /* [N]     vector of commanded thruster forces */
     double      Fbar[MAX_EFF_CNT];            /* [N]     vector of intermediate thruster forces */
     double      D[3][MAX_EFF_CNT];            /* [m]     mapping matrix from thruster forces to body torque */

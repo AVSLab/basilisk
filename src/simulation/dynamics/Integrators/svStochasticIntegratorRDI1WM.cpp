@@ -36,13 +36,15 @@ void svStochasticIntegratorRDI1WM::integrate(double currentTime, double timeStep
     const ExtendedStateVector currentState = ExtendedStateVector::fromStates(dynPtrs);
     const std::vector<StateIdToIndexMap>& maps = noiseIndexMaps();
     const size_t m = maps.size();
+    const Eigen::Index noiseCount = static_cast<Eigen::Index>(m);
 
     const GaussianNoiseSample sample = this->rvGenerator->generate(m, timeStep);
 
     // Three-point distributed increment per noise source.
-    Eigen::VectorXd Ihat(m);
+    Eigen::VectorXd Ihat(noiseCount);
     for (size_t k = 0; k < m; k++) {
-        Ihat(k) = stochasticWeakRV::threePoint(sample.dW(k), timeStep);
+        const Eigen::Index eigenK = static_cast<Eigen::Index>(k);
+        Ihat(eigenK) = stochasticWeakRV::threePoint(sample.dW(eigenK), timeStep);
     }
 
     // Stage 0.

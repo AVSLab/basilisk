@@ -37,7 +37,7 @@ namespace
     {
         if (joints.size() < 3) return false;
 
-        size_t idx = 0;
+        Eigen::Index idx = 0;
         for (auto&& joint : joints)
         {
             if (idx == 3) break;
@@ -133,7 +133,7 @@ void MJBody::configure(const mjModel* mujocoModel)
     }
 
     // Seed this body's entry of the scene's bulk mass state from the model.
-    this->getSpec().getScene().getMassState()->state(this->getId()) =
+    this->getSpec().getScene().getMassState()->state(static_cast<Eigen::Index>(this->getId())) =
         mujocoModel->body_mass[this->getId()];
 }
 
@@ -184,7 +184,7 @@ void MJBody::setPosition(const Eigen::Vector3d& position)
         this->freeJoint.value().setPosition(position);
     } else if (areJoints3DTranslation(scalarJoints))
     {
-        size_t idx = 0;
+        Eigen::Index idx = 0;
         for (auto&& joint : scalarJoints)
         {
             if (idx == 3) break;
@@ -202,7 +202,7 @@ void MJBody::setVelocity(const Eigen::Vector3d& velocity)
         this->freeJoint.value().setVelocity(velocity);
     } else if (areJoints3DTranslation(scalarJoints))
     {
-        size_t idx = 0;
+        Eigen::Index idx = 0;
         for (auto&& joint : scalarJoints)
         {
             if (idx == 3) break;
@@ -254,7 +254,7 @@ void MJBody::writeStateDependentOutputMessages(uint64_t CurrentSimNanos)
 double MJBody::getMass()
 {
     // This body's mass lives at its body id in the scene's bulk mass state.
-    return this->getSpec().getScene().getMassState()->state(this->getId());
+    return this->getSpec().getScene().getMassState()->state(static_cast<Eigen::Index>(this->getId()));
 }
 
 void MJBody::updateMujocoModelFromMassProps(mjModel* m)
@@ -288,7 +288,8 @@ void MJBody::updateMassPropsDerivative()
     if (this->derivativeMassPropertiesInMsg.isLinked()) {
         auto deriv = this->derivativeMassPropertiesInMsg();
         // Write into this body's entry of the bulk mass state derivative.
-        this->getSpec().getScene().getMassState()->stateDeriv(this->getId()) = deriv.massSC;
+        this->getSpec().getScene().getMassState()->stateDeriv(static_cast<Eigen::Index>(this->getId())) =
+            deriv.massSC;
     }
 }
 

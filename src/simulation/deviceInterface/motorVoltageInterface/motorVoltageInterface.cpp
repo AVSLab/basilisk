@@ -69,8 +69,10 @@ void MotorVoltageInterface::readInputMessages()
 void MotorVoltageInterface::computeMotorTorque()
 {
     this->outputTorqueBuffer = this->motorTorqueOutMsg.zeroMsgPayload;
-    for (uint64_t i=0; i < MAX_EFF_CNT; i++) {
-        this->outputTorqueBuffer.motorTorque[i] = this->inputVoltageBuffer.voltage[i] * this->voltage2TorqueGain(i) * this->scaleFactor(i) + this->bias(i);
+    for (size_t i = 0; i < MAX_EFF_CNT; i++) {
+        const Eigen::Index eigenIndex = static_cast<Eigen::Index>(i);
+        this->outputTorqueBuffer.motorTorque[i] = this->inputVoltageBuffer.voltage[i]
+            * this->voltage2TorqueGain(eigenIndex) * this->scaleFactor(eigenIndex) + this->bias(eigenIndex);
     }
     return;
 }

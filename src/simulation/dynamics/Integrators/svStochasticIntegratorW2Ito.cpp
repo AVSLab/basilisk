@@ -48,6 +48,7 @@ void svStochasticIntegratorW2Ito::integrate(double currentTime, double timeStep)
     const ExtendedStateVector currentState = ExtendedStateVector::fromStates(dynPtrs);
     const std::vector<StateIdToIndexMap>& maps = noiseIndexMaps();
     const size_t m = maps.size();
+    const Eigen::Index noiseCount = static_cast<Eigen::Index>(m);
 
     const GaussianNoiseSample sample = this->rvGenerator->generate(m, timeStep);
     const double h = timeStep;
@@ -65,14 +66,16 @@ void svStochasticIntegratorW2Ito::integrate(double currentTime, double timeStep)
     const double eta1 = (m > 0) ? stochasticWeakRV::twoPoint(sample.dZ(0), 1.0) : 1.0;
     const double eta2 = (m > 1) ? stochasticWeakRV::twoPoint(sample.dZ(1), 1.0) : 0.0;
     const double xi = sqh * eta1;
-    Eigen::VectorXd _dW(m), Ikk(m);
+    Eigen::VectorXd _dW(noiseCount), Ikk(noiseCount);
     for (size_t k = 0; k < m; k++) {
-        _dW(k) = stochasticWeakRV::threePoint(sample.dW(k), h);
-        Ikk(k) = (_dW(k) * _dW(k) / xi - xi) / 2.0;
+        const Eigen::Index eigenK = static_cast<Eigen::Index>(k);
+        _dW(eigenK) = stochasticWeakRV::threePoint(sample.dW(eigenK), h);
+        Ikk(eigenK) = (_dW(eigenK) * _dW(eigenK) / xi - xi) / 2.0;
     }
     auto Ikl = [&](size_t k, size_t l) -> double {
-        if (k < l) return 0.5 * (_dW(l) - eta2 * _dW(l));
-        return 0.5 * (_dW(l) + eta2 * _dW(l)); // k > l
+        const Eigen::Index eigenL = static_cast<Eigen::Index>(l);
+        if (k < l) return 0.5 * (_dW(eigenL) - eta2 * _dW(eigenL));
+        return 0.5 * (_dW(eigenL) + eta2 * _dW(eigenL)); // k > l
     };
 
     // Stage function evaluations. f_H0[i] = f(H_i^(0)); g_Hk[k][i] = g_k(H_i^(k)).
@@ -107,10 +110,13 @@ void svStochasticIntegratorW2Ito::integrate(double currentTime, double timeStep)
                 if (l == k) continue;
                 scaledSum(c.B2.at(i), g_Hk.at(l), i).setDiffusions(dynPtrs, maps.at(l));
             }
-            Eigen::VectorXd step(m);
-            for (size_t l = 0; l < m; l++) step(l) = (l == k) ? xi : Ikl(k, l);
+            Eigen::VectorXd step(noiseCount);
+            for (size_t l = 0; l < m; l++) {
+                step(static_cast<Eigen::Index>(l)) = (l == k) ? xi : Ikl(k, l);
+            }
             propagateState(timeStep, step, maps);
-            g_Hk.at(k).at(i) = computeDiffusion(currentTime + c.c1(i) * timeStep, timeStep, maps.at(k));
+            g_Hk.at(k).at(i) =
+                computeDiffusion(currentTime + c.c1(i) * timeStep, timeStep, maps.at(k));
         }
     }
 

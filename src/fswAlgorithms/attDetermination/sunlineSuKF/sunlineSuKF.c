@@ -312,7 +312,8 @@ void sunlineStateProp(double *stateInOut, double *b_Vec, double dt)
 */
 int sunlineSuKFTimeUpdate(SunlineSuKFConfig *configData, double updateTime)
 {
-    int Index, badUpdate;
+    size_t Index;
+    int badUpdate;
 	double sBarT[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];
 	double xComp[SKF_N_STATES_SWITCH], AT[(2 * SKF_N_STATES_SWITCH + SKF_N_STATES_SWITCH)*SKF_N_STATES_SWITCH];
 	double aRow[SKF_N_STATES_SWITCH], rAT[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH], xErr[SKF_N_STATES_SWITCH];
@@ -339,20 +340,20 @@ int sunlineSuKFTimeUpdate(SunlineSuKFConfig *configData, double updateTime)
                sBarT);
     /*! - For each Sigma point, apply sBar-based error, propagate forward, and scale by Wm just like 0th.
           Note that we perform +/- sigma points simultaneously in loop to save loop values.*/
-	for (uint64_t i = 0; i<configData->countHalfSPs; i++)
+	for (size_t i = 0; i<configData->countHalfSPs; i++)
 	{
-		Index = (int) i + 1;
-		spPtr = &(configData->SP[Index*(int)configData->numStates]);
-		vCopy(&sBarT[i*(int)configData->numStates], configData->numStates, spPtr);
+		Index = i + 1;
+		spPtr = &(configData->SP[Index * configData->numStates]);
+		vCopy(&sBarT[i * configData->numStates], configData->numStates, spPtr);
 		vScale(configData->gamma, spPtr, configData->numStates, spPtr);
 		vAdd(spPtr, configData->numStates, configData->state, spPtr);
 		sunlineStateProp(spPtr, configData->bVec_B, configData->dt);
 		vScale(configData->wM[Index], spPtr, configData->numStates, xComp);
 		vAdd(xComp, configData->numStates, configData->xBar, configData->xBar);
 
-		Index = (int) i + 1 + (int) configData->countHalfSPs;
-        spPtr = &(configData->SP[Index*(int)configData->numStates]);
-        vCopy(&sBarT[i*(int) configData->numStates], configData->numStates, spPtr);
+		Index = i + 1 + configData->countHalfSPs;
+        spPtr = &(configData->SP[Index * configData->numStates]);
+        vCopy(&sBarT[i * configData->numStates], configData->numStates, spPtr);
         vScale(-configData->gamma, spPtr, configData->numStates, spPtr);
         vAdd(spPtr, configData->numStates, configData->state, spPtr);
         sunlineStateProp(spPtr, configData->bVec_B, configData->dt);
@@ -365,15 +366,15 @@ int sunlineSuKFTimeUpdate(SunlineSuKFConfig *configData, double updateTime)
 	/*! - Assemble the AT matrix.  Note that this matrix is the internals of
           the qr decomposition call in the source design documentation.  It is
           the inside of equation 20 in that document*/
-	for (uint64_t i = 0; i<2 * configData->countHalfSPs; i++)
+	for (size_t i = 0; i<2 * configData->countHalfSPs; i++)
 	{
 
         vScale(-1.0, configData->xBar, configData->numStates, aRow);
         vAdd(aRow, configData->numStates,
-             &(configData->SP[(i+1)*(int) configData->numStates]), aRow);
+             &(configData->SP[(i + 1) * configData->numStates]), aRow);
         if (configData->wC[i+1] <0){return -1;}
         vScale(sqrt(configData->wC[i+1]), aRow, configData->numStates, aRow);
-		memcpy((void *)&AT[i*(int) configData->numStates], (void *)aRow,
+		memcpy((void *)&AT[i * configData->numStates], (void *)aRow,
 			configData->numStates*sizeof(double));
 	}
 

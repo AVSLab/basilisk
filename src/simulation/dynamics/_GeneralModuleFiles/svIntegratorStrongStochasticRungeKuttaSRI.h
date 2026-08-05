@@ -175,6 +175,7 @@ void svIntegratorStrongStochasticRungeKuttaSRI<numberStages>::integrate(double c
     // Map (ExtendedStateId -> local noise index) for each of the m noise sources (cached).
     const std::vector<StateIdToIndexMap>& stateIdToNoiseIndexMaps = noiseIndexMaps();
     const size_t m = stateIdToNoiseIndexMaps.size();
+    const Eigen::Index noiseCount = static_cast<Eigen::Index>(m);
 
     // Draw the random variables for this step (needs dW and dZ per noise source).
     const GaussianNoiseSample sample = this->rvGenerator->generate(m, timeStep);
@@ -186,13 +187,16 @@ void svIntegratorStrongStochasticRungeKuttaSRI<numberStages>::integrate(double c
     const double sqrt3 = std::sqrt(3.0);
 
     // Iterated-integral approximations, one entry per noise source.
-    Eigen::VectorXd chi1(m); // I_(1,1)/sqrt(h)
-    Eigen::VectorXd chi2(m); // I_(1,0)/h
-    Eigen::VectorXd chi3(m); // I_(1,1,1)/h
+    Eigen::VectorXd chi1(noiseCount); // I_(1,1)/sqrt(h)
+    Eigen::VectorXd chi2(noiseCount); // I_(1,0)/h
+    Eigen::VectorXd chi3(noiseCount); // I_(1,1,1)/h
     for (size_t k = 0; k < m; k++) {
-        chi1(k) = (dW(k) * dW(k) - h) / (2.0 * sqh);
-        chi2(k) = (dW(k) + dZ(k) / sqrt3) / 2.0;
-        chi3(k) = (dW(k) * dW(k) * dW(k) - 3.0 * dW(k) * h) / (6.0 * h);
+        const Eigen::Index eigenK = static_cast<Eigen::Index>(k);
+        chi1(eigenK) = (dW(eigenK) * dW(eigenK) - h) / (2.0 * sqh);
+        chi2(eigenK) = (dW(eigenK) + dZ(eigenK) / sqrt3) / 2.0;
+        chi3(eigenK) =
+            (dW(eigenK) * dW(eigenK) * dW(eigenK) - 3.0 * dW(eigenK) * h) /
+            (6.0 * h);
     }
 
     // f_H0[i]      = f(t_n + c0[i] h, H0[i])                  for i = 0..s-1
@@ -233,8 +237,8 @@ void svIntegratorStrongStochasticRungeKuttaSRI<numberStages>::integrate(double c
                 .setDiffusions(dynPtrs, stateIdToNoiseIndexMaps.at(k));
 
             // Only noise source k participates (pseudo step sqrt(h)); all others zero.
-            Eigen::VectorXd pseudoTimeStep = Eigen::VectorXd::Zero(m);
-            pseudoTimeStep(k) = sqh;
+            Eigen::VectorXd pseudoTimeStep = Eigen::VectorXd::Zero(noiseCount);
+            pseudoTimeStep(static_cast<Eigen::Index>(k)) = sqh;
             propagateState(timeStep, pseudoTimeStep, stateIdToNoiseIndexMaps);
 
             g_Hk.at(k).at(i) =

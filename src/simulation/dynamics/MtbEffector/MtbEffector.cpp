@@ -132,8 +132,11 @@ void MtbEffector::computeForceTorque(double integTime, double timeStep)
      * Transpose the row-major payload into column-major storage for the Eigen map.
      */
     double GtColMajor[3*MAX_EFF_CNT];
-    mSetZero(GtColMajor, 3, this->mtbConfigParams.numMTB);
-    mTranspose(this->mtbConfigParams.GtMatrix_B, 3, this->mtbConfigParams.numMTB, GtColMajor);
+    mSetZero(GtColMajor, 3, static_cast<size_t>(this->mtbConfigParams.numMTB));
+    mTranspose(this->mtbConfigParams.GtMatrix_B,
+               3,
+               static_cast<size_t>(this->mtbConfigParams.numMTB),
+               GtColMajor);
     const Eigen::Map<const Eigen::Matrix3Xd> GtMatrix_B(GtColMajor, 3, this->mtbConfigParams.numMTB);
 
     /* check if dipole commands are saturating the effector */

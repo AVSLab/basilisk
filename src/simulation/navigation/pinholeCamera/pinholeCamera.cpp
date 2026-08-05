@@ -104,8 +104,8 @@ void PinholeCamera::loopLandmarks()
     /* Loop through landmarks */
     for (int i = 0; i < this->n; i++){
         /* Extract ith landmark position and its normal */
-        rLmk = this->r_LP_P[i];
-        nLmk = this->nL_P[i];
+        rLmk = this->r_LP_P[static_cast<size_t>(i)];
+        nLmk = this->nL_P[static_cast<size_t>(i)];
 
         /* Compute pixel and check visbility/lighting conditions */
         pLmk = this->computePixel(rLmk);
@@ -254,13 +254,17 @@ void PinholeCamera::writeOutputMessages(uint64_t CurrentClock)
 {
     /* Loop through landmarks */
     for (int i = 0; i < this->n; i++){
+        const size_t landmarkIndex = static_cast<size_t>(i);
         /* Zero the output message buffers */
-        this->landmarkMsgBuffer.at(i) = this->landmarkOutMsgs.at(i)->zeroMsgPayload;
+        this->landmarkMsgBuffer.at(landmarkIndex) =
+            this->landmarkOutMsgs.at(landmarkIndex)->zeroMsgPayload;
 
         /* Fill landmark output messages */
-        this->landmarkMsgBuffer.at(i).isVisible = this->isvisibleLmk(i);
-        eigenMatrixXi2CArray(this->pixelLmk.row(i), this->landmarkMsgBuffer.at(i).pL);
-        this->landmarkOutMsgs.at(i)->write(&this->landmarkMsgBuffer.at(i), this->moduleID, CurrentClock);
+        this->landmarkMsgBuffer.at(landmarkIndex).isVisible = this->isvisibleLmk(i);
+        eigenMatrixXi2CArray(this->pixelLmk.row(i),
+                             this->landmarkMsgBuffer.at(landmarkIndex).pL);
+        this->landmarkOutMsgs.at(landmarkIndex)->write(
+            &this->landmarkMsgBuffer.at(landmarkIndex), this->moduleID, CurrentClock);
     }
 }
 

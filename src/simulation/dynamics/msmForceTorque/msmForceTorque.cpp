@@ -185,8 +185,9 @@ void MsmForceTorque::UpdateState(uint64_t CurrentSimNanos)
     counter = 0;
     for (long unsigned int c=0; c < this->numSat; c++) {
         for (long unsigned int k=0; k < this->radiiList.at(c).size(); k++) {
-            S(counter, counter) = kc/this->radiiList.at(c).at(k);
-            V(counter) = this->volt.at(c);
+            const Eigen::Index eigenCounter = static_cast<Eigen::Index>(counter);
+            S(eigenCounter, eigenCounter) = kc/this->radiiList.at(c).at(k);
+            V(eigenCounter) = this->volt.at(c);
             counter++;
         }
     }
@@ -195,8 +196,10 @@ void MsmForceTorque::UpdateState(uint64_t CurrentSimNanos)
         for (long unsigned int j=0; j < this->numSpheres; j++) {
             if (i != j) {
                 r_ij_N = r_SN_NList.at(i) - r_SN_NList.at(j);
-                S(i,j) = kc / r_ij_N.norm();
-                S(j,i) = S(i,j);
+                const Eigen::Index eigenI = static_cast<Eigen::Index>(i);
+                const Eigen::Index eigenJ = static_cast<Eigen::Index>(j);
+                S(eigenI, eigenJ) = kc / r_ij_N.norm();
+                S(eigenJ, eigenI) = S(eigenI, eigenJ);
             }
         }
     }
@@ -238,7 +241,8 @@ void MsmForceTorque::UpdateState(uint64_t CurrentSimNanos)
                     r_ij = r_ij_N.norm();
                     // check if separation is larger then current MSM sphere radius
                     if (r_ij > this->radiiList.at(c).at(j-i0)) {
-                        force_N -= kc * q(j)*q(i) * r_ij_N/r_ij/r_ij/r_ij;
+                        force_N -= kc * q(static_cast<Eigen::Index>(j)) * q(static_cast<Eigen::Index>(i))
+                            * r_ij_N/r_ij/r_ij/r_ij;
                     } else {
                         bskLogger.bskLog(BSK_WARNING, "MsmForceTorque: spacecraft %lu, sphere %lu is too close to another sphere.", c, j-i0);
                     }
@@ -258,7 +262,8 @@ void MsmForceTorque::UpdateState(uint64_t CurrentSimNanos)
         this->eTorqueOutMsgs.at(c)->write(&torqueMsgBuffer, this->moduleID, CurrentSimNanos);
 
         // store MSM charges to output message
-        chargeMsmMsgBuffer.q = q.segment(i0, i1-i0);
+        chargeMsmMsgBuffer.q = q.segment(static_cast<Eigen::Index>(i0),
+                                         static_cast<Eigen::Index>(i1 - i0));
         this->chargeMsmOutMsgs.at(c)->write(&chargeMsmMsgBuffer, this->moduleID, CurrentSimNanos);
 
         // set the body sphere start counter

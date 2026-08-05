@@ -87,7 +87,11 @@ void Update_dipoleMapping(dipoleMappingConfig *configData, uint64_t callTime, in
     MTBCmdMsgPayload dipoleRequestMtbOutMsgBuffer = MTBCmdMsg_C_zeroMsgPayload();
 
     /*! - Map the requested Body frame dipole request to individual torque rod dipoles.*/
-    mMultV(configData->steeringMatrix, configData->mtbArrayConfigParams.numMTB, 3, dipoleRequestBodyInMsgBuffer.dipole_B, dipoleRequestMtbOutMsgBuffer.mtbDipoleCmds);
+    mMultV(configData->steeringMatrix,
+           (size_t) configData->mtbArrayConfigParams.numMTB,
+           3,
+           dipoleRequestBodyInMsgBuffer.dipole_B,
+           dipoleRequestMtbOutMsgBuffer.mtbDipoleCmds);
 
     /*! - Saturate the dipole commands if necesarry.*/
     for (j = 0; j < configData->mtbArrayConfigParams.numMTB; j++)

@@ -130,7 +130,7 @@ bool HaslamMap::loadHaslamMap() {
     }
 
     // Read temperature data
-    this->brightnessTemperatures.resize(this->npix);
+    this->brightnessTemperatures.resize(static_cast<size_t>(this->npix));
     float nullval = 0.0;
     int anynull;
 
@@ -260,7 +260,7 @@ std::vector<long> HaslamMap::query_disc(double theta0, double phi0, double radiu
 
 double HaslamMap::getPixelTemperature(long ipix) const {
     if (ipix < 0 || ipix >= this->npix) return 0.0;
-    float val = this->brightnessTemperatures[ipix];
+    float val = this->brightnessTemperatures[static_cast<size_t>(ipix)];
     if (val < -1.0e30) return 0.0;  // BAD_DATA sentinel
     return val;
 }

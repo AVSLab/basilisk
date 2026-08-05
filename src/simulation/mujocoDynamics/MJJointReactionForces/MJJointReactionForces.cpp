@@ -55,19 +55,20 @@ void MJJointReactionForces::Reset(uint64_t CurrentSimNanos)
     this->nDOF = static_cast<std::size_t>(model->nv);
 
     // extract the static joint information
-    std::vector<int> bodyTreeIdx(model->nbody, -1);
+    std::vector<int> bodyTreeIdx(static_cast<size_t>(model->nbody), -1);
     int nextTreeIdx = 0;
     for (int b = 1; b < model->nbody; ++b) {
         int root = b;
         while (root > 0 && model->body_parentid[root] != 0) {
             root = model->body_parentid[root];
         }
-        if (bodyTreeIdx[root] == -1) {
-            bodyTreeIdx[root] = nextTreeIdx;
+        const size_t rootIndex = static_cast<size_t>(root);
+        if (bodyTreeIdx[rootIndex] == -1) {
+            bodyTreeIdx[rootIndex] = nextTreeIdx;
             nextTreeIdx++;
         }
 
-        bodyTreeIdx[b] = bodyTreeIdx[root];
+        bodyTreeIdx[static_cast<size_t>(b)] = bodyTreeIdx[rootIndex];
     }
 
     this->jointTreeIdx.clear();
@@ -78,7 +79,7 @@ void MJJointReactionForces::Reset(uint64_t CurrentSimNanos)
         int parentBody = model->jnt_bodyid[j];
         this->jointParentBodyIdx.push_back(parentBody);
 
-        int treeIdx = (parentBody>= 0) ? bodyTreeIdx[parentBody] : -1;
+        int treeIdx = (parentBody>= 0) ? bodyTreeIdx[static_cast<size_t>(parentBody)] : -1;
         this->jointTreeIdx.push_back(treeIdx);
 
         int jt = model->jnt_type[j];

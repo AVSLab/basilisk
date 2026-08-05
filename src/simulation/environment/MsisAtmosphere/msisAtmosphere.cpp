@@ -98,9 +98,9 @@ MsisAtmosphere::~MsisAtmosphere()
  */
 void MsisAtmosphere::customReset(uint64_t CurrentSimNanos)
 {
-    for(int ind = 0; ind < 23; ind++) {
+    for(size_t ind = 0; ind < 23; ind++) {
         if (!this->swDataInMsgs[ind].isLinked()) {
-            bskLogger.bskError("Required MSIS input messages No. %d are not connected.", ind);
+            bskLogger.bskError("Required MSIS input messages No. %zu are not connected.", ind);
         }
     }
 }
@@ -144,7 +144,7 @@ bool MsisAtmosphere::customReadMessages(){
     this->swDataList.clear();
 
     //! Iterate over swData message ids
-    for(int ind = 0; ind < 23; ind++) {
+    for(size_t ind = 0; ind < 23; ind++) {
         tmpSwData = this->swDataInMsgs.at(ind)();
         swRead = this->swDataInMsgs.at(ind).isWritten();
         if (swRead) {

@@ -120,8 +120,9 @@ void JointArrayRefProfiler::UpdateState(uint64_t CurrentSimNanos)
         for (std::size_t i = 0; i < this->jointStatesInMsgs.size(); ++i) {
             ScalarJointStateMsgPayload jointStateIn = this->jointStatesInMsgs[i]();
             ScalarJointStateMsgPayload jointStateDotIn = this->jointStateDotsInMsgs[i]();
-            this->startJointAngles[i] = jointStateIn.state;
-            this->startJointRates[i] = jointStateDotIn.state;
+            const Eigen::Index jointIndex = static_cast<Eigen::Index>(i);
+            this->startJointAngles[jointIndex] = jointStateIn.state;
+            this->startJointRates[jointIndex] = jointStateDotIn.state;
         }
 
         if (this->profileType == "lowPass") {
@@ -166,7 +167,7 @@ void JointArrayRefProfiler::computeLowPassFilter(uint64_t CurrentSimNanos, const
     Eigen::VectorXd prevRefJointAngles = this->refJointAngles;
     Eigen::VectorXd prevRefJointRates = this->refJointRates;
     for (int i = 0; i < this->numHingedJoints; ++i) {
-        const double thetaCmd = desJointStatesIn.states[i];
+        const double thetaCmd = desJointStatesIn.states[static_cast<size_t>(i)];
         this->refJointAngles[i] = prevRefJointAngles[i] + beta * (thetaCmd - prevRefJointAngles[i]);
         this->refJointRates[i] = (this->refJointAngles[i] - prevRefJointAngles[i]) / this->filterDt;
         this->refJointAccels[i] = (this->refJointRates[i] - prevRefJointRates[i]) / this->filterDt;
@@ -183,7 +184,7 @@ void JointArrayRefProfiler::computeLinearProfile(uint64_t CurrentSimNanos, const
     this->refJointAccels.setZero(this->numHingedJoints);
     if (tau >= this->profileDuration) {
         for (int i = 0; i < this->numHingedJoints; ++i) {
-            this->refJointAngles[i] = desJointStatesIn.states[i];
+            this->refJointAngles[i] = desJointStatesIn.states[static_cast<size_t>(i)];
             this->refJointRates[i] = 0.0;
             this->refJointAccels[i] = 0.0;
         }
@@ -192,7 +193,7 @@ void JointArrayRefProfiler::computeLinearProfile(uint64_t CurrentSimNanos, const
 
     for (int i = 0; i < this->numHingedJoints; ++i) {
         double theta0 = this->startJointAngles[i];
-        double thetaf = desJointStatesIn.states[i];
+        double thetaf = desJointStatesIn.states[static_cast<size_t>(i)];
         double T = this->profileDuration;
 
         // compute reference angle, rate, and acceleration
@@ -212,7 +213,7 @@ void JointArrayRefProfiler::computeCubicProfile(uint64_t CurrentSimNanos, const 
     this->refJointAccels.setZero(this->numHingedJoints);
     if (tau >= this->profileDuration) {
         for (int i = 0; i < this->numHingedJoints; ++i) {
-            this->refJointAngles[i] = desJointStatesIn.states[i];
+            this->refJointAngles[i] = desJointStatesIn.states[static_cast<size_t>(i)];
             this->refJointRates[i] = 0.0;
             this->refJointAccels[i] = 0.0;
         }
@@ -221,7 +222,7 @@ void JointArrayRefProfiler::computeCubicProfile(uint64_t CurrentSimNanos, const 
 
     for (int i = 0; i < this->numHingedJoints; ++i) {
         double theta0 = this->startJointAngles[i];
-        double thetaf = desJointStatesIn.states[i];
+        double thetaf = desJointStatesIn.states[static_cast<size_t>(i)];
         double thetaDot0 = this->startJointRates[i];
         double T = this->profileDuration;
 
@@ -248,7 +249,7 @@ void JointArrayRefProfiler::computeQuinticProfile(uint64_t CurrentSimNanos, cons
     this->refJointAccels.setZero(this->numHingedJoints);
     if (tau >= this->profileDuration) {
         for (int i = 0; i < this->numHingedJoints; ++i) {
-            this->refJointAngles[i] = desJointStatesIn.states[i];
+            this->refJointAngles[i] = desJointStatesIn.states[static_cast<size_t>(i)];
             this->refJointRates[i] = 0.0;
             this->refJointAccels[i] = 0.0;
         }
@@ -257,7 +258,7 @@ void JointArrayRefProfiler::computeQuinticProfile(uint64_t CurrentSimNanos, cons
 
     for (int i = 0; i < this->numHingedJoints; ++i) {
         double theta0 = this->startJointAngles[i];
-        double thetaf = desJointStatesIn.states[i];
+        double thetaf = desJointStatesIn.states[static_cast<size_t>(i)];
         double thetaDot0 = this->startJointRates[i];
         double deltaTheta = thetaf - theta0;
         double T = this->profileDuration;

@@ -34,6 +34,7 @@ void svIntegratorWeakSIESME::integrate(double currentTime, double timeStep)
 
     const std::vector<StateIdToIndexMap>& maps = noiseIndexMaps();
     const size_t m = maps.size();
+    const Eigen::Index noiseCount = static_cast<Eigen::Index>(m);
 
     const GaussianNoiseSample sample = this->rvGenerator->generate(m, timeStep);
     const Eigen::VectorXd& dW = sample.dW;
@@ -42,11 +43,12 @@ void svIntegratorWeakSIESME::integrate(double currentTime, double timeStep)
     const double sqh = std::sqrt(h);
 
     // Polynomial moments of the Gaussian increment (per noise source).
-    Eigen::VectorXd W2(m); // dW^2 / sqrt(h)
-    Eigen::VectorXd W3(m); // nu2 * dW^3 / h
+    Eigen::VectorXd W2(noiseCount); // dW^2 / sqrt(h)
+    Eigen::VectorXd W3(noiseCount); // nu2 * dW^3 / h
     for (size_t k = 0; k < m; k++) {
-        W2(k) = dW(k) * dW(k) / sqh;
-        W3(k) = c.nu2 * dW(k) * dW(k) * dW(k) / h;
+        const Eigen::Index eigenK = static_cast<Eigen::Index>(k);
+        W2(eigenK) = dW(eigenK) * dW(eigenK) / sqh;
+        W3(eigenK) = c.nu2 * dW(eigenK) * dW(eigenK) * dW(eigenK) / h;
     }
 
     // --- Stage 0: k0 = f(x_n), g0 = g(x_n) ---
@@ -60,8 +62,8 @@ void svIntegratorWeakSIESME::integrate(double currentTime, double timeStep)
         g0.at(k).setDiffusions(dynPtrs, maps.at(k));
     }
     {
-        Eigen::VectorXd step(m);
-        for (size_t k = 0; k < m; k++) step(k) = c.nu1 * dW(k) + W3(k);
+        Eigen::VectorXd step(noiseCount);
+        for (Eigen::Index k = 0; k < noiseCount; k++) step(k) = c.nu1 * dW(k) + W3(k);
         propagateState(timeStep, step, maps);
     }
     ExtendedStateVector k1 = computeDerivatives(currentTime + c.mu0 * timeStep, timeStep);
@@ -73,8 +75,8 @@ void svIntegratorWeakSIESME::integrate(double currentTime, double timeStep)
         g0.at(k).setDiffusions(dynPtrs, maps.at(k));
     }
     {
-        Eigen::VectorXd step(m);
-        for (size_t k = 0; k < m; k++) step(k) = c.beta2 * sqh + c.beta3 * W2(k);
+        Eigen::VectorXd step(noiseCount);
+        for (Eigen::Index k = 0; k < noiseCount; k++) step(k) = c.beta2 * sqh + c.beta3 * W2(k);
         propagateState(timeStep, step, maps);
     }
     std::vector<ExtendedStateVector> g1 =
@@ -87,8 +89,8 @@ void svIntegratorWeakSIESME::integrate(double currentTime, double timeStep)
         g0.at(k).setDiffusions(dynPtrs, maps.at(k));
     }
     {
-        Eigen::VectorXd step(m);
-        for (size_t k = 0; k < m; k++) step(k) = c.delta2 * sqh + c.delta3 * W2(k);
+        Eigen::VectorXd step(noiseCount);
+        for (Eigen::Index k = 0; k < noiseCount; k++) step(k) = c.delta2 * sqh + c.delta3 * W2(k);
         propagateState(timeStep, step, maps);
     }
     std::vector<ExtendedStateVector> g2 =
@@ -107,24 +109,28 @@ void svIntegratorWeakSIESME::integrate(double currentTime, double timeStep)
         g0.at(k).setDiffusions(dynPtrs, maps.at(k));
     }
     {
-        Eigen::VectorXd step(m);
-        for (size_t k = 0; k < m; k++) step(k) = c.gamma1 * dW(k);
+        Eigen::VectorXd step(noiseCount);
+        for (Eigen::Index k = 0; k < noiseCount; k++) step(k) = c.gamma1 * dW(k);
         propagateState(timeStep, step, maps);
     }
     for (size_t k = 0; k < m; k++) {
         g1.at(k).setDiffusions(dynPtrs, maps.at(k));
     }
     {
-        Eigen::VectorXd step(m);
-        for (size_t k = 0; k < m; k++) step(k) = c.lambda1 * dW(k) + c.lambda2 * sqh + c.lambda3 * W2(k);
+        Eigen::VectorXd step(noiseCount);
+        for (Eigen::Index k = 0; k < noiseCount; k++) {
+            step(k) = c.lambda1 * dW(k) + c.lambda2 * sqh + c.lambda3 * W2(k);
+        }
         propagateState(0, step, maps);
     }
     for (size_t k = 0; k < m; k++) {
         g2.at(k).setDiffusions(dynPtrs, maps.at(k));
     }
     {
-        Eigen::VectorXd step(m);
-        for (size_t k = 0; k < m; k++) step(k) = c.mu1 * dW(k) + c.mu2 * sqh + c.mu3 * W2(k);
+        Eigen::VectorXd step(noiseCount);
+        for (Eigen::Index k = 0; k < noiseCount; k++) {
+            step(k) = c.mu1 * dW(k) + c.mu2 * sqh + c.mu3 * W2(k);
+        }
         propagateState(0, step, maps);
     }
 

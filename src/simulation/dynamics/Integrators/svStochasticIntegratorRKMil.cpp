@@ -30,6 +30,7 @@ void svStochasticIntegratorRKMil::integrate(double currentTime, double timeStep)
 
     const std::vector<StateIdToIndexMap>& stateIdToNoiseIndexMaps = noiseIndexMaps();
     const size_t m = stateIdToNoiseIndexMaps.size();
+    const Eigen::Index noiseCount = static_cast<Eigen::Index>(m);
 
     const GaussianNoiseSample sample = this->rvGenerator->generate(m, timeStep);
     const Eigen::VectorXd& dW = sample.dW;
@@ -46,7 +47,7 @@ void svStochasticIntegratorRKMil::integrate(double currentTime, double timeStep)
     currentState.setStates(dynPtrs);
     f.setDerivatives(dynPtrs);
     // Zero pseudo-time steps: K carries no noise contribution.
-    propagateState(timeStep, Eigen::VectorXd::Zero(m), stateIdToNoiseIndexMaps);
+    propagateState(timeStep, Eigen::VectorXd::Zero(noiseCount), stateIdToNoiseIndexMaps);
     const ExtendedStateVector K = ExtendedStateVector::fromStates(dynPtrs);
 
     // --- uTilde = K + sqrt(h) * sum_k L_k  (support point for the finite difference) ---
@@ -58,7 +59,7 @@ void svStochasticIntegratorRKMil::integrate(double currentTime, double timeStep)
     for (size_t k = 0; k < m; k++) {
         L.at(k).setDiffusions(dynPtrs, stateIdToNoiseIndexMaps.at(k));
     }
-    propagateState(0.0, sqh * Eigen::VectorXd::Ones(m), stateIdToNoiseIndexMaps);
+    propagateState(0.0, sqh * Eigen::VectorXd::Ones(noiseCount), stateIdToNoiseIndexMaps);
 
     // --- gTilde_k = g_k(uTilde);  ggprime_k = (gTilde_k - L_k) / sqrt(h) ---
     std::vector<ExtendedStateVector> gTilde =
@@ -71,9 +72,10 @@ void svStochasticIntegratorRKMil::integrate(double currentTime, double timeStep)
 
     // --- x_{n+1} = K + sum_k L_k dW_k + sum_k ggprime_k (dW_k^2 - h)/2 ---
     // Milstein pseudo-time step for the ggprime term.
-    Eigen::VectorXd milStep(m);
+    Eigen::VectorXd milStep(noiseCount);
     for (size_t k = 0; k < m; k++) {
-        milStep(k) = (dW(k) * dW(k) - h) / 2.0;
+        const Eigen::Index eigenK = static_cast<Eigen::Index>(k);
+        milStep(eigenK) = (dW(eigenK) * dW(eigenK) - h) / 2.0;
     }
 
     // Start from K, add the L*dW term (drift set to zero so it is not double-counted).

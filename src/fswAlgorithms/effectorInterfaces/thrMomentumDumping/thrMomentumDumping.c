@@ -137,7 +137,7 @@ void Update_thrMomentumDumping(thrMomentumDumpingConfig *configData, uint64_t ca
             /* identical net thruster impulse request case, continue with existing RW momentum dumping */
             if (configData->thrDumpingCounter <= 0) {
                 /* time to fire thrusters again */
-                mCopy(configData->thrOnTimeRemaining, 1, configData->numThrusters, tOnOut);
+                mCopy(configData->thrOnTimeRemaining, 1, (size_t) configData->numThrusters, tOnOut);
                 /* subtract next control period from remaining impulse time */
                 for (i=0;i<configData->numThrusters;i++) {
                     if (configData->thrOnTimeRemaining[i] >0.0){
@@ -155,13 +155,13 @@ void Update_thrMomentumDumping(thrMomentumDumpingConfig *configData, uint64_t ca
         } else {
             /* new net thruster impulse request case */
             configData->lastDeltaHInMsgTime = timeOfDeltaHMsg;
-            mCopy(Delta_P_input, 1, configData->numThrusters, configData->Delta_p); /* store current Delta_p */
+            mCopy(Delta_P_input, 1, (size_t) configData->numThrusters, configData->Delta_p); /* store current Delta_p */
             for (i=0;i<configData->numThrusters;i++) {
                 /* compute net time required to implement requested thruster impulse */
                 configData->thrOnTimeRemaining[i] = configData->Delta_p[i]/configData->thrMaxForce[i];
             }
             /* set thruster on time to requested impulse time */
-            mCopy(configData->thrOnTimeRemaining, 1, configData->numThrusters, tOnOut);
+            mCopy(configData->thrOnTimeRemaining, 1, (size_t) configData->numThrusters, tOnOut);
             /* reset the dumping counter */
             configData->thrDumpingCounter = configData->maxCounterValue;
             /* subtract next control period from remaining impulse time */

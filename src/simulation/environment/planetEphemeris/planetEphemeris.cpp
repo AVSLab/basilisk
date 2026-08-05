@@ -224,8 +224,9 @@ void PlanetEphemeris::UpdateState(uint64_t CurrentSimNanos)
     if (this->zeroBaseIndex >= 0) {
         double zeroBasePosition_N[3];         // [m] zero-base heliocentric position
         double zeroBaseVelocity_N[3];         // [m/s] zero-base heliocentric velocity
-        v3Copy(planetStates.at(this->zeroBaseIndex).PositionVector, zeroBasePosition_N);
-        v3Copy(planetStates.at(this->zeroBaseIndex).VelocityVector, zeroBaseVelocity_N);
+        const size_t zeroBasePosition = static_cast<size_t>(this->zeroBaseIndex);
+        v3Copy(planetStates.at(zeroBasePosition).PositionVector, zeroBasePosition_N);
+        v3Copy(planetStates.at(zeroBasePosition).VelocityVector, zeroBaseVelocity_N);
 
         for (auto& planetState : planetStates) {
             v3Subtract(planetState.PositionVector, zeroBasePosition_N, planetState.PositionVector);

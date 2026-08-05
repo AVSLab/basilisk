@@ -368,7 +368,7 @@ void oasapComputeSecondRotation(double hRefHat_B[3], double rHat_SB_R1[3], doubl
 }
 
 /*! This helper function computes the third rotation that breaks the heading alignment if needed, to achieve maximum incidence on solar arrays */
-void oasapComputeThirdRotation(int alignmentPriority, double hRefHat_B[3], double rHat_SB_R2[3], double a1Hat_B[3], double R3R2[3][3])
+void oasapComputeThirdRotation(AlignmentPriority alignmentPriority, double hRefHat_B[3], double rHat_SB_R2[3], double a1Hat_B[3], double R3R2[3][3])
 {
     double PRV_theta[3];
 
@@ -413,7 +413,7 @@ void oasapComputeThirdRotation(int alignmentPriority, double hRefHat_B[3], doubl
 }
 
 /*! This helper function computes the final rotation as a product of the first three DCMs */
-void oasapComputeFinalRotation(int alignmentPriority, double BN[3][3], double rHat_SB_B[3], double hRefHat_B[3], double hReqHat_B[3], double a1Hat_B[3], double a2Hat_B[3], double RN[3][3])
+void oasapComputeFinalRotation(AlignmentPriority alignmentPriority, double BN[3][3], double rHat_SB_B[3], double hRefHat_B[3], double hReqHat_B[3], double a1Hat_B[3], double a2Hat_B[3], double RN[3][3])
 {
     /*! compute the first rotation DCM */
     double R1B[3][3];

@@ -33,8 +33,8 @@ ImuSensor::ImuSensor()
     this->StatePrevious = this->scStateInMsg.zeroMsgPayload;
     this->StateCurrent = this->scStateInMsg.zeroMsgPayload;
 
-    this->errorModelGyro =  GaussMarkov(this->numStates, this->RNGSeed);
-    this->errorModelAccel = GaussMarkov(this->numStates, this->RNGSeed);
+    this->errorModelGyro =  GaussMarkov(static_cast<uint64_t>(this->numStates), this->RNGSeed);
+    this->errorModelAccel = GaussMarkov(static_cast<uint64_t>(this->numStates), this->RNGSeed);
 
     this->aDisc = Discretize((uint8_t) this->numStates);
     this->oDisc = Discretize((uint8_t) this->numStates);

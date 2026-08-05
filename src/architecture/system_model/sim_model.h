@@ -93,7 +93,7 @@ public:
     void StepUntilStop(uint64_t SimStopTime, int64_t stopPri);  //!< Step simulation until stop time uint64_t reached
     void SingleStepProcesses(int64_t stopPri=-1); //!< Step only the next Task in the simulation
     void addNewProcess(SysProcess *newProc);
-    void addProcessToThread(SysProcess *newProc, uint64_t threadSel);
+    void addProcessToThread(SysProcess *newProc, size_t threadSel);
     void ResetSimulation();  //!< Reset simulation back to zero
     void clearProcsFromThreads() const;
     void resetThreads(uint64_t threadCount);

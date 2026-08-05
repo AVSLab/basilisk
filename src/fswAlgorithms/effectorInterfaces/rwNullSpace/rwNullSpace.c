@@ -74,9 +74,9 @@ void Reset_rwNullSpace(rwNullSpaceConfig *configData, uint64_t callTime,
     }
     for(uint32_t i=0; i<configData->numWheels; i=i+1)
     {
-        for(int j=0; j<3; j=j+1)
+        for(uint32_t j=0; j<3; j=j+1)
         {
-            GsMatrix[j*(int) configData->numWheels+i] = localRWData.reactionWheels[i].gsHat_B[j];
+            GsMatrix[j * configData->numWheels + i] = localRWData.reactionWheels[i].gsHat_B[j];
         }
     }
 

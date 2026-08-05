@@ -28,7 +28,7 @@ void SaturationSingleActuator::UpdateState(uint64_t currentSimNanos)
 
     outPayload.input = this->applySaturation(inPayload.input);
 
-    this->actuatorOutMsg.write(&outPayload, currentSimNanos, this->moduleID);
+    this->actuatorOutMsg.write(&outPayload, this->moduleID, currentSimNanos);
 }
 
 void SaturationSingleActuator::setSaturationEnabled(bool enabled)

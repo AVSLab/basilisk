@@ -129,7 +129,7 @@ bool ThrusterStateEffector::ReadInputs()
  */
 void ThrusterStateEffector::writeOutputStateMessages(uint64_t CurrentClock)
 {
-    int idx = 0;
+    size_t idx = 0;
     std::vector<std::shared_ptr<THRSimConfig>>::iterator itp;
     std::shared_ptr<THRSimConfig> it;
 
@@ -212,7 +212,7 @@ void ThrusterStateEffector::UpdateThrusterProperties()
 
     // Loop through all thrusters
     std::vector<ReadFunctor<SCStatesMsgPayload>>::iterator it;
-    int index;
+    size_t index;
     for (it = this->attachedBodyInMsgs.begin(), index = 0; it != this->attachedBodyInMsgs.end(); it++, index++)
     {
         // Check if the message is linked, and if so do the conversion
@@ -306,13 +306,14 @@ void ThrusterStateEffector::registerStates(DynParamManager& states)
     this->kappaState = states.registerState((uint32_t) this->thrusterData.size(), 1, this->nameOfKappaState);
     Eigen::MatrixXd kappaInitMatrix(this->thrusterData.size(), 1);
     // Loop through all thrusters to initialize each state variable
-    for (uint64_t i = 0; i < this->thrusterData.size(); i++) {
+    for (Eigen::Index i = 0; i < kappaInitMatrix.rows(); i++) {
+        const size_t thrusterIndex = static_cast<size_t>(i);
         // Make sure that the thruster state is between 0 and 1
-        if (this->kappaInit[i] < 0.0 || this->kappaInit[i] > 1.0) {
+        if (this->kappaInit[thrusterIndex] < 0.0 || this->kappaInit[thrusterIndex] > 1.0) {
             bskLogger.bskError("thrusterStateEffector: the initial condition for the thrust factor must be between 0 and 1. Setting it to 0.");
-            this->kappaInit[i] = 0.0;
+            this->kappaInit[thrusterIndex] = 0.0;
         }
-        kappaInitMatrix(i, 0) = this->kappaInit[i];
+        kappaInitMatrix(i, 0) = this->kappaInit[thrusterIndex];
     }
     this->kappaState->setState(kappaInitMatrix);
 
@@ -325,7 +326,7 @@ void ThrusterStateEffector::computeDerivatives(double integTime, Eigen::Vector3d
     std::vector<std::shared_ptr<THRSimConfig>>::iterator itp;
     std::shared_ptr<THRSimConfig> it;
     THROperation* ops;
-    uint64_t i;
+    Eigen::Index i;
 
     // - Compute Derivatives
     Eigen::MatrixXd kappaDot(this->thrusterData.size(), 1);

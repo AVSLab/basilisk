@@ -162,8 +162,8 @@ LambertPlanner::PropagationResult LambertPlanner::propagate(
     std::vector<StateVector> X = {X0};
 
     // propagate forward to tf
-    double N = ceil(abs(tf-t0)/dt);
-    for (int c=0; c < N; c++) {
+    const size_t stepCount = static_cast<size_t>(ceil(abs(tf-t0)/dt));
+    for (size_t c = 0; c < stepCount; c++) {
         double step = std::min(dt,abs(tf-t.at(c))); // for last time step, step size might be smaller than dt
         // special case for backwards propagation
         if (tf < t0) {

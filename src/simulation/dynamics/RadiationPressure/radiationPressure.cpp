@@ -183,7 +183,7 @@ void RadiationPressure::computeLookupModel(Eigen::Vector3d s_B)
 {
     double tmpDotProduct = 0;
     double currentDotProduct = 0;
-    int currentIdx = 0;
+    size_t currentIdx = 0;
     double sunDist = s_B.norm();
     Eigen::Vector3d sHat_B = s_B/sunDist;
     Eigen::Vector3d tmpLookupSHat_B(0,0,0);
@@ -200,7 +200,7 @@ void RadiationPressure::computeLookupModel(Eigen::Vector3d s_B)
     // @TODO: this lookup search should be optimized, possibly by saving the
     // index for later use and generate lookup table as azimuth and elevation
     // because then we can use a simple gradient decent search to find the nearest next attitude
-    for(int i = 0; i < (int) this->lookupSHat_B.size(); i++) {
+    for(size_t i = 0; i < this->lookupSHat_B.size(); i++) {
         tmpLookupSHat_B = this->lookupSHat_B[i];
         tmpDotProduct = tmpLookupSHat_B.dot(sHat_B);
         if (tmpDotProduct > currentDotProduct)

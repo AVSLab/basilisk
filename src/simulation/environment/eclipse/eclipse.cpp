@@ -114,7 +114,7 @@ void Eclipse::UpdateState(uint64_t CurrentSimNanos)
 
     // Index to assign the illuminationFactor for each body position (S/C)
     // being tracked
-    int scIdx = 0;
+    size_t scIdx = 0;
 
     for(scIt = this->scStateBuffer.begin(); scIt != this->scStateBuffer.end(); scIt++)
     {
@@ -151,13 +151,14 @@ void Eclipse::UpdateState(uint64_t CurrentSimNanos)
         // If planetkey is not -1 then we have a planet for which
         // we compute the eclipse conditions
         if (eclipsePlanetKey >= 0) {
-            r_PN_N = cArray2EigenVector3d(this->planetBuffer[eclipsePlanetKey].PositionVector);
+            const size_t planetIndex = static_cast<size_t>(eclipsePlanetKey);
+            r_PN_N = cArray2EigenVector3d(this->planetBuffer[planetIndex].PositionVector);
             s_BP_N = r_BN_N - r_PN_N;
             r_HB_N = r_HN_N - r_BN_N;
             s_HP_N = r_HN_N - r_PN_N;
 
             double s = s_BP_N.norm();
-            std::string plName(this->planetBuffer[eclipsePlanetKey].PlanetName);
+            std::string plName(this->planetBuffer[planetIndex].PlanetName);
             double planetRadius = this->getPlanetEquatorialRadius(plName);
             double f_1 = safeAsin((REQ_SUN*1000 + planetRadius)/s_HP_N.norm());
             double f_2 = safeAsin((REQ_SUN*1000 - planetRadius)/s_HP_N.norm());

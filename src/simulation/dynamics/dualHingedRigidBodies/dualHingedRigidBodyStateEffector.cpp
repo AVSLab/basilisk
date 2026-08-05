@@ -79,7 +79,7 @@ uint64_t DualHingedRigidBodyStateEffector::effectorID = 1;
 
 DualHingedRigidBodyStateEffector::~DualHingedRigidBodyStateEffector()
 {
-    for (int c=0; c<2; c++) {
+    for (size_t c = 0; c < 2; c++) {
         delete this->dualHingedRigidBodyOutMsgs.at(c);
         delete this->dualHingedRigidBodyConfigLogOutMsgs.at(c);
     }
@@ -399,7 +399,7 @@ void DualHingedRigidBodyStateEffector::writeOutputStateMessages(uint64_t Current
     // write out the panel state config log message
     SCStatesMsgPayload configLogMsg;
     // Note, logging the hinge frame S is the body frame B of that object
-    for (int i=0; i<2; i++) {
+    for (size_t i = 0; i < 2; i++) {
         configLogMsg = this->dualHingedRigidBodyConfigLogOutMsgs[i]->zeroMsgPayload;
         eigenVector3d2CArray(this->r_SN_N[i], configLogMsg.r_BN_N);
         eigenVector3d2CArray(this->v_SN_N[i], configLogMsg.v_BN_N);

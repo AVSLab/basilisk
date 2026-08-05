@@ -70,26 +70,28 @@ void VSCMGStateEffector::registerStates(DynParamManager& states)
 	Eigen::MatrixXd gammaDotsForInit(this->VSCMGData.size(),1);
 
 	std::vector<VSCMGConfigMsgPayload>::iterator it;
+    Eigen::Index vscmgIndex = 0;
     for(it=VSCMGData.begin(); it!=VSCMGData.end(); it++) {
         if (it->VSCMGModel == vscmgJitterSimple || it->VSCMGModel == vscmgJitterFullyCoupled) {
             this->numVSCMGJitter++;
         }
-        omegasForInit(it - this->VSCMGData.begin(), 0) = it->Omega;
-		gammasForInit(it - this->VSCMGData.begin(), 0) = it->gamma;
-		gammaDotsForInit(it - this->VSCMGData.begin(), 0) = it->gammaDot;
+        omegasForInit(vscmgIndex, 0) = it->Omega;
+		gammasForInit(vscmgIndex, 0) = it->gamma;
+		gammaDotsForInit(vscmgIndex, 0) = it->gammaDot;
         this->numVSCMG++;
+        vscmgIndex++;
     }
 
-	this->OmegasState = states.registerState(this->numVSCMG, 1, this->nameOfVSCMGOmegasState);
-	this->gammasState = states.registerState(this->numVSCMG, 1, this->nameOfVSCMGGammasState);
-	this->gammaDotsState = states.registerState(this->numVSCMG, 1, this->nameOfVSCMGGammaDotsState);
+	this->OmegasState = states.registerState(static_cast<uint32_t>(this->numVSCMG), 1, this->nameOfVSCMGOmegasState);
+	this->gammasState = states.registerState(static_cast<uint32_t>(this->numVSCMG), 1, this->nameOfVSCMGGammasState);
+	this->gammaDotsState = states.registerState(static_cast<uint32_t>(this->numVSCMG), 1, this->nameOfVSCMGGammaDotsState);
 
     this->OmegasState->setState(omegasForInit);
 	this->gammasState->setState(gammasForInit);
 	this->gammaDotsState->setState(gammaDotsForInit);
 
 	if (numVSCMGJitter > 0) {
-		this->thetasState = states.registerState(this->numVSCMGJitter, 1, this->nameOfVSCMGThetasState);
+		this->thetasState = states.registerState(static_cast<uint32_t>(this->numVSCMGJitter), 1, this->nameOfVSCMGThetasState);
         Eigen::MatrixXd thetasForZeroing(this->numVSCMGJitter,1);
         thetasForZeroing.setZero();
         this->thetasState->setState(thetasForZeroing);
@@ -115,7 +117,7 @@ void VSCMGStateEffector::updateEffectorMassProps(double integTime)
     std::vector<VSCMGConfigMsgPayload>::iterator it;
 	for(it=VSCMGData.begin(); it!=VSCMGData.end(); it++)
 	{
-        std::size_t vscmgIndex = it - VSCMGData.begin();
+		const Eigen::Index vscmgIndex = std::distance(VSCMGData.begin(), it);
 		it->Omega = omegasVector(vscmgIndex, 0);
 		it->gamma = gammasVector(vscmgIndex, 0);
 		it->gammaDot = gammaDotsVector(vscmgIndex, 0);
@@ -547,7 +549,8 @@ void VSCMGStateEffector::WriteOutputMessages(uint64_t CurrentClock)
 	std::vector<VSCMGConfigMsgPayload>::iterator it;
 	for (it = VSCMGData.begin(); it != VSCMGData.end(); it++)
 	{
-        std::size_t vscmgIndex = it - VSCMGData.begin();
+        const size_t vscmgPosition = static_cast<size_t>(std::distance(VSCMGData.begin(), it));
+        const Eigen::Index vscmgIndex = static_cast<Eigen::Index>(vscmgPosition);
         tmpVSCMG = this->vscmgOutMsgs[0]->zeroMsgPayload;
         if (numVSCMGJitter > 0) {
             double thetaCurrent = (*thetaVector)(vscmgIndex, 0);
@@ -555,13 +558,13 @@ void VSCMGStateEffector::WriteOutputMessages(uint64_t CurrentClock)
         }
         double omegaCurrent = omegasVector(vscmgIndex, 0);
         it->Omega = omegaCurrent;
-		this->outputStates.wheelSpeeds[vscmgIndex] = it->Omega;
+		this->outputStates.wheelSpeeds[vscmgPosition] = it->Omega;
 		double gammaCurrent = gammasVector(vscmgIndex, 0);
 		it->gamma = gammaCurrent;
-		this->outputStates.gimbalAngles[vscmgIndex] = it->gamma;
+		this->outputStates.gimbalAngles[vscmgPosition] = it->gamma;
 		double gammaDotCurrent = gammaDotsVector(vscmgIndex, 0);
 		it->gammaDot = gammaDotCurrent;
-		this->outputStates.gimbalRates[vscmgIndex] = it->gammaDot;
+		this->outputStates.gimbalRates[vscmgPosition] = it->gammaDot;
 
 		tmpVSCMG.u_s_current = it->u_s_current;
 		tmpVSCMG.u_s_max = it->u_s_max;
@@ -582,7 +585,7 @@ void VSCMGStateEffector::WriteOutputMessages(uint64_t CurrentClock)
 		tmpVSCMG.U_d = it->U_d;
 		tmpVSCMG.VSCMGModel = it->VSCMGModel;
 		// Write out config data for each VSCMG
-        this->vscmgOutMsgs.at(it - VSCMGData.begin())->write(&tmpVSCMG, this->moduleID, CurrentClock);
+        this->vscmgOutMsgs.at(vscmgPosition)->write(&tmpVSCMG, this->moduleID, CurrentClock);
 	}
 
 	// Write this message once for all VSCMGs
@@ -641,7 +644,7 @@ void VSCMGStateEffector::ReadInputs()
 void VSCMGStateEffector::ConfigureVSCMGRequests(double CurrentTime)
 {
 	std::vector<VSCMGCmdMsgPayload>::iterator CmdIt;
-	int it = 0;
+	size_t it = 0;
 	double u_s;
 	double u_g;
 	double omegaCritical;

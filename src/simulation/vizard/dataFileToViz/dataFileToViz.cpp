@@ -321,11 +321,13 @@ void DataFileToViz::UpdateState(uint64_t CurrentSimNanos)
                 /* check if thruster states are provided */
                 if (this->thrMsgDataSC.size() > 0) {
                     if (this->thrMsgDataSC[scCounter].size() > 0) {
-                        int thrCounter = 0;
+                        size_t thrCounter = 0;
                         std::vector<ThrClusterMap>::iterator thrSet;
-                        int thrClusterCounter = 0;
+                        size_t thrClusterCounter = 0;
                         for (thrSet = this->thrMsgDataSC[scCounter].begin(); thrSet!=this->thrMsgDataSC[scCounter].end(); thrSet++) {
-                            for (uint32_t idx = 0; idx< (uint32_t)this->numThrPerCluster[scCounter][thrClusterCounter]; idx++) {
+                            const size_t thrusterCount =
+                                static_cast<size_t>(this->numThrPerCluster[scCounter][thrClusterCounter]);
+                            for (size_t idx = 0; idx < thrusterCount; idx++) {
                                 THROutputMsgPayload thrMsg;
                                 thrMsg = this->thrScOutMsgs[scCounter].at(thrCounter)->zeroMsgPayload;
 

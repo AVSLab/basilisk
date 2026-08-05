@@ -68,7 +68,10 @@ void Reset_mtbMomentumManagementSimple(mtbMomentumManagementSimpleConfig *config
      * axis of the reaction wheels. By transposing it we get the transformation
      * from the wheel space to the Body frame, Gs.
      */
-    mTranspose(configData->rwConfigParams.GsMatrix_B, configData->rwConfigParams.numRW, 3, configData->Gs);
+    mTranspose(configData->rwConfigParams.GsMatrix_B,
+               (size_t) configData->rwConfigParams.numRW,
+               3,
+               configData->Gs);
 
     /*
      * Sanity check configs.
@@ -93,7 +96,7 @@ void Update_mtbMomentumManagementSimple(mtbMomentumManagementSimpleConfig *confi
      */
     double hWheels_B[3] = {0.0, 0.0, 0.0};                      // the net momentum of the reaction wheels in the body frame
     double hWheels_W[MAX_EFF_CNT];                              // array of individual wheel momentum values
-    vSetZero(hWheels_W, configData->rwConfigParams.numRW);
+    vSetZero(hWheels_W, (size_t) configData->rwConfigParams.numRW);
 
     /*
      * Read the input message and initialize output message.
@@ -103,8 +106,11 @@ void Update_mtbMomentumManagementSimple(mtbMomentumManagementSimpleConfig *confi
 
     /*! - Compute wheel momentum in Body frame components by calculating it first in the wheel frame and then
          transforming it from the wheel space into the body frame using Gs.*/
-    vElementwiseMult(rwSpeedsInMsgBuffer.wheelSpeeds, configData->rwConfigParams.numRW, configData->rwConfigParams.JsList, hWheels_W);
-    mMultV(configData->Gs, 3, configData->rwConfigParams.numRW, hWheels_W, hWheels_B);
+    vElementwiseMult(rwSpeedsInMsgBuffer.wheelSpeeds,
+                     (size_t) configData->rwConfigParams.numRW,
+                     configData->rwConfigParams.JsList,
+                     hWheels_W);
+    mMultV(configData->Gs, 3, (size_t) configData->rwConfigParams.numRW, hWheels_W, hWheels_B);
 
     /*! - Compute the feedback torque command by multiplying the wheel momentum in the Body frame by the proportional
          momentum gain Kp. Note that this module is currently targeting a wheel momentum in the Body frame of zero and

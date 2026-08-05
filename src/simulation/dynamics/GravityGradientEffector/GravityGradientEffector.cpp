@@ -113,7 +113,7 @@ void GravityGradientEffector::computeForceTorque(double integTime, double timeSt
     ISCPntC_B = *this->ISCPntB_B - (*this->m_SC)(0,0)*cTilde*cTilde.transpose();
 
     std::vector<std::string>::iterator it;
-    int c = 0;
+    size_t c = 0;
     for(it = this->planetPropertyNames.begin(); it != this->planetPropertyNames.end(); it++) {
         double mu = (*this->muPlanet[c])(0,0);  /* in m^3/s^2 */
 

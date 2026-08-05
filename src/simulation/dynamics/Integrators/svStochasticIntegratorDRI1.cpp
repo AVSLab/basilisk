@@ -167,6 +167,7 @@ void svStochasticIntegratorDRI1::integrate(double currentTime, double timeStep)
     const ExtendedStateVector currentState = ExtendedStateVector::fromStates(dynPtrs);
     const std::vector<StateIdToIndexMap>& maps = noiseIndexMaps();
     const size_t m = maps.size();
+    const Eigen::Index noiseCount = static_cast<Eigen::Index>(m);
 
     const GaussianNoiseSample sample = this->rvGenerator->generate(m, timeStep);
     const double h = timeStep;
@@ -176,11 +177,12 @@ void svStochasticIntegratorDRI1::integrate(double currentTime, double timeStep)
     //   _dW : three-point in {-sqrt(3h), 0, +sqrt(3h)}
     //   chi1: (_dW^2 - h)/2      (diagonal of Ihat2)
     //   _dZ : two-point in {-sqrt(h), +sqrt(h)}  (only used for cross-noise, m>1)
-    Eigen::VectorXd _dW(m), chi1(m), _dZ(m);
+    Eigen::VectorXd _dW(noiseCount), chi1(noiseCount), _dZ(noiseCount);
     for (size_t k = 0; k < m; k++) {
-        _dW(k) = stochasticWeakRV::threePoint(sample.dW(k), h);
-        chi1(k) = (_dW(k) * _dW(k) - h) / 2.0;
-        _dZ(k) = stochasticWeakRV::twoPoint(sample.dZ(k), sqh);
+        const Eigen::Index eigenK = static_cast<Eigen::Index>(k);
+        _dW(eigenK) = stochasticWeakRV::threePoint(sample.dW(eigenK), h);
+        chi1(eigenK) = (_dW(eigenK) * _dW(eigenK) - h) / 2.0;
+        _dZ(eigenK) = stochasticWeakRV::twoPoint(sample.dZ(eigenK), sqh);
     }
 
     // ---- Drift stages (shared across noise sources) ----
@@ -212,19 +214,20 @@ void svStochasticIntegratorDRI1::integrate(double currentTime, double timeStep)
     // g2[k] = g(H12[k]); g3[k] = g(H13[k])   (only component k used)
     std::vector<ExtendedStateVector> g2(m), g3(m);
     for (size_t k = 0; k < m; k++) {
-        Eigen::VectorXd stepK = Eigen::VectorXd::Zero(m);
+        Eigen::VectorXd stepK = Eigen::VectorXd::Zero(noiseCount);
+        const Eigen::Index eigenK = static_cast<Eigen::Index>(k);
 
         currentState.setStates(dynPtrs);
         (k1 * c.a121).setDerivatives(dynPtrs);
         g1.at(k).setDiffusions(dynPtrs, maps.at(k));
-        stepK(k) = c.b121 * sqh;
+        stepK(eigenK) = c.b121 * sqh;
         propagateState(timeStep, stepK, maps);
         g2.at(k) = computeDiffusion(currentTime + c.c12 * timeStep, timeStep, maps.at(k));
 
         currentState.setStates(dynPtrs);
         (k1 * c.a131).setDerivatives(dynPtrs);
         g1.at(k).setDiffusions(dynPtrs, maps.at(k));
-        stepK(k) = c.b131 * sqh;
+        stepK(eigenK) = c.b131 * sqh;
         propagateState(timeStep, stepK, maps);
         g3.at(k) = computeDiffusion(currentTime + c.c13 * timeStep, timeStep, maps.at(k));
     }
@@ -239,7 +242,8 @@ void svStochasticIntegratorDRI1::integrate(double currentTime, double timeStep)
     const bool doCrossNoise = (m > 1) && !this->nonMixing;
     if (doCrossNoise) {
         for (size_t l = 0; l < m; l++) {
-            Eigen::VectorXd stepL = Eigen::VectorXd::Zero(m);
+            Eigen::VectorXd stepL = Eigen::VectorXd::Zero(noiseCount);
+            const Eigen::Index eigenL = static_cast<Eigen::Index>(l);
 
             // Hhat2[l]
             currentState.setStates(dynPtrs);
@@ -249,7 +253,7 @@ void svStochasticIntegratorDRI1::integrate(double currentTime, double timeStep)
                 d += g3.at(l) * c.b223;
                 d.setDiffusions(dynPtrs, maps.at(l));
             }
-            stepL(l) = sqh;
+            stepL(eigenL) = sqh;
             propagateState(0, stepL, maps);
             gHat2Full.at(l) = computeDiffusions(currentTime, timeStep, maps);
 
@@ -261,7 +265,7 @@ void svStochasticIntegratorDRI1::integrate(double currentTime, double timeStep)
                 d += g3.at(l) * c.b233;
                 d.setDiffusions(dynPtrs, maps.at(l));
             }
-            stepL(l) = sqh;
+            stepL(eigenL) = sqh;
             propagateState(0, stepL, maps);
             gHat3Full.at(l) = computeDiffusions(currentTime, timeStep, maps);
         }
@@ -287,14 +291,18 @@ void svStochasticIntegratorDRI1::integrate(double currentTime, double timeStep)
     // Noise from g2/g3: (_dW*beta12 + chi1*beta22/sqrt(h)) g2 + (_dW*beta13 + chi1*beta23/sqrt(h)) g3
     for (size_t k = 0; k < m; k++) g2.at(k).setDiffusions(dynPtrs, maps.at(k));
     {
-        Eigen::VectorXd step(m);
-        for (size_t k = 0; k < m; k++) step(k) = _dW(k) * c.beta12 + chi1(k) * c.beta22 / sqh;
+        Eigen::VectorXd step(noiseCount);
+        for (Eigen::Index k = 0; k < noiseCount; k++) {
+            step(k) = _dW(k) * c.beta12 + chi1(k) * c.beta22 / sqh;
+        }
         propagateState(0, step, maps);
     }
     for (size_t k = 0; k < m; k++) g3.at(k).setDiffusions(dynPtrs, maps.at(k));
     {
-        Eigen::VectorXd step(m);
-        for (size_t k = 0; k < m; k++) step(k) = _dW(k) * c.beta13 + chi1(k) * c.beta23 / sqh;
+        Eigen::VectorXd step(noiseCount);
+        for (Eigen::Index k = 0; k < noiseCount; k++) {
+            step(k) = _dW(k) * c.beta13 + chi1(k) * c.beta23 / sqh;
+        }
         propagateState(0, step, maps);
     }
 
@@ -306,8 +314,10 @@ void svStochasticIntegratorDRI1::integrate(double currentTime, double timeStep)
     //                    (_dW[k]*_dW[l] + sqrt(h)*_dZ[l])/2      if l < k
     if (doCrossNoise) {
         auto ihat2 = [&](size_t k, size_t l) -> double {
-            if (k < l) return (_dW(k) * _dW(l) - sqh * _dZ(k)) / 2.0;
-            return (_dW(k) * _dW(l) + sqh * _dZ(l)) / 2.0; // l < k
+            const Eigen::Index eigenK = static_cast<Eigen::Index>(k);
+            const Eigen::Index eigenL = static_cast<Eigen::Index>(l);
+            if (k < l) return (_dW(eigenK) * _dW(eigenL) - sqh * _dZ(eigenK)) / 2.0;
+            return (_dW(eigenK) * _dW(eigenL) + sqh * _dZ(eigenL)) / 2.0; // l < k
         };
         // For every ordered pair (k, l) with l != k, the update adds to state k:
         //   g_k(Hhat2[l]) * (_dW[k]*beta32 + ihat2(k,l)*beta42/sqrt(h))
@@ -318,19 +328,20 @@ void svStochasticIntegratorDRI1::integrate(double currentTime, double timeStep)
         for (size_t l = 0; l < m; l++) {
             for (size_t k = 0; k < m; k++) {
                 if (k == l) continue;
-                const double w2 = _dW(k) * c.beta32 + ihat2(k, l) * c.beta42 / sqh;
-                const double w3 = _dW(k) * c.beta33 + ihat2(k, l) * c.beta43 / sqh;
+                const Eigen::Index eigenK = static_cast<Eigen::Index>(k);
+                const double w2 = _dW(eigenK) * c.beta32 + ihat2(k, l) * c.beta42 / sqh;
+                const double w3 = _dW(eigenK) * c.beta33 + ihat2(k, l) * c.beta43 / sqh;
 
                 gHat2Full.at(l).at(k).setDiffusions(dynPtrs, maps.at(k));
                 {
-                    Eigen::VectorXd step = Eigen::VectorXd::Zero(m);
-                    step(k) = w2;
+                    Eigen::VectorXd step = Eigen::VectorXd::Zero(noiseCount);
+                    step(eigenK) = w2;
                     propagateState(0, step, maps);
                 }
                 gHat3Full.at(l).at(k).setDiffusions(dynPtrs, maps.at(k));
                 {
-                    Eigen::VectorXd step = Eigen::VectorXd::Zero(m);
-                    step(k) = w3;
+                    Eigen::VectorXd step = Eigen::VectorXd::Zero(noiseCount);
+                    step(eigenK) = w3;
                     propagateState(0, step, maps);
                 }
             }

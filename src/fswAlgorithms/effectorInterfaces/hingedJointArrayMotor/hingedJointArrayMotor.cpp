@@ -122,8 +122,9 @@ void HingedJointArrayMotor::UpdateState(uint64_t CurrentSimNanos)
     for (size_t i = 0; i < this->jointStatesInMsgs.size(); ++i) {
         ScalarJointStateMsgPayload jointStateIn = this->jointStatesInMsgs[i]();
         ScalarJointStateMsgPayload jointStateDotIn = this->jointStateDotsInMsgs[i]();
-        jointStates(i) = jointStateIn.state;
-        jointStateDots(i) = jointStateDotIn.state;
+        const Eigen::Index jointIndex = static_cast<Eigen::Index>(i);
+        jointStates(jointIndex) = jointStateIn.state;
+        jointStateDots(jointIndex) = jointStateDotIn.state;
 
     }
 
@@ -134,8 +135,11 @@ void HingedJointArrayMotor::UpdateState(uint64_t CurrentSimNanos)
     Eigen::VectorXd nonActuatorForces(nDOF);
     nonActuatorForces.setZero();
     for (int k = 0; k < nDOF; ++k) {
-        nonActuatorForces(k) = reactionForcesIn.passiveForces[k] + reactionForcesIn.constraintForces[k] +
-                               reactionForcesIn.appliedForces[k] - reactionForcesIn.biasForces[k];
+        const size_t dofIndex = static_cast<size_t>(k);
+        nonActuatorForces(k) = reactionForcesIn.passiveForces[dofIndex]
+                               + reactionForcesIn.constraintForces[dofIndex]
+                               + reactionForcesIn.appliedForces[dofIndex]
+                               - reactionForcesIn.biasForces[dofIndex];
     }
 
     constexpr int nTransDOF = 3; // number of translational DOFs for free joint base
@@ -151,15 +155,15 @@ void HingedJointArrayMotor::UpdateState(uint64_t CurrentSimNanos)
 
         // Extract the joint DOF indicies for this tree
         std::vector<int> dofIdx;
-        dofIdx.reserve(nTransDOF + nHingeJoints);
+        dofIdx.reserve(static_cast<size_t>(nTransDOF + nHingeJoints));
 
-        const int freeStart = reactionForcesIn.jointDOFStart[freeJointIdx];
+        const int freeStart = reactionForcesIn.jointDOFStart[static_cast<size_t>(freeJointIdx)];
         for (int i = 0; i < nTransDOF; ++i) {
             dofIdx.push_back(freeStart + i);
         }
 
         for (int mhJointIdx : hingeJointIdxs) {
-            const int hingeStart = reactionForcesIn.jointDOFStart[mhJointIdx];
+            const int hingeStart = reactionForcesIn.jointDOFStart[static_cast<size_t>(mhJointIdx)];
             dofIdx.push_back(hingeStart); // hinged joints have 1 DOF
         }
 
@@ -170,10 +174,10 @@ void HingedJointArrayMotor::UpdateState(uint64_t CurrentSimNanos)
         const auto& massMatrixData = massMatrixIn.massMatrix;
 
         for (int r = 0; r < nTreeDOF; ++r) {
-            const int rowIdx = dofIdx[r];
+            const int rowIdx = dofIdx[static_cast<size_t>(r)];
             for (int c = 0; c < nTreeDOF; ++c) {
-                const int colIdx = dofIdx[c];
-                Mfull(r, c) = massMatrixData[rowIdx * nDOF + colIdx];
+                const int colIdx = dofIdx[static_cast<size_t>(c)];
+                Mfull(r, c) = massMatrixData[static_cast<size_t>(rowIdx * nDOF + colIdx)];
             }
         }
 
@@ -189,10 +193,10 @@ void HingedJointArrayMotor::UpdateState(uint64_t CurrentSimNanos)
         Eigen::VectorXd jointBias(nHingeJoints);
         jointBias.setZero();
         for (int i = 0; i < nTransDOF; ++i) {
-            baseTransBias(i) = nonActuatorForces(dofIdx[i]);
+            baseTransBias(i) = nonActuatorForces(dofIdx[static_cast<size_t>(i)]);
         }
         for (int i = 0; i < nHingeJoints; ++i) {
-            jointBias(i) = nonActuatorForces(dofIdx[nTransDOF + i]);
+            jointBias(i) = nonActuatorForces(dofIdx[static_cast<size_t>(nTransDOF + i)]);
         }
 
         // Build the gain matrices for the tree
@@ -201,9 +205,9 @@ void HingedJointArrayMotor::UpdateState(uint64_t CurrentSimNanos)
         Eigen::MatrixXd Ptheta_tree(nHingeJoints, nHingeJoints);
         Ptheta_tree.setZero();
         for (int i = 0; i < nHingeJoints; ++i) {
-            const int gi = hingeGlobalIdxs[i];
+            const int gi = hingeGlobalIdxs[static_cast<size_t>(i)];
             for (int j = 0; j < nHingeJoints; ++j) {
-                const int gj = hingeGlobalIdxs[j];
+                const int gj = hingeGlobalIdxs[static_cast<size_t>(j)];
                 Ktheta_tree(i, j) = this->Ktheta(gi, gj);
                 Ptheta_tree(i, j) = this->Ptheta(gi, gj);
             }
@@ -219,12 +223,13 @@ void HingedJointArrayMotor::UpdateState(uint64_t CurrentSimNanos)
         thetaDot_des.setZero();
         thetaDDot_des.setZero();
         for (int i = 0; i < nHingeJoints; ++i) {
-            const int jointIdx = hingeGlobalIdxs[i];
+            const int jointIdx = hingeGlobalIdxs[static_cast<size_t>(i)];
+            const size_t jointPosition = static_cast<size_t>(jointIdx);
             theta(i) = jointStates[jointIdx];
             thetaDot(i) = jointStateDots[jointIdx];
-            theta_des(i) = desJointStatesIn.states[jointIdx];
-            thetaDot_des(i) = desJointStatesIn.stateDots[jointIdx];
-            thetaDDot_des(i) = desJointStatesIn.stateDDots[jointIdx];
+            theta_des(i) = desJointStatesIn.states[jointPosition];
+            thetaDot_des(i) = desJointStatesIn.stateDots[jointPosition];
+            thetaDDot_des(i) = desJointStatesIn.stateDDots[jointPosition];
         }
 
         auto wrap = [](double a){ return std::atan2(std::sin(a), std::cos(a)); };
@@ -244,7 +249,7 @@ void HingedJointArrayMotor::UpdateState(uint64_t CurrentSimNanos)
         Eigen::VectorXd uH_tree = (Mthth * theta_ddot_des) + (Mtht*lambda) - jointBias;
 
         for (int i = 0; i < nHingeJoints; ++i) {
-            const int hingedIdx = hingeGlobalIdxs[i];
+            const int hingedIdx = hingeGlobalIdxs[static_cast<size_t>(i)];
             uH(hingedIdx) = uH_tree(i);
         }
 
@@ -256,15 +261,17 @@ void HingedJointArrayMotor::UpdateState(uint64_t CurrentSimNanos)
             bskLogger.bskError("HingedJointArrayMotor: size of uMax does not match numHingedJoints.");
         }
         for (int i = 0; i < this->numHingedJoints; ++i) {
-            uH(i) = std::max(-this->uMax[i], std::min(this->uMax[i], uH(i)));
+            const size_t jointIndex = static_cast<size_t>(i);
+            uH(i) = std::max(-this->uMax[jointIndex], std::min(this->uMax[jointIndex], uH(i)));
         }
     }
 
     // write to the output messages
     for (int i=0; i < this->numHingedJoints; ++i) {
-        SingleActuatorMsgPayload motorTorquesOutMsg = this->motorTorquesOutMsgs[i]->zeroMsgPayload;
+        const size_t jointIndex = static_cast<size_t>(i);
+        SingleActuatorMsgPayload motorTorquesOutMsg = this->motorTorquesOutMsgs[jointIndex]->zeroMsgPayload;
         motorTorquesOutMsg.input = uH(i);
-        this->motorTorquesOutMsgs[i]->write(&motorTorquesOutMsg, this->moduleID, CurrentSimNanos);
+        this->motorTorquesOutMsgs[jointIndex]->write(&motorTorquesOutMsg, this->moduleID, CurrentSimNanos);
     }
 }
 

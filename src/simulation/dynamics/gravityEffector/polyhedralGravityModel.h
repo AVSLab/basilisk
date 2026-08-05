@@ -77,7 +77,7 @@ class PolyhedralGravityModel : public GravityModel {
   private:
     void initializeFacets();
     void initializeEdges();
-    bool addEdge(Eigen::Vector2i edge, int idx_edge, int idx_facet);
+    bool addEdge(Eigen::Vector2i edge, Eigen::Index idx_edge, int idx_facet);
 
   public:
     double muBody = 0;  /**< [m^3/s^2] Gravitation parameter for the planet */

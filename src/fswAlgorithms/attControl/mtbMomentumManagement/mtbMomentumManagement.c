@@ -89,9 +89,12 @@ void Update_mtbMomentumManagement(mtbMomentumManagementConfig *configData, uint6
     /*
      * Declare and initialize local variables.
      */
-    int numRW = configData->rwConfigParams.numRW;
-    int numMTB = configData->mtbConfigParams.numMTB;
-    int j = 0;
+    if (configData->rwConfigParams.numRW < 0 || configData->mtbConfigParams.numMTB < 0) {
+        _bskError(configData->bskLogger, "mtbMomentumManagement: effector counts must be non-negative.");
+    }
+    size_t numRW = (size_t) configData->rwConfigParams.numRW;
+    size_t numMTB = (size_t) configData->mtbConfigParams.numMTB;
+    size_t j = 0;
     double BTilde_B[3*3];
     double BGt[3*MAX_EFF_CNT];
     double BGtPsuedoInverse[MAX_EFF_CNT*3];
@@ -105,7 +108,7 @@ void Update_mtbMomentumManagement(mtbMomentumManagementConfig *configData, uint6
     v3SetZero(uDelta_B);
     vSetZero(uDelta_W, numRW);
     mSetZero(GsPsuedoInverse, numRW, 3);
-    mTranspose(configData->rwConfigParams.GsMatrix_B, configData->rwConfigParams.numRW, 3, Gs);
+    mTranspose(configData->rwConfigParams.GsMatrix_B, numRW, 3, Gs);
     v3SetZero(configData->tauDesiredMTB_B);
     v3SetZero(configData->tauDesiredRW_B);
     vSetZero(configData->hDeltaWheels_W, numRW);

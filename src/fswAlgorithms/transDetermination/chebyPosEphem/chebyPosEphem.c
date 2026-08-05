@@ -52,28 +52,30 @@ void Reset_chebyPosEphem(ChebyPosEphemData *configData, uint64_t callTime,
         _bskError(configData->bskLogger, "Error: chebyPosEphem.clockCorrInMsg wasn't connected.");
     }
 
-    int i, j, k, n;
+    uint32_t i, k;
+    int j, n;
     ChebyEphemRecord *currRec;
     double tempCVec[MAX_CHEB_COEFF];
     memset(tempCVec, 0x0, MAX_CHEB_COEFF*sizeof(double));
     for(i=0; i< MAX_CHEB_RECORDS; i++)
     {
         currRec = &(configData->ephArray[i]);
-        n=currRec->nChebCoeff;
+        n = (int) currRec->nChebCoeff;
         for(k=0; k<3; k++)
         {
+            const size_t coefficientOffset = (size_t) k * currRec->nChebCoeff;
             memset(tempCVec, 0x0, MAX_CHEB_COEFF*sizeof(double));
-            vCopy(&(currRec->posChebyCoeff[k*currRec->nChebCoeff]), currRec->nChebCoeff, tempCVec);
+            vCopy(&(currRec->posChebyCoeff[coefficientOffset]), currRec->nChebCoeff, tempCVec);
             for(j=n-2;j>=2;j--)
             {
-                currRec->velChebyCoeff[k*n+j]=2*(j+1)*tempCVec[j+1];
+                currRec->velChebyCoeff[coefficientOffset + (size_t) j]=2*(j+1)*tempCVec[j+1];
                 tempCVec[j - 1] += ((j+1)*tempCVec[j+1])/(j - 1);
             }
-            currRec->velChebyCoeff[k*n+1] = 4.0*tempCVec[2];
-            currRec->velChebyCoeff[k*n+0] = tempCVec[1];
+            currRec->velChebyCoeff[coefficientOffset + 1] = 4.0*tempCVec[2];
+            currRec->velChebyCoeff[coefficientOffset] = tempCVec[1];
             for(j=0; j<n; j++)
             {
-                currRec->velChebyCoeff[k*n+j] *= 1.0/currRec->ephemTimeRad;
+                currRec->velChebyCoeff[coefficientOffset + (size_t) j] *= 1.0/currRec->ephemTimeRad;
             }
         }
 
@@ -95,7 +97,7 @@ void Update_chebyPosEphem(ChebyPosEphemData *configData, uint64_t callTime, int6
     double currentEphTime;
     double currentScaledValue;
     ChebyEphemRecord *currRec;
-    int i;
+    uint32_t i;
     TDBVehicleClockCorrelationMsgPayload localCorr;
 
     // read input msg

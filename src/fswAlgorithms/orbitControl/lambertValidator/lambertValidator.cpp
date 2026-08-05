@@ -273,7 +273,7 @@ LambertValidator::InitialStates LambertValidator::getInitialStates()
     // Create initial state vectors.
     // Perturb all states in + and - direction, and for each case use min and max expected DV magnitude
     InitialStates initialStates;
-    for (int c1=0; c1 < stateSize; c1++) {
+    for (Eigen::Index c1 = 0; c1 < stateSize; c1++) {
         for (int c2=0; c2 < 2; c2++) {
             StateVector X0_H;
             StateVector X0minDV_H;
@@ -295,8 +295,10 @@ LambertValidator::InitialStates LambertValidator::getInitialStates()
             X0minDV_H.segment(3, 3) += dv_H - this->uncertaintyDV * dvHat_H;
             X0maxDV_H.segment(3, 3) += dv_H + this->uncertaintyDV * dvHat_H;
 
-            initialStates.at(c2*stateSize + c1) = dcm_HN_state.transpose() * X0minDV_H;
-            initialStates.at(2*stateSize + c2*stateSize + c1) = dcm_HN_state.transpose() * X0maxDV_H;
+            initialStates.at(static_cast<size_t>(c2 * stateSize + c1)) =
+                dcm_HN_state.transpose() * X0minDV_H;
+            initialStates.at(static_cast<size_t>(2 * stateSize + c2 * stateSize + c1)) =
+                dcm_HN_state.transpose() * X0maxDV_H;
         }
     }
 
@@ -330,7 +332,7 @@ void LambertValidator::countViolations(const InitialStates& initialStates)
     this->violationsOrbitRadius = 0;
 
     // propagate each initial condition from maneuver time to final time and check if constraints are violated
-    for (int c=0; c < NUM_INITIALSTATES; c++) {
+    for (size_t c = 0; c < NUM_INITIALSTATES; c++) {
         const StateVector& X0 = initialStates.at(c);
 
         PropagationResult states = this->propagate(
@@ -420,8 +422,8 @@ LambertValidator::PropagationResult LambertValidator::propagate(
     std::vector<StateVector> X = {X0};
 
     // propagate forward to tf
-    double N = ceil(abs(tf-t0)/dt);
-    for (int c=0; c < N; c++) {
+    const size_t stepCount = static_cast<size_t>(ceil(abs(tf-t0)/dt));
+    for (size_t c = 0; c < stepCount; c++) {
         double step = std::min(dt,abs(tf-t.at(c))); // for last time step, step size might be smaller than dt
         // special case for backwards propagation
         if (tf < t0) {
