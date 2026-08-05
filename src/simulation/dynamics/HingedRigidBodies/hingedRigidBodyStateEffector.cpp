@@ -440,11 +440,10 @@ void HingedRigidBodyStateEffector::computePanelInertialStates()
 
     // inertial velocity vector
     this->v_SN_N = (Eigen::Vector3d)(*this->inertialVelocityProperty)
-                  + this->d * this->thetaDot * this->sHat3_P - this->d * (omega_BN_B.cross(this->sHat1_P))
-                  + omega_BN_B.cross(this->r_HP_P);
+                  + dcm_NP * (this->rPrime_SP_P + omega_BN_B.cross(this->r_SP_P));
 
     *this->v_HN_N = (Eigen::Vector3d)(*this->inertialVelocityProperty)
-                  + omega_BN_B.cross(this->r_HP_P);
+                  + dcm_NP * omega_BN_B.cross(this->r_HP_P);
 
     return;
 }
