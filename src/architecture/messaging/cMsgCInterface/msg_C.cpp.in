@@ -59,7 +59,9 @@ void @MSG_AUTOSOURCE_TYPE@_C_write(@MSG_AUTOSOURCE_TYPE@Payload *data, @MSG_AUTO
 //! C interface to read to a message
 @MSG_AUTOSOURCE_TYPE@Payload @MSG_AUTOSOURCE_TYPE@_C_read(@MSG_AUTOSOURCE_TYPE@_C *source) {
     if (!source->headerPointer->isWritten) {
-        BSK_PRINT(MSG_ERROR,"In C input msg, you are trying to read an un-written message of type @MSG_AUTOSOURCE_TYPE@.");
+        BSK_PRINT(MSG_ERROR,
+                  "%s",
+                  "In C input msg, you are trying to read an unwritten message of type @MSG_AUTOSOURCE_TYPE@.");
     }
     //! ensure the current message container has a copy of a subscribed message.
     //! Does nothing if the message is writing to itself
@@ -78,7 +80,9 @@ int @MSG_AUTOSOURCE_TYPE@_C_isWritten(@MSG_AUTOSOURCE_TYPE@_C *data) {
     if (data->header.isLinked) {
         return (int) data->headerPointer->isWritten;
     }
-    BSK_PRINT(MSG_ERROR,"In C input msg, you are checking if an unconnected msg of type @MSG_AUTOSOURCE_TYPE@ is written.");
+    BSK_PRINT(MSG_ERROR,
+              "%s",
+              "In C input msg, you are checking if an unconnected msg of type @MSG_AUTOSOURCE_TYPE@ is written.");
     return 0;
 };
 
@@ -87,18 +91,24 @@ uint64_t @MSG_AUTOSOURCE_TYPE@_C_timeWritten(@MSG_AUTOSOURCE_TYPE@_C *data) {
     if (data->header.isLinked) {
         return data->headerPointer->timeWritten;
     }
-    BSK_PRINT(MSG_ERROR,"In C input msg, you are requesting the write time of an unconnected msg of type @MSG_AUTOSOURCE_TYPE@.");
+    BSK_PRINT(MSG_ERROR,
+              "%s",
+              "In C input msg, you are requesting the write time of an unconnected msg of type @MSG_AUTOSOURCE_TYPE@.");
     return 0;
 };
 
 //! C interface to get the moduleID of who wrote the message
 int64_t @MSG_AUTOSOURCE_TYPE@_C_moduleID(@MSG_AUTOSOURCE_TYPE@_C *data) {
     if (!data->header.isLinked) {
-        BSK_PRINT(MSG_ERROR,"In C input msg, you are requesting moduleID of an unconnected msg of type @MSG_AUTOSOURCE_TYPE@.");
+        BSK_PRINT(MSG_ERROR,
+                  "%s",
+                  "In C input msg, you are requesting moduleID of an unconnected msg of type @MSG_AUTOSOURCE_TYPE@.");
         return 0;
     }
     if (!data->headerPointer->isWritten) {
-        BSK_PRINT(MSG_ERROR,"In C input msg, you are requesting moduleID of an unwritten msg of type @MSG_AUTOSOURCE_TYPE@.");
+        BSK_PRINT(MSG_ERROR,
+                  "%s",
+                  "In C input msg, you are requesting moduleID of an unwritten msg of type @MSG_AUTOSOURCE_TYPE@.");
         return 0;
     }
     return data->headerPointer->moduleID;
