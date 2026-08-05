@@ -10,6 +10,9 @@ Basilisk Known Issues
 
 Version |release| (July 7, 2026)
 --------------------------------
+- The :ref:`linearTranslationOneDOFStateEffector` published two of its inertial properties incorrectly.
+  The translating frame velocity omitted the hub's inertial velocity entirely, and the translating frame
+  angular velocity was rotated by the transpose of ``dcm_FB``. This is fixed in the current version.
 - The :ref:`spinningBodyTwoDOFStateEffector` applied an attached dynamic effector's torque on the upper
   spinning body to the lower spinning body's equation of motion with the wrong sign. This is fixed in
   the current version.

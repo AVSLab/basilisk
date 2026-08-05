@@ -100,7 +100,7 @@ private:
     Eigen::Vector3d r_FcF_F = Eigen::Vector3d::Zero();        //!< [m] vector pointing from location F to FC in F frame components
     Eigen::Vector3d r_F0B_B = Eigen::Vector3d::Zero();        //!< [m] vector pointing from body frame B origin to point to F0 origin of F frame in B frame components
     Eigen::Matrix3d IPntFc_F = Eigen::Matrix3d::Identity();   //!< [kg-m^2] Inertia of pc about point Fc in F frame component
-    Eigen::Matrix3d dcm_FB = Eigen::Matrix3d::Identity();     //!< DCM from the F frame to the body frame
+    Eigen::Matrix3d dcm_FB = Eigen::Matrix3d::Identity();     //!< DCM from the body frame to the F frame
     std::string nameOfRhoState{};     //!< Identifier for the rho state data container
     std::string nameOfRhoDotState{};  //!< Identifier for the rhoDot state data container
     std::string nameOfInertialPositionProperty;                      //!< -- identifier for the inertial position property
