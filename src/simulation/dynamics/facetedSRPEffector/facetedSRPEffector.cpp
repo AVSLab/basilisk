@@ -25,8 +25,7 @@
 
  @param currentSimNanos [ns] Time the method is called
 */
-void FacetedSRPEffector::Reset(uint64_t currentSimNanos) {
-    (void) currentSimNanos;
+void FacetedSRPEffector::Reset(uint64_t currentSimNanos [[maybe_unused]]) {
     // Check Sun state input message is linked
     if (!this->sunStateInMsg.isLinked()) {
         this->bskLogger.bskError("FacetedSRPEffector.sunStateInMsg was not linked.");
@@ -79,9 +78,7 @@ void FacetedSRPEffector::linkInStates(DynParamManager& states) {
  @param callTime [s] Time the method is called
  @param timeStep [s] Simulation time step
 */
-void FacetedSRPEffector::computeForceTorque(double callTime, double timeStep) {
-    (void) callTime;
-    (void) timeStep;
+void FacetedSRPEffector::computeForceTorque(double callTime [[maybe_unused]], double timeStep [[maybe_unused]]) {
 
     this->forceExternal_B.setZero();
     this->torqueExternalPntB_B.setZero();

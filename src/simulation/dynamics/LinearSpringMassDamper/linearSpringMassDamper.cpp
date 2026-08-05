@@ -92,9 +92,8 @@ void LinearSpringMassDamper::registerStates(DynParamManager& states)
 }
 
 /*! This is the method for the SMD to add its contributions to the mass props and mass prop rates of the vehicle */
-void LinearSpringMassDamper::updateEffectorMassProps(double integTime)
+void LinearSpringMassDamper::updateEffectorMassProps(double integTime [[maybe_unused]])
 {
-    (void) integTime;
 	// - Grab rho from state manager and define r_PcB_B
 	this->rho = this->rhoState->getStateReference()(0,0);
 	this->r_PcB_B = this->rho * this->pHat_B + this->r_PB_B;
@@ -122,9 +121,8 @@ void LinearSpringMassDamper::updateEffectorMassProps(double integTime)
 }
 
 /*! This is method is used to pass mass properties information to the fuelTank */
-void LinearSpringMassDamper::retrieveMassValue(double integTime)
+void LinearSpringMassDamper::retrieveMassValue(double integTime [[maybe_unused]])
 {
-    (void) integTime;
     // Save mass value into the fuelSlosh class variable
     this->fuelMass = this->massSMD;
 
@@ -132,10 +130,8 @@ void LinearSpringMassDamper::retrieveMassValue(double integTime)
 }
 
 /*! This method is for the SMD to add its contributions to the back-sub method */
-void LinearSpringMassDamper::updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::MRPd sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N)
+void LinearSpringMassDamper::updateContributions(double integTime [[maybe_unused]], BackSubMatrices & backSubContr, Eigen::MRPd sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N [[maybe_unused]])
 {
-    (void) integTime;
-    (void) g_N;
     // - Find dcm_BN
     Eigen::MRPd sigmaLocal_BN;
     Eigen::Matrix3d dcm_BN;
@@ -175,9 +171,8 @@ void LinearSpringMassDamper::updateContributions(double integTime, BackSubMatric
 
 /*! This method is used to define the derivatives of the SMD. One is the trivial kinematic derivative and the other is
  derived using the back-sub method */
-void LinearSpringMassDamper::computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN)
+void LinearSpringMassDamper::computeDerivatives(double integTime [[maybe_unused]], Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN)
 {
-    (void) integTime;
 
 	// - Find DCM
 	Eigen::MRPd sigmaLocal_BN;
@@ -204,10 +199,9 @@ void LinearSpringMassDamper::computeDerivatives(double integTime, Eigen::Vector3
 }
 
 /*! This method is for the SMD to add its contributions to energy and momentum */
-void LinearSpringMassDamper::updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
+void LinearSpringMassDamper::updateEnergyMomContributions(double integTime [[maybe_unused]], Eigen::Vector3d & rotAngMomPntCContr_B,
                                                           double & rotEnergyContr, Eigen::Vector3d omega_BN_B)
 {
-    (void) integTime;
     //  - Get variables needed for energy momentum calcs
     Eigen::Vector3d omegaLocal_BN_B;
     omegaLocal_BN_B = omega_BN_B;
@@ -223,9 +217,8 @@ void LinearSpringMassDamper::updateEnergyMomContributions(double integTime, Eige
     return;
 }
 
-void LinearSpringMassDamper::calcForceTorqueOnBody(double integTime, Eigen::Vector3d omega_BN_B)
+void LinearSpringMassDamper::calcForceTorqueOnBody(double integTime [[maybe_unused]], Eigen::Vector3d omega_BN_B)
 {
-    (void) integTime;
     // - Get the current omega state
     Eigen::Vector3d omegaLocal_BN_B;
     omegaLocal_BN_B = omega_BN_B;

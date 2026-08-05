@@ -38,9 +38,8 @@ MtbEffector::~MtbEffector()
 /*! This method is used to reset the module and checks that required input messages are connect.
 
 */
-void MtbEffector::Reset(uint64_t CurrentSimNanos)
+void MtbEffector::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
-    (void) CurrentSimNanos;
     /*
      * Check that required input messages are connected.
      */
@@ -94,10 +93,8 @@ void MtbEffector::linkInStates(DynParamManager& states)
 /*! This method computes the body torque contribution from all magnetic torque bars.
 
 */
-void MtbEffector::computeForceTorque(double integTime, double timeStep)
+void MtbEffector::computeForceTorque(double integTime [[maybe_unused]], double timeStep [[maybe_unused]])
 {
-    (void) integTime;
-    (void) timeStep;
     /*
      * Create local variables.
      */

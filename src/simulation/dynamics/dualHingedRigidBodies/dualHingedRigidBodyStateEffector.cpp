@@ -92,9 +92,8 @@ DualHingedRigidBodyStateEffector::~DualHingedRigidBodyStateEffector()
 /*! This method is used to reset the module.
 
  */
-void DualHingedRigidBodyStateEffector::Reset(uint64_t CurrentSimNanos)
+void DualHingedRigidBodyStateEffector::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
-    (void) CurrentSimNanos;
 
     return;
 }
@@ -147,9 +146,8 @@ void DualHingedRigidBodyStateEffector::registerStates(DynParamManager& states)
     return;
 }
 
-void DualHingedRigidBodyStateEffector::updateEffectorMassProps(double integTime)
+void DualHingedRigidBodyStateEffector::updateEffectorMassProps(double integTime [[maybe_unused]])
 {
-    (void) integTime;
     // - Convert initial variables to mother craft frame relative information
     this->r_H1P_P = this->r_BP_P + this->dcm_BP.transpose()*this->r_H1B_B;
     this->dcm_H1P = this->dcm_H1B*this->dcm_BP;
@@ -208,10 +206,8 @@ void DualHingedRigidBodyStateEffector::updateEffectorMassProps(double integTime)
     return;
 }
 
-void DualHingedRigidBodyStateEffector::updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::MRPd sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N)
+void DualHingedRigidBodyStateEffector::updateContributions(double integTime [[maybe_unused]], BackSubMatrices & backSubContr, Eigen::MRPd sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N [[maybe_unused]])
 {
-    (void) integTime;
-    (void) g_N;
     Eigen::MRPd sigmaPNLocal;
     Eigen::Matrix3d dcmPN;                        /* direction cosine matrix from N to B */
     Eigen::Matrix3d dcmNP;                        /* direction cosine matrix from B to N */
@@ -305,10 +301,8 @@ void DualHingedRigidBodyStateEffector::updateContributions(double integTime, Bac
     return;
 }
 
-void DualHingedRigidBodyStateEffector::computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN)
+void DualHingedRigidBodyStateEffector::computeDerivatives(double integTime [[maybe_unused]], Eigen::Vector3d rDDot_BN_N [[maybe_unused]], Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN)
 {
-    (void) integTime;
-    (void) rDDot_BN_N;
     // - Define necessarry variables
     Eigen::MRPd sigmaBNLocal;
     Eigen::Matrix3d dcmBN;                        /* direction cosine matrix from N to B */
@@ -341,9 +335,8 @@ void DualHingedRigidBodyStateEffector::computeDerivatives(double integTime, Eige
     return;
 }
 /*! This method is for calculating the contributions of the DHRB state effector to the energy and momentum of the s/c */
-void DualHingedRigidBodyStateEffector::updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_P, double & rotEnergyContr, Eigen::Vector3d omega_BN_B)
+void DualHingedRigidBodyStateEffector::updateEnergyMomContributions(double integTime [[maybe_unused]], Eigen::Vector3d & rotAngMomPntCContr_P, double & rotEnergyContr, Eigen::Vector3d omega_BN_B)
 {
-    (void) integTime;
     // - Get the current omega state
     Eigen::Vector3d omegaLocal_PN_P;
     this->omega_BN_B = omega_BN_B;

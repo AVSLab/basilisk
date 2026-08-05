@@ -306,10 +306,8 @@ bool SpacecraftChargingEquilibrium::validateSolveConfiguration()
 /*! This method is used to reset the module and checks that required input messages are connected.
  @param CurrentSimNanos current simulation time in nano-seconds
 */
-void SpacecraftChargingEquilibrium::Reset(uint64_t CurrentSimNanos)
+void SpacecraftChargingEquilibrium::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
-    (void) CurrentSimNanos;
-
     if (!this->plasmaFluxInMsg.isLinked()) {
         this->bskLogger.bskError("SpacecraftChargingEquilibrium.plasmaFluxInMsg was not linked.");
     }

@@ -63,9 +63,8 @@ SimpleAntenna::SimpleAntenna()
 }
 /*! This method is used to reset the module and checks that required input messages are connected.
 */
-void SimpleAntenna::Reset(uint64_t CurrentSimNanos)
+void SimpleAntenna::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
-    (void) CurrentSimNanos;
     // ERRORS
     // check that required input messages are connected
     if (!this->scStateInMsg.isLinked() && !this->groundStateInMsg.isLinked()) {

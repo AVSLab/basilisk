@@ -30,8 +30,7 @@ SimpleSolarPanel::~SimpleSolarPanel(){
 
 /*! custom solar panel reset function
  */
-void SimpleSolarPanel::customReset(uint64_t CurrentClock) {
-    (void) CurrentClock;
+void SimpleSolarPanel::customReset(uint64_t CurrentClock [[maybe_unused]]) {
 
     this->illuminationFactor = 1.0;
 

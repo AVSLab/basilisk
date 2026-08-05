@@ -58,9 +58,8 @@ Camera::~Camera()
 
  @param currentSimNanos current time (ns)
  */
-void Camera::Reset(uint64_t currentSimNanos)
+void Camera::Reset(uint64_t currentSimNanos [[maybe_unused]])
 {
-    (void) currentSimNanos;
 }
 
 /*!

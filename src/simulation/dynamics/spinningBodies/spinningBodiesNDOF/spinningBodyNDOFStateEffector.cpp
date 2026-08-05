@@ -44,9 +44,8 @@ SpinningBodyNDOFStateEffector::~SpinningBodyNDOFStateEffector()
     SpinningBodyNDOFStateEffector::effectorID --;    /* reset the panel ID*/
 }
 
-void SpinningBodyNDOFStateEffector::Reset(uint64_t CurrentClock)
+void SpinningBodyNDOFStateEffector::Reset(uint64_t CurrentClock [[maybe_unused]])
 {
-    (void) CurrentClock;
     if (this->spinningBodyVec.back()->mass <= 0.0)
         bskLogger.bskError("The mass of the last element must be greater than 0.");
 
@@ -238,9 +237,8 @@ void SpinningBodyNDOFStateEffector::registerProperties(DynParamManager& states)
     }
 }
 
-void SpinningBodyNDOFStateEffector::updateEffectorMassProps(double integTime)
+void SpinningBodyNDOFStateEffector::updateEffectorMassProps(double integTime [[maybe_unused]])
 {
-    (void) integTime;
     this->effProps.mEff = 0.0;
     this->effProps.rEff_CB_B = Eigen::Vector3d::Zero();
     this->effProps.rEffPrime_CB_B = Eigen::Vector3d::Zero();
@@ -585,10 +583,8 @@ void SpinningBodyNDOFStateEffector::computeBackSubVectors(BackSubMatrices &backS
     }
 }
 
-void SpinningBodyNDOFStateEffector::computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN)
+void SpinningBodyNDOFStateEffector::computeDerivatives(double integTime [[maybe_unused]], Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN [[maybe_unused]])
 {
-    (void) integTime;
-    (void) sigma_BN;
     Eigen::Vector3d rDDotLocal_BN_B = this->dcm_BN * rDDot_BN_N;
 
     Eigen::VectorXd thetaDDot = this->ATheta * rDDotLocal_BN_B + this->BTheta * omegaDot_BN_B + this->CTheta;
@@ -596,9 +592,8 @@ void SpinningBodyNDOFStateEffector::computeDerivatives(double integTime, Eigen::
     this->thetaDotState->setDerivative(thetaDDot);
 }
 
-void SpinningBodyNDOFStateEffector::updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B, double & rotEnergyContr, Eigen::Vector3d omega_BN_B)
+void SpinningBodyNDOFStateEffector::updateEnergyMomContributions(double integTime [[maybe_unused]], Eigen::Vector3d & rotAngMomPntCContr_B, double & rotEnergyContr, Eigen::Vector3d omega_BN_B)
 {
-    (void) integTime;
     this->omega_BN_B = omega_BN_B;
     this->omegaTilde_BN_B = eigenTilde(this->omega_BN_B);
 

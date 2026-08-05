@@ -76,9 +76,8 @@ SpinningBodyTwoDOFStateEffector::~SpinningBodyTwoDOFStateEffector()
 }
 
 /*! This method is used to reset the module. */
-void SpinningBodyTwoDOFStateEffector::Reset(uint64_t CurrentClock)
+void SpinningBodyTwoDOFStateEffector::Reset(uint64_t CurrentClock [[maybe_unused]])
 {
-    (void) CurrentClock;
     // Normalize both sHat vectors
     if (this->s1Hat_S1.norm() > 0.01) {
         this->s1Hat_S1.normalize();
@@ -253,9 +252,8 @@ void SpinningBodyTwoDOFStateEffector::registerProperties(DynParamManager& states
 
 /*! This method allows the SB state effector to provide its contributions to the mass props and mass prop rates of the
  spacecraft */
-void SpinningBodyTwoDOFStateEffector::updateEffectorMassProps(double integTime)
+void SpinningBodyTwoDOFStateEffector::updateEffectorMassProps(double integTime [[maybe_unused]])
 {
-    (void) integTime;
     // Give the mass of the spinning body to the effProps mass
     this->mass = this->mass1 + this->mass2;
     this->effProps.mEff = this->mass;
@@ -645,10 +643,8 @@ void SpinningBodyTwoDOFStateEffector::addPrescribedMotionCouplingContributions(B
 }
 
 /*! This method is used to find the derivatives for the SB stateEffector: thetaDDot and the kinematic derivative */
-void SpinningBodyTwoDOFStateEffector::computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN)
+void SpinningBodyTwoDOFStateEffector::computeDerivatives(double integTime [[maybe_unused]], Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN [[maybe_unused]])
 {
-    (void) integTime;
-    (void) sigma_BN;
     // Grab omegaDot_BN_B
     Eigen::Vector3d omegaDotLocal_BN_B;
     omegaDotLocal_BN_B = omegaDot_BN_B;
@@ -667,9 +663,8 @@ void SpinningBodyTwoDOFStateEffector::computeDerivatives(double integTime, Eigen
 }
 
 /*! This method is for calculating the contributions of the SB state effector to the energy and momentum of the spacecraft */
-void SpinningBodyTwoDOFStateEffector::updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B, double & rotEnergyContr, Eigen::Vector3d omega_BN_B)
+void SpinningBodyTwoDOFStateEffector::updateEnergyMomContributions(double integTime [[maybe_unused]], Eigen::Vector3d & rotAngMomPntCContr_B, double & rotEnergyContr, Eigen::Vector3d omega_BN_B)
 {
-    (void) integTime;
     // Update omega_BN_B and omega_SN_B
     this->omega_BN_B = omega_BN_B;
     this->omegaTilde_BN_B = eigenTilde(this->omega_BN_B);

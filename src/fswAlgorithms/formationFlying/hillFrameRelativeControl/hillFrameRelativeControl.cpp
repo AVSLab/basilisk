@@ -31,9 +31,8 @@ HillFrameRelativeControl::~HillFrameRelativeControl() = default;
 
 /*! This method is used to reset the module and checks that required input messages are connected.
  */
-void HillFrameRelativeControl::Reset(uint64_t currentSimNanos)
+void HillFrameRelativeControl::Reset(uint64_t currentSimNanos [[maybe_unused]])
 {
-    (void) currentSimNanos;
     if (!this->chiefTransInMsg.isLinked()) {
         this->bskLogger.bskError("hillFrameRelativeControl.chiefTransInMsg was not linked.");
     }

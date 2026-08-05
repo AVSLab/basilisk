@@ -24,9 +24,8 @@
 /*! This method is used to reset the module. Currently no tasks are required.
 
  */
-void SolarFlux::Reset(uint64_t CurrentSimNanos)
+void SolarFlux::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
-    (void) CurrentSimNanos;
     // check if input message has not been included
     if (!this->sunPositionInMsg.isLinked()) {
         bskLogger.bskError("solarFlux.sunPositionInMsg was not linked.");

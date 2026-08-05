@@ -47,6 +47,22 @@ simulation time is large:
 Store ``previous_time_nanos`` as a Python integer and update it only after the
 elapsed-time calculation.
 
+Unused Lifecycle Parameters
+---------------------------
+
+Basilisk still supplies every lifecycle argument when it calls a Python
+module.  Keep an unused argument in the method signature and prefix its name
+with an underscore to show that it is intentionally unused:
+
+.. code-block:: python
+
+    def Reset(self, _current_sim_nanos):
+        """Reset the module state."""
+        self.dummy = 0.0  # [-]
+
+This convention also prevents unused-argument reports from common Python
+linters.  Remove the underscore if the implementation later uses the value.
+
 The ``moduleID`` value of these Python BSK modules will be a unique positive number,
 same as with C, C++, and Rust BSK modules.
 

@@ -37,8 +37,7 @@ void PrescribedRotation1DOF::SelfInit() {
 
  @param callTime [ns] Time the method is called
 */
-void PrescribedRotation1DOF::Reset(uint64_t callTime) {
-    (void) callTime;
+void PrescribedRotation1DOF::Reset(uint64_t callTime [[maybe_unused]]) {
     if (!this->spinningBodyInMsg.isLinked()) {
         this->bskLogger->bskError("prescribedRotation1DOF.spinningBodyInMsg wasn't connected.");
     }

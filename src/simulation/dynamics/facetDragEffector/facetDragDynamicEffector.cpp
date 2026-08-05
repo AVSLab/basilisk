@@ -42,9 +42,8 @@ FacetDragDynamicEffector::~FacetDragDynamicEffector()
 
 
 
-void FacetDragDynamicEffector::Reset(uint64_t CurrentSimNanos)
+void FacetDragDynamicEffector::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
-    (void) CurrentSimNanos;
 	// check if input message has not been included
 	if (!this->atmoDensInMsg.isLinked()) {
 		bskLogger.bskError("facetDragDynamicEffector.atmoDensInMsg was not linked.");
@@ -56,9 +55,8 @@ void FacetDragDynamicEffector::Reset(uint64_t CurrentSimNanos)
 /*! The DragEffector does not write output messages to the rest of the sim.
 
  */
-void FacetDragDynamicEffector::WriteOutputMessages(uint64_t CurrentClock)
+void FacetDragDynamicEffector::WriteOutputMessages(uint64_t CurrentClock [[maybe_unused]])
 {
-    (void) CurrentClock;
 	return;
 }
 
@@ -175,9 +173,7 @@ void FacetDragDynamicEffector::plateDrag(){
 /*! This method computes the body forces and torques for the dragEffector in a simulation loop,
 selecting the model type based on the settable attribute "modelType."
 */
-void FacetDragDynamicEffector::computeForceTorque(double integTime, double timeStep){
-    (void) integTime;
-    (void) timeStep;
+void FacetDragDynamicEffector::computeForceTorque(double integTime [[maybe_unused]], double timeStep [[maybe_unused]]){
 	updateDragDir();
 	plateDrag();
   return;
@@ -188,9 +184,8 @@ Naturally, this means that conditions are held piecewise-constant over an integr
 
  @param CurrentSimNanos The current simulation time in nanoseconds
  */
-void FacetDragDynamicEffector::UpdateState(uint64_t CurrentSimNanos)
+void FacetDragDynamicEffector::UpdateState(uint64_t CurrentSimNanos [[maybe_unused]])
 {
-    (void) CurrentSimNanos;
 	ReadInputs();
 	return;
 }

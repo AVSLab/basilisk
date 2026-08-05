@@ -34,9 +34,8 @@ void ThrustCMEstimation::SelfInit(){
 
  @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void ThrustCMEstimation::Reset(uint64_t CurrentSimNanos)
+void ThrustCMEstimation::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
-    (void) CurrentSimNanos;
     /*! - Check if the required message has not been connected */
     if (!this->thrusterConfigBInMsg.isLinked()) {
         bskLogger.bskError(" thrusterConfigInMsg wasn't connected.");

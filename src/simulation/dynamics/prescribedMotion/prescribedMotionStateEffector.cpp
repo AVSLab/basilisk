@@ -83,9 +83,8 @@ PrescribedMotionStateEffector::~PrescribedMotionStateEffector()
 
  @param currentClock [ns] Time the method is called
 */
-void PrescribedMotionStateEffector::Reset(uint64_t currentClock)
+void PrescribedMotionStateEffector::Reset(uint64_t currentClock [[maybe_unused]])
 {
-    (void) currentClock;
 }
 
 /*! This method takes the computed states and outputs them to the messaging system.

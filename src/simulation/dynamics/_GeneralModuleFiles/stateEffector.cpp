@@ -47,9 +47,8 @@ StateEffector::~StateEffector()
 
 /*! This method is for the state effector to provide its contributions of mass and mass rates to the dynamicObject. This
  allows for the dynamicObject to have access to the total mass, and inerita, mass and inertia rates*/
-void StateEffector::updateEffectorMassProps(double integTime)
+void StateEffector::updateEffectorMassProps(double integTime [[maybe_unused]])
 {
-    (void) integTime;
     return;
 }
 
@@ -64,13 +63,8 @@ void StateEffector::receiveMotherSpacecraftData(Eigen::Vector3d rSC_BP_P, Eigen:
 /*! This method is strictly for the back-substituion method for computing the dynamics of the spacecraft. The back-sub
  method first computes rDDot_BN_N and omegaDot_BN_B for the spacecraft using these contributions from the state
  effectors. Then computeDerivatives is called to compute the stateEffectors derivatives using rDDot_BN_N omegaDot_BN_B*/
-void StateEffector::updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::MRPd sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N)
+void StateEffector::updateContributions(double integTime [[maybe_unused]], BackSubMatrices & backSubContr [[maybe_unused]], Eigen::MRPd sigma_BN [[maybe_unused]], Eigen::Vector3d omega_BN_B [[maybe_unused]], Eigen::Vector3d g_N [[maybe_unused]])
 {
-    (void) integTime;
-    (void) backSubContr;
-    (void) sigma_BN;
-    (void) omega_BN_B;
-    (void) g_N;
     return;
 }
 
@@ -79,66 +73,53 @@ void StateEffector::updateContributions(double integTime, BackSubMatrices & back
  to how the spacecraft module calls updateContributions for all its attached effectors, the prescribed motion module
  calls this method for all its attached state effectors.
  */
-void StateEffector::addPrescribedMotionCouplingContributions(BackSubMatrices& backSubContr)
+void StateEffector::addPrescribedMotionCouplingContributions(BackSubMatrices& backSubContr [[maybe_unused]])
 {
-    (void) backSubContr;
     return;
 }
 
 /*! This method allows for an individual stateEffector to add its energy and momentum calculations to the dynamicObject.
  The analytical devlopement of these contributions can be seen in
  Basilisk/simulation/dynamics/_Documentation/Basilisk-EnergyAndMomentum-20161219.pdf*/
-void StateEffector::updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
-                                                 double & rotEnergyContr, Eigen::Vector3d omega_BN_B)
+void StateEffector::updateEnergyMomContributions(double integTime [[maybe_unused]], Eigen::Vector3d & rotAngMomPntCContr_B [[maybe_unused]],
+                                                 double & rotEnergyContr [[maybe_unused]], Eigen::Vector3d omega_BN_B [[maybe_unused]])
 {
-    (void) integTime;
-    (void) rotAngMomPntCContr_B;
-    (void) rotEnergyContr;
-    (void) omega_BN_B;
     return;
 }
 
 /*! This method allows for an individual stateEffector to modify their states after integration*/
-void StateEffector::modifyStates(double integTime)
+void StateEffector::modifyStates(double integTime [[maybe_unused]])
 {
-    (void) integTime;
     return;
 }
 
 /*! This method allows for an individual stateEffector to find the force and torque that the stateEffector is placing on to the body */
-void StateEffector::calcForceTorqueOnBody(double integTime, Eigen::Vector3d omega_BN_B)
+void StateEffector::calcForceTorqueOnBody(double integTime [[maybe_unused]], Eigen::Vector3d omega_BN_B [[maybe_unused]])
 {
-    (void) integTime;
-    (void) omega_BN_B;
     return;
 }
 
 /*! This method ensures that all dynamics states have their messages written after integation */
-void StateEffector::writeOutputStateMessages(uint64_t integTimeNanos)
+void StateEffector::writeOutputStateMessages(uint64_t integTimeNanos [[maybe_unused]])
 {
-    (void) integTimeNanos;
     return;
 }
 
 /*! This method allows the effector to register its properties */
-void StateEffector::registerProperties(DynParamManager& states)
+void StateEffector::registerProperties(DynParamManager& states [[maybe_unused]])
 {
-    (void) states;
     return;
 }
 
 /*! This method can only be called for a state effector with override definition set up to support attached dynamic effectors */
-void StateEffector::addDynamicEffector(DynamicEffector *newDynamicEffector, int segment)
+void StateEffector::addDynamicEffector(DynamicEffector * newDynamicEffector [[maybe_unused]], int segment [[maybe_unused]])
 {
-    (void) newDynamicEffector;
-    (void) segment;
     bskLogger.bskError("StateEffector: This effector is not compatible with attached effectors");
 }
 
 /*! This method allows the state effector to link in prescribed motion properties */
-void StateEffector::linkInPrescribedMotionProperties(DynParamManager& properties)
+void StateEffector::linkInPrescribedMotionProperties(DynParamManager& properties [[maybe_unused]])
 {
-    (void) properties;
     bskLogger.bskError("StateEffector: This effector is not compatible for attachment to prescribed motion.");
 }
 

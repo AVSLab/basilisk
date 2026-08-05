@@ -74,9 +74,8 @@ void WindBase::Reset(uint64_t CurrentSimNanos)
     customReset(CurrentSimNanos);
 }
 
-void WindBase::customReset(uint64_t CurrentClock)
+void WindBase::customReset(uint64_t CurrentClock [[maybe_unused]])
 {
-    (void) CurrentClock;
     // Read the planet message to get the current SPICE data
     if (this->planetPosInMsg.isWritten()) {
         this->planetState = this->planetPosInMsg();

@@ -44,8 +44,7 @@ LinearTranslationOneDOFStateEffector::~LinearTranslationOneDOFStateEffector()
     LinearTranslationOneDOFStateEffector::effectorID = 1;
 }
 
-void LinearTranslationOneDOFStateEffector::Reset(uint64_t CurrentClock) {
-    (void) CurrentClock;
+void LinearTranslationOneDOFStateEffector::Reset(uint64_t CurrentClock [[maybe_unused]]) {
 }
 
 void LinearTranslationOneDOFStateEffector::setMass(double mass) {
@@ -193,9 +192,8 @@ void LinearTranslationOneDOFStateEffector::writeOutputStateMessages(uint64_t cur
     }
 }
 
-void LinearTranslationOneDOFStateEffector::updateEffectorMassProps(double integTime)
+void LinearTranslationOneDOFStateEffector::updateEffectorMassProps(double integTime [[maybe_unused]])
 {
-    (void) integTime;
 	this->rho = this->rhoState->getStateReference()(0,0);
     this->rhoDot = this->rhoDotState->getStateReference()(0, 0);
 
@@ -223,9 +221,8 @@ void LinearTranslationOneDOFStateEffector::updateEffectorMassProps(double integT
 void LinearTranslationOneDOFStateEffector::updateContributions(double integTime, BackSubMatrices & backSubContr,
                                                                Eigen::MRPd sigma_BN,
                                                                Eigen::Vector3d omega_BN_B,
-                                                               Eigen::Vector3d g_N)
+                                                               Eigen::Vector3d g_N [[maybe_unused]])
 {
-    (void) g_N;
     Eigen::MRPd sigmaLocal_BN;
     sigmaLocal_BN = sigma_BN;
     this->dcm_BN = sigmaLocal_BN.toRotationMatrix().transpose();
@@ -356,12 +353,11 @@ void LinearTranslationOneDOFStateEffector::addPrescribedMotionCouplingContributi
             + vecRotTerm5;
 }
 
-void LinearTranslationOneDOFStateEffector::computeDerivatives(double integTime,
+void LinearTranslationOneDOFStateEffector::computeDerivatives(double integTime [[maybe_unused]],
                                                               Eigen::Vector3d rDDot_BN_N,
                                                               Eigen::Vector3d omegaDot_BN_B,
                                                               Eigen::MRPd sigma_BN)
 {
-    (void) integTime;
 	Eigen::MRPd sigmaLocal_BN;
 	sigmaLocal_BN = sigma_BN;
 	this->dcm_BN = sigmaLocal_BN.toRotationMatrix().transpose();
@@ -373,12 +369,11 @@ void LinearTranslationOneDOFStateEffector::computeDerivatives(double integTime,
     this->rhoState->setDerivative(this->rhoDotState->getStateReference());
 }
 
-void LinearTranslationOneDOFStateEffector::updateEnergyMomContributions(double integTime,
+void LinearTranslationOneDOFStateEffector::updateEnergyMomContributions(double integTime [[maybe_unused]],
                                                                         Eigen::Vector3d & rotAngMomPntCContr_B,
                                                                         double & rotEnergyContr,
                                                                         Eigen::Vector3d omega_BN_B)
 {
-    (void) integTime;
     // Update omega_BN_B and omega_FN_B
     this->omega_BN_B = omega_BN_B;
     Eigen::Vector3d omega_FN_B = this->omega_BN_B;

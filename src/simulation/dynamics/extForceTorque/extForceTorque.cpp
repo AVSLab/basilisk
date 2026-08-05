@@ -47,9 +47,8 @@ ExtForceTorque::~ExtForceTorque()
 /*! This method is used to reset the module.
 
  */
-void ExtForceTorque::Reset(uint64_t CurrentSimNanos)
+void ExtForceTorque::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
-    (void) CurrentSimNanos;
     /* zero the input messages */
     this->incomingCmdTorqueBuffer = this->cmdTorqueInMsg.zeroMsgPayload;
     this->incomingCmdForceBodyBuffer = this->cmdForceBodyInMsg.zeroMsgPayload;
@@ -57,9 +56,8 @@ void ExtForceTorque::Reset(uint64_t CurrentSimNanos)
 }
 
 
-void ExtForceTorque::linkInStates(DynParamManager& statesIn)
+void ExtForceTorque::linkInStates(DynParamManager& statesIn [[maybe_unused]])
 {
-    (void) statesIn;
 
 }
 
@@ -68,9 +66,8 @@ void ExtForceTorque::linkInStates(DynParamManager& statesIn)
  @param currentClock The current time used for time-stamping the message
 
  */
-void ExtForceTorque::writeOutputMessages(uint64_t currentClock)
+void ExtForceTorque::writeOutputMessages(uint64_t currentClock [[maybe_unused]])
 {
-    (void) currentClock;
 
 }
 
@@ -97,10 +94,8 @@ void ExtForceTorque::readInputMessages()
             matrix representations in the body (B) and inerial (N) frame components are treated as 2
             separate vectors.  Only set both if you mean to, as both vectors will be included.
  */
-void ExtForceTorque::computeForceTorque(double integTime, double timeStep)
+void ExtForceTorque::computeForceTorque(double integTime [[maybe_unused]], double timeStep [[maybe_unused]])
 {
-    (void) integTime;
-    (void) timeStep;
 	Eigen::Vector3d cmdVec;
 
     /* add the cmd force in inertial frame components set via Python */
@@ -130,8 +125,7 @@ void ExtForceTorque::computeForceTorque(double integTime, double timeStep)
     return;
 }
 
-void ExtForceTorque::UpdateState(uint64_t CurrentSimNanos)
+void ExtForceTorque::UpdateState(uint64_t CurrentSimNanos [[maybe_unused]])
 {
-    (void) CurrentSimNanos;
     this->readInputMessages();
 }

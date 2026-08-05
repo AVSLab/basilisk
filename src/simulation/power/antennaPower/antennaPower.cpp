@@ -30,9 +30,8 @@ AntennaPower::~AntennaPower(){
 
 /*! This method is used to reset the module. Here variables are checked for correct values.
  */
-void AntennaPower::customReset(uint64_t CurrentSimNanos)
+void AntennaPower::customReset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
-    (void) CurrentSimNanos;
     // Check that basePowerNeed is non-negative
     if (this->basePowerNeed < 0.0) {
         bskLogger.bskError("AntennaPower: basePowerNeed cannot be negative.");

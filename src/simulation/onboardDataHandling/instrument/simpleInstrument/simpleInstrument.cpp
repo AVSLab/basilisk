@@ -39,8 +39,7 @@ SimpleInstrument::~SimpleInstrument(){
 /*! Sets the name and baud rate for the data in the output message.
 
 */
-void SimpleInstrument::evaluateDataModel(DataNodeUsageMsgPayload *dataUsageSimMsg, double currentTime){
-    (void) currentTime;
+void SimpleInstrument::evaluateDataModel(DataNodeUsageMsgPayload *dataUsageSimMsg, double currentTime [[maybe_unused]]){
     dataUsageSimMsg->baudRate = this->nodeBaudRate;
     if (std::memchr(this->nodeDataName, '\0', sizeof(this->nodeDataName)) == nullptr) {
         bskLogger.bskError("SimpleInstrument: nodeDataName is not null-terminated within %zu characters.",

@@ -170,9 +170,8 @@ void HingedRigidBodyStateEffector::registerProperties(DynParamManager& states)
 
 /*! This method allows the HRB state effector to provide its contributions to the mass props and mass prop rates of the
  spacecraft */
-void HingedRigidBodyStateEffector::updateEffectorMassProps(double integTime)
+void HingedRigidBodyStateEffector::updateEffectorMassProps(double integTime [[maybe_unused]])
 {
-    (void) integTime;
     // - Convert initial variables to mother craft frame relative information
     this->r_HP_P = this->r_BP_P + this->dcm_BP.transpose()*r_HB_B;
     this->dcm_HP = this->dcm_HB*this->dcm_BP;
@@ -292,9 +291,8 @@ void HingedRigidBodyStateEffector::updateContributions(double integTime, BackSub
 }
 
 /*! This method is used to find the derivatives for the HRB stateEffector: thetaDDot and the kinematic derivative */
-void HingedRigidBodyStateEffector::computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN)
+void HingedRigidBodyStateEffector::computeDerivatives(double integTime [[maybe_unused]], Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN)
 {
-    (void) integTime;
     // - Grab necessarry values from manager (these have been previously computed in hubEffector)
     Eigen::Vector3d rDDotLoc_PN_N = rDDot_BN_N;
     Eigen::MRPd sigmaLocal_PN;
@@ -320,10 +318,9 @@ void HingedRigidBodyStateEffector::computeDerivatives(double integTime, Eigen::V
 }
 
 /*! This method is for calculating the contributions of the HRB state effector to the energy and momentum of the s/c */
-void HingedRigidBodyStateEffector::updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
+void HingedRigidBodyStateEffector::updateEnergyMomContributions(double integTime [[maybe_unused]], Eigen::Vector3d & rotAngMomPntCContr_B,
                                                                 double & rotEnergyContr, Eigen::Vector3d omega_BN_B)
 {
-    (void) integTime;
     // - Get the current omega state
     Eigen::Vector3d omegaLocal_PN_P;
     omegaLocal_PN_P = omega_BN_B;
@@ -372,9 +369,8 @@ void HingedRigidBodyStateEffector::UpdateState(uint64_t CurrentSimNanos)
     return;
 }
 
-void HingedRigidBodyStateEffector::calcForceTorqueOnBody(double integTime, Eigen::Vector3d omega_BN_B)
+void HingedRigidBodyStateEffector::calcForceTorqueOnBody(double integTime [[maybe_unused]], Eigen::Vector3d omega_BN_B)
 {
-    (void) integTime;
 
     // - Get the current omega state
     Eigen::Vector3d omegaLocal_PN_P = omega_BN_B;

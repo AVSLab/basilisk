@@ -58,9 +58,8 @@ GroundLocation::~GroundLocation()
 }
 
 /*! Resets the internal position to the specified initial position.*/
-void GroundLocation::Reset(uint64_t CurrentSimNanos)
+void GroundLocation::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
-    (void) CurrentSimNanos;
     this->r_LP_P = this->r_LP_P_Init;
 
     if (this->planetRadius < 0) {

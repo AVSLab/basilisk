@@ -52,9 +52,8 @@ PlanetNav::~PlanetNav()
 
     @param CurrentSimNanos The clock time associated with the module call
 */
-void PlanetNav::Reset(uint64_t CurrentSimNanos)
+void PlanetNav::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
-    (void) CurrentSimNanos;
     // check that required input messages are connected
     if (!this->ephemerisInMsg.isLinked()) {
         bskLogger.bskError("PlanetNav.ephemerisInMsg was not linked.");

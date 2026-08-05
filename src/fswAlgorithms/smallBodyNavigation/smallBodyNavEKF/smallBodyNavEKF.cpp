@@ -78,9 +78,8 @@ void SmallBodyNavEKF::SelfInit(){
 /*! This method is used to reset the module and checks that required input messages are connect.
 
 */
-void SmallBodyNavEKF::Reset(uint64_t CurrentSimNanos)
+void SmallBodyNavEKF::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
-    (void) CurrentSimNanos;
     /* check that required input messages are connected */
     if (!this->navTransInMsg.isLinked()) {
         bskLogger.bskError("SmallBodyNavEKF.navTransInMsg was not linked.");
@@ -269,8 +268,7 @@ void SmallBodyNavEKF::computeEquationsOfMotion(const StateVector& x_hat, const S
     @param CurrentSimNanos
 
 */
-void SmallBodyNavEKF::aprioriCovar(uint64_t CurrentSimNanos){
-    (void) CurrentSimNanos;
+void SmallBodyNavEKF::aprioriCovar(uint64_t CurrentSimNanos [[maybe_unused]]){
     const StateMatrix currentCovariance = P_k;
     const StateMatrix processNoise = Q;
 

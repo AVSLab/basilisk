@@ -37,9 +37,8 @@ MJSystemCoM::MJSystemCoM()
 
 /*! This method is used to reset the module and checks that required input messages are connect.
 */
-void MJSystemCoM::Reset(uint64_t CurrentSimNanos)
+void MJSystemCoM::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
-    (void) CurrentSimNanos;
     if (!scene) {
         bskLogger.bskError("MJSystemCoM: scene pointer not set!");
     }

@@ -37,9 +37,8 @@ ExtPulsedTorque::~ExtPulsedTorque()
 
 
 /*! link the states */
-void ExtPulsedTorque::linkInStates(DynParamManager& statesIn)
+void ExtPulsedTorque::linkInStates(DynParamManager& statesIn [[maybe_unused]])
 {
-    (void) statesIn;
     return;
 }
 
@@ -48,9 +47,8 @@ void ExtPulsedTorque::linkInStates(DynParamManager& statesIn)
  @param currentClock The current time used for time-stamping the message
 
  */
-void ExtPulsedTorque::writeOutputMessages(uint64_t currentClock)
+void ExtPulsedTorque::writeOutputMessages(uint64_t currentClock [[maybe_unused]])
 {
-    (void) currentClock;
     return;
 }
 
@@ -68,10 +66,8 @@ void ExtPulsedTorque::readInputMessages()
             matrix represnetations in the body (B) and inerial (N) frame components are treated as 2
             separate vectors.  Only set both if you mean to, as both vectors will be included.
  */
-void ExtPulsedTorque::computeForceTorque(double integTime, double timeStep)
+void ExtPulsedTorque::computeForceTorque(double integTime [[maybe_unused]], double timeStep [[maybe_unused]])
 {
-    (void) integTime;
-    (void) timeStep;
     /* zero the output vector */
     this->torqueExternalPntB_B.fill(0.0);
 
@@ -93,8 +89,7 @@ void ExtPulsedTorque::computeForceTorque(double integTime, double timeStep)
 
 /*! Module update method
  */
-void ExtPulsedTorque::UpdateState(uint64_t CurrentSimNanos)
+void ExtPulsedTorque::UpdateState(uint64_t CurrentSimNanos [[maybe_unused]])
 {
-    (void) CurrentSimNanos;
     return;
 }

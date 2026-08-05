@@ -39,6 +39,26 @@ timestamp when exact nanosecond resolution is required across a long-running
 simulation.
 
 
+Unused Lifecycle Parameters
+---------------------------
+
+Basilisk lifecycle functions have framework-defined parameter lists.  Keep an
+unused parameter in the function signature and cast it to ``void`` in the
+function body to document that it is intentionally unused and suppress
+compiler warnings:
+
+.. code-block:: c
+
+   void Reset_myModule(MyModuleConfig *configData, uint64_t callTime, int64_t moduleID)
+   {
+       (void) configData;
+       (void) callTime;
+       (void) moduleID;
+   }
+
+Remove the cast if the implementation later uses the parameter.
+
+
 .. toctree::
    :maxdepth: 2
 

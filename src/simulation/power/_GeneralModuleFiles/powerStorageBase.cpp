@@ -175,18 +175,16 @@ void PowerStorageBase::UpdateState(uint64_t currentSimNanos)
 /*! Custom Reset() method.  This allows a child class to add additional functionality to the Reset() method
 
  */
-void PowerStorageBase::customReset(uint64_t CurrentClock)
+void PowerStorageBase::customReset(uint64_t CurrentClock [[maybe_unused]])
 {
-    (void) CurrentClock;
     return;
 }
 
 /*! custom Write method, similar to customSelfInit.
 
  */
-void PowerStorageBase::customWriteMessages(uint64_t CurrentClock)
+void PowerStorageBase::customWriteMessages(uint64_t CurrentClock [[maybe_unused]])
 {
-    (void) CurrentClock;
     return;
 }
 

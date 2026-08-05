@@ -208,9 +208,8 @@ MJScene::UpdateState(uint64_t CurrentSimNanos)
 }
 
 void
-MJScene::equationsOfMotion(double t, double timeStep)
+MJScene::equationsOfMotion(double t, double timeStep [[maybe_unused]])
 {
-    (void) timeStep;
     auto nanos = static_cast<uint64_t>(t * SEC2NANO);
 
     // Make sure the model is compiled
@@ -322,9 +321,8 @@ MJScene::equationsOfMotion(double t, double timeStep)
 }
 
 void
-MJScene::equationsOfMotionDiffusion(double t, double timeStep)
+MJScene::equationsOfMotionDiffusion(double t, double timeStep [[maybe_unused]])
 {
-    (void) timeStep;
     auto nanos = static_cast<uint64_t>(t * SEC2NANO);
     this->dynamicsDiffusionTask.ExecuteTaskList(nanos);
 }

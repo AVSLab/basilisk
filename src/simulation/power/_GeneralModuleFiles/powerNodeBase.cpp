@@ -94,9 +94,8 @@ bool PowerNodeBase::readMessages()
 /*! Core compute operation that implements switching logic and computes module-wise power consumption.
  */
 
-void PowerNodeBase::computePowerStatus(double currentTime)
+void PowerNodeBase::computePowerStatus(double currentTime [[maybe_unused]])
 {
-    (void) currentTime;
     if(this->powerStatus > 0)
     {
         this->evaluatePowerModel(&this->nodePowerMsg);
@@ -134,18 +133,16 @@ void PowerNodeBase::UpdateState(uint64_t CurrentSimNanos)
 /*! Custom Reset() method.  This allows a child class to add additional functionality to the Reset() method
 
  */
-void PowerNodeBase::customReset(uint64_t CurrentClock)
+void PowerNodeBase::customReset(uint64_t CurrentClock [[maybe_unused]])
 {
-    (void) CurrentClock;
     return;
 }
 
 /*! custom Write method, similar to customSelfInit.
 
  */
-void PowerNodeBase::customWriteMessages(uint64_t CurrentClock)
+void PowerNodeBase::customWriteMessages(uint64_t CurrentClock [[maybe_unused]])
 {
-    (void) CurrentClock;
     return;
 }
 

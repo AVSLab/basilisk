@@ -40,9 +40,8 @@ ReactionWheelPower::~ReactionWheelPower(){
 /*! This method is used to reset the module. Here variables are checked for correct values.
 
  */
-void ReactionWheelPower::customReset(uint64_t CurrentSimNanos)
+void ReactionWheelPower::customReset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
-    (void) CurrentSimNanos;
     if (this->elecToMechEfficiency <= 0.0) {
         bskLogger.bskError("PowerRW: elecToMechEfficiency is %f, must a strictly positive value.",
                          this->elecToMechEfficiency);

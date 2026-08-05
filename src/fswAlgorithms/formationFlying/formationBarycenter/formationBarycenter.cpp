@@ -45,8 +45,7 @@ void FormationBarycenter::SelfInit()
 
 /*! This method is used to reset the module and checks that required input messages are connected.
 */
-void FormationBarycenter::Reset(uint64_t CurrentSimNanos) {
-    (void) CurrentSimNanos;
+void FormationBarycenter::Reset(uint64_t CurrentSimNanos [[maybe_unused]]) {
     // check that required input messages are connected
     if (this->scNavInMsgs.size() == 0 || this->scPayloadInMsgs.size() == 0) {
         bskLogger.bskError("FormationBarycenter module must have at least one spacecraft added through `addSpacecraftToModel`");

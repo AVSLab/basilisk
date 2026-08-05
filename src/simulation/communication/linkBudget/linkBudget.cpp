@@ -68,9 +68,8 @@ LinkBudget::LinkBudget()
 
 /*! This method is used to reset the module and checks that required input messages are connect.
 */
-void LinkBudget::Reset(uint64_t CurrentSimNanos)
+void LinkBudget::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
-    (void) CurrentSimNanos;
     // check that required input messages are connected
     if (!this->antennaInPayload_1.isLinked()) {
         bskLogger.bskError("LinkBudget.antennaInPayload_1 was not linked.");

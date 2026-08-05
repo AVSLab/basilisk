@@ -25,9 +25,8 @@
 #include <mujoco/mujoco.h>
 #include <iomanip>
 
-void MJSystemMassMatrix::Reset(uint64_t CurrentSimNanos)
+void MJSystemMassMatrix::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
-    (void) CurrentSimNanos;
     if (!scene) {
         bskLogger.bskError("MJSystemMassMatrix: scene pointer not set!");
     }

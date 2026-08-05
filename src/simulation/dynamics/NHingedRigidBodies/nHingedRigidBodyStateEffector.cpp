@@ -60,9 +60,8 @@ void NHingedRigidBodyStateEffector::readInputMessages()
 
  @param CurrentClock The current simulation time (used for time stamping)
  */
-void NHingedRigidBodyStateEffector::WriteOutputMessages(uint64_t CurrentClock)
+void NHingedRigidBodyStateEffector::WriteOutputMessages(uint64_t CurrentClock [[maybe_unused]])
 {
-    (void) CurrentClock;
     return;
 }
 
@@ -102,9 +101,8 @@ void NHingedRigidBodyStateEffector::registerStates(DynParamManager& states)
 
 /*! This method allows the HRB state effector to provide its contributions to the mass props and mass prop rates of the
  spacecraft */
-void NHingedRigidBodyStateEffector::updateEffectorMassProps(double integTime)
+void NHingedRigidBodyStateEffector::updateEffectorMassProps(double integTime [[maybe_unused]])
 {
-    (void) integTime;
     // - Define summation variables
     double sum_Theta = 0;
     double sum_ThetaDot = 0;
@@ -208,10 +206,8 @@ double NHingedRigidBodyStateEffector::HeaviFunc(double cond)
 
 /*! This method allows the HRB state effector to give its contributions to the matrices needed for the back-sub
  method */
-void NHingedRigidBodyStateEffector::updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::MRPd sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N)
+void NHingedRigidBodyStateEffector::updateContributions(double integTime [[maybe_unused]], BackSubMatrices & backSubContr, Eigen::MRPd sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N [[maybe_unused]])
 {
-    (void) integTime;
-    (void) g_N;
     // - Find dcm_BN
     Eigen::MRPd sigmaLocal_BN;
     Eigen::Matrix3d dcm_BN;
@@ -448,9 +444,8 @@ void NHingedRigidBodyStateEffector::updateContributions(double integTime, BackSu
 }
 
 /*! This method is used to find the derivatives for the HRB stateEffector: thetaDDot and the kinematic derivative */
-void NHingedRigidBodyStateEffector::computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN)
+void NHingedRigidBodyStateEffector::computeDerivatives(double integTime [[maybe_unused]], Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN)
 {
-    (void) integTime;
     // - Grab necessarry values from manager (these have been previously computed in hubEffector)
     Eigen::Vector3d rDDotLoc_BN_N;
     Eigen::MRPd sigmaLocal_BN;
@@ -483,10 +478,9 @@ void NHingedRigidBodyStateEffector::computeDerivatives(double integTime, Eigen::
 }
 
 /*! This method is for calculating the contributions of the HRB state effector to the energy and momentum of the s/c */
-void NHingedRigidBodyStateEffector::updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
+void NHingedRigidBodyStateEffector::updateEnergyMomContributions(double integTime [[maybe_unused]], Eigen::Vector3d & rotAngMomPntCContr_B,
                                                                  double & rotEnergyContr, Eigen::Vector3d omega_BN_B)
 {
-    (void) integTime;
     // - Get the current omega state
     Eigen::Vector3d omegaLocal_BN_B;
     omegaLocal_BN_B = omega_BN_B;

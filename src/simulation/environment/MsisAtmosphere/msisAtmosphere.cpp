@@ -96,9 +96,8 @@ MsisAtmosphere::~MsisAtmosphere()
 /*! This method is used to reset the module.
 
  */
-void MsisAtmosphere::customReset(uint64_t CurrentSimNanos)
+void MsisAtmosphere::customReset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
-    (void) CurrentSimNanos;
     for(size_t ind = 0; ind < 23; ind++) {
         if (!this->swDataInMsgs[ind].isLinked()) {
             bskLogger.bskError("Required MSIS input messages No. %zu are not connected.", ind);
@@ -127,9 +126,8 @@ void MsisAtmosphere::customSetEpochFromVariable()
  @param CurrentClock The current time used for time-stamping the message
 
  */
-void MsisAtmosphere::customWriteMessages(uint64_t CurrentClock)
+void MsisAtmosphere::customWriteMessages(uint64_t CurrentClock [[maybe_unused]])
 {
-    (void) CurrentClock;
         /* [WIP] - Include additional outputs for other MSISE outputs (species count, etc.)*/
 
 }

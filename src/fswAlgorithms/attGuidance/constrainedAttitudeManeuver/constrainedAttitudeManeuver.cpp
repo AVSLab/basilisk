@@ -226,9 +226,8 @@ void ConstrainedAttitudeManeuver::appendKeepInDirection(double direction[3], dou
 
 /*! This method is used to reset the module. The input messages are read here,
 the grid is generated and the graph search is performed. */
-void ConstrainedAttitudeManeuver::Reset(uint64_t CurrentSimNanos)
+void ConstrainedAttitudeManeuver::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
-    (void) CurrentSimNanos;
 	ReadInputs();
 
 	Node startNode = Node(this->scStateMsgBuffer.sigma_BN, this->constraints, this->boresights);
@@ -745,9 +744,8 @@ void ConstrainedAttitudeManeuver::computeTorque(int n, double I[9], double L[3])
 /*! This method computes the torque vector required at time step with index n
 
  */
-double ConstrainedAttitudeManeuver::computeTorqueNorm(int n, double I[9])
+double ConstrainedAttitudeManeuver::computeTorqueNorm(int n, double I [[maybe_unused]][9])
 {
-    (void) I;
 	double L[3];
 	computeTorque(n, this->vehicleConfigMsgBuffer.ISCPntB_B, L);
 
