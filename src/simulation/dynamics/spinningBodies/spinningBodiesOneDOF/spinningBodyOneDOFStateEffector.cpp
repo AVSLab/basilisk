@@ -93,6 +93,8 @@ void SpinningBodyOneDOFStateEffector::Reset(uint64_t CurrentClock [[maybe_unused
 /*! This method takes the computed theta states and outputs them to the messaging system. */
 void SpinningBodyOneDOFStateEffector::writeOutputStateMessages(uint64_t CurrentClock)
 {
+    this->computeSpinningBodyInertialStates();
+
     // Write out the spinning body output messages
     if (this->spinningBodyOutMsg.isLinked()) {
         HingedRigidBodyMsgPayload spinningBodyBuffer;
@@ -132,6 +134,7 @@ void SpinningBodyOneDOFStateEffector::linkInStates(DynParamManager& statesIn)
     // Get access to properties needed for dynamic coupling (Hub or prescribed)
     this->inertialPositionProperty = statesIn.getPropertyReference(this->propName_inertialPosition);
     this->inertialVelocityProperty = statesIn.getPropertyReference(this->propName_inertialVelocity);
+    this->hubSigmaState = statesIn.getStateObject(this->nameOfSpacecraftAttachedTo + this->stateNameOfSigma);
 }
 
 /*! This method is used to link prescribed motion properties */
@@ -274,6 +277,10 @@ void SpinningBodyOneDOFStateEffector::updateContributions(double integTime,
 
     // Define auxiliary variable mTheta
     this->mTheta = this->sHat_B.transpose() * IPntS_B * this->sHat_B;
+
+    if (!this->dynEffectors.empty()) {
+        this->computeSpinningBodyInertialStates();
+    }
 
     // Loop through to collect forces and torques from any connected dynamic effectors
     Eigen::Vector3d attBodyForce_S = Eigen::Vector3d::Zero();  // sum of external forces in S frame components
@@ -461,6 +468,12 @@ void SpinningBodyOneDOFStateEffector::updateEnergyMomContributions(double integT
 /*! This method computes the spinning body states relative to the inertial frame */
 void SpinningBodyOneDOFStateEffector::computeSpinningBodyInertialStates()
 {
+    // - read live: the cached copy lags half a step at write time, unless a prescribed body set it
+    if (this->prescribedAttitudeProperty == nullptr) {
+        const Eigen::MRPd sigmaHub_BN(this->hubSigmaState->getStateReference().data());
+        this->dcm_BN = sigmaHub_BN.toRotationMatrix().transpose();
+    }
+
     // inertial attitude
     Eigen::Matrix3d dcm_SN;
     dcm_SN = (this->dcm_BS).transpose() * this->dcm_BN;
@@ -501,9 +514,6 @@ void SpinningBodyOneDOFStateEffector::UpdateState(uint64_t CurrentSimNanos)
         this->thetaRef = incomingRefBuffer.theta;
         this->thetaDotRef = incomingRefBuffer.thetaDot;
     }
-
-    /* Compute spinning body inertial states */
-    this->computeSpinningBodyInertialStates();
 
     this->writeOutputStateMessages(CurrentSimNanos);
 }

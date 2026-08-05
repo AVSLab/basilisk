@@ -155,6 +155,8 @@ void SpinningBodyNDOFStateEffector::readInputMessages()
 
 void SpinningBodyNDOFStateEffector::writeOutputStateMessages(uint64_t CurrentClock)
 {
+    this->computeSpinningBodyInertialStates();
+
     size_t spinningBodyIndex = 0;
     for(auto& spinningBody: this->spinningBodyVec) {
         if (this->spinningBodyOutMsgs[spinningBodyIndex]->isLinked()) {
@@ -189,6 +191,7 @@ void SpinningBodyNDOFStateEffector::linkInStates(DynParamManager& statesIn)
 {
     this->inertialPositionProperty = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + "r_BN_N");
     this->inertialVelocityProperty = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + "v_BN_N");
+    this->hubSigmaState = statesIn.getStateObject(this->nameOfSpacecraftAttachedTo + this->stateNameOfSigma);
 }
 
 void SpinningBodyNDOFStateEffector::registerStates(DynParamManager& states)
@@ -351,6 +354,21 @@ void SpinningBodyNDOFStateEffector::updateContributions(double integTime,
     Eigen::MatrixX3d AThetaStar = Eigen::MatrixX3d::Zero(this->numberOfDegreesOfFreedom, 3);
     Eigen::MatrixX3d BThetaStar = Eigen::MatrixX3d::Zero(this->numberOfDegreesOfFreedom, 3);
     Eigen::VectorXd CThetaStar = Eigen::VectorXd::Zero(this->numberOfDegreesOfFreedom);
+
+    bool hasAttachedEffectors = false;
+    for (const auto& spinningBody : this->spinningBodyVec) {
+        if (!spinningBody->dynEffectors.empty()) {
+            hasAttachedEffectors = true;
+            break;
+        }
+    }
+    if (hasAttachedEffectors) {
+        // - the per-body inertial rates are not refreshed until after the children are called
+        for (auto& spinningBody : this->spinningBodyVec) {
+            spinningBody->omega_SN_B = spinningBody->omega_SB_B + this->omega_BN_B;
+        }
+        this->computeSpinningBodyInertialStates();
+    }
 
     this->computeDependentEffectors(backSubContr, integTime);
 
@@ -612,6 +630,12 @@ void SpinningBodyNDOFStateEffector::updateEnergyMomContributions(double integTim
 
 void SpinningBodyNDOFStateEffector::computeSpinningBodyInertialStates()
 {
+    // - read live: the cached copy lags half a step at write time, unless a prescribed body set it
+    if (this->prescribedAttitudeProperty == nullptr) {
+        const Eigen::MRPd sigmaHub_BN(this->hubSigmaState->getStateReference().data());
+        this->dcm_BN = sigmaHub_BN.toRotationMatrix().transpose();
+    }
+
     for(auto& spinningBody: this->spinningBodyVec) {
         // Compute the rotational properties
         Eigen::Matrix3d dcm_SN = spinningBody->dcm_BS.transpose() * this->dcm_BN;
@@ -632,6 +656,5 @@ void SpinningBodyNDOFStateEffector::computeSpinningBodyInertialStates()
 void SpinningBodyNDOFStateEffector::UpdateState(uint64_t CurrentSimNanos)
 {
     this->readInputMessages();
-    this->computeSpinningBodyInertialStates();
     this->writeOutputStateMessages(CurrentSimNanos);
 }

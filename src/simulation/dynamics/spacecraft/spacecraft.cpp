@@ -490,6 +490,10 @@ void Spacecraft::equationsOfMotion(double integTimeSeconds, double timeStep)
 
     this->gravField.computeGravityField(rLocal_CN_N, vLocal_CN_N);
 
+    // - refresh so effectors publish inertial properties at the current substep
+    this->gravField.updateInertialPosAndVel(this->hubR_N->getStateReference(),
+                                            this->hubV_N->getStateReference());
+
     // - Loop through dynEffectors to compute force and torque on the s/c
     std::vector<DynamicEffector*>::iterator dynIt;
     for(dynIt = this->dynEffectors.begin(); dynIt != this->dynEffectors.end(); dynIt++)

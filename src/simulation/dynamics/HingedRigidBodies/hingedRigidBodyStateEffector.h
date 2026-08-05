@@ -113,6 +113,7 @@ private:
     Eigen::MatrixXd* omega_SN_S;      //!< [rad/s] inertial panel frame angular velocity vector
 
     // Hub properties
+    StateData* hubSigmaState = nullptr;  //!< hub attitude state, read live for the published kinematics
     Eigen::MatrixXd* inertialPositionProperty;  //!< [m] r_N inertial position relative to system spice zeroBase/refBase
     Eigen::MatrixXd* inertialVelocityProperty;  //!< [m] v_N inertial velocity relative to system spice zeroBase/refBase
 

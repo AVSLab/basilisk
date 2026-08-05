@@ -67,6 +67,9 @@ from Basilisk.simulation import ( # dynamic effectors
 )
 from Basilisk.architecture import messaging
 
+COARSE_TIMESTEP = 0.001  # [s]
+FINE_TIMESTEP = 0.0005  # [s]
+
 # uncomment this line if this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
 # uncomment this line if this test has an expected failure, adjust message as needed
@@ -188,6 +191,40 @@ def test_effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dy
     :math:`{}^{\mathcal{N}}\mathbf{r}_{Pc_j/N}`, :math:`[\mathcal{NP}_j]`, and
     :math:`{}^{\mathcal{P}_j}\mathbf{r}_{Pc_j/P_j}` come from the state effector module.
 
+    Neither of those checks can see an error inside the parent's own equations of motion. The
+    parent's back-substitution stays internally consistent even when one of its terms is wrong, so
+    the momentum it hands the hub still matches the momentum its own coordinates lose. Energy is
+    not blind in the same way: a wrong generalized force does work that the applied load does not
+    account for. All state effector dampers are therefore set to zero, and the change in the
+    vehicle's rotational energy is compared against the work the child does about the vehicle
+    center of mass,
+
+    .. math::
+
+        \Delta T_{\text{rot}} = \int_{t_0}^{t} \left[
+        [\mathcal{NP}_j] {}^{\mathcal{P}_j}\!\boldsymbol{\tau}_{\text{ext},P_j}
+        \cdot {}^{\mathcal{N}}\boldsymbol{\omega}_{\mathcal{P}_j/\mathcal{N}}
+        + [\mathcal{NP}_j] {}^{\mathcal{P}_j}\mathbf{F}_{P_j} \cdot \left(
+        {}^{\mathcal{N}}\mathbf{v}_{P_j/N} - {}^{\mathcal{N}}\mathbf{v}_{C/N}
+        \right) \right] dt
+
+    where the attachment point velocity is recovered from the logged segment center of mass,
+    :math:`\mathbf{v}_{P_j/N} = \mathbf{v}_{Pc_j/N} + \boldsymbol{\omega}_{\mathcal{P}_j/\mathcal{N}}
+    \times \left( - [\mathcal{NP}_j] {}^{\mathcal{P}_j}\mathbf{r}_{Pc_j/P_j} \right)`.
+
+    Asserting only that this residual is small would be weak: the residual also carries
+    discretization error, so the tolerance has a floor and any defect smaller than that floor is
+    invisible unless the applied loads are raised until it clears. The test therefore asserts
+    convergence instead. The residual is dominated by the trapezoid rule used for the work integral
+    above, which is second order, so halving the step must drop it to roughly a quarter. A wrong
+    term in the equations of motion contributes a residual that does not shrink with the step at
+    all, and the ratio moves from a quarter towards one. The ratio is therefore required to sit
+    near 0.25 rather than merely to decrease. The lower bound matters too: a ratio well under 0.25
+    means the residual is falling faster than a trapezoid allows, which in practice means it has
+    reached a floor and the check has stopped measuring the equations of motion. This criterion is
+    independent of the load magnitude, so it does not have to be re-tuned when the loads or the
+    step change.
+
     The accumulated delta V is compared against the internally computed delta V of the spacecraft
     center of mass.
 
@@ -201,9 +238,21 @@ def test_effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dy
     the spacecraft module.
     """
 
-    effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dynamicEffector, isChild)
+    coarseResidual = effectorBranchingIntegratedTest(show_plots, stateEffector, isParent,
+                                                    dynamicEffector, isChild)
+    if coarseResidual is None:
+        return
 
-def effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dynamicEffector, isChild):
+    fineResidual = effectorBranchingIntegratedTest(False, stateEffector, isParent,
+                                                  dynamicEffector, isChild, timestep=FINE_TIMESTEP)
+    ratio = fineResidual / coarseResidual
+    assert 0.20 < ratio < 0.35, (
+        "branching energy work balance does not converge at second order: "
+        "%.4e J at 1 ms and %.4e J at 0.5 ms, ratio %.3f rather than 0.25"
+        % (coarseResidual, fineResidual, ratio))
+
+def effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dynamicEffector, isChild,
+                                    timestep=COARSE_TIMESTEP):
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
 
@@ -212,7 +261,6 @@ def effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dynamic
     unitTestSim.SetProgressBar(True)
 
     # Create test thread
-    timestep = 0.001
     testProcessRate = macros.sec2nano(timestep)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
@@ -379,12 +427,15 @@ def effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dynamic
     totAccumDV_N = datLog.TotalAccumDV_CN_N # total accumulated deltaV of the total vehicle COM
 
     r_ScN_N_log = inertialPropLog.r_BN_N
+    v_ScN_N_log = inertialPropLog.v_BN_N
+    omega_SN_log = inertialPropLog.omega_BN_B
+    rotEnergy = scObjectLog.totRotEnergy
 
     # Grab effector's attitude properties
     sigma_SN_log = inertialPropLog.sigma_BN
 
     # Compute conservation quantities using the state and dynamic effector's logged properties
-    n = rotAngMom_N.shape[0]-1 # length of log minus 1 as the inertial property log lags by a timestep
+    n = rotAngMom_N.shape[0]-1  # length of log minus one so the trapezoid integrals line up
     extTorque = np.empty((n,3))
     dV = np.empty((n,3))
     for idx in range(n):
@@ -396,18 +447,23 @@ def effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dynamic
             dV[idx,:] = (dV[idx-1,:] + (dcm_NS @ np.array(dynamicEff.extForce_B).flatten())
                        / (scObject.hub.mHub + stateEffProps.totalMass) * timestep)
         # Compute the total external torque on the vehicle
-        if stateEffector == "linearTranslationBodiesOneDOF" or stateEffector == "linearTranslationBodiesNDOF":
-            extTorque[idx,:] = (dcm_NS @ np.array(dynamicEff.extTorquePntB_B).flatten()
-                                + np.cross(r_ScN_N_log[idx+1,:] - dcm_NS
-                                @ np.array(stateEffProps.r_PcP_P).flatten()
-                                - datLog.r_CN_N[idx,:], dcm_NS
-                                @ np.array(dynamicEff.extForce_B).flatten()))
-        else:
-            extTorque[idx,:] = (dcm_NS @ np.array(dynamicEff.extTorquePntB_B).flatten()
-                                + np.cross(r_ScN_N_log[idx+1,:] - dcm_NS
-                                @ np.array(stateEffProps.r_PcP_P).flatten()
-                                - datLog.r_CN_N[idx,:], dcm_NS
-                                @ np.array(dynamicEff.extForce_B).flatten()))
+        extTorque[idx,:] = (dcm_NS @ np.array(dynamicEff.extTorquePntB_B).flatten()
+                            + np.cross(r_ScN_N_log[idx,:] - dcm_NS
+                            @ np.array(stateEffProps.r_PcP_P).flatten()
+                            - datLog.r_CN_N[idx,:], dcm_NS
+                            @ np.array(dynamicEff.extForce_B).flatten()))
+
+    rotPower = np.empty(n)
+    for idx in range(n):
+        dcm_NS = np.transpose(rbk.MRP2C(sigma_SN_log[idx,:]))
+        F_N = dcm_NS @ np.array(dynamicEff.extForce_B).flatten()
+        tau_N = dcm_NS @ np.array(dynamicEff.extTorquePntB_B).flatten()
+        omega_SN_N = dcm_NS @ omega_SN_log[idx,:]
+        # the load acts at the parent frame origin, r_PcP_P from the segment center of mass
+        v_PN_N = (v_ScN_N_log[idx,:]
+                  + np.cross(omega_SN_N, -dcm_NS @ np.array(stateEffProps.r_PcP_P).flatten()))
+        rotPower[idx] = tau_N.dot(omega_SN_N) + F_N.dot(v_PN_N - datLog.v_CN_N[idx,:])
+    dErot = np.concatenate(([0.0], np.cumsum(0.5*(rotPower[1:] + rotPower[:-1])*timestep)))
 
     # Integrate the torque to find accumulated change in angular momentum
     dx = np.ones(n-1)*timestep
@@ -460,20 +516,21 @@ def effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dynamic
     plt.close("all")
 
     # Check angular momentum difference against sim truth
-    angMom_accuracy = 1e-3
-    # np.testing.assert_allclose(np.linalg.norm(rotAngMom_N[:-1,:]-rotAngMom_N[0,:] - dH, axis=1), 0, atol=angMom_accuracy,
-    #                            err_msg="angular momentum difference beyond accuracy limits")
-    np.testing.assert_allclose(rotAngMom_N[:-1,:]-rotAngMom_N[0,:], dH, atol=angMom_accuracy,
+    angMom_accuracy = 1e-5  # [kg*m^2/s]
+    np.testing.assert_allclose(rotAngMom_N[:-1,:]-rotAngMom_N[0,:], dH, 0, atol=angMom_accuracy,
                                err_msg="angular momentum difference beyond accuracy limits")
 
+    rotEnergy_accuracy = 5e-2  # [J]
+    np.testing.assert_allclose((rotEnergy[:n] - rotEnergy[0]), dErot, atol=rotEnergy_accuracy,
+                               err_msg="branching energy work balance beyond accuracy limits")
+    energyResidual = abs((rotEnergy[n-1] - rotEnergy[0]) - dErot[-1])
+
     # Check deltaV difference against sim truth
-    deltaV_accuracy = 1e-6
-    # np.testing.assert_allclose(np.linalg.norm(totAccumDV_N[:-1,:] - dV, axis=1), 0, atol=deltaV_accuracy,
-    #                            err_msg="deltaV difference beyond accuracy limits")
+    deltaV_accuracy = 1e-6  # [m/s]
     np.testing.assert_allclose(totAccumDV_N[:-1,:], dV, 0, atol=deltaV_accuracy,
                                err_msg="deltaV difference beyond accuracy limits")
 
-    return
+    return energyResidual
 
 def getDynEffInertialPropName(dynamicEffector, dynamicEff, propType):
     if dynamicEffector == "multiEffector":
@@ -650,7 +707,7 @@ def setup_spinningBodiesOneDOF():
     spinningBody.thetaInit = 5.0 * macros.D2R
     spinningBody.thetaDotInit = -1.0 * macros.D2R
     spinningBody.k = 100.0
-    spinningBody.c = 50
+    spinningBody.c = 0.0  # [N-m-s/rad]
     spinningBody.ModelTag = "SpinningBody"
 
     # Compute COM offset contribution, to be divided by the hub mass
@@ -685,8 +742,8 @@ def setup_spinningBodiesTwoDOF():
     spinningBody.theta2DotInit = 1.0 * macros.D2R
     spinningBody.k1 = 1000.0
     spinningBody.k2 = 500.0
-    spinningBody.c1 = 500
-    spinningBody.c2 = 200
+    spinningBody.c1 = 0.0  # [N-m-s/rad]
+    spinningBody.c2 = 0.0  # [N-m-s/rad]
     spinningBody.ModelTag = "SpinningBody"
 
     # Compute COM offset contribution, to be divided by the hub mass
@@ -736,7 +793,7 @@ def setup_spinningBodiesNDOF():
         spinningBody.setThetaInit(2.0 * macros.D2R)
         spinningBody.setThetaDotInit(-0.5 * macros.D2R)
         spinningBody.setK(10)
-        spinningBody.setC(8)
+        spinningBody.setC(0.0)  # [N-m-s/rad]
         spinningBodyEffector.addSpinningBody(spinningBody)
         r_ScB_B += dcm_SB.transpose() @ spinningBody.getR_SP_P()
         dcm_SB = rbk.PRV2C(spinningBody.getThetaInit() * np.array(spinningBody.getSHat_S())) @ spinningBody.getDCM_S0P() @ dcm_SB
@@ -755,7 +812,7 @@ def setup_spinningBodiesNDOF():
         spinningBody.setThetaInit(2.0 * macros.D2R)
         spinningBody.setThetaDotInit(-0.5 * macros.D2R)
         spinningBody.setK(1)
-        spinningBody.setC(0.8)
+        spinningBody.setC(0.0)  # [N-m-s/rad]
         spinningBodyEffector.addSpinningBody(spinningBody)
         dcm_SB = rbk.PRV2C(spinningBody.getThetaInit() * np.array(spinningBody.getSHat_S())) @ spinningBody.getDCM_S0P() @ dcm_SB
 
@@ -781,7 +838,7 @@ def setup_hingedRigidBodyStateEffector():
     hingedBody.IPntS_S = [[50.0, 0.0, 0.0], [0.0, 30.0, 0.0], [0.0, 0.0, 40.0]]
     hingedBody.d = 1.0
     hingedBody.k = 100.0
-    hingedBody.c = 50.0
+    hingedBody.c = 0.0  # [N-m-s/rad]
     hingedBody.dcm_HB = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
     hingedBody.r_HB_B = [[0.5], [-1.5], [-0.5]]
     hingedBody.thetaInit = 5 * macros.D2R
@@ -809,7 +866,7 @@ def setup_translatingBodiesOneDOF():
     # Define properties of translating body
     translatingBody.setMass(20.0)
     translatingBody.setK(100.0)
-    translatingBody.setC(50.0)
+    translatingBody.setC(0.0)  # [N-s/m]
     translatingBody.setRhoInit(1.0)
     translatingBody.setRhoDotInit(0.05)
     translatingBody.setFHat_B([[3.0 / 5.0], [4.0 / 5.0], [0.0]])
@@ -840,7 +897,7 @@ def setup_linearSpringMassDamper():
     linearSpring = linearSpringMassDamper.LinearSpringMassDamper()
     linearSpring.massInit = 50.0
     linearSpring.k = 100.0
-    linearSpring.c = 50.0
+    linearSpring.c = 0.0  # [N-s/m]
     linearSpring.r_PB_B = [[1.0], [0.0], [0.0]]
     linearSpring.pHat_B = [[1.0], [0.0], [0.0]]
     linearSpring.rhoInit = 0.0

@@ -204,6 +204,7 @@ private:
     double theta1Dot = 0.0;             //!< [rad/s] first axis angle rate
     double theta2 = 0.0;                //!< [rad] second axis angle
     double theta2Dot = 0.0;             //!< [rad/s] second axis angle rate
+    StateData* hubSigmaState = nullptr;  //!< hub attitude state, read live for the published kinematics
     Eigen::MatrixXd* inertialPositionProperty = nullptr;    //!< [m] r_N inertial position relative to system spice zeroBase/refBase
     Eigen::MatrixXd* inertialVelocityProperty = nullptr;    //!< [m] v_N inertial velocity relative to system spice zeroBase/refBase
     StateData* theta1State = nullptr;    //!< -- state manager of theta1 for spinning body
