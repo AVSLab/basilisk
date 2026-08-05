@@ -35,7 +35,7 @@ typedef enum {
 } logLevel_t;
 
 extern logLevel_t LogLevel;
-void printDefaultLogLevel();
+void printDefaultLogLevel(void);
 
 /// \cond DO_NOT_DOCUMENT
 

@@ -376,6 +376,8 @@ class moduleGenerator:
         defFile += '*/\n'
         defFile += f'void {self._className}::Reset(uint64_t CurrentSimNanos)\n'
         defFile += '{\n'
+        defFile += '    (void) CurrentSimNanos;\n'
+        defFile += '\n'
         defFile += '    // check that required input messages are connected\n'
         for msg in inMsgList:
             defFile += f'    if (!this->{msg["var"]}.isLinked()) {{\n'
@@ -579,6 +581,8 @@ class moduleGenerator:
         defFile += ' */\n'
         defFile += f'void SelfInit_{name}({name}Config  *configData, int64_t moduleID)\n'
         defFile += '{\n'
+        defFile += '    (void) moduleID;\n'
+        defFile += '\n'
         for msg in outMsgList:
             defFile += f'    {msg["type"]}_C_init(&configData->{msg["var"]});\n'
         defFile += '}\n'
@@ -594,6 +598,9 @@ class moduleGenerator:
         defFile += '*/\n'
         defFile += f'void Reset_{name}({name}Config *configData, uint64_t callTime, int64_t moduleID)\n'
         defFile += '{\n'
+        defFile += '    (void) callTime;\n'
+        defFile += '    (void) moduleID;\n'
+        defFile += '\n'
         defFile += '    // check if the required message has not been connected\n'
         for msg in inMsgList:
             defFile += f'    if (!{msg["type"]}_C_isLinked(&configData->{msg["var"]})) {{\n'

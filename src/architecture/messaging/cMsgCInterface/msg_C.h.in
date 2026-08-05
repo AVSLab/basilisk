@@ -64,7 +64,7 @@ void @MSG_AUTOSOURCE_TYPE@_C_write(@MSG_AUTOSOURCE_TYPE@Payload *data, @MSG_AUTO
 
 @MSG_AUTOSOURCE_TYPE@Payload @MSG_AUTOSOURCE_TYPE@_C_read(@MSG_AUTOSOURCE_TYPE@_C *source);
 
-@MSG_AUTOSOURCE_TYPE@Payload @MSG_AUTOSOURCE_TYPE@_C_zeroMsgPayload();
+@MSG_AUTOSOURCE_TYPE@Payload @MSG_AUTOSOURCE_TYPE@_C_zeroMsgPayload(void);
 
 #ifdef __cplusplus
 }
