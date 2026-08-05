@@ -254,7 +254,7 @@ void DualHingedRigidBodyStateEffector::updateContributions(double integTime [[ma
                                  - this->mass2*this->d2*this->sHat23_P.cross(this->r_S2P_P).transpose());
 
     this->vectorVDHRB(0) =  -(this->IPntS1_S1(0,0) - this->IPntS1_S1(2,2))*this->omega_PN_S1(2)*this->omega_PN_S1(0)
-                            + this->u1 - this->k1*this->theta1 - this->c1*this->theta1Dot + this->k2*this->theta2 + this->c2*this->theta2Dot + this->sHat12_P.dot(gravTorquePan1PntH1) + this->l1*this->sHat13_P.dot(gravForcePan2) -
+                            + this->u1 - this->u2 - this->k1*this->theta1 - this->c1*this->theta1Dot + this->k2*this->theta2 + this->c2*this->theta2Dot + this->sHat12_P.dot(gravTorquePan1PntH1) + this->l1*this->sHat13_P.dot(gravForcePan2) -
                             this->mass1*this->d1*this->sHat13_P.dot(2*this->omega_PNLoc_P.cross(this->rPrimeS1P_P)
                             + this->omega_PNLoc_P.cross(this->omega_PNLoc_P.cross(this->r_S1P_P)))
                             - this->mass2*this->l1*this->sHat13_P.dot(2*this->omega_PNLoc_P.cross(this->rPrimeS2P_P)
