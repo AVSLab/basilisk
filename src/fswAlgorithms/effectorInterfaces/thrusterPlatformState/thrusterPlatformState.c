@@ -28,6 +28,7 @@
  */
 void SelfInit_thrusterPlatformState(thrusterPlatformStateConfig *configData, int64_t moduleID)
 {
+    (void) moduleID;
     THRConfigMsg_C_init(&configData->thrusterConfigBOutMsg);
 }
 

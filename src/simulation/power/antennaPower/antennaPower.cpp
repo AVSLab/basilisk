@@ -32,6 +32,7 @@ AntennaPower::~AntennaPower(){
  */
 void AntennaPower::customReset(uint64_t CurrentSimNanos)
 {
+    (void) CurrentSimNanos;
     // Check that basePowerNeed is non-negative
     if (this->basePowerNeed < 0.0) {
         bskLogger.bskError("AntennaPower: basePowerNeed cannot be negative.");

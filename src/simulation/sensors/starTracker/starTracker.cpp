@@ -53,6 +53,7 @@ StarTracker::~StarTracker()
   */
 void StarTracker::Reset(uint64_t CurrentSimNanos)
 {
+    (void) CurrentSimNanos;
     // check if input message has not been included
     if (!this->scStateInMsg.isLinked()) {
         bskLogger.bskError("starTracker.scStateInMsg was not linked.");

@@ -241,6 +241,7 @@ int64_t DataStorageUnitBase::sumAllData(){
  */
 void DataStorageUnitBase::customReset(uint64_t CurrentClock)
 {
+    (void) CurrentClock;
     return;
 }
 
@@ -249,6 +250,7 @@ void DataStorageUnitBase::customReset(uint64_t CurrentClock)
  */
 void DataStorageUnitBase::customWriteMessages(uint64_t CurrentClock)
 {
+    (void) CurrentClock;
     return;
 }
 

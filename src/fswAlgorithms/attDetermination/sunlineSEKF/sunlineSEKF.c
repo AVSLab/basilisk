@@ -33,6 +33,7 @@
  */
 void SelfInit_sunlineSEKF(sunlineSEKFConfig *configData, int64_t moduleID)
 {
+    (void) moduleID;
     NavAttMsg_C_init(&configData->navStateOutMsg);
     SunlineFilterMsg_C_init(&configData->filtDataOutMsg);
 }
@@ -48,6 +49,7 @@ void SelfInit_sunlineSEKF(sunlineSEKFConfig *configData, int64_t moduleID)
 void Reset_sunlineSEKF(sunlineSEKFConfig *configData, uint64_t callTime,
                       int64_t moduleID)
 {
+    (void) moduleID;
     CSSConfigMsgPayload cssConfigInBuffer;
 
     /*! - Zero the local configuration data structures and outputs */
@@ -298,6 +300,7 @@ void sunlineStateSTMProp(double dynMat[EKF_N_STATES_SWITCH*EKF_N_STATES_SWITCH],
 
 void sunlineDynMatrix(double states[EKF_N_STATES_SWITCH], double bVec[SKF_N_STATES_HALF], double dt, double *dynMat)
 {
+    (void) dt;
     double skewOmega[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
     double skewStates[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
     double omega_BN_S[SKF_N_STATES_HALF] = {0, -states[3], -states[4]};
@@ -337,6 +340,7 @@ void sunlineDynMatrix(double states[EKF_N_STATES_SWITCH], double bVec[SKF_N_STAT
  */
 void sunlineMeasUpdate(sunlineSEKFConfig *configData, double updateTime)
 {
+    (void) updateTime;
     /*! - Compute the valid observations and the measurement model for all observations*/
     int numObsInt = (int) configData->numObs;
     sunlineHMatrixYMeas(configData->state, configData->numCSSTotal, configData->cssSensorInBuffer.CosValue, configData->sensorUseThresh, configData->cssNHat_B, configData->obs, configData->yMeas, &(numObsInt), configData->measMat);

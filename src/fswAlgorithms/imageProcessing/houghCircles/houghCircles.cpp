@@ -61,6 +61,7 @@ HoughCircles::~HoughCircles()
  */
 void HoughCircles::Reset(uint64_t CurrentSimNanos)
 {
+    (void) CurrentSimNanos;
     // check that the required message has not been connected
     if (!this->imageInMsg.isLinked()) {
         bskLogger.bskError("HoughCircles.imageInMsg wasn't connected.");

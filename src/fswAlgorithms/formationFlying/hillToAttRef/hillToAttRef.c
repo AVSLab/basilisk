@@ -24,6 +24,7 @@
 #include "architecture/utilities/rigidBodyKinematics.h"
 
 void SelfInit_hillToAttRef(HillToAttRefConfig *configData, int64_t moduleID){
+    (void) moduleID;
     AttRefMsg_C_init(&configData->attRefOutMsg);
 }
 
@@ -35,6 +36,8 @@ void SelfInit_hillToAttRef(HillToAttRefConfig *configData, int64_t moduleID){
  */
 void Reset_hillToAttRef(HillToAttRefConfig *configData,  uint64_t callTime, int64_t moduleID)
 {
+    (void) callTime;
+    (void) moduleID;
     if (!HillRelStateMsg_C_isLinked(&configData->hillStateInMsg)) {
         _bskError(configData->bskLogger, "Error: hillToAttRef.hillStateInMsg wasn't connected.");
     }

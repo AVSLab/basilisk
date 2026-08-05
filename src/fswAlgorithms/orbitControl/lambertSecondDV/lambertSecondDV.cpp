@@ -36,6 +36,7 @@ LambertSecondDV::~LambertSecondDV() = default;
 */
 void LambertSecondDV::Reset(uint64_t currentSimNanos)
 {
+    (void) currentSimNanos;
     // check that required input messages are connected
     if (!this->lambertSolutionInMsg.isLinked()) {
         bskLogger.bskError("lambertSecondDV.lambertSolutionInMsg was not linked.");

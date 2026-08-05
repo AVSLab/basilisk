@@ -117,6 +117,7 @@ void SphericalPendulum::registerStates(DynParamManager& states)
 /*! This is the method for the FSP to add its contributions to the mass props and mass prop rates of the vehicle */
 void SphericalPendulum::updateEffectorMassProps(double integTime)
 {
+    (void) integTime;
 
     // - Grab phi and theta from state manager and define r_PcB_B
 	this->phi = this->phiState->getStateReference()(0,0);
@@ -195,6 +196,7 @@ void SphericalPendulum::updateEffectorMassProps(double integTime)
 /*! This is method is used to pass mass properties information to the fuelTank */
 void SphericalPendulum::retrieveMassValue(double integTime)
 {
+    (void) integTime;
     // Save mass value into the fuelSlosh class variable
     this->fuelMass = this->massFSP;
 
@@ -204,6 +206,8 @@ void SphericalPendulum::retrieveMassValue(double integTime)
 /*! This method is for the FSP to add its contributions to the back-sub method */
 void SphericalPendulum::updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::MRPd sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N)
 {
+    (void) integTime;
+    (void) g_N;
 
     // - Find dcm_BN
     Eigen::MRPd sigmaLocal_BN;
@@ -296,6 +300,7 @@ void SphericalPendulum::updateContributions(double integTime, BackSubMatrices & 
  derived using the back-sub method */
 void SphericalPendulum::computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN)
 {
+    (void) integTime;
 
 	// - Find DCM
 	Eigen::MRPd sigmaLocal_BN;
@@ -330,6 +335,7 @@ void SphericalPendulum::computeDerivatives(double integTime, Eigen::Vector3d rDD
 void SphericalPendulum::updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
                                                      double & rotEnergyContr, Eigen::Vector3d omega_BN_B)
 {
+    (void) integTime;
 
     //  - Get variables needed for energy momentum calcs
     Eigen::Vector3d omegaLocal_BN_B;
@@ -349,6 +355,7 @@ void SphericalPendulum::updateEnergyMomContributions(double integTime, Eigen::Ve
 }
 
 void SphericalPendulum::modifyStates(double integTime){
+    (void) integTime;
 	// when theta>45° change reference system in order to avoid singularities on aPhi, bPhi, cPhi
 	if (fabs(cos(this->theta))<sqrt(2)/2){
 		// define the rotation matrix from P0 to P0new

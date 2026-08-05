@@ -34,6 +34,7 @@ LambertSurfaceRelativeVelocity::~LambertSurfaceRelativeVelocity() = default;
 */
 void LambertSurfaceRelativeVelocity::Reset(uint64_t currentSimNanos)
 {
+    (void) currentSimNanos;
     // check that required input messages are connected
     if (!this->lambertProblemInMsg.isLinked()) {
         bskLogger.bskError("lambertSurfaceRelativeVelocity.lambertProblemInMsg was not linked.");

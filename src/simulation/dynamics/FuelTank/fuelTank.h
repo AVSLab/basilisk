@@ -69,6 +69,7 @@ public:
     }
 
     void computeTankPropDerivs(double mFuel, double mDotFuel) override {
+        (void) mFuel;
         this->IPrimeTankPntT_T = 2.0 / 5.0 * mDotFuel * this->radiusTankInit * this->radiusTankInit * Eigen::Matrix3d::Identity();
         this->rPrime_TcT_T.setZero();
         this->rPPrime_TcT_T.setZero();
@@ -92,6 +93,7 @@ public:
     }
 
     void computeTankPropDerivs(double mFuel, double mDotFuel) override {
+        (void) mFuel;
         this->IPrimeTankPntT_T = 2.0 / 3.0 * mDotFuel * this->radiusTank * this->radiusTank * Eigen::Matrix3d::Identity();
         this->rPrime_TcT_T.setZero();
         this->rPPrime_TcT_T.setZero();
@@ -221,6 +223,7 @@ public:
     }
 
     void computeTankPropDerivs(double mFuel, double mDotFuel) override {
+        (void) mFuel;
         this->IPrimeTankPntT_T.setZero();
         this->IPrimeTankPntT_T(0, 0) = this->IPrimeTankPntT_T(1, 1) =
                 mDotFuel * (this->radiusTankInit * this->radiusTankInit / 4.0 + this->lengthTank * this->lengthTank / 12.0);
@@ -255,6 +258,7 @@ public:
     }
 
     void computeTankPropDerivs(double mFuel, double mDotFuel) override {
+        (void) mFuel;
         this->IPrimeTankPntT_T.setZero();
         this->IPrimeTankPntT_T(0, 0) = this->IPrimeTankPntT_T(1, 1) =
                 mDotFuel * (this->radiusInner * this->radiusInner / 2.0 + this->lengthTank * this->lengthTank / 12.0);

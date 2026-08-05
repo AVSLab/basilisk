@@ -34,6 +34,7 @@
  */
 void SelfInit_spacecraftReconfig(spacecraftReconfigConfig *configData, int64_t moduleID)
 {
+    (void) moduleID;
     AttRefMsg_C_init(&configData->attRefOutMsg);
     THRArrayOnTimeCmdMsg_C_init(&configData->onTimeOutMsg);
     ReconfigBurnArrayInfoMsg_C_init(&configData->burnArrayInfoOutMsg);
@@ -50,6 +51,8 @@ void SelfInit_spacecraftReconfig(spacecraftReconfigConfig *configData, int64_t m
  */
 void Reset_spacecraftReconfig(spacecraftReconfigConfig *configData, uint64_t callTime, int64_t moduleID)
 {
+    (void) callTime;
+    (void) moduleID;
     // check if the required input messages are included
     if (!NavTransMsg_C_isLinked(&configData->chiefTransInMsg)) {
         _bskError(configData->bskLogger, "Error: spacecraftReconfig.chiefTransInMsg wasn't connected.");

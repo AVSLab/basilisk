@@ -31,6 +31,7 @@
  */
 void SelfInit_dvGuidance(dvGuidanceConfig *configData, int64_t moduleID)
 {
+    (void) moduleID;
     AttRefMsg_C_init(&configData->attRefOutMsg);
 }
 
@@ -44,6 +45,8 @@ void SelfInit_dvGuidance(dvGuidanceConfig *configData, int64_t moduleID)
 void Reset_dvGuidance(dvGuidanceConfig *configData, uint64_t callTime,
                        int64_t moduleID)
 {
+    (void) callTime;
+    (void) moduleID;
     // check if the required input messages are included
     if (!DvBurnCmdMsg_C_isLinked(&configData->burnDataInMsg)) {
         _bskError(configData->bskLogger, "Error: dvGuidance.burnDataInMsg wasn't connected.");

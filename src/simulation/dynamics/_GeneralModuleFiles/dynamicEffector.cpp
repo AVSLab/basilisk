@@ -40,12 +40,14 @@ DynamicEffector::~DynamicEffector()
     to a state effector derivative. Example - a thruster's mDot will impact a fuel tanks total mDot */
 void DynamicEffector::computeStateContribution(double integTime)
 {
+    (void) integTime;
     return;
 }
 
 /*! This method is used to link in properties from a parent body that isn't the hub */
 void DynamicEffector::linkInProperties(DynParamManager& properties)
 {
+    (void) properties;
     // check that this effector can be attached to a state effector
     if (!this->isAttachableToStateEffector) {
         bskLogger.bskError("DynamicEffector: This effector cannot be attached to a state effector.");

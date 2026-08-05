@@ -31,6 +31,7 @@
  */
 void SelfInit_pixelLineConverter(PixelLineConvertData *configData, int64_t moduleID)
 {
+    (void) moduleID;
     OpNavMsg_C_init(&configData->opNavOutMsg);
 }
 
@@ -43,6 +44,8 @@ void SelfInit_pixelLineConverter(PixelLineConvertData *configData, int64_t modul
  */
 void Reset_pixelLineConverter(PixelLineConvertData *configData, uint64_t callTime, int64_t moduleID)
 {
+    (void) callTime;
+    (void) moduleID;
     // check that the required message has not been connected
     if (!CameraConfigMsg_C_isLinked(&configData->cameraConfigInMsg)) {
         _bskError(configData->bskLogger, "Error: pixelLineConverter.cameraConfigInMsg wasn't connected.");

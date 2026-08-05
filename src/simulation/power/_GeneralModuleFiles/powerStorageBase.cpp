@@ -177,6 +177,7 @@ void PowerStorageBase::UpdateState(uint64_t currentSimNanos)
  */
 void PowerStorageBase::customReset(uint64_t CurrentClock)
 {
+    (void) CurrentClock;
     return;
 }
 
@@ -185,6 +186,7 @@ void PowerStorageBase::customReset(uint64_t CurrentClock)
  */
 void PowerStorageBase::customWriteMessages(uint64_t CurrentClock)
 {
+    (void) CurrentClock;
     return;
 }
 

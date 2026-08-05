@@ -35,6 +35,7 @@ void PrescribedLinearTranslation::SelfInit() {
  @param callTime [ns] Time the method is called
 */
 void PrescribedLinearTranslation::Reset(uint64_t callTime) {
+    (void) callTime;
     if (!this->linearTranslationRigidBodyInMsg.isLinked()) {
         _bskLog(this->bskLogger,
                 BSK_ERROR,

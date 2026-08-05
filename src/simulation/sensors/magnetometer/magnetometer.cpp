@@ -82,6 +82,7 @@ Eigen::Matrix3d Magnetometer::setBodyToSensorDCM(double yaw, double pitch, doubl
   */
 void Magnetometer::Reset(uint64_t CurrentSimNanos)
 {
+    (void) CurrentSimNanos;
     if (!this->magInMsg.isLinked()) {
         bskLogger.bskError("Magnetic field interface message name (magInMsg) is empty.");
     }

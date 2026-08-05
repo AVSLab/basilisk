@@ -29,6 +29,7 @@
 */
 void SelfInit_relODuKF(RelODuKFConfig *configData, int64_t moduleId)
 {
+    (void) moduleId;
     NavTransMsg_C_init(&configData->navStateOutMsg);
     OpNavFilterMsg_C_init(&configData->filtDataOutMsg);
 }
@@ -44,6 +45,7 @@ void SelfInit_relODuKF(RelODuKFConfig *configData, int64_t moduleId)
 void Reset_relODuKF(RelODuKFConfig *configData, uint64_t callTime,
                        int64_t moduleId)
 {
+    (void) moduleId;
     // check if the required message has not been connected
     if (!OpNavMsg_C_isLinked(&configData->opNavInMsg)) {
         _bskError(configData->bskLogger, "Error: relativeODuKF.opNavInMsg wasn't connected.");

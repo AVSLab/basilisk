@@ -39,6 +39,7 @@
  */
 void SelfInit_rateMsgConverter(rateMsgConverterConfig *configData, int64_t moduleID)
 {
+    (void) moduleID;
     NavAttMsg_C_init(&configData->navRateOutMsg);
 }
 
@@ -52,6 +53,8 @@ void SelfInit_rateMsgConverter(rateMsgConverterConfig *configData, int64_t modul
  */
 void Reset_rateMsgConverter(rateMsgConverterConfig *configData, uint64_t callTime, int64_t moduleID)
 {
+    (void) callTime;
+    (void) moduleID;
     // check if the required message has not been connected
     if (!IMUSensorBodyMsg_C_isLinked(&configData->imuRateInMsg)) {
         _bskError(configData->bskLogger, "Error: rateMsgConverter.imuRateInMsg wasn't connected.");

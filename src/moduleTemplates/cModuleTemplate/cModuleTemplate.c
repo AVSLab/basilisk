@@ -42,6 +42,7 @@
  */
 void SelfInit_cModuleTemplate(cModuleTemplateConfig *configData, int64_t moduleID)
 {
+    (void) moduleID;
     CModuleTemplateMsg_C_init(&configData->dataOutMsg);
 }
 

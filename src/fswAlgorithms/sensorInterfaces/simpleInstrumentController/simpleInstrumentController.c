@@ -36,6 +36,7 @@
 void
 SelfInit_simpleInstrumentController(simpleInstrumentControllerConfig* configData, int64_t moduleID)
 {
+    (void) moduleID;
     configData->imaged = 0;
     configData->controllerStatus = 1;
     configData->constraintStartTime = 0.0;
@@ -54,6 +55,8 @@ SelfInit_simpleInstrumentController(simpleInstrumentControllerConfig* configData
 void
 Reset_simpleInstrumentController(simpleInstrumentControllerConfig* configData, uint64_t callTime, int64_t moduleID)
 {
+    (void) callTime;
+    (void) moduleID;
     // check if the required message has not been connected
     if (!AccessMsg_C_isLinked(&configData->locationAccessInMsg)) {
         _bskError(configData->bskLogger, "Error: simpleInstrumentController.locationAccessInMsg wasn't connected.");

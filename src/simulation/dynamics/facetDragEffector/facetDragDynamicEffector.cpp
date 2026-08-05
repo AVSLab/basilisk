@@ -44,6 +44,7 @@ FacetDragDynamicEffector::~FacetDragDynamicEffector()
 
 void FacetDragDynamicEffector::Reset(uint64_t CurrentSimNanos)
 {
+    (void) CurrentSimNanos;
 	// check if input message has not been included
 	if (!this->atmoDensInMsg.isLinked()) {
 		bskLogger.bskError("facetDragDynamicEffector.atmoDensInMsg was not linked.");
@@ -57,6 +58,7 @@ void FacetDragDynamicEffector::Reset(uint64_t CurrentSimNanos)
  */
 void FacetDragDynamicEffector::WriteOutputMessages(uint64_t CurrentClock)
 {
+    (void) CurrentClock;
 	return;
 }
 
@@ -174,6 +176,8 @@ void FacetDragDynamicEffector::plateDrag(){
 selecting the model type based on the settable attribute "modelType."
 */
 void FacetDragDynamicEffector::computeForceTorque(double integTime, double timeStep){
+    (void) integTime;
+    (void) timeStep;
 	updateDragDir();
 	plateDrag();
   return;
@@ -186,6 +190,7 @@ Naturally, this means that conditions are held piecewise-constant over an integr
  */
 void FacetDragDynamicEffector::UpdateState(uint64_t CurrentSimNanos)
 {
+    (void) CurrentSimNanos;
 	ReadInputs();
 	return;
 }

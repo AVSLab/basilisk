@@ -56,6 +56,7 @@ LimbFinding::~LimbFinding()
  */
 void LimbFinding::Reset(uint64_t CurrentSimNanos)
 {
+    (void) CurrentSimNanos;
     // check that the required message has not been connected
     if (!this->imageInMsg.isLinked()) {
         bskLogger.bskError("LimbFinding.imageInMsg wasn't connected.");

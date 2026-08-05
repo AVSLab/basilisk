@@ -29,6 +29,7 @@
  */
 void SelfInit_dipoleMapping(dipoleMappingConfig  *configData, int64_t moduleID)
 {
+    (void) moduleID;
     /*
      * Initialize the output message.
      */

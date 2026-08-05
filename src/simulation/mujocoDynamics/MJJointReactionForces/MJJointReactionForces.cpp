@@ -42,6 +42,7 @@ void fillForcePayload(std::vector<double>& forces,
 
 void MJJointReactionForces::Reset(uint64_t CurrentSimNanos)
 {
+    (void) CurrentSimNanos;
     if (!scene) {
         bskLogger.bskError("MJJointReactionForces: scene pointer not set!");
     }

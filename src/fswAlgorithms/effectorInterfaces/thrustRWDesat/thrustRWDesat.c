@@ -31,6 +31,7 @@
  */
 void SelfInit_thrustRWDesat(thrustRWDesatConfig *configData, int64_t moduleID)
 {
+    (void) moduleID;
     THRArrayOnTimeCmdMsg_C_init(&configData->thrCmdOutMsg);
 }
 

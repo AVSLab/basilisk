@@ -30,6 +30,7 @@
  */
 void SelfInit_imuProcessTelem(IMUConfigData *configData, int64_t moduleID)
 {
+    (void) moduleID;
     IMUSensorBodyMsg_C_init(&configData->imuSensorOutMsg);
 
 }
@@ -43,6 +44,8 @@ void SelfInit_imuProcessTelem(IMUConfigData *configData, int64_t moduleID)
  */
 void Reset_imuProcessTelem(IMUConfigData *configData, uint64_t callTime, int64_t moduleID)
 {
+    (void) callTime;
+    (void) moduleID;
     // check if the required message has not been connected
     if (!IMUSensorMsg_C_isLinked(&configData->imuComInMsg)) {
         _bskError(configData->bskLogger, "Error: imuComm.imuComInMsg wasn't connected.");

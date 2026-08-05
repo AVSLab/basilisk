@@ -38,6 +38,7 @@ GravityGradientEffector::~GravityGradientEffector()
 */
 void GravityGradientEffector::Reset(uint64_t CurrentSimNanos)
 {
+    (void) CurrentSimNanos;
     /* zero the effector output forces and torques */
     this->forceExternal_B.fill(0.0);
     this->torqueExternalPntB_B.fill(0.0);
@@ -99,6 +100,8 @@ void GravityGradientEffector::linkInStates(DynParamManager& states){
 /*! This method computes the body forces and torques for the gravity gradient effector.
 */
 void GravityGradientEffector::computeForceTorque(double integTime, double timeStep){
+    (void) integTime;
+    (void) timeStep;
 	// Zero out the force/torque values to begin with
     this->torqueExternalPntB_B.setZero();
 

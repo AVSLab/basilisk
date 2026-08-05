@@ -113,9 +113,11 @@ ExtendedStateVector ExtendedStateVector::operator-(const ExtendedStateVector& rh
 
 ExtendedStateVector ExtendedStateVector::operator*(const double rhs) const
 {
-    return this->map([rhs](const size_t& dynObjIndex,
-                           const std::string& stateName,
-                           const Eigen::MatrixXd& thisState) { return thisState * rhs; });
+    return this->map([rhs](const size_t&,
+                           const std::string&,
+                           const Eigen::MatrixXd& thisState) {
+                               return thisState * rhs;
+                           });
 }
 
 void ExtendedStateVector::setStates(std::vector<DynamicObject*>& dynPtrs) const

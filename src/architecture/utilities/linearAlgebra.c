@@ -1393,6 +1393,7 @@ void mGetSubMatrix(void *mx, size_t dim1, size_t dim2,
                    size_t dim1Start, size_t dim2Start,
                    size_t dim1Result, size_t dim2Result, void *result)
 {
+    (void) dim1;
     double *m_mx = (double *)mx;
     double *m_result = (double *)result;
 
@@ -1409,6 +1410,7 @@ void mSetSubMatrix(void *mx, size_t dim1, size_t dim2,
                    void *result, size_t dim1Result, size_t dim2Result,
                    size_t dim1Start, size_t dim2Start)
 {
+    (void) dim1Result;
     double *m_mx = (double *)mx;
     double *m_result = (double *)result;
 

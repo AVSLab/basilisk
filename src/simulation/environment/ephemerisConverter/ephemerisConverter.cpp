@@ -37,6 +37,7 @@ EphemerisConverter::~EphemerisConverter()
  */
 void EphemerisConverter::Reset(uint64_t CurrenSimNanos)
 {
+    (void) CurrenSimNanos;
     // check if the spiceInMsgs is empty or not
     if (this->spiceInMsgs.size() == 0) {
         bskLogger.bskError("ephemerisConverter.spiceInMsgs is empty.");
@@ -70,6 +71,7 @@ void EphemerisConverter::addSpiceInputMsg(Message<SpicePlanetStateMsgPayload> *t
  */
 void EphemerisConverter::convertEphemData(uint64_t clockNow)
 {
+    (void) clockNow;
     Eigen::Matrix3d dcm_BN;
     Eigen::MRPd sigma_BN;
     Eigen::Matrix3d dcm_BN_dot;

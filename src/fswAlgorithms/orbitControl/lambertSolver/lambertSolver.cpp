@@ -34,6 +34,7 @@ LambertSolver::~LambertSolver() = default;
 */
 void LambertSolver::Reset(uint64_t currentSimNanos)
 {
+    (void) currentSimNanos;
     // check that required input messages are connected
     if (!this->lambertProblemInMsg.isLinked()) {
         bskLogger.bskError("lambertSolver.lambertProblemInMsg was not linked.");

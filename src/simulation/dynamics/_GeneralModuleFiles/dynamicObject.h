@@ -68,7 +68,10 @@ class DynamicObject : public SysModel {
      *
      * Note that not all ``DynamicObjects`` may support this functionality.
      */
-    virtual void equationsOfMotionDiffusion(double t, double timeStep) {};
+    virtual void equationsOfMotionDiffusion(double t, double timeStep) {
+        (void) t;
+        (void) timeStep;
+    };
 
     /** Performs pre-integration steps */
     virtual void preIntegration(uint64_t callTimeNanos) = 0;
@@ -80,7 +83,9 @@ class DynamicObject : public SysModel {
     virtual void initializeDynamics(){};
 
     /** Computes energy and momentum of the system */
-    virtual void computeEnergyMomentum(double t){};
+    virtual void computeEnergyMomentum(double t){
+        (void) t;
+    };
 
     /** Prepares the dynamic object to be integrated, integrates the states
      * forward in time, and finally performs the post-integration steps.

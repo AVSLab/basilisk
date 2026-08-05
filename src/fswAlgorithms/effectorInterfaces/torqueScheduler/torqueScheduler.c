@@ -29,6 +29,7 @@
  */
 void SelfInit_torqueScheduler(torqueSchedulerConfig *configData, int64_t moduleID)
 {
+    (void) moduleID;
     ArrayMotorTorqueMsg_C_init(&configData->motorTorqueOutMsg);
     ArrayEffectorLockMsg_C_init(&configData->effectorLockOutMsg);
 }

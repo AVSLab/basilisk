@@ -40,6 +40,7 @@ MtbEffector::~MtbEffector()
 */
 void MtbEffector::Reset(uint64_t CurrentSimNanos)
 {
+    (void) CurrentSimNanos;
     /*
      * Check that required input messages are connected.
      */
@@ -95,6 +96,8 @@ void MtbEffector::linkInStates(DynParamManager& states)
 */
 void MtbEffector::computeForceTorque(double integTime, double timeStep)
 {
+    (void) integTime;
+    (void) timeStep;
     /*
      * Create local variables.
      */

@@ -32,6 +32,7 @@
  */
 void SelfInit_spacecraftPointing(spacecraftPointingConfig *configData, int64_t moduleID)
 {
+    (void) moduleID;
     AttRefMsg_C_init(&configData->attReferenceOutMsg);
 }
 
@@ -45,6 +46,8 @@ void SelfInit_spacecraftPointing(spacecraftPointingConfig *configData, int64_t m
  */
 void Reset_spacecraftPointing(spacecraftPointingConfig *configData, uint64_t callTime, int64_t moduleID)
 {
+    (void) callTime;
+    (void) moduleID;
     // check if the required input messages are included
     if (!NavTransMsg_C_isLinked(&configData->chiefPositionInMsg)) {
         _bskError(configData->bskLogger, "Error: spacecraftPointing.chiefPositionInMsg wasn't connected.");

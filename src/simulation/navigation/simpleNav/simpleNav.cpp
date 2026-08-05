@@ -63,6 +63,7 @@ SimpleNav::~SimpleNav()
  */
 void SimpleNav::Reset(uint64_t CurrentSimNanos)
 {
+    (void) CurrentSimNanos;
     // check if input message has not been included
     if (!this->scStateInMsg.isLinked()) {
         bskLogger.bskError("SimpleNav.scStateInMsg was not linked.");
@@ -141,6 +142,7 @@ void SimpleNav::applyErrors()
 */
 void SimpleNav::computeTrueOutput(uint64_t Clock)
 {
+    (void) Clock;
     //! - Set output state to truth data
     v3Copy(this->inertialState.r_BN_N, this->trueTransState.r_BN_N);
     v3Copy(this->inertialState.v_BN_N, this->trueTransState.v_BN_N);

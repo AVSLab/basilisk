@@ -55,6 +55,7 @@ WaypointReference::~WaypointReference()
  */
 void WaypointReference::Reset(uint64_t CurrentSimNanos)
 {
+    (void) CurrentSimNanos;
     if (this->dataFileName.length() == 0) {
         bskLogger.bskError("WaypointReference: dataFileName must be an non-empty string.");
     }

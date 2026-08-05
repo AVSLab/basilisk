@@ -30,6 +30,7 @@
  */
 void SelfInit_forceTorqueThrForceMapping(forceTorqueThrForceMappingConfig  *configData, int64_t moduleID)
 {
+    (void) moduleID;
     THRArrayCmdForceMsg_C_init(&configData->thrForceCmdOutMsg);
 }
 

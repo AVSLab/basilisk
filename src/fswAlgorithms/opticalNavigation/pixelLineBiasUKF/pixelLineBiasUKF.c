@@ -29,6 +29,7 @@
  */
 void SelfInit_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, int64_t moduleId)
 {
+    (void) moduleId;
     NavTransMsg_C_init(&configData->navStateOutMsg);
     PixelLineFilterMsg_C_init(&configData->filtDataOutMsg);
 }
@@ -44,6 +45,7 @@ void SelfInit_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, int64_t modul
 void Reset_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, uint64_t callTime,
                        int64_t moduleId)
 {
+    (void) moduleId;
     // check if the required message has not been connected
     if (!OpNavCirclesMsg_C_isLinked(&configData->circlesInMsg)) {
         _bskError(configData->bskLogger, "Error: pixelLineBiasUKF.circlesInMsg wasn't connected.");

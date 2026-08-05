@@ -40,6 +40,7 @@
  */
 void SelfInit_velocityPoint(velocityPointConfig *configData, int64_t moduleID)
 {
+    (void) moduleID;
     AttRefMsg_C_init(&configData->attRefOutMsg);
 }
 
@@ -52,6 +53,8 @@ void SelfInit_velocityPoint(velocityPointConfig *configData, int64_t moduleID)
  */
 void Reset_velocityPoint(velocityPointConfig *configData, uint64_t callTime, int64_t moduleID)
 {
+    (void) callTime;
+    (void) moduleID;
     // check if the required input messages are included
     if (!NavTransMsg_C_isLinked(&configData->transNavInMsg)) {
         _bskError(configData->bskLogger, "Error: velocityPoint.transNavInMsg wasn't connected.");

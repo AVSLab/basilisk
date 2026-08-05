@@ -43,6 +43,7 @@ HingedBodyLinearProfiler::~HingedBodyLinearProfiler()
 */
 void HingedBodyLinearProfiler::Reset(uint64_t CurrentSimNanos)
 {
+    (void) CurrentSimNanos;
     // check that required input messages are connected
     if(this->endTime-this->startTime > 0){
         this->deploymentSlope = (this->endTheta-this->startTheta) /

@@ -183,7 +183,11 @@ protected:
      */
     virtual void resolvePlanetEntry(const SpicePlanetStateMsgPayload& planetMsg,
                                     PlanetGrid& grid,
-                                    int         idx) {}
+                                    int         idx) {
+                                        (void) planetMsg;
+                                        (void) grid;
+                                        (void) idx;
+                                    }
 
     /*! Called at the start of UpdateState(), before the planet loop.
      *  Override to clear per-timestep accumulators or cache the spacecraft attitude.
@@ -195,7 +199,11 @@ protected:
      */
     virtual void onUpdateBegin(const SCStatesMsgPayload&         scMsg,
                                const SpicePlanetStateMsgPayload& sunMsg,
-                               uint64_t                          nanos) {}
+                               uint64_t                          nanos) {
+                                   (void) scMsg;
+                                   (void) sunMsg;
+                                   (void) nanos;
+                               }
 
     /*! Called after the planet loop in UpdateState().
      *  Override to write output messages.
@@ -203,7 +211,9 @@ protected:
      *
      *  @param nanos  Current simulation time (ns).
      */
-    virtual void onUpdateEnd(uint64_t nanos) {}
+    virtual void onUpdateEnd(uint64_t nanos) {
+        (void) nanos;
+    }
 
     /*! Called at the end of Reset().
      *  Override for additional validation (e.g. instrument configuration).
@@ -211,7 +221,9 @@ protected:
      *
      *  @param nanos  Current simulation time (ns).
      */
-    virtual void customReset(uint64_t nanos) {}
+    virtual void customReset(uint64_t nanos) {
+        (void) nanos;
+    }
 
     /*! Return true to enable the single-planet backward-compat fallback in Reset():
      *  when planets is empty and planetInMsg is linked, a default PlanetGrid

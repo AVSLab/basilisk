@@ -39,6 +39,7 @@ MJSystemCoM::MJSystemCoM()
 */
 void MJSystemCoM::Reset(uint64_t CurrentSimNanos)
 {
+    (void) CurrentSimNanos;
     if (!scene) {
         bskLogger.bskError("MJSystemCoM: scene pointer not set!");
     }

@@ -35,6 +35,7 @@
 */
 void SelfInit_mrpPD(MrpPDConfig *configData, int64_t moduleID)
 {
+    (void) moduleID;
     /*! - Create output message for module */
     CmdTorqueBodyMsg_C_init(&configData->cmdTorqueOutMsg);
 
@@ -50,6 +51,8 @@ void SelfInit_mrpPD(MrpPDConfig *configData, int64_t moduleID)
 */
 void Reset_mrpPD(MrpPDConfig *configData, uint64_t callTime, int64_t moduleID)
 {
+    (void) callTime;
+    (void) moduleID;
     // check if the required input messages are included
     if (!AttGuidMsg_C_isLinked(&configData->guidInMsg)) {
         _bskError(configData->bskLogger, "Error: mrpPD.guidInMsg wasn't connected.");

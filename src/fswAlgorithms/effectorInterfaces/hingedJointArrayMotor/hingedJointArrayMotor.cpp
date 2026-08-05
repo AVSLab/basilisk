@@ -25,6 +25,7 @@
 
 void HingedJointArrayMotor::Reset(uint64_t CurrentSimNanos)
 {
+    (void) CurrentSimNanos;
     // check that required input messages are connected
     if (!this->massMatrixInMsg.isLinked()) {
         bskLogger.bskError("HingedJointArrayMotor.massMatrixInMsg was not linked.");

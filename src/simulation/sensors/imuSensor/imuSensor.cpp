@@ -98,6 +98,7 @@ ImuSensor::~ImuSensor()
  */
 void ImuSensor::Reset(uint64_t CurrentSimNanos)
 {
+    (void) CurrentSimNanos;
     // check if input message has not been included
     if (!this->scStateInMsg.isLinked()) {
         bskLogger.bskError("imuSensor.scStateInMsg was not linked.");
@@ -355,6 +356,7 @@ void ImuSensor::computePlatformDR()
  */
 void ImuSensor::computePlatformDV(uint64_t CurrentTime)
 {
+    (void) CurrentTime;
     //Calculate "instantaneous" linear acceleration
     Eigen::Vector3d rDotDot_SN_B;     //sensor non conservative acceleration relative to inertial frame in body frame coordinates
     rDotDot_SN_B = this->current_nonConservativeAccelpntB_B + this->current_omegaDot_BN_B.cross(this->sensorPos_B) + this->current_omega_BN_B.cross(this->current_omega_BN_B.cross(this->sensorPos_B));

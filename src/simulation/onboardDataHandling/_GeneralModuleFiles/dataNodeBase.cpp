@@ -131,6 +131,7 @@ void DataNodeBase::UpdateState(uint64_t CurrentSimNanos)
  */
 void DataNodeBase::customReset(uint64_t CurrentClock)
 {
+    (void) CurrentClock;
     return;
 }
 
@@ -139,6 +140,7 @@ void DataNodeBase::customReset(uint64_t CurrentClock)
  */
 void DataNodeBase::customWriteMessages(uint64_t CurrentClock)
 {
+    (void) CurrentClock;
     return;
 }
 

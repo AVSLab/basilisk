@@ -38,6 +38,7 @@
  */
 void SelfInit_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *configData, int64_t moduleID)
 {
+    (void) moduleID;
     /*! - Initialize output message for module */
     CmdTorqueBodyMsg_C_init(&configData->cmdTorqueOutMsg);
 }
@@ -52,6 +53,8 @@ void SelfInit_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *confi
  */
 void Reset_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *configData, uint64_t callTime, int64_t moduleID)
 {
+    (void) callTime;
+    (void) moduleID;
     int i;
 
     configData->reset  = BOOL_TRUE;         /* reset the first run flag */

@@ -30,6 +30,7 @@
  */
 void SelfInit_faultDetection(FaultDetectionData *configData, int64_t moduleID)
 {
+    (void) moduleID;
     OpNavMsg_C_init(&configData->opNavOutMsg);
 }
 
@@ -42,6 +43,8 @@ void SelfInit_faultDetection(FaultDetectionData *configData, int64_t moduleID)
  */
 void Reset_faultDetection(FaultDetectionData *configData, uint64_t callTime, int64_t moduleID)
 {
+    (void) callTime;
+    (void) moduleID;
     // check that the opnave messages are linked
     if (!OpNavMsg_C_isLinked(&configData->navMeasPrimaryInMsg)) {
         _bskError(configData->bskLogger, "Error: faultDetection.navMeasPrimaryInMsg wasn't connected.");

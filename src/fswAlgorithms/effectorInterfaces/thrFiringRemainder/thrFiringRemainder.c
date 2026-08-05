@@ -37,6 +37,7 @@
  */
 void SelfInit_thrFiringRemainder(thrFiringRemainderConfig *configData, int64_t moduleID)
 {
+    (void) moduleID;
     THRArrayOnTimeCmdMsg_C_init(&configData->onTimeOutMsg);
 }
 

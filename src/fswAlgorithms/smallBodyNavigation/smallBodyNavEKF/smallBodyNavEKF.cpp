@@ -80,6 +80,7 @@ void SmallBodyNavEKF::SelfInit(){
 */
 void SmallBodyNavEKF::Reset(uint64_t CurrentSimNanos)
 {
+    (void) CurrentSimNanos;
     /* check that required input messages are connected */
     if (!this->navTransInMsg.isLinked()) {
         bskLogger.bskError("SmallBodyNavEKF.navTransInMsg was not linked.");
@@ -269,6 +270,7 @@ void SmallBodyNavEKF::computeEquationsOfMotion(const StateVector& x_hat, const S
 
 */
 void SmallBodyNavEKF::aprioriCovar(uint64_t CurrentSimNanos){
+    (void) CurrentSimNanos;
     const StateMatrix currentCovariance = P_k;
     const StateMatrix processNoise = Q;
 

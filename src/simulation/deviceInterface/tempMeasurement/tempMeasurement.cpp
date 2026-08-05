@@ -41,6 +41,7 @@ TempMeasurement::~TempMeasurement() = default;
 */
 void TempMeasurement::Reset(uint64_t CurrentSimNanos)
 {
+    (void) CurrentSimNanos;
     if (!this->tempInMsg.isLinked()) {
         bskLogger.bskError("TempMeasurement.tempInMsg was not linked.");
     }

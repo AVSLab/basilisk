@@ -32,6 +32,7 @@
  */
 void SelfInit_dvExecuteGuidance(dvExecuteGuidanceConfig *configData, int64_t moduleID)
 {
+    (void) moduleID;
     DvExecutionDataMsg_C_init(&configData->burnExecOutMsg);
     THRArrayOnTimeCmdMsg_C_init(&configData->thrCmdOutMsg);
 }
@@ -46,6 +47,8 @@ void SelfInit_dvExecuteGuidance(dvExecuteGuidanceConfig *configData, int64_t mod
 void Reset_dvExecuteGuidance(dvExecuteGuidanceConfig *configData, uint64_t callTime,
                        int64_t moduleID)
 {
+    (void) callTime;
+    (void) moduleID;
     // check if the required input messages are included
     if (!NavTransMsg_C_isLinked(&configData->navDataInMsg)) {
         _bskError(configData->bskLogger, "Error: dvExecuteGuidance.navDataInMsg wasn't connected.");

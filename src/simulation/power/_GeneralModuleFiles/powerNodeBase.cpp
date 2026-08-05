@@ -96,6 +96,7 @@ bool PowerNodeBase::readMessages()
 
 void PowerNodeBase::computePowerStatus(double currentTime)
 {
+    (void) currentTime;
     if(this->powerStatus > 0)
     {
         this->evaluatePowerModel(&this->nodePowerMsg);
@@ -135,6 +136,7 @@ void PowerNodeBase::UpdateState(uint64_t CurrentSimNanos)
  */
 void PowerNodeBase::customReset(uint64_t CurrentClock)
 {
+    (void) CurrentClock;
     return;
 }
 
@@ -143,6 +145,7 @@ void PowerNodeBase::customReset(uint64_t CurrentClock)
  */
 void PowerNodeBase::customWriteMessages(uint64_t CurrentClock)
 {
+    (void) CurrentClock;
     return;
 }
 

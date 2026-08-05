@@ -30,6 +30,7 @@
  */
 void SelfInit_attRefCorrection(attRefCorrectionConfig  *configData, int64_t moduleID)
 {
+    (void) moduleID;
     AttRefMsg_C_init(&configData->attRefOutMsg);
 }
 
@@ -44,6 +45,8 @@ void SelfInit_attRefCorrection(attRefCorrectionConfig  *configData, int64_t modu
 */
 void Reset_attRefCorrection(attRefCorrectionConfig *configData, uint64_t callTime, int64_t moduleID)
 {
+    (void) callTime;
+    (void) moduleID;
     // check if the required message has not been connected
     if (!AttRefMsg_C_isLinked(&configData->attRefInMsg)) {
         _bskError(configData->bskLogger, "Error: attRefCorrection.attRefInMsg was not connected.");

@@ -37,6 +37,7 @@
  */
 void SelfInit_thrMomentumDumping(thrMomentumDumpingConfig *configData, int64_t moduleID)
 {
+    (void) moduleID;
     THRArrayOnTimeCmdMsg_C_init(&configData->thrusterOnTimeOutMsg);
 }
 
@@ -50,6 +51,8 @@ void SelfInit_thrMomentumDumping(thrMomentumDumpingConfig *configData, int64_t m
  */
 void Reset_thrMomentumDumping(thrMomentumDumpingConfig *configData, uint64_t callTime, int64_t moduleID)
 {
+    (void) callTime;
+    (void) moduleID;
     THRArrayConfigMsgPayload    localThrusterData;     /* local copy of the thruster data message */
     int                         i;
 

@@ -37,6 +37,7 @@
 */
 void SelfInit_thrMomentumManagement(thrMomentumManagementConfig *configData, int64_t moduleID)
 {
+    (void) moduleID;
     CmdTorqueBodyMsg_C_init(&configData->deltaHOutMsg);
 }
 
@@ -50,6 +51,8 @@ void SelfInit_thrMomentumManagement(thrMomentumManagementConfig *configData, int
  */
 void Reset_thrMomentumManagement(thrMomentumManagementConfig *configData, uint64_t callTime, int64_t moduleID)
 {
+    (void) callTime;
+    (void) moduleID;
     // check if the required input messages are included
     if (!RWArrayConfigMsg_C_isLinked(&configData->rwConfigDataInMsg)) {
         _bskError(configData->bskLogger, "Error: thrMomentumManagement.rwConfigDataInMsg wasn't connected.");

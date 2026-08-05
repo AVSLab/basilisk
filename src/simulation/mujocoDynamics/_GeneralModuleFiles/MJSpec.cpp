@@ -30,6 +30,7 @@ namespace
 {
 std::vector<std::string> readCustomSingleSplit(mjSpec* spec, const std::string& key, char delimiter)
 {
+    (void) delimiter;
     std::string value;
 
     for (auto element = mjs_firstElement(spec, mjOBJ_TEXT); element;

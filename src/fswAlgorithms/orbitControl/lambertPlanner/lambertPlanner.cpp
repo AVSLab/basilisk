@@ -38,6 +38,7 @@ LambertPlanner::~LambertPlanner() = default;
 */
 void LambertPlanner::Reset(uint64_t currentSimNanos)
 {
+    (void) currentSimNanos;
     // check that required input messages are connected
     if (!this->navTransInMsg.isLinked()) {
         bskLogger.bskError("lambertPlanner.navTransInMsg was not linked.");

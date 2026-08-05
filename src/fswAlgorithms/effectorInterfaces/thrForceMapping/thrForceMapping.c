@@ -34,6 +34,7 @@
  */
 void SelfInit_thrForceMapping(thrForceMappingConfig *configData, int64_t moduleID)
 {
+    (void) moduleID;
     THRArrayCmdForceMsg_C_init(&configData->thrForceCmdOutMsg);
 }
 
@@ -47,6 +48,8 @@ void SelfInit_thrForceMapping(thrForceMappingConfig *configData, int64_t moduleI
  */
 void Reset_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime, int64_t moduleID)
 {
+    (void) callTime;
+    (void) moduleID;
     double             *pAxis;                  /* pointer to the current control axis */
     uint32_t                 i;
     THRArrayConfigMsgPayload   localThrusterData;   /* local copy of the thruster data message */

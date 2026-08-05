@@ -40,6 +40,7 @@ static double adjust_range(double lower, double upper, double angle);
  @param moduleID The Basilisk module identifier
  */
 void SelfInit_meanOEFeedback(meanOEFeedbackConfig *configData, int64_t moduleID) {
+    (void) moduleID;
     CmdForceInertialMsg_C_init(&configData->forceOutMsg);
 }
 
@@ -53,6 +54,8 @@ void SelfInit_meanOEFeedback(meanOEFeedbackConfig *configData, int64_t moduleID)
  @param moduleID The Basilisk module identifier
  */
 void Reset_meanOEFeedback(meanOEFeedbackConfig *configData, uint64_t callTime, int64_t moduleID) {
+    (void) callTime;
+    (void) moduleID;
     // check if the required input messages are included
     if (!NavTransMsg_C_isLinked(&configData->chiefTransInMsg)) {
         _bskError(configData->bskLogger, "Error: meanOEFeedback.chiefTransInMsg wasn't connected.");

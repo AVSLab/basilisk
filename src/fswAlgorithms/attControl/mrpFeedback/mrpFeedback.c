@@ -37,6 +37,7 @@
 */
 void SelfInit_mrpFeedback(mrpFeedbackConfig *configData, int64_t moduleID)
 {
+    (void) moduleID;
     CmdTorqueBodyMsg_C_init(&configData->cmdTorqueOutMsg);
     CmdTorqueBodyMsg_C_init(&configData->intFeedbackTorqueOutMsg);
 }
@@ -51,6 +52,8 @@ void SelfInit_mrpFeedback(mrpFeedbackConfig *configData, int64_t moduleID)
 */
 void Reset_mrpFeedback(mrpFeedbackConfig *configData, uint64_t callTime, int64_t moduleID)
 {
+    (void) callTime;
+    (void) moduleID;
     /* - Read the input messages */
     int i;
 

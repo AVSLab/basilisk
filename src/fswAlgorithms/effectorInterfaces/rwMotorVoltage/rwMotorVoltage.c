@@ -35,6 +35,7 @@
  */
 void SelfInit_rwMotorVoltage(rwMotorVoltageConfig *configData, int64_t moduleID)
 {
+    (void) moduleID;
     ArrayMotorVoltageMsg_C_init(&configData->voltageOutMsg);
 }
 

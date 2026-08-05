@@ -24,6 +24,7 @@
 
 void JointMotionCompensator::Reset(uint64_t CurrentSimNanos)
 {
+    (void) CurrentSimNanos;
     // check that required input messages are connected
     if (!this->massMatrixInMsg.isLinked()) {
         bskLogger.bskError("JointMotionCompensator.massMatrixInMsg was not linked.");

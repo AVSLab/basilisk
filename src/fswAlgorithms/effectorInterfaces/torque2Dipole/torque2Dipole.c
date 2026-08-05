@@ -30,6 +30,7 @@
  */
 void SelfInit_torque2Dipole(torque2DipoleConfig  *configData, int64_t moduleID)
 {
+    (void) moduleID;
     /*
      * Initialize the output message.
      */

@@ -35,6 +35,7 @@ const double epsilon = 1e-12;                           // module tolerance for 
  */
 void SelfInit_solarArrayReference(solarArrayReferenceConfig *configData, int64_t moduleID)
 {
+    (void) moduleID;
     HingedRigidBodyMsg_C_init(&configData->hingedRigidBodyRefOutMsg);
 }
 
@@ -47,6 +48,7 @@ void SelfInit_solarArrayReference(solarArrayReferenceConfig *configData, int64_t
 */
 void Reset_solarArrayReference(solarArrayReferenceConfig *configData, uint64_t callTime, int64_t moduleID)
 {
+    (void) moduleID;
     if (!NavAttMsg_C_isLinked(&configData->attNavInMsg)) {
         _bskError(configData->bskLogger, "solarArrayReference.attNavInMsg wasn't connected.");
     }

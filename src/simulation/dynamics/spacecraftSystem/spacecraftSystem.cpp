@@ -68,6 +68,7 @@ void SpacecraftUnit::addDockingPort(DockingData *newDockingPort)
 
 void SpacecraftUnit::SelfInitSC(int64_t moduleID)
 {
+    (void) moduleID;
 }
 
 

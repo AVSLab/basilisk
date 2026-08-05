@@ -49,6 +49,7 @@ DragDynamicEffector::~DragDynamicEffector()
  */
 void DragDynamicEffector::Reset(uint64_t CurrentSimNanos)
 {
+    (void) CurrentSimNanos;
     // check if input message has not been included
     if (!this->atmoDensInMsg.isLinked()) {
         bskLogger.bskError("dragDynamicEffector.atmoDensInMsg was not linked.");
@@ -60,6 +61,7 @@ void DragDynamicEffector::Reset(uint64_t CurrentSimNanos)
  */
 void DragDynamicEffector::WriteOutputMessages(uint64_t CurrentClock)
 {
+    (void) CurrentClock;
 	return;
 }
 
@@ -165,6 +167,8 @@ void DragDynamicEffector::cannonballDrag(){
 selecting the model type based on the settable attribute "modelType."
 */
 void DragDynamicEffector::computeForceTorque(double integTime, double timeStep){
+    (void) integTime;
+    (void) timeStep;
 	updateDragDir();
 	if(this->modelType == "cannonball"){
 		cannonballDrag();
@@ -179,6 +183,7 @@ Naturally, this means that conditions are held piecewise-constant over an integr
  */
 void DragDynamicEffector::UpdateState(uint64_t CurrentSimNanos)
 {
+    (void) CurrentSimNanos;
 	ReadInputs();
 	return;
 }

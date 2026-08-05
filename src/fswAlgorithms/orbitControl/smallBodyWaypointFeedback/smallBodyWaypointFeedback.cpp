@@ -54,6 +54,7 @@ void SmallBodyWaypointFeedback::SelfInit(){
 */
 void SmallBodyWaypointFeedback::Reset(uint64_t CurrentSimNanos)
 {
+    (void) CurrentSimNanos;
     // check that required input messages are connected
     if (!this->navTransInMsg.isLinked()) {
         bskLogger.bskError("SmallBodyWaypointFeedback.navTransInMsg was not linked.");
@@ -85,6 +86,7 @@ void SmallBodyWaypointFeedback::readMessages(){
 
 */
 void SmallBodyWaypointFeedback::computeControl(uint64_t CurrentSimNanos){
+    (void) CurrentSimNanos;
     /* Get the orbital elements of the asteroid, we assume the uncertainty on the pos. and vel. of the body are low
      * enough to consider them known apriori */
     rv2elem(mu_sun, asteroidEphemerisInMsgBuffer.r_BdyZero_N, asteroidEphemerisInMsgBuffer.v_BdyZero_N, &oe_ast);

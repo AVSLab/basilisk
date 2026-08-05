@@ -98,6 +98,7 @@ MsisAtmosphere::~MsisAtmosphere()
  */
 void MsisAtmosphere::customReset(uint64_t CurrentSimNanos)
 {
+    (void) CurrentSimNanos;
     for(size_t ind = 0; ind < 23; ind++) {
         if (!this->swDataInMsgs[ind].isLinked()) {
             bskLogger.bskError("Required MSIS input messages No. %zu are not connected.", ind);
@@ -128,6 +129,7 @@ void MsisAtmosphere::customSetEpochFromVariable()
  */
 void MsisAtmosphere::customWriteMessages(uint64_t CurrentClock)
 {
+    (void) CurrentClock;
         /* [WIP] - Include additional outputs for other MSISE outputs (species count, etc.)*/
 
 }

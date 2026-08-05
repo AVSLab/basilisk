@@ -27,6 +27,7 @@
  */
 void SelfInit_ephemDifference(EphemDifferenceData *configData, int64_t moduleID)
 {
+    (void) moduleID;
     uint32_t i;
     for(i = 0; i < MAX_NUM_CHANGE_BODIES; i++)
     {
@@ -45,6 +46,8 @@ void SelfInit_ephemDifference(EphemDifferenceData *configData, int64_t moduleID)
 void Reset_ephemDifference(EphemDifferenceData *configData, uint64_t callTime,
                          int64_t moduleID)
 {
+    (void) callTime;
+    (void) moduleID;
     // check if the required message has not been connected
     if (!EphemerisMsg_C_isLinked(&configData->ephBaseInMsg)) {
         _bskError(configData->bskLogger, "Error: ephemDifference.ephBaseInMsg wasn't connected.");

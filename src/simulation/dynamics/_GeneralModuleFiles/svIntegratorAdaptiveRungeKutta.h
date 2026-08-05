@@ -351,6 +351,7 @@ double svIntegratorAdaptiveRungeKutta<numberStages>::computeMaxRelativeError(
     const ExtendedStateVector& lowOrderNextStep,
     const ExtendedStateVector& highOrderNextStep) const
 {
+    (void) timeStep;
     // Compute the absolute truncation error for every state
     ExtendedStateVector truncationError = highOrderNextStep - lowOrderNextStep;
 

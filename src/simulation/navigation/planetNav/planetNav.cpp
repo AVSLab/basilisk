@@ -54,6 +54,7 @@ PlanetNav::~PlanetNav()
 */
 void PlanetNav::Reset(uint64_t CurrentSimNanos)
 {
+    (void) CurrentSimNanos;
     // check that required input messages are connected
     if (!this->ephemerisInMsg.isLinked()) {
         bskLogger.bskError("PlanetNav.ephemerisInMsg was not linked.");

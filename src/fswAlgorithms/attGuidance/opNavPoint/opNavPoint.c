@@ -33,6 +33,7 @@
  */
 void SelfInit_opNavPoint(OpNavPointConfig *configData, int64_t moduleID)
 {
+    (void) moduleID;
     AttGuidMsg_C_init(&configData->attGuidanceOutMsg);
 }
 
@@ -46,6 +47,8 @@ void SelfInit_opNavPoint(OpNavPointConfig *configData, int64_t moduleID)
  */
 void Reset_opNavPoint(OpNavPointConfig *configData, uint64_t callTime, int64_t moduleID)
 {
+    (void) callTime;
+    (void) moduleID;
     double v1[3];
 
     // check if the required input messages are included

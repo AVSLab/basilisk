@@ -45,6 +45,7 @@ MotorVoltageInterface::~MotorVoltageInterface()
  */
 void MotorVoltageInterface::Reset(uint64_t CurrenSimNanos)
 {
+    (void) CurrenSimNanos;
     if(!this->motorVoltageInMsg.isLinked())
     {
         bskLogger.bskLog(BSK_WARNING, "motorVoltageInterface.motorVoltageInMsg is not linked.");

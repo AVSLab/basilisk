@@ -38,6 +38,7 @@
  */
 void SelfInit_hillPoint(hillPointConfig *configData, int64_t moduleID)
 {
+    (void) moduleID;
     AttRefMsg_C_init(&configData->attRefOutMsg);
 }
 
@@ -50,6 +51,8 @@ void SelfInit_hillPoint(hillPointConfig *configData, int64_t moduleID)
  */
 void Reset_hillPoint(hillPointConfig *configData, uint64_t callTime, int64_t moduleID)
 {
+    (void) callTime;
+    (void) moduleID;
     // check if the required input message is included
     if (!NavTransMsg_C_isLinked(&configData->transNavInMsg)) {
         _bskError(configData->bskLogger, "Error: hillPoint.transNavInMsg wasn't connected.");
@@ -103,6 +106,7 @@ void computeHillPointingReference(hillPointConfig *configData,
                                   double celBdyVelocityVector[3],
                                   AttRefMsgPayload *attRefOut)
 {
+    (void) configData;
 
     double  relPosVector[3];
     double  relVelVector[3];

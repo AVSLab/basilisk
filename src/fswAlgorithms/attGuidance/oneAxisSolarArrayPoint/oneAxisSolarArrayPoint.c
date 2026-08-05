@@ -35,6 +35,7 @@ const double epsilon = 1e-12;                           // module tolerance for 
  */
 void SelfInit_oneAxisSolarArrayPoint(OneAxisSolarArrayPointConfig *configData, int64_t moduleID)
 {
+    (void) moduleID;
     AttRefMsg_C_init(&configData->attRefOutMsg);
 }
 
@@ -48,6 +49,8 @@ void SelfInit_oneAxisSolarArrayPoint(OneAxisSolarArrayPointConfig *configData, i
 */
 void Reset_oneAxisSolarArrayPoint(OneAxisSolarArrayPointConfig *configData, uint64_t callTime, int64_t moduleID)
 {
+    (void) callTime;
+    (void) moduleID;
     if (!NavAttMsg_C_isLinked(&configData->attNavInMsg)) {
         _bskError(configData->bskLogger, " oneAxisSolarArrayPoint.attNavInMsg wasn't connected.");
     }

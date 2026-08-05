@@ -60,6 +60,7 @@ Camera::~Camera()
  */
 void Camera::Reset(uint64_t currentSimNanos)
 {
+    (void) currentSimNanos;
 }
 
 /*!

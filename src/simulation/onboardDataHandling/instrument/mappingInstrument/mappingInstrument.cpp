@@ -41,6 +41,7 @@ MappingInstrument::~MappingInstrument()
  */
 void MappingInstrument::Reset(uint64_t CurrentSimNanos)
 {
+    (void) CurrentSimNanos;
     // check that the baud rate is set
     if (this->nodeBaudRate < 0.0){
         bskLogger.bskError("MappingInstrument.nodeBaudRate is not set to a positive value.");

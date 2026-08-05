@@ -34,6 +34,7 @@
  */
 void SelfInit_sunlineUKF(SunlineUKFConfig *configData, int64_t moduleID)
 {
+    (void) moduleID;
     NavAttMsg_C_init(&configData->navStateOutMsg);
     SunlineFilterMsg_C_init(&configData->filtDataOutMsg);
 }
@@ -49,6 +50,7 @@ void SelfInit_sunlineUKF(SunlineUKFConfig *configData, int64_t moduleID)
 void Reset_sunlineUKF(SunlineUKFConfig *configData, uint64_t callTime,
                       int64_t moduleID)
 {
+    (void) moduleID;
 
     CSSConfigMsgPayload cssConfigInBuffer;
     double tempMatrix[SKF_N_STATES*SKF_N_STATES];
@@ -380,6 +382,7 @@ void sunlineUKFMeasModel(SunlineUKFConfig *configData)
  */
 void sunlineUKFMeasUpdate(SunlineUKFConfig *configData, double updateTime)
 {
+    (void) updateTime;
     double yBar[MAX_N_CSS_MEAS], syInv[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS];
     double kMat[SKF_N_STATES*MAX_N_CSS_MEAS];
     double xHat[SKF_N_STATES], sBarT[SKF_N_STATES*SKF_N_STATES], tempYVec[MAX_N_CSS_MEAS];
