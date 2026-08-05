@@ -276,10 +276,41 @@ void DualHingedRigidBodyStateEffector::updateContributions(double integTime [[ma
     // - Map gravity to body frame
     g_P = dcmPN*gLocal_N;
 
+    if (!this->dynEffectors.empty()) {
+        this->omega_BN_B = omega_BN_B;
+        this->computePanelInertialStates();
+    }
+
+    // Loop through to collect forces and torques from any connected dynamic effectors
+    Eigen::Vector3d attBodyForce_S1 = Eigen::Vector3d::Zero();
+    Eigen::Vector3d attBodyTorquePntH1_S1 = Eigen::Vector3d::Zero();
+    Eigen::Vector3d attBodyForce_S2 = Eigen::Vector3d::Zero();
+    Eigen::Vector3d attBodyTorquePntH2_S2 = Eigen::Vector3d::Zero();
+    for (size_t i = 0; i < this->dynEffectors.size(); i++) {
+        DynamicEffector* dynEffector = this->dynEffectors[i];
+        // - Compute the force and torque contributions from the dynamicEffectors
+        dynEffector->computeForceTorque(integTime, double(0.0));
+        if (this->dynEffectorSegments[i] == 1) {
+            // a child's "_B" loads are already in panel 1's S1 frame, so only "_N" is rotated
+            attBodyForce_S1 += dynEffector->forceExternal_B + this->dcm_S1P * dcmPN * dynEffector->forceExternal_N;
+            attBodyTorquePntH1_S1 += dynEffector->torqueExternalPntB_B;
+        } else if (this->dynEffectorSegments[i] == 2) {
+            // a child's "_B" loads are already in panel 2's S2 frame, so only "_N" is rotated
+            attBodyForce_S2 += dynEffector->forceExternal_B + this->dcm_S2P * dcmPN * dynEffector->forceExternal_N;
+            attBodyTorquePntH2_S2 += dynEffector->torqueExternalPntB_B;
+        }
+    }
+
     // - Define gravity terms
     Eigen::Vector3d gravTorquePan1PntH1_P = -this->d1*this->sHat11_P.cross(this->mass1*g_P);
     Eigen::Vector3d gravForcePan2_P = this->mass2*g_P;
     Eigen::Vector3d gravTorquePan2PntH2_P = -this->d2*this->sHat21_P.cross(this->mass2*g_P);
+
+    // - Sum of forces and torques
+    Eigen::Vector3d externalForcePan1_P = this->dcm_S1P.transpose() * attBodyForce_S1;
+    Eigen::Vector3d externalForcePan2_P = this->dcm_S2P.transpose() * attBodyForce_S2;
+    Eigen::Vector3d externalTorquePan1PntH1_P = this->dcm_S1P.transpose() * attBodyTorquePntH1_S1;
+    Eigen::Vector3d externalTorquePan2PntH2_P = this->dcm_S2P.transpose() * attBodyTorquePntH2_S2;
 
     // - Define omegaBN_S
     this->omega_BN_B = omega_BN_B;
@@ -303,24 +334,29 @@ void DualHingedRigidBodyStateEffector::updateContributions(double integTime [[ma
                                  - this->mass2*this->d2*this->sHat23_P.cross(this->r_S2P_P).transpose());
 
     this->vectorVDHRB(0) =  -(this->IPntS1_S1(0,0) - this->IPntS1_S1(2,2))*this->omega_PN_S1(2)*this->omega_PN_S1(0)
-                            + this->u1 - this->u2 - this->k1*this->theta1 - this->c1*this->theta1Dot + this->k2*this->theta2 + this->c2*this->theta2Dot + this->sHat12_P.dot(gravTorquePan1PntH1_P) + this->l1*this->sHat13_P.dot(gravForcePan2_P) -
+                            + this->u1 - this->u2 - this->k1*this->theta1 - this->c1*this->theta1Dot + this->k2*this->theta2 + this->c2*this->theta2Dot
+                            + this->sHat12_P.dot(gravTorquePan1PntH1_P + externalTorquePan1PntH1_P)
+                            + this->l1*this->sHat13_P.dot(gravForcePan2_P + externalForcePan2_P) -
                             this->mass1*this->d1*this->sHat13_P.dot(2*this->omega_PNLoc_P.cross(this->rPrimeS1P_P)
                             + this->omega_PNLoc_P.cross(this->omega_PNLoc_P.cross(this->r_S1P_P)))
                             - this->mass2*this->l1*this->sHat13_P.dot(2*this->omega_PNLoc_P.cross(this->rPrimeS2P_P)
                             + this->omega_PNLoc_P.cross(this->omega_PNLoc_P.cross(this->r_S2P_P))
                             + this->l1*this->theta1Dot*this->theta1Dot*this->sHat11_P
-                            + this->d2*(this->theta1Dot + this->theta2Dot)*(this->theta1Dot + this->theta2Dot)*this->sHat21_P); //still missing torque and force terms - SJKC
+                            + this->d2*(this->theta1Dot + this->theta2Dot)*(this->theta1Dot + this->theta2Dot)*this->sHat21_P);
 
     this->vectorVDHRB(1) =  -(this->IPntS2_S2(0,0) - this->IPntS2_S2(2,2))*this->omega_PN_S2(2)*this->omega_PN_S2(0)
-                            + this->u2 - this->k2*this->theta2 - this->c2*this->theta2Dot + this->sHat22_P.dot(gravTorquePan2PntH2_P) - this->mass2*this->d2*this->sHat23_P.dot(2*this->omega_PNLoc_P.cross(this->rPrimeS2P_P)
-                            + this->omega_PNLoc_P.cross(this->omega_PNLoc_P.cross(this->r_S2P_P)) + this->l1*this->theta1Dot*this->theta1Dot*this->sHat11_P); // still missing torque term. - SJKC
+                            + this->u2 - this->k2*this->theta2 - this->c2*this->theta2Dot
+                            + this->sHat22_P.dot(gravTorquePan2PntH2_P + externalTorquePan2PntH2_P)
+                            - this->mass2*this->d2*this->sHat23_P.dot(2*this->omega_PNLoc_P.cross(this->rPrimeS2P_P)
+                            + this->omega_PNLoc_P.cross(this->omega_PNLoc_P.cross(this->r_S2P_P)) + this->l1*this->theta1Dot*this->theta1Dot*this->sHat11_P);
 
     // - Start defining them good old contributions - start with translation
     // - For documentation on contributions see Allard, Diaz, Schaub flex/slosh paper
     backSubContr.matrixA = (this->mass1*this->d1*this->sHat13_P + this->mass2*this->l1*this->sHat13_P + this->mass2*this->d2*this->sHat23_P)*matrixEDHRB.row(0)*this->matrixFDHRB + this->mass2*this->d2*this->sHat23_P*this->matrixEDHRB.row(1)*this->matrixFDHRB;
     backSubContr.matrixB = (this->mass1*this->d1*this->sHat13_P + this->mass2*this->l1*this->sHat13_P + this->mass2*this->d2*this->sHat23_P)*this->matrixEDHRB.row(0)*(matrixGDHRB) + this->mass2*this->d2*this->sHat23_P*this->matrixEDHRB.row(1)*(matrixGDHRB);
     backSubContr.vecTrans = -(this->mass1*this->d1*this->theta1Dot*this->theta1Dot*this->sHat11_P + this->mass2*(this->l1*this->theta1Dot*this->theta1Dot*this->sHat11_P + this->d2*(this->theta1Dot+this->theta2Dot)*(this->theta1Dot+this->theta2Dot)*this->sHat21_P)
-                    + (this->mass1*this->d1*this->sHat13_P + this->mass2*this->l1*this->sHat13_P + this->mass2*this->d2*this->sHat23_P)*this->matrixEDHRB.row(0)*this->vectorVDHRB + this->mass2*this->d2*this->sHat23_P*this->matrixEDHRB.row(1)*this->vectorVDHRB);
+                    + (this->mass1*this->d1*this->sHat13_P + this->mass2*this->l1*this->sHat13_P + this->mass2*this->d2*this->sHat23_P)*this->matrixEDHRB.row(0)*this->vectorVDHRB + this->mass2*this->d2*this->sHat23_P*this->matrixEDHRB.row(1)*this->vectorVDHRB)
+                    + externalForcePan1_P + externalForcePan2_P;
 
     // - Define rotational matrice contributions (Eq 96 in paper)
 
@@ -345,7 +381,11 @@ void DualHingedRigidBodyStateEffector::updateContributions(double integTime [[ma
                     + this->mass2*this->r_S2P_P.cross(this->l1*this->theta1Dot*this->theta1Dot*this->sHat11_P
                     + this->d2*(this->theta1Dot+this->theta2Dot)*(this->theta1Dot+this->theta2Dot)*this->sHat21_P)
                     + rotFactor0_P*this->matrixEDHRB.row(0)*this->vectorVDHRB
-                    + rotFactor1_P*this->matrixEDHRB.row(1)*this->vectorVDHRB);
+                    + rotFactor1_P*this->matrixEDHRB.row(1)*this->vectorVDHRB)
+                    + this->dcm_S1P.transpose()*attBodyTorquePntH1_S1
+                    + this->dcm_S2P.transpose()*attBodyTorquePntH2_S2
+                    + this->r_H1P_P.cross(externalForcePan1_P)
+                    + this->r_H2P_P.cross(externalForcePan2_P);
 
     return;
 }
