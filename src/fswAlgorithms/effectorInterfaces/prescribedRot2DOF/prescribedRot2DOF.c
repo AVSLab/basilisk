@@ -71,7 +71,7 @@ void Reset_prescribedRot2DOF(PrescribedRot2DOFConfig *configData, uint64_t callT
     }
 
     // Store the initial time */
-    configData->maneuverStartTime = nanoToSec(callTime);
+    configData->maneuverStartTime = (double) callTime * NANO2SEC;
 
     // Set the initial convergence to true to properly enter the desired loop in the Update() method on the first pass
     configData->isManeuverComplete = true;
@@ -118,7 +118,7 @@ void Update_prescribedRot2DOF(PrescribedRot2DOFConfig *configData, uint64_t call
     || HingedRigidBodyMsg_C_timeWritten(&configData->spinningBodyRef2InMsg) <= callTime ) && configData->isManeuverComplete)
     {
         // Define the initial time
-        configData->maneuverStartTime = nanoToSec(callTime);
+        configData->maneuverStartTime = (double) callTime * NANO2SEC;
 
         // Calculate dcm_P0M. This DCM represents the current spinning body attitude with respect to the M frame
         double dcm_PM[3][3];
@@ -180,7 +180,7 @@ void Update_prescribedRot2DOF(PrescribedRot2DOFConfig *configData, uint64_t call
     }
 
     // Store the current simulation time
-    double t = nanoToSec(callTime); // [s]
+    double t = (double) callTime * NANO2SEC; // [s]
 
     // Define the other scalar module states locally
     double phiDDot;

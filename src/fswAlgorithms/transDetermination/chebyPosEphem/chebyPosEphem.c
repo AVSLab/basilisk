@@ -107,7 +107,7 @@ void Update_chebyPosEphem(ChebyPosEphemData *configData, uint64_t callTime, int6
     localCorr = TDBVehicleClockCorrelationMsg_C_read(&configData->clockCorrInMsg);
     configData->outputState = EphemerisMsg_C_zeroMsgPayload();
 
-    currentEphTime = nanoToSec(callTime);
+    currentEphTime = (double) callTime * NANO2SEC;
     currentEphTime += localCorr.ephemerisTime - localCorr.vehicleClockTime;
 
     configData->coeffSelector = 0;
@@ -129,7 +129,7 @@ void Update_chebyPosEphem(ChebyPosEphemData *configData, uint64_t callTime, int6
         currentScaledValue = currentScaledValue/fabs(currentScaledValue);
     }
 
-    configData->outputState.timeTag = nanoToSec(callTime);
+    configData->outputState.timeTag = (double) callTime * NANO2SEC;
 
     for(i=0; i<3; i++)
     {

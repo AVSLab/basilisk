@@ -344,7 +344,7 @@ void SpacecraftSystem::Reset(uint64_t CurrentSimNanos)
     // - Call method for initializing the dynamics of spacecraft
     this->initializeDynamics();
 
-    this->timeBefore = nanoToSec(CurrentSimNanos);
+    this->timeBefore = static_cast<double>(CurrentSimNanos) * NANO2SEC;
     this->timeBeforeNanos = CurrentSimNanos;
 }
 
@@ -1224,8 +1224,8 @@ void SpacecraftSystem::preIntegration(uint64_t integrateToThisTimeNanos) {
 void SpacecraftSystem::postIntegration(uint64_t integrateToThisTimeNanos) {
     std::vector<SpacecraftUnit*>::iterator spacecraftUnConnectedIt;
     this->timeBeforeNanos = integrateToThisTimeNanos; // - copy the current time into previous time for next integrate state call
-    this->timeBefore = nanoToSec(integrateToThisTimeNanos);     // - copy the current time into previous time for next integrate state call
-    double integrateToThisTime = nanoToSec(integrateToThisTimeNanos); // - convert to seconds
+    this->timeBefore = static_cast<double>(integrateToThisTimeNanos) * NANO2SEC; // - copy current time for next integration call
+    double integrateToThisTime = static_cast<double>(integrateToThisTimeNanos) * NANO2SEC; // - convert to seconds
 
     // - Calculate the states of the attached spacecraft from the primary spacecraft
     this->determineAttachedSCStates();

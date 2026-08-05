@@ -94,7 +94,7 @@ MJScene::SelfInit()
 void
 MJScene::Reset(uint64_t CurrentSimNanos)
 {
-    this->timeBefore = nanoToSec(CurrentSimNanos);
+    this->timeBefore = static_cast<double>(CurrentSimNanos) * NANO2SEC;
     this->firstDynamicsCall = true;
     this->initializeDynamics();
     this->dynamicsTask.TaskName = "Dynamics:" + this->ModelTag;
@@ -338,9 +338,9 @@ MJScene::preIntegration(uint64_t callTime)
 void
 MJScene::postIntegration(uint64_t callTimeNanos)
 {
-    this->timeBefore = nanoToSec(callTimeNanos);
+    this->timeBefore = static_cast<double>(callTimeNanos) * NANO2SEC;
     this->timeBeforeNanos = callTimeNanos;
-    double callTime = nanoToSec(callTimeNanos);
+    double callTime = static_cast<double>(callTimeNanos) * NANO2SEC;
 
     // Copy data from Basilisk state objects to MuJoCo structs
     updateMujocoArraysFromStates();

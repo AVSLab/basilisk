@@ -77,7 +77,7 @@ void StepperMotor::UpdateState(uint64_t callTime) {
     }
 
     // Actuate the motor only if a current actuation segment is not complete
-    double t = nanoToSec(callTime);
+    double t = static_cast<double>(callTime) * NANO2SEC;
     if (!(this->actuationComplete)) {
         // Reset the motor immediately after a new non-interrupting request is received
         if ((this->newMsg && !this->interruptMsg) || (this->interruptMsg && this->stepComplete)) {

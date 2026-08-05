@@ -67,7 +67,7 @@ void PrescribedRotation1DOF::UpdateState(uint64_t callTime) {
     spinning body rotation are updated in this statement. */
     if (this->spinningBodyInMsg.timeWritten() <= callTime && this->convergence) {
         // Update the initial time as the current simulation time
-        this->tInit = nanoToSec(callTime);
+        this->tInit = static_cast<double>(callTime) * NANO2SEC;
 
         // Update the initial angle
         this->thetaInit = this->theta;
@@ -87,7 +87,7 @@ void PrescribedRotation1DOF::UpdateState(uint64_t callTime) {
     }
 
     // Compute the scalar rotational states at the current simulation time
-    this->computeCurrentState(nanoToSec(callTime));
+    this->computeCurrentState(static_cast<double>(callTime) * NANO2SEC);
 
     // Write the module output messages
     this->writeOutputMessages(callTime);

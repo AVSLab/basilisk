@@ -80,7 +80,7 @@ void PlanetEphemeris::setPlanetNames(std::vector<std::string> names)
 
 void PlanetEphemeris::Reset(uint64_t CurrentSimNanos)
 {
-    this->epochTime = nanoToSec(CurrentSimNanos);
+    this->epochTime = static_cast<double>(CurrentSimNanos) * NANO2SEC;
 
     /*! - do sanity checks that the vector arrays for planet names and ephemeris have the same length */
     if (this->planetElements.size() != this->planetNames.size()) {
@@ -172,7 +172,7 @@ void PlanetEphemeris::UpdateState(uint64_t CurrentSimNanos)
 
 
     //! - set time in units of seconds
-    time = nanoToSec(CurrentSimNanos);
+    time = static_cast<double>(CurrentSimNanos) * NANO2SEC;
 
     //! - set sun gravity constant
     mu = MU_SUN*pow(1000.,3);

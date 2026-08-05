@@ -62,7 +62,7 @@ void Reset_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, uint64_t callTim
     double tempMatrix[PIXLINE_N_STATES*PIXLINE_N_STATES];
 
     /*! - Initialize filter parameters to max values */
-    configData->timeTag = nanoToSec(callTime);
+    configData->timeTag = (double) callTime * NANO2SEC;
     configData->dt = 0.0;
     configData->numStates = PIXLINE_N_STATES;
     configData->countHalfSPs = PIXLINE_N_STATES;
@@ -161,7 +161,7 @@ void Update_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, uint64_t callTi
     /*! - Handle initializing time in filter and discard initial messages*/
     /*! - If the time tag from the measured data is new compared to previous step,
      propagate and update the filter*/
-    newTimeTag = nanoToSec(NavAttMsg_C_timeWritten(&configData->attInMsg));
+    newTimeTag = (double) NavAttMsg_C_timeWritten(&configData->attInMsg) * NANO2SEC;
     if(newTimeTag >= configData->timeTag && NavAttMsg_C_isWritten(&configData->attInMsg) && inputCircles.valid ==1)
     {
         configData->circlesInBuffer = inputCircles;
@@ -172,7 +172,7 @@ void Update_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, uint64_t callTi
     }
     /*! - If current clock time is further ahead than the measured time, then
      propagate to this current time-step*/
-    newTimeTag = nanoToSec(callTime);
+    newTimeTag = (double) callTime * NANO2SEC;
     if(newTimeTag > configData->timeTag)
     {
         pixelLineBiasUKFTimeUpdate(configData, newTimeTag);

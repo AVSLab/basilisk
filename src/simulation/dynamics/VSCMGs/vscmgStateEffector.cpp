@@ -764,7 +764,7 @@ void VSCMGStateEffector::UpdateState(uint64_t CurrentSimNanos)
 {
 	//! - Read the inputs and then call ConfigureVSCMGRequests to set up dynamics
 	ReadInputs();
-	ConfigureVSCMGRequests(nanoToSec(CurrentSimNanos));
+	ConfigureVSCMGRequests(static_cast<double>(CurrentSimNanos) * NANO2SEC);
 	WriteOutputMessages(CurrentSimNanos);
 }
 

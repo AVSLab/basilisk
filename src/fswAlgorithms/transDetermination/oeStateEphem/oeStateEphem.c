@@ -80,7 +80,7 @@ void Update_oeStateEphem(OEStateEphemData *configData, uint64_t callTime, int64_
     localCorr = TDBVehicleClockCorrelationMsg_C_read(&configData->clockCorrInMsg);
 
     /*! - compute time for fitting interval */
-    currentEphTime = nanoToSec(callTime);
+    currentEphTime = (double) callTime * NANO2SEC;
     currentEphTime += localCorr.ephemerisTime - localCorr.vehicleClockTime;
 
     /*! - select the fitting coefficients for the nearest fit interval */
@@ -105,7 +105,7 @@ void Update_oeStateEphem(OEStateEphemData *configData, uint64_t callTime, int64_
     }
 
     /* - determine orbit elements from chebychev polynominals */
-    tmpOutputState.timeTag = nanoToSec(callTime);
+    tmpOutputState.timeTag = (double) callTime * NANO2SEC;
     orbEl.rPeriap = calculateChebyValue(currRec->rPeriapCoeff, currRec->nChebCoeff,
                                   currentScaledValue);
     orbEl.i = calculateChebyValue(currRec->incCoeff, currRec->nChebCoeff,

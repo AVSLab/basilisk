@@ -78,9 +78,10 @@ void LimbFinding::UpdateState(uint64_t CurrentSimNanos)
 
     cv::Mat imageCV, blurred, edgeImage;
     if (this->saveDir != ""){
-        dirName = this->saveDir + std::to_string(nanoToSec(CurrentSimNanos)) + ".jpg";
+        dirName = this->saveDir +
+                  std::to_string(static_cast<double>(CurrentSimNanos) * NANO2SEC) + ".jpg";
     }
-    else{dirName = "./"+ std::to_string(nanoToSec(CurrentSimNanos)) + ".jpg";}
+    else{dirName = "./"+ std::to_string(static_cast<double>(CurrentSimNanos) * NANO2SEC) + ".jpg";}
 
     /*! - Read in the bitmap*/
     if(this->imageInMsg.isLinked())

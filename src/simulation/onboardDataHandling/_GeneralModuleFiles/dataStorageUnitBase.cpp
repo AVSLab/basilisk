@@ -81,7 +81,7 @@ void DataStorageUnitBase::UpdateState(uint64_t CurrentSimNanos)
     //! - update data information
     if(this->readMessages())
     {
-        this->integrateDataStatus(nanoToSec(CurrentSimNanos));
+        this->integrateDataStatus(static_cast<double>(CurrentSimNanos) * NANO2SEC);
     } else {
         //! - Zero the output message if no input messages were received.
         this->storageStatusMsg = this->storageUnitDataOutMsg.zeroMsgPayload;
