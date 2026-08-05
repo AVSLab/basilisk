@@ -442,7 +442,7 @@ void SpinningBodyTwoDOFStateEffector::updateContributions(double integTime, Back
         + this->omega_BN_B.cross(r_Sc2S1_B.cross(this->rPrime_Sc2S1_B)))
         + this->mass2 * r_Sc2S1_B.cross(this->omega_S2S1_B.cross(this->rPrime_Sc2S2_B))
         + this->mass * r_ScS1_B.cross(this->omega_BN_B.cross(rDot_S1B_B))
-        - this->dcm_BS1 * attBodyTorquePntS1_S1 + this->dcm_BS2 * attBodyTorquePntS2_S2
+        - this->dcm_BS1 * attBodyTorquePntS1_S1 - this->dcm_BS2 * attBodyTorquePntS2_S2
         - this->r_S2S1_B.cross(this->dcm_BS2 * attBodyForce_S2);
     Eigen::Vector3d cThetaTerm1_B = IPrimeS2PntS2_B * this->omega_S2N_B
         + this->omega_BN_B.cross(IS2PntS2_B * this->omega_S2N_B)
