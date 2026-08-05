@@ -10,6 +10,8 @@ Basilisk Known Issues
 
 Version |release| (July 7, 2026)
 --------------------------------
+- The :ref:`hingedRigidBodyStateEffector` added body-frame relative velocity terms directly onto the
+  inertial hub velocity when forming both its logged velocities. This is fixed in the current version.
 - :ref:`vizInterface` left its protobuf output stream open after the module was destroyed. On Windows, this could
   prevent saved Vizard data files from being removed until the Python process exited. The stream is now owned and
   closed automatically by the module. This is fixed in the current version.

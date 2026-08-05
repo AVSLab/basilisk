@@ -1,0 +1,1 @@
+- Fixed the :ref:`hingedRigidBodyStateEffector` panel and hinge velocity outputs, which were wrong for a rotated spacecraft hub.
