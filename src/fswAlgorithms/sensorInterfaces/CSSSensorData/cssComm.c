@@ -110,7 +110,7 @@ void Update_cssProcessTelem(CSSConfigData *configData, uint64_t callTime,
      */
     for(i=0; i<configData->numSensors; i++)
     {
-        outputBuffer.CosValue[i] = (float) inputValues[i]/configData->maxSensorValue; /* Scale Sensor Data */
+        outputBuffer.CosValue[i] = inputValues[i] / configData->maxSensorValue; /* Scale Sensor Data */
 
         /* Seed the polynomial computations */
         ValueMult = 2.0*outputBuffer.CosValue[i];

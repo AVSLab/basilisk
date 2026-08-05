@@ -274,7 +274,7 @@ void Camera::applyFilters(cv::Mat &mSource, cv::Mat &mDst){
     mSource.convertTo(mFilters, mSource.type());
 
     if (this->gaussian > 0){
-        float scale = 2;
+        const double scale = 2.0;  // [-]
         this->addGaussianNoise(mFilters, mFilters, 0, this->gaussian * scale);
         cv::threshold(mFilters, mFilters, this->gaussian*6, 255, cv::THRESH_TOZERO);
     }
@@ -287,7 +287,7 @@ void Camera::applyFilters(cv::Mat &mSource, cv::Mat &mDst){
                  cv::Point(-1 , -1));
     }
     if(this->darkCurrent > 0){
-        float scale = 15;
+        const double scale = 15.0;  // [-]
         this->addGaussianNoise(mFilters, mFilters, this->darkCurrent * scale, 0.0);
     }
     if (this->hsv.cwiseAbs().sum() > 0.00001) {
@@ -297,11 +297,11 @@ void Camera::applyFilters(cv::Mat &mSource, cv::Mat &mDst){
         this->bgrAdjustPercent(mFilters, mFilters);
     }
     if (this->saltPepper > 0){
-        float scale = 0.00002f;
+        const double scale = 0.00002;  // [-]
         this->addSaltPepper(mFilters,
                             mFilters,
-                            (float) (this->saltPepper * scale),
-                            (float) (this->saltPepper * scale));
+                            static_cast<float>(this->saltPepper * scale),
+                            static_cast<float>(this->saltPepper * scale));
     }
     if(this->cosmicRays > 0){
         this->addCosmicRayBurst(mFilters, mFilters, std::round(this->cosmicRays));
