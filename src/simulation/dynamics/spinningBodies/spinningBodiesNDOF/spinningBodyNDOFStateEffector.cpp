@@ -394,7 +394,8 @@ void SpinningBodyNDOFStateEffector::computeDependentEffectors(BackSubMatrices& b
         auto& spinningBody = *it;
         for (auto& dynEffector : spinningBody->dynEffectors) {
             dynEffector->computeForceTorque(integTime, double(0.0));
-            force_S += dynEffector->forceExternal_B;
+            // a child's "_B" loads are already in this parent's S frame, so only "_N" is rotated
+            force_S += dynEffector->forceExternal_B + spinningBody->dcm_BS.transpose() * this->dcm_BN * dynEffector->forceExternal_N;
             torquePntS_S += dynEffector->torqueExternalPntB_B;
         }
         spinningBody->extForce_S = force_S;

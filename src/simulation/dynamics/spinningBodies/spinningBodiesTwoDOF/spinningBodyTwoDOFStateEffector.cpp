@@ -379,13 +379,13 @@ void SpinningBodyTwoDOFStateEffector::updateContributions(double integTime, Back
         // Compute the force and torque contributions from the dynamicEffectors in parent frame
         (*dynIt)->computeForceTorque(integTime, double(0.0));
         if ((*dynIt)->getPropName_inertialPosition() == this->nameOfInertialPositionProperty1) {
-            // for inner segment parent frame is S1, not B
-            attBodyForce_S1 += (*dynIt)->forceExternal_B;
+            // a child's "_B" loads are already in the lower body's S1 frame, so only "_N" is rotated
+            attBodyForce_S1 += (*dynIt)->forceExternal_B + this->dcm_BS1.transpose() * this->dcm_BN * (*dynIt)->forceExternal_N;
             attBodyTorquePntS1_S1 += (*dynIt)->torqueExternalPntB_B;
         }
         else if ((*dynIt)->getPropName_inertialPosition() == this->nameOfInertialPositionProperty2) {
-            // for outer segment parent frame is S2, not B
-            attBodyForce_S2 += (*dynIt)->forceExternal_B;
+            // a child's "_B" loads are already in the upper body's S2 frame, so only "_N" is rotated
+            attBodyForce_S2 += (*dynIt)->forceExternal_B + this->dcm_BS2.transpose() * this->dcm_BN * (*dynIt)->forceExternal_N;
             attBodyTorquePntS2_S2 += (*dynIt)->torqueExternalPntB_B;
         }
     }

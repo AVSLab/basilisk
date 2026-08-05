@@ -290,8 +290,9 @@ void SpinningBodyOneDOFStateEffector::updateContributions(double integTime,
     {
         // Compute the force and torque contributions from the dynamicEffectors in parent frame
         (*dynIt)->computeForceTorque(integTime, double(0.0));
-        attBodyForce_S += (*dynIt)->forceExternal_B; // here parent frame is S, not B
-        attBodyTorquePntS_S += (*dynIt)->torqueExternalPntB_B; // here parent frame is S, not B
+        // a child's "_B" loads are already in this parent's S frame, so only "_N" is rotated
+        attBodyForce_S += (*dynIt)->forceExternal_B + this->dcm_BS.transpose() * this->dcm_BN * (*dynIt)->forceExternal_N;
+        attBodyTorquePntS_S += (*dynIt)->torqueExternalPntB_B;
     }
 
     // Lock the axis if the flag is set to 1

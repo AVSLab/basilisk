@@ -253,7 +253,8 @@ void LinearTranslationOneDOFStateEffector::computeBackSubContributions(BackSubMa
     {
         // - Compute the force and torque contributions from the dynamicEffectors
         (*dynIt)->computeForceTorque(integTime, double(0.0));
-        attBodyForce_F += (*dynIt)->forceExternal_B;
+        // a child's "_B" loads are already in this parent's F frame, so only "_N" is rotated
+        attBodyForce_F += (*dynIt)->forceExternal_B + this->dcm_FB * this->dcm_BN * (*dynIt)->forceExternal_N;
         attBodyTorquePntF_F += (*dynIt)->torqueExternalPntB_B;
     }
 
