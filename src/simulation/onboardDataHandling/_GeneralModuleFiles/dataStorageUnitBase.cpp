@@ -19,9 +19,25 @@
 
 #include "dataStorageUnitBase.h"
 #include "architecture/utilities/macroDefinitions.h"
+#include <cmath>
 #include <cstdio>
 #include <cstring>
 #include <iostream>
+#include <limits>
+
+namespace {
+
+bool checkedAddInt64(int64_t left, int64_t right, int64_t& result)
+{
+    if ((right > 0 && left > std::numeric_limits<int64_t>::max() - right)
+        || (right < 0 && left < std::numeric_limits<int64_t>::min() - right)) {
+        return false;
+    }
+    result = left + right;
+    return true;
+}
+
+}
 
 /*! This method initializes some basic parameters for the module.
 
@@ -171,18 +187,14 @@ void DataStorageUnitBase::integrateDataStatus(double currentTime){
                              sizeof(it->dataName));
         }
         index = messageInStoredData(&(*it));
-        const int64_t dataDelta = static_cast<int64_t>(round(it->baudRate * this->currentTimestep));
+        const int64_t dataDelta = this->computeDataDelta(it->baudRate);
 
         //! - If the storage capacity has not been reached or the baudRate is less than 0 and won't take below 0, then add the data
-       if ((this->storedDataSum + dataDelta <= this->storageCapacity) || (it->baudRate < 0)) {
+       if (this->dataFitsInCapacity(dataDelta, true) || (it->baudRate < 0)) {
            //! - if a dataNode exists in storedData vector, integrate and add to current amount
            if (index != -1) {
                //! If this operation takes the sum below zero, set it to zero
-               if ((this->storedData[(size_t)index].dataInstanceSum + dataDelta) >= 0) {
-                   this->storedData[(size_t)index].dataInstanceSum += dataDelta;
-               } else {
-                   this->storedData[(size_t)index].dataInstanceSum = 0;
-               }
+               this->applyDataDelta(this->storedData[(size_t)index], dataDelta);
                //! - if a dataNode does not exist in storedData, add it to storedData, integrate baud rate, and add amount
            }
            else if (strcmp(it->dataName, "") != 0) {
@@ -190,7 +202,7 @@ void DataStorageUnitBase::integrateDataStatus(double currentTime){
                              sizeof(tmpDataInstance.dataInstanceName),
                              "%s",
                              it->dataName);
-               tmpDataInstance.dataInstanceSum = dataDelta;
+               tmpDataInstance.dataInstanceSum = dataDelta > 0 ? dataDelta : 0;
                this->storedData.push_back(tmpDataInstance);
            }
        }
@@ -230,10 +242,64 @@ int64_t DataStorageUnitBase::sumAllData(){
 
     std::vector<dataInstance>::iterator it;
     for(it = storedData.begin(); it != storedData.end(); it++) {
-        dataSum += it->dataInstanceSum;
+        int64_t updatedSum;
+        if (!checkedAddInt64(dataSum, it->dataInstanceSum, updatedSum)) {
+            bskLogger.bskError("DataStorageUnitBase: total stored data exceeds the supported int64_t range.");
+        }
+        dataSum = updatedSum;
     }
 
     return dataSum;
+}
+
+/*! Converts the integrated baud rate for the current time step to a bit count.
+ @param baudRate Data production rate in bits per second.
+ @return Integrated data change in bits.
+ */
+int64_t DataStorageUnitBase::computeDataDelta(double baudRate)
+{
+    const double roundedDataDelta = std::round(baudRate * this->currentTimestep);  // [bits]
+    const double int64Limit = std::ldexp(1.0, 63);  // [bits]
+    if (!std::isfinite(roundedDataDelta)
+        || roundedDataDelta < -int64Limit
+        || roundedDataDelta >= int64Limit) {
+        bskLogger.bskError("DataStorageUnitBase: baud rate %.17g [bits/s] over timestep %.17g [s] "
+                           "produces a data change outside the supported int64_t range.",
+                           baudRate,
+                           this->currentTimestep);
+    }
+    return static_cast<int64_t>(roundedDataDelta);
+}
+
+/*! Checks whether applying a data change keeps the total within storage capacity.
+ @param dataDelta Data change in bits.
+ @param allowEqual Whether a result equal to the capacity is accepted.
+ @return True when the mathematical sum satisfies the capacity limit.
+ */
+bool DataStorageUnitBase::dataFitsInCapacity(int64_t dataDelta, bool allowEqual) const
+{
+    int64_t updatedSum;
+    if (!checkedAddInt64(this->storedDataSum, dataDelta, updatedSum)) {
+        return dataDelta < 0;
+    }
+    return allowEqual ? updatedSum <= this->storageCapacity : updatedSum < this->storageCapacity;
+}
+
+/*! Applies a data change to one partition without signed integer overflow.
+ @param partition Partition to update.
+ @param dataDelta Data change in bits.
+ */
+void DataStorageUnitBase::applyDataDelta(dataInstance& partition, int64_t dataDelta)
+{
+    int64_t updatedData;
+    if (!checkedAddInt64(partition.dataInstanceSum, dataDelta, updatedData)) {
+        if (dataDelta < 0) {
+            partition.dataInstanceSum = 0;
+            return;
+        }
+        bskLogger.bskError("DataStorageUnitBase: partition data exceeds the supported int64_t range.");
+    }
+    partition.dataInstanceSum = updatedData > 0 ? updatedData : 0;
 }
 
 /*! Custom Reset() method.  This allows a child class to add additional functionality to the Reset() method
@@ -277,12 +343,17 @@ void DataStorageUnitBase::setDataBuffer(std::string partitionName, int64_t data)
     }
 
     //! - If the new data won't overflow the storage capacity, then add the data
-    if (this->storedDataSum + data <= this->storageCapacity) {
+    if (this->dataFitsInCapacity(data, true)) {
         //! - if a dataNode exists in storedData vector, integrate and add to current amount
         if (index != -1) {
             //! Only perform if this operation will not take the sum below zero
-            if ((this->storedData[(size_t) index].dataInstanceSum + data) >= 0) {
-                this->storedData[(size_t) index].dataInstanceSum += data;
+            int64_t updatedData;
+            if (checkedAddInt64(this->storedData[(size_t) index].dataInstanceSum, data, updatedData)) {
+                if (updatedData >= 0) {
+                    this->storedData[(size_t) index].dataInstanceSum = updatedData;
+                }
+            } else if (data > 0) {
+                bskLogger.bskError("DataStorageUnitBase: partition data exceeds the supported int64_t range.");
             }
 
         }

@@ -60,17 +60,13 @@ void SimpleStorageUnit::integrateDataStatus(double currentTime){
     //! - loop over all the data nodes and add them to the single partition.
     std::vector<DataNodeUsageMsgPayload>::iterator it;
     for(it = nodeBaudMsgs.begin(); it != nodeBaudMsgs.end(); it++) {
-        const int64_t dataDelta = static_cast<int64_t>(round(it->baudRate * this->currentTimestep));
+        const int64_t dataDelta = this->computeDataDelta(it->baudRate);
         if (storedData.size() == 0){
             this->storedData.push_back({{'S','T','O','R','E','D',' ','D','A','T','A'}, 0});
         }
-        else if ((this->storedDataSum + dataDelta < this->storageCapacity) || (it->baudRate <= 0)){
+        else if (this->dataFitsInCapacity(dataDelta, false) || (it->baudRate <= 0)){
             //! If this operation takes the sum below zero, set it to zero
-            if ((this->storedData[0].dataInstanceSum + dataDelta) >= 0) {
-                this->storedData[0].dataInstanceSum += dataDelta;
-            } else {
-                this->storedData[0].dataInstanceSum = 0;
-            }
+            this->applyDataDelta(this->storedData[0], dataDelta);
         }
         this->netBaud += it->baudRate;
     }
