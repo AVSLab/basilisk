@@ -395,6 +395,44 @@ def test_integrated_data_rejects_int64_overflow(storage_unit_type):
     assert data_log.storedData[-1][0] == float(initial_data)
 
 
+def test_multiple_data_nodes_respect_storage_capacity():
+    """Verify each data node checks capacity against the current storage level."""
+    unit_task_name = "unitTask"
+    unit_process_name = "TestProcess"
+    storage_capacity = 100  # [bits]
+    initial_data = 90  # [bits]
+    baud_rate = 9.0  # [bits/s]
+
+    unit_test_sim = SimulationBaseClass.SimBaseClass()
+    test_process = unit_test_sim.CreateNewProcess(unit_process_name)
+    task_period = macros.sec2nano(1.0)  # [ns]
+    test_process.addTask(unit_test_sim.CreateNewTask(unit_task_name, task_period))
+
+    test_storage_unit = simpleStorageUnit.SimpleStorageUnit()
+    test_storage_unit.storageCapacity = storage_capacity
+    test_storage_unit.setDataBuffer(initial_data)
+    data_messages = []
+    for data_name in ("dataNodeA", "dataNodeB"):
+        data_payload = messaging.DataNodeUsageMsgPayload()
+        data_payload.baudRate = baud_rate
+        data_payload.dataName = data_name
+        data_message = messaging.DataNodeUsageMsg().write(data_payload)
+        data_messages.append(data_message)
+        test_storage_unit.addDataNodeToModel(data_message)
+    unit_test_sim.AddModelToTask(unit_task_name, test_storage_unit)
+
+    data_log = test_storage_unit.storageUnitDataOutMsg.recorder()
+    unit_test_sim.AddModelToTask(unit_task_name, data_log)
+    unit_test_sim.InitializeSimulation()
+    unit_test_sim.ConfigureStopTime(task_period)
+    unit_test_sim.ExecuteSimulation()
+
+    expected_storage = initial_data + int(baud_rate)  # [bits]
+    assert data_log.storageLevel[-1] == expected_storage
+    assert data_log.storedData[-1][0] == expected_storage
+    assert data_log.storageLevel[-1] < storage_capacity
+
+
 out_of_range_baud_rates = [float(1 << 63), float("inf")]  # [bits/s]
 
 
