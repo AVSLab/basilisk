@@ -122,7 +122,6 @@ private:
     // Matrix quantities
     Eigen::Matrix3d rTilde_ScB_B;       //!< [m] tilde matrix of r_ScB_B
     Eigen::Matrix3d omegaTilde_SB_B;    //!< [rad/s] tilde matrix of omega_SB_B
-    Eigen::Matrix3d omegaTilde_BN_B;    //!< [rad/s] tilde matrix of omega_BN_B
     Eigen::Matrix3d dcm_BS;             //!< -- DCM from spinner frame to body frame
     Eigen::Matrix3d dcm_BN;             //!< -- DCM from inertial frame to body frame
     Eigen::Matrix3d IPntSc_B;           //!< [kg-m^2] inertia of spinning body about point Sc in B frame components

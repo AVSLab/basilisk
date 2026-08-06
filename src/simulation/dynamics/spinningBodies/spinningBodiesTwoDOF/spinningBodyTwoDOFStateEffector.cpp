@@ -43,7 +43,6 @@ SpinningBodyTwoDOFStateEffector::SpinningBodyTwoDOFStateEffector()
     this->rTilde_Sc2B_B.setZero();
     this->omegaTilde_S1B_B.setZero();
     this->omegaTilde_S2B_B.setZero();
-    this->omegaTilde_BN_B.setZero();
     this->dcm_BS1.setIdentity();
     this->dcm_BS2.setIdentity();
     this->dcm_BN.setIdentity();
@@ -328,10 +327,6 @@ void SpinningBodyTwoDOFStateEffector::updateEffectorMassProps(double integTime [
     this->rPrime_ScB_B = (this->mass1 * this->rPrime_Sc1B_B + this->mass2 * this->rPrime_Sc2B_B) / this->mass;
     this->effProps.rEffPrime_CB_B = this->rPrime_ScB_B;
 
-    // Compute the effector's velocity properties
-    this->rDot_S1B_B = this->omegaTilde_BN_B * this->r_S1B_B;
-    this->rDot_S2B_B = this->rDot_S1B_B + this->rPrime_S2S1_B + this->omegaTilde_BN_B * this->r_S2S1_B;
-
     // Find the body-frame time derivative of the inertias of each spinner
     this->IPrimeS1PntSc1_B = this->omegaTilde_S1B_B * this->IS1PntSc1_B - this->IS1PntSc1_B * this->omegaTilde_S1B_B;
     this->IPrimeS2PntSc2_B = this->omegaTilde_S2B_B * this->IS2PntSc2_B - this->IS2PntSc2_B * this->omegaTilde_S2B_B;
@@ -360,11 +355,14 @@ void SpinningBodyTwoDOFStateEffector::updateContributions(double integTime, Back
 
     // Update omega_BN_B
     this->omega_BN_B = omega_BN_B;
-    this->omegaTilde_BN_B = eigenTilde(this->omega_BN_B);
     this->omega_S1N_B = this->omega_S1B_B + this->omega_BN_B;
     this->omega_S2N_B = this->omega_S2B_B + this->omega_BN_B;
 
     if (!this->dynEffectors.empty()) {
+        this->rDot_S1B_B = this->omega_BN_B.cross(this->r_S1B_B);
+        this->rDot_S2B_B = this->rDot_S1B_B + this->rPrime_S2S1_B + this->omega_BN_B.cross(this->r_S2S1_B);
+        this->rDot_Sc1B_B = this->rPrime_Sc1B_B + this->omega_BN_B.cross(this->r_Sc1B_B);
+        this->rDot_Sc2B_B = this->rPrime_Sc2B_B + this->omega_BN_B.cross(this->r_Sc2B_B);
         this->computeSpinningBodyInertialStates();
     }
 
@@ -673,13 +671,14 @@ void SpinningBodyTwoDOFStateEffector::updateEnergyMomContributions(double integT
 {
     // Update omega_BN_B and omega_SN_B
     this->omega_BN_B = omega_BN_B;
-    this->omegaTilde_BN_B = eigenTilde(this->omega_BN_B);
     this->omega_S1N_B = this->omega_S1B_B + this->omega_BN_B;
     this->omega_S2N_B = this->omega_S2B_B + this->omega_BN_B;
 
-    // Compute rDot_ScB_B
-    this->rDot_Sc1B_B = this->rPrime_Sc1B_B + this->omegaTilde_BN_B * this->r_Sc1B_B;
-    this->rDot_Sc2B_B = this->rPrime_Sc2B_B + this->omegaTilde_BN_B * this->r_Sc2B_B;
+    // Compute the rDot terms
+    this->rDot_Sc1B_B = this->rPrime_Sc1B_B + this->omega_BN_B.cross(this->r_Sc1B_B);
+    this->rDot_Sc2B_B = this->rPrime_Sc2B_B + this->omega_BN_B.cross(this->r_Sc2B_B);
+    this->rDot_S1B_B = this->omega_BN_B.cross(this->r_S1B_B);
+    this->rDot_S2B_B = this->rDot_S1B_B + this->rPrime_S2S1_B + this->omega_BN_B.cross(this->r_S2S1_B);
 
     // Find rotational angular momentum contribution from hub
     rotAngMomPntCContr_B = this->IS1PntSc1_B * this->omega_S1N_B + this->mass1 * this->rTilde_Sc1B_B * this->rDot_Sc1B_B

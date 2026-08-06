@@ -190,7 +190,6 @@ private:
     Eigen::MRPd sigma_BN;
     StateData* hubSigmaState = nullptr;    //!< hub attitude state, read live for the published kinematics
     Eigen::Matrix3d dcm_BN = Eigen::Matrix3d::Zero();
-    Eigen::Matrix3d omegaTilde_BN_B = Eigen::Matrix3d::Zero();
 
     Eigen::MatrixXd* inertialPositionProperty = nullptr;
     Eigen::MatrixXd* inertialVelocityProperty = nullptr;

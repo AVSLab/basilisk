@@ -176,7 +176,6 @@ private:
     Eigen::Matrix3d rTilde_Sc2B_B;      //!< [m] tilde matrix of r_Sc2B_B
     Eigen::Matrix3d omegaTilde_S1B_B;   //!< [rad/s] tilde matrix of omega_S1B_B
     Eigen::Matrix3d omegaTilde_S2B_B;   //!< [rad/s] tilde matrix of omega_S2B_B
-    Eigen::Matrix3d omegaTilde_BN_B;    //!< [rad/s] tilde matrix of omega_BN_B
     Eigen::Matrix3d dcm_BS1;            //!< -- DCM from lower spinner frame to body frame
     Eigen::Matrix3d dcm_BS2;            //!< -- DCM from upper spinner frame to body frame
     Eigen::Matrix3d dcm_BN;             //!< -- DCM from inertial frame to body frame
