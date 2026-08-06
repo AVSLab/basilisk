@@ -64,15 +64,14 @@ void SimpleStorageUnit::integrateDataStatus(double currentTime){
         if (storedData.size() == 0){
             this->storedData.push_back({{'S','T','O','R','E','D',' ','D','A','T','A'}, 0});
         }
-        else if (this->dataFitsInCapacity(dataDelta, false) || (it->baudRate <= 0)){
+        else if (this->dataFitsInCapacity(dataDelta, true) || (it->baudRate <= 0)){
             //! If this operation takes the sum below zero, set it to zero
             this->applyDataDelta(this->storedData[0], dataDelta);
         }
+        //! Use the updated amount when evaluating the next data node.
+        this->storedDataSum = this->storedData[0].dataInstanceSum;
         this->netBaud += it->baudRate;
     }
-
-    //!- Sum all data in storedData vector
-    this->storedDataSum = this->storedData[0].dataInstanceSum;
 
     //!- Update previousTime
     this->previousTime = currentTime;
