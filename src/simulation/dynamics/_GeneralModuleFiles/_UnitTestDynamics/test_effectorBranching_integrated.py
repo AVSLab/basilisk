@@ -251,6 +251,99 @@ def test_effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dy
         "%.4e J at 1 ms and %.4e J at 0.5 ms, ratio %.3f rather than 0.25"
         % (coarseResidual, fineResidual, ratio))
 
+
+@pytest.mark.parametrize("stateEffector", [
+    "spinningBodiesOneDOF",
+    "spinningBodiesTwoDOF",
+    "spinningBodiesNDOF",
+    "linearTranslationBodiesOneDOF",
+])
+def test_parentPublishesCurrentVelocityToChild(stateEffector):
+    r"""
+    **Validation Test Description**
+
+    This test checks that a branching parent's published inertial velocity is current at the
+    integrator substep on which its child evaluates, rather than at the previous task step.
+
+    **Description of Variables Being Tested**
+
+    The conservation checks in the test above cannot see an error here. They drive the parent with
+    :ref:`extForceTorque`, whose load is constant, so a wrong published velocity reaches neither
+    the trajectory nor the work integral. This test therefore attaches a child whose load is a
+    function of that velocity, namely a :ref:`constraintDynamicEffector` between the parent's first
+    segment and the hub of the same spacecraft, with its stiffness suppressed so that only the
+    velocity feedback term contributes,
+
+    .. math::
+
+        \boldsymbol{\psi}' = {}^{\mathcal{N}}\dot{\mathbf{r}}_{P_2/P_1}
+        - \boldsymbol{\omega}_{\mathcal{P}_1/\mathcal{N}} \times \mathbf{r}_{P_2/P_1}
+
+    The parent's first segment is locked and started at rest, which makes that segment and the hub
+    one rigid body. Both attachment points are then fixed in that body and
+    :math:`\boldsymbol{\omega}_{\mathcal{P}_1/\mathcal{N}}` equals the hub rate, so the two terms
+    cancel identically and the constraint force is zero for any hub attitude and rate. A published
+    velocity that lags the current substep leaves the cancellation incomplete, and the residual
+    appears as a force of order :math:`|\boldsymbol{\omega}_{\mathcal{B}/\mathcal{N}}|
+    \, |\mathbf{r}_{P_1/B}|`. The assertion is therefore against zero rather than against a
+    tolerance scaled to the step size or to the applied load.
+
+    The hinged rigid bodies are absent because they expose no lock, so their panel always rotates
+    relative to the hub and no such rigid configuration exists.
+    """
+    unitTestSim = SimulationBaseClass.SimBaseClass()
+    unitTestSim.SetProgressBar(False)
+    testProc = unitTestSim.CreateNewProcess("TestProcess")
+    testProc.addTask(unitTestSim.CreateNewTask("unitTask", macros.sec2nano(COARSE_TIMESTEP)))
+
+    scObject = spacecraft.Spacecraft()
+    scObject.ModelTag = "spacecraftBody"
+    integratorObject = svIntegrators.svIntegratorRKF45(scObject)
+    scObject.setIntegrator(integratorObject)
+    scObject.hub.mHub = 750.0  # [kg]
+    scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]  # [kg*m^2]
+    scObject.hub.r_CN_NInit = [[-4020338.690396649], [7490566.741852513], [5248299.211589362]]  # [m]
+    scObject.hub.v_CN_NInit = [[-5199.77710904224], [-3436.681645356935], [1041.576797498721]]  # [m/s]
+    scObject.hub.omega_BN_BInit = [[0.1], [0.1], [0.1]]  # [rad/s]
+
+    earthGravBody = gravityEffector.GravBodyData()
+    earthGravBody.planetName = "earth_planet_data"
+    earthGravBody.mu = 0.3986004415E+15  # [m^3/s^2]
+    earthGravBody.isCentralBody = True
+    scObject.gravField.gravBodies = spacecraft.GravBodyVector([earthGravBody])
+
+    setupByName = {
+        "spinningBodiesOneDOF": setup_spinningBodiesOneDOF,
+        "spinningBodiesTwoDOF": setup_spinningBodiesTwoDOF,
+        "spinningBodiesNDOF": setup_spinningBodiesNDOF,
+        "linearTranslationBodiesOneDOF": setup_translatingBodiesOneDOF,
+    }
+    stateEff, stateEffProps = setupByName[stateEffector]()
+    weldParentSegmentToHub(stateEffector, stateEff)
+    scObject.hub.r_BcB_B = stateEffProps.mr_PcB_B / scObject.hub.mHub  # [m]
+
+    constraintEffector = setup_velocityConstraintEffector()
+    # attach to the parent first so the constraint links its first property set to that segment
+    stateEff.addDynamicEffector(constraintEffector, 1)
+    scObject.addDynamicEffector(constraintEffector)
+    scObject.addStateEffector(stateEff)
+
+    unitTestSim.AddModelToTask("unitTask", stateEff)
+    unitTestSim.AddModelToTask("unitTask", scObject)
+    unitTestSim.AddModelToTask("unitTask", constraintEffector)
+    constraintLog = constraintEffector.constraintElements.recorder()
+    unitTestSim.AddModelToTask("unitTask", constraintLog)
+
+    unitTestSim.InitializeSimulation()
+    unitTestSim.ConfigureStopTime(macros.sec2nano(10 * COARSE_TIMESTEP))
+    unitTestSim.ExecuteSimulation()
+
+    forceAccuracy = 1e-7  # [N]
+    np.testing.assert_allclose(
+        constraintLog.Fc_N, 0.0, atol=forceAccuracy,
+        err_msg="child evaluated its load against a stale parent velocity property")
+
+
 def effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dynamicEffector, isChild,
                                     timestep=COARSE_TIMESTEP):
     unitTaskName = "unitTask"  # arbitrary name (don't change)
@@ -607,6 +700,44 @@ def setup_constraintEffector(scObject1):
     scObject2.gravField.gravBodies = scObject1.gravField.gravBodies
 
     return scObject2
+
+
+def weldParentSegmentToHub(stateEffector, stateEff):
+    # start the first segment at rest and lock it, so it and the hub move as one rigid body
+    if stateEffector == "spinningBodiesOneDOF":
+        stateEff.thetaDotInit = 0.0  # [rad/s]
+        numberOfDegreesOfFreedom = 1
+    elif stateEffector == "spinningBodiesTwoDOF":
+        stateEff.theta1DotInit = 0.0  # [rad/s]
+        numberOfDegreesOfFreedom = 2
+    elif stateEffector == "spinningBodiesNDOF":
+        numberOfDegreesOfFreedom = len(stateEff.spinningBodyOutMsgs)
+        stateEff.getSpinningBody(0).setThetaDotInit(0.0)  # [rad/s]
+    elif stateEffector == "linearTranslationBodiesOneDOF":
+        stateEff.setRhoDotInit(0.0)  # [m/s]
+        numberOfDegreesOfFreedom = 1
+    else:
+        pytest.fail("Weld requested for a state effector that exposes no lock.")
+
+    lockArray = messaging.ArrayEffectorLockMsgPayload()
+    lockArray.effectorLockFlag = [1] + [0] * (numberOfDegreesOfFreedom - 1)
+    lockMsg = messaging.ArrayEffectorLockMsg().write(lockArray)
+    stateEff.motorLockInMsg.subscribeTo(lockMsg)
+
+
+def setup_velocityConstraintEffector():
+    constraintEffector = constraintDynamicEffector.ConstraintDynamicEffector()
+    constraintEffector.ModelTag = "velocityConstraintEffector"
+    # body 1 is the parent segment and body 2 is the hub, each attached at its own frame origin
+    constraintEffector.setR_P1B1_B1(np.zeros(3))  # [m]
+    constraintEffector.setR_P2B2_B2(np.zeros(3))  # [m]
+    constraintEffector.setR_P2P1_B1Init(np.zeros(3))  # [m]
+    # stiffness suppressed so that only the velocity feedback term reaches the reported force
+    constraintEffector.setK_d(1e-12)  # [N/m]
+    constraintEffector.setC_d(1.0)  # [N*s/m]
+
+    return constraintEffector
+
 
 def setup_constraintEffectorOneHub(scObjecty, stateEffProps):
     constraintEffector = constraintDynamicEffector.ConstraintDynamicEffector()

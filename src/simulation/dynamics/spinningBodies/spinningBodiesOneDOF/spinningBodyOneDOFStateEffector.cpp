@@ -40,7 +40,6 @@ SpinningBodyOneDOFStateEffector::SpinningBodyOneDOFStateEffector()
     this->dcm_BS.setIdentity();
     this->rTilde_ScB_B.setZero();
     this->omegaTilde_SB_B.setZero();
-    this->omegaTilde_BN_B.setZero();
     this->dcm_BS.setIdentity();
     this->dcm_BN.setIdentity();
     this->IPntSc_B.setIdentity();
@@ -259,7 +258,6 @@ void SpinningBodyOneDOFStateEffector::updateContributions(double integTime,
 {
     // Define omega_SN_B
     this->omega_BN_B = omega_BN_B;
-    this->omegaTilde_BN_B = eigenTilde(this->omega_BN_B);
     this->omega_SN_B = this->omega_SB_B + this->omega_BN_B;
 
     // Define IPntS_B for compactness
@@ -279,6 +277,8 @@ void SpinningBodyOneDOFStateEffector::updateContributions(double integTime,
     this->mTheta = this->sHat_B.transpose() * IPntS_B * this->sHat_B;
 
     if (!this->dynEffectors.empty()) {
+        this->rDot_SB_B = this->omega_BN_B.cross(this->r_SB_B);
+        this->rDot_ScB_B = this->rPrime_ScB_B + this->omega_BN_B.cross(this->r_ScB_B);
         this->computeSpinningBodyInertialStates();
     }
 
@@ -451,11 +451,10 @@ void SpinningBodyOneDOFStateEffector::updateEnergyMomContributions(double integT
 {
     // Update omega_BN_B and omega_SN_B
     this->omega_BN_B = omega_BN_B;
-    this->omegaTilde_BN_B = eigenTilde(this->omega_BN_B);
     this->omega_SN_B = this->omega_SB_B + this->omega_BN_B;
 
     // Compute rDot_ScB_B
-    this->rDot_ScB_B = this->rPrime_ScB_B + this->omegaTilde_BN_B * this->r_ScB_B;
+    this->rDot_ScB_B = this->rPrime_ScB_B + this->omega_BN_B.cross(this->r_ScB_B);
 
     // Find rotational angular momentum contribution
     rotAngMomPntCContr_B = this->IPntSc_B * this->omega_SN_B + this->mass * this->rTilde_ScB_B * this->rDot_ScB_B;

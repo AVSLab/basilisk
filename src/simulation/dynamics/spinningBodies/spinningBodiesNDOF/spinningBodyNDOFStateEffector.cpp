@@ -363,9 +363,9 @@ void SpinningBodyNDOFStateEffector::updateContributions(double integTime,
         }
     }
     if (hasAttachedEffectors) {
-        // - the per-body inertial rates are not refreshed until after the children are called
         for (auto& spinningBody : this->spinningBodyVec) {
             spinningBody->omega_SN_B = spinningBody->omega_SB_B + this->omega_BN_B;
+            spinningBody->rDot_ScB_B = spinningBody->rPrime_ScB_B + this->omega_BN_B.cross(spinningBody->r_ScB_B);
         }
         this->computeSpinningBodyInertialStates();
     }
@@ -613,14 +613,13 @@ void SpinningBodyNDOFStateEffector::computeDerivatives(double integTime [[maybe_
 void SpinningBodyNDOFStateEffector::updateEnergyMomContributions(double integTime [[maybe_unused]], Eigen::Vector3d & rotAngMomPntCContr_B, double & rotEnergyContr, Eigen::Vector3d omega_BN_B)
 {
     this->omega_BN_B = omega_BN_B;
-    this->omegaTilde_BN_B = eigenTilde(this->omega_BN_B);
 
     rotAngMomPntCContr_B = Eigen::Vector3d::Zero();
     rotEnergyContr = 0.0;
 
     for(auto& spinningBody: this->spinningBodyVec) {
         spinningBody->omega_SN_B = spinningBody->omega_SB_B + this->omega_BN_B;
-        spinningBody->rDot_ScB_B = spinningBody->rPrime_ScB_B + this->omegaTilde_BN_B * spinningBody->r_ScB_B;
+        spinningBody->rDot_ScB_B = spinningBody->rPrime_ScB_B + this->omega_BN_B.cross(spinningBody->r_ScB_B);
 
         rotAngMomPntCContr_B += spinningBody->ISPntSc_B * spinningBody->omega_SN_B + spinningBody->mass * spinningBody->rTilde_ScB_B * spinningBody->rDot_ScB_B;
         rotEnergyContr += 1.0 / 2.0 * spinningBody->omega_SN_B.dot(spinningBody->ISPntSc_B * spinningBody->omega_SN_B)
