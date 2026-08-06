@@ -322,8 +322,9 @@ void HingedRigidBodyStateEffector::updateEnergyMomContributions(double integTime
                                                                 double & rotEnergyContr, Eigen::Vector3d omega_BN_B)
 {
     // - Get the current omega state
+    this->omega_BN_B = omega_BN_B;
     Eigen::Vector3d omegaLocal_PN_P;
-    omegaLocal_PN_P = omega_BN_B;
+    omegaLocal_PN_P = this->omega_BN_B;
 
     // - Find rotational angular momentum contribution from hub
     Eigen::Vector3d omega_SP_P;
