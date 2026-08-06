@@ -56,6 +56,9 @@ protected:
     virtual bool customReadMessages(); //!< Custom read method, similar to customSelfInit; returns `true' by default.
     int messageInStoredData(DataNodeUsageMsgPayload *tmpNodeMsg); //!< Returns index of the dataName if it's already in storedData
     int64_t sumAllData(); //!< Sums all of the data in the storedData vector
+    int64_t computeDataDelta(double baudRate); //!< Converts an integrated baud rate to a checked integer bit count
+    bool dataFitsInCapacity(int64_t dataDelta, bool allowEqual) const; //!< Checks a data change without overflowing
+    void applyDataDelta(dataInstance& partition, int64_t dataDelta); //!< Applies a checked data change and clamps at zero
 
 public:
     std::vector<ReadFunctor<DataNodeUsageMsgPayload>> nodeDataUseInMsgs; //!< Vector of data node input message names

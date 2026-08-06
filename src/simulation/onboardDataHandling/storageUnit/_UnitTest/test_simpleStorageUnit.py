@@ -27,8 +27,9 @@ splitPath = path.split(bskName)
 
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.simulation import simpleStorageUnit
+from Basilisk.simulation import partitionedStorageUnit, simpleStorageUnit
 from Basilisk.architecture import messaging
+from Basilisk.architecture.bskLogging import BasiliskError
 from Basilisk.utilities import macros
 
 params_storage_limits = [(1200, 1200, 2400, 2400),
@@ -289,6 +290,143 @@ def test_data_removal(baudRate, initialData, storageCapacity, expectedStorage):
 
         assert storedDataLog[ind] >= 0., (
             "FAILED: PartitionedStorageUnit's stored data was negative.")
+
+
+def test_set_data_buffer_rejects_int64_overflow():
+    """Verify that a capacity check rejects an addition before signed overflow."""
+    unit_task_name = "unitTask"
+    unit_process_name = "TestProcess"
+    storage_capacity = (1 << 63) - 1  # [bits]
+    initial_data = storage_capacity - 10_000  # [bits]
+    rejected_data = 20_000  # [bits]
+
+    unit_test_sim = SimulationBaseClass.SimBaseClass()
+    test_process = unit_test_sim.CreateNewProcess(unit_process_name)
+    task_period = macros.sec2nano(1.0)  # [ns]
+    test_process.addTask(unit_test_sim.CreateNewTask(unit_task_name, task_period))
+
+    test_storage_unit = simpleStorageUnit.SimpleStorageUnit()
+    test_storage_unit.storageCapacity = storage_capacity
+    assert test_storage_unit.storageCapacity == storage_capacity
+    test_storage_unit.setDataBuffer(initial_data)
+    test_storage_unit.setDataBuffer(rejected_data)
+    unit_test_sim.AddModelToTask(unit_task_name, test_storage_unit)
+
+    data_log = test_storage_unit.storageUnitDataOutMsg.recorder()
+    unit_test_sim.AddModelToTask(unit_task_name, data_log)
+    unit_test_sim.InitializeSimulation()
+    unit_test_sim.ConfigureStopTime(0)  # [ns]
+    unit_test_sim.ExecuteSimulation()
+
+    assert data_log.storageLevel[-1] == float(initial_data)
+    assert data_log.storedData[-1][0] == float(initial_data)
+
+
+@pytest.mark.parametrize("invalid_value", [1 << 63, -(1 << 63) - 1])  # [bits]
+def test_storage_python_inputs_validate_int64_range(invalid_value):
+    """Verify that storage interfaces reject Python integers outside the C++ range."""
+    simple_storage = simpleStorageUnit.SimpleStorageUnit()
+    with pytest.raises(OverflowError):
+        simple_storage.storageCapacity = invalid_value
+    with pytest.raises(OverflowError):
+        simple_storage.setDataBuffer(invalid_value)
+
+    partitioned_storage = partitionedStorageUnit.PartitionedStorageUnit()
+    with pytest.raises(OverflowError):
+        partitioned_storage.storageCapacity = invalid_value
+    with pytest.raises(OverflowError):
+        partitioned_storage.setDataBuffer(["dataNode"], [invalid_value])
+
+
+def test_storage_python_inputs_accept_scientific_notation():
+    """Verify that the legacy float input supported by the typemaps remains available."""
+    storage_capacity = 1E9  # [bits]
+    initial_data = 1E3  # [bits]
+
+    simple_storage = simpleStorageUnit.SimpleStorageUnit()
+    simple_storage.storageCapacity = storage_capacity
+    simple_storage.setDataBuffer(initial_data)
+    assert simple_storage.storageCapacity == int(storage_capacity)
+
+    partitioned_storage = partitionedStorageUnit.PartitionedStorageUnit()
+    partitioned_storage.storageCapacity = storage_capacity
+    partitioned_storage.setDataBuffer(["dataNode"], [initial_data])
+    assert partitioned_storage.storageCapacity == int(storage_capacity)
+
+
+@pytest.mark.parametrize("storage_unit_type", [
+    simpleStorageUnit.SimpleStorageUnit,
+    partitionedStorageUnit.PartitionedStorageUnit,
+])
+def test_integrated_data_rejects_int64_overflow(storage_unit_type):
+    """Verify that integrated data cannot wrap past the signed 64-bit limit."""
+    unit_task_name = "unitTask"
+    unit_process_name = "TestProcess"
+    storage_capacity = (1 << 63) - 1  # [bits]
+    initial_data = storage_capacity - 10_000  # [bits]
+    baud_rate = 20_000.0  # [bits/s]
+
+    unit_test_sim = SimulationBaseClass.SimBaseClass()
+    test_process = unit_test_sim.CreateNewProcess(unit_process_name)
+    task_period = macros.sec2nano(1.0)  # [ns]
+    test_process.addTask(unit_test_sim.CreateNewTask(unit_task_name, task_period))
+
+    test_storage_unit = storage_unit_type()
+    test_storage_unit.storageCapacity = storage_capacity
+    assert test_storage_unit.storageCapacity == storage_capacity
+    if storage_unit_type is simpleStorageUnit.SimpleStorageUnit:
+        test_storage_unit.setDataBuffer(initial_data)
+    else:
+        test_storage_unit.setDataBuffer(["dataNode"], [initial_data])
+    data_payload = messaging.DataNodeUsageMsgPayload()
+    data_payload.baudRate = baud_rate
+    data_payload.dataName = "dataNode"
+    data_message = messaging.DataNodeUsageMsg().write(data_payload)
+    test_storage_unit.addDataNodeToModel(data_message)
+    unit_test_sim.AddModelToTask(unit_task_name, test_storage_unit)
+
+    data_log = test_storage_unit.storageUnitDataOutMsg.recorder()
+    unit_test_sim.AddModelToTask(unit_task_name, data_log)
+    unit_test_sim.InitializeSimulation()
+    unit_test_sim.ConfigureStopTime(task_period)
+    unit_test_sim.ExecuteSimulation()
+
+    assert data_log.storageLevel[-1] == float(initial_data)
+    assert data_log.storedData[-1][0] == float(initial_data)
+
+
+out_of_range_baud_rates = [float(1 << 63), float("inf")]  # [bits/s]
+
+
+@pytest.mark.parametrize("storage_unit_type", [
+    simpleStorageUnit.SimpleStorageUnit,
+    partitionedStorageUnit.PartitionedStorageUnit,
+])
+@pytest.mark.parametrize("baud_rate", out_of_range_baud_rates)
+def test_integrated_data_delta_range_check(storage_unit_type, baud_rate):
+    """Verify that non-representable integrated data changes stop the simulation."""
+    unit_task_name = "unitTask"
+    unit_process_name = "TestProcess"
+    storage_capacity = (1 << 63) - 1  # [bits]
+
+    unit_test_sim = SimulationBaseClass.SimBaseClass()
+    test_process = unit_test_sim.CreateNewProcess(unit_process_name)
+    task_period = macros.sec2nano(1.0)  # [ns]
+    test_process.addTask(unit_test_sim.CreateNewTask(unit_task_name, task_period))
+
+    test_storage_unit = storage_unit_type()
+    test_storage_unit.storageCapacity = storage_capacity
+    data_payload = messaging.DataNodeUsageMsgPayload()
+    data_payload.baudRate = baud_rate
+    data_payload.dataName = "dataNode"
+    data_message = messaging.DataNodeUsageMsg().write(data_payload)
+    test_storage_unit.addDataNodeToModel(data_message)
+    unit_test_sim.AddModelToTask(unit_task_name, test_storage_unit)
+
+    unit_test_sim.InitializeSimulation()
+    unit_test_sim.ConfigureStopTime(task_period)
+    with pytest.raises(BasiliskError, match="outside the supported int64_t range"):
+        unit_test_sim.ExecuteSimulation()
 
 
 if __name__ == "__main__":
