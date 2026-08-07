@@ -243,6 +243,50 @@ def select_cmake_generator(
     return "Unix Makefiles", "ninja executable not found"
 
 
+def create_conan_build_command(
+        arguments: argparse.Namespace,
+        platform_name: str = os.name,
+) -> list[str]:
+    """Create the single Conan command used to install dependencies and build Basilisk."""
+    command = [
+        sys.executable,
+        "-m",
+        "conans.conan",
+        "build",
+        ".",
+        "--build=missing",
+        "-s",
+        "build_type=" + str(arguments.buildType),
+        "-s",
+        "compiler.cppstd=17",
+    ]
+    if platform_name != "nt":
+        command.extend(["-s", "compiler.cstd=gnu17"])
+    if arguments.generator:
+        command.extend(["-o", "&:generator=" + str(arguments.generator)])
+
+    argument_values = vars(arguments)
+    for option_name in bskModuleOptionsBool:
+        command.extend(["-o", f"&:{option_name}={argument_values[option_name]}"])
+
+    for option_name in bskModuleOptionsString:
+        option_value = str(argument_values[option_name])
+        if not option_value or option_name == "autoKey":
+            continue
+        if option_name == "pathToExternalModules":
+            external_path = os.path.abspath(option_value.rstrip(os.path.sep))
+            if not os.path.exists(external_path):
+                raise ValueError(f"path {option_value} does not exist")
+            option_value = external_path
+        command.extend(["-o", f"&:{option_name}={option_value}"])
+
+    for option_name in bskModuleOptionsFlag:
+        if argument_values[option_name]:
+            command.extend(["-o", f"&:{option_name}=True"])
+
+    return command
+
+
 class BasiliskConan(ConanFile):
     name = "Basilisk"
     homepage = "https://avslab.github.io/basilisk/"
@@ -701,46 +745,12 @@ if __name__ == "__main__":
     if args.mujoco:
         conan_create_mujoco()
 
-    # setup conan install command arguments
-    conanInstallArgs = [sys.executable, "-m", "conans.conan", "install", ".", "--build=missing"]
-    # setup arguments shared by conan install and conan build
-    conanBuildOptionsList = ["-s", "build_type=" + str(args.buildType)]
-    conanBuildOptionsList.extend(["-s", "compiler.cppstd=17"])
-    if os.name != "nt":
-        conanBuildOptionsList.extend(["-s", "compiler.cstd=gnu17"])
-    if args.generator:
-        conanBuildOptionsList.extend(["-o", "&:generator=" + str(args.generator)])
-    for opt, value in bskModuleOptionsBool.items():
-        conanBuildOptionsList.extend(["-o", "&:" + opt + "=" + str(vars(args)[opt])])
-    conanInstallArgs.extend(conanBuildOptionsList)  # arguments get used in both install and build
+    try:
+        buildCmd = create_conan_build_command(args)
+    except ValueError as error:
+        print(f"{failColor}Error: {error}{endColor}")
+        sys.exit(1)
 
-    # Most of these options go to both conan install and build commands
-    for opt, value in bskModuleOptionsString.items():
-        if str(vars(args)[opt]):
-            if opt == "pathToExternalModules":
-                externalPath = os.path.abspath(str(vars(args)[opt]).rstrip(os.path.sep))
-                if os.path.exists(externalPath):
-                    conanInstallArgs.extend(["-o", "&:" + opt + "=" + externalPath])
-                    conanBuildOptionsList.extend(["-o", "&:" + opt + "=" + externalPath])
-                else:
-                    print(f"{failColor}Error: path {str(vars(args)[opt])} does not exist{endColor}")
-                    sys.exit(1)
-            else:
-                if opt != "autoKey":
-                    conanInstallArgs.extend(["-o", "&:" + opt + "=" + str(vars(args)[opt])])
-                    conanBuildOptionsList.extend(["-o", "&:" + opt + "=" + str(vars(args)[opt])])
-
-    # only used for conan install arguments, not build
-    for opt, value in bskModuleOptionsFlag.items():
-        if vars(args)[opt]:
-            conanInstallArgs.extend(["-o", "&:" + opt + "=True"])
-
-    print(statusColor + "Running conan install:" + endColor)
-    print(shlex.join(conanInstallArgs))
-    completedProcess = subprocess.run(conanInstallArgs, check=True)
-
-    # run conan build
-    buildCmd = [sys.executable, "-m", "conans.conan", "build", "."] + conanBuildOptionsList
     print(statusColor + "Running conan build:" + endColor)
     print(shlex.join(buildCmd))
-    completedProcess = subprocess.run(buildCmd, check=True)
+    subprocess.run(buildCmd, check=True)
