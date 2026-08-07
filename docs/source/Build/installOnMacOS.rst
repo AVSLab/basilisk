@@ -136,12 +136,8 @@ When all the prerequisite installations are complete, the project can be built a
 
    See :ref:`rustModules` for details about creating and testing Rust modules.
 
-   For other configure and build options, see :ref:`configureBuild`.  This creates the Xcode project in
-   ``dist3``.
-
-   .. Warning:: Note that the default configuration is building for Release.  When you open the project in XCode, note
-        that you need to build for profiling.  Otherwise you get errors about not being able to find appropriate
-        conan installed libraries.
+   For other configure and build options, see :ref:`configureBuild`. For a new command-line build, the script uses
+   Ninja when it is available and otherwise uses Unix Makefiles. The selected build files are created in ``dist3``.
 
    The ``python3 conanfile.py`` process will verify that the minimum required Basilisk python packages are installed, and that
    the version is correct.  If not, the user is prompted to install the package with ``pip3`` in the system or user
@@ -179,9 +175,13 @@ Basilisk project in Xcode directly.  Further, if you are developing for Basilisk
 the Basilisk Xcode project file and not build right away. To change the default behavior disable the automatic build
 using:
 
-#. Set the ``buildProject`` argument to ``False`` using::
+#. Create a fresh Xcode project by setting the ``buildProject`` argument to ``False``::
 
-    (.venv) $ python3 conanfile.py --buildProject False
+    (.venv) $ python3 conanfile.py --clean --buildProject False
+
+   The ``--clean`` option removes the existing ``dist3`` build before selecting Xcode. It is required when a prior
+   command-line build used Ninja or Unix Makefiles because CMake cannot change the generator of an existing build
+   directory.
 
 #. Open the Xcode project file inside ``dist3``.  This is ``basilisk.xcodeproj`` on macOS.
 
@@ -192,6 +192,11 @@ using:
          :scale: 40%
    -  Ensure that the target scheme is set to ``ALL_BUILD`` as shown in figure above
    -  Within Xcode now go under `Product/Build For/Profiling` to build for Release.
+
+   .. warning::
+
+      The default configuration is Release. In Xcode, build for profiling; otherwise, Xcode can select a configuration
+      for which the Conan-installed libraries are unavailable.
 
 FAQs
 ----

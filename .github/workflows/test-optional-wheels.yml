@@ -27,8 +27,6 @@ jobs:
             output-dir: wheelhouse-opnav-full
             conan-args: --opNav True --mujoco True --rustModules True --clean
             save-conan-cache: "true"
-          - os: windows-2025-vs2026
-            extra-conan-args: --generator Ninja
 
     steps:
       - name: Checkout source
@@ -61,7 +59,7 @@ jobs:
         uses: ./.github/actions/build-wheel
         with:
           output-dir: ${{ matrix.output-dir }}
-          conan-args: ${{ matrix.conan-args }} ${{ matrix.extra-conan-args }}
+          conan-args: ${{ matrix.conan-args }}
           cibw-build: cp314-*
           save-conan-cache: ${{ matrix.save-conan-cache }}
 

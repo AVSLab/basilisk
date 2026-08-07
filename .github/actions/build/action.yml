@@ -50,7 +50,6 @@ runs:
         fi
 
     - name: Install Ninja
-      if: ${{ runner.os == 'Windows' }}
       shell: bash
       run: pip install ninja
 

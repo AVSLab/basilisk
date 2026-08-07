@@ -193,6 +193,56 @@ def resolve_py_limited_api(opt_value: Optional[str]) -> str:
         return opt_value
     return PY_LIMITED_API_PY39
 
+
+def read_cached_cmake_generator(build_folder: Path) -> Optional[str]:
+    """Return the generator recorded in an existing CMake build directory."""
+    cache_path = Path(build_folder) / "CMakeCache.txt"
+    try:
+        cache_lines = cache_path.read_text(encoding="utf-8", errors="replace").splitlines()
+    except FileNotFoundError:
+        return None
+
+    cache_key = "CMAKE_GENERATOR:INTERNAL="
+    for line in cache_lines:
+        if line.startswith(cache_key):
+            return line[len(cache_key):].strip() or None
+    return None
+
+
+def select_cmake_generator(
+        requested_generator: Optional[str],
+        build_folder: Path,
+        operating_system: str,
+        build_project: bool,
+        ninja_finder: Callable[[str], Optional[str]] = shutil.which,
+) -> tuple[str, str]:
+    """Select a CMake generator without changing an existing build directory."""
+    cached_generator = read_cached_cmake_generator(build_folder)
+    if requested_generator:
+        if cached_generator and requested_generator != cached_generator:
+            raise ValueError(
+                f"The existing CMake build directory '{build_folder}' uses "
+                f"the '{cached_generator}' generator, but '{requested_generator}' "
+                "was requested. Clean the build directory before switching generators "
+                "(use --clean with conanfile.py or -o \"&:clean=True\" with direct Conan)."
+            )
+        return requested_generator, "explicitly requested"
+
+    if cached_generator:
+        return cached_generator, "reused from the existing build directory"
+
+    if not build_project:
+        if operating_system == "Windows":
+            return "Visual Studio 17 2022", "default Windows IDE project"
+        if operating_system == "Macos":
+            return "Xcode", "default macOS IDE project"
+    if ninja_finder("ninja"):
+        return "Ninja", "ninja executable found"
+    if operating_system == "Windows":
+        return "Visual Studio 17 2022", "ninja executable not found"
+    return "Unix Makefiles", "ninja executable not found"
+
+
 class BasiliskConan(ConanFile):
     name = "Basilisk"
     homepage = "https://avslab.github.io/basilisk/"
@@ -420,24 +470,19 @@ class BasiliskConan(ConanFile):
         deps.generate()
 
         tc = CMakeToolchain(self)
-        generatorString = str(self.options.get_safe("generator"))
-        if generatorString == "":
-            # Select default generator supplied to cmake based on os
-            if self.settings.os == "Macos" and not self.options.get_safe("buildProject"):
-                generatorString = "Xcode"
-                tc.generator = generatorString
-            elif self.settings.os == "Windows":
-                generatorString = "Visual Studio 17 2022"
-                tc.generator = generatorString
-                self.options["*"].shared = True
-            else:
-                print("Creating a make file for project. ")
-                print("Specify your own using the -o generator='Name' flag during conan install")
-        else:
-            tc.generator = generatorString
-            if self.settings.os == "Windows":
-                self.options["*"].shared = True
-        print("cmake generator set to: " + statusColor + generatorString + endColor)
+        generatorString, generatorReason = select_cmake_generator(
+            requested_generator=str(self.options.get_safe("generator") or ""),
+            build_folder=Path(self.build_folder),
+            operating_system=str(self.settings.os),
+            build_project=bool(self.options.get_safe("buildProject")),
+        )
+        tc.generator = generatorString
+        if self.settings.os == "Windows":
+            self.options["*"].shared = True
+        print(
+            "cmake generator set to: " + statusColor + generatorString + endColor
+            + f" ({generatorReason})"
+        )
 
         tc.cache_variables["BUILD_OPNAV"] = bool(self.options.get_safe("opNav"))
         tc.cache_variables["BUILD_VIZINTERFACE"] = bool(self.options.get_safe("vizInterface"))
@@ -537,12 +582,10 @@ class BasiliskConan(ConanFile):
                         os.replace(tmp, os.path.join(basilisk_dst_root, lower))
         else:
             print(f"{statusColor}Finished configuring the Basilisk project.{endColor}")
-            if self.settings.os != "Linux":
-                print(f"{statusColor}Please open project file inside dist3 with IDE "
-                      f"and build the project for {self.settings.build_type}{endColor}")
-            else:
-                print(f"{statusColor}Please go to dist3 folder and run command "
-                      f"`make -j <number of threads to use>`{endColor}")
+            print(
+                f"{statusColor}Build it later with `cmake --build {self.build_folder} "
+                f"--config {self.settings.build_type} --parallel <number of threads to use>`{endColor}"
+            )
         return
 
     def add_basilisk_to_sys_path(self):

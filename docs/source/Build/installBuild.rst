@@ -22,17 +22,16 @@ who want to customize.
 
 One-Step Configuring and Building the Basilisk Framework
 --------------------------------------------------------
-If you just installed the Basilisk source code, or changed any source file, you will want to recreate the Basilisk IDE
-project or makefile to compile it.  This creates or updates the project file to included the latest Basilisk source
-code.  From the Basilisk root directory, this is done simply using::
+If you just installed the Basilisk source code, use the build script to configure and compile the framework. From the
+Basilisk root directory, this is done simply using::
 
     python3 conanfile.py
 
 This one-line step will use ``conan`` to:
 
 - pull and compile any resource dependencies such a protobuffer, etc.
-- configure the Xcode (macOS) or Visual Studio (Windows) IDE project in the ``dist3`` folder,
-  or create the makefile for Linux systems
+- configure a CMake build in the ``dist3`` folder using the automatically selected, explicitly requested, or
+  previously cached generator
 - build the project.
 
 By default the build is for Python3 with the support for :ref:`vizInterface`
@@ -83,12 +82,13 @@ The script accepts the following options to customize this process.
         :ref:`strictCompilerWarnings`.
     * - ``generator``
       - see `here <https://cmake.org/cmake/help/latest/manual/cmake-generators.7.html>`__
-      - ``XCode`` (macOS), ``Visual Studio 16 2019`` (Windows), ``None`` (Linux)
-      - If not set the ``cmake`` build generator is automatically selected to be ``XCode`` for macOS,
-        ``Visual Studio 16 2019`` on Windows, and ``None`` for Linux which create a make file on this platform.
-        It can also be set through this
-        flag.  If unsure what generators are supported on your platform, open a terminal window and
-        type ``cmake --help`` to get a list of supported generator strings.
+      - Automatically selected
+      - An existing build folder's generator is reused unless the same generator is explicitly requested. Changing
+        generators requires ``--clean`` because CMake cannot switch generators in an existing build directory. For a
+        new automatic build, Ninja is used on every platform when available; Ninja is optional and is not installed
+        by Basilisk. Without Ninja, Windows falls back to Visual Studio 2022 and macOS or Linux falls back to Unix
+        Makefiles. For a new build with ``--buildProject False``, Windows defaults to Visual Studio 2022 and macOS
+        defaults to Xcode. If unsure what generators are supported on your platform, run ``cmake --help``.
     * - ``autoKey``
       - String 's' or 'u'
       - Empty
@@ -281,8 +281,9 @@ Compiling the messaging related files is a large component of the Basilisk build
 this command is required if you make changes to the message file definitions, or add a new message file.  However,
 it is not the preferred manner to compile Basilisk if you just need to do an incremental build.
 
-Rather, run ``python conanfile.py --buildProject False`` to create the IDE file for your platform
-such as Xcode projeect file on macOS, MS Visual Studio project file on Windows, etc.  Next,
+Rather, run ``python conanfile.py --clean --buildProject False`` to create the IDE file for your platform,
+such as an Xcode project file on macOS or an MS Visual Studio project file on Windows. The ``--clean`` option is
+required when replacing an existing Ninja or Makefiles build because CMake generators cannot be changed in place. Next,
 open the project file in your IDE and compile Basilisk there.  The initial build is a clean build and will take a
 similar amount of time to compile the messaging related files.  However, after making changes to a particular module,
 only this Basilisk module will need to be compiled and the compile times are drastically reduced.
