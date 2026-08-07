@@ -236,10 +236,9 @@ If you are developing new modules you often just want to configure the Basilisk 
 
    This will disable the build workflow so that you can build the project separately.
 
-#. Next, move to the distribution folder to build using a makefile::
+#. Build the configured project with CMake's generator-independent command. For example, to use five parallel
+   jobs::
 
-        (.venv) $ cd dist3
+       (.venv) $ cmake --build dist3 --parallel 5
 
-#. You can do a multi core make by running ``make -j<number of cores +1>`` such as::
-
-       (.venv) $ make -j5
+   This command works with either Ninja or Unix Makefiles.

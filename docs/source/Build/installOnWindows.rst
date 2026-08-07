@@ -167,9 +167,10 @@ When all the prerequisite installations are complete, the project can be built a
 
    See :ref:`rustModules` for details about creating and testing Rust modules.
 
-   This creates the Visual Studio 17 2022 IDE project in ``dist3`` and builds the project.
-   You can also specify the generator directly in this build process and select other versions of Visual Studio.
-   For other configure and build options, including running ``cmake`` directly, see :ref:`configureBuild`.
+   For a new command-line build, the script uses Ninja when it is available and otherwise uses Visual Studio 17 2022.
+   The selected build files are created in ``dist3`` and the project is built. You can also specify the generator
+   directly to select another supported version of Visual Studio. For other configure and build options, including
+   running ``cmake`` directly, see :ref:`configureBuild`.
    This process will verify that the minimum required Basilisk python packages are installed, and that
    the version is correct.  If not, the user is prompted to install the package with ``pip3`` in the system or user
    folder.
@@ -200,14 +201,15 @@ Building with IDE
 -----------------
 Conan file will build the project by default.  However, this can take longer to compile than building the
 Basilisk project in the IDE directly.  Further, if you are developing for Basilisk you often just want to configure
-the Basilisk Xcode project file and not build right away. To change the default behavior disable the automatic build
-using:
+the Basilisk Visual Studio project file and not build right away. To change the default behavior, disable the automatic
+build using:
 
-#. Run this command to disable the build::
+#. Run this command to create a fresh Visual Studio project without building it::
 
-    python conanfile.py --buildProject False
+    python conanfile.py --clean --buildProject False
 
-   This will disable the build workflow so that you can build the project from the IDE.
+   The ``--clean`` option removes the existing ``dist3`` build before selecting Visual Studio. It is required when a
+   prior command-line build used Ninja because CMake cannot change the generator of an existing build directory.
 
 #. Open the Visual Studio project file inside ``dist3``.  This is ``basilisk.sln`` on Windows.
 

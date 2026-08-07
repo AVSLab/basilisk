@@ -1,0 +1,1 @@
+- Reduced clean configuration and build time by automatically using Ninja for new builds on every platform when it is available, while preserving explicit, existing, and requested IDE generator choices.
