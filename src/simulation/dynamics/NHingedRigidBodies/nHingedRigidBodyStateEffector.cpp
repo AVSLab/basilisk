@@ -19,6 +19,7 @@
 
 #include "nHingedRigidBodyStateEffector.h"
 #include "architecture/utilities/avsEigenSupport.h"
+#include <cmath>
 
 /*! This is the constructor, setting variables to default values */
 NHingedRigidBodyStateEffector::NHingedRigidBodyStateEffector()
@@ -64,9 +65,38 @@ void NHingedRigidBodyStateEffector::linkInStates(DynParamManager& statesIn)
     return;
 }
 
+/*! This method checks that the panel chain is one the equations of motion can represent */
+void
+NHingedRigidBodyStateEffector::checkPanelUniformity()
+{
+    if (this->PanelVec.empty()) {
+        this->bskLogger.bskError("NHingedRigidBodyStateEffector: at least one hinged panel is required.");
+    }
+
+    // the equations of motion factor one panel mass and one half-length out of the sums over the
+    // chain, so an uneven chain integrates silently wrong dynamics rather than failing
+    const double relativeTolerance = 1e-9; // [-]
+    const double mass = this->PanelVec.front().mass;
+    const double d = this->PanelVec.front().d;
+    std::vector<HingedPanel>::iterator PanelIt;
+    for (PanelIt = this->PanelVec.begin(); PanelIt != this->PanelVec.end(); PanelIt++) {
+        if (PanelIt->mass <= 0.0) {
+            this->bskLogger.bskError("NHingedRigidBodyStateEffector: every panel mass must be greater than 0.");
+        }
+        if (std::abs(PanelIt->mass - mass) > relativeTolerance * std::abs(mass) ||
+            std::abs(PanelIt->d - d) > relativeTolerance * std::abs(d)) {
+            this->bskLogger.bskError("NHingedRigidBodyStateEffector: every panel must carry the same "
+                                     "mass and the same hinge to center of mass distance d. Model an "
+                                     "uneven chain with dualHingedRigidBodyStateEffector or "
+                                     "spinningBodyNDOFStateEffector instead.");
+        }
+    }
+}
+
 /*! This method allows the HRB state effector to register its states: theta and thetaDot with the dyn param manager */
 void NHingedRigidBodyStateEffector::registerStates(DynParamManager& states)
 {
+    this->checkPanelUniformity();
 
     // - Register the states associated with hinged rigid bodies - theta and thetaDot
     Eigen::MatrixXd thetaInitMatrix(this->PanelVec.size(),1);

@@ -14,6 +14,10 @@ Version |release| (July 7, 2026)
   ``SimBaseClass.AddVariableForLogging()`` and ``GetLogVariableData()`` methods, causing every
   Monte Carlo variable-retention request to fail with ``AttributeError``. Variable retention now
   creates and reads the supported module logger directly.
+- The :ref:`nHingedRigidBodyStateEffector` equations of motion are derived for a chain of identical
+  panels, but the module accepted a per-panel mass and hinge to center of mass distance and
+  integrated silently wrong dynamics when either varied along the chain. Initialization now rejects
+  such a chain.
 - Every state effector acting as a parent published the inertial state of its attachment frame once
   per task step from its own ``UpdateState()``. A child effector therefore evaluated its loads against
   kinematics a full task step old. These are now refreshed within the integration.

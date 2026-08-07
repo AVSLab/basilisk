@@ -9,6 +9,15 @@ The module
 contains further information on this module's function,
 how to run it, as well as testing.
 
+.. important::
+
+    The equations of motion are derived for a chain of identical panels. Every panel must carry the
+    same positive ``mass`` and the same hinge to center of mass distance ``d``, and each hinge sits
+    ``2d`` from the one before it. The panel inertia ``IPntS_S`` may differ from panel to panel.
+    Initialization rejects a chain that violates the mass or distance requirement. An uneven chain
+    is modeled with :ref:`dualHingedRigidBodyStateEffector` for two panels, or with
+    :ref:`spinningBodyNDOFStateEffector` for an arbitrary number.
+
 
 
 Message Connection Descriptions
