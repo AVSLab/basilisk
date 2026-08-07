@@ -31,7 +31,9 @@ The command, in its minimal form, is::
 
 This command creates the ``dist3`` distribution folder when needed, resolves the required third-party resources,
 compiles dependencies whose binaries are missing, generates the CMake files, and builds Basilisk. All build files
-are stored in ``dist3``.
+are stored in ``dist3``. It does not install or modify packages in the active Python environment. Install the
+requirements and create the editable Basilisk installation separately, as described in the platform-specific
+installation instructions.
 
 There are several options that can be provided to this ``conan build`` command as shown in the following table.
 Note that the option names for groupings of Basilisk modules are the same as with the one-step build above. The
@@ -76,16 +78,6 @@ Note that the option names for groupings of Basilisk modules are the same as wit
       - see `here <https://cmake.org/cmake/help/latest/manual/cmake-generators.7.html>`__
       - Automatically selected
       - Used to specify a specific ``cmake`` generator.  See discussion in Table :ref:`buildTable1Label`.
-    * - ``-o autoKey``
-      - String 's' or 'u'
-      - Empty
-      - This is used to automatically respond to the python packaging installation requests to install the
-        package for the user (u) or system (s).
-    * - ``-o allOptPkg``
-      - Boolean
-      - False
-      - Install all of the optional Basilisk python package dependencies
-
 Thus, using the same build example as in the one-step section, to create a build with ``opNav`` modes enabled,
 but no :ref:`vizInterface`, and using a clean distribution folder, and that is built right away, you could use::
 

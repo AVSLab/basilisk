@@ -11,7 +11,6 @@ from pathlib import Path
 from typing import Callable, Optional
 
 import importlib.metadata
-from packaging.requirements import Requirement
 
 from conan import ConanFile
 from conan.tools.cmake import CMakeToolchain, CMake, cmake_layout, CMakeDeps
@@ -46,32 +45,16 @@ bskModuleOptionsBool = {
     # Enable the opt-in compiler warning policy defined by BSK_STRICT_WARNINGS
     # in src/CMakeLists.txt.
     "strictWarnings": [[True, False], False],
-    "examples": [[True, False], True],
     "buildProject": [[True, False], True],
-    "pyPkgCanary": [[True, False], False],
     "recorderPropertyRollback": [[True, False], False],
-
-    # XXX: Set managePipEnvironment to True to keep the old behaviour of
-    # managing the `pip` environment directly (upgrading, installing Python
-    # packages, etc.). This behaviour is deprecated using the new pip-based
-    # installation, and should only be required for users who are still calling
-    # this file with `python conanfile.py ...`.
-    # TODO: Remove all managePipEnvironment behaviour!
-    "managePipEnvironment": [[True, False], True],
 }
 bskModuleOptionsString = {
-    "autoKey": [["", "u", "s","c"], ""],  # TODO: Remove, used only for managePipEnvironment.
     "pathToExternalModules": [["ANY"], ""],
     "pyLimitedAPI": [["ANY"], ""],
 }
 bskModuleOptionsFlag = {
     "clean": [[True, False], False],
-    "allOptPkg": [[True, False], False]  # TODO: Remove, used only for managePipEnvironment.
 }
-
-
-def is_running_virtual_env():
-    return sys.prefix != sys.base_prefix
 
 required_conan_version = ">=2.0.5"
 
@@ -271,7 +254,7 @@ def create_conan_build_command(
 
     for option_name in bskModuleOptionsString:
         option_value = str(argument_values[option_name])
-        if not option_value or option_name == "autoKey":
+        if not option_value:
             continue
         if option_name == "pathToExternalModules":
             external_path = os.path.abspath(option_value.rstrip(os.path.sep))
@@ -329,91 +312,6 @@ class BasiliskConan(ConanFile):
     for opt, value in bskModuleOptionsFlag.items():
         options.update({opt: value[0]})
         default_options.update({opt: value[1]})
-
-    def system_requirements(self):
-        if not self.options.get_safe("managePipEnvironment"):
-            return  # Don't need to manage any pip requirements
-
-        # TODO: Remove everything here, which only runs if we have set
-        # managePipEnvironment (i.e. conanfile.py-based build).
-
-        # ensure latest pip is installed
-        cmakeCmd = [sys.executable, "-m", "pip", "install", "--upgrade", "pip"]
-        print(statusColor + "Updating pip:" + endColor)
-        print(shlex.join(cmakeCmd))
-        try:
-            subprocess.check_call(cmakeCmd)
-        except subprocess.CalledProcessError:
-            print(warningColor + "Was not able to upgrade pip; continuing with the existing pip installation." + endColor)
-
-        # TODO: Remove this: requirements and optional requirements are
-        # installed automatically by add_basilisk_to_sys_path(). Only build
-        # system requirements need to be installed here.
-        reqPath = '.github/workflows/' if self.options.get_safe("pyPkgCanary") else ''
-
-        reqFile = open(f'{reqPath}requirements.txt', 'r')
-        required = reqFile.read().replace("`", "").split('\n')
-        reqFile.close()
-        pkgList = [x.lower() for x in required]
-
-        reqFile = open(f'{reqPath}requirements_dev.txt', 'r')
-        required = reqFile.read().replace("`", "").split('\n')
-        reqFile.close()
-        pkgList += [x.lower() for x in required]
-
-        checkStr = "Required"
-        if self.options.get_safe("allOptPkg"):
-            optFile = open(f'{reqPath}requirements_doc.txt', 'r')
-            optionalPkgs = optFile.read().replace("`", "").split('\n')
-            optFile.close()
-            optionalPkgs = [x.lower() for x in optionalPkgs]
-            pkgList += optionalPkgs
-            checkStr += " and All Optional"
-
-        print("\nChecking " + checkStr + " Python packages:")
-        missing_packages = []
-        for elem in pkgList:
-            if not elem:  # Skip empty or falsy elements
-                continue
-
-            try:
-                # Parse the requirement (e.g., "numpy<2")
-                req = Requirement(elem)
-                # Get the installed version of the package
-                installed_version = importlib.metadata.version(req.name)
-
-                # Check if the installed version satisfies the requirement
-                if req.specifier.contains(installed_version):
-                    print("Found: " + statusColor + elem + endColor)
-                else:
-                    raise Exception(
-                        f"Version conflict for {req.name}: {installed_version} does not satisfy {req.specifier}")
-            except importlib.metadata.PackageNotFoundError:
-                missing_packages.append(elem)
-            except Exception as e:
-                print(f"Error: {e}")
-                missing_packages.append(elem)
-
-        for elem in missing_packages:
-            installCmd = [sys.executable, "-m", "pip", "install"]
-
-            if not is_running_virtual_env():
-                if self.options.get_safe("autoKey"):
-                    choice = self.options.get_safe("autoKey")
-                else:
-                    choice = input(warningColor + f"Required python package " + elem + " is missing" + endColor +
-                                    "\nInstall for user (u), system (s) or cancel(c)? ")
-                if choice == 'c':
-                    print(warningColor + "Skipping installing " + elem + endColor)
-                    continue
-                elif choice == 'u':
-                    installCmd.append("--user")
-            installCmd.append(elem)
-            try:
-                subprocess.check_call(installCmd)
-                print(f"Installed: {statusColor}{elem}{endColor}")
-            except subprocess.CalledProcessError:
-                print(failColor + f"Was not able to install " + elem + endColor)
 
     def build_requirements(self):
         # Protobuf is also required as a tool (in order for CMake to find the
@@ -578,10 +476,6 @@ class BasiliskConan(ConanFile):
         print(statusColor + "Configuring cmake..." + endColor)
         cmake.configure()
 
-        if self.options.get_safe("managePipEnvironment"):
-            # TODO: it's only needed when conanfile.py is handling pip installations.
-            self.add_basilisk_to_sys_path()
-
         if self.options.get_safe("buildProject"):
             print(statusColor + "\nCompiling Basilisk..." + endColor)
             start = datetime.now()
@@ -632,36 +526,11 @@ class BasiliskConan(ConanFile):
             )
         return
 
-    def add_basilisk_to_sys_path(self):
-        print(f"{statusColor}Adding Basilisk module to python{endColor}\n")
-        # NOTE: "--no-build-isolation" is used here only to force pip to use the
-        # packages installed directly by this Conanfile (using the
-        # "managePipEnvironment" option). Otherwise, it is not necessary.
-        add_basilisk_module_command = [sys.executable, "-m", "pip", "install", "--no-build-isolation", "-e", "../"]
-
-        if self.options.get_safe("examples"):
-            add_basilisk_module_command[-1] = "../[examples]"
-
-        if self.options.get_safe("allOptPkg"):
-            # Install the optional requirements as well
-            add_basilisk_module_command[-1] = "../[optional]"
-
-        if not is_running_virtual_env() and self.options.get_safe("autoKey") != 's':
-            add_basilisk_module_command.append("--user")
-
-        process = subprocess.Popen(add_basilisk_module_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        output, err = process.communicate()
-        if process.returncode:
-            print("Error %s while running %s" % (err.decode(), add_basilisk_module_command))
-            sys.exit(1)
-        else:
-            print("This resulted in the stdout: \n%s" % output.decode())
-            if err.decode() != "":
-                print("This resulted in the stderr: \n%s" % err.decode())
 
 def get_mujoco_version():
     with open("./libs/mujoco/version.txt") as f:
         return f.read().strip()
+
 
 def is_conan_package_available(ref: str):
     """
@@ -677,6 +546,7 @@ def is_conan_package_available(ref: str):
         return any( "error" not in v for v in parsed.values() )
     except subprocess.CalledProcessError:
         return False
+
 
 def conan_create_mujoco(print_fn: Optional[Callable[[str], None]] = print):
     """

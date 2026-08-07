@@ -34,6 +34,12 @@ This one-line step will use ``conan`` to:
   previously cached generator
 - build the project.
 
+The build script does not install, upgrade, or otherwise modify Python packages. For a new clone, install the
+Python requirements before the first build and register the completed build as an editable package afterward, as
+shown in the platform-specific installation instructions. The editable installation is required only once per
+virtual environment; subsequent incremental or clean native rebuilds update the same ``dist3`` package in place and
+do not require another editable installation.
+
 By default the build is for Python3 with the support for :ref:`vizInterface`
 included to enable recording data for or live-streaming to :ref:`Vizard <Vizard>`.
 
@@ -89,15 +95,6 @@ The script accepts the following options to customize this process.
         by Basilisk. Without Ninja, Windows falls back to Visual Studio 2022 and macOS or Linux falls back to Unix
         Makefiles. For a new build with ``--buildProject False``, Windows defaults to Visual Studio 2022 and macOS
         defaults to Xcode. If unsure what generators are supported on your platform, run ``cmake --help``.
-    * - ``autoKey``
-      - String 's' or 'u'
-      - Empty
-      - This is used to automatically respond to the python packaging installation requests to install the
-        package for the user (u) or system (s).
-    * - ``allOptPkg``
-      -
-      - None
-      - If flag is set the Basilisk python package depenencies to build documentation are installed
     * - ``pathToExternalModules``
       - String
       - Empty
@@ -112,11 +109,6 @@ The script accepts the following options to customize this process.
       - :beta:`Rust Module Support` Enables discovery and compilation of
         in-tree Rust modules. Requires Rust and Cargo. See :ref:`rustModules`
         for the minimum supported Rust version and setup details.
-    * - ``examples``
-      - Boolean
-      - True
-      - Installs the optional Python dependencies used by Basilisk example scripts, such as ``scipy`` and ``numba``.
-        Disable this flag if you want a leaner clone-based install and do not need the example-only Python packages.
     * - ``recorderPropertyRollback``
       - Boolean
       - False
@@ -130,10 +122,6 @@ clean distribution folder, and that is built right away, you could use::
     python3 conanfile.py --clean --opNav True --vizInterface False --buildProject True
 
 The ``buildProject`` argument here is optional as its default value is ``True``.
-Likewise, the ``examples`` argument is optional as its default value is ``True``.
-To skip the optional example Python packages during the clone-based install, use::
-
-    python3 conanfile.py --examples False
 
 .. _strictCompilerWarnings:
 

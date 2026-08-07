@@ -89,6 +89,23 @@ def test_single_command_installs_missing_dependencies_and_builds(conanfile_modul
     assert "&:rustModules=True" in options
 
 
+def test_legacy_python_environment_options_are_removed(conanfile_module):
+    """Keep Python package management outside the native build recipe."""
+    option_names = {
+        *conanfile_module.bskModuleOptionsBool,
+        *conanfile_module.bskModuleOptionsString,
+        *conanfile_module.bskModuleOptionsFlag,
+    }
+
+    assert option_names.isdisjoint({
+        "managePipEnvironment",
+        "autoKey",
+        "allOptPkg",
+        "pyPkgCanary",
+        "examples",
+    })
+
+
 def test_windows_command_omits_c_language_standard(conanfile_module):
     """Retain the existing Windows command-line settings."""
     arguments = make_arguments(conanfile_module)

@@ -187,9 +187,9 @@ Python Environment
 
         (.venv) $ deactivate
 
-#. Ensure all build related pip packages are installed::
+#. Install the Python runtime and build requirements::
 
-       (.venv) $ pip3 install -r requirements_dev.txt
+       (.venv) $ python3 -m pip install -r requirements.txt -r requirements_dev.txt
 
    The ``conan`` repositories information is automatically setup by ``conanfile.py``.
 
@@ -213,9 +213,15 @@ Build Process via Terminal
    See :ref:`rustModules` for details about creating and testing Rust modules.
 
    For other configure and build options, see :ref:`configureBuild`.
-   This process will verify that the minimum required Basilisk python packages are installed, and that
-   the version is correct.  If not, the user is prompted to install the package with ``pip3`` in the system or user
-   folder.
+
+#. Register the completed ``dist3`` build as an editable Basilisk installation and install the optional example
+   dependencies::
+
+       (.venv) $ python3 -m pip install --no-build-isolation -e ".[examples]"
+
+   Use ``-e .`` instead of ``-e ".[examples]"`` for an installation without the example-only dependencies. This
+   command is required only once after creating the virtual environment. Do not repeat it after subsequent
+   ``python3 conanfile.py``, clean, or incremental native builds.
 
 #. To test your setup you can run one of the :ref:`examples`:
 

@@ -110,12 +110,11 @@ and running Basilisk.
 At the time of this writing, the build backend is ``setuptools``, which invokes the ``setup.py`` file to
 perform the build. In ``setup.py``, the Python extension builder is overridden with a custom builder that
 computes an appropriate Python Limited C API version (based on the minimum supported Python version
-specified in ``pyproject.toml``). The builder then invokes ``python conanfile.py``, setting the
-``--managePipEnvironment False`` option so that Conan does not directly manipulate the user's ``pip``
-environment. The main reason for this setting is to maintain the current default behaviour of
-``conanfile.py``-based installation. The script dispatches one ``conan build --build=missing`` command, which
-installs missing dependencies, generates the CMake toolchain files, and invokes the recipe's build method in one
-dependency-resolution pass.
+specified in ``pyproject.toml``). The builder then invokes ``python conanfile.py``. The Conan recipe configures and
+compiles the native project but never installs or upgrades Python packages; the pip frontend owns the Python
+environment using the dependencies declared in ``pyproject.toml``. The script dispatches one
+``conan build --build=missing`` command, which installs missing native dependencies, generates the CMake toolchain
+files, and invokes the recipe's build method in one dependency-resolution pass.
 
 Editable installations (i.e. ``pip install -e .``) are partially supported. Python code changes are reflected
 automatically with this flag, but C++ components are not automatically rebuilt.

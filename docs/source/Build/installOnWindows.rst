@@ -136,10 +136,10 @@ steps work regardless if done within a virtual environment or not.
 Installing required python support packages
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-#. Basilisk uses conan for package managing. In order to do so, users
-   must first install all build related pip packages using::
+#. Basilisk uses Conan for native package management. Install the Python runtime and build requirements before
+   invoking the build script::
 
-       (.venv) $ pip install -r requirements_dev.txt
+       (.venv) $ python -m pip install -r requirements.txt -r requirements_dev.txt
 
    The ``conan`` repositories information is automatically setup by ``conanfile.py``.
 
@@ -147,9 +147,6 @@ Installing required python support packages
 
       Don't use the ``conan`` binary installed from the `conan web site <https://conan.io/downloads.html>`__.
       This causes several issues with the current build system.
-
-#. The required python packages for Basilisk will be installed automatically when running ``conanfile.py``.
-
 
 Build Project Process via Command line
 --------------------------------------
@@ -171,9 +168,6 @@ When all the prerequisite installations are complete, the project can be built a
    The selected build files are created in ``dist3`` and the project is built. You can also specify the generator
    directly to select another supported version of Visual Studio. For other configure and build options, including
    running ``cmake`` directly, see :ref:`configureBuild`.
-   This process will verify that the minimum required Basilisk python packages are installed, and that
-   the version is correct.  If not, the user is prompted to install the package with ``pip3`` in the system or user
-   folder.
 
    .. note::
 
@@ -185,7 +179,14 @@ When all the prerequisite installations are complete, the project can be built a
 
         To build on Windows you need to run an account with admin privileges.
 
+#. Register the completed ``dist3`` build as an editable Basilisk installation and install the optional example
+   dependencies::
 
+       (.venv) $ python -m pip install --no-build-isolation -e ".[examples]"
+
+   Use ``-e .`` instead of ``-e ".[examples]"`` for an installation without the example-only dependencies. This
+   command is required only once after creating the virtual environment. Do not repeat it after subsequent
+   ``python conanfile.py``, clean, or incremental native builds.
 
 #. To test your setup you can run one of the :ref:`examples`:
 
