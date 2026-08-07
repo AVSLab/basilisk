@@ -176,14 +176,9 @@ function(generate_package_libraries INIT_DIRECTORY AllLibs)
     # Grab the library source files
     file(GLOB C_FILES CONFIGURE_DEPENDS
          "${LIB_DIR}/*.cpp" "${LIB_DIR}/*.c" "${LIB_DIR}/*.h")
-    # Grab the framework source files
-    file(GLOB BSK_FWK_FILES CONFIGURE_DEPENDS
-         "${CMAKE_SOURCE_DIR}/architecture/_GeneralModuleFiles/*.cpp" # Might not be needed
-         "${CMAKE_SOURCE_DIR}/architecture/_GeneralModuleFiles/*.h"
-         "${CMAKE_SOURCE_DIR}/architecture/_GeneralModuleFiles/*.c")
 
     # Add Target
-    add_library(${LIB_NAME} SHARED ${C_FILES} ${BSK_FWK_FILES})
+    add_library(${LIB_NAME} SHARED ${C_FILES})
 
     if(NOT "${INIT_DIRECTORY}" STREQUAL "${CMAKE_SOURCE_DIR}")
       bsk_suppress_strict_warnings_for_sources(${C_FILES})
@@ -208,6 +203,9 @@ function(generate_package_libraries INIT_DIRECTORY AllLibs)
     else()
       target_link_libraries(${LIB_NAME} PUBLIC ArchitectureUtilities)
       target_link_libraries(${LIB_NAME} PUBLIC cMsgCInterface)
+    endif()
+    if(NOT "${LIB_NAME}" STREQUAL "architectureLib")
+      target_link_libraries(${LIB_NAME} PUBLIC architectureLib)
     endif()
 
     # define build location, IDE generation specifications
