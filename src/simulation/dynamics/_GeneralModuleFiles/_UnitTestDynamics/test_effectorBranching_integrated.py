@@ -81,7 +81,7 @@ FINE_TIMESTEP = 0.0005  # [s]
 @pytest.mark.parametrize("stateEffector, isParent", [
     ("hingedRigidBodies",             True),
     ("dualHingedRigidBodies",           True),
-    # ("nHingedRigidBodies",              True),
+    ("nHingedRigidBodies",            True),
     ("spinningBodiesOneDOF",          True),
     ("spinningBodiesTwoDOF",          True),
     ("spinningBodiesNDOF",            True),
@@ -405,6 +405,9 @@ def effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dynamic
     elif stateEffector == "hingedRigidBodies":
         stateEff, stateEffProps = setup_hingedRigidBodyStateEffector()
         segment = 1
+    elif stateEffector == "nHingedRigidBodies":
+        stateEff, stateEffProps = setup_nHingedRigidBodies()
+        segment = 2
     elif stateEffector == "linearTranslationBodiesOneDOF":
         stateEff, stateEffProps = setup_translatingBodiesOneDOF()
         segment = 1
@@ -469,11 +472,11 @@ def effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dynamic
     datLog = scObject.scStateOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, datLog)
 
-    # Log the effector's inertial properties
-    if segment == 1:
-        inertialPropLog = getattr(stateEff, f"{stateEffProps.inertialPropLogName}").recorder()
-    else:
+    # Log the effector's inertial properties, indexing the parents that publish one message per segment
+    if stateEffProps.inertialPropLogName.endswith("Msgs"):
         inertialPropLog = getattr(stateEff, f"{stateEffProps.inertialPropLogName}")[segment-1].recorder()
+    else:
+        inertialPropLog = getattr(stateEff, f"{stateEffProps.inertialPropLogName}").recorder()
     unitTestSim.AddModelToTask(unitTaskName, inertialPropLog)
 
     # Add energy and momentum variables to log
@@ -491,17 +494,21 @@ def effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dynamic
         assert isChild, "FAILED: attached an incompatible dynamic effector without erroring"
 
     # Check that properties are being handed correctly from state effector to dynamic effector
-    if (stateEffector == "spinningBodiesNDOF" or stateEffector == "linearTranslationBodiesOneDOF"
-        or stateEffector == "linearTranslationBodiesNDOF"):
-        # newer effector classes keep their names private, so validate the name handed to the child
+    if stateEffector in ("spinningBodiesNDOF", "linearTranslationBodiesOneDOF",
+                         "linearTranslationBodiesNDOF", "nHingedRigidBodies"):
+        # newer effector classes keep their names out of reach, so validate the name handed to the child
         positionName = getModernStateEffInertialPropName(
-            scObject, segment, "Position", getDynEffInertialPropName(dynamicEffector, dynamicEff, "Position"))
+            scObject, stateEffector, segment, "Position",
+            getDynEffInertialPropName(dynamicEffector, dynamicEff, "Position"))
         velocityName = getModernStateEffInertialPropName(
-            scObject, segment, "Velocity", getDynEffInertialPropName(dynamicEffector, dynamicEff, "Velocity"))
+            scObject, stateEffector, segment, "Velocity",
+            getDynEffInertialPropName(dynamicEffector, dynamicEff, "Velocity"))
         attitudeName = getModernStateEffInertialPropName(
-            scObject, segment, "Attitude", getDynEffInertialPropName(dynamicEffector, dynamicEff, "Attitude"))
+            scObject, stateEffector, segment, "Attitude",
+            getDynEffInertialPropName(dynamicEffector, dynamicEff, "Attitude"))
         angvelocityName = getModernStateEffInertialPropName(
-            scObject, segment, "AngVelocity", getDynEffInertialPropName(dynamicEffector, dynamicEff, "AngVelocity"))
+            scObject, stateEffector, segment, "AngVelocity",
+            getDynEffInertialPropName(dynamicEffector, dynamicEff, "AngVelocity"))
     else:
         # older effector classes have public variable names that are simply checked directly
         positionName = getStateEffInertialPropName(segment, stateEff, "Position")
@@ -683,12 +690,14 @@ def getStateEffInertialPropName(segment, stateEff, propType):
     elif segment == 2:
         return getattr(stateEff, f"nameOfInertial{propType}Property2")
 
-def getModernStateEffInertialPropName(scObject, segment, propType, handedPropName):
+def getModernStateEffInertialPropName(scObject, stateEffector, segment, propType, handedPropName):
     # a generated name ends in a process-global counter, so validate the handed name instead of rebuilding it
-    if segment == 1:
-        pattern = "linearTranslationInertial" + propType + r"[0-9]+"
-    else:
+    if stateEffector == "nHingedRigidBodies":
+        pattern = "nHingedRigidBodyInertial" + propType + r"[0-9]+_" + str(segment)
+    elif stateEffector == "spinningBodiesNDOF":
         pattern = "spinningBodyInertial" + propType + r"[0-9]+_" + str(segment)
+    else:
+        pattern = "linearTranslationInertial" + propType + r"[0-9]+"
     try:
         scObject.dynManager.getPropertyReference(handedPropName)
     except BasiliskError:
@@ -1122,6 +1131,52 @@ def setup_dualHingedRigidBodies():
     stateEffProps.r_PB_B = r_H2B_B  # [m]
     stateEffProps.r_PcP_P = hingedBody.d2 * s1_hat
     stateEffProps.inertialPropLogName = "dualHingedRigidBodyConfigLogOutMsgs"
+
+    return(hingedBody, stateEffProps)
+
+def setup_nHingedRigidBodies():
+    hingedBody = nHingedRigidBodyStateEffector.NHingedRigidBodyStateEffector()
+
+    # Define properties of the panel chain, which the module requires to be identical panels
+    numberOfPanels = 3
+    panelMass = 100.0  # [kg]
+    panelHalfLength = 0.75  # [m]
+    thetaInit = [5 * macros.D2R, -2 * macros.D2R, 3 * macros.D2R]  # [rad]
+    thetaDotInit = [-1 * macros.D2R, 0.0, 0.5 * macros.D2R]  # [rad/s]
+    hingedBody.dcm_HB = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+    hingedBody.r_HB_B = [[0.5], [-1.5], [-0.5]]  # [m]
+    for idx in range(numberOfPanels):
+        panel = nHingedRigidBodyStateEffector.HingedPanel()
+        panel.mass = panelMass  # [kg]
+        panel.d = panelHalfLength  # [m]
+        panel.k = 100.0  # [N*m/rad]
+        panel.c = 0.0  # [N*m*s/rad]
+        panel.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]  # [kg*m^2]
+        panel.thetaInit = thetaInit[idx]  # [rad]
+        panel.thetaDotInit = thetaDotInit[idx]  # [rad/s]
+        panel.theta_0 = 0.0  # [rad]
+        hingedBody.addHingedPanel(panel)
+    hingedBody.ModelTag = "HingedRigidBodyNDOF"
+
+    # Walk the chain to find each hinge, and the COM offset contribution to be divided by the hub mass
+    s1_hat = np.array([[-1.0], [0.0], [0.0]])
+    r_HB_B = np.array(hingedBody.r_HB_B)
+    hingeLocations = []
+    mr_ScB_B = 0.0
+    sumTheta = 0.0
+    for idx in range(numberOfPanels):
+        sumTheta += thetaInit[idx]
+        dcm_SB = rbk.euler2(sumTheta) @ np.array(hingedBody.dcm_HB)
+        hingeLocations.append(r_HB_B)
+        mr_ScB_B -= panelMass * (r_HB_B + np.transpose(dcm_SB) @ (panelHalfLength * s1_hat))
+        r_HB_B = r_HB_B + np.transpose(dcm_SB) @ (2 * panelHalfLength * s1_hat)
+
+    stateEffProps = stateEffectorProperties()
+    stateEffProps.totalMass = numberOfPanels * panelMass
+    stateEffProps.mr_PcB_B = mr_ScB_B
+    stateEffProps.r_PB_B = hingeLocations[1]  # [m] the panel the dynamic effector attaches to
+    stateEffProps.r_PcP_P = panelHalfLength * s1_hat
+    stateEffProps.inertialPropLogName = "nHingedRigidBodyConfigLogOutMsgs"
 
     return(hingedBody, stateEffProps)
 
