@@ -20,12 +20,13 @@
 #ifndef N_HINGED_RIGID_BODY_STATE_EFFECTOR_H
 #define N_HINGED_RIGID_BODY_STATE_EFFECTOR_H
 
-#include <Eigen/Dense>
-#include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
-#include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/utilities/avsEigenMRP.h"
 #include "architecture/utilities/bskLogging.h"
+#include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
+#include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
+#include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
+#include <Eigen/Dense>
 #include <cstdint>
 #include <string>
 #include <vector>
@@ -73,6 +74,24 @@ struct HingedPanel {
     Eigen::MatrixXd* v_HN_N = nullptr;     //!< [m/s] inertial velocity vector of H relative to the inertial frame
     Eigen::MatrixXd* sigma_SN = nullptr;   //!< -- MRP attitude of panel frame S relative to the inertial frame
     Eigen::MatrixXd* omega_SN_S = nullptr; //!< [rad/s] inertial panel frame angular velocity vector
+
+    std::vector<DynamicEffector*> dynEffectors; //!< -- Vector of dynamic effectors attached to this panel
+    Eigen::Vector3d extForce_B;                 //!< [N] attached effector force on this panel in B frame components
+    Eigen::Vector3d extTorquePntH_B; //!< [N-m] attached effector torque on this panel about H in B frame components
+
+    /**
+     * @brief Assign this panel's state-engine property names to an attached effector.
+     * @tparam Type Pointer type for an effector that accepts inertial property names.
+     * @param effector Effector that receives the panel's inertial property names.
+     */
+    template<typename Type>
+    void assignStateParamNames(Type effector)
+    {
+        effector->setPropName_inertialPosition(this->nameOfInertialPositionProperty);
+        effector->setPropName_inertialVelocity(this->nameOfInertialVelocityProperty);
+        effector->setPropName_inertialAttitude(this->nameOfInertialAttitudeProperty);
+        effector->setPropName_inertialAngVelocity(this->nameOfInertialAngVelocityProperty);
+    };
 };
 
 /*! @brief NHingedRigidBodyStateEffector class */
@@ -115,6 +134,7 @@ public:
     void UpdateState(uint64_t CurrentSimNanos) override;
     void registerStates(DynParamManager& statesIn) override; //!< -- Method for registering the HRB states
     void registerProperties(DynParamManager& states) override; //!< -- Method for registering the panel properties
+    void addDynamicEffector(DynamicEffector* newDynamicEffector, int segment) override; //!< -- Attach an effector
     void linkInStates(DynParamManager& states) override;     //!< -- Method for getting access to other states
     void updateEffectorMassProps(double integTime) override; //!< -- Method for stateEffector to give mass contributions
     void updateContributions(double integTime,
