@@ -105,6 +105,9 @@ public:
                             Eigen::Vector3d rDDot_BN_N,
                             Eigen::Vector3d omegaDot_BN_B,
                             Eigen::MRPd sigma_BN) override; //!< -- Method for computing the effector derivatives
+
+private:
+    void checkPanelUniformity(); //!< -- Method for rejecting a panel chain the EOMs cannot represent
 };
 
 

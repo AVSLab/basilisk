@@ -30,6 +30,7 @@ splitPath = path.split('SimCode')
 sys.path.append(splitPath[0] + '/modules')
 sys.path.append(splitPath[0] + '/PythonModules')
 
+from Basilisk.architecture.bskLogging import BasiliskError
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import simHelpers
@@ -86,6 +87,47 @@ values have all been confirmed to be conserved.
     """
     [testResults, testMessage] = nHingedRigidBody(show_plots, testCase)
     assert testResults < 1, testMessage
+
+
+@pytest.mark.parametrize("chain", ['UnequalMass', 'UnequalDistance', 'NoPanels'])
+def test_nHingedRigidBodyRejectsUnevenChain(chain):
+    """
+The equations of motion are derived for a chain of identical panels, factoring one panel mass and
+one hinge to center of mass distance out of the sums that run over the chain. A chain that violates
+that assumption integrates without complaint, so this test asserts that initialization rejects it
+instead. This is a separate test from the conservation test above because it asserts an error
+rather than a conserved quantity, and because a rejected configuration never reaches integration.
+
+**Test Parameters:**
+
+- chain: [string]
+    which requirement the panel chain violates (UnequalMass, UnequalDistance, or NoPanels)
+    """
+    scObject = spacecraft.Spacecraft()
+    scObject.ModelTag = "spacecraftBody"
+    scObject.hub.mHub = 750.0  # [kg]
+    scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]  # [kg*m^2]
+
+    effector = nHingedRigidBodyStateEffector.NHingedRigidBodyStateEffector()
+    if chain != 'NoPanels':
+        for factor in [1.0, 2.0]:
+            panel = nHingedRigidBodyStateEffector.HingedPanel()
+            panel.mass = 50.0 * (factor if chain == 'UnequalMass' else 1.0)  # [kg]
+            panel.d = 0.75 * (factor if chain == 'UnequalDistance' else 1.0)  # [m]
+            panel.k = 500.0  # [N*m/rad]
+            panel.c = 0.0  # [N*m*s/rad]
+            panel.IPntS_S = [[50.0, 0.0, 0.0], [0.0, 25.0, 0.0], [0.0, 0.0, 25.0]]  # [kg*m^2]
+            effector.addHingedPanel(panel)
+    scObject.addStateEffector(effector)
+
+    unitTestSim = SimulationBaseClass.SimBaseClass()
+    unitTestSim.CreateNewProcess("TestProcess").addTask(
+        unitTestSim.CreateNewTask("unitTask", macros.sec2nano(0.0001)))
+    unitTestSim.AddModelToTask("unitTask", scObject)
+
+    with pytest.raises(BasiliskError):
+        unitTestSim.InitializeSimulation()
+
 
 def nHingedRigidBody(show_plots, testCase):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
