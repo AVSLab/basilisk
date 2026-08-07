@@ -95,6 +95,17 @@ def test_mrp_pd_rust_rejects_invalid_configuration():
     assert controller.knownTorquePntB_B == [0.1, 0.2, 0.3]
 
 
+def test_mrp_pd_rust_logger_treats_python_message_as_text():
+    """Preserve format directives passed through a Rust module logger proxy."""
+    bsk_logger = mrpPDRust.BSKLogger()
+    message = "preformatted %s message"
+
+    with pytest.raises(BasiliskError) as error:
+        bsk_logger.bskLog(mrpPDRust.BSK_ERROR, message)
+
+    assert str(error.value) == message
+
+
 def test_mrp_pd_rust_rejects_invalid_inertia_message():
     """Validate inertia received through the vehicle-configuration message."""
     simulation = SimulationBaseClass.SimBaseClass()

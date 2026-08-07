@@ -29,6 +29,17 @@ def test_bsk_error_treats_python_message_as_text():
         bsk_logger.error("preformatted %s message")
 
 
+def test_bsk_log_treats_python_message_as_text():
+    """Preserve format directives passed through the Python ``bskLog`` API."""
+    bsk_logger = bskLogging.BSKLogger()
+    message = "preformatted %s message"
+
+    with pytest.raises(bskLogging.BasiliskError) as error:
+        bsk_logger.bskLog(bskLogging.BSK_ERROR, message)
+
+    assert str(error.value) == message
+
+
 def test_warning_level_output_is_flushed(capfd):
     """A ``BSK_WARNING`` must reach stdout at log time (issue #1444).
 
