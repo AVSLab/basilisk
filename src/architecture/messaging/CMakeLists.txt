@@ -115,8 +115,10 @@ function(generate_messages searchDir generateCCode)
                  "${CMAKE_CURRENT_SOURCE_DIR}/newMessaging.ih"
                  "${CMAKE_CURRENT_SOURCE_DIR}/messaging.h"
                  "${CMAKE_CURRENT_SOURCE_DIR}/messagingBase.h"
-                 "${CMAKE_CURRENT_SOURCE_DIR}/messagingBase.i")
-    add_dependencies(${TARGET_NAME} messagingBase swigtrick)
+                 "${CMAKE_CURRENT_SOURCE_DIR}/messagingBase.i"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/messagingSupport.i"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/messagingSupportTypemaps.swg")
+    add_dependencies(${TARGET_NAME} messagingBase messagingSupport swigtrick)
     set_target_properties(${TARGET_NAME} PROPERTIES FOLDER "architecture/messaging/derivedCode")
     set_target_properties(${SWIG_MODULE_${TARGET_NAME}_REAL_NAME}
                           PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging")
@@ -181,6 +183,52 @@ endif(NOT "${EXTERNAL_MODULES_PATH}" STREQUAL "")
 # Custom target for establishing dependency
 add_custom_target(swigtrick DEPENDS ${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/__init__.py)
 add_dependencies(swigtrick msgKeepAlivePy)
+
+# Build common payload-wrapper types and helpers once, inside the messaging
+# package, instead of emitting them into every generated payload extension.
+set(MESSAGING_SUPPORT_INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/messagingSupport.i")
+set_property(SOURCE ${MESSAGING_SUPPORT_INTERFACE} PROPERTY CPLUSPLUS ON)
+set_property(SOURCE ${MESSAGING_SUPPORT_INTERFACE} PROPERTY USE_TARGET_INCLUDE_DIRECTORIES TRUE)
+set_property(
+  SOURCE ${MESSAGING_SUPPORT_INTERFACE}
+  PROPERTY SWIG_FLAGS
+           "-I${CMAKE_CURRENT_SOURCE_DIR}/../"
+           "-I${CMAKE_CURRENT_SOURCE_DIR}/../../"
+           "-I${CMAKE_BINARY_DIR}/autoSource/"
+           "-I${Python3_INCLUDE_DIRS}"
+           "-I${NUMPY_INCLUDE_DIR}")
+
+swig_add_library(
+  messagingSupport
+  LANGUAGE "python"
+  TYPE MODULE
+  SOURCES ${MESSAGING_SUPPORT_INTERFACE}
+  OUTFILE_DIR "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/"
+  OUTPUT_DIR "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/")
+set_property(
+  TARGET messagingSupport
+  APPEND
+  PROPERTY SWIG_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/messagingSupportTypemaps.swg")
+
+bsk_suppress_strict_warnings_for_sources(
+  "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/messagingSupportPYTHON_wrap.cxx")
+target_include_directories(messagingSupport PRIVATE ${Python3_INCLUDE_DIRS})
+target_include_directories(messagingSupport PRIVATE ${NUMPY_INCLUDE_DIR})
+target_include_directories(messagingSupport PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../..)
+target_link_libraries(messagingSupport PUBLIC architectureLib)
+set_target_properties(messagingSupport PROPERTIES FOLDER "architecture/messaging")
+set_target_properties(
+  ${SWIG_MODULE_messagingSupport_REAL_NAME}
+  PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging"
+             LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging"
+             LIBRARY_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging")
+
+# The target is created above with messaging-package output paths; do not let
+# the root architecture target discovery create it a second time.
+list(APPEND EXCLUDED_BSK_TARGETS messagingSupport)
+set(EXCLUDED_BSK_TARGETS
+    ${EXCLUDED_BSK_TARGETS}
+    PARENT_SCOPE)
 
 # Generate per-payload equality headers. Each "<Payload>_equality.h" is included
 # only by that payload's own SWIG module.

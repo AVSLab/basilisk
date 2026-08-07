@@ -14,6 +14,9 @@ def generatePackageInit(moduleOutputPath, headerInputPaths):
     os.makedirs(moduleOutputPath, exist_ok=True)
     outputPath = os.path.join(moduleOutputPath, '__init__.py')
     with open(outputPath, 'w', encoding='utf-8') as mainImportFile:
+        mainImportFile.write(
+            'from Basilisk.architecture.messaging.messagingSupport import *\n'
+        )
         for headerInputPath in headerInputPaths:
             for fileName in sorted(os.listdir(headerInputPath)):
                 if fileName.endswith(('.h', '.hpp')):
