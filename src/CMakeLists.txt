@@ -176,6 +176,26 @@ function(generate_package_libraries INIT_DIRECTORY AllLibs)
     # Grab the library source files
     file(GLOB C_FILES CONFIGURE_DEPENDS
          "${LIB_DIR}/*.cpp" "${LIB_DIR}/*.c" "${LIB_DIR}/*.h")
+    # A package library can explicitly own implementations that remain beside
+    # their module interfaces rather than under _GeneralModuleFiles.
+    set(PACKAGE_SOURCES_FILE "${CMAKE_SOURCE_DIR}/${LIB_DIR}/PackageSources.cmake")
+    if(EXISTS "${PACKAGE_SOURCES_FILE}")
+      unset(BSK_PACKAGE_LIBRARY_SOURCES)
+      include("${PACKAGE_SOURCES_FILE}")
+      if(NOT DEFINED BSK_PACKAGE_LIBRARY_SOURCES)
+        message(FATAL_ERROR "${PACKAGE_SOURCES_FILE} does not declare BSK_PACKAGE_LIBRARY_SOURCES.")
+      endif()
+      foreach(PACKAGE_LIBRARY_SOURCE IN LISTS BSK_PACKAGE_LIBRARY_SOURCES)
+        cmake_path(
+          NORMAL_PATH
+          PACKAGE_LIBRARY_SOURCE
+          OUTPUT_VARIABLE NORMALIZED_PACKAGE_LIBRARY_SOURCE)
+        if(NOT EXISTS "${NORMALIZED_PACKAGE_LIBRARY_SOURCE}")
+          message(FATAL_ERROR "${PACKAGE_SOURCES_FILE} names missing source ${PACKAGE_LIBRARY_SOURCE}.")
+        endif()
+        list(APPEND C_FILES "${NORMALIZED_PACKAGE_LIBRARY_SOURCE}")
+      endforeach()
+    endif()
 
     # Add Target
     add_library(${LIB_NAME} SHARED ${C_FILES})
@@ -275,6 +295,82 @@ function(find_python_package_targets PKG_DIR ALL_TARGET_LIST)
       PARENT_SCOPE)
 endfunction(find_python_package_targets)
 
+function(bsk_select_wrapper_implementation_sources TARGET_NAME PARENT_DIR LIB_DEP_LIST OUT_VAR)
+  file(GLOB IMPLEMENTATION_FILES CONFIGURE_DEPENDS "${PARENT_DIR}/*.c" "${PARENT_DIR}/*.cpp")
+
+  # A linked package library owns its sources, so wrappers must not compile them.
+  set(AVAILABLE_IMPLEMENTATION_FILES ${IMPLEMENTATION_FILES})
+  foreach(LIB IN LISTS LIB_DEP_LIST)
+    if(TARGET "${LIB}")
+      get_target_property(LIB_SOURCE_FILES "${LIB}" SOURCES)
+      if(LIB_SOURCE_FILES)
+        list(REMOVE_ITEM AVAILABLE_IMPLEMENTATION_FILES ${LIB_SOURCE_FILES})
+      endif()
+    endif()
+  endforeach()
+
+  file(GLOB INTERFACE_FILES CONFIGURE_DEPENDS "${PARENT_DIR}/*.i")
+  list(LENGTH INTERFACE_FILES INTERFACE_FILE_COUNT)
+  if(INTERFACE_FILE_COUNT LESS 2 OR NOT AVAILABLE_IMPLEMENTATION_FILES)
+    set(${OUT_VAR}
+        ${AVAILABLE_IMPLEMENTATION_FILES}
+        PARENT_SCOPE)
+    return()
+  endif()
+
+  set(OWNERSHIP_FILE "${CMAKE_SOURCE_DIR}/${PARENT_DIR}/ModuleSources.cmake")
+  if(NOT EXISTS "${OWNERSHIP_FILE}")
+    message(
+      FATAL_ERROR
+        "${PARENT_DIR} contains multiple SWIG interfaces and local implementation sources. "
+        "Add ModuleSources.cmake with a BSK_MODULE_SOURCES_<target> declaration for every interface target."
+    )
+  endif()
+  include("${OWNERSHIP_FILE}")
+
+  set(DECLARED_IMPLEMENTATION_FILES "")
+  set(TARGET_IMPLEMENTATION_FILES "")
+  foreach(INTERFACE_FILE IN LISTS INTERFACE_FILES)
+    get_filename_component(INTERFACE_TARGET_NAME "${INTERFACE_FILE}" NAME_WE)
+    set(MODULE_SOURCE_VARIABLE "BSK_MODULE_SOURCES_${INTERFACE_TARGET_NAME}")
+    if(NOT DEFINED ${MODULE_SOURCE_VARIABLE})
+      message(FATAL_ERROR "${OWNERSHIP_FILE} does not declare ${MODULE_SOURCE_VARIABLE}.")
+    endif()
+
+    foreach(MODULE_SOURCE_FILE IN LISTS ${MODULE_SOURCE_VARIABLE})
+      cmake_path(
+        ABSOLUTE_PATH
+        MODULE_SOURCE_FILE
+        BASE_DIRECTORY "${CMAKE_SOURCE_DIR}/${PARENT_DIR}"
+        NORMALIZE
+        OUTPUT_VARIABLE ABSOLUTE_MODULE_SOURCE_FILE)
+      if(NOT ABSOLUTE_MODULE_SOURCE_FILE IN_LIST AVAILABLE_IMPLEMENTATION_FILES)
+        message(
+          FATAL_ERROR
+            "${MODULE_SOURCE_VARIABLE} assigns ${MODULE_SOURCE_FILE}, which is not an available local implementation source."
+        )
+      endif()
+      if(ABSOLUTE_MODULE_SOURCE_FILE IN_LIST DECLARED_IMPLEMENTATION_FILES)
+        message(FATAL_ERROR "${MODULE_SOURCE_FILE} has more than one owner in ${OWNERSHIP_FILE}.")
+      endif()
+      list(APPEND DECLARED_IMPLEMENTATION_FILES "${ABSOLUTE_MODULE_SOURCE_FILE}")
+      if(INTERFACE_TARGET_NAME STREQUAL TARGET_NAME)
+        list(APPEND TARGET_IMPLEMENTATION_FILES "${ABSOLUTE_MODULE_SOURCE_FILE}")
+      endif()
+    endforeach()
+  endforeach()
+
+  foreach(IMPLEMENTATION_FILE IN LISTS AVAILABLE_IMPLEMENTATION_FILES)
+    if(NOT IMPLEMENTATION_FILE IN_LIST DECLARED_IMPLEMENTATION_FILES)
+      message(FATAL_ERROR "${IMPLEMENTATION_FILE} has no owner in ${OWNERSHIP_FILE}.")
+    endif()
+  endforeach()
+
+  set(${OUT_VAR}
+      ${TARGET_IMPLEMENTATION_FILES}
+      PARENT_SCOPE)
+endfunction(bsk_select_wrapper_implementation_sources)
+
 function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
   foreach(TARGET_FILE ${TARGET_LIST})
     get_filename_component(TARGET_NAME ${TARGET_FILE} NAME_WE)
@@ -296,18 +392,13 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
       "${PARENT_DIR}/*.cmake"
       "${PARENT_DIR}/*.rst")
 
-    # Do not compile sources into a SWIG target when one of its linked libraries
-    # already owns them.  This is especially important for directories containing
-    # multiple interfaces, where every wrapper would otherwise build every source.
+    # Compile only the implementation sources owned by this wrapper. Keep the
+    # neighboring headers and documentation attached for dependency and IDE use.
+    bsk_select_wrapper_implementation_sources(
+      "${TARGET_NAME}" "${PARENT_DIR}" "${LIB_DEP_LIST}" WRAPPER_IMPLEMENTATION_FILES)
     set(WRAPPER_FILES ${C_FILES})
-    foreach(LIB IN LISTS LIB_DEP_LIST)
-      if(TARGET "${LIB}")
-        get_target_property(LIB_SOURCE_FILES "${LIB}" SOURCES)
-        if(LIB_SOURCE_FILES)
-          list(REMOVE_ITEM WRAPPER_FILES ${LIB_SOURCE_FILES})
-        endif()
-      endif()
-    endforeach()
+    list(FILTER WRAPPER_FILES EXCLUDE REGEX "\\.(c|cpp)$")
+    list(APPEND WRAPPER_FILES ${WRAPPER_IMPLEMENTATION_FILES})
 
     set_property(SOURCE ${TARGET_FILE} PROPERTY USE_TARGET_INCLUDE_DIRECTORIES TRUE) # Allows for include paths in the
                                                                                      # .i files

@@ -309,6 +309,23 @@ Use ``ExternalModules/_GeneralModuleFiles`` for support code shared by multiple
 external modules. Keep module-specific files in the module directory so the
 build dependencies remain understandable.
 
+If one directory contains multiple SWIG ``.i`` files and local C or C++
+implementations, add a ``ModuleSources.cmake`` file that assigns each source to
+one wrapper target. Every interface in that directory needs a declaration; use
+an empty string for an interface whose implementation is supplied by a linked
+library. For example:
+
+.. code-block:: cmake
+
+   set(BSK_MODULE_SOURCES_firstModule firstModule.cpp)
+   set(BSK_MODULE_SOURCES_secondModule secondModule.c)
+   set(BSK_MODULE_SOURCES_libraryBackedModule "")
+
+Configuration stops with an error if a local implementation is missing, named
+more than once, or outside the directory's available implementation sources.
+Put an implementation shared by multiple wrappers in ``_GeneralModuleFiles``
+instead of assigning it to multiple targets.
+
 For additional include paths, compile definitions, or third-party libraries,
 an advanced external module can provide ``Custom.cmake`` in its module
 directory. The build also checks for ``Custom.cmake`` associated with shared
