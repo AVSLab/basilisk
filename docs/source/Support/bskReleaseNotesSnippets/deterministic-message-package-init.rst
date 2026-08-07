@@ -9,3 +9,5 @@
 - Assigned local implementations explicitly in directories containing multiple SWIG interfaces.
 - Consolidated common message-wrapper helpers into one support extension while preserving their Python names.
 - Removed the unused logging dependency from the common ``SysModel`` header.
+- Prevented header-only package groups from producing empty shared libraries and restored shared ``_GeneralModuleFiles/Custom.cmake`` hooks for built-in and external wrappers.
+- Updated the downloadable external-module example for the current Rust message-output API.

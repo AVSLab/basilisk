@@ -23,7 +23,16 @@ list(APPEND CMAKE_PREFIX_PATH "${CMAKE_BINARY_DIR}/conan")
 
 include(bskTargetExcludeBuildOptions)
 include(bskBuildInfo)
+include(bskCollectWrapperCustomFiles)
 include(bskFindRustModules)
+
+# Track the appearance and removal of module-local and shared Custom.cmake
+# hooks with one recursive check per source root.
+bsk_collect_custom_cmake_files(BSK_SOURCE_CUSTOM_CMAKE_FILES "${CMAKE_SOURCE_DIR}")
+if(NOT "${EXTERNAL_MODULES_PATH}" STREQUAL "")
+  bsk_collect_custom_cmake_files(
+    BSK_EXTERNAL_CUSTOM_CMAKE_FILES "${EXTERNAL_MODULES_PATH}")
+endif()
 
 # Find necessary packages
 find_package(Python3 ${PYTHON_VERSION} EXACT REQUIRED COMPONENTS Interpreter Development.Module OPTIONAL_COMPONENTS Development.SABIModule)
@@ -179,7 +188,8 @@ function(generate_package_libraries INIT_DIRECTORY AllLibs)
     # A package library can explicitly own implementations that remain beside
     # their module interfaces rather than under _GeneralModuleFiles.
     set(PACKAGE_SOURCES_FILE "${CMAKE_SOURCE_DIR}/${LIB_DIR}/PackageSources.cmake")
-    if(EXISTS "${PACKAGE_SOURCES_FILE}")
+    bsk_collect_optional_cmake_file(PACKAGE_SOURCES_FILES "${PACKAGE_SOURCES_FILE}")
+    if(PACKAGE_SOURCES_FILES)
       unset(BSK_PACKAGE_LIBRARY_SOURCES)
       include("${PACKAGE_SOURCES_FILE}")
       if(NOT DEFINED BSK_PACKAGE_LIBRARY_SOURCES)
@@ -195,6 +205,17 @@ function(generate_package_libraries INIT_DIRECTORY AllLibs)
         endif()
         list(APPEND C_FILES "${NORMALIZED_PACKAGE_LIBRARY_SOURCE}")
       endforeach()
+    endif()
+
+    # Header-only _GeneralModuleFiles directories do not need an owning
+    # binary. In particular, a SHARED library without exported symbols is not
+    # valid on Windows. Their headers remain available through the source-tree
+    # include paths used by the consuming wrappers.
+    set(PACKAGE_IMPLEMENTATION_FILES ${C_FILES})
+    list(FILTER PACKAGE_IMPLEMENTATION_FILES INCLUDE REGEX "\\.(c|cpp)$")
+    if(NOT PACKAGE_IMPLEMENTATION_FILES)
+      message(STATUS "Skipped Header-Only Package Library: ${PARENT_DIR_NAME}")
+      continue()
     endif()
 
     # Add Target
@@ -371,6 +392,19 @@ function(bsk_select_wrapper_implementation_sources TARGET_NAME PARENT_DIR LIB_DE
       PARENT_SCOPE)
 endfunction(bsk_select_wrapper_implementation_sources)
 
+function(bsk_include_wrapper_custom_files TARGET_FILE TARGET_NAME PARENT_DIR MODULE_DIR)
+  bsk_collect_wrapper_custom_files(
+    CUSTOM_FILES
+    "${PARENT_DIR}"
+    "${MODULE_DIR}"
+    "${CMAKE_SOURCE_DIR}"
+    "${EXTERNAL_MODULES_PATH}")
+  foreach(CUSTOM_FILE IN LISTS CUSTOM_FILES)
+    message(STATUS "Including custom Custom.cmake for: ${TARGET_FILE}")
+    include("${CUSTOM_FILE}")
+  endforeach()
+endfunction(bsk_include_wrapper_custom_files)
+
 function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
   foreach(TARGET_FILE ${TARGET_LIST})
     get_filename_component(TARGET_NAME ${TARGET_FILE} NAME_WE)
@@ -431,16 +465,8 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
       endforeach()
     endif()
 
-    # Collect any external dependencies
-    if(EXISTS "${CMAKE_SOURCE_DIR}/${PARENT_DIR}/Custom.cmake")
-      message(STATUS "Including custom Custom.cmake for: ${TARGET_FILE}")
-      include("${PARENT_DIR}/Custom.cmake")
-    endif()
-    # Also look for a Custom.cmake on the _GeneralModuleFiles
-    if(EXISTS "${MODULE_DIR}/${SUBMODULE}/_GeneralModuleFiles/Custom.cmake")
-      message(STATUS "Including custom Custom.cmake for: ${TARGET_FILE}")
-      include("${MODULE_DIR}/${SUBMODULE}/_GeneralModuleFiles/Custom.cmake")
-    endif()
+    # Collect module-local and shared package dependencies.
+    bsk_include_wrapper_custom_files("${TARGET_FILE}" "${TARGET_NAME}" "${PARENT_DIR}" "${MODULE_DIR}")
 
     target_include_directories(${TARGET_NAME} PRIVATE ${Python3_INCLUDE_DIRS}) # Exposes python.h to wrap.c(xx) file
     target_include_directories(

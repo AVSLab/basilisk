@@ -29,6 +29,7 @@ import os
 import shutil
 import subprocess
 import sys
+import tempfile
 import time
 from contextlib import contextmanager
 from dataclasses import dataclass
@@ -57,6 +58,20 @@ class WrapperTarget:
 
 class IncrementalBuildError(RuntimeError):
     """Report an incremental-build behavior regression."""
+
+
+def cmake_executable() -> str:
+    """Return the CMake executable used by the active Python environment."""
+
+    cmake = shutil.which("cmake")
+    if cmake is not None:
+        return cmake
+
+    environment_cmake = Path(sys.executable).with_name("cmake")
+    if environment_cmake.is_file():
+        return str(environment_cmake)
+
+    raise IncrementalBuildError("Could not locate the CMake executable.")
 
 
 def parse_arguments() -> argparse.Namespace:
@@ -118,16 +133,8 @@ def run_build(
 ) -> str:
     """Build the representative targets and return their combined output."""
 
-    cmake = shutil.which("cmake")
-    if cmake is None:
-        environment_cmake = Path(sys.executable).with_name("cmake")
-        if environment_cmake.is_file():
-            cmake = str(environment_cmake)
-        else:
-            raise IncrementalBuildError("Could not locate the CMake executable.")
-
     command = [
-        cmake,
+        cmake_executable(),
         "--build",
         str(build_dir),
         "--parallel",
@@ -152,6 +159,66 @@ def run_build(
             f"CMake build failed with exit status {result.returncode}."
         )
     return result.stdout
+
+
+def assert_package_configuration(source_dir: Path, build_dir: Path) -> None:
+    """Check header-only libraries and shared Custom.cmake discovery."""
+
+    help_command = [
+        cmake_executable(),
+        "--build",
+        str(build_dir),
+        "--target",
+        "help",
+    ]
+    help_result = subprocess.run(
+        help_command,
+        check=False,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True,
+    )
+    if help_result.returncode:
+        raise IncrementalBuildError(
+            f"CMake target listing failed with exit status {help_result.returncode}.\n"
+            f"{help_result.stdout}"
+        )
+
+    unexpected_libraries = [
+        library
+        for library in ("communicationLib", "vizardLib")
+        if library in help_result.stdout
+    ]
+    if unexpected_libraries:
+        raise IncrementalBuildError(
+            "Header-only packages created binary library targets: "
+            + ", ".join(unexpected_libraries)
+        )
+    print("PASS: header-only packages did not create binary libraries.")
+
+    test_script = REPOSITORY_ROOT / ".github/scripts/test_cmake_package_configuration.cmake"
+    require_files((test_script,))
+    with tempfile.TemporaryDirectory(prefix="bsk-cmake-package-") as temporary_dir:
+        custom_file_command = [
+            cmake_executable(),
+            f"-DBSK_SOURCE_DIR={source_dir}",
+            f"-DTEST_ROOT={temporary_dir}",
+            "-P",
+            str(test_script),
+        ]
+        custom_file_result = subprocess.run(
+            custom_file_command,
+            check=False,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+        )
+    print(custom_file_result.stdout, end="")
+    if custom_file_result.returncode:
+        raise IncrementalBuildError(
+            "Custom.cmake discovery check failed with exit status "
+            f"{custom_file_result.returncode}."
+        )
 
 
 def require_files(paths: tuple[Path, ...]) -> None:
@@ -273,6 +340,7 @@ def run_regression_test(args: argparse.Namespace) -> None:
     unrelated_cpp = source_dir / "architecture/_GeneralModuleFiles/sys_model.cpp"
 
     require_files((shared_swig_include, unrelated_cpp))
+    assert_package_configuration(source_dir, build_dir)
     run_build(build_dir, targets, args.parallel, args.config)
     require_files(wrappers)
 
