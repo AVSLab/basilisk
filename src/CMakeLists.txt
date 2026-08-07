@@ -278,54 +278,6 @@ function(find_python_package_targets PKG_DIR ALL_TARGET_LIST)
 endfunction(find_python_package_targets)
 
 function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
-
-  if(TARGET_LIST)
-    string(REPLACE "/" ";" DirList "${TARGET_LIST}")
-    list(GET DirList 1 SUBMODULE)
-
-    # It is redundant to compute simulation modules for each target. This should be fixed when modules' directories are
-    # restructured.
-    file(
-      GLOB
-      GEN_FILES
-      CONFIGURE_DEPENDS
-      "${CMAKE_SOURCE_DIR}/architecture/_GeneralModuleFiles/*.c"
-      "${CMAKE_SOURCE_DIR}/architecture/_GeneralModuleFiles/*.cpp"
-      "${CMAKE_SOURCE_DIR}/architecture/_GeneralModuleFiles/*.h"
-      "${CMAKE_SOURCE_DIR}/architecture/_GeneralModuleFiles/*.i")
-
-    # mujocoDynamics is special in that it also gets to see the
-    # dynamics/_GeneralModuleFiles headers
-    if(${MODULE_DIR} STREQUAL "simulation/mujocoDynamics")
-      file(
-        GLOB
-        GEN_FILES_DYNAMICS
-        CONFIGURE_DEPENDS
-        "${CMAKE_SOURCE_DIR}/simulation/dynamics/_GeneralModuleFiles/*.c"
-        "${CMAKE_SOURCE_DIR}/simulation/dynamics/_GeneralModuleFiles/*.cpp"
-        "${CMAKE_SOURCE_DIR}/simulation/dynamics/_GeneralModuleFiles/*.h"
-        "${CMAKE_SOURCE_DIR}/simulation/dynamics/_GeneralModuleFiles/*.i"
-      )
-      list (APPEND GEN_FILES ${GEN_FILES_DYNAMICS})
-    endif()
-
-    if(${MODULE_DIR} STREQUAL "ExternalModules")
-      file(
-        GLOB
-        GEN_FILES_LOCAL
-        CONFIGURE_DEPENDS
-        "${EXTERNAL_MODULES_PATH}/${MODULE_DIR}/_GeneralModuleFiles/*.c"
-        "${EXTERNAL_MODULES_PATH}/${MODULE_DIR}/_GeneralModuleFiles/*.cpp"
-        "${EXTERNAL_MODULES_PATH}/${MODULE_DIR}/_GeneralModuleFiles/*.h"
-        "${EXTERNAL_MODULES_PATH}/${MODULE_DIR}/_GeneralModuleFiles/*.i")
-    else()
-      file(GLOB GEN_FILES_LOCAL CONFIGURE_DEPENDS
-           "${MODULE_DIR}/${SUBMODULE}/_GeneralModuleFiles/*.c"
-           "${MODULE_DIR}/${SUBMODULE}/_GeneralModuleFiles/*.cpp" "${MODULE_DIR}/${SUBMODULE}/_GeneralModuleFiles/*.h"
-           "${MODULE_DIR}/${SUBMODULE}/_GeneralModuleFiles/*.i")
-    endif()
-  endif()
-
   foreach(TARGET_FILE ${TARGET_LIST})
     get_filename_component(TARGET_NAME ${TARGET_FILE} NAME_WE)
     get_filename_component(PARENT_DIR ${TARGET_FILE} DIRECTORY)
@@ -345,17 +297,11 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
       "${PARENT_DIR}/*.h"
       "${PARENT_DIR}/*.cmake"
       "${PARENT_DIR}/*.rst")
-    file(GLOB SWIG_DEP CONFIGURE_DEPENDS
-         "${PARENT_DIR}/*.c" "${PARENT_DIR}/*.cpp" "${PARENT_DIR}/*.h")
 
     set_property(SOURCE ${TARGET_FILE} PROPERTY USE_TARGET_INCLUDE_DIRECTORIES TRUE) # Allows for include paths in the
                                                                                      # .i files
     set_property(SOURCE ${TARGET_FILE} PROPERTY CPLUSPLUS ON)
 
-    # Add Target To add dependency so that any change to source file will reswig the interface file
-    # https://stackoverflow.com/questions/31007635/is-there-a-way-for-cmake-to-utilize-dependencies-generated-by-swig-mm
-    # https://public.kitware.com/pipermail/cmake/2012-December/053045.html
-    set(SWIG_MODULE_${TARGET_NAME}_EXTRA_DEPS ${SWIG_DEP} ${GEN_FILES} ${GEN_FILES_LOCAL})
     swig_add_library(
       ${TARGET_NAME}
       LANGUAGE "python"
