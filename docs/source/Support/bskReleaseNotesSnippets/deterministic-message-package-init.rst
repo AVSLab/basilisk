@@ -1,1 +1,2 @@
 - Made generated Python message package imports deterministic so split wheel builds remain compatible across independent runners.
+- Prevented strict compiler warnings from being applied to generated Rust SWIG wrapper sources.
