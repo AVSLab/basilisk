@@ -19,7 +19,6 @@
 
 #include "nHingedRigidBodyStateEffector.h"
 #include "architecture/utilities/avsEigenSupport.h"
-#include <iostream>
 
 /*! This is the constructor, setting variables to default values */
 NHingedRigidBodyStateEffector::NHingedRigidBodyStateEffector()
@@ -43,14 +42,6 @@ uint64_t NHingedRigidBodyStateEffector::effectorID = 1;
 
 /*! This is the destructor, nothing to report here */
 NHingedRigidBodyStateEffector::~NHingedRigidBodyStateEffector()
-{
-    return;
-}
-
-
-/*! This method reads necessary input messages
-  */
-void NHingedRigidBodyStateEffector::readInputMessages()
 {
     return;
 }
@@ -131,7 +122,6 @@ void NHingedRigidBodyStateEffector::updateEffectorMassProps(double integTime [[m
         PanelIt->thetaDot = thetaDotVector(it, 0);
         // - Next find the sHat unit vectors
         sum_Theta += PanelIt->theta;
-        PanelIt->dcm_SS_prev = eigenM2(PanelIt->theta);
         PanelIt->dcm_SB = eigenM2(sum_Theta)*this->dcm_HB;
         PanelIt->sHat1_B = PanelIt->dcm_SB.row(0);
         PanelIt->sHat2_B = PanelIt->dcm_SB.row(1);
@@ -386,11 +376,6 @@ void NHingedRigidBodyStateEffector::updateContributions(double integTime [[maybe
         backSubContr.vecTrans += -sumTerm2 - sumTerm1 * (eRow * this->vectorVDHRB);
         j += 1;
     }
-    Eigen::Vector3d aTheta;
-    Eigen::Vector3d bTheta;
-
-    aTheta = this->matrixEDHRB.row(0)*this->matrixFDHRB;
-    bTheta = this->matrixEDHRB.row(0)*this->matrixGDHRB;
 
     // - Rotational contributions
     backSubContr.matrixC.setZero();

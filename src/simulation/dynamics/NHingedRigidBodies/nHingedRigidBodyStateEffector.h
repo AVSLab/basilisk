@@ -26,6 +26,9 @@
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/utilities/avsEigenMRP.h"
 #include "architecture/utilities/bskLogging.h"
+#include <cstdint>
+#include <string>
+#include <vector>
 
 
 
@@ -42,7 +45,6 @@ struct HingedPanel {
     double theta = 0.0;              //!< [rad] hinged rigid body angle
     double theta_0 = 0.0;            //!< [rad] hinged rigid body rest angle
     double thetaDot = 0.0;           //!< [rad/s] hinged rigid body angle rate
-    Eigen::Matrix3d dcm_SS_prev;     //!< -- DCM from previous S frame to current S frame
     Eigen::Matrix3d dcm_SB;          //!< -- DCM from body to S frame
     Eigen::Vector3d omega_BN_S;      //!< [rad/s] omega_BN in S frame components
     Eigen::Vector3d omega_SB_B;      //!< [rad/s] omega_SB in B frame components
@@ -69,22 +71,16 @@ public:
 
 private:
     double totalMass;                //!< [kg] Total mass of effector
-    StateData *thetaState;           //!< -- state manager of theta for hinged rigid body
-    StateData *thetaDotState;        //!< -- state manager of thetaDot for hinged rigid body
+    StateData* thetaState;           //!< -- state manager of theta for hinged rigid body
+    StateData* thetaDotState;        //!< -- state manager of thetaDot for hinged rigid body
     std::vector<HingedPanel> PanelVec; //!< -- vector containing all the info on the different panels
     Eigen::MatrixXd matrixADHRB;    //!< [-] term needed for back substitution
     Eigen::MatrixXd matrixEDHRB;    //!< [-] term needed for back substitution
     Eigen::MatrixX3d matrixFDHRB;   //!< [-] term needed for back substitution
     Eigen::MatrixX3d matrixGDHRB;   //!< [-] term needed for back substitution
-    Eigen::MatrixXd matrixHDHRB;    //!< [-] term needed for back substitution
-    Eigen::MatrixXd matrixKDHRB;    //!< [-] term needed for back substitution
-    Eigen::MatrixXd matrixLDHRB;    //!< [-] term needed for back substitution
-    Eigen::MatrixXd matrixMDHRB;    //!< [-] term needed for back substitution
     Eigen::VectorXd vectorVDHRB;    //!< [-] term needed for back substitution
-    Eigen::Vector3d aTheta;         //!< -- term needed for back substitution
-    Eigen::Vector3d bTheta;         //!< -- term needed for back substitution
     Eigen::Vector3d omegaLoc_BN_B;  //!< [rad/s] local copy of omegaBN
-    Eigen::MatrixXd *g_N;           //!< [m/s^2] Gravitational acceleration in N frame components
+    Eigen::MatrixXd* g_N;           //!< [m/s^2] Gravitational acceleration in N frame components
     static uint64_t effectorID;        //!< [] ID number of this panel
 
 public:
@@ -92,15 +88,23 @@ public:
     ~NHingedRigidBodyStateEffector();  //!< -- Destructor
     double HeaviFunc(double cond); //!< -- Heaviside function used for matrix contributions
     void WriteOutputMessages(uint64_t CurrentClock);
-	void UpdateState(uint64_t CurrentSimNanos);
-    void registerStates(DynParamManager& statesIn);  //!< -- Method for registering the HRB states
-    void linkInStates(DynParamManager& states);  //!< -- Method for getting access to other states
-    void updateEffectorMassProps(double integTime);  //!< -- Method for stateEffector to give mass contributions
-    void updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::MRPd sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N);  //!< -- Back-sub contributions
-    void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
-                                              double & rotEnergyContr, Eigen::Vector3d omega_BN_B);  //!< -- Energy and momentum calculations
-    void computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN);  //!< -- Method for each stateEffector to calculate derivatives
-    void readInputMessages();       //!< -- method to read input messages
+    void UpdateState(uint64_t CurrentSimNanos) override;
+    void registerStates(DynParamManager& statesIn) override; //!< -- Method for registering the HRB states
+    void linkInStates(DynParamManager& states) override;     //!< -- Method for getting access to other states
+    void updateEffectorMassProps(double integTime) override; //!< -- Method for stateEffector to give mass contributions
+    void updateContributions(double integTime,
+                             BackSubMatrices& backSubContr,
+                             Eigen::MRPd sigma_BN,
+                             Eigen::Vector3d omega_BN_B,
+                             Eigen::Vector3d g_N) override; //!< -- Back-sub contributions
+    void updateEnergyMomContributions(double integTime,
+                                      Eigen::Vector3d& rotAngMomPntCContr_B,
+                                      double& rotEnergyContr,
+                                      Eigen::Vector3d omega_BN_B) override; //!< -- Energy and momentum calculations
+    void computeDerivatives(double integTime,
+                            Eigen::Vector3d rDDot_BN_N,
+                            Eigen::Vector3d omegaDot_BN_B,
+                            Eigen::MRPd sigma_BN) override; //!< -- Method for computing the effector derivatives
 };
 
 
