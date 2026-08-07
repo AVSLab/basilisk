@@ -1,0 +1,3 @@
+- Added support for :ref:`nHingedRigidBodyStateEffector` to be the parent for dynamic effectors.
+- Added panel state and panel configuration log output messages to :ref:`nHingedRigidBodyStateEffector`.
+- :ref:`nHingedRigidBodyStateEffector` now rejects a massless panel and a panel chain whose panels differ in mass or length.
