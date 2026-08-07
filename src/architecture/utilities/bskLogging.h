@@ -96,6 +96,13 @@ public:
         : std::runtime_error(message) {}
 };
 
+#ifdef SWIG
+/* SWIG cannot safely marshal C variadic arguments. Keep the C++ formatting
+   API hidden and expose a fixed-argument Python adapter under the established
+   bskLog name instead. */
+%ignore BSKLogger::bskLog;
+%rename(bskLog) BSKLogger::bskLogText;
+#endif
 
 /*! BSK logging class */
 class BSKLogger
@@ -129,6 +136,10 @@ class BSKLogger
 
 #ifdef SWIG
 %extend BSKLogger {
+    void bskLogText(logLevel_t targetLevel, const char* info) {
+        $self->bskLog(targetLevel, "%s", info);
+    }
+
     void bskError(const char* info) {
         $self->bskLog(BSK_ERROR, "%s", info);
         throw BasiliskError(info);
