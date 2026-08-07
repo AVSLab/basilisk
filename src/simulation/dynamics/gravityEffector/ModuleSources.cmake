@@ -1,0 +1,4 @@
+set(BSK_MODULE_SOURCES_gravityEffector "")
+set(BSK_MODULE_SOURCES_pointMassGravityModel "")
+set(BSK_MODULE_SOURCES_polyhedralGravityModel polyhedralGravityModel.cpp)
+set(BSK_MODULE_SOURCES_sphericalHarmonicsGravityModel sphericalHarmonicsGravityModel.cpp)

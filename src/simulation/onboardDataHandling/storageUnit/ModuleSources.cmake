@@ -1,0 +1,2 @@
+set(BSK_MODULE_SOURCES_partitionedStorageUnit partitionedStorageUnit.cpp)
+set(BSK_MODULE_SOURCES_simpleStorageUnit simpleStorageUnit.cpp)
