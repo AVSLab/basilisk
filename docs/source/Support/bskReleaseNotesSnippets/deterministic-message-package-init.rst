@@ -1,0 +1,1 @@
+- Made generated Python message package imports deterministic so split wheel builds remain compatible across independent runners.
