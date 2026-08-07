@@ -4,6 +4,7 @@ function(generate_messages searchDir generateCCode)
   file(
     GLOB_RECURSE message_files
     RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/"
+    CONFIGURE_DEPENDS
     "../${searchDir}/*Payload.h" "${EXTERNAL_MODULES_PATH}/${searchDir}/*Payload.h")
 
   file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/autoSource/cMsgMeta)

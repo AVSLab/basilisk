@@ -31,6 +31,14 @@ fn main() {
         utilities.join("orbitalMotion.c"),
         utilities.join("rigidBodyKinematics.c"),
     ];
+    let headers = [
+        utilities.join("astroConstants.h"),
+        utilities.join("bskLogging.h"),
+        utilities.join("bsk_Print.h"),
+        utilities.join("linearAlgebra.h"),
+        utilities.join("orbitalMotion.h"),
+        utilities.join("rigidBodyKinematics.h"),
+    ];
 
     let mut build = cc::Build::new();
     build.include(&source_root).warnings(false);
@@ -43,8 +51,10 @@ fn main() {
         // expose the math constants used by the existing C utilities.
         build.std("gnu17");
     }
+    for dependency in sources.iter().chain(&headers) {
+        println!("cargo:rerun-if-changed={}", dependency.display());
+    }
     for source in &sources {
-        println!("cargo:rerun-if-changed={}", source.display());
         build.file(source);
     }
     build.compile("bsk_utilities_ffi_tests");

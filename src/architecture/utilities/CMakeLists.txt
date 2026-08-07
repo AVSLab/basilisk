@@ -1,7 +1,8 @@
 
-file(GLOB basilisk_src "*.h" "*.cpp" "*.c" "*.i")
+file(GLOB basilisk_src CONFIGURE_DEPENDS "*.h" "*.cpp" "*.c" "*.i")
 
-file(GLOB moduleId "moduleIdGenerator/*.h" "moduleIdGenerator/*.cpp" "moduleIdGenerator/*.i")
+file(GLOB moduleId CONFIGURE_DEPENDS
+     "moduleIdGenerator/*.h" "moduleIdGenerator/*.cpp" "moduleIdGenerator/*.i")
 
 add_library(ArchitectureUtilities STATIC ${basilisk_src})
 # Find and link cfitsio
