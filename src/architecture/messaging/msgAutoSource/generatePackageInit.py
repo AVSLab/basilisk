@@ -4,21 +4,31 @@ import sys
 path = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(path + '/../../../../../Basilisk/src/architecture/messaging/msgAutoSource')
 
+
+def generatePackageInit(moduleOutputPath, headerInputPaths):
+    """Generate deterministic imports for the Python messaging package.
+
+    :param moduleOutputPath: directory where the package initializer is written
+    :param headerInputPaths: directories containing message payload headers
+    """
+    os.makedirs(moduleOutputPath, exist_ok=True)
+    outputPath = os.path.join(moduleOutputPath, '__init__.py')
+    with open(outputPath, 'w', encoding='utf-8') as mainImportFile:
+        for headerInputPath in headerInputPaths:
+            for fileName in sorted(os.listdir(headerInputPath)):
+                if fileName.endswith(('.h', '.hpp')):
+                    className = os.path.splitext(fileName)[0]
+                    mainImportFile.write(
+                        'from Basilisk.architecture.messaging.'
+                        + className
+                        + ' import *\n'
+                    )
+        mainImportFile.write('from Basilisk.architecture.messagingBase import *\n')
+
+
 if __name__ == "__main__":
     moduleOutputPath = sys.argv[1]
-    isExist = os.path.exists(moduleOutputPath)
-    if not isExist:
-        os.makedirs(moduleOutputPath, exist_ok=True)
-    mainImportFid = open(moduleOutputPath + '/__init__.py', 'w')
-    for i in range(2, len(sys.argv)):
-        headerInputPath = sys.argv[i]
-        for filePre in os.listdir(headerInputPath):
-            if(filePre.endswith(".h") or filePre.endswith(".hpp")):
-                className = os.path.splitext(filePre)[0]
-                msgName = className.split('Payload')[0]
-                mainImportFid.write('from Basilisk.architecture.messaging.' + className + ' import *\n')
-    mainImportFid.write('from Basilisk.architecture.messagingBase import *\n')
-    mainImportFid.close()
+    generatePackageInit(moduleOutputPath, sys.argv[2:])
     setOldPath = moduleOutputPath.split('messaging')[0] + '/cMsgCInterfacePy'
 
     # XXX: Disabled: don't make a symbolic link here, because when we build a
