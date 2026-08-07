@@ -114,7 +114,9 @@ specified in ``pyproject.toml``). The builder then invokes ``python conanfile.py
 compiles the native project but never installs or upgrades Python packages; the pip frontend owns the Python
 environment using the dependencies declared in ``pyproject.toml``. The script dispatches one
 ``conan build --build=missing`` command, which installs missing native dependencies, generates the CMake toolchain
-files, and invokes the recipe's build method in one dependency-resolution pass.
+files, and invokes the recipe's build method in one dependency-resolution pass. Pip and wheel builds set
+``BUILD_TESTING=OFF`` so GoogleTest and the native C++ test executables are not compiled into packaging jobs. Direct
+``python conanfile.py`` source builds retain ``BUILD_TESTING=ON`` by default.
 
 Editable installations (i.e. ``pip install -e .``) are partially supported. Python code changes are reflected
 automatically with this flag, but C++ components are not automatically rebuilt.

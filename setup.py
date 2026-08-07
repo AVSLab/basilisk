@@ -156,6 +156,7 @@ setup(
                 # (defaults)
                 "--buildType", "Release",
                 "--buildProject", "True",
+                "--buildTesting", "False",
                 # (user arguments)
                 *USER_CONAN_ARGS,
             ]

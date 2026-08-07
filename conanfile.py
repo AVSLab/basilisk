@@ -45,6 +45,7 @@ bskModuleOptionsBool = {
     # Enable the opt-in compiler warning policy defined by BSK_STRICT_WARNINGS
     # in src/CMakeLists.txt.
     "strictWarnings": [[True, False], False],
+    "buildTesting": [[True, False], True],
     "buildProject": [[True, False], True],
     "recorderPropertyRollback": [[True, False], False],
 }
@@ -433,6 +434,7 @@ class BasiliskConan(ConanFile):
         tc.cache_variables["BUILD_MUJOCO"] = bool(self.options.get_safe("mujoco"))
         tc.cache_variables["BUILD_RUST_MODULES"] = bool(self.options.get_safe("rustModules"))
         tc.cache_variables["BSK_STRICT_WARNINGS"] = bool(self.options.get_safe("strictWarnings"))
+        tc.cache_variables["BUILD_TESTING"] = bool(self.options.get_safe("buildTesting"))
         tc.cache_variables["BSK_CONAN_BUILD_TYPE"] = str(self.settings.build_type)
         tc.cache_variables["BSK_VERSION"] = str(self.version).strip()
         tc.cache_variables["BSK_CONAN_VERSION"] = importlib.metadata.version("conan")

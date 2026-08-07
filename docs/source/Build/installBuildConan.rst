@@ -66,6 +66,10 @@ Note that the option names for groupings of Basilisk modules are the same as wit
       - Boolean
       - True
       - Will build the project executable after the configuration step
+    * - ``-o "&:buildTesting=<value>"``
+      - Boolean
+      - True
+      - Builds the native GoogleTest executables and registers them with CTest
     * - ``-s build_type``
       - Release, Debug
       - Release
@@ -114,6 +118,9 @@ they are not used, then the shown default behaviors are used.
     * - ``BUILD_OPNAV``
       - ``OFF``
       - will create the OpenCL dependent optical navigation related modules
+    * - ``BUILD_TESTING``
+      - ``ON``
+      - fetches GoogleTest and builds the native C++ test executables
     * - ``BSK_STRICT_WARNINGS``
       - ``OFF``
       - enables additional compiler diagnostics for Basilisk C and C++ sources
