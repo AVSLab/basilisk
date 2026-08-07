@@ -113,7 +113,7 @@ runs:
       shell: bash
       if: ${{ inputs.skip-build == 'false' }}
       env:
-        CONAN_ARGS: ${{ inputs.conan-args }}
+        CONAN_ARGS: "${{ inputs.conan-args }} --buildTesting True"
       run: |
         if [[ "${{ inputs.is-canary }}" == 'true' ]]; then
           pip install --no-build-isolation --no-deps -e ".[examples]" -v

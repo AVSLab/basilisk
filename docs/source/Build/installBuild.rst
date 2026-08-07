@@ -76,6 +76,11 @@ The script accepts the following options to customize this process.
       - Boolean
       - True
       - If set to True, this option will compile the project right away after creating the IDE or make file
+    * - ``buildTesting``
+      - Boolean
+      - True
+      - Builds the native GoogleTest executables and registers them with CTest. Pip and wheel builds disable this
+        option because published packages do not run the native test executables.
     * - ``buildType``
       - Release, Debug
       - Release
@@ -122,6 +127,9 @@ clean distribution folder, and that is built right away, you could use::
     python3 conanfile.py --clean --opNav True --vizInterface False --buildProject True
 
 The ``buildProject`` argument here is optional as its default value is ``True``.
+Native test targets are also enabled by default for source builds. To omit them when they are not needed, use::
+
+    python3 conanfile.py --buildTesting False
 
 .. _strictCompilerWarnings:
 

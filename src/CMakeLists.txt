@@ -502,16 +502,18 @@ endfunction(generate_python_package_targets)
 
 # Start of main projection configuration
 
-include(FetchContent)
-FetchContent_Declare(
-  googletest
-  URL https://github.com/google/googletest/archive/refs/tags/v1.17.0.zip
-)
-# For Windows: Prevent overriding the parent project's compiler/linker settings
-set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-FetchContent_MakeAvailable(googletest)
-include(GoogleTest)
-enable_testing()
+include(CTest)
+if(BUILD_TESTING)
+  include(FetchContent)
+  FetchContent_Declare(
+    googletest
+    URL https://github.com/google/googletest/archive/refs/tags/v1.17.0.zip
+  )
+  # For Windows: Prevent overriding the parent project's compiler/linker settings
+  set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+  FetchContent_MakeAvailable(googletest)
+  include(GoogleTest)
+endif()
 
 
 # TODO: Remove the global link-libraries call
@@ -947,5 +949,7 @@ create_symlinks("${CMAKE_BINARY_DIR}/Basilisk/supportData" ${dataFiles})
 # Optional performance benchmark targets
 add_subdirectory("${CMAKE_SOURCE_DIR}/../benchmarks" "${CMAKE_BINARY_DIR}/benchmarks")
 
-# Tests targets
-add_subdirectory("architecture/utilities/tests")
+# Native test targets
+if(BUILD_TESTING)
+  add_subdirectory("architecture/utilities/tests")
+endif()

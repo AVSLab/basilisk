@@ -237,7 +237,7 @@ generate_messages(msgPayloadDefC "True")
 
 set(recorder_copy_contract_test_source
     "${CMAKE_CURRENT_SOURCE_DIR}/_UnitTest/test_recorder_copy_contract.cpp")
-if(EXISTS "${recorder_copy_contract_test_source}")
+if(BUILD_TESTING AND EXISTS "${recorder_copy_contract_test_source}")
   # Verify the central SysModel copy restriction while keeping Recorder explicitly copyable.
   add_executable(test_recorder_copy_contract "${recorder_copy_contract_test_source}")
   target_sources(test_recorder_copy_contract PRIVATE ${CMAKE_SOURCE_DIR}/architecture/_GeneralModuleFiles/sys_model.cpp)

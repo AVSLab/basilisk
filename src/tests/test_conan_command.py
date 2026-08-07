@@ -89,6 +89,16 @@ def test_single_command_installs_missing_dependencies_and_builds(conanfile_modul
     assert "&:generator=Ninja" in options
     assert "&:clean=True" in options
     assert "&:rustModules=True" in options
+    assert "&:buildTesting=True" in options
+
+
+def test_native_tests_can_be_disabled(conanfile_module):
+    """Forward the wheel-build setting that excludes native test targets."""
+    arguments = make_arguments(conanfile_module, buildTesting=False)
+
+    command = conanfile_module.create_conan_build_command(arguments)
+
+    assert "&:buildTesting=False" in option_values(command, "-o")
 
 
 def test_legacy_python_environment_options_are_removed(conanfile_module):
