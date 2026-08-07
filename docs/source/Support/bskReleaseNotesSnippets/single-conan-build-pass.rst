@@ -1,2 +1,3 @@
 - Reduced ``python conanfile.py`` setup time by using one Conan dependency-and-build pass instead of repeating dependency resolution, generator creation, and environment checks across separate install and build commands.
 - Removed deprecated Python-environment management from ``conanfile.py``. Clone-based builds now leave Python package installation to explicit pip setup steps, matching wheel and editable-install behavior.
+- Aligned the Conan build profile's C++ standard with the C++17 host profile so cached build tools such as Protocol Buffers resolve directly without unnecessary compatibility searches or remote queries.

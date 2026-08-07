@@ -77,12 +77,14 @@ def test_single_command_installs_missing_dependencies_and_builds(conanfile_modul
 
     command = conanfile_module.create_conan_build_command(arguments, platform_name="posix")
     settings = option_values(command, "-s")
+    build_settings = option_values(command, "-s:b")
     options = option_values(command, "-o")
 
     assert command[3:6] == ["build", ".", "--build=missing"]
     assert "install" not in command
     assert "build_type=Debug" in settings
     assert "compiler.cppstd=17" in settings
+    assert "compiler.cppstd=17" in build_settings
     assert "compiler.cstd=gnu17" in settings
     assert "&:generator=Ninja" in options
     assert "&:clean=True" in options
