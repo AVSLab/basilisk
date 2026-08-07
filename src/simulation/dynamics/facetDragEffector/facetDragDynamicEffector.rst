@@ -35,6 +35,22 @@ Example setup:
 
     scObject.addDynamicEffector(drag)
 
+Attaching to a State Effector
+-----------------------------
+This effector supports the branching described in :ref:`bskPrinciples-11`, so a drag surface can
+be carried by an appendage instead of the hub. Attach it to the parent state effector rather than
+to the spacecraft:
+
+.. code-block:: python
+
+    stateEff.addDynamicEffector(drag, segment)
+
+The parent's inertial attitude and velocity then replace the hub's in the drag calculation, so a
+panel that rotates or translates relative to the hub sees its own relative wind. Every facet normal
+and facet location passed to ``addFacet()`` is expressed in the parent segment's frame in that
+configuration, not in the hub body frame, and the resulting force and torque are returned about the
+parent frame origin.
+
 Input Message Timing
 ---------------------
 Both ``atmoDensInMsg`` and ``windVelInMsg`` are refreshed only during ``UpdateState()``.
