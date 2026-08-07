@@ -10,7 +10,8 @@ if(BUILD_VIZINTERFACE)
          REQUIRED
      )
 
-     file(GLOB PROTO_DEFS "${CMAKE_CURRENT_SOURCE_DIR}/*.proto")
+     file(GLOB PROTO_DEFS CONFIGURE_DEPENDS
+         "${CMAKE_CURRENT_SOURCE_DIR}/*.proto")
 
      foreach(PROTO_DEF ${PROTO_DEFS})
          get_filename_component(PROTO_TARGET "${PROTO_DEF}" NAME_WE)
@@ -19,9 +20,10 @@ if(BUILD_VIZINTERFACE)
              OUTPUT "${CMAKE_CURRENT_SOURCE_DIR}/${PROTO_TARGET}.pb.cc" "${CMAKE_CURRENT_SOURCE_DIR}/${PROTO_TARGET}.pb.h" "${CMAKE_CURRENT_SOURCE_DIR}/${PROTO_TARGET}_pb2.py"
              COMMAND "${PROTOC_EXE}" "--proto_path=${CMAKE_CURRENT_SOURCE_DIR}" "--cpp_out=${CMAKE_CURRENT_SOURCE_DIR}" "${PROTO_DEF}"
              COMMAND "${PROTOC_EXE}" "--proto_path=${CMAKE_CURRENT_SOURCE_DIR}" "--python_out=${CMAKE_CURRENT_SOURCE_DIR}" "${PROTO_DEF}"
-             DEPENDS "${PROTO_DEF}"
+             DEPENDS "${PROTO_DEF}" "${PROTOC_EXE}"
              WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
              COMMENT "Generating protobuf (C++, Python): ${PROTO_TARGET}"
+             VERBATIM
          )
 
          message(STATUS "Defining protobuf interface library target: ${PROTO_TARGET}")

@@ -37,6 +37,9 @@ endif()
 
 find_package(SWIG 4.4.1...<5 REQUIRED COMPONENTS python)
 include(${SWIG_USE_FILE})
+# Have SWIG emit depfiles for every wrapper so nested %include and %import
+# changes trigger regeneration on all supported Basilisk generators.
+set(SWIG_USE_SWIG_DEPENDENCIES ON)
 
 # Set the Python module library to be linked to.
 set(PYTHON3_MODULE Python3::Module)
@@ -104,9 +107,11 @@ function(create_symlinks destinationPath)
 endfunction(create_symlinks)
 
 function(add_message_headers)
-  file(GLOB CMESSAGE_HEADER_FILES "${CMAKE_SOURCE_DIR}/architecture/msgPayloadDefC/*.h"
+  file(GLOB CMESSAGE_HEADER_FILES CONFIGURE_DEPENDS
+       "${CMAKE_SOURCE_DIR}/architecture/msgPayloadDefC/*.h"
        "${EXTERNAL_MODULES_PATH}/msgPayloadDefC/*.h")
-  file(GLOB CPPMESSAGE_HEADER_FILES "${CMAKE_SOURCE_DIR}/architecture/msgPayloadDefCpp/*.h"
+  file(GLOB CPPMESSAGE_HEADER_FILES CONFIGURE_DEPENDS
+       "${CMAKE_SOURCE_DIR}/architecture/msgPayloadDefCpp/*.h"
        "${EXTERNAL_MODULES_PATH}/msgPayloadDefCpp/*.h")
   add_custom_target(msgPayloadDefC SOURCES ${CMESSAGE_HEADER_FILES})
   add_custom_target(msgPayloadDefCpp SOURCES ${CPPMESSAGE_HEADER_FILES})
@@ -169,9 +174,11 @@ function(generate_package_libraries INIT_DIRECTORY AllLibs)
       RELATIVE ${CMAKE_SOURCE_DIR}
       "${INIT_DIRECTORY}/${LIB_DIR}")
     # Grab the library source files
-    file(GLOB C_FILES "${LIB_DIR}/*.cpp" "${LIB_DIR}/*.c" "${LIB_DIR}/*.h")
+    file(GLOB C_FILES CONFIGURE_DEPENDS
+         "${LIB_DIR}/*.cpp" "${LIB_DIR}/*.c" "${LIB_DIR}/*.h")
     # Grab the framework source files
-    file(GLOB BSK_FWK_FILES "${CMAKE_SOURCE_DIR}/architecture/_GeneralModuleFiles/*.cpp" # Might not be needed
+    file(GLOB BSK_FWK_FILES CONFIGURE_DEPENDS
+         "${CMAKE_SOURCE_DIR}/architecture/_GeneralModuleFiles/*.cpp" # Might not be needed
          "${CMAKE_SOURCE_DIR}/architecture/_GeneralModuleFiles/*.h"
          "${CMAKE_SOURCE_DIR}/architecture/_GeneralModuleFiles/*.c")
 
@@ -229,6 +236,7 @@ function(find_package_targets PKG_DIR ALL_TARGET_LIST)
   file(
     GLOB_RECURSE SWIG_TARGETS
     RELATIVE ${CMAKE_SOURCE_DIR}
+    CONFIGURE_DEPENDS
     "${PKG_DIR}/*.i")
   # Direct Cargo commands can generate SWIG interfaces below a crate's
   # target/ directory. Those are build products, not source modules.
@@ -242,6 +250,7 @@ function(find_python_package_targets PKG_DIR ALL_TARGET_LIST)
   file(
     GLOB_RECURSE PYTHON_TARGETS
     RELATIVE ${CMAKE_SOURCE_DIR}
+    CONFIGURE_DEPENDS
     "${PKG_DIR}/*.py")
 
   set(FILTERED_TARGETS "")
@@ -279,6 +288,7 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
     file(
       GLOB
       GEN_FILES
+      CONFIGURE_DEPENDS
       "${CMAKE_SOURCE_DIR}/architecture/_GeneralModuleFiles/*.c"
       "${CMAKE_SOURCE_DIR}/architecture/_GeneralModuleFiles/*.cpp"
       "${CMAKE_SOURCE_DIR}/architecture/_GeneralModuleFiles/*.h"
@@ -290,6 +300,7 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
       file(
         GLOB
         GEN_FILES_DYNAMICS
+        CONFIGURE_DEPENDS
         "${CMAKE_SOURCE_DIR}/simulation/dynamics/_GeneralModuleFiles/*.c"
         "${CMAKE_SOURCE_DIR}/simulation/dynamics/_GeneralModuleFiles/*.cpp"
         "${CMAKE_SOURCE_DIR}/simulation/dynamics/_GeneralModuleFiles/*.h"
@@ -302,12 +313,14 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
       file(
         GLOB
         GEN_FILES_LOCAL
+        CONFIGURE_DEPENDS
         "${EXTERNAL_MODULES_PATH}/${MODULE_DIR}/_GeneralModuleFiles/*.c"
         "${EXTERNAL_MODULES_PATH}/${MODULE_DIR}/_GeneralModuleFiles/*.cpp"
         "${EXTERNAL_MODULES_PATH}/${MODULE_DIR}/_GeneralModuleFiles/*.h"
         "${EXTERNAL_MODULES_PATH}/${MODULE_DIR}/_GeneralModuleFiles/*.i")
     else()
-      file(GLOB GEN_FILES_LOCAL "${MODULE_DIR}/${SUBMODULE}/_GeneralModuleFiles/*.c"
+      file(GLOB GEN_FILES_LOCAL CONFIGURE_DEPENDS
+           "${MODULE_DIR}/${SUBMODULE}/_GeneralModuleFiles/*.c"
            "${MODULE_DIR}/${SUBMODULE}/_GeneralModuleFiles/*.cpp" "${MODULE_DIR}/${SUBMODULE}/_GeneralModuleFiles/*.h"
            "${MODULE_DIR}/${SUBMODULE}/_GeneralModuleFiles/*.i")
     endif()
@@ -326,12 +339,14 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
     file(
       GLOB
       C_FILES
+      CONFIGURE_DEPENDS
       "${PARENT_DIR}/*.c"
       "${PARENT_DIR}/*.cpp"
       "${PARENT_DIR}/*.h"
       "${PARENT_DIR}/*.cmake"
       "${PARENT_DIR}/*.rst")
-    file(GLOB SWIG_DEP "${PARENT_DIR}/*.c" "${PARENT_DIR}/*.cpp" "${PARENT_DIR}/*.h")
+    file(GLOB SWIG_DEP CONFIGURE_DEPENDS
+         "${PARENT_DIR}/*.c" "${PARENT_DIR}/*.cpp" "${PARENT_DIR}/*.h")
 
     set_property(SOURCE ${TARGET_FILE} PROPERTY USE_TARGET_INCLUDE_DIRECTORIES TRUE) # Allows for include paths in the
                                                                                      # .i files
@@ -866,7 +881,8 @@ endforeach()
 
 # symlink utilities into the dist directory TODO: consider making the utilities directory it's own module with
 # associated .i file and many `%pythoncode` directives.
-file(GLOB pythonModules "${CMAKE_SOURCE_DIR}/utilities/*.py" "${CMAKE_SOURCE_DIR}/utilities/**")
+file(GLOB pythonModules CONFIGURE_DEPENDS
+     "${CMAKE_SOURCE_DIR}/utilities/*.py" "${CMAKE_SOURCE_DIR}/utilities/**")
 create_symlinks("${CMAKE_BINARY_DIR}/Basilisk/utilities" ${pythonModules})
 
 find_python_package_targets("${CMAKE_SOURCE_DIR}/fswAlgorithms" FSW_PYTHON_TARGETS)
@@ -877,7 +893,7 @@ generate_python_package_targets("${SIMULATION_PYTHON_TARGETS}" "simulation")
 
 # symlink into package the supportData files to keep
 file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/supportData")
-file(GLOB dataFiles "${CMAKE_SOURCE_DIR}/../supportData/*")
+file(GLOB dataFiles CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/../supportData/*")
 create_symlinks("${CMAKE_BINARY_DIR}/Basilisk/supportData" ${dataFiles})
 
 # Optional performance benchmark targets

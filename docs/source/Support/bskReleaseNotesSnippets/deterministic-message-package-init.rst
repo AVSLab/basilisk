@@ -1,3 +1,4 @@
 - Made generated Python message package imports deterministic so split wheel builds remain compatible across independent runners.
 - Prevented strict compiler warnings from being applied to generated Rust SWIG wrapper sources.
 - Made the Python ``BSKLogger.bskLog`` method treat messages as literal text instead of C format strings.
+- Improved incremental builds by tracking transitive SWIG includes, source discovery changes, protobuf tools, and Rust FFI headers.
