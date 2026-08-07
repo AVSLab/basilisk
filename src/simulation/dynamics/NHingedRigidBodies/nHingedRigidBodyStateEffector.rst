@@ -14,13 +14,3 @@ how to run it, as well as testing.
 Message Connection Descriptions
 -------------------------------
 This state effector has no input or output messages.
-
-
-
-
-
-
-
-
-
-
