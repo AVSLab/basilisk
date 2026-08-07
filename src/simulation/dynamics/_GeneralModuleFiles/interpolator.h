@@ -26,6 +26,7 @@
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/messaging.h"
+#include "architecture/utilities/bskLogging.h"
 
 /** A class that interpolates from a given table of points and
  * outputs the result as a message payload.

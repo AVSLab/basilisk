@@ -25,6 +25,7 @@
 #include <mujoco/mujoco.h>
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
+#include "architecture/utilities/bskLogging.h"
 
 #include <optional>
 #include <stdexcept>

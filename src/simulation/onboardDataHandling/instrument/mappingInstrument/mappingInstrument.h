@@ -29,6 +29,7 @@
 #include "architecture/msgPayloadDefC/AccessMsgPayload.h"
 #include "architecture/msgPayloadDefC/DataNodeUsageMsgPayload.h"
 #include "architecture/messaging/messaging.h"
+#include "architecture/utilities/bskLogging.h"
 
 /*! @brief This module receives a vector of accessMsgPayloads and outputs a vector of DataNodeUsageMsgPayloads for each accessible point.
  */
