@@ -208,7 +208,24 @@ void NHingedRigidBodyStateEffector::registerStates(DynParamManager& states)
     return;
 }
 
-/*! This method registers the panel inertial properties with the dynamic parameter manager */
+/*! This method attaches a dynamicEffector to one of the panels
+
+ @param newDynamicEffector the dynamic effector to be attached
+ @param segment the panel to attach to, counting outward from the hub starting at 1 */
+void
+NHingedRigidBodyStateEffector::addDynamicEffector(DynamicEffector* newDynamicEffector, int segment)
+{
+    if (segment <= 0 || segment > (int)this->PanelVec.size()) {
+        this->bskLogger.bskError("NHingedRigidBodyStateEffector: specifying attachment to a non-existent panel.");
+    }
+
+    HingedPanel& panel = this->PanelVec[(size_t)(segment - 1)];
+    panel.assignStateParamNames<DynamicEffector*>(newDynamicEffector);
+    panel.dynEffectors.push_back(newDynamicEffector);
+}
+
+/*! This method registers the panel inertial properties with the dynamic parameter manager and links
+ them into dependent dynamic effectors */
 void
 NHingedRigidBodyStateEffector::registerProperties(DynParamManager& states)
 {
@@ -219,6 +236,11 @@ NHingedRigidBodyStateEffector::registerProperties(DynParamManager& states)
         PanelIt->v_HN_N = states.createProperty(PanelIt->nameOfInertialVelocityProperty, stateInit);
         PanelIt->sigma_SN = states.createProperty(PanelIt->nameOfInertialAttitudeProperty, stateInit);
         PanelIt->omega_SN_S = states.createProperty(PanelIt->nameOfInertialAngVelocityProperty, stateInit);
+
+        std::vector<DynamicEffector*>::iterator dynIt;
+        for (dynIt = PanelIt->dynEffectors.begin(); dynIt != PanelIt->dynEffectors.end(); dynIt++) {
+            (*dynIt)->linkInProperties(states);
+        }
     }
 
     return;
