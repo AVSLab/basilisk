@@ -296,6 +296,19 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
       "${PARENT_DIR}/*.cmake"
       "${PARENT_DIR}/*.rst")
 
+    # Do not compile sources into a SWIG target when one of its linked libraries
+    # already owns them.  This is especially important for directories containing
+    # multiple interfaces, where every wrapper would otherwise build every source.
+    set(WRAPPER_FILES ${C_FILES})
+    foreach(LIB IN LISTS LIB_DEP_LIST)
+      if(TARGET "${LIB}")
+        get_target_property(LIB_SOURCE_FILES "${LIB}" SOURCES)
+        if(LIB_SOURCE_FILES)
+          list(REMOVE_ITEM WRAPPER_FILES ${LIB_SOURCE_FILES})
+        endif()
+      endif()
+    endforeach()
+
     set_property(SOURCE ${TARGET_FILE} PROPERTY USE_TARGET_INCLUDE_DIRECTORIES TRUE) # Allows for include paths in the
                                                                                      # .i files
     set_property(SOURCE ${TARGET_FILE} PROPERTY CPLUSPLUS ON)
@@ -305,7 +318,7 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
       LANGUAGE "python"
       TYPE MODULE
       SOURCES ${TARGET_FILE}
-              ${C_FILES}
+              ${WRAPPER_FILES}
               # TODO: Following commented lines will become default with future imports OUTFILE_DIR
               # "${CMAKE_BINARY_DIR}/Basilisk/${PARENT_DIR}" #_wrap.c/.cxx file OUTPUT_DIR
               # "${CMAKE_BINARY_DIR}/Basilisk/${PARENT_DIR}") # generated .py file

@@ -5,3 +5,4 @@
 - Made fixed-width integer and Eigen headers self-contained instead of relying on transitive includes.
 - Prevented unchanged Rust-enabled builds from recompiling generated message bindings and Rust modules.
 - Reduced clean-build work by compiling architecture framework sources in one package library instead of ten.
+- Removed redundant source compilation from SWIG wrappers when a linked package library already owns those sources.
