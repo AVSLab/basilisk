@@ -22,4 +22,15 @@ how to run it, as well as testing.
 
 Message Connection Descriptions
 -------------------------------
-This state effector has no input or output messages.
+The following table lists all the module output messages. Each is a vector carrying one message per
+panel, ordered outward from the hub.
+
+.. bsk-module-io:: nHingedRigidBodyStateEffector
+    :caption: Module I/O Messages
+
+    output nHingedRigidBodyOutMsgs HingedRigidBodyMsgPayload
+        Output vector of messages containing the panel angle and angle rate.
+    output nHingedRigidBodyConfigLogOutMsgs SCStatesMsgPayload
+        Output vector of messages containing the panel inertial states. The position and velocity are
+        those of the panel center of mass, and the attitude and angular velocity are those of the
+        panel frame S.

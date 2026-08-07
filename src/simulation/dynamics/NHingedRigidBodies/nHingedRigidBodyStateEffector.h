@@ -30,7 +30,9 @@
 #include <string>
 #include <vector>
 
-
+#include "architecture/messaging/messaging.h"
+#include "architecture/msgPayloadDefC/HingedRigidBodyMsgPayload.h"
+#include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 
 /*! Struct containing all the panel variables. All members are public by default so they can be changed by methods of
  the N_hingedRigidBodyStateEffector class. */
@@ -51,11 +53,18 @@ struct HingedPanel {
     Eigen::Vector3d sHat1_B;         //!< -- unit direction vector for the first axis of the S frame
     Eigen::Vector3d sHat2_B;         //!< -- unit direction vector for the second axis of the S frame
     Eigen::Vector3d sHat3_B;         //!< -- unit direction vector for the third axis of the S frame
+    Eigen::Vector3d r_HB_B;          //!< -- Vector pointing from B to this panel's hinge in B frame components
+    Eigen::Vector3d rPrime_HB_B;     //!< [m/s] Body time derivative of this panel's r_HB_B
     Eigen::Vector3d r_SB_B;          //!< -- Vector pointing from B to CoM of hinged rigid body in B frame components
     Eigen::Matrix3d rTilde_SB_B;     //!< -- Tilde matrix of rSB_B
     Eigen::Vector3d rPrime_SB_B;     //!< [m/s] Body time derivative of rSB_B
     Eigen::Matrix3d rPrimeTilde_SB_B;//!< -- Tilde matrix of rPrime_SB_B
     Eigen::Matrix3d ISPrimePntS_B;   //!< [kg-m^2/s] time body derivative IPntS in body frame components
+
+    Eigen::Vector3d r_ScN_N;    //!< [m] position vector of the panel CoM S relative to the inertial frame
+    Eigen::Vector3d v_ScN_N;    //!< [m/s] inertial velocity vector of S relative to the inertial frame
+    Eigen::MRPd sigma_SN;       //!< -- MRP attitude of panel frame S relative to the inertial frame
+    Eigen::Vector3d omega_SN_S; //!< [rad/s] inertial panel frame angular velocity vector
 };
 
 /*! @brief NHingedRigidBodyStateEffector class */
@@ -66,8 +75,10 @@ public:
     Eigen::Vector3d r_HB_B;          //!< [m] vector pointing from body frame origin to the first Hinge location
     Eigen::Matrix3d rTilde_HB_B;     //!< -- Tilde matrix of rHB_B
     Eigen::Matrix3d dcm_HB;          //!< -- DCM from body frame to hinge frame
-    void addHingedPanel(HingedPanel NewPanel) {PanelVec.push_back(NewPanel);} //!< class method
+    void addHingedPanel(HingedPanel NewPanel); //!< class method
     BSKLogger bskLogger;                      //!< -- BSK Logging
+    std::vector<Message<HingedRigidBodyMsgPayload>*> nHingedRigidBodyOutMsgs;   //!< -- panel state output messages
+    std::vector<Message<SCStatesMsgPayload>*> nHingedRigidBodyConfigLogOutMsgs; //!< -- panel config log messages
 
 private:
     double totalMass;                //!< [kg] Total mass of effector
@@ -80,6 +91,10 @@ private:
     Eigen::MatrixX3d matrixGDHRB;   //!< [-] term needed for back substitution
     Eigen::VectorXd vectorVDHRB;    //!< [-] term needed for back substitution
     Eigen::Vector3d omegaLoc_BN_B;  //!< [rad/s] local copy of omegaBN
+    Eigen::MRPd sigma_BN{0.0, 0.0, 0.0};       //!< -- Hub attitude relative to the inertial frame
+    StateData* hubSigmaState = nullptr;        //!< hub attitude state, read live for the published kinematics
+    Eigen::MatrixXd* inertialPositionProperty = nullptr; //!< [m] r_N position relative to system spice zeroBase
+    Eigen::MatrixXd* inertialVelocityProperty = nullptr; //!< [m/s] v_N velocity relative to system spice zeroBase
     Eigen::MatrixXd* g_N;           //!< [m/s^2] Gravitational acceleration in N frame components
     static uint64_t effectorID;        //!< [] ID number of this panel
 
@@ -87,7 +102,7 @@ public:
     NHingedRigidBodyStateEffector();  //!< -- Contructor
     ~NHingedRigidBodyStateEffector();  //!< -- Destructor
     double HeaviFunc(double cond); //!< -- Heaviside function used for matrix contributions
-    void WriteOutputMessages(uint64_t CurrentClock);
+    void writeOutputStateMessages(uint64_t CurrentClock) override;
     void UpdateState(uint64_t CurrentSimNanos) override;
     void registerStates(DynParamManager& statesIn) override; //!< -- Method for registering the HRB states
     void linkInStates(DynParamManager& states) override;     //!< -- Method for getting access to other states
@@ -107,7 +122,8 @@ public:
                             Eigen::MRPd sigma_BN) override; //!< -- Method for computing the effector derivatives
 
 private:
-    void checkPanelUniformity(); //!< -- Method for rejecting a panel chain the EOMs cannot represent
+    void checkPanelUniformity();       //!< -- Method for rejecting a panel chain the EOMs cannot represent
+    void computePanelInertialStates(); //!< -- Method for computing the panel states relative to the inertial frame
 };
 
 
