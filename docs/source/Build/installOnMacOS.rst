@@ -111,14 +111,12 @@ steps work regardless if done within a virtual environment or not.
 
 Installing required python support packages
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#. Basilisk uses ``conan`` for package managing. In order to do so, users
-   must first install all build related pip packages using::
+#. Basilisk uses ``conan`` for native package management. Install the Python runtime and build requirements before
+   invoking the build script::
 
-       (.venv) $ pip3 install -r requirements_dev.txt
+       (.venv) $ python3 -m pip install -r requirements.txt -r requirements_dev.txt
 
    The ``conan`` repositories information is automatically setup by ``conanfile.py``.
-
-#. The required python packages for Basilisk will be installed automatically when running ``conanfile.py``.
 
 Build Project Process via Terminal
 ----------------------------------
@@ -139,10 +137,6 @@ When all the prerequisite installations are complete, the project can be built a
    For other configure and build options, see :ref:`configureBuild`. For a new command-line build, the script uses
    Ninja when it is available and otherwise uses Unix Makefiles. The selected build files are created in ``dist3``.
 
-   The ``python3 conanfile.py`` process will verify that the minimum required Basilisk python packages are installed, and that
-   the version is correct.  If not, the user is prompted to install the package with ``pip3`` in the system or user
-   folder.
-
    .. Note:: If you wish to use the another version of python 3 configure the Python paths in :ref:`customPython`
 
    .. Warning:: If you get an error message in ``cmake`` saying it can’t find the compiler tools, open a Terminal window and type::
@@ -158,6 +152,15 @@ When all the prerequisite installations are complete, the project can be built a
         sudo xcode-select --reset
 
       Now clear the Cmake cache and try running the configure and build process again.
+
+#. Register the completed ``dist3`` build as an editable Basilisk installation and install the optional example
+   dependencies::
+
+       (.venv) $ python3 -m pip install --no-build-isolation -e ".[examples]"
+
+   Use ``-e .`` instead of ``-e ".[examples]"`` for an installation without the example-only dependencies. This
+   command is required only once after creating the virtual environment. Do not repeat it after subsequent
+   ``python3 conanfile.py``, clean, or incremental native builds.
 
 #. To test your setup you can run one of the :ref:`examples`:
 
