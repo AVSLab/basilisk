@@ -31,7 +31,10 @@ FacetDragDynamicEffector::FacetDragDynamicEffector()
     this->atmoInData = {};  // Initialize atmosphere data to zero
     this->windInData = {};  // Initialize wind data to zero
 	this->numFacets = 0;
-	return;
+
+    this->isAttachableToStateEffector = true;
+
+    return;
 }
 
 /*! The destructor.*/
@@ -106,14 +109,29 @@ void FacetDragDynamicEffector::linkInStates(DynParamManager& states){
 	this->hubVelocity = states.getStateObject(this->stateNameOfVelocity);
 }
 
+/*! This method is used to link the dragEffector to its parent state effector's properties
+ @param properties The parameter manager to collect from
+ */
+void FacetDragDynamicEffector::linkInProperties(DynParamManager& properties){
+    this->inertialAttitudeProperty = properties.getPropertyReference(this->propName_inertialAttitude);
+    this->inertialVelocityProperty = properties.getPropertyReference(this->propName_inertialVelocity);
+}
+
 /*! This method updates the internal drag direction based on the spacecraft velocity vector.
  * It accounts for wind velocity if the wind message is linked.
 */
 void FacetDragDynamicEffector::updateDragDir(){
-    Eigen::MRPd sigmaBN(this->hubSigma->getState().data());
-    Eigen::Matrix3d dcm_BN = sigmaBN.toRotationMatrix().transpose();
+    Eigen::MRPd sigmaBN;
+    Eigen::Vector3d v_BN_N;
+    if (!this->stateNameOfSigma.empty()) {
+        sigmaBN = Eigen::MRPd(this->hubSigma->getState().data());
+        v_BN_N = this->hubVelocity->getState();
+    } else {
+        sigmaBN = Eigen::MRPd(this->inertialAttitudeProperty->data());
+        v_BN_N = *this->inertialVelocityProperty;
+    }
 
-    Eigen::Vector3d v_BN_N = this->hubVelocity->getState();
+    Eigen::Matrix3d dcm_BN = sigmaBN.toRotationMatrix().transpose();
 
     if (this->windVelInMsg.isLinked()) {
         Eigen::Map<Eigen::Vector3d> v_air_N(this->windInData.v_air_N);
