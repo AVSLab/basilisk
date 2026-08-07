@@ -41,9 +41,28 @@ NHingedRigidBodyStateEffector::NHingedRigidBodyStateEffector()
 
 uint64_t NHingedRigidBodyStateEffector::effectorID = 1;
 
-/*! This is the destructor, nothing to report here */
+/*! This is the destructor, releasing the per panel output messages */
 NHingedRigidBodyStateEffector::~NHingedRigidBodyStateEffector()
 {
+    for (size_t c = 0; c < this->nHingedRigidBodyOutMsgs.size(); c++) {
+        delete this->nHingedRigidBodyOutMsgs.at(c);
+        delete this->nHingedRigidBodyConfigLogOutMsgs.at(c);
+    }
+
+    return;
+}
+
+/*! This method appends a panel to the chain along with its output messages
+
+ @param NewPanel the panel to append to the chain
+ */
+void
+NHingedRigidBodyStateEffector::addHingedPanel(HingedPanel NewPanel)
+{
+    this->PanelVec.push_back(NewPanel);
+    this->nHingedRigidBodyOutMsgs.push_back(new Message<HingedRigidBodyMsgPayload>);
+    this->nHingedRigidBodyConfigLogOutMsgs.push_back(new Message<SCStatesMsgPayload>);
+
     return;
 }
 
@@ -51,8 +70,58 @@ NHingedRigidBodyStateEffector::~NHingedRigidBodyStateEffector()
 
  @param CurrentClock The current simulation time (used for time stamping)
  */
-void NHingedRigidBodyStateEffector::WriteOutputMessages(uint64_t CurrentClock [[maybe_unused]])
+void
+NHingedRigidBodyStateEffector::writeOutputStateMessages(uint64_t CurrentClock)
 {
+    this->computePanelInertialStates();
+
+    size_t panelIndex = 0;
+    std::vector<HingedPanel>::iterator PanelIt;
+    for (PanelIt = this->PanelVec.begin(); PanelIt != this->PanelVec.end(); PanelIt++) {
+        if (this->nHingedRigidBodyOutMsgs[panelIndex]->isLinked()) {
+            HingedRigidBodyMsgPayload panelBuffer = this->nHingedRigidBodyOutMsgs[panelIndex]->zeroMsgPayload;
+            panelBuffer.theta = PanelIt->theta;
+            panelBuffer.thetaDot = PanelIt->thetaDot;
+            this->nHingedRigidBodyOutMsgs[panelIndex]->write(&panelBuffer, this->moduleID, CurrentClock);
+        }
+
+        if (this->nHingedRigidBodyConfigLogOutMsgs[panelIndex]->isLinked()) {
+            SCStatesMsgPayload configLogMsg = this->nHingedRigidBodyConfigLogOutMsgs[panelIndex]->zeroMsgPayload;
+            // Note, logging the panel frame S is the body frame B of that object
+            eigenVector3d2CArray(PanelIt->r_ScN_N, configLogMsg.r_BN_N);
+            eigenVector3d2CArray(PanelIt->v_ScN_N, configLogMsg.v_BN_N);
+            eigenMRPd2CArray(PanelIt->sigma_SN, configLogMsg.sigma_BN);
+            eigenVector3d2CArray(PanelIt->omega_SN_S, configLogMsg.omega_BN_B);
+            this->nHingedRigidBodyConfigLogOutMsgs[panelIndex]->write(&configLogMsg, this->moduleID, CurrentClock);
+        }
+        panelIndex++;
+    }
+
+    return;
+}
+
+/*! This method computes the panel states relative to the inertial frame */
+void
+NHingedRigidBodyStateEffector::computePanelInertialStates()
+{
+    // - read live: the cached copy lags half a step at write time, unless a prescribed body set it
+    if (this->prescribedAttitudeProperty == nullptr) {
+        this->sigma_BN = Eigen::MRPd(this->hubSigmaState->getStateReference().data());
+    }
+    Eigen::MRPd sigmaLocal_BN = this->sigma_BN;
+    Eigen::Matrix3d dcm_NB = sigmaLocal_BN.toRotationMatrix();
+    Eigen::Vector3d r_BN_N = (Eigen::Vector3d)(*this->inertialPositionProperty);
+    Eigen::Vector3d v_BN_N = (Eigen::Vector3d)(*this->inertialVelocityProperty);
+
+    std::vector<HingedPanel>::iterator PanelIt;
+    for (PanelIt = this->PanelVec.begin(); PanelIt != this->PanelVec.end(); PanelIt++) {
+        PanelIt->sigma_SN = eigenC2MRP(PanelIt->dcm_SB * dcm_NB.transpose());
+        PanelIt->omega_SN_S = PanelIt->dcm_SB * (this->omegaLoc_BN_B + PanelIt->omega_SB_B);
+
+        PanelIt->r_ScN_N = r_BN_N + dcm_NB * PanelIt->r_SB_B;
+        PanelIt->v_ScN_N = v_BN_N + dcm_NB * (PanelIt->rPrime_SB_B + this->omegaLoc_BN_B.cross(PanelIt->r_SB_B));
+    }
+
     return;
 }
 
@@ -61,6 +130,12 @@ void NHingedRigidBodyStateEffector::linkInStates(DynParamManager& statesIn)
 {
     // - Get access to the hub states
     this->g_N = statesIn.getPropertyReference(this->propName_vehicleGravity);
+
+    this->inertialPositionProperty =
+      statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + this->propName_inertialPosition);
+    this->inertialVelocityProperty =
+      statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + this->propName_inertialVelocity);
+    this->hubSigmaState = statesIn.getStateObject(this->nameOfSpacecraftAttachedTo + this->stateNameOfSigma);
 
     return;
 }
@@ -157,6 +232,7 @@ void NHingedRigidBodyStateEffector::updateEffectorMassProps(double integTime [[m
         PanelIt->sHat2_B = PanelIt->dcm_SB.row(1);
         PanelIt->sHat3_B = PanelIt->dcm_SB.row(2);
 
+        PanelIt->r_HB_B = this->r_HB_B + sum_rH;
         PanelIt->r_SB_B = this->r_HB_B - PanelIt->d*PanelIt->sHat1_B + sum_rH;
         sum_rH += -2*PanelIt->d*PanelIt->sHat1_B;
 
@@ -165,6 +241,7 @@ void NHingedRigidBodyStateEffector::updateEffectorMassProps(double integTime [[m
 
         // - Find rPrime_SB_B
         sum_ThetaDot += PanelIt->thetaDot;
+        PanelIt->rPrime_HB_B = PanelIt->d * sum_rPrimeH;
         PanelIt->rPrime_SB_B = PanelIt->d*(sum_ThetaDot*PanelIt->sHat3_B + sum_rPrimeH);
         sum_rPrimeH += 2*PanelIt->sHat3_B*sum_ThetaDot;
 
@@ -231,7 +308,8 @@ void NHingedRigidBodyStateEffector::updateContributions(double integTime [[maybe
     Eigen::MRPd sigmaLocal_BN;
     Eigen::Matrix3d dcm_BN;
     Eigen::Matrix3d dcm_NB;
-    sigmaLocal_BN = sigma_BN;
+    this->sigma_BN = sigma_BN;
+    sigmaLocal_BN = this->sigma_BN;
     dcm_NB = sigmaLocal_BN.toRotationMatrix();
     dcm_BN = dcm_NB.transpose();
 
@@ -496,8 +574,9 @@ void NHingedRigidBodyStateEffector::updateEnergyMomContributions(double integTim
                                                                  double & rotEnergyContr, Eigen::Vector3d omega_BN_B)
 {
     // - Get the current omega state
+    this->omegaLoc_BN_B = omega_BN_B;
     Eigen::Vector3d omegaLocal_BN_B;
-    omegaLocal_BN_B = omega_BN_B;
+    omegaLocal_BN_B = this->omegaLoc_BN_B;
 
     Eigen::Vector3d omega_SN_B;
     Eigen::Matrix3d IPntS_B;
@@ -529,7 +608,7 @@ void NHingedRigidBodyStateEffector::updateEnergyMomContributions(double integTim
  */
 void NHingedRigidBodyStateEffector::UpdateState(uint64_t CurrentSimNanos)
 {
-    WriteOutputMessages(CurrentSimNanos);
+    this->writeOutputStateMessages(CurrentSimNanos);
 
     return;
 }

@@ -31,7 +31,9 @@
 from Basilisk.architecture.swig_common_model import *
 %}
 %include "swig_eigen.i"
+%include "swig_conly_data.i"
 %include "std_string.i"
+%include "std_vector.i"
 %include "stdint.i"
 
 
@@ -39,6 +41,11 @@ from Basilisk.architecture.swig_common_model import *
 %include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.i"
 %include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
 %include "nHingedRigidBodyStateEffector.h"
+
+%include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
+struct SCStatesMsg_C;
+%include "architecture/msgPayloadDefC/HingedRigidBodyMsgPayload.h"
+struct HingedRigidBodyMsg_C;
 
 %pythoncode %{
 import sys
