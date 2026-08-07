@@ -28,9 +28,21 @@ the surrounding work is already touching that area.
    - For dense arrays, tables, or function calls, document units once on the variable,
      column, or argument when per-element comments would hurt readability.
 
-2. **Doc comment format**
-   - All new/updated Python docstrings and Doxygen comments must be valid, well-formed reStructuredText (`.rst`) markup.
-   - Keep parameter, return, and note sections consistent and renderable by Sphinx/Doxygen.
+2. **Documentation and doc-comment format**
+   - New or updated Python docstrings and standalone `.rst` documentation must
+     use valid, well-formed reStructuredText that renders correctly with
+     Sphinx.
+   - New or updated C/C++ API comments must use valid Doxygen syntax that
+     produces the expected Doxygen XML and renders correctly through
+     Breathe/Sphinx.
+   - In C/C++ Doxygen comments, use Doxygen commands such as `@brief`,
+     `@param`, `@return`, and `@note`. The `@param` command is the correct way
+     to make method parameters appear in the generated API documentation; do
+     not require reStructuredText field lists such as `:param name:` in C/C++
+     header comments.
+   - Ensure every documented parameter name matches the declaration and that
+     parameter, return, and note sections are complete and renderable in the
+     documentation pipeline.
 
 3. **Spelling quality**
    - No misspellings in newly added/modified identifiers, comments, docstrings, Doxygen blocks, user-facing strings, or docs text.
@@ -79,3 +91,14 @@ the surrounding work is already touching that area.
    - If the example file includes the `enableUnityVisualization()` method, ensure the `saveFile` argument is included but commented out.
    - Ensure new Python example scripts are linked in `examples/_default.rst`.
    - Ensure any data importing is done in a robust manner supporting Linux, Windows and macOS
+
+11. **Header self-containment**
+   - For every new or materially modified C/C++ header, verify that it directly
+     includes the headers required for every type, function, and macro it uses.
+   - Do not rely on transitive includes or include order.
+   - Where practical, compile the header in isolation using its owning target's
+     build flags.
+   - Pay particular attention to fixed-width integer types, Eigen types,
+     messaging types, and `BSKLogger`.
+   - Exempt intentional implementation fragments, generated headers, and
+     SWIG-only include files when standalone compilation is not appropriate.
