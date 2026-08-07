@@ -4,10 +4,6 @@
     #include "architecture/messaging/messaging.h"
     // Per-payload PayloadEqualityTraits<{type}Payload> specialization (auto-generated).
     #include "{type}Payload_equality.h"
-    #include "architecture/msgPayloadDefC/ReconfigBurnInfoMsgPayload.h"
-    #include "architecture/msgPayloadDefC/RWConfigElementMsgPayload.h"
-    #include "architecture/msgPayloadDefC/THRConfigMsgPayload.h"
-    #include "simulation/dynamics/reactionWheels/reactionWheelSupport.h"
     #include <stdint.h>
     #include <vector>
     #include <deque>
@@ -16,27 +12,23 @@
 %include "messaging/newMessaging.ih"
 %import "architecture/messaging/messagingBase.i"
 
+// These generic interfaces provide code-generation fragments used by each
+// payload's own message/reader/recorder vector wrappers.  Their shared concrete
+// helper types are instantiated only by messagingSupport below.
 %include "std_vector.i"
 %include "std_string.i"
 %include "_GeneralModuleFiles/swig_eigen.i"
 %include "_GeneralModuleFiles/swig_conly_data.i"
 %include "stdint.i"
-%template(TimeVector) std::vector<unsigned long long, std::allocator<unsigned long long>>;
-%template(DoubleVector) std::vector<double, std::allocator<double>>;
-%template(StringVector) std::vector<std::string, std::allocator<std::string>>;
 
-%typemap(out) uintptr_t {{
-    $result = PyLong_FromUnsignedLongLong((unsigned long long)$1);
-}}
+#define BSK_MESSAGING_SUPPORT_IMPORT
+%import "architecture/messaging/messagingSupport.i"
+#undef BSK_MESSAGING_SUPPORT_IMPORT
+%include "architecture/messaging/messagingSupportTypemaps.swg"
 
-%include "architecture/utilities/macroDefinitions.h"
-%include "fswAlgorithms/fswUtilities/fswDefinitions.h"
-%include "simulation/dynamics/reactionWheels/reactionWheelSupport.h"
-ARRAYASLIST(FSWdeviceAvailability, PyLong_FromLong, PyLong_AsLong)
-STRUCTASLIST(CSSUnitConfigMsgPayload)
-STRUCTASLIST(AccPktDataMsgPayload)
-STRUCTASLIST(RWConfigElementMsgPayload)
-STRUCTASLIST(CSSArraySensorMsgPayload)
+%pythoncode %{{
+from Basilisk.architecture.messaging.messagingSupport import *
+%}};
 
 %ignore SysModel::SysModel(const SysModel &);
 %ignore SysModel::operator=(const SysModel &);
@@ -58,10 +50,6 @@ STRUCTASLIST(CSSArraySensorMsgPayload)
 
 %include "messaging/messaging.h"
 %include "_GeneralModuleFiles/sys_model.h"
-
-%array_functions(THRConfigMsgPayload, ThrustConfigArray);
-%array_functions(RWConfigElementMsgPayload, RWConfigArray);
-%array_functions(ReconfigBurnInfoMsgPayload, ReconfigBurnArray);
 
 %rename(__subscribe_to) subscribeTo;  // we want the users to have a unified "subscribeTo" interface
 %rename(__subscribe_to_C) subscribeToC;  // we want the users to have a unified "subscribeTo" interface

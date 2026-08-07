@@ -93,6 +93,7 @@ def test_package_init_generation_is_deterministic(tmp_path, monkeypatch):
     for file_name in file_names:
         (header_path / file_name).touch()
     expected = """\
+from Basilisk.architecture.messaging.messagingSupport import *
 from Basilisk.architecture.messaging.AlphaMsgPayload import *
 from Basilisk.architecture.messaging.ZuluMsgPayload import *
 from Basilisk.architecture.messagingBase import *
@@ -160,6 +161,13 @@ def test_generated_message_bindings_use_module_local_classes(tmp_path):
     new_messaging_template = NEW_MESSAGING_TEMPLATE.read_text(encoding="utf-8")
 
     assert '%import "architecture/messaging/messagingBase.i"' in generated
+    assert '%import "architecture/messaging/messagingSupport.i"' in generated
+    assert '%include "architecture/messaging/messagingSupportTypemaps.swg"' in generated
+    assert "from Basilisk.architecture.messaging.messagingSupport import *" in generated
+    assert "ThrustConfigArray" not in generated
+    assert "reactionWheelSupport.h" not in generated
+    assert "macroDefinitions.h" not in new_messaging_template
+    assert "fswDefinitions.h" not in new_messaging_template
     assert "from Basilisk.architecture.messaging.messageType" not in new_messaging_template
     assert "if type(source) == messageType ## _C:" in new_messaging_template
     assert "from Basilisk.architecture.messaging import CustomMsg" not in generated
