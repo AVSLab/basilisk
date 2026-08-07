@@ -27,13 +27,14 @@ Installing Dependencies and Building Basilisk
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 The command, in its minimal form, is::
 
-    conan build . --build=missing
+    conan build . --build=missing -s compiler.cppstd=17 -s:b compiler.cppstd=17
 
 This command creates the ``dist3`` distribution folder when needed, resolves the required third-party resources,
 compiles dependencies whose binaries are missing, generates the CMake files, and builds Basilisk. All build files
 are stored in ``dist3``. It does not install or modify packages in the active Python environment. Install the
 requirements and create the editable Basilisk installation separately, as described in the platform-specific
-installation instructions.
+installation instructions. Applying C++17 to both the host and build profiles lets Conan match cached build tools
+directly instead of searching compatible configurations or querying a remote for an avoidable profile mismatch.
 
 There are several options that can be provided to this ``conan build`` command as shown in the following table.
 Note that the option names for groupings of Basilisk modules are the same as with the one-step build above. The
@@ -78,10 +79,11 @@ Note that the option names for groupings of Basilisk modules are the same as wit
       - see `here <https://cmake.org/cmake/help/latest/manual/cmake-generators.7.html>`__
       - Automatically selected
       - Used to specify a specific ``cmake`` generator.  See discussion in Table :ref:`buildTable1Label`.
+
 Thus, using the same build example as in the one-step section, to create a build with ``opNav`` modes enabled,
 but no :ref:`vizInterface`, and using a clean distribution folder, and that is built right away, you could use::
 
-    conan build . --build=missing \
+    conan build . --build=missing -s compiler.cppstd=17 -s:b compiler.cppstd=17 \
         -o "&:clean=True" -o "&:buildProject=True" -o "&:opNav=True" -o "&:vizInterface=False"
 
 Note how much more verbose this is, but it gives you full control if you want to store the compiled binaries and

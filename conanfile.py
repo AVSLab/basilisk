@@ -242,6 +242,8 @@ def create_conan_build_command(
         "build_type=" + str(arguments.buildType),
         "-s",
         "compiler.cppstd=17",
+        "-s:b",
+        "compiler.cppstd=17",
     ]
     if platform_name != "nt":
         command.extend(["-s", "compiler.cstd=gnu17"])
