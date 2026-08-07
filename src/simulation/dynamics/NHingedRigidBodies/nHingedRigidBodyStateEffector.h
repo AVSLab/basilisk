@@ -124,6 +124,7 @@ private:
     Eigen::MatrixXd* inertialVelocityProperty = nullptr; //!< [m/s] v_N velocity relative to system spice zeroBase
     Eigen::MatrixXd* g_N;           //!< [m/s^2] Gravitational acceleration in N frame components
     std::string propertyNameIndex;  //!< -- effector identifier used to name the per panel properties
+    bool hasAttachedEffectors = false; //!< -- true once any panel carries a dynamic effector
     static uint64_t effectorID;        //!< [] ID number of this panel
 
 public:
