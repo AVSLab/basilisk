@@ -1,0 +1,1 @@
+- Reduced ``python conanfile.py`` setup time by using one Conan dependency-and-build pass instead of repeating dependency resolution, generator creation, and environment checks across separate install and build commands.

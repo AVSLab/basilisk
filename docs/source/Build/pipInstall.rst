@@ -112,8 +112,10 @@ perform the build. In ``setup.py``, the Python extension builder is overridden w
 computes an appropriate Python Limited C API version (based on the minimum supported Python version
 specified in ``pyproject.toml``). The builder then invokes ``python conanfile.py``, setting the
 ``--managePipEnvironment False`` option so that Conan does not directly manipulate the user's ``pip``
-environment. The main reasons for this setting was to maintain the current default behaviour of
-``conanfile.py``-based installation.
+environment. The main reason for this setting is to maintain the current default behaviour of
+``conanfile.py``-based installation. The script dispatches one ``conan build --build=missing`` command, which
+installs missing dependencies, generates the CMake toolchain files, and invokes the recipe's build method in one
+dependency-resolution pass.
 
 Editable installations (i.e. ``pip install -e .``) are partially supported. Python code changes are reflected
 automatically with this flag, but C++ components are not automatically rebuilt.

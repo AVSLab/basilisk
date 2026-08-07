@@ -15,28 +15,30 @@ Advanced: Directly Building the Software Framework Using Conan
 
 Configuring and Building with ``conan`` Commands
 ------------------------------------------------
-Calling ``conanfile.py`` with python executes a method that calls two separate ``conan`` function to setup and
-configure process, and build the executable if desired.  This section outlines this 2-step build process for
-those that seek to build it this way.
+Calling ``conanfile.py`` with Python dispatches one Conan command that installs missing dependencies, generates
+the build files, and calls the Basilisk recipe's ``build()`` method. This section outlines the equivalent direct
+Conan command for advanced users.
 
 .. note::
 
     All commands are called from the Basilisk root directory.
 
-Step 1: Installing Basilisk Dependencies
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-The first command, in its minimalist form, is::
+Installing Dependencies and Building Basilisk
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The command, in its minimal form, is::
 
-    conan install . --build=missing
+    conan build . --build=missing
 
-This conan command will create the distribution folder, ``dist3`` in the above case, if needed, collect all the
-require Basilisk 3rd party resources and compile them if their binaries are missing. All build files
+This command creates the ``dist3`` distribution folder when needed, resolves the required third-party resources,
+compiles dependencies whose binaries are missing, generates the CMake files, and builds Basilisk. All build files
 are stored in ``dist3``.
 
-There are several options that can be provided to this ``conan install`` command as shown in the following table.
-Note that the option names for groupings of Basilisk modules are the same as with the one-step build above.
+There are several options that can be provided to this ``conan build`` command as shown in the following table.
+Note that the option names for groupings of Basilisk modules are the same as with the one-step build above. The
+``&:`` prefix scopes each option to the Basilisk consumer recipe. Keep the option expression in double quotes because
+``&`` is a shell control character.
 
-.. list-table:: Options for ``conan install`` Step
+.. list-table:: Options for ``conan build``
     :widths: 15 15 10 60
     :header-rows: 1
 
@@ -44,20 +46,20 @@ Note that the option names for groupings of Basilisk modules are the same as wit
       - Values
       - Default
       - Description
-    * - ``-o vizInterface``
+    * - ``-o "&:vizInterface=<value>"``
       - Boolean
       - True
       - Include :ref:`vizInterface` in the configuration and build
-    * - ``-o opNav``
+    * - ``-o "&:opNav=<value>"``
       - Boolean
       - False
       - Include the `OpenCV <https://opencv.org>`__ library dependent Basilisk modules.
-    * - ``-o clean``
+    * - ``-o "&:clean=<value>"``
       - Boolean
       - False
       - Delete the distribution folder and Basilisk Numba cache artifacts before configuring to yield
         a fresh build
-    * - ``-o buildProject``
+    * - ``-o "&:buildProject=<value>"``
       - Boolean
       - True
       - Will build the project executable after the configuration step
@@ -65,14 +67,14 @@ Note that the option names for groupings of Basilisk modules are the same as wit
       - Release, Debug
       - Release
       - Specifies the build type
-    * - ``-o strictWarnings``
+    * - ``-o "&:strictWarnings=<value>"``
       - Boolean
       - False
       - Enables the additional Basilisk compiler diagnostics described in
         :ref:`strictCompilerWarnings`
-    * - ``-o generator``
+    * - ``-o "&:generator=<value>"``
       - see `here <https://cmake.org/cmake/help/latest/manual/cmake-generators.7.html>`__
-      - ``XCode`` (macOS), ``Visual Studio 16 2019`` (Windows), ``None`` (Linux)
+      - Automatically selected
       - Used to specify a specific ``cmake`` generator.  See discussion in Table :ref:`buildTable1Label`.
     * - ``-o autoKey``
       - String 's' or 'u'
@@ -87,35 +89,20 @@ Note that the option names for groupings of Basilisk modules are the same as wit
 Thus, using the same build example as in the one-step section, to create a build with ``opNav`` modes enabled,
 but no :ref:`vizInterface`, and using a clean distribution folder, and that is built right away, you could use::
 
-    conan install . --build=missing -o clean=True -o buildProject=True -o opNav=True -o vizInterface=False
+    conan build . --build=missing \
+        -o "&:clean=True" -o "&:buildProject=True" -o "&:opNav=True" -o "&:vizInterface=False"
 
 Note how much more verbose this is, but it gives you full control if you want to store the compiled binaries and
 cmake files in directories other than ``dist3/conan``.
-
-Step 2: Creating the IDE Project
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-The final step is to create the IDE project file and possibly build the executables directly.
-At this stage there are no options to be provided.  This step is done with::
-
-    conan build .
-
-.. note::
-
-    If you provide the ``conan install`` step some optional arguments with ``-o``, the same
-    arguments must be provided for the ``conan build`` step.
-
-.. warning::
-
-    If you want the ``conan build`` command to automatically compile the code, the ``buildProject`` option
-    must be set in the ``conan install`` step.
 
 
 Running ``cmake`` Directly
 --------------------------
 
-The ``conan install`` command must always be run to install the required dependencies and compile them.  If the
-developer wishes, the ``cmake`` can be run directly from the ``dist3`` distribution folder instead
-of relying on the ``conan build`` step discussed above.
+Advanced users can still run ``conan install . --build=missing`` separately when they intentionally want to
+prepare dependencies and toolchain files without calling the recipe's ``build()`` method. They must then configure
+CMake with the generated Conan toolchain before running CMake directly from the ``dist3`` distribution folder.
+This optional split workflow is not used by ``python conanfile.py``.
 
 The following table summarizes the optional Basilisk related flags that can be provided to ``cmake``.  If
 they are not used, then the shown default behaviors are used.
