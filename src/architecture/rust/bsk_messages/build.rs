@@ -23,7 +23,7 @@ use std::{
     error::Error,
     ffi::OsStr,
     fmt::Write as _,
-    fs,
+    fs, io,
     path::{Path, PathBuf},
 };
 
@@ -159,7 +159,7 @@ fn generate_bindings() -> Result<(), Box<dyn Error>> {
         env::var_os("OUT_DIR").ok_or("Cargo did not provide OUT_DIR to bsk-messages")?,
     );
     let wrapper_path = output_dir.join("bsk_messages_wrapper.h");
-    fs::write(&wrapper_path, render_wrapper(&headers))?;
+    write_if_changed(&wrapper_path, &render_wrapper(&headers))?;
 
     // Rust modules bind only Basilisk's C message ABI. Parsing these headers
     // as C also avoids coupling bindgen's libclang version to the host C++
@@ -199,8 +199,15 @@ fn generate_bindings() -> Result<(), Box<dyn Error>> {
     generated.push('\n');
     generated.push_str(&render_message_trait_impls(&generated)?);
 
-    fs::write(output_dir.join(GENERATED_BINDINGS_FILE), generated)?;
+    write_if_changed(&output_dir.join(GENERATED_BINDINGS_FILE), &generated)?;
     Ok(())
+}
+
+fn write_if_changed(path: &Path, contents: &str) -> io::Result<()> {
+    if fs::read_to_string(path).is_ok_and(|existing| existing == contents) {
+        return Ok(());
+    }
+    fs::write(path, contents)
 }
 
 fn env_path(variable: &str) -> Option<PathBuf> {
