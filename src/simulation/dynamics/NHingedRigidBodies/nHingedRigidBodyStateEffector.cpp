@@ -222,6 +222,7 @@ NHingedRigidBodyStateEffector::addDynamicEffector(DynamicEffector* newDynamicEff
     HingedPanel& panel = this->PanelVec[(size_t)(segment - 1)];
     panel.assignStateParamNames<DynamicEffector*>(newDynamicEffector);
     panel.dynEffectors.push_back(newDynamicEffector);
+    this->hasAttachedEffectors = true;
 }
 
 /*! This method registers the panel inertial properties with the dynamic parameter manager and links
@@ -354,7 +355,7 @@ double NHingedRigidBodyStateEffector::HeaviFunc(double cond)
 
 /*! This method allows the HRB state effector to give its contributions to the matrices needed for the back-sub
  method */
-void NHingedRigidBodyStateEffector::updateContributions(double integTime [[maybe_unused]], BackSubMatrices & backSubContr, Eigen::MRPd sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N [[maybe_unused]])
+void NHingedRigidBodyStateEffector::updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::MRPd sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N [[maybe_unused]])
 {
     // - Find dcm_BN
     Eigen::MRPd sigmaLocal_BN;
@@ -376,6 +377,30 @@ void NHingedRigidBodyStateEffector::updateContributions(double integTime [[maybe
     std::vector<HingedPanel>::iterator PanelIt;
     for(PanelIt=this->PanelVec.begin(); PanelIt!=this->PanelVec.end(); PanelIt++){
         PanelIt->omega_BN_S = PanelIt->dcm_SB*this->omegaLoc_BN_B;
+    }
+
+    if (this->hasAttachedEffectors) {
+        this->computePanelInertialStates();
+    }
+
+    // Loop through to collect forces and torques from any connected dynamic effectors
+    Eigen::Vector3d attBodyForce_B = Eigen::Vector3d::Zero();
+    Eigen::Vector3d attBodyTorquePntB_B = Eigen::Vector3d::Zero();
+    for(PanelIt=this->PanelVec.begin(); PanelIt!=this->PanelVec.end(); PanelIt++){
+        PanelIt->extForce_B.setZero();
+        PanelIt->extTorquePntH_B.setZero();
+        std::vector<DynamicEffector*>::iterator dynIt;
+        for(dynIt = PanelIt->dynEffectors.begin(); dynIt != PanelIt->dynEffectors.end(); dynIt++)
+        {
+            // - Compute the force and torque contributions from the dynamicEffectors
+            (*dynIt)->computeForceTorque(integTime, double(0.0));
+            // a child's "_B" loads are already in this panel's S frame, so only "_N" is rotated
+            PanelIt->extForce_B += PanelIt->dcm_SB.transpose()*(*dynIt)->forceExternal_B
+                                   + dcm_BN*(*dynIt)->forceExternal_N;
+            PanelIt->extTorquePntH_B += PanelIt->dcm_SB.transpose()*(*dynIt)->torqueExternalPntB_B;
+        }
+        attBodyForce_B += PanelIt->extForce_B;
+        attBodyTorquePntB_B += PanelIt->extTorquePntH_B + PanelIt->r_HB_B.cross(PanelIt->extForce_B);
     }
 
     // - Define A matrix for the panel equations
@@ -452,10 +477,12 @@ void NHingedRigidBodyStateEffector::updateContributions(double integTime [[maybe
     this->vectorVDHRB.resize((int) this->PanelVec.size());
     this->vectorVDHRB.setZero();
     double massOfCurrentPanelAndBefore = 0; // Summation of all of prior panels masses and the current panels mass
+    Eigen::Vector3d extForceCurrentPanelAndBefore = Eigen::Vector3d::Zero();
     j = 1;
     for(PanelIt=this->PanelVec.begin(); PanelIt!=this->PanelVec.end(); PanelIt++){
         // Add current panel to mass
         massOfCurrentPanelAndBefore += PanelIt->mass;
+        extForceCurrentPanelAndBefore += PanelIt->extForce_B;
         double sumTerm1;
         Eigen::Vector3d sumTerm2;
         sumTerm2.setZero();
@@ -503,8 +530,11 @@ void NHingedRigidBodyStateEffector::updateContributions(double integTime [[maybe
         double remainingMass;
         remainingMass = this->totalMass - massOfCurrentPanelAndBefore;
         gravForceRestOfPanels = remainingMass*g_B;
-        this->vectorVDHRB(j-1) = sumTerm1 + PanelIt->sHat2_B.dot(gravTorqueCurPanel)
-        + 2.0*PanelIt->d*PanelIt->sHat3_B.dot(gravForceRestOfPanels);
+        // an attached effector's torque on a panel outboard of j cancels between the row j and row
+        // j+1 balances, so only the moment arm of its force survives here
+        Eigen::Vector3d extForceRestOfPanels = attBodyForce_B - extForceCurrentPanelAndBefore;
+        this->vectorVDHRB(j-1) = sumTerm1 + PanelIt->sHat2_B.dot(gravTorqueCurPanel + PanelIt->extTorquePntH_B)
+        + 2.0*PanelIt->d*PanelIt->sHat3_B.dot(gravForceRestOfPanels + extForceRestOfPanels);
         j += 1;
     }
 
@@ -536,6 +566,7 @@ void NHingedRigidBodyStateEffector::updateContributions(double integTime [[maybe
         backSubContr.vecTrans += -sumTerm2 - sumTerm1 * (eRow * this->vectorVDHRB);
         j += 1;
     }
+    backSubContr.vecTrans += attBodyForce_B;
 
     // - Rotational contributions
     backSubContr.matrixC.setZero();
@@ -582,6 +613,7 @@ void NHingedRigidBodyStateEffector::updateContributions(double integTime [[maybe
         backSubContr.vecRot += -sumTerm2 - sumTerm1 * (eRow * this->vectorVDHRB);
         j += 1;
     }
+    backSubContr.vecRot += attBodyTorquePntB_B;
 
 
     return;
