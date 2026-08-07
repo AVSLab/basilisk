@@ -42,6 +42,8 @@ jobs:
         run: |
           grep -F "BUILD_RUST_MODULES:BOOL=ON" dist3/CMakeCache.txt
           python -c "from Basilisk import getBuildInfo; assert getBuildInfo()['diagnostics']['tools']['corrosion']"
+      - name: Test incremental build dependencies
+        run: python .github/scripts/test_incremental_build.py --build-dir dist3
       - name: Test Rust workspace
         run: |
           cargo test --workspace --all-features --locked --manifest-path src/Cargo.toml
