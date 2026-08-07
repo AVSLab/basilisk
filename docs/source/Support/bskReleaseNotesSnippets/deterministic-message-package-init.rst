@@ -4,3 +4,4 @@
 - Improved incremental builds by tracking transitive SWIG includes, source discovery changes, protobuf tools, and Rust FFI headers without regenerating wrappers for unrelated source changes.
 - Made fixed-width integer and Eigen headers self-contained instead of relying on transitive includes.
 - Prevented unchanged Rust-enabled builds from recompiling generated message bindings and Rust modules.
+- Reduced clean-build work by compiling architecture framework sources in one package library instead of ten.
