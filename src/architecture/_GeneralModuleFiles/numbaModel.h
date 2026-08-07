@@ -21,6 +21,7 @@
 #include <vector>
 #include "sys_model.h"
 #include "architecture/messaging/msgHeader.h"
+#include "architecture/utilities/bskLogging.h"
 
 /*! @brief Bookkeeping for one registered ReadFunctor.
  *

@@ -30,6 +30,7 @@
 #include "MJBody.h"
 #include "MJGeomInfo.h"
 #include "MJUtils.h"
+#include "architecture/utilities/bskLogging.h"
 
 namespace Eigen
 {

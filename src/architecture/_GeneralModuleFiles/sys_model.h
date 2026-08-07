@@ -20,7 +20,6 @@
 #ifndef _SysModel_HH_
 #define _SysModel_HH_
 
-#include <architecture/utilities/bskLogging.h>
 #include <string>
 #include <stdint.h>
 

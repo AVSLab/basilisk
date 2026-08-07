@@ -25,6 +25,7 @@
 #include "cMsgCInterface/NavAttMsg_C.h"
 
 #include "architecture/utilities/macroDefinitions.h"
+#include "architecture/utilities/bskLogging.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 
