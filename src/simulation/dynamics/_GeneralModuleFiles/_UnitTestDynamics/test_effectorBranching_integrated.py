@@ -61,6 +61,7 @@ from Basilisk.simulation import ( # dynamic effectors
     thrusterDynamicEffector,
     constraintDynamicEffector,
     dragDynamicEffector,
+    facetDragDynamicEffector,
     radiationPressure,
     facetSRPDynamicEffector,
     MtbEffector,
@@ -101,6 +102,7 @@ FINE_TIMESTEP = 0.0005  # [s]
     ("constraintEffectorOneHub",  True),
     ("constraintEffectorNoHubs",  True),
     # ("dragEffector",                False),
+    ("facetDragDynamicEffector",  True),
     # ("radiationPressure",           False),
     # ("facetSRPDynamicEffector",     False),
     # ("MtbEffector",                 False),
@@ -417,6 +419,8 @@ def effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dynamic
         dynamicEff = setup_extPulseTorque()
     elif dynamicEffector == "thrusterDynamicEffector":
         dynamicEff, thFactory = setup_thrusterDynamicEffector()
+    elif dynamicEffector == "facetDragDynamicEffector":
+        dynamicEff = setup_facetDragDynamicEffector()
     elif dynamicEffector == "constraintEffectorOneHub":
         dynamicEff, scObjectx = setup_constraintEffectorOneHub(scObject, stateEffProps)
         unitTestSim.AddModelToTask("unitTask", scObjectx)
@@ -689,6 +693,27 @@ def setup_thrusterDynamicEffector():
     thruster.cmdsInMsg.subscribeTo(thrMsg)
 
     return(thruster, thFactory)
+
+def setup_facetDragDynamicEffector():
+    facetDrag = facetDragDynamicEffector.FacetDragDynamicEffector()
+    facetDrag.ModelTag = "facetDragDynamicEffector"
+
+    # facet geometry is expressed in the parent frame, not the hub body frame
+    panelArea = 10.0  # [m^2]
+    panelCd = 5.0  # [-]
+    r_FP_P = np.array([0.0, 0.0, 0.3])  # [m] both faces share the panel centroid
+    for panelNormal_P in [np.array([0.0, 0.0, 1.0]), np.array([0.0, 0.0, -1.0])]:
+        facetDrag.addFacet(panelArea, panelCd, panelNormal_P, r_FP_P)
+
+    # the orbit shared by every case here sits above any atmosphere table, so feed the effector a
+    # fixed density rather than an atmosphere model or the drag load is zero
+    atmoMsgData = messaging.AtmoPropsMsgPayload()
+    atmoMsgData.neutralDensity = 4.2e-10  # [kg/m^3] nominal 200 km density
+    atmoMsg = messaging.AtmoPropsMsg()
+    atmoMsg.write(atmoMsgData)
+    facetDrag.atmoDensInMsg.subscribeTo(atmoMsg)
+
+    return(facetDrag)
 
 def setup_constraintEffector(scObject1):
     scObject2 = spacecraft.Spacecraft()
