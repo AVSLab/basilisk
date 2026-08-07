@@ -95,9 +95,17 @@ External Project Layout
 
 .. sidebar:: Download the Example
 
-   Download a sample external project containing C and C++ modules, shared
-   support code, custom messages, and unit tests:
+   Download a sample external project containing C, C++, and Rust modules,
+   shared support code, custom messages, and unit tests:
    :download:`External.zip <External.zip>`.
+
+The Rust manifests in this downloadable example assume that ``External`` is
+extracted beside a Basilisk checkout whose directory is named ``basilisk``, as
+shown by the relative build command below. If the example is placed elsewhere
+or the checkout has another name, update the ``bsk-build`` and ``bsk-messages``
+path dependencies in both included ``Cargo.toml`` files to point to the actual
+Basilisk checkout before enabling ``rustModules``. C and C++ external modules
+do not have this sample-specific path assumption.
 
 The external project root can have any name. The directories inside it use
 fixed names because the Basilisk build discovers them automatically:
