@@ -20,6 +20,7 @@
 #ifndef SYNC_CLOCK_MESSAGE_H
 #define SYNC_CLOCK_MESSAGE_H
 
+#include <stdint.h>
 
 //! @brief Output diagnostic structure used for analyzing how the synch is performing.
 typedef struct {

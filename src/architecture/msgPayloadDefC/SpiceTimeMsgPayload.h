@@ -20,6 +20,7 @@
 #ifndef SPICE_TIME_MESSAGE_H
 #define SPICE_TIME_MESSAGE_H
 
+#include <stdint.h>
 
 
 //! The SPICE time output structure outputs time information to the rest of the system

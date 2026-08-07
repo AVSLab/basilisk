@@ -19,6 +19,7 @@
 #ifndef BASILISK_POWERNODESTATUSMSG_H
 #define BASILISK_POWERNODESTATUSMSG_H
 
+#include <stdint.h>
 
 
 //! @brief Power node command message used to change the state of power modules.

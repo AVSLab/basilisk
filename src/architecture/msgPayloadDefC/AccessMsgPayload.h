@@ -20,6 +20,8 @@
 #ifndef ACCESSSIMMSG_H
 #define ACCESSSIMMSG_H
 
+#include <stdint.h>
+
 /*! @brief Message that defines access to spacecraft from a groundLocation, providing access, range, and elevation with
  * respect to a ground location.
  */
