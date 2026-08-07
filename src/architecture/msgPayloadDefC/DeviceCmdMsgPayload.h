@@ -20,6 +20,8 @@
 #ifndef BASILISK_DEVICECMDMSGPAYLOAD_H
 #define BASILISK_DEVICECMDMSGPAYLOAD_H
 
+#include <stdint.h>
+
 //! @brief Device command message used to change the state of instruments.
 typedef struct{
     uint64_t deviceCmd;   //!< device command; 0 is off, >0 commands other states

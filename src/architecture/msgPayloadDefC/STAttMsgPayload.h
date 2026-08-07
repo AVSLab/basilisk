@@ -20,6 +20,7 @@
 #ifndef ST_ATTITUDE_MESSAGE_H
 #define ST_ATTITUDE_MESSAGE_H
 
+#include <stdint.h>
 
 /*! @brief Output structure for ST attitude measurement in vehicle body frame*/
 typedef struct {

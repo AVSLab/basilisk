@@ -19,6 +19,8 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 #ifndef msgHeader_h
 #define msgHeader_h
 
+#include <stdint.h>
+
 /*! @brief message system 2 header information structure */
 typedef struct {
     int64_t isLinked;       //!< flag if the message has is connected to another message

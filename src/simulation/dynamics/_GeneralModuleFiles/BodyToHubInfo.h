@@ -19,6 +19,7 @@
 
 #ifndef SIM_THRUSTER_BODYTOHUBINFO_H
 #define SIM_THRUSTER_BODYTOHUBINFO_H
+#include <Eigen/Dense>
 #include <stdint.h>
 
 
