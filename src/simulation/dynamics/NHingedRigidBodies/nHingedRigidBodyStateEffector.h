@@ -63,8 +63,16 @@ struct HingedPanel {
 
     Eigen::Vector3d r_ScN_N;    //!< [m] position vector of the panel CoM S relative to the inertial frame
     Eigen::Vector3d v_ScN_N;    //!< [m/s] inertial velocity vector of S relative to the inertial frame
-    Eigen::MRPd sigma_SN;       //!< -- MRP attitude of panel frame S relative to the inertial frame
-    Eigen::Vector3d omega_SN_S; //!< [rad/s] inertial panel frame angular velocity vector
+
+    std::string nameOfInertialPositionProperty;    //!< -- identifier for the inertial position property
+    std::string nameOfInertialVelocityProperty;    //!< -- identifier for the inertial velocity property
+    std::string nameOfInertialAttitudeProperty;    //!< -- identifier for the inertial attitude property
+    std::string nameOfInertialAngVelocityProperty; //!< -- identifier for the inertial angular velocity property
+
+    Eigen::MatrixXd* r_HN_N = nullptr;     //!< [m] position vector of the panel hinge H relative to the inertial frame
+    Eigen::MatrixXd* v_HN_N = nullptr;     //!< [m/s] inertial velocity vector of H relative to the inertial frame
+    Eigen::MatrixXd* sigma_SN = nullptr;   //!< -- MRP attitude of panel frame S relative to the inertial frame
+    Eigen::MatrixXd* omega_SN_S = nullptr; //!< [rad/s] inertial panel frame angular velocity vector
 };
 
 /*! @brief NHingedRigidBodyStateEffector class */
@@ -96,6 +104,7 @@ private:
     Eigen::MatrixXd* inertialPositionProperty = nullptr; //!< [m] r_N position relative to system spice zeroBase
     Eigen::MatrixXd* inertialVelocityProperty = nullptr; //!< [m/s] v_N velocity relative to system spice zeroBase
     Eigen::MatrixXd* g_N;           //!< [m/s^2] Gravitational acceleration in N frame components
+    std::string propertyNameIndex;  //!< -- effector identifier used to name the per panel properties
     static uint64_t effectorID;        //!< [] ID number of this panel
 
 public:
@@ -105,6 +114,7 @@ public:
     void writeOutputStateMessages(uint64_t CurrentClock) override;
     void UpdateState(uint64_t CurrentSimNanos) override;
     void registerStates(DynParamManager& statesIn) override; //!< -- Method for registering the HRB states
+    void registerProperties(DynParamManager& states) override; //!< -- Method for registering the panel properties
     void linkInStates(DynParamManager& states) override;     //!< -- Method for getting access to other states
     void updateEffectorMassProps(double integTime) override; //!< -- Method for stateEffector to give mass contributions
     void updateContributions(double integTime,

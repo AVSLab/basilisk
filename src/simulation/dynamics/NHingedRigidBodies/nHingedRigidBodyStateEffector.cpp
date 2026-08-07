@@ -34,6 +34,7 @@ NHingedRigidBodyStateEffector::NHingedRigidBodyStateEffector()
     this->dcm_HB.setIdentity();
     this->nameOfThetaState ="nHingedRigidBody" + std::to_string(this->effectorID) + "Theta";
     this->nameOfThetaDotState = "nHingedRigidBody" + std::to_string(this->effectorID) + "ThetaDot";
+    this->propertyNameIndex = std::to_string(this->effectorID); // preserves effectorID for later adding panels
     this->effectorID++;
 
     return;
@@ -63,6 +64,13 @@ NHingedRigidBodyStateEffector::addHingedPanel(HingedPanel NewPanel)
     this->nHingedRigidBodyOutMsgs.push_back(new Message<HingedRigidBodyMsgPayload>);
     this->nHingedRigidBodyConfigLogOutMsgs.push_back(new Message<SCStatesMsgPayload>);
 
+    const std::string panelSuffix = this->propertyNameIndex + "_" + std::to_string(this->PanelVec.size());
+    HingedPanel& panel = this->PanelVec.back();
+    panel.nameOfInertialPositionProperty = "nHingedRigidBodyInertialPosition" + panelSuffix;
+    panel.nameOfInertialVelocityProperty = "nHingedRigidBodyInertialVelocity" + panelSuffix;
+    panel.nameOfInertialAttitudeProperty = "nHingedRigidBodyInertialAttitude" + panelSuffix;
+    panel.nameOfInertialAngVelocityProperty = "nHingedRigidBodyInertialAngVelocity" + panelSuffix;
+
     return;
 }
 
@@ -90,8 +98,8 @@ NHingedRigidBodyStateEffector::writeOutputStateMessages(uint64_t CurrentClock)
             // Note, logging the panel frame S is the body frame B of that object
             eigenVector3d2CArray(PanelIt->r_ScN_N, configLogMsg.r_BN_N);
             eigenVector3d2CArray(PanelIt->v_ScN_N, configLogMsg.v_BN_N);
-            eigenMRPd2CArray(PanelIt->sigma_SN, configLogMsg.sigma_BN);
-            eigenVector3d2CArray(PanelIt->omega_SN_S, configLogMsg.omega_BN_B);
+            eigenMatrixXd2CArray(*PanelIt->sigma_SN, configLogMsg.sigma_BN);
+            eigenMatrixXd2CArray(*PanelIt->omega_SN_S, configLogMsg.omega_BN_B);
             this->nHingedRigidBodyConfigLogOutMsgs[panelIndex]->write(&configLogMsg, this->moduleID, CurrentClock);
         }
         panelIndex++;
@@ -115,11 +123,15 @@ NHingedRigidBodyStateEffector::computePanelInertialStates()
 
     std::vector<HingedPanel>::iterator PanelIt;
     for (PanelIt = this->PanelVec.begin(); PanelIt != this->PanelVec.end(); PanelIt++) {
-        PanelIt->sigma_SN = eigenC2MRP(PanelIt->dcm_SB * dcm_NB.transpose());
-        PanelIt->omega_SN_S = PanelIt->dcm_SB * (this->omegaLoc_BN_B + PanelIt->omega_SB_B);
+        const Eigen::MRPd sigma_SN = eigenC2MRP(PanelIt->dcm_SB * dcm_NB.transpose());
+        *PanelIt->sigma_SN = sigma_SN.coeffs();
+        *PanelIt->omega_SN_S = PanelIt->dcm_SB * (this->omegaLoc_BN_B + PanelIt->omega_SB_B);
 
         PanelIt->r_ScN_N = r_BN_N + dcm_NB * PanelIt->r_SB_B;
         PanelIt->v_ScN_N = v_BN_N + dcm_NB * (PanelIt->rPrime_SB_B + this->omegaLoc_BN_B.cross(PanelIt->r_SB_B));
+
+        *PanelIt->r_HN_N = r_BN_N + dcm_NB * PanelIt->r_HB_B;
+        *PanelIt->v_HN_N = v_BN_N + dcm_NB * (PanelIt->rPrime_HB_B + this->omegaLoc_BN_B.cross(PanelIt->r_HB_B));
     }
 
     return;
@@ -190,6 +202,24 @@ void NHingedRigidBodyStateEffector::registerStates(DynParamManager& states)
     this->thetaState->setState(thetaInitMatrix);
     this->thetaDotState = states.registerState((uint32_t) this->PanelVec.size(), 1, this->nameOfThetaDotState);
     this->thetaDotState->setState(thetaDotInitMatrix);
+
+    registerProperties(states);
+
+    return;
+}
+
+/*! This method registers the panel inertial properties with the dynamic parameter manager */
+void
+NHingedRigidBodyStateEffector::registerProperties(DynParamManager& states)
+{
+    Eigen::Vector3d stateInit = Eigen::Vector3d::Zero();
+    std::vector<HingedPanel>::iterator PanelIt;
+    for (PanelIt = this->PanelVec.begin(); PanelIt != this->PanelVec.end(); PanelIt++) {
+        PanelIt->r_HN_N = states.createProperty(PanelIt->nameOfInertialPositionProperty, stateInit);
+        PanelIt->v_HN_N = states.createProperty(PanelIt->nameOfInertialVelocityProperty, stateInit);
+        PanelIt->sigma_SN = states.createProperty(PanelIt->nameOfInertialAttitudeProperty, stateInit);
+        PanelIt->omega_SN_S = states.createProperty(PanelIt->nameOfInertialAngVelocityProperty, stateInit);
+    }
 
     return;
 }
