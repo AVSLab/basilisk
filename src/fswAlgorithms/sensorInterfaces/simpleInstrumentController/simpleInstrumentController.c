@@ -39,7 +39,8 @@ SelfInit_simpleInstrumentController(simpleInstrumentControllerConfig* configData
     (void) moduleID;
     configData->imaged = 0;
     configData->controllerStatus = 1;
-    configData->constraintStartTime = 0.0;
+    configData->constraintStartTime = 0.0; // [ns]
+    configData->elapsedTime = 0.0; // [ns]
     configData->constraintsActive = 0;
 
     DeviceCmdMsg_C_init(&configData->deviceCmdOutMsg);
@@ -68,7 +69,8 @@ Reset_simpleInstrumentController(simpleInstrumentControllerConfig* configData, u
     // reset the imaged variable to zero
     configData->imaged = 0;
     configData->constraintsActive = 0;
-    configData->constraintStartTime = 0.0;
+    configData->constraintStartTime = 0.0; // [ns]
+    configData->elapsedTime = 0.0; // [ns]
 }
 
 /*! Add a description of what this main Update() routine does for this module
@@ -139,12 +141,13 @@ Update_simpleInstrumentController(simpleInstrumentControllerConfig* configData, 
                 else {
                     if (!configData->constraintsActive) {
                         configData->constraintsActive = 1;
-                        configData->constraintStartTime = (double)callTime; // current sim time
+                        configData->constraintStartTime = (double)callTime; // [ns] current sim time
+                        configData->elapsedTime = 0.0; // [ns]
                     }
 
                     if (configData->acquisitionTime < 0.0) {
                         // Negative acquisitionTime is invalid; cap to zero
-                        configData->acquisitionTime = 0.0;
+                        configData->acquisitionTime = 0.0; // [ns]
                         _bskLog(configData->bskLogger,
                                 BSK_WARNING,
                                 "simpleInstrumentController: acquisitionTime is negative and has been set to zero.");
@@ -152,27 +155,27 @@ Update_simpleInstrumentController(simpleInstrumentControllerConfig* configData, 
 
                     if (configData->allowedTime < 0.0) {
                         // Negative allowedTime is invalid; cap to zero
-                        configData->allowedTime = 0.0;
+                        configData->allowedTime = 0.0; // [ns]
                         _bskLog(configData->bskLogger,
                                 BSK_WARNING,
                                 "simpleInstrumentController: allowedTime is negative and has been set to zero.");
                     }
 
-                    double elapsedTime = (double) callTime - configData->constraintStartTime;
+                    configData->elapsedTime = (double) callTime - configData->constraintStartTime;
 
                     // Determine the effective time to image: cannot exceed allowedTime
                     double effectiveImageTime = (configData->acquisitionTime > configData->allowedTime)
                                                   ? configData->allowedTime
                                                   : configData->acquisitionTime;
 
-                    if (elapsedTime >= effectiveImageTime) {
+                    if (configData->elapsedTime >= effectiveImageTime) {
                         // Capture only while the acquisition and imaging window remain within the allowed duration
                         if (configData->acquisitionTime <= configData->allowedTime && timeControl &&
-                            elapsedTime <= configData->allowedTime) {
+                            configData->elapsedTime <= configData->allowedTime) {
                             configData->imaged = 1; // Success
                             deviceCmdOutMsgBuffer.deviceCmd = 1;
                             configData->constraintsActive = 0; // Reset timer
-                        } else if (elapsedTime >= configData->allowedTime) {
+                        } else if (configData->elapsedTime >= configData->allowedTime) {
                             // Failed because the required acquisition or capture-window wait exceeded the
                             // allowed duration
                             configData->imaged = 0;
