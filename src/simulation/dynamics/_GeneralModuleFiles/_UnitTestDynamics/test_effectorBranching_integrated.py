@@ -238,6 +238,11 @@ def test_effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dy
     where again :math:`j` is the segment that the dynamic effector is attached to among all
     :math:`i` segments. The sim 'truth' :math:`{}^{\mathcal{N}}\!\Delta v_{accum,C}` is logged from
     the spacecraft module.
+
+    For the :ref:`facetDragDynamicEffector` cases, the force and torque are also recomputed from
+    the parent segment's inertial attitude and velocity properties. The parent segment frames are
+    intentionally offset from the hub frame, so this comparison detects use of the hub kinematics
+    or an incorrect parent-to-inertial frame transformation.
     """
 
     coarseResidual = effectorBranchingIntegratedTest(show_plots, stateEffector, isParent,
@@ -420,7 +425,7 @@ def effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dynamic
     elif dynamicEffector == "thrusterDynamicEffector":
         dynamicEff, thFactory = setup_thrusterDynamicEffector()
     elif dynamicEffector == "facetDragDynamicEffector":
-        dynamicEff = setup_facetDragDynamicEffector()
+        dynamicEff, facetProps = setup_facetDragDynamicEffector()
     elif dynamicEffector == "constraintEffectorOneHub":
         dynamicEff, scObjectx = setup_constraintEffectorOneHub(scObject, stateEffProps)
         unitTestSim.AddModelToTask("unitTask", scObjectx)
@@ -517,6 +522,34 @@ def effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dynamic
     stopTime = 1
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
     unitTestSim.ExecuteSimulation()
+
+    if dynamicEffector == "facetDragDynamicEffector":
+        sigma_PN = np.array(scObject.dynManager.getPropertyReference(
+            dynamicEff.getPropName_inertialAttitude())).flatten()
+        v_PN_N = np.array(scObject.dynManager.getPropertyReference(
+            dynamicEff.getPropName_inertialVelocity())).flatten()
+        expectedForce_P, expectedTorque_P = facetDragLoad_P(facetProps, sigma_PN, v_PN_N)
+
+        sigma_BN = np.array(scObject.dynManager.getStateObject(
+            scObject.hub.nameOfHubSigma).getState()).flatten()
+        v_BN_N = np.array(scObject.dynManager.getStateObject(
+            scObject.hub.nameOfHubVelocity).getState()).flatten()
+        hubForce_B, _ = facetDragLoad_P(facetProps, sigma_BN, v_BN_N)
+
+        # RKF45 takes its last stage at the step midpoint, so re-evaluate against the reads above
+        dynamicEff.computeForceTorque(0.0, 0.0)  # [s]
+        force_accuracy = 1e-12  # [N]
+        torque_accuracy = 1e-12  # [N*m]
+        assert not np.allclose(expectedForce_P, hubForce_B, rtol=0.0, atol=force_accuracy), (
+            "FAILED: this parent is not offset enough from the hub to tell their kinematics apart")
+        np.testing.assert_allclose(
+            np.array(dynamicEff.forceExternal_B).flatten(), expectedForce_P,
+            rtol=0.0, atol=force_accuracy,
+            err_msg="FAILED: branched facet drag force was not built from the parent kinematics")
+        np.testing.assert_allclose(
+            np.array(dynamicEff.torqueExternalPntB_B).flatten(), expectedTorque_P,
+            rtol=0.0, atol=torque_accuracy,
+            err_msg="FAILED: branched facet drag moment was not taken about the parent frame origin")
 
     # Continue to check state effector EOMs using pure force & torque
     if dynamicEffector != "extForceTorque":
@@ -698,22 +731,27 @@ def setup_facetDragDynamicEffector():
     facetDrag = facetDragDynamicEffector.FacetDragDynamicEffector()
     facetDrag.ModelTag = "facetDragDynamicEffector"
 
+    facetProps = facetDragProperties()
+    facetProps.area = 10.0  # [m^2]
+    facetProps.dragCoeff = 5.0  # [-]
+    facetProps.density = 4.2e-10  # [kg/m^3] nominal 200 km density
+    facetProps.r_FP_P = np.array([0.0, 0.0, 0.3])  # [m] both faces share the panel centroid
+    facetProps.normals_P = [np.array([0.0, 0.0, 1.0]), np.array([0.0, 0.0, -1.0])]
+
     # facet geometry is expressed in the parent frame, not the hub body frame
-    panelArea = 10.0  # [m^2]
-    panelCd = 5.0  # [-]
-    r_FP_P = np.array([0.0, 0.0, 0.3])  # [m] both faces share the panel centroid
-    for panelNormal_P in [np.array([0.0, 0.0, 1.0]), np.array([0.0, 0.0, -1.0])]:
-        facetDrag.addFacet(panelArea, panelCd, panelNormal_P, r_FP_P)
+    for normal_P in facetProps.normals_P:
+        facetDrag.addFacet(facetProps.area, facetProps.dragCoeff, normal_P, facetProps.r_FP_P)
 
     # the orbit shared by every case here sits above any atmosphere table, so feed the effector a
     # fixed density rather than an atmosphere model or the drag load is zero
     atmoMsgData = messaging.AtmoPropsMsgPayload()
-    atmoMsgData.neutralDensity = 4.2e-10  # [kg/m^3] nominal 200 km density
+    atmoMsgData.neutralDensity = facetProps.density
     atmoMsg = messaging.AtmoPropsMsg()
     atmoMsg.write(atmoMsgData)
     facetDrag.atmoDensInMsg.subscribeTo(atmoMsg)
 
-    return(facetDrag)
+    return(facetDrag, facetProps)
+
 
 def setup_constraintEffector(scObject1):
     scObject2 = spacecraft.Spacecraft()
@@ -728,6 +766,26 @@ def setup_constraintEffector(scObject1):
     scObject2.gravField.gravBodies = scObject1.gravField.gravBodies
 
     return scObject2
+
+
+def facetDragLoad_P(facetProps, sigma_PN, v_PN_N):
+    """Reference facet drag force and moment about the parent frame origin."""
+    dcm_PN = rbk.MRP2C(sigma_PN)
+    v_PN_P = dcm_PN @ v_PN_N
+    speed = np.linalg.norm(v_PN_P)
+    vHat_P = v_PN_P / speed
+
+    force_P = np.zeros(3)
+    torque_P = np.zeros(3)
+    for normal_P in facetProps.normals_P:
+        projectedArea = facetProps.area * normal_P.dot(vHat_P)
+        if projectedArea > 0.0:
+            facetForce_P = (-0.5 * facetProps.density * facetProps.dragCoeff * projectedArea
+                            * speed**2 * vHat_P)
+            force_P += facetForce_P
+            torque_P += np.cross(facetProps.r_FP_P, facetForce_P)
+
+    return(force_P, torque_P)
 
 
 def weldParentSegmentToHub(stateEffector, stateEff):
@@ -1129,6 +1187,14 @@ class stateEffectorProperties:
     # to be used in checking equations of motion
     inertialPropLogName = "" # name of inertial property output log message
     r_PcP_P = [[0.0], [0.0], [0.0]] # individual COM for linkage that dynEff will be attached to
+
+class facetDragProperties:
+    # facet geometry and flow conditions, all expressed in the parent frame
+    area = 0.0 # individual facet area
+    dragCoeff = 0.0 # individual facet drag coefficient
+    density = 0.0 # atmospheric density held fixed for the test
+    r_FP_P = [0.0, 0.0, 0.0] # facet centroid relative to the parent frame origin
+    normals_P = [] # outward facet normals
 
 if __name__ == "__main__":
     effectorBranchingIntegratedTest(True, "hingedRigidBodies", True, "extForceTorque", True)
