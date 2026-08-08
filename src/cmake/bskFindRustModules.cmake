@@ -309,7 +309,13 @@ function(generate_rust_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
     # with that Rust target; OUTPUT_NAME below preserves the installed
     # Python extension and import name.
     set(_swig_target "_bsk_python_${TARGET_NAME}")
-    set_source_files_properties("${_rust_interface}" PROPERTIES GENERATED TRUE)
+    # The generated interface does not exist during a clean configure, so
+    # UseSWIG cannot inspect its %module declaration. State the module name
+    # explicitly to keep CMake's declared Python output aligned with SWIG's
+    # generated output.
+    set_source_files_properties("${_rust_interface}" PROPERTIES
+      GENERATED TRUE
+      SWIG_MODULE_NAME "${TARGET_NAME}")
 
     set_property(SOURCE ${_rust_interface} PROPERTY USE_TARGET_INCLUDE_DIRECTORIES TRUE)
     set_property(SOURCE ${_rust_interface} PROPERTY CPLUSPLUS ON)
