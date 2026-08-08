@@ -60,8 +60,12 @@ Note that the option names for groupings of Basilisk modules are the same as wit
     * - ``-o "&:clean=<value>"``
       - Boolean
       - False
-      - Delete the distribution folder and Basilisk Numba cache artifacts before configuring to yield
-        a fresh build
+      - Delete the configured build folder and Basilisk Numba cache artifacts before configuring to yield
+        a fresh build. The build folder must either be empty or contain recognizable CMake/Conan build output.
+    * - ``-o "&:buildFolder=<path>"``
+      - Directory path
+      - ``dist3``
+      - Select the build folder. Relative paths are resolved from the Basilisk source directory.
     * - ``-o "&:buildProject=<value>"``
       - Boolean
       - True

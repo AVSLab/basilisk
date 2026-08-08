@@ -63,6 +63,14 @@ PY_LIMITED_API_PY39  = "0x03090000"  # cp39-abi3
 NUMBA_CACHE_SEARCH_DIRS = ("src", "docs/source", "examples")
 NUMBA_CACHE_DIR_NAME = "__pycache__"
 NUMBA_CACHE_FILE_PATTERNS = ("*.nbc", "*.nbi")
+BUILD_DIRECTORY_MARKERS = (
+    "CMakeCache.txt",
+    "CMakeFiles",
+    "build.ninja",
+    "cmake_install.cmake",
+    "conan/conan_toolchain.cmake",
+)
+CONAN_GENERATOR_MARKER = Path("generators") / "conan_toolchain.cmake"
 
 
 def get_basilisk_numba_model_cache_dir() -> Optional[Path]:
@@ -72,6 +80,66 @@ def get_basilisk_numba_model_cache_dir() -> Optional[Path]:
     except ImportError:
         return None
     return Path(user_cache_dir("basilisk")) / "numba_model"
+
+
+def clean_configured_build_folder(root: Path, build_folder: Path) -> Path:
+    """Remove the configured Conan build directory after validating the target.
+
+    :param root: Basilisk recipe directory used to resolve relative paths
+    :param build_folder: configured Conan build-directory path
+    :return: resolved build-directory path
+    :raises ValueError: if the target is unsafe or does not resemble a build directory
+    """
+    root_path = Path(root).resolve()
+    configured_path = Path(build_folder)
+    if not configured_path.is_absolute():
+        configured_path = root_path / configured_path
+    configured_path = Path(os.path.abspath(configured_path))
+
+    if configured_path.is_symlink():
+        raise ValueError(
+            f"Refusing to clean symlinked build directory '{configured_path}'."
+        )
+
+    resolved_path = configured_path.resolve()
+    forbidden_paths = {
+        Path(resolved_path.anchor).resolve(),
+        Path.home().resolve(),
+        root_path,
+    }
+    if resolved_path in forbidden_paths or resolved_path in root_path.parents:
+        raise ValueError(
+            f"Refusing to clean unsafe build directory '{resolved_path}'."
+        )
+
+    if not resolved_path.exists():
+        return resolved_path
+    if not resolved_path.is_dir():
+        raise ValueError(
+            f"Configured build path '{resolved_path}' is not a directory."
+        )
+
+    directory_is_empty = next(resolved_path.iterdir(), None) is None
+    contains_build_marker = any(
+        (resolved_path / marker).exists()
+        for marker in BUILD_DIRECTORY_MARKERS
+    )
+    contains_conan_generator_marker = any(
+        (child / CONAN_GENERATOR_MARKER).is_file()
+        for child in resolved_path.iterdir()
+        if child.is_dir()
+    )
+    is_recognized_build = (
+        contains_build_marker or contains_conan_generator_marker
+    )
+    if not directory_is_empty and not is_recognized_build:
+        raise ValueError(
+            f"Refusing to clean '{resolved_path}' because it does not look like "
+            "a Basilisk build directory."
+        )
+
+    shutil.rmtree(resolved_path)
+    return resolved_path
 
 
 def clean_numba_cache_artifacts(root: Optional[Path] = None,
@@ -337,13 +405,12 @@ class BasiliskConan(ConanFile):
 
     def configure(self):
         if self.options.get_safe("clean"):
-            # clean the distribution folder to start fresh
-            root = os.path.abspath(os.path.curdir)
-            distPath = os.path.join(root, "dist3")
-            if os.path.exists(distPath):
-                shutil.rmtree(distPath, ignore_errors=True)
-            clean_numba_cache_artifacts(Path(root))
-            clean_rust_target_artifacts(Path(root))
+            # Clean the configured distribution folder to start fresh.
+            root = Path(self.recipe_folder or os.path.curdir).resolve()
+            build_folder = Path(str(self.options.get_safe("buildFolder")))
+            clean_configured_build_folder(root, build_folder)
+            clean_numba_cache_artifacts(root)
+            clean_rust_target_artifacts(root)
         if self.settings.get_safe("build_type") == "Debug":
             print(warningColor + "Build type is set to Debug. Performance will be significantly lower." + endColor)
 
