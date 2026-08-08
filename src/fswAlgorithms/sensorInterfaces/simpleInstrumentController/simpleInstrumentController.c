@@ -178,6 +178,7 @@ Update_simpleInstrumentController(simpleInstrumentControllerConfig* configData, 
                         } else if (configData->elapsedTime >= configData->allowedTime) {
                             // Failed because the required acquisition or capture-window wait exceeded the
                             // allowed duration
+                            configData->elapsedTime = configData->allowedTime;
                             configData->imaged = 0;
                             deviceCmdOutMsgBuffer.deviceCmd = 0;
                             configData->controllerStatus = 0;  // Disable further attempts

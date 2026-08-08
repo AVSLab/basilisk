@@ -206,6 +206,7 @@ elapsedTimeTests = [
     (1.0, 3.0, [0, 1, 0, 0, 1], 1.0),  # successful duration imaging stores acquisition duration
     (2.0, 3.0, [0, 0, 1, 0, 0], 1.0),  # second attempt is still accumulating at the final update
     (3.0, 2.0, [0, 0, 0, 0, 0], 2.0),  # failed duration imaging stores the elapsed attempt time
+    (3.0, 1.5, [0, 0, 0, 0, 0], 1.5),  # failed imaging clamps task-step overshoot to the allowed duration
 ]
 
 
