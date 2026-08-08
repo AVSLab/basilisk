@@ -18,6 +18,8 @@ def generatePackageInit(moduleOutputPath, headerInputPaths):
             'from Basilisk.architecture.messaging.messagingSupport import *\n'
         )
         for headerInputPath in headerInputPaths:
+            if not os.path.exists(headerInputPath):
+                continue
             for fileName in sorted(os.listdir(headerInputPath)):
                 if fileName.endswith(('.h', '.hpp')):
                     className = os.path.splitext(fileName)[0]
