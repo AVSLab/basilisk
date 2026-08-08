@@ -200,6 +200,38 @@ def test_simple_instrument_controller_duration_time_window(
     assert testResults < 1, testMessage
 
 
+# Tuple: acquisitionTime [s], allowedTime [s], expected_result [-], expectedElapsedTime [s]
+elapsedTimeTests = [
+    (0.0, 2.0, [1, 0, 0, 1, 0], 0.0),  # zero acquisition duration images immediately
+    (1.0, 3.0, [0, 1, 0, 0, 1], 1.0),  # successful duration imaging stores acquisition duration
+    (2.0, 3.0, [0, 0, 1, 0, 0], 1.0),  # second attempt is still accumulating at the final update
+    (3.0, 2.0, [0, 0, 0, 0, 0], 2.0),  # failed duration imaging stores the elapsed attempt time
+]
+
+
+@pytest.mark.parametrize(
+    "acquisitionTime,allowedTime,expected_result,expectedElapsedTime", elapsedTimeTests
+)
+def test_simple_instrument_controller_elapsed_time_access(
+    show_plots, acquisitionTime, allowedTime, expected_result, expectedElapsedTime
+):
+    r"""
+    **Validation Test Description**
+
+    Verify that duration-based imaging leaves the elapsed valid-constraint duration accessible for immediate,
+    successful, and failed imaging attempts.
+    """
+    [testResults, testMessage] = simpleInstrumentControllerTestFunction(
+        show_plots,
+        useDuration=1,
+        imagingTimes=[acquisitionTime, allowedTime],
+        expected_result=expected_result,
+        expectedElapsedTime=expectedElapsedTime,
+    )
+
+    assert testResults < 1, testMessage
+
+
 def simpleInstrumentControllerTestFunction(
     show_plots,
     use_rate_limit=1,
@@ -213,6 +245,7 @@ def simpleInstrumentControllerTestFunction(
     timeToleranceLower=None,
     timeToleranceUpper=None,
     imagingTime=None,
+    expectedElapsedTime=None,
 ):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
@@ -309,6 +342,16 @@ def simpleInstrumentControllerTestFunction(
     if not unitTestSupport.isArrayEqual(dataLog.deviceCmd, expected_result, len(expected_result), 1e-12):
         testFailCount += 1
         testMessages.append("FAILED: " + module.ModelTag + " Module failed dataVector" + " unit test at t=" + str(dataLog.times()[0]*macros.NANO2SEC) + "sec\n")
+
+    if expectedElapsedTime is not None:
+        expectedElapsedTimeNano = macros.sec2nano(expectedElapsedTime)  # [ns]
+        if not unitTestSupport.isDoubleEqual(module.elapsedTime, expectedElapsedTimeNano, 1e-12):
+            testFailCount += 1
+            testMessages.append(
+                "FAILED: " + module.ModelTag + " Module failed elapsedTime unit test. "
+                + "Expected " + str(expectedElapsedTimeNano) + " ns but got "
+                + str(module.elapsedTime) + " ns.\n"
+            )
 
     # Plots
     plt.close("all")  # close all prior figures so we start with a clean slate
