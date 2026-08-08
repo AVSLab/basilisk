@@ -48,8 +48,8 @@ Version |release| (July 7, 2026)
   for Basilisk and compatible extensions. If source builds fail with SWIG 4.4.0 or emit
   ``builtin type swigvarlink has no __module__ attribute`` warnings, upgrade to SWIG 4.4.1 or a newer
   supported 4.x release.
-- ``python conanfile.py --clean`` now removes Basilisk Numba cache artifacts in addition to ``dist3``,
-  preventing clean source builds from reusing stale compiled Numba objects after API changes.
+- Clean Conan builds now remove the configured build folder (``dist3`` by default) and Basilisk Numba cache
+  artifacts, preventing generator conflicts and reuse of stale compiled Numba objects after API changes.
 - The deprecated ``--managePipEnvironment``, ``--autoKey``, ``--allOptPkg``, ``--pyPkgCanary``, and
   ``--examples`` source-build options have been removed. ``python conanfile.py`` now configures and builds the
   native project without modifying the Python environment; the updated source-install instructions install the
