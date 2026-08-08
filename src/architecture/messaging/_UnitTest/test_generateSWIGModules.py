@@ -113,6 +113,26 @@ from Basilisk.architecture.messagingBase import *
     assert generated == [expected, expected]
 
 
+def test_package_init_skips_missing_optional_header_directories(tmp_path):
+    """Missing optional external message directories do not stop generation."""
+    header_path = tmp_path / "headers"
+    header_path.mkdir()
+    (header_path / "CustomMsgPayload.h").touch()
+    missing_header_path = tmp_path / "missing-headers"
+    output_path = tmp_path / "output"
+
+    generatePackageInit.generatePackageInit(
+        output_path,
+        [header_path, missing_header_path],
+    )
+
+    assert (output_path / "__init__.py").read_text(encoding="utf-8") == """\
+from Basilisk.architecture.messaging.messagingSupport import *
+from Basilisk.architecture.messaging.CustomMsgPayload import *
+from Basilisk.architecture.messagingBase import *
+"""
+
+
 def _render_read_functor_namespace():
     """Render the generated ``ReadFunctor`` Python helpers for execution."""
 
