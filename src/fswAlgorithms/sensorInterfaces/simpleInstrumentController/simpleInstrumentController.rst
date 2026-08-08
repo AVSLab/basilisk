@@ -60,4 +60,13 @@ imaging time. A nonzero ``timeToleranceLower`` permits imaging no earlier than
 ``imagingTime + timeToleranceUpper``. Each bound is enabled independently; a tolerance of zero disables that bound,
 which preserves the default behavior without time-based constraints.
 
-The ``useDurationImaging`` flag enables duration-based imaging, where the instrument must maintain valid constraints for a specified period before capturing an image. By default, this feature is disabled. The ``acquisitionTime`` (optional, in nanoseconds) specifies how long the constraints must remain satisfied to trigger an image capture. The ``allowedTime`` (optional, in nanoseconds) defines the maximum period during which the system will attempt imaging. If ``acquisitionTime`` is less than or equal to ``allowedTime``, the image will be captured once the required duration is met. If ``acquisitionTime`` exceeds ``allowedTime``, the image will not be captured, although the system will continue attempting for the full ``allowedTime`` period. If either ``acquisitionTime`` or ``allowedTime`` is negative or not set, the value is automatically capped to zero.
+The ``useDurationImaging`` flag enables duration-based imaging, where the instrument must maintain valid
+constraints for a specified period before capturing an image. By default, this feature is disabled. The
+``acquisitionTime`` (optional, in nanoseconds) specifies how long the constraints must remain satisfied to trigger an
+image capture. The ``allowedTime`` (optional, in nanoseconds) defines the maximum period during which the system will
+attempt imaging. The ``elapsedTime`` state variable stores the elapsed duration, in nanoseconds, from the start of the
+current duration-based imaging attempt. This value is accessible from Python and remains available if the attempt does
+not complete. If ``acquisitionTime`` is less than or equal to ``allowedTime``, the image will be captured once the
+required duration is met. If ``acquisitionTime`` exceeds ``allowedTime``, the image will not be captured, although the
+system will continue attempting for the full ``allowedTime`` period. If either ``acquisitionTime`` or ``allowedTime``
+is negative or not set, the value is automatically capped to zero.
