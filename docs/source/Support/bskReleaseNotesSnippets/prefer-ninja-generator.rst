@@ -1,2 +1,2 @@
 - Reduced clean configuration and build time by automatically using Ninja for new builds on every platform when it is available, while preserving explicit, existing, and requested IDE generator choices.
-- Clean Conan builds now remove the configured build folder rather than always removing ``dist3``.
+- Clean Conan builds now remove the resolved Conan output folder rather than always removing ``dist3``, while rejecting symlink traversal and build trees owned by another CMake project.

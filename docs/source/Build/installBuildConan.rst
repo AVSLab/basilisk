@@ -61,7 +61,9 @@ Note that the option names for groupings of Basilisk modules are the same as wit
       - Boolean
       - False
       - Delete the configured build folder and Basilisk Numba cache artifacts before configuring to yield
-        a fresh build. The build folder must either be empty or contain recognizable CMake/Conan build output.
+        a fresh build. The build folder must either be empty or contain Basilisk ownership metadata, and its
+        resolved path cannot traverse a symbolic link or junction. Existing CMake builds are accepted only when
+        their cache identifies the selected Basilisk source tree.
     * - ``-o "&:buildFolder=<path>"``
       - Directory path
       - ``dist3``
