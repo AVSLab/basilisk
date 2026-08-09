@@ -2,3 +2,4 @@
 - Removed deprecated Python-environment management from ``conanfile.py``. Clone-based builds now leave Python package installation to explicit pip setup steps, matching wheel and editable-install behavior.
 - Aligned the Conan build profile's C++ standard with the C++17 host profile so cached build tools such as Protocol Buffers resolve directly without unnecessary compatibility searches or remote queries.
 - Stopped fetching GoogleTest and compiling native C++ test executables during wheel builds. Direct source builds and source CI continue to build them by default through the standard ``BUILD_TESTING`` option.
+- Added compatibility with Setuptools 84's dataclass-backed extension metadata while retaining support for earlier Setuptools releases.
