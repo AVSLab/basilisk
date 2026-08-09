@@ -67,6 +67,8 @@ NUMBA_CACHE_DIR_NAME = "__pycache__"
 NUMBA_CACHE_FILE_PATTERNS = ("*.nbc", "*.nbi")
 BASILISK_BUILD_MARKER = ".basilisk-build-root"
 CMAKE_CACHE_FILE = "CMakeCache.txt"
+OFFLINE_CONAN_CONF = "user.basilisk:offline"
+BASILISK_FETCHCONTENT_CACHE_DIR = REPOSITORY_ROOT / ".bsk-cache" / "fetchcontent"
 BASILISK_VERSION = (REPOSITORY_ROOT / "docs" / "source" / "bskVersion.txt").read_text(
     encoding="utf-8"
 )
@@ -465,13 +467,14 @@ def create_conan_build_command(
         platform_name: str = os.name,
 ) -> list[str]:
     """Create the single Conan command used to install dependencies and build Basilisk."""
+    offline = bool(getattr(arguments, "offline", False))
     command = [
         sys.executable,
         "-m",
         "conans.conan",
         "build",
         ".",
-        "--build=missing",
+        "--build=never" if offline else "--build=missing",
         "-s",
         "build_type=" + str(arguments.buildType),
         "-s",
@@ -479,6 +482,8 @@ def create_conan_build_command(
         "-s:b",
         "compiler.cppstd=17",
     ]
+    if offline:
+        command.extend(["--no-remote", "-c", f"{OFFLINE_CONAN_CONF}=True"])
     if platform_name != "nt":
         command.extend(["-s", "compiler.cstd=gnu17"])
     if arguments.generator:
@@ -504,6 +509,17 @@ def create_conan_build_command(
             command.extend(["-o", f"&:{option_name}=True"])
 
     return command
+
+
+def create_conan_build_environment(
+        offline: bool,
+        environment: Optional[dict[str, str]] = None,
+) -> dict[str, str]:
+    """Create the Conan subprocess environment, including strict Cargo offline mode."""
+    build_environment = (os.environ if environment is None else environment).copy()
+    if offline:
+        build_environment["CARGO_NET_OFFLINE"] = "true"
+    return build_environment
 
 
 class BasiliskConan(ConanFile):
@@ -667,6 +683,12 @@ class BasiliskConan(ConanFile):
         tc.cache_variables["BUILD_RUST_MODULES"] = bool(self.options.get_safe("rustModules"))
         tc.cache_variables["BSK_STRICT_WARNINGS"] = bool(self.options.get_safe("strictWarnings"))
         tc.cache_variables["BUILD_TESTING"] = bool(self.options.get_safe("buildTesting"))
+        tc.cache_variables["BSK_OFFLINE_BUILD"] = bool(
+            self.conf.get(OFFLINE_CONAN_CONF, default=False, check_type=bool)
+        )
+        tc.cache_variables["BSK_FETCHCONTENT_CACHE_DIR"] = (
+            BASILISK_FETCHCONTENT_CACHE_DIR.as_posix()
+        )
         tc.cache_variables["BSK_CONAN_BUILD_TYPE"] = str(self.settings.build_type)
         tc.cache_variables["BSK_VERSION"] = str(self.version).strip()
         tc.cache_variables["BSK_CONAN_VERSION"] = importlib.metadata.version("conan")
@@ -771,7 +793,7 @@ def get_mujoco_version():
 
 def is_conan_package_available(ref: str):
     """
-    Run 'conan list' and return True if package exists in local or remote caches.
+    Run 'conan list' and return True if the package exists in the local cache.
     """
     try:
         output = subprocess.check_output(
@@ -785,18 +807,36 @@ def is_conan_package_available(ref: str):
         return False
 
 
-def conan_create_mujoco(print_fn: Optional[Callable[[str], None]] = print):
+def conan_create_mujoco(
+        offline: bool = False,
+        print_fn: Optional[Callable[[str], None]] = print,
+):
     """
-    If the 'mujoco/VERSION' package is not found in any remote or the local cache,
-    then the mujoco project (as defined in '/libs/mujoco/conanfile.py') is created
-    into the local cache.
+    Create the MuJoCo package locally when it is absent during an online build.
     """
     ref = f"mujoco/{get_mujoco_version()}"
     if not is_conan_package_available(ref):
+        if offline:
+            raise RuntimeError(
+                f"Offline build requires {ref} in the local Conan cache. "
+                "Run the same build once without --offline while connected."
+            )
         if print_fn is not None:
             print_fn(f"Package {ref} not found locally, creating it...")
         # Run 'conan create' in the external recipe directory
-        subprocess.run([sys.executable, "-m", "conans.conan", "create", ".", "-s" ,"compiler.cppstd=17"], cwd="./libs/mujoco" )
+        subprocess.run(
+            [
+                sys.executable,
+                "-m",
+                "conans.conan",
+                "create",
+                ".",
+                "-s",
+                "compiler.cppstd=17",
+            ],
+            cwd=REPOSITORY_ROOT / "libs" / "mujoco",
+            check=True,
+        )
     else:
         if print_fn is not None:
             print_fn(f"Package {ref} already available, skipping creation.")
@@ -818,6 +858,11 @@ if __name__ == "__main__":
     # define the optional arguments
     parser.add_argument("--generator", help="cmake generator")
     parser.add_argument("--buildType", help="build type", default="Release", choices=["Release", "Debug"])
+    parser.add_argument(
+        "--offline",
+        help="use only previously cached Conan, CMake, and Cargo dependencies",
+        action="store_true",
+    )
     # parser.add_argument("--clean", help="make a clean distribution folder", action="store_true")
     for opt, value in bskModuleOptionsBool.items():
         parser.add_argument("--" + opt, help="build modules for " + opt + " behavior", default=value[1],
@@ -850,7 +895,11 @@ if __name__ == "__main__":
 
     # If we're missing MuJoCo, create the conan package
     if args.mujoco:
-        conan_create_mujoco()
+        try:
+            conan_create_mujoco(offline=args.offline)
+        except RuntimeError as error:
+            print(f"{failColor}Error: {error}{endColor}")
+            sys.exit(1)
 
     try:
         buildCmd = create_conan_build_command(args)
@@ -860,4 +909,14 @@ if __name__ == "__main__":
 
     print(statusColor + "Running conan build:" + endColor)
     print(shlex.join(buildCmd))
-    subprocess.run(buildCmd, check=True)
+    buildEnvironment = create_conan_build_environment(args.offline)
+    try:
+        subprocess.run(buildCmd, check=True, env=buildEnvironment)
+    except subprocess.CalledProcessError as error:
+        if args.offline:
+            print(
+                f"{failColor}Offline build failed. If the preceding error reports a "
+                "missing dependency or cache entry, run the same command once without "
+                f"--offline while connected, then retry offline.{endColor}"
+            )
+        sys.exit(error.returncode)

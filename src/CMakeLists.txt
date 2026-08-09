@@ -7,6 +7,17 @@ cmake_minimum_required(VERSION 3.26)
 
 project("basilisk")
 
+option(BSK_OFFLINE_BUILD "Prevent build tools from accessing the network" OFF)
+if(BSK_OFFLINE_BUILD)
+  set(ENV{CARGO_NET_OFFLINE} "true")
+endif()
+if(NOT BSK_FETCHCONTENT_CACHE_DIR)
+  get_filename_component(
+    BSK_FETCHCONTENT_CACHE_DIR
+    "${CMAKE_SOURCE_DIR}/../.bsk-cache/fetchcontent"
+    ABSOLUTE)
+endif()
+
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE
       "Debug"
@@ -626,9 +637,25 @@ endfunction(generate_python_package_targets)
 include(CTest)
 if(BUILD_TESTING)
   include(FetchContent)
+  set(_googletest_source_dir
+      "${BSK_FETCHCONTENT_CACHE_DIR}/googletest-v1.17.0")
+  if(EXISTS "${_googletest_source_dir}/CMakeLists.txt")
+    set(FETCHCONTENT_SOURCE_DIR_GOOGLETEST
+        "${_googletest_source_dir}"
+        CACHE PATH "Use cached GoogleTest sources" FORCE)
+  elseif(BSK_OFFLINE_BUILD)
+    message(FATAL_ERROR
+      "Offline test build requires cached GoogleTest 1.17.0 sources at "
+      "${_googletest_source_dir}. Run the same build once without --offline "
+      "while connected, then retry offline.")
+  else()
+    unset(FETCHCONTENT_SOURCE_DIR_GOOGLETEST CACHE)
+  endif()
   FetchContent_Declare(
     googletest
     URL https://github.com/google/googletest/archive/refs/tags/v1.17.0.zip
+    SOURCE_DIR "${_googletest_source_dir}"
+    BINARY_DIR "${CMAKE_BINARY_DIR}/_deps/googletest-build"
   )
   # For Windows: Prevent overriding the parent project's compiler/linker settings
   set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)

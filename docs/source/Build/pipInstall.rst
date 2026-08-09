@@ -38,6 +38,14 @@ Build options (as passed to ``conanfile.py`` and described in :ref:`configureBui
 
     CONAN_ARGS="--pathToExternalModules='/path/to/external' --opNav True" pip install -v .
 
+Maintainers can also build a wheel from previously prepared native caches by including ``--offline`` in
+``CONAN_ARGS`` and preventing pip itself from resolving packages from an index::
+
+    CONAN_ARGS="--offline" pip wheel --no-build-isolation --no-deps --no-index -v .
+
+This requires the build environment, Python build requirements, and matching Conan, CMake support-source, and Cargo
+caches to have been prepared in advance as described in :ref:`offlineBuild`.
+
 .. warning::
 
     For backwards compatibility reasons, and due to issues arising from temporary build environments, editable

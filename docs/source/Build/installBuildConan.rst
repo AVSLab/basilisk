@@ -36,6 +36,16 @@ requirements and create the editable Basilisk installation separately, as descri
 installation instructions. Applying C++17 to both the host and build profiles lets Conan match cached build tools
 directly instead of searching compatible configurations or querying a remote for an avoidable profile mismatch.
 
+For the direct equivalent of :ref:`offlineBuild`, replace ``--build=missing`` with ``--build=never``, disable remotes,
+and enable Basilisk's offline CMake and Cargo behavior through its Conan configuration value::
+
+    conan build . --build=never --no-remote \
+        -c user.basilisk:offline=True \
+        -s compiler.cppstd=17 -s:b compiler.cppstd=17
+
+The matching configuration must first have been built online so its Conan packages, GoogleTest or Corrosion sources,
+and Rust crates are already cached.
+
 There are several options that can be provided to this ``conan build`` command as shown in the following table.
 Note that the option names for groupings of Basilisk modules are the same as with the one-step build above. The
 ``&:`` prefix scopes each option to the Basilisk consumer recipe. Keep the option expression in double quotes because
@@ -130,6 +140,13 @@ they are not used, then the shown default behaviors are used.
     * - ``BSK_STRICT_WARNINGS``
       - ``OFF``
       - enables additional compiler diagnostics for Basilisk C and C++ sources
+    * - ``BSK_OFFLINE_BUILD``
+      - ``OFF``
+      - prevents GoogleTest, Corrosion, and Cargo dependency resolution from accessing the network; the required
+        sources and crates must already be cached
+    * - ``BSK_FETCHCONTENT_CACHE_DIR``
+      - ``<Basilisk root>/.bsk-cache/fetchcontent``
+      - selects the persistent GoogleTest and Corrosion source cache used by online and offline builds
 
 macOS Example
 ~~~~~~~~~~~~~
