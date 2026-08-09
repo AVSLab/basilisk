@@ -271,18 +271,24 @@ these fields for release provenance.
 
 Doing Incremental Builds
 ------------------------
-If you are developing new Basilisk capabilities you will be looking to do incremental builds.  Note that running
-``python conanfile.py`` will delete the auto-created messaging related files and their compiled products.
-Compiling the messaging related files is a large component of the Basilisk build time.  Thus, running
-this command is required if you make changes to the message file definitions, or add a new message file.  However,
-it is not the preferred manner to compile Basilisk if you just need to do an incremental build.
+Once ``dist3`` has been configured, build ordinary source, header, module, and message changes directly through CMake::
 
-Rather, run ``python conanfile.py --clean --buildProject False`` to create the IDE file for your platform,
-such as an Xcode project file on macOS or an MS Visual Studio project file on Windows. The ``--clean`` option is
-required when replacing an existing Ninja or Makefiles build because CMake generators cannot be changed in place. Next,
-open the project file in your IDE and compile Basilisk there.  The initial build is a clean build and will take a
-similar amount of time to compile the messaging related files.  However, after making changes to a particular module,
-only this Basilisk module will need to be compiled and the compile times are drastically reduced.
+    cmake --build dist3 --config Release --parallel 12
+
+The build system tracks module implementations, SWIG includes, generated C-message interfaces, Rust bindings, and
+the payload inventory. Adding, renaming, or deleting a ``*Payload.h`` file causes CMake to reconfigure automatically,
+regenerate the current message manifest, and remove generated artifacts belonging to payloads that no longer exist.
+A clean build is not required for these changes. An unchanged build does not recompile native sources or regenerate
+SWIG wrappers.
+
+Running ``python conanfile.py`` again is safe when Conan options or dependencies need to be refreshed. It reruns
+dependency resolution and CMake configuration but preserves unchanged generated and compiled outputs, allowing the
+native build to remain incremental.
+
+Developers who prefer Xcode or Visual Studio can create an IDE project with
+``python conanfile.py --clean --buildProject False`` and then perform incremental builds in the IDE. The ``--clean``
+option is required when replacing an existing Ninja or Makefiles build because CMake cannot change the generator of
+an existing build directory. It is not otherwise part of the normal incremental-build workflow.
 
 Every loadable BSK module target depends on ABI metadata generation, so an incremental module-only build refreshes the
 compiled descriptor for the selected configuration.  This refreshes the ABI details under ``getBuildInfo()["abi"]``;
