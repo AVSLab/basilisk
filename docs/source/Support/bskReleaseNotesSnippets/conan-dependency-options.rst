@@ -1,0 +1,1 @@
+- Reduced clean-build time and Conan deprecation warnings by omitting unused OpenCV contrib and JPEG 2000 modules and CSPICE command-line utilities.
