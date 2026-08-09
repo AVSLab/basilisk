@@ -6,6 +6,7 @@
 - Prevented unchanged Rust-enabled builds from recompiling generated message bindings and Rust modules.
 - Reduced clean-build work by compiling architecture framework sources in one package library instead of ten.
 - Removed redundant source compilation from SWIG wrappers when a linked package library already owns those sources.
+- Removed redundant transitive architecture libraries from generated package and wrapper link inputs.
 - Assigned local implementations explicitly in directories containing multiple SWIG interfaces.
 - Consolidated common message-wrapper helpers into one support extension while preserving their Python names.
 - Removed the unused logging dependency from the common ``SysModel`` header.
