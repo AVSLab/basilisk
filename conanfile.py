@@ -570,12 +570,12 @@ class BasiliskConan(ConanFile):
         if self.settings.get_safe("build_type") == "Debug":
             print(warningColor + "Build type is set to Debug. Performance will be significantly lower." + endColor)
 
-        # Install additional opencv methods
+        # Basilisk only uses OpenCV's standard modules and image formats.
         if self.options.get_safe("opNav"):
-            self.options['opencv'].contrib = True
             self.options['opencv'].with_ffmpeg = False  # video frame encoding lib
             self.options['opencv'].gapi = False  # graph manipulations framework
             self.options['opencv'].with_tiff = False  # generate image in TIFF format
+            self.options['opencv'].with_jpeg2000 = False  # JPEG 2000 image format
             self.options['opencv'].with_openexr = False  # generate image in EXR format
             self.options['opencv'].with_quirc = False  # QR code lib
             self.options['opencv'].with_webp = False  # raster graphics file format for web
@@ -583,6 +583,7 @@ class BasiliskConan(ConanFile):
                 self.options['opencv'].with_wayland = False  # desktop display protocol
 
         # Other dependency options
+        self.options['cspice'].utilities = False  # Basilisk only links the CSPICE library.
         if self.options.get_safe("vizInterface") or self.options.get_safe("opNav"):
             if self.settings.get_safe("os") == "Macos":
                 # Avoid loading separate protobuf runtimes through OpenCV and vizInterface.
