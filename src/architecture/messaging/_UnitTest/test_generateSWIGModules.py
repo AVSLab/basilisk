@@ -96,6 +96,7 @@ def test_package_init_uses_only_cmake_manifest_entries(tmp_path):
         "ZuluMsgPayload\nAlphaMsgPayload\n",
         encoding="utf-8",
     )
+    previous_manifest_path = tmp_path / "messagePayloads.previous.txt"
     expected = """\
 from Basilisk.architecture.messaging.messagingSupport import *
 from Basilisk.architecture.messaging.AlphaMsgPayload import *
@@ -104,11 +105,18 @@ from Basilisk.architecture.messagingBase import *
 """
 
     output_path = tmp_path / "output"
-    generatePackageInit.generate_package_init(output_path, manifest_path)
+    generatePackageInit.generate_package_init(
+        output_path,
+        manifest_path,
+        previous_manifest_path,
+    )
     generated = (output_path / "__init__.py").read_text(encoding="utf-8")
 
     assert generated == expected
     assert "IgnoredMsgPayload" not in generated
+    assert previous_manifest_path.read_text(encoding="utf-8") == (
+        "AlphaMsgPayload\nZuluMsgPayload\n"
+    )
 
 
 def test_package_init_rejects_duplicate_manifest_entries(tmp_path):
@@ -123,6 +131,7 @@ def test_package_init_rejects_duplicate_manifest_entries(tmp_path):
         generatePackageInit.generate_package_init(
             tmp_path / "output",
             manifest_path,
+            tmp_path / "messagePayloads.previous.txt",
         )
 
 
@@ -135,7 +144,72 @@ def test_package_init_rejects_invalid_manifest_entry(tmp_path):
         generatePackageInit.generate_package_init(
             tmp_path / "output",
             manifest_path,
+            tmp_path / "messagePayloads.previous.txt",
         )
+
+
+def test_package_init_removes_only_stale_payload_artifacts(tmp_path):
+    """Removed or renamed payloads lose only their known generated artifacts."""
+    module_output_path = tmp_path / "Basilisk" / "architecture" / "messaging"
+    module_output_path.mkdir(parents=True)
+    auto_source_path = tmp_path / "autoSource"
+    (auto_source_path / "cMsgMeta").mkdir(parents=True)
+
+    current_payload = "RenamedMsgPayload"
+    removed_payload = "OriginalMsgPayload"
+    manifest_path = auto_source_path / "messagePayloads.txt"
+    manifest_path.write_text(f"{current_payload}\n", encoding="utf-8")
+    previous_manifest_path = auto_source_path / "messagePayloads.previous.txt"
+    previous_manifest_path.write_text(
+        f"{removed_payload}\n",
+        encoding="utf-8",
+    )
+
+    removed_artifacts = set(generatePackageInit.payload_artifact_paths(
+        removed_payload,
+        module_output_path,
+        auto_source_path,
+    ))
+    required_artifacts = {
+        module_output_path / f"{removed_payload}.py",
+        module_output_path / f"{removed_payload}PYTHON_wrap.cxx",
+        module_output_path / f"_{removed_payload}.so",
+        module_output_path / f"_{removed_payload}.pyd",
+        module_output_path / f"_{removed_payload}.dylib",
+        auto_source_path / f"{removed_payload}.i",
+        auto_source_path / f"{removed_payload}_equality.h",
+        auto_source_path / "cMsgMeta" / f"{removed_payload}.json",
+        auto_source_path / "cMsgMeta" / f"{removed_payload}.d",
+    }
+    assert required_artifacts <= removed_artifacts
+    for artifact_path in removed_artifacts:
+        artifact_path.write_text("stale", encoding="utf-8")
+
+    retained_artifacts = {
+        module_output_path / f"{current_payload}.py",
+        module_output_path / f"{removed_payload}.user-notes",
+        auto_source_path / "unrelated.json",
+    }
+    for artifact_path in retained_artifacts:
+        artifact_path.write_text("retain", encoding="utf-8")
+
+    removed_payloads = generatePackageInit.generate_package_init(
+        module_output_path,
+        manifest_path,
+        previous_manifest_path,
+    )
+
+    assert removed_payloads == [removed_payload]
+    assert all(not artifact_path.exists() for artifact_path in removed_artifacts)
+    assert all(artifact_path.exists() for artifact_path in retained_artifacts)
+    assert previous_manifest_path.read_text(encoding="utf-8") == (
+        f"{current_payload}\n"
+    )
+    package_init = (module_output_path / "__init__.py").read_text(
+        encoding="utf-8"
+    )
+    assert current_payload in package_init
+    assert removed_payload not in package_init
 
 
 def _render_read_functor_namespace():

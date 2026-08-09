@@ -59,6 +59,10 @@ list(SORT MESSAGE_PAYLOAD_FILES)
 file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/autoSource")
 set(MESSAGE_PAYLOAD_MANIFEST
     "${CMAKE_BINARY_DIR}/autoSource/messagePayloads.txt")
+# Keep this state file outside the custom command's declared outputs so a
+# CMake clean cannot erase the prior inventory before regeneration compares it.
+set(PREVIOUS_MESSAGE_PAYLOAD_MANIFEST
+    "${CMAKE_BINARY_DIR}/autoSource/messagePayloads.previous.txt")
 generate_payload_manifest(
   "${MESSAGE_PAYLOAD_MANIFEST}"
   ${MESSAGE_PAYLOAD_FILES})
@@ -216,6 +220,7 @@ add_custom_command(
     ${Python3_EXECUTABLE} generatePackageInit.py
     "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/"
     "${MESSAGE_PAYLOAD_MANIFEST}"
+    "${PREVIOUS_MESSAGE_PAYLOAD_MANIFEST}"
   DEPENDS
     ${CMAKE_CURRENT_SOURCE_DIR}/msgAutoSource/generatePackageInit.py
     ${MESSAGE_PAYLOAD_MANIFEST}
