@@ -3,6 +3,7 @@ import os
 import json
 import shutil
 import shlex
+import stat
 import subprocess
 import sys
 from datetime import datetime
@@ -63,14 +64,8 @@ PY_LIMITED_API_PY39  = "0x03090000"  # cp39-abi3
 NUMBA_CACHE_SEARCH_DIRS = ("src", "docs/source", "examples")
 NUMBA_CACHE_DIR_NAME = "__pycache__"
 NUMBA_CACHE_FILE_PATTERNS = ("*.nbc", "*.nbi")
-BUILD_DIRECTORY_MARKERS = (
-    "CMakeCache.txt",
-    "CMakeFiles",
-    "build.ninja",
-    "cmake_install.cmake",
-    "conan/conan_toolchain.cmake",
-)
-CONAN_GENERATOR_MARKER = Path("generators") / "conan_toolchain.cmake"
+BASILISK_BUILD_MARKER = ".basilisk-build-root"
+CMAKE_CACHE_FILE = "CMakeCache.txt"
 
 
 def get_basilisk_numba_model_cache_dir() -> Optional[Path]:
@@ -82,34 +77,166 @@ def get_basilisk_numba_model_cache_dir() -> Optional[Path]:
     return Path(user_cache_dir("basilisk")) / "numba_model"
 
 
-def clean_configured_build_folder(root: Path, build_folder: Path) -> Path:
-    """Remove the configured Conan build directory after validating the target.
+def _is_symlink_or_junction(path: Path) -> bool:
+    """Return whether ``path`` is a symbolic link or Windows junction."""
+    if path.is_symlink():
+        return True
+    is_junction = getattr(path, "is_junction", None)
+    if is_junction is not None:
+        return is_junction()
+    if os.name != "nt":
+        return False
+    try:
+        file_attributes = path.lstat().st_file_attributes
+    except (AttributeError, OSError):
+        return False
+    reparse_point = getattr(stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0x400)
+    return bool(file_attributes & reparse_point)
 
-    :param root: Basilisk recipe directory used to resolve relative paths
-    :param build_folder: configured Conan build-directory path
-    :return: resolved build-directory path
-    :raises ValueError: if the target is unsafe or does not resemble a build directory
+
+def _path_uses_link(path: Path) -> bool:
+    """Return whether an existing component of ``path`` is a link."""
+    return any(_is_symlink_or_junction(component) for component in (path, *path.parents))
+
+
+def _paths_match(first: Path, second: Path) -> bool:
+    """Compare resolved paths using the platform's path-case rules."""
+    first_key = os.path.normcase(os.fspath(Path(first).resolve()))
+    second_key = os.path.normcase(os.fspath(Path(second).resolve()))
+    return first_key == second_key
+
+
+def _read_cmake_home_directory(cache_path: Path) -> Optional[Path]:
+    """Return ``CMAKE_HOME_DIRECTORY`` from a CMake cache, if present."""
+    try:
+        cache_lines = cache_path.read_text(encoding="utf-8", errors="replace").splitlines()
+    except OSError:
+        return None
+    for line in cache_lines:
+        key, separator, value = line.partition("=")
+        if separator and key.startswith("CMAKE_HOME_DIRECTORY:") and value:
+            return Path(value)
+    return None
+
+
+def _directory_contains_files(directory: Path) -> bool:
+    """Return whether a directory tree contains files or linked entries."""
+    return any(
+        entry.is_file() or _is_symlink_or_junction(entry)
+        for entry in directory.rglob("*")
+    )
+
+
+def _validate_build_folder_ownership(source_root: Path, build_folder: Path) -> bool:
+    """Validate available Basilisk ownership records for a build folder.
+
+    :param source_root: resolved Basilisk CMake source directory
+    :param build_folder: existing build directory to inspect
+    :return: ``True`` when at least one ownership record is present
+    :raises ValueError: if an ownership record is malformed or belongs elsewhere
     """
-    root_path = Path(root).resolve()
+    ownership_found = False
+    marker_path = build_folder / BASILISK_BUILD_MARKER
+    if marker_path.exists():
+        ownership_found = True
+        try:
+            marker_value = marker_path.read_text(encoding="utf-8").strip()
+        except OSError as error:
+            raise ValueError(
+                f"Unable to read Basilisk build marker '{marker_path}'."
+            ) from error
+        marker_source = Path(marker_value) if marker_value else None
+        if marker_source is None or not _paths_match(marker_source, source_root):
+            raise ValueError(
+                f"Refusing to use '{build_folder}' because its Basilisk build marker "
+                f"belongs to '{marker_source}', not '{source_root}'."
+            )
+
+    cache_path = build_folder / CMAKE_CACHE_FILE
+    if cache_path.exists():
+        ownership_found = True
+        cmake_source = _read_cmake_home_directory(cache_path)
+        if cmake_source is None:
+            raise ValueError(
+                f"Refusing to use '{build_folder}' because '{cache_path}' does not "
+                "identify its CMake source directory."
+            )
+        if not _paths_match(cmake_source, source_root):
+            raise ValueError(
+                f"Refusing to use '{build_folder}' because its CMake cache was "
+                f"configured from '{cmake_source}', not '{source_root}'."
+            )
+
+    return ownership_found
+
+
+def _resolve_build_folder(source_root: Path, build_folder: Path) -> tuple[Path, Path]:
+    """Resolve and safety-check a configured build directory."""
+    source_path = Path(source_root).resolve()
     configured_path = Path(build_folder)
     if not configured_path.is_absolute():
-        configured_path = root_path / configured_path
+        configured_path = source_path / configured_path
     configured_path = Path(os.path.abspath(configured_path))
-
-    if configured_path.is_symlink():
-        raise ValueError(
-            f"Refusing to clean symlinked build directory '{configured_path}'."
-        )
 
     resolved_path = configured_path.resolve()
     forbidden_paths = {
         Path(resolved_path.anchor).resolve(),
         Path.home().resolve(),
-        root_path,
+        source_path,
     }
-    if resolved_path in forbidden_paths or resolved_path in root_path.parents:
+    if resolved_path in forbidden_paths or resolved_path in source_path.parents:
         raise ValueError(
-            f"Refusing to clean unsafe build directory '{resolved_path}'."
+            f"Refusing to use unsafe build directory '{resolved_path}'."
+        )
+    return configured_path, resolved_path
+
+
+def write_basilisk_build_marker(source_root: Path, build_folder: Path) -> Path:
+    """Record that a build directory belongs to a Basilisk source tree.
+
+    Existing nonempty directories must already have matching ownership metadata
+    before they can be claimed.
+
+    :param source_root: Basilisk CMake source directory
+    :param build_folder: configured Conan build directory
+    :return: path to the ownership marker
+    :raises ValueError: if an existing directory belongs to another project
+    """
+    source_path = Path(source_root).resolve()
+    _, resolved_path = _resolve_build_folder(source_path, build_folder)
+    if resolved_path.exists() and not resolved_path.is_dir():
+        raise ValueError(
+            f"Configured build path '{resolved_path}' is not a directory."
+        )
+    resolved_path.mkdir(parents=True, exist_ok=True)
+
+    if _directory_contains_files(resolved_path):
+        ownership_found = _validate_build_folder_ownership(source_path, resolved_path)
+        if not ownership_found:
+            raise ValueError(
+                f"Refusing to use nonempty build directory '{resolved_path}' because "
+                "it is not owned by this Basilisk source tree."
+            )
+
+    marker_path = resolved_path / BASILISK_BUILD_MARKER
+    marker_path.write_text(f"{source_path}\n", encoding="utf-8")
+    return marker_path
+
+
+def clean_configured_build_folder(source_root: Path, build_folder: Path) -> Path:
+    """Remove the configured Conan build directory after validating the target.
+
+    :param source_root: Basilisk CMake source directory used to verify ownership
+    :param build_folder: configured Conan build-directory path
+    :return: resolved build-directory path
+    :raises ValueError: if the target is unsafe or is owned by another project
+    """
+    source_path = Path(source_root).resolve()
+    configured_path, resolved_path = _resolve_build_folder(source_path, build_folder)
+    if _path_uses_link(configured_path):
+        raise ValueError(
+            f"Refusing to clean build directory '{configured_path}' because its path "
+            "contains a symbolic link or junction."
         )
 
     if not resolved_path.exists():
@@ -119,27 +246,61 @@ def clean_configured_build_folder(root: Path, build_folder: Path) -> Path:
             f"Configured build path '{resolved_path}' is not a directory."
         )
 
-    directory_is_empty = next(resolved_path.iterdir(), None) is None
-    contains_build_marker = any(
-        (resolved_path / marker).exists()
-        for marker in BUILD_DIRECTORY_MARKERS
-    )
-    contains_conan_generator_marker = any(
-        (child / CONAN_GENERATOR_MARKER).is_file()
-        for child in resolved_path.iterdir()
-        if child.is_dir()
-    )
-    is_recognized_build = (
-        contains_build_marker or contains_conan_generator_marker
-    )
-    if not directory_is_empty and not is_recognized_build:
+    if _directory_contains_files(resolved_path):
+        ownership_found = _validate_build_folder_ownership(source_path, resolved_path)
+    else:
+        ownership_found = True
+    if not ownership_found:
         raise ValueError(
-            f"Refusing to clean '{resolved_path}' because it does not look like "
-            "a Basilisk build directory."
+            f"Refusing to clean nonempty build directory '{resolved_path}' because "
+            "it is not owned by this Basilisk source tree."
         )
 
     shutil.rmtree(resolved_path)
     return resolved_path
+
+
+def prepare_conan_build_folder(
+        recipe_root: Path,
+        source_root: Path,
+        build_folder: Path,
+        generators_folder: Path,
+        clean: bool,
+) -> Path:
+    """Prepare Conan's resolved build folder before generating build files.
+
+    :param recipe_root: Basilisk recipe directory containing source-side caches
+    :param source_root: Conan's resolved Basilisk CMake source directory
+    :param build_folder: Conan's resolved build directory, including output root
+    :param generators_folder: Conan's resolved generator directory
+    :param clean: whether to remove existing Basilisk build artifacts first
+    :return: path to the Basilisk ownership marker
+    """
+    recipe_path = Path(recipe_root).resolve()
+    build_path = Path(build_folder)
+    generators_path = Path(generators_folder)
+    original_directory = Path.cwd()
+    changed_directory = False
+
+    if clean:
+        _, resolved_build_path = _resolve_build_folder(source_root, build_path)
+        resolved_original_directory = original_directory.resolve()
+        if (
+                resolved_original_directory == resolved_build_path
+                or resolved_build_path in resolved_original_directory.parents
+        ):
+            os.chdir(recipe_path)
+            changed_directory = True
+        try:
+            clean_configured_build_folder(source_root, build_path)
+            clean_numba_cache_artifacts(recipe_path)
+            clean_rust_target_artifacts(recipe_path)
+        finally:
+            if changed_directory:
+                generators_path.mkdir(parents=True, exist_ok=True)
+                os.chdir(generators_path)
+
+    return write_basilisk_build_marker(source_root, build_path)
 
 
 def clean_numba_cache_artifacts(root: Optional[Path] = None,
@@ -404,13 +565,6 @@ class BasiliskConan(ConanFile):
             self.requires(f"mujoco/{get_mujoco_version()}")
 
     def configure(self):
-        if self.options.get_safe("clean"):
-            # Clean the configured distribution folder to start fresh.
-            root = Path(self.recipe_folder or os.path.curdir).resolve()
-            build_folder = Path(str(self.options.get_safe("buildFolder")))
-            clean_configured_build_folder(root, build_folder)
-            clean_numba_cache_artifacts(root)
-            clean_rust_target_artifacts(root)
         if self.settings.get_safe("build_type") == "Debug":
             print(warningColor + "Build type is set to Debug. Performance will be significantly lower." + endColor)
 
@@ -454,6 +608,14 @@ class BasiliskConan(ConanFile):
         self.folders.build = str(self.options.get_safe("buildFolder"))
 
     def generate(self):
+        prepare_conan_build_folder(
+            recipe_root=Path(self.recipe_folder or os.path.curdir),
+            source_root=Path(self.source_folder),
+            build_folder=Path(self.build_folder),
+            generators_folder=Path(self.generators_folder),
+            clean=bool(self.options.get_safe("clean")),
+        )
+
         if self.settings.os == "Windows":
             # Ensure dependent DLLs are copied into the Basilisk package
             # directory inside the build folder so they can be discovered by

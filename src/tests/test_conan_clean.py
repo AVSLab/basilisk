@@ -19,12 +19,49 @@
 
 import importlib
 from pathlib import Path
-from types import SimpleNamespace
 
 import pytest
 
 
 pytest.importorskip("conan")
+
+
+def write_cmake_cache(build_directory, source_root):
+    """Write the CMake source ownership entry used by cleanup tests."""
+    build_directory.mkdir(parents=True, exist_ok=True)
+    (build_directory / "CMakeCache.txt").write_text(
+        f"CMAKE_HOME_DIRECTORY:INTERNAL={Path(source_root).resolve()}\n",
+        encoding="utf-8",
+    )
+
+
+def test_is_symlink_or_junction_supports_legacy_windows_python(monkeypatch):
+    """Detect junction reparse points when ``Path.is_junction`` is unavailable."""
+    repo_root = Path(__file__).resolve().parents[2]
+    monkeypatch.syspath_prepend(str(repo_root))
+    conanfile = importlib.import_module("conanfile")
+
+    class JunctionStatus:
+        """Provide the Windows file attribute exposed by ``Path.lstat``."""
+
+        st_file_attributes = 0x400
+
+    class JunctionPath:
+        """Model a pre-Python 3.12 path pointing at a Windows junction."""
+
+        @staticmethod
+        def is_symlink():
+            """Report that the junction is not a symbolic link."""
+            return False
+
+        @staticmethod
+        def lstat():
+            """Return a Windows reparse-point file status."""
+            return JunctionStatus()
+
+    monkeypatch.setattr(conanfile.os, "name", "nt")
+
+    assert conanfile._is_symlink_or_junction(JunctionPath())
 
 
 def test_clean_numba_cache_artifacts(tmp_path, monkeypatch):
@@ -132,8 +169,7 @@ def test_clean_configured_build_folder(
     else:
         selected_build = source_root / "custom-build"
         build_option = Path("custom-build")
-    selected_build.mkdir()
-    (selected_build / "CMakeCache.txt").write_text("selected", encoding="utf-8")
+    write_cmake_cache(selected_build, source_root)
 
     cleaned_path = conanfile.clean_configured_build_folder(source_root, build_option)
 
@@ -179,7 +215,7 @@ def test_clean_configured_build_folder_rejects_unrecognized_directory(
     retained_file = unrelated_directory / "notes.txt"
     retained_file.write_text("retain", encoding="utf-8")
 
-    with pytest.raises(ValueError, match="does not look like"):
+    with pytest.raises(ValueError, match="not owned by this Basilisk source tree"):
         conanfile.clean_configured_build_folder(
             source_root,
             Path("documentation"),
@@ -192,7 +228,7 @@ def test_clean_configured_build_folder_accepts_partial_conan_generation(
         tmp_path,
         monkeypatch,
 ):
-    """Clean a build folder where Conan generated files before CMake failed."""
+    """Clean an owned build folder where Conan generation stopped before CMake."""
     repo_root = Path(__file__).resolve().parents[2]
     monkeypatch.chdir(repo_root)
     monkeypatch.syspath_prepend(str(repo_root))
@@ -206,6 +242,10 @@ def test_clean_configured_build_folder_accepts_partial_conan_generation(
         "# Partially generated Conan toolchain.\n",
         encoding="utf-8",
     )
+    (build_directory / conanfile.BASILISK_BUILD_MARKER).write_text(
+        f"{source_root.resolve()}\n",
+        encoding="utf-8",
+    )
 
     cleaned_path = conanfile.clean_configured_build_folder(
         source_root,
@@ -216,8 +256,11 @@ def test_clean_configured_build_folder_accepts_partial_conan_generation(
     assert not build_directory.exists()
 
 
-def test_recipe_clean_uses_configured_build_folder(tmp_path, monkeypatch):
-    """Have the Conan ``configure()`` method clean its ``buildFolder`` option."""
+def test_clean_configured_build_folder_rejects_unowned_conan_generation(
+        tmp_path,
+        monkeypatch,
+):
+    """Do not treat another Conan project's generator file as Basilisk ownership."""
     repo_root = Path(__file__).resolve().parents[2]
     monkeypatch.chdir(repo_root)
     monkeypatch.syspath_prepend(str(repo_root))
@@ -225,33 +268,123 @@ def test_recipe_clean_uses_configured_build_folder(tmp_path, monkeypatch):
 
     source_root = tmp_path / "source"
     source_root.mkdir()
-    default_build = source_root / "dist3"
-    selected_build = source_root / "custom-build"
-    for build_directory in (default_build, selected_build):
-        build_directory.mkdir()
-        (build_directory / "CMakeCache.txt").write_text(
-            "configured",
-            encoding="utf-8",
-        )
+    build_directory = source_root / "partial-build"
+    generator_directory = build_directory / "Release" / "generators"
+    generator_directory.mkdir(parents=True)
+    retained_file = generator_directory / "conan_toolchain.cmake"
+    retained_file.write_text("# Unowned Conan output.\n", encoding="utf-8")
 
-    option_values = {
-        "buildFolder": "custom-build",
-        "clean": True,
-    }
-    recipe = SimpleNamespace(
-        options=SimpleNamespace(
-            get_safe=lambda name: option_values.get(name, False),
-        ),
-        recipe_folder=str(source_root),
-        settings=SimpleNamespace(get_safe=lambda name: "Release"),
-    )
+    with pytest.raises(ValueError, match="not owned by this Basilisk source tree"):
+        conanfile.clean_configured_build_folder(source_root, build_directory)
+
+    assert retained_file.exists()
+
+
+def test_clean_configured_build_folder_rejects_unrelated_cmake_build(
+        tmp_path,
+        monkeypatch,
+):
+    """Preserve a CMake build configured from an unrelated source tree."""
+    repo_root = Path(__file__).resolve().parents[2]
+    monkeypatch.chdir(repo_root)
+    monkeypatch.syspath_prepend(str(repo_root))
+    conanfile = importlib.import_module("conanfile")
+
+    source_root = tmp_path / "basilisk" / "src"
+    source_root.mkdir(parents=True)
+    unrelated_source = tmp_path / "unrelated" / "src"
+    unrelated_source.mkdir(parents=True)
+    build_directory = tmp_path / "unrelated-build"
+    write_cmake_cache(build_directory, unrelated_source)
+    retained_file = build_directory / "important-artifact"
+    retained_file.write_text("retain", encoding="utf-8")
+
+    with pytest.raises(ValueError, match="configured from"):
+        conanfile.clean_configured_build_folder(source_root, build_directory)
+
+    assert retained_file.exists()
+
+
+@pytest.mark.parametrize("link_parent", [False, True])
+def test_clean_configured_build_folder_rejects_symlink_traversal(
+        tmp_path,
+        monkeypatch,
+        link_parent,
+):
+    """Preserve build output reached through a final or parent symbolic link."""
+    repo_root = Path(__file__).resolve().parents[2]
+    monkeypatch.chdir(repo_root)
+    monkeypatch.syspath_prepend(str(repo_root))
+    conanfile = importlib.import_module("conanfile")
+
+    source_root = tmp_path / "source"
+    source_root.mkdir()
+    victim_parent = tmp_path / "victim"
+    victim_build = victim_parent / "build"
+    write_cmake_cache(victim_build, source_root)
+    retained_file = victim_build / "important-artifact"
+    retained_file.write_text("retain", encoding="utf-8")
+
+    try:
+        if link_parent:
+            linked_parent = source_root / "linked-parent"
+            linked_parent.symlink_to(victim_parent, target_is_directory=True)
+            build_option = linked_parent / "build"
+        else:
+            linked_build = source_root / "linked-build"
+            linked_build.symlink_to(victim_build, target_is_directory=True)
+            build_option = linked_build
+    except OSError as error:
+        pytest.skip(f"Symbolic links are unavailable: {error}")
+
+    with pytest.raises(ValueError, match="symbolic link or junction"):
+        conanfile.clean_configured_build_folder(source_root, build_option)
+
+    assert retained_file.exists()
+
+
+def test_prepare_conan_build_folder_uses_resolved_output_folder(
+        tmp_path,
+        monkeypatch,
+):
+    """Clean Conan's post-layout output folder instead of repository ``dist3``."""
+    repo_root = Path(__file__).resolve().parents[2]
+    monkeypatch.chdir(repo_root)
+    monkeypatch.syspath_prepend(str(repo_root))
+    conanfile = importlib.import_module("conanfile")
+
+    recipe_root = tmp_path / "repository"
+    source_root = recipe_root / "src"
+    source_root.mkdir(parents=True)
+    repository_build = recipe_root / "dist3"
+    write_cmake_cache(repository_build, source_root)
+    repository_artifact = repository_build / "retain"
+    repository_artifact.write_text("repository build", encoding="utf-8")
+
+    output_build = tmp_path / "output" / "dist3"
+    write_cmake_cache(output_build, source_root)
+    removed_artifact = output_build / "remove"
+    removed_artifact.write_text("selected output build", encoding="utf-8")
+    generators_folder = output_build / "Release" / "generators"
+    generators_folder.mkdir(parents=True)
+
     monkeypatch.setattr(conanfile, "clean_numba_cache_artifacts", lambda root: None)
     monkeypatch.setattr(conanfile, "clean_rust_target_artifacts", lambda root: None)
+    monkeypatch.chdir(generators_folder)
 
-    conanfile.BasiliskConan.configure(recipe)
+    marker_path = conanfile.prepare_conan_build_folder(
+        recipe_root=recipe_root,
+        source_root=source_root,
+        build_folder=output_build,
+        generators_folder=generators_folder,
+        clean=True,
+    )
 
-    assert not selected_build.exists()
-    assert default_build.exists()
+    assert repository_artifact.exists()
+    assert not removed_artifact.exists()
+    assert marker_path == output_build / conanfile.BASILISK_BUILD_MARKER
+    assert marker_path.read_text(encoding="utf-8").strip() == str(source_root.resolve())
+    assert Path.cwd() == generators_folder.resolve()
 
 
 def test_windows_dll_scan_excludes_cargo_build_artifacts(tmp_path, monkeypatch):
