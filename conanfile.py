@@ -18,7 +18,8 @@ from conan.tools.cmake import CMakeToolchain, CMake, cmake_layout, CMakeDeps
 from conan.tools.microsoft import is_msvc
 from conan.tools.files import copy
 
-sys.path.insert(1, './src/utilities/')
+REPOSITORY_ROOT = Path(__file__).resolve().parent
+sys.path.insert(1, str(REPOSITORY_ROOT / "src" / "utilities"))
 import makeDraftModule
 
 # XXX: this statement is needed to enable Windows to print ANSI codes in the Terminal
@@ -66,6 +67,9 @@ NUMBA_CACHE_DIR_NAME = "__pycache__"
 NUMBA_CACHE_FILE_PATTERNS = ("*.nbc", "*.nbi")
 BASILISK_BUILD_MARKER = ".basilisk-build-root"
 CMAKE_CACHE_FILE = "CMakeCache.txt"
+BASILISK_VERSION = (REPOSITORY_ROOT / "docs" / "source" / "bskVersion.txt").read_text(
+    encoding="utf-8"
+)
 
 
 def get_basilisk_numba_model_cache_dir() -> Optional[Path]:
@@ -505,9 +509,7 @@ def create_conan_build_command(
 class BasiliskConan(ConanFile):
     name = "Basilisk"
     homepage = "https://avslab.github.io/basilisk/"
-    f = open('docs/source/bskVersion.txt', 'r')
-    version = f.read()
-    f.close()
+    version = BASILISK_VERSION
     # generators = "CMakeDeps"
     settings = "os", "compiler", "build_type", "arch"
     build_policy = "missing"
@@ -761,8 +763,9 @@ class BasiliskConan(ConanFile):
 
 
 def get_mujoco_version():
-    with open("./libs/mujoco/version.txt") as f:
-        return f.read().strip()
+    return (REPOSITORY_ROOT / "libs" / "mujoco" / "version.txt").read_text(
+        encoding="utf-8"
+    ).strip()
 
 
 def is_conan_package_available(ref: str):

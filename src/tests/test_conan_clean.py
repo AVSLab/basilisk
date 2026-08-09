@@ -64,6 +64,27 @@ def test_is_symlink_or_junction_supports_legacy_windows_python(monkeypatch):
     assert conanfile._is_symlink_or_junction(JunctionPath())
 
 
+def test_recipe_resource_paths_do_not_depend_on_working_directory(
+        tmp_path,
+        monkeypatch,
+):
+    """Resolve recipe imports and version files outside the repository root."""
+    repo_root = Path(__file__).resolve().parents[2]
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.syspath_prepend(str(repo_root))
+    conanfile = importlib.import_module("conanfile")
+
+    expected_version = (repo_root / "docs/source/bskVersion.txt").read_text(
+        encoding="utf-8"
+    )
+    expected_mujoco_version = (repo_root / "libs/mujoco/version.txt").read_text(
+        encoding="utf-8"
+    ).strip()
+
+    assert conanfile.BasiliskConan.version == expected_version
+    assert conanfile.get_mujoco_version() == expected_mujoco_version
+
+
 def test_clean_numba_cache_artifacts(tmp_path, monkeypatch):
     """Ensure clean builds remove repo and user Numba cache artifacts."""
     repo_root = Path(__file__).resolve().parents[2]
