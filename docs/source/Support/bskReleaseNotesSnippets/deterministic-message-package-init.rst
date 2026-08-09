@@ -11,5 +11,6 @@
 - Consolidated common message-wrapper helpers into one support extension while preserving their Python names.
 - Removed the unused logging dependency from the common ``SysModel`` header.
 - Prevented header-only package groups from producing empty shared libraries and restored shared ``_GeneralModuleFiles/Custom.cmake`` hooks for built-in and external wrappers.
+- Made Conan recipe imports and version-file lookup independent of the current working directory.
 - Allowed integrated external projects to omit unused C and C++ custom-message directories.
 - Updated the downloadable external-module example for the current Rust message-output API.
