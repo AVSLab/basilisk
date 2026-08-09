@@ -1,8 +1,20 @@
 
-file(GLOB basilisk_src CONFIGURE_DEPENDS "*.h" "*.cpp" "*.c" "*.i")
+bsk_get_directory_source_files(basilisk_src "${CMAKE_CURRENT_SOURCE_DIR}")
+list(FILTER basilisk_src INCLUDE REGEX "\\.(c|cpp|h|hpp|i)$")
+bsk_get_directory_source_files(
+  moduleId "${CMAKE_CURRENT_SOURCE_DIR}/moduleIdGenerator")
+list(FILTER moduleId INCLUDE REGEX "\\.(c|cpp|h|hpp|i)$")
 
-file(GLOB moduleId CONFIGURE_DEPENDS
-     "moduleIdGenerator/*.h" "moduleIdGenerator/*.cpp" "moduleIdGenerator/*.i")
+foreach(source_file IN LISTS basilisk_src)
+  if(source_file MATCHES "\\.(c|cpp)$")
+    bsk_claim_production_source("${source_file}" "library ArchitectureUtilities")
+  endif()
+endforeach()
+foreach(source_file IN LISTS moduleId)
+  if(source_file MATCHES "\\.(c|cpp)$")
+    bsk_claim_production_source("${source_file}" "library ModuleIdGenerator")
+  endif()
+endforeach()
 
 add_library(ArchitectureUtilities STATIC ${basilisk_src})
 # Find and link cfitsio

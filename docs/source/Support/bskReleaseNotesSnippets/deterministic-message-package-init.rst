@@ -1,7 +1,7 @@
 - Generated Python message package imports now use the exact sorted ``*Payload.h`` inventory built by CMake, keeping split wheel builds compatible across independent runners, rejecting duplicate payload names, and pruning generated artifacts for removed or renamed payloads.
 - Prevented strict compiler warnings from being applied to generated Rust SWIG wrapper sources.
 - Made the Python ``BSKLogger.bskLog`` method treat messages as literal text instead of C format strings.
-- Improved incremental builds by tracking transitive SWIG includes, source discovery changes, protobuf tools, and Rust FFI headers without regenerating wrappers for unrelated source changes.
+- Improved incremental builds by inventorying wrapper sources once per package root and tracking transitive SWIG includes, source discovery changes, protobuf tools, and Rust FFI headers without regenerating wrappers for unrelated source changes.
 - Made fixed-width integer and Eigen headers self-contained instead of relying on transitive includes.
 - Prevented unchanged Rust-enabled builds from recompiling generated message bindings and Rust modules.
 - Reduced clean-build work by compiling architecture framework sources in one package library instead of ten.

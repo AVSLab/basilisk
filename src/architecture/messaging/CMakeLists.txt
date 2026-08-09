@@ -1,17 +1,22 @@
 cmake_policy(SET CMP0078 NEW)
 
 function(collect_message_payloads searchDir outputVariable)
-  set(message_search_patterns
-      "${CMAKE_CURRENT_SOURCE_DIR}/../${searchDir}/*Payload.h")
+  set(message_search_roots
+      "${CMAKE_CURRENT_SOURCE_DIR}/../${searchDir}")
   if(NOT "${EXTERNAL_MODULES_PATH}" STREQUAL "")
-    list(APPEND message_search_patterns
-         "${EXTERNAL_MODULES_PATH}/${searchDir}/*Payload.h")
+    list(APPEND message_search_roots
+         "${EXTERNAL_MODULES_PATH}/${searchDir}")
   endif()
 
-  file(
-    GLOB_RECURSE message_files
-    CONFIGURE_DEPENDS
-    ${message_search_patterns})
+  set(message_files)
+  foreach(message_search_root IN LISTS message_search_roots)
+    bsk_filter_source_inventory(
+      root_message_files
+      "${message_search_root}"
+      BSK_HEADER_FILES)
+    list(FILTER root_message_files INCLUDE REGEX "Payload\\.h$")
+    list(APPEND message_files ${root_message_files})
+  endforeach()
   list(REMOVE_DUPLICATES message_files)
   list(SORT message_files)
   set(${outputVariable} ${message_files} PARENT_SCOPE)

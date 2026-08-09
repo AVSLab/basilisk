@@ -18,8 +18,22 @@ function(GenCMessages TARGET searchDir)
     # Instead, this function tracks dependencies directly in CMake.
     #--------------------------------------------------------------------------
 
-    # Find all C message payloads
-    file(GLOB_RECURSE payloadFiles CONFIGURE_DEPENDS "${searchDir}/msgPayloadDefC/*Payload.h")
+    if("${searchDir}" STREQUAL "")
+        return()
+    endif()
+
+    # Find all C message payloads from the shared source inventory.
+    cmake_path(
+      ABSOLUTE_PATH
+      searchDir
+      BASE_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+      NORMALIZE
+      OUTPUT_VARIABLE absoluteSearchDir)
+    bsk_filter_source_inventory(
+      payloadFiles
+      "${absoluteSearchDir}/msgPayloadDefC"
+      BSK_HEADER_FILES)
+    list(FILTER payloadFiles INCLUDE REGEX "Payload\\.h$")
     foreach(payloadFile ${payloadFiles})
 
         # Compute the name of the payload structure and generated files
