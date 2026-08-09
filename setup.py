@@ -57,7 +57,6 @@ USER_CONAN_ARGS = shlex.split(os.getenv("CONAN_ARGS") or "")
 
 
 import sys
-from dataclasses import dataclass
 from setuptools import setup, Command, Extension, find_packages
 from setuptools.command.build import build, SubCommand
 from subprocess import run
@@ -66,16 +65,18 @@ from pathlib import Path
 HERE = Path(__file__).parent.resolve()
 
 
-@dataclass
 class ConanExtension(Extension):
-    name: str
-    src: Path
-    build_dir: str
-    args: list[str]
+    """Represent the Conan-driven Basilisk extension build."""
 
-    def __post_init__(self):
-        self.conanfile = Path(self.src)/"conanfile.py"
-        assert self.conanfile.is_file(), f"Expected to find conanfile.py file at {self.conanfile}"
+    def __init__(self, *, name: str, src: Path, build_dir: str, args: list[str]) -> None:
+        super().__init__(name=name, sources=[])
+
+        self.src = Path(src)
+        self.build_dir = build_dir
+        self.args = list(args)
+        self.conanfile = self.src / "conanfile.py"
+        if not self.conanfile.is_file():
+            raise FileNotFoundError(f"Expected to find conanfile.py at {self.conanfile}")
 
 
 class BuildConanExtCommand(Command, SubCommand):
