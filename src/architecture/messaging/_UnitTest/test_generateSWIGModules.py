@@ -81,17 +81,21 @@ def _generate_swig_interface(tmp_path, generate_c_info):
     return output_path.read_text(encoding="utf-8")
 
 
-def test_package_init_generation_is_deterministic(tmp_path, monkeypatch):
-    """Package imports are independent of filesystem enumeration order."""
+def test_package_init_uses_only_cmake_manifest_entries(tmp_path):
+    """Package imports are sorted and limited to the inventory supplied by CMake."""
     header_path = tmp_path / "headers"
     header_path.mkdir()
-    file_names = [
-        "ZuluMsgPayload.h",
-        "AlphaMsgPayload.hpp",
-        "README.txt",
-    ]
-    for file_name in file_names:
+    for file_name in (
+            "ZuluMsgPayload.h",
+            "AlphaMsgPayload.h",
+            "IgnoredMsgPayload.hpp",
+    ):
         (header_path / file_name).touch()
+    manifest_path = tmp_path / "messagePayloads.txt"
+    manifest_path.write_text(
+        "ZuluMsgPayload\nAlphaMsgPayload\n",
+        encoding="utf-8",
+    )
     expected = """\
 from Basilisk.architecture.messaging.messagingSupport import *
 from Basilisk.architecture.messaging.AlphaMsgPayload import *
@@ -99,38 +103,39 @@ from Basilisk.architecture.messaging.ZuluMsgPayload import *
 from Basilisk.architecture.messagingBase import *
 """
 
-    generated = []
-    for index, order in enumerate((file_names, list(reversed(file_names)))):
-        output_path = tmp_path / f"output-{index}"
-        monkeypatch.setattr(
-            generatePackageInit.os,
-            "listdir",
-            lambda _path, entries=order: entries,
-        )
-        generatePackageInit.generatePackageInit(output_path, [header_path])
-        generated.append((output_path / "__init__.py").read_text(encoding="utf-8"))
-
-    assert generated == [expected, expected]
-
-
-def test_package_init_skips_missing_optional_header_directories(tmp_path):
-    """Missing optional external message directories do not stop generation."""
-    header_path = tmp_path / "headers"
-    header_path.mkdir()
-    (header_path / "CustomMsgPayload.h").touch()
-    missing_header_path = tmp_path / "missing-headers"
     output_path = tmp_path / "output"
+    generatePackageInit.generate_package_init(output_path, manifest_path)
+    generated = (output_path / "__init__.py").read_text(encoding="utf-8")
 
-    generatePackageInit.generatePackageInit(
-        output_path,
-        [header_path, missing_header_path],
+    assert generated == expected
+    assert "IgnoredMsgPayload" not in generated
+
+
+def test_package_init_rejects_duplicate_manifest_entries(tmp_path):
+    """Duplicate payload module names fail with their manifest line numbers."""
+    manifest_path = tmp_path / "messagePayloads.txt"
+    manifest_path.write_text(
+        "DuplicateMsgPayload\nDuplicateMsgPayload\n",
+        encoding="utf-8",
     )
 
-    assert (output_path / "__init__.py").read_text(encoding="utf-8") == """\
-from Basilisk.architecture.messaging.messagingSupport import *
-from Basilisk.architecture.messaging.CustomMsgPayload import *
-from Basilisk.architecture.messagingBase import *
-"""
+    with pytest.raises(ValueError, match="lines 1 and 2"):
+        generatePackageInit.generate_package_init(
+            tmp_path / "output",
+            manifest_path,
+        )
+
+
+def test_package_init_rejects_invalid_manifest_entry(tmp_path):
+    """Only payload module names can be emitted as package imports."""
+    manifest_path = tmp_path / "messagePayloads.txt"
+    manifest_path.write_text("UnexpectedMsgPayload.hpp\n", encoding="utf-8")
+
+    with pytest.raises(ValueError, match="Invalid payload module"):
+        generatePackageInit.generate_package_init(
+            tmp_path / "output",
+            manifest_path,
+        )
 
 
 def _render_read_functor_namespace():

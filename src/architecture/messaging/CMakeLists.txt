@@ -1,11 +1,69 @@
 cmake_policy(SET CMP0078 NEW)
 
-function(generate_messages searchDir generateCCode)
+function(collect_message_payloads searchDir outputVariable)
+  set(message_search_patterns
+      "${CMAKE_CURRENT_SOURCE_DIR}/../${searchDir}/*Payload.h")
+  if(NOT "${EXTERNAL_MODULES_PATH}" STREQUAL "")
+    list(APPEND message_search_patterns
+         "${EXTERNAL_MODULES_PATH}/${searchDir}/*Payload.h")
+  endif()
+
   file(
     GLOB_RECURSE message_files
-    RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/"
     CONFIGURE_DEPENDS
-    "../${searchDir}/*Payload.h" "${EXTERNAL_MODULES_PATH}/${searchDir}/*Payload.h")
+    ${message_search_patterns})
+  list(REMOVE_DUPLICATES message_files)
+  list(SORT message_files)
+  set(${outputVariable} ${message_files} PARENT_SCOPE)
+endfunction()
+
+function(generate_payload_manifest outputFile)
+  set(payload_files ${ARGN})
+  list(REMOVE_DUPLICATES payload_files)
+  list(SORT payload_files)
+
+  set(payload_names)
+  set(payload_sources)
+  foreach(payload_file IN LISTS payload_files)
+    get_filename_component(payload_name "${payload_file}" NAME_WE)
+    list(FIND payload_names "${payload_name}" duplicate_index)
+    if(NOT duplicate_index EQUAL -1)
+      list(GET payload_sources ${duplicate_index} original_payload_file)
+      message(
+        FATAL_ERROR
+          "Duplicate message payload name '${payload_name}' was discovered.\n"
+          "  First header:  ${original_payload_file}\n"
+          "  Second header: ${payload_file}\n"
+          "Payload header names must be unique across built-in and external message trees.")
+    endif()
+    list(APPEND payload_names "${payload_name}")
+    list(APPEND payload_sources "${payload_file}")
+  endforeach()
+
+  list(SORT payload_names)
+  list(JOIN payload_names "\n" payload_manifest_content)
+  if(payload_manifest_content)
+    string(APPEND payload_manifest_content "\n")
+  endif()
+  file(GENERATE OUTPUT "${outputFile}" CONTENT "${payload_manifest_content}")
+endfunction()
+
+collect_message_payloads(msgPayloadDefC C_MESSAGE_PAYLOAD_FILES)
+collect_message_payloads(msgPayloadDefCpp CPP_MESSAGE_PAYLOAD_FILES)
+set(MESSAGE_PAYLOAD_FILES
+    ${C_MESSAGE_PAYLOAD_FILES}
+    ${CPP_MESSAGE_PAYLOAD_FILES})
+list(REMOVE_DUPLICATES MESSAGE_PAYLOAD_FILES)
+list(SORT MESSAGE_PAYLOAD_FILES)
+
+file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/autoSource")
+set(MESSAGE_PAYLOAD_MANIFEST
+    "${CMAKE_BINARY_DIR}/autoSource/messagePayloads.txt")
+generate_payload_manifest(
+  "${MESSAGE_PAYLOAD_MANIFEST}"
+  ${MESSAGE_PAYLOAD_FILES})
+
+function(generate_messages searchDir generateCCode messageFilesVariable)
 
   file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/autoSource/cMsgMeta)
 
@@ -16,7 +74,7 @@ function(generate_messages searchDir generateCCode)
     set(CLANG_LANG_FLAG "c++")
   endif()
 
-  foreach(msgFile ${message_files})
+  foreach(msgFile IN LISTS ${messageFilesVariable})
     get_filename_component(TARGET_NAME ${msgFile} NAME_WE)
 
     set(MSG_META_OUTPUT "${CMAKE_BINARY_DIR}/autoSource/cMsgMeta/${TARGET_NAME}.json")
@@ -150,35 +208,20 @@ add_custom_command(
   VERBATIM)
 add_custom_target(msgKeepAlivePy DEPENDS ${MSG_KEEP_ALIVE_PY})
 
-# Track payload headers so the generated Python message package is rebuilt when message definitions change.
-file(GLOB_RECURSE package_init_payload_files CONFIGURE_DEPENDS
-  "${CMAKE_CURRENT_SOURCE_DIR}/../msgPayloadDefC/*Payload.h"
-  "${CMAKE_CURRENT_SOURCE_DIR}/../msgPayloadDefCpp/*Payload.h")
-
-if(NOT "${EXTERNAL_MODULES_PATH}" STREQUAL "")
-  file(GLOB_RECURSE package_init_external_payload_files CONFIGURE_DEPENDS
-    "${EXTERNAL_MODULES_PATH}/msgPayloadDefC/*Payload.h"
-    "${EXTERNAL_MODULES_PATH}/msgPayloadDefCpp/*Payload.h")
-  list(APPEND package_init_payload_files ${package_init_external_payload_files})
-
-  add_custom_command(
-    OUTPUT ${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/__init__.py
-    COMMAND
-      ${Python3_EXECUTABLE} generatePackageInit.py "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/"
-      "../../msgPayloadDefC/" "../../msgPayloadDefCpp/" "${EXTERNAL_MODULES_PATH}/msgPayloadDefC/"
-      "${EXTERNAL_MODULES_PATH}/msgPayloadDefCpp/"
-    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/msgAutoSource/generatePackageInit.py ${package_init_payload_files}
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/msgAutoSource
-    VERBATIM)
-else()
-  add_custom_command(
-    OUTPUT ${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/__init__.py
-    COMMAND ${Python3_EXECUTABLE} generatePackageInit.py "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/"
-            "../../msgPayloadDefC/" "../../msgPayloadDefCpp/"
-    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/msgAutoSource/generatePackageInit.py ${package_init_payload_files}
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/msgAutoSource
-    VERBATIM)
-endif(NOT "${EXTERNAL_MODULES_PATH}" STREQUAL "")
+# Generate package imports from the exact payload inventory used for SWIG
+# targets.  This avoids a second directory scan with different file matching.
+add_custom_command(
+  OUTPUT ${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/__init__.py
+  COMMAND
+    ${Python3_EXECUTABLE} generatePackageInit.py
+    "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/"
+    "${MESSAGE_PAYLOAD_MANIFEST}"
+  DEPENDS
+    ${CMAKE_CURRENT_SOURCE_DIR}/msgAutoSource/generatePackageInit.py
+    ${MESSAGE_PAYLOAD_MANIFEST}
+    ${MESSAGE_PAYLOAD_FILES}
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/msgAutoSource
+  VERBATIM)
 
 # Custom target for establishing dependency
 add_custom_target(swigtrick DEPENDS ${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/__init__.py)
@@ -232,8 +275,8 @@ set(EXCLUDED_BSK_TARGETS
 
 # Generate per-payload equality headers. Each "<Payload>_equality.h" is included
 # only by that payload's own SWIG module.
-generate_messages(msgPayloadDefCpp "False")
-generate_messages(msgPayloadDefC "True")
+generate_messages(msgPayloadDefCpp "False" CPP_MESSAGE_PAYLOAD_FILES)
+generate_messages(msgPayloadDefC "True" C_MESSAGE_PAYLOAD_FILES)
 
 set(recorder_copy_contract_test_source
     "${CMAKE_CURRENT_SOURCE_DIR}/_UnitTest/test_recorder_copy_contract.cpp")
