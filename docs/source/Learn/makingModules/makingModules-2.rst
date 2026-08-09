@@ -33,15 +33,25 @@ The ``#ifndef`` statement ensures this header file is only included once when co
 
 Creating the Msg C/C++ Swig Interface Files
 -------------------------------------------
-To create message objects in C and C++ modules, you need to run ``python3 conanfile.py`` again from in the Terminal or command line window.  This script auto-creates the corresponding C module interface files and stores them in ``basilisk/dist3/autoSource/cMsgCInterface``.  The C++ message objects are automatically created as a template class using the ``*.h`` definitions in ``msgPayloadDefC``.  Naturally no C module interface files are created for ``*.h`` files in ``msgPayloadDefCpp``.
+To create message objects in C and C++ modules, build Basilisk after adding the message definition. The initial
+``python3 conanfile.py`` build auto-creates the corresponding C module interface files and stores them in
+``basilisk/dist3/autoSource/cMsgCInterface``. The C++ message objects are automatically created as template classes
+using the ``*.h`` definitions in ``msgPayloadDefC``. Naturally, no C module interface files are created for ``*.h``
+files in ``msgPayloadDefCpp``.
 
-Running ``python3 conanfile.py`` re-creates the IDE project file that will now include access to the new message definition.
+Once ``dist3`` is configured, a normal incremental build detects added, renamed, or deleted payload definitions and
+automatically reconfigures CMake as needed::
 
-.. caution::
+    cmake --build dist3 --parallel 12
 
-    Compiled message objects (built by ``python3 conanfile.py``) are added to the installed Basilisk package, such that they can be imported from Python. If you rename or delete a message's ``*Payload.h`` file, you should run a "clean" build to delete its previously compiled message objects, to avoid accidentally importing and using an old message type that should no longer exist.
+Running ``python3 conanfile.py`` again is also valid when the Conan or CMake configuration needs to be refreshed. It
+preserves unchanged generated and compiled products, so it does not turn an otherwise incremental build into a clean
+build.
 
-    "Clean" builds can be done by deleting the ``dist3`` directory, or by running ``python3 conanfile.py --clean``.
+The generated Python messaging package is written from the current payload manifest. When a ``*Payload.h`` file is
+renamed or deleted, the build removes that payload's stale generated source, Python wrapper, metadata, and compiled
+extension artifacts. A clean build is therefore not required to prevent an obsolete message type from remaining
+importable.
 
 For the Basilisk module to have python interfaces to the module messages, you must include the message definition
 ``...MsgPayload.h`` file in the module swig interface file ``*.i``.  See :ref:`cppModules-4` for an example
