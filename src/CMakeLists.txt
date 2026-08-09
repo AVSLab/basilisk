@@ -231,18 +231,18 @@ function(generate_package_libraries INIT_DIRECTORY AllLibs)
       include("${PACKAGE_CUSTOM_FILE}")
     endif()
 
-    # Link all necessary libraries
+    # Link implementation-only support used while building each package.
     target_link_libraries(${LIB_NAME} PRIVATE ModuleIdGenerator)
     target_link_libraries(${LIB_NAME} PRIVATE Eigen3::Eigen3)
-    if(${PARENT_DIR_NAME} STREQUAL "mujocoDynamics")
-      target_link_libraries(${LIB_NAME} PUBLIC dynamicsLib)
-      # dynamicsLib already has ArchitectureUtilities and cMsgCInterface
-      # publicly linked, so no need to add them (again) for mujocoDynamics
-    else()
+
+    # Each package exposes only its nearest public package dependency.
+    # architectureLib is the public owner of the architecture leaf libraries.
+    if("${LIB_NAME}" STREQUAL "architectureLib")
       target_link_libraries(${LIB_NAME} PUBLIC ArchitectureUtilities)
       target_link_libraries(${LIB_NAME} PUBLIC cMsgCInterface)
-    endif()
-    if(NOT "${LIB_NAME}" STREQUAL "architectureLib")
+    elseif(${PARENT_DIR_NAME} STREQUAL "mujocoDynamics")
+      target_link_libraries(${LIB_NAME} PUBLIC dynamicsLib)
+    else()
       target_link_libraries(${LIB_NAME} PUBLIC architectureLib)
     endif()
 
@@ -267,6 +267,44 @@ function(generate_package_libraries INIT_DIRECTORY AllLibs)
       ${AllLibs}
       PARENT_SCOPE)
 endfunction(generate_package_libraries)
+
+function(bsk_assert_architecture_link_ownership PACKAGE_LIBRARIES)
+  get_target_property(
+    ARCHITECTURE_INTERFACE_LIBRARIES
+    architectureLib
+    INTERFACE_LINK_LIBRARIES)
+  foreach(ARCHITECTURE_LEAF_LIBRARY ArchitectureUtilities cMsgCInterface)
+    set(ARCHITECTURE_LEAF_COUNT 0)
+    foreach(INTERFACE_LIBRARY IN LISTS ARCHITECTURE_INTERFACE_LIBRARIES)
+      if(INTERFACE_LIBRARY STREQUAL ARCHITECTURE_LEAF_LIBRARY)
+        math(EXPR ARCHITECTURE_LEAF_COUNT "${ARCHITECTURE_LEAF_COUNT} + 1")
+      endif()
+    endforeach()
+    if(NOT ARCHITECTURE_LEAF_COUNT EQUAL 1)
+      message(
+        FATAL_ERROR
+          "architectureLib must publicly own ${ARCHITECTURE_LEAF_LIBRARY} exactly once.")
+    endif()
+  endforeach()
+
+  foreach(PACKAGE_LIBRARY IN LISTS PACKAGE_LIBRARIES)
+    if(NOT TARGET "${PACKAGE_LIBRARY}" OR PACKAGE_LIBRARY STREQUAL "architectureLib")
+      continue()
+    endif()
+    get_target_property(
+      DIRECT_LINK_LIBRARIES
+      "${PACKAGE_LIBRARY}"
+      LINK_LIBRARIES)
+    foreach(ARCHITECTURE_LEAF_LIBRARY ArchitectureUtilities cMsgCInterface)
+      if(ARCHITECTURE_LEAF_LIBRARY IN_LIST DIRECT_LINK_LIBRARIES)
+        message(
+          FATAL_ERROR
+            "${PACKAGE_LIBRARY} links ${ARCHITECTURE_LEAF_LIBRARY} directly; link its nearest package dependency instead."
+        )
+      endif()
+    endforeach()
+  endforeach()
+endfunction(bsk_assert_architecture_link_ownership)
 
 function(find_package_targets PKG_DIR ALL_TARGET_LIST)
   bsk_filter_source_inventory(
@@ -824,8 +862,9 @@ add_subdirectory("architecture/messaging/")
 set(AllLibs "")
 generate_package_libraries("${CMAKE_SOURCE_DIR}" "${AllLibs}") # This finds GeneralModuleFiles and generates a library
                                                                # of the parentDirectory name
+bsk_assert_architecture_link_ownership("${AllLibs}")
 
-set(ARCHITECTURE_LIBS architectureLib ArchitectureUtilities ModuleIdGenerator cMsgCInterface)
+set(ARCHITECTURE_LIBS architectureLib ModuleIdGenerator)
 
 # ARCHITECTURE
 find_package_targets("${CMAKE_SOURCE_DIR}/architecture" ARCHITECTURE_TARGETS)
@@ -877,16 +916,16 @@ if(NOT "${EXTERNAL_MODULES_PATH}" STREQUAL "")
 endif(NOT "${EXTERNAL_MODULES_PATH}" STREQUAL "")
 
 # The quotations around DYN_TARGETS informs function that it is a list
-generate_package_targets("${DYN_TARGETS}" "dynamicsLib;${ARCHITECTURE_LIBS}" "simulation")
+generate_package_targets("${DYN_TARGETS}" "dynamicsLib;ModuleIdGenerator" "simulation")
 # Only build mujocoDynamics targets if the mujocoDynamics library is available
 if(NOT ("mujocoDynamics" IN_LIST EXCLUDED_BSK_LIBRARIES))
-  generate_package_targets("${MULTI_BODY_DYN_TARGETS}" "mujocoDynamicsLib;dynamicsLib;${ARCHITECTURE_LIBS}" "simulation")
+  generate_package_targets("${MULTI_BODY_DYN_TARGETS}" "mujocoDynamicsLib;ModuleIdGenerator" "simulation")
 endif()
-generate_package_targets("${ENV_TARGETS}" "environmentLib;${ARCHITECTURE_LIBS};${library_dependencies}" "simulation")
+generate_package_targets("${ENV_TARGETS}" "environmentLib;ModuleIdGenerator;${library_dependencies}" "simulation")
 generate_package_targets("${FORCE_TORQUE_TARGETS}" "${ARCHITECTURE_LIBS};${library_dependencies}" "simulation")
-generate_package_targets("${DATA_TARGETS}" "onboardDataHandlingLib;${ARCHITECTURE_LIBS};" "simulation")
+generate_package_targets("${DATA_TARGETS}" "onboardDataHandlingLib;ModuleIdGenerator" "simulation")
 generate_package_targets("${DEVICE_INTERFACE_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
-generate_package_targets("${POWER_TARGETS}" "powerLib;${ARCHITECTURE_LIBS};" "simulation")
+generate_package_targets("${POWER_TARGETS}" "powerLib;ModuleIdGenerator" "simulation")
 generate_package_targets("${NAV_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
 generate_package_targets("${SENSORS_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
 generate_package_targets("${SIM_SYNCH_TARGETS}" "${ARCHITECTURE_LIBS};" "simulation")
@@ -922,7 +961,7 @@ generate_package_targets("${ATT_CONTROL_TARGETS}" "${ARCHITECTURE_LIBS};" "fswAl
 generate_package_targets("${ATT_DET_TARGETS}" "${ARCHITECTURE_LIBS};" "fswAlgorithms")
 generate_package_targets("${ATT_GUID_TARGETS}" "${ARCHITECTURE_LIBS};" "fswAlgorithms")
 generate_package_targets("${DV_GUID_TARGETS}" "${ARCHITECTURE_LIBS};" "fswAlgorithms")
-generate_package_targets("${EFF_INTERFACES_TARGETS}" "effectorInterfacesLib;${ARCHITECTURE_LIBS};" "fswAlgorithms")
+generate_package_targets("${EFF_INTERFACES_TARGETS}" "effectorInterfacesLib;ModuleIdGenerator" "fswAlgorithms")
 generate_package_targets("${FORM_FLYING_TARGETS}" "${ARCHITECTURE_LIBS};" "fswAlgorithms")
 generate_package_targets("${FSW_UTIL_TARGETS}" "${ARCHITECTURE_LIBS};" "fswAlgorithms")
 generate_package_targets("${IMAGE_PROC_TARGETS}" "${ARCHITECTURE_LIBS};" "fswAlgorithms")
@@ -932,7 +971,7 @@ generate_package_targets("${SENSOR_INTERFACE_TARGETS}" "${ARCHITECTURE_LIBS};" "
 generate_package_targets("${SMALLBODY_NAV_TARGETS}" "${ARCHITECTURE_LIBS};" "fswAlgorithms")
 generate_package_targets("${STATE_EST_TARGETS}" "${ARCHITECTURE_LIBS};" "fswAlgorithms")
 generate_package_targets("${ORBIT_CONTROL_TARGETS}" "${ARCHITECTURE_LIBS};" "fswAlgorithms")
-generate_package_targets("${TRANS_DET_TARGETS}" "transDeterminationLib;${ARCHITECTURE_LIBS};" "fswAlgorithms")
+generate_package_targets("${TRANS_DET_TARGETS}" "transDeterminationLib;ModuleIdGenerator" "fswAlgorithms")
 generate_package_targets("${VEH_CONFIG_TARGETS}" "${ARCHITECTURE_LIBS};" "fswAlgorithms")
 
 # Rust modules under fswAlgorithms/ -- see the "ARCHITECTURE" section above.
