@@ -21,6 +21,7 @@ if(NOT DEFINED BSK_SOURCE_DIR OR NOT DEFINED TEST_ROOT)
 endif()
 
 include("${BSK_SOURCE_DIR}/cmake/bskCollectWrapperCustomFiles.cmake")
+include("${BSK_SOURCE_DIR}/cmake/bskSourceInventory.cmake")
 
 set(FIXTURE_SOURCE_DIR "${TEST_ROOT}/source")
 set(FIXTURE_EXTERNAL_DIR "${TEST_ROOT}/external")
@@ -33,12 +34,21 @@ file(MAKE_DIRECTORY "${FIXTURE_SOURCE_DIR}/simulation/package/_GeneralModuleFile
 file(WRITE "${IN_TREE_LOCAL_CUSTOM}" "")
 file(WRITE "${IN_TREE_SHARED_CUSTOM}" "")
 
+bsk_collect_source_inventory(
+  FIXTURE_SOURCE_INVENTORY
+  "${FIXTURE_SOURCE_DIR}"
+  "${FIXTURE_EXTERNAL_DIR}")
+set(FIXTURE_CUSTOM_FILE_INVENTORY ${FIXTURE_SOURCE_INVENTORY})
+list(FILTER FIXTURE_CUSTOM_FILE_INVENTORY
+  INCLUDE REGEX "(^|/)Custom\\.cmake$")
+
 bsk_collect_wrapper_custom_files(
   IN_TREE_CUSTOM_FILES
   "simulation/package/module"
   "simulation"
   "${FIXTURE_SOURCE_DIR}"
-  "${FIXTURE_EXTERNAL_DIR}")
+  "${FIXTURE_EXTERNAL_DIR}"
+  "${FIXTURE_CUSTOM_FILE_INVENTORY}")
 set(EXPECTED_IN_TREE_CUSTOM_FILES "${IN_TREE_LOCAL_CUSTOM};${IN_TREE_SHARED_CUSTOM}")
 if(NOT "${IN_TREE_CUSTOM_FILES}" STREQUAL "${EXPECTED_IN_TREE_CUSTOM_FILES}")
   message(FATAL_ERROR
@@ -54,12 +64,21 @@ file(WRITE "${EXTERNAL_LOCAL_CUSTOM}" "")
 file(WRITE "${EXTERNAL_SHARED_CUSTOM}" "")
 file(RELATIVE_PATH EXTERNAL_PARENT_DIR "${FIXTURE_SOURCE_DIR}" "${EXTERNAL_MODULE_DIR}")
 
+bsk_collect_source_inventory(
+  FIXTURE_SOURCE_INVENTORY
+  "${FIXTURE_SOURCE_DIR}"
+  "${FIXTURE_EXTERNAL_DIR}")
+set(FIXTURE_CUSTOM_FILE_INVENTORY ${FIXTURE_SOURCE_INVENTORY})
+list(FILTER FIXTURE_CUSTOM_FILE_INVENTORY
+  INCLUDE REGEX "(^|/)Custom\\.cmake$")
+
 bsk_collect_wrapper_custom_files(
   EXTERNAL_CUSTOM_FILES
   "${EXTERNAL_PARENT_DIR}"
   "ExternalModules"
   "${FIXTURE_SOURCE_DIR}"
-  "${FIXTURE_EXTERNAL_DIR}")
+  "${FIXTURE_EXTERNAL_DIR}"
+  "${FIXTURE_CUSTOM_FILE_INVENTORY}")
 set(EXPECTED_EXTERNAL_CUSTOM_FILES "${EXTERNAL_LOCAL_CUSTOM};${EXTERNAL_SHARED_CUSTOM}")
 if(NOT "${EXTERNAL_CUSTOM_FILES}" STREQUAL "${EXPECTED_EXTERNAL_CUSTOM_FILES}")
   message(FATAL_ERROR
@@ -78,13 +97,14 @@ file(MAKE_DIRECTORY "${OPTIONAL_CONFIG_DIR}")
 set(CONFIGURE_PROJECT_CONTENT [=[
 cmake_minimum_required(VERSION 3.26)
 project(bsk_configure_dependency_test NONE)
-include("@BSK_SOURCE_DIR@/cmake/bskCollectWrapperCustomFiles.cmake")
-bsk_collect_custom_cmake_files(
-  DISCOVERED_CONFIG
+include("@BSK_SOURCE_DIR@/cmake/bskSourceInventory.cmake")
+bsk_collect_source_inventory(
+  DISCOVERED_SOURCE_FILES
   "${CMAKE_SOURCE_DIR}")
-bsk_collect_optional_cmake_file(
-  DISCOVERED_MANIFEST
-  "${CMAKE_SOURCE_DIR}/package/_GeneralModuleFiles/PackageSources.cmake")
+set(DISCOVERED_CONFIG ${DISCOVERED_SOURCE_FILES})
+list(FILTER DISCOVERED_CONFIG INCLUDE REGEX "(^|/)Custom\\.cmake$")
+set(DISCOVERED_MANIFEST ${DISCOVERED_SOURCE_FILES})
+list(FILTER DISCOVERED_MANIFEST INCLUDE REGEX "(^|/)PackageSources\\.cmake$")
 file(WRITE "${CMAKE_BINARY_DIR}/discovered-config.txt" "${DISCOVERED_CONFIG}")
 file(WRITE "${CMAKE_BINARY_DIR}/discovered-manifest.txt" "${DISCOVERED_MANIFEST}")
 ]=])
