@@ -17,6 +17,7 @@
 #
 
 from copy import deepcopy as _deepcopy
+from importlib import invalidate_caches as _invalidateImportCaches
 from importlib.metadata import distributions as _distributions
 
 from Basilisk._buildAbiData import buildAbiData as _buildAbiData
@@ -28,6 +29,7 @@ _buildFeatureEntryPointGroup = "basilisk.build_features"
 
 def _installedBuildFeatureProviders() -> dict[str, tuple[tuple[str, str], ...]]:
     """Return optional feature providers discovered from distribution metadata."""
+    _invalidateImportCaches()
     providers: dict[str, set[tuple[str, str]]] = {}
     for distribution in _distributions():
         distributionName = distribution.metadata.get("Name") or "<unknown>"

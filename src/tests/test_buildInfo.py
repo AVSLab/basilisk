@@ -17,6 +17,7 @@
 #
 
 import ctypes
+import os
 import platform
 import re
 from importlib.metadata import distributions
@@ -372,6 +373,7 @@ def test_optional_build_feature_environment_changes(monkeypatch, tmp_path):
     )
 
     assert Basilisk.hasBuildFeature("opNav") is False
+    cachedDirectoryStat = tmp_path.stat()
 
     providerPath = tmp_path / f"bsk_opnav-{coreVersion}.dist-info"
     providerPath.mkdir()
@@ -384,6 +386,10 @@ def test_optional_build_feature_environment_changes(monkeypatch, tmp_path):
     entryPointPath.write_text(
         f"[{buildInfoFormatter._buildFeatureEntryPointGroup}]\nopNav = Basilisk\n",
         encoding="utf-8",
+    )
+    os.utime(
+        tmp_path,
+        ns=(cachedDirectoryStat.st_atime_ns, cachedDirectoryStat.st_mtime_ns),
     )
     assert Basilisk.hasBuildFeature("opNav") is True
 
