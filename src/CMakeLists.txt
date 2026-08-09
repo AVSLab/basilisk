@@ -25,14 +25,34 @@ include(bskTargetExcludeBuildOptions)
 include(bskBuildInfo)
 include(bskCollectWrapperCustomFiles)
 include(bskFindRustModules)
+include(bskSourceInventory)
 
-# Track the appearance and removal of module-local and shared Custom.cmake
-# hooks with one recursive check per source root.
-bsk_collect_custom_cmake_files(BSK_SOURCE_CUSTOM_CMAKE_FILES "${CMAKE_SOURCE_DIR}")
+# Inventory build-relevant source files once per top-level package root. All
+# wrapper and package discovery below filters these lists in memory.
+set(BSK_SOURCE_INVENTORY_ROOTS
+    "${CMAKE_SOURCE_DIR}/architecture"
+    "${CMAKE_SOURCE_DIR}/simulation"
+    "${CMAKE_SOURCE_DIR}/fswAlgorithms"
+    "${CMAKE_SOURCE_DIR}/moduleTemplates"
+    "${CMAKE_SOURCE_DIR}/topLevelModules")
 if(NOT "${EXTERNAL_MODULES_PATH}" STREQUAL "")
-  bsk_collect_custom_cmake_files(
-    BSK_EXTERNAL_CUSTOM_CMAKE_FILES "${EXTERNAL_MODULES_PATH}")
+  list(APPEND BSK_SOURCE_INVENTORY_ROOTS "${EXTERNAL_MODULES_PATH}")
 endif()
+bsk_collect_source_inventory(
+  BSK_SOURCE_INVENTORY
+  ${BSK_SOURCE_INVENTORY_ROOTS})
+bsk_index_source_inventory(${BSK_SOURCE_INVENTORY})
+
+set(BSK_HEADER_FILES ${BSK_SOURCE_INVENTORY})
+list(FILTER BSK_HEADER_FILES INCLUDE REGEX "\\.(h|hpp)$")
+set(BSK_INTERFACE_FILES ${BSK_SOURCE_INVENTORY})
+list(FILTER BSK_INTERFACE_FILES INCLUDE REGEX "\\.i$")
+set(BSK_PYTHON_FILES ${BSK_SOURCE_INVENTORY})
+list(FILTER BSK_PYTHON_FILES INCLUDE REGEX "\\.py$")
+set(BSK_CMAKE_FILES ${BSK_SOURCE_INVENTORY})
+list(FILTER BSK_CMAKE_FILES INCLUDE REGEX "\\.cmake$")
+set(BSK_CUSTOM_CMAKE_FILES ${BSK_CMAKE_FILES})
+list(FILTER BSK_CUSTOM_CMAKE_FILES INCLUDE REGEX "(^|/)Custom\\.cmake$")
 
 # Find necessary packages
 find_package(Python3 ${PYTHON_VERSION} EXACT REQUIRED COMPONENTS Interpreter Development.Module OPTIONAL_COMPONENTS Development.SABIModule)
@@ -116,42 +136,17 @@ function(create_symlinks destinationPath)
 endfunction(create_symlinks)
 
 function(add_message_headers)
-  file(GLOB CMESSAGE_HEADER_FILES CONFIGURE_DEPENDS
-       "${CMAKE_SOURCE_DIR}/architecture/msgPayloadDefC/*.h"
-       "${EXTERNAL_MODULES_PATH}/msgPayloadDefC/*.h")
-  file(GLOB CPPMESSAGE_HEADER_FILES CONFIGURE_DEPENDS
-       "${CMAKE_SOURCE_DIR}/architecture/msgPayloadDefCpp/*.h"
-       "${EXTERNAL_MODULES_PATH}/msgPayloadDefCpp/*.h")
+  set(CMESSAGE_HEADER_FILES ${BSK_HEADER_FILES})
+  list(FILTER CMESSAGE_HEADER_FILES
+       INCLUDE REGEX "/msgPayloadDefC/[^/]+\\.h$")
+  set(CPPMESSAGE_HEADER_FILES ${BSK_HEADER_FILES})
+  list(FILTER CPPMESSAGE_HEADER_FILES
+       INCLUDE REGEX "/msgPayloadDefCpp/[^/]+\\.h$")
   add_custom_target(msgPayloadDefC SOURCES ${CMESSAGE_HEADER_FILES})
   add_custom_target(msgPayloadDefCpp SOURCES ${CPPMESSAGE_HEADER_FILES})
   set_target_properties(msgPayloadDefC PROPERTIES FOLDER architecture)
   set_target_properties(msgPayloadDefCpp PROPERTIES FOLDER architecture)
 endfunction(add_message_headers)
-
-function(sub_dir_list result curdir)
-  # Searches through all directories in source, and keeps those called GeneralModuleFiles
-  file(
-    GLOB_RECURSE children
-    LIST_DIRECTORIES true
-    RELATIVE ${curdir}
-    ${curdir}/*/)
-  set(dirlist "")
-  foreach(child ${children})
-    if(IS_DIRECTORY ${curdir}/${child})
-      string(FIND ${curdir}/${child} "_GeneralModuleFiles" FOUND)
-      string(FIND ${curdir}/${child} "__pycache__" FOUND_PY)
-      string(FIND ${curdir}/${child} "_UnitTest" FOUND_UNIT)
-      if(${FOUND} GREATER -1
-         AND ${FOUND_PY} EQUAL -1
-         AND ${FOUND_UNIT} EQUAL -1)
-        list(APPEND dirlist ${child})
-      endif()
-    endif()
-  endforeach()
-  set(${result}
-      ${dirlist}
-      PARENT_SCOPE)
-endfunction(sub_dir_list)
 
 # add header search directories
 include_directories("${CMAKE_BINARY_DIR}/autoSource")
@@ -160,15 +155,16 @@ include_directories("${CMAKE_SOURCE_DIR}")
 function(generate_package_libraries INIT_DIRECTORY AllLibs)
   # Find all _GeneralModuleFiles and put them into library targets so they aren't rewrapped, built with every module.
 
-  # Find all _GeneralModuleFiles directories
-  sub_dir_list(LIB_DIRS ${INIT_DIRECTORY})
+  bsk_find_general_module_directories(
+    LIB_DIRS
+    "${INIT_DIRECTORY}"
+    BSK_SOURCE_INVENTORY)
   foreach(LIB_DIR ${LIB_DIRS})
 
     # Determine the name of the parent directory of _GeneralModuleFiles (i.e. dynamics, environment, etc)
-    get_filename_component(PARENT_DIR ${LIB_DIR} DIRECTORY) # Relative to the source directory (e.g. simulation/power)
-    string(FIND ${PARENT_DIR} "/" DIR_NAME_IDX REVERSE)
-    math(EXPR DIR_NAME_IDX "${DIR_NAME_IDX} + 1") # "simulation/"
-    string(SUBSTRING ${PARENT_DIR} ${DIR_NAME_IDX} -1 PARENT_DIR_NAME) # Should be "power"
+    get_filename_component(PARENT_DIRECTORY "${LIB_DIR}" DIRECTORY)
+    get_filename_component(PARENT_DIR_NAME "${PARENT_DIRECTORY}" NAME)
+    file(RELATIVE_PATH PARENT_DIR "${INIT_DIRECTORY}" "${PARENT_DIRECTORY}")
 
     if(${PARENT_DIR_NAME} IN_LIST EXCLUDED_BSK_LIBRARIES)
       message("Skipped Package Library: ${PARENT_DIR_NAME}")
@@ -177,19 +173,12 @@ function(generate_package_libraries INIT_DIRECTORY AllLibs)
 
     # Set the library name (ex. dynamicsLib, environmentLib, etc)
     set(LIB_NAME "${PARENT_DIR_NAME}Lib")
-    # Added to build ExternalModulesLib
-    file(
-      GLOB LIB_DIR
-      RELATIVE ${CMAKE_SOURCE_DIR}
-      "${INIT_DIRECTORY}/${LIB_DIR}")
-    # Grab the library source files
-    file(GLOB C_FILES CONFIGURE_DEPENDS
-         "${LIB_DIR}/*.cpp" "${LIB_DIR}/*.c" "${LIB_DIR}/*.h")
+    bsk_get_directory_source_files(C_FILES "${LIB_DIR}")
+    list(FILTER C_FILES INCLUDE REGEX "\\.(c|cpp|h|hpp)$")
     # A package library can explicitly own implementations that remain beside
     # their module interfaces rather than under _GeneralModuleFiles.
-    set(PACKAGE_SOURCES_FILE "${CMAKE_SOURCE_DIR}/${LIB_DIR}/PackageSources.cmake")
-    bsk_collect_optional_cmake_file(PACKAGE_SOURCES_FILES "${PACKAGE_SOURCES_FILE}")
-    if(PACKAGE_SOURCES_FILES)
+    set(PACKAGE_SOURCES_FILE "${LIB_DIR}/PackageSources.cmake")
+    if(PACKAGE_SOURCES_FILE IN_LIST BSK_CMAKE_FILES)
       unset(BSK_PACKAGE_LIBRARY_SOURCES)
       include("${PACKAGE_SOURCES_FILE}")
       if(NOT DEFINED BSK_PACKAGE_LIBRARY_SOURCES)
@@ -206,6 +195,7 @@ function(generate_package_libraries INIT_DIRECTORY AllLibs)
         list(APPEND C_FILES "${NORMALIZED_PACKAGE_LIBRARY_SOURCE}")
       endforeach()
     endif()
+    list(REMOVE_DUPLICATES C_FILES)
 
     # Header-only _GeneralModuleFiles directories do not need an owning
     # binary. In particular, a SHARED library without exported symbols is not
@@ -218,6 +208,12 @@ function(generate_package_libraries INIT_DIRECTORY AllLibs)
       continue()
     endif()
 
+    foreach(PACKAGE_IMPLEMENTATION_FILE IN LISTS PACKAGE_IMPLEMENTATION_FILES)
+      bsk_claim_production_source(
+        "${PACKAGE_IMPLEMENTATION_FILE}"
+        "package library ${LIB_NAME}")
+    endforeach()
+
     # Add Target
     add_library(${LIB_NAME} SHARED ${C_FILES})
 
@@ -229,9 +225,10 @@ function(generate_package_libraries INIT_DIRECTORY AllLibs)
     list(APPEND AllLibs ${LIB_NAME})
 
     # If the library directory has a Custom.cmake, include that
-    if(EXISTS "${CMAKE_SOURCE_DIR}/${LIB_DIR}/Custom.cmake")
+    set(PACKAGE_CUSTOM_FILE "${LIB_DIR}/Custom.cmake")
+    if(PACKAGE_CUSTOM_FILE IN_LIST BSK_CUSTOM_CMAKE_FILES)
       message(STATUS "Including custom Custom.cmake for package lib: ${LIB_DIR}")
-      include("${CMAKE_SOURCE_DIR}/${LIB_DIR}/Custom.cmake")
+      include("${PACKAGE_CUSTOM_FILE}")
     endif()
 
     # Link all necessary libraries
@@ -272,11 +269,16 @@ function(generate_package_libraries INIT_DIRECTORY AllLibs)
 endfunction(generate_package_libraries)
 
 function(find_package_targets PKG_DIR ALL_TARGET_LIST)
-  file(
-    GLOB_RECURSE SWIG_TARGETS
-    RELATIVE ${CMAKE_SOURCE_DIR}
-    CONFIGURE_DEPENDS
-    "${PKG_DIR}/*.i")
+  bsk_filter_source_inventory(
+    ABSOLUTE_SWIG_TARGETS
+    "${PKG_DIR}"
+    BSK_INTERFACE_FILES)
+  set(SWIG_TARGETS)
+  foreach(ABSOLUTE_SWIG_TARGET IN LISTS ABSOLUTE_SWIG_TARGETS)
+    file(RELATIVE_PATH SWIG_TARGET
+         "${CMAKE_SOURCE_DIR}" "${ABSOLUTE_SWIG_TARGET}")
+    list(APPEND SWIG_TARGETS "${SWIG_TARGET}")
+  endforeach()
   # Direct Cargo commands can generate SWIG interfaces below a crate's
   # target/ directory. Those are build products, not source modules.
   list(FILTER SWIG_TARGETS EXCLUDE REGEX "(^|/)target(/|$)")
@@ -286,11 +288,16 @@ function(find_package_targets PKG_DIR ALL_TARGET_LIST)
 endfunction(find_package_targets)
 
 function(find_python_package_targets PKG_DIR ALL_TARGET_LIST)
-  file(
-    GLOB_RECURSE PYTHON_TARGETS
-    RELATIVE ${CMAKE_SOURCE_DIR}
-    CONFIGURE_DEPENDS
-    "${PKG_DIR}/*.py")
+  bsk_filter_source_inventory(
+    ABSOLUTE_PYTHON_TARGETS
+    "${PKG_DIR}"
+    BSK_PYTHON_FILES)
+  set(PYTHON_TARGETS)
+  foreach(ABSOLUTE_PYTHON_TARGET IN LISTS ABSOLUTE_PYTHON_TARGETS)
+    file(RELATIVE_PATH PYTHON_TARGET
+         "${CMAKE_SOURCE_DIR}" "${ABSOLUTE_PYTHON_TARGET}")
+    list(APPEND PYTHON_TARGETS "${PYTHON_TARGET}")
+  endforeach()
 
   set(FILTERED_TARGETS "")
   foreach(PYTHON_TARGET ${PYTHON_TARGETS})
@@ -316,31 +323,66 @@ function(find_python_package_targets PKG_DIR ALL_TARGET_LIST)
       PARENT_SCOPE)
 endfunction(find_python_package_targets)
 
-function(bsk_select_wrapper_implementation_sources TARGET_NAME PARENT_DIR LIB_DEP_LIST OUT_VAR)
-  file(GLOB IMPLEMENTATION_FILES CONFIGURE_DEPENDS "${PARENT_DIR}/*.c" "${PARENT_DIR}/*.cpp")
-
-  # A linked package library owns its sources, so wrappers must not compile them.
-  set(AVAILABLE_IMPLEMENTATION_FILES ${IMPLEMENTATION_FILES})
-  foreach(LIB IN LISTS LIB_DEP_LIST)
-    if(TARGET "${LIB}")
-      get_target_property(LIB_SOURCE_FILES "${LIB}" SOURCES)
-      if(LIB_SOURCE_FILES)
-        list(REMOVE_ITEM AVAILABLE_IMPLEMENTATION_FILES ${LIB_SOURCE_FILES})
-      endif()
-    endif()
-  endforeach()
-
-  file(GLOB INTERFACE_FILES CONFIGURE_DEPENDS "${PARENT_DIR}/*.i")
-  list(LENGTH INTERFACE_FILES INTERFACE_FILE_COUNT)
-  if(INTERFACE_FILE_COUNT LESS 2 OR NOT AVAILABLE_IMPLEMENTATION_FILES)
-    set(${OUT_VAR}
-        ${AVAILABLE_IMPLEMENTATION_FILES}
-        PARENT_SCOPE)
+function(bsk_cache_wrapper_source_ownership PARENT_DIR)
+  cmake_path(
+    ABSOLUTE_PATH
+    PARENT_DIR
+    BASE_DIRECTORY "${CMAKE_SOURCE_DIR}"
+    NORMALIZE
+    OUTPUT_VARIABLE ABSOLUTE_PARENT_DIR)
+  string(SHA256 DIRECTORY_KEY "${ABSOLUTE_PARENT_DIR}")
+  get_property(
+    OWNERSHIP_IS_CACHED GLOBAL
+    PROPERTY "BSK_WRAPPER_OWNERSHIP_CACHED_${DIRECTORY_KEY}")
+  if(OWNERSHIP_IS_CACHED)
     return()
   endif()
 
-  set(OWNERSHIP_FILE "${CMAKE_SOURCE_DIR}/${PARENT_DIR}/ModuleSources.cmake")
-  if(NOT EXISTS "${OWNERSHIP_FILE}")
+  bsk_get_directory_source_files(DIRECTORY_FILES "${ABSOLUTE_PARENT_DIR}")
+  set(IMPLEMENTATION_FILES ${DIRECTORY_FILES})
+  list(FILTER IMPLEMENTATION_FILES INCLUDE REGEX "\\.(c|cpp)$")
+  set(INTERFACE_FILES ${DIRECTORY_FILES})
+  list(FILTER INTERFACE_FILES INCLUDE REGEX "\\.i$")
+
+  # Package libraries are configured before wrappers and claim their production
+  # sources globally. Wrappers may compile only the remaining local sources.
+  set(AVAILABLE_IMPLEMENTATION_FILES)
+  foreach(IMPLEMENTATION_FILE IN LISTS IMPLEMENTATION_FILES)
+    bsk_get_production_source_owner(
+      IMPLEMENTATION_SOURCE_OWNER "${IMPLEMENTATION_FILE}")
+    if(NOT IMPLEMENTATION_SOURCE_OWNER)
+      list(APPEND AVAILABLE_IMPLEMENTATION_FILES "${IMPLEMENTATION_FILE}")
+    endif()
+  endforeach()
+
+  list(LENGTH INTERFACE_FILES INTERFACE_FILE_COUNT)
+  if(INTERFACE_FILE_COUNT LESS 2 OR NOT AVAILABLE_IMPLEMENTATION_FILES)
+    foreach(INTERFACE_FILE IN LISTS INTERFACE_FILES)
+      get_filename_component(INTERFACE_TARGET_NAME "${INTERFACE_FILE}" NAME_WE)
+      string(SHA256 TARGET_KEY "${ABSOLUTE_PARENT_DIR}/${INTERFACE_TARGET_NAME}")
+      if(INTERFACE_FILE_COUNT EQUAL 1)
+        set(TARGET_IMPLEMENTATION_FILES ${AVAILABLE_IMPLEMENTATION_FILES})
+      else()
+        set(TARGET_IMPLEMENTATION_FILES)
+      endif()
+      set_property(
+        GLOBAL
+        PROPERTY "BSK_WRAPPER_SOURCES_${TARGET_KEY}"
+                 "${TARGET_IMPLEMENTATION_FILES}")
+      foreach(TARGET_IMPLEMENTATION_FILE IN LISTS TARGET_IMPLEMENTATION_FILES)
+        bsk_claim_production_source(
+          "${TARGET_IMPLEMENTATION_FILE}"
+          "wrapper target ${INTERFACE_TARGET_NAME}")
+      endforeach()
+    endforeach()
+    set_property(
+      GLOBAL
+      PROPERTY "BSK_WRAPPER_OWNERSHIP_CACHED_${DIRECTORY_KEY}" TRUE)
+    return()
+  endif()
+
+  set(OWNERSHIP_FILE "${ABSOLUTE_PARENT_DIR}/ModuleSources.cmake")
+  if(NOT OWNERSHIP_FILE IN_LIST BSK_CMAKE_FILES)
     message(
       FATAL_ERROR
         "${PARENT_DIR} contains multiple SWIG interfaces and local implementation sources. "
@@ -349,8 +391,7 @@ function(bsk_select_wrapper_implementation_sources TARGET_NAME PARENT_DIR LIB_DE
   endif()
   include("${OWNERSHIP_FILE}")
 
-  set(DECLARED_IMPLEMENTATION_FILES "")
-  set(TARGET_IMPLEMENTATION_FILES "")
+  set(DECLARED_IMPLEMENTATION_FILES)
   foreach(INTERFACE_FILE IN LISTS INTERFACE_FILES)
     get_filename_component(INTERFACE_TARGET_NAME "${INTERFACE_FILE}" NAME_WE)
     set(MODULE_SOURCE_VARIABLE "BSK_MODULE_SOURCES_${INTERFACE_TARGET_NAME}")
@@ -358,11 +399,12 @@ function(bsk_select_wrapper_implementation_sources TARGET_NAME PARENT_DIR LIB_DE
       message(FATAL_ERROR "${OWNERSHIP_FILE} does not declare ${MODULE_SOURCE_VARIABLE}.")
     endif()
 
+    set(TARGET_IMPLEMENTATION_FILES)
     foreach(MODULE_SOURCE_FILE IN LISTS ${MODULE_SOURCE_VARIABLE})
       cmake_path(
         ABSOLUTE_PATH
         MODULE_SOURCE_FILE
-        BASE_DIRECTORY "${CMAKE_SOURCE_DIR}/${PARENT_DIR}"
+        BASE_DIRECTORY "${ABSOLUTE_PARENT_DIR}"
         NORMALIZE
         OUTPUT_VARIABLE ABSOLUTE_MODULE_SOURCE_FILE)
       if(NOT ABSOLUTE_MODULE_SOURCE_FILE IN_LIST AVAILABLE_IMPLEMENTATION_FILES)
@@ -375,10 +417,17 @@ function(bsk_select_wrapper_implementation_sources TARGET_NAME PARENT_DIR LIB_DE
         message(FATAL_ERROR "${MODULE_SOURCE_FILE} has more than one owner in ${OWNERSHIP_FILE}.")
       endif()
       list(APPEND DECLARED_IMPLEMENTATION_FILES "${ABSOLUTE_MODULE_SOURCE_FILE}")
-      if(INTERFACE_TARGET_NAME STREQUAL TARGET_NAME)
-        list(APPEND TARGET_IMPLEMENTATION_FILES "${ABSOLUTE_MODULE_SOURCE_FILE}")
-      endif()
+      list(APPEND TARGET_IMPLEMENTATION_FILES "${ABSOLUTE_MODULE_SOURCE_FILE}")
+      bsk_claim_production_source(
+        "${ABSOLUTE_MODULE_SOURCE_FILE}"
+        "wrapper target ${INTERFACE_TARGET_NAME}")
     endforeach()
+
+    string(SHA256 TARGET_KEY "${ABSOLUTE_PARENT_DIR}/${INTERFACE_TARGET_NAME}")
+    set_property(
+      GLOBAL
+      PROPERTY "BSK_WRAPPER_SOURCES_${TARGET_KEY}"
+               "${TARGET_IMPLEMENTATION_FILES}")
   endforeach()
 
   foreach(IMPLEMENTATION_FILE IN LISTS AVAILABLE_IMPLEMENTATION_FILES)
@@ -387,9 +436,24 @@ function(bsk_select_wrapper_implementation_sources TARGET_NAME PARENT_DIR LIB_DE
     endif()
   endforeach()
 
-  set(${OUT_VAR}
-      ${TARGET_IMPLEMENTATION_FILES}
-      PARENT_SCOPE)
+  set_property(
+    GLOBAL
+    PROPERTY "BSK_WRAPPER_OWNERSHIP_CACHED_${DIRECTORY_KEY}" TRUE)
+endfunction(bsk_cache_wrapper_source_ownership)
+
+function(bsk_select_wrapper_implementation_sources TARGET_NAME PARENT_DIR OUT_VAR)
+  cmake_path(
+    ABSOLUTE_PATH
+    PARENT_DIR
+    BASE_DIRECTORY "${CMAKE_SOURCE_DIR}"
+    NORMALIZE
+    OUTPUT_VARIABLE ABSOLUTE_PARENT_DIR)
+  bsk_cache_wrapper_source_ownership("${ABSOLUTE_PARENT_DIR}")
+  string(SHA256 TARGET_KEY "${ABSOLUTE_PARENT_DIR}/${TARGET_NAME}")
+  get_property(
+    TARGET_IMPLEMENTATION_FILES GLOBAL
+    PROPERTY "BSK_WRAPPER_SOURCES_${TARGET_KEY}")
+  set(${OUT_VAR} ${TARGET_IMPLEMENTATION_FILES} PARENT_SCOPE)
 endfunction(bsk_select_wrapper_implementation_sources)
 
 function(bsk_include_wrapper_custom_files TARGET_FILE TARGET_NAME PARENT_DIR MODULE_DIR)
@@ -398,7 +462,8 @@ function(bsk_include_wrapper_custom_files TARGET_FILE TARGET_NAME PARENT_DIR MOD
     "${PARENT_DIR}"
     "${MODULE_DIR}"
     "${CMAKE_SOURCE_DIR}"
-    "${EXTERNAL_MODULES_PATH}")
+    "${EXTERNAL_MODULES_PATH}"
+    "${BSK_CUSTOM_CMAKE_FILES}")
   foreach(CUSTOM_FILE IN LISTS CUSTOM_FILES)
     message(STATUS "Including custom Custom.cmake for: ${TARGET_FILE}")
     include("${CUSTOM_FILE}")
@@ -415,21 +480,13 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
         continue()
     endif()
 
-    # Grab the target source files
-    file(
-      GLOB
-      C_FILES
-      CONFIGURE_DEPENDS
-      "${PARENT_DIR}/*.c"
-      "${PARENT_DIR}/*.cpp"
-      "${PARENT_DIR}/*.h"
-      "${PARENT_DIR}/*.cmake"
-      "${PARENT_DIR}/*.rst")
+    bsk_get_directory_source_files(C_FILES "${PARENT_DIR}")
+    list(FILTER C_FILES INCLUDE REGEX "\\.(c|cpp|h|hpp|cmake|rst)$")
 
     # Compile only the implementation sources owned by this wrapper. Keep the
     # neighboring headers and documentation attached for dependency and IDE use.
     bsk_select_wrapper_implementation_sources(
-      "${TARGET_NAME}" "${PARENT_DIR}" "${LIB_DEP_LIST}" WRAPPER_IMPLEMENTATION_FILES)
+      "${TARGET_NAME}" "${PARENT_DIR}" WRAPPER_IMPLEMENTATION_FILES)
     set(WRAPPER_FILES ${C_FILES})
     list(FILTER WRAPPER_FILES EXCLUDE REGEX "\\.(c|cpp)$")
     list(APPEND WRAPPER_FILES ${WRAPPER_IMPLEMENTATION_FILES})

@@ -16,50 +16,14 @@
 
 include_guard(GLOBAL)
 
-function(bsk_collect_optional_cmake_file OUTPUT_VARIABLE FILE_PATH)
-  cmake_path(
-    ABSOLUTE_PATH
-    FILE_PATH
-    BASE_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-    NORMALIZE
-    OUTPUT_VARIABLE ABSOLUTE_FILE_PATH)
-
-  # CONFIGURE_DEPENDS is available only while configuring a project, not in
-  # `cmake -P` script mode. The latter is used by the focused helper test.
-  if(CMAKE_SCRIPT_MODE_FILE)
-    file(GLOB OPTIONAL_CMAKE_FILE "${ABSOLUTE_FILE_PATH}")
-  else()
-    file(GLOB OPTIONAL_CMAKE_FILE CONFIGURE_DEPENDS "${ABSOLUTE_FILE_PATH}")
-  endif()
-  set("${OUTPUT_VARIABLE}" "${OPTIONAL_CMAKE_FILE}" PARENT_SCOPE)
-endfunction(bsk_collect_optional_cmake_file)
-
-function(bsk_collect_custom_cmake_files OUTPUT_VARIABLE ROOT_DIRECTORY)
-  cmake_path(
-    ABSOLUTE_PATH
-    ROOT_DIRECTORY
-    BASE_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-    NORMALIZE
-    OUTPUT_VARIABLE ABSOLUTE_ROOT_DIRECTORY)
-
-  # One recursive glob tracks all module-local and shared hooks without adding
-  # a configure-time glob for every wrapper and ancestor directory.
-  if(CMAKE_SCRIPT_MODE_FILE)
-    file(GLOB_RECURSE CUSTOM_CMAKE_FILES "${ABSOLUTE_ROOT_DIRECTORY}/Custom.cmake")
-  else()
-    file(GLOB_RECURSE CUSTOM_CMAKE_FILES CONFIGURE_DEPENDS
-         "${ABSOLUTE_ROOT_DIRECTORY}/Custom.cmake")
-  endif()
-  set("${OUTPUT_VARIABLE}" "${CUSTOM_CMAKE_FILES}" PARENT_SCOPE)
-endfunction(bsk_collect_custom_cmake_files)
-
 function(
   bsk_collect_wrapper_custom_files
   OUTPUT_VARIABLE
   PARENT_DIR
   MODULE_DIR
   SOURCE_DIR
-  EXTERNAL_PROJECT_DIR)
+  EXTERNAL_PROJECT_DIR
+  CUSTOM_FILE_INVENTORY)
   cmake_path(
     ABSOLUTE_PATH
     PARENT_DIR
@@ -76,7 +40,7 @@ function(
 
   set(CUSTOM_FILES)
   set(MODULE_CUSTOM_FILE "${WRAPPER_SOURCE_DIR}/Custom.cmake")
-  if(EXISTS "${MODULE_CUSTOM_FILE}")
+  if(MODULE_CUSTOM_FILE IN_LIST CUSTOM_FILE_INVENTORY)
     list(APPEND CUSTOM_FILES "${MODULE_CUSTOM_FILE}")
   endif()
 
@@ -85,7 +49,7 @@ function(
     set(SEARCH_DIR "${WRAPPER_SOURCE_DIR}")
     while(TRUE)
       set(SHARED_CUSTOM_FILE "${SEARCH_DIR}/_GeneralModuleFiles/Custom.cmake")
-      if(EXISTS "${SHARED_CUSTOM_FILE}")
+      if(SHARED_CUSTOM_FILE IN_LIST CUSTOM_FILE_INVENTORY)
         list(APPEND CUSTOM_FILES "${SHARED_CUSTOM_FILE}")
       endif()
       if("${SEARCH_DIR}" STREQUAL "${MODULE_ROOT}")

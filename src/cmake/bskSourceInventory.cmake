@@ -1,0 +1,188 @@
+# ISC License
+#
+# Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+include_guard(GLOBAL)
+
+function(bsk_collect_source_inventory OUTPUT_VARIABLE)
+  set(SOURCE_INVENTORY)
+  foreach(SOURCE_ROOT IN LISTS ARGN)
+    cmake_path(
+      ABSOLUTE_PATH
+      SOURCE_ROOT
+      BASE_DIRECTORY "${CMAKE_SOURCE_DIR}"
+      NORMALIZE
+      OUTPUT_VARIABLE ABSOLUTE_SOURCE_ROOT)
+    if(NOT IS_DIRECTORY "${ABSOLUTE_SOURCE_ROOT}")
+      continue()
+    endif()
+
+    if(CMAKE_SCRIPT_MODE_FILE)
+      file(GLOB_RECURSE ROOT_SOURCE_INVENTORY
+           LIST_DIRECTORIES false
+           "${ABSOLUTE_SOURCE_ROOT}/*")
+    else()
+      file(GLOB_RECURSE ROOT_SOURCE_INVENTORY
+           LIST_DIRECTORIES false
+           CONFIGURE_DEPENDS
+           "${ABSOLUTE_SOURCE_ROOT}/*")
+    endif()
+    list(FILTER ROOT_SOURCE_INVENTORY
+         INCLUDE REGEX "\\.(c|cpp|h|hpp|i|cmake|rst|py)$")
+    list(FILTER ROOT_SOURCE_INVENTORY
+         EXCLUDE REGEX "(^|/)(target|__pycache__)(/|$)")
+    list(APPEND SOURCE_INVENTORY ${ROOT_SOURCE_INVENTORY})
+  endforeach()
+
+  list(REMOVE_DUPLICATES SOURCE_INVENTORY)
+  list(SORT SOURCE_INVENTORY)
+  set(${OUTPUT_VARIABLE} ${SOURCE_INVENTORY} PARENT_SCOPE)
+endfunction()
+
+function(bsk_index_source_inventory)
+  foreach(SOURCE_FILE IN LISTS ARGN)
+    get_filename_component(SOURCE_DIRECTORY "${SOURCE_FILE}" DIRECTORY)
+    cmake_path(NORMAL_PATH SOURCE_DIRECTORY)
+    string(SHA256 DIRECTORY_KEY "${SOURCE_DIRECTORY}")
+    set_property(
+      GLOBAL APPEND
+      PROPERTY "BSK_SOURCE_DIRECTORY_${DIRECTORY_KEY}"
+               "${SOURCE_FILE}")
+  endforeach()
+endfunction()
+
+function(bsk_get_directory_source_files OUTPUT_VARIABLE SOURCE_DIRECTORY)
+  cmake_path(
+    ABSOLUTE_PATH
+    SOURCE_DIRECTORY
+    BASE_DIRECTORY "${CMAKE_SOURCE_DIR}"
+    NORMALIZE
+    OUTPUT_VARIABLE ABSOLUTE_SOURCE_DIRECTORY)
+  string(SHA256 DIRECTORY_KEY "${ABSOLUTE_SOURCE_DIRECTORY}")
+  get_property(
+    DIRECTORY_SOURCE_FILES GLOBAL
+    PROPERTY "BSK_SOURCE_DIRECTORY_${DIRECTORY_KEY}")
+  set(${OUTPUT_VARIABLE} ${DIRECTORY_SOURCE_FILES} PARENT_SCOPE)
+endfunction()
+
+function(
+  bsk_filter_source_inventory
+  OUTPUT_VARIABLE
+  SOURCE_ROOT
+  INVENTORY_VARIABLE)
+  cmake_path(
+    ABSOLUTE_PATH
+    SOURCE_ROOT
+    BASE_DIRECTORY "${CMAKE_SOURCE_DIR}"
+    NORMALIZE
+    OUTPUT_VARIABLE ABSOLUTE_SOURCE_ROOT)
+
+  set(FILTERED_SOURCE_FILES)
+  foreach(SOURCE_FILE IN LISTS ${INVENTORY_VARIABLE})
+    cmake_path(
+      IS_PREFIX ABSOLUTE_SOURCE_ROOT "${SOURCE_FILE}"
+      NORMALIZE SOURCE_IS_IN_ROOT)
+    if(SOURCE_IS_IN_ROOT)
+      list(APPEND FILTERED_SOURCE_FILES "${SOURCE_FILE}")
+    endif()
+  endforeach()
+  set(${OUTPUT_VARIABLE} ${FILTERED_SOURCE_FILES} PARENT_SCOPE)
+endfunction()
+
+function(
+  bsk_find_general_module_directories
+  OUTPUT_VARIABLE
+  SOURCE_ROOT
+  INVENTORY_VARIABLE)
+  cmake_path(
+    ABSOLUTE_PATH
+    SOURCE_ROOT
+    BASE_DIRECTORY "${CMAKE_SOURCE_DIR}"
+    NORMALIZE
+    OUTPUT_VARIABLE ABSOLUTE_SOURCE_ROOT)
+  bsk_filter_source_inventory(
+    ROOT_SOURCE_FILES
+    "${ABSOLUTE_SOURCE_ROOT}"
+    "${INVENTORY_VARIABLE}")
+
+  set(GENERAL_MODULE_DIRECTORIES)
+  foreach(SOURCE_FILE IN LISTS ROOT_SOURCE_FILES)
+    get_filename_component(SEARCH_DIRECTORY "${SOURCE_FILE}" DIRECTORY)
+    while(TRUE)
+      get_filename_component(DIRECTORY_NAME "${SEARCH_DIRECTORY}" NAME)
+      if(DIRECTORY_NAME STREQUAL "_GeneralModuleFiles")
+        list(APPEND GENERAL_MODULE_DIRECTORIES "${SEARCH_DIRECTORY}")
+        break()
+      endif()
+      if(SEARCH_DIRECTORY STREQUAL ABSOLUTE_SOURCE_ROOT)
+        break()
+      endif()
+
+      get_filename_component(PARENT_DIRECTORY "${SEARCH_DIRECTORY}" DIRECTORY)
+      cmake_path(
+        IS_PREFIX ABSOLUTE_SOURCE_ROOT "${PARENT_DIRECTORY}"
+        NORMALIZE PARENT_IS_IN_ROOT)
+      if(NOT PARENT_IS_IN_ROOT OR PARENT_DIRECTORY STREQUAL SEARCH_DIRECTORY)
+        break()
+      endif()
+      set(SEARCH_DIRECTORY "${PARENT_DIRECTORY}")
+    endwhile()
+  endforeach()
+
+  list(REMOVE_DUPLICATES GENERAL_MODULE_DIRECTORIES)
+  list(SORT GENERAL_MODULE_DIRECTORIES)
+  set(${OUTPUT_VARIABLE} ${GENERAL_MODULE_DIRECTORIES} PARENT_SCOPE)
+endfunction()
+
+function(bsk_source_ownership_key OUTPUT_VARIABLE SOURCE_FILE)
+  cmake_path(
+    ABSOLUTE_PATH
+    SOURCE_FILE
+    BASE_DIRECTORY "${CMAKE_SOURCE_DIR}"
+    NORMALIZE
+    OUTPUT_VARIABLE ABSOLUTE_SOURCE_FILE)
+  string(SHA256 SOURCE_KEY "${ABSOLUTE_SOURCE_FILE}")
+  set(${OUTPUT_VARIABLE} "${SOURCE_KEY}" PARENT_SCOPE)
+endfunction()
+
+function(bsk_get_production_source_owner OUTPUT_VARIABLE SOURCE_FILE)
+  bsk_source_ownership_key(SOURCE_KEY "${SOURCE_FILE}")
+  get_property(
+    SOURCE_OWNER GLOBAL
+    PROPERTY "BSK_PRODUCTION_SOURCE_OWNER_${SOURCE_KEY}")
+  set(${OUTPUT_VARIABLE} "${SOURCE_OWNER}" PARENT_SCOPE)
+endfunction()
+
+function(bsk_claim_production_source SOURCE_FILE SOURCE_OWNER)
+  cmake_path(
+    ABSOLUTE_PATH
+    SOURCE_FILE
+    BASE_DIRECTORY "${CMAKE_SOURCE_DIR}"
+    NORMALIZE
+    OUTPUT_VARIABLE ABSOLUTE_SOURCE_FILE)
+  bsk_get_production_source_owner(EXISTING_SOURCE_OWNER "${ABSOLUTE_SOURCE_FILE}")
+  if(EXISTING_SOURCE_OWNER AND NOT EXISTING_SOURCE_OWNER STREQUAL SOURCE_OWNER)
+    message(
+      FATAL_ERROR
+        "Production source '${ABSOLUTE_SOURCE_FILE}' has multiple owners: "
+        "'${EXISTING_SOURCE_OWNER}' and '${SOURCE_OWNER}'.")
+  endif()
+
+  bsk_source_ownership_key(SOURCE_KEY "${ABSOLUTE_SOURCE_FILE}")
+  set_property(
+    GLOBAL
+    PROPERTY "BSK_PRODUCTION_SOURCE_OWNER_${SOURCE_KEY}"
+             "${SOURCE_OWNER}")
+endfunction()
