@@ -72,6 +72,11 @@ The script accepts the following options to customize this process.
       - None
       - If flag is set, this deletes the distribution folder ``dist3`` and Basilisk Numba cache
         artifacts to create a fresh setup and build
+    * - ``offline``
+      -
+      - None
+      - If set, prevents Conan, CMake dependency fetching, and Cargo from accessing the network. Every selected
+        dependency must already exist in the local caches; see :ref:`offlineBuild`.
     * - ``buildProject``
       - Boolean
       - True
@@ -130,6 +135,41 @@ The ``buildProject`` argument here is optional as its default value is ``True``.
 Native test targets are also enabled by default for source builds. To omit them when they are not needed, use::
 
     python3 conanfile.py --buildTesting False
+
+.. _offlineBuild:
+
+Preparing for Offline Builds
+----------------------------
+The ``--offline`` flag provides a strict way to configure, clean, and incrementally rebuild Basilisk
+without network access. It disables Conan remotes and dependency builds, prevents CMake from downloading its
+GoogleTest and Corrosion support sources, and enables Cargo's offline mode. A cache miss therefore stops immediately
+with instructions to prepare the missing dependency while connected instead of waiting on a network timeout.
+
+Prepare the desired configuration once while connected. Include every optional feature and external module that you
+will need offline. For example, the full Basilisk configuration is prepared with::
+
+    python3 conanfile.py --opNav True --mujoco True --rustModules True \
+        --pathToExternalModules /path/to/External
+
+The online build stores Conan packages in the Conan cache, Rust crates in the Cargo cache, and the pinned GoogleTest
+and Corrosion sources under ``.bsk-cache/fetchcontent`` in the Basilisk checkout. The ``--clean`` option removes
+``dist3`` but intentionally preserves ``.bsk-cache``. While still connected, verify that a clean build can use only
+those caches::
+
+    python3 conanfile.py --offline --clean --opNav True --mujoco True --rustModules True \
+        --pathToExternalModules /path/to/External
+
+Use the same platform, compiler, build type, and feature options offline. Rust-enabled builds still require the Rust
+toolchain on ``PATH``; all builds require the normal compiler, CMake, SWIG, Conan, and Python environment to remain
+installed. If an external Rust module adds a new crate, or a selected Conan package is not cached for the active
+configuration, repeat the matching build once without ``--offline`` while connected.
+
+After configuration, routine source changes do not need Conan at all. The fastest offline incremental build is::
+
+    cmake --build dist3 --parallel 12
+
+This mode covers dependency resolution during compilation only. Runtime helpers that intentionally download optional
+data, such as ``bskLargeData`` or ``bskExamples``, still require either network access or separately prepared data.
 
 .. _strictCompilerWarnings:
 

@@ -65,10 +65,10 @@ function(_bsk_rust_workspace_metadata WORKSPACE_MANIFEST OUT_VAR)
     "${_workspace_manifest}"
     "${_workspace_lockfile}")
 
+  _bsk_cargo_metadata_arguments(_cargo_metadata_arguments)
   execute_process(
     COMMAND
-      "${_cargo_executable}" metadata
-      --locked
+      "${_cargo_executable}" ${_cargo_metadata_arguments}
       --no-deps
       --format-version 1
       --manifest-path "${_workspace_manifest}"

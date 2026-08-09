@@ -17,6 +17,14 @@
 include_guard(GLOBAL)
 include("${CMAKE_CURRENT_LIST_DIR}/bskRustSupportVersions.cmake")
 
+function(_bsk_cargo_metadata_arguments OUT_VAR)
+  set(_arguments metadata --locked)
+  if(BSK_OFFLINE_BUILD)
+    list(APPEND _arguments --offline)
+  endif()
+  set("${OUT_VAR}" "${_arguments}" PARENT_SCOPE)
+endfunction()
+
 # Return the complete C ABI exported by every generated Rust module. Keeping
 # this list beside the shared Cargo integration prevents Basilisk and extension
 # builds from acquiring different Windows export contracts.
@@ -70,6 +78,32 @@ function(_bsk_load_corrosion)
     return()
   endif()
 
+  if(NOT BSK_FETCHCONTENT_CACHE_DIR)
+    get_filename_component(
+      BSK_FETCHCONTENT_CACHE_DIR
+      "${CMAKE_SOURCE_DIR}/.bsk-cache/fetchcontent"
+      ABSOLUTE)
+  endif()
+  set(_corrosion_source_dir
+      "${BSK_FETCHCONTENT_CACHE_DIR}/corrosion-${BSK_CORROSION_GIT_TAG}")
+
+  if(EXISTS "${_corrosion_source_dir}/CMakeLists.txt")
+    set(FETCHCONTENT_SOURCE_DIR_CORROSION
+        "${_corrosion_source_dir}"
+        CACHE PATH "Use cached Corrosion sources" FORCE)
+  elseif(BSK_OFFLINE_BUILD)
+    message(FATAL_ERROR
+      "Offline Rust build requires cached Corrosion ${BSK_CORROSION_VERSION} "
+      "sources at ${_corrosion_source_dir}. Run the same build once without "
+      "--offline while connected, then retry offline.")
+  else()
+    unset(FETCHCONTENT_SOURCE_DIR_CORROSION CACHE)
+  endif()
+
+  if(BSK_OFFLINE_BUILD)
+    set(ENV{CARGO_NET_OFFLINE} "true")
+  endif()
+
   include(FetchContent)
   FetchContent_Declare(
     Corrosion
@@ -77,6 +111,8 @@ function(_bsk_load_corrosion)
     # Corrosion v0.6.1. Pin the immutable commit rather than the movable v0.6
     # tag so a clean Basilisk configure cannot acquire different build logic.
     GIT_TAG ${BSK_CORROSION_GIT_TAG}
+    SOURCE_DIR "${_corrosion_source_dir}"
+    BINARY_DIR "${CMAKE_BINARY_DIR}/_deps/corrosion-build"
   )
   FetchContent_MakeAvailable(Corrosion)
 endfunction()
@@ -92,10 +128,10 @@ function(_bsk_rust_package_name_from_metadata MANIFEST OUT_PACKAGE_NAME)
   endif()
 
   file(REAL_PATH "${MANIFEST}" _requested_manifest)
+  _bsk_cargo_metadata_arguments(_cargo_metadata_arguments)
   execute_process(
     COMMAND
-      "${_cargo_executable}" metadata
-      --locked
+      "${_cargo_executable}" ${_cargo_metadata_arguments}
       --no-deps
       --format-version 1
       --manifest-path "${_requested_manifest}"
@@ -248,9 +284,15 @@ function(bsk_add_rust_module_sources)
     set(_cargo_makeflags_env "MAKEFLAGS=")
   endif()
 
+  set(_cargo_offline_env)
+  if(BSK_OFFLINE_BUILD)
+    set(_cargo_offline_env "CARGO_NET_OFFLINE=true")
+  endif()
+
   corrosion_set_env_vars(
     "${_rust_target}"
     ${_cargo_makeflags_env}
+    ${_cargo_offline_env}
     "BSK_INCLUDE_DIR=${RUST_INCLUDE_DIR}"
     "BSK_HEADER_PATH=${RUST_HEADER}"
     "BSK_INTERFACE_PATH=${RUST_INTERFACE}"

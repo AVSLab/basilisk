@@ -92,6 +92,47 @@ def test_single_command_installs_missing_dependencies_and_builds(conanfile_modul
     assert "&:buildTesting=True" in options
 
 
+def test_offline_command_uses_only_cached_binary_packages(conanfile_module):
+    """Disable Conan remotes and dependency builds in strict offline mode."""
+    arguments = make_arguments(conanfile_module, offline=True)
+
+    command = conanfile_module.create_conan_build_command(arguments)
+
+    assert command[3:6] == ["build", ".", "--build=never"]
+    assert "--build=missing" not in command
+    assert "--no-remote" in command
+    assert (
+        f"{conanfile_module.OFFLINE_CONAN_CONF}=True"
+        in option_values(command, "-c")
+    )
+
+
+def test_offline_environment_disables_cargo_network_access(conanfile_module):
+    """Force every Cargo command spawned by Conan or CMake to remain offline."""
+    original_environment = {"EXISTING_VARIABLE": "unchanged"}
+
+    build_environment = conanfile_module.create_conan_build_environment(
+        offline=True,
+        environment=original_environment,
+    )
+
+    assert build_environment["CARGO_NET_OFFLINE"] == "true"
+    assert build_environment["EXISTING_VARIABLE"] == "unchanged"
+    assert "CARGO_NET_OFFLINE" not in original_environment
+
+
+def test_online_environment_preserves_existing_cargo_policy(conanfile_module):
+    """Do not override a developer's Cargo policy during a regular build."""
+    original_environment = {"CARGO_NET_OFFLINE": "custom"}
+
+    build_environment = conanfile_module.create_conan_build_environment(
+        offline=False,
+        environment=original_environment,
+    )
+
+    assert build_environment == original_environment
+
+
 def test_native_tests_can_be_disabled(conanfile_module):
     """Forward the wheel-build setting that excludes native test targets."""
     arguments = make_arguments(conanfile_module, buildTesting=False)
@@ -151,3 +192,23 @@ def test_missing_external_module_path_is_rejected(conanfile_module, tmp_path):
 
     with pytest.raises(ValueError, match="does not exist"):
         conanfile_module.create_conan_build_command(arguments)
+
+
+def test_offline_mujoco_requires_a_cached_package(conanfile_module, monkeypatch):
+    """Fail without launching a network-capable MuJoCo package build offline."""
+    create_calls = []
+    monkeypatch.setattr(
+        conanfile_module,
+        "is_conan_package_available",
+        lambda reference: False,
+    )
+    monkeypatch.setattr(
+        conanfile_module.subprocess,
+        "run",
+        lambda *args, **kwargs: create_calls.append((args, kwargs)),
+    )
+
+    with pytest.raises(RuntimeError, match=r"mujoco/.*local Conan cache"):
+        conanfile_module.conan_create_mujoco(offline=True, print_fn=None)
+
+    assert create_calls == []
