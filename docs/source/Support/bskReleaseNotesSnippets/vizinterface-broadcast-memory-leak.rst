@@ -1,0 +1,4 @@
+- Fixed :ref:`vizInterface` leaking its protobuffer message when a frame did not reach a successful save-file write, including live-stream-only, broadcast-only, and camera-image early-return paths.
+- Fixed :ref:`vizInterface` leaking the serialized protobuffer buffer on broadcast-only frames and orphaning it when the message was re-serialized after its settings block was removed.
+- Fixed :ref:`vizInterface` leaking the copied synchronization-settings broadcast buffer and a heap allocation for every Vizard event reply.
+- :ref:`vizInterface` no longer calls ``google::protobuf::ShutdownProtobufLibrary()`` after qualifying successful save-file frames, which released protobuf's internal state while the module was still running.
