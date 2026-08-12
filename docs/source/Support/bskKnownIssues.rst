@@ -88,6 +88,14 @@ Version |release| (July 7, 2026)
 - The :ref:`FuelTank` emptying model computed the fuel COM and transverse inertia derivatives
   incorrectly except at the half-full condition, producing wrong high-fidelity depletion torques.
   The derivative equations and their finite-difference coverage are corrected in the current version.
+- :ref:`vizInterface` leaked its protobuffer message on frames that did not reach a successful save-file
+  write, including live-stream-only, broadcast-only, and camera-image early-return paths. It also leaked
+  serialized buffers on broadcast-only frames, during re-serialization after removing the settings block,
+  and while copying synchronization settings, as well as a heap allocation for every Vizard event reply.
+  These leaks are fixed in the current version.
+- :ref:`vizInterface` called ``google::protobuf::ShutdownProtobufLibrary()`` after qualifying successful
+  save-file frames, releasing protobuf's internal state while the module was still running. Other frames
+  skipped the call through guards or early returns. This is fixed in the current version.
 
 
 Version 2.11.0 (July 7, 2026)
