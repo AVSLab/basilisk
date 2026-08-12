@@ -1171,10 +1171,9 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
 
     {
 
-        // Serialize message (as is)
-        uint32_t byteCount = (uint32_t) message->ByteSizeLong();
-        void* serialized_message = malloc(byteCount);
-        message->SerializeToArray(serialized_message, (int) byteCount);
+        // Serialize message (as is). zmq_send() copies, so this buffer stays ours.
+        std::string serializedMessage;
+        message->SerializeToString(&serializedMessage);
 
         // BROADCAST MODE
         if (this->broadcastStream) {
@@ -1183,7 +1182,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             if (sendStatus == -1) {
                 bskLogger.bskError("Broadcast header did not send to socket.");
             }
-            sendStatus = zmq_send(this->publisher_socket, serialized_message, byteCount, 0);
+            sendStatus = zmq_send(this->publisher_socket, serializedMessage.data(), serializedMessage.size(), 0);
             if (sendStatus == -1) {
                 bskLogger.bskError("Broadcast protobuffer did not send to socket.");
             }
@@ -1201,15 +1200,14 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
 
             // Re-serialize
             google::protobuf::uint8 varIntBuffer[4];
-            byteCount = (uint32_t) message->ByteSizeLong();
+            uint32_t byteCount = (uint32_t) message->ByteSizeLong();
             google::protobuf::uint8 *end = google::protobuf::io::CodedOutputStream::WriteVarint32ToArray(byteCount, varIntBuffer);
             unsigned long varIntBytes = (unsigned long) (end - varIntBuffer);
             // Save message to file if saveFile flag is true, and if Vizard is not being terminated
             if (this->saveFile && !this->liveSettings.terminateVizard) {
                 this->outputStream.write(reinterpret_cast<char*>(varIntBuffer), static_cast<int>(varIntBytes));
             }
-            serialized_message = malloc(byteCount);
-            message->SerializeToArray(serialized_message, (int) byteCount);
+            message->SerializeToString(&serializedMessage);
         }
 
         // Check whether noDisplay mode should generate imagery from Vizard at this timestep
@@ -1242,10 +1240,15 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             void* header_message = malloc(10 * sizeof(char));
             memcpy(header_message, "SIM_UPDATE", 10);
 
+            // ZMQ owns this buffer and frees it via message_buffer_deallocate().
+            void* request_message = malloc(serializedMessage.size());
+            memcpy(request_message, serializedMessage.data(), serializedMessage.size());
+
             zmq_msg_init_data(&request_header, header_message, 10, message_buffer_deallocate, NULL);
             zmq_msg_init(&empty_frame1);
             zmq_msg_init(&empty_frame2);
-            zmq_msg_init_data(&request_buffer, serialized_message, byteCount, message_buffer_deallocate, NULL);
+            zmq_msg_init_data(&request_buffer, request_message, serializedMessage.size(),
+                              message_buffer_deallocate, NULL);
 
             // Send to 2-WAY (REQUESTER) socket
             zmq_msg_send(&request_header, this->requester_socket, ZMQ_SNDMORE);
