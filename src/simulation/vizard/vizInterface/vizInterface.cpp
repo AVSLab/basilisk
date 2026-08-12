@@ -1318,9 +1318,6 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         }
         this->outputStream.flush();
     }
-
-    google::protobuf::ShutdownProtobufLibrary();
-
 }
 
 /*! Update this module at the task rate
