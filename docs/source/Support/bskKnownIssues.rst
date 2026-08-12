@@ -75,6 +75,11 @@ Version |release| (July 7, 2026)
 - The :ref:`FuelTank` emptying model computed the fuel COM and transverse inertia derivatives
   incorrectly except at the half-full condition, producing wrong high-fidelity depletion torques.
   The derivative equations and their finite-difference coverage are corrected in the current version.
+- :ref:`vizInterface` leaked the protobuffer message on every timestep unless it was also written to file,
+  and never released the serialized buffer used by the broadcast path, so a streaming or broadcasting
+  simulation grew without bound until it ran out of memory. This is fixed in the current version.
+- :ref:`vizInterface` called ``google::protobuf::ShutdownProtobufLibrary()`` every timestep, releasing
+  protobuf's internal state while the module was still running. This is fixed in the current version.
 
 
 Version 2.11.0 (July 7, 2026)

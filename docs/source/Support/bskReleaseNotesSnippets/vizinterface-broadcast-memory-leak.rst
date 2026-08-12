@@ -1,0 +1,3 @@
+- Fixed :ref:`vizInterface` leaking its per-timestep protobuffer message whenever the Vizard data was not also being written to file, which grew a live-streaming or broadcasting simulation without bound until it ran out of memory.
+- Fixed :ref:`vizInterface` leaking the serialized protobuffer buffer used by the broadcast path, together with a second buffer that was orphaned whenever the message was re-serialized after its settings block was removed.
+- :ref:`vizInterface` no longer calls ``google::protobuf::ShutdownProtobufLibrary()`` at the end of every timestep, which released protobuf's internal state while the module was still running.
