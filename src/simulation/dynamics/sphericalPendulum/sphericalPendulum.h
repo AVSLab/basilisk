@@ -43,7 +43,7 @@ public:
     std::string nameOfThetaDotState; //!< [-] Identifier for the thetaDot state data container
 	std::string nameOfMassState;   //!< [-] Identifier for the mass state data container
 	Eigen::Vector3d d;        //!< [m] position vector from B point to tank center , T, in body frame
-	StateData *massState;		   //!< -- state data for the pendulums mass
+	StateData *massState = nullptr;		   //!< -- state data for the pendulums mass
     Eigen::Vector3d pHat_01;      //!<-- first vector of the P0 frame in B frame components
     Eigen::Vector3d pHat_02;       //!<-- second vector of the P0 frame in  B frame components
     Eigen::Vector3d pHat_03;        //!<-- third vector of the P0 frame in B frame components

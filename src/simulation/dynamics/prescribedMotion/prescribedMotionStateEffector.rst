@@ -77,7 +77,9 @@ Currently, this branching capability has only been configured for the spinningBo
 linearTranslationOneDOF state effectors. See the User Guide section for how to connect these effectors to the
 prescribed motion effector. The scenario scripts :ref:`scenarioPrescribedMotionWithRotationBranching`
 and :ref:`scenarioPrescribedMotionWithTranslationBranching` are more complex examples demonstrating how to connect
-multiple state effectors to the prescribed motion effector.
+multiple state effectors to the prescribed motion effector. Nested
+variable-mass state effectors are not supported and must instead be attached
+directly to :ref:`spacecraft`.
 
 
 Module Testing

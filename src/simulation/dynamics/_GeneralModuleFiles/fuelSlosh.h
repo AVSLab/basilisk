@@ -35,6 +35,8 @@ public:
     double fuelMass = 0.0;                 //!< [kg] mass of fuelSlosh particle
     double massToTotalTankMassRatio = 0.0; //!< -- ratio of fuelSlosh particle mass to total mass of fuel tank
     double fuelMassDot = 0.0;              //!< [kg/s] mass depletion rate of fuelSlosh particle
+    bool omitMassRateDynamics = false;      //!< -- substitute zero depletion rates into generic rate-dependent terms
+    bool hasRegisteredStates = false;       //!< -- set after stateful FuelSlosh implementations register their states
 };
 
 
