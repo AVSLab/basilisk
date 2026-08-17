@@ -79,8 +79,11 @@ Version |release| (July 7, 2026)
   convergence tests ran at a fraction of the intended measurement noise. The tests now draw noise with
   ``sigma = sqrt(qObsVal)`` from a local seeded generator and check convergence against a noise-appropriate
   tolerance. This is fixed in the current version.
-- A depleting :ref:`FuelTank` with attached fuel slosh particles expelled propellant by a factor of
-  one plus the slosh mass fraction. This is fixed in the current version.
+- A depleting :ref:`FuelTank` with attached fuel slosh particles reported the
+  commanded total outflow as the tank component rate while the slosh
+  effectors reported zero mass rate. The integrated component masses and
+  aggregate outflow were correct, but the reported component derivatives did
+  not match their integrated states. This is fixed in the current version.
 - The :ref:`FuelTank` mass-depletion torque treated the tank-frame fuel COM and inertia derivative
   as body-frame quantities and dropped the tank offset, so a rotated (``dcm_TB``) or offset
   (``r_TB_B``) depleting tank applied a wrong or missing torque about the hub. This is fixed in the
@@ -96,6 +99,15 @@ Version |release| (July 7, 2026)
 - :ref:`vizInterface` called ``google::protobuf::ShutdownProtobufLibrary()`` after qualifying successful
   save-file frames, releasing protobuf's internal state while the module was still running. Other frames
   skipped the call through guards or early returns. This is fixed in the current version.
+- :ref:`spacecraft` divided the center-of-mass-rate mass term by total mass
+  twice, in both the reported ``centerOfMassPrimeSC`` property and the
+  coupled-depletion equations of motion. The reported property also dropped
+  the per-effector first moments :math:`\dot m_i\mathbf r_i`. This is fixed in
+  the current version, though the coupled-depletion rate still omits those
+  source moments by convention.
+- :ref:`MJSystemCoM` reported mass-weighted material velocity rather than the
+  time derivative of its center-of-mass position when individual MuJoCo body
+  masses changed. This is fixed in the current version.
 
 
 Version 2.11.0 (July 7, 2026)

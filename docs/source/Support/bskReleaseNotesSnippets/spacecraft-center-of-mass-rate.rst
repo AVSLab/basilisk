@@ -1,0 +1,5 @@
+- Corrected :ref:`spacecraft` center-of-mass derivatives and allowed :ref:`FuelTank` update-only depletion to report retained mass-property derivatives while excluding depletion-dependent rate terms from the equations of motion.
+- Made :ref:`FuelTank` allocate flow from current integration-stage masses before reporting tank and slosh retained mass-property derivatives.
+- Corrected :ref:`MJSystemCoM` to report the time derivative of its center-of-mass position when MuJoCo body masses change.
+- Documented that state effectors using dynamics-rate overrides require direct attachment to :ref:`spacecraft` and reject unsupported nested prescribed-motion configurations.
+- Corrected the :ref:`spacecraft` coupled-depletion center-of-mass rate, which divided its mass-rate term by total mass twice.
