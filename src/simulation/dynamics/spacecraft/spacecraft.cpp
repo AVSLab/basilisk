@@ -355,6 +355,9 @@ void Spacecraft::updateSCMassProps(double time)
     (*this->cPrime_B).setZero();
     (*this->cDot_B).setZero();
     (*this->ISCPntBPrime_B).setZero();
+    this->mDotDynamics = 0.0;
+    this->cPrimeEffectorDynamics_B.setZero();
+    this->ISCPntBPrimeDynamics_B.setZero();
 
     // Add in hubs mass props to the spacecraft mass props
     this->hub.updateEffectorMassProps(time);
@@ -366,21 +369,40 @@ void Spacecraft::updateSCMassProps(double time)
     std::vector<StateEffector*>::iterator it;
     for(it = this->states.begin(); it != this->states.end(); it++)
     {
+        (*it)->effProps.hasMassPropertyRateDynamics = false;
         (*it)->updateEffectorMassProps(time);
         // - Add in effectors mass props into mass props of spacecraft
         (*this->m_SC)(0,0) += (*it)->effProps.mEff;
-        (*this->mDot_SC)(0,0) += (*it)->effProps.mEffDot;
         (*this->ISCPntB_B) += (*it)->effProps.IEffPntB_B;
         (*this->c_B) += (*it)->effProps.mEff*(*it)->effProps.rEff_CB_B;
+        (*this->mDot_SC)(0,0) += (*it)->effProps.mEffDot;
         (*this->ISCPntBPrime_B) += (*it)->effProps.IEffPrimePntB_B;
-        (*this->cPrime_B) += (*it)->effProps.mEff*(*it)->effProps.rEffPrime_CB_B;
-        // For high fidelity mass depletion, this is left out: += (*it)->effProps.mEffDot*(*it)->effProps.rEff_CB_B
+        (*this->cPrime_B) +=
+            (*it)->effProps.mEff*(*it)->effProps.rEffPrime_CB_B
+            + (*it)->effProps.mEffDot*(*it)->effProps.rEff_CB_B;
+        const bool hasDynamicsRates =
+            (*it)->effProps.hasMassPropertyRateDynamics;
+        const double effectorMassRateDynamics =
+            hasDynamicsRates
+                ? (*it)->effProps.mEffDotDynamics
+                : (*it)->effProps.mEffDot;
+        this->mDotDynamics += effectorMassRateDynamics;
+        this->cPrimeEffectorDynamics_B +=
+            (*it)->effProps.mEff
+            *(hasDynamicsRates
+                  ? (*it)->effProps.rEffPrime_CB_BDynamics
+                  : (*it)->effProps.rEffPrime_CB_B);
+        this->ISCPntBPrimeDynamics_B +=
+            hasDynamicsRates
+                ? (*it)->effProps.IEffPrimePntB_BDynamics
+                : (*it)->effProps.IEffPrimePntB_B;
     }
 
     // Divide c_B and cPrime_B by the total mass of the spaceCraft to finalize c_B and cPrime_B
     (*this->c_B) = (*this->c_B)/(*this->m_SC)(0,0);
     (*this->cPrime_B) = (*this->cPrime_B)/(*this->m_SC)(0,0)
-                                             - (*this->mDot_SC)(0,0)*(*this->c_B)/(*this->m_SC)(0,0)/(*this->m_SC)(0,0);
+                                             - (*this->mDot_SC)(0,0)*(*this->c_B)/(*this->m_SC)(0,0);
+    this->cPrimeEffectorDynamics_B /= (*this->m_SC)(0,0);
     Eigen::Vector3d omegaLocal_BN_B = hubOmega_BN_B->getStateReference();
     Eigen::Vector3d cLocal_B = (*this->c_B);
     (*this->cDot_B) = (*this->cPrime_B) + omegaLocal_BN_B.cross(cLocal_B);
@@ -532,7 +554,12 @@ void Spacecraft::equationsOfMotion(double integTimeSeconds, double timeStep)
     Eigen::Vector3d cLocal_B;
     Eigen::Vector3d cPrimeLocal_B;
     cLocal_B = *this->c_B;
-    cPrimeLocal_B = *cPrime_B;
+    const double mDotLocal = this->mDotDynamics;
+    const Eigen::Matrix3d& inertiaRateLocal_B = this->ISCPntBPrimeDynamics_B;
+    // source first moments remain omitted from the dynamics rate
+    cPrimeLocal_B =
+        this->cPrimeEffectorDynamics_B
+        - mDotLocal*cLocal_B/(*this->m_SC)(0,0);
 
     Eigen::Matrix3d intermediateMatrix;
     Eigen::Vector3d intermediateVector;
@@ -544,9 +571,11 @@ void Spacecraft::equationsOfMotion(double integTimeSeconds, double timeStep)
     this->hub.hubBackSubMatrices.matrixD += *ISCPntB_B;
     this->hub.hubBackSubMatrices.vecTrans += -2.0*(*this->m_SC)(0, 0)*omegaLocalBN_B.cross(cPrimeLocal_B)
     - (*this->m_SC)(0, 0)*omegaLocalBN_B.cross(omegaLocalBN_B.cross(cLocal_B))
-    - 2.0*(*mDot_SC)(0,0)*(cPrimeLocal_B+omegaLocalBN_B.cross(cLocal_B));
+    - 2.0*mDotLocal*(cPrimeLocal_B+omegaLocalBN_B.cross(cLocal_B));
     intermediateVector = *ISCPntB_B*omegaLocalBN_B;
-    this->hub.hubBackSubMatrices.vecRot += -omegaLocalBN_B.cross(intermediateVector) - *ISCPntBPrime_B*omegaLocalBN_B;
+    this->hub.hubBackSubMatrices.vecRot +=
+        -omegaLocalBN_B.cross(intermediateVector)
+        - inertiaRateLocal_B*omegaLocalBN_B;
 
     // - Map external force_N to the body frame
     Eigen::Vector3d sumForceExternalMappedToB;

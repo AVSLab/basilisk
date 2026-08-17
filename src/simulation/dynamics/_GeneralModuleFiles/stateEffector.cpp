@@ -29,6 +29,10 @@ StateEffector::StateEffector()
     this->effProps.IEffPrimePntB_B.fill(0.0);
     this->effProps.rEff_CB_B.fill(0.0);
     this->effProps.rEffPrime_CB_B.fill(0.0);
+    this->effProps.hasMassPropertyRateDynamics = false;
+    this->effProps.mEffDotDynamics = 0.0;
+    this->effProps.rEffPrime_CB_BDynamics.fill(0.0);
+    this->effProps.IEffPrimePntB_BDynamics.fill(0.0);
 
     // - set force and torques equal to zero
     this->forceOnBody_B = this->torqueOnBodyPntB_B = this->torqueOnBodyPntC_B.setZero();

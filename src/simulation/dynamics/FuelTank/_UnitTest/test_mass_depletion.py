@@ -560,7 +560,7 @@ def test_depletionTorqueFollowsTankMounting():
     # Regression value after independently validating the emptying-model derivatives by finite differences.
     np.testing.assert_allclose(
         np.linalg.norm(omega_BN_B),
-        2.6376706988e-04,  # [rad/s]
+        2.6449538196e-04,  # [rad/s]
         rtol=1e-5,
         err_msg="depletion torque magnitude not equal")
 
@@ -629,7 +629,7 @@ def test_depletionTorqueUsesCurrentMassFlowRate():
     # Regression value after independently validating the emptying-model derivatives by finite differences.
     np.testing.assert_allclose(
         np.linalg.norm(omega_BN_B),
-        1.5638822750e-03,  # [rad/s]
+        1.5818171569e-03,  # [rad/s]
         rtol=1e-5,
         err_msg="depletion torque did not use the current mass-flow rate")
 

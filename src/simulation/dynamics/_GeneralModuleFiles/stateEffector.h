@@ -41,11 +41,15 @@ struct BackSubMatrices {
  needs to be integrated. For example: reaction wheels, flexing solar panels, fuel slosh etc */
 typedef struct {
     double mEff;                           //!< [kg] Mass of the effector
-    double mEffDot;					   //!< [kg/s] Time derivate of mEff
+    double mEffDot;                        //!< [kg/s] Time derivative of retained effector mass
     Eigen::Matrix3d IEffPntB_B;            //!< [kg m^2] Inertia of effector relative to point B in B frame components
     Eigen::Vector3d rEff_CB_B;             //!< [m] Center of mass of effector with respect to point B in B frame comp
-    Eigen::Vector3d rEffPrime_CB_B;        //!< [m/s] Time derivative with respect to the body of rEff_CB_B
-    Eigen::Matrix3d IEffPrimePntB_B;       //!< [kg m^2/s] Time derivative with respect to the body of IEffPntB_B
+    Eigen::Vector3d rEffPrime_CB_B;        //!< [m/s] Body-frame derivative of the retained effector CoM
+    Eigen::Matrix3d IEffPrimePntB_B;       //!< [kg m^2/s] Body-frame derivative of retained effector inertia
+    bool hasMassPropertyRateDynamics;      //!< -- True when the equations of motion use explicit rate overrides
+    double mEffDotDynamics;                //!< [kg/s] Mass rate substituted into generic rate-dependent terms
+    Eigen::Vector3d rEffPrime_CB_BDynamics; //!< [m/s] CoM derivative used by generic rate terms
+    Eigen::Matrix3d IEffPrimePntB_BDynamics; //!< [kg m^2/s] Inertia rate substituted into generic rate-dependent terms
 }EffectorMassProps;
 
 /*! @brief state effector class */
