@@ -86,6 +86,7 @@ void LinearSpringMassDamper::registerStates(DynParamManager& states)
     Eigen::MatrixXd massInitMatrix(1,1);
     massInitMatrix(0,0) = this->massInit;
     this->massState->setState(massInitMatrix);
+    this->hasRegisteredStates = true;
 
 	return;
 }
@@ -100,6 +101,9 @@ void LinearSpringMassDamper::updateEffectorMassProps(double integTime [[maybe_un
 
 	// - Update the effectors mass
 	this->effProps.mEff = this->massSMD;
+	this->effProps.mEffDot = this->fuelMassDot;
+	this->effProps.mEffDotDynamics =
+        this->omitMassRateDynamics ? 0.0 : this->fuelMassDot;
 	// - Update the position of CoM
 	this->effProps.rEff_CB_B = this->r_PcB_B;
 	// - Update the inertia about B
@@ -110,11 +114,19 @@ void LinearSpringMassDamper::updateEffectorMassProps(double integTime [[maybe_un
 	this->rhoDot = this->rhoDotState->getStateReference()(0, 0);
 	this->rPrime_PcB_B = this->rhoDot * this->pHat_B;
 	this->effProps.rEffPrime_CB_B = this->rPrime_PcB_B;
+    this->effProps.rEffPrime_CB_BDynamics = this->rPrime_PcB_B;
 
 	// - Update the body time derivative of inertia about B
 	this->rPrimeTilde_PcB_B = eigenTilde(this->rPrime_PcB_B);
-	this->effProps.IEffPrimePntB_B = -this->massSMD*(this->rPrimeTilde_PcB_B*this->rTilde_PcB_B
-                                                                          + this->rTilde_PcB_B*this->rPrimeTilde_PcB_B);
+	const Eigen::Matrix3d inertiaRateFromMotion =
+        -this->massSMD*(this->rPrimeTilde_PcB_B*this->rTilde_PcB_B
+                       + this->rTilde_PcB_B*this->rPrimeTilde_PcB_B);
+    this->effProps.IEffPrimePntB_B =
+        -this->fuelMassDot*this->rTilde_PcB_B*this->rTilde_PcB_B
+        + inertiaRateFromMotion;
+    this->effProps.IEffPrimePntB_BDynamics = inertiaRateFromMotion;
+    this->effProps.hasMassPropertyRateDynamics =
+        this->fuelMassDot != 0.0;
 
     return;
 }
@@ -122,8 +134,14 @@ void LinearSpringMassDamper::updateEffectorMassProps(double integTime [[maybe_un
 /*! This is method is used to pass mass properties information to the fuelTank */
 void LinearSpringMassDamper::retrieveMassValue(double integTime [[maybe_unused]])
 {
-    // Save mass value into the fuelSlosh class variable
-    this->fuelMass = this->massSMD;
+    if (this->massState == nullptr) {
+        this->bskLogger.bskLog(
+            BSK_ERROR,
+            "LinearSpringMassDamper was attached to a FuelTank but never added to Spacecraft. Every particle "
+            "passed to pushFuelSloshParticle must also be passed to addStateEffector.");
+    }
+    // Read the current RK-stage state before the tank allocates propellant flow.
+    this->fuelMass = this->massState->getStateReference()(0, 0);
 
     return;
 }

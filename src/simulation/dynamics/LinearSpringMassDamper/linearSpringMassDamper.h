@@ -42,7 +42,7 @@ public:
 	std::string nameOfMassState;      //!< [-] Identifier for the mass state data container
 	Eigen::Vector3d r_PB_B;        //!< [m] position vector from B point to particle equilibrium, P, in body frame
 	Eigen::Vector3d pHat_B;        //!< [-] particle direction unit vector, in body frame
-	StateData *massState;		   //!< -- state data for the particles mass
+	StateData *massState = nullptr;		   //!< -- state data for the particles mass
 	BSKLogger bskLogger;                      //!< -- BSK Logging
 
 private:

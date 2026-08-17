@@ -121,17 +121,53 @@ void FuelTank::addThrusterSet(ThrusterStateEffector *stateEff) {
 void FuelTank::linkInStates(DynParamManager &statesIn) {
     // Grab access to the hubs omega_BN_N
     this->omegaState = statesIn.getStateObject(this->stateNameOfOmega);
+    for (auto* fuelSloshParticle: this->fuelSloshParticles) {
+        // runs after the whole registerStates pass, so the flag is scoped to one pass
+        fuelSloshParticle->hasRegisteredStates = false;
+    }
 }
 
-/*! Register states. The fuel tank has one state associated with it: mass, and it also has the
- responsibility to call register states for the fuel slosh particles */
+/*! Register the tank mass state before any attached fuel-slosh states. */
 void FuelTank::registerStates(DynParamManager &statesIn) {
+    for (auto* fuelSloshParticle: this->fuelSloshParticles) {
+        if (fuelSloshParticle->hasRegisteredStates) {
+            this->bskLogger.bskLog(
+                BSK_ERROR,
+                "FuelTank must be added to Spacecraft before its attached fuel-slosh effectors.");
+        }
+    }
     // Register the mass state associated with the tank
     Eigen::MatrixXd massMatrix(1, 1);
     this->massState = statesIn.registerState(1, 1, this->getNameOfMassState());
     massMatrix(0, 0) = this->fuelTankModel->propMassInit;
     this->massState->setState(massMatrix);
     this->emptyTankWarningPrinted = false;
+}
+
+/*! Update derivatives of the retained tank mass properties. */
+void FuelTank::updateRetainedMassPropertyDerivatives(double mass,
+                                                     double massRate)
+{
+    this->fuelTankModel->computeTankPropDerivs(mass, massRate);
+    const Eigen::Matrix3d dcm_TBLocal = this->getDcm_TB();
+    this->effProps.rEffPrime_CB_B =
+        dcm_TBLocal.transpose()*this->fuelTankModel->rPrime_TcT_T;
+    const Eigen::Vector3d rPrime_TcB_B = this->effProps.rEffPrime_CB_B;
+    this->effProps.IEffPrimePntB_B =
+        dcm_TBLocal.transpose()
+            * this->fuelTankModel->IPrimeTankPntT_T
+            * dcm_TBLocal
+        + massRate
+            *(this->r_TcB_B.dot(this->r_TcB_B)
+                  * Eigen::Matrix3d::Identity()
+              - this->r_TcB_B*this->r_TcB_B.transpose())
+        + mass
+            *(2.0*this->r_TcB_B.dot(rPrime_TcB_B)
+                  * Eigen::Matrix3d::Identity()
+              - this->r_TcB_B*rPrime_TcB_B.transpose()
+              - rPrime_TcB_B*this->r_TcB_B.transpose());
+    this->effProps.rEffPrime_CB_BDynamics.setZero();
+    this->effProps.IEffPrimePntB_BDynamics.setZero();
 }
 
 /*! Fuel tank add its contributions the mass of the vehicle. */
@@ -153,9 +189,6 @@ void FuelTank::updateEffectorMassProps(double integTime) {
     this->effProps.IEffPntB_B = ITankPntT_B + massLocal * (r_TcB_B.dot(r_TcB_B) * Eigen::Matrix3d::Identity()
                                                            - r_TcB_B * r_TcB_B.transpose());
     this->effProps.rEff_CB_B = this->r_TcB_B;
-
-    // This does not incorporate mEffDot into cPrime for high fidelity mass depletion
-    this->effProps.rEffPrime_CB_B = Eigen::Vector3d::Zero();
 
     // Mass depletion (call thrusters attached to this tank to get their mDot, and contributions)
     this->fuelConsumption = 0.0;
@@ -182,6 +215,7 @@ void FuelTank::updateEffectorMassProps(double integTime) {
          fuelSloshInt++) {
         // Retrieve current mass value of fuelSlosh particle
         (*fuelSloshInt)->retrieveMassValue(integTime);
+        (*fuelSloshInt)->omitMassRateDynamics = this->getUpdateOnly();
         // Add fuelSlosh mass to total mass of tank
         totalMass += (*fuelSloshInt)->fuelMass;
     }
@@ -203,6 +237,9 @@ void FuelTank::updateEffectorMassProps(double integTime) {
         }
         this->tankFuelConsumption = 0.0;  // [kg/s]
         this->effProps.mEffDot = 0.0;  // [kg/s]
+        this->effProps.mEffDotDynamics = 0.0;  // [kg/s]
+        this->updateRetainedMassPropertyDerivatives(massLocal, 0.0);
+        this->effProps.hasMassPropertyRateDynamics = false;
         return;
     }
     // Set mass depletion rate of fuelSloshParticles
@@ -219,10 +256,17 @@ void FuelTank::updateEffectorMassProps(double integTime) {
     for (auto &dynEffector: this->thrDynEffectors) {
         dynEffector->fuelMass = totalMass;
     }
-
     // Set fuel consumption rate of fuelTank (not negative because the negative sign is in the computeDerivatives call
     this->tankFuelConsumption = massLocal / totalMass * (this->fuelConsumption);
-    this->effProps.mEffDot = -this->fuelConsumption;
+    this->effProps.mEffDot = -this->tankFuelConsumption;
+    this->effProps.mEffDotDynamics =
+        this->getUpdateOnly() ? 0.0 : this->effProps.mEffDot;
+    this->updateRetainedMassPropertyDerivatives(
+        massLocal,
+        this->effProps.mEffDot
+    );
+    this->effProps.hasMassPropertyRateDynamics =
+        this->effProps.mEffDot != 0.0;
 }
 
 /*! Fuel tank adds its contributions to the matrices for the back-sub method. */
@@ -242,7 +286,6 @@ void FuelTank::updateContributions(double integTime [[maybe_unused]],
         massLocal = 0.0;  // [kg]
     }
     const double mDotTank = -this->tankFuelConsumption; // [kg/s] tank mass rate this substep
-    this->fuelTankModel->computeTankPropDerivs(massLocal, mDotTank);
     omega_BN_BLocal = this->omegaState->getState();
     if (!this->getUpdateOnly()) {
         const Eigen::Matrix3d dcm_TBLocal = this->getDcm_TB();

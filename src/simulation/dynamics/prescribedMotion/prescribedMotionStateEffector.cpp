@@ -193,6 +193,12 @@ void PrescribedMotionStateEffector::registerProperties(DynParamManager& states)
 */
 void PrescribedMotionStateEffector::updateEffectorMassProps(double integTime)
 {
+    this->effProps.mEffDot = 0.0;
+    this->effProps.mEffDotDynamics = 0.0;
+    this->effProps.rEffPrime_CB_BDynamics.setZero();
+    this->effProps.IEffPrimePntB_BDynamics.setZero();
+    this->effProps.hasMassPropertyRateDynamics = false;
+
     // Update the prescribed states
     double dt = integTime - this->currentSimTimeSec;
     this->r_PM_M = this->rEpoch_PM_M + (this->rPrimeEpoch_PM_M * dt) + (0.5 * this->rPrimePrime_PM_M * dt * dt);
@@ -263,7 +269,14 @@ void PrescribedMotionStateEffector::updateEffectorMassProps(double integTime)
     // Loop through attached state effectors and compute their contributions
     std::vector<StateEffector*>::iterator it;
     for(it = this->stateEffectors.begin(); it != this->stateEffectors.end(); it++) {
+        (*it)->effProps.hasMassPropertyRateDynamics = false;
         (*it)->updateEffectorMassProps(integTime);
+        if ((*it)->effProps.hasMassPropertyRateDynamics
+            || (*it)->effProps.mEffDot != 0.0) {
+            this->bskLogger.bskLog(
+                BSK_ERROR,
+                "PrescribedMotionStateEffector does not support nested variable-mass state effectors.");
+        }
 
         this->effProps.mEff += (*it)->effProps.mEff;
         this->effProps.mEffDot += (*it)->effProps.mEffDot;

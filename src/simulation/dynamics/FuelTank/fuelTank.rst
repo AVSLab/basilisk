@@ -82,3 +82,14 @@ A thruster effector can be attached to a tank effector to simulate fuel mass dep
 .. code-block:: python
 
     fuelTankEffector.addThrusterSet(thrustersEffector)
+
+When attaching fuel-slosh particles, add the tank to :ref:`spacecraft` before
+the particles. During each integration stage, the tank reads the current
+particle masses and allocates the total propellant outflow; the particles then
+report their allocated component rates during the same mass-property assembly.
+
+.. code-block:: python
+
+    fuelTankEffector.pushFuelSloshParticle(sloshParticle)
+    spacecraftObject.addStateEffector(fuelTankEffector)
+    spacecraftObject.addStateEffector(sloshParticle)

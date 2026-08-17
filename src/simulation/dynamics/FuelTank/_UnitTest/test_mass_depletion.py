@@ -23,9 +23,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pytest
 from Basilisk.architecture import messaging
+from Basilisk.architecture.bskLogging import BasiliskError
 from Basilisk.simulation import fuelTank
 from Basilisk.simulation import gravityEffector
 from Basilisk.simulation import linearSpringMassDamper
+from Basilisk.simulation import prescribedMotionStateEffector
+from Basilisk.simulation import sphericalPendulum
 from Basilisk.simulation import spacecraft
 from Basilisk.simulation import thrusterDynamicEffector, thrusterStateEffector
 from Basilisk.utilities import RigidBodyKinematics as rbk
@@ -52,6 +55,349 @@ def _configureTankGeometry(tankModel):
         tankModel.radiusTankInit = 1.0  # [m]
     if hasattr(tankModel, "lengthTank"):
         tankModel.lengthTank = 1.0  # [m]
+
+
+def _buildAttachedSloshModel(sloshConstructor, wiring):
+    """Build a tank with one attached slosh particle under a given registration wiring.
+
+    ``wiring`` selects the order the effectors reach Spacecraft: "tankFirst" is the
+    supported order, "sloshFirst" reverses it, and "sloshUnregistered" attaches the
+    particle to the tank without ever adding it to Spacecraft. Returns the objects so
+    the caller keeps them alive for the duration of the simulation.
+    """
+    simulation = SimulationBaseClass.SimBaseClass()
+    process = simulation.CreateNewProcess("testProcess")
+    taskName = "testTask"
+    process.addTask(
+        simulation.CreateNewTask(taskName, macros.sec2nano(0.1))
+    )  # [s]
+
+    dynamics = spacecraft.Spacecraft()
+    tank = fuelTank.FuelTank()
+    tankModel = fuelTank.FuelTankModelConstantVolume()
+    tankModel.propMassInit = 20.0  # [kg]
+    tankModel.radiusTankInit = 0.5  # [m]
+    tank.setTankModel(tankModel)
+
+    slosh = sloshConstructor()
+    slosh.massInit = 5.0  # [kg]
+    tank.pushFuelSloshParticle(slosh)
+
+    if wiring == "sloshFirst":
+        dynamics.addStateEffector(slosh)
+        dynamics.addStateEffector(tank)
+    elif wiring == "tankFirst":
+        dynamics.addStateEffector(tank)
+        dynamics.addStateEffector(slosh)
+    elif wiring == "sloshUnregistered":
+        dynamics.addStateEffector(tank)
+    else:
+        raise ValueError(f"unknown wiring {wiring}")
+
+    simulation.AddModelToTask(taskName, tank)
+    simulation.AddModelToTask(taskName, dynamics)
+    return simulation, dynamics, tank, slosh
+
+
+@pytest.mark.parametrize(
+    "sloshConstructor",
+    [
+        linearSpringMassDamper.LinearSpringMassDamper,
+        sphericalPendulum.SphericalPendulum,
+    ],
+)
+def test_attachedSloshRequiresTankFirst(sloshConstructor):
+    """Reject attached fuel slosh registered before its owning tank."""
+    simulation, _dynamics, _tank, _slosh = _buildAttachedSloshModel(
+        sloshConstructor, "sloshFirst"
+    )
+    with pytest.raises(
+        BasiliskError,
+        match="FuelTank must be added to Spacecraft before",
+    ):
+        simulation.InitializeSimulation()
+
+
+@pytest.mark.parametrize(
+    "sloshConstructor",
+    [
+        linearSpringMassDamper.LinearSpringMassDamper,
+        sphericalPendulum.SphericalPendulum,
+    ],
+)
+def test_attachedSloshRequiresSpacecraftRegistration(sloshConstructor):
+    """Reject attached fuel slosh that never registers states with Spacecraft."""
+    simulation, _dynamics, _tank, _slosh = _buildAttachedSloshModel(
+        sloshConstructor, "sloshUnregistered"
+    )
+    with pytest.raises(
+        BasiliskError,
+        match="never added to Spacecraft",
+    ):
+        simulation.InitializeSimulation()
+
+
+@pytest.mark.parametrize(
+    "sloshConstructor",
+    [
+        linearSpringMassDamper.LinearSpringMassDamper,
+        sphericalPendulum.SphericalPendulum,
+    ],
+)
+def test_repeatedInitializationKeepsAttachedSloshValid(sloshConstructor):
+    """Re-initializing a correctly ordered tank and slosh must not trip the guard."""
+    simulation, _dynamics, _tank, _slosh = _buildAttachedSloshModel(
+        sloshConstructor, "tankFirst"
+    )
+    simulation.InitializeSimulation()
+    simulation.InitializeSimulation()
+
+
+@pytest.mark.parametrize("updateOnly", [True, False])
+def test_prescribedMotionRejectsVariableMassTank(updateOnly):
+    """Reject variable-mass state effectors nested under prescribed motion."""
+    simulation = SimulationBaseClass.SimBaseClass()
+    process = simulation.CreateNewProcess("testProcess")
+    taskName = "testTask"
+    process.addTask(
+        simulation.CreateNewTask(taskName, macros.sec2nano(0.1))
+    )  # [s]
+
+    dynamics = spacecraft.Spacecraft()
+    prescribedBody = (
+        prescribedMotionStateEffector.PrescribedMotionStateEffector()
+    )
+    prescribedBody.setMass(10.0)  # [kg]
+    prescribedBody.setIPntPc_P(np.diag([2.0, 3.0, 4.0]))  # [kg*m^2]
+
+    tank = fuelTank.FuelTank()
+    tankModel = fuelTank.FuelTankModelConstantVolume()
+    tankModel.propMassInit = 20.0  # [kg]
+    tankModel.radiusTankInit = 0.5  # [m]
+    tank.setTankModel(tankModel)
+    tank.setFuelLeakRate(0.1)  # [kg/s]
+    tank.setUpdateOnly(updateOnly)
+    prescribedBody.addStateEffector(tank)
+    dynamics.addStateEffector(prescribedBody)
+
+    simulation.AddModelToTask(taskName, tank)
+    simulation.AddModelToTask(taskName, prescribedBody)
+    simulation.AddModelToTask(taskName, dynamics)
+    with pytest.raises(
+        BasiliskError,
+        match="does not support nested variable-mass",
+    ):
+        simulation.InitializeSimulation()
+
+
+@pytest.mark.parametrize(
+    "sloshConstructor",
+    [
+        linearSpringMassDamper.LinearSpringMassDamper,
+        sphericalPendulum.SphericalPendulum,
+    ],
+)
+@pytest.mark.parametrize("updateOnly", [True, False])
+def test_attachedSloshReportsComponentRates(sloshConstructor, updateOnly):
+    """Verify attached tank and slosh retained-property derivatives.
+
+    Coupled-depletion accelerations are regression baselines recorded from the
+    current implementation, not analytic variable-mass truth values. The
+    coupled-depletion rate still omits the mass-flow source first moments.
+    """
+    dynamics, tank, slosh = _initializeAttachedSlosh(
+        sloshConstructor,
+        updateOnly,
+        leakRate=1.0,
+    )
+
+    tankMassRate = -0.8  # [kg/s]
+    sloshMassRate = -0.2  # [kg/s]
+    np.testing.assert_allclose(
+        tank.effProps.mEffDot,
+        tankMassRate,
+        rtol=0.0,
+        atol=1.0e-15,
+    )
+    np.testing.assert_allclose(
+        slosh.fuelMassDot,
+        sloshMassRate,
+        rtol=0.0,
+        atol=1.0e-15,
+    )
+    reportedMassRate = np.asarray(
+        dynamics.dynManager.getPropertyReference("mDot_SC")
+    ).reshape(-1)
+    np.testing.assert_allclose(
+        reportedMassRate,
+        [-1.0],
+        rtol=0.0,
+        atol=1.0e-15,
+    )
+
+    offset_B = np.array([0.6, -0.3, 0.2])  # [m]
+    totalMass = 125.0  # [kg]
+    centerOfMass_B = 25.0*offset_B/totalMass  # [m]
+    expectedCenterOfMassPrime_B = (
+        -offset_B/totalMass + centerOfMass_B/totalMass
+    )  # [m/s]
+    centerOfMassPrime_B = np.asarray(
+        dynamics.dynManager.getPropertyReference("centerOfMassPrimeSC")
+    ).reshape(3)
+    np.testing.assert_allclose(
+        centerOfMassPrime_B,
+        expectedCenterOfMassPrime_B,
+        rtol=1.0e-14,
+        atol=1.0e-16,
+    )
+
+    offsetTilde = np.array(
+        [
+            [0.0, -offset_B[2], offset_B[1]],
+            [offset_B[2], 0.0, -offset_B[0]],
+            [-offset_B[1], offset_B[0], 0.0],
+        ]
+    )  # [m]
+    expectedSloshInertiaRate_B = (
+        -sloshMassRate*offsetTilde@offsetTilde
+    )  # [kg*m^2/s]
+    np.testing.assert_allclose(
+        np.asarray(slosh.effProps.IEffPrimePntB_B),
+        expectedSloshInertiaRate_B,
+        rtol=1.0e-14,
+        atol=1.0e-16,
+    )
+
+    if updateOnly:
+        control, _, _ = _initializeAttachedSlosh(
+            sloshConstructor,
+            updateOnly=True,
+            leakRate=0.0,
+        )
+        np.testing.assert_allclose(
+            _hubStateDerivatives(dynamics),
+            _hubStateDerivatives(control),
+            rtol=0.0,
+            atol=1.0e-13,
+        )
+    else:
+        if isinstance(
+            slosh,
+            linearSpringMassDamper.LinearSpringMassDamper,
+        ):
+            expectedVelocityDerivative_N = np.array(
+                [
+                    0.00440480657192980,
+                    0.00124386704106702,
+                    -0.00089226309734675,
+                ]
+            )  # [m/s^2]
+            expectedRateDerivative_B = np.array(
+                [
+                    0.00337915307437880,
+                    0.00416556431825436,
+                    0.00444682568256779,
+                ]
+            )  # [rad/s^2]
+        else:
+            expectedVelocityDerivative_N = np.array(
+                [
+                    0.00527105039614227,
+                    0.00102237938234717,
+                    -0.00073415691683492,
+                ]
+            )  # [m/s^2]
+            expectedRateDerivative_B = np.array(
+                [
+                    0.00337533072997688,
+                    0.00425076546666240,
+                    0.00457131641985391,
+                ]
+            )  # [rad/s^2]
+        hubStateDerivatives = _hubStateDerivatives(dynamics)
+        np.testing.assert_allclose(
+            hubStateDerivatives[:3],
+            expectedVelocityDerivative_N,
+            rtol=1.0e-13,
+            atol=1.0e-15,
+        )
+        np.testing.assert_allclose(
+            hubStateDerivatives[3:],
+            expectedRateDerivative_B,
+            rtol=1.0e-13,
+            atol=1.0e-15,
+        )
+
+
+def _initializeAttachedSlosh(sloshConstructor, updateOnly, leakRate):
+    """Initialize a tank and stationary attached slosh at one offset."""
+    simulation = SimulationBaseClass.SimBaseClass()
+    process = simulation.CreateNewProcess("testProcess")
+    taskName = "testTask"
+    process.addTask(
+        simulation.CreateNewTask(taskName, macros.sec2nano(0.1))
+    )  # [s]
+
+    dynamics = spacecraft.Spacecraft()
+    dynamics.hub.mHub = 100.0  # [kg]
+    dynamics.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # [m]
+    dynamics.hub.IHubPntBc_B = np.diag(
+        [80.0, 90.0, 100.0]
+    )  # [kg*m^2]
+    dynamics.hub.omega_BN_BInit = [[0.1], [-0.2], [0.15]]  # [rad/s]
+
+    offset_B = np.array([0.6, -0.3, 0.2])  # [m]
+    tank = fuelTank.FuelTank()
+    tankModel = fuelTank.FuelTankModelConstantVolume()
+    tankModel.propMassInit = 20.0  # [kg]
+    tankModel.radiusTankInit = 0.5  # [m]
+    tankModel.r_TcT_TInit = [[0.0], [0.0], [0.0]]  # [m]
+    tank.setTankModel(tankModel)
+    tank.setR_TB_B(offset_B)
+    tank.setFuelLeakRate(leakRate)
+    tank.setUpdateOnly(updateOnly)
+
+    slosh = sloshConstructor()
+    slosh.massInit = 5.0  # [kg]
+    if isinstance(
+        slosh,
+        linearSpringMassDamper.LinearSpringMassDamper,
+    ):
+        slosh.k = 1.0  # [N/m]
+        slosh.c = 0.0  # [N*s/m]
+        slosh.r_PB_B = offset_B
+        slosh.pHat_B = [1.0, 0.0, 0.0]
+        slosh.rhoInit = 0.0  # [m]
+        slosh.rhoDotInit = 0.0  # [m/s]
+    else:
+        slosh.pendulumRadius = 0.5  # [m]
+        slosh.d = offset_B - np.array([0.5, 0.0, 0.0])  # [m]
+        slosh.D = np.zeros((3, 3))  # [N*s/m]
+        slosh.phiDotInit = 0.0  # [rad/s]
+        slosh.thetaDotInit = 0.0  # [rad/s]
+
+    tank.pushFuelSloshParticle(slosh)
+    dynamics.addStateEffector(tank)
+    dynamics.addStateEffector(slosh)
+    simulation.AddModelToTask(taskName, tank)
+    simulation.AddModelToTask(taskName, dynamics)
+    simulation.InitializeSimulation()
+    return dynamics, tank, slosh
+
+
+def _hubStateDerivatives(dynamics):
+    """Return translational and angular hub accelerations."""
+    velocityDerivative_N = np.asarray(
+        dynamics.dynManager.getStateObject(
+            dynamics.hub.nameOfHubVelocity
+        ).getStateDeriv()
+    ).reshape(3)
+    rateDerivative_B = np.asarray(
+        dynamics.dynManager.getStateObject(
+            dynamics.hub.nameOfHubOmega
+        ).getStateDeriv()
+    ).reshape(3)
+    return np.concatenate((velocityDerivative_N, rateDerivative_B))
 
 
 @pytest.mark.parametrize("thrusterConstructor", [thrusterDynamicEffector.ThrusterDynamicEffector,
@@ -276,7 +622,10 @@ def test_leakyTank(sloshMass):
     fuelMass = fuelLog.fuelMass
     fuelMassDot = fuelLog.fuelMassDot
 
-    assert np.allclose(fuelMassDot, -leakRate, rtol=1e-6)
+    expectedTankMassRate = (
+        -leakRate*initialFuelMass/totalPropellant
+    )  # [kg/s]
+    assert np.allclose(fuelMassDot, expectedTankMassRate, rtol=1e-6)
 
     # The tank drains only its share of the flow, so its mass follows
     # m(t) = m(0) * (1 - mDot*t/totalPropellant), which is m(0) - mDot*t when it carries it all.
