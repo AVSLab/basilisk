@@ -42,6 +42,20 @@ void MJSystemCoM::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
     if (!scene) {
         bskLogger.bskError("MJSystemCoM: scene pointer not set!");
     }
+
+    const mjModel* model = scene->getMujocoModel();
+    if (!model) {
+        bskLogger.bskError("MJSystemCoM: MuJoCo model not available in Reset()");
+    }
+
+    this->namedBodies.clear();
+    for (int i = 1; i < model->nbody; ++i) {
+        const char* bodyName = mj_id2name(model, mjOBJ_BODY, i);
+        if (bodyName == nullptr) {
+            continue;
+        }
+        this->namedBodies.emplace_back(i, &scene->getBody(bodyName));
+    }
 }
 
 
@@ -73,7 +87,9 @@ void MJSystemCoM::UpdateState(uint64_t CurrentSimNanos)
         r_CN_N += mi * ri;
     }
 
-    // calculate CoM velocity
+    // Calculate the derivative of the reported CoM position. The Jacobian
+    // term is the mass-weighted body velocity; changing body masses add
+    // sum(mDot_i*(r_i - r_C))/M.
     if (model->nv > 0 && massSC > 0.0) {
         // jacp = linear 3×nv, jacr = angular 3×nv
         const size_t jacobianSize = static_cast<size_t>(3 * model->nv);
@@ -99,6 +115,19 @@ void MJSystemCoM::UpdateState(uint64_t CurrentSimNanos)
             const Eigen::Vector3d vi = Jp * qv;   // linear COM velocity of body i
 
             v_CN_N += mi * vi;
+        }
+    }
+    if (massSC > 0.0) {
+        const Eigen::Vector3d centerOfMass_N = r_CN_N/massSC;
+        for (const auto& [bodyIndex, body] : this->namedBodies) {
+            if (model->body_mass[bodyIndex] <= 0.0) continue;
+            auto& massRateInMsg = body->derivativeMassPropertiesInMsg;
+            if (massRateInMsg.isLinked()) {
+                const double massRate = massRateInMsg().massSC;  // [kg/s]
+                const Eigen::Vector3d ri =
+                    Eigen::Map<const Eigen::Vector3d>(data->xipos + 3*bodyIndex);
+                v_CN_N += massRate*(ri - centerOfMass_N);
+            }
         }
     }
 

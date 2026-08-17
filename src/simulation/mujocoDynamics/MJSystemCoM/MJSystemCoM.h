@@ -28,6 +28,8 @@
 #include "simulation/mujocoDynamics/_GeneralModuleFiles/MJScene.h"
 #include "architecture/utilities/avsEigenSupport.h"
 #include <Eigen/Dense>
+#include <utility>
+#include <vector>
 
 
 /*! @brief This is a C++ module to extract the system CoM position and velocity from Mujoco
@@ -50,6 +52,9 @@ public:
 
     BSKLogger bskLogger;              //!< BSK Logging
 
+private:
+
+    std::vector<std::pair<int, MJBody*>> namedBodies;  //!< MuJoCo body index paired with its scene body, resolved in Reset
 
 };
 
