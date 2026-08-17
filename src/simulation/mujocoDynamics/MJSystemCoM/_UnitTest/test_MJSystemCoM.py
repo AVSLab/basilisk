@@ -116,6 +116,28 @@ def _xml_angled():
 </mujoco>
 """
 
+
+def _xml_variable_mass(rotated):
+    hubPose = (
+        'pos="4 -2 1" quat="0.9238795325112867 0 0 '
+        '0.3826834323650898"'
+        if rotated else ""
+    )
+    return f"""<mujoco>
+  <option gravity="0 0 0"/>
+  <worldbody>
+    <body name="hub" {hubPose}>
+      <freejoint/>
+      <inertial pos="0 0 0" mass="10" diaginertia="1 1 1"/>
+      <body name="tank" pos="3 0 0">
+        <inertial pos="0 0 0" mass="2" diaginertia="0.1 0.1 0.1"/>
+      </body>
+    </body>
+  </worldbody>
+</mujoco>
+"""
+
+
 def _write_temp_xml(xml_text: str, basename: str) -> str:
     tmpdir = tempfile.mkdtemp(prefix="mjcom_")
     path = os.path.join(tmpdir, f"{basename}.xml")
@@ -158,6 +180,98 @@ def _expected_com(model: str, r_root, v_root):
         raise ValueError("unknown model")
 
     return rC, vC
+
+
+@pytest.mark.parametrize("rotated", [False, True])
+def test_variable_mass_velocity_is_com_position_derivative(rotated):
+    r"""Include the quotient-rule term in the reported CoM velocity.
+
+    A 10 kg hub and a 2 kg tank translate together, with the tank positioned
+    by a fixed inertial offset :math:`\mathbf d` from the hub and depleting at
+    0.5 kg/s. Their center of mass is
+
+    .. math::
+
+        \mathbf r_C(t) =
+        \mathbf r_H(0) + \mathbf v_Ht
+        + \frac{m(t)}{10+m(t)}\mathbf d, \qquad
+        m(t) = 2 - 0.5t,
+
+    so
+
+    .. math::
+
+        \dot{\mathbf r}_C(t) =
+        \mathbf v_H + \frac{10\dot m}{(10+m(t))^2}\mathbf d.
+
+    The second term distinguishes the position derivative from the
+    mass-weighted body velocity. The rotated case ensures that the
+    correction uses inertial body positions rather than MJCF-local offsets.
+    """
+    timeStep = 1.0e-3  # [s]
+    finalTime = 2.0e-3  # [s]
+    tankMassRate = -0.5  # [kg/s]
+    rootPosition = (
+        np.array([4.0, -2.0, 1.0]) if rotated else np.zeros(3)
+    )  # [m]
+    tankOffset = (
+        np.array([3.0/np.sqrt(2.0), 3.0/np.sqrt(2.0), 0.0])
+        if rotated else np.array([3.0, 0.0, 0.0])
+    )  # [m]
+    rootVelocity = np.array([1.0, -0.5, 0.25])  # [m/s]
+
+    simulation = SimulationBaseClass.SimBaseClass()
+    process = simulation.CreateNewProcess("process")
+    process.addTask(
+        simulation.CreateNewTask("task", macros.sec2nano(timeStep))
+    )
+    scene = mujoco.MJScene(_xml_variable_mass(rotated))
+    scene.extraEoMCall = True
+    simulation.AddModelToTask("task", scene)
+
+    massRatePayload = messaging.SCMassPropsMsgPayload()
+    massRatePayload.massSC = tankMassRate
+    massRateMsg = messaging.SCMassPropsMsg().write(massRatePayload)
+    scene.getBody("tank").derivativeMassPropertiesInMsg.subscribeTo(
+        massRateMsg
+    )
+
+    module = MJSystemCoM.MJSystemCoM()
+    module.scene = scene
+    scene.AddModelToDynamicsTask(module)
+    recorder = module.comStatesOutMsg.recorder()
+    simulation.AddModelToTask("task", recorder)
+
+    simulation.InitializeSimulation()
+    scene.getBody("hub").setVelocity(rootVelocity)
+    simulation.ConfigureStopTime(macros.sec2nano(finalTime))
+    simulation.ExecuteSimulation()
+
+    times = np.asarray(recorder.times())*macros.NANO2SEC  # [s]
+    tankMass = 2.0 + tankMassRate*times  # [kg]
+    expectedPosition = (
+        rootPosition
+        + times[:, None]*rootVelocity
+        + tankMass[:, None]/(10.0 + tankMass[:, None])*tankOffset
+    )  # [m]
+    expectedVelocity = (
+        rootVelocity
+        + 10.0*tankMassRate
+        /(10.0 + tankMass[:, None])**2*tankOffset
+    )  # [m/s]
+    np.testing.assert_allclose(
+        recorder.r_CN_N,
+        expectedPosition,
+        rtol=0.0,
+        atol=2.0e-12,
+    )
+    np.testing.assert_allclose(
+        recorder.v_CN_N,
+        expectedVelocity,
+        rtol=0.0,
+        atol=2.0e-12,
+    )
+
 
 @pytest.mark.parametrize("model", ["single", "straight", "angled"])
 @pytest.mark.parametrize("moving", [True, False])

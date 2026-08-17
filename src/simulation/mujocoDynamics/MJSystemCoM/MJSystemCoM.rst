@@ -1,6 +1,19 @@
 Executive Summary
 -----------------
-The ``MJSystemCoM`` module extracts the total system CoM position and velocity from a Mujoco scene with a single spacecraft.
+The ``MJSystemCoM`` module extracts the total system CoM position and velocity
+from a MuJoCo scene with a single spacecraft. For variable-mass bodies, the
+reported velocity is the time derivative of the reported center-of-mass
+position,
+
+.. math::
+
+    \dot{\mathbf r}_C =
+    \frac{\sum_i m_i\mathbf v_i}{M}
+    + \frac{\sum_i\dot m_i(\mathbf r_i-\mathbf r_C)}{M}.
+
+The second term is read from each body's
+``derivativeMassPropertiesInMsg``. It is a mass-property bookkeeping term,
+not an additional generalized force in the MuJoCo equations of motion.
 
 Message Connection Descriptions
 -------------------------------
@@ -25,7 +38,7 @@ This section is to outline the steps needed to setup the ``MJSystemCoM`` module 
 
     from Basilisk.simulation import MJSystemCoM
 
-#. Enable extra EOM call when building the Mujoco scene::
+#. Enable extra EOM call when building the MuJoCo scene::
 
     scene.extraEoMCall = True
 
@@ -39,6 +52,6 @@ This section is to outline the steps needed to setup the ``MJSystemCoM`` module 
 
 #. The MJSystemCoM output message is ``comStatesOutMsg``.
 
-#. Add the module to the Mujoco scene dynamics task::
+#. Add the module to the MuJoCo scene dynamics task::
 
     scene.AddModelToDynamicsTask(module)
