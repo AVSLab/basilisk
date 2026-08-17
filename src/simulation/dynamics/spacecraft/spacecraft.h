@@ -134,6 +134,9 @@ private:
     Eigen::MatrixXd *ISCPntBPrime_B;     //!< [kg m^2/s] Body time derivative of ISCPntB_B
     Eigen::MatrixXd *g_N;                //!< [m/s^2] Gravitational acceleration in N frame components
     Eigen::MatrixXd *sysTime;            //!< [s] System time
+    double mDotDynamics = 0.0;           //!< [kg/s] Aggregate mass rate substituted into generic rate-dependent terms
+    Eigen::Vector3d cPrimeEffectorDynamics_B = Eigen::Vector3d::Zero(); //!< [m/s] Dynamics effector CoM rate
+    Eigen::Matrix3d ISCPntBPrimeDynamics_B = Eigen::Matrix3d::Zero(); //!< [kg m^2/s] Dynamics inertia rate
 
     Eigen::Vector3d oldOmega_BN_B;       //!< [r/s] prior angular rate of B wrt N in the Body frame
 
