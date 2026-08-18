@@ -754,6 +754,80 @@ def test_leakyTankRunsOutOfFuel(tankModelConstructor):
     assert np.any(np.isclose(fuelMassDot, -leakRate, rtol=1e-6))
 
 
+@pytest.mark.parametrize(
+    "sloshConstructor",
+    [
+        linearSpringMassDamper.LinearSpringMassDamper,
+        sphericalPendulum.SphericalPendulum,
+    ],
+)
+def test_attachedSloshMassClampsAtEmpty(sloshConstructor):
+    """Clamp attached slosh mass when a depletion step crosses zero."""
+    simulation = SimulationBaseClass.SimBaseClass()
+    process = simulation.CreateNewProcess("testProcess")
+    taskName = "testTask"
+    timeStep = 1.0  # [s]
+    process.addTask(
+        simulation.CreateNewTask(taskName, macros.sec2nano(timeStep))
+    )
+
+    dynamics = spacecraft.Spacecraft()
+    dynamics.hub.mHub = 100.0  # [kg]
+    dynamics.hub.IHubPntBc_B = np.diag(
+        [80.0, 90.0, 100.0]
+    )  # [kg*m^2]
+
+    tank = fuelTank.FuelTank()
+    tankModel = fuelTank.FuelTankModelConstantVolume()
+    tankModel.propMassInit = 1.0e-4  # [kg]
+    tankModel.radiusTankInit = 0.5  # [m]
+    tank.setTankModel(tankModel)
+    tank.setFuelLeakRate(1.0e-4)  # [kg/s]
+
+    slosh = sloshConstructor()
+    slosh.massInit = 2.5e-5  # [kg]
+    if isinstance(
+        slosh,
+        linearSpringMassDamper.LinearSpringMassDamper,
+    ):
+        slosh.k = 1.0  # [N/m]
+        slosh.c = 0.0  # [N*s/m]
+        slosh.r_PB_B = np.zeros(3)  # [m]
+        slosh.pHat_B = [1.0, 0.0, 0.0]
+        slosh.rhoInit = 0.0  # [m]
+        slosh.rhoDotInit = 0.0  # [m/s]
+    else:
+        slosh.pendulumRadius = 0.5  # [m]
+        slosh.d = np.array([-0.5, 0.0, 0.0])  # [m]
+        slosh.D = np.zeros((3, 3))  # [N*s/m]
+        slosh.phiDotInit = 0.0  # [rad/s]
+        slosh.thetaDotInit = 0.0  # [rad/s]
+
+    tank.pushFuelSloshParticle(slosh)
+    dynamics.addStateEffector(tank)
+    dynamics.addStateEffector(slosh)
+    simulation.AddModelToTask(taskName, tank)
+    simulation.AddModelToTask(taskName, dynamics)
+    simulation.InitializeSimulation()
+
+    stopTime = 3.0  # [s]
+    simulation.ConfigureStopTime(macros.sec2nano(stopTime))
+    simulation.ExecuteSimulation()
+
+    tankMass = dynamics.dynManager.getStateObject(
+        tank.getNameOfMassState()
+    ).getState()[0][0]
+    sloshMass = dynamics.dynManager.getStateObject(
+        slosh.nameOfMassState
+    ).getState()[0][0]
+    massTolerance = 1.0e-14  # [kg]
+
+    assert np.isclose(tankMass, 0.0, atol=massTolerance)
+    assert np.isclose(sloshMass, 0.0, atol=massTolerance)
+    assert np.isclose(slosh.effProps.mEff, 0.0, atol=massTolerance)
+    assert np.all(np.isfinite(_hubStateDerivatives(dynamics)))
+
+
 @pytest.mark.parametrize("tankModelConstructor", [fuelTank.FuelTankModelConstantVolume,
                                                   fuelTank.FuelTankModelConstantDensity,
                                                   fuelTank.FuelTankModelEmptying,

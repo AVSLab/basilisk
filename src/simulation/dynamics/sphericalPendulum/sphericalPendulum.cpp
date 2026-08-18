@@ -214,6 +214,12 @@ void SphericalPendulum::retrieveMassValue(double integTime [[maybe_unused]])
     }
     // Read the current RK-stage state before the tank allocates propellant flow.
     this->fuelMass = this->massState->getStateReference()(0, 0);
+    if (this->fuelMass < 0.0) {
+        this->fuelMass = 0.0;  // [kg]
+        Eigen::MatrixXd massMatrix(1, 1);
+        massMatrix(0, 0) = this->fuelMass;
+        this->massState->setState(massMatrix);
+    }
 
     return;
 }
@@ -221,6 +227,21 @@ void SphericalPendulum::retrieveMassValue(double integTime [[maybe_unused]])
 /*! This method is for the FSP to add its contributions to the back-sub method */
 void SphericalPendulum::updateContributions(double integTime [[maybe_unused]], BackSubMatrices & backSubContr, Eigen::MRPd sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N [[maybe_unused]])
 {
+    if (this->massFSP <= 0.0) {
+        this->aPhi.setZero();
+        this->bPhi.setZero();
+        this->aTheta.setZero();
+        this->bTheta.setZero();
+        this->cPhi = 0.0;  // [rad/s^2]
+        this->cTheta = 0.0;  // [rad/s^2]
+        backSubContr.matrixA.setZero();
+        backSubContr.matrixB.setZero();
+        backSubContr.matrixC.setZero();
+        backSubContr.matrixD.setZero();
+        backSubContr.vecTrans.setZero();
+        backSubContr.vecRot.setZero();
+        return;
+    }
 
     // - Find dcm_BN
     Eigen::MRPd sigmaLocal_BN;
