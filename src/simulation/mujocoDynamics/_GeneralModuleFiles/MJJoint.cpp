@@ -81,9 +81,7 @@ Eigen::Vector3d MJScalarJoint::getAxis() const
 
 bool MJScalarJoint::isHinge() const
 {
-    checkInitialized();
-    const auto m = this->body.getSpec().getMujocoModel();
-    return m->jnt_type[this->qposAdr.value()] == mjJNT_HINGE;
+    return this->mjsObject->type == mjJNT_HINGE;
 }
 
 void MJScalarJoint::configure(const mjModel* m)

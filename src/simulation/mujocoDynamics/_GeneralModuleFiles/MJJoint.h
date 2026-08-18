@@ -149,6 +149,8 @@ public:
     /**
      * @brief Returns true if this is a rotational joint, false if it's a
      * translational slide joint.
+     *
+     * @note This query is available before the MuJoCo model is initialized.
      */
     bool isHinge() const;
 

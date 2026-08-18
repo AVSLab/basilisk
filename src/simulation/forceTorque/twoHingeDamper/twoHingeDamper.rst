@@ -1,0 +1,74 @@
+twoHingeDamper
+==============
+
+Executive Summary
+-----------------
+
+The ``TwoHingeDamper`` module converts the position and rates of a
+two-hinge spherical pendulum into the generalized torques produced by an
+isotropic Cartesian damper at the bob. For rod length :math:`L` and Cartesian
+damping coefficient :math:`d`, set ``dampingCoeff`` to :math:`dL^2`.
+
+For a ``phi`` rotation followed by a ``theta`` rotation, the module writes
+
+.. math::
+
+   Q_\phi = -dL^2\cos^2\theta\,\dot\phi,\qquad
+   Q_\theta = -dL^2\dot\theta.
+
+Connecting the outputs to motors on the two joints applies equal and opposite
+torques to the parent and child bodies.
+
+Module Assumptions and Limitations
+----------------------------------
+
+The first input coordinate is the pendulum's ``phi`` hinge and the second is
+its ``theta`` hinge. The damping law assumes a rod direction formed by a
+``phi`` rotation followed by a ``theta`` rotation, with both hinge axes
+intersecting at the pendulum pivot. Both coordinates must therefore be
+rotational hinge joints; translational slide joints are not supported.
+
+``dampingCoeff`` has units of N m s and represents :math:`dL^2`, where
+:math:`d` is the isotropic Cartesian damping coefficient at the bob and
+:math:`L` is the rod length. The three input messages must be linked before
+the module is reset.
+
+Message Connection Descriptions
+-------------------------------
+
+.. bsk-module-io:: twoHingeDamper
+
+   input thetaInMsg ScalarJointStateMsgPayload
+      Second hinge position :math:`\theta`.
+
+   input phiDotInMsg ScalarJointStateMsgPayload
+      First hinge rate :math:`\dot\phi`.
+
+   input thetaDotInMsg ScalarJointStateMsgPayload
+      Second hinge rate :math:`\dot\theta`.
+
+   output phiTorqueOutMsg SingleActuatorMsgPayload
+      Generalized damping torque for the first hinge.
+
+   output thetaTorqueOutMsg SingleActuatorMsgPayload
+      Generalized damping torque for the second hinge.
+
+User Guide
+----------
+
+Set ``dampingCoeff``, connect the three scalar-joint state messages, and route
+the two output messages to actuators on the corresponding joints. For MuJoCo
+models, ``applyTo`` performs this wiring and creates the two internal torque
+actuators:
+
+.. code-block:: python
+
+   damper = twoHingeDamper.TwoHingeDamper()
+   damper.ModelTag = "pendulumDamper"
+   damper.dampingCoeff = cartesianDamping*rodLength**2
+   phiActuator, thetaActuator = damper.applyTo(phiJoint, thetaJoint)
+   scene.AddModelToDynamicsTask(damper)
+
+Call ``applyTo`` after constructing the :ref:`MJScene<MJScene>` and retrieving
+the two hinge joints, but before initializing the simulation. Both joints must
+belong to the same scene. The returned actuators remain owned by that scene.
