@@ -8,6 +8,7 @@ from conan import ConanFile
 
 class MujocoConan(ConanFile):
     name = "mujoco"
+    package_type = "shared-library"
     settings = "os", "arch"
 
     def set_version(self):

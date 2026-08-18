@@ -19,6 +19,7 @@
 
 import argparse
 import importlib
+import importlib.util
 from pathlib import Path
 
 import pytest
@@ -166,6 +167,22 @@ def test_windows_command_omits_c_language_standard(conanfile_module):
     command = conanfile_module.create_conan_build_command(arguments, platform_name="nt")
 
     assert "compiler.cstd=gnu17" not in option_values(command, "-s")
+
+
+def test_mujoco_recipe_declares_shared_library_package():
+    """Expose MuJoCo's DLL directory through Conan's runtime environment."""
+    repo_root = Path(__file__).resolve().parents[2]
+    recipe_path = repo_root / "libs" / "mujoco" / "conanfile.py"
+    recipe_spec = importlib.util.spec_from_file_location(
+        "basilisk_mujoco_conan_recipe",
+        recipe_path,
+    )
+    assert recipe_spec is not None
+    assert recipe_spec.loader is not None
+    recipe_module = importlib.util.module_from_spec(recipe_spec)
+    recipe_spec.loader.exec_module(recipe_module)
+
+    assert recipe_module.MujocoConan.package_type == "shared-library"
 
 
 def test_external_module_path_is_normalized(conanfile_module, tmp_path):
