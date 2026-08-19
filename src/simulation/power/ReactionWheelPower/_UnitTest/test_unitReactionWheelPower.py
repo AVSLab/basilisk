@@ -98,9 +98,6 @@ def test_module(show_plots, setRwMsg, setDeviceStatusMsg, setEta_e2m, OmegaValue
 
 
 def powerRW(show_plots, setRwMsg, setDeviceStatusMsg, setEta_e2m, OmegaValue, setEta_m2c, accuracy):
-    if not setRwMsg:
-        bskLogging.setDefaultLogLevel(bskLogging.ERROR)
-
     """Module Unit Test"""
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
@@ -117,6 +114,8 @@ def powerRW(show_plots, setRwMsg, setDeviceStatusMsg, setEta_e2m, OmegaValue, se
 
     # create the rw power test module
     testModule = ReactionWheelPower.ReactionWheelPower()
+    if not setRwMsg:
+        testModule.bskLogger.setLogLevel(bskLogging.ERROR)
     testModule.ModelTag = "bskSat"
     testModule.basePowerNeed = 10.   # baseline power draw, Watts
     rwMsg = messaging.RWConfigLogMsg()
