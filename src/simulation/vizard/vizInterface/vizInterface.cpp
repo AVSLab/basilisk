@@ -31,7 +31,39 @@
 #include <google/protobuf/io/zero_copy_stream_impl.h>
 #include "architecture/utilities/astroConstants.h"
 
-void message_buffer_deallocate(void *data, void *hint);
+namespace {
+
+class ZmqMessage {
+public:
+    ZmqMessage() : initialized(zmq_msg_init(&this->message) == 0) {}
+    explicit ZmqMessage(size_t size) : initialized(zmq_msg_init_size(&this->message, size) == 0) {}
+    ZmqMessage(const void* data, size_t size) : ZmqMessage(size)
+    {
+        if (this->initialized) {
+            memcpy(this->data(), data, size);
+        }
+    }
+    ~ZmqMessage()
+    {
+        if (this->initialized) {
+            zmq_msg_close(&this->message);
+        }
+    }
+
+    ZmqMessage(const ZmqMessage&) = delete;
+    ZmqMessage& operator=(const ZmqMessage&) = delete;
+
+    bool isInitialized() const { return this->initialized; }
+    void* data() { return zmq_msg_data(&this->message); }
+    size_t size() const { return zmq_msg_size(&this->message); }
+    zmq_msg_t* get() { return &this->message; }
+
+private:
+    zmq_msg_t message;
+    bool initialized;
+};
+
+}
 
 /*! VizInterface Constructor
  */
@@ -118,20 +150,19 @@ void VizInterface::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
             bskLogger.bskError("%s", text.c_str());
         }
 
-        void* message = malloc(4 * sizeof(char));
-        memcpy(message, "PING", 4);
-        zmq_msg_t request;
-
         text = "Waiting for Vizard at " + this->reqComProtocol + "://" + this->reqComAddress + ":" + this->reqPortNumber;
         bskLogger.bskLog(BSK_INFORMATION, "%s", text.c_str());
 
-        zmq_msg_init_data(&request, message, 4, message_buffer_deallocate, NULL);
-        zmq_msg_send(&request, this->requester_socket, 0);
+        ZmqMessage request("PING", 4);
+        if (!request.isInitialized()) {
+            bskLogger.bskError("Failed to initialize the Vizard connection request.");
+            return;
+        }
+        zmq_msg_send(request.get(), this->requester_socket, 0);
         char buffer[4];
         zmq_recv (this->requester_socket, buffer, 4, 0);
         zmq_send (this->requester_socket, "PING", 4, 0);
         bskLogger.bskLog(BSK_INFORMATION, "Basilisk-Vizard connection made");
-        zmq_msg_close(&request);
     }
 
     std::vector<VizSpacecraftData>::iterator scIt;
@@ -1226,40 +1257,42 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             if (this->firstPass < 11){
                 this->firstPass++;
             }
-            zmq_msg_t receive_buffer;
-            zmq_msg_init(&receive_buffer);
-            zmq_msg_recv (&receive_buffer, requester_socket, 0);
-            zmq_msg_close(&receive_buffer);
+            ZmqMessage receiveBuffer;
+            if (!receiveBuffer.isInitialized()) {
+                bskLogger.bskError("Failed to initialize the Vizard receive buffer.");
+                return;
+            }
+            zmq_msg_recv(receiveBuffer.get(), requester_socket, 0);
 
             /*! - Normal sim step by sending protobuffers */
-            zmq_msg_t request_header;
-            zmq_msg_t empty_frame1;
-            zmq_msg_t empty_frame2;
-            zmq_msg_t request_buffer;
+            {
+                ZmqMessage requestHeader(10);
+                if (!requestHeader.isInitialized()) {
+                    bskLogger.bskError("Failed to initialize the Vizard request header.");
+                    return;
+                }
+                memcpy(requestHeader.data(), "SIM_UPDATE", 10);
 
-            void* header_message = malloc(10 * sizeof(char));
-            memcpy(header_message, "SIM_UPDATE", 10);
+                ZmqMessage emptyFrame1;
+                ZmqMessage emptyFrame2;
+                if (!emptyFrame1.isInitialized() || !emptyFrame2.isInitialized()) {
+                    bskLogger.bskError("Failed to initialize the Vizard request delimiter frames.");
+                    return;
+                }
 
-            // ZMQ owns this buffer and frees it via message_buffer_deallocate().
-            void* request_message = malloc(serialized_message.size());
-            memcpy(request_message, serialized_message.data(), serialized_message.size());
+                ZmqMessage requestBuffer(serialized_message.size());
+                if (!requestBuffer.isInitialized()) {
+                    bskLogger.bskError("Failed to initialize the Vizard request buffer.");
+                    return;
+                }
+                memcpy(requestBuffer.data(), serialized_message.data(), serialized_message.size());
 
-            zmq_msg_init_data(&request_header, header_message, 10, message_buffer_deallocate, NULL);
-            zmq_msg_init(&empty_frame1);
-            zmq_msg_init(&empty_frame2);
-            zmq_msg_init_data(&request_buffer, request_message, serialized_message.size(),
-                              message_buffer_deallocate, NULL);
-
-            // Send to 2-WAY (REQUESTER) socket
-            zmq_msg_send(&request_header, this->requester_socket, ZMQ_SNDMORE);
-            zmq_msg_send(&empty_frame1, this->requester_socket, ZMQ_SNDMORE);
-            zmq_msg_send(&empty_frame2, this->requester_socket, ZMQ_SNDMORE);
-            zmq_msg_send(&request_buffer, this->requester_socket, 0);
-
-            zmq_msg_close(&request_header);
-            zmq_msg_close(&empty_frame1);
-            zmq_msg_close(&empty_frame2);
-            zmq_msg_close(&request_buffer);
+                // Send to 2-WAY (REQUESTER) socket
+                zmq_msg_send(requestHeader.get(), this->requester_socket, ZMQ_SNDMORE);
+                zmq_msg_send(emptyFrame1.get(), this->requester_socket, ZMQ_SNDMORE);
+                zmq_msg_send(emptyFrame2.get(), this->requester_socket, ZMQ_SNDMORE);
+                zmq_msg_send(requestBuffer.get(), this->requester_socket, 0);
+            }
 
             // Receive status message from Vizard after SIM_UPDATE
             if (this->liveSettings.terminateVizard) {
@@ -1268,13 +1301,16 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                 this->noDisplay = false;
             }
             else {
-                zmq_msg_t receiveOK;
-                zmq_msg_init(&receiveOK);
-                int receive_status = zmq_msg_recv(&receiveOK, this->requester_socket, 0);
+                ZmqMessage receiveOK;
+                if (!receiveOK.isInitialized()) {
+                    bskLogger.bskError("Failed to initialize the Vizard status response.");
+                    return;
+                }
+                int receive_status = zmq_msg_recv(receiveOK.get(), this->requester_socket, 0);
                 if (receive_status) {
                     // Make sure "OK" was received from Vizard
-                    void* msgData = zmq_msg_data(&receiveOK);
-                    size_t msgSize = zmq_msg_size(&receiveOK);
+                    void* msgData = receiveOK.data();
+                    size_t msgSize = receiveOK.size();
                     std::string receiveOKStr (static_cast<char*>(msgData), msgSize);
                     std::string errStatusStr = "OK";
                     if (receiveOKStr.compare(errStatusStr) != 0) {
@@ -1284,8 +1320,6 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                 else {
                     bskLogger.bskError("Vizard: Did not return a status (OK) message during SIM_UPDATE.");
                 }
-                zmq_msg_close(&receiveOK);
-
                 // Only handle user input if in liveStream mode (and not in noDisplay mode)
                 if (this->liveStream) {
                     this->receiveUserInput(CurrentSimNanos);
@@ -1301,12 +1335,12 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                 }
                 if (returnCamImgStatus) {
                     /*! -- Ping the Viz back to continue the lock-step */
-                    void* keep_alive = malloc(4 * sizeof(char));
-                    memcpy(keep_alive, "PING", 4);
-                    zmq_msg_t request_life;
-                    zmq_msg_init_data(&request_life, keep_alive, 4, message_buffer_deallocate, NULL);
-                    zmq_msg_send(&request_life, this->requester_socket, 0);
-                    zmq_msg_close(&request_life);
+                    ZmqMessage requestLife("PING", 4);
+                    if (!requestLife.isInitialized()) {
+                        bskLogger.bskError("Failed to initialize the Vizard keep-alive request.");
+                        return;
+                    }
+                    zmq_msg_send(requestLife.get(), this->requester_socket, 0);
                     return;
                 }
             }
@@ -1370,18 +1404,21 @@ void VizInterface::addCamMsgToModule(Message<CameraConfigMsgPayload> *tmpMsg)
 void VizInterface::receiveUserInput(uint64_t CurrentSimNanos){
 
     // Send "REQUEST_INPUT" to elicit a response from Vizard
-    void* request_input_str = malloc(13 * sizeof(char));
-    memcpy(request_input_str, "REQUEST_INPUT", 13);
-    zmq_msg_t request_input_msg;
-    zmq_msg_init_data(&request_input_msg, request_input_str, 13, message_buffer_deallocate, NULL);
-    zmq_msg_send(&request_input_msg, this->requester_socket, 0);
-    zmq_msg_close(&request_input_msg);
+    ZmqMessage requestInput("REQUEST_INPUT", 13);
+    if (!requestInput.isInitialized()) {
+        bskLogger.bskError("Failed to initialize the Vizard user-input request.");
+        return;
+    }
+    zmq_msg_send(requestInput.get(), this->requester_socket, 0);
 
     /* Expect Vizard to send a status string on the socket, then the protobuffer
             Status string can be: "VIZARD_INPUT" or "ERROR" */
-    zmq_msg_t viz_response;
-    zmq_msg_init(&viz_response);
-    int receive_status = zmq_msg_recv(&viz_response, this->requester_socket, 0);
+    ZmqMessage vizResponse;
+    if (!vizResponse.isInitialized()) {
+        bskLogger.bskError("Failed to initialize the Vizard user-input response.");
+        return;
+    }
+    int receive_status = zmq_msg_recv(vizResponse.get(), this->requester_socket, 0);
 
     // If socket was empty, throw an error and exit
     if (receive_status == -1) {
@@ -1389,8 +1426,8 @@ void VizInterface::receiveUserInput(uint64_t CurrentSimNanos){
     }
     // Else, parse the status string and ensure Vizard did not send "ERROR"
     else {
-        void* msgData = zmq_msg_data(&viz_response);
-        size_t msgSize = zmq_msg_size(&viz_response);
+        void* msgData = vizResponse.data();
+        size_t msgSize = vizResponse.size();
         std::string receive_status_str (static_cast<char*>(msgData), msgSize);
         std::string err_status_str = "ERROR";
         if (receive_status_str.compare(err_status_str) == 0) {
@@ -1399,12 +1436,12 @@ void VizInterface::receiveUserInput(uint64_t CurrentSimNanos){
     }
 
     // Retrieve protobuffer from socket
-    receive_status = zmq_msg_recv(&viz_response, this->requester_socket, 0);
+    receive_status = zmq_msg_recv(vizResponse.get(), this->requester_socket, 0);
 
     if (receive_status != -1) {
         // Extract message size and data pointer from socket
-        int vizPointSize = (int)zmq_msg_size(&viz_response);
-        void* vizPoint = zmq_msg_data(&viz_response);
+        int vizPointSize = (int)vizResponse.size();
+        void* vizPoint = vizResponse.data();
 
         // Set up and fill VizInput message
         vizProtobufferMessage::VizInput* msgRecv = new vizProtobufferMessage::VizInput;
@@ -1436,17 +1473,17 @@ void VizInterface::receiveUserInput(uint64_t CurrentSimNanos){
             ver_nc = const_cast<vizProtobufferMessage::VizEventReply*>(ver);
 
             // Create EventReply containers and pack into userInputMsg
-            VizEventReply* er = new VizEventReply();
-            er->eventHandlerID = *(ver_nc->mutable_eventhandlerid());
-            er->reply = *(ver_nc->mutable_reply());
-            er->eventHandlerDestroyed = ver_nc->eventhandlerdestroyed();
-            outMsgBuffer.vizEventReplies.push_back(*er);
+            VizEventReply er;
+            er.eventHandlerID = *(ver_nc->mutable_eventhandlerid());
+            er.reply = *(ver_nc->mutable_reply());
+            er.eventHandlerDestroyed = ver_nc->eventhandlerdestroyed();
+            outMsgBuffer.vizEventReplies.push_back(er);
 
             // Populate VizEventReply in VizBroadcastSyncSettings
             vizProtobufferMessage::VizEventReply* ver_nc_bss = vbss_nc->add_dialogevents();
-            ver_nc_bss->set_eventhandlerid(er->eventHandlerID);
-            ver_nc_bss->set_reply(er->reply);
-            ver_nc_bss->set_eventhandlerdestroyed(er->eventHandlerDestroyed);
+            ver_nc_bss->set_eventhandlerid(er.eventHandlerID);
+            ver_nc_bss->set_reply(er.reply);
+            ver_nc_bss->set_eventhandlerdestroyed(er.eventHandlerDestroyed);
         }
 
         // Serialize and send BroadcastSyncSettings*/
@@ -1454,15 +1491,15 @@ void VizInterface::receiveUserInput(uint64_t CurrentSimNanos){
 
         // Serialize if in broadcastStream mode
         if (syncByteCount > 0 && this->broadcastStream) {
-            void* sync_settings = malloc(syncByteCount);
-            vbss_nc->SerializeToArray(sync_settings, (int) syncByteCount);
+            std::string syncSettings;
+            vbss_nc->SerializeToString(&syncSettings);
 
             // Send sync settings message to BROADCAST (PUBLISHER) socket */
             int sendStatus = zmq_send(this->publisher_socket, "SYNC_SETTINGS", 13, ZMQ_SNDMORE);
             if (sendStatus == -1) {
                 bskLogger.bskError("Broadcast header did not send to socket.");
             }
-            sendStatus = zmq_send(this->publisher_socket, sync_settings, syncByteCount, 0);
+            sendStatus = zmq_send(this->publisher_socket, syncSettings.data(), syncSettings.size(), 0);
             if (sendStatus == -1) {
                 bskLogger.bskError("Broadcast protobuffer did not send to socket.");
             }
@@ -1476,8 +1513,6 @@ void VizInterface::receiveUserInput(uint64_t CurrentSimNanos){
         bskLogger.bskError("Vizard 2-way [2]: Did not return a user input message.");
     }
 
-    zmq_msg_close(&viz_response);
-
 }
 
 
@@ -1488,36 +1523,36 @@ void VizInterface::requestImage(size_t camCounter, uint64_t CurrentSimNanos)
     /*! -- Send request */
     std::string cmdMsg = "REQUEST_IMAGE_";
     cmdMsg += std::to_string(this->cameraConfigBuffers[camCounter].cameraID);
-    void* img_message = malloc(cmdMsg.length() * sizeof(char));
-    memcpy(img_message, cmdMsg.c_str(), cmdMsg.length());
-    zmq_msg_t img_request;
-    zmq_msg_init_data(&img_request, img_message, cmdMsg.length(), message_buffer_deallocate, NULL);
-    zmq_msg_send(&img_request, this->requester_socket, 0);
-    zmq_msg_close(&img_request);
+    ZmqMessage imageRequest(cmdMsg.data(), cmdMsg.size());
+    if (!imageRequest.isInitialized()) {
+        bskLogger.bskError("Failed to initialize the Vizard image request.");
+        return;
+    }
+    zmq_msg_send(imageRequest.get(), this->requester_socket, 0);
 
-    zmq_msg_t length;
-    zmq_msg_t image;
-    zmq_msg_init(&length);
-    zmq_msg_init(&image);
+    ZmqMessage length;
+    ZmqMessage image;
+    if (!length.isInitialized() || !image.isInitialized()) {
+        bskLogger.bskError("Failed to initialize the Vizard image response.");
+        return;
+    }
     if (this->bskImagePtrs[camCounter] != NULL) {
         /*! If the permanent image buffer is not populated, it will be equal to null*/
         free(this->bskImagePtrs[camCounter]);
         this->bskImagePtrs[camCounter] = NULL;
     }
-    if (zmq_msg_recv(&length, this->requester_socket, 0) == -1
-        || zmq_msg_recv(&image, this->requester_socket, 0) == -1) {
-        zmq_msg_close(&length);
-        zmq_msg_close(&image);
+    if (zmq_msg_recv(length.get(), this->requester_socket, 0) == -1
+        || zmq_msg_recv(image.get(), this->requester_socket, 0) == -1) {
         bskLogger.bskError("Vizard image response was not received.");
+        return;
     }
-    if (zmq_msg_size(&length) < sizeof(int32_t)) {
-        zmq_msg_close(&length);
-        zmq_msg_close(&image);
+    if (length.size() < sizeof(int32_t)) {
         bskLogger.bskError("Vizard image response length field is invalid.");
+        return;
     }
 
-    int32_t *lengthPoint= (int32_t *)zmq_msg_data(&length);
-    void *imagePoint= zmq_msg_data(&image);
+    int32_t *lengthPoint= (int32_t *)length.data();
+    void *imagePoint= image.data();
     const uint32_t lengthUnswapped = static_cast<uint32_t>(*lengthPoint);
     /*! --  Endianness switch for the length of the buffer */
     const uint32_t imageBufferLengthUnsigned =((lengthUnswapped>>24)&0xffU) | // move byte 3 to byte 0
@@ -1526,10 +1561,9 @@ void VizInterface::requestImage(size_t camCounter, uint64_t CurrentSimNanos)
                                                ((lengthUnswapped<<24)&0xff000000U); // byte 0 to byte 3
 
     if (imageBufferLengthUnsigned > static_cast<uint32_t>(std::numeric_limits<int32_t>::max()) ||
-        static_cast<size_t>(imageBufferLengthUnsigned) != zmq_msg_size(&image)) {
-        zmq_msg_close(&length);
-        zmq_msg_close(&image);
+        static_cast<size_t>(imageBufferLengthUnsigned) != image.size()) {
         bskLogger.bskError("Vizard image response buffer length is invalid.");
+        return;
     }
     const int32_t imageBufferLength = static_cast<int32_t>(imageBufferLengthUnsigned);
     const size_t imageBufferSize = static_cast<size_t>(imageBufferLengthUnsigned);
@@ -1538,9 +1572,8 @@ void VizInterface::requestImage(size_t camCounter, uint64_t CurrentSimNanos)
     if (imageBufferLength > 0) {
         this->bskImagePtrs[camCounter] = malloc(imageBufferSize * sizeof(char));
         if (this->bskImagePtrs[camCounter] == NULL) {
-            zmq_msg_close(&length);
-            zmq_msg_close(&image);
             bskLogger.bskError("Vizard image response buffer allocation failed.");
+            return;
         }
         memcpy(this->bskImagePtrs[camCounter], imagePoint, imageBufferSize * sizeof(char));
     }
@@ -1555,19 +1588,4 @@ void VizInterface::requestImage(size_t camCounter, uint64_t CurrentSimNanos)
     imageData.imageType = 4;
     if (imageBufferLength>0){imageData.valid = 1;}
     this->opnavImageOutMsgs[camCounter]->write(&imageData, this->moduleID, CurrentSimNanos);
-
-    /*! -- Clean the messages to avoid memory leaks */
-    zmq_msg_close(&length);
-    zmq_msg_close(&image);
-}
-
-
-
-/*! A cleaning method to ensure the message buffers are wiped clean.
- @param data The current sim time in nanoseconds
- @param hint
- */
-void message_buffer_deallocate(void *data, void * hint [[maybe_unused]])
-{
-    free (data);
 }
