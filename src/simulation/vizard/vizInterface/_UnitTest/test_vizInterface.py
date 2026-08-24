@@ -140,6 +140,23 @@ def test_vizInterface_closes_output_files(tmp_path):
     second_output.unlink()
 
 
+def test_vizInterface_broadcast_without_subscriber():
+    """Verify that a broadcast-only update succeeds without a subscriber.
+
+    This smoke test exercises the publisher serialization path and the early
+    return used when the protocol buffer is not also saved to a file.
+    """
+    current_sim_time = 0  # [ns]
+
+    viz = vizInterface.VizInterface()
+    viz.broadcastStream = True
+    viz.pubComAddress = "127.0.0.1"
+    viz.pubPortNumber = "*"
+    viz.Reset(current_sim_time)
+
+    viz.WriteProtobuffer(current_sim_time)
+
+
 def vizInterfaceTest(show_plots, accuracy, output_file):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages

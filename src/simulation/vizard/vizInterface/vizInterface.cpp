@@ -1444,29 +1444,29 @@ void VizInterface::receiveUserInput(uint64_t CurrentSimNanos){
         void* vizPoint = vizResponse.data();
 
         // Set up and fill VizInput message
-        vizProtobufferMessage::VizInput* msgRecv = new vizProtobufferMessage::VizInput;
-        msgRecv->ParseFromArray(vizPoint, vizPointSize);
+        vizProtobufferMessage::VizInput msgRecv;
+        msgRecv.ParseFromArray(vizPoint, vizPointSize);
 
         // Set up output VizUserInputMsgPayload message
         VizUserInputMsgPayload outMsgBuffer;
         outMsgBuffer = this->userInputMsg.zeroMsgPayload;
-        outMsgBuffer.frameNumber = static_cast<int>(msgRecv->framenumber());
+        outMsgBuffer.frameNumber = static_cast<int>(msgRecv.framenumber());
 
         // Parse keyboard inputs
-        const std::string& keys = msgRecv->keyinputs().keys();
+        const std::string& keys = msgRecv.keyinputs().keys();
         if (keys.length() > 0) {
             outMsgBuffer.keyboardInput = keys;
         }
 
         // Receive VizBroadcastSyncSettings
-        const vizProtobufferMessage::VizBroadcastSyncSettings* vbss = &(msgRecv->broadcastsyncsettings());
+        const vizProtobufferMessage::VizBroadcastSyncSettings* vbss = &(msgRecv.broadcastsyncsettings());
         // Remove "const"ness for compatibility with protobuffer access methods
         vizProtobufferMessage::VizBroadcastSyncSettings* vbss_nc;
         vbss_nc = const_cast<vizProtobufferMessage::VizBroadcastSyncSettings*>(vbss);
 
         // Iterate through VizEventReply objects
-        for (int i=0; i<msgRecv->replies_size(); i++) {
-            const vizProtobufferMessage::VizEventReply* ver = &(msgRecv->replies(i));
+        for (int i=0; i<msgRecv.replies_size(); i++) {
+            const vizProtobufferMessage::VizEventReply* ver = &(msgRecv.replies(i));
 
             // Remove "const"ness for compatibility with protobuffer access methods
             vizProtobufferMessage::VizEventReply* ver_nc;
@@ -1506,8 +1506,6 @@ void VizInterface::receiveUserInput(uint64_t CurrentSimNanos){
         }
 
         this->userInputMsg.write(&outMsgBuffer, this->moduleID, CurrentSimNanos);
-
-        delete msgRecv;
     }
     else {
         bskLogger.bskError("Vizard 2-way [2]: Did not return a user input message.");
