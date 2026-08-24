@@ -36,6 +36,7 @@ splitPath = path.split('simulation')
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
 from Basilisk.simulation import spacecraft, generalSingleBodyStateEffector, gravityEffector
 from Basilisk.architecture import messaging
+from Basilisk.utilities import vizSupport
 
 test_time_step_sec = 0.0001
 def test_general_two_dof_rotation(show_plots):
@@ -471,24 +472,22 @@ def test_general_two_dof_rot_trans(show_plots):
 
     # Set up the rotational DOF
     rotHat_G1 = np.array([1.0, 0.0, 0.0])
-    theta1Init = 5.0 * macros.D2R
-    thetaDot1Init = 0.0 * macros.D2R
-    k_1 = 100.0
-    c_1 = 0.0
+    thetaInit = 5.0 * macros.D2R
+    thetaDotInit = 0.0 * macros.D2R
+    k = 100.0
+    c = 0.0
 
     one_dof_rotation = generalSingleBodyStateEffector.DOF()
     one_dof_rotation.setDOFAxis(rotHat_G1)
-    one_dof_rotation.setBetaInit(theta1Init)
-    one_dof_rotation.setBetaDotInit(thetaDot1Init)
-    one_dof_rotation.setSpringConstantK(k_1)
-    one_dof_rotation.setDampingConstantK(c_1)
+    one_dof_rotation.setBetaInit(thetaInit)
+    one_dof_rotation.setBetaDotInit(thetaDotInit)
+    one_dof_rotation.setSpringConstantK(k)
+    one_dof_rotation.setDampingConstantK(c)
 
     # Set up the translational DOF
     transHat_G2 = np.array([0.0, 1.0, 0.0])
-    rhoInit = 0.5
+    rhoInit = 0.1
     rhoDotInit = 0.0
-    k = 100
-    c = 0.0
 
     one_dof_translation = generalSingleBodyStateEffector.DOF()
     one_dof_translation.setDOFAxis(transHat_G2)
@@ -529,6 +528,26 @@ def test_general_two_dof_rot_trans(show_plots):
         test_sim.AddModelToTask(task_name, general_body_rho_states_data_log[-1])
     test_sim.AddModelToTask(task_name, energy_momentum_data_log)
     test_sim.AddModelToTask(task_name, sc_state_data_log)
+
+    # # Add Vizard
+    # sc_body_list = [sc_object]
+    # sc_body_list.append(["generalBody", general_body.generalSingleBodyConfigLogOutMsg])
+    #
+    # if vizSupport.vizFound:
+    #     viz = vizSupport.enableUnityVisualization(test_sim, task_name, sc_body_list,
+    #                                               saveFile=filename
+    #                                               )
+    #     vizSupport.createCustomModel(viz
+    #                                  , simBodiesToModify=[sc_object.ModelTag]
+    #                                  , modelPath="CUBE"
+    #                                  , scale=[1.0, 1.0, 1.0]
+    #                                  , color=vizSupport.toRGBA255("gray"))
+    #     vizSupport.createCustomModel(viz
+    #                                  , simBodiesToModify=["generalBody"]
+    #                                  , modelPath="CUBE"
+    #                                  , scale=[1.0, 1.0, 1.0]
+    #                                  , color=vizSupport.toRGBA255("orange"))
+    #     viz.settings.orbitLinesOn = -1
 
     # Rum the simulation
     sim_time = 5.0

@@ -719,8 +719,8 @@ def unit_test_verification_check(orb_ang_momentum_N, orb_energy, rot_ang_momentu
 
 
 if __name__ == "__main__":
-    # test_general_three_dof_rotation(True)
-    # test_general_three_dof_translation(True)
-    # test_general_two_dof_trans_one_dof_rot(True)
-    test_general_one_dof_trans_two_dof_rot(True)
-    # test_general_two_dof_rot_one_dof_trans(True)
+    # test_general_three_dof_rotation(True)  # works
+    # test_general_three_dof_translation(True)  # works
+    # test_general_two_dof_trans_one_dof_rot(True)  # works
+    # test_general_one_dof_trans_two_dof_rot(True)  # works
+    test_general_two_dof_rot_one_dof_trans(True)

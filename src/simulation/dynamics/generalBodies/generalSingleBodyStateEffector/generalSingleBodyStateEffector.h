@@ -146,8 +146,8 @@ private:
     Eigen::MatrixXd TMat;
     Eigen::MatrixXd TPrimeMat;
 
-    Eigen::MatrixXd GMat;
-    Eigen::VectorXd hVec;
+    Eigen::MatrixXd UMat;
+    Eigen::VectorXd vVec;
 
     static uint64_t effectorID;                                         //!< ID number of this panel
 
