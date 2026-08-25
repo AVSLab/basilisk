@@ -1,1 +1,1 @@
-- Updated the legacy-script migration guide to reflect Basilisk's Python 3-only support policy.
+- Removed the obsolete Python 2-to-3 migration guide now that Basilisk supports Python 3 exclusively.
