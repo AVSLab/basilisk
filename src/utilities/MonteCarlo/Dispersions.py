@@ -27,9 +27,7 @@ from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities.MonteCarlo.Controller import SimulationExecutor
 
 
-class SingleVariableDispersion(object):
-    __metaclass__ = abc.ABCMeta
-
+class SingleVariableDispersion(abc.ABC):
     def __init__(self, varName, bounds):
         self.varName = varName
         self.bounds = bounds
@@ -92,9 +90,7 @@ class NormalDispersion(SingleVariableDispersion):
         return dispValue
 
 
-class VectorVariableDispersion(object):
-    __metaclass__ = abc.ABCMeta
-
+class VectorVariableDispersion(abc.ABC):
     def __init__(self, varName, bounds):
         self.varName = varName
         self.bounds = bounds

@@ -16,7 +16,10 @@
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
+import inspect
+
 import numpy as np
+import pytest
 
 from Basilisk.simulation import motorVoltageInterface, spacecraft
 from Basilisk.utilities import simHelpers
@@ -24,8 +27,10 @@ from Basilisk.utilities.MonteCarlo.Controller import SimulationExecutor, Simulat
 from Basilisk.utilities.MonteCarlo.Dispersions import (
     NormalVectorAngleDispersion,
     NormalVectorDispersion,
+    SingleVariableDispersion,
     UniformDispersion,
-    UniformVectorAngleDispersion
+    UniformVectorAngleDispersion,
+    VectorVariableDispersion,
 )
 
 
@@ -69,6 +74,18 @@ class DummySimulation:
 
     def get_DynModel(self):
         return self.dynModel
+
+
+@pytest.mark.parametrize(
+    "dispersion_class",
+    [SingleVariableDispersion, VectorVariableDispersion],
+)
+def test_dispersion_base_classes_are_abstract(dispersion_class):
+    """Verify Python enforces the Monte Carlo dispersion interfaces."""
+    assert inspect.isabstract(dispersion_class)
+
+    with pytest.raises(TypeError, match="abstract method.*generate"):
+        dispersion_class("test.variable", None)
 
 
 def test_apply_modification_updates_nested_attributes():
