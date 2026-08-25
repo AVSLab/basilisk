@@ -1373,8 +1373,7 @@ Version 2.1.0 (Nov. 13, 2021)
   to `src/architecture`.  This impacts some include statements
 - Made the C/C++ ``#include`` statements all relative to `src` to make it easier to find the associated
   files in the source code
-- Updated message names to now all comply with the Basilisk message naming convention.  See
-  :ref:`migratingToBsk2` for a table of how some message names have changed
+- Updated message names to now all comply with the Basilisk message naming convention.
 - Updated :ref:`vizSupport` to work with BSK2.  It is now much easier to include RW, thruster and CSS devices.
   Further, the simulation gravity bodies don't have to be explicitly provided to the
   ``vizSupport.enableUnityVisualization()`` method.  Rather, these are pulled from the spacecraft object
