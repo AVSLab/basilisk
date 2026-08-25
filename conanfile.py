@@ -870,11 +870,8 @@ if __name__ == "__main__":
     for opt, value in bskModuleOptionsString.items():
         parser.add_argument("--" + opt, help="using string option for " + opt, default=value[1])
     for opt, value in bskModuleOptionsFlag.items():
-        if sys.version_info < (3, 9, 0):
-            parser.add_argument("--" + opt, help="using flag option for " + opt, default=value[1], action='store_true')
-        else:
-            parser.add_argument("--" + opt, help="using flag option for " + opt, default=value[1],
-                                action=argparse.BooleanOptionalAction)
+        parser.add_argument("--" + opt, help="using flag option for " + opt, default=value[1],
+                            action=argparse.BooleanOptionalAction)
     args = parser.parse_args()
 
     # set the build destination folder
