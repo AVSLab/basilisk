@@ -53,7 +53,7 @@ installed location of Basilisk by opening a python interpreter and running the c
 
    import Basilisk
    basiliskPath = Basilisk.__path__[0]
-   print basiliskPath
+   print(basiliskPath)
 
 Copy the folder ``{basiliskPath}/examples`` into a new folder in a different directory.
 Now, when you want to use a tutorial, navigate inside that folder, and edit and execute the copied integrated tests.
