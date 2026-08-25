@@ -1,43 +1,22 @@
-
-# -*- coding: utf-8 -*-
-
 """Pretty-print tabular data."""
 
-from __future__ import print_function
-from __future__ import unicode_literals
-
-
-from collections import namedtuple
-
-from platform import python_version_tuple
+import io
 import re
+from collections import namedtuple
+from functools import partial, reduce
+from itertools import zip_longest as izip_longest
 
-if python_version_tuple()[0] < "3":
-    from itertools import izip_longest
-    from functools import partial
-    _none_type = type(None)
-    _int_type = int
-    _long_type = long
-    _float_type = float
-    _text_type = unicode
-    _binary_type = str
 
-    def _is_file(f):
-        return isinstance(f, file)
+_none_type = type(None)
+_int_type = int
+_long_type = int
+_float_type = float
+_text_type = str
+_binary_type = bytes
 
-else:
-    from itertools import zip_longest as izip_longest
-    from functools import reduce, partial
-    _none_type = type(None)
-    _int_type = int
-    _long_type = int
-    _float_type = float
-    _text_type = str
-    _binary_type = bytes
 
-    import io
-    def _is_file(f):
-        return isinstance(f, io.IOBase)
+def _is_file(f):
+    return isinstance(f, io.IOBase)
 
 
 __all__ = ["tabulate", "tabulate_formats", "simple_separated_format"]
