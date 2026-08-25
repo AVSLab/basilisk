@@ -11,4 +11,3 @@ The following support documents are for the Basilisk user who is seeking general
 
    User/FAQ
    User/FAQwindows
-   User/migratingToBsk2

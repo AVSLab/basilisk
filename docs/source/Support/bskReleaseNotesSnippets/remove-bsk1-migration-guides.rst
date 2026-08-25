@@ -1,0 +1,1 @@
+- Removed the obsolete Basilisk 1.x-to-2.x user and module migration guides.
