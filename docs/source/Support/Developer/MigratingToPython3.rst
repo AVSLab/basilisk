@@ -4,14 +4,11 @@
 Migrating BSK Scripts to Python 3
 =================================
 
-With release Basilisk v0.8.x onward the software framework now supports using Python 3. The purpose of this document is to illustrate how to
-migrate Python 2 BSK scripts such that they will function in both Python
-3 and Python 2. For the time being Python 2 is still supported as a
-deprecated functionality. But, python scripts committed to Basilisk
-should be written such that they support Python 3 and 2 for now. This
-document serves as compilation of BSK common syntactical adjustments
-needed to use Python 3. It is not a comprehensive list of the
-differences between Python 2 and Python 3.
+Basilisk supports Python 3 only. This document summarizes common changes
+needed when migrating legacy Python 2 BSK scripts to Python 3. New and
+updated scripts should target the supported Python 3 versions declared by
+the project. This is not a comprehensive list of the differences between
+Python 2 and Python 3.
 
 Dividing Scalars
 ----------------
@@ -22,9 +19,8 @@ integers operated on. Thus::
        a = 3/2
 
 resulted in an integer value of 1 in Python 2, but yields a float value
-of 1.5 in Python 3. To get the same result in Python 3 and 2, you can
-use either of the following options which work in both version of
-Python::
+of 1.5 in Python 3. During migration, choose floor division or
+floating-point division explicitly to preserve the intended behavior::
 
        a = 3//2
        a = 3./2
@@ -38,10 +34,10 @@ Without modification the user will see an error in Python 3 complaining about an
        SimModel::logThisMessage(std::string,uint64_t)
        SimModel::logThisMessage(std::string)
 
-Returning Lists Instead of Iterables
-------------------------------------
+Dictionary Iteration
+--------------------
 
-Python 3 removed ``iteritems()`` method. The same functionality can be achieved in both Python 2 and 3 with ``items()``.
+Python 3 removed the ``iteritems()`` method. Replace it with ``items()``.
 
 Range, Map, Zip
 ---------------
@@ -54,7 +50,8 @@ iterable object. To preserve functionality, cast as a list::
 Print
 -----
 
-Print is treated as a statement in Python 2 and strictly a function in Python 3. For both 3 and 2::
+Print is treated as a statement in Python 2 and as a function in Python 3.
+Use the function-call form::
 
    print(x)
 
