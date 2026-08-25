@@ -262,7 +262,7 @@ def getStructSize(self):
             raise ValueError(f"{sizeof_variable_name} not found in globals()")
     except (NameError) as e:
         typeString = 'sizeof_' + repr(self).split(';')[0].split('.')[-1]
-        raise NameError(e.message + '\nYou tried to get this size macro: ' + typeString +
+        raise NameError(str(e) + '\nYou tried to get this size macro: ' + typeString +
             '\n It appears to be undefined.  \nYou need to run the SWIG GEN_SIZEOF' +
             ' SWIG macro against the class/struct in your SWIG file if you want to ' +
             ' make this call.\n')
