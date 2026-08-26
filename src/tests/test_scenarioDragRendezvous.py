@@ -66,3 +66,20 @@ def test_scenarioDragRendezvous(show_plots):
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
     assert testFailCount < 1, testMessages
+
+
+@pytest.mark.scenarioTest
+def test_scenario_drag_rendezvous_j2_no_wind(capfd):
+    """Verify the J2/no-wind configuration runs without a planet-orientation warning."""
+    results = sdr.drag_simulator(
+        0.0,  # [m] altitude offset
+        0.1,  # [deg] true anomaly offset
+        1,  # [-] density multiplier
+        ctrlType='lqr',
+        useJ2=True,
+        useWind=False,
+    )
+
+    out, _ = capfd.readouterr()
+    assert len(results["dynTimeData"]) > 0
+    assert "no planet-orientation message" not in out

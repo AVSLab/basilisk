@@ -297,8 +297,8 @@ def drag_simulator(
     earth.isCentralBody = True
     mu = earth.mu
     if useJ2:
-        ggm03s_path = get_path(DataFile.LocalGravData.GGM03S)
-        earth.useSphericalHarmonicsGravityModel(str(ggm03s_path), 2)
+        ggm03s_j2_only_path = get_path(DataFile.LocalGravData.GGM03S_J2_only)
+        earth.useSphericalHarmonicsGravityModel(str(ggm03s_j2_only_path), 2)
 
     # timeInitString = '2021 MAY 04 07:47:48.965 (UTC)'
     # spiceObject = gravFactory.createSpiceInterface(time=timeInitString)
