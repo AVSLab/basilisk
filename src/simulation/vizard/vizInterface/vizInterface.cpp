@@ -1237,18 +1237,17 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             zmq_msg_t empty_frame2;
             zmq_msg_t request_buffer;
 
+            if (zmq_msg_init_size(&request_buffer, serializedMessage.size()) != 0) {
+                bskLogger.bskError("Vizard 2-way request buffer allocation failed.");
+            }
+            memcpy(zmq_msg_data(&request_buffer), serializedMessage.data(), serializedMessage.size());
+
             void* header_message = malloc(10 * sizeof(char));
             memcpy(header_message, "SIM_UPDATE", 10);
-
-            // ZMQ owns this buffer and frees it via message_buffer_deallocate().
-            void* request_message = malloc(serializedMessage.size());
-            memcpy(request_message, serializedMessage.data(), serializedMessage.size());
 
             zmq_msg_init_data(&request_header, header_message, 10, message_buffer_deallocate, NULL);
             zmq_msg_init(&empty_frame1);
             zmq_msg_init(&empty_frame2);
-            zmq_msg_init_data(&request_buffer, request_message, serializedMessage.size(),
-                              message_buffer_deallocate, NULL);
 
             // Send to 2-WAY (REQUESTER) socket
             zmq_msg_send(&request_header, this->requester_socket, ZMQ_SNDMORE);
@@ -1407,70 +1406,64 @@ void VizInterface::receiveUserInput(uint64_t CurrentSimNanos){
         void* vizPoint = zmq_msg_data(&viz_response);
 
         // Set up and fill VizInput message
-        vizProtobufferMessage::VizInput* msgRecv = new vizProtobufferMessage::VizInput;
-        msgRecv->ParseFromArray(vizPoint, vizPointSize);
+        vizProtobufferMessage::VizInput msgRecv;
+        msgRecv.ParseFromArray(vizPoint, vizPointSize);
 
         // Set up output VizUserInputMsgPayload message
         VizUserInputMsgPayload outMsgBuffer;
         outMsgBuffer = this->userInputMsg.zeroMsgPayload;
-        outMsgBuffer.frameNumber = static_cast<int>(msgRecv->framenumber());
+        outMsgBuffer.frameNumber = static_cast<int>(msgRecv.framenumber());
 
         // Parse keyboard inputs
-        const std::string& keys = msgRecv->keyinputs().keys();
+        const std::string& keys = msgRecv.keyinputs().keys();
         if (keys.length() > 0) {
             outMsgBuffer.keyboardInput = keys;
         }
 
         // Receive VizBroadcastSyncSettings
-        const vizProtobufferMessage::VizBroadcastSyncSettings* vbss = &(msgRecv->broadcastsyncsettings());
-        // Remove "const"ness for compatibility with protobuffer access methods
-        vizProtobufferMessage::VizBroadcastSyncSettings* vbss_nc;
-        vbss_nc = const_cast<vizProtobufferMessage::VizBroadcastSyncSettings*>(vbss);
+        vizProtobufferMessage::VizBroadcastSyncSettings* broadcastSyncSettings =
+            msgRecv.mutable_broadcastsyncsettings();
 
         // Iterate through VizEventReply objects
-        for (int i=0; i<msgRecv->replies_size(); i++) {
-            const vizProtobufferMessage::VizEventReply* ver = &(msgRecv->replies(i));
-
-            // Remove "const"ness for compatibility with protobuffer access methods
-            vizProtobufferMessage::VizEventReply* ver_nc;
-            ver_nc = const_cast<vizProtobufferMessage::VizEventReply*>(ver);
+        for (int i=0; i<msgRecv.replies_size(); i++) {
+            const vizProtobufferMessage::VizEventReply& reply = msgRecv.replies(i);
 
             // Create EventReply containers and pack into userInputMsg
-            VizEventReply* er = new VizEventReply();
-            er->eventHandlerID = *(ver_nc->mutable_eventhandlerid());
-            er->reply = *(ver_nc->mutable_reply());
-            er->eventHandlerDestroyed = ver_nc->eventhandlerdestroyed();
-            outMsgBuffer.vizEventReplies.push_back(*er);
+            VizEventReply eventReply;
+            eventReply.eventHandlerID = reply.eventhandlerid();
+            eventReply.reply = reply.reply();
+            eventReply.eventHandlerDestroyed = reply.eventhandlerdestroyed();
+            outMsgBuffer.vizEventReplies.push_back(eventReply);
 
             // Populate VizEventReply in VizBroadcastSyncSettings
-            vizProtobufferMessage::VizEventReply* ver_nc_bss = vbss_nc->add_dialogevents();
-            ver_nc_bss->set_eventhandlerid(er->eventHandlerID);
-            ver_nc_bss->set_reply(er->reply);
-            ver_nc_bss->set_eventhandlerdestroyed(er->eventHandlerDestroyed);
+            vizProtobufferMessage::VizEventReply* broadcastReply =
+                broadcastSyncSettings->add_dialogevents();
+            broadcastReply->set_eventhandlerid(eventReply.eventHandlerID);
+            broadcastReply->set_reply(eventReply.reply);
+            broadcastReply->set_eventhandlerdestroyed(eventReply.eventHandlerDestroyed);
         }
 
-        // Serialize and send BroadcastSyncSettings*/
-        uint32_t syncByteCount = (uint32_t) vbss_nc->ByteSizeLong();
+        // Serialize and send broadcast synchronization settings
+        const size_t syncByteCount = broadcastSyncSettings->ByteSizeLong();
 
         // Serialize if in broadcastStream mode
         if (syncByteCount > 0 && this->broadcastStream) {
-            void* sync_settings = malloc(syncByteCount);
-            vbss_nc->SerializeToArray(sync_settings, (int) syncByteCount);
+            std::string serializedSyncSettings;
+            broadcastSyncSettings->SerializeToString(&serializedSyncSettings);
 
-            // Send sync settings message to BROADCAST (PUBLISHER) socket */
+            // Send sync settings message to BROADCAST (PUBLISHER) socket
             int sendStatus = zmq_send(this->publisher_socket, "SYNC_SETTINGS", 13, ZMQ_SNDMORE);
             if (sendStatus == -1) {
                 bskLogger.bskError("Broadcast header did not send to socket.");
             }
-            sendStatus = zmq_send(this->publisher_socket, sync_settings, syncByteCount, 0);
+            sendStatus = zmq_send(this->publisher_socket, serializedSyncSettings.data(),
+                                  serializedSyncSettings.size(), 0);
             if (sendStatus == -1) {
                 bskLogger.bskError("Broadcast protobuffer did not send to socket.");
             }
         }
 
         this->userInputMsg.write(&outMsgBuffer, this->moduleID, CurrentSimNanos);
-
-        delete msgRecv;
     }
     else {
         bskLogger.bskError("Vizard 2-way [2]: Did not return a user input message.");
