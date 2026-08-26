@@ -25,8 +25,8 @@ r"""
 Overview
 --------
 
-This scenario demonstrates how to set up a spacecraft orbiting a celestial body. The gravity can be a first order
-approximation or run with high-order spherical harmonic terms.  The following diagram illustrates how the
+This scenario demonstrates how to set up a spacecraft orbiting a celestial body. The gravity can use a point-mass
+approximation or include the zonal :math:`J_2` spherical harmonic term.  The following diagram illustrates how the
 Basilisk components are interconnected.
 
 .. image:: /_images/static/test_scenarioBasicOrbit.svg
@@ -173,15 +173,12 @@ In this case the Earth's spherical harmonics are turned on.
     show_plots = True, orbitCase='LEO', useSphericalHarmonics=True, planetCase='Mars'
 
 This case illustrates a circular Low Mars Orbit or LMO with a non-zero orbit inclination.
-In this simulation setup the planet's spherical harmonics are turned on.
+In this simulation setup the planet's zonal :math:`J_2` spherical harmonic term is turned on.
 
-.. image:: /_images/Scenarios/scenarioBasicOrbit1LEO0Mars.svg
+.. image:: /_images/Scenarios/scenarioBasicOrbit1LEO1Mars.svg
    :align: center
 
-.. image:: /_images/Scenarios/scenarioBasicOrbit2LEO0Mars.svg
-   :align: center
-
-.. image:: /_images/Scenarios/scenarioBasicOrbit3LEO0Mars.svg
+.. image:: /_images/Scenarios/scenarioBasicOrbit2LEO1Mars.svg
    :align: center
 
 """
@@ -304,8 +301,8 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
             # the get_path() method returns the data path to supportData folder
             # if the repository was cloned, and to the pooch cached file if a
             # wheel install was performed.
-            ggm2b_path = get_path(DataFile.LocalGravData.GGM2BData)
-            planet.useSphericalHarmonicsGravityModel(str(ggm2b_path), 100)
+            ggm2b_j2_only_path = get_path(DataFile.LocalGravData.GGM2B_J2_only)
+            planet.useSphericalHarmonicsGravityModel(str(ggm2b_j2_only_path), 2)
 
     else:  # Earth
         planet = gravFactory.createEarth()
@@ -337,8 +334,8 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
     # with the planet's longitude, so the planet orientation must be supplied via a planet-orientation message
     # (e.g. `gravFactory.createSpiceInterface()`).  Without it the planet is treated as non-rotating and those
     # longitude-dependent terms no longer average out, producing spurious secular drift in the orbit (see issue
-    # #1352).  The Earth case above deliberately uses a J2-only (purely zonal) field, which depends only on
-    # latitude and is unaffected by planet rotation, which is why no SPICE interface is needed here.  For a
+    # #1352).  The Earth and Mars cases above deliberately use J2-only (purely zonal) fields, which depend only on
+    # latitude and are unaffected by planet rotation, which is why no SPICE interface is needed here.  For a
     # high-fidelity field with tesseral terms, attach the planet rotation -- see ``scenarioOrbitMultiBody`` and
     # ``scenarioOrbitConsistencyVerification``.
 

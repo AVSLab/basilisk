@@ -56,7 +56,8 @@ import scenarioBasicOrbit
     ('GTO', False, 'Earth'),
     ('GEO', False, 'Earth'),
     ('LEO', True, 'Earth'),
-    ('LEO', False, 'Mars')
+    ('LEO', False, 'Mars'),
+    ('LEO', True, 'Mars')
 ])
 @pytest.mark.scenarioTest
 
