@@ -318,6 +318,7 @@ class DataFile:
 
     class LocalGravData(Enum):
         eros007790 = "eros007790.tab"
+        GGM2B_J2_only = "GGM2B-J2-only.txt"
         GGM2BData = "GGM2BData.txt"
         GGM03S_J2_only = "GGM03S-J2-only.txt"
         GGM03S = "GGM03S.txt"
