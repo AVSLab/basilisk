@@ -114,10 +114,10 @@ struct SpicePlanetStateMsg_C;
             "2024/09/07",
             "Using 'useSphericalHarmParams = True/False' to turn on/off the spherical harmonics"
             " is deprecated. Prefer the following syntax:\n"
-            "\tplanet.useSphericalHarmonicsGravityModel('GGM2BData.txt', 100)\n"
+            "\tplanet.useSphericalHarmonicsGravityModel('GGM2BData.txt', 80)\n"
             "Over:\n"
             "\tplanet.useSphericalHarmParams = True\n"
-            "\tsimIncludeGravBody.loadGravFromFile('GGM2BData.txt', planet.spherHarm, 100)"
+            "\tsimIncludeGravBody.loadGravFromFile('GGM2BData.txt', planet.spherHarm, 80)"
         )
         if self.useSphericalHarmParams and not value:
             self.gravityModel = PointMassGravityModel()
