@@ -54,6 +54,11 @@ Version |release| (July 7, 2026)
   supported 4.x release.
 - Clean Conan builds now remove the configured build folder (``dist3`` by default) and Basilisk Numba cache
   artifacts, preventing generator conflicts and reuse of stale compiled Numba objects after API changes.
+- BSK-1445: The documented Mars spherical-harmonics configuration in :ref:`scenarioBasicOrbit` requested degree
+  100 from a gravity file whose maximum degree/order is 80 and failed before simulation initialization. In addition,
+  :ref:`scenarioDragRendezvous` loaded orientation-dependent tesseral terms when ``useJ2=True`` and ``useWind=False``.
+  Both examples now use zonal-only :math:`J_2` gravity fields and run without requiring planet rotation. This is
+  fixed in the current version.
 - The deprecated ``--managePipEnvironment``, ``--autoKey``, ``--allOptPkg``, ``--pyPkgCanary``, and
   ``--examples`` source-build options have been removed. ``python conanfile.py`` now configures and builds the
   native project without modifying the Python environment; the updated source-install instructions install the

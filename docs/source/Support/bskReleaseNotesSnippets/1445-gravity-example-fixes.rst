@@ -1,0 +1,2 @@
+- Fixed the documented Mars spherical-harmonics configuration in :ref:`scenarioBasicOrbit` to use a packaged zonal :math:`J_2` field instead of requesting an unsupported gravity-field degree.
+- Corrected :ref:`scenarioDragRendezvous` to load a zonal-only gravity field when ``useJ2=True``, avoiding orientation-dependent tesseral terms when planet rotation is not configured.
