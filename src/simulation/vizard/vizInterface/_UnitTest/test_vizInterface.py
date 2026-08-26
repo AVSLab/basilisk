@@ -24,11 +24,13 @@
 #   Creation Date:      November 4, 2024
 #
 
+import gc
 import inspect
 import os
 import tempfile
 
 import numpy as np
+import psutil
 import pytest
 
 # Protobuffer-specific modules are generated with vizInterface.
@@ -138,6 +140,68 @@ def test_vizInterface_closes_output_files(tmp_path):
 
     del viz
     second_output.unlink()
+
+
+@pytest.mark.flaky(reruns=3, reruns_delay=0)
+def test_vizInterface_broadcast_without_subscriber():
+    r"""Verify that broadcast-only execution remains memory-bounded without a Vizard subscriber.
+
+    This exercises the publisher serialization path and the no-save-file return
+    path over multiple frames. RSS is sampled after an initial warm-up so one-time
+    Python, protobuf, and ZeroMQ allocations are excluded from the measured growth.
+    A subscriber is intentionally absent because a ZeroMQ publisher must be able
+    to operate without one.
+    """
+    taskRate = macros.sec2nano(0.01)  # [ns]
+    warmupFrames = 200
+    measuredFrames = 2000
+    totalFrames = warmupFrames + measuredFrames
+    warmupTime = warmupFrames * taskRate  # [ns]
+    simulationTime = totalFrames * taskRate  # [ns]
+    # Comparable macOS soak runs grew about 0.5 MiB with the fix and more than
+    # 4.5 MiB with the original leak; this limit allows for allocator noise.
+    maxAllowedGrowth = 3.0  # [MiB]
+
+    unitTestSim = SimulationBaseClass.SimBaseClass()
+    testProcess = unitTestSim.CreateNewProcess("broadcastProcess")
+    testProcess.addTask(unitTestSim.CreateNewTask("broadcastTask", taskRate))
+
+    spacecraftModel = spacecraft.Spacecraft()
+    spacecraftModel.ModelTag = "broadcastSat"
+    unitTestSim.AddModelToTask("broadcastTask", spacecraftModel)
+
+    viz = vizSupport.enableUnityVisualization(
+        unitTestSim,
+        "broadcastTask",
+        spacecraftModel,
+        saveFile=None,
+        liveStream=False,
+        broadcastStream=True,
+    )
+
+    viz.pubComAddress = "127.0.0.1"
+    viz.pubPortNumber = "*"
+
+    unitTestSim.InitializeSimulation()
+    unitTestSim.ConfigureStopTime(warmupTime)
+    unitTestSim.ExecuteSimulation()
+
+    process = psutil.Process(os.getpid())
+    gc.collect()
+    initialMemory = process.memory_info().rss / 1024**2  # [MiB]
+
+    unitTestSim.ConfigureStopTime(simulationTime)
+    unitTestSim.ExecuteSimulation()
+
+    gc.collect()
+    finalMemory = process.memory_info().rss / 1024**2  # [MiB]
+    memoryGrowth = finalMemory - initialMemory  # [MiB]
+
+    assert viz.FrameNumber == totalFrames
+    assert memoryGrowth < maxAllowedGrowth, (
+        f"Broadcast-only RSS grew by {memoryGrowth:.2f} MiB over {measuredFrames} frames; "
+        f"expected less than {maxAllowedGrowth:.2f} MiB."
+    )
 
 
 def vizInterfaceTest(show_plots, accuracy, output_file):
