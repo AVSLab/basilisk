@@ -21,6 +21,7 @@
 #define GROUND_LOCATION_H
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <cstdint>
 #include <Eigen/Dense>
 #include <string>
 #include <vector>
@@ -58,6 +59,8 @@ class SpacecraftLocation : public SysModel
     double theta_solar;     //!< [r] (optional) illumination half-cone angle, treating aHat_B as the surface normal
     double min_illumination_factor; //!< [] (optional) minimum amount of illumination due to eclipse necessary to observe
     double min_shadow_factor;       //!< [] (DEPRECATED) Alias for min_illumination_factor. Use min_illumination_factor instead.
+    double glareThreshold; //!< [-] minimum specular alignment classified as glare; defaults to 0.95
+    bool useGlareConstraint; //!< [-] if true, detected glare prevents access; defaults to false
 
     ReadFunctor<SCStatesMsgPayload> primaryScStateInMsg;        //!< primary spacecraft input message
     ReadFunctor<SpicePlanetStateMsgPayload> planetInMsg;        //!< (optional) planet state input message

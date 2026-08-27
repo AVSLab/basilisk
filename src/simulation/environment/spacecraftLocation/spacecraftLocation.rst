@@ -5,7 +5,7 @@ This module determines if one satellite has a line of sight vector to another sa
 
 Further, the module tracks a body-fixed location `L` on the primary spacecraft (i.e. location where an antenna is attached), and you can specify an optional sensor/communication bore sight axis :math:`\hat{\bf a}` and a center-to-edge sensor/communication cone angle :math:`\theta`.  In this case the access message is true if the line of sight vector between spacecraft is above the surface and the relative position vector to the other spacecraft is within this cone.
 
-Lighting conditions are also considered. If `theta_solar` is set, the module will check that the normal :math:`\hat{\bf a}` is illuminated by the sun with at most that incidence angle.
+Lighting conditions are also considered. If ``theta_solar`` is set, the module checks that the normal :math:`\hat{\bf a}` is illuminated by the Sun with at most that incidence angle. When a Sun message is connected, the module also reports how closely the tracked spacecraft aligns with the ideal specular reflection from the body-fixed location. This geometric glare metric can optionally prevent access so that overexposed observations are scheduled for re-imaging.
 
 Finally, if the other spacecraft is accessible, the range to the other satellite is stored in the output message.
 
@@ -13,6 +13,8 @@ Finally, if the other spacecraft is accessible, the range to the other satellite
 Module Assumptions and Limitations
 ----------------------------------
 This module assumes all spacecraft are orbiting the same planet.  The planet shape is assumed to be an ellipsoid specified through the equatorial and polar radius.  To account for a planet's atmosphere, increase these radii to account for the atmospheric height.
+
+The glare output is a geometric specular-alignment metric. It does not model a bidirectional reflectance distribution function, surface roughness, wavelength-dependent material properties, absolute irradiance, camera exposure, or sensor saturation. Consequently, ``hasGlare`` indicates a user-configured risk geometry rather than proving that an image is overexposed.
 
 Message Connection Descriptions
 -------------------------------
@@ -30,7 +32,7 @@ provides information on what this message is used for.
     input scStateInMsgs SCStatesMsgPayload
         vector of other spacecraft state input messages.  These are set through ``addSpacecraftToModel()``.
     input sunInMsg SpicePlanetStateMsgPayload
-        (optional) sun state input message. Used for illumination checking if the message is connected and ``theta_solar`` is set.
+        (optional) Sun state input message. Used for illumination and glare checking when connected.
     input eclipseInMsg EclipseMsgPayload
         (optional) eclipse input message. Used for illumination checking if the message is connected and ``min_illumination_factor`` is set.
     output accessOutMsgs AccessMsgPayload
@@ -46,6 +48,7 @@ The ``spacecraftLocation`` module handles the following behavior:
 #. The planet-centered planet-fixed frame is either a zero state (default), or read in through an optional planet ephemeris message
 #. An optional sensor axis can be specified to ensure the primary spacecraft is pointing this axis
 #. Computation of spacecraft visibility (i.e. access) considering range and relative field-of-view constraints
+#. Computation of Sun incidence, tracked-spacecraft view angle, and geometric specular-glare alignment at the body-fixed location
 #. Support for multiple other spacecraft given one ``spacecraftLocation`` instance
 
 
@@ -108,12 +111,39 @@ If this :math:`\hat{\bf a}` is considered, then the access output message sets t
 
 Determining Solar Illumination
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-If the ``sunInMsg`` is connected and :math:`\theta_{\text{solar,max}}` is set, the illumination of the surface is considered, treating :math:`\hat{\bf a}` as the surface normal. Taking :math:`\hat{\bf s}` as the sun vector, the illumination incidence condition is met if
+If the ``sunInMsg`` is connected and :math:`\theta_{\text{solar,max}}` is set, the illumination of the surface is considered, treating :math:`\hat{\bf a}` as the surface normal. Let :math:`L` be the body-fixed location, :math:`H` the Sun, and :math:`S` the tracked spacecraft. The unit location-to-Sun and location-to-spacecraft vectors are
 
 .. math::
-    \arccos \left( \hat{\bf a} \cdot \hat{\bf s} \right) = \theta_{\text{solar}} \le \theta_{\text{solar,max}}
+    \hat{\bf l} = \frac{{}^{N}{\bf r}_{H/N} - {}^{N}{\bf r}_{L/N}}
+    {\left|{}^{N}{\bf r}_{H/N} - {}^{N}{\bf r}_{L/N}\right|},
+    \qquad
+    \hat{\bf v} = \frac{{}^{N}{\bf r}_{S/N} - {}^{N}{\bf r}_{L/N}}
+    {\left|{}^{N}{\bf r}_{S/N} - {}^{N}{\bf r}_{L/N}\right|}.
+
+The illumination incidence condition is met if
+
+.. math::
+    \arccos \left( \hat{\bf a} \cdot \hat{\bf l} \right) = \theta_{\text{solar}} \le \theta_{\text{solar,max}}.
 
 If an eclipse message is connected and ``min_illumination_factor`` is set, the module will also check that the illumination factor is above this threshold.
+
+Determining Specular Glare
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+For an illuminated, front-facing surface, the ideal outgoing reflection of incoming sunlight is
+
+.. math::
+    \hat{\bf r} = 2\left(\hat{\bf a}\cdot\hat{\bf l}\right)\hat{\bf a} - \hat{\bf l}.
+
+The module defines the dimensionless geometric glare factor as
+
+.. math::
+    g = \max\left(0,\hat{\bf r}\cdot\hat{\bf v}\right),
+
+with :math:`g=0` when either the Sun or tracked spacecraft is behind the surface. The value is clamped to :math:`[0,1]`, and :math:`g=1` is exact alignment with the specular reflection. This single alignment test captures both equal incidence/view angles and coplanarity, including the normal-incidence case where cross-product-based plane normals are undefined.
+
+This is the geometric alignment underlying the specular term in the `Blinn--Phong model used by van Wijk et al. <https://arxiv.org/abs/2308.02743>`__. That model can additionally apply material coefficients, a shininess exponent, light intensity, and sensor-dependent thresholds when radiometric overexposure fidelity is required.
+
+The output ``hasGlare`` is set when ``glareFactor >= glareThreshold``. The default ``glareThreshold`` is 0.95. If no surface normal is supplied through ``aHat_B``, both glare outputs remain zero. By default, glare is reported without modifying access. Setting ``useGlareConstraint`` to ``True`` also clears ``hasAccess`` for glared observations, allowing an inspection planner to leave those points available for re-imaging.
 
 User Guide
 ----------
@@ -143,6 +173,18 @@ To set a primary spacecraft body fixed sensor or communication axis :math:`\hat{
 
     module.aHat_B = [xxx, xxx, xxx]
     module.theta = xxx * macros.D2R
+
+For a surface inspection point, configure the body-fixed point location and outward normal, connect the Sun, and optionally reject glared views::
+
+    location.r_LB_B = [xPoint, yPoint, zPoint]  # [m]
+    location.aHat_B = [cHatX, cHatY, cHatZ]  # [-]
+    location.theta = 90.0 * macros.D2R  # [rad]
+    location.theta_solar = 90.0 * macros.D2R  # [rad]
+    location.glareThreshold = 0.95  # [-]
+    location.useGlareConstraint = True
+    location.sunInMsg.subscribeTo(sunMsg)
+
+The output ``glareFactor`` can be retained as an observation-quality feature even when ``useGlareConstraint`` is ``False``. For a point-cloud RSO model, create one module instance per body-fixed point and connect each instance to the same Sun and imaging-spacecraft state messages.
 
 
 Spacecraft can be added to the model by calling::

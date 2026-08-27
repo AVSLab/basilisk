@@ -1,0 +1,2 @@
+- Added geometric specular-glare detection and an optional glare access constraint to :ref:`spacecraftLocation`.
+- Corrected :ref:`spacecraftLocation` illumination and viewing angles to originate at the configured body-fixed location.

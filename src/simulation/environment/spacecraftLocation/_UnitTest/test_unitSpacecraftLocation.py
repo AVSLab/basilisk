@@ -208,6 +208,154 @@ def test_spacecraftLocationColinearAccess(show_plots):
     np.testing.assert_allclose(accessMsg.slantRange, rOther - rPrimary, rtol=1e-6)
 
 
+@pytest.mark.parametrize(
+    "caseName, sunPolarAngle, sunAzimuth, viewPolarAngle, viewAzimuth, expectedGlareFactor, "
+    "useGlareConstraint, expectedAccess",
+    [
+        (
+            "normal_incidence",
+            0.0,  # [rad]
+            0.0,  # [rad]
+            0.0,  # [rad]
+            0.0,  # [rad]
+            1.0,  # [-]
+            True,
+            0,  # [-]
+        ),
+        (
+            "exact_oblique",
+            np.pi / 6,  # [rad]
+            0.0,  # [rad]
+            np.pi / 6,  # [rad]
+            np.pi,  # [rad]
+            1.0,  # [-]
+            False,
+            1,  # [-]
+        ),
+        (
+            "near_miss",
+            np.pi / 6,  # [rad]
+            0.0,  # [rad]
+            np.pi / 18,  # [rad]
+            np.pi,  # [rad]
+            np.cos(np.pi / 9),  # [-]
+            True,
+            1,  # [-]
+        ),
+        (
+            "out_of_plane",
+            np.pi / 6,  # [rad]
+            0.0,  # [rad]
+            np.pi / 6,  # [rad]
+            np.pi / 2,  # [rad]
+            0.75,  # [-]
+            True,
+            1,  # [-]
+        ),
+        (
+            "back_facing_sun",
+            2 * np.pi / 3,  # [rad]
+            0.0,  # [rad]
+            0.0,  # [rad]
+            0.0,  # [rad]
+            0.0,  # [-]
+            True,
+            1,  # [-]
+        ),
+    ],
+)
+def test_spacecraftLocationGlare(
+        caseName,
+        sunPolarAngle,
+        sunAzimuth,
+        viewPolarAngle,
+        viewAzimuth,
+        expectedGlareFactor,
+        useGlareConstraint,
+        expectedAccess):
+    """Verify specular-glare geometry and its optional access constraint.
+
+    Validation Test Description
+    ---------------------------
+    The test places an offset body-fixed location far from the inertial origin,
+    then supplies point-to-Sun and point-to-viewer directions with known mirror
+    geometry. This verifies the glare factor, threshold flag, access behavior,
+    and the use of the body-fixed location as the origin of both directions.
+
+    Test Parameter Discussion
+    -------------------------
+    The cases cover normal and oblique exact reflections, an in-plane near
+    miss, an out-of-plane view, and a Sun direction behind the surface.
+    ``useGlareConstraint`` also verifies that glare rejection is opt-in.
+
+    Expected Results
+    ----------------
+    Exact reflections produce a glare factor of one. Off-specular and
+    back-facing cases produce the analytical factor supplied by the test and
+    do not meet the default 0.95 glare threshold.
+    """
+    def direction_from_normal(polarAngle, azimuth):
+        """Return a unit direction measured from the positive x-axis.
+
+        :param polarAngle: Polar angle from the surface normal in radians.
+        :param azimuth: Azimuth about the surface normal in radians.
+        :return: Unit direction vector.
+        """
+        return np.array([
+            np.cos(polarAngle),
+            np.sin(polarAngle) * np.cos(azimuth),
+            np.sin(polarAngle) * np.sin(azimuth),
+        ])
+
+    scSim = SimulationBaseClass.SimBaseClass()
+    dynProcess = scSim.CreateNewProcess("simProcess")
+    simulationTimeStep = macros.sec2nano(1.0)  # [ns]
+    dynProcess.addTask(scSim.CreateNewTask("simTask", simulationTimeStep))
+
+    module = spacecraftLocation.SpacecraftLocation()
+    module.ModelTag = "scLocationGlare_" + caseName
+    module.rEquator = 1.0  # [m]
+    module.rPolar = 1.0  # [m]
+    locationOffset_B = np.array([2.0, -3.0, 1.0])  # [m]
+    module.r_LB_B = locationOffset_B
+    module.aHat_B = [1.0, 0.0, 0.0]  # [-]
+    module.theta = np.pi / 2  # [rad]
+    module.glareThreshold = 0.95  # [-]
+    module.useGlareConstraint = useGlareConstraint
+    scSim.AddModelToTask("simTask", module)
+
+    primaryPosition_N = np.array([1.0e9, -2.0e9, 3.0e9])  # [m]
+    primaryMsgData = messaging.SCStatesMsgPayload()
+    primaryMsgData.r_BN_N = primaryPosition_N
+    primaryMsg = messaging.SCStatesMsg().write(primaryMsgData)
+    module.primaryScStateInMsg.subscribeTo(primaryMsg)
+
+    locationPosition_N = primaryPosition_N + locationOffset_B  # [m]
+    sunDirection_N = direction_from_normal(sunPolarAngle, sunAzimuth)
+    sunDistance = 1.0e6  # [m]
+    sunMsgData = messaging.SpicePlanetStateMsgPayload()
+    sunMsgData.PositionVector = locationPosition_N + sunDistance * sunDirection_N
+    sunMsg = messaging.SpicePlanetStateMsg().write(sunMsgData)
+    module.sunInMsg.subscribeTo(sunMsg)
+
+    viewDirection_N = direction_from_normal(viewPolarAngle, viewAzimuth)
+    viewingDistance = 1.0e3  # [m]
+    otherMsgData = messaging.SCStatesMsgPayload()
+    otherMsgData.r_BN_N = locationPosition_N + viewingDistance * viewDirection_N
+    otherMsg = messaging.SCStatesMsg().write(otherMsgData)
+    module.addSpacecraftToModel(otherMsg)
+
+    scSim.InitializeSimulation()
+    scSim.TotalSim.SingleStepProcesses()
+    accessMsg = module.accessOutMsgs[0].read()
+
+    np.testing.assert_allclose(accessMsg.sunIncidenceAngle, sunPolarAngle, atol=1e-10)
+    np.testing.assert_allclose(accessMsg.scViewAngle, viewPolarAngle, atol=1e-10)
+    np.testing.assert_allclose(accessMsg.glareFactor, expectedGlareFactor, atol=1e-10)
+    assert accessMsg.hasGlare == int(expectedGlareFactor >= module.glareThreshold)
+    assert accessMsg.hasAccess == expectedAccess
+
+
 if __name__ == '__main__':
     run(False
         , False      # defaultPolarRadius

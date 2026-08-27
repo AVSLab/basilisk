@@ -35,10 +35,11 @@ typedef struct {
     double az_dot; //!< [rad/s] Azimuth angle rate for a given spacecraft in the SEZ rotating frame.
     double r_BL_L[3]; //!<[m] Spacecraft position relative to the groundLocation in the SEZ frame.
     double v_BL_L[3]; //!<[m/s] SEZ relative time derivative of r_BL vector in SEZ vector components.
-    uint64_t hasIllumination;//!< [-] 1 when illumination constraints are met; 0 otherwise.
-    double sunIncidenceAngle; //!<[rad] Angle between bore-sight and Sun vector
-    double scViewAngle;  //!<[rad] Angle between bore-sight and deputy SC vector
+    uint64_t hasIllumination; //!< [-] 1 when illumination constraints are met; 0 otherwise.
+    double sunIncidenceAngle; //!< [rad] Angle between the surface normal and location-to-Sun vector.
+    double scViewAngle; //!< [rad] Angle between the surface normal and location-to-spacecraft vector.
+    uint64_t hasGlare; //!< [-] 1 when the specular glare factor meets the configured threshold; 0 otherwise.
+    double glareFactor; //!< [-] Alignment of the tracked spacecraft with the ideal specular reflection, in [0, 1].
 }AccessMsgPayload;
-
 
 #endif /* accessSimMsg.h */

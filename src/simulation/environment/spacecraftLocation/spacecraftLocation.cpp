@@ -21,6 +21,7 @@
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/linearAlgebra.h"
 
+#include <algorithm>
 #include <iostream>
 
 /*! @brief Creates an instance of the SpacecraftLocation class
@@ -38,6 +39,8 @@ SpacecraftLocation::SpacecraftLocation()
     this->theta_solar = -1.0;
     this->min_illumination_factor = -1.0;
     this->min_shadow_factor = -2.0;      // Initialize to -2 (different from min_illumination_factor to detect if user sets it
+    this->glareThreshold = 0.95; // [-]
+    this->useGlareConstraint = false;
 
     this->planetState = this->planetInMsg.zeroMsgPayload;
     this->planetState.J20002Pfix[0][0] = 1;
@@ -88,6 +91,10 @@ SpacecraftLocation::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
         if (this->aHat_B.norm() < 0.001) {
             bskLogger.bskError("SpacecraftLocation must set aHat_B if you specify theta_solar");
         }
+    }
+
+    if (this->glareThreshold < 0.0 || this->glareThreshold > 1.0) {
+        bskLogger.bskError("SpacecraftLocation glareThreshold must be in the range [0, 1]");
     }
 
     if (this->min_shadow_factor != -2.0) {
@@ -170,7 +177,6 @@ SpacecraftLocation::ReadMessages()
         this->eclipseInMsgData = this->eclipseInMsg();
     }
 
-
     return (planetRead && scRead && sunRead && eclipseRead);
 }
 
@@ -202,7 +208,24 @@ SpacecraftLocation::computeAccess()
     // compute primary spacecraft relative to planet
     Eigen::MRPd sigma_BN = cArray2EigenMRPd(this->primaryScStatesBuffer.sigma_BN);
     Eigen::Matrix3d dcm_NB = sigma_BN.toRotationMatrix();
-    r_LP_P = this->dcm_PN * (this->r_BN_N + dcm_NB * this->r_LB_B - this->r_PN_N);
+    Eigen::Vector3d r_LN_N = this->r_BN_N + dcm_NB * this->r_LB_B;
+    r_LP_P = this->dcm_PN * (r_LN_N - this->r_PN_N);
+
+    const double surfaceNormalTolerance = 1e-3; // [-]
+    const double vectorNormTolerance = 1e-12; // [m]
+    const bool hasSurfaceNormal = this->aHat_B.norm() > surfaceNormalTolerance;
+    Eigen::Vector3d aHat_N;
+    Eigen::Vector3d sunHat_L_N;
+    double sunIncidenceAngle = 0.0; // [rad]
+    if (this->sunInMsg.isLinked() && hasSurfaceNormal) {
+        aHat_N = (dcm_NB * this->aHat_B).normalized();
+        Eigen::Vector3d r_HL_N = this->r_HN_N - r_LN_N;
+        if (r_HL_N.norm() < vectorNormTolerance) {
+            bskLogger.bskError("SpacecraftLocation location-to-Sun vector must have nonzero length");
+        }
+        sunHat_L_N = r_HL_N.normalized();
+        sunIncidenceAngle = safeAcos(aHat_N.dot(sunHat_L_N));
+    }
 
     // do affine scaling to map ellipsoid to sphere
     r_LP_P[2] = r_LP_P[2] * this->zScale;
@@ -265,19 +288,37 @@ SpacecraftLocation::computeAccess()
             // Assume illumination conditions are met; then check for unmet conditions
             this->accessMsgBuffer.at(c).hasIllumination = 1;
 
-            // aHat vector in inertial frame
-            Eigen::Vector3d aHat_N = dcm_NB * this->aHat_B;
+            if (hasSurfaceNormal) {
+                // Vector from the body-fixed location to the tracked spacecraft
+                Eigen::Vector3d r_SL_N = r_SN_N - r_LN_N;
+                if (r_SL_N.norm() < vectorNormTolerance) {
+                    bskLogger.bskError("SpacecraftLocation location-to-spacecraft vector must have nonzero length");
+                }
+                Eigen::Vector3d scViewHat_L_N = r_SL_N.normalized();
 
-            // Vector from spacecraft to Sun
-            Eigen::Vector3d r_SL_N = r_SN_N - this->r_BN_N;
+                // Calculate the sun-incidence angle and spacecraft-view angle
+                double scViewAngle = safeAcos(aHat_N.dot(scViewHat_L_N));
 
-            // Calculate the sun-incidence angle and spacecraft-view angle
-            double sunIncidenceAngle = safeAcos(aHat_N.dot(this->r_HN_N) / (aHat_N.norm() * this->r_HN_N.norm()));
-            double scViewAngle = safeAcos(aHat_N.dot(r_SL_N) / (aHat_N.norm() * r_SL_N.norm()));
+                // Store the angles in the output buffer
+                this->accessMsgBuffer.at(c).sunIncidenceAngle = sunIncidenceAngle;
+                this->accessMsgBuffer.at(c).scViewAngle = scViewAngle;
 
-            // Store the angles in the output buffer
-            this->accessMsgBuffer.at(c).sunIncidenceAngle = sunIncidenceAngle;
-            this->accessMsgBuffer.at(c).scViewAngle = scViewAngle;
+                // Compare the view direction with the ideal reflection of incoming sunlight.
+                double glareFactor = 0.0; // [-]
+                double sunNormalProjection = aHat_N.dot(sunHat_L_N);
+                double viewNormalProjection = aHat_N.dot(scViewHat_L_N);
+                if (sunNormalProjection > 0.0 && viewNormalProjection > 0.0) {
+                    Eigen::Vector3d reflectedSunHat_N = 2.0 * sunNormalProjection * aHat_N - sunHat_L_N;
+                    glareFactor = std::clamp(reflectedSunHat_N.dot(scViewHat_L_N), 0.0, 1.0);
+                }
+                this->accessMsgBuffer.at(c).glareFactor = glareFactor;
+                if (glareFactor >= this->glareThreshold) {
+                    this->accessMsgBuffer.at(c).hasGlare = 1;
+                    if (this->useGlareConstraint) {
+                        this->accessMsgBuffer.at(c).hasAccess = 0;
+                    }
+                }
+            }
 
             // Check if location is illuminated if threshold is set
             if (this->theta_solar >= 0.0) {

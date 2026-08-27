@@ -14,6 +14,9 @@ Version |release| (July 7, 2026)
   ``SimBaseClass.AddVariableForLogging()`` and ``GetLogVariableData()`` methods, causing every
   Monte Carlo variable-retention request to fail with ``AttributeError``. Variable retention now
   creates and reads the supported module logger directly.
+- :ref:`spacecraftLocation` formed its Sun direction from the inertial origin and its viewing direction from the
+  primary spacecraft center instead of the configured body-fixed location. Illumination and viewing angles for
+  translated or offset locations are corrected in the current version.
 - Every state effector acting as a parent published the inertial state of its attachment frame once
   per task step from its own ``UpdateState()``. A child effector therefore evaluated its loads against
   kinematics a full task step old. These are now refreshed within the integration.
