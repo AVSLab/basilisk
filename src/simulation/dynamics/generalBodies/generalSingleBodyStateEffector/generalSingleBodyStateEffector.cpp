@@ -30,6 +30,10 @@ GeneralSingleBodyStateEffector::GeneralSingleBodyStateEffector() {
     effectorID++;
 }
 
+GeneralSingleBodyStateEffector::~GeneralSingleBodyStateEffector() {
+    this->clearDOFs();
+}
+
 uint64_t GeneralSingleBodyStateEffector::effectorID = 1;
 
 void GeneralSingleBodyStateEffector::Reset(uint64_t currentSimNanos) {
