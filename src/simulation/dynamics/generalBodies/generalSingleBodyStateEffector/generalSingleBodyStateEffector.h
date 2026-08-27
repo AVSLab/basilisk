@@ -86,7 +86,38 @@ private:
     Eigen::Vector3d r_G0B_B{Eigen::Vector3d::Zero()};
     Eigen::Matrix3d dcm_G0B{Eigen::Matrix3d::Identity()};
 
+    uint64_t numDOF{};
+    std::vector<double> betaInitList;
+    std::vector<double> betaDotInitList;
+
+    Eigen::VectorXd beta;
+    Eigen::VectorXd betaDot;
+    StateData* betaState = nullptr;
+    StateData* betaDotState = nullptr;
+    Eigen::MatrixXd* inertialPositionProperty = nullptr;
+    Eigen::MatrixXd* inertialVelocityProperty = nullptr;
+
+    Eigen::MatrixXd TMat;
+    Eigen::MatrixXd TPrimeMat;
+    Eigen::MatrixXd UMat;
+    Eigen::VectorXd vVec{Eigen::VectorXd::Zero(6)};
+    Eigen::Vector3d r_GB_B{Eigen::Vector3d::Zero()};
+    Eigen::Vector3d r_GcN_N{Eigen::Vector3d::Zero()};
+    Eigen::Vector3d v_GcN_N{Eigen::Vector3d::Zero()};
+    Eigen::Vector3d sigma_GN{Eigen::Vector3d::Zero()};
+    Eigen::Vector3d omega_GN_G{Eigen::Vector3d::Zero()};
+
+    Eigen::MatrixXd ABeta;
+    Eigen::MatrixXd BBeta;
+    Eigen::VectorXd CBeta;
+
+    Eigen::Matrix3d dcm_BN{Eigen::Matrix3d::Identity()};
+    Eigen::Vector3d omega_BN_B{Eigen::Vector3d::Zero()};
+
     static uint64_t effectorID;
+
+    std::string nameOfBetaState;
+    std::string nameOfBetaDotState;
 };
 
 #endif /* GENERAL_SINGLE_BODY_STATE_EFFECTOR_H */
