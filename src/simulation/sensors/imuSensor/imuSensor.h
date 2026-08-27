@@ -20,9 +20,11 @@
 #ifndef IMU_SENSOR_H
 #define IMU_SENSOR_H
 
-#include <vector>
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <cstdint>
 #include <random>
+#include <vector>
+
+#include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/utilities/gauss_markov.h"
 #include "architecture/utilities/discretize.h"
 #include "architecture/utilities/saturate.h"
@@ -35,36 +37,39 @@
 #include "architecture/utilities/avsEigenMRP.h"
 #include "architecture/utilities/bskLogging.h"
 
-
 /*! @class ImuSensor
  * @brief An IMU sensor model that simulates accelerometer and gyro measurements with configurable noise
  *
  * The IMU sensor supports various noise configurations through:
- * - Error bounds: Maximum allowed deviations from truth
- * - PMatrix: Noise covariance matrix (diagonal elements = noiseStd * 1.5)
- * - AMatrix: Propagation matrix for error model (defaults to 3x3 identity matrix)
+ * - PMatrix: Matrix square root of the process-noise covariance
+ * - AMatrix: Propagation matrix for the error model
+ * - Error bounds: Optional hard bounds on the propagated error states
  *
  * Default behaviors:
- * - AMatrixGyro: Initialized as 3x3 identity matrix
- * - AMatrixAccel: Initialized as 3x3 identity matrix
- * - Error bounds: Set to zero by default
+ * - AMatrixGyro: Initialized as a 3x3 zero matrix for white noise
+ * - AMatrixAccel: Initialized as a 3x3 zero matrix for white noise
+ * - Hard clipping: Disabled by default
  * - Noise matrices: Set to zero by default
  *
  * Example Python usage:
  * @code
+ *     imu = imuSensor.ImuSensor()
+ *
  *     # Configure accelerometer noise (m/s^2)
- *     senTransNoiseStd = 0.001
- *     PMatrixAccel = [0.0] * 9
- *     PMatrixAccel[0] = PMatrixAccel[4] = PMatrixAccel[8] = senTransNoiseStd * 1.5
- *     imuSensor.PMatrixAccel = PMatrixAccel
- *     imuSensor.setErrorBoundsAccel([0.1, 0.1, 0.1])
+ *     imu.PMatrixAccel = [[0.001, 0.0, 0.0],
+ *                         [0.0, 0.001, 0.0],
+ *                         [0.0, 0.0, 0.001]]
  *
  *     # Configure gyro noise (rad/s)
- *     senRotNoiseStd = 0.0001
- *     PMatrixGyro = [0.0] * 9
- *     PMatrixGyro[0] = PMatrixGyro[4] = PMatrixGyro[8] = senRotNoiseStd * 1.5
- *     imuSensor.PMatrixGyro = PMatrixGyro
- *     imuSensor.setErrorBoundsGyro([0.01, 0.01, 0.01])
+ *     imu.PMatrixGyro = [[0.0001, 0.0, 0.0],
+ *                        [0.0, 0.0001, 0.0],
+ *                        [0.0, 0.0, 0.0001]]
+ *
+ *     # Optional: configure a bounded gyro random walk explicitly
+ *     imu.setAMatrixGyro([[1.0, 0.0, 0.0],
+ *                         [0.0, 1.0, 0.0],
+ *                         [0.0, 0.0, 1.0]])
+ *     imu.setErrorBoundsGyro([0.01, 0.01, 0.01])
  * @endcode
  */
 class ImuSensor: public SysModel {
@@ -110,7 +115,7 @@ public:
     Eigen::Vector3d getErrorBoundsGyro() const;
 
 public:
-    ReadFunctor<SCStatesMsgPayload> scStateInMsg; /*!< input essage name for spacecraft state */
+    ReadFunctor<SCStatesMsgPayload> scStateInMsg; /*!< input message name for spacecraft state */
     Message<IMUSensorMsgPayload> sensorOutMsg;        /*!< output message name for IMU output data */
     Eigen::Vector3d sensorPos_B;              /*!< [m] IMU sensor location in body */
     Eigen::Matrix3d dcm_PB;                //!< -- Transform from body to platform
@@ -120,12 +125,12 @@ public:
 	double senTransMax;					//!< [m/s2] Accelerometer saturation value
     uint64_t OutputBufferCount;         //!< -- number of output msgs stored
     bool NominalReady;                  //!< -- Flag indicating that system is in run
-    Eigen::Matrix3d PMatrixAccel;   //!< [-] Cholesky-decomposition or matrix square root of the covariance matrix to apply errors with
+    Eigen::Matrix3d PMatrixAccel;   //!< [m/s^2] Matrix square root of the accelerometer process-noise covariance
 	Eigen::Matrix3d AMatrixAccel;   //!< [-] AMatrix that we use for error propagation
-	Eigen::Vector3d navErrorsAccel; //!< [-] Current navigation errors applied to truth
-	Eigen::Matrix3d PMatrixGyro;    //!< [-] Cholesky-decomposition or matrix square root of the covariance matrix to apply errors with
+	Eigen::Vector3d navErrorsAccel; //!< [m/s^2] Current acceleration errors applied to truth
+	Eigen::Matrix3d PMatrixGyro;    //!< [rad/s] Matrix square root of the gyro process-noise covariance
 	Eigen::Matrix3d AMatrixGyro;    //!< [-] AMatrix that we use for error propagation
-	Eigen::Vector3d navErrorsGyro;  //!< [-] Current navigation errors applied to truth
+	Eigen::Vector3d navErrorsGyro;  //!< [rad/s] Current angular-rate errors applied to truth
 
     IMUSensorMsgPayload trueValues;         //!< [-] total measurement without perturbations
     IMUSensorMsgPayload sensedValues;       //!< [-] total measurement including perturbations
@@ -155,7 +160,7 @@ private:
     Eigen::Vector3d previous_omega_BN_B;        //!< -- omega_BN_B from the previous spacecraft message
     Eigen::Vector3d current_omega_BN_B;         //!< -- omega_BN_B from the current spacecraft message
     Eigen::Vector3d current_nonConservativeAccelpntB_B; //!< -- nonConservativeAccelpntB_B from the current message
-    Eigen::Vector3d current_omegaDot_BN_B;      //!< -- omegaDot_BN_B from the curret spacecraft message
+    Eigen::Vector3d current_omegaDot_BN_B;      //!< -- omegaDot_BN_B from the current spacecraft message
     Eigen::Vector3d previous_TotalAccumDV_BN_B; //!< -- TotalAccumDV_BN_B from the previous spacecraft message
     Eigen::Vector3d current_TotalAccumDV_BN_B; //!< -- TotalAccumDV_BN_B from the current spacecraft message
 
