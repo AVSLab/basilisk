@@ -20,6 +20,7 @@
 #ifndef COARSE_SUN_SENSOR_H
 #define COARSE_SUN_SENSOR_H
 
+#include <cstdint>
 #include <vector>
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 
@@ -47,28 +48,29 @@ typedef enum {
     NOMINAL
 } CSSFaultState_t;
 
-/*! @class CoarseSunSensor
- * @brief Coarse sun sensor model that simulates sun vector measurements with configurable noise
+/**
+ * @class CoarseSunSensor
+ * @brief Coarse sun sensor model that simulates sun vector measurements with configurable noise.
  *
- * The CSS supports noise configuration through:
- * - Walk bounds: Maximum allowed deviations from truth [-]
- * - Noise std: Standard deviation of measurement noise [-]
- * - AMatrix: Propagation matrix for error model (defaults to identity)
- * - Fault noise: Additional noise when in fault state [-]
+ * The nominal sensor error is propagated as @f$e_{k+1} = A e_k + w_k@f$,
+ * where @f$w_k@f$ is zero-mean Gaussian noise with standard deviation
+ * ``senNoiseStd``. The default propagation matrix is zero, so setting only
+ * ``senNoiseStd`` produces independent white measurement noise. Set
+ * ``AMatrix`` to a nonzero value to model temporally correlated noise and set
+ * ``walkBounds`` to a positive value to apply a hard bound to the error state.
  *
- * Example Python usage:
- * @code
+ * @code{.py}
  *     cssSensor = CoarseSunSensor()
  *
- *     # Configure noise (dimensionless)
- *     cssSensor.senNoiseStd = 0.001      # Standard deviation
- *     cssSensor.walkBounds = 0.01        # Maximum error bound
+ *     # Independent, dimensionless Gaussian measurement noise
+ *     cssSensor.senNoiseStd = 0.001
  *
- *     # Optional: Configure error propagation (default is identity)
- *     cssSensor.setAMatrix([[1]])        # 1x1 matrix for scalar measurement
+ *     # Optional bounded random walk
+ *     cssSensor.setAMatrix([[1.0]])
+ *     cssSensor.walkBounds = 0.01
  *
- *     # Optional: Configure fault noise
- *     cssSensor.faultNoiseStd = 0.5      # Noise when in fault state
+ *     # Optional fault noise
+ *     cssSensor.faultNoiseStd = 0.5
  * @endcode
  */
 class CoarseSunSensor: public SysModel {
@@ -122,8 +124,17 @@ public:
     int                 CSSGroupID=-1;          //!< [-] (optional) CSS group id identifier, -1 means it is not set and default is used
     BSKLogger bskLogger;                        //!< -- BSK Logging
 
-    void setAMatrix(const Eigen::Matrix<double, -1, 1, 0, -1, 1>& propMatrix);
-    Eigen::Matrix<double, -1, 1, 0, -1, 1> getAMatrix() const;
+    /**
+     * @brief Set the nominal sensor-error propagation matrix.
+     * @param propMatrix One-by-one propagation matrix.
+     */
+    void setAMatrix(const Eigen::VectorXd& propMatrix);
+
+    /**
+     * @brief Get the nominal sensor-error propagation matrix.
+     * @return Current one-by-one propagation matrix.
+     */
+    Eigen::VectorXd getAMatrix() const;
 
 private:
     SpicePlanetStateMsgPayload sunData;             //!< [-] Unused for now, but including it for future
@@ -133,7 +144,7 @@ private:
     GaussMarkov noiseModel;                     //! [-] Gauss Markov noise generation model
     GaussMarkov faultNoiseModel;                //! [-] Gauss Markov noise generation model exclusively for CSS fault
     Saturate saturateUtility;                   //! [-] Saturation utility
-    Eigen::Matrix<double, -1, 1, 0, -1, 1> propagationMatrix;  // Store the propagation matrix
+    Eigen::VectorXd propagationMatrix;             //!< [-] nominal sensor-error propagation matrix
 };
 
 //!@brief Constellation of coarse sun sensors for aggregating output information

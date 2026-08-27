@@ -1,0 +1,1 @@
+- :ref:`coarsesunsensor` now produces white measurement noise by default when ``senNoiseStd`` is set, while explicit propagation matrices still support correlated noise and bounded random walks; its Python ``setAMatrix()`` and ``getAMatrix()`` bindings are now usable without an opaque-object memory-leak warning.

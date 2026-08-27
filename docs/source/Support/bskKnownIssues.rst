@@ -79,6 +79,12 @@ Version |release| (July 7, 2026)
   convergence tests ran at a fraction of the intended measurement noise. The tests now draw noise with
   ``sigma = sqrt(qObsVal)`` from a local seeded generator and check convergence against a noise-appropriate
   tolerance. This is fixed in the current version.
+- BSK-1460: Setting only ``senNoiseStd`` on :ref:`coarsesunsensor` produced an unbounded random walk
+  because the nominal error propagation matrix defaulted to identity while the negative default
+  ``walkBounds`` disabled hard clipping. The propagation matrix now defaults to zero, so
+  ``senNoiseStd`` produces independent white measurement noise. The Python ``setAMatrix()`` and
+  ``getAMatrix()`` bindings now also accept and return the documented matrix representation without
+  emitting an opaque-object memory-leak warning. This is fixed in the current version.
 - A depleting :ref:`FuelTank` with attached fuel slosh particles reported the
   commanded total outflow as the tank component rate while the slosh
   effectors reported zero mass rate. The integrated component masses and
