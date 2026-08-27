@@ -10,6 +10,10 @@ Basilisk Known Issues
 
 Version |release| (July 7, 2026)
 --------------------------------
+- GitHub issue 1459: ``RetentionPolicy.addVariableLog()`` still called the removed
+  ``SimBaseClass.AddVariableForLogging()`` and ``GetLogVariableData()`` methods, causing every
+  Monte Carlo variable-retention request to fail with ``AttributeError``. Variable retention now
+  creates and reads the supported module logger directly.
 - Every state effector acting as a parent published the inertial state of its attachment frame once
   per task step from its own ``UpdateState()``. A child effector therefore evaluated its loads against
   kinematics a full task step old. These are now refreshed within the integration.
