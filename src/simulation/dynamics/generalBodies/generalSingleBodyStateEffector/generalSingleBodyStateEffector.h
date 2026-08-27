@@ -169,6 +169,8 @@ private:
 
     std::string nameOfBetaState;
     std::string nameOfBetaDotState;
+
+    void addDOF(std::shared_ptr<DOF> newDOF);
 };
 
 #endif /* GENERAL_SINGLE_BODY_STATE_EFFECTOR_H */
