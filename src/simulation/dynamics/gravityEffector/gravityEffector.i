@@ -33,8 +33,6 @@ from Basilisk.simulation.pointMassGravityModel import PointMassGravityModel
 from Basilisk.simulation.polyhedralGravityModel import PolyhedralGravityModel
 from Basilisk.simulation.sphericalHarmonicsGravityModel import SphericalHarmonicsGravityModel
 
-from Basilisk.utilities import deprecated
-
 Polyhedral = PolyhedralGravityModel
 SphericalHarmonics = SphericalHarmonicsGravityModel
 
@@ -107,51 +105,18 @@ struct SpicePlanetStateMsg_C;
     def useSphericalHarmParams(self):
         return isinstance(self.gravityModel, SphericalHarmonicsGravityModel)
 
-    @useSphericalHarmParams.setter
-    def useSphericalHarmParams(self, value: bool):
-        deprecated.deprecationWarn(
-            "GravBodyData.useSphericalHarmParams setter",
-            "2024/09/07",
-            "Using 'useSphericalHarmParams = True/False' to turn on/off the spherical harmonics"
-            " is deprecated. Prefer the following syntax:\n"
-            "\tplanet.useSphericalHarmonicsGravityModel('GGM2BData.txt', 80)\n"
-            "Over:\n"
-            "\tplanet.useSphericalHarmParams = True\n"
-            "\tsimIncludeGravBody.loadGravFromFile('GGM2BData.txt', planet.spherHarm, 80)"
-        )
-        if self.useSphericalHarmParams and not value:
-            self.gravityModel = PointMassGravityModel()
-        elif not self.useSphericalHarmParams and value:
-            self.gravityModel = SphericalHarmonicsGravityModel()
-
     @property
     def usePolyhedral(self):
         return isinstance(self.gravityModel, PolyhedralGravityModel)
-
-    @usePolyhedral.setter
-    def usePolyhedral(self, value: bool):
-        deprecated.deprecationWarn(
-            "GravBodyData.usePolyhedral setter",
-            "2024/09/07",
-            "Using 'usePolyhedral = True/False' to turn on/off the polyhedral model"
-            " is deprecated. Prefer the following syntax:\n"
-            "\tplanet.usePolyhedralGravityModel('eros.txt')\n"
-            "Over:\n"
-            "\tplanet.usePolyhedral = True\n"
-            "\tsimIncludeGravBody.loadPolyFromFile('eros.txt', planet.poly)"
-        )
-        if self.usePolyhedral and not value:
-            self.gravityModel = PointMassGravityModel()
-        elif not self.usePolyhedral and value:
-            self.gravityModel = PolyhedralGravityModel()
 
     @property
     def spherHarm(self) -> SphericalHarmonicsGravityModel:
         if self.useSphericalHarmParams:
             return self.gravityModel
-        else:
-            raise ValueError("GravBodyData is not using spherical harmonics as a gravity model. "
-                "Call 'useSphericalHarmonicsGravityModel(...)' or set 'useSphericalHarmParams' to 'True' before retrieving 'spherHarm'.")
+        raise ValueError(
+            "GravBodyData is not using spherical harmonics as a gravity model. "
+            "Call 'useSphericalHarmonicsGravityModel(...)' before retrieving 'spherHarm'."
+        )
 
     @spherHarm.setter
     def spherHarm(self, value: SphericalHarmonicsGravityModel):
@@ -161,9 +126,10 @@ struct SpicePlanetStateMsg_C;
     def poly(self) -> PolyhedralGravityModel:
         if self.usePolyhedral:
             return self.gravityModel
-        else:
-            raise ValueError("GravBodyData is not using the polyhedral gravity model. "
-                "Call 'usePolyhedralGravityModel(...)' or set 'usePolyhedral' to 'True' before retrieving 'poly'.")
+        raise ValueError(
+            "GravBodyData is not using the polyhedral gravity model. "
+            "Call 'usePolyhedralGravityModel(...)' before retrieving 'poly'."
+        )
 
     @poly.setter
     def poly(self, value: PolyhedralGravityModel):
