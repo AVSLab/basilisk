@@ -12,6 +12,43 @@ how to run it, as well as testing.
 The corruption types are outlined in this
 :download:`PDF Description </../../src/simulation/sensors/imuSensor/_Documentation/BasiliskCorruptions.pdf>`.
 
+Sensor Noise Model
+------------------
+
+The nominal sensor error is a scalar Gauss-Markov process,
+
+.. math::
+
+    e_{k+1} = a e_k + w_k, \qquad
+    w_k \sim \mathcal{N}(0, \mathtt{senNoiseStd}^2),
+
+where ``a`` is the one-by-one propagation matrix configured with
+``setAMatrix()``. The default value is ``a = 0``, so setting only a positive
+``senNoiseStd`` adds independent white Gaussian noise with the requested
+standard deviation to each measurement::
+
+    css = coarseSunSensor.CoarseSunSensor()
+    css.senNoiseStd = 0.017  # [-]
+
+Temporally correlated noise is enabled explicitly by setting a nonzero
+propagation factor. For :math:`|a| < 1`, the stationary error standard
+deviation is
+
+.. math::
+
+    \sigma_e = \frac{\mathtt{senNoiseStd}}{\sqrt{1-a^2}}.
+
+An identity propagation matrix creates a random walk. A positive
+``walkBounds`` value applies a hard bound to that error state::
+
+    css.setAMatrix([[1.0]])
+    css.walkBounds = 0.05  # [-]
+
+A non-positive ``walkBounds`` disables hard clipping; it does not disable
+state propagation. The matrix configured by ``setAMatrix()`` applies only to
+the nominal measurement-noise model and does not alter the separate CSS fault
+noise model.
+
 .. warning::
   Be careful when generating CSS objects in a loop or using a function! It is often
   convenient to initialize many CSS' with the same attributes using a loop with a

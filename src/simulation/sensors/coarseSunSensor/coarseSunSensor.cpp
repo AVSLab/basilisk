@@ -35,7 +35,7 @@ CoarseSunSensor::CoarseSunSensor()
     this->senBias = 0.0;
     this->senNoiseStd = 0.0;
     this->faultNoiseStd = 0.5;
-    this->walkBounds = -1.0; // don't allow random walk by default
+    this->walkBounds = -1.0; // [-] disable hard clipping by default
     this->noiseModel = GaussMarkov(1, this->RNGSeed);
     this->faultNoiseModel = GaussMarkov(1, this->RNGSeed+1);
     this->faultState = NOMINAL;
@@ -62,7 +62,7 @@ CoarseSunSensor::CoarseSunSensor()
     this->sunDistanceFactor = 1.0;
     this->dcm_PB.setIdentity(3,3);
     this->propagationMatrix.resize(1);
-    this->propagationMatrix(0) = 1.0;
+    this->propagationMatrix(0) = 0.0; // [-] produce white measurement noise by default
     return;
 }
 
@@ -128,10 +128,8 @@ void CoarseSunSensor::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
     }
 
     Eigen::VectorXd nMatrix;
-    Eigen::VectorXd pMatrix;
     Eigen::VectorXd bounds;
     nMatrix.resize(1,1);
-    pMatrix.resize(1,1);
     bounds.resize(1,1);
 
     this->noiseModel.setRNGSeed(this->RNGSeed);
@@ -143,9 +141,6 @@ void CoarseSunSensor::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 
         bounds(0,0) = this->walkBounds;
         this->noiseModel.setUpperBounds(bounds);
-
-        // Only set propagation matrix once
-        this->noiseModel.setPropMatrix(this->propagationMatrix);
     }
 
     // Fault Noise Model
@@ -161,10 +156,10 @@ void CoarseSunSensor::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
     nMatrixFault(0,0) = this->faultNoiseStd; // sensor noise standard dev
     this->faultNoiseModel.setNoiseMatrix(nMatrixFault);
 
-    boundsFault(0,0) = 2.0; // walk bounds
+    boundsFault(0,0) = 2.0; // [-] walk bounds
     this->faultNoiseModel.setUpperBounds(boundsFault);
 
-    pMatrixFault(0,0) = 1.0; // propagation matrix
+    pMatrixFault(0,0) = 1.0; // [-] propagation matrix
     this->faultNoiseModel.setPropMatrix(pMatrixFault);
 
     Eigen::Matrix<double, 1, 2> satBounds;
@@ -172,9 +167,8 @@ void CoarseSunSensor::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
     satBounds(0,1) = this->maxOutput;
     this->saturateUtility.setBounds(satBounds);
 
-    // Set up noise model with stored propagation matrix
+    // Set up the nominal noise model with the stored propagation matrix.
     this->noiseModel.setPropMatrix(this->propagationMatrix);
-    this->faultNoiseModel.setPropMatrix(this->propagationMatrix);
 }
 
 void CoarseSunSensor::readInputMessages()
@@ -441,26 +435,16 @@ void CSSConstellation::appendCSS(CoarseSunSensor* newSensor) {
     return;
 }
 
-/*!
-    Setter for `AMatrix` used for error propagation
-    @param propMatrix Matrix to set
-*/
-void CoarseSunSensor::setAMatrix(const Eigen::Matrix<double, -1, 1, 0, -1, 1>& propMatrix)
+void CoarseSunSensor::setAMatrix(const Eigen::VectorXd& propMatrix)
 {
     if(propMatrix.rows() != 1 || propMatrix.cols() != 1) {
         bskLogger.bskError("CoarseSunSensor: Propagation matrix must be 1x1");
     }
     this->propagationMatrix = propMatrix;
-    // Set the propagation matrix for both noise models
     this->noiseModel.setPropMatrix(propMatrix);
-    this->faultNoiseModel.setPropMatrix(propMatrix);
 }
 
-/*!
-    Getter for `AMatrix` used for error propagation
-    @return Current matrix
-*/
-Eigen::Matrix<double, -1, 1, 0, -1, 1> CoarseSunSensor::getAMatrix() const
+Eigen::VectorXd CoarseSunSensor::getAMatrix() const
 {
     return this->propagationMatrix;
 }
