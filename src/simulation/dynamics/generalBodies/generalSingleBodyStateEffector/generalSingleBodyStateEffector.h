@@ -38,6 +38,17 @@ public:
     GeneralSingleBodyStateEffector();
     ~GeneralSingleBodyStateEffector() = default;
 
+    void setMass(const double mass) {this->mass = mass;};
+    void setIPntGc_G(const Eigen::Matrix3d IPntGc_G) {this->IPntGc_G = IPntGc_G;};
+    void setR_GcG_G(const Eigen::Vector3d r_GcG_G) {this->r_GcG_G = r_GcG_G;};
+    void setR_G0B_B(Eigen::Vector3d r_G0B_B) {this->r_G0B_B = r_G0B_B;};
+    void setDCM_G0B(Eigen::Matrix3d dcm_G0B) {this->dcm_G0B = dcm_G0B;};
+    double getMass() const {return this->mass;};
+    const Eigen::Matrix3d getIPntGc_G() const {return this->IPntGc_G;};
+    const Eigen::Vector3d getR_GcG_G() const {return this->r_GcG_G;};
+    Eigen::Vector3d getR_G0B_B() const {return this->r_G0B_B;};
+    Eigen::Matrix3d getDCM_G0B() const {return this->dcm_G0B;};
+
     void Reset(uint64_t currentSimNanos) override;
     void registerStates(DynParamManager& statesIn) override;
     void linkInStates(DynParamManager& states) override;
@@ -69,6 +80,12 @@ public:
     Message<SCStatesMsgPayload> generalSingleBodyConfigLogOutMsg;
 
 private:
+    double mass{};
+    Eigen::Matrix3d IPntGc_G{Eigen::Matrix3d::Identity()};
+    Eigen::Vector3d r_GcG_G{Eigen::Vector3d::Zero()};
+    Eigen::Vector3d r_G0B_B{Eigen::Vector3d::Zero()};
+    Eigen::Matrix3d dcm_G0B{Eigen::Matrix3d::Identity()};
+
     static uint64_t effectorID;
 };
 
