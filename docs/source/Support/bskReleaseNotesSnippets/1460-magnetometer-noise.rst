@@ -1,0 +1,1 @@
+- The :ref:`magnetometer` now produces white Gaussian noise by default when ``senNoiseStd`` is configured, supports explicit correlated and bounded-random-walk propagation through ``setAMatrix()``, and honors ``RNGSeed`` during reset.

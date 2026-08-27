@@ -85,10 +85,12 @@ class FaultInjectionTestScenario(BSKSim, BSKScenario):
         return
 
 
-def run_faults(faults, stop_sec=1.0):
+def run_faults(faults, stop_sec=1.0, initial_tam_a_matrix=None):
     scenario = FaultInjectionTestScenario()
     scenario.modeRequest = "hillPoint"
     scenario.configure_faults(faults)
+    if initial_tam_a_matrix is not None:
+        scenario.get_DynModel().TAM.setAMatrix(initial_tam_a_matrix)
     scenario.InitializeSimulation()
     scenario.ConfigureStopTime(macros.sec2nano(stop_sec))
     scenario.ExecuteSimulation()
@@ -258,15 +260,20 @@ def test_magnetometer_fault_modes():
 
 
 def test_mag_polar_noise_modes():
-    scenario_noise = run_faults([BSK_Faults.MagPolarNoise(time=0, faultType="NOISE")])
+    scenario_noise = run_faults(
+        [BSK_Faults.MagPolarNoise(time=0, faultType="NOISE")],
+        initial_tam_a_matrix=np.zeros((3, 3)),
+    )
     tam_noise = scenario_noise.get_DynModel().TAM
     assert as_flat_float_array(tam_noise.senNoiseStd).size == 3
     assert as_flat_float_array(tam_noise.walkBounds).size == 3
+    np.testing.assert_allclose(np.asarray(tam_noise.getAMatrix()), np.eye(3))
 
     scenario_spike = run_faults([BSK_Faults.MagPolarNoise(time=0, faultType="SPIKE")])
     tam_spike = scenario_spike.get_DynModel().TAM
     assert as_flat_float_array(tam_spike.spikeProbability)[0] > 0
     assert as_flat_float_array(tam_spike.spikeAmount)[0] > 0
+    np.testing.assert_allclose(np.asarray(tam_spike.getAMatrix()), np.eye(3))
 
 
 def test_fixedframe2lla_basic_case():

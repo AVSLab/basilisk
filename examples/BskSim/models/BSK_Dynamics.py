@@ -313,6 +313,8 @@ class BSKDynamicModels():
         # specify the optional TAM variables
         self.TAM.scaleFactor = 1.0
         self.TAM.senNoiseStd = [4e-9, 4e-9, 4e-9]  # [T]
+        # Preserve the BSK model's bounded random walk explicitly.
+        self.TAM.setAMatrix(np.eye(3))
         self.TAM.walkBounds = [15e-9, 15e-9, 15e-9]  # [T]
         self.TAM.stateInMsg.subscribeTo(self.scObject.scStateOutMsg)
         self.TAM.magInMsg.subscribeTo(self.magModule.envOutMsgs[0])

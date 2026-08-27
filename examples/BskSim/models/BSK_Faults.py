@@ -712,6 +712,11 @@ class MagPolarNoise(FaultObject):
         polarSpikeRate  = 0.1
         spikeAmount = 2.0
 
+        if self.faultType in ("NOISE", "BOTH"):
+            # Keep the documented bounded random walk explicit instead of relying
+            # on a sensor default.
+            dynModels.TAM.setAMatrix(np.eye(3))
+
         if self.faultType == "NOISE":
             dynModels.TAM.senNoiseStd = senNoise.tolist()
             dynModels.TAM.walkBounds  = walkBounds.tolist()
