@@ -97,6 +97,10 @@ Version |release| (July 7, 2026)
   and both noise models were initialized with the same random stream. Both propagation matrices now
   default to zero, and the accelerometer and gyro use independent repeatable streams. This is fixed
   in the current version.
+- BSK-1460: Configuring :ref:`starTracker` ``PMatrix`` produced an unbounded attitude-error random
+  walk by default. The propagation matrix now defaults to zero so ``PMatrix`` alone produces white
+  Gaussian attitude errors; random-walk behavior remains explicitly configurable. This is fixed in
+  the current version.
 - A depleting :ref:`FuelTank` with attached fuel slosh particles reported the
   commanded total outflow as the tank component rate while the slosh
   effectors reported zero mass rate. The integrated component masses and

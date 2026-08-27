@@ -1,0 +1,1 @@
+- The :ref:`starTracker` now produces white Gaussian attitude errors by default when ``PMatrix`` is configured. Correlated and bounded-random-walk propagation remains available through explicit ``setAMatrix()`` and ``setWalkBounds()`` calls.
