@@ -67,6 +67,30 @@ The magnetic field vector of the magnetic field models is considered to be "trut
 
 where :math:`\boldsymbol e_{noise}` is the Gaussian noise, :math:`\boldsymbol e_{bias}` is the bias applied on the magnetic field measurements, and :math:`f_{scale}` is the scale factor applied on the measurements for linear scaling.
 
+The noise state follows
+
+.. math::
+
+    \boldsymbol e_{k+1} = A\boldsymbol e_k + L\boldsymbol z_k,
+    \qquad \boldsymbol z_k \sim \mathcal{N}(\boldsymbol 0, I),
+
+where the diagonal entries of :math:`L` are configured with ``senNoiseStd``.
+The propagation matrix :math:`A` defaults to zero, so setting ``senNoiseStd``
+alone produces independent white Gaussian measurement noise with the requested
+standard deviation. ``RNGSeed`` controls the repeatable random sequence.
+
+A correlated process or random walk must be configured explicitly with
+``setAMatrix()``. For example, an identity propagation matrix and positive
+``walkBounds`` create a bounded random walk::
+
+    magSensor.setAMatrix([[1.0, 0.0, 0.0],
+                          [0.0, 1.0, 0.0],
+                          [0.0, 0.0, 1.0]])
+    magSensor.walkBounds = [1e-7, 1e-7, 1e-7]  # [T]
+
+Each positive ``walkBounds`` entry is an exact hard bound on the corresponding
+noise state. A non-positive entry disables clipping for that state.
+
 Saturation
 ^^^^^^^^^^
 Sensors might have specific saturation bounds for their measurements. It also prevents the sensor for giving a value less or higher than the possible hardware output. The saturated values are:
@@ -158,7 +182,7 @@ where (``psi``, ``theta``, ``phi``) are classical 3-2-1 Euler angles that map fr
 
 Specifying TAM Sensor Corruptions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Three types of TAM sensor corruptions can be simulated.  If not specified, all these corruptions are zeroed. To add a Gaussian noise component to the output, the 3d vector ``senNoiseStd`` is set to non-zero values.  This is the standard deviation of Gaussian noise in Tesla.  If any ``senNoiseStd`` component is negative then the noise is not applied.
+Three types of TAM sensor corruptions can be simulated.  If not specified, all these corruptions are zeroed. To add a Gaussian noise component to the output, the 3d vector ``senNoiseStd`` is set to positive values.  This is the standard deviation of Gaussian noise in Tesla.  If any ``senNoiseStd`` component is non-positive then the noise is not applied.
 
 Next, to simulate a constant bias, the variable ``senBias`` is set to a non-zero value. To simulate a linear scaling of the outputs, the variable ``scaleFactor`` is used.
 

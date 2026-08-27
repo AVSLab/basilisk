@@ -19,8 +19,9 @@
 
 #ifndef MAGNETOMETER_H
 #define MAGNETOMETER_H
-#include <vector>
+#include <cstdint>
 #include <random>
+#include <vector>
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 
 #include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
@@ -44,9 +45,9 @@ typedef enum {
  * @brief Magnetometer sensor model that simulates magnetic field measurements with configurable noise
  *
  * The magnetometer supports noise configuration through:
- * - Walk bounds: Maximum allowed deviations from truth [T]
- * - Noise std: Standard deviation of measurement noise [T]
- * - AMatrix: Propagation matrix for error model (defaults to identity)
+ * - Noise std: Standard deviation of the process innovation [T]
+ * - AMatrix: Propagation matrix for the error model (defaults to zero for white noise)
+ * - Walk bounds: Optional hard bounds on the propagated error state [T]
  * - Bias: Static measurement bias [T]
  *
  * Example Python usage:
@@ -54,14 +55,14 @@ typedef enum {
  *     magSensor = Magnetometer()
  *
  *     # Configure noise (Tesla)
- *     magSensor.senNoiseStd = [0.001, 0.001, 0.001]  # Standard deviation per axis
- *     magSensor.walkBounds([0.01, 0.01, 0.01])    # Maximum error bounds
+ *     magSensor.senNoiseStd = [1e-9, 1e-9, 1e-9]  # [T] White-noise standard deviation per axis
  *
  *     # Optional: Set static bias (Tesla)
- *     magSensor.senBias = [0.0001, 0.0001, 0.0001]
+ *     magSensor.senBias = [1e-8, 1e-8, 1e-8]  # [T]
  *
- *     # Optional: Configure error propagation (default is identity)
+ *     # Optional: Configure a bounded random walk explicitly
  *     magSensor.setAMatrix([[1,0,0], [0,1,0], [0,0,1]])
+ *     magSensor.walkBounds = [1e-7, 1e-7, 1e-7]  # [T]
  * @endcode
  */
 class Magnetometer : public SysModel {
@@ -102,7 +103,7 @@ public:
     Eigen::Vector3d     senBias;                //!< [T] Sensor bias vector
     Eigen::Vector3d     senNoiseStd;            //!< [T] Sensor noise standard deviation vector, can be changed during simulation
 
-    Eigen::Vector3d     walkBounds;             //!< [T] "3-sigma" errors to permit for states, can be changed during simulation
+    Eigen::Vector3d     walkBounds;             //!< [T] Hard bounds on noise states; non-positive entries disable clipping
     double              maxOutput;              //!< [T] Maximum output for saturation application
     double              minOutput;              //!< [T] Minimum output for saturation application
     Eigen::Vector3d     stuckValue;             //!< [T] Value for mag sensor to get stuck at
@@ -118,7 +119,7 @@ private:
     uint64_t numStates;                          //!< [-] Number of States for Gauss Markov Models
     GaussMarkov noiseModel;                      //!< [-] Gauss Markov noise generation model
     Saturate saturateUtility;                    //!< [-] Saturation utility
-    Eigen::Matrix3d AMatrix;      //!< [-] Error propagation matrix
+    Eigen::Matrix3d AMatrix;                     //!< [-] Error propagation matrix; defaults to zero for white noise
     Eigen::Vector3d pastValue;                   //!< [-] Measurement from last update (used only for faults)
     std::minstd_rand spikeProbabilityGenerator;  //! [-] Number generator for calculating probability of spike if faulty
 };

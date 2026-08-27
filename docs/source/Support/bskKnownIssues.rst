@@ -85,6 +85,10 @@ Version |release| (July 7, 2026)
   ``senNoiseStd`` produces independent white measurement noise. The Python ``setAMatrix()`` and
   ``getAMatrix()`` bindings now also accept and return the documented matrix representation without
   emitting an opaque-object memory-leak warning. This is fixed in the current version.
+- BSK-1460: Setting ``senNoiseStd`` on :ref:`magnetometer` produced a random walk instead of the
+  documented Gaussian measurement noise, and changing ``RNGSeed`` after construction did not change
+  its random sequence. The default propagation matrix is now zero and the configured seed is applied
+  during reset. This is fixed in the current version.
 - A depleting :ref:`FuelTank` with attached fuel slosh particles reported the
   commanded total outflow as the tank component rate while the slosh
   effectors reported zero mass rate. The integrated component masses and

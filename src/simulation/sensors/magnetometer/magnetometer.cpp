@@ -41,7 +41,7 @@ Magnetometer::Magnetometer()
     this->noiseModel.setNoiseMatrix(nMatrix);
 
     Eigen::MatrixXd pMatrix;
-    pMatrix.setIdentity(3,3);
+    pMatrix.setZero(3,3);
     this->noiseModel.setPropMatrix(pMatrix);
 
     this->noiseModel.setUpperBounds(this->walkBounds);
@@ -52,7 +52,7 @@ Magnetometer::Magnetometer()
     this->minOutput = -1e200; // Tesla
     this->saturateUtility = Saturate(static_cast<int64_t>(this->numStates));
     this->dcm_SB.setIdentity(3, 3);
-    this->AMatrix.setIdentity();
+    this->AMatrix.setZero();
     this->faultStateAxis[0] = NOMINAL;
     this->faultStateAxis[1] = NOMINAL;
     this->faultStateAxis[2] = NOMINAL;
@@ -90,10 +90,11 @@ void Magnetometer::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
         bskLogger.bskError("Spacecraft state message name (stateInMsg) is empty.");
     }
 
+    this->noiseModel.setRNGSeed(this->RNGSeed);
+    this->spikeProbabilityGenerator.seed(this->RNGSeed + 1);
+
     // Only apply noise if user has configured it
     if (this->walkBounds.norm() > 0 || this->senNoiseStd.norm() > 0) {
-        this->noiseModel.setUpperBounds(this->walkBounds);
-
         Eigen::MatrixXd nMatrix;
         nMatrix.resize(3,3);
         nMatrix.setZero();
@@ -101,6 +102,7 @@ void Magnetometer::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
         nMatrix(1,1) = this->senNoiseStd(1);
         nMatrix(2,2) = this->senNoiseStd(2);
         this->noiseModel.setNoiseMatrix(nMatrix);
+        this->noiseModel.setUpperBounds(this->walkBounds);
     }
 
     // Set saturation bounds
@@ -157,8 +159,6 @@ void Magnetometer::applySensorErrors()
         }
     }
     if (this->walkBounds.norm() > 0 || this->senNoiseStd.norm() > 0) {
-        this->noiseModel.setUpperBounds(this->walkBounds);
-
         Eigen::MatrixXd nMatrix;
         nMatrix.resize(3,3);
         nMatrix.setZero();
@@ -166,6 +166,7 @@ void Magnetometer::applySensorErrors()
         nMatrix(1,1) = this->senNoiseStd(1);
         nMatrix(2,2) = this->senNoiseStd(2);
         this->noiseModel.setNoiseMatrix(nMatrix);
+        this->noiseModel.setUpperBounds(this->walkBounds);
     }
     if (anyNoiseComponentUninitialized) {
         this->tamSensed_S = this->tamTrue_S;
