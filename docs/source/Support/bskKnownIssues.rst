@@ -89,6 +89,10 @@ Version |release| (July 7, 2026)
   documented Gaussian measurement noise, and changing ``RNGSeed`` after construction did not change
   its random sequence. The default propagation matrix is now zero and the configured seed is applied
   during reset. This is fixed in the current version.
+- BSK-1460: :ref:`tempMeasurement` propagated noise as a random walk and clipped it to
+  :math:`\pm 10^{-15}` degrees Celsius by default, instead of producing noise with the requested
+  standard deviation. The default propagation matrix is now zero and hard clipping is disabled by
+  default. This is fixed in the current version.
 - A depleting :ref:`FuelTank` with attached fuel slosh particles reported the
   commanded total outflow as the tank component rate while the slosh
   effectors reported zero mass rate. The integrated component masses and
