@@ -141,14 +141,14 @@
 
   <g inkscape:groupmode="layer" inkscape:label="Labels" id="layer-labels">
     <text id="label-sun" x="140" y="113" text-anchor="middle">Sun H</text>
-    <text id="label-surface-normal" x="560" y="54" fill="#264653">âₙ = Ĉ</text>
-    <text id="label-sun-vector" x="170" y="365" fill="#d97706">l̂</text>
-    <text id="label-reflection-vector" x="720" y="118" fill="#277da1">r̂</text>
-    <text id="label-view-vector" x="705" y="400" fill="#2a9d8f">v̂</text>
-    <text id="label-incidence-angle" x="474" y="336" fill="#8a5a44">θᵢ</text>
-    <text id="label-reflection-angle" x="588" y="336" fill="#8a5a44">θᵣ</text>
-    <text id="label-viewing-offset" x="660" y="300" fill="#7c3aed">δ</text>
-    <text id="label-inspection-point" x="660" y="454">inspection point L</text>
+    <text id="label-surface-normal" x="560" y="54" fill="#264653">âₙ = Ĉ: outward surface normal</text>
+    <text id="label-sun-vector" x="100" y="390" fill="#d97706">l̂: location-to-Sun direction</text>
+    <text id="label-reflection-vector" x="765" y="105" fill="#277da1">r̂: ideal reflected direction</text>
+    <text id="label-view-vector" x="710" y="410" fill="#2a9d8f">v̂: location-to-imager direction</text>
+    <text id="label-incidence-angle" x="290" y="100" fill="#8a5a44">θᵢ: incidence angle</text>
+    <text id="label-reflection-angle" x="600" y="160" fill="#8a5a44">θᵣ: reflection angle</text>
+    <text id="label-viewing-offset" x="820" y="300" fill="#7c3aed">δ: viewing offset</text>
+    <text id="label-inspection-point" x="660" y="454">L: body-fixed inspection point</text>
     <text id="label-inspected-spacecraft" x="540" y="592" text-anchor="middle">inspected spacecraft</text>
     <text id="label-imaging-spacecraft" x="805" y="340">imaging spacecraft S</text>
   </g>
