@@ -129,6 +129,18 @@ If an eclipse message is connected and ``min_illumination_factor`` is set, the m
 
 Determining Specular Glare
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. _spacecraftLocationGlareGeometry:
+
+.. figure:: /../../src/simulation/environment/spacecraftLocation/_Documentation/Images/specularGlareGeometry.svg
+    :align: center
+    :width: 95%
+    :alt: Specular glare geometry showing the Sun, surface normal, ideal reflection, and imaging-spacecraft view vectors.
+
+    Specular-glare geometry at the body-fixed surface point :math:`L`. The two-dimensional drawing shows the ideal
+    coplanar case; the vector calculation is performed in three dimensions. The ideal reflection has equal incidence
+    and reflection angles, while the offset :math:`\delta` between :math:`\hat{\bf r}` and :math:`\hat{\bf v}` controls
+    the reported glare factor.
+
 For an illuminated, front-facing surface, the ideal outgoing reflection of incoming sunlight is
 
 .. math::
@@ -143,7 +155,11 @@ with :math:`g=0` when either the Sun or tracked spacecraft is behind the surface
 
 This is the geometric alignment underlying the specular term in the `Blinn--Phong model used by van Wijk et al. <https://arxiv.org/abs/2308.02743>`__. That model can additionally apply material coefficients, a shininess exponent, light intensity, and sensor-dependent thresholds when radiometric overexposure fidelity is required.
 
-The output ``hasGlare`` is set when ``glareFactor >= glareThreshold``. The default ``glareThreshold`` is 0.95. If no surface normal is supplied through ``aHat_B``, both glare outputs remain zero. By default, glare is reported without modifying access. Setting ``useGlareConstraint`` to ``True`` also clears ``hasAccess`` for glared observations, allowing an inspection planner to leave those points available for re-imaging.
+The output ``hasGlare`` is set when ``glareFactor >= glareThreshold``. The default ``glareThreshold`` is 0.95. Glare
+is evaluated separately for every spacecraft connected through ``addSpacecraftToModel()`` and only when ``sunInMsg``
+is connected. If no surface normal is supplied through ``aHat_B``, both glare outputs remain zero. By default, glare
+is reported without modifying access. Setting ``useGlareConstraint`` to ``True`` also clears ``hasAccess`` for glared
+observations, allowing an inspection planner to leave those points available for re-imaging.
 
 User Guide
 ----------

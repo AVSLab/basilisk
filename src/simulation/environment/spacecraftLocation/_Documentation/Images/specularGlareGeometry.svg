@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 690" width="1080" height="690" role="img"
+     aria-labelledby="title description">
+  <title id="title">Specular glare geometry at a spacecraft surface point</title>
+  <desc id="description">
+    A surface point L has outward normal a-hat, also called C-hat. The vector l-hat points
+    from L to the Sun. The ideal reflected direction r-hat is symmetric with l-hat about
+    the normal. The vector v-hat points from L to the imaging spacecraft. The separation
+    angle delta between r-hat and v-hat determines the glare factor.
+  </desc>
+
+  <defs>
+    <marker id="arrow-orange" markerWidth="10" markerHeight="10" refX="8" refY="3"
+            orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#d97706"/>
+    </marker>
+    <marker id="arrow-blue" markerWidth="10" markerHeight="10" refX="8" refY="3"
+            orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#277da1"/>
+    </marker>
+    <marker id="arrow-navy" markerWidth="10" markerHeight="10" refX="8" refY="3"
+            orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#264653"/>
+    </marker>
+    <marker id="arrow-green" markerWidth="10" markerHeight="10" refX="8" refY="3"
+            orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#2a9d8f"/>
+    </marker>
+    <marker id="arrow-gold" markerWidth="10" markerHeight="10" refX="8" refY="3"
+            orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#f4a261"/>
+    </marker>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #202124; }
+      .label { font-size: 20px; }
+      .small { font-size: 17px; }
+      .equation { font-family: Georgia, "Times New Roman", serif; font-size: 21px; }
+      .subtle { fill: #5f6368; }
+    </style>
+  </defs>
+
+  <rect width="1080" height="690" rx="14" fill="#ffffff"/>
+  <text x="540" y="39" text-anchor="middle" font-size="26" font-weight="700">
+    Specular-glare geometry at surface point L
+  </text>
+
+  <!-- Surface facet and outward half-space. -->
+  <path d="M300 438 L700 438 L742 486 L258 486 Z" fill="#eef1f3" stroke="#6b7280"
+        stroke-width="2"/>
+  <path d="M278 460 l20 20 M322 440 l42 42 M388 440 l42 42 M454 440 l42 42
+           M520 440 l42 42 M586 440 l42 42 M652 440 l42 42 M716 444 l24 24"
+        fill="none" stroke="#c5cbd1" stroke-width="2"/>
+  <line x1="260" y1="438" x2="742" y2="438" stroke="#343a40" stroke-width="5"/>
+  <text x="748" y="445" class="small subtle">local tangent plane</text>
+
+  <!-- Surface point. -->
+  <circle cx="500" cy="438" r="8" fill="#202124"/>
+  <text x="482" y="466" class="label" font-weight="700">L</text>
+  <text x="510" y="468" class="small subtle">body-fixed inspection point</text>
+
+  <!-- Outward normal. -->
+  <line x1="500" y1="428" x2="500" y2="94" stroke="#264653" stroke-width="4"
+        marker-end="url(#arrow-navy)"/>
+  <text x="516" y="115" class="label" fill="#264653">
+    a&#770;<tspan baseline-shift="sub" font-size="14">N</tspan> = C&#770;
+  </text>
+  <text x="516" y="140" class="small subtle">outward surface normal</text>
+
+  <!-- Sun symbol. -->
+  <circle cx="163" cy="104" r="40" fill="#ffd166" stroke="#d97706" stroke-width="3"/>
+  <g stroke="#d97706" stroke-width="3">
+    <line x1="163" y1="48" x2="163" y2="30"/>
+    <line x1="163" y1="160" x2="163" y2="178"/>
+    <line x1="107" y1="104" x2="89" y2="104"/>
+    <line x1="219" y1="104" x2="237" y2="104"/>
+    <line x1="123" y1="64" x2="110" y2="51"/>
+    <line x1="203" y1="144" x2="216" y2="157"/>
+    <line x1="203" y1="64" x2="216" y2="51"/>
+    <line x1="123" y1="144" x2="110" y2="157"/>
+  </g>
+  <text x="163" y="110" text-anchor="middle" font-size="18" font-weight="700">Sun H</text>
+
+  <!-- Location-to-Sun direction; physical light propagates in the opposite direction. -->
+  <line x1="493" y1="431" x2="202" y2="142" stroke="#d97706" stroke-width="4"
+        marker-end="url(#arrow-orange)"/>
+  <text x="280" y="236" class="label" fill="#d97706">l&#770;: direction to Sun</text>
+  <line x1="220" y1="158" x2="461" y2="398" stroke="#f4a261" stroke-width="2.5"
+        stroke-dasharray="8 7" marker-end="url(#arrow-gold)"/>
+  <text x="230" y="274" class="small" fill="#b45309">sunlight travels along −l&#770;</text>
+
+  <!-- Ideal reflected direction. -->
+  <line x1="507" y1="431" x2="790" y2="150" stroke="#277da1" stroke-width="4"
+        marker-end="url(#arrow-blue)"/>
+  <text x="665" y="215" class="label" fill="#277da1">r&#770;: ideal reflection</text>
+
+  <!-- Imaging spacecraft and actual view vector. -->
+  <line x1="508" y1="433" x2="852" y2="221" stroke="#2a9d8f" stroke-width="4"
+        marker-end="url(#arrow-green)"/>
+  <g transform="translate(871 207) rotate(-5)">
+    <rect x="-26" y="-19" width="52" height="38" rx="5" fill="#f7faf9"
+          stroke="#1f776d" stroke-width="3"/>
+    <circle cx="-9" cy="0" r="9" fill="#bde4df" stroke="#1f776d" stroke-width="2"/>
+    <rect x="30" y="-12" width="62" height="24" fill="#b7d5ee" stroke="#277da1"
+          stroke-width="2"/>
+    <line x1="50" y1="-12" x2="50" y2="12" stroke="#6c9ec5"/>
+    <line x1="71" y1="-12" x2="71" y2="12" stroke="#6c9ec5"/>
+    <line x1="30" y1="0" x2="92" y2="0" stroke="#6c9ec5"/>
+  </g>
+  <text x="858" y="174" class="label" fill="#2a9d8f">imaging spacecraft S</text>
+  <text x="720" y="296" class="label" fill="#2a9d8f">v&#770;: direction to imager</text>
+
+  <!-- Equal incidence and ideal reflection angles. -->
+  <path d="M447 385 A75 75 0 0 1 500 363" fill="none" stroke="#8a5a44" stroke-width="2.5"/>
+  <path d="M500 363 A75 75 0 0 1 553 385" fill="none" stroke="#8a5a44" stroke-width="2.5"/>
+  <text x="448" y="342" class="equation" fill="#8a5a44">θ<tspan baseline-shift="sub" font-size="15">i</tspan></text>
+  <text x="537" y="342" class="equation" fill="#8a5a44">θ<tspan baseline-shift="sub" font-size="15">r</tspan></text>
+  <text x="423" y="316" class="small" fill="#8a5a44">θ<tspan baseline-shift="sub" font-size="12">i</tspan> = θ<tspan baseline-shift="sub" font-size="12">r</tspan></text>
+
+  <!-- Misalignment between ideal reflection and actual viewing direction. -->
+  <path d="M585 353 A120 120 0 0 1 602 371" fill="none" stroke="#7c3aed" stroke-width="3"/>
+  <text x="615" y="362" class="equation" fill="#7c3aed">δ</text>
+  <text x="612" y="387" class="small" fill="#7c3aed">viewing offset</text>
+
+  <!-- Mathematical summary. -->
+  <rect x="85" y="525" width="910" height="124" rx="12" fill="#f7f9fb" stroke="#c8d1da"
+        stroke-width="2"/>
+  <text x="110" y="559" class="equation">
+    r&#770; = 2(a&#770;<tspan baseline-shift="sub" font-size="15">N</tspan> · l&#770;)a&#770;<tspan baseline-shift="sub" font-size="15">N</tspan> − l&#770;
+  </text>
+  <text x="110" y="596" class="equation">
+    δ = acos(r&#770; · v&#770;)
+  </text>
+  <text x="420" y="559" class="equation">
+    glareFactor = clamp(r&#770; · v&#770;, 0, 1)
+  </text>
+  <text x="420" y="596" class="small">
+    Exact specular alignment: δ = 0° and glareFactor = 1
+  </text>
+  <text x="110" y="628" class="small subtle">
+    Evaluated only with a connected Sun message and a valid surface normal; both Sun and imager must be above the facet.
+  </text>
+</svg>
