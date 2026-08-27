@@ -43,6 +43,8 @@ from Basilisk.simulation import spacecraft
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.utilities import macros
+from Basilisk.utilities import pythonVariableLogger
+from Basilisk.utilities import simHelpers
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities.supportDataTools.dataFetcher import get_path, DataFile
 import shutil
@@ -55,7 +57,9 @@ VERBOSE = True
 PROCESSES = 2
 
 retainedMessageName = "spacecraftStateMsg"
-retainedRate = macros.sec2nano(10)
+retainedRate = macros.sec2nano(10.0)  # [ns]
+retainedVariableName = "bsk-Sat.totOrbEnergy"
+retainedComputedName = "doubleOrbEnergy"
 var1 = "v_BN_N"
 var2 = "r_BN_N"
 
@@ -119,6 +123,11 @@ def myCreationFunction():
     sim.msgRecList = {}
     sim.msgRecList[retainedMessageName] = scObject.scStateOutMsg.recorder(retainedRate)
     sim.AddModelToTask(simTaskName, sim.msgRecList[retainedMessageName])
+    sim.computedVariableLogger = pythonVariableLogger.PythonVariableLogger(
+        {retainedComputedName: lambda _: 2.0*scObject.totOrbEnergy},
+        retainedRate,
+    )
+    sim.AddModelToTask(simTaskName, sim.computedVariableLogger)
 
     #   configure a simulation stop time and execute the simulation run
     sim.ConfigureStopTime(simulationTime)
@@ -130,6 +139,17 @@ def myExecutionFunction(sim):
     """function that executes a simulation"""
     sim.InitializeSimulation()
     sim.ExecuteSimulation()
+
+
+def retainComputedVariable(sim):
+    """Return computed orbital energy in the standard time-column format."""
+    variableLogger = sim.computedVariableLogger
+    return {
+        retainedComputedName: simHelpers.addTimeColumn(
+            variableLogger.times(),
+            variableLogger[retainedComputedName],
+        ),
+    }
 
 
 colorList = ["b", "r", "g", "k"]
@@ -150,6 +170,7 @@ def myDataCallback(monteCarloData, retentionPolicy):
 
 @pytest.mark.slowtest
 def test_MonteCarloSimulation(show_plots):
+    """Verify Monte Carlo retention, archiving, loading, and repeatability."""
     # Test a montecarlo simulation
     dirName = os.path.abspath(os.path.dirname(__file__)) + "/tmp_montecarlo_test"
     monteCarlo = Controller()
@@ -193,6 +214,8 @@ def test_MonteCarloSimulation(show_plots):
     # Add retention policy
     retentionPolicy = RetentionPolicy()
     retentionPolicy.addMessageLog(retainedMessageName, [var1, var2])
+    retentionPolicy.addVariableLog(retainedVariableName, logRate=retainedRate)
+    retentionPolicy.addRetentionFunction(retainComputedVariable)
     retentionPolicy.setDataCallback(myDataCallback)
     monteCarlo.addRetentionPolicy(retentionPolicy)
 
@@ -211,6 +234,22 @@ def test_MonteCarloSimulation(show_plots):
     )
     assert retainedMessageName + ".v_BN_N" in retainedData["messages"], (
         "Retained messages should exist"
+    )
+    assert retainedVariableName in retainedData["variables"], (
+        "Retained module variables should exist"
+    )
+    assert retainedData["variables"][retainedVariableName].shape[1] == 2, (
+        "Retained scalar variables should contain time and value columns"
+    )
+    assert retainedComputedName in retainedData["custom"], (
+        "Computed module variables should be retained as custom data"
+    )
+    directVariableData = retainedData["variables"][retainedVariableName]
+    computedVariableData = retainedData["custom"][retainedComputedName]
+    np.testing.assert_allclose(computedVariableData[:, 0], directVariableData[:, 0])
+    np.testing.assert_allclose(
+        computedVariableData[:, 1],
+        2.0*directVariableData[:, 1],
     )
 
     # rerun the case and it should be the same, because we dispersed random seeds
