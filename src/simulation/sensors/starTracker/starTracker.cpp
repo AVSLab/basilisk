@@ -37,7 +37,7 @@ StarTracker::StarTracker()
     this->walkBounds.resize(3);
 
     this->PMatrix.fill(0.0);
-    this->AMatrix.setIdentity(3, 3);
+    this->AMatrix.setZero(3, 3);
     this->walkBounds.fill(0.0);
     return;
 }
