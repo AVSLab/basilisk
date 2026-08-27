@@ -1,57 +1,80 @@
 # MonteCarlo: Brief Guide
 
-*If you plan to use this it is highly recommended to read the documentation in the `MonteCarlo/Controller.py` source file, the example usage in `examples/scenarioMonteCarloAttRW.py`, and the corresponding test in `src/tests/test_scenarioMonteCarloAttRW.py`. This guide offers only a brief overview of features*
+For complete examples, see `examples/scenarioMonteCarloAttRW.py` and its test in
+`src/tests/test_scenarioMonteCarloAttRW.py`. This guide provides a brief overview of
+the main Monte Carlo features.
 
-A MonteCarlo simulation can be created using the `MonteCarlo` module. This module is used to execute monte carlo simulations, and access retained data from previously executed MonteCarlo runs.
+The Monte Carlo utilities execute a simulation repeatedly while varying random seeds and
+selected initial parameters. `Controller` manages the runs, archives retained data, reloads
+completed runs, and reproduces selected cases from their saved parameters.
 
-First, the `Controller` class is used in order to execute a simulation repeatedly, applying unique random seeds to each run, statistically dispersing initial parameters, executing the simulation run, and compressing and retaining data about the run.
+To create a Monte Carlo simulation, import `Controller`, `RetentionPolicy`, and any
+dispersion classes needed to vary the initial parameters. Then create and configure a
+`Controller` for the run.
 
-Data retained through a MonteCarlo simulation is compressed and saved to disk. The `Controller` class is also used to access this data from each run.  The MonteCarlo `Controller` can reload the directory where data was retained in, and access the retained data, or rerun unusual cases using the same random seeds and initial parameters.
+## Configure the simulation
 
-To create a Monte Carlo simulation, import the `Controller`, `RetentionPolicy`, and other objects described later from the `MonteCarlo` module, along with `Dispersion` classes used to disperse initial parameters. Then create a `Controller` and configure that object for the particular monte carlo run.
+```python
+import matplotlib.pyplot as plt
+import numpy as np
 
-```
-from MonteCarlo.Controller import Controller, RetentionPolicy
+from Basilisk.utilities import (
+    SimulationBaseClass,
+    macros,
+    pythonVariableLogger,
+    simHelpers,
+)
+from Basilisk.utilities.MonteCarlo.Controller import Controller
+from Basilisk.utilities.MonteCarlo.Dispersions import UniformEulerAngleMRPDispersion
+from Basilisk.utilities.MonteCarlo.RetentionPolicy import RetentionPolicy
+
 monteCarlo = Controller()
 ```
 
-Every MonteCarlo simulation must define a function that creates the `SimulationBaseClass` to execute and returns it. Within this function, the simulation is created and configured
+Every Monte Carlo simulation must define and return the `SimBaseClass` instance to run.
 
-```
+```python
 def myCreationFunction():
-   sim = SimulationBaseClass()
-   # modify sim ...
-   return sim
+    sim = SimulationBaseClass.SimBaseClass()
+    # configure sim ...
+    return sim
 
 monteCarlo.setSimulationFunction(myCreationFunction)
 ```
 
+Every Monte Carlo simulation must also define a function that executes the created
+simulation:
 
-Also, every MonteCarlo simulation must define a function which executes the simulation that was created. It could look like this:
-
-```
+```python
 def myExecutionFunction(sim):
-    sim.InitializeSimulationAndDiscover()
+    sim.InitializeSimulation()
     sim.ExecuteSimulation()
 
 monteCarlo.setExecutionFunction(myExecutionFunction)
 ```
 
-Optionally, there is a function that can be used to configure the simulation after random seeds
-have been populated. Non-seed parameter dispersions are applied after this configuration step
+Optionally, a configuration function can adjust the simulation after random seeds have
+been populated. Non-seed parameter dispersions are applied after this configuration step
 and before the execution function runs.
 
-```
+```python
 def myConfigureFunction(sim):
-  # do something with the sim now that random seeds have been applied ...
+    # Configure the sim now that random seeds have been applied ...
+    pass
 
 monteCarlo.setConfigureFunction(myConfigureFunction)
 ```
 
-Statistical dispersions can be applied to initial parameters using the MonteCarlo module. These initial parameters are saved for reference and in order to re-run cases. Various dispersions have been created, and these are not specified here. To see available dispersions, examine `MonteCarlo/Dispersions.py`
+Statistical dispersions can be applied to initial parameters. These parameters are saved
+for reference and to make individual cases reproducible. See `MonteCarlo/Dispersions.py`
+for the available dispersion classes.
 
-```
-monteCarlo.addDispersion(UniformEulerAngleMRPDispersion("taskName.hub.sigma_BNInit"))
+```python
+monteCarlo.addDispersion(
+    UniformEulerAngleMRPDispersion(
+        "TaskList[0].TaskModels[0].hub.sigma_BNInit"
+    )
+)
 ```
 
 Dispersion names can reference nested simulation attributes with dotted names, integer list
@@ -62,82 +85,129 @@ resolves the object returned by `get_DynModel()` before applying the dispersion.
 indices can be used for matrix-like attributes, such as
 `scObject.hub.IHubPntBc_B[0][1]`.
 
-If data is being retained, a archive directory to store retained data must be specified. This directory is later used to reload the retained data from an executed Monte Carlo simulation.
+## Retain simulation data
 
-```
+If data is being retained, an archive directory must be specified. The same directory is
+used to reload retained data after the Monte Carlo execution.
+
+```python
 monteCarlo.setArchiveDir("dirName")
 ```
 
-Data is retained from a simulation to a unique file for each run. A `RetentionPolicy` is used to define what data from the simulation should be retained. A `RetentionPolicy` is a list of messages and variables to log from each simulation run. It also has a callback, used for plotting/processing the retained data. If a user wanted to create a plot of each run of a simulation message, they would create a retention policy defining the message they want to plot, and a callback that uses that message to draw a plot. This plot can be created any time after the initial execution of the monte carlo run, from the retained data.
+Data is retained from a simulation to a unique file for each run. A `RetentionPolicy`
+defines which recorded message fields, module variables, and custom values are saved.
+It can also provide a callback for plotting or processing the retained data.
 
-```
-# add retention policy that logs a message and plots it
+Message recorders must be created by the simulation creation function and stored in
+`sim.msgRecList`; their sampling interval is set when the recorder is created. A module
+variable is identified in `<ModelTag>.<variableName>` format and must be public or
+available through its standard getter. The scheduled module must support Basilisk's
+standard `logger()` API, and its model tag must be unique. A model tag may contain periods
+because the final period in the identifier separates it from the variable name. `logRate`
+sets the variable logger's nonnegative integer minimum recording period in nanoseconds.
+
+The complete scalar, vector, or array is recorded by default. The first column of every
+retained message or variable array is simulation time in nanoseconds. Multidimensional
+variable samples are flattened in row-major order into the remaining columns.
+
+The legacy `startIndex`, `stopIndex`, and `varType` arguments remain available for
+migration until 2027-08-26. Component indices are inclusive and refer to the flattened
+variable. Output column zero contains time, and the selected components are stored
+consecutively beginning in column one. `varType` is ignored because modern loggers determine
+the value type directly. New code should retain the complete variable and select component
+columns from the resulting NumPy array. To record nested or computed values over time, create a
+`pythonVariableLogger.PythonVariableLogger` during simulation setup, schedule it on the source
+model's task after that model, and store it on the simulation object. Use
+`addRetentionFunction()` to copy its time and value arrays into the retained `custom` data, and
+use `simHelpers.addTimeColumn(logger.times(), logger["valueName"])` when the custom array should
+follow the same time-column convention as message and direct-variable data.
+
+```python
+# Add a retention policy that logs message fields and a module variable.
+# Assume myCreationFunction stores the recorder as sim.msgRecList["spacecraftState"]
+# and adds a module whose ModelTag is "bsk-Sat".
+retainedRate = macros.sec2nano(10.0)  # [ns]
 plotRetentionPolicy = RetentionPolicy()
-# log this message
-plotRetentionPolicy.addMessageLog("inertial_state_output", [("v_BN_N", range(3)), ("r_BN_N", range(3)], retainedRate)
+plotRetentionPolicy.addMessageLog(
+    "spacecraftState",
+    ["v_BN_N", "r_BN_N"],
+)
+plotRetentionPolicy.addVariableLog(
+    "bsk-Sat.totOrbEnergy",
+    logRate=retainedRate,
+)
 
-# this is the plot command (for only one run)
+# This callback plots one retained run.
 def myDataCallback(data, retentionPolicy):
-    v_BN_N = np.array(monteCarloData["messages"]["inertial_state_output.v_BN_N"])
-    plt.plot(v_BN_N[:,1], v_BN_N[:,2])
+    r_BN_N = np.asarray(data["messages"]["spacecraftState.r_BN_N"])
+    orbitalEnergy = np.asarray(data["variables"]["bsk-Sat.totOrbEnergy"])
+    plt.figure()
+    plt.plot(r_BN_N[:, 1], r_BN_N[:, 2])
+    plt.figure()
+    plt.plot(orbitalEnergy[:, 0], orbitalEnergy[:, 1])
+
+
 plotRetentionPolicy.setDataCallback(myDataCallback)
 
 monteCarlo.addRetentionPolicy(plotRetentionPolicy)
+```
 
-# now execute the simulations, and the message will be retained
-monteCarlo.executeSimulations()
+## Execute and analyze the runs
 
-# After the simulation has been executed
-# this can be in a different script than the executeSimulations
-# or in the same script this line can be skipped
+Random-seed dispersion is recommended whenever a simulation uses random number generation.
+Seeds are archived so an individual run can be reproduced. Configure the number of runs and,
+optionally, the worker-process count and console verbosity before execution:
+
+```python
+monteCarlo.setShouldDisperseSeeds(True)
+monteCarlo.setExecutionCount(100)
+monteCarlo.setThreadCount(4)
+monteCarlo.setVerbose(False)
+
+failures = monteCarlo.executeSimulations()
+```
+
+`executeSimulations()` returns the indices of failed runs. Once execution is complete, the
+controller and retained data can be reloaded in the same script or a later analysis script:
+
+```python
 monteCarlo = Controller.load("dirName")
 
-# now we can plot all plots for all runs on the same plot
+# Execute callbacks for every run, or select specific runs and policies.
 monteCarlo.executeCallbacks()
-# or plot only this one plot with only the data from runs 4, 6, and 27
-monteCarlo.executeCallbacks([4,6,7], [plotRetentionPolicy])
+# This second form assumes plotRetentionPolicy is available in the analysis script.
+monteCarlo.executeCallbacks([4, 6, 7], [plotRetentionPolicy])
 
 plt.show()
 ```
 
-The simulations can have random seeds of each simulation dispersed randomly. This is recommended to be used when a simulation relies on random number generation. Whether to disperse random seeds on all simulation tasks is controlled via the method `monteCarlo.setShouldDisperseSeeds(True)`. If random seeds are used, the random seeds are saved in case a user wants to rerun a particular run. This is all stored with the initial parameters in an individual json file for each run in the archive directory.
+Retained data from a run is a dictionary containing message, variable, and custom
+data, together with the Monte Carlo run index:
 
-A Monte Carlo simulation must define how many simulation runs to execute for the Monte Carlo using `monteCarlo.setExecutionCount(NUMBER_OF_RUNS)`
-
-Optionally, the number of processes to use for the simulation. If this isn't called use the number of cores on the computer `monteCarlo.setThreadCount(PROCESSES)`
-
-Whether to print more verbose information during the run `monteCarlo.setVerbose(False)`
-
-
-After the monteCarlo run is configured, it is executed. This method returns the list of jobs that failed.
-
-```
-failures = monteCarlo.executeSimulations()
-```
-
-Now in another script (or the current one), the data from this simulation can be easily loaded.
-
-```
-# Test loading data from runs from disk
-monteCarlo = Controller.load(dirName)
+```python
+{
+    "messages": {
+        "recorderName.fieldName": [[time, value1, value2]]
+    },
+    "variables": {
+        "modelTag.variableName": [[time, value1, value2]]
+    },
+    "custom": {
+        "customName": [value1, value2]
+    },
+    "index": 19,
+}
 ```
 
-Then retained data from any run can then be accessed in the form of a dictionary with two sub-dictionaries for messages and variables:
-
-```
-  {
-      "messages": {
-          "messageName": [value1,value2,value3]
-      },
-      "variables": {
-          "variableName": [value1,value2,value3]
-      }
-  }
-```
-
-```
+```python
 retainedData = monteCarlo.getRetainedData(19)
-retainedData["messages"]["inertial_state_output.r_BN_N"]
+retainedData["messages"]["spacecraftState.r_BN_N"]
+orbitalEnergy = retainedData["variables"]["bsk-Sat.totOrbEnergy"]
+
+# Column 0 is time; subsequent columns contain the retained variable components.
+time = orbitalEnergy[:, 0]
+energy = orbitalEnergy[:, 1]
 ```
 
-There are various other methods to get retained initial parameters, which are further documented in the `Controller` class and the test script.
+Additional methods for loading retained parameters and rerunning cases are documented in
+`Controller` and the referenced Monte Carlo example.
