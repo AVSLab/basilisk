@@ -23,6 +23,12 @@
 #include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
+#include "architecture/messaging/messaging.h"
+#include "architecture/msgPayloadDefC/ArrayMotorForceMsgPayload.h"
+#include "architecture/msgPayloadDefC/ArrayMotorTorqueMsgPayload.h"
+#include "architecture/msgPayloadDefC/HingedRigidBodyMsgPayload.h"
+#include "architecture/msgPayloadDefC/LinearTranslationRigidBodyMsgPayload.h"
+#include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/avsEigenMRP.h"
 
@@ -52,6 +58,15 @@ public:
                                       Eigen::Vector3d & rotAngMomPntCContr_B,
                                       double & rotEnergyContr,
                                       Eigen::Vector3d omega_BN_B) override;
+
+    std::vector<ReadFunctor<HingedRigidBodyMsgPayload>> spinningBodyRefInMsg;
+    std::vector<ReadFunctor<ArrayMotorTorqueMsgPayload>> motorTorqueInMsg;
+    std::vector<ReadFunctor<LinearTranslationRigidBodyMsgPayload>> translatingBodyRefInMsgs;
+    std::vector<ReadFunctor<ArrayMotorForceMsgPayload>> motorForceInMsg;
+
+    std::vector<Message<HingedRigidBodyMsgPayload>*> spinningBodyOutMsgs;
+    std::vector<Message<LinearTranslationRigidBodyMsgPayload>*> translatingBodyOutMsgs;
+    Message<SCStatesMsgPayload> generalSingleBodyConfigLogOutMsg;
 
 private:
     static uint64_t effectorID;
