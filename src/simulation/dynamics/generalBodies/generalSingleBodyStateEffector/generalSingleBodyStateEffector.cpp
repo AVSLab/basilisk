@@ -131,3 +131,28 @@ void GeneralSingleBodyStateEffector::addDOF(std::shared_ptr<DOF> newDOF) {
 bool GeneralSingleBodyStateEffector::isDOFAdded(const std::shared_ptr<DOF>& newDOF) const {
     return std::find(this->jointDOFList.begin(), this->jointDOFList.end(), newDOF) != this->jointDOFList.end();
 }
+
+void GeneralSingleBodyStateEffector::clearDOFs() {
+    this->numDOF = 0;
+    this->numRotDOF = 0;
+    this->numTransDOF = 0;
+    this->jointDOFList.clear();
+    this->betaInitList.clear();
+    this->betaDotInitList.clear();
+
+    this->spinningBodyRefInMsg.clear();
+    this->motorTorqueInMsg.clear();
+    this->translatingBodyRefInMsgs.clear();
+    this->motorForceInMsg.clear();
+    for (auto* rotMsg : this->spinningBodyOutMsgs) delete rotMsg;
+    this->spinningBodyOutMsgs.clear();
+    for (auto* transMsg : this->translatingBodyOutMsgs) delete transMsg;
+    this->translatingBodyOutMsgs.clear();
+
+    this->TMat.resize(6, 0);
+    this->TPrimeMat.resize(6, 0);
+    this->UMat.resize(6, 0);
+    this->ABeta.resize(0, 3);
+    this->BBeta.resize(0, 3);
+    this->CBeta.resize(0);
+}
