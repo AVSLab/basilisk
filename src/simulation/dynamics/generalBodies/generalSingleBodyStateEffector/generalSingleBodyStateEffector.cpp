@@ -26,6 +26,8 @@
 
 GeneralSingleBodyStateEffector::GeneralSingleBodyStateEffector()
 {
+    this->nameOfBetaState = "generalBodyBeta" + std::to_string(effectorID);
+    this->nameOfBetaDotState = "generalBodyBetaDot" + std::to_string(effectorID);
     effectorID++;
 }
 
