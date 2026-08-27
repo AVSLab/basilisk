@@ -1,16 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 620" width="1080" height="620" role="img"
-     aria-labelledby="title description">
+<svg xmlns="http://www.w3.org/2000/svg"
+     xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+     xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+     viewBox="0 0 1080 620" width="1080" height="620" role="img"
+     aria-labelledby="title description" sodipodi:docname="specularGlareGeometry.svg">
   <title id="title">Specular glare geometry at an inspected spacecraft surface point</title>
   <desc id="description">
     The body-fixed inspection point L lies on the upper surface of a spacecraft bus with solar arrays. The vector
     a-hat-N, also called C-hat, is the outward surface normal. The vector l-hat points from L toward the Sun, r-hat
-    is the ideal reflected direction, and v-hat points from L toward an imaging spacecraft whose sensor cone is
-    directed at L. The incidence and ideal reflection angles are equal, and delta is the offset between r-hat and
-    v-hat.
+    is the ideal reflected direction, and v-hat points from L toward an imaging spacecraft. The imaging spacecraft
+    and its field-of-view cone are aligned with point L. The incidence and ideal reflection angles are equal, and
+    delta is the offset between r-hat and v-hat.
   </desc>
 
-  <defs>
+  <sodipodi:namedview id="namedview1" pagecolor="#ffffff" bordercolor="#666666"
+                      inkscape:showpageshadow="2"/>
+
+  <defs id="definitions">
     <marker id="arrow-orange" markerWidth="10" markerHeight="10" refX="8" refY="3"
             orient="auto" markerUnits="strokeWidth">
       <path d="M0,0 L0,6 L9,3 z" fill="#d97706"/>
@@ -30,7 +36,7 @@
     <style>
       text {
         font-family: Arial, Helvetica, sans-serif;
-        font-size: 21px;
+        font-size: 24px;
         font-style: normal;
         font-weight: 400;
         fill: #202124;
@@ -38,95 +44,112 @@
     </style>
   </defs>
 
-  <rect width="1080" height="620" fill="#ffffff"/>
-
-  <!-- Imaging sensor field of view, drawn behind the geometry vectors. -->
-  <path d="M850 245 L522 414 L558 436 Z" fill="#2a9d8f" fill-opacity="0.08"/>
-  <line x1="850" y1="245" x2="522" y2="414" stroke="#2a9d8f" stroke-width="2"
-        stroke-dasharray="8 8"/>
-  <line x1="850" y1="245" x2="558" y2="436" stroke="#2a9d8f" stroke-width="2"
-        stroke-dasharray="8 8"/>
-
-  <!-- Inspected spacecraft: central bus and two solar arrays. -->
-  <line x1="425" y1="500" x2="445" y2="500" stroke="#4b5563" stroke-width="8"/>
-  <line x1="635" y1="500" x2="655" y2="500" stroke="#4b5563" stroke-width="8"/>
-
-  <rect x="130" y="470" width="295" height="60" rx="3" fill="#b7d5ee" stroke="#277da1"
-        stroke-width="3"/>
-  <path d="M189 470 V530 M248 470 V530 M307 470 V530 M366 470 V530 M130 500 H425"
-        fill="none" stroke="#6c9ec5" stroke-width="2"/>
-
-  <rect x="655" y="470" width="295" height="60" rx="3" fill="#b7d5ee" stroke="#277da1"
-        stroke-width="3"/>
-  <path d="M714 470 V530 M773 470 V530 M832 470 V530 M891 470 V530 M655 500 H950"
-        fill="none" stroke="#6c9ec5" stroke-width="2"/>
-
-  <path d="M470 425 H610 L635 452 V555 H445 V452 Z" fill="#eef1f3" stroke="#4b5563"
-        stroke-width="4"/>
-  <rect x="474" y="473" width="132" height="55" rx="7" fill="#ffffff" stroke="#9ca3af"
-        stroke-width="2"/>
-  <circle cx="500" cy="500" r="10" fill="#dbe7ef" stroke="#6b7280" stroke-width="2"/>
-  <circle cx="540" cy="500" r="10" fill="#dbe7ef" stroke="#6b7280" stroke-width="2"/>
-  <circle cx="580" cy="500" r="10" fill="#dbe7ef" stroke="#6b7280" stroke-width="2"/>
-  <text x="540" y="592" text-anchor="middle">inspected spacecraft</text>
-
-  <!-- Body-fixed surface point. -->
-  <circle cx="540" cy="425" r="8" fill="#202124"/>
-  <text x="558" y="458">L  body-fixed inspection point</text>
-
-  <!-- Outward surface normal. -->
-  <line x1="540" y1="415" x2="540" y2="72" stroke="#264653" stroke-width="4"
-        marker-end="url(#arrow-navy)"/>
-  <text x="560" y="54" fill="#264653">âₙ = Ĉ  outward surface normal</text>
-
-  <!-- Sun. -->
-  <circle cx="140" cy="105" r="38" fill="#ffd166" stroke="#d97706" stroke-width="3"/>
-  <g stroke="#d97706" stroke-width="3">
-    <line x1="140" y1="51" x2="140" y2="31"/>
-    <line x1="140" y1="159" x2="140" y2="179"/>
-    <line x1="86" y1="105" x2="66" y2="105"/>
-    <line x1="194" y1="105" x2="214" y2="105"/>
-    <line x1="102" y1="67" x2="88" y2="53"/>
-    <line x1="178" y1="143" x2="192" y2="157"/>
-    <line x1="178" y1="67" x2="192" y2="53"/>
-    <line x1="102" y1="143" x2="88" y2="157"/>
+  <g inkscape:groupmode="layer" inkscape:label="Background" id="layer-background">
+    <rect id="background" width="1080" height="620" fill="#ffffff"/>
   </g>
-  <text x="140" y="112" text-anchor="middle">Sun H</text>
 
-  <!-- Location-to-Sun direction. -->
-  <line x1="533" y1="419" x2="180" y2="137" stroke="#d97706" stroke-width="4"
-        marker-end="url(#arrow-orange)"/>
-  <text x="150" y="365" fill="#d97706">l̂  location-to-Sun direction</text>
+  <g inkscape:groupmode="layer" inkscape:label="Camera field of view" id="layer-camera-cone">
+    <!-- The cone apex is the sensor at (850,245); its centerline terminates at L=(540,425). -->
+    <path id="camera-field-of-view" d="M850 245 L530 408 L550 442 Z"
+          fill="#2a9d8f" fill-opacity="0.09"/>
+    <line id="camera-cone-upper" x1="850" y1="245" x2="530" y2="408"
+          stroke="#2a9d8f" stroke-width="2" stroke-dasharray="8 8"/>
+    <line id="camera-cone-lower" x1="850" y1="245" x2="550" y2="442"
+          stroke="#2a9d8f" stroke-width="2" stroke-dasharray="8 8"/>
+  </g>
 
-  <!-- Ideal reflected direction, symmetric with the Sun direction about the normal. -->
-  <line x1="547" y1="419" x2="900" y2="137" stroke="#277da1" stroke-width="4"
-        marker-end="url(#arrow-blue)"/>
-  <text x="700" y="120" fill="#277da1">r̂  ideal reflected direction</text>
+  <g inkscape:groupmode="layer" inkscape:label="Spacecraft" id="layer-spacecraft">
+    <g id="inspected-spacecraft">
+      <line id="left-array-boom" x1="425" y1="500" x2="445" y2="500"
+            stroke="#4b5563" stroke-width="8"/>
+      <line id="right-array-boom" x1="635" y1="500" x2="655" y2="500"
+            stroke="#4b5563" stroke-width="8"/>
 
-  <!-- Imaging spacecraft and location-to-imager direction. -->
-  <line x1="548" y1="420" x2="840" y2="251" stroke="#2a9d8f" stroke-width="4"
-        marker-end="url(#arrow-green)"/>
-  <text x="710" y="395" fill="#2a9d8f">v̂  location-to-imager direction</text>
+      <rect id="left-solar-array" x="130" y="470" width="295" height="60" rx="3"
+            fill="#b7d5ee" stroke="#277da1" stroke-width="3"/>
+      <path id="left-solar-array-grid"
+            d="M189 470 V530 M248 470 V530 M307 470 V530 M366 470 V530 M130 500 H425"
+            fill="none" stroke="#6c9ec5" stroke-width="2"/>
 
-  <!-- Imaging spacecraft with an optical sensor facing point L. -->
-  <path d="M850 245 L875 224 V266 Z" fill="#d7f0ec" stroke="#1f776d" stroke-width="3"/>
-  <circle cx="858" cy="245" r="7" fill="#7bc8bd" stroke="#1f776d" stroke-width="2"/>
-  <rect x="875" y="213" width="70" height="64" rx="7" fill="#f7faf9" stroke="#1f776d"
-        stroke-width="3"/>
-  <line x1="945" y1="245" x2="962" y2="245" stroke="#4b5563" stroke-width="6"/>
-  <rect x="962" y="218" width="90" height="54" rx="3" fill="#b7d5ee" stroke="#277da1"
-        stroke-width="3"/>
-  <path d="M992 218 V272 M1022 218 V272 M962 245 H1052" fill="none" stroke="#6c9ec5"
-        stroke-width="2"/>
-  <text x="816" y="187">imaging spacecraft S</text>
+      <rect id="right-solar-array" x="655" y="470" width="295" height="60" rx="3"
+            fill="#b7d5ee" stroke="#277da1" stroke-width="3"/>
+      <path id="right-solar-array-grid"
+            d="M714 470 V530 M773 470 V530 M832 470 V530 M891 470 V530 M655 500 H950"
+            fill="none" stroke="#6c9ec5" stroke-width="2"/>
 
-  <!-- Equal incidence and ideal reflection angles. -->
-  <path d="M473 371 A86 86 0 0 1 540 339" fill="none" stroke="#8a5a44" stroke-width="3"/>
-  <path d="M540 339 A86 86 0 0 1 607 371" fill="none" stroke="#8a5a44" stroke-width="3"/>
-  <text x="474" y="336" fill="#8a5a44">θᵢ</text>
-  <text x="588" y="336" fill="#8a5a44">θᵣ</text>
+      <path id="inspected-spacecraft-bus" d="M470 425 H610 L635 452 V555 H445 V452 Z"
+            fill="#eef1f3" stroke="#4b5563" stroke-width="4"/>
+      <rect id="bus-detail-panel" x="474" y="482" width="132" height="48" rx="7"
+            fill="#ffffff" stroke="#9ca3af" stroke-width="2"/>
+      <circle id="bus-port-left" cx="500" cy="506" r="9" fill="#dbe7ef"
+              stroke="#6b7280" stroke-width="2"/>
+      <circle id="bus-port-center" cx="540" cy="506" r="9" fill="#dbe7ef"
+              stroke="#6b7280" stroke-width="2"/>
+      <circle id="bus-port-right" cx="580" cy="506" r="9" fill="#dbe7ef"
+              stroke="#6b7280" stroke-width="2"/>
+      <circle id="inspection-point" cx="540" cy="425" r="8" fill="#202124"/>
+    </g>
 
-  <!-- Offset between ideal reflection and actual imaging-spacecraft direction. -->
-  <path d="M638 347 A125 125 0 0 1 648 362" fill="none" stroke="#7c3aed" stroke-width="3"/>
-  <text x="660" y="305" fill="#7c3aed">δ  viewing offset</text>
+    <!-- The camera body extends along +x in its local frame. Rotating it -30 degrees makes
+         the optical axis point from the sensor at (850,245) directly toward L=(540,425). -->
+    <g id="imaging-spacecraft" transform="translate(850 245) rotate(-30.14)">
+      <path id="camera-sensor-housing" d="M0 0 L28 -20 V20 Z"
+            fill="#d7f0ec" stroke="#1f776d" stroke-width="3"/>
+      <circle id="camera-aperture" cx="7" cy="0" r="7" fill="#7bc8bd"
+              stroke="#1f776d" stroke-width="2"/>
+      <rect id="imaging-spacecraft-bus" x="28" y="-32" width="70" height="64" rx="7"
+            fill="#f7faf9" stroke="#1f776d" stroke-width="3"/>
+      <line id="imaging-array-boom" x1="98" y1="0" x2="115" y2="0"
+            stroke="#4b5563" stroke-width="6"/>
+      <rect id="imaging-solar-array" x="115" y="-27" width="90" height="54" rx="3"
+            fill="#b7d5ee" stroke="#277da1" stroke-width="3"/>
+      <path id="imaging-solar-array-grid" d="M145 -27 V27 M175 -27 V27 M115 0 H205"
+            fill="none" stroke="#6c9ec5" stroke-width="2"/>
+    </g>
+
+    <circle id="sun-disc" cx="140" cy="105" r="38" fill="#ffd166"
+            stroke="#d97706" stroke-width="3"/>
+    <g id="sun-rays" stroke="#d97706" stroke-width="3">
+      <line x1="140" y1="51" x2="140" y2="31"/>
+      <line x1="140" y1="159" x2="140" y2="179"/>
+      <line x1="86" y1="105" x2="66" y2="105"/>
+      <line x1="194" y1="105" x2="214" y2="105"/>
+      <line x1="102" y1="67" x2="88" y2="53"/>
+      <line x1="178" y1="143" x2="192" y2="157"/>
+      <line x1="178" y1="67" x2="192" y2="53"/>
+      <line x1="102" y1="143" x2="88" y2="157"/>
+    </g>
+  </g>
+
+  <g inkscape:groupmode="layer" inkscape:label="Vectors and angles" id="layer-vectors">
+    <line id="surface-normal-vector" x1="540" y1="415" x2="540" y2="72"
+          stroke="#264653" stroke-width="4" marker-end="url(#arrow-navy)"/>
+    <line id="location-to-sun-vector" x1="533" y1="419" x2="180" y2="137"
+          stroke="#d97706" stroke-width="4" marker-end="url(#arrow-orange)"/>
+    <line id="ideal-reflection-vector" x1="547" y1="419" x2="900" y2="137"
+          stroke="#277da1" stroke-width="4" marker-end="url(#arrow-blue)"/>
+    <line id="location-to-imager-vector" x1="548" y1="420" x2="840" y2="251"
+          stroke="#2a9d8f" stroke-width="4" marker-end="url(#arrow-green)"/>
+
+    <path id="incidence-angle" d="M473 371 A86 86 0 0 1 540 339"
+          fill="none" stroke="#8a5a44" stroke-width="3"/>
+    <path id="reflection-angle" d="M540 339 A86 86 0 0 1 607 371"
+          fill="none" stroke="#8a5a44" stroke-width="3"/>
+    <path id="viewing-offset-angle" d="M638 347 A125 125 0 0 1 648 362"
+          fill="none" stroke="#7c3aed" stroke-width="3"/>
+  </g>
+
+  <g inkscape:groupmode="layer" inkscape:label="Labels" id="layer-labels">
+    <text id="label-sun" x="140" y="113" text-anchor="middle">Sun H</text>
+    <text id="label-surface-normal" x="560" y="54" fill="#264653">âₙ = Ĉ</text>
+    <text id="label-sun-vector" x="170" y="365" fill="#d97706">l̂</text>
+    <text id="label-reflection-vector" x="720" y="118" fill="#277da1">r̂</text>
+    <text id="label-view-vector" x="705" y="400" fill="#2a9d8f">v̂</text>
+    <text id="label-incidence-angle" x="474" y="336" fill="#8a5a44">θᵢ</text>
+    <text id="label-reflection-angle" x="588" y="336" fill="#8a5a44">θᵣ</text>
+    <text id="label-viewing-offset" x="660" y="300" fill="#7c3aed">δ</text>
+    <text id="label-inspection-point" x="660" y="454">inspection point L</text>
+    <text id="label-inspected-spacecraft" x="540" y="592" text-anchor="middle">inspected spacecraft</text>
+    <text id="label-imaging-spacecraft" x="805" y="340">imaging spacecraft S</text>
+  </g>
 </svg>
