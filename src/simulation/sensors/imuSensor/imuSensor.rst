@@ -3,6 +3,31 @@ Executive Summary
 
 Sensor model to simulate an IMU.
 
+The accelerometer and gyro error states evolve independently according to
+
+.. math::
+
+    \boldsymbol e_{k+1} = A\boldsymbol e_k + P\boldsymbol z_k,
+    \qquad \boldsymbol z_k \sim \mathcal{N}(\boldsymbol 0, I),
+
+where ``PMatrixAccel`` and ``PMatrixGyro`` are matrix square roots of the
+respective process-noise covariance matrices. ``AMatrixAccel`` and
+``AMatrixGyro`` both default to zero, so configuring only a ``PMatrix``
+produces independent white Gaussian measurement noise. The accelerometer and
+gyro use separate repeatable random streams derived from ``RNGSeed``.
+
+Correlated processes and random walks must be configured explicitly with
+``setAMatrixAccel()`` or ``setAMatrixGyro()``. For example, the following
+configuration creates a bounded gyro random walk::
+
+    imu.setAMatrixGyro([[1.0, 0.0, 0.0],
+                        [0.0, 1.0, 0.0],
+                        [0.0, 0.0, 1.0]])
+    imu.setErrorBoundsGyro([0.01, 0.01, 0.01])  # [rad/s]
+
+Each positive error-bound entry is an exact hard bound on the corresponding
+error state. A non-positive entry disables clipping for that state.
+
 The module
 :download:`PDF Description </../../src/simulation/sensors/imuSensor/_Documentation/Basilisk-IMU-20170712.pdf>`
 contains further information on this module's function,
@@ -24,7 +49,7 @@ provides information on what this message is used for.
 .. bsk-module-io:: imuSensor
 
    input scStateInMsg SCStatesMsgPayload
-      input essage name for spacecraft state
+      input message name for spacecraft state
 
    output sensorOutMsg IMUSensorMsgPayload
       output message name for IMU output data

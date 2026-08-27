@@ -1,0 +1,1 @@
+- The :ref:`imuSensor` accelerometer and gyro now both produce white Gaussian noise by default when their ``PMatrix`` is configured, and use independent repeatable random streams. Correlated and bounded-random-walk propagation remains available through the explicit ``AMatrix`` and error-bound setters.

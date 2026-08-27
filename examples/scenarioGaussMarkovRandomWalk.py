@@ -41,23 +41,22 @@ The dynamics simulation is setup using a :ref:`Spacecraft` module in an elliptic
 are configured with different parameters:
 
 - IMU 1 demonstrates bounded random walk behavior:
-    - Uses non-zero A Matrix for state propagation (-0.1 on diagonal)
-    - Has positive walk bounds (±3.0 rad/s by default)
-    - Shows mean-reverting behavior characteristic of Gauss-Markov process
+    - Uses an identity A Matrix for state propagation
+    - Has positive error bounds (±3.0 rad/s by default)
+    - Shows random-walk behavior characteristic of an integrated process
     - Uses process noise level of 0.5 by default
 
 - IMU 2 demonstrates pure Gaussian noise:
-    - Uses zero A Matrix (set after initialization)
-    - Has negative walk bounds to disable random walk
+    - Uses the default zero A Matrix
+    - Leaves hard clipping disabled
     - Shows independent noise samples with no temporal correlation
     - Uses the same process noise level as IMU 1
 
 Both IMUs use the same process noise level (P Matrix) to ensure comparable noise magnitudes.
 
-Note that any sensors using the ``GaussMarkov`` noise model should be configured with
-user-defined configuration parameters such as ``walkBounds`` and ``AMatrix``. While this
-scenario intentionally configures noise to demonstrate different behaviors, in normal usage
-these parameters should start disabled by default and only be enabled when explicitly needed.
+Setting only the IMU ``PMatrix`` produces white noise by default. This scenario
+sets ``AMatrix`` and error bounds explicitly only for the bounded random-walk
+sensor.
 
 Illustration of Simulation Results
 -----------------------------------
@@ -152,13 +151,8 @@ def run(show_plots, processNoiseLevel=0.5, walkBounds=3.0):
         [0.0, processNoiseLevel, 0.0],
         [0.0, 0.0, processNoiseLevel]
     ]
-    imuSensor1.AMatrixGyro = [
-        [-0.1, 0.0, 0.0],
-        [0.0, -0.1, 0.0],
-        [0.0, 0.0, -0.1]
-    ]
-    imuSensor1.setWalkBoundsGyro(np.array([walkBounds, walkBounds, walkBounds], dtype=np.float64))
-    imuSensor1.applySensorErrors = True
+    imuSensor1.setAMatrixGyro(np.eye(3))
+    imuSensor1.setErrorBoundsGyro(np.array([walkBounds, walkBounds, walkBounds], dtype=np.float64))
     imuSensor1.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
 
     # Create second IMU with pure Gaussian noise
@@ -172,7 +166,6 @@ def run(show_plots, processNoiseLevel=0.5, walkBounds=3.0):
         [0.0, 0.0, processNoiseLevel]
     ]
     imuSensor2.senRotBias = [0.0, 0.0, 0.0]
-    imuSensor2.applySensorErrors = True
     imuSensor2.scStateInMsg.subscribeTo(scObject.scStateOutMsg)
 
     # Add both IMUs to simulation
@@ -186,13 +179,6 @@ def run(show_plots, processNoiseLevel=0.5, walkBounds=3.0):
     scSim.AddModelToTask(simTaskName, dataLog2)
 
     scSim.InitializeSimulation()
-
-    # Set IMU2's A Matrix to zero to demonstrate different error propagation behavior.
-    imuSensor2.AMatrixGyro = [
-        [0.0, 0.0, 0.0],
-        [0.0, 0.0, 0.0],
-        [0.0, 0.0, 0.0]
-    ]
 
     simulationTime = macros.min2nano(10)
     scSim.ConfigureStopTime(simulationTime)
