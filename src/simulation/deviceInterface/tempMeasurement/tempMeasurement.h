@@ -21,8 +21,9 @@
 #ifndef TEMPMEASUREMENT_H
 #define TEMPMEASUREMENT_H
 
-#include <random>
 #include <Eigen/Dense>
+#include <cstdint>
+#include <random>
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/msgPayloadDefC/TemperatureMsgPayload.h"
@@ -49,29 +50,42 @@ public:
     void Reset(uint64_t CurrentSimNanos);
     void UpdateState(uint64_t CurrentSimNanos);
 
-private:
+    /**
+     * @brief Set the sensor-error propagation matrix.
+     * @param propMatrix One-by-one propagation matrix.
+     */
+    void setAMatrix(const Eigen::VectorXd& propMatrix);
+
+    /**
+     * @brief Get the sensor-error propagation matrix.
+     * @return Current one-by-one propagation matrix.
+     */
+    Eigen::VectorXd getAMatrix() const;
+
+  private:
     void applySensorErrors();
 
 public:
     ReadFunctor<TemperatureMsgPayload> tempInMsg;   //!< True temperature measurement
     Message<TemperatureMsgPayload> tempOutMsg;      //!< Sensed temperature measurement
-    BSKLogger bskLogger;                        //!< -- BSK Logging
-    TempFaultState_t faultState;                //!< [-] Fault status variable
+    BSKLogger bskLogger;                            //!< -- BSK Logging
+    TempFaultState_t faultState;                    //!< [-] Fault status variable
 
-    double senBias{};                             //!< [-] Sensor bias value
-    double senNoiseStd{};                         //!< [-] Sensor noise value
-    double walkBounds;                          //!< [-] Gauss Markov walk bounds
+    double senBias{};                             //!< [C] Sensor bias value
+    double senNoiseStd{};                         //!< [C] Sensor process-noise standard deviation
+    double walkBounds;                            //!< [C] Hard bound on the noise state; non-positive disables clipping
     double stuckValue{};                          //!< [C] Value for temp sensor to get stuck at
-    double spikeProbability;                    //!< [-] Probability of spiking at each time step (between 0 and 1)
-    double spikeAmount;                         //!< [-] Spike multiplier
+    double spikeProbability;                      //!< [-] Probability of spiking at each time step (between 0 and 1)
+    double spikeAmount;                           //!< [-] Spike multiplier
 
-private:
+  private:
     double trueTemperature{};                     //!< [C] Truth value for the temperature measurement
     double sensedTemperature{};                   //!< [C] Temperature measurement as corrupted by noise and faults
-    double pastValue{};                           //!< [-] Measurement from last update (used only for faults)
+    double pastValue{};                           //!< [C] Measurement from last update (used only for faults)
 
-    std::minstd_rand spikeProbabilityGenerator; //! [-] Number generator for calculating probability of spike if faulty
-    GaussMarkov noiseModel;                     //! [-] Gauss Markov noise generation model
+    std::minstd_rand spikeProbabilityGenerator; //!< [-] Generator for calculating probability of a fault spike
+    GaussMarkov noiseModel;                     //!< [-] Gauss-Markov noise generation model
+    Eigen::VectorXd propagationMatrix;          //!< [-] Sensor-error propagation matrix; defaults to zero
 };
 
 

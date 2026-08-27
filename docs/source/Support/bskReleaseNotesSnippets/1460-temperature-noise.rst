@@ -1,0 +1,1 @@
+- The :ref:`tempMeasurement` module now produces white Gaussian noise by default when ``senNoiseStd`` is configured, supports explicit correlated and bounded-random-walk propagation through ``setAMatrix()``, and uses independent repeatable streams for measurement noise and spike faults.

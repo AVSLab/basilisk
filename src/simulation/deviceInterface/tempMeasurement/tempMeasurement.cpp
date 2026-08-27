@@ -27,11 +27,13 @@
     Don't allow random walk by default.
  */
 TempMeasurement::TempMeasurement() : faultState{TEMP_FAULT_NOMINAL},
-                                    walkBounds{1E-15},
+                                    walkBounds{-1.0},
                                     spikeProbability{0.1},
                                     spikeAmount{2.0}
 {
     this->noiseModel = GaussMarkov(1, this->RNGSeed);
+    this->propagationMatrix.resize(1);
+    this->propagationMatrix(0) = 0.0;
 }
 
 TempMeasurement::~TempMeasurement() = default;
@@ -49,16 +51,14 @@ void TempMeasurement::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
         bskLogger.bskError("The probability of temperature spike on fault must be between 0 and 1.");
     }
     // set up gaussMarkov and random number generator parameters
-    this->spikeProbabilityGenerator.seed(this->RNGSeed);
+    this->spikeProbabilityGenerator.seed(this->RNGSeed + 1);
     this->noiseModel.setRNGSeed(this->RNGSeed);
 
     Eigen::VectorXd nMatrix(1,1);
     nMatrix(0,0) = this->senNoiseStd;
     this->noiseModel.setNoiseMatrix(nMatrix);
 
-    Eigen::VectorXd pMatrix(1,1);
-    pMatrix(0,0) = 1.;
-    this->noiseModel.setPropMatrix(pMatrix);
+    this->noiseModel.setPropMatrix(this->propagationMatrix);
 
     Eigen::VectorXd bounds(1,1);
     bounds(0,0) = this->walkBounds;
@@ -121,4 +121,18 @@ void TempMeasurement::UpdateState(uint64_t CurrentSimNanos)
 
     // write to the output messages
     this->tempOutMsg.write(&tempOutMsgBuffer, this->moduleID, CurrentSimNanos);
+}
+
+void TempMeasurement::setAMatrix(const Eigen::VectorXd& propMatrix)
+{
+    if (propMatrix.rows() != 1 || propMatrix.cols() != 1) {
+        bskLogger.bskError("TempMeasurement: Propagation matrix must be 1x1");
+    }
+    this->propagationMatrix = propMatrix;
+    this->noiseModel.setPropMatrix(propMatrix);
+}
+
+Eigen::VectorXd TempMeasurement::getAMatrix() const
+{
+    return this->propagationMatrix;
 }

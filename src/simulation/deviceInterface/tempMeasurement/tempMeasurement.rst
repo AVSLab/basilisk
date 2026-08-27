@@ -28,6 +28,32 @@ bias, and three faults:
   to a specified multiplier times the actual value, with a given probability
 - ``TEMP_FAULT_NOMINAL`` has no faulty behavior but may still have noise and bias
 
+The sensor noise state follows
+
+.. math::
+
+    e_{k+1} = a e_k + \sigma z_k,
+    \qquad z_k \sim \mathcal{N}(0, 1),
+
+where ``senNoiseStd`` configures :math:`\sigma` and ``setAMatrix()`` configures
+the one-by-one propagation matrix :math:`a`. The propagation matrix defaults to
+zero, so setting ``senNoiseStd`` alone produces independent white Gaussian
+measurement noise with the requested standard deviation. ``RNGSeed`` controls
+the repeatable random sequence.
+
+A correlated process or random walk must be configured explicitly. For
+example, identity propagation with a positive ``walkBounds`` creates a bounded
+random walk::
+
+    tempMeasurementModel.setAMatrix([[1.0]])
+    tempMeasurementModel.walkBounds = 10.0  # [C]
+
+A positive ``walkBounds`` value is an exact hard bound on the noise state. A
+non-positive value disables clipping. Bias and noise are applied before fault
+handling. The stuck-value and stuck-current faults replace the noisy, biased
+measurement, while the spiking fault multiplies it by ``spikeAmount`` when a
+spike occurs.
+
 User Guide
 ----------
 
@@ -53,8 +79,8 @@ This module has several parameters that are set to default values:
       - Sets the standard deviation for sensor noise.
       - 0.0
     * - walkBounds
-      - Sets the random walk bounds for sensor noise.
-      - 1E-15
+      - Sets an optional hard bound on the sensor noise state.
+      - -1.0 (disabled)
     * - stuckValue
       - Temperature at which the reading is stuck for fault mode ``TEMP_FAULT_STUCK_VALUE``.
       - 0.0
@@ -83,13 +109,12 @@ A sample setup is done using:
     :linenos:
 
     tempMeasurementModel.senBias = 1.0  # [C] bias amount
-    tempMeasurementModel.senNoiseStd = 5.0  # [C] noise standard devation
-    tempMeasurementModel.walkBounds = 2.0  #
+    tempMeasurementModel.senNoiseStd = 5.0  # [C] white-noise standard deviation
     tempMeasurementModel.stuckValue = 10.0  # [C] if the sensor gets stuck, stuck at 10 degrees C
     tempMeasurementModel.spikeProbability = 0.3  # [-] 30% chance of spiking at each time step
     tempMeasurementModel.spikeAmount = 10.0  # [-] 10x the actual sensed value if the spike happens
 
-The incomping temperature message must be connected to the module:
+The incoming temperature message must be connected to the module:
 
 .. code-block:: python
     :linenos:

@@ -219,9 +219,8 @@ def run(show_plots):
 
         # initialize the temperature measurement
         tempMeasList[item].ModelTag = "tempMeasurementModel" + str(item)
-        tempMeasList[item].senBias = 0.0 # [C] bias amount
+        tempMeasList[item].senBias = 0.0  # [C] bias amount
         tempMeasList[item].senNoiseStd = 0.5  # [C] noise standard deviation
-        tempMeasList[item].walkBounds = 0.1  # [C] noise wald bounds
         tempMeasList[item].stuckValue = 0.0  # [C] if the sensor gets stuck, stuck at 10 degrees C
         tempMeasList[item].spikeProbability = 0.0  # [-] 30% chance of spiking at each time step
         tempMeasList[item].spikeAmount = 0.0  # [-] 10x the actual sensed value if the spike happens
