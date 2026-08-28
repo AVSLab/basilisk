@@ -42,10 +42,19 @@ public:
     ~GaussMarkov();
     void computeNextState();
 
-    /*!@brief Method does just what it says, seeds the random number generator
-       @param newSeed The seed to use in the random number generator
+    /*! @brief Restart the noise process with the supplied random seed.
+
+        The generator, cached distribution state, and propagated noise state are
+        reset so the same seed reproduces the complete output sequence.
+
+        @param newSeed The seed to use in the random number generator.
      */
-    void setRNGSeed(uint64_t newSeed) {rGen.seed((unsigned int)newSeed); RNGSeed = newSeed;}
+    void setRNGSeed(uint64_t newSeed) {
+        this->rGen.seed(static_cast<unsigned int>(newSeed));
+        this->rNum.reset();
+        this->currentState.setZero();
+        this->RNGSeed = newSeed;
+    }
 
     /*! Method returns the current random walk state from the model.
 

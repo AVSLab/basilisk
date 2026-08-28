@@ -213,3 +213,23 @@ TEST(GaussMarkov, gaussianOnlyMode) {
     EXPECT_NEAR(stds(0), 1.0, 0.1);
     EXPECT_NEAR(stds(1), 1.0, 0.1);
 }
+
+TEST(GaussMarkov, reseedingRestartsSequence) {
+    constexpr uint64_t seed = 1000;
+    // An odd state count leaves one normal variate cached between updates.
+    GaussMarkov errorModel(3);
+    errorModel.setNoiseMatrix(Eigen::Matrix3d::Identity());
+    errorModel.setPropMatrix(Eigen::Matrix3d::Identity());
+    errorModel.setRNGSeed(seed);
+
+    errorModel.computeNextState();
+    const Eigen::Vector3d firstSample = errorModel.getCurrentState();
+
+    errorModel.setRNGSeed(seed);
+    errorModel.computeNextState();
+    const Eigen::Vector3d replayedSample = errorModel.getCurrentState();
+
+    for (Eigen::Index i = 0; i < firstSample.size(); i++) {
+        EXPECT_DOUBLE_EQ(replayedSample[i], firstSample[i]);
+    }
+}
