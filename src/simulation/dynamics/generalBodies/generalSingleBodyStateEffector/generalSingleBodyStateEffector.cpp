@@ -51,6 +51,8 @@ void GeneralSingleBodyStateEffector::Reset(uint64_t currentSimNanos) {
 }
 
 void GeneralSingleBodyStateEffector::linkInStates(DynParamManager& statesIn) {
+    this->inertialPositionProperty = statesIn.getPropertyReference(this->propName_inertialPosition);
+    this->inertialVelocityProperty = statesIn.getPropertyReference(this->propName_inertialVelocity);
 }
 
 void GeneralSingleBodyStateEffector::registerStates(DynParamManager& states) {
