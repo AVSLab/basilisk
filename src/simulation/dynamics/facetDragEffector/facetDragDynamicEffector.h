@@ -22,6 +22,7 @@
 #define FACET_DRAG_DYNAMIC_EFFECTOR_H
 
 #include <Eigen/Dense>
+#include <cstdint>
 #include <vector>
 #include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
@@ -54,11 +55,11 @@ public:
 
     FacetDragDynamicEffector();
     ~FacetDragDynamicEffector();
-    void linkInStates(DynParamManager& states);
+    void linkInStates(DynParamManager& states) override;
     void linkInProperties(DynParamManager& properties) override;
-    void computeForceTorque(double integTime, double timeStep);
-    void Reset(uint64_t CurrentSimNanos);               //!< class method
-    void UpdateState(uint64_t CurrentSimNanos);
+    void computeForceTorque(double integTime, double timeStep) override;
+    void Reset(uint64_t CurrentSimNanos) override;  //!< class method
+    void UpdateState(uint64_t CurrentSimNanos) override;
     void WriteOutputMessages(uint64_t CurrentClock);
     bool ReadInputs();
     void addFacet(double area, double dragCoeff, Eigen::Vector3d B_normal_hat, Eigen::Vector3d B_location);
