@@ -56,6 +56,17 @@ void GeneralSingleBodyStateEffector::linkInStates(DynParamManager& statesIn) {
 }
 
 void GeneralSingleBodyStateEffector::registerStates(DynParamManager& states) {
+    this->betaState = states.registerState(this->numDOF, 1, this->nameOfBetaState);
+    this->betaDotState = states.registerState(this->numDOF, 1, this->nameOfBetaDotState);
+
+    Eigen::VectorXd betaInit = Eigen::VectorXd::Zero(this->numDOF);
+    Eigen::VectorXd betaDotInit = Eigen::VectorXd::Zero(this->numDOF);
+    for (auto& dof : this->jointDOFList) {
+        betaInit(dof->index, 0) = dof->betaInit;
+        betaDotInit(dof->index, 0) = dof->betaDotInit;
+    }
+    this->betaState->setState(betaInit);
+    this->betaDotState->setState(betaDotInit);
 }
 
 void GeneralSingleBodyStateEffector::UpdateState(uint64_t currentSimNanos) {
