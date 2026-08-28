@@ -116,7 +116,7 @@ def unitSimStarTracker(show_plots, useFlag, testCase):
     # pull message log data and assemble into dict
     moduleOutput = dataLog.qInrtl2Case
 
-    accuracy = 1e-6
+    accuracy = 1e-6  # [-]
     for i in range(0,len(trueVector['qInrtl2Case'])):
         if not unitTestSupport.isArrayEqual(moduleOutput[i], trueVector['qInrtl2Case'][i], 3, accuracy):
             testFail = True

@@ -33,7 +33,8 @@ ImuSensor::ImuSensor()
     this->StatePrevious = this->scStateInMsg.zeroMsgPayload;
     this->StateCurrent = this->scStateInMsg.zeroMsgPayload;
 
-    this->errorModelGyro =  GaussMarkov(static_cast<uint64_t>(this->numStates), this->RNGSeed + 1);
+    const uint64_t gyroSeed = GaussMarkov::deriveSecondarySeed(this->RNGSeed);
+    this->errorModelGyro = GaussMarkov(static_cast<uint64_t>(this->numStates), gyroSeed);
     this->errorModelAccel = GaussMarkov(static_cast<uint64_t>(this->numStates), this->RNGSeed);
 
     this->aDisc = Discretize((uint8_t) this->numStates);
@@ -117,7 +118,7 @@ void ImuSensor::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
         bskLogger.bskError("Your process noise matrix (PMatrixGyro) is not 3*3. Quitting.");
     }
     this->errorModelGyro.setNoiseMatrix(this->PMatrixGyro);
-    this->errorModelGyro.setRNGSeed(this->RNGSeed + 1);
+    this->errorModelGyro.setRNGSeed(GaussMarkov::deriveSecondarySeed(this->RNGSeed));
 
     Eigen::Matrix<double, 3, 2> oSatBounds;
     oSatBounds(0,0) = -this->senRotMax;

@@ -63,10 +63,11 @@ def run_sensor(sampleCount, seed, propagationMatrix=None, errorBound=None):
 def test_default_noise_is_white_and_independent():
     """Default accelerometer and gyro noise must be white and independent."""
     sampleCount = 2500
-    sensor, accelNoise, gyroNoise = run_sensor(sampleCount, seed=1234)
+    sensor, accelNoise, gyroNoise = run_sensor(sampleCount, seed=0)
 
     np.testing.assert_allclose(np.asarray(sensor.getAMatrixAccel()), np.zeros((3, 3)))
     np.testing.assert_allclose(np.asarray(sensor.getAMatrixGyro()), np.zeros((3, 3)))
+    assert not np.array_equal(accelNoise, gyroNoise)
     for samples, expectedSigma in (
         (accelNoise, ACCEL_NOISE_STD),
         (gyroNoise, GYRO_NOISE_STD),

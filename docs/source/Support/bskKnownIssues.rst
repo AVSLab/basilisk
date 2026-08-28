@@ -95,8 +95,8 @@ Version |release| (July 7, 2026)
   default. This is fixed in the current version.
 - BSK-1460: :ref:`imuSensor` used white noise for the accelerometer but a random walk for the gyro,
   and both noise models were initialized with the same random stream. Both propagation matrices now
-  default to zero, and the accelerometer and gyro use independent repeatable streams. This is fixed
-  in the current version.
+  default to zero, and the accelerometer and gyro use distinct repeatable streams for every
+  ``RNGSeed`` value, including zero. This is fixed in the current version.
 - BSK-1460: Configuring :ref:`starTracker` ``PMatrix`` produced an unbounded attitude-error random
   walk by default. The propagation matrix now defaults to zero so ``PMatrix`` alone produces white
   Gaussian attitude errors; random-walk behavior remains explicitly configurable. This is fixed in

@@ -22,7 +22,7 @@
 #include "gauss_markov.h"
 #include "linearAlgebra.h"
 
-/*! The constructor initialies the random number generator used for the walks*/
+/*! The constructor initializes the random number generator used for the walks. */
 GaussMarkov::GaussMarkov()
 {
     this->RNGSeed = 0x1badcad1;
@@ -55,8 +55,22 @@ GaussMarkov::GaussMarkov(uint64_t size, uint64_t newSeed)
 void GaussMarkov::initializeRNG() {
     //! - Set up standard normal distribution N(0,1) parameters for random number generation
     std::normal_distribution<double>::param_type updatePair(0.0, 1.0);
-    this->rGen.seed((unsigned int)this->RNGSeed);
+    this->rGen.seed(static_cast<std::minstd_rand::result_type>(this->RNGSeed));
+    this->rNum.reset();
     this->rNum.param(updatePair);
+}
+
+uint64_t
+GaussMarkov::deriveSecondarySeed(uint64_t baseSeed)
+{
+    constexpr uint64_t secondaryStreamDiscriminator = 0x9E3779B97F4A7C15ULL;
+    const uint64_t candidateSeed = baseSeed ^ secondaryStreamDiscriminator;
+    std::minstd_rand primaryGenerator(static_cast<std::minstd_rand::result_type>(baseSeed));
+    std::minstd_rand secondaryGenerator(static_cast<std::minstd_rand::result_type>(candidateSeed));
+    if (primaryGenerator == secondaryGenerator) {
+        return static_cast<uint64_t>(primaryGenerator());
+    }
+    return candidateSeed;
 }
 
 /*! The destructor is a placeholder for one that might do something*/

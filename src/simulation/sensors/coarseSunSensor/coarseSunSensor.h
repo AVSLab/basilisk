@@ -20,9 +20,9 @@
 #ifndef COARSE_SUN_SENSOR_H
 #define COARSE_SUN_SENSOR_H
 
+#include "architecture/_GeneralModuleFiles/sys_model.h"
 #include <cstdint>
 #include <vector>
-#include "architecture/_GeneralModuleFiles/sys_model.h"
 
 #include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 #include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
@@ -136,7 +136,7 @@ public:
      */
     Eigen::VectorXd getAMatrix() const;
 
-private:
+  private:
     SpicePlanetStateMsgPayload sunData;             //!< [-] Unused for now, but including it for future
     SCStatesMsgPayload stateCurrent;            //!< [-] Current SSBI-relative state
     EclipseMsgPayload sunVisibilityFactor;          //!< [-] scaling parameter from 0 (fully obscured) to 1 (fully visible)
@@ -144,7 +144,7 @@ private:
     GaussMarkov noiseModel;                     //! [-] Gauss Markov noise generation model
     GaussMarkov faultNoiseModel;                //! [-] Gauss Markov noise generation model exclusively for CSS fault
     Saturate saturateUtility;                   //! [-] Saturation utility
-    Eigen::VectorXd propagationMatrix;             //!< [-] nominal sensor-error propagation matrix
+    Eigen::VectorXd propagationMatrix;          //!< [-] nominal sensor-error propagation matrix
 };
 
 //!@brief Constellation of coarse sun sensors for aggregating output information

@@ -28,8 +28,6 @@
 # Creation Date:  May. 31, 2017
 #
 
-import os
-
 import numpy as np
 import pytest
 from Basilisk.architecture import messaging
@@ -37,38 +35,48 @@ from Basilisk.simulation import coarseSunSensor
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion as om
-from Basilisk.utilities import unitTestSupport
-
-path = os.path.dirname(os.path.abspath(__file__))
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize(
-    "cssFault, errTol",
+    "cssFault",
     [
-        ("CSSFAULT_OFF", 0.01),
-        ("CSSFAULT_STUCK_CURRENT", 0.01),
-        ("CSSFAULT_STUCK_MAX", 0.01),
-        ("CSSFAULT_STUCK_RAND", 0.05),
-        ("CSSFAULT_RAND", 0.15),
-    ])
+        "CSSFAULT_OFF",
+        "CSSFAULT_STUCK_CURRENT",
+        "CSSFAULT_STUCK_MAX",
+        "CSSFAULT_STUCK_RAND",
+        "CSSFAULT_RAND",
+    ],
+)
 # provide a unique test method name, starting with test_
-def test_coarseSunSensor(cssFault, errTol):
-    '''This function is called by the py.test environment.'''
-    # each test method requires a single assert method to be called
-    [testResults, testMessage] = run(cssFault, errTol)
-    assert testResults < 1, testMessage
-    __tracebackhide__ = True
+def test_coarseSunSensor(cssFault):
+    """Verify that each coarse sun sensor fault has the documented behavior."""
+    outputs = run(cssFault)
+    nominalOutput = outputs[0]
+    faultOutputs = outputs[1:]
+
+    if cssFault == "CSSFAULT_OFF":
+        np.testing.assert_array_equal(faultOutputs, np.zeros(3))
+    elif cssFault == "CSSFAULT_STUCK_CURRENT":
+        np.testing.assert_allclose(faultOutputs, nominalOutput)
+    elif cssFault == "CSSFAULT_STUCK_MAX":
+        expectedOutput = 2.0  # [-] unit signal multiplied by the configured scale factor
+        np.testing.assert_allclose(faultOutputs, expectedOutput)
+    elif cssFault == "CSSFAULT_STUCK_RAND":
+        np.testing.assert_allclose(faultOutputs, faultOutputs[0])
+        assert not np.isclose(faultOutputs[0], nominalOutput)
+    elif cssFault == "CSSFAULT_RAND":
+        assert np.ptp(faultOutputs) > np.finfo(float).eps
+
+    faultBound = 4.0  # [-] Gauss-Markov fault bound multiplied by the configured scale factor
+    assert np.all(np.abs(faultOutputs) <= faultBound)
 
 
-def run(cssFault, errTol):
-    # np.random.seed(10)
-
-    testFailCount = 0
-    testMessages = []
+def run(cssFault):
     testTaskName = "unitTestTask"
     testProcessName = "unitTestProcess"
-    testTaskRate = macros.sec2nano(0.1)
+    testTaskPeriod = 0.1  # [s]
+    testTaskRate = macros.sec2nano(testTaskPeriod)
 
     # Create a simulation container
     unitTestSim = SimulationBaseClass.SimBaseClass()
@@ -88,15 +96,15 @@ def run(cssFault, errTol):
     # Create dummy spacecraft message
     satelliteStateMsg = messaging.SCStatesMsgPayload()
     satelliteStateMsg.r_BN_N = [0.0, 0.0, 0.0]
-    angle = np.pi/16
+    angle = np.pi / 16  # [rad]
     satelliteStateMsg.sigma_BN = [0., 0., angle]
     scMsg = messaging.SCStatesMsg().write(satelliteStateMsg)
 
     # Calculate sun distance factor
     CSS = coarseSunSensor.CoarseSunSensor()
 
-    CSS.fov = 80. * macros.D2R         # half-angle field of view value
-    CSS.scaleFactor = 2.0
+    CSS.fov = 80.0 * macros.D2R  # [rad] half-angle field of view value
+    CSS.scaleFactor = 2.0  # [-]
     CSS.nHat_B = np.array([1., 0., 0.])
     CSS.sunInMsg.subscribeTo(sunMsg)
     CSS.stateInMsg.subscribeTo(scMsg)
@@ -108,24 +116,7 @@ def run(cssFault, errTol):
     cssRecoder = CSS.cssDataOutMsg.recorder()
     unitTestSim.AddModelToTask(testTaskName, cssRecoder)
 
-    # Truth Values
-    if cssFault == "CSSFAULT_OFF":
-        cssFaultValue = coarseSunSensor.CSSFAULT_OFF
-        truthValue = 0.0
-    elif cssFault == "CSSFAULT_STUCK_CURRENT":
-        cssFaultValue = coarseSunSensor.CSSFAULT_STUCK_CURRENT
-        truthValue = 1.4280970791070948
-    elif cssFault == "CSSFAULT_STUCK_MAX":
-        cssFaultValue = coarseSunSensor.CSSFAULT_STUCK_MAX
-        truthValue = 2.0
-    elif cssFault == "CSSFAULT_STUCK_RAND":
-        cssFaultValue = coarseSunSensor.CSSFAULT_STUCK_RAND
-        truthValue = 3.8616668174815842
-    elif cssFault == "CSSFAULT_RAND":
-        cssFaultValue = coarseSunSensor.CSSFAULT_RAND
-        truthValue = 1.8197981843932824
-    else:
-        NotImplementedError("Fault type specified does not exist.")
+    cssFaultValue = getattr(coarseSunSensor, cssFault)
 
     unitTestSim.InitializeSimulation()
 
@@ -135,18 +126,7 @@ def run(cssFault, errTol):
     for i in range(3):
         unitTestSim.TotalSim.SingleStepProcesses()
 
-    cssOutput = cssRecoder.OutputData[-1]
-
-    if cssFault == "CSSFAULT_OFF":
-        if not truthValue == cssOutput:
-            testFailCount += 1
-    elif not unitTestSupport.isDoubleEqualRelative(cssOutput, truthValue, errTol):
-        testFailCount += 1
-
-    if testFailCount == 0:
-        return [0, '']
-    else:
-        return [testFailCount, '']
+    return np.asarray(cssRecoder.OutputData)
 
 
 if __name__ == "__main__":
