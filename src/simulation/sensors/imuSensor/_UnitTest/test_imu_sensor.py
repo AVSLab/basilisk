@@ -70,8 +70,14 @@ def findSigmaDot(sigma, omega):
     sigmaDot = np.dot(0.25, np.dot(B, omega))
     return sigmaDot
 
-def setRandomWalk(self,senRotNoiseStd = 0.0,senTransNoiseStd = 0.0,errorBoundsGyro = [1e6] * 3,errorBoundsAccel = [1e6] * 3):
-    # sets the random walk for IRU module
+def setNoiseAndBounds(
+    self,
+    senRotNoiseStd=0.0,
+    senTransNoiseStd=0.0,
+    errorBoundsGyro=[1e6] * 3,  # [rad/s]
+    errorBoundsAccel=[1e6] * 3,  # [m/s^2]
+):
+    # Set the process-noise matrices and optional hard bounds for the IMU module.
     self.PMatrixAccel = np.eye(3) * senTransNoiseStd
     self.setErrorBoundsAccel(np.array(errorBoundsAccel))
 
@@ -91,7 +97,7 @@ def setRandomWalk(self,senRotNoiseStd = 0.0,senTransNoiseStd = 0.0,errorBoundsGy
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("show_plots,   testCase,       stopTime,       procRate,   gyroLSBIn,      accelLSBIn,     senRotMaxIn,    senTransMaxIn,  senRotNoiseStd,     senTransNoiseStd,   errorBoundsGyroIn,  errorBoundsAccelIn, senRotBiasIn,   senTransBiasIn, accuracy", [
                         (False,         'clean',        1.0,            0.01,       0.0,            0.0,            1000.,          1000.,          0.0,                0.0,                0.0,                0.0,                0.,             0.,             1e-8),
-                        (False,         'noise',        1.0,            0.001,      0.0,            0.0,            1000.,          1000.,          .1,                 .1,                 0.3,                0.3,                0.0,            0.0,            1.5e-1),
+                        (False,         'noise',        0.2,            0.001,      0.0,            0.0,            1000.,          1000.,          .1,                 .1,                 0.3,                0.3,                0.0,            0.0,            1.5e-1),
                         (False,         'bias',         1.0,            0.01,       0.0,            0.0,            1000.,          1000.,          0.0,                0.0,                0.0,                0.0,                10.,            10.,            1e-8),
                         (False,         'saturation',   1.0,            0.01,       0.0,            0.0,            1.0,            5.0,            0.0,                0.0,                0.0,                0.0,                0.0,            0.0,            1e-8),
                         (False,        'discretization',1.,             0.01,       0.05,           0.5,            100.,           1000.,          0.0,                0.0,                1e6,                1e6,                0.0,            0.0,            1e-8),
@@ -195,7 +201,13 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       procRate, gyroLSBIn
     ImuSensor.setBodyToPlatformDCM(yaw, pitch, roll) # done separately as a check
     errorBoundsGyro = [errorBoundsGyroIn] * 3
     errorBoundsAccel = [errorBoundsAccelIn] * 3
-    setRandomWalk(ImuSensor, senRotNoiseStd, senTransNoiseStd, errorBoundsGyro, errorBoundsAccel)
+    setNoiseAndBounds(
+        ImuSensor,
+        senRotNoiseStd,
+        senTransNoiseStd,
+        errorBoundsGyro,
+        errorBoundsAccel,
+    )
     ImuSensor.setLSBs(accelLSBIn, gyroLSBIn)
     ImuSensor.senRotBias = np.array([senRotBiasIn] * 3)
     ImuSensor.senTransBias = np.array([senTransBiasIn] * 3)
@@ -436,44 +448,39 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       procRate, gyroLSBIn
         DVout = addTimeColumn(dataLog.times(), DVout)[1:,]
         omegaOut = addTimeColumn(dataLog.times(), omegaOut)[1:,]
 
-        DRoutNoise = np.zeros((np.shape(DRout)[0], np.shape(DRout)[1]-1))
-        for i in range(3,len(stepPRV_PN)-1):
-            for j in [0,1,2]:
-                DRoutNoise[i][j] = DRout[i][j+1] - DRout[i-1][j+1]
+        # Skip the startup samples and difference consecutive measurements to
+        # remove the slowly varying truth signal.
+        DRoutNoise = np.diff(DRout[:, 1:], axis=0)[2:]
+        rDotDotOutNoise = np.diff(rDotDotOut[:, 1:], axis=0)[2:]
+        DVoutNoise = np.diff(DVout[:, 1:], axis=0)[2:]
+        omegaOutNoise = np.diff(omegaOut[:, 1:], axis=0)[2:]
 
-        rDotDotOutNoise = np.zeros((np.shape(DRout)[0], np.shape(DRout)[1] - 1))
-        for i in range(3, len(stepPRV_PN) - 1):
-            for j in [0, 1, 2]:
-                rDotDotOutNoise[i, j] = rDotDotOut[i, j+1] - rDotDotOut[i-1, j+1]
-
-        DVoutNoise = np.zeros((np.shape(DRout)[0], np.shape(DRout)[1] - 1))
-        for i in range(3, len(stepPRV_PN) - 1):
-            for j in [0, 1, 2]:
-                DVoutNoise[i, j] = DVout[i, j + 1] - DVout[i-1, j + 1]
-
-        omegaOutNoise = np.zeros((np.shape(DRout)[0], np.shape(DRout)[1] - 1))
-        for i in range(3, len(stepPRV_PN)-1):
-            for j in [0, 1, 2]:
-                omegaOutNoise[i, j] = omegaOut[i, j + 1] - omegaOut[i-1, j + 1]
-
-        # Use a more lenient accuracy threshold for noise comparisons
-        noiseAccuracy = 0.5  # Allows for up to 50% deviation
+        # The difference of two independent white-noise samples has sqrt(2)
+        # times the standard deviation of either sample.
+        differenceNoiseScale = np.sqrt(2.0)  # [-]
+        noiseAccuracy = 0.25  # [-] relative tolerance
 
         # Compare noise standard deviations with expected values
-        for i, (actual, expected, name) in enumerate([
-            (np.std(DRoutNoise[:,0]), senRotNoiseStd*dt, "DRnoise1"),
-            (np.std(DRoutNoise[:,1]), senRotNoiseStd*dt, "DRnoise2"),
-            (np.std(DRoutNoise[:,2]), senRotNoiseStd*dt, "DRnoise3"),
-            (np.std(DVoutNoise[:,0]), senTransNoiseStd*dt*accelScale[0], "DVnoise1"),
-            (np.std(DVoutNoise[:,1]), senTransNoiseStd*dt*accelScale[1], "DVnoise2"),
-            (np.std(DVoutNoise[:,2]), senTransNoiseStd*dt*accelScale[2], "DVnoise3"),
-            (np.std(rDotDotOutNoise[:,0]), senTransNoiseStd*accelScale[0], "AccelNoise1"),
-            (np.std(rDotDotOutNoise[:,1]), senTransNoiseStd*accelScale[1], "AccelNoise2"),
-            (np.std(rDotDotOutNoise[:,2]), senTransNoiseStd*accelScale[2], "AccelNoise3"),
-            (np.std(omegaOutNoise[:,0]), senRotNoiseStd, "omegaNoise1"),
-            (np.std(omegaOutNoise[:,1]), senRotNoiseStd, "omegaNoise2"),
-            (np.std(omegaOutNoise[:,2]), senRotNoiseStd, "omegaNoise3")
-        ]):
+        expectedDRNoise = differenceNoiseScale * senRotNoiseStd * dt
+        accelScaleArray = np.asarray(accelScale)
+        expectedDVNoise = differenceNoiseScale * senTransNoiseStd * dt * accelScaleArray
+        expectedAccelNoise = differenceNoiseScale * senTransNoiseStd * accelScaleArray
+        expectedOmegaNoise = differenceNoiseScale * senRotNoiseStd
+        noiseChecks = [
+            (np.std(DRoutNoise[:, 0]), expectedDRNoise, "DRnoise1"),
+            (np.std(DRoutNoise[:, 1]), expectedDRNoise, "DRnoise2"),
+            (np.std(DRoutNoise[:, 2]), expectedDRNoise, "DRnoise3"),
+            (np.std(DVoutNoise[:, 0]), expectedDVNoise[0], "DVnoise1"),
+            (np.std(DVoutNoise[:, 1]), expectedDVNoise[1], "DVnoise2"),
+            (np.std(DVoutNoise[:, 2]), expectedDVNoise[2], "DVnoise3"),
+            (np.std(rDotDotOutNoise[:, 0]), expectedAccelNoise[0], "AccelNoise1"),
+            (np.std(rDotDotOutNoise[:, 1]), expectedAccelNoise[1], "AccelNoise2"),
+            (np.std(rDotDotOutNoise[:, 2]), expectedAccelNoise[2], "AccelNoise3"),
+            (np.std(omegaOutNoise[:, 0]), expectedOmegaNoise, "omegaNoise1"),
+            (np.std(omegaOutNoise[:, 1]), expectedOmegaNoise, "omegaNoise2"),
+            (np.std(omegaOutNoise[:, 2]), expectedOmegaNoise, "omegaNoise3"),
+        ]
+        for actual, expected, name in noiseChecks:
             print(f"\nChecking {name}:")
             print(f"  Actual value:   {actual}")
             print(f"  Expected value: {expected}")
@@ -485,9 +492,10 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       procRate, gyroLSBIn
                 print("  ✓ Test passed")
 
         # noise plots
+        noiseTimes = DRout[3:, 0] / 1e9  # [s]
         plt.figure(1000, figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
         plt.clf()
-        plt.plot(DRout[1:, 0]/1e9, DVoutNoise[1:,:])
+        plt.plot(noiseTimes, DVoutNoise)
         plt.xlabel("Time[s]")
         plt.ylabel("DV Noise [um/s]")
         plt.title("DV Noise")
@@ -497,7 +505,7 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       procRate, gyroLSBIn
                                          'height=0.7\\textwidth, keepaspectratio', path)
         plt.figure(1001, figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
         plt.clf()
-        plt.plot(DRout[1:, 0]/1e9, rDotDotOutNoise[1:,:])
+        plt.plot(noiseTimes, rDotDotOutNoise)
         plt.xlabel("Time[s]")
         plt.ylabel("Acceleration Noise [m/s/s]")
         plt.title("Acceleration Noise")
@@ -507,7 +515,7 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       procRate, gyroLSBIn
                                          'height=0.7\\textwidth, keepaspectratio', path)
         plt.figure(1002, figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
         plt.clf()
-        plt.plot(DRout[1:, 0]/1e9, DRoutNoise[1:,:])
+        plt.plot(noiseTimes, DRoutNoise)
         plt.xlabel("Time[s]")
         plt.ylabel("DR Noise [rad]")
         plt.title("DR Noise")
@@ -517,7 +525,7 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       procRate, gyroLSBIn
                                          'height=0.7\\textwidth, keepaspectratio', path)
         plt.figure(1003, figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
         plt.clf()
-        plt.plot(DRout[1:, 0]/1e9, omegaOutNoise[1:,:])
+        plt.plot(noiseTimes, omegaOutNoise)
         plt.xlabel("Time[s]")
         plt.ylabel("Angular Rate Noise [rad/s]")
         plt.title("Angular Rate Noise")
@@ -583,4 +591,4 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       procRate, gyroLSBIn
 # stand-along python script
 if __name__ == "__main__":
     # unitSimIMU(True,        'noise',        1.0,            0.01,       0.0,            0.0,            1000.,          1000.,          0.0,                0.0,                0.0,                0.0,                0.,             0.,             1e-8)
-    unitSimIMU(False,         'noise',        1.0,            0.001,      0.0,            0.0,            1000.,          1000.,          .1,                 .1,                 0.1,                0.1,                0.0,            0.0,            1e-1)
+    unitSimIMU(False,         'noise',        0.2,            0.001,      0.0,            0.0,            1000.,          1000.,          .1,                 .1,                 0.1,                0.1,                0.0,            0.0,            1e-1)

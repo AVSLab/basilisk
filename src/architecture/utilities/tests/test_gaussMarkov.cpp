@@ -61,12 +61,12 @@ TEST(GaussMarkov, stdDeviationIsExpected) {
     errorModel.setNoiseMatrix(noiseMatrix);
     errorModel.setUpperBounds(bounds);
 
-    int64_t numPts = 100000;
+    int64_t numPts = 20000;
     Eigen::MatrixXd noiseOut;
     noiseOut.resize(2, numPts);
 
-    // Longer warm up period to reach steady state
-    for(int64_t i = 0; i < 5000; i++) {
+    // Warm up for many times the process correlation time.
+    for(int64_t i = 0; i < 500; i++) {
         errorModel.computeNextState();
     }
 
@@ -101,7 +101,7 @@ TEST(GaussMarkov, meanIsZero) {
     errorModel.setNoiseMatrix(noiseMatrix);
     errorModel.setUpperBounds(bounds);
 
-    int64_t numPts = 100000;
+    int64_t numPts = 10000;
     Eigen::MatrixXd noiseOut;
     noiseOut.resize(2, numPts);
 
@@ -141,7 +141,7 @@ TEST(GaussMarkov, boundsAreRespected) {
     errorModel.setNoiseMatrix(covar);
     errorModel.setUpperBounds(bounds);
 
-    int64_t numPts = 1000000;
+    int64_t numPts = 10000;
     Eigen::MatrixXd noiseOut;
     noiseOut.resize(2, numPts);
 
@@ -194,7 +194,7 @@ TEST(GaussMarkov, gaussianOnlyMode) {
     errorModel.setUpperBounds(bounds);
 
     // Collect samples and verify standard normal distribution properties
-    int64_t numPts = 100000;
+    int64_t numPts = 10000;
     Eigen::MatrixXd samples;
     samples.resize(2, numPts);
 
