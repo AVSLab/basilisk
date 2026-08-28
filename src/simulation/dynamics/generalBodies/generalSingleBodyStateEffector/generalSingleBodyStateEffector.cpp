@@ -24,6 +24,20 @@
 #include <string>
 #include <Eigen/Dense>
 
+const Eigen::Matrix<double, 3, 6> transMap =
+        (Eigen::Matrix<double, 3, 6>() <<
+                1, 0, 0,  0, 0, 0,
+                0, 1, 0,  0, 0, 0,
+                0, 0, 1,  0, 0, 0
+        ).finished();
+
+const Eigen::Matrix<double, 3, 6> rotMap =
+        (Eigen::Matrix<double, 3, 6>() <<
+                0, 0, 0,  1, 0, 0,
+                0, 0, 0,  0, 1, 0,
+                0, 0, 0,  0, 0, 1
+        ).finished();
+
 GeneralSingleBodyStateEffector::GeneralSingleBodyStateEffector() {
     this->nameOfBetaState = "generalBodyBeta" + std::to_string(effectorID);
     this->nameOfBetaDotState = "generalBodyBetaDot" + std::to_string(effectorID);
@@ -104,6 +118,27 @@ void GeneralSingleBodyStateEffector::UpdateState(uint64_t currentSimNanos) {
 }
 
 void GeneralSingleBodyStateEffector::computeGeneralBodyInertialStates() {
+    // Inertial attitude
+    Eigen::Matrix3d dcm_GB = this->jointDOFList.at(this->numDOF - 1)->dcm_GB;
+    Eigen::Matrix3d dcm_GN = dcm_GB * this->dcm_BN;
+    this->sigma_GN = eigenMRPd2Vector3d(eigenC2MRP(dcm_GN));
+
+    // Inertial angular velocity
+    Eigen::Vector3d omega_GB_B = rotMap * this->TMat * this->betaDot;
+    Eigen::Vector3d omega_GN_B = omega_GB_B + this->omega_BN_B;
+    this->omega_GN_G = dcm_GB * omega_GN_B;
+
+    // Inertial position
+    Eigen::Vector3d r_GcG_B = dcm_GB.transpose() * this->r_GcG_G;
+    Eigen::Vector3d r_GcB_B = r_GcG_B + this->r_GB_B;
+    this->r_GcN_N = this->dcm_BN.transpose() * r_GcB_B + (Eigen::Vector3d)*this->inertialPositionProperty;
+
+    // Inertial velocity
+    Eigen::Matrix3d omegaTilde_BN_B = eigenTilde(this->omega_BN_B);
+    Eigen::Matrix3d rTilde_GcG_B = eigenTilde(r_GcG_B);
+    Eigen::Vector3d rPrime_GcB_B = (transMap - rTilde_GcG_B * rotMap) * this->TMat * this->betaDot + transMap * this->TPrimeMat * this->beta;
+    Eigen::Vector3d rDot_GcB_B = rPrime_GcB_B + omegaTilde_BN_B * r_GcB_B;
+    this->v_GcN_N = this->dcm_BN.transpose() * rDot_GcB_B + (Eigen::Vector3d)*this->inertialVelocityProperty;
 }
 
 void GeneralSingleBodyStateEffector::writeOutputStateMessages(uint64_t currentSimNanos) {
