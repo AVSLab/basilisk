@@ -37,6 +37,17 @@ GeneralSingleBodyStateEffector::~GeneralSingleBodyStateEffector() {
 uint64_t GeneralSingleBodyStateEffector::effectorID = 1;
 
 void GeneralSingleBodyStateEffector::Reset(uint64_t currentSimNanos) {
+    if (!eigenIsValidInertiaMatrix(this->IPntGc_G)) {
+        bskLogger.bskError("GeneralSingleBodyStateEffector: effector inertia tensor is invalid.");
+    }
+    if (!eigenIsRotationMatrix(this->dcm_G0B)) {
+        bskLogger.bskError("GeneralSingleBodyStateEffector: effector hub-relative attitude DCM is invalid.");
+    }
+    for (const auto& dof : this->jointDOFList) {
+        if (!eigenIsUnitVector(dof->axis_G)) {
+            bskLogger.bskError("GeneralSingleBodyStateEffector: effector degree of freedom axis must be a unit vector.");
+        }
+    }
 }
 
 void GeneralSingleBodyStateEffector::linkInStates(DynParamManager& statesIn) {
