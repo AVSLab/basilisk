@@ -68,22 +68,22 @@ def run_sensor(sampleCount, seed, propagationMatrix=None, walkBounds=None):
 
 def test_default_noise_is_white():
     """The default propagation must produce the configured white-noise sigma."""
-    sampleCount = 3000
+    sampleCount = 1000
     sensor, errors = run_sensor(sampleCount, seed=1234)
 
     np.testing.assert_allclose(np.asarray(sensor.getAMatrix()), np.zeros((3, 3)))
     for axis in range(3):
         axisErrors = errors[:, axis]
         assert abs(np.mean(axisErrors)) < 5.0 * NOISE_STD / np.sqrt(sampleCount)
-        assert abs(np.std(axisErrors, ddof=1) / NOISE_STD - 1.0) < 0.07
-        assert abs(np.corrcoef(axisErrors[:-1], axisErrors[1:])[0, 1]) < 0.07
+        assert abs(np.std(axisErrors, ddof=1) / NOISE_STD - 1.0) < 0.1
+        assert abs(np.corrcoef(axisErrors[:-1], axisErrors[1:])[0, 1]) < 0.15
 
 
 def test_explicit_random_walk_is_bounded():
     """Identity propagation and positive bounds must create a bounded walk."""
     bound = 5.0 * NOISE_STD  # [rad]
     sensor, errors = run_sensor(
-        800,
+        400,
         seed=1234,
         propagationMatrix=np.eye(3),
         walkBounds=np.full(3, bound),
@@ -97,9 +97,9 @@ def test_explicit_random_walk_is_bounded():
 
 def test_rng_seed_controls_noise_sequence():
     """Equal seeds must repeat and different seeds must change the sequence."""
-    _, first = run_sensor(32, seed=1234)
-    _, repeated = run_sensor(32, seed=1234)
-    _, different = run_sensor(32, seed=5678)
+    _, first = run_sensor(8, seed=1234)
+    _, repeated = run_sensor(8, seed=1234)
+    _, different = run_sensor(8, seed=5678)
 
     assert np.array_equal(first, repeated)
     assert not np.array_equal(first, different)

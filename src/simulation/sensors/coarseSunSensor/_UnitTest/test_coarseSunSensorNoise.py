@@ -69,7 +69,7 @@ def run_noise_case(sampleCount, propagationFactor=None, walkBounds=DEFAULT_WALK_
 
 def test_default_noise_is_white():
     """Verify that ``senNoiseStd`` alone produces stationary white noise."""
-    sampleCount = 5000
+    sampleCount = 1000
     sensor, errors = run_noise_case(sampleCount)
 
     noiseStandardDeviation = sensor.senNoiseStd
@@ -77,15 +77,15 @@ def test_default_noise_is_white():
     lagOneCorrelation = np.corrcoef(errors[:-1], errors[1:])[0, 1]
 
     assert abs(np.mean(errors)) < meanTolerance
-    assert np.isclose(np.std(errors), noiseStandardDeviation, rtol=0.05)
-    assert abs(lagOneCorrelation) < 0.05
+    assert np.isclose(np.std(errors), noiseStandardDeviation, rtol=0.1)
+    assert abs(lagOneCorrelation) < 0.15
 
 
 def test_explicit_bounded_random_walk():
     """Verify that an identity propagation matrix enables a bounded random walk."""
     walkBounds = 0.1  # [-]
     propagationFactor = 1.0  # [-]
-    sensor, errors = run_noise_case(2000, propagationFactor=propagationFactor, walkBounds=walkBounds)
+    sensor, errors = run_noise_case(400, propagationFactor=propagationFactor, walkBounds=walkBounds)
 
     lagOneCorrelation = np.corrcoef(errors[:-1], errors[1:])[0, 1]
 

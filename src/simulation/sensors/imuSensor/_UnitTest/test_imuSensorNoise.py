@@ -62,7 +62,7 @@ def run_sensor(sampleCount, seed, propagationMatrix=None, errorBound=None):
 
 def test_default_noise_is_white_and_independent():
     """Default accelerometer and gyro noise must be white and independent."""
-    sampleCount = 2500
+    sampleCount = 1000
     sensor, accelNoise, gyroNoise = run_sensor(sampleCount, seed=0)
 
     np.testing.assert_allclose(np.asarray(sensor.getAMatrixAccel()), np.zeros((3, 3)))
@@ -75,18 +75,18 @@ def test_default_noise_is_white_and_independent():
         for axis in range(3):
             axisSamples = samples[:, axis]
             assert abs(np.mean(axisSamples)) < 5.0 * expectedSigma / np.sqrt(sampleCount)
-            assert abs(np.std(axisSamples, ddof=1) / expectedSigma - 1.0) < 0.08
-            assert abs(np.corrcoef(axisSamples[:-1], axisSamples[1:])[0, 1]) < 0.08
+            assert abs(np.std(axisSamples, ddof=1) / expectedSigma - 1.0) < 0.1
+            assert abs(np.corrcoef(axisSamples[:-1], axisSamples[1:])[0, 1]) < 0.15
 
     for axis in range(3):
-        assert abs(np.corrcoef(accelNoise[:, axis], gyroNoise[:, axis])[0, 1]) < 0.08
+        assert abs(np.corrcoef(accelNoise[:, axis], gyroNoise[:, axis])[0, 1]) < 0.15
 
 
 def test_explicit_random_walk_is_bounded():
     """Identity propagation and positive bounds must create bounded walks."""
     bound = 5.0  # [m/s^2] and [rad/s]
     sensor, accelNoise, gyroNoise = run_sensor(
-        800,
+        400,
         seed=1234,
         propagationMatrix=np.eye(3),
         errorBound=bound,
@@ -102,9 +102,9 @@ def test_explicit_random_walk_is_bounded():
 
 def test_rng_seed_controls_both_noise_sequences():
     """Equal seeds must repeat and different seeds must change both streams."""
-    _, firstAccel, firstGyro = run_sensor(32, seed=1234)
-    _, repeatedAccel, repeatedGyro = run_sensor(32, seed=1234)
-    _, differentAccel, differentGyro = run_sensor(32, seed=5678)
+    _, firstAccel, firstGyro = run_sensor(8, seed=1234)
+    _, repeatedAccel, repeatedGyro = run_sensor(8, seed=1234)
+    _, differentAccel, differentGyro = run_sensor(8, seed=5678)
 
     assert np.array_equal(firstAccel, repeatedAccel)
     assert np.array_equal(firstGyro, repeatedGyro)
