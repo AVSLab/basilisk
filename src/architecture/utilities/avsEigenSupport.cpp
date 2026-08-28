@@ -346,10 +346,9 @@ double bisectionSolve(double *interval, double accuracy, std::function< double(d
  */
 bool eigenIsRotationMatrix(const Eigen::Matrix3d& dcm, double tolerance)
 {
-    Eigen::Matrix3d shouldBeIdentity = dcm.transpose() * dcm;
-    bool orthonormal = (shouldBeIdentity - Eigen::Matrix3d::Identity()).norm() <= tolerance;
-    bool rightHanded = std::abs(dcm.determinant() - 1.0) <= tolerance;
-    return orthonormal && rightHanded;
+    bool isOrthonormal = (dcm.transpose() * dcm - Eigen::Matrix3d::Identity()).norm() <= tolerance;
+    bool isRightHanded = std::abs(dcm.determinant() - 1.0) <= tolerance;
+    return isOrthonormal && isRightHanded;
 }
 
 /*! This function returns true if the provided 3-vector has unit norm within the
