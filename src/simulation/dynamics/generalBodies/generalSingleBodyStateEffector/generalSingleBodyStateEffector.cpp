@@ -142,6 +142,38 @@ void GeneralSingleBodyStateEffector::computeGeneralBodyInertialStates() {
 }
 
 void GeneralSingleBodyStateEffector::writeOutputStateMessages(uint64_t currentSimNanos) {
+    // Write the config log message if it is linked
+    if (this->generalSingleBodyConfigLogOutMsg.isLinked()) {
+        SCStatesMsgPayload configLogMsg = this->generalSingleBodyConfigLogOutMsg.zeroMsgPayload;
+        eigenVector3d2CArray(this->r_GcN_N, configLogMsg.r_BN_N);
+        eigenVector3d2CArray(this->v_GcN_N, configLogMsg.v_BN_N);
+        eigenMatrixXd2CArray(this->sigma_GN, configLogMsg.sigma_BN);
+        eigenMatrixXd2CArray(this->omega_GN_G, configLogMsg.omega_BN_B);
+        this->generalSingleBodyConfigLogOutMsg.write(&configLogMsg, this->moduleID, currentSimNanos);
+    }
+
+    // Write the joint state messages
+    uint64_t rotIdx{};
+    uint64_t transIdx{};
+    for (auto& dof : this->jointDOFList) {
+        if (dof->type == DOF::Type::ROTATION) {
+            if (this->spinningBodyOutMsgs[rotIdx]->isLinked()) {
+                HingedRigidBodyMsgPayload spinningBodyBuffer = this->spinningBodyOutMsgs[rotIdx]->zeroMsgPayload;
+                spinningBodyBuffer.theta = dof->beta;
+                spinningBodyBuffer.thetaDot = dof->betaDot;
+                this->spinningBodyOutMsgs[rotIdx]->write(&spinningBodyBuffer, this->moduleID, currentSimNanos);
+            }
+            rotIdx++;
+        } else {
+            if (this->translatingBodyOutMsgs[transIdx]->isLinked()) {
+                LinearTranslationRigidBodyMsgPayload translatingBodyBuffer = this->translatingBodyOutMsgs[transIdx]->zeroMsgPayload;
+                translatingBodyBuffer.rho = dof->beta;
+                translatingBodyBuffer.rhoDot = dof->betaDot;
+                this->translatingBodyOutMsgs[transIdx]->write(&translatingBodyBuffer, this->moduleID, currentSimNanos);
+            }
+            transIdx++;
+        }
+    }
 }
 
 void GeneralSingleBodyStateEffector::updateEffectorMassProps(double integTime) {
