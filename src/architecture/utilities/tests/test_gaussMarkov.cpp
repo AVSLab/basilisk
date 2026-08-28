@@ -214,7 +214,8 @@ TEST(GaussMarkov, gaussianOnlyMode) {
     EXPECT_NEAR(stds(1), 1.0, 0.1);
 }
 
-TEST(GaussMarkov, reseedingRestartsSequence) {
+TEST(GaussMarkov, reseedingRestartsSequence)
+{
     constexpr uint64_t seed = 1000;
     // An odd state count leaves one normal variate cached between updates.
     GaussMarkov errorModel(3);
@@ -232,4 +233,14 @@ TEST(GaussMarkov, reseedingRestartsSequence) {
     for (Eigen::Index i = 0; i < firstSample.size(); i++) {
         EXPECT_DOUBLE_EQ(replayedSample[i], firstSample[i]);
     }
+}
+
+TEST(GaussMarkov, secondarySeedDoesNotAliasZero)
+{
+    constexpr uint64_t baseSeed = 0;
+    const uint64_t secondarySeed = GaussMarkov::deriveSecondarySeed(baseSeed);
+    std::minstd_rand baseGenerator(static_cast<std::minstd_rand::result_type>(baseSeed));
+    std::minstd_rand secondaryGenerator(static_cast<std::minstd_rand::result_type>(secondarySeed));
+
+    EXPECT_NE(baseGenerator(), secondaryGenerator());
 }

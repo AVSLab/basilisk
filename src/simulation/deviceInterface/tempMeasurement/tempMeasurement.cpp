@@ -26,14 +26,15 @@
     values and initializes the various parts of the model.
     Don't allow random walk by default.
  */
-TempMeasurement::TempMeasurement() : faultState{TEMP_FAULT_NOMINAL},
-                                    walkBounds{-1.0},
-                                    spikeProbability{0.1},
-                                    spikeAmount{2.0}
+TempMeasurement::TempMeasurement()
+  : faultState{ TEMP_FAULT_NOMINAL }
+  , walkBounds{ -1.0 }
+  , spikeProbability{ 0.1 }
+  , spikeAmount{ 2.0 }
 {
     this->noiseModel = GaussMarkov(1, this->RNGSeed);
     this->propagationMatrix.resize(1);
-    this->propagationMatrix(0) = 0.0;
+    this->propagationMatrix(0) = 0.0; // [-]
 }
 
 TempMeasurement::~TempMeasurement() = default;
@@ -51,7 +52,8 @@ void TempMeasurement::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
         bskLogger.bskError("The probability of temperature spike on fault must be between 0 and 1.");
     }
     // set up gaussMarkov and random number generator parameters
-    this->spikeProbabilityGenerator.seed(this->RNGSeed + 1);
+    const uint64_t spikeSeed = GaussMarkov::deriveSecondarySeed(this->RNGSeed);
+    this->spikeProbabilityGenerator.seed(static_cast<std::minstd_rand::result_type>(spikeSeed));
     this->noiseModel.setRNGSeed(this->RNGSeed);
 
     Eigen::VectorXd nMatrix(1,1);
@@ -123,7 +125,8 @@ void TempMeasurement::UpdateState(uint64_t CurrentSimNanos)
     this->tempOutMsg.write(&tempOutMsgBuffer, this->moduleID, CurrentSimNanos);
 }
 
-void TempMeasurement::setAMatrix(const Eigen::VectorXd& propMatrix)
+void
+TempMeasurement::setAMatrix(const Eigen::VectorXd& propMatrix)
 {
     if (propMatrix.rows() != 1 || propMatrix.cols() != 1) {
         bskLogger.bskError("TempMeasurement: Propagation matrix must be 1x1");
@@ -132,7 +135,8 @@ void TempMeasurement::setAMatrix(const Eigen::VectorXd& propMatrix)
     this->noiseModel.setPropMatrix(propMatrix);
 }
 
-Eigen::VectorXd TempMeasurement::getAMatrix() const
+Eigen::VectorXd
+TempMeasurement::getAMatrix() const
 {
     return this->propagationMatrix;
 }

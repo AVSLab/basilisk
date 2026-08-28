@@ -19,10 +19,10 @@
 
 #ifndef MAGNETOMETER_H
 #define MAGNETOMETER_H
+#include "architecture/_GeneralModuleFiles/sys_model.h"
 #include <cstdint>
 #include <random>
 #include <vector>
-#include "architecture/_GeneralModuleFiles/sys_model.h"
 
 #include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 #include "architecture/msgPayloadDefC/MagneticFieldMsgPayload.h"
@@ -103,7 +103,7 @@ public:
     Eigen::Vector3d     senBias;                //!< [T] Sensor bias vector
     Eigen::Vector3d     senNoiseStd;            //!< [T] Sensor noise standard deviation vector, can be changed during simulation
 
-    Eigen::Vector3d     walkBounds;             //!< [T] Hard bounds on noise states; non-positive entries disable clipping
+    Eigen::Vector3d walkBounds; //!< [T] Hard bounds on noise states; non-positive entries disable clipping
     double              maxOutput;              //!< [T] Maximum output for saturation application
     double              minOutput;              //!< [T] Minimum output for saturation application
     Eigen::Vector3d     stuckValue;             //!< [T] Value for mag sensor to get stuck at

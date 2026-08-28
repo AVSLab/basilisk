@@ -36,7 +36,7 @@ def run_noise_case(sampleCount, propagationFactor=None, walkBounds=DEFAULT_WALK_
     process.addTask(simulation.CreateNewTask("noiseTask", taskRate))
 
     sunPayload = messaging.SpicePlanetStateMsgPayload()
-    sunPayload.PositionVector = [orbitalMotion.AU*1000.0, 0.0, 0.0]  # [m]
+    sunPayload.PositionVector = [orbitalMotion.AU * 1000.0, 0.0, 0.0]  # [m]
     sunMessage = messaging.SpicePlanetStateMsg().write(sunPayload)
 
     statePayload = messaging.SCStatesMsgPayload()
@@ -60,7 +60,7 @@ def run_noise_case(sampleCount, propagationFactor=None, walkBounds=DEFAULT_WALK_
     simulation.AddModelToTask("noiseTask", sensor)
     simulation.AddModelToTask("noiseTask", recorder)
     simulation.InitializeSimulation()
-    simulation.ConfigureStopTime((sampleCount - 1)*taskRate)
+    simulation.ConfigureStopTime((sampleCount - 1) * taskRate)
     simulation.ExecuteSimulation()
 
     truthOutput = 1.0  # [-]
@@ -73,7 +73,7 @@ def test_default_noise_is_white():
     sensor, errors = run_noise_case(sampleCount)
 
     noiseStandardDeviation = sensor.senNoiseStd
-    meanTolerance = 4.0*noiseStandardDeviation/np.sqrt(sampleCount)
+    meanTolerance = 4.0 * noiseStandardDeviation / np.sqrt(sampleCount)
     lagOneCorrelation = np.corrcoef(errors[:-1], errors[1:])[0, 1]
 
     assert abs(np.mean(errors)) < meanTolerance

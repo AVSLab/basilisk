@@ -42,6 +42,19 @@ public:
     ~GaussMarkov();
     void computeNextState();
 
+    /*! @brief Derive a seed for a secondary @c std::minstd_rand stream.
+
+        A fixed stream discriminator separates the seed values. The normalized
+        engine states are compared explicitly, with a deterministic fallback
+        if the candidate aliases @c baseSeed. This includes the special case
+        where @c std::minstd_rand normalizes seeds zero and one to the same
+        initial state.
+
+        @param baseSeed Seed used by the primary random stream.
+        @return Seed for a distinct, repeatable secondary random stream.
+     */
+    static uint64_t deriveSecondarySeed(uint64_t baseSeed);
+
     /*! @brief Restart the noise process with the supplied random seed.
 
         The generator, cached distribution state, and propagated noise state are
@@ -49,8 +62,9 @@ public:
 
         @param newSeed The seed to use in the random number generator.
      */
-    void setRNGSeed(uint64_t newSeed) {
-        this->rGen.seed(static_cast<unsigned int>(newSeed));
+    void setRNGSeed(uint64_t newSeed)
+    {
+        this->rGen.seed(static_cast<std::minstd_rand::result_type>(newSeed));
         this->rNum.reset();
         this->currentState.setZero();
         this->RNGSeed = newSeed;

@@ -41,7 +41,7 @@ Magnetometer::Magnetometer()
     this->noiseModel.setNoiseMatrix(nMatrix);
 
     Eigen::MatrixXd pMatrix;
-    pMatrix.setZero(3,3);
+    pMatrix.setZero(3, 3);
     this->noiseModel.setPropMatrix(pMatrix);
 
     this->noiseModel.setUpperBounds(this->walkBounds);
@@ -91,7 +91,8 @@ void Magnetometer::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
     }
 
     this->noiseModel.setRNGSeed(this->RNGSeed);
-    this->spikeProbabilityGenerator.seed(this->RNGSeed + 1);
+    const uint64_t spikeSeed = GaussMarkov::deriveSecondarySeed(this->RNGSeed);
+    this->spikeProbabilityGenerator.seed(static_cast<std::minstd_rand::result_type>(spikeSeed));
 
     // Only apply noise if user has configured it
     if (this->walkBounds.norm() > 0 || this->senNoiseStd.norm() > 0) {
