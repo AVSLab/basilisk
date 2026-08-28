@@ -44,6 +44,14 @@ disabled). Always use the "Merge" strategy.
 - If the PR is linked to an issue, then the issue will be closed when
   the PR is closed and pushed to `develop`.s
 
+## AI-Assisted Development
+
+AI-assisted development tools may be used in Basilisk development only when their use is consistent with applicable sponsor, contractual, institutional, export-control, security, and other legal requirements. Human contributors remain fully responsible for all submitted code, documentation, tests, and technical claims, including their correctness, originality, licensing, and compliance.
+
+All AI-assisted contributions must be reviewed and validated by the human contributor before submission. AI systems and AI service providers must not be identified as authors, co-authors, committers, or contributors in Basilisk commit metadata.
+
+When disclosure of AI-assisted development is required by a sponsor, contract, institution, or applicable policy, that disclosure should be made in the pull request or other appropriate project record rather than through Git authorship metadata.
+
 ## Coding Conventions
 
 A [coding conventions](https://avslab.github.io/basilisk/Support/Developer/CodingGuidlines.html) document exists to
