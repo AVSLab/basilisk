@@ -75,20 +75,28 @@ by using::
 Illustration of Simulation Results
 ----------------------------------
 
-All sampled configurations, colored by integrator and shaped by engine. Fixed-step
-points cluster against the stability limit; adaptive points sweep a clean curve.
+.. note::
+
+    To bound CI time, the automated documentation build uses a one-second horizon
+    and only two adaptive RKF45 tolerances. The figures below exercise the plotting
+    path but do not contain the fixed-step configurations, stability boundary, or
+    complete adaptive ladders described above. Run this script directly with its
+    defaults to generate the full work-precision study.
+
+The two reduced adaptive configurations are colored by integrator and shaped by
+engine.
 
 .. image:: /_images/Scenarios/scenarioCompareParetoFlexPanels_pareto.svg
    :align: center
 
-The non-dominated frontier of each engine summarizes the cheapest achievable accuracy on
-this stability-limited system.
+For this two-point documentation profile, the frontier only connects the sampled
+adaptive results and does not establish the cheapest achievable accuracy.
 
 .. image:: /_images/Scenarios/scenarioCompareParetoFlexPanels_frontier.svg
    :align: center
 
-The same work-precision analysis is repeated for the hub inertial position error, giving
-a companion view of the translational coupling alongside the attitude result.
+The same reduced plotting workflow is repeated for hub inertial position error,
+giving a companion view of the translational coupling.
 
 .. image:: /_images/Scenarios/scenarioCompareParetoFlexPanels_frontierPosition.svg
    :align: center

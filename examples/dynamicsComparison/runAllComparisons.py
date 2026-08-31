@@ -74,6 +74,12 @@ Run these commands from the repository root after building Basilisk:
     python3 examples/dynamicsComparison/sweepVariableMassPendulumInertia.py
     python3 examples/dynamicsComparison/paperFigures.py --update-provenance
 
+The documentation workflow instead invokes ``runAllComparisons.py
+--documentation-figures``. That option uses explicitly reduced dimensionality and
+Pareto profiles to bound CI time. The affected scenario pages label those generated
+figures and state which conclusions require the complete default runs; the reduced
+figures are workflow demonstrations, not publication benchmark evidence.
+
 The runner writes scenario JSON and SVG files to ``results/``, copies documentation
 figures to ``docs/source/_images/Scenarios``, and may write optional local runtime
 CSV tables. Each sweep writes its own JSON and SVG artifacts. ``paperFigures.py``
