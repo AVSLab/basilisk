@@ -32,6 +32,8 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import RigidBodyKinematics as rbk
 
+pytestmark = pytest.mark.scenarioTest
+
 THIS_FOLDER = os.path.dirname(__file__)
 SCENARIO_FOLDER = os.path.join(
     THIS_FOLDER, "..", "..", "examples", "dynamicsComparison"
@@ -537,7 +539,6 @@ def _assert_figure_data(figureList, expectedNames):
 
 
 @pytest.mark.parametrize("scenario", SCENARIO_FILES)
-@pytest.mark.scenarioTest
 def test_scenarios(scenario: str):
     """Run a real dynamics comparison and constrain its numerical result.
 
