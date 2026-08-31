@@ -149,6 +149,12 @@ def test_two_hinge_damper_apply_to_enforces_joint_contract():
     hingeScene = makeScene()
     phiHinge = hingeScene.getBody("pendulum").getScalarJoint("phi")
     thetaHinge = hingeScene.getBody("pendulum").getScalarJoint("theta")
+
+    with pytest.raises(ValueError, match="distinct hinge joints"):
+        twoHingeDamper.TwoHingeDamper().applyTo(phiHinge, phiHinge)
+
+    # The rejected call must not have created an actuator or otherwise prevent
+    # the same scene from accepting the valid two-joint attachment.
     actuators = twoHingeDamper.TwoHingeDamper().applyTo(
         phiHinge, thetaHinge)
     assert len(actuators) == 2
