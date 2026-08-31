@@ -42,6 +42,8 @@ resultsPath = os.path.join(os.path.dirname(__file__), "results")
 
 def attitudeFloor(rwMass, dt=0.02, tf=120.0, recordDt=0.5):
     """Max cross-engine hub-attitude principal angle with the given wheel mass [kg]."""
+    _comparisonValidation.validateTaskHorizon(
+        "reaction-wheel bookkeeping-mass sweep", tf, dt)
     originalMass = srp.RW_MASS
     try:
         srp.RW_MASS = rwMass

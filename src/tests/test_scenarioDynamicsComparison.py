@@ -219,6 +219,10 @@ def test_history_validation_rejects_invalid_timestamps(times, message):
 def test_history_validation_accepts_complete_schedule_and_equal_lengths():
     """Return a complete recorder schedule and constrain equal history lengths."""
     validation = importlib.import_module("_comparisonValidation")
+    assert validation.validateTaskHorizon(
+        "test", 1.0, 0.2) == pytest.approx(1.0)  # [s]
+    with pytest.raises(ValueError, match="does not lie on"):
+        validation.validateTaskHorizon("test", 0.25, 0.2)
     assert validation.recorderSampleInterval(0.2, 0.1) == pytest.approx(0.2)
     assert validation.recorderSampleInterval(40.0, 60.0) == pytest.approx(80.0)
     assert validation.alignedHorizon(
@@ -256,6 +260,13 @@ def test_orbit_sweep_rejects_incomplete_engine_history():
             bsmTimes[:-1], bsmTimes[:-1],
             np.zeros((2, 3)), np.zeros((2, 3)), np.zeros((2, 3)),
         )
+
+
+def test_torque_sweep_rejects_unreachable_requested_horizon():
+    """Reject a public sweep request before propagating to an earlier task epoch."""
+    module = importlib.import_module("sweepTorqueArtifact")
+    with pytest.raises(ValueError, match="does not lie on"):
+        module.velocitySweep((0.0,), 0.2, 0.25, 0.1)
 
 
 @requiresMujoco

@@ -147,6 +147,8 @@ def runMujocoDrift(speed, dt, tf, recordDt):
 
 def velocitySweep(speeds, dt, tf, recordDt):
     """Max attitude deviation vs the zero-velocity run, per engine, per speed."""
+    _comparisonValidation.validateTaskHorizon(
+        "torque velocity sweep", tf, dt)
     sampleInterval = _comparisonValidation.recorderSampleInterval(
         dt, recordDt)
     timeBSMRest, sigmaBSMRest = runBSMDrift(0.0, dt, tf, recordDt)
@@ -192,6 +194,8 @@ def dtSweep(dts, tf, recordDt, mu):
     """Repeat the scenario's orbiting-vs-rest discriminator per integrator step."""
     rows = []
     for dt in dts:
+        _comparisonValidation.validateTaskHorizon(
+            "torque time-step sweep", tf, dt)
         sampleInterval = _comparisonValidation.recorderSampleInterval(
             dt, recordDt)
         bsmOrbitRec, _ = sct.runBSM(mu, dt, tf, recordDt, withGravity=True)

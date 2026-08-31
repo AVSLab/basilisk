@@ -68,6 +68,8 @@ def quietMujocoRun(direction, speed, mass, captureBias=False,
     """Return maximum attitude drift and, optionally, the initial bias force."""
     if not couldImportMujoco:
         raise ImportError("Build Basilisk with --mujoco to run this control.")
+    _comparisonValidation.validateTaskHorizon(
+        "torque mechanism control", simDuration, timeStep)
 
     simulation = SimulationBaseClass.SimBaseClass()
     process = simulation.CreateNewProcess("dyn")

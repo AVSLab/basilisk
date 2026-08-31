@@ -104,6 +104,8 @@ def run(showPlots=False, saveJson=False, bobInertias=BOB_INERTIAS,
         raise ValueError("At least one bob inertia and time step are required.")
     errors = {}
     for dt in timeSteps:
+        _comparisonValidation.validateTaskHorizon(
+            "variable-mass pendulum-inertia sweep", simDuration, dt)
         bsm = _bsmReference(dt, simDuration)
         errors[dt] = [
             _mujocoAttitudeError(bsm, dt, bobInertia, simDuration)
