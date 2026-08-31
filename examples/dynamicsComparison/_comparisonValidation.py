@@ -83,6 +83,43 @@ def alignedHorizon(requestedHorizon, intervals):
     return alignedNanos*macros.NANO2SEC
 
 
+def validateTaskHorizon(name, expectedFinalTime, taskInterval):
+    """Require the requested stop epoch to lie on a periodic task schedule.
+
+    Basilisk executes a periodic task only at integer multiples of its interval.
+    A stop time between two task executions therefore leaves the propagated state
+    at the preceding task epoch, even though a recorder history can still be
+    complete for its own (coarser) schedule.
+
+    Args:
+        name (str): descriptive propagation name used in exceptions.
+        expectedFinalTime (float): requested propagation horizon [s].
+        taskInterval (float): periodic dynamics-task interval [s].
+
+    Returns:
+        float: the validated propagation horizon [s].
+
+    Raises:
+        ValueError: if either argument is nonpositive or the requested horizon
+            is not divisible by the task interval in integer nanoseconds.
+    """
+    finalNanos = macros.sec2nano(float(expectedFinalTime))
+    taskNanos = macros.sec2nano(float(taskInterval))
+    if finalNanos <= 0 or taskNanos <= 0:
+        raise ValueError(
+            f"{name} final time and task interval must both be positive."
+        )
+    if finalNanos % taskNanos != 0:
+        reachedNanos = finalNanos//taskNanos*taskNanos
+        raise ValueError(
+            f"{name} requested final time "
+            f"{finalNanos*macros.NANO2SEC:.16g} s does not lie on the "
+            f"{taskNanos*macros.NANO2SEC:.16g} s task schedule; the last "
+            f"executable epoch is {reachedNanos*macros.NANO2SEC:.16g} s."
+        )
+    return finalNanos*macros.NANO2SEC
+
+
 def validateHistory(name, times, expectedFinalTime=None, sampleInterval=0.0,
                     requireFinalSample=False, **histories):
     """Validate one recorded simulation history.
@@ -93,7 +130,9 @@ def validateHistory(name, times, expectedFinalTime=None, sampleInterval=0.0,
         expectedFinalTime (float, optional): requested propagation horizon [s].
         sampleInterval (float, optional): recorder sampling interval [s]. When
             supplied with ``expectedFinalTime``, the complete expected
-            nanosecond schedule is enforced.
+            recorder schedule through the last sample at or before the horizon
+            is enforced. Call :func:`validateTaskHorizon` before propagation to
+            verify that the dynamics task itself can reach the requested epoch.
         requireFinalSample (bool, optional): if True, require the recorder
             schedule to include ``expectedFinalTime`` exactly. Use this when
             the recorder samples every dynamics task step.
@@ -103,8 +142,8 @@ def validateHistory(name, times, expectedFinalTime=None, sampleInterval=0.0,
         numpy.ndarray: validated one-dimensional timestamp array [s].
 
     Raises:
-        ValueError: if timestamps or history lengths are invalid, or the recorder did not
-            reach the requested horizon.
+        ValueError: if timestamps, history lengths, or the expected recorder
+            schedule are invalid.
     """
     times = np.asarray(times, dtype=float)
     if times.ndim != 1 or times.size == 0:

@@ -43,6 +43,8 @@ resultsPath = os.path.join(os.path.dirname(__file__), "results")
 def maxSloshDifference(inOrbit, tf=900.0):
     """Max abs cross-engine SMD displacement difference [m] for one configuration."""
     dt = scv.timeStep()
+    _comparisonValidation.validateTaskHorizon(
+        "slosh-displacement sweep", tf, dt)
     mu = scv.earthMu()
 
     bsmSim, bsmRec, _ = scv.buildBSM(
