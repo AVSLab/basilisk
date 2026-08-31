@@ -175,6 +175,19 @@ requiresMujoco = pytest.mark.skipif(
 )
 
 
+def test_aggregate_runner_does_not_patch_global_color_helper(monkeypatch):
+    """Import the aggregate runner without mutating shared plotting utilities."""
+    from Basilisk.utilities import unitTestSupport
+
+    def sentinelColor(index, count):
+        return index, count
+
+    monkeypatch.setattr(unitTestSupport, "getLineColor", sentinelColor)
+    monkeypatch.delitem(sys.modules, "runAllComparisons", raising=False)
+    importlib.import_module("runAllComparisons")
+    assert unitTestSupport.getLineColor is sentinelColor
+
+
 @pytest.mark.parametrize("moduleName", RESEARCH_ENTRY_POINTS)
 def test_research_entry_points_import(moduleName):
     """Import research drivers used by documentation and command-line workflows."""
