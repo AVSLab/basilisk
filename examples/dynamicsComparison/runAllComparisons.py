@@ -32,10 +32,6 @@ default arguments, and persists their artifacts:
 #. for the accuracy-comparison scenarios, an optional local BSM-vs-MJScene
    runtime ``.csv`` (``saveTiming=True``).
 
-Before importing the scenarios, this runner replaces ``unitTestSupport.getLineColor``
-with the Paul Tol high-contrast palette (colorblind-friendly, prints well). The patch
-must precede the imports because the scenarios resolve their palette at import time.
-
 Required build features
 -----------------------
 
@@ -119,7 +115,6 @@ import matplotlib.pyplot as plt
 
 from Basilisk import hasBuildFeature
 from Basilisk.utilities import simHelpers
-from Basilisk.utilities import unitTestSupport
 
 thisFolder = os.path.dirname(os.path.abspath(__file__))
 
@@ -131,12 +126,6 @@ resultsPath = os.path.join(thisFolder, "results")
 if thisFolder not in sys.path:
     sys.path.append(thisFolder)
 
-# Paul Tol high-contrast qualitative palette (colorblind-friendly).
-BLUE = "#004488"
-YELLOW = "#DDAA33"
-RED = "#BB5566"
-HIGH_CONTRAST = (BLUE, YELLOW, RED)
-
 
 def requireMujoco():
     """Require the build feature needed for complete comparison figures."""
@@ -145,28 +134,6 @@ def requireMujoco():
             "Dynamics-comparison figures require a MuJoCo-enabled Basilisk "
             "build; rebuild with `python conanfile.py --mujoco True`."
         )
-
-
-def highContrastLineColor(idx, maxNum):
-    """Drop-in replacement for ``unitTestSupport.getLineColor``.
-
-    Returns a color from the Paul Tol high-contrast palette, cycling through it so
-    that any index requested by the scenarios maps to a valid color.
-
-    Args:
-        idx (int): index of the curve to color.
-        maxNum (int): number of curves the caller is coloring (unused, kept for
-            signature compatibility with ``unitTestSupport.getLineColor``).
-
-    Returns:
-        str: a hex color string from the high-contrast palette.
-    """
-    return HIGH_CONTRAST[idx % len(HIGH_CONTRAST)]
-
-
-# Install the palette before the scenarios are imported: several of them resolve
-# their module-level colors (e.g. COLOR_BSM) at import time.
-unitTestSupport.getLineColor = highContrastLineColor
 
 
 def discoverScenarios():
