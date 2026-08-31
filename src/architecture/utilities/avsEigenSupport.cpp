@@ -364,10 +364,11 @@ bool eigenIsUnitVector(const Eigen::Vector3d& vec, double tolerance)
 }
 
 /*! This function returns true if the provided 3x3 matrix is a valid inertia
-    tensor, i.e. it is symmetric (within tolerance) and positive definite (all
-    eigenvalues strictly greater than zero).
+    tensor, i.e. it contains finite values, is symmetric (within tolerance),
+    positive semi-definite (within tolerance), and its principal inertia
+    values are consistent (within tolerance).
     @param inertia matrix to test
-    @param tolerance allowed deviation from symmetry
+    @param tolerance allowed deviation in checks
     @return bool
  */
 bool eigenIsValidInertiaMatrix(const Eigen::Matrix3d& inertia, double tolerance)
@@ -378,11 +379,22 @@ bool eigenIsValidInertiaMatrix(const Eigen::Matrix3d& inertia, double tolerance)
     }
     // an inertia tensor must be positive definite; all eigenvalues of the
     // (symmetric) matrix must be strictly positive
-    Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> solver(inertia);
-    if (solver.info() != Eigen::Success) {
+    Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> eigenSolver(inertia);
+    if (eigenSolver.info() != Eigen::Success) {
+    if (eigenSolver.eigenvalues().minCoeff() <= 0.0) {
         return false;
     }
-    return solver.eigenvalues().minCoeff() > 0.0;
+        return false;
+    }
+
+    // Principal inertia check - triangle inequality
+    // Also covers positive semi-definite check: eigenvalues are ascending, so
+    // passing this requires eigenvalues[0] >= -tolerance * eigenvalues[2]
+    if (eigenvalues[0] + eigenvalues[1] < eigenvalues[2] * (1.0 - tolerance)) {
+        return false;
+    }
+
+    return true;
 }
 
 /*! This function returns true if the provided 3x3 matrix contains only finite
