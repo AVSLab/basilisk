@@ -48,7 +48,15 @@ class BSKSim(SimulationBaseClass.SimBaseClass):
 
     """
 
-    def __init__(self, numberSpacecraft, relativeNavigation=False, fswRate=0.1, dynRate=0.1, envRate=0.1, relNavRate=0.1):
+    def __init__(
+        self,
+        numberSpacecraft,
+        relativeNavigation=False,
+        fswRate=0.1,  # [s]
+        dynRate=0.1,  # [s]
+        envRate=0.1,  # [s]
+        relNavRate=0.1,  # [s]
+    ):
         self.dynRate = dynRate
         self.fswRate = fswRate
         self.envRate = envRate
@@ -59,9 +67,12 @@ class BSKSim(SimulationBaseClass.SimBaseClass):
         SimulationBaseClass.SimBaseClass.__init__(self)
         self.SetProgressBar(True)
 
-        self.EnvModel = []
-        self.DynModels = []
-        self.FSWModels = []
+        self._envModel = None
+        self._dynModels = None
+        self._fswModels = None
+        self._environmentSetupAttempted = False
+        self._dynamicsSetupAttempted = False
+        self._fswSetupAttempted = False
         self.EnvProcessName = None
         self.DynamicsProcessName = []
         self.FSWProcessName = []
@@ -80,43 +91,123 @@ class BSKSim(SimulationBaseClass.SimBaseClass):
             self.relativeNavigationTaskName = None
             self.add_relativeNavigation()
 
+    @property
+    def EnvModel(self):
+        """Return the configured environment model.
+
+        :raises RuntimeError: If an environment model has not been added.
+        """
+        if self._envModel is None:
+            raise RuntimeError("An environment model has not been added yet")
+        return self._envModel
+
     def get_EnvModel(self):
-        assert (self.environment_added is True), "It is mandatory to use an environment model as an argument"
+        """Return the configured environment model.
+
+        :raises RuntimeError: If an environment model has not been added.
+        """
         return self.EnvModel
 
     def set_EnvModel(self, envModel):
-        self.environment_added = True
+        """Construct and store the environment model.
+
+        :param envModel: Module containing the ``BSKEnvironmentModel`` class.
+        :raises RuntimeError: If environment setup has already been attempted.
+        """
+        if self._environmentSetupAttempted:
+            if self._envModel is None:
+                raise RuntimeError("A previous environment model setup attempt failed")
+            raise RuntimeError("An environment model has already been added")
+        self._environmentSetupAttempted = True
         self.EnvProcessName = "EnvironmentProcess"
         self.envProc = self.CreateNewProcess(self.EnvProcessName, 300)
 
         # Add the environment class
-        self.EnvModel = envModel.BSKEnvironmentModel(self, self.envRate)
+        environmentModel = envModel.BSKEnvironmentModel(self, self.envRate)
+        self._envModel = environmentModel
+        self.environment_added = True
+
+    @property
+    def DynModels(self):
+        """Return the configured dynamics models.
+
+        :raises RuntimeError: If dynamics models have not been added.
+        """
+        if self._dynModels is None:
+            raise RuntimeError("Dynamics models have not been added yet")
+        return self._dynModels
 
     def get_DynModel(self):
-        assert (self.dynamics_added is True), "It is mandatory to use a dynamics model as an argument"
+        """Return the configured dynamics models.
+
+        :raises RuntimeError: If dynamics models have not been added.
+        """
         return self.DynModels
 
     def set_DynModel(self, dynModel):
-        self.dynamics_added = True
+        """Construct and store the dynamics models.
+
+        :param dynModel: Modules containing the ``BSKDynamicModels`` class.
+        :raises RuntimeError: If the environment is missing or dynamics setup was already attempted.
+        """
+        if self._dynamicsSetupAttempted:
+            if self._dynModels is None:
+                raise RuntimeError("A previous dynamics model setup attempt failed")
+            raise RuntimeError("Dynamics models have already been added")
+        if self._envModel is None:
+            raise RuntimeError("An environment model must be added before the dynamics models")
+        self._dynamicsSetupAttempted = True
 
         # Add the dynamics classes
+        dynamicsModels = []
         for spacecraftIndex in range(self.numberSpacecraft):
             self.DynamicsProcessName.append("DynamicsProcess" + str(spacecraftIndex))  # Create simulation process name
             self.dynProc.append(self.CreateNewProcess(self.DynamicsProcessName[spacecraftIndex], 200))  # Create process
-            self.DynModels.append(dynModel[spacecraftIndex].BSKDynamicModels(self, self.dynRate, spacecraftIndex))
+            dynamicsModels.append(dynModel[spacecraftIndex].BSKDynamicModels(self, self.dynRate, spacecraftIndex))
+        self._dynModels = dynamicsModels
+        self.dynamics_added = True
+
+    @property
+    def FSWModels(self):
+        """Return the configured flight software models.
+
+        :raises RuntimeError: If flight software models have not been added.
+        """
+        if self._fswModels is None:
+            raise RuntimeError("Flight software models have not been added yet")
+        return self._fswModels
 
     def get_FswModel(self):
-        assert (self.fsw_added is True), "A flight software model has not been added yet"
+        """Return the configured flight software models.
+
+        :raises RuntimeError: If flight software models have not been added.
+        """
         return self.FSWModels
 
     def set_FswModel(self, fswModel):
-        self.fsw_added = True
+        """Construct and store the flight software models.
+
+        :param fswModel: Modules containing the ``BSKFswModels`` class.
+        :raises RuntimeError: If dynamics is missing or FSW setup was already attempted.
+        """
+        if self._fswSetupAttempted:
+            if self._fswModels is None:
+                raise RuntimeError("A previous flight software model setup attempt failed")
+            raise RuntimeError("Flight software models have already been added")
+        if self._dynModels is None:
+            raise RuntimeError("Dynamics models must be added before the flight software models")
+        self._fswSetupAttempted = True
 
         # Add the FSW classes
+        flightSoftwareModels = []
         for spacecraftIndex in range(self.numberSpacecraft):
             self.FSWProcessName.append("FSWProcess" + str(spacecraftIndex))  # Create simulation process name
             self.fswProc.append(self.CreateNewProcess(self.FSWProcessName[spacecraftIndex], 100))  # Create process
-            self.FSWModels.append(fswModel[spacecraftIndex].BSKFswModels(self, self.fswRate, spacecraftIndex))
+            flightSoftwareModels.append(
+                fswModel[spacecraftIndex].BSKFswModels(self, self.fswRate, spacecraftIndex)
+            )
+        self._fswModels = flightSoftwareModels
+        self.fsw_added = True
 
     def add_relativeNavigation(self):
         processName = "RelativeNavigation"

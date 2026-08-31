@@ -137,6 +137,8 @@ class BSKSim(SimulationBaseClass.SimBaseClass):
         self.vizPath = appPath
         self._dynModels = None
         self._fswModels = None
+        self._dynamicsSetupAttempted = False
+        self._fswSetupAttempted = False
         self.DynamicsProcessName = None
         self.dynProc = None
         self.FSWProcessName = None
@@ -166,10 +168,13 @@ class BSKSim(SimulationBaseClass.SimBaseClass):
         """Construct and store the dynamics model.
 
         :param dynModel: Module containing the ``BSKDynamicModels`` class.
-        :raises RuntimeError: If a dynamics model has already been added.
+        :raises RuntimeError: If dynamics setup has already been attempted.
         """
-        if self._dynModels is not None:
+        if self._dynamicsSetupAttempted:
+            if self._dynModels is None:
+                raise RuntimeError("A previous dynamics model setup attempt failed")
             raise RuntimeError("A dynamics model has already been added")
+        self._dynamicsSetupAttempted = True
         self.DynamicsProcessName = 'DynamicsProcess'  # Create simulation process name
         self.dynProc = self.CreateNewProcess(self.DynamicsProcessName, 100)  # Create process
         dynModels = dynModel.BSKDynamicModels(self, self.dynRate)  # Create dynamics class
@@ -197,10 +202,15 @@ class BSKSim(SimulationBaseClass.SimBaseClass):
         """Construct and store the flight software model.
 
         :param fswModel: Module containing the ``BSKFswModels`` class.
-        :raises RuntimeError: If a flight software model has already been added.
+        :raises RuntimeError: If dynamics has not been added or FSW setup has already been attempted.
         """
-        if self._fswModels is not None:
+        if self._fswSetupAttempted:
+            if self._fswModels is None:
+                raise RuntimeError("A previous flight software model setup attempt failed")
             raise RuntimeError("A flight software model has already been added")
+        if self._dynModels is None:
+            raise RuntimeError("A dynamics model must be added before the flight software model")
+        self._fswSetupAttempted = True
         self.FSWProcessName = "FSWProcess"  # Create simulation process name
         self.fswProc = self.CreateNewProcess(self.FSWProcessName, 10)  # Create process
         fswModels = fswModel.BSKFswModels(self, self.fswRate)  # Create FSW class
