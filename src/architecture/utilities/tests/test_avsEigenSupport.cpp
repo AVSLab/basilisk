@@ -206,8 +206,28 @@ TEST(avsEigenSupport, PositiveSemidefiniteMatrix) {
     EXPECT_TRUE(eigenIsPositiveSemidefiniteMatrix(Eigen::Matrix3d::Zero()));
     EXPECT_TRUE(eigenIsPositiveSemidefiniteMatrix(positiveDefinite));
     EXPECT_TRUE(eigenIsPositiveSemidefiniteMatrix(positiveSemidefinite));
+
+    // Definiteness, finiteness, symmetric checks
+    EXPECT_TRUE(eigenIsValidInertiaMatrix(positiveDefinite));
+    EXPECT_FALSE(eigenIsValidInertiaMatrix(indefinite));
+    EXPECT_FALSE(eigenIsValidInertiaMatrix(nonfinite));
+    EXPECT_FALSE(eigenIsValidInertiaMatrix(nonsymmetric));
+    // Check that at most one eigenvalue can be zero
+    EXPECT_TRUE(eigenIsValidInertiaMatrix(Eigen::Vector3d(0.0, 1.0, 1.0).asDiagonal()));
     EXPECT_FALSE(eigenIsValidInertiaMatrix(Eigen::Matrix3d::Zero()));
     EXPECT_FALSE(eigenIsValidInertiaMatrix(positiveSemidefinite));
+    // Principal inertia triangle inequality checks
+    EXPECT_TRUE(eigenIsValidInertiaMatrix(Eigen::Vector3d(1.0, 2.0, 3.0).asDiagonal()));
+    EXPECT_FALSE(eigenIsValidInertiaMatrix(Eigen::Vector3d(0.0, 2.0, 3.0).asDiagonal()));
+    EXPECT_FALSE(eigenIsValidInertiaMatrix(Eigen::Vector3d(1.0, 1.0, 3.0).asDiagonal()));
+    // Principal inertia check - triangle inequality - edge cases
+    // Also covers positive semi-definite check: eigenvalues are ascending, so
+    // passing this requires eigenvalues[0] >= -tolerance * eigenvalues[2]
+    EXPECT_TRUE(eigenIsValidInertiaMatrix(Eigen::Vector3d(1e-8, 1.0, 1.0).asDiagonal()));
+    EXPECT_TRUE(eigenIsValidInertiaMatrix(Eigen::Vector3d(-1e-10, 1.0, 1.0).asDiagonal()));
+    EXPECT_TRUE(eigenIsValidInertiaMatrix(Eigen::Vector3d(-1e-9, 1.0, 1.0).asDiagonal()));
+    EXPECT_FALSE(eigenIsValidInertiaMatrix(Eigen::Vector3d(-1e-8, 1.0, 1.0).asDiagonal()));
+
     EXPECT_FALSE(eigenIsPositiveSemidefiniteMatrix(nonsymmetric));
     EXPECT_FALSE(eigenIsPositiveSemidefiniteMatrix(indefinite));
     EXPECT_FALSE(eigenIsPositiveSemidefiniteMatrix(nonfinite));
