@@ -81,10 +81,10 @@ void SpinningBodyOneDOFStateEffector::Reset(uint64_t CurrentClock [[maybe_unused
         bskLogger.bskError("spinningBodyOneDOFStateEffector: mass must be greater than or equal to 0. It may not have been set properly by the user.");
     }
 
-    // Verify that the inertia tensor is physically valid (symmetric and positive definite).
+    // Verify that the inertia tensor is physically realizable (see eigenIsValidInertiaMatrix).
     // A massless body legitimately carries a zero inertia tensor, so only check when mass > 0.
     if (this->mass > 0.0 && !eigenIsValidInertiaMatrix(this->IPntSc_S)) {
-        bskLogger.bskError("spinningBodyOneDOFStateEffector: IPntSc_S is not a valid inertia tensor; it must be symmetric and positive definite. It may not have been set properly by the user.");
+        bskLogger.bskError("spinningBodyOneDOFStateEffector: IPntSc_S is not a valid inertia tensor. It may not have been set properly by the user.");
     }
 }
 
