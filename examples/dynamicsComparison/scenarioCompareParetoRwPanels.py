@@ -76,15 +76,22 @@ by using::
 Illustration of Simulation Results
 ----------------------------------
 
-Each engine's work-precision front spans many orders of magnitude in accuracy. The
-lower-left envelope is the Pareto-optimal frontier; points above and to the right of it
-are dominated.
+.. note::
+
+    To bound CI time, the automated documentation build generates these figures
+    from three representative configurations: one RK4, one Euler, and one RKF45
+    run. They exercise the work-precision workflow but do not constitute the
+    wide, well-populated default Pareto study described above. Run this script
+    directly with its defaults before drawing performance conclusions.
+
+The reduced documentation profile illustrates how the individual configurations
+and their lower-left envelope are displayed.
 
 .. image:: /_images/Scenarios/scenarioCompareParetoRwPanels_pareto.svg
    :align: center
 
-Comparing the non-dominated frontier of each engine shows which one reaches a target
-accuracy for the least wall-clock cost.
+The reduced frontier is a plotting demonstration, not a basis for ranking the
+engines at unsampled target accuracies.
 
 .. image:: /_images/Scenarios/scenarioCompareParetoRwPanels_frontier.svg
    :align: center

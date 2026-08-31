@@ -50,13 +50,23 @@ by using::
 Illustration of Simulation Results
 ----------------------------------
 
-The two engines agree to round-off at every dimensionality in the sweep.
+.. note::
+
+    The automated documentation build uses the reduced profile
+    ``N = 1, 2, 4, 8`` to bound CI time. The figures below therefore do not
+    contain the ``N = 16`` or ``N = 32`` cases and should not be used to infer
+    asymptotic scaling. Run this script directly with its defaults to generate
+    the complete six-point study.
+
+The two engines agree to round-off at all four dimensionalities in the reduced
+documentation profile.
 
 .. image:: /_images/Scenarios/scenarioCompareFlexPanels_validity.svg
    :align: center
 
-The wall-clock cost of both engines grows with the number of flexible degrees of
-freedom, with the MuJoCo recursive solver scaling more favorably.
+Within this reduced range, the wall-clock cost of both engines grows with the
+number of flexible degrees of freedom. The complete default sweep is required
+before comparing broader scaling behavior.
 
 .. image:: /_images/Scenarios/scenarioCompareFlexPanels_runtime.svg
    :align: center
