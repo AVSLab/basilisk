@@ -58,7 +58,8 @@ HubEffector::~HubEffector()
 }
 
 /*! This method verifies the user-supplied hub properties are physically valid. The hub mass
- must be strictly positive and the hub inertia tensor must be symmetric positive definite.
+ must be strictly positive and the hub inertia tensor must be physically realizable
+ (see eigenIsValidInertiaMatrix).
  It is intended to be called by the owning spacecraft at reset time, before the dynamics
  are initialized. */
 void HubEffector::validateConfiguration()
@@ -67,8 +68,7 @@ void HubEffector::validateConfiguration()
         bskLogger.bskError("hubEffector: mHub must be greater than 0. It may not have been set properly by the user.");
     }
     if (!eigenIsValidInertiaMatrix(this->IHubPntBc_B)) {
-        bskLogger.bskError("hubEffector: IHubPntBc_B is not a valid inertia tensor; it must be symmetric and positive"
-                           " definite. It may not have been set properly by the user.");
+        bskLogger.bskError("hubEffector: IHubPntBc_B is not a valid inertia tensor. It may not have been set properly by the user.");
     }
 }
 

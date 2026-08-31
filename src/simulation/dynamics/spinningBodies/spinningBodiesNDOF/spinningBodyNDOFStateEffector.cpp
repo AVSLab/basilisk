@@ -55,7 +55,7 @@ void SpinningBodyNDOFStateEffector::Reset(uint64_t CurrentClock [[maybe_unused]]
         }
         // A massless body legitimately carries a zero inertia tensor, so only check when its mass > 0.
         if (body->mass > 0.0 && !eigenIsValidInertiaMatrix(body->ISPntSc_S)) {
-            bskLogger.bskError("spinningBodyNDOFStateEffector: a spinning body's ISPntSc_S is not a valid inertia tensor; it must be symmetric and positive definite. It may not have been set properly by the user.");
+            bskLogger.bskError("spinningBodyNDOFStateEffector: a spinning body's ISPntSc_S is not a valid inertia tensor. It may not have been set properly by the user.");
         }
     }
 }
