@@ -1,0 +1,1 @@
+- Tightened ``eigenIsValidInertiaMatrix`` in ``avsEigenSupport`` so an inertia tensor must also be finite, have at most one zero principal inertia, and its principal inertias must satisfy the triangle inequality.
