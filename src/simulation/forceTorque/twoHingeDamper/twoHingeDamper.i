@@ -76,6 +76,12 @@ from Basilisk.architecture.swig_common_model import *
                     f"TwoHingeDamper.applyTo: {name} must be a hinge joint."
                 )
 
+        if phiJoint.this == thetaJoint.this:
+            raise ValueError(
+                "TwoHingeDamper.applyTo: phiJoint and thetaJoint must be "
+                "distinct hinge joints."
+            )
+
         phiScene = phiJoint.getBody().getScene()
         thetaScene = thetaJoint.getBody().getScene()
         if phiScene.this != thetaScene.this:
