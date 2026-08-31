@@ -373,7 +373,12 @@ bool eigenIsUnitVector(const Eigen::Vector3d& vec, double tolerance)
  */
 bool eigenIsValidInertiaMatrix(const Eigen::Matrix3d& inertia, double tolerance)
 {
-    // an inertia tensor must be symmetric
+    // Finiteness check
+    if (!inertia.allFinite()) {
+        return false;
+    }
+
+    // Symmetric check
     if ((inertia - inertia.transpose()).norm() > tolerance) {
         return false;
     }
