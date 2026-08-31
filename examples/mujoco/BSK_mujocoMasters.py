@@ -34,14 +34,14 @@ sys.path.append(path + '/mujocoModels')
 class BSKSim(SimulationBaseClass.SimBaseClass):
     """Main bskSim simulation class"""
 
-    def __init__(self, fswRate=0.01, dynRate=0.01):
+    def __init__(self, fswRate=0.01, dynRate=0.01):  # [s]
         self.dynRate = dynRate
         self.fswRate = fswRate
         # Create a sim module as an empty container
         SimulationBaseClass.SimBaseClass.__init__(self)
 
-        self.DynModels = []
-        self.FSWModels = []
+        self._dynModels = None
+        self._fswModels = None
         self.DynamicsProcessName = None
         self.FSWProcessName = None
         self.dynProc = None
@@ -50,25 +50,67 @@ class BSKSim(SimulationBaseClass.SimBaseClass):
         self.dynamics_added = False
         self.fsw_added = False
 
+    @property
+    def DynModels(self):
+        """Return the configured dynamics model.
+
+        :raises RuntimeError: If a dynamics model has not been added.
+        """
+        if self._dynModels is None:
+            raise RuntimeError("A dynamics model has not been added yet")
+        return self._dynModels
+
     def get_DynModel(self):
-        assert (self.dynamics_added is True), "It is mandatory to use a dynamics model as an argument"
+        """Return the configured dynamics model.
+
+        :raises RuntimeError: If a dynamics model has not been added.
+        """
         return self.DynModels
 
     def set_DynModel(self, dynModel):
-        self.dynamics_added = True
+        """Construct and store the dynamics model.
+
+        :param dynModel: Module containing the ``BSKMujocoDynamicsModels`` class.
+        :raises RuntimeError: If a dynamics model has already been added.
+        """
+        if self._dynModels is not None:
+            raise RuntimeError("A dynamics model has already been added")
         self.DynamicsProcessName = 'DynamicsProcess'  # Create simulation process name
         self.dynProc = self.CreateNewProcess(self.DynamicsProcessName)  # Create process
-        self.DynModels = dynModel.BSKMujocoDynamicsModels(self, self.dynRate)  # Create Dynamics class
+        dynModels = dynModel.BSKMujocoDynamicsModels(self, self.dynRate)  # Create dynamics class
+        self._dynModels = dynModels
+        self.dynamics_added = True
+
+    @property
+    def FSWModels(self):
+        """Return the configured flight software model.
+
+        :raises RuntimeError: If a flight software model has not been added.
+        """
+        if self._fswModels is None:
+            raise RuntimeError("A flight software model has not been added yet")
+        return self._fswModels
 
     def get_FswModel(self):
-        assert (self.fsw_added is True), "A flight software model has not been added yet"
+        """Return the configured flight software model.
+
+        :raises RuntimeError: If a flight software model has not been added.
+        """
         return self.FSWModels
 
     def set_FswModel(self, fswModel):
-        self.fsw_added = True
+        """Construct and store the flight software model.
+
+        :param fswModel: Module containing the ``BSKMujocoFSWModels`` class.
+        :raises RuntimeError: If a flight software model has already been added.
+        """
+        if self._fswModels is not None:
+            raise RuntimeError("A flight software model has already been added")
         self.FSWProcessName = "FSWProcess"  # Create simulation process name
         self.fswProc = self.CreateNewProcess(self.FSWProcessName)  # Create process
-        self.FSWModels = fswModel.BSKMujocoFSWModels(self, self.fswRate)  # Create FSW class
+        fswModels = fswModel.BSKMujocoFSWModels(self, self.fswRate)  # Create FSW class
+        self._fswModels = fswModels
+        self.fsw_added = True
 
 
 class BSKScenario(object):
