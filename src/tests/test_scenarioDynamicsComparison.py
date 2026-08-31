@@ -769,6 +769,11 @@ def test_pareto_rw_requires_common_comparison_horizon():
         "tol": None,
         "requestedDt": 0.8,
     }]
+    with pytest.raises(ValueError, match="same executed"):
+        module.normalizedSweepConfigurations((
+            ("svIntegratorRK4", 0.8, None),
+            ("svIntegratorRK4", 0.76, None),
+        ))
     stopTimeNanos = macros.sec2nano(module.SIM_DURATION)
     for _, dt, _ in module.FULL_SWEEP_CONFIGS:
         assert stopTimeNanos % macros.sec2nano(dt) == 0

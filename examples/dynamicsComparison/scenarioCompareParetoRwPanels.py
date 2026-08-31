@@ -496,8 +496,18 @@ def normalizedSweepConfigurations(configurations):
     """Return execution tuples and serializable requested/executed step records."""
     execution = []
     records = []
+    requestedByExecution = {}
     for integrator, requestedStep, tolerance in configurations:
         executedStep = snappedStep(requestedStep)
+        executionKey = (integrator, executedStep, tolerance)
+        if executionKey in requestedByExecution:
+            previousStep = requestedByExecution[executionKey]
+            raise ValueError(
+                f"requested steps {previousStep:g} s and {requestedStep:g} s "
+                f"both map to the same executed {integrator} configuration "
+                f"at dt={executedStep:g} s and tol={tolerance!r}."
+            )
+        requestedByExecution[executionKey] = requestedStep
         execution.append((integrator, executedStep, tolerance))
         record = {"integrator": integrator, "dt": executedStep, "tol": tolerance}
         if executedStep != requestedStep:
