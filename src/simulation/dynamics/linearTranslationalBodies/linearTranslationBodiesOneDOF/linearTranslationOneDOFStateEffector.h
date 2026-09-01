@@ -147,6 +147,7 @@ private:
     Eigen::MatrixXd* omega_FN_F = nullptr;                        //!< [rad/s] inertial translating body frame angular velocity vector
 
     void Reset(uint64_t CurrentClock) override;
+    void validateConfiguration();  //!< Method to reject a configuration the equations of motion cannot represent
 	void registerStates(DynParamManager& states) override;
 	void linkInStates(DynParamManager& states) override;
     void registerProperties(DynParamManager& states) override;
