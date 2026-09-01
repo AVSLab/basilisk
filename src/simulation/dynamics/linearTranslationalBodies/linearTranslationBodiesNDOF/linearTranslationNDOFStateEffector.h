@@ -208,6 +208,9 @@ private:
                                       double& rotEnergyContr,
                                       Eigen::Vector3d omega_BN_B) final;
     void prependSpacecraftNameToStates() final;
+    void validateConfiguration();
+    void checkBodyConfiguration();
+    void checkJointMassMatrix();
     void computeTranslatingBodyInertialStates();
 };
 
