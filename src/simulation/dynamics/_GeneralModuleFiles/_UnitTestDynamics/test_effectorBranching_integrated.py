@@ -86,7 +86,7 @@ FINE_TIMESTEP = 0.0005  # [s]
     ("spinningBodiesTwoDOF",          True),
     ("spinningBodiesNDOF",            True),
     ("linearTranslationBodiesOneDOF", True),
-    # ("linearTranslationBodiesNDOF",     True),
+    ("linearTranslationBodiesNDOF",   True),
     ("linearSpringMassDamper",          False),
     # ("sphericalPendulum",               False),
     # ("prescribedMotion",                False),
@@ -264,6 +264,7 @@ def test_effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dy
     "spinningBodiesTwoDOF",
     "spinningBodiesNDOF",
     "linearTranslationBodiesOneDOF",
+    "linearTranslationBodiesNDOF",
 ])
 def test_parentPublishesCurrentVelocityToChild(stateEffector):
     r"""
@@ -324,6 +325,7 @@ def test_parentPublishesCurrentVelocityToChild(stateEffector):
         "spinningBodiesTwoDOF": setup_spinningBodiesTwoDOF,
         "spinningBodiesNDOF": setup_spinningBodiesNDOF,
         "linearTranslationBodiesOneDOF": setup_translatingBodiesOneDOF,
+        "linearTranslationBodiesNDOF": setup_translatingBodiesNDOF,
     }
     stateEff, stateEffProps = setupByName[stateEffector]()
     weldParentSegmentToHub(stateEffector, stateEff)
@@ -411,6 +413,9 @@ def effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dynamic
     elif stateEffector == "linearTranslationBodiesOneDOF":
         stateEff, stateEffProps = setup_translatingBodiesOneDOF()
         segment = 1
+    elif stateEffector == "linearTranslationBodiesNDOF":
+        stateEff, stateEffProps = setup_translatingBodiesNDOF()
+        segment = 2
     elif stateEffector == "linearSpringMassDamper":
         stateEff, stateEffProps = setup_linearSpringMassDamper()
         segment = 1
@@ -696,6 +701,8 @@ def getModernStateEffInertialPropName(scObject, stateEffector, segment, propType
         pattern = "nHingedRigidBodyInertial" + propType + r"[0-9]+_" + str(segment)
     elif stateEffector == "spinningBodiesNDOF":
         pattern = "spinningBodyInertial" + propType + r"[0-9]+_" + str(segment)
+    elif stateEffector == "linearTranslationBodiesNDOF":
+        pattern = "linearTranslationInertial" + propType + r"[0-9]+_" + str(segment)
     else:
         pattern = "linearTranslationInertial" + propType + r"[0-9]+"
     try:
@@ -811,6 +818,9 @@ def weldParentSegmentToHub(stateEffector, stateEff):
     elif stateEffector == "linearTranslationBodiesOneDOF":
         stateEff.setRhoDotInit(0.0)  # [m/s]
         numberOfDegreesOfFreedom = 1
+    elif stateEffector == "linearTranslationBodiesNDOF":
+        numberOfDegreesOfFreedom = len(stateEff.translatingBodyOutMsgs)
+        stateEff.getTranslatingBody(0).setRhoDotInit(0.0)  # [m/s]
     else:
         pytest.fail("Weld requested for a state effector that exposes no lock.")
 
@@ -1212,6 +1222,57 @@ def setup_translatingBodiesOneDOF():
     stateEffProps.inertialPropLogName = "translatingBodyConfigLogOutMsg"
 
     return(translatingBody, stateEffProps)
+
+def setup_translatingBodiesNDOF():
+    translatingBodyEffector = linearTranslationNDOFStateEffector.LinearTranslationNDOFStateEffector()
+
+    # Define properties of the chain, whose first body is rotated away from the hub frame
+    numberOfBodies = 3
+    bodyMass = 20.0  # [kg]
+    rhoInit = [1.0, 0.5, -0.25]  # [m]
+    rhoDotInit = [0.05, -0.02, 0.03]  # [m/s]
+    fHat_P = np.array([[3.0 / 5.0], [4.0 / 5.0], [0.0]])
+    r_FcF_F = np.array([[-1.0], [1.0], [0.0]])  # [m]
+    r_F0P_P = np.array([[-1.0], [1.0], [0.0]])  # [m]
+    dcm_F0B = np.array([[0.0, -1.0, 0.0], [0.0, 0.0, -1.0], [1.0, 0.0, 0.0]])
+
+    for idx in range(numberOfBodies):
+        body = linearTranslationNDOFStateEffector.TranslatingBody()
+        body.setMass(bodyMass)
+        body.setK(100.0)  # [N/m]
+        body.setC(0.0)  # [N*s/m]
+        body.setRhoInit(rhoInit[idx])
+        body.setRhoDotInit(rhoDotInit[idx])
+        body.setFHat_P(fHat_P)
+        body.setR_FcF_F(r_FcF_F)
+        body.setR_F0P_P(r_F0P_P)
+        body.setIPntFc_F([[50.0, 0.0, 0.0],  # [kg*m^2]
+                          [0.0, 80.0, 0.0],
+                          [0.0, 0.0, 60.0]])
+        body.setDCM_FP(dcm_F0B if idx == 0 else np.eye(3))
+        translatingBodyEffector.addTranslatingBody(body)
+    translatingBodyEffector.ModelTag = "linearTranslationNDOF"
+
+    # Walk the chain to find each frame origin, and the COM offset contribution to be divided by
+    # the hub mass. Each body's axis and offset are stated in its parent's frame.
+    dcm_FB = np.eye(3)
+    r_FB_B = np.zeros((3, 1))
+    frameOrigins = []
+    mr_FcB_B = np.zeros((3, 1))
+    for idx in range(numberOfBodies):
+        r_FB_B = r_FB_B + dcm_FB.transpose() @ (r_F0P_P + rhoInit[idx] * fHat_P)
+        dcm_FB = (dcm_F0B if idx == 0 else np.eye(3)) @ dcm_FB
+        frameOrigins.append(r_FB_B)
+        mr_FcB_B -= bodyMass * (r_FB_B + dcm_FB.transpose() @ r_FcF_F)
+
+    stateEffProps = stateEffectorProperties()
+    stateEffProps.totalMass = numberOfBodies * bodyMass
+    stateEffProps.mr_PcB_B = mr_FcB_B
+    stateEffProps.r_PB_B = frameOrigins[1]  # [m] the body the dynamic effector attaches to
+    stateEffProps.r_PcP_P = r_FcF_F
+    stateEffProps.inertialPropLogName = "translatingBodyConfigLogOutMsgs"
+
+    return(translatingBodyEffector, stateEffProps)
 
 def setup_linearSpringMassDamper():
     linearSpring = linearSpringMassDamper.LinearSpringMassDamper()
