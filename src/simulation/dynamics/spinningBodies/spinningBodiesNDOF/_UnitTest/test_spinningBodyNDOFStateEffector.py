@@ -40,6 +40,17 @@ from Basilisk.simulation import spacecraft, spinningBodyNDOFStateEffector, gravi
 from Basilisk.architecture import messaging
 
 
+def randomValidInertia():
+    r"""Generate a random diagonal inertia tensor that is physically realizable."""
+    secondMoments = np.random.uniform(2.5, 50.0, 3)  # [kg m^2]
+    principalInertias = np.array([
+        secondMoments[1] + secondMoments[2],
+        secondMoments[0] + secondMoments[2],
+        secondMoments[0] + secondMoments[1]
+    ])  # [kg m^2]
+    return np.diag(principalInertias)
+
+
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
 # uncomment this line if this test has an expected failure, adjust message as needed
@@ -105,9 +116,7 @@ def spinningBodyNoInput(show_plots):
     # Define properties of spinning bodies
     spinningBody1 = spinningBodyNDOFStateEffector.SpinningBody()
     spinningBody1.setMass(np.random.uniform(5.0, 50.0))
-    spinningBody1.setISPntSc_S([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
-                                [0.0, np.random.uniform(5.0, 100.0), 0.0],
-                                [0.0, 0.0, np.random.uniform(5.0, 100.0)]])
+    spinningBody1.setISPntSc_S(randomValidInertia())
     spinningBody1.setDCM_S0P([[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]])
     spinningBody1.setR_ScS_S([[np.random.uniform(-1.0, 1.0)],
                               [np.random.uniform(-1.0, 1.0)],
@@ -123,9 +132,7 @@ def spinningBodyNoInput(show_plots):
 
     spinningBody2 = spinningBodyNDOFStateEffector.SpinningBody()
     spinningBody2.setMass(np.random.uniform(5.0, 50.0))
-    spinningBody2.setISPntSc_S([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
-                                [0.0, np.random.uniform(5.0, 100.0), 0.0],
-                                [0.0, 0.0, np.random.uniform(5.0, 100.0)]])
+    spinningBody2.setISPntSc_S(randomValidInertia())
     spinningBody2.setDCM_S0P([[0.0, -1.0, 0.0], [0.0, .0, -1.0], [1.0, 0.0, 0.0]])
     spinningBody2.setR_ScS_S([[np.random.uniform(-1.0, 1.0)],
                               [np.random.uniform(-1.0, 1.0)],
@@ -141,9 +148,7 @@ def spinningBodyNoInput(show_plots):
 
     spinningBody3 = spinningBodyNDOFStateEffector.SpinningBody()
     spinningBody3.setMass(np.random.uniform(5.0, 50.0))
-    spinningBody3.setISPntSc_S([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
-                                [0.0, np.random.uniform(5.0, 100.0), 0.0],
-                                [0.0, 0.0, np.random.uniform(5.0, 100.0)]])
+    spinningBody3.setISPntSc_S(randomValidInertia())
     spinningBody3.setDCM_S0P([[1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, -1.0]])
     spinningBody3.setR_ScS_S([[np.random.uniform(-1.0, 1.0)],
                               [np.random.uniform(-1.0, 1.0)],
@@ -159,9 +164,7 @@ def spinningBodyNoInput(show_plots):
 
     spinningBody4 = spinningBodyNDOFStateEffector.SpinningBody()
     spinningBody4.setMass(np.random.uniform(5.0, 50.0))
-    spinningBody4.setISPntSc_S([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
-                                [0.0, np.random.uniform(5.0, 100.0), 0.0],
-                                [0.0, 0.0, np.random.uniform(5.0, 100.0)]])
+    spinningBody4.setISPntSc_S(randomValidInertia())
     spinningBody4.setDCM_S0P([[0.0, 1.0, 0.0], [0.0, .0, 1.0], [1.0, 0.0, 0.0]])
     spinningBody4.setR_ScS_S([[np.random.uniform(-1.0, 1.0)],
                               [np.random.uniform(-1.0, 1.0)],
@@ -358,9 +361,7 @@ def spinningBodyLockAxis(show_plots):
     # Define properties of spinning bodies
     spinningBody1 = spinningBodyNDOFStateEffector.SpinningBody()
     spinningBody1.setMass(np.random.uniform(5.0, 50.0))
-    spinningBody1.setISPntSc_S([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
-                                [0.0, np.random.uniform(5.0, 100.0), 0.0],
-                                [0.0, 0.0, np.random.uniform(5.0, 100.0)]])
+    spinningBody1.setISPntSc_S(randomValidInertia())
     spinningBody1.setDCM_S0P([[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]])
     spinningBody1.setR_ScS_S([[np.random.uniform(-1.0, 1.0)],
                               [np.random.uniform(-1.0, 1.0)],
@@ -376,9 +377,7 @@ def spinningBodyLockAxis(show_plots):
 
     spinningBody2 = spinningBodyNDOFStateEffector.SpinningBody()
     spinningBody2.setMass(np.random.uniform(5.0, 50.0))
-    spinningBody2.setISPntSc_S([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
-                                [0.0, np.random.uniform(5.0, 100.0), 0.0],
-                                [0.0, 0.0, np.random.uniform(5.0, 100.0)]])
+    spinningBody2.setISPntSc_S(randomValidInertia())
     spinningBody2.setDCM_S0P([[0.0, -1.0, 0.0], [0.0, .0, -1.0], [1.0, 0.0, 0.0]])
     spinningBody2.setR_ScS_S([[np.random.uniform(-1.0, 1.0)],
                               [np.random.uniform(-1.0, 1.0)],
@@ -394,9 +393,7 @@ def spinningBodyLockAxis(show_plots):
 
     spinningBody3 = spinningBodyNDOFStateEffector.SpinningBody()
     spinningBody3.setMass(np.random.uniform(5.0, 50.0))
-    spinningBody3.setISPntSc_S([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
-                                [0.0, np.random.uniform(5.0, 100.0), 0.0],
-                                [0.0, 0.0, np.random.uniform(5.0, 100.0)]])
+    spinningBody3.setISPntSc_S(randomValidInertia())
     spinningBody3.setDCM_S0P([[1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, -1.0]])
     spinningBody3.setR_ScS_S([[np.random.uniform(-1.0, 1.0)],
                               [np.random.uniform(-1.0, 1.0)],
@@ -412,9 +409,7 @@ def spinningBodyLockAxis(show_plots):
 
     spinningBody4 = spinningBodyNDOFStateEffector.SpinningBody()
     spinningBody4.setMass(np.random.uniform(5.0, 50.0))
-    spinningBody4.setISPntSc_S([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
-                                [0.0, np.random.uniform(5.0, 100.0), 0.0],
-                                [0.0, 0.0, np.random.uniform(5.0, 100.0)]])
+    spinningBody4.setISPntSc_S(randomValidInertia())
     spinningBody4.setDCM_S0P([[0.0, 1.0, 0.0], [0.0, .0, 1.0], [1.0, 0.0, 0.0]])
     spinningBody4.setR_ScS_S([[np.random.uniform(-1.0, 1.0)],
                               [np.random.uniform(-1.0, 1.0)],
@@ -617,9 +612,7 @@ def spinningBodyCommandedTorque(show_plots):
     # Define properties of spinning bodies
     spinningBody1 = spinningBodyNDOFStateEffector.SpinningBody()
     spinningBody1.setMass(np.random.uniform(5.0, 50.0))
-    spinningBody1.setISPntSc_S([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
-                                [0.0, np.random.uniform(5.0, 100.0), 0.0],
-                                [0.0, 0.0, np.random.uniform(5.0, 100.0)]])
+    spinningBody1.setISPntSc_S(randomValidInertia())
     spinningBody1.setDCM_S0P([[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]])
     spinningBody1.setR_ScS_S([[np.random.uniform(-1.0, 1.0)],
                               [np.random.uniform(-1.0, 1.0)],
@@ -635,9 +628,7 @@ def spinningBodyCommandedTorque(show_plots):
 
     spinningBody2 = spinningBodyNDOFStateEffector.SpinningBody()
     spinningBody2.setMass(np.random.uniform(5.0, 50.0))
-    spinningBody2.setISPntSc_S([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
-                                [0.0, np.random.uniform(5.0, 100.0), 0.0],
-                                [0.0, 0.0, np.random.uniform(5.0, 100.0)]])
+    spinningBody2.setISPntSc_S(randomValidInertia())
     spinningBody2.setDCM_S0P([[0.0, -1.0, 0.0], [0.0, .0, -1.0], [1.0, 0.0, 0.0]])
     spinningBody2.setR_ScS_S([[np.random.uniform(-1.0, 1.0)],
                               [np.random.uniform(-1.0, 1.0)],
@@ -653,9 +644,7 @@ def spinningBodyCommandedTorque(show_plots):
 
     spinningBody3 = spinningBodyNDOFStateEffector.SpinningBody()
     spinningBody3.setMass(np.random.uniform(5.0, 50.0))
-    spinningBody3.setISPntSc_S([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
-                                [0.0, np.random.uniform(5.0, 100.0), 0.0],
-                                [0.0, 0.0, np.random.uniform(5.0, 100.0)]])
+    spinningBody3.setISPntSc_S(randomValidInertia())
     spinningBody3.setDCM_S0P([[1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, -1.0]])
     spinningBody3.setR_ScS_S([[np.random.uniform(-1.0, 1.0)],
                               [np.random.uniform(-1.0, 1.0)],
@@ -671,9 +660,7 @@ def spinningBodyCommandedTorque(show_plots):
 
     spinningBody4 = spinningBodyNDOFStateEffector.SpinningBody()
     spinningBody4.setMass(np.random.uniform(5.0, 50.0))
-    spinningBody4.setISPntSc_S([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
-                                [0.0, np.random.uniform(5.0, 100.0), 0.0],
-                                [0.0, 0.0, np.random.uniform(5.0, 100.0)]])
+    spinningBody4.setISPntSc_S(randomValidInertia())
     spinningBody4.setDCM_S0P([[0.0, 1.0, 0.0], [0.0, .0, 1.0], [1.0, 0.0, 0.0]])
     spinningBody4.setR_ScS_S([[np.random.uniform(-1.0, 1.0)],
                               [np.random.uniform(-1.0, 1.0)],
