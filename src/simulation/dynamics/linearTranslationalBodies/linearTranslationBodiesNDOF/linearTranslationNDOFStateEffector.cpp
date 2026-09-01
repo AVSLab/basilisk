@@ -49,10 +49,10 @@ LinearTranslationNDOFStateEffector::~LinearTranslationNDOFStateEffector()
 }
 
 void TranslatingBody::setMass(double mass) {
-    if (mass > 0.0)
+    if (mass >= 0.0)
         this->mass = mass;
     else {
-        this->bskLogger.bskError("Mass must be greater than 0.");
+        this->bskLogger.bskError("Mass must be greater than or equal to 0.");
     }
 }
 
@@ -84,14 +84,7 @@ void TranslatingBody::setC(double c) {
 /*! This method is used to reset the module. */
 void LinearTranslationNDOFStateEffector::Reset(uint64_t CurrentClock [[maybe_unused]])
 {
-    for(auto& translatingBody: this->translatingBodyVec) {
-        if (translatingBody->fHat_P.norm() > 0.0) {
-            translatingBody->fHat_P.normalize();
-        }
-        else {
-            bskLogger.bskError("Norm of fHat must be greater than 0. fHat may not have been set by the user.");
-        }
-    }
+    this->validateConfiguration();
 }
 
 /*! This method is used to add a translating body. */
@@ -201,6 +194,68 @@ void LinearTranslationNDOFStateEffector::linkInStates(DynParamManager& statesIn)
     this->inertialVelocityProperty = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + "v_BN_N");
 }
 
+/*! This method runs every configuration check. Spacecraft initialization always reaches it through
+ registerStates(), whereas Reset() runs only when the effector is also added to a task */
+void
+LinearTranslationNDOFStateEffector::validateConfiguration()
+{
+    for (auto& translatingBody : this->translatingBodyVec) {
+        if (translatingBody->fHat_P.norm() > 0.0) {
+            translatingBody->fHat_P.normalize();
+        }
+        else {
+            bskLogger.bskError("Norm of fHat must be greater than 0. fHat may not have been set by the user.");
+        }
+    }
+
+    this->checkBodyConfiguration();
+    this->checkJointMassMatrix();
+}
+
+/*! This method checks each translating body's user set frame and inertia */
+void
+LinearTranslationNDOFStateEffector::checkBodyConfiguration()
+{
+    if (this->translatingBodyVec.empty()) {
+        bskLogger.bskError("LinearTranslationNDOFStateEffector: at least one translating body is required.");
+        return;
+    }
+
+    for (const auto& translatingBody : this->translatingBodyVec) {
+        if (!eigenIsRotationMatrix(translatingBody->dcm_FP)) {
+            bskLogger.bskError(
+              "LinearTranslationNDOFStateEffector: a translating body's dcm_FP is not a valid rotation matrix; it must "
+              "be orthogonal and right-handed. It may not have been set properly by the user.");
+        }
+        // a massless body legitimately carries a zero inertia tensor, so only check when its mass > 0
+        if (translatingBody->mass > 0.0 && !eigenIsValidInertiaMatrix(translatingBody->IPntFc_F)) {
+            bskLogger.bskError("LinearTranslationNDOFStateEffector: a translating body's IPntFc_F is not a valid "
+                               "inertia tensor. It may not have been set properly by the user.");
+        }
+    }
+}
+
+/*! This method checks that the joint mass matrix the equations of motion invert is not singular */
+void
+LinearTranslationNDOFStateEffector::checkJointMassMatrix()
+{
+    // the axes are fixed in their parents and a translating body does not rotate, so the matrix
+    // never changes during the integration and the equations of motion can build it here
+    Eigen::Matrix3d dcm_FB = Eigen::Matrix3d::Identity();
+    for (auto& translatingBody : this->translatingBodyVec) {
+        translatingBody->fHat_B = dcm_FB.transpose() * translatingBody->fHat_P;
+        dcm_FB = translatingBody->dcm_FP * dcm_FB;
+    }
+
+    Eigen::MatrixXd MRho = Eigen::MatrixXd::Zero(this->N, this->N);
+    this->computeMRho(MRho);
+    if (Eigen::FullPivLU<Eigen::MatrixXd>(MRho).rank() < this->N) {
+        bskLogger.bskError("LinearTranslationNDOFStateEffector: the translating body masses and axes leave the joint "
+                           "mass matrix singular. The outermost body must carry mass, and a massless body's axis must "
+                           "be independent of the axes outboard of it.");
+    }
+}
+
 /*! This method allows the TB state effector to register its states: rho and rhoDot with the dynamic parameter manager */
 void LinearTranslationNDOFStateEffector::registerStates(DynParamManager& states)
 {
@@ -217,6 +272,8 @@ void LinearTranslationNDOFStateEffector::registerStates(DynParamManager& states)
     }
     this->rhoState->setState(RhoInitMatrix);
     this->rhoDotState->setState(RhoDotInitMatrix);
+
+    this->validateConfiguration();
 }
 
 /*! This method allows the TB state effector to provide its contributions to the mass props and mass prop rates of the

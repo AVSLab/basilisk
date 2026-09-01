@@ -42,6 +42,18 @@ from Basilisk.utilities import (
 )
 from Basilisk.simulation import spacecraft, linearTranslationNDOFStateEffector, gravityEffector
 from Basilisk.architecture import messaging
+from Basilisk.architecture.bskLogging import BasiliskError
+
+
+def randomValidInertia():
+    r"""Generate a random diagonal inertia tensor that is physically realizable."""
+    secondMoments = np.random.uniform(2.5, 50.0, 3)  # [kg m^2]
+    principalInertias = np.array([
+        secondMoments[1] + secondMoments[2],
+        secondMoments[0] + secondMoments[2],
+        secondMoments[0] + secondMoments[1]
+    ])  # [kg m^2]
+    return np.diag(principalInertias)
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -81,6 +93,136 @@ def test_translatingBody(show_plots, function):
 
     testFunction(show_plots)
 
+# axis and mass [kg] of each body in the chain, outward from the hub. A body given no mass keeps the
+# zero default, since the setter rejects a non-positive mass, and is given a zero inertia to match.
+X_AXIS = [[1.0], [0.0], [0.0]]
+Y_AXIS = [[0.0], [1.0], [0.0]]
+Z_AXIS = [[0.0], [0.0], [1.0]]
+XY_AXIS = [[1.0], [1.0], [0.0]]
+VALIDATION_CHAINS = {
+    'Valid': [(20.0, X_AXIS), (15.0, Y_AXIS)],
+    'MasslessJoint': [(None, X_AXIS), (20.0, Y_AXIS)],
+    'MasslessChain': [(None, X_AXIS), (None, Y_AXIS), (20.0, Z_AXIS)],
+    'MasslessOutermost': [(20.0, X_AXIS), (None, Y_AXIS)],
+    'CollinearMassless': [(None, X_AXIS), (20.0, X_AXIS)],
+    # pairwise independent axes that collectively span only two dimensions
+    'CoplanarMassless': [(None, X_AXIS), (None, Y_AXIS), (20.0, XY_AXIS)],
+    'NoBodies': [],
+    'SkewedDCM': [(20.0, X_AXIS), (15.0, Y_AXIS)],
+    'AsymmetricInertia': [(20.0, X_AXIS), (15.0, Y_AXIS)],
+    'TriangleInertia': [(20.0, X_AXIS), (15.0, Y_AXIS)],
+}
+
+
+@pytest.mark.parametrize("scheduleEffector", [True, False])
+@pytest.mark.parametrize("chain, shouldRaise", [
+    ('Valid', False),
+    ('MasslessJoint', False),
+    ('MasslessChain', False),
+    ('MasslessOutermost', True),
+    ('CollinearMassless', True),
+    ('CoplanarMassless', True),
+    ('NoBodies', True),
+    ('SkewedDCM', True),
+    ('AsymmetricInertia', True),
+    ('TriangleInertia', True),
+])
+def test_translatingBodyConfigurationValidation(chain, shouldRaise, scheduleEffector):
+    """
+    Verify that initialization rejects a chain the equations of motion cannot represent, and that a
+    massless body used to build a multiple degree of freedom joint is not one of them.
+
+    The joint mass matrix sums the masses outboard of each axis. A body may be left massless so that
+    several single axis bodies compose one multi-axis joint, but the matrix is singular whenever some
+    nonzero combination of axis rates leaves every body carrying mass at rest. That covers a massless
+    outermost body and a massless body sharing its axis with the body outboard of it, and it is a
+    collective condition rather than a pairwise one: massless stages along x and y followed by a
+    massive stage along x + y have pairwise independent axes yet span only two dimensions, so they
+    are rejected as well.
+    Inverting a singular matrix fills the spacecraft state with NaN rather than raising, which is why
+    this is asserted as an error at initialization instead of as a tolerance on a trajectory. The
+    axes are fixed in their parents and a translating body does not rotate, so the matrix never
+    changes during the integration. The rotation matrix and inertia tensor checks match those the
+    spinning body effectors already apply, including skipping the inertia check for a massless body,
+    whose inertia tensor is legitimately zero.
+
+    An accepted chain is integrated as well, because initializing without error would not show that
+    a massless body carries the correct dynamics. Every damper is zero, so the rotational energy and
+    the rotational angular momentum about the vehicle center of mass must both be conserved.
+
+    **Test Parameters:**
+
+    - chain: [string]
+        translating body configuration to initialize
+    - shouldRaise: [bool]
+        whether initialization must reject the configuration
+    - scheduleEffector: [bool]
+        whether the effector is added to the task in addition to the spacecraft
+
+    The scheduling parameter matters because the checks must not depend on it. Spacecraft
+    initialization calls ``registerStates()`` on every attached state effector but never calls
+    ``Reset()``, which runs only for a module added to a task. The module user guide adds the
+    effector to the spacecraft alone, so validation reached from ``Reset()`` would miss the
+    documented setup and let a singular chain integrate to NaN.
+    """
+    scObject = spacecraft.Spacecraft()
+    scObject.ModelTag = "spacecraftBody"
+    scObject.hub.mHub = 750.0  # [kg]
+    scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]  # [kg*m^2]
+    scObject.hub.omega_BN_BInit = [[0.1], [-0.2], [0.3]]  # [rad/s]
+
+    effector = linearTranslationNDOFStateEffector.LinearTranslationNDOFStateEffector()
+    for mass, fHat_P in VALIDATION_CHAINS[chain]:
+        body = linearTranslationNDOFStateEffector.TranslatingBody()
+        if mass is not None:
+            body.setMass(mass)  # [kg]
+        else:
+            body.setIPntFc_F([[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]])  # [kg*m^2]
+        if chain == 'SkewedDCM':
+            body.setDCM_FP([[1.0, 0.1, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
+        if chain == 'AsymmetricInertia':
+            body.setIPntFc_F([[50.0, 3.0, 0.0], [0.0, 80.0, 0.0], [0.0, 0.0, 60.0]])  # [kg*m^2]
+        if chain == 'TriangleInertia':
+            # positive definite, but the principal moments violate the triangle inequality
+            body.setIPntFc_F([[10.0, 0.0, 0.0], [0.0, 10.0, 0.0], [0.0, 0.0, 90.0]])  # [kg*m^2]
+        body.setR_FcF_F([[0.5], [0.2], [-0.3]])  # [m]
+        body.setR_F0P_P([[1.0], [0.5], [0.25]])  # [m]
+        body.setFHat_P(fHat_P)
+        body.setRhoInit(0.1)  # [m]
+        body.setRhoDotInit(0.05)  # [m/s]
+        body.setK(10.0)  # [N/m]
+        effector.addTranslatingBody(body)
+    scObject.addStateEffector(effector)
+
+    unitTestSim = SimulationBaseClass.SimBaseClass()
+    unitTestSim.SetProgressBar(False)
+    unitTestSim.CreateNewProcess("TestProcess").addTask(
+        unitTestSim.CreateNewTask("unitTask", macros.sec2nano(0.001)))
+    if scheduleEffector:
+        unitTestSim.AddModelToTask("unitTask", effector)
+    unitTestSim.AddModelToTask("unitTask", scObject)
+    conservationLog = scObject.logger(["totRotEnergy", "totRotAngMomPntC_N"])
+    unitTestSim.AddModelToTask("unitTask", conservationLog)
+
+    if shouldRaise:
+        with pytest.raises(BasiliskError):
+            unitTestSim.InitializeSimulation()
+        return
+
+    unitTestSim.InitializeSimulation()
+    unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))
+    unitTestSim.ExecuteSimulation()
+
+    accuracy = 1e-10
+    rotEnergy = np.array(conservationLog.totRotEnergy)
+    rotAngMom = np.array(conservationLog.totRotAngMomPntC_N)
+    np.testing.assert_allclose(rotEnergy, rotEnergy[0], rtol=accuracy,
+                               err_msg="Rotational energy is not constant.")
+    np.testing.assert_allclose(rotAngMom, np.broadcast_to(rotAngMom[0], rotAngMom.shape),
+                               rtol=accuracy,
+                               err_msg="Rotational angular momentum is not constant.")
+
+
 def translatingBodyNoInput(show_plots):
     r"""
     This test does not use any input messages or lock flags, so the links are free to move.
@@ -106,9 +248,7 @@ def translatingBodyNoInput(show_plots):
     # define properties
     translatingBody1 = linearTranslationNDOFStateEffector.TranslatingBody()
     translatingBody1.setMass(np.random.uniform(5.0, 50.0))
-    translatingBody1.setIPntFc_F([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
-                                 [0.0, np.random.uniform(5.0, 100.0), 0.0],
-                                 [0.0, 0.0, np.random.uniform(5.0, 100.0)]])
+    translatingBody1.setIPntFc_F(randomValidInertia())
     translatingBody1.setDCM_FP([[0.0, -1.0, 0.0], [0.0, 0.0, -1.0], [1.0, 0.0, 0.0]])
     translatingBody1.setR_FcF_F([[np.random.uniform(-1.0, 1.0)],
                                 [np.random.uniform(-1.0, 1.0)],
@@ -124,9 +264,7 @@ def translatingBodyNoInput(show_plots):
 
     translatingBody2 = linearTranslationNDOFStateEffector.TranslatingBody()
     translatingBody2.setMass(np.random.uniform(5.0, 50.0))
-    translatingBody2.setIPntFc_F([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
-                                  [0.0, np.random.uniform(5.0, 100.0), 0.0],
-                                  [0.0, 0.0, np.random.uniform(5.0, 100.0)]])
+    translatingBody2.setIPntFc_F(randomValidInertia())
     translatingBody2.setDCM_FP([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
     translatingBody2.setR_FcF_F([[np.random.uniform(-1.0, 1.0)],
                                  [np.random.uniform(-1.0, 1.0)],
@@ -142,9 +280,7 @@ def translatingBodyNoInput(show_plots):
 
     translatingBody3 = linearTranslationNDOFStateEffector.TranslatingBody()
     translatingBody3.setMass(np.random.uniform(5.0, 50.0))
-    translatingBody3.setIPntFc_F([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
-                                  [0.0, np.random.uniform(5.0, 100.0), 0.0],
-                                  [0.0, 0.0, np.random.uniform(5.0, 100.0)]])
+    translatingBody3.setIPntFc_F(randomValidInertia())
     translatingBody3.setDCM_FP([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
     translatingBody3.setR_FcF_F([[np.random.uniform(-1.0, 1.0)],
                                  [np.random.uniform(-1.0, 1.0)],
@@ -160,9 +296,7 @@ def translatingBodyNoInput(show_plots):
 
     translatingBody4 = linearTranslationNDOFStateEffector.TranslatingBody()
     translatingBody4.setMass(np.random.uniform(5.0, 50.0))
-    translatingBody4.setIPntFc_F([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
-                                  [0.0, np.random.uniform(5.0, 100.0), 0.0],
-                                  [0.0, 0.0, np.random.uniform(5.0, 100.0)]])
+    translatingBody4.setIPntFc_F(randomValidInertia())
     translatingBody4.setDCM_FP([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
     translatingBody4.setR_FcF_F([[np.random.uniform(-1.0, 1.0)],
                                  [np.random.uniform(-1.0, 1.0)],
@@ -348,9 +482,7 @@ def translatingBodyLockAxis(show_plots):
     # define properties
     translatingBody1 = linearTranslationNDOFStateEffector.TranslatingBody()
     translatingBody1.setMass(np.random.uniform(5.0, 50.0))
-    translatingBody1.setIPntFc_F([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
-                                  [0.0, np.random.uniform(5.0, 100.0), 0.0],
-                                  [0.0, 0.0, np.random.uniform(5.0, 100.0)]])
+    translatingBody1.setIPntFc_F(randomValidInertia())
     translatingBody1.setDCM_FP([[0.0, -1.0, 0.0], [0.0, 0.0, -1.0], [1.0, 0.0, 0.0]])
     translatingBody1.setR_FcF_F([[np.random.uniform(-1.0, 1.0)],
                                  [np.random.uniform(-1.0, 1.0)],
@@ -366,9 +498,7 @@ def translatingBodyLockAxis(show_plots):
 
     translatingBody2 = linearTranslationNDOFStateEffector.TranslatingBody()
     translatingBody2.setMass(np.random.uniform(5.0, 50.0))
-    translatingBody2.setIPntFc_F([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
-                                  [0.0, np.random.uniform(5.0, 100.0), 0.0],
-                                  [0.0, 0.0, np.random.uniform(5.0, 100.0)]])
+    translatingBody2.setIPntFc_F(randomValidInertia())
     translatingBody2.setDCM_FP([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
     translatingBody2.setR_FcF_F([[np.random.uniform(-1.0, 1.0)],
                                  [np.random.uniform(-1.0, 1.0)],
@@ -384,9 +514,7 @@ def translatingBodyLockAxis(show_plots):
 
     translatingBody3 = linearTranslationNDOFStateEffector.TranslatingBody()
     translatingBody3.setMass(np.random.uniform(5.0, 50.0))
-    translatingBody3.setIPntFc_F([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
-                                  [0.0, np.random.uniform(5.0, 100.0), 0.0],
-                                  [0.0, 0.0, np.random.uniform(5.0, 100.0)]])
+    translatingBody3.setIPntFc_F(randomValidInertia())
     translatingBody3.setDCM_FP([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
     translatingBody3.setR_FcF_F([[np.random.uniform(-1.0, 1.0)],
                                  [np.random.uniform(-1.0, 1.0)],
@@ -402,9 +530,7 @@ def translatingBodyLockAxis(show_plots):
 
     translatingBody4 = linearTranslationNDOFStateEffector.TranslatingBody()
     translatingBody4.setMass(np.random.uniform(5.0, 50.0))
-    translatingBody4.setIPntFc_F([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
-                                  [0.0, np.random.uniform(5.0, 100.0), 0.0],
-                                  [0.0, 0.0, np.random.uniform(5.0, 100.0)]])
+    translatingBody4.setIPntFc_F(randomValidInertia())
     translatingBody4.setDCM_FP([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
     translatingBody4.setR_FcF_F([[np.random.uniform(-1.0, 1.0)],
                                  [np.random.uniform(-1.0, 1.0)],
@@ -597,9 +723,7 @@ def translatingBodyCommandedForce(show_plots):
     # define properties
     translatingBody1 = linearTranslationNDOFStateEffector.TranslatingBody()
     translatingBody1.setMass(np.random.uniform(5.0, 50.0))
-    translatingBody1.setIPntFc_F([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
-                                  [0.0, np.random.uniform(5.0, 100.0), 0.0],
-                                  [0.0, 0.0, np.random.uniform(5.0, 100.0)]])
+    translatingBody1.setIPntFc_F(randomValidInertia())
     translatingBody1.setDCM_FP([[0.0, -1.0, 0.0], [0.0, 0.0, -1.0], [1.0, 0.0, 0.0]])
     translatingBody1.setR_FcF_F([[np.random.uniform(-1.0, 1.0)],
                                  [np.random.uniform(-1.0, 1.0)],
@@ -615,9 +739,7 @@ def translatingBodyCommandedForce(show_plots):
 
     translatingBody2 = linearTranslationNDOFStateEffector.TranslatingBody()
     translatingBody2.setMass(np.random.uniform(5.0, 50.0))
-    translatingBody2.setIPntFc_F([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
-                                  [0.0, np.random.uniform(5.0, 100.0), 0.0],
-                                  [0.0, 0.0, np.random.uniform(5.0, 100.0)]])
+    translatingBody2.setIPntFc_F(randomValidInertia())
     translatingBody2.setDCM_FP([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
     translatingBody2.setR_FcF_F([[np.random.uniform(-1.0, 1.0)],
                                  [np.random.uniform(-1.0, 1.0)],
@@ -633,9 +755,7 @@ def translatingBodyCommandedForce(show_plots):
 
     translatingBody3 = linearTranslationNDOFStateEffector.TranslatingBody()
     translatingBody3.setMass(np.random.uniform(5.0, 50.0))
-    translatingBody3.setIPntFc_F([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
-                                  [0.0, np.random.uniform(5.0, 100.0), 0.0],
-                                  [0.0, 0.0, np.random.uniform(5.0, 100.0)]])
+    translatingBody3.setIPntFc_F(randomValidInertia())
     translatingBody3.setDCM_FP([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
     translatingBody3.setR_FcF_F([[np.random.uniform(-1.0, 1.0)],
                                  [np.random.uniform(-1.0, 1.0)],
@@ -651,9 +771,7 @@ def translatingBodyCommandedForce(show_plots):
 
     translatingBody4 = linearTranslationNDOFStateEffector.TranslatingBody()
     translatingBody4.setMass(np.random.uniform(5.0, 50.0))
-    translatingBody4.setIPntFc_F([[np.random.uniform(5.0, 100.0), 0.0, 0.0],
-                                  [0.0, np.random.uniform(5.0, 100.0), 0.0],
-                                  [0.0, 0.0, np.random.uniform(5.0, 100.0)]])
+    translatingBody4.setIPntFc_F(randomValidInertia())
     translatingBody4.setDCM_FP([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
     translatingBody4.setR_FcF_F([[np.random.uniform(-1.0, 1.0)],
                                  [np.random.uniform(-1.0, 1.0)],

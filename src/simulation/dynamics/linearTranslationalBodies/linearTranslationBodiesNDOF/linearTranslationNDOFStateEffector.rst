@@ -12,6 +12,10 @@ optional motor force can be applied on each translating axis, and the user can a
 through a command. Moreover, the user can input a displacement reference that the effector will
 track through a spring and damper.
 
+Nominally, each degree of freedom corresponds to an additional rigid body link. However, by setting
+the mass and the inertia of a body to 0, several single axis bodies can compose one multiple degree
+of freedom joint instead.
+
 
 Message Connection Descriptions
 -------------------------------
@@ -60,7 +64,7 @@ This section is to outline the steps needed to setup a Translating Body State Ef
 
     translatingBodyEffector = linearTranslationNDOFStateEffector.LinearTranslationNDOFStateEffector()
 
-#. For each degree of freedom, create and set the properties of a translating body.  The mass must be positive::
+#. For each degree of freedom, create and set the properties of a translating body.  A body may carry zero mass and zero inertia, subject to the condition in the note below::
 
     translatingBody = linearTranslationNDOFStateEffector.TranslatingBody()
     translatingBody.setMass(50.0)
@@ -88,6 +92,16 @@ This section is to outline the steps needed to setup a Translating Body State Ef
 
     translatingBody.setK(100.0)
     translatingBody.setC(0.0)
+
+   .. note::
+
+       Initialization rejects a chain whose joint mass matrix is singular, which happens exactly
+       when some nonzero combination of joint rates leaves every body carrying mass stationary. A
+       massless outermost body and a massless body sharing its axis with the body outboard of it are
+       the simplest cases, but the condition is collective rather than pairwise. Massless stages
+       along :math:`\hat{x}` and :math:`\hat{y}` followed by a massive stage along
+       :math:`\hat{x} + \hat{y}` have pairwise independent axes and are still rejected, because the
+       three axes span only two dimensions.
 
 #. (Optional) Define a unique name for each state.  If you have multiple effectors, they each must have a unique name.  If these names are not specified, then the default names are used which are incremented by the effector number::
 
