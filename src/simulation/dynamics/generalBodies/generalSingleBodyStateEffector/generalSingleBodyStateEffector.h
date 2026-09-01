@@ -173,6 +173,7 @@ private:
 
     void addDOF(std::shared_ptr<DOF> newDOF);
     bool isDOFAdded(const std::shared_ptr<DOF>& newDOF) const;
+    void computeAttitudeProperties();
 };
 
 #endif /* GENERAL_SINGLE_BODY_STATE_EFFECTOR_H */
