@@ -139,3 +139,20 @@ This section is to outline the steps needed to setup a Translating Body State Ef
     scObject.addStateEffector(translatingBodyEffector)
 
    See :ref:`spacecraft` documentation on how to set up a spacecraft object.
+
+Hosting a Dynamic Effector
+--------------------------
+This effector supports the branching described in :ref:`bskPrinciples-11`, so a compatible dynamic
+effector can be carried by one of the translating bodies rather than by the hub::
+
+    translatingBodyEffector.addDynamicEffector(childEffector, segment)
+
+Here ``segment`` is the one-based body number, counting outward from the hub, so ``1`` is the body
+attached to the hub. The child then reads that body's inertial position, velocity, attitude, and
+angular velocity in place of the hub's, and any geometry given to the child is expressed in that
+body's frame rather than the hub body frame.
+
+Both this effector and the child are still added to the task in the usual way::
+
+    scSim.AddModelToTask(taskName, translatingBodyEffector)
+    scSim.AddModelToTask(taskName, childEffector)

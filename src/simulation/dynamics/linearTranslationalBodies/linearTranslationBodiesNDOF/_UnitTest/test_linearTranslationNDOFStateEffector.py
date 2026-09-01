@@ -41,7 +41,7 @@ from Basilisk.utilities import (
     macros,
 )
 from Basilisk.simulation import spacecraft, linearTranslationNDOFStateEffector, gravityEffector
-from Basilisk.simulation import linearTranslationOneDOFStateEffector
+from Basilisk.simulation import linearTranslationOneDOFStateEffector, extForceTorque
 from Basilisk.architecture import messaging
 from Basilisk.architecture.bskLogging import BasiliskError
 
@@ -194,6 +194,35 @@ def test_translatingBodyOutputMessagesMatchOneDOF():
         np.testing.assert_allclose(getattr(nDofConfig, field), getattr(oneDofConfig, field),
                                    rtol=accuracy, atol=accuracy,
                                    err_msg=field + " does not match the one-DOF effector.")
+
+
+@pytest.mark.parametrize("segment, shouldRaise", [(1, False), (3, False), (0, True), (4, True)])
+def test_translatingBodyDynamicEffectorSegmentBounds(segment, shouldRaise):
+    """
+    Verify that dynamic effectors can attach only to existing translating bodies.
+
+    A three-body chain accepts its first and last body numbers and rejects the adjacent values
+    outside the valid one-based range.
+
+    **Test Parameters:**
+
+    - segment: [int]
+        one-based body number supplied to ``addDynamicEffector``
+    - shouldRaise: [bool]
+        whether the body number is outside the valid range
+    """
+    effector = linearTranslationNDOFStateEffector.LinearTranslationNDOFStateEffector()
+    for _ in range(3):
+        body = linearTranslationNDOFStateEffector.TranslatingBody()
+        body.setMass(20.0)  # [kg]
+        effector.addTranslatingBody(body)
+
+    child = extForceTorque.ExtForceTorque()
+    if shouldRaise:
+        with pytest.raises(BasiliskError, match="non-existent translating body"):
+            effector.addDynamicEffector(child, segment)
+    else:
+        effector.addDynamicEffector(child, segment)
 
 
 # axis and mass [kg] of each body in the chain, outward from the hub. A body given no mass keeps the
