@@ -1,0 +1,6 @@
+- Added support for :ref:`linearTranslationNDOFStateEffector` to be the parent for dynamic effectors.
+- :ref:`linearTranslationNDOFStateEffector` now rejects a chain whose joint mass matrix is singular, an empty chain, and an invalid rotation matrix or inertia tensor.
+- :ref:`linearTranslationOneDOFStateEffector` now rejects an invalid rotation matrix or inertia tensor, matching the spinning body effectors.
+- Fixed the :ref:`linearTranslationNDOFStateEffector` translating body configuration log, which reported an attitude lagging the hub by an integrator substep.
+- :ref:`linearTranslationNDOFStateEffector` now accepts a zero body mass, which its massless joint setup documented but the setter rejected.
+- Fixed a memory leak of the per body output messages in :ref:`linearTranslationNDOFStateEffector` and :ref:`spinningBodyNDOFStateEffector`.
