@@ -191,23 +191,7 @@ void GeneralSingleBodyStateEffector::updateEffectorMassProps(double integTime) {
     }
 
     this->computeAttitudeProperties();
-
-    // Compute joint and general body position vectors relative to hub frame
-    for (auto& dof : this->jointDOFList) {
-        Eigen::Vector3d r_GG0_G{Eigen::Vector3d::Zero()};
-        if (dof->type == DOF::Type::TRANSLATION) {
-            r_GG0_G = dof->beta * dof->axis_G;
-        } else {
-            r_GG0_G = dof->screwConstant * dof->beta * dof->axis_G;
-        }
-        Eigen::Vector3d r_GG0_B = dof->dcm_GB.transpose() * r_GG0_G;
-
-        if (dof->index == 0) {
-            dof->r_GB_B = r_GG0_B + this->r_G0B_B;
-        } else {
-            dof->r_GB_B = r_GG0_B + this->jointDOFList.at(dof->index - 1)->r_GB_B;
-        }
-    }
+    this->computePositionProperties();
 
     // Compute joint and general body angular velocity vectors relative to the hub frame
     for (auto& dof : this->jointDOFList) {
@@ -348,6 +332,24 @@ void GeneralSingleBodyStateEffector::computeAttitudeProperties() {
             dof->dcm_GB = dcm_GG0 * this->dcm_G0B;
         } else {
             dof->dcm_GB = dcm_GG0 * this->jointDOFList.at(dof->index - 1)->dcm_GB;
+        }
+    }
+}
+
+void GeneralSingleBodyStateEffector::computePositionProperties() {
+    for (auto& dof : this->jointDOFList) {
+        Eigen::Vector3d r_GG0_G{Eigen::Vector3d::Zero()};
+        if (dof->type == DOF::Type::TRANSLATION) {
+            r_GG0_G = dof->beta * dof->axis_G;
+        } else {
+            r_GG0_G = dof->screwConstant * dof->beta * dof->axis_G;
+        }
+        Eigen::Vector3d r_GG0_B = dof->dcm_GB.transpose() * r_GG0_G;
+
+        if (dof->index == 0) {
+            dof->r_GB_B = r_GG0_B + this->r_G0B_B;
+        } else {
+            dof->r_GB_B = r_GG0_B + this->jointDOFList.at(dof->index - 1)->r_GB_B;
         }
     }
 }
