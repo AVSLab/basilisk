@@ -93,7 +93,7 @@ private:
     bool isAxisLocked = false;     //!< -- lock flag
     Eigen::Matrix3d IPntFc_F = Eigen::Matrix3d::Identity();   //!< [kg-m^2] Inertia of body about point Fc in F frame components
     Eigen::Vector3d r_FcF_F = Eigen::Vector3d::Zero();        //!< [m] vector pointing from translating frame F origin to point Fc (center of mass of arm) in F frame components
-    Eigen::Vector3d r_F0P_P = Eigen::Vector3d::Zero();        //!< [m] vector pointing from parent origin to translating frame F origin in F frame components
+    Eigen::Vector3d r_F0P_P = Eigen::Vector3d::Zero();        //!< [m] vector pointing from parent origin to translating frame F0 origin in parent frame components
     Eigen::Vector3d fHat_P{1.0, 0.0, 0.0};           //!< -- translating axis in parent frame components.
     Eigen::Matrix3d dcm_FP = Eigen::Matrix3d::Identity();     //!< -- DCM from parent frame to current F frame
 
@@ -102,34 +102,32 @@ private:
     double rhoDot = 0.0;           //!< [m/s] translating body velocity of F frame wrt F0 frame
 
     // Vector quantities
-    Eigen::Vector3d r_FF0_B;            //!< [m] vector pointing from translating frame F to translating frame F0 (magnitude rho)
-    Eigen::Vector3d r_F0P_B;            //!< [m] vector pointing from parent translating frame P to translating frame F0
-    Eigen::Vector3d fHat_B;             //!< -- translating axis in B frame components.
-    Eigen::Vector3d r_FcF_B;            //!< [m] vector pointing from translating frame F origin to point Fc (center of mass of arm) in B frame components
-    Eigen::Vector3d r_FB_B;             //!< [m] vector pointing from body frame B origin to F frame in B frame components
-    Eigen::Vector3d r_FcB_B;            //!< [m] vector pointing from body frame B origin to Fc in B frame components
-    Eigen::Vector3d r_FP_B;             //!< [m] vector from parent frame to current F frame in B frame componentes
-    Eigen::Vector3d r_FP_P;             //!< [m] vector from parent frame to current F frame in parent frame components
-    Eigen::Vector3d rPrime_FB_B;        //!< [m/s] body frame time derivative of r_FB_B
-    Eigen::Vector3d rPrime_FcF_B;       //!< [m/s] body frame time derivative of r_FcF_B
-    Eigen::Vector3d rPrime_FcB_B;       //!< [m/s] body frame time derivative of r_FcB_B
-    Eigen::Vector3d rPrime_FP_B;        //!< [m/s] body frame time derivative of r_FP_B
-    Eigen::Vector3d rPrime_FF0_B;       //!< [m/s] body frame time derivative of r_FF0_B
-    Eigen::Vector3d rDot_FcB_B;         //!< [m/s] inertial frame time derivative of r_FcB_B
-    Eigen::Vector3d omega_FN_B;         //!< [rad/s] angular velocity of the F frame wrt the N frame in B frame components
+    Eigen::Vector3d r_FF0_B = Eigen::Vector3d::Zero();      //!< [m] vector pointing from translating frame F0 to translating frame F (magnitude rho)
+    Eigen::Vector3d r_F0P_B = Eigen::Vector3d::Zero();      //!< [m] vector pointing from parent translating frame P to translating frame F0
+    Eigen::Vector3d fHat_B = Eigen::Vector3d::Zero();       //!< -- translating axis in B frame components.
+    Eigen::Vector3d r_FcF_B = Eigen::Vector3d::Zero();      //!< [m] vector pointing from translating frame F origin to point Fc (center of mass of arm) in B frame components
+    Eigen::Vector3d r_FB_B = Eigen::Vector3d::Zero();       //!< [m] vector pointing from body frame B origin to F frame in B frame components
+    Eigen::Vector3d r_FcB_B = Eigen::Vector3d::Zero();      //!< [m] vector pointing from body frame B origin to Fc in B frame components
+    Eigen::Vector3d r_FP_B = Eigen::Vector3d::Zero();       //!< [m] vector from parent frame to current F frame in B frame components
+    Eigen::Vector3d rPrime_FB_B = Eigen::Vector3d::Zero();  //!< [m/s] body frame time derivative of r_FB_B
+    Eigen::Vector3d rPrime_FcF_B = Eigen::Vector3d::Zero(); //!< [m/s] body frame time derivative of r_FcF_B
+    Eigen::Vector3d rPrime_FcB_B = Eigen::Vector3d::Zero(); //!< [m/s] body frame time derivative of r_FcB_B
+    Eigen::Vector3d rPrime_FP_B = Eigen::Vector3d::Zero();  //!< [m/s] body frame time derivative of r_FP_B
+    Eigen::Vector3d rPrime_FF0_B = Eigen::Vector3d::Zero(); //!< [m/s] body frame time derivative of r_FF0_B
+    Eigen::Vector3d rDot_FcB_B = Eigen::Vector3d::Zero();   //!< [m/s] inertial frame time derivative of r_FcB_B
+    Eigen::Vector3d omega_FN_B = Eigen::Vector3d::Zero();   //!< [rad/s] angular velocity of the F frame wrt the N frame in B frame components
 
     // Matrix quantities
-    Eigen::Matrix3d dcm_FB;            //!< -- DCM from body frame to F frame
-    Eigen::Matrix3d IPntFc_B;          //!< [kg-m^2] Inertia of body about point Fc in B frame components
-    Eigen::Matrix3d IPrimePntFc_B;     //!< [kg-m^2/s] body frame time derivative of IPntFc_B
-    Eigen::Matrix3d rTilde_FcB_B;      //!< [m] tilde matrix of r_FcB_B
-    Eigen::Matrix3d omegaTilde_FB_B;   //!< [rad/s] tilde matrix of omega_FB_B
+    Eigen::Matrix3d dcm_FB = Eigen::Matrix3d::Identity();      //!< -- DCM from body frame to F frame
+    Eigen::Matrix3d IPntFc_B = Eigen::Matrix3d::Zero();        //!< [kg-m^2] Inertia of body about point Fc in B frame components
+    Eigen::Matrix3d IPrimePntFc_B = Eigen::Matrix3d::Zero();   //!< [kg-m^2/s] body frame time derivative of IPntFc_B
+    Eigen::Matrix3d rTilde_FcB_B = Eigen::Matrix3d::Zero();    //!< [m] tilde matrix of r_FcB_B
 
     // Inertial properties
-    Eigen::Vector3d r_FcN_N;            //!< [m] position vector of translating body's center of mass Fc relative to the inertial frame origin N
-    Eigen::Vector3d v_FcN_N;            //!< [m/s] inertial velocity vector of Fc relative to inertial frame
-    Eigen::MRPd sigma_FN;               //!< -- MRP attitude of frame S relative to inertial frame
-    Eigen::Vector3d omega_FN_F;         //!< [rad/s] inertial translating body frame angular velocity vector
+    Eigen::Vector3d r_FcN_N = Eigen::Vector3d::Zero();      //!< [m] position vector of translating body's center of mass Fc relative to the inertial frame origin N
+    Eigen::Vector3d v_FcN_N = Eigen::Vector3d::Zero();      //!< [m/s] inertial velocity vector of Fc relative to inertial frame
+    Eigen::MRPd sigma_FN{0.0, 0.0, 0.0};                    //!< -- MRP attitude of frame F relative to inertial frame
+    Eigen::Vector3d omega_FN_F = Eigen::Vector3d::Zero();   //!< [rad/s] inertial translating body frame angular velocity vector
 
     BSKLogger bskLogger;
 };
@@ -171,17 +169,17 @@ private:
     Eigen::VectorXd CRho;     //!< -- scalar term for back substitution
 
     // Hub properties
-    Eigen::Vector3d omega_BN_B;   //!< [rad/s] angular velocity of the B frame wrt the N frame in B frame components
-    Eigen::MRPd sigma_BN;         //!< -- body frame attitude wrt to the N frame in MRPs
-    Eigen::Matrix3d dcm_BN;       //!< -- DCM from inertial frame to body frame
+    Eigen::Vector3d omega_BN_B = Eigen::Vector3d::Zero();  //!< [rad/s] angular velocity of the B frame wrt the N frame in B frame components
+    Eigen::MRPd sigma_BN{0.0, 0.0, 0.0};                   //!< -- body frame attitude wrt to the N frame in MRPs
+    Eigen::Matrix3d dcm_BN = Eigen::Matrix3d::Identity();  //!< -- DCM from inertial frame to body frame
 
     // States
     Eigen::MatrixXd* inertialPositionProperty = nullptr;    //!< [m] r_N inertial position relative to system spice zeroBase/refBase
     Eigen::MatrixXd* inertialVelocityProperty = nullptr;    //!< [m] v_N inertial velocity relative to system spice zeroBase/refBase
     StateData* rhoState = nullptr;
     StateData* rhoDotState = nullptr;
-    std::string nameOfRhoState;        //!< -- identifier for the theta state data container
-    std::string nameOfRhoDotState;     //!< -- identifier for the thetaDot state data container
+    std::string nameOfRhoState;        //!< -- identifier for the rho state data container
+    std::string nameOfRhoDotState;     //!< -- identifier for the rhoDot state data container
 
     // module functions
     void Reset(uint64_t CurrentClock) final;

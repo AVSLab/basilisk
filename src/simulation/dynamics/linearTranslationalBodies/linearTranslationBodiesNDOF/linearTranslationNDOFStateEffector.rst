@@ -2,7 +2,15 @@
 Executive Summary
 -----------------
 
-The N-DoF linear translation body class is an instantiation of the state effector abstract class with :math:`N` degrees of freedom. The integrated test is validating the interaction between the linear translation body module and the rigid body hub that it is attached to. In this case, a 4-DoF linear translation body has an inertia tensor and is attached to the hub by four single-degree-of-freedom axes. Each spinning axis is fixed in the parent's body frame and the effector is rigid, which means that its center of mass location does not move in the :math:`F` frame. An optional motor force can be applied on the spinning axis, and the user can also lock the axis through a command. Moreover, the user can input a displacement reference that the effector will track through a spring and damper.
+The N-DoF linear translation body class is an instantiation of the state effector abstract class
+with :math:`N` degrees of freedom. The integrated test is validating the interaction between the
+linear translation body module and the rigid body hub that it is attached to. In this case, a 4-DoF
+linear translation body has an inertia tensor and is attached to the hub by four
+single-degree-of-freedom axes. Each translating axis is fixed in the parent's body frame and each
+body is rigid, which means that its center of mass location does not move in the :math:`F` frame. An
+optional motor force can be applied on each translating axis, and the user can also lock an axis
+through a command. Moreover, the user can input a displacement reference that the effector will
+track through a spring and damper.
 
 
 Message Connection Descriptions
@@ -12,16 +20,18 @@ The following table lists all the module input and output messages.  The module 
 .. bsk-module-io:: linearTranslationNDOFStateEffector
     :caption: Module I/O Messages
 
-    output translatingBodyOutMsg LinearTranslationRigidBodyMsgPayload
-        Output message containing the linear translation body state displacement and displacement rate.
+    output translatingBodyOutMsgs LinearTranslationRigidBodyMsgPayload
+        Output vector of messages containing the linear translation body state displacement and displacement rate.
     input motorForceInMsg ArrayMotorForceMsgPayload
-        (Optional) Input message of the motor force value.
+        (Optional) Input message of the motor force value for every axis.
     input motorLockInMsg ArrayEffectorLockMsgPayload
-        (Optional) Input message for locking the axis.
-    input translatingBodyRefInMsg LinearTranslationRigidBodyMsgPayload
-        (Optional) Input message for prescribing the displacement and displacement rate.
-    output translatingBodyConfigLogOutMsg SCStatesMsgPayload
-        Output message containing the translating body inertial position and attitude states.
+        (Optional) Input message for locking each axis.
+    input translatingBodyRefInMsgs LinearTranslationRigidBodyMsgPayload
+        (Optional) Input vector of messages for prescribing the displacement and displacement rate.
+    output translatingBodyConfigLogOutMsgs SCStatesMsgPayload
+        Output vector of messages containing the translating body inertial states. The position and
+        velocity are those of the body center of mass, and the attitude and angular velocity are
+        those of the body frame F.
 
 
 Detailed Module Description
@@ -42,17 +52,17 @@ User Guide
 ----------
 This section is to outline the steps needed to setup a Translating Body State Effector in Python using Basilisk.
 
-#. Import the linearTranslatingBodyNDOFStateEffector class::
+#. Import the linearTranslationNDOFStateEffector class::
 
-    from Basilisk.simulation import linearTranslatingBodyNDOFStateEffector
+    from Basilisk.simulation import linearTranslationNDOFStateEffector
 
 #. Create an instantiation of a Translating body::
 
-    translatingBodyEffector = linearTranslatingBodyNDOFStateEffector.linearTranslatingBodyNDOFStateEffector()
+    translatingBodyEffector = linearTranslationNDOFStateEffector.LinearTranslationNDOFStateEffector()
 
-#. For each degree of freedom, create and set the properties of a translating body::
+#. For each degree of freedom, create and set the properties of a translating body.  The mass must be positive::
 
-    translatingBody = linearTranslationNDOFStateEffector.translatingBody()
+    translatingBody = linearTranslationNDOFStateEffector.TranslatingBody()
     translatingBody.setMass(50.0)
     translatingBody.setIPntFc_F([[100.0, 0.0, 0.0],
                                  [0.0, 80.0, 0.0],
@@ -79,36 +89,36 @@ This section is to outline the steps needed to setup a Translating Body State Ef
     translatingBody.setK(100.0)
     translatingBody.setC(0.0)
 
-#. (Optional) Define a unique name for each state.  If you have multiple translating bodies, they each must have a unique name.  If these names are not specified, then the default names are used which are incremented by the effector number::
+#. (Optional) Define a unique name for each state.  If you have multiple effectors, they each must have a unique name.  If these names are not specified, then the default names are used which are incremented by the effector number::
 
-    translatingBody.nameOfRhoState = "translatingBodyRho"
-    translatingBody.nameOfRhoDotState = "translatingBodyRhoDot"
+    translatingBodyEffector.setNameOfRhoState("translatingBodyRho")
+    translatingBodyEffector.setNameOfRhoDotState("translatingBodyRhoDot")
 
-#. (Optional) Connect a command force message::
+#. (Optional) Connect a command force message, which carries one force per degree of freedom::
 
     cmdArray = messaging.ArrayMotorForceMsgPayload()
-    cmdArray.motorForce = [cmdForce]  # [Nm]
+    cmdArray.motorForce = [cmdForce]  # [N]
     cmdMsg = messaging.ArrayMotorForceMsg().write(cmdArray)
-    translatingBody.motorForceInMsg.subscribeTo(cmdMsg)
+    translatingBodyEffector.motorForceInMsg.subscribeTo(cmdMsg)
 
-#. (Optional) Connect an axis-locking message (0 means the axis is free to move and 1 locks the axis)::
+#. (Optional) Connect an axis-locking message, which carries one flag per degree of freedom (0 means the axis is free to move and 1 locks the axis)::
 
     lockArray = messaging.ArrayEffectorLockMsgPayload()
     lockArray.effectorLockFlag = [1]
     lockMsg = messaging.ArrayEffectorLockMsg().write(lockArray)
-    translatingBody.motorLockInMsg.subscribeTo(lockMsg)
+    translatingBodyEffector.motorLockInMsg.subscribeTo(lockMsg)
 
-#. (Optional) Connect a displacement and displacement rate reference message::
+#. (Optional) Connect a displacement and displacement rate reference message to any degree of freedom::
 
     translationRef = messaging.LinearTranslationRigidBodyMsgPayload()
     translationRef.rho = 0.2
     translationRef.rhoDot = 0.0
     translationRefMsg = messaging.LinearTranslationRigidBodyMsg().write(translationRef)
-    translatingBody.translatingBodyRefInMsg.subscribeTo(translationRefMsg)
+    translatingBodyEffector.translatingBodyRefInMsgs[0].subscribeTo(translationRefMsg)
 
-#. The linear states of the body are created using an output message ``translatingBodyOutMsg``.
+#. The linear states of each body are created using the output message vector ``translatingBodyOutMsgs``.
 
-#. The translating body config log state output message is ``translatingBodyConfigLogOutMsg``.
+#. The translating body config log state output message vector is ``translatingBodyConfigLogOutMsgs``.
 
 #. Add the effector to your spacecraft::
 

@@ -85,7 +85,7 @@ void LinearTranslationNDOFStateEffector::Reset(uint64_t CurrentClock [[maybe_unu
             translatingBody->fHat_P.normalize();
         }
         else {
-            bskLogger.bskError("Norm of fHat must be greater than 0. sHat may not have been set by the user.");
+            bskLogger.bskError("Norm of fHat must be greater than 0. fHat may not have been set by the user.");
         }
     }
 }
