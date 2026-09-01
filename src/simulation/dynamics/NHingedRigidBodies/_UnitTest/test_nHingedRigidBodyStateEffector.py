@@ -35,6 +35,8 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import simHelpers
 from Basilisk.simulation import spacecraft
+from Basilisk.simulation import dualHingedRigidBodyStateEffector
+from Basilisk.simulation import extForceTorque
 from Basilisk.simulation import nHingedRigidBodyStateEffector
 from Basilisk.simulation import gravityEffector
 from Basilisk.utilities import macros
@@ -89,19 +91,153 @@ values have all been confirmed to be conserved.
     assert testResults < 1, testMessage
 
 
-@pytest.mark.parametrize("chain", ['UnequalMass', 'UnequalDistance', 'NoPanels'])
-def test_nHingedRigidBodyRejectsUnevenChain(chain):
+def test_nHingedRigidBodyOutputMessagesMatchDual():
+    """
+    Verify both output-message vectors against the equivalent dual-hinged model.
+
+    A two-panel N-hinged effector and a dual-hinged effector are given identical geometry, mass
+    properties, and initial states on the same spacecraft. The hub starts with a non-identity
+    attitude and nonzero translational and angular velocity so that every inertial transformation
+    contributes. The test runs for two steps and compares each panel's angle, angle rate, inertial
+    position, inertial velocity, attitude, and angular velocity.
+    """
+    timeStep = 0.01  # [s]
+    unitTestSim = SimulationBaseClass.SimBaseClass()
+    unitTestSim.SetProgressBar(False)
+    unitTestSim.CreateNewProcess("TestProcess").addTask(
+        unitTestSim.CreateNewTask("unitTask", macros.sec2nano(timeStep)))
+
+    scObject = spacecraft.Spacecraft()
+    scObject.ModelTag = "spacecraftBody"
+    scObject.hub.mHub = 750.0  # [kg]
+    scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]  # [kg*m^2]
+    scObject.hub.r_CN_NInit = [[1000.0], [-2000.0], [3000.0]]  # [m]
+    scObject.hub.v_CN_NInit = [[-2.0], [3.0], [1.0]]  # [m/s]
+    scObject.hub.sigma_BNInit = [[0.1], [-0.2], [0.05]]  # [-]
+    scObject.hub.omega_BN_BInit = [[0.1], [-0.1], [0.2]]  # [rad/s]
+
+    panelMass = 50.0  # [kg]
+    panelHalfLength = 0.75  # [m]
+    panelInertia = [[50.0, 0.0, 0.0], [0.0, 25.0, 0.0], [0.0, 0.0, 25.0]]  # [kg*m^2]
+    springConstant = 100.0  # [N*m/rad]
+    dampingCoefficient = 0.0  # [N*m*s/rad]
+    thetaInit = [0.1, -0.2]  # [rad]
+    thetaDotInit = [-0.01, 0.02]  # [rad/s]
+    hingePosition_B = [[0.5], [-1.5], [-0.5]]  # [m]
+    dcm_HB = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]  # [-]
+
+    nHinged = nHingedRigidBodyStateEffector.NHingedRigidBodyStateEffector()
+    nHinged.r_HB_B = hingePosition_B
+    nHinged.dcm_HB = dcm_HB
+    for panelIndex in range(2):
+        panel = nHingedRigidBodyStateEffector.HingedPanel()
+        panel.mass = panelMass
+        panel.d = panelHalfLength
+        panel.k = springConstant
+        panel.c = dampingCoefficient
+        panel.IPntS_S = panelInertia
+        panel.thetaInit = thetaInit[panelIndex]
+        panel.thetaDotInit = thetaDotInit[panelIndex]
+        panel.theta_0 = 0.0  # [rad]
+        nHinged.addHingedPanel(panel)
+
+    dualHinged = dualHingedRigidBodyStateEffector.DualHingedRigidBodyStateEffector()
+    dualHinged.mass1 = panelMass
+    dualHinged.mass2 = panelMass
+    dualHinged.d1 = panelHalfLength
+    dualHinged.d2 = panelHalfLength
+    dualHinged.l1 = 2.0 * panelHalfLength  # [m]
+    dualHinged.thetaH2S1 = 0.0  # [rad] the N hinged chain carries no fixed offset between hinges
+    dualHinged.k1 = springConstant
+    dualHinged.k2 = springConstant
+    dualHinged.c1 = dampingCoefficient
+    dualHinged.c2 = dampingCoefficient
+    dualHinged.IPntS1_S1 = panelInertia
+    dualHinged.IPntS2_S2 = panelInertia
+    dualHinged.theta1Init = thetaInit[0]
+    dualHinged.theta2Init = thetaInit[1]
+    dualHinged.theta1DotInit = thetaDotInit[0]
+    dualHinged.theta2DotInit = thetaDotInit[1]
+    dualHinged.r_H1B_B = hingePosition_B
+    dualHinged.dcm_H1B = dcm_HB
+
+    scObject.addStateEffector(nHinged)
+    scObject.addStateEffector(dualHinged)
+    unitTestSim.AddModelToTask("unitTask", scObject)
+
+    nStateRecorders = [message.recorder() for message in nHinged.nHingedRigidBodyOutMsgs]
+    nConfigRecorders = [message.recorder() for message in nHinged.nHingedRigidBodyConfigLogOutMsgs]
+    dualStateRecorders = [message.recorder() for message in dualHinged.dualHingedRigidBodyOutMsgs]
+    dualConfigRecorders = [message.recorder() for message in dualHinged.dualHingedRigidBodyConfigLogOutMsgs]
+    for recorder in nStateRecorders + nConfigRecorders + dualStateRecorders + dualConfigRecorders:
+        unitTestSim.AddModelToTask("unitTask", recorder)
+
+    unitTestSim.InitializeSimulation()
+    unitTestSim.ConfigureStopTime(macros.sec2nano(2.0 * timeStep))
+    unitTestSim.ExecuteSimulation()
+
+    accuracy = 1e-13
+    for panelIndex in range(2):
+        numpy.testing.assert_allclose(
+            nStateRecorders[panelIndex].theta, dualStateRecorders[panelIndex].theta,
+            rtol=0.0, atol=accuracy)
+        numpy.testing.assert_allclose(
+            nStateRecorders[panelIndex].thetaDot, dualStateRecorders[panelIndex].thetaDot,
+            rtol=0.0, atol=accuracy)
+        for fieldName in ("r_BN_N", "v_BN_N", "sigma_BN", "omega_BN_B"):
+            numpy.testing.assert_allclose(
+                getattr(nConfigRecorders[panelIndex], fieldName),
+                getattr(dualConfigRecorders[panelIndex], fieldName),
+                rtol=0.0, atol=accuracy)
+
+
+@pytest.mark.parametrize("segment, shouldRaise", [(1, False), (3, False), (0, True), (4, True)])
+def test_nHingedRigidBodyDynamicEffectorSegmentBounds(segment, shouldRaise):
+    """
+    Verify that dynamic effectors can attach only to existing panels.
+
+    A three-panel chain accepts its first and last panel numbers and rejects the adjacent values
+    outside the valid one-based range.
+
+    **Test Parameters:**
+
+    - segment: [int]
+        one-based panel number supplied to ``addDynamicEffector``
+    - shouldRaise: [bool]
+        whether the panel number is outside the valid range
+    """
+    effector = nHingedRigidBodyStateEffector.NHingedRigidBodyStateEffector()
+    for _ in range(3):
+        effector.addHingedPanel(nHingedRigidBodyStateEffector.HingedPanel())
+
+    child = extForceTorque.ExtForceTorque()
+    if shouldRaise:
+        with pytest.raises(BasiliskError, match="non-existent panel"):
+            effector.addDynamicEffector(child, segment)
+    else:
+        effector.addDynamicEffector(child, segment)
+
+
+@pytest.mark.parametrize("chain, expectedError", [
+    ('UnequalMass', "same mass and the same hinge"),
+    ('UnequalDistance', "same mass and the same hinge"),
+    ('NoPanels', "at least one hinged panel"),
+    ('MasslessPanels', "panel mass must be greater than 0"),
+    ('UnequalInertia', None),
+])
+def test_nHingedRigidBodyPanelValidation(chain, expectedError):
     """
 The equations of motion are derived for a chain of identical panels, factoring one panel mass and
-one hinge to center of mass distance out of the sums that run over the chain. A chain that violates
-that assumption integrates without complaint, so this test asserts that initialization rejects it
-instead. This is a separate test from the conservation test above because it asserts an error
-rather than a conserved quantity, and because a rejected configuration never reaches integration.
+one hinge to center of mass distance out of the sums that run over the chain. An uneven chain
+integrates without complaint and a massless one reaches the hub states as NaN, so initialization
+must reject both. The inertia is not factored out, so dissimilar inertia tensors must initialize.
 
 **Test Parameters:**
 
 - chain: [string]
-    which requirement the panel chain violates (UnequalMass, UnequalDistance, or NoPanels)
+    panel-chain configuration to initialize
+- expectedError: [string]
+    text the rejection message must carry, or None when the chain must initialize
     """
     scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "spacecraftBody"
@@ -112,11 +248,13 @@ rather than a conserved quantity, and because a rejected configuration never rea
     if chain != 'NoPanels':
         for factor in [1.0, 2.0]:
             panel = nHingedRigidBodyStateEffector.HingedPanel()
-            panel.mass = 50.0 * (factor if chain == 'UnequalMass' else 1.0)  # [kg]
+            massScale = 0.0 if chain == 'MasslessPanels' else (factor if chain == 'UnequalMass' else 1.0)  # [-]
+            panel.mass = 50.0 * massScale  # [kg]
             panel.d = 0.75 * (factor if chain == 'UnequalDistance' else 1.0)  # [m]
             panel.k = 500.0  # [N*m/rad]
             panel.c = 0.0  # [N*m*s/rad]
-            panel.IPntS_S = [[50.0, 0.0, 0.0], [0.0, 25.0, 0.0], [0.0, 0.0, 25.0]]  # [kg*m^2]
+            inertiaScale = factor if chain == 'UnequalInertia' else 1.0  # [-]
+            panel.IPntS_S = (inertiaScale * numpy.diag([50.0, 25.0, 25.0])).tolist()  # [kg*m^2]
             effector.addHingedPanel(panel)
     scObject.addStateEffector(effector)
 
@@ -125,7 +263,10 @@ rather than a conserved quantity, and because a rejected configuration never rea
         unitTestSim.CreateNewTask("unitTask", macros.sec2nano(0.0001)))
     unitTestSim.AddModelToTask("unitTask", scObject)
 
-    with pytest.raises(BasiliskError):
+    if expectedError is not None:
+        with pytest.raises(BasiliskError, match=expectedError):
+            unitTestSim.InitializeSimulation()
+    else:
         unitTestSim.InitializeSimulation()
 
 
