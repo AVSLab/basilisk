@@ -44,6 +44,23 @@ LinearTranslationOneDOFStateEffector::~LinearTranslationOneDOFStateEffector()
 }
 
 void LinearTranslationOneDOFStateEffector::Reset(uint64_t CurrentClock [[maybe_unused]]) {
+    this->validateConfiguration();
+}
+
+/*! This method runs every configuration check. Spacecraft initialization always reaches it through
+ registerStates(), whereas Reset() runs only when the effector is also added to a task */
+void LinearTranslationOneDOFStateEffector::validateConfiguration() {
+    if (!eigenIsRotationMatrix(this->dcm_FB)) {
+        this->bskLogger.bskError("LinearTranslationOneDOFStateEffector: dcm_FB is not a valid rotation "
+                                 "matrix; it must be orthogonal and right-handed. It may not have been "
+                                 "set properly by the user.");
+    }
+
+    // the mass is strictly positive here, so unlike a spinning body there is no massless case to skip
+    if (!eigenIsValidInertiaMatrix(this->IPntFc_F)) {
+        this->bskLogger.bskError("LinearTranslationOneDOFStateEffector: IPntFc_F is not a valid inertia "
+                                 "tensor. It may not have been set properly by the user.");
+    }
 }
 
 void LinearTranslationOneDOFStateEffector::setMass(double mass) {
@@ -114,6 +131,7 @@ void LinearTranslationOneDOFStateEffector::registerStates(DynParamManager& state
     this->rhoDotState->setState(rhoDotInitMatrix);
 
     registerProperties(states);
+    this->validateConfiguration();
 }
 
 /*! This method attaches a dynamicEffector

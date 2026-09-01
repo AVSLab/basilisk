@@ -39,6 +39,7 @@ from Basilisk.utilities import (
 )
 from Basilisk.simulation import spacecraft, linearTranslationOneDOFStateEffector, gravityEffector
 from Basilisk.architecture import messaging
+from Basilisk.architecture.bskLogging import BasiliskError
 
 
 # uncomment this line if this test is to be skipped in the global unit test run, adjust message as needed
@@ -86,6 +87,84 @@ def test_translatingBody(show_plots, function):
         func(show_plots, 0.5)
     else:
         func(show_plots)
+
+
+@pytest.mark.parametrize("scheduleEffector", [True, False])
+@pytest.mark.parametrize("configuration, shouldRaise", [
+    ('Valid', False),
+    ('SkewedDCM', True),
+    ('MirroredDCM', True),
+    ('AsymmetricInertia', True),
+    ('NegativeInertia', True),
+    ('TriangleInertia', True),
+])
+def test_translatingBodyConfigurationValidation(configuration, shouldRaise, scheduleEffector):
+    """
+    Verify that initialization rejects a translating body whose frame or inertia is not physical.
+
+    The frame orientation and the inertia tensor enter the mass properties directly, through
+    ``dcm_FB.transpose() * IPntFc_F * dcm_FB`` and ``dcm_FB.transpose() * r_FcF_F``, so a matrix that
+    is merely close to a rotation or to an inertia tensor produces wrong dynamics rather than an
+    error. These are the checks the spinning body effectors already apply, asserted here on five ways
+    of getting them wrong: a non-orthogonal frame, a left-handed frame, a non-symmetric inertia, one
+    that is not positive definite, and one whose principal moments violate the triangle inequality.
+
+    **Test Parameters:**
+
+    - configuration: [string]
+        translating body configuration to initialize
+    - shouldRaise: [bool]
+        whether initialization must reject the configuration
+    - scheduleEffector: [bool]
+        whether the effector is added to the task in addition to the spacecraft
+
+    The scheduling parameter matters because the checks must not depend on it. Spacecraft
+    initialization calls ``registerStates()`` on every attached state effector but never calls
+    ``Reset()``, which runs only for a module added to a task.
+    """
+    scObject = spacecraft.Spacecraft()
+    scObject.ModelTag = "spacecraftBody"
+    scObject.hub.mHub = 750.0  # [kg]
+    scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]  # [kg*m^2]
+
+    effector = linearTranslationOneDOFStateEffector.LinearTranslationOneDOFStateEffector()
+    effector.setMass(20.0)  # [kg]
+    effector.setFHat_B([[1.0], [0.0], [0.0]])
+    effector.setR_F0B_B([[1.0], [0.5], [0.25]])  # [m]
+
+    dcm_FB = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+    if configuration == 'SkewedDCM':
+        dcm_FB = [[1.0, 0.1, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+    elif configuration == 'MirroredDCM':
+        # orthogonal but left-handed, so it reflects rather than rotates
+        dcm_FB = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, -1.0]]
+    effector.setDCM_FB(dcm_FB)
+
+    IPntFc_F = [[50.0, 0.0, 0.0], [0.0, 80.0, 0.0], [0.0, 0.0, 60.0]]  # [kg*m^2]
+    if configuration == 'AsymmetricInertia':
+        IPntFc_F = [[50.0, 3.0, 0.0], [0.0, 80.0, 0.0], [0.0, 0.0, 60.0]]  # [kg*m^2]
+    elif configuration == 'NegativeInertia':
+        # symmetric, but a negative principal moment leaves it indefinite
+        IPntFc_F = [[50.0, 0.0, 0.0], [0.0, 80.0, 0.0], [0.0, 0.0, -10.0]]  # [kg*m^2]
+    elif configuration == 'TriangleInertia':
+        # positive definite, but the principal moments violate the triangle inequality
+        IPntFc_F = [[10.0, 0.0, 0.0], [0.0, 10.0, 0.0], [0.0, 0.0, 90.0]]  # [kg*m^2]
+    effector.setIPntFc_F(IPntFc_F)
+    scObject.addStateEffector(effector)
+
+    unitTestSim = SimulationBaseClass.SimBaseClass()
+    unitTestSim.SetProgressBar(False)
+    unitTestSim.CreateNewProcess("TestProcess").addTask(
+        unitTestSim.CreateNewTask("unitTask", macros.sec2nano(0.001)))
+    if scheduleEffector:
+        unitTestSim.AddModelToTask("unitTask", effector)
+    unitTestSim.AddModelToTask("unitTask", scObject)
+
+    if shouldRaise:
+        with pytest.raises(BasiliskError):
+            unitTestSim.InitializeSimulation()
+    else:
+        unitTestSim.InitializeSimulation()
 
 
 # rho ref and cmd force are zero, no lock flag
