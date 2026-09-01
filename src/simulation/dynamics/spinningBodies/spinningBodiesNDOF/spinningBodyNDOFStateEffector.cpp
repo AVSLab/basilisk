@@ -41,6 +41,10 @@ uint64_t SpinningBodyNDOFStateEffector::effectorID = 1;
 
 SpinningBodyNDOFStateEffector::~SpinningBodyNDOFStateEffector()
 {
+    for (size_t c = 0; c < this->spinningBodyOutMsgs.size(); c++) {
+        delete this->spinningBodyOutMsgs.at(c);
+        delete this->spinningBodyConfigLogOutMsgs.at(c);
+    }
 }
 
 void SpinningBodyNDOFStateEffector::Reset(uint64_t CurrentClock [[maybe_unused]])

@@ -18,6 +18,9 @@ Version |release| (July 7, 2026)
   panels, but the module accepted a per-panel mass and hinge to center of mass distance and
   integrated silently wrong dynamics when either varied along the chain. Initialization now rejects
   such a chain.
+- The :ref:`linearTranslationNDOFStateEffector` and the :ref:`spinningBodyNDOFStateEffector` allocated
+  a state and a configuration log output message for every body added to the chain and freed neither,
+  so each effector leaked both for the life of the process. This is fixed in the current version.
 - Every state effector acting as a parent published the inertial state of its attachment frame once
   per task step from its own ``UpdateState()``. A child effector therefore evaluated its loads against
   kinematics a full task step old. These are now refreshed within the integration.

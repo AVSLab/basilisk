@@ -39,9 +39,13 @@ LinearTranslationNDOFStateEffector::LinearTranslationNDOFStateEffector()
 
 uint64_t LinearTranslationNDOFStateEffector::effectorID = 1;
 
-/*! This is the destructor, nothing to report here */
+/*! This is the destructor, releasing the per body output messages */
 LinearTranslationNDOFStateEffector::~LinearTranslationNDOFStateEffector()
 {
+    for (size_t c = 0; c < this->translatingBodyOutMsgs.size(); c++) {
+        delete this->translatingBodyOutMsgs.at(c);
+        delete this->translatingBodyConfigLogOutMsgs.at(c);
+    }
 }
 
 void TranslatingBody::setMass(double mass) {
