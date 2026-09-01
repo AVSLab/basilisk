@@ -286,6 +286,24 @@ void LinearTranslationNDOFStateEffector::registerStates(DynParamManager& states)
     this->validateConfiguration();
 }
 
+/*! This method attaches a dynamicEffector to one of the translating bodies
+
+ @param newDynamicEffector the dynamic effector to be attached
+ @param segment the translating body to attach to, counting outward from the hub starting at 1 */
+void
+LinearTranslationNDOFStateEffector::addDynamicEffector(DynamicEffector* newDynamicEffector, int segment)
+{
+    if (segment <= 0 || segment > this->N) {
+        bskLogger.bskError("LinearTranslationNDOFStateEffector: specifying attachment to a "
+                           "non-existent translating body.");
+        return;
+    }
+
+    auto& translatingBody = this->translatingBodyVec[static_cast<size_t>(segment - 1)];
+    translatingBody->assignStateParamNames<DynamicEffector*>(newDynamicEffector);
+    translatingBody->dynEffectors.push_back(newDynamicEffector);
+}
+
 /*! This method registers each translating body's inertial properties with the dynamic parameter
  manager and links them into dependent dynamic effectors
 
@@ -300,6 +318,10 @@ LinearTranslationNDOFStateEffector::registerProperties(DynParamManager& states)
         translatingBody->sigma_FN = states.createProperty(translatingBody->nameOfInertialAttitudeProperty, stateInit);
         translatingBody->omega_FN_F =
           states.createProperty(translatingBody->nameOfInertialAngVelocityProperty, stateInit);
+
+        for (auto& dynEffector : translatingBody->dynEffectors) {
+            dynEffector->linkInProperties(states);
+        }
     }
 }
 

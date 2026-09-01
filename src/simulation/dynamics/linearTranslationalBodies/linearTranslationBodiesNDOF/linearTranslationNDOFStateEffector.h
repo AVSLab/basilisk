@@ -20,12 +20,17 @@
 #ifndef LINEAR_TRANSLATION_N_DOF_STATE_EFFECTOR_H
 #define LINEAR_TRANSLATION_N_DOF_STATE_EFFECTOR_H
 
-#include <Eigen/Dense>
-#include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
-#include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/utilities/avsEigenMRP.h"
 #include "architecture/utilities/bskLogging.h"
+#include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
+#include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
+#include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
+#include <Eigen/Dense>
+#include <cstdint>
+#include <memory>
+#include <string>
+#include <vector>
 
 #include "architecture/msgPayloadDefC/ArrayMotorForceMsgPayload.h"
 #include "architecture/msgPayloadDefC/ArrayEffectorLockMsgPayload.h"
@@ -135,6 +140,21 @@ private:
     std::string nameOfInertialAttitudeProperty;    //!< -- identifier for the inertial attitude property
     std::string nameOfInertialAngVelocityProperty; //!< -- identifier for the inertial angular velocity property
 
+    std::vector<DynamicEffector*> dynEffectors;    //!< -- vector of dynamic effectors attached to this body
+
+    /**
+     * @brief Assign this body's state-engine property names to an attached effector.
+     * @tparam Type Pointer type for an effector that accepts inertial property names.
+     * @param effector Effector that receives the body's inertial property names.
+     */
+    template <typename Type>
+    void assignStateParamNames(Type effector) {
+        effector->setPropName_inertialPosition(this->nameOfInertialPositionProperty);
+        effector->setPropName_inertialVelocity(this->nameOfInertialVelocityProperty);
+        effector->setPropName_inertialAttitude(this->nameOfInertialAttitudeProperty);
+        effector->setPropName_inertialAngVelocity(this->nameOfInertialAngVelocityProperty);
+    }
+
     BSKLogger bskLogger;
 };
 
@@ -196,6 +216,7 @@ private:
     void UpdateState(uint64_t CurrentSimNanos) final;
     void registerStates(DynParamManager& statesIn) final;
     void registerProperties(DynParamManager& states) final;
+    void addDynamicEffector(DynamicEffector* newDynamicEffector, int segment) final;
     void linkInStates(DynParamManager& states) final;
     void updateContributions(double integTime,
                              BackSubMatrices& backSubContr,
