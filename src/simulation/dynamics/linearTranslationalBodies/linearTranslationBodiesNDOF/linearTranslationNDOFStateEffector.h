@@ -141,6 +141,8 @@ private:
     std::string nameOfInertialAngVelocityProperty; //!< -- identifier for the inertial angular velocity property
 
     std::vector<DynamicEffector*> dynEffectors;    //!< -- vector of dynamic effectors attached to this body
+    Eigen::Vector3d extForce_B = Eigen::Vector3d::Zero();      //!< [N] attached effector force on this body in B frame components
+    Eigen::Vector3d extTorquePntF_B = Eigen::Vector3d::Zero(); //!< [N-m] attached effector torque on this body about F in B frame components
 
     /**
      * @brief Assign this body's state-engine property names to an attached effector.
@@ -223,6 +225,7 @@ private:
                              Eigen::MRPd sigma_BN,
                              Eigen::Vector3d omega_BN_B,
                              Eigen::Vector3d g_N) final;
+    void computeDependentEffectors(BackSubMatrices& backSubContr, double integTime);
     void computeMRho(Eigen::MatrixXd& MRho);
     void computeARhoStar(Eigen::MatrixX3d& ARhoStar);
     void computeBRhoStar(Eigen::MatrixX3d& BRhoStar);

@@ -412,7 +412,7 @@ void LinearTranslationNDOFStateEffector::updateEffectorMassProps(double integTim
 
 /*! This method allows the TB state effector to give its contributions to the matrices needed for the back-sub
  method */
-void LinearTranslationNDOFStateEffector::updateContributions(double integTime [[maybe_unused]], BackSubMatrices & backSubContr, Eigen::MRPd sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N)
+void LinearTranslationNDOFStateEffector::updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::MRPd sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N)
 {
     // Find the DCM from N to B frames
     this->sigma_BN = sigma_BN;
@@ -423,6 +423,18 @@ void LinearTranslationNDOFStateEffector::updateContributions(double integTime [[
     Eigen::MatrixX3d ARhoStar = Eigen::MatrixX3d::Zero(this->N, 3);
     Eigen::MatrixX3d BRhoStar = Eigen::MatrixX3d::Zero(this->N, 3);
     Eigen::VectorXd CRhoStar = Eigen::VectorXd::Zero(this->N);
+
+    bool hasAttachedEffectors = false;
+    for (const auto& translatingBody : this->translatingBodyVec) {
+        if (!translatingBody->dynEffectors.empty()) {
+            hasAttachedEffectors = true;
+            break;
+        }
+    }
+    if (hasAttachedEffectors) {
+        this->computeTranslatingBodyInertialStates();
+    }
+    this->computeDependentEffectors(backSubContr, integTime);
 
     this->computeMRho(MRho);
     this->computeARhoStar(ARhoStar);
@@ -435,6 +447,30 @@ void LinearTranslationNDOFStateEffector::updateContributions(double integTime [[
     this->CRho = MRhoInv * CRhoStar;
 
     this->computeBackSubContributions(backSubContr);
+}
+
+/*! This method collects the loads from any attached dynamic effectors and applies them to the hub
+
+ @param backSubContr the Backsubstitution contributions this effector adds to the hub
+ @param integTime the integration time the attached effectors evaluate their loads at */
+void
+LinearTranslationNDOFStateEffector::computeDependentEffectors(BackSubMatrices& backSubContr, double integTime)
+{
+    for (auto& translatingBody : this->translatingBodyVec) {
+        translatingBody->extForce_B.setZero();
+        translatingBody->extTorquePntF_B.setZero();
+        for (auto& dynEffector : translatingBody->dynEffectors) {
+            dynEffector->computeForceTorque(integTime, double(0.0));
+            // a child's "_B" loads are already in this body's F frame, so only "_N" is rotated
+            translatingBody->extForce_B += translatingBody->dcm_FB.transpose() * dynEffector->forceExternal_B +
+                                           this->dcm_BN * dynEffector->forceExternal_N;
+            translatingBody->extTorquePntF_B += translatingBody->dcm_FB.transpose() * dynEffector->torqueExternalPntB_B;
+        }
+
+        backSubContr.vecTrans += translatingBody->extForce_B;
+        backSubContr.vecRot +=
+          translatingBody->extTorquePntF_B + translatingBody->r_FB_B.cross(translatingBody->extForce_B);
+    }
 }
 
 /*! This method compute MRho for back-sub */
@@ -513,8 +549,10 @@ void LinearTranslationNDOFStateEffector::computeCRhoStar(Eigen::VectorXd& CRhoSt
             Eigen::Vector3d rPrime_FciB_B = this->translatingBodyVec[iIndex]->rPrime_FcB_B;
 
             F_g = this->translatingBodyVec[iIndex]->mass * g_B;
+            // a torque does no work through a prismatic joint, so only the force reaches this equation
             CRhoStar(n, 0) += this->translatingBodyVec[nIndex]->fHat_B.transpose()
-                * (F_g - this->translatingBodyVec[iIndex]->mass *
+                * (F_g + this->translatingBodyVec[iIndex]->extForce_B
+                       - this->translatingBodyVec[iIndex]->mass *
                               (this->omega_BN_B.cross(this->omega_BN_B.cross(r_FciB_B))
                                + 2 * this->omega_BN_B.cross(rPrime_FciB_B)));
         }
