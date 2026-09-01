@@ -190,27 +190,7 @@ void GeneralSingleBodyStateEffector::updateEffectorMassProps(double integTime) {
         dof->betaDot = this->betaDot[dof->index];
     }
 
-    // Compute general body attitudes
-    for (auto& dof : this->jointDOFList) {
-        Eigen::Vector3d prv_GG0{Eigen::Vector3d::Zero()};
-        if (dof->type == DOF::Type::ROTATION) {
-            prv_GG0 = dof->beta * dof->axis_G;
-        } else {
-            prv_GG0 = dof->screwConstant * dof->beta * dof->axis_G;
-        }
-        double prv_GG0_array[3];
-        eigenVector3d2CArray(prv_GG0, prv_GG0_array);
-
-        double dcm_GG0_array[3][3];
-        PRV2C(prv_GG0_array, dcm_GG0_array);
-        Eigen::Matrix3d dcm_GG0 = c2DArray2EigenMatrix3d(dcm_GG0_array);
-
-        if (dof->index == 0) {
-            dof->dcm_GB = dcm_GG0 * this->dcm_G0B;
-        } else {
-            dof->dcm_GB = dcm_GG0 * this->jointDOFList.at(dof->index - 1)->dcm_GB;
-        }
-    }
+    this->computeAttitudeProperties();
 
     // Compute joint and general body position vectors relative to hub frame
     for (auto& dof : this->jointDOFList) {
@@ -347,6 +327,29 @@ void GeneralSingleBodyStateEffector::updateEffectorMassProps(double integTime) {
     Eigen::Matrix3d rPrimeTilde_GcB_B = eigenTilde(rPrime_GcB_B);
     this->effProps.IEffPrimePntB_B = omegaTilde_GB_B * IPntGc_B - IPntGc_B * omegaTilde_GB_B
             - this->mass * (rPrimeTilde_GcB_B * rTilde_GcB_B + rTilde_GcB_B * rPrimeTilde_GcB_B);
+}
+
+void GeneralSingleBodyStateEffector::computeAttitudeProperties() {
+    for (auto& dof : this->jointDOFList) {
+        Eigen::Vector3d prv_GG0{Eigen::Vector3d::Zero()};
+        if (dof->type == DOF::Type::ROTATION) {
+            prv_GG0 = dof->beta * dof->axis_G;
+        } else {
+            prv_GG0 = dof->screwConstant * dof->beta * dof->axis_G;
+        }
+        double prv_GG0_array[3];
+        eigenVector3d2CArray(prv_GG0, prv_GG0_array);
+
+        double dcm_GG0_array[3][3];
+        PRV2C(prv_GG0_array, dcm_GG0_array);
+        Eigen::Matrix3d dcm_GG0 = c2DArray2EigenMatrix3d(dcm_GG0_array);
+
+        if (dof->index == 0) {
+            dof->dcm_GB = dcm_GG0 * this->dcm_G0B;
+        } else {
+            dof->dcm_GB = dcm_GG0 * this->jointDOFList.at(dof->index - 1)->dcm_GB;
+        }
+    }
 }
 
 void GeneralSingleBodyStateEffector::updateContributions(double integTime,
