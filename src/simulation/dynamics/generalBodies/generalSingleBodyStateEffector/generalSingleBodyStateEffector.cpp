@@ -192,23 +192,7 @@ void GeneralSingleBodyStateEffector::updateEffectorMassProps(double integTime) {
 
     this->computeAttitudeProperties();
     this->computePositionProperties();
-
-    // Compute joint and general body angular velocity vectors relative to the hub frame
-    for (auto& dof : this->jointDOFList) {
-        Eigen::Vector3d omega_GP_G{Eigen::Vector3d::Zero()};
-        if (dof->type == DOF::Type::ROTATION) {
-            omega_GP_G = dof->betaDot * dof->axis_G;
-        } else {
-            omega_GP_G = dof->screwConstant * dof->betaDot * dof->axis_G;
-        }
-        Eigen::Vector3d omega_GP_B = dof->dcm_GB.transpose() * omega_GP_G;
-
-        if (dof->index == 0) {
-            dof->omega_GB_B = omega_GP_B;
-        } else {
-            dof->omega_GB_B = omega_GP_B + this->jointDOFList.at(dof->index - 1)->omega_GB_B;
-        }
-    }
+    this->computeAngularVelocityProperties();
 
     // Compute general body transformation matrix TMat and its first time derivative TMatPrime
     for (auto& dof : this->jointDOFList) {
@@ -350,6 +334,24 @@ void GeneralSingleBodyStateEffector::computePositionProperties() {
             dof->r_GB_B = r_GG0_B + this->r_G0B_B;
         } else {
             dof->r_GB_B = r_GG0_B + this->jointDOFList.at(dof->index - 1)->r_GB_B;
+        }
+    }
+}
+
+void GeneralSingleBodyStateEffector::computeAngularVelocityProperties() {
+    for (auto& dof : this->jointDOFList) {
+        Eigen::Vector3d omega_GP_G{Eigen::Vector3d::Zero()};
+        if (dof->type == DOF::Type::ROTATION) {
+            omega_GP_G = dof->betaDot * dof->axis_G;
+        } else {
+            omega_GP_G = dof->screwConstant * dof->betaDot * dof->axis_G;
+        }
+        Eigen::Vector3d omega_GP_B = dof->dcm_GB.transpose() * omega_GP_G;
+
+        if (dof->index == 0) {
+            dof->omega_GB_B = omega_GP_B;
+        } else {
+            dof->omega_GB_B = omega_GP_B + this->jointDOFList.at(dof->index - 1)->omega_GB_B;
         }
     }
 }

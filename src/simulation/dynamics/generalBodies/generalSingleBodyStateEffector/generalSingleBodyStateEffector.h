@@ -175,6 +175,7 @@ private:
     bool isDOFAdded(const std::shared_ptr<DOF>& newDOF) const;
     void computeAttitudeProperties();
     void computePositionProperties();
+    void computeAngularVelocityProperties();
 };
 
 #endif /* GENERAL_SINGLE_BODY_STATE_EFFECTOR_H */
