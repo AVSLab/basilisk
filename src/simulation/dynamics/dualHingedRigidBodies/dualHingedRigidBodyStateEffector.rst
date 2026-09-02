@@ -75,3 +75,19 @@ This section is to outline the steps needed to setup a Hinged Rigid Body State E
 #. Add the module to the task list::
 
     unitTestSim.AddModelToTask(unitTaskName, panel1)
+
+
+Hosting a Dynamic Effector
+--------------------------
+This effector supports the branching described in :ref:`bskPrinciples-11`, so a compatible
+dynamic effector can be carried by one of the panels rather than by the hub::
+
+    panel1.addDynamicEffector(childEffector, segment)
+
+Here ``segment`` is the one-based panel number, counting outward from the hub, so ``1`` is the
+panel attached to the hub.
+
+The child then reads this effector's inertial position, velocity, attitude, and angular velocity
+in place of the hub's, and any geometry given to the child is expressed in that panel's frame
+rather than the hub body frame. Both this effector and the child are still added to the task in
+the usual way.

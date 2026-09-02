@@ -27,3 +27,20 @@ provides information on what this message is used for.
         commanded force input msg in B frame.
     input cmdForceInertialInMsg CmdForceInertialMsgPayload
         commanded force input msg in N frame.
+
+
+Attaching to a State Effector
+-----------------------------
+This effector supports the branching described in :ref:`bskPrinciples-11`, so its load can be
+carried by an appendage instead of the hub. Attach it to the parent state effector rather than
+to the spacecraft::
+
+    stateEff.addDynamicEffector(extFTObject, segment)
+
+This effector reads no kinematics of its own, so the body frame force and torque it is given are
+interpreted in the parent segment's frame and the torque is applied about that segment's frame
+origin. An inertial frame force is unaffected by the choice of parent. The ``segment`` argument is
+omitted for a parent with a single degree of freedom.
+
+Both the parent and the child are still added to the task in the usual way, the same as when the
+child is attached to the hub.

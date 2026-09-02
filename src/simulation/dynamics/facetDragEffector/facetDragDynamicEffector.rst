@@ -39,9 +39,7 @@ Attaching to a State Effector
 -----------------------------
 This effector supports the branching described in :ref:`bskPrinciples-11`, so a drag surface can
 be carried by an appendage instead of the hub. Attach it to the parent state effector rather than
-to the spacecraft:
-
-.. code-block:: python
+to the spacecraft::
 
     stateEff.addDynamicEffector(drag, segment)
 
@@ -49,7 +47,11 @@ The parent's inertial attitude and velocity then replace the hub's in the drag c
 panel that rotates or translates relative to the hub sees its own relative wind. Every facet normal
 and facet location passed to ``addFacet()`` is expressed in the parent segment's frame in that
 configuration, not in the hub body frame, and the resulting force and torque are returned about the
-parent frame origin.
+parent frame origin. The ``segment`` argument is omitted for a parent with a single degree of
+freedom.
+
+Both the parent and the child are still added to the task in the usual way, the same as when the
+child is attached to the hub.
 
 Input Message Timing
 ---------------------
