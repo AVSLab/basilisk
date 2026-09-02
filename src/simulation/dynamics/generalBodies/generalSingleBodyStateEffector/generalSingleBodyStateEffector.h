@@ -31,6 +31,7 @@
 #include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/avsEigenMRP.h"
+#include "architecture/utilities/bskLogging.h"
 
 struct DOF {
 public:
@@ -134,6 +135,8 @@ private:
     std::vector<std::shared_ptr<DOF>> jointDOFList;
 
     uint64_t numDOF{};
+    uint64_t numRotDOF{};
+    uint64_t numTransDOF{};
     std::vector<double> betaInitList;
     std::vector<double> betaDotInitList;
 
@@ -162,6 +165,7 @@ private:
     Eigen::Vector3d omega_BN_B{Eigen::Vector3d::Zero()};
 
     static uint64_t effectorID;
+    BSKLogger bskLogger;
 
     std::string nameOfBetaState;
     std::string nameOfBetaDotState;
