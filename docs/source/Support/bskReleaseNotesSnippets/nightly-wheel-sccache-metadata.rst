@@ -1,0 +1,1 @@
+- Allow optional-wheel packaging to continue when independently built inputs differ only in compiler-cache launcher diagnostics.
