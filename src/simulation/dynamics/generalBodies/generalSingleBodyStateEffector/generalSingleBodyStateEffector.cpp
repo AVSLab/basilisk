@@ -465,6 +465,18 @@ void GeneralSingleBodyStateEffector::computeDerivatives(double integTime,
                                                        Eigen::Vector3d rDDot_BN_N,
                                                        Eigen::Vector3d omegaDot_BN_B,
                                                        Eigen::MRPd sigma_BN) {
+    // Update hub attitude
+    this->dcm_BN = sigma_BN.toRotationMatrix().transpose();
+
+    // Set betaState derivative
+    this->betaState->setDerivative(this->betaDotState->getState());
+
+    // Set betaDotState derivative
+    Eigen::VectorXd betaDDot;
+    betaDDot.resize(this->numDOF);
+    Eigen::Vector3d rDDot_BN_B = this->dcm_BN * rDDot_BN_N;
+    betaDDot = this->ABeta * rDDot_BN_B + this->BBeta * omegaDot_BN_B + this->CBeta;
+    this->betaDotState->setDerivative(betaDDot);
 }
 
 void GeneralSingleBodyStateEffector::updateEnergyMomContributions(double integTime,
