@@ -38,3 +38,23 @@ provides information on what this message is used for.
 
 .. note::
   The dynamic behaviour of this module is governed by the variables inside :ref:`THRTimePair`, which determine the on and off-ramp characteristics. The default behaviour is to not have on and off-ramps active. The ``cutoffFrequency`` variable inside :ref:`THRSimConfig` has no impact on this module and is instead supposed to be used to determine the dynamic behaviour within :ref:`thrusterStateEffector`.
+
+
+Attaching to a State Effector
+-----------------------------
+This effector supports the branching described in :ref:`bskPrinciples-11`, so its load can be
+carried by an appendage instead of the hub. Attach it to the parent state effector rather than
+to the spacecraft::
+
+    stateEff.addDynamicEffector(thrusterSet, segment)
+
+A thruster set built with :ref:`simIncludeThruster` is attached through the factory instead::
+
+    thFactory.addToSpacecraftSubcomponent(thrModelTag, thrusterSet, stateEff, segment)
+
+The thrusters then fire from the parent segment's frame, using its inertial attitude and position in
+place of the hub's, so a gimbaled or deployed thruster follows its mount. The ``segment`` argument
+is omitted for a parent with a single degree of freedom.
+
+Both the parent and the child are still added to the task in the usual way, the same as when the
+child is attached to the hub.

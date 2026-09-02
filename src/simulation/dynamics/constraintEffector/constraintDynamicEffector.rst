@@ -155,3 +155,20 @@ its optional status input and to update its filtered-force and filtered-torque o
 
 When the effector is scheduled, its ``Reset()`` repeats the gain validation and derivation.
 It does not clear the constraint filter history or change the parent attachments.
+
+Attaching to a State Effector
+-----------------------------
+This effector supports the branching described in :ref:`bskPrinciples-11`. A constraint needs two
+endpoints, and either or both of them may be a state effector rather than a hub::
+
+    stateEff.addDynamicEffector(constraintEffector, segment)
+    scObject2.addDynamicEffector(constraintEffector)
+
+The endpoint added first becomes body 1 of the constraint and the one added second becomes body 2,
+so ``r_P1B1_B1`` and ``r_P2B2_B2`` are each measured in the frame their own endpoint belongs to, the
+parent segment's frame for a state effector and the hub body frame for a spacecraft. Adding two
+state effectors connects two appendages directly, with no hub as an endpoint. The ``segment``
+argument is omitted for a parent with a single degree of freedom.
+
+Both the parent and the child are still added to the task in the usual way, the same as when the
+child is attached to the hub.
