@@ -32,6 +32,48 @@
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/avsEigenMRP.h"
 
+struct DOF {
+public:
+    enum class Type { ROTATION, TRANSLATION };
+
+    void setDOFAxis(Eigen::Vector3d axis_G) {this->axis_G = axis_G;};
+    void setBetaInit(double betaInit) {this->betaInit = betaInit;};
+    void setBetaDotInit(double betaDotInit) {this->betaDotInit = betaDotInit;};
+    void setSpringConstantK(double k) {this->k = k;};
+    void setDampingConstantC(double c) {this->c = c;};
+    void setScrewConstant(double screwConstant) {this->screwConstant = screwConstant;};
+
+    Type getDOFType() const {return this->type;};
+    Eigen::Vector3d getDOFAxis() const {return this->axis_G;};
+    double getBetaInit() const {return this->betaInit;};
+    double getBetaDotInit() const {return this->betaDotInit;};
+    double getSpringConstantK() const {return this->k;};
+    double getDampingConstantC() const {return this->c;};
+    double getScrewConstant() const {return this->screwConstant;};
+
+private:
+    friend class GeneralSingleBodyStateEffector;
+
+    Type type{Type::ROTATION};
+    Eigen::Vector3d axis_G{1.0, 0.0, 0.0};
+    double betaInit{};
+    double betaDotInit{};
+    double k{};
+    double c{};
+    double screwConstant{};
+
+    uint64_t index{};
+    double beta{};
+    double betaDot{};
+    double betaRef{};
+    double betaDotRef{};
+    Eigen::Vector3d r_GB_B{Eigen::Vector3d::Zero()};
+    Eigen::Vector3d omega_GB_B{Eigen::Vector3d::Zero()};
+    Eigen::Matrix3d dcm_GB{Eigen::Matrix3d::Identity()};
+    double u{};
+    double f{};
+};
+
 /*! @brief General rigid body state effector class */
 class GeneralSingleBodyStateEffector: public StateEffector, public SysModel {
 public:
@@ -48,6 +90,10 @@ public:
     const Eigen::Vector3d getR_GcG_G() const {return this->r_GcG_G;};
     Eigen::Vector3d getR_G0B_B() const {return this->r_G0B_B;};
     Eigen::Matrix3d getDCM_G0B() const {return this->dcm_G0B;};
+
+    void addRotDOF(std::shared_ptr<DOF> newDOF);
+    void addTransDOF(std::shared_ptr<DOF> newDOF);
+    std::shared_ptr<DOF> getDOF(uint64_t index) {return this->jointDOFList.at(index);};
 
     void Reset(uint64_t currentSimNanos) override;
     void registerStates(DynParamManager& statesIn) override;
@@ -85,6 +131,7 @@ private:
     Eigen::Vector3d r_GcG_G{Eigen::Vector3d::Zero()};
     Eigen::Vector3d r_G0B_B{Eigen::Vector3d::Zero()};
     Eigen::Matrix3d dcm_G0B{Eigen::Matrix3d::Identity()};
+    std::vector<std::shared_ptr<DOF>> jointDOFList;
 
     uint64_t numDOF{};
     std::vector<double> betaInitList;
