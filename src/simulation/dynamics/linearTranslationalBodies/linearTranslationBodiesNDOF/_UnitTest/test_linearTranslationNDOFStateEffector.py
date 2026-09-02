@@ -285,9 +285,10 @@ def test_translatingBodyConfigurationValidation(chain, shouldRaise, scheduleEffe
     Inverting a singular matrix fills the spacecraft state with NaN rather than raising, which is why
     this is asserted as an error at initialization instead of as a tolerance on a trajectory. The
     axes are fixed in their parents and a translating body does not rotate, so the matrix never
-    changes during the integration. The rotation matrix and inertia tensor checks match those the
-    spinning body effectors already apply, including skipping the inertia check for a massless body,
-    whose inertia tensor is legitimately zero.
+    changes during the integration. The singular cases also verify that the error reports this
+    collective condition rather than a more restrictive axis-independence rule. The rotation matrix
+    and inertia tensor checks match those the spinning body effectors already apply, including
+    skipping the inertia check for a massless body, whose inertia tensor is legitimately zero.
 
     An accepted chain is integrated as well, because initializing without error would not show that
     a massless body carries the correct dynamics. Every damper is zero, so the rotational energy and
@@ -347,8 +348,10 @@ def test_translatingBodyConfigurationValidation(chain, shouldRaise, scheduleEffe
     unitTestSim.AddModelToTask("unitTask", conservationLog)
 
     if shouldRaise:
-        with pytest.raises(BasiliskError):
+        with pytest.raises(BasiliskError) as error:
             unitTestSim.InitializeSimulation()
+        if chain in ('MasslessOutermost', 'CollinearMassless', 'CoplanarMassless'):
+            assert "nonzero combination of joint rates leaves every mass-bearing body stationary" in str(error.value)
         return
 
     unitTestSim.InitializeSimulation()
