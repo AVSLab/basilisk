@@ -17,8 +17,11 @@
 #
 #
 
+import math
+
 import pytest
 from Basilisk.architecture import messaging
+from Basilisk.architecture.bskLogging import BasiliskError
 from Basilisk.simulation import hingedRigidBodyMotor
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
@@ -34,6 +37,9 @@ from Basilisk.utilities import macros
         pytest.param(5.0, 1.0, 1.0, 0.1, 1.2, 0.2, 0.5, 0.5, id="limited-positive"),
         pytest.param(5.0, 1.0, 1.0, 0.1, 0.8, -0.1, 0.5, -0.5, id="limited-negative"),
         pytest.param(5.0, 1.0, 1.0, 0.1, 1.2, 0.2, 0.0, 0.0, id="zero-limit"),
+        pytest.param(0.0, 1.0, 1.0, 0.1, 1.2, 0.2, None, 0.1, id="rate-only"),
+        pytest.param(5.0, 0.0, 1.0, 0.1, 1.2, 0.2, None, 1.0, id="proportional-only"),
+        pytest.param(0.0, 0.0, 1.0, 0.1, 1.2, 0.2, None, 0.0, id="zero-gains"),
     ],
 )
 def test_hingedRigidBodyMotor(
@@ -48,9 +54,9 @@ def test_hingedRigidBodyMotor(
 
     **Test Parameter Discussion**
 
-    ``K`` and ``P`` are positive controller gains.  The sensed and reference hinge states produce both signs of raw
-    torque command.  ``uMax`` is either left at its negative default, set above or below the raw command magnitude, or
-    set to zero.
+    ``K`` and ``P`` are nonnegative controller gains, including proportional-only, rate-only, and zero-gain cases.  The
+    sensed and reference hinge states produce both signs of raw torque command.  ``uMax`` is either left at its negative
+    default, set above or below the raw command magnitude, or set to zero.
 
     **Description of Variables Being Tested**
 
@@ -61,6 +67,56 @@ def test_hingedRigidBodyMotor(
         K, P, sensedTheta, sensedThetaDot, refTheta, refThetaDot, uMax
     )
     assert actualTorque == pytest.approx(expectedTorque, rel=1e-12)
+
+
+# K [N m/rad] and P [N m s/rad].
+@pytest.mark.parametrize(
+    "K, P",
+    [
+        pytest.param(-1.0, 1.0, id="negative-K"),
+        pytest.param(1.0, -1.0, id="negative-P"),
+        pytest.param(math.nan, 1.0, id="nan-K"),
+        pytest.param(1.0, math.nan, id="nan-P"),
+        pytest.param(math.inf, 1.0, id="infinite-K"),
+        pytest.param(1.0, math.inf, id="infinite-P"),
+    ],
+)
+def test_hingedRigidBodyMotor_rejects_invalid_gains(K, P):
+    """Verify that ``Reset()`` rejects negative and non-finite controller gains."""
+    module = make_reset_ready_module()
+    module.K = K
+    module.P = P
+
+    with pytest.raises(BasiliskError, match="K and P must be set to finite, non-negative values"):
+        module.Reset(0)  # [ns]
+
+
+# uMax [N m].
+@pytest.mark.parametrize(
+    "uMax",
+    [
+        pytest.param(math.nan, id="nan-uMax"),
+        pytest.param(math.inf, id="positive-infinite-uMax"),
+        pytest.param(-math.inf, id="negative-infinite-uMax"),
+    ],
+)
+def test_hingedRigidBodyMotor_rejects_nonfinite_torque_limit(uMax):
+    """Verify that ``Reset()`` rejects a non-finite motor-torque limit."""
+    module = make_reset_ready_module()
+    module.uMax = uMax
+
+    with pytest.raises(BasiliskError, match="uMax must be set to a finite value"):
+        module.Reset(0)  # [ns]
+
+
+def make_reset_ready_module():
+    """Return a module with both required input messages connected."""
+    module = hingedRigidBodyMotor.HingedRigidBodyMotor()
+    sensedMsg = messaging.HingedRigidBodyMsg().write(messaging.HingedRigidBodyMsgPayload())
+    referenceMsg = messaging.HingedRigidBodyMsg().write(messaging.HingedRigidBodyMsgPayload())
+    module.hingedBodyStateSensedInMsg.subscribeTo(sensedMsg)
+    module.hingedBodyStateReferenceInMsg.subscribeTo(referenceMsg)
+    return module
 
 
 def run_motor_case(K, P, sensedTheta, sensedThetaDot, refTheta, refThetaDot, uMax):

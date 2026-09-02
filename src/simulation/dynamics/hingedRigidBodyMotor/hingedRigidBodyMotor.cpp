@@ -19,7 +19,9 @@
 
 
 #include "simulation/dynamics/hingedRigidBodyMotor/hingedRigidBodyMotor.h"
+
 #include <algorithm>
+#include <cmath>
 
 /** @brief Constructs a hinged rigid body motor controller with torque saturation disabled. */
 HingedRigidBodyMotor::HingedRigidBodyMotor()
@@ -46,8 +48,11 @@ void HingedRigidBodyMotor::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
     if (!this->hingedBodyStateReferenceInMsg.isLinked()) {
         bskLogger.bskError("HingedRigidBodyMotor.hingedBodyStateReferenceInMsg was not linked.");
     }
-    if (this->K <= 0.0 || this->P <= 0.0) {
-        bskLogger.bskError("HingedRigidBodyMotor K and P must be set to positive values.");
+    if (!std::isfinite(this->K) || !std::isfinite(this->P) || this->K < 0.0 || this->P < 0.0) {
+        bskLogger.bskError("HingedRigidBodyMotor K and P must be set to finite, non-negative values.");
+    }
+    if (!std::isfinite(this->uMax)) {
+        bskLogger.bskError("HingedRigidBodyMotor uMax must be set to a finite value.");
     }
 
 }
