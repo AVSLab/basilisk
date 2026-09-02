@@ -361,6 +361,104 @@ void GeneralSingleBodyStateEffector::updateContributions(double integTime,
                                                         Eigen::MRPd sigma_BN,
                                                         Eigen::Vector3d omega_BN_B,
                                                         Eigen::Vector3d g_N) {
+    // Update hub attitude and angular velocity
+    this->dcm_BN = sigma_BN.toRotationMatrix().transpose();
+    this->omega_BN_B = omega_BN_B;
+    Eigen::Matrix3d omegaTilde_BN_B = eigenTilde(this->omega_BN_B);
+
+    // Define MBeta matrix
+    Eigen::Matrix<double, 6, Eigen::Dynamic> MBetaTemp;
+    MBetaTemp.resize(6, this->numDOF);
+    Eigen::Matrix3d dcm_GB = this->jointDOFList.at(this->numDOF - 1)->dcm_GB;
+    Eigen::Vector3d r_GcG_B = dcm_GB.transpose() * this->r_GcG_G;
+    Eigen::Matrix3d rTilde_GcG_B = eigenTilde(r_GcG_B);
+    MBetaTemp.topRows(3) = this->mass * ((transMap - rTilde_GcG_B * rotMap) * this->TMat + transMap * this->UMat);
+    Eigen::Matrix3d IPntGc_B = dcm_GB.transpose() * this->IPntGc_G * dcm_GB;
+    Eigen::Matrix3d IPntG_B = IPntGc_B - this->mass * rTilde_GcG_B * rTilde_GcG_B;
+    MBetaTemp.bottomRows(3) = IPntG_B * rotMap * this->TMat + this->mass * rTilde_GcG_B * transMap * (this->TMat + this->UMat);
+    Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> MBeta;
+    MBeta.resize(this->numDOF, this->numDOF);
+    MBeta = this->TMat.transpose() * MBetaTemp;
+
+    // Define ABetaStar matrix
+    Eigen::Matrix<double, 6, 3> ABetaStarTemp;
+    ABetaStarTemp.topRows(3) = - this->mass * Eigen::Matrix3d::Identity();
+    ABetaStarTemp.bottomRows(3) = - this->mass * rTilde_GcG_B;
+    Eigen::Matrix<double, Eigen::Dynamic, 3> ABetaStar;
+    ABetaStar.resize(this->numDOF, 3);
+    ABetaStar = this->TMat.transpose() * ABetaStarTemp;
+
+    // Define BBetaStar matrix
+    Eigen::Matrix<double, 6, 3> BBetaStarTemp;
+    BBetaStarTemp.topRows(3) = this->mass * eigenTilde(r_GcG_B + this->r_GB_B);
+    BBetaStarTemp.bottomRows(3) = - (IPntG_B - this->mass * rTilde_GcG_B * eigenTilde(this->r_GB_B));
+    Eigen::Matrix<double, Eigen::Dynamic, 3> BBetaStar;
+    BBetaStar.resize(this->numDOF, 3);
+    BBetaStar = this->TMat.transpose() * BBetaStarTemp;
+
+    // Define forces and torques due to gravity
+    Eigen::Vector3d g_B = this->dcm_BN * g_N;
+    Eigen::Vector3d gravityForce_B = this->mass * g_B;
+    Eigen::Vector3d gravityTorquePntG_B = rTilde_GcG_B * gravityForce_B;
+
+    // Define CBetaStar vector
+    Eigen::VectorXd CBetaStarTemp;
+    CBetaStarTemp.resize(6);
+    CBetaStarTemp.head(3) = gravityForce_B - 2 * this->mass * omegaTilde_BN_B * (
+            (transMap - rTilde_GcG_B * rotMap) * this->TMat * this->betaDot
+            + transMap * this->TPrimeMat * this->beta)
+            - this->mass * omegaTilde_BN_B * omegaTilde_BN_B * (r_GcG_B + this->r_GB_B)
+            - this->mass * (2 * transMap - rTilde_GcG_B * rotMap) * this->TPrimeMat * this->betaDot
+            - this->mass * eigenTilde(rotMap * this->TMat * this->betaDot) * eigenTilde(rotMap * this->TMat * this->betaDot) * r_GcG_B
+            - this->mass * transMap * this->vVec;
+    CBetaStarTemp.tail(3) = gravityTorquePntG_B - eigenTilde(rotMap * this->TMat * this->betaDot + this->omega_BN_B) * IPntG_B * (rotMap * this->TMat * this->betaDot + this->omega_BN_B)
+            - IPntG_B * rotMap * this->TPrimeMat * this->betaDot
+            - IPntG_B * omegaTilde_BN_B * rotMap * this->TMat * this->betaDot
+            - this->mass * rTilde_GcG_B * (
+                    transMap * (2 * this->TPrimeMat * this->betaDot + this->vVec)
+                    + 2 * omegaTilde_BN_B * transMap * (this->TMat * this->betaDot + this->TPrimeMat * this->beta)
+                    + omegaTilde_BN_B * omegaTilde_BN_B * this->r_GB_B);
+
+    Eigen::VectorXd CBetaStar = this->TMat.transpose() * CBetaStarTemp;
+    for (auto& dof : this->jointDOFList) {
+        double motorForceTorque{};
+        if (dof->type == DOF::Type::ROTATION) {
+            motorForceTorque = dof->u;
+        } else {
+            motorForceTorque = dof->f;
+        }
+
+        CBetaStar[dof->index] += motorForceTorque - dof->k * (dof->beta - dof->betaRef)
+                                           - dof->c * (dof->betaDot - dof->betaDotRef);
+    }
+
+    // Define BSM ABeta, BBeta, and CBeta matrices
+    this->ABeta = MBeta.inverse() * ABetaStar;
+    this->BBeta = MBeta.inverse() * BBetaStar;
+    this->CBeta = MBeta.inverse() * CBetaStar;
+
+    // Define BSM [A] [B] [C] [D] contributions
+    backSubContr.matrixA = this->mass * ((transMap - rTilde_GcG_B * rotMap) * this->TMat + transMap * this->UMat) * this->ABeta;
+    backSubContr.matrixB = this->mass * ((transMap - rTilde_GcG_B * rotMap) * this->TMat + transMap * this->UMat) * this->BBeta;
+    backSubContr.matrixC = (IPntGc_B * rotMap * this->TMat + this->mass * eigenTilde(r_GcG_B + this->r_GB_B) * ((transMap - rTilde_GcG_B * rotMap) * this->TMat + transMap * this->UMat)) * this->ABeta;
+    backSubContr.matrixD = (IPntGc_B * rotMap * this->TMat + this->mass * eigenTilde(r_GcG_B + this->r_GB_B) * ((transMap - rTilde_GcG_B * rotMap) * this->TMat + transMap * this->UMat)) * this->BBeta;
+
+    // Define BSM vecTrans and vecRot contributions
+    backSubContr.vecTrans = - this->mass * (2 * transMap - rTilde_GcG_B * rotMap) * this->TPrimeMat * this->betaDot
+                            - this->mass * eigenTilde(rotMap * this->TMat * this->betaDot) * eigenTilde(rotMap * this->TMat * this->betaDot) * r_GcG_B
+                            - this->mass * transMap * this->vVec
+                            - this->mass * ((transMap - rTilde_GcG_B * rotMap) * this->TMat + transMap * this->UMat) * this->CBeta;
+
+    backSubContr.vecRot = - IPntGc_B * rotMap * this->TPrimeMat * this->betaDot
+            - this->mass * eigenTilde(r_GcG_B + this->r_GB_B) * (
+            (2 * transMap - rTilde_GcG_B * rotMap) * this->TPrimeMat * this->betaDot
+            + eigenTilde(rotMap * this->TMat * this->betaDot) * eigenTilde(rotMap * this->TMat * this->betaDot) * r_GcG_B
+            + transMap * this->vVec)
+            - eigenTilde(rotMap * this->TMat * this->betaDot + this->omega_BN_B) * IPntGc_B * rotMap * this->TMat * this->betaDot
+            - this->mass * omegaTilde_BN_B * eigenTilde(r_GcG_B + this->r_GB_B) * (
+                    (transMap - rTilde_GcG_B * rotMap) * this->TMat * this->betaDot
+                    + transMap * this->TPrimeMat * this->beta)
+            - (IPntGc_B * rotMap * this->TMat + this->mass * eigenTilde(r_GcG_B + this->r_GB_B) * ((transMap - rTilde_GcG_B * rotMap) * this->TMat + transMap * this->UMat)) * this->CBeta;
 }
 
 void GeneralSingleBodyStateEffector::computeDerivatives(double integTime,
