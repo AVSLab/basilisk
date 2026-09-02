@@ -41,6 +41,7 @@ from Basilisk.utilities import (
     macros,
 )
 from Basilisk.simulation import spacecraft, linearTranslationNDOFStateEffector, gravityEffector
+from Basilisk.simulation import linearTranslationOneDOFStateEffector
 from Basilisk.architecture import messaging
 from Basilisk.architecture.bskLogging import BasiliskError
 
@@ -92,6 +93,108 @@ def test_translatingBody(show_plots, function):
         raise ValueError(f"Function '{function}' not found in global scope")
 
     testFunction(show_plots)
+
+def test_translatingBodyOutputMessagesMatchOneDOF():
+    """
+    Verify both output-message vectors against the equivalent one-DOF model.
+
+    A single-body N-DOF effector and a one-DOF effector are given identical geometry, mass
+    properties, and initial states on their own spacecraft in one simulation. The hub starts with a
+    non-identity attitude and nonzero translational and angular velocity so that every inertial
+    transformation contributes. The displacement, displacement rate, inertial position, inertial
+    velocity, attitude, and angular velocity are compared at every step.
+    """
+    timeStep = 0.01  # [s]
+    unitTestSim = SimulationBaseClass.SimBaseClass()
+    unitTestSim.SetProgressBar(False)
+    testProc = unitTestSim.CreateNewProcess("TestProcess")
+    testProc.addTask(unitTestSim.CreateNewTask("unitTask", macros.sec2nano(timeStep)))
+
+    mass = 20.0  # [kg]
+    k = 100.0  # [N/m]
+    rhoInit = 0.4  # [m]
+    rhoDotInit = 0.05  # [m/s]
+    fHat = [[3.0 / 5.0], [4.0 / 5.0], [0.0]]
+    r_FcF_F = [[-1.0], [1.0], [0.5]]  # [m]
+    r_F0B_B = [[-1.0], [1.0], [0.0]]  # [m]
+    IPntFc_F = [[50.0, 0.0, 0.0], [0.0, 80.0, 0.0], [0.0, 0.0, 60.0]]  # [kg*m^2]
+    dcm_FB = [[0.0, -1.0, 0.0], [0.0, 0.0, -1.0], [1.0, 0.0, 0.0]]
+
+    nDofEffector = linearTranslationNDOFStateEffector.LinearTranslationNDOFStateEffector()
+    nDofEffector.ModelTag = "translatingBodyNDOF"
+    body = linearTranslationNDOFStateEffector.TranslatingBody()
+    body.setMass(mass)
+    body.setK(k)
+    body.setC(0.0)  # [N*s/m]
+    body.setRhoInit(rhoInit)
+    body.setRhoDotInit(rhoDotInit)
+    body.setFHat_P(fHat)
+    body.setR_FcF_F(r_FcF_F)
+    body.setR_F0P_P(r_F0B_B)
+    body.setIPntFc_F(IPntFc_F)
+    body.setDCM_FP(dcm_FB)
+    nDofEffector.addTranslatingBody(body)
+
+    oneDofEffector = linearTranslationOneDOFStateEffector.LinearTranslationOneDOFStateEffector()
+    oneDofEffector.ModelTag = "translatingBodyOneDOF"
+    oneDofEffector.setMass(mass)
+    oneDofEffector.setK(k)
+    oneDofEffector.setC(0.0)  # [N*s/m]
+    oneDofEffector.setRhoInit(rhoInit)
+    oneDofEffector.setRhoDotInit(rhoDotInit)
+    oneDofEffector.setFHat_B(fHat)
+    oneDofEffector.setR_FcF_F(r_FcF_F)
+    oneDofEffector.setR_F0B_B(r_F0B_B)
+    oneDofEffector.setIPntFc_F(IPntFc_F)
+    oneDofEffector.setDCM_FB(dcm_FB)
+
+    recorders = []
+    for effector in (nDofEffector, oneDofEffector):
+        scObject = spacecraft.Spacecraft()
+        scObject.ModelTag = "spacecraft" + effector.ModelTag
+        scObject.hub.mHub = 750.0  # [kg]
+        scObject.hub.r_BcB_B = [[0.0], [0.0], [1.0]]  # [m]
+        scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]  # [kg*m^2]
+        scObject.hub.r_CN_NInit = [[-4020338.690396649], [7490566.741852513], [5248299.211589362]]  # [m]
+        scObject.hub.v_CN_NInit = [[-5199.77710904224], [-3436.681645356935], [1041.576797498721]]  # [m/s]
+        scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]
+        scObject.hub.omega_BN_BInit = [[0.5], [-0.4], [0.6]]  # [rad/s]
+
+        earthGravBody = gravityEffector.GravBodyData()
+        earthGravBody.planetName = "earth_planet_data"
+        earthGravBody.mu = 0.3986004415E+15  # [m^3/s^2]
+        earthGravBody.isCentralBody = True
+        scObject.gravField.gravBodies = spacecraft.GravBodyVector([earthGravBody])
+
+        scObject.addStateEffector(effector)
+        unitTestSim.AddModelToTask("unitTask", effector)
+        unitTestSim.AddModelToTask("unitTask", scObject)
+
+    for outMsg, configMsg in ((nDofEffector.translatingBodyOutMsgs[0],
+                               nDofEffector.translatingBodyConfigLogOutMsgs[0]),
+                              (oneDofEffector.translatingBodyOutMsg,
+                               oneDofEffector.translatingBodyConfigLogOutMsg)):
+        stateRec = outMsg.recorder()
+        configRec = configMsg.recorder()
+        unitTestSim.AddModelToTask("unitTask", stateRec)
+        unitTestSim.AddModelToTask("unitTask", configRec)
+        recorders.append((stateRec, configRec))
+
+    unitTestSim.InitializeSimulation()
+    unitTestSim.ConfigureStopTime(macros.sec2nano(10 * timeStep))
+    unitTestSim.ExecuteSimulation()
+
+    (nDofState, nDofConfig), (oneDofState, oneDofConfig) = recorders
+    accuracy = 1e-10
+    np.testing.assert_allclose(nDofState.rho, oneDofState.rho, rtol=accuracy,
+                               err_msg="Displacement does not match the one-DOF effector.")
+    np.testing.assert_allclose(nDofState.rhoDot, oneDofState.rhoDot, rtol=accuracy,
+                               err_msg="Displacement rate does not match the one-DOF effector.")
+    for field in ("r_BN_N", "v_BN_N", "sigma_BN", "omega_BN_B"):
+        np.testing.assert_allclose(getattr(nDofConfig, field), getattr(oneDofConfig, field),
+                                   rtol=accuracy, atol=accuracy,
+                                   err_msg=field + " does not match the one-DOF effector.")
+
 
 # axis and mass [kg] of each body in the chain, outward from the hub. A body given no mass keeps the
 # zero default, since the setter rejects a non-positive mass, and is given a zero inertia to match.

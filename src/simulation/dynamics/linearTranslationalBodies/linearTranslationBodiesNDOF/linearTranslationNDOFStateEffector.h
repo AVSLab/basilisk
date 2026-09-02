@@ -115,7 +115,6 @@ private:
     Eigen::Vector3d rPrime_FP_B = Eigen::Vector3d::Zero();  //!< [m/s] body frame time derivative of r_FP_B
     Eigen::Vector3d rPrime_FF0_B = Eigen::Vector3d::Zero(); //!< [m/s] body frame time derivative of r_FF0_B
     Eigen::Vector3d rDot_FcB_B = Eigen::Vector3d::Zero();   //!< [m/s] inertial frame time derivative of r_FcB_B
-    Eigen::Vector3d omega_FN_B = Eigen::Vector3d::Zero();   //!< [rad/s] angular velocity of the F frame wrt the N frame in B frame components
 
     // Matrix quantities
     Eigen::Matrix3d dcm_FB = Eigen::Matrix3d::Identity();      //!< -- DCM from body frame to F frame
@@ -178,6 +177,7 @@ private:
     Eigen::MatrixXd* inertialVelocityProperty = nullptr;    //!< [m] v_N inertial velocity relative to system spice zeroBase/refBase
     StateData* rhoState = nullptr;
     StateData* rhoDotState = nullptr;
+    StateData* hubSigmaState = nullptr; //!< hub attitude state, read live for the published kinematics
     std::string nameOfRhoState;        //!< -- identifier for the rho state data container
     std::string nameOfRhoDotState;     //!< -- identifier for the rhoDot state data container
 
