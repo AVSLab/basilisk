@@ -21,6 +21,9 @@ Version |release| (July 7, 2026)
 - The :ref:`linearTranslationNDOFStateEffector` and the :ref:`spinningBodyNDOFStateEffector` allocated
   a state and a configuration log output message for every body added to the chain and freed neither,
   so each effector leaked both for the life of the process. This is fixed in the current version.
+- The :ref:`linearTranslationNDOFStateEffector` built its translating body configuration log from a
+  hub attitude cached at the previous integrator substep, so the logged body attitude lagged the hub
+  attitude even though the body does not rotate relative to the hub. This is fixed in the current version.
 - The :ref:`linearTranslationNDOFStateEffector` accepted a chain whose joint mass matrix is singular,
   most simply one whose outermost body was left at its default zero mass, and inverting it filled the
   spacecraft state with NaN. It also took an invalid rotation matrix or inertia tensor at face value

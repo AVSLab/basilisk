@@ -192,6 +192,7 @@ void LinearTranslationNDOFStateEffector::linkInStates(DynParamManager& statesIn)
 {
     this->inertialPositionProperty = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + "r_BN_N");
     this->inertialVelocityProperty = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + "v_BN_N");
+    this->hubSigmaState = statesIn.getStateObject(this->nameOfSpacecraftAttachedTo + this->stateNameOfSigma);
 }
 
 /*! This method runs every configuration check. Spacecraft initialization always reaches it through
@@ -524,19 +525,16 @@ void LinearTranslationNDOFStateEffector::updateEnergyMomContributions(double int
     rotEnergyContr = 0.0;
 
     for(auto& translatingBody: this->translatingBodyVec) {
-        // Update omega_FN_B
-        translatingBody->omega_FN_B = this->omega_BN_B;
-
-        // Compute rDot_FcB_B
+        // Compute rDot_FcB_B, noting that the F frame shares the hub angular velocity
         translatingBody->rDot_FcB_B = translatingBody->rPrime_FcB_B
                                       + this->omega_BN_B.cross(translatingBody->r_FcB_B);
 
         // Find rotational angular momentum contribution from hub
-        rotAngMomPntCContr_B += translatingBody->IPntFc_B * translatingBody->omega_FN_B
+        rotAngMomPntCContr_B += translatingBody->IPntFc_B * this->omega_BN_B
                                 + translatingBody->mass * translatingBody->r_FcB_B.cross(translatingBody->rDot_FcB_B);
 
         // Find rotational energy contribution from the hub
-        rotEnergyContr += 1.0 / 2.0 * translatingBody->omega_FN_B.dot(translatingBody->IPntFc_B * translatingBody->omega_FN_B)
+        rotEnergyContr += 1.0 / 2.0 * this->omega_BN_B.dot(translatingBody->IPntFc_B * this->omega_BN_B)
                         + 1.0 / 2.0 * translatingBody->mass * translatingBody->rDot_FcB_B.dot(translatingBody->rDot_FcB_B)
                         + 1.0 / 2.0 * translatingBody->k * (translatingBody->rho - translatingBody->rhoRef) *
                         (translatingBody->rho - translatingBody->rhoRef);
@@ -546,16 +544,23 @@ void LinearTranslationNDOFStateEffector::updateEnergyMomContributions(double int
 /*! This method computes the translating body states relative to the inertial frame */
 void LinearTranslationNDOFStateEffector::computeTranslatingBodyInertialStates()
 {
-    for(auto& translatingBody: this->translatingBodyVec) {
-        // Compute the rotational properties
-        Eigen::Matrix3d dcm_FN;
-        dcm_FN = translatingBody->dcm_FB * this->dcm_BN;
-        translatingBody->sigma_FN = eigenC2MRP(dcm_FN);
-        translatingBody->omega_FN_F = translatingBody->dcm_FB * translatingBody->omega_FN_B;
+    // - read live: the cached copy lags an integrator substep at write time
+    const Eigen::MRPd sigmaHub_BN(this->hubSigmaState->getStateReference().data());
+    this->dcm_BN = sigmaHub_BN.toRotationMatrix().transpose();
 
-        // Compute the translation properties
-        translatingBody->r_FcN_N = (Eigen::Vector3d)*this->inertialPositionProperty + this->dcm_BN.transpose() * translatingBody->r_FcB_B;
-        translatingBody->v_FcN_N = (Eigen::Vector3d)*this->inertialVelocityProperty + this->dcm_BN.transpose() * translatingBody->rDot_FcB_B;
+    const Eigen::Vector3d r_BN_N = (Eigen::Vector3d)*this->inertialPositionProperty;
+    const Eigen::Vector3d v_BN_N = (Eigen::Vector3d)*this->inertialVelocityProperty;
+
+    for(auto& translatingBody: this->translatingBodyVec) {
+        // Compute the rotational properties, noting that F does not rotate relative to B
+        const Eigen::Matrix3d dcm_FN = translatingBody->dcm_FB * this->dcm_BN;
+        translatingBody->sigma_FN = eigenC2MRP(dcm_FN);
+        translatingBody->omega_FN_F = translatingBody->dcm_FB * this->omega_BN_B;
+
+        // Compute the translation properties of the center of mass Fc
+        translatingBody->rDot_FcB_B = translatingBody->rPrime_FcB_B + this->omega_BN_B.cross(translatingBody->r_FcB_B);
+        translatingBody->r_FcN_N = r_BN_N + this->dcm_BN.transpose() * translatingBody->r_FcB_B;
+        translatingBody->v_FcN_N = v_BN_N + this->dcm_BN.transpose() * translatingBody->rDot_FcB_B;
     }
 }
 
