@@ -4,7 +4,7 @@ Advanced: Effector Module Branching
 ===================================
 
 Module branching in Basilisk enables the attachment of compatible dynamic effectors on state
-effectors as an alternative to attaching them directly to the hub. For example, a gimballed thruster
+effectors as an alternative to attaching them directly to the hub. For example, a gimbaled thruster
 can be modeled as a ``thrusterDynamicEffector`` attached to a ``spinningBodyTwoDOFStateEffector``,
 or a robotic docking arm can be modeled as a ``constraintDynamicEffector`` attached to a 7-DOF
 revolute ``spinningBodyNDOFStateEffector``. Multiple dynamic effectors can be attached to a state
@@ -16,239 +16,69 @@ be found in :ref:`effectorBranching`. Integrated testing of effector branching i
 
 Allowable Configurations
 ------------------------
-The currently supported configurations of state effectors compatible as "parent" effectors and
-dynamic effectors compatible as "child" effectors is summarized in the table below. Green shows
-currently supported configurations, yellow shows configurations expected to be supported in the
-future, and red shows configurations not planned to be supported. Additionally, blue shows the
-special case of prescribed effector branching explained in :ref:`prescribedMotionStateEffector`.
+Branching pairs a state effector acting as a parent with a dynamic effector acting as a child. The
+two sides are supported independently, so any parent listed below accepts any child listed below,
+and a parent accepts more than one child at a time.
 
-.. raw:: html
+State Effectors Supported as Parents
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-    <style>
-      /* Responsive wrapper */
-      .table-wrapper {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        margin: 1em 0;
-      }
+- :ref:`hingedRigidBodyStateEffector`
+- :ref:`dualHingedRigidBodyStateEffector`
+- :ref:`nHingedRigidBodyStateEffector`
+- :ref:`spinningBodyOneDOFStateEffector`
+- :ref:`spinningBodyTwoDOFStateEffector`
+- :ref:`spinningBodyNDOFStateEffector`
+- :ref:`linearTranslationOneDOFStateEffector`
+- :ref:`linearTranslationNDOFStateEffector`
 
-      /* Table base */
-      table.effector-compat {
-        border-collapse: collapse;
-        table-layout: fixed;              /* consistent sizing across browsers */
-        width: 100%;
-        text-align: center;
-        font-size: 0.9em;
-      }
+A parent with more than one degree of freedom additionally takes the segment its child attaches to,
+counting outward from the hub starting at 1.
 
-      /* Cells */
-      table.effector-compat th,
-      table.effector-compat td {
-        border: 1px solid #777;
-        padding: 6px 8px;
-      }
+:ref:`prescribedMotionStateEffector` hosts children as well, through the separate mechanism
+described on its own page. Its state is prescribed rather than integrated, so a child attached to it
+does not feed a load back through a joint.
 
-      /* Header cells */
-      table.effector-compat thead th {
-        background-color: #e5e5e5;
-        color: #222;
-        font-weight: bold;
-      }
+Dynamic Effectors Supported as Children
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-      /* Second column (row labels) */
-      table.effector-compat td.label {
-        background-color: #f5f5f5;
-        color: #222;
-        font-weight: bold;
-        white-space: normal;          /* allow wrapping */
-        overflow-wrap: anywhere;      /* wrap long words */
-        text-align: left;             /* readability */
-      }
+- :ref:`extForceTorque`
+- :ref:`thrusterDynamicEffector`
+- :ref:`constraintDynamicEffector`
+- :ref:`facetDragDynamicEffector`
+- :ref:`facetSRPDynamicEffector`
 
-      /* Rotated column headers (use inner wrapper, not the <th> itself) */
-      table.effector-compat th.rotate {
-        vertical-align: middle;
-        background-color: #d9d9d9;
-        padding: 0;                   /* inner span handles spacing */
-        height: 140px;                /* stable header height */
-        width: 38px;                  /* narrow columns for tall text */
-      }
-      @supports (writing-mode: vertical-rl) {
-        table.effector-compat th.rotate > .rotate-inner {
-          writing-mode: vertical-rl;
-          text-orientation: mixed;
-          transform: rotate(180deg);  /* bottom → top like original */
-          display: inline-block;
-          white-space: nowrap;
-          padding: 8px 4px;
-          line-height: 1.1;
-        }
-      }
-      @supports not (writing-mode: vertical-rl) {
-        table.effector-compat th.rotate > .rotate-inner {
-          display: inline-block;
-          transform: rotate(-90deg);
-          transform-origin: center;
-          white-space: nowrap;
-          padding: 8px 4px;
-          line-height: 1.1;
-        }
-      }
+A child reads its parent's inertial position, velocity, attitude, and angular velocity rather than
+the hub's, and any geometry the user gives it is then expressed relative to the parent's frame
+rather than the hub body frame.
 
-      /* FIRST COLUMN (vertical "Parent Effectors") — rotate-only, no writing-mode */
-      table.effector-compat td.vlabel {
-        position: relative;     /* anchor for absolute child */
-        padding: 0;
-        text-align: center;
-        overflow: hidden;       /* keep content inside the cell */
-      }
-      table.effector-compat td.vlabel .rotate-inner {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%) rotate(-90deg);  /* center + rotate */
-        transform-origin: center;
-        display: block;
-        white-space: nowrap;
-        line-height: 1;
-        padding: 6px 4px;
-        font-weight: bold;
-        color: #222;
-      }
-      @supports (writing-mode: vertical-rl) {
-        table.effector-compat td.vlabel .rotate-inner {
-          writing-mode: initial !important;
-          text-orientation: initial !important;
-        }
-      }
+Effectors Not Supported for Branching
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-      /* Column widths via <colgroup> */
-      table.effector-compat col.col-vert  { width: 32px; }   /* first column */
-      table.effector-compat col.col-label { width: 280px; }  /* second column */
-      table.effector-compat col.col-data  { width: 32px; }   /* each data column */
+Every other effector attaches to the hub only.
 
-      /* Color palette */
-      table.effector-compat td.green  { background-color: #90ee90; }
-      table.effector-compat td.yellow { background-color: #fff59d; }
-      table.effector-compat td.red    { background-color: #ff9999; }
-      table.effector-compat td.blue   { background-color: #9ec5fe; }
+A state effector cannot act as a child. ``addDynamicEffector`` accepts a dynamic effector, and a
+state effector contributes Backsubstitution matrices rather than a force and a torque, so the two
+do not interchange. This covers the spinning bodies, the translating bodies, the hinged rigid
+bodies, :ref:`linearSpringMassDamper`, :ref:`sphericalPendulum`, :ref:`reactionWheelStateEffector`,
+:ref:`vscmgStateEffector`, :ref:`thrusterStateEffector`, and :ref:`fuelTank`.
 
-      /* Caption */
-      table.effector-compat caption {
-        caption-side: top;
-        text-align: left;
-        font-weight: bold;
-        margin-bottom: 0.5em;
-        font-size: 1.05em;
-      }
-    </style>
+A load that does not depend on the parent's attitude is the same whether the effector attaches to a
+segment or to the hub. This covers the cannonball models, namely :ref:`dragDynamicEffector` and the
+cannonball option of :ref:`radiationPressure`.
 
-    <div class="table-wrapper">
-    <table class="effector-compat">
-      <caption>Effector Branching Compatibility</caption>
+:ref:`gravityEffector` is not a dynamic effector. It is a member of :ref:`spacecraft` whose field
+reaches the equations of motion as the gravitational acceleration handed to every state effector, so
+each branched body already carries its own weight. The vehicle level gravity gradient torque is
+covered separately by :ref:`GravityGradientEffector`, which reads the spacecraft inertia tensor
+about point B and therefore already tracks the configuration of every attached body.
 
-      <!-- IMPORTANT: <colgroup> must be AFTER caption, BEFORE thead -->
-      <colgroup>
-        <col class="col-vert">            <!-- 1st column: vertical label -->
-        <col class="col-label">           <!-- 2nd column: wider, wraps -->
-        <col class="col-data" span="16">  <!-- 16 child-effector columns -->
-      </colgroup>
+:ref:`MtbEffector` and :ref:`ExtPulsedTorque` are branchable in principle and are listed here only
+because no use case has called for them.
 
-      <thead>
-        <tr>
-          <th rowspan="2" colspan="2"></th>
-          <th colspan="16">Children Effectors</th>
-        </tr>
-        <tr>
-          <th class="rotate"><span class="rotate-inner">Thruster Dynamic Effector</span></th>
-          <th class="rotate"><span class="rotate-inner">Thruster State Effector</span></th>
-          <th class="rotate"><span class="rotate-inner">Constraint Effector</span></th>
-          <th class="rotate"><span class="rotate-inner">Faceted Drag Effector</span></th>
-          <th class="rotate"><span class="rotate-inner">External Force Torque</span></th>
-          <th class="rotate"><span class="rotate-inner">SRP Effector</span></th>
-          <th class="rotate"><span class="rotate-inner">Fuel Tank Effector</span></th>
-          <th class="rotate"><span class="rotate-inner">Gravity Effector</span></th>
-          <th class="rotate"><span class="rotate-inner">Spinning Bodies</span></th>
-          <th class="rotate"><span class="rotate-inner">Translating Bodies</span></th>
-          <th class="rotate"><span class="rotate-inner">Hinged Rigid Bodies</span></th>
-          <th class="rotate"><span class="rotate-inner">Prescribed Bodies</span></th>
-          <th class="rotate"><span class="rotate-inner">Linear Spring Mass Damper</span></th>
-          <th class="rotate"><span class="rotate-inner">Spherical Pendulum</span></th>
-          <th class="rotate"><span class="rotate-inner">Reaction Wheel</span></th>
-          <th class="rotate"><span class="rotate-inner">VSCMG</span></th>
-        </tr>
-      </thead>
-
-      <tbody>
-        <tr>
-          <td rowspan="9" class="label vlabel">
-            <span class="rotate-inner">Parent Effectors</span>
-          </td>
-          <td class="label">Spinning Bodies 1DOF</td>
-          <td class="green"></td><td class="yellow"></td><td class="green"></td><td class="green"></td>
-          <td class="green"></td><td class="yellow"></td><td class="yellow"></td><td class="yellow"></td>
-          <td class="red"></td><td class="red"></td><td class="red"></td><td class="red"></td>
-          <td class="red"></td><td class="red"></td><td class="red"></td><td class="red"></td>
-        </tr>
-        <tr>
-          <td class="label">Spinning Bodies 2DOF</td>
-          <td class="green"></td><td class="yellow"></td><td class="green"></td><td class="green"></td>
-          <td class="green"></td><td class="yellow"></td><td class="yellow"></td><td class="yellow"></td>
-          <td class="red"></td><td class="red"></td><td class="red"></td><td class="red"></td>
-          <td class="red"></td><td class="red"></td><td class="red"></td><td class="red"></td>
-        </tr>
-        <tr>
-          <td class="label">Spinning Bodies NDOF</td>
-          <td class="green"></td><td class="yellow"></td><td class="green"></td><td class="green"></td>
-          <td class="green"></td><td class="yellow"></td><td class="yellow"></td><td class="yellow"></td>
-          <td class="red"></td><td class="red"></td><td class="red"></td><td class="red"></td>
-          <td class="red"></td><td class="red"></td><td class="red"></td><td class="red"></td>
-        </tr>
-        <tr>
-          <td class="label">Hinged Rigid Bodies</td>
-          <td class="green"></td><td class="yellow"></td><td class="green"></td><td class="green"></td>
-          <td class="green"></td><td class="yellow"></td><td class="yellow"></td><td class="yellow"></td>
-          <td class="red"></td><td class="red"></td><td class="red"></td><td class="red"></td>
-          <td class="red"></td><td class="red"></td><td class="red"></td><td class="red"></td>
-        </tr>
-        <tr>
-          <td class="label">Dual Hinged Rigid Bodies</td>
-          <td class="green"></td><td class="yellow"></td><td class="green"></td><td class="green"></td>
-          <td class="green"></td><td class="yellow"></td><td class="yellow"></td><td class="yellow"></td>
-          <td class="red"></td><td class="red"></td><td class="red"></td><td class="red"></td>
-          <td class="red"></td><td class="red"></td><td class="red"></td><td class="red"></td>
-        </tr>
-        <tr>
-          <td class="label">N Hinged Rigid Bodies</td>
-          <td class="green"></td><td class="yellow"></td><td class="green"></td><td class="green"></td>
-          <td class="green"></td><td class="yellow"></td><td class="yellow"></td><td class="yellow"></td>
-          <td class="red"></td><td class="red"></td><td class="red"></td><td class="red"></td>
-          <td class="red"></td><td class="red"></td><td class="red"></td><td class="red"></td>
-        </tr>
-        <tr>
-          <td class="label">Linear Translating Bodies 1DOF</td>
-          <td class="green"></td><td class="yellow"></td><td class="green"></td><td class="green"></td>
-          <td class="green"></td><td class="yellow"></td><td class="yellow"></td><td class="yellow"></td>
-          <td class="red"></td><td class="red"></td><td class="red"></td><td class="red"></td>
-          <td class="red"></td><td class="red"></td><td class="red"></td><td class="red"></td>
-        </tr>
-        <tr>
-          <td class="label">Linear Translating Bodies NDOF</td>
-          <td class="green"></td><td class="yellow"></td><td class="green"></td><td class="green"></td>
-          <td class="green"></td><td class="yellow"></td><td class="yellow"></td><td class="yellow"></td>
-          <td class="red"></td><td class="red"></td><td class="red"></td><td class="red"></td>
-          <td class="red"></td><td class="red"></td><td class="red"></td><td class="red"></td>
-        </tr>
-        <tr>
-          <td class="label">Prescribed Motion</td>
-          <td class="blue"></td><td class="blue"></td><td class="blue"></td><td class="blue"></td>
-          <td class="blue"></td><td class="blue"></td><td class="blue"></td><td class="blue"></td>
-          <td class="blue"></td><td class="blue"></td><td class="blue"></td><td class="blue"></td>
-          <td class="blue"></td><td class="blue"></td><td class="blue"></td><td class="blue"></td>
-        </tr>
-      </tbody>
-    </table>
-    </div>
+:ref:`thrusterStateEffector` and :ref:`fuelTank` are the two worth revisiting if a mission calls for
+them, though either would first need the child side mechanism that a state effector does not have
+today.
 
 Setup
 -----
@@ -275,7 +105,7 @@ By default, effectors are attached to the hub using::
     scObject.addDynamicEffector(dynEff)
     scSim.AddModelToTask(simTaskName, dynEff)
 
-Dynamic effector's can instead be attached to a state effector as::
+Dynamic effectors can instead be attached to a state effector as::
 
     stateEff.addDynamicEffector(dynEff)
 
@@ -286,7 +116,7 @@ attach the dynamic effector to as::
     segment = 2
     stateEff.addDynamicEffector(dynEff, segment)
 
-Where segment is the integer number of the segement to be attached to, with 1 being the segment
+Where segment is the integer number of the segment to be attached to, with 1 being the segment
 attached to the hub, increasing outward from the hub. For example, spinningBodyOneDOFStateEffector
 will always attach to segment 1, attaching to the second to last segment of a 7DOF robotic arm would
 be segment 6. Note that in either case the dynamic effector is still added to the sim task.
