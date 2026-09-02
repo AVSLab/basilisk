@@ -69,6 +69,9 @@ void GeneralSingleBodyStateEffector::updateEnergyMomContributions(double integTi
 
 void GeneralSingleBodyStateEffector::addRotDOF(std::shared_ptr<DOF> newDOF)
 {
+    if (this->isDOFAdded(newDOF)) {
+        bskLogger.bskError("This DOF was already added. Create a separate DOF object for each degree of freedom.");
+    }
     if (this->numRotDOF >= 3) {
         bskLogger.bskError("General body rotational degrees of freedom cannot exceed 3.");
     }
@@ -85,6 +88,9 @@ void GeneralSingleBodyStateEffector::addRotDOF(std::shared_ptr<DOF> newDOF)
 
 void GeneralSingleBodyStateEffector::addTransDOF(std::shared_ptr<DOF> newDOF)
 {
+    if (this->isDOFAdded(newDOF)) {
+        bskLogger.bskError("This DOF was already added. Create a separate DOF object for each degree of freedom.");
+    }
     if (this->numTransDOF >= 3) {
         bskLogger.bskError("General body translational degrees of freedom cannot exceed 3.");
     }
@@ -99,7 +105,8 @@ void GeneralSingleBodyStateEffector::addTransDOF(std::shared_ptr<DOF> newDOF)
     this->translatingBodyOutMsgs.push_back(new Message<LinearTranslationRigidBodyMsgPayload>);
 }
 
-void GeneralSingleBodyStateEffector::addDOF(std::shared_ptr<DOF> newDOF) {
+void GeneralSingleBodyStateEffector::addDOF(std::shared_ptr<DOF> newDOF)
+{
     this->numDOF++;
     newDOF->index = this->numDOF - 1;
     this->jointDOFList.push_back(newDOF);
@@ -111,4 +118,9 @@ void GeneralSingleBodyStateEffector::addDOF(std::shared_ptr<DOF> newDOF) {
     this->ABeta.conservativeResize(this->ABeta.rows() + 1, 3);
     this->BBeta.conservativeResize(this->BBeta.rows() + 1, 3);
     this->CBeta.conservativeResize(this->CBeta.rows() + 1);
+}
+
+bool GeneralSingleBodyStateEffector::isDOFAdded(const std::shared_ptr<DOF>& newDOF) const
+{
+    return std::find(this->jointDOFList.begin(), this->jointDOFList.end(), newDOF) != this->jointDOFList.end();
 }
