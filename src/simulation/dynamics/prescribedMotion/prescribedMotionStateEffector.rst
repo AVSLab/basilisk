@@ -61,6 +61,8 @@ motion is provided in the following journal paper
     Leah Kiner, Hanspeter Schaub, and Cody Allard
     Journal of Aerospace Information Systems 2025 22:8, 703-715
 
+.. _prescribedMotionBranching:
+
 Branching Capability
 ^^^^^^^^^^^^^^^^^^^^
 An additional feature of this module is the ability to attach other state effectors to the prescribed motion component.

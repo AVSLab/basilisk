@@ -124,3 +124,15 @@ and reference inputs and to update its output messages through ``UpdateState()``
 When the effector is scheduled, its ``Reset()`` repeats the same validation and
 normalization.  ``Reset()`` does not reset the integrated angle or angle-rate states; those states receive their
 configured initial values when they are registered with the spacecraft dynamics.
+
+Hosting a Dynamic Effector
+--------------------------
+This effector supports the branching described in :ref:`bskPrinciples-11`, so a compatible
+dynamic effector can be carried by the spinning body rather than by the hub::
+
+    spinningBody.addDynamicEffector(childEffector)
+
+This effector then makes its inertial position, velocity, attitude, and angular velocity available
+in place of the hub's, and the child reads whichever of the four its model needs. Any geometry given
+to the child is expressed in that spinning body's frame rather than the hub body frame. Both this
+effector and the child are still added to the task in the usual way.
