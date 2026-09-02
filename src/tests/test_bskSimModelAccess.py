@@ -141,6 +141,29 @@ def test_modelAccessRequiresInitialization(
         simulation.get_FswModel()
 
 
+def test_multiSatDynamicsRequiresEnvironment():
+    """Verify MultiSat dynamics setup requires the environment to be added first."""
+    masterPath = REPOSITORY_ROOT / "examples/MultiSatBskSim/BSK_MultiSatMasters.py"
+    masterClass = loadMasterClass("MultiSat", masterPath)
+    simulation = makeSimulation(masterClass, 2)
+    environmentInput, dynamicsInput, _ = makeModelInputs(
+        "BSKDynamicModels", "BSKFswModels", 2
+    )
+
+    processCount = len(simulation.procList)
+    with pytest.raises(
+        RuntimeError,
+        match="An environment model must be added before the dynamics models",
+    ):
+        simulation.set_DynModel(dynamicsInput)
+    assert len(simulation.procList) == processCount
+    assert simulation.dynamics_added is False
+
+    simulation.set_EnvModel(environmentInput)
+    simulation.set_DynModel(dynamicsInput)
+    assert simulation.dynamics_added is True
+
+
 @pytest.mark.parametrize(
     "masterName, masterPath, dynClassName, fswClassName, numberSpacecraft",
     MASTER_CONFIGURATIONS,
