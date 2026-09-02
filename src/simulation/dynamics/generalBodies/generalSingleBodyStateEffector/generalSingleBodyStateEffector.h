@@ -171,6 +171,7 @@ private:
     std::string nameOfBetaDotState;
 
     void addDOF(std::shared_ptr<DOF> newDOF);
+    bool isDOFAdded(const std::shared_ptr<DOF>& newDOF) const;
 };
 
 #endif /* GENERAL_SINGLE_BODY_STATE_EFFECTOR_H */
