@@ -21,6 +21,8 @@
 #ifndef HINGEDRIGIDBODYMOTOR_H
 #define HINGEDRIGIDBODYMOTOR_H
 
+#include <cstdint>
+
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/msgPayloadDefC/HingedRigidBodyMsgPayload.h"
 #include "architecture/msgPayloadDefC/ArrayMotorTorqueMsgPayload.h"
@@ -30,7 +32,7 @@
 /** @brief Computes an ideal commanded hinge torque using a PD tracking law.
  *
  * The module uses sensed and reference hinge angles and angular rates to calculate a torque command.  It is an ideal
- * controller and does not model electromechanical motor dynamics or actuator limits.
+ * controller with optional symmetric torque saturation; it does not model electromechanical motor dynamics.
  */
 class HingedRigidBodyMotor: public SysModel {
 public:
@@ -44,6 +46,7 @@ public:
 
     double K;  //!< [N m/rad] proportional gain on hinge-angle tracking error
     double P;  //!< [N m s/rad] derivative gain on hinge-rate tracking error
+    double uMax;  //!< [N m] maximum torque magnitude; a negative value disables saturation
 
     ReadFunctor<HingedRigidBodyMsgPayload> hingedBodyStateSensedInMsg;  //!< sensed rigid body state (theta, theta dot)
     ReadFunctor<HingedRigidBodyMsgPayload> hingedBodyStateReferenceInMsg;  //!< reference hinged rigid body state (theta, theta dot)

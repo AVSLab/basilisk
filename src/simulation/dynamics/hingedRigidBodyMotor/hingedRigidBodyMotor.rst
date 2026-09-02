@@ -58,6 +58,9 @@ where
       - N m s/rad
       - Derivative gain on hinge-rate tracking error.  The name ``P`` is retained for API compatibility; it is the
         derivative gain commonly denoted by :math:`K_d` in PD-controller notation.
+    * - :math:`u_{\max}`
+      - N m
+      - Optional symmetric torque magnitude limit configured through ``uMax``.
 
 Thus, positive :math:`K` and :math:`P` produce a restoring torque that reduces the reference-tracking error.  Both gains
 must currently be assigned strictly positive values before the simulation initializes.  The constructor initializes
@@ -92,10 +95,19 @@ gains across the intended configurations and simulation time steps.
 Module Assumptions and Limitations
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The commanded torque is ideal and unsaturated.  This module does not model motor current, voltage, speed-torque curves,
-gearboxes, backlash, actuator dynamics, torque or rate limits, or thermal effects.  Large gains can therefore command
-unrealistic torques and can make the simulated dynamics numerically stiff.  Model those effects separately when they
-are important to the analysis.
+The optional ``uMax`` parameter applies a symmetric limit to the ideal controller output after evaluating the PD control
+law:
+
+.. math::
+
+    u_{\mathrm{out}} = \operatorname{clamp}(u, -u_{\max}, u_{\max}).
+
+Set ``uMax`` to the nonnegative maximum torque magnitude in N m.  A negative value disables saturation; the default is
+``uMax = -1.0`` N m.  In particular, ``uMax = 0`` commands zero torque.
+
+The limit does not model motor current, voltage, speed-torque curves, gearboxes, backlash, actuator dynamics, asymmetric
+torque limits, rate limits, or thermal effects.  Large gains can still make the simulated dynamics numerically stiff.
+Model those effects separately when they are important to the analysis.
 
 User Guide
 ----------
@@ -121,3 +133,4 @@ A sample setup is done using:
 
     testModule.K = 1.0  # [N m/rad] hinge-angle tracking gain
     testModule.P = 1.0  # [N m s/rad] hinge-rate tracking gain
+    testModule.uMax = 0.5  # [N m] optional symmetric torque limit
