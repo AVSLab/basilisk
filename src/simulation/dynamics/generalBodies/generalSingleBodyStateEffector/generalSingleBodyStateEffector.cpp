@@ -483,6 +483,30 @@ void GeneralSingleBodyStateEffector::updateEnergyMomContributions(double integTi
                                                                  Eigen::Vector3d & rotAngMomPntCContr_B,
                                                                  double & rotEnergyContr,
                                                                  Eigen::Vector3d omega_BN_B) {
+    // Update hub angular velocity
+    this->omega_BN_B = omega_BN_B;
+
+    // Rotational angular momentum contribution
+    Eigen::Matrix3d omegaTilde_BN_B = eigenTilde(this->omega_BN_B);
+    Eigen::Matrix3d dcm_GB = this->jointDOFList.at(this->numDOF - 1)->dcm_GB;
+    Eigen::Vector3d r_GcG_B = dcm_GB.transpose() * this->r_GcG_G;
+    Eigen::Vector3d r_GcB_B = r_GcG_B + this->r_GB_B;
+    Eigen::Matrix3d rTilde_GcG_B = eigenTilde(r_GcG_B);
+    Eigen::Vector3d rPrime_GcB_B = (transMap - rTilde_GcG_B * rotMap) * this->TMat * this->betaDot + transMap * this->TPrimeMat * this->beta;
+    Eigen::Vector3d rDot_GcB_B = rPrime_GcB_B + omegaTilde_BN_B * r_GcB_B;
+    Eigen::Matrix3d rTilde_GcB_B = eigenTilde(r_GcB_B);
+    Eigen::Vector3d omega_GB_B = rotMap * this->TMat * this->betaDot;
+    Eigen::Vector3d omega_GN_B = omega_GB_B + this->omega_BN_B;
+    Eigen::Matrix3d IPntGc_B = dcm_GB.transpose() * this->IPntGc_G * dcm_GB;
+    rotAngMomPntCContr_B = IPntGc_B * omega_GN_B + this->mass * rTilde_GcB_B * rDot_GcB_B;
+
+    // Rotational energy contribution
+    rotEnergyContr = 0.5 * omega_GN_B.dot(IPntGc_B * omega_GN_B)
+                     + 0.5 * this->mass * rDot_GcB_B.dot(rDot_GcB_B);
+    for (auto& dof : this->jointDOFList) {
+        double rotEnergy = 0.5 * dof->k * (dof->beta - dof->betaRef) * (dof->beta - dof->betaRef);
+        rotEnergyContr += rotEnergy;
+    }
 }
 
 void GeneralSingleBodyStateEffector::addRotDOF(std::shared_ptr<DOF> newDOF) {
