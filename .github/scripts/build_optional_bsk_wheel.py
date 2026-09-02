@@ -306,16 +306,38 @@ def normalize_compatible_version_field(
     differences.append(f"{path}: {base_version!r} versus {component_version!r}")
 
 
-def normalize_compatible_diagnostic_versions(
+def normalize_nonsemantic_diagnostic_field(
+    base_values: dict[str, object],
+    component_values: dict[str, object],
+    field: str,
+    path: str,
+    differences: list[str],
+) -> None:
+    """Normalize one diagnostic-only string and record its difference."""
+    base_value = base_values.get(field)
+    component_value = component_values.get(field)
+    if base_value == component_value:
+        return
+    if not isinstance(base_value, str) or not isinstance(component_value, str):
+        return
+
+    base_values[field] = "compatible-diagnostic-value"
+    component_values[field] = "compatible-diagnostic-value"
+    differences.append(f"{path}: {base_value!r} versus {component_value!r}")
+
+
+def normalize_compatible_diagnostics(
     base_build_info: dict[str, object],
     component_build_info: dict[str, object],
 ) -> list[str]:
-    """Normalize compatible patch/build differences in diagnostic versions.
+    """Normalize compatible differences in build diagnostics.
 
     Optional wheel inputs are built by independent GitHub runners. During a
     runner-image rollout, those machines can carry different patch releases of
-    otherwise compatible compilers and build tools. ABI-relevant metadata is
-    still compared exactly by :func:`validate_build_feature_metadata`.
+    otherwise compatible compilers and build tools. Compiler launchers only
+    wrap compiler invocation and can differ when optional caching is unavailable.
+    All other build metadata remains exact, and compiled ABI metadata is
+    validated separately by :func:`validate_build_abi_metadata`.
     """
     differences: list[str] = []
     base_diagnostics = base_build_info.get("diagnostics")
@@ -345,6 +367,13 @@ def normalize_compatible_diagnostic_versions(
                     f"diagnostics.compilers.{compiler_name}.{field}",
                     differences,
                 )
+            normalize_nonsemantic_diagnostic_field(
+                base_compiler,
+                component_compiler,
+                "launcher",
+                f"diagnostics.compilers.{compiler_name}.launcher",
+                differences,
+            )
 
     base_tools = base_diagnostics.get("tools")
     component_tools = component_diagnostics.get("tools")
@@ -361,15 +390,15 @@ def normalize_compatible_diagnostic_versions(
     return differences
 
 
-def warn_compatible_diagnostic_versions(differences: list[str]) -> None:
-    """Report compatible compiler and build-tool version differences."""
+def warn_compatible_build_metadata(differences: list[str]) -> None:
+    """Report compatible build-metadata differences."""
     if not differences:
         return
 
     details = "\n  ".join(differences)
     print(
-        "warning: base and component wheels use compatible patch/build "
-        "versions from independent runners:\n"
+        "warning: base and component wheels have compatible build-metadata "
+        "differences from independent runners:\n"
         f"  {details}",
         file=sys.stderr,
     )
@@ -518,7 +547,7 @@ def validate_build_feature_metadata(
     component_archive: zipfile.ZipFile,
     component: OptionalComponent,
 ) -> list[str]:
-    """Validate feature metadata and return compatible diagnostic revisions."""
+    """Validate feature metadata and return compatible diagnostic differences."""
     base_build_info = parse_build_info_data(base_archive.read(BUILD_INFO_DATA_PATH))
     component_build_info = parse_build_info_data(
         component_archive.read(BUILD_INFO_DATA_PATH)
@@ -552,7 +581,7 @@ def validate_build_feature_metadata(
         **component_features,
         component.build_feature: base_enabled,
     }
-    version_differences = normalize_compatible_diagnostic_versions(
+    diagnostic_differences = normalize_compatible_diagnostics(
         normalized_base_info,
         normalized_component_info,
     )
@@ -561,7 +590,7 @@ def validate_build_feature_metadata(
             f"{BUILD_INFO_DATA_PATH} differs between the base and component builds "
             f"beyond the expected {component.build_feature!r} feature value."
         )
-    return version_differences
+    return diagnostic_differences
 
 
 def validate_common_payloads(
@@ -578,7 +607,7 @@ def validate_common_payloads(
         raise ValueError(
             f"Both wheel build inputs must contain {BUILD_INFO_DATA_PATH}."
         )
-    version_differences = validate_build_feature_metadata(
+    compatible_differences = validate_build_feature_metadata(
         base_archive,
         component_archive,
         component,
@@ -591,10 +620,10 @@ def validate_common_payloads(
             "either input provides it."
         )
     if base_has_abi_data:
-        version_differences.extend(
+        compatible_differences.extend(
             validate_build_abi_metadata(base_archive, component_archive)
         )
-    warn_compatible_diagnostic_versions(version_differences)
+    warn_compatible_build_metadata(compatible_differences)
 
     changed = []
     for name in sorted(base_payload & component_payload):
