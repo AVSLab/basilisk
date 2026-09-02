@@ -34,6 +34,8 @@ LinearTranslationNDOFStateEffector::LinearTranslationNDOFStateEffector()
 
     this->nameOfRhoState = "translatingBodyRho" + std::to_string(LinearTranslationNDOFStateEffector::effectorID);
     this->nameOfRhoDotState = "translatingBodyRhoDot" + std::to_string(LinearTranslationNDOFStateEffector::effectorID);
+    // preserves the effectorID for bodies added later
+    this->propertyNameIndex = std::to_string(LinearTranslationNDOFStateEffector::effectorID);
     LinearTranslationNDOFStateEffector::effectorID++;
 }
 
@@ -102,6 +104,12 @@ void LinearTranslationNDOFStateEffector::addTranslatingBody(const std::shared_pt
     this->ARho.conservativeResize(this->ARho.rows()+1, 3);
     this->BRho.conservativeResize(this->BRho.rows()+1, 3);
     this->CRho.conservativeResize(this->CRho.rows()+1);
+
+    const std::string bodySuffix = this->propertyNameIndex + "_" + std::to_string(this->N);
+    newBody->nameOfInertialPositionProperty = "linearTranslationInertialPosition" + bodySuffix;
+    newBody->nameOfInertialVelocityProperty = "linearTranslationInertialVelocity" + bodySuffix;
+    newBody->nameOfInertialAttitudeProperty = "linearTranslationInertialAttitude" + bodySuffix;
+    newBody->nameOfInertialAngVelocityProperty = "linearTranslationInertialAngVelocity" + bodySuffix;
 }
 
 /*! This method is used to get a translating body. */
@@ -171,8 +179,8 @@ void LinearTranslationNDOFStateEffector::writeOutputStateMessages(uint64_t Curre
             // Logging the F frame is the body frame B of that object
             eigenVector3d2CArray(translatingBody->r_FcN_N, configLogMsg.r_BN_N);
             eigenVector3d2CArray(translatingBody->v_FcN_N, configLogMsg.v_BN_N);
-            eigenMRPd2CArray(translatingBody->sigma_FN, configLogMsg.sigma_BN);
-            eigenVector3d2CArray(translatingBody->omega_FN_F, configLogMsg.omega_BN_B);
+            eigenMatrixXd2CArray(*translatingBody->sigma_FN, configLogMsg.sigma_BN);
+            eigenMatrixXd2CArray(*translatingBody->omega_FN_F, configLogMsg.omega_BN_B);
             this->translatingBodyConfigLogOutMsgs[i]->write(&configLogMsg, this->moduleID, CurrentClock);
         }
 
@@ -274,7 +282,25 @@ void LinearTranslationNDOFStateEffector::registerStates(DynParamManager& states)
     this->rhoState->setState(RhoInitMatrix);
     this->rhoDotState->setState(RhoDotInitMatrix);
 
+    this->registerProperties(states);
     this->validateConfiguration();
+}
+
+/*! This method registers each translating body's inertial properties with the dynamic parameter
+ manager and links them into dependent dynamic effectors
+
+ @param states the dynamic parameter manager holding the published properties */
+void
+LinearTranslationNDOFStateEffector::registerProperties(DynParamManager& states)
+{
+    const Eigen::Vector3d stateInit = Eigen::Vector3d::Zero();
+    for (auto& translatingBody : this->translatingBodyVec) {
+        translatingBody->r_FN_N = states.createProperty(translatingBody->nameOfInertialPositionProperty, stateInit);
+        translatingBody->v_FN_N = states.createProperty(translatingBody->nameOfInertialVelocityProperty, stateInit);
+        translatingBody->sigma_FN = states.createProperty(translatingBody->nameOfInertialAttitudeProperty, stateInit);
+        translatingBody->omega_FN_F =
+          states.createProperty(translatingBody->nameOfInertialAngVelocityProperty, stateInit);
+    }
 }
 
 /*! This method allows the TB state effector to provide its contributions to the mass props and mass prop rates of the
@@ -554,13 +580,18 @@ void LinearTranslationNDOFStateEffector::computeTranslatingBodyInertialStates()
     for(auto& translatingBody: this->translatingBodyVec) {
         // Compute the rotational properties, noting that F does not rotate relative to B
         const Eigen::Matrix3d dcm_FN = translatingBody->dcm_FB * this->dcm_BN;
-        translatingBody->sigma_FN = eigenC2MRP(dcm_FN);
-        translatingBody->omega_FN_F = translatingBody->dcm_FB * this->omega_BN_B;
+        *translatingBody->sigma_FN = eigenC2MRP(dcm_FN).coeffs();
+        *translatingBody->omega_FN_F = translatingBody->dcm_FB * this->omega_BN_B;
 
-        // Compute the translation properties of the center of mass Fc
+        // Compute the translation properties of the center of mass Fc and of the frame origin F
         translatingBody->rDot_FcB_B = translatingBody->rPrime_FcB_B + this->omega_BN_B.cross(translatingBody->r_FcB_B);
         translatingBody->r_FcN_N = r_BN_N + this->dcm_BN.transpose() * translatingBody->r_FcB_B;
         translatingBody->v_FcN_N = v_BN_N + this->dcm_BN.transpose() * translatingBody->rDot_FcB_B;
+
+        *translatingBody->r_FN_N = r_BN_N + this->dcm_BN.transpose() * translatingBody->r_FB_B;
+        *translatingBody->v_FN_N =
+          v_BN_N +
+          this->dcm_BN.transpose() * (translatingBody->rPrime_FB_B + this->omega_BN_B.cross(translatingBody->r_FB_B));
     }
 }
 

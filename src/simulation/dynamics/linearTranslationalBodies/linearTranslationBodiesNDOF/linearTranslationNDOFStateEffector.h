@@ -125,8 +125,15 @@ private:
     // Inertial properties
     Eigen::Vector3d r_FcN_N = Eigen::Vector3d::Zero();      //!< [m] position vector of translating body's center of mass Fc relative to the inertial frame origin N
     Eigen::Vector3d v_FcN_N = Eigen::Vector3d::Zero();      //!< [m/s] inertial velocity vector of Fc relative to inertial frame
-    Eigen::MRPd sigma_FN{0.0, 0.0, 0.0};                    //!< -- MRP attitude of frame F relative to inertial frame
-    Eigen::Vector3d omega_FN_F = Eigen::Vector3d::Zero();   //!< [rad/s] inertial translating body frame angular velocity vector
+    Eigen::MatrixXd* r_FN_N = nullptr;      //!< [m] position vector of the translating frame F origin relative to the inertial frame origin N
+    Eigen::MatrixXd* v_FN_N = nullptr;      //!< [m/s] inertial velocity vector of F relative to inertial frame
+    Eigen::MatrixXd* sigma_FN = nullptr;    //!< -- MRP attitude of frame F relative to inertial frame
+    Eigen::MatrixXd* omega_FN_F = nullptr;  //!< [rad/s] inertial translating body frame angular velocity vector
+
+    std::string nameOfInertialPositionProperty;    //!< -- identifier for the inertial position property
+    std::string nameOfInertialVelocityProperty;    //!< -- identifier for the inertial velocity property
+    std::string nameOfInertialAttitudeProperty;    //!< -- identifier for the inertial attitude property
+    std::string nameOfInertialAngVelocityProperty; //!< -- identifier for the inertial angular velocity property
 
     BSKLogger bskLogger;
 };
@@ -180,6 +187,7 @@ private:
     StateData* hubSigmaState = nullptr; //!< hub attitude state, read live for the published kinematics
     std::string nameOfRhoState;        //!< -- identifier for the rho state data container
     std::string nameOfRhoDotState;     //!< -- identifier for the rhoDot state data container
+    std::string propertyNameIndex;     //!< -- effector identifier used to name the per body properties
 
     // module functions
     void Reset(uint64_t CurrentClock) final;
@@ -187,6 +195,7 @@ private:
     void writeOutputStateMessages(uint64_t CurrentClock) final;
     void UpdateState(uint64_t CurrentSimNanos) final;
     void registerStates(DynParamManager& statesIn) final;
+    void registerProperties(DynParamManager& states) final;
     void linkInStates(DynParamManager& states) final;
     void updateContributions(double integTime,
                              BackSubMatrices& backSubContr,
