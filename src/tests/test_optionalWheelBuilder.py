@@ -76,13 +76,27 @@ def _buildInfoData(opNavEnabled, *, schemaVersion=4, diagnostics=None):
     return f"buildInfoData = {buildInfo!r}\n".encode("utf-8")
 
 
-def _windowsBuildDiagnostics(msvcVersion, rustVersion, cargoVersion):
+def _windowsBuildDiagnostics(
+    msvcVersion,
+    rustVersion,
+    cargoVersion,
+    compilerLauncher="",
+):
     return {
         "target": {"system": "Windows", "processor": "AMD64"},
         "build": {"configuration": "Release", "generator": "Ninja"},
         "compilers": {
-            "c": {"id": "MSVC", "version": msvcVersion},
-            "cxx": {"id": "MSVC", "version": msvcVersion, "standard": "17"},
+            "c": {
+                "id": "MSVC",
+                "version": msvcVersion,
+                "launcher": compilerLauncher,
+            },
+            "cxx": {
+                "id": "MSVC",
+                "version": msvcVersion,
+                "launcher": compilerLauncher,
+                "standard": "17",
+            },
             "rust": {
                 "id": "rustc",
                 "version": rustVersion,
@@ -187,7 +201,7 @@ def test_patch_build_tool_version_differences_warn(capsys):
             )
 
     warning = capsys.readouterr().err
-    assert "compatible patch/build versions" in warning
+    assert "compatible build-metadata differences" in warning
     assert "19.51.36252.0" in warning
     assert "19.51.36248.0" in warning
     assert "1.97.1" in warning
@@ -221,7 +235,7 @@ def test_patch_abi_compiler_version_differences_warn(capsys):
             )
 
     warning = capsys.readouterr().err
-    assert "compatible patch/build versions" in warning
+    assert "compatible build-metadata differences" in warning
     assert "195136252" in warning
     assert "195136248" in warning
     assert "patchVersion: 0 versus 1" in warning
@@ -256,6 +270,40 @@ def test_abi_layout_difference_fails():
                     payload,
                     component,
                 )
+
+
+def test_compiler_launcher_differences_warn(capsys):
+    """Compiler-cache availability differs without changing compatibility."""
+    payload = {WHEEL_BUILDER.BUILD_INFO_DATA_PATH}
+    component = WHEEL_BUILDER.COMPONENTS["opnav"]
+    baseData = _buildInfoData(
+        False,
+        diagnostics=_windowsBuildDiagnostics("19.51.1", "1.97.1", "1.97.1"),
+    )
+    componentData = _buildInfoData(
+        True,
+        diagnostics=_windowsBuildDiagnostics(
+            "19.51.1",
+            "1.97.1",
+            "1.97.1",
+            compilerLauncher="sccache",
+        ),
+    )
+
+    with _buildInfoArchive(baseData) as baseArchive:
+        with _buildInfoArchive(componentData) as componentArchive:
+            WHEEL_BUILDER.validate_common_payloads(
+                baseArchive,
+                componentArchive,
+                payload,
+                payload,
+                component,
+            )
+
+    warning = capsys.readouterr().err
+    assert "compatible build-metadata differences" in warning
+    assert "diagnostics.compilers.c.launcher: '' versus 'sccache'" in warning
+    assert "diagnostics.compilers.cxx.launcher: '' versus 'sccache'" in warning
 
 
 def test_build_tool_minor_version_difference_fails():
