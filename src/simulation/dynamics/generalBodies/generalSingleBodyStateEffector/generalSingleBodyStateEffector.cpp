@@ -71,6 +71,11 @@ void GeneralSingleBodyStateEffector::updateEnergyMomContributions(double integTi
 }
 
 void GeneralSingleBodyStateEffector::addRotDOF(std::shared_ptr<DOF> newDOF) {
+    if (this->numRotDOF >= 3) {
+        bskLogger.bskError("General body rotational degrees of freedom cannot exceed 3.");
+    }
+
+    this->numRotDOF++;
     this->numDOF++;
     newDOF->type = DOF::Type::ROTATION;
     newDOF->index = this->numDOF - 1;
@@ -91,6 +96,11 @@ void GeneralSingleBodyStateEffector::addRotDOF(std::shared_ptr<DOF> newDOF) {
 }
 
 void GeneralSingleBodyStateEffector::addTransDOF(std::shared_ptr<DOF> newDOF) {
+    if (this->numTransDOF >= 3) {
+        bskLogger.bskError("General body translational degrees of freedom cannot exceed 3.");
+    }
+
+    this->numTransDOF++;
     this->numDOF++;
     newDOF->type = DOF::Type::TRANSLATION;
     newDOF->index = this->numDOF - 1;
