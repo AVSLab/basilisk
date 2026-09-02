@@ -97,6 +97,11 @@ void FacetSRPDynamicEffector::addArticulatedFacet(Message<HingedRigidBodyMsgPayl
     this->articulatedFacetDataInMsgs.push_back(tmpMsg->addSubscriber());
 }
 
+/*! This is the constructor, marking the effector as attachable to a state effector */
+FacetSRPDynamicEffector::FacetSRPDynamicEffector() {
+    this->isAttachableToStateEffector = true;
+}
+
 /*! This method gives the module access to the hub inertial attitude and position.
 
  @param states Dynamic parameter states
@@ -104,6 +109,16 @@ void FacetSRPDynamicEffector::addArticulatedFacet(Message<HingedRigidBodyMsgPayl
 void FacetSRPDynamicEffector::linkInStates(DynParamManager& states) {
     this->hubSigma = states.getStateObject(this->stateNameOfSigma);
     this->hubPosition = states.getStateObject(this->stateNameOfPosition);
+    this->validateConfiguration();
+}
+
+/*! This method gives the module access to its parent state effector's inertial properties.
+
+ @param properties Dynamic parameter properties
+*/
+void FacetSRPDynamicEffector::linkInProperties(DynParamManager& properties) {
+    this->inertialAttitudeProperty = properties.getPropertyReference(this->propName_inertialAttitude);
+    this->inertialPositionProperty = properties.getPropertyReference(this->propName_inertialPosition);
     this->validateConfiguration();
 }
 
@@ -148,12 +163,17 @@ void FacetSRPDynamicEffector::computeForceTorque(double callTime [[maybe_unused]
     // Read the input messages
     ReadMessages();
 
-    // Compute dcm_BN
-    Eigen::MRPd sigma_BN(this->hubSigma->getState().data());
+    // the hub state names are assigned only when attached to the hub
+    Eigen::MRPd sigma_BN;
+    Eigen::Vector3d r_BN_N;
+    if (!this->stateNameOfSigma.empty()) {
+        sigma_BN = Eigen::MRPd(this->hubSigma->getState().data());
+        r_BN_N = this->hubPosition->getState();
+    } else {
+        sigma_BN = Eigen::MRPd(this->inertialAttitudeProperty->data());
+        r_BN_N = *this->inertialPositionProperty;
+    }
     Eigen::Matrix3d dcm_BN = sigma_BN.toRotationMatrix().transpose();
-
-    // Grab the current spacecraft inertial position
-    Eigen::Vector3d r_BN_N = this->hubPosition->getState();
 
     // Calculate the Sun unit direction vector relative to point B in B frame components
     Eigen::Vector3d r_SB_B = dcm_BN * (this->r_SN_N - r_BN_N);
