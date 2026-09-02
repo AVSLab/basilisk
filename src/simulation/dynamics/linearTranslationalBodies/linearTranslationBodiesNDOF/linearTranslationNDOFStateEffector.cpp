@@ -260,8 +260,8 @@ LinearTranslationNDOFStateEffector::checkJointMassMatrix()
     this->computeMRho(MRho);
     if (Eigen::FullPivLU<Eigen::MatrixXd>(MRho).rank() < this->N) {
         bskLogger.bskError("LinearTranslationNDOFStateEffector: the translating body masses and axes leave the joint "
-                           "mass matrix singular. The outermost body must carry mass, and a massless body's axis must "
-                           "be independent of the axes outboard of it.");
+                           "mass matrix singular because at least one nonzero combination of joint rates leaves every "
+                           "mass-bearing body stationary.");
     }
 }
 
