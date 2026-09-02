@@ -127,21 +127,16 @@ void FacetSRPDynamicEffector::ReadMessages() {
     }
 
     // Read the facet articulation angle data
-    if (this->articulatedFacetDataInMsgs.size() == this->numArticulatedFacets) {
-        HingedRigidBodyMsgPayload facetAngleMsg;
-        this->facetArticulationAngleList.clear();
-        for (uint64_t i = 0; i < this->numArticulatedFacets; i++) {
-            if (this->articulatedFacetDataInMsgs[i].isLinked() && this->articulatedFacetDataInMsgs[i].isWritten()) {
-                    facetAngleMsg = this->articulatedFacetDataInMsgs[i]();
-                    this->facetArticulationAngleList.push_back(facetAngleMsg.theta);
-                    this->facetAngleMsgRead = true;
-                } else {
-                this->facetAngleMsgRead = false;
-            }
+    HingedRigidBodyMsgPayload facetAngleMsg;
+    this->facetArticulationAngleList.clear();
+    for (uint64_t i = 0; i < this->numArticulatedFacets; i++) {
+        if (this->articulatedFacetDataInMsgs[i].isLinked() && this->articulatedFacetDataInMsgs[i].isWritten()) {
+            facetAngleMsg = this->articulatedFacetDataInMsgs[i]();
+            this->facetArticulationAngleList.push_back(facetAngleMsg.theta);
         }
-    } else {
-        bskLogger.bskError("NUMBER OF ARTICULATED FACETS DOES NOT MATCH COUNTED VALUE.");
     }
+    // a partial read would shift the angles off their facets
+    this->facetAngleMsgRead = (this->facetArticulationAngleList.size() == this->numArticulatedFacets);
 }
 
 /*! This method computes the srp force and torque acting about the hub point B in B frame components.

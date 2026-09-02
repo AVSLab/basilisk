@@ -392,6 +392,77 @@ def test_facetSRPFacetCountValidation(numFacets, numArticulatedFacets, numArticu
         unitTestSim.InitializeSimulation()
 
 
+def test_facetSRPPartialArticulationRead():
+    """
+    Verify that a partial articulation message read leaves every facet unarticulated.
+
+    The angle list is indexed by facet, so reading only some of the articulation messages once
+    shortened the list and shifted every remaining angle onto the wrong facet before running off
+    its end. Two articulated facets are declared and only the second message is written, carrying a
+    right angle that would swing whichever facet received it out of the sunlight. The resulting load
+    is compared against an otherwise identical effector that declares no articulation at all, which
+    the two must match because neither facet may articulate on an incomplete read.
+    """
+    def runCase(numArticulatedFacets, writeFirstMessage):
+        scObject = spacecraft.Spacecraft()
+        scObject.ModelTag = "spacecraftBody"
+        scObject.hub.mHub = 750.0  # [kg]
+        scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]  # [kg*m^2]
+        scObject.hub.r_CN_NInit = [[7000.0e3], [0.0], [0.0]]  # [m]
+
+        srpEffector = facetSRPDynamicEffector.FacetSRPDynamicEffector()
+        srpEffector.ModelTag = "srpEffector"
+        srpEffector.setNumFacets(2)
+        srpEffector.setNumArticulatedFacets(numArticulatedFacets)
+
+        sunMsgData = messaging.SpicePlanetStateMsgPayload()
+        sunMsgData.PositionVector = [0.0, 149597870700.0, 0.0]  # [m]
+        srpEffector.sunInMsg.subscribeTo(messaging.SpicePlanetStateMsg().write(sunMsgData))
+
+        angleMsgData = messaging.HingedRigidBodyMsgPayload()
+        angleMsgData.theta = macros.D2R * 90.0  # [rad]
+        angleMsgs = []  # the effector only stores a subscriber, so the messages must outlive this scope
+        for index in range(numArticulatedFacets):
+            msg = messaging.HingedRigidBodyMsg()
+            if index > 0 or writeFirstMessage:
+                msg.write(angleMsgData)
+            angleMsgs.append(msg)
+            srpEffector.addArticulatedFacet(msg)
+
+        for _ in range(2):
+            srpEffector.addFacet(10.0,  # [m^2]
+                                 np.identity(3),
+                                 np.array([0.0, 1.0, 0.0]),
+                                 np.array([1.0, 0.0, 0.0]),
+                                 np.array([0.0, 0.0, 0.3]),  # [m]
+                                 0.2,
+                                 0.6)
+        scObject.addDynamicEffector(srpEffector)
+
+        unitTestSim = SimulationBaseClass.SimBaseClass()
+        unitTestSim.SetProgressBar(False)
+        unitTestSim.CreateNewProcess("TestProcess").addTask(
+            unitTestSim.CreateNewTask("unitTask", macros.sec2nano(0.01)))
+        unitTestSim.AddModelToTask("unitTask", srpEffector)
+        unitTestSim.AddModelToTask("unitTask", scObject)
+        unitTestSim.InitializeSimulation()
+        unitTestSim.ConfigureStopTime(macros.sec2nano(0.02))
+        unitTestSim.ExecuteSimulation()
+        srpEffector.computeForceTorque(0.0, 0.0)  # [s]
+        return np.array(srpEffector.forceExternal_B).flatten()
+
+    partialRead = runCase(2, False)
+    unarticulated = runCase(0, False)
+    fullRead = runCase(2, True)
+
+    accuracy = 1e-16  # [N]
+    assert not np.allclose(fullRead, unarticulated, rtol=0.0, atol=accuracy), (
+        "the articulation angle must change the load, or this test cannot detect a misassignment")
+    np.testing.assert_allclose(
+        partialRead, unarticulated, rtol=0.0, atol=accuracy,
+        err_msg="an incomplete articulation read articulated a facet from another facet's angle")
+
+
 def computeFacetSRPForceTorque(index,
                                facetRotAngle1,
                                facetRotAngle2,
