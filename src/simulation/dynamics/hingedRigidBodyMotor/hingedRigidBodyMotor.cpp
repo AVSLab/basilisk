@@ -19,15 +19,14 @@
 
 
 #include "simulation/dynamics/hingedRigidBodyMotor/hingedRigidBodyMotor.h"
-#include <iostream>
+#include <algorithm>
 
-/*! This is the constructor for the module class.  It sets default variable
-    values and initializes the various parts of the model */
+/** @brief Constructs a hinged rigid body motor controller with torque saturation disabled. */
 HingedRigidBodyMotor::HingedRigidBodyMotor()
 {
-    //! zero values will lead to zero outputs
-    this->K = 0.0;
-    this->P = 0.0;
+    this->K = 0.0;  // [N m/rad]
+    this->P = 0.0;  // [N m s/rad]
+    this->uMax = -1.0;  // [N m] negative values disable torque saturation
 }
 
 /*! Module Destructor */
@@ -35,9 +34,9 @@ HingedRigidBodyMotor::~HingedRigidBodyMotor()
 {
 }
 
-/*! This method is used to reset the module and checks that required input messages are connect.
-
-*/
+/** @brief Checks that required input messages and controller gains are configured.
+ * @param CurrentSimNanos [ns] Current simulation time; unused during reset.
+ */
 void HingedRigidBodyMotor::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     //! check that required input messages are connected
@@ -54,17 +53,17 @@ void HingedRigidBodyMotor::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 }
 
 
-/*! This is the main method that gets called every time the module is updated.  It calculates a motor torque on a hinged rigid body using a simple PD control law.
-
-*/
+/** @brief Calculates and limits the commanded hinge torque.
+ * @param CurrentSimNanos [ns] Current simulation time.
+ */
 void HingedRigidBodyMotor::UpdateState(uint64_t CurrentSimNanos)
 {
     //! local variables
-    double sensedTheta;
-    double sensedThetaDot;
-    double refTheta;
-    double refThetaDot;
-    double torque;
+    double sensedTheta;  // [rad]
+    double sensedThetaDot;  // [rad/s]
+    double refTheta;  // [rad]
+    double refThetaDot;  // [rad/s]
+    double torque;  // [N m]
 
     HingedRigidBodyMsgPayload hingedBodyStateSensedInMsgBuffer;  //!< local copy of message buffer for reference
     HingedRigidBodyMsgPayload hingedBodyStateReferenceInMsgBuffer;  //!< local copy of message buffer for measurement
@@ -84,7 +83,10 @@ void HingedRigidBodyMotor::UpdateState(uint64_t CurrentSimNanos)
     refThetaDot = hingedBodyStateReferenceInMsgBuffer.thetaDot;
 
     //! calculate motor torque
-    torque = -1 * this->K * (sensedTheta - refTheta) - this->P * (sensedThetaDot - refThetaDot);
+    torque = this->K * (refTheta - sensedTheta) + this->P * (refThetaDot - sensedThetaDot);
+    if (this->uMax >= 0.0) {
+        torque = std::clamp(torque, -this->uMax, this->uMax);
+    }
     motorTorqueOutMsgBuffer.motorTorque[0] = torque;
 
     //! write to the output messages

@@ -1,1 +1,2 @@
 - Clarified that :ref:`hingedRigidBodyMotor` is an ideal PD torque controller, documented the meaning and units of its ``K`` and ``P`` gains, and distinguished them from passive joint stiffness and damping.
+- Added optional symmetric torque saturation to :ref:`hingedRigidBodyMotor` through the ``uMax`` parameter.
