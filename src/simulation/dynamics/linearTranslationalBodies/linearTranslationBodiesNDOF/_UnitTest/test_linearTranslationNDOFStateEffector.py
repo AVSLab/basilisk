@@ -225,20 +225,31 @@ def test_translatingBodyDynamicEffectorSegmentBounds(segment, shouldRaise):
         effector.addDynamicEffector(child, segment)
 
 
-# axis and mass [kg] of each body in the chain, outward from the hub. A body given no mass keeps the
-# zero default, since the setter rejects a non-positive mass, and is given a zero inertia to match.
+def test_translatingBodyMassSetterBoundary():
+    """Verify that the mass setter accepts zero and rejects a negative mass."""
+    body = linearTranslationNDOFStateEffector.TranslatingBody()
+    body.setMass(1.0)  # [kg]
+    body.setMass(0.0)  # [kg]
+    assert body.getMass() == 0.0
+
+    with pytest.raises(BasiliskError, match="greater than or equal to 0"):
+        body.setMass(-1.0)  # [kg]
+
+
+# Axis and mass [kg] of each body in the chain, outward from the hub. A massless body is given zero
+# mass and zero inertia explicitly.
 X_AXIS = [[1.0], [0.0], [0.0]]
 Y_AXIS = [[0.0], [1.0], [0.0]]
 Z_AXIS = [[0.0], [0.0], [1.0]]
 XY_AXIS = [[1.0], [1.0], [0.0]]
 VALIDATION_CHAINS = {
     'Valid': [(20.0, X_AXIS), (15.0, Y_AXIS)],
-    'MasslessJoint': [(None, X_AXIS), (20.0, Y_AXIS)],
-    'MasslessChain': [(None, X_AXIS), (None, Y_AXIS), (20.0, Z_AXIS)],
-    'MasslessOutermost': [(20.0, X_AXIS), (None, Y_AXIS)],
-    'CollinearMassless': [(None, X_AXIS), (20.0, X_AXIS)],
+    'MasslessJoint': [(0.0, X_AXIS), (20.0, Y_AXIS)],
+    'MasslessChain': [(0.0, X_AXIS), (0.0, Y_AXIS), (20.0, Z_AXIS)],
+    'MasslessOutermost': [(20.0, X_AXIS), (0.0, Y_AXIS)],
+    'CollinearMassless': [(0.0, X_AXIS), (20.0, X_AXIS)],
     # pairwise independent axes that collectively span only two dimensions
-    'CoplanarMassless': [(None, X_AXIS), (None, Y_AXIS), (20.0, XY_AXIS)],
+    'CoplanarMassless': [(0.0, X_AXIS), (0.0, Y_AXIS), (20.0, XY_AXIS)],
     'NoBodies': [],
     'SkewedDCM': [(20.0, X_AXIS), (15.0, Y_AXIS)],
     'AsymmetricInertia': [(20.0, X_AXIS), (15.0, Y_AXIS)],
@@ -306,9 +317,8 @@ def test_translatingBodyConfigurationValidation(chain, shouldRaise, scheduleEffe
     effector = linearTranslationNDOFStateEffector.LinearTranslationNDOFStateEffector()
     for mass, fHat_P in VALIDATION_CHAINS[chain]:
         body = linearTranslationNDOFStateEffector.TranslatingBody()
-        if mass is not None:
-            body.setMass(mass)  # [kg]
-        else:
+        body.setMass(mass)  # [kg]
+        if mass == 0.0:
             body.setIPntFc_F([[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]])  # [kg*m^2]
         if chain == 'SkewedDCM':
             body.setDCM_FP([[1.0, 0.1, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
