@@ -40,6 +40,7 @@ from Basilisk.utilities import orbitalMotion
 from Basilisk.simulation import facetSRPDynamicEffector
 from Basilisk.simulation import spacecraft
 from Basilisk.architecture import messaging
+from Basilisk.architecture.bskLogging import BasiliskError
 
 # Vary the articulated facet initial angles and eclipse illumination factor
 @pytest.mark.parametrize("facetRotAngle1", [macros.D2R * -10.4, macros.D2R * 45.2, macros.D2R * 90.0, macros.D2R * 180.0])
@@ -305,6 +306,91 @@ def test_facetSRPDynamicEffector(show_plots, facetRotAngle1, facetRotAngle2, ecl
                                    srpTorque_BTruth[idx],
                                    atol=1e-12,
                                    verbose=True)
+
+@pytest.mark.parametrize("scheduleEffector", [True, False])
+@pytest.mark.parametrize("numFacets, numArticulatedFacets, numArticulationMsgs, shouldRaise", [
+    (2, 0, 0, False),
+    (2, 2, 2, False),
+    (3, 0, 0, True),
+    (1, 0, 0, True),
+    (2, 3, 3, True),
+    (2, 2, 1, True),
+])
+def test_facetSRPFacetCountValidation(numFacets, numArticulatedFacets, numArticulationMsgs, shouldRaise,
+                                      scheduleEffector):
+    """
+    Verify that initialization rejects a facet count that does not match the facets added.
+
+    The force loop walks the geometry lists by the declared facet count rather than by their own
+    size, so a count larger than the facets added indexes past the end of every list and a count
+    smaller silently drops the trailing facets. Neither raised, and the resulting load was wrong
+    without any indication. This is asserted as an error at initialization rather than as a
+    tolerance on a load, because the over-declared case is undefined behavior whose observed effect
+    is not stable. Two facets are always added, so the declared count is what varies.
+
+    **Test Parameters:**
+
+    - numFacets: [int]
+        facet count passed to ``setNumFacets``
+    - numArticulatedFacets: [int]
+        articulated facet count passed to ``setNumArticulatedFacets``
+    - numArticulationMsgs: [int]
+        number of articulation messages added by ``addArticulatedFacet``
+    - shouldRaise: [bool]
+        whether initialization must reject the configuration
+    - scheduleEffector: [bool]
+        whether the effector is added to the task in addition to the spacecraft
+
+    The scheduling parameter matters because the checks must not depend on it. Spacecraft
+    initialization calls ``linkInStates()`` on every attached dynamic effector, and a branching
+    parent calls ``linkInProperties()``, but neither calls ``Reset()``, which runs only for a module
+    added to a task.
+    """
+    scObject = spacecraft.Spacecraft()
+    scObject.ModelTag = "spacecraftBody"
+    scObject.hub.mHub = 750.0  # [kg]
+    scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]  # [kg*m^2]
+
+    srpEffector = facetSRPDynamicEffector.FacetSRPDynamicEffector()
+    srpEffector.ModelTag = "srpEffector"
+    srpEffector.setNumFacets(numFacets)
+    srpEffector.setNumArticulatedFacets(numArticulatedFacets)
+
+    sunMsgData = messaging.SpicePlanetStateMsgPayload()
+    sunMsgData.PositionVector = [0.0, 149597870700.0, 0.0]  # [m]
+    srpEffector.sunInMsg.subscribeTo(messaging.SpicePlanetStateMsg().write(sunMsgData))
+
+    angleMsgData = messaging.HingedRigidBodyMsgPayload()
+    angleMsgData.theta = macros.D2R * 10.0  # [rad]
+    angleMsgs = []  # the effector only stores a subscriber, so the messages must outlive this scope
+    for _ in range(numArticulationMsgs):
+        angleMsgs.append(messaging.HingedRigidBodyMsg().write(angleMsgData))
+        srpEffector.addArticulatedFacet(angleMsgs[-1])
+
+    for _ in range(2):
+        srpEffector.addFacet(10.0,  # [m^2]
+                             np.identity(3),
+                             np.array([0.0, 1.0, 0.0]),
+                             np.array([1.0, 0.0, 0.0]),
+                             np.array([0.0, 0.0, 0.3]),  # [m]
+                             0.2,
+                             0.6)
+    scObject.addDynamicEffector(srpEffector)
+
+    unitTestSim = SimulationBaseClass.SimBaseClass()
+    unitTestSim.SetProgressBar(False)
+    unitTestSim.CreateNewProcess("TestProcess").addTask(
+        unitTestSim.CreateNewTask("unitTask", macros.sec2nano(0.01)))
+    if scheduleEffector:
+        unitTestSim.AddModelToTask("unitTask", srpEffector)
+    unitTestSim.AddModelToTask("unitTask", scObject)
+
+    if shouldRaise:
+        with pytest.raises(BasiliskError):
+            unitTestSim.InitializeSimulation()
+    else:
+        unitTestSim.InitializeSimulation()
+
 
 def computeFacetSRPForceTorque(index,
                                facetRotAngle1,
