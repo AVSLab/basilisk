@@ -104,7 +104,7 @@ FINE_TIMESTEP = 0.0005  # [s]
     # ("dragEffector",                False),
     ("facetDragDynamicEffector",  True),
     # ("radiationPressure",           False),
-    # ("facetSRPDynamicEffector",     False),
+    ("facetSRPDynamicEffector",   True),
     # ("MtbEffector",                 False),
     ("multiEffector",             True),
 ])
@@ -239,10 +239,13 @@ def test_effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dy
     :math:`i` segments. The sim 'truth' :math:`{}^{\mathcal{N}}\!\Delta v_{accum,C}` is logged from
     the spacecraft module.
 
-    For the :ref:`facetDragDynamicEffector` cases, the force and torque are also recomputed from
-    the parent segment's inertial attitude and velocity properties. The parent segment frames are
+    For the :ref:`facetDragDynamicEffector` and :ref:`facetSRPDynamicEffector` cases, the force
+    and torque are also recomputed from the parent segment's inertial properties, the attitude and
+    velocity for drag and the attitude and position for SRP. The parent segment frames are
     intentionally offset from the hub frame, so this comparison detects use of the hub kinematics
-    or an incorrect parent-to-inertial frame transformation.
+    or an incorrect parent-to-inertial frame transformation. The SRP case places the Sun close
+    enough that the parent's offset from the hub moves the load, which one astronomical unit
+    cannot, and checks the attitude and the position against the hub's one at a time.
     """
 
     coarseResidual = effectorBranchingIntegratedTest(show_plots, stateEffector, isParent,
@@ -434,6 +437,8 @@ def effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dynamic
         dynamicEff, thFactory = setup_thrusterDynamicEffector()
     elif dynamicEffector == "facetDragDynamicEffector":
         dynamicEff, facetProps = setup_facetDragDynamicEffector()
+    elif dynamicEffector == "facetSRPDynamicEffector":
+        dynamicEff, srpProps = setup_facetSRPDynamicEffector()
     elif dynamicEffector == "constraintEffectorOneHub":
         dynamicEff, scObjectx = setup_constraintEffectorOneHub(scObject, stateEffProps)
         unitTestSim.AddModelToTask("unitTask", scObjectx)
@@ -563,6 +568,37 @@ def effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dynamic
             np.array(dynamicEff.torqueExternalPntB_B).flatten(), expectedTorque_P,
             rtol=0.0, atol=torque_accuracy,
             err_msg="FAILED: branched facet drag moment was not taken about the parent frame origin")
+
+    if dynamicEffector == "facetSRPDynamicEffector":
+        sigma_PN = np.array(scObject.dynManager.getPropertyReference(
+            dynamicEff.getPropName_inertialAttitude())).flatten()
+        r_PN_N = np.array(scObject.dynManager.getPropertyReference(
+            dynamicEff.getPropName_inertialPosition())).flatten()
+        expectedForce_P, expectedTorque_P = facetSRPLoad_P(srpProps, sigma_PN, r_PN_N)
+
+        sigma_BN = np.array(scObject.dynManager.getStateObject(
+            scObject.hub.nameOfHubSigma).getState()).flatten()
+        r_BN_N = np.array(scObject.dynManager.getStateObject(
+            scObject.hub.nameOfHubPosition).getState()).flatten()
+        hubSigmaForce_P, _ = facetSRPLoad_P(srpProps, sigma_BN, r_PN_N)
+        hubPosForce_P, _ = facetSRPLoad_P(srpProps, sigma_PN, r_BN_N)
+
+        # RKF45 takes its last stage at the step midpoint, so re-evaluate against the reads above
+        dynamicEff.computeForceTorque(0.0, 0.0)  # [s]
+        force_accuracy = 1e-12  # [N]
+        torque_accuracy = 1e-12  # [N*m]
+        assert not np.allclose(expectedForce_P, hubSigmaForce_P, rtol=0.0, atol=force_accuracy), (
+            "FAILED: this parent is not rotated enough from the hub to tell their attitudes apart")
+        assert not np.allclose(expectedForce_P, hubPosForce_P, rtol=0.0, atol=force_accuracy), (
+            "FAILED: this parent is not offset enough from the hub to tell their positions apart")
+        np.testing.assert_allclose(
+            np.array(dynamicEff.forceExternal_B).flatten(), expectedForce_P,
+            rtol=0.0, atol=force_accuracy,
+            err_msg="FAILED: branched SRP force was not built from the parent kinematics")
+        np.testing.assert_allclose(
+            np.array(dynamicEff.torqueExternalPntB_B).flatten(), expectedTorque_P,
+            rtol=0.0, atol=torque_accuracy,
+            err_msg="FAILED: branched SRP moment was not taken about the parent frame origin")
 
     # Continue to check state effector EOMs using pure force & torque
     if dynamicEffector != "extForceTorque":
@@ -801,6 +837,33 @@ def facetDragLoad_P(facetProps, sigma_PN, v_PN_N):
                             * speed**2 * vHat_P)
             force_P += facetForce_P
             torque_P += np.cross(facetProps.r_FP_P, facetForce_P)
+
+    return(force_P, torque_P)
+
+
+def facetSRPLoad_P(srpProps, sigma_PN, r_PN_N):
+    """Reference faceted SRP force and moment about the parent frame origin."""
+    SOLAR_RAD_FLUX = 1368.0  # [W/m^2] solar radiation flux at 1 AU, as the module defines it
+    SPEED_LIGHT = 299792458.0  # [m/s]
+    ASTRONOMICAL_UNIT = 149597870700.0  # [m]
+
+    dcm_PN = rbk.MRP2C(sigma_PN)
+    r_SP_P = dcm_PN @ (np.array(srpProps.r_SN_N) - np.array(r_PN_N))
+    sunDistance = np.linalg.norm(r_SP_P)
+    sHat = r_SP_P / sunDistance
+    pressure = (SOLAR_RAD_FLUX / SPEED_LIGHT) * (ASTRONOMICAL_UNIT / sunDistance)**2  # [N/m^2]
+
+    force_P = np.zeros(3)
+    torque_P = np.zeros(3)
+    for normal_P in srpProps.normals_P:
+        cosTheta = normal_P.dot(sHat)
+        projectedArea = srpProps.area * cosTheta
+        if projectedArea > 0.0:
+            facetForce_P = -pressure * projectedArea * (
+                (1 - srpProps.specularCoeff) * sHat
+                + 2 * (srpProps.diffuseCoeff / 3 + srpProps.specularCoeff * cosTheta) * normal_P)
+            force_P += facetForce_P
+            torque_P += np.cross(srpProps.r_CopP_P, facetForce_P)
 
     return(force_P, torque_P)
 
@@ -1278,6 +1341,33 @@ def setup_translatingBodiesNDOF():
 
     return(translatingBodyEffector, stateEffProps)
 
+def setup_facetSRPDynamicEffector():
+    facetSRP = facetSRPDynamicEffector.FacetSRPDynamicEffector()
+    facetSRP.ModelTag = "facetSRPDynamicEffector"
+
+    srpProps = facetSRPProperties()
+    srpProps.area = 10.0  # [m^2]
+    srpProps.diffuseCoeff = 0.2  # [-]
+    srpProps.specularCoeff = 0.6  # [-]
+    srpProps.r_CopP_P = np.array([0.0, 0.0, 0.3])  # [m] both faces share the panel centroid
+    srpProps.normals_P = [np.array([0.0, 0.0, 1.0]), np.array([0.0, 0.0, -1.0])]
+    # a Sun this close lets the parent's meter-scale offset from the hub show in the load
+    srpProps.r_SN_N = np.array([0.0, 1.0e9, 0.0])  # [m]
+
+    # facet geometry is expressed in the parent frame, not the hub body frame
+    facetSRP.setNumFacets(len(srpProps.normals_P))
+    for normal_P in srpProps.normals_P:
+        facetSRP.addFacet(srpProps.area, np.eye(3), normal_P, np.array([1.0, 0.0, 0.0]),
+                          srpProps.r_CopP_P, srpProps.diffuseCoeff, srpProps.specularCoeff)
+
+    sunMsgData = messaging.SpicePlanetStateMsgPayload()
+    sunMsgData.PositionVector = srpProps.r_SN_N
+    sunMsg = messaging.SpicePlanetStateMsg()
+    sunMsg.write(sunMsgData)
+    facetSRP.sunInMsg.subscribeTo(sunMsg)
+
+    return(facetSRP, srpProps)
+
 def setup_linearSpringMassDamper():
     linearSpring = linearSpringMassDamper.LinearSpringMassDamper()
     linearSpring.massInit = 50.0  # [kg]
@@ -1316,6 +1406,15 @@ class facetDragProperties:
     density = 0.0 # atmospheric density held fixed for the test
     r_FP_P = [0.0, 0.0, 0.0] # facet centroid relative to the parent frame origin
     normals_P = [] # outward facet normals
+
+class facetSRPProperties:
+    # facet geometry and optical properties, all expressed in the parent frame
+    area = 0.0 # [m^2] individual facet area
+    diffuseCoeff = 0.0 # individual facet diffuse reflection coefficient
+    specularCoeff = 0.0 # individual facet specular reflection coefficient
+    r_CopP_P = [0.0, 0.0, 0.0] # [m] facet center of pressure relative to the parent frame origin
+    normals_P = [] # outward facet normals
+    r_SN_N = [0.0, 0.0, 0.0] # [m] Sun inertial position held fixed for the test
 
 if __name__ == "__main__":
     effectorBranchingIntegratedTest(True, "hingedRigidBodies", True, "extForceTorque", True)
