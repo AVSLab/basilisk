@@ -29,6 +29,7 @@
 #include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 #include "architecture/utilities/avsEigenMRP.h"
 #include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/bskLogging.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
 #include <Eigen/Dense>
@@ -140,6 +141,8 @@ class GeneralSingleBodyStateEffector
     std::vector<std::shared_ptr<DOF>> jointDOFList;
 
     uint64_t numDOF{};
+    uint64_t numRotDOF{};
+    uint64_t numTransDOF{};
     std::vector<double> betaInitList;
     std::vector<double> betaDotInitList;
 
@@ -168,6 +171,7 @@ class GeneralSingleBodyStateEffector
     Eigen::Vector3d omega_BN_B{ Eigen::Vector3d::Zero() };
 
     static uint64_t effectorID;
+    BSKLogger bskLogger;
 
     std::string nameOfBetaState;
     std::string nameOfBetaDotState;
