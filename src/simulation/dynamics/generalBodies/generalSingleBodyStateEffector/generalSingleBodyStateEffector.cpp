@@ -177,6 +177,176 @@ void GeneralSingleBodyStateEffector::writeOutputStateMessages(uint64_t currentSi
 }
 
 void GeneralSingleBodyStateEffector::updateEffectorMassProps(double integTime) {
+    // Set effProps.mEff
+    this->effProps.mEff = this->mass;
+
+    // Get current state
+    this->beta = this->betaState->getState();
+    this->betaDot = this->betaDotState->getState();
+
+    // Set beta and betaDot for each DOF
+    for (auto& dof : this->jointDOFList) {
+        dof->beta = this->beta[dof->index];
+        dof->betaDot = this->betaDot[dof->index];
+    }
+
+    // Compute general body attitudes
+    for (auto& dof : this->jointDOFList) {
+        Eigen::Vector3d prv_GG0{Eigen::Vector3d::Zero()};
+        if (dof->type == DOF::Type::ROTATION) {
+            prv_GG0 = dof->beta * dof->axis_G;
+        } else {
+            prv_GG0 = dof->screwConstant * dof->beta * dof->axis_G;
+        }
+        double prv_GG0_array[3];
+        eigenVector3d2CArray(prv_GG0, prv_GG0_array);
+
+        double dcm_GG0_array[3][3];
+        PRV2C(prv_GG0_array, dcm_GG0_array);
+        Eigen::Matrix3d dcm_GG0 = c2DArray2EigenMatrix3d(dcm_GG0_array);
+
+        if (dof->index == 0) {
+            dof->dcm_GB = dcm_GG0 * this->dcm_G0B;
+        } else {
+            dof->dcm_GB = dcm_GG0 * this->jointDOFList.at(dof->index - 1)->dcm_GB;
+        }
+    }
+
+    // Compute joint and general body position vectors relative to hub frame
+    for (auto& dof : this->jointDOFList) {
+        Eigen::Vector3d r_GG0_G{Eigen::Vector3d::Zero()};
+        if (dof->type == DOF::Type::TRANSLATION) {
+            r_GG0_G = dof->beta * dof->axis_G;
+        } else {
+            r_GG0_G = dof->screwConstant * dof->beta * dof->axis_G;
+        }
+        Eigen::Vector3d r_GG0_B = dof->dcm_GB.transpose() * r_GG0_G;
+
+        if (dof->index == 0) {
+            dof->r_GB_B = r_GG0_B + this->r_G0B_B;
+        } else {
+            dof->r_GB_B = r_GG0_B + this->jointDOFList.at(dof->index - 1)->r_GB_B;
+        }
+    }
+
+    // Compute joint and general body angular velocity vectors relative to the hub frame
+    for (auto& dof : this->jointDOFList) {
+        Eigen::Vector3d omega_GP_G{Eigen::Vector3d::Zero()};
+        if (dof->type == DOF::Type::ROTATION) {
+            omega_GP_G = dof->betaDot * dof->axis_G;
+        } else {
+            omega_GP_G = dof->screwConstant * dof->betaDot * dof->axis_G;
+        }
+        Eigen::Vector3d omega_GP_B = dof->dcm_GB.transpose() * omega_GP_G;
+
+        if (dof->index == 0) {
+            dof->omega_GB_B = omega_GP_B;
+        } else {
+            dof->omega_GB_B = omega_GP_B + this->jointDOFList.at(dof->index - 1)->omega_GB_B;
+        }
+    }
+
+    // Compute general body transformation matrix TMat and its first time derivative TMatPrime
+    for (auto& dof : this->jointDOFList) {
+        Eigen::Vector3d jointDOFAxis_B = dof->dcm_GB.transpose() * dof->axis_G;
+        Eigen::Matrix3d omegaTilde_GB_B = eigenTilde(dof->omega_GB_B);
+
+        Eigen::Vector3d omega_GPrevB_B = Eigen::Vector3d::Zero();
+        if (dof->index != 0) {
+            omega_GPrevB_B = this->jointDOFList.at(dof->index - 1)->omega_GB_B;
+        }
+        Eigen::Matrix3d omegaTilde_GPrevB_B = eigenTilde(omega_GPrevB_B);
+
+        if (dof->type == DOF::Type::ROTATION) {
+            this->TMat.col(dof->index).head<3>() = dof->screwConstant * jointDOFAxis_B;
+            this->TMat.col(dof->index).tail<3>() = jointDOFAxis_B;
+            this->TPrimeMat.col(dof->index).head<3>() = omegaTilde_GPrevB_B * dof->screwConstant * jointDOFAxis_B;
+            this->TPrimeMat.col(dof->index).tail<3>() = omegaTilde_GPrevB_B * jointDOFAxis_B;
+        } else {
+            this->TMat.col(dof->index).head<3>() = jointDOFAxis_B;
+            this->TMat.col(dof->index).tail<3>() = dof->screwConstant * jointDOFAxis_B;
+            this->TPrimeMat.col(dof->index).head<3>() = omegaTilde_GPrevB_B * jointDOFAxis_B;
+            this->TPrimeMat.col(dof->index).tail<3>() = omegaTilde_GPrevB_B * dof->screwConstant * jointDOFAxis_B;
+        }
+    }
+
+    // Compute UMat matrix
+    for (uint64_t colIdx{}; colIdx < this->numDOF; colIdx++) {
+        this->UMat.col(colIdx).head<3>().setZero();
+        this->UMat.col(colIdx).tail<3>().setZero();
+
+        Eigen::VectorXd sumToN = Eigen::VectorXd::Zero(6);
+        for (uint64_t idx = colIdx + 1; idx < this->numDOF; idx++) {
+            sumToN += this->TMat.col(idx) * this->jointDOFList.at(idx)->beta;
+        }
+
+        Eigen::Vector3d dofRotAxis = rotMap * this->TMat.col(colIdx);
+        Eigen::Matrix3d dofRotAxisTilde = eigenTilde(dofRotAxis);
+        Eigen::Matrix<double, 6, 6> tildeSixMatrix = Eigen::Matrix<double, 6, 6>::Zero();
+        tildeSixMatrix.topLeftCorner<3, 3>() = dofRotAxisTilde;
+        tildeSixMatrix.bottomRightCorner<3, 3>() = dofRotAxisTilde;
+
+        this->UMat.col(colIdx) = tildeSixMatrix * sumToN;
+    }
+
+    // Compute vVec vector
+    this->vVec.setZero();
+    Eigen::VectorXd hVecTerm1{Eigen::VectorXd::Zero(6)};
+    Eigen::VectorXd hVecTerm2{Eigen::VectorXd::Zero(6)};
+    for (uint64_t idx1{}; idx1 < this->numDOF; idx1++) {
+        Eigen::VectorXd sumTerm1{Eigen::VectorXd::Zero(6)};
+        Eigen::VectorXd sumTerm2{Eigen::VectorXd::Zero(6)};
+
+        for (uint64_t idx2{}; idx2 < idx1; idx2++) {
+            Eigen::VectorXd sumTerm1A{Eigen::VectorXd::Zero(6)};
+            for (uint64_t idx3{}; idx3 < idx2; idx3++) {
+                sumTerm1A += this->TMat.col(idx3) * this->jointDOFList.at(idx3)->betaDot;
+            }
+
+            Eigen::Matrix<double, 6, 6> tildeSixMatrix{Eigen::Matrix<double, 6, 6>::Zero()};
+            tildeSixMatrix.topLeftCorner<3, 3>() = eigenTilde(rotMap * sumTerm1A);
+            tildeSixMatrix.bottomRightCorner<3, 3>() = tildeSixMatrix.topLeftCorner<3, 3>();
+            sumTerm1 += tildeSixMatrix * this->TMat.col(idx2) * this->jointDOFList.at(idx2)->betaDot;
+
+            sumTerm2 += this->TMat.col(idx2) * this->jointDOFList.at(idx2)->betaDot;
+        }
+
+        Eigen::Matrix<double, 6, 6> tildeSixMatrix{Eigen::Matrix<double, 6, 6>::Zero()};
+        tildeSixMatrix.topLeftCorner<3, 3>() = eigenTilde(rotMap * sumTerm1);
+        tildeSixMatrix.bottomRightCorner<3, 3>() = tildeSixMatrix.topLeftCorner<3, 3>();
+        hVecTerm1 = tildeSixMatrix * this->TMat.col(idx1) * this->jointDOFList.at(idx1)->beta;
+
+        tildeSixMatrix = Eigen::Matrix<double, 6, 6>::Zero();
+        tildeSixMatrix.topLeftCorner<3, 3>() = eigenTilde(rotMap * sumTerm2) * eigenTilde(rotMap * sumTerm2);
+        tildeSixMatrix.bottomRightCorner<3, 3>() = tildeSixMatrix.topLeftCorner<3, 3>();
+        hVecTerm2 = tildeSixMatrix * this->TMat.col(idx1) * this->jointDOFList.at(idx1)->beta;
+
+        this->vVec += hVecTerm1 + hVecTerm2;
+    }
+
+    // Compute and set effProps.rEff_CB_B
+    Eigen::Matrix3d dcm_GB = this->jointDOFList.at(this->numDOF - 1)->dcm_GB;
+    Eigen::Vector3d r_GcG_B = dcm_GB.transpose() * this->r_GcG_G;
+    this->r_GB_B = this->jointDOFList.at(this->numDOF - 1)->r_GB_B;
+    Eigen::Vector3d r_GcB_B = r_GcG_B + this->r_GB_B;
+    this->effProps.rEff_CB_B = r_GcB_B;
+
+    // Compute and set effProps.IEffPntB_B
+    Eigen::Matrix3d IPntGc_B = dcm_GB.transpose() * this->IPntGc_G * dcm_GB;
+    Eigen::Matrix3d rTilde_GcB_B = eigenTilde(r_GcB_B);
+    this->effProps.IEffPntB_B = IPntGc_B - this->mass * rTilde_GcB_B * rTilde_GcB_B;
+
+    // Compute and set effProps.rEffPrime_CB_B
+    Eigen::Matrix3d rTilde_GcG_B = eigenTilde(r_GcG_B);
+    Eigen::Vector3d rPrime_GcB_B = (transMap - rTilde_GcG_B * rotMap) * this->TMat * this->betaDot + transMap * this->TPrimeMat * this->beta;
+    this->effProps.rEffPrime_CB_B = rPrime_GcB_B;
+
+    // Compute and set effProps.IEffPrimePntB_B
+    Eigen::Vector3d omega_GB_B = rotMap * this->TMat * this->betaDot;
+    Eigen::Matrix3d omegaTilde_GB_B = eigenTilde(omega_GB_B);
+    Eigen::Matrix3d rPrimeTilde_GcB_B = eigenTilde(rPrime_GcB_B);
+    this->effProps.IEffPrimePntB_B = omegaTilde_GB_B * IPntGc_B - IPntGc_B * omegaTilde_GB_B
+            - this->mass * (rPrimeTilde_GcB_B * rTilde_GcB_B + rTilde_GcB_B * rPrimeTilde_GcB_B);
 }
 
 void GeneralSingleBodyStateEffector::updateContributions(double integTime,
