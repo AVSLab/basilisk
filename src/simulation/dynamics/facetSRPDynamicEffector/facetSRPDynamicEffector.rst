@@ -245,3 +245,29 @@ The following steps are required to set up the ``facetSRPDynamicEffector`` modul
 
 .. note::
     See the example script :ref:`scenarioSepMomentumManagement`, which illustrates how to set up a spacecraft with articulated panels for SRP calculation.
+
+
+Attaching to a State Effector
+-----------------------------
+This effector supports the branching described in :ref:`bskPrinciples-11`, so the facets can be
+carried by an appendage instead of the hub. Attach it to the parent state effector rather than to
+the spacecraft::
+
+    stateEff.addDynamicEffector(SRPEffector, segment)
+
+The parent's inertial attitude and position then replace the hub's, and the parent segment's frame
+replaces the hub body frame throughout ``addFacet()``. The facet normal and the center of pressure
+are expressed in that frame, and ``dcm_F0B`` orients the facet frame relative to it. The resulting
+force and torque are returned about the parent frame origin, which the parent carries into the hub
+equations of motion. The ``segment`` argument is omitted for a parent with a single degree of
+freedom.
+
+Attaching to a parent complements ``addArticulatedFacet()`` rather than replacing it. An articulated
+facet rotates its normal through a commanded angle, which is all a single axis solar array drive
+needs, but its center of pressure stays where ``addFacet()`` put it. Attach the effector to a parent
+instead when the facet's position moves relative to the hub, when the panel rides a translating body
+that has no articulation angle to supply, or when the panel sits on a gimbal or an arm that one
+angle about one axis cannot describe.
+
+Both the parent and the child are still added to the task in the usual way, the same as when the
+child is attached to the hub.
