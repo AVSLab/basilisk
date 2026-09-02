@@ -48,23 +48,14 @@ from Basilisk.simulation import ( # state effectors
     linearTranslationOneDOFStateEffector,
     linearTranslationNDOFStateEffector,
     linearSpringMassDamper,
-    sphericalPendulum,
-    prescribedMotionStateEffector,
-    reactionWheelStateEffector,
-    vscmgStateEffector,
-    thrusterStateEffector,
-    fuelTank,
 )
 from Basilisk.simulation import ( # dynamic effectors
     extForceTorque,
     ExtPulsedTorque,
     thrusterDynamicEffector,
     constraintDynamicEffector,
-    dragDynamicEffector,
     facetDragDynamicEffector,
-    radiationPressure,
     facetSRPDynamicEffector,
-    MtbEffector,
 )
 from Basilisk.architecture import messaging
 
@@ -76,37 +67,28 @@ FINE_TIMESTEP = 0.0005  # [s]
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail()
 
-# Note: effectors commented out as True are expected to be added in the future, effectors
-#       commented out as False are not expected to be added in the future
+# Note: an effector listed as False is one branching must reject. See bskPrinciples-11 for the
+#       full compatibility description.
 @pytest.mark.parametrize("stateEffector, isParent", [
     ("hingedRigidBodies",             True),
-    ("dualHingedRigidBodies",           True),
+    ("dualHingedRigidBodies",         True),
     ("nHingedRigidBodies",            True),
     ("spinningBodiesOneDOF",          True),
     ("spinningBodiesTwoDOF",          True),
     ("spinningBodiesNDOF",            True),
     ("linearTranslationBodiesOneDOF", True),
     ("linearTranslationBodiesNDOF",   True),
-    ("linearSpringMassDamper",          False),
-    # ("sphericalPendulum",               False),
-    # ("prescribedMotion",                False),
-    # ("reactionWheels",                  False),
-    # ("VSCMGs",                          False),
-    # ("thrusterStateEffector",           False),
-    # ("fuelTank",                        False),
+    ("linearSpringMassDamper",        False),
 ])
 @pytest.mark.parametrize("dynamicEffector, isChild", [
     ("extForceTorque",            True),
-    ("extPulseTorque",              False),
     ("thrusterDynamicEffector",   True),
     ("constraintEffectorOneHub",  True),
     ("constraintEffectorNoHubs",  True),
-    # ("dragEffector",                False),
     ("facetDragDynamicEffector",  True),
-    # ("radiationPressure",           False),
     ("facetSRPDynamicEffector",   True),
-    # ("MtbEffector",                 False),
     ("multiEffector",             True),
+    ("extPulseTorque",            False),
 ])
 
 def test_effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dynamicEffector, isChild):
