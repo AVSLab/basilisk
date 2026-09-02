@@ -69,3 +69,43 @@ void GeneralSingleBodyStateEffector::updateEnergyMomContributions(double integTi
                                                                  double & rotEnergyContr,
                                                                  Eigen::Vector3d omega_BN_B) {
 }
+
+void GeneralSingleBodyStateEffector::addRotDOF(std::shared_ptr<DOF> newDOF) {
+    this->numDOF++;
+    newDOF->type = DOF::Type::ROTATION;
+    newDOF->index = this->numDOF - 1;
+    this->jointDOFList.push_back(newDOF);
+
+    // Resize required matrices
+    this->TMat.conservativeResize(6, this->TMat.cols() + 1);
+    this->TPrimeMat.conservativeResize(6, this->TPrimeMat.cols() + 1);
+    this->UMat.conservativeResize(6, this->UMat.cols() + 1);
+    this->ABeta.conservativeResize(this->ABeta.rows() + 1, 3);
+    this->BBeta.conservativeResize(this->BBeta.rows() + 1, 3);
+    this->CBeta.conservativeResize(this->CBeta.rows() + 1);
+
+    // Add required message types
+    this->spinningBodyRefInMsg.push_back(ReadFunctor<HingedRigidBodyMsgPayload>());
+    this->motorTorqueInMsg.push_back(ReadFunctor<ArrayMotorTorqueMsgPayload>());
+    this->spinningBodyOutMsgs.push_back(new Message<HingedRigidBodyMsgPayload>);
+}
+
+void GeneralSingleBodyStateEffector::addTransDOF(std::shared_ptr<DOF> newDOF) {
+    this->numDOF++;
+    newDOF->type = DOF::Type::TRANSLATION;
+    newDOF->index = this->numDOF - 1;
+    this->jointDOFList.push_back(newDOF);
+
+    // Resize required matrices
+    this->TMat.conservativeResize(6, this->TMat.cols() + 1);
+    this->TPrimeMat.conservativeResize(6, this->TPrimeMat.cols() + 1);
+    this->UMat.conservativeResize(6, this->UMat.cols() + 1);
+    this->ABeta.conservativeResize(this->ABeta.rows() + 1, 3);
+    this->BBeta.conservativeResize(this->BBeta.rows() + 1, 3);
+    this->CBeta.conservativeResize(this->CBeta.rows() + 1);
+
+    // Add required message types
+    this->translatingBodyRefInMsgs.push_back(ReadFunctor<LinearTranslationRigidBodyMsgPayload>());
+    this->motorForceInMsg.push_back(ReadFunctor<ArrayMotorForceMsgPayload>());
+    this->translatingBodyOutMsgs.push_back(new Message<LinearTranslationRigidBodyMsgPayload>);
+}
