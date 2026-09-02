@@ -62,9 +62,10 @@ where
       - N m
       - Optional symmetric torque magnitude limit configured through ``uMax``.
 
-Thus, positive :math:`K` and :math:`P` produce a restoring torque that reduces the reference-tracking error.  Both gains
-must currently be assigned strictly positive values before the simulation initializes.  The constructor initializes
-them to zero, but ``Reset()`` reports an error if either value remains zero or is negative.
+The gains must be finite and nonnegative.  Positive :math:`K` and :math:`P` produce a restoring torque that reduces the
+reference-tracking error.  Set ``K = 0`` to disable angle feedback for a rate-only controller, or set ``P = 0`` to
+disable rate feedback for a proportional-only controller.  Setting both gains to zero commands zero torque.  ``Reset()``
+reports an error if either gain is negative or non-finite.
 
 Relationship to State-Effector Stiffness and Damping
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -102,8 +103,9 @@ law:
 
     u_{\mathrm{out}} = \operatorname{clamp}(u, -u_{\max}, u_{\max}).
 
-Set ``uMax`` to the nonnegative maximum torque magnitude in N m.  A negative value disables saturation; the default is
-``uMax = -1.0`` N m.  In particular, ``uMax = 0`` commands zero torque.
+Set ``uMax`` to a finite value in N m.  A nonnegative value specifies the maximum torque magnitude, while a negative
+value disables saturation; the default is ``uMax = -1.0`` N m.  In particular, ``uMax = 0`` commands zero torque.
+``Reset()`` reports an error if ``uMax`` is non-finite.
 
 The limit does not model motor current, voltage, speed-torque curves, gearboxes, backlash, actuator dynamics, asymmetric
 torque limits, rate limits, or thermal effects.  Large gains can still make the simulated dynamics numerically stiff.

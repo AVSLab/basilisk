@@ -44,9 +44,9 @@ public:
 
 public:
 
-    double K;  //!< [N m/rad] proportional gain on hinge-angle tracking error
-    double P;  //!< [N m s/rad] derivative gain on hinge-rate tracking error
-    double uMax;  //!< [N m] maximum torque magnitude; a negative value disables saturation
+    double K;  //!< [N m/rad] finite, nonnegative proportional gain on hinge-angle tracking error
+    double P;  //!< [N m s/rad] finite, nonnegative derivative gain on hinge-rate tracking error
+    double uMax;  //!< [N m] finite maximum torque magnitude; a negative value disables saturation
 
     ReadFunctor<HingedRigidBodyMsgPayload> hingedBodyStateSensedInMsg;  //!< sensed rigid body state (theta, theta dot)
     ReadFunctor<HingedRigidBodyMsgPayload> hingedBodyStateReferenceInMsg;  //!< reference hinged rigid body state (theta, theta dot)
