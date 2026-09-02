@@ -71,6 +71,9 @@ void GeneralSingleBodyStateEffector::updateEnergyMomContributions(double integTi
 }
 
 void GeneralSingleBodyStateEffector::addRotDOF(std::shared_ptr<DOF> newDOF) {
+    if (!newDOF) {
+        bskLogger.bskError("A null DOF object was given. Provide a valid DOF object for each degree of freedom.");
+    }
     if (this->isDOFAdded(newDOF)) {
         bskLogger.bskError("This DOF was already added. Create a separate DOF object for each degree of freedom.");
     }
@@ -89,6 +92,9 @@ void GeneralSingleBodyStateEffector::addRotDOF(std::shared_ptr<DOF> newDOF) {
 }
 
 void GeneralSingleBodyStateEffector::addTransDOF(std::shared_ptr<DOF> newDOF) {
+    if (!newDOF) {
+        bskLogger.bskError("A null DOF object was given. Provide a valid DOF object for each degree of freedom.");
+    }
     if (this->isDOFAdded(newDOF)) {
         bskLogger.bskError("This DOF was already added. Create a separate DOF object for each degree of freedom.");
     }
