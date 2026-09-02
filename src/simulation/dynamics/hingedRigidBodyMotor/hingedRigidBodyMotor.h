@@ -27,8 +27,10 @@
 #include "architecture/utilities/bskLogging.h"
 #include "architecture/messaging/messaging.h"
 
-/*! @brief Calculates a motor torque to drive a hinged panel to a reference angle state. A sensed and reference hinged rigid body angle
-           drives a simple PD control law.
+/** @brief Computes an ideal commanded hinge torque using a PD tracking law.
+ *
+ * The module uses sensed and reference hinge angles and angular rates to calculate a torque command.  It is an ideal
+ * controller and does not model electromechanical motor dynamics or actuator limits.
  */
 class HingedRigidBodyMotor: public SysModel {
 public:
@@ -39,9 +41,9 @@ public:
     void UpdateState(uint64_t CurrentSimNanos);
 
 public:
-    
-    double K;  //!< gain on theta
-    double P; //!< gain on theta dot
+
+    double K;  //!< [N m/rad] proportional gain on hinge-angle tracking error
+    double P;  //!< [N m s/rad] derivative gain on hinge-rate tracking error
 
     ReadFunctor<HingedRigidBodyMsgPayload> hingedBodyStateSensedInMsg;  //!< sensed rigid body state (theta, theta dot)
     ReadFunctor<HingedRigidBodyMsgPayload> hingedBodyStateReferenceInMsg;  //!< reference hinged rigid body state (theta, theta dot)

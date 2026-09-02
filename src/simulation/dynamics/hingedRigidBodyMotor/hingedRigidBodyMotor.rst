@@ -1,6 +1,8 @@
 Executive Summary
 -----------------
-Calculates a motor torque given a sensed and reference hinged rigid body state using a simple PD control law.
+This module implements an ideal proportional-derivative (PD) hinge controller.  It calculates a commanded hinge torque
+from sensed and reference hinge angles and angular rates.  Despite the module name, it does not model the electrical or
+mechanical dynamics of a physical motor.
 
 Message Connection Descriptions
 -------------------------------
@@ -22,12 +24,78 @@ provides information on what this message is used for.
 Detailed Model Description
 --------------------------
 
-This module takes in a reference angle and angle rate, as well as a sensed angle and angle rate, and calculates the motor torque according to:
+Control Law and Gain Definitions
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The controller calculates the commanded hinge torque according to
 
 .. math::
-    u = -K(\theta_s-\theta_r)-P(\dot{\theta}_s-\dot{\theta}_r)
 
-K and P are the constant gains. Both should be set to positive values.
+    u = K(\theta_r-\theta_s) + P(\dot{\theta}_r-\dot{\theta}_s),
+
+where
+
+.. list-table::
+    :widths: 15 20 65
+    :header-rows: 1
+
+    * - Symbol
+      - Units
+      - Meaning
+    * - :math:`u`
+      - N m
+      - Commanded torque applied to the hinge.
+    * - :math:`\theta_r`, :math:`\theta_s`
+      - rad
+      - Reference and sensed hinge angles, respectively.
+    * - :math:`\dot{\theta}_r`, :math:`\dot{\theta}_s`
+      - rad/s
+      - Reference and sensed hinge angular rates, respectively.
+    * - :math:`K`
+      - N m/rad
+      - Proportional gain on hinge-angle tracking error.
+    * - :math:`P`
+      - N m s/rad
+      - Derivative gain on hinge-rate tracking error.  The name ``P`` is retained for API compatibility; it is the
+        derivative gain commonly denoted by :math:`K_d` in PD-controller notation.
+
+Thus, positive :math:`K` and :math:`P` produce a restoring torque that reduces the reference-tracking error.  Both gains
+must currently be assigned strictly positive values before the simulation initializes.  The constructor initializes
+them to zero, but ``Reset()`` reports an error if either value remains zero or is negative.
+
+Relationship to State-Effector Stiffness and Damping
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The motor gains should not be confused with the ``k`` and ``c`` parameters of
+:ref:`spinningBodyOneDOFStateEffector` or :ref:`hingedRigidBodyStateEffector`.  The state-effector parameters represent
+passive physical joint stiffness and damping.  In contrast, ``K`` and ``P`` define active feedback torque commanded by
+this module.  If both are enabled, their torques act together in the coupled dynamics model.  Set the state-effector
+``k`` and ``c`` parameters to zero for an ideal torque-driven hinge without passive compliance, or give them nonzero
+values only when physical joint stiffness and damping are intentionally part of the model.
+
+Gain Selection
+~~~~~~~~~~~~~~
+
+For an isolated hinge with equivalent rotational inertia :math:`J_{\mathrm{eq}}`, a useful initial gain estimate follows
+from the standard second-order response:
+
+.. math::
+
+    K = J_{\mathrm{eq}}\omega_n^2, \qquad
+    P = 2\zeta J_{\mathrm{eq}}\omega_n,
+
+where :math:`J_{\mathrm{eq}}` is the equivalent hinge inertia in kg m^2, :math:`\omega_n` is the desired natural
+frequency in rad/s, and :math:`\zeta` is the desired dimensionless damping ratio.  In a coupled spacecraft and appendage
+system, :math:`J_{\mathrm{eq}}` is configuration dependent, so these relations are only a starting point.  Validate the
+gains across the intended configurations and simulation time steps.
+
+Module Assumptions and Limitations
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The commanded torque is ideal and unsaturated.  This module does not model motor current, voltage, speed-torque curves,
+gearboxes, backlash, actuator dynamics, torque or rate limits, or thermal effects.  Large gains can therefore command
+unrealistic torques and can make the simulated dynamics numerically stiff.  Model those effects separately when they
+are important to the analysis.
 
 User Guide
 ----------
@@ -42,7 +110,7 @@ The interface module is created in python using:
 .. code-block:: python
     :linenos:
 
-    testModule = hingedRigidBodyMotor.hingedRigidBodyMotor()
+    testModule = hingedRigidBodyMotor.HingedRigidBodyMotor()
     testModule.ModelTag = "hingedRigidBodyMotor"
 
 
@@ -51,7 +119,5 @@ A sample setup is done using:
 .. code-block:: python
     :linenos:
 
-    testModule.K = 1 # proportional gain constant
-    testModule.P = 1 # derivative gain constant
-
-If :math:`K` and :math:`P` are not set, they default to 0.
+    testModule.K = 1.0  # [N m/rad] hinge-angle tracking gain
+    testModule.P = 1.0  # [N m s/rad] hinge-rate tracking gain

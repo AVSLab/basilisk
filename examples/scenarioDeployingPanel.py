@@ -210,13 +210,13 @@ def run(show_plots):
     # motors
     motor1 = hingedRigidBodyMotor.HingedRigidBodyMotor()
     motor1.ModelTag = "hingedRigidBodyMotor"
-    motor1.K = 20  # proportional gain constant
-    motor1.P = 10  # derivative gain constant
+    motor1.K = 20  # [N m/rad] hinge-angle tracking gain
+    motor1.P = 10  # [N m s/rad] hinge-rate tracking gain
 
     motor2 = hingedRigidBodyMotor.HingedRigidBodyMotor()
     motor2.ModelTag = "hingedRigidBodyMotor2"
-    motor2.K = 20  # proportional gain constant
-    motor2.P = 10  # derivative gain constant
+    motor2.K = 20  # [N m/rad] hinge-angle tracking gain
+    motor2.P = 10  # [N m s/rad] hinge-rate tracking gain
 
     motor1.hingedBodyStateSensedInMsg.subscribeTo(panel1.hingedRigidBodyOutMsg)
     motor1.hingedBodyStateReferenceInMsg.subscribeTo(profiler1.hingedRigidBodyReferenceOutMsg)
