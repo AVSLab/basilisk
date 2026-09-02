@@ -70,6 +70,8 @@ public:
     ReadFunctor<EclipseMsgPayload> sunEclipseInMsg;                                      //!< (optional) Sun eclipse input message
 
 private:
+    void validateConfiguration();                                                        //!< Method to reject a facet configuration the force loop cannot walk
+
     std::vector<ReadFunctor<HingedRigidBodyMsgPayload>> articulatedFacetDataInMsgs;      //!< Articulated facet angle data input message
     std::vector<double> facetArticulationAngleList;                                      //!< [rad] Vector of facet rotation angles
     std::vector<Eigen::Vector3d> facetNHat_BList;                                        //!< Vector of facet normals expressed in B frame components

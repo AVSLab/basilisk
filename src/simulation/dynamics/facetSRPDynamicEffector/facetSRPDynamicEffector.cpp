@@ -31,11 +31,33 @@ const double solarRadFlux = 1368.0;  // [W/m^2] Solar radiation flux at 1 AU
  @param currentSimNanos [ns] Time the method is called
 */
 void FacetSRPDynamicEffector::Reset(uint64_t currentSimNanos [[maybe_unused]]) {
+    this->validateConfiguration();
+
+    // Default to full sunlight if no eclipse message is connected
+    this->sunVisibilityFactor.illuminationFactor = 1.0;
+}
+
+/*! This method runs every configuration check from each initialization path, since Reset() runs
+ only when the effector is also added to a task */
+void FacetSRPDynamicEffector::validateConfiguration() {
     if (!this->sunInMsg.isLinked()) {
         bskLogger.bskError("FacetSRPDynamicEffector.sunInMsg was not linked.");
     }
-    // Default to full sunlight if no eclipse message is connected
-    this->sunVisibilityFactor.illuminationFactor = 1.0;
+
+    // the force loop walks every geometry list by numFacets
+    if (this->numFacets != this->scGeometry.facetAreaList.size()) {
+        bskLogger.bskError("FacetSRPDynamicEffector: the facet count set by setNumFacets does not "
+                           "match the number of facets added by addFacet.");
+    }
+    if (this->numArticulatedFacets > this->numFacets) {
+        bskLogger.bskError("FacetSRPDynamicEffector: more articulated facets are declared than "
+                           "there are facets.");
+    }
+    if (this->articulatedFacetDataInMsgs.size() != this->numArticulatedFacets) {
+        bskLogger.bskError("FacetSRPDynamicEffector: the articulated facet count set by "
+                           "setNumArticulatedFacets does not match the number of articulation "
+                           "messages added by addArticulatedFacet.");
+    }
 }
 
 /*! This method populates the spacecraft facet geometry structure with user-input facet information.
@@ -82,6 +104,7 @@ void FacetSRPDynamicEffector::addArticulatedFacet(Message<HingedRigidBodyMsgPayl
 void FacetSRPDynamicEffector::linkInStates(DynParamManager& states) {
     this->hubSigma = states.getStateObject(this->stateNameOfSigma);
     this->hubPosition = states.getStateObject(this->stateNameOfPosition);
+    this->validateConfiguration();
 }
 
 /*! This method reads the Sun state input message. If time-varying facet articulations are considered,
