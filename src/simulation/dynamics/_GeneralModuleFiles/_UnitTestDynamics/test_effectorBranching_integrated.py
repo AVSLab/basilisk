@@ -446,14 +446,15 @@ def effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dynamic
     else:
         pytest.fail("ERROR: Effector branching integrated test using unrecognized dynamic effector input.")
 
-    # Add dynamic effector to state effector
+    # Add dynamic effector to state effector, omitting the segment where the parent defaults it
+    attachArgs = () if stateEffProps.defaultsSegment else (segment,)
     try:
         if dynamicEffector == "thrusterDynamicEffector": # if thruster, then use thruster factory
-            thFactory.addToSpacecraftSubcomponent("dynamicThruster", dynamicEff, stateEff, segment)
+            thFactory.addToSpacecraftSubcomponent("dynamicThruster", dynamicEff, stateEff, *attachArgs)
         elif dynamicEffector == "multiEffector": # if multiple effectors, loop over all to add
-            for dynEff in dynamicEff: stateEff.addDynamicEffector(dynEff, segment)
+            for dynEff in dynamicEff: stateEff.addDynamicEffector(dynEff, *attachArgs)
         else:
-            stateEff.addDynamicEffector(dynamicEff, segment)
+            stateEff.addDynamicEffector(dynamicEff, *attachArgs)
     except BasiliskError:
         # check if error was meant to happen
         assert not isParent, "FAILED: attempted attaching to a compatible state effector, but errored"
@@ -959,6 +960,7 @@ def setup_spinningBodiesOneDOF():
     stateEffProps.r_PB_B = spinningBody.r_SB_B
     stateEffProps.r_PcP_P = spinningBody.r_ScS_S
     stateEffProps.inertialPropLogName = "spinningBodyConfigLogOutMsg"
+    stateEffProps.defaultsSegment = True
 
     return(spinningBody, stateEffProps)
 
@@ -1097,6 +1099,7 @@ def setup_hingedRigidBodyStateEffector():
     stateEffProps.r_PB_B = hingedBody.r_HB_B
     stateEffProps.r_PcP_P = hingedBody.d * s1_hat
     stateEffProps.inertialPropLogName = "hingedRigidBodyConfigLogOutMsg"
+    stateEffProps.defaultsSegment = True
 
     return(hingedBody, stateEffProps)
 
@@ -1220,6 +1223,7 @@ def setup_translatingBodiesOneDOF():
     stateEffProps.r_PB_B = translatingBody.getR_F0B_B()  # [m]
     stateEffProps.r_PcP_P = translatingBody.getR_FcF_F()
     stateEffProps.inertialPropLogName = "translatingBodyConfigLogOutMsg"
+    stateEffProps.defaultsSegment = True
 
     return(translatingBody, stateEffProps)
 
@@ -1303,6 +1307,7 @@ class stateEffectorProperties:
     # to be used in checking equations of motion
     inertialPropLogName = "" # name of inertial property output log message
     r_PcP_P = [[0.0], [0.0], [0.0]] # individual COM for linkage that dynEff will be attached to
+    defaultsSegment = False # parent has one degree of freedom and defaults the attachment segment
 
 class facetDragProperties:
     # facet geometry and flow conditions, all expressed in the parent frame
