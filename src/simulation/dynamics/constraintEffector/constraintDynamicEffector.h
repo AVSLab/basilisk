@@ -40,7 +40,7 @@ struct parentID{
 };
 
 /*! @brief constraint dynamic effector class */
-class ConstraintDynamicEffector: public SysModel, public DynamicEffector {
+class ConstraintDynamicEffector final: public SysModel, public DynamicEffector {
 public:
     ConstraintDynamicEffector();
     ~ConstraintDynamicEffector();

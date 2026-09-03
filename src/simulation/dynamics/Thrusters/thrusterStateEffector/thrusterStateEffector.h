@@ -41,7 +41,7 @@
 
 
 /*! @brief thruster dynamic effector class */
-class ThrusterStateEffector: public StateEffector, public SysModel {
+class ThrusterStateEffector final: public StateEffector, public SysModel {
 public:
     ThrusterStateEffector();
     ~ThrusterStateEffector();

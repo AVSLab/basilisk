@@ -47,7 +47,7 @@ typedef struct {
 }DragBaseData;
 
 /*! @brief drag dynamic effector */
-class DragDynamicEffector: public SysModel, public DynamicEffector {
+class DragDynamicEffector final: public SysModel, public DynamicEffector {
 public:
     DragDynamicEffector();
     ~DragDynamicEffector();

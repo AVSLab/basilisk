@@ -33,7 +33,7 @@
 #include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
 
 /*! @brief Faceted solar radiation pressure dynamic effector */
-class FacetedSRPEffector: public SysModel, public DynamicEffector {
+class FacetedSRPEffector final: public SysModel, public DynamicEffector {
 public:
     FacetedSRPEffector() = default;  //!< Constructor
     ~FacetedSRPEffector() = default;  //!< Destructor

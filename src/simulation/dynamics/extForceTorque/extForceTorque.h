@@ -33,7 +33,7 @@
 
 
 /*! @brief external force and torque dynamic efector class */
-class ExtForceTorque: public SysModel, public DynamicEffector{
+class ExtForceTorque final: public SysModel, public DynamicEffector{
 public:
     ExtForceTorque();
     ~ExtForceTorque();

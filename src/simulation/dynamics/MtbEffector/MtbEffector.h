@@ -35,7 +35,7 @@
 
 /*! @brief This module converts magnetic torque bar dipoles to body torques.
  */
-class MtbEffector: public SysModel, public DynamicEffector {
+class MtbEffector final: public SysModel, public DynamicEffector {
 
 public:
     MtbEffector();
