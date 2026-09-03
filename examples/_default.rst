@@ -302,6 +302,23 @@ Complex Spacecraft Dynamics Simulations
    Spacecraft with an multi-link extending component <scenarioExtendingBoom>
    Solar Array Debris Impact <scenarioImpact>
 
+Effector Branching Simulations
+------------------------------
+Effector branching routes a dynamic effector's forces and torques through a moving platform
+rather than applying them directly to the central hub. These scenarios demonstrate the supported
+parent and child pairings across an articulated thruster arm, a robotic grappling arm between two
+spacecraft, and hinged panels experiencing drag in an atmosphere. Each contrasts the branched model
+against the hub-direct assumption it replaces, or exercises a topology the hub-direct assumption
+cannot express at all.
+
+.. toctree::
+   :maxdepth: 1
+
+   Thruster on a Two-Axis Articulated Arm <scenarioThrusterArm>
+   Robotic Grappling and Berthing of a Target <scenarioRoboticGrappling>
+   Aerobraking with Deflecting Panels <scenarioAerobrake>
+   Verification of the Branched Equations of Motion <scenarioBranchingVerification>
+
 Prescribed Motion Spacecraft Dynamics Simulations
 -------------------------------------------------
 
