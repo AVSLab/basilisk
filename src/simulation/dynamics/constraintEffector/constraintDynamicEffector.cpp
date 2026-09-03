@@ -314,7 +314,7 @@ void ConstraintDynamicEffector::readInputMessage(){
         statusMsg = this->effectorStatusInMsg();
         this->effectorStatus = statusMsg.deviceStatus;
     }
-    else{
+    else{ // default to active if no message is linked
         this->effectorStatus = 1;
     }
 }
@@ -408,6 +408,13 @@ void ConstraintDynamicEffector::linkInProperties(DynParamManager& properties){
 void ConstraintDynamicEffector::computeForceTorque(double integTime [[maybe_unused]], double timeStep [[maybe_unused]])
 {
     if (this->scInitCounter == 2) { // only proceed once both spacecraft are added
+        if (this->effectorStatus == 0) { // disabled: apply and report no loads, but keep measuring the violations
+            this->forceExternal_N = Eigen::Vector3d::Zero();
+            this->torqueExternalPntB_B = Eigen::Vector3d::Zero();
+            this->Fc_N = Eigen::Vector3d::Zero();
+            this->T_B1 = Eigen::Vector3d::Zero();
+            this->T_B2 = Eigen::Vector3d::Zero();
+        }
         // alternate assigning the constraint force and torque
         if (this->scID == 0) { // compute all forces and torques once, assign to spacecraft 1 and store for spacecraft 2
             Eigen::Vector3d r_B1N_N;
@@ -469,26 +476,28 @@ void ConstraintDynamicEffector::computeForceTorque(double integTime [[maybe_unus
             Eigen::Vector3d omega_B1N_B2 = dcm_B2N * dcm_B1N.transpose() * omega_B1N_B1;
             this->omega_B2B1_B2 = omega_B2N_B2 - omega_B1N_B2; // difference in angular rate
 
-            // calculate the constraint force
-            this->Fc_N = this->k_d * this->psi_N + this->c_d * this->psiPrime_N; // store the constraint force for spacecraft 2
-            this->forceExternal_N = this->Fc_N;
+            if (this->effectorStatus == 1) {
+                // calculate the constraint force
+                this->Fc_N = this->k_d * this->psi_N + this->c_d * this->psiPrime_N; // store the constraint force for spacecraft 2
+                this->forceExternal_N = this->Fc_N;
 
-            // calculate the torque on each spacecraft from the direction constraint
-            Eigen::Vector3d Fc_B1 = dcm_B1N * this->Fc_N;
-            Eigen::Vector3d L_B1_len = (this->r_P1B1_B1).cross(Fc_B1);
-            Eigen::Vector3d Fc_B2 = dcm_B2N * this->Fc_N;
-            Eigen::Vector3d L_B2_len = -this->r_P2B2_B2.cross(Fc_B2);
+                // calculate the torque on each spacecraft from the direction constraint
+                Eigen::Vector3d Fc_B1 = dcm_B1N * this->Fc_N;
+                Eigen::Vector3d L_B1_len = (this->r_P1B1_B1).cross(Fc_B1);
+                Eigen::Vector3d Fc_B2 = dcm_B2N * this->Fc_N;
+                Eigen::Vector3d L_B2_len = -this->r_P2B2_B2.cross(Fc_B2);
 
-            // calculate the constraint torque imparted on each spacecraft from the attitude constraint
-            Eigen::Matrix3d dcm_B1B2 = dcm_B1N * dcm_B2N.transpose();
-            Eigen::Vector3d L_B2_att = -this->k_a * this->phi.coeffs() - this->c_a * 0.25 * this->phi.Bmat() * omega_B2B1_B2;
-            Eigen::Vector3d L_B1_att = - dcm_B1B2 * L_B2_att;
-            this->T_B2 = L_B2_len + L_B2_att; // store the constraint torque for spacecraft 2
+                // calculate the constraint torque imparted on each spacecraft from the attitude constraint
+                Eigen::Matrix3d dcm_B1B2 = dcm_B1N * dcm_B2N.transpose();
+                Eigen::Vector3d L_B2_att = -this->k_a * this->phi.coeffs() - this->c_a * 0.25 * this->phi.Bmat() * omega_B2B1_B2;
+                Eigen::Vector3d L_B1_att = - dcm_B1B2 * L_B2_att;
+                this->T_B2 = L_B2_len + L_B2_att; // store the constraint torque for spacecraft 2
 
-            // assign forces and torques for spacecraft 1
-            this->forceExternal_N = this->Fc_N;
-            this->torqueExternalPntB_B = L_B1_len + L_B1_att;
-            this->T_B1 = this->torqueExternalPntB_B;
+                // assign forces and torques for spacecraft 1
+                this->forceExternal_N = this->Fc_N;
+                this->torqueExternalPntB_B = L_B1_len + L_B1_att;
+                this->T_B1 = this->torqueExternalPntB_B;
+            }
         }
         else if (this->scID == 1) {
             // assign forces and torques for spacecraft 2
@@ -523,11 +532,9 @@ void ConstraintDynamicEffector::writeOutputStateMessage(uint64_t CurrentClock)
 void ConstraintDynamicEffector::UpdateState(uint64_t CurrentSimNanos)
 {
     this->readInputMessage();
-    if(this->effectorStatus){
-        this->computeFilteredForce(CurrentSimNanos);
-        this->computeFilteredTorque(CurrentSimNanos);
-        this->writeOutputStateMessage(CurrentSimNanos);
-    }
+    this->computeFilteredForce(CurrentSimNanos);
+    this->computeFilteredTorque(CurrentSimNanos);
+    this->writeOutputStateMessage(CurrentSimNanos);
 }
 
 /*! Filtering method to calculate filtered Constraint Force
