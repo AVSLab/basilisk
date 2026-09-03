@@ -313,3 +313,20 @@ state effectors to one another.::
 
     stateEff.addDynamicEffector(constraintEffector)
     scObject2.addDynamicEffector(constraintEffector)
+
+Examples
+--------
+Three example scenarios in ``basilisk/examples`` demonstrate effector branching across the
+currently supported parent and child configurations:
+
+- :ref:`scenarioThrusterArm` branches a :ref:`thrusterDynamicEffector` onto a
+  :ref:`spinningBodyTwoDOFStateEffector` arm. Compares effector-branched attachment against naive
+  hub-direct attachment to isolate the modeling error each accrues.
+- :ref:`scenarioRoboticGrappling` branches a :ref:`constraintDynamicEffector` onto a
+  :ref:`linearTranslationOneDOFStateEffector` arm tip and a separate target spacecraft.
+  Demonstrates a docking-and-berthing maneuver from free-flight approach through
+  event-triggered capture and prescribed-motion retraction.
+- :ref:`scenarioAerobrake` branches a :ref:`facetDragDynamicEffector` onto each of two
+  :ref:`hingedRigidBodyStateEffector` solar panels on a Magellan-inspired Earth aerobraking
+  trajectory. Compares orientation-dependent branched drag against a legacy rigid-panel
+  baseline, with optional MRP-feedback velocity-pointing control.
