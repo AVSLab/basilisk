@@ -37,6 +37,10 @@ Version |release|
   collection before saving data from the healthy source. The collector now retries
   these failures and, if retries are exhausted, saves available observations while
   marking the failed source's retained data as stale.
+- Configuration checks in several state and dynamic effectors ran only from ``Reset()``, which the scheduler does
+  not invoke unless the effector is separately added to a task.  Attached-only effectors could therefore bypass
+  validation.  The affected effectors now perform the same checks from their guaranteed spacecraft initialization
+  hooks, including the property-linking path used by branch-attached dynamic effectors.
 - GitHub issue 1459: ``RetentionPolicy.addVariableLog()`` still called the removed
   ``SimBaseClass.AddVariableForLogging()`` and ``GetLogVariableData()`` methods, causing every
   Monte Carlo variable-retention request to fail with ``AttributeError``. Variable retention now

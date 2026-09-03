@@ -44,10 +44,17 @@ DragDynamicEffector::~DragDynamicEffector()
 }
 
 
-/*! This method is used to reset the module.
+/*! Validate the module configuration when the scheduler resets the model.
 
+ @param CurrentSimNanos [ns] Time at which the reset occurs
  */
 void DragDynamicEffector::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+{
+    this->validateConfiguration();
+}
+
+/*! Validate that the required atmospheric density input is connected. */
+void DragDynamicEffector::validateConfiguration()
 {
     // check if input message has not been included
     if (!this->atmoDensInMsg.isLinked()) {
@@ -90,6 +97,8 @@ bool DragDynamicEffector::ReadInputs()
     @param states simulation states
  */
 void DragDynamicEffector::linkInStates(DynParamManager& states){
+    this->validateConfiguration();
+
     this->hubSigma = states.getStateObject(this->stateNameOfSigma);
     this->hubVelocity = states.getStateObject(this->stateNameOfVelocity);
 

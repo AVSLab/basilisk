@@ -43,9 +43,17 @@ FacetDragDynamicEffector::~FacetDragDynamicEffector()
 	return;
 }
 
+/*! Validate the module configuration when the scheduler resets the model.
 
-
+ @param CurrentSimNanos [ns] Time at which the reset occurs
+ */
 void FacetDragDynamicEffector::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+{
+	this->validateConfiguration();
+}
+
+/*! Validate that the required atmospheric density input is connected. */
+void FacetDragDynamicEffector::validateConfiguration()
 {
 	// check if input message has not been included
 	if (!this->atmoDensInMsg.isLinked()) {
@@ -105,6 +113,8 @@ which are required for calculating drag forces and torques.
  */
 
 void FacetDragDynamicEffector::linkInStates(DynParamManager& states){
+	this->validateConfiguration();
+
 	this->hubSigma = states.getStateObject(this->stateNameOfSigma);
 	this->hubVelocity = states.getStateObject(this->stateNameOfVelocity);
 }
@@ -113,6 +123,8 @@ void FacetDragDynamicEffector::linkInStates(DynParamManager& states){
  @param properties The parameter manager to collect from
  */
 void FacetDragDynamicEffector::linkInProperties(DynParamManager& properties){
+    this->validateConfiguration();
+
     this->inertialAttitudeProperty = properties.getPropertyReference(this->propName_inertialAttitude);
     this->inertialVelocityProperty = properties.getPropertyReference(this->propName_inertialVelocity);
 }

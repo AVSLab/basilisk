@@ -65,7 +65,7 @@ public:
     void addFacet(double area, double dragCoeff, Eigen::Vector3d B_normal_hat, Eigen::Vector3d B_location);
 
 private:
-
+    void validateConfiguration();
     void plateDrag();
     void updateDragDir();
     double getDensity();
