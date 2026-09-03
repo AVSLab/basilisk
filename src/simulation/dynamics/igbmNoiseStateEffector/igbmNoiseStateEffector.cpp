@@ -99,14 +99,14 @@ void IgbmNoiseStateEffector::registerStates(DynParamManager& states)
     this->state->setState(state);
 }
 
-void IgbmNoiseStateEffector::linkInStates(DynParamManager& /** states */)
+void IgbmNoiseStateEffector::linkInStates(DynParamManager& states [[maybe_unused]])
 {
 }
 
-void IgbmNoiseStateEffector::computeDerivatives(double /** integTime */,
-                                                Eigen::Vector3d /** rDDot_BN_N */,
-                                                Eigen::Vector3d /** omegaDot_BN_B */,
-                                                Eigen::MRPd /** sigma_BN */)
+void IgbmNoiseStateEffector::computeDerivatives(double integTime [[maybe_unused]],
+                                                Eigen::Vector3d rDDot_BN_N [[maybe_unused]],
+                                                Eigen::Vector3d omegaDot_BN_B [[maybe_unused]],
+                                                Eigen::MRPd sigma_BN [[maybe_unused]])
 {
     if (this->state == nullptr) {
         this->bskLogger.bskError("IgbmNoiseStateEffector::computeDerivatives called before registerStates.");

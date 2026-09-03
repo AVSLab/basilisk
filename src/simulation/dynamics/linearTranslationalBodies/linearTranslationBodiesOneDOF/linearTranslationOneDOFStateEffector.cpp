@@ -43,6 +43,10 @@ LinearTranslationOneDOFStateEffector::~LinearTranslationOneDOFStateEffector()
 {
 }
 
+/*! @brief Reset the effector.
+ *
+ * @param[in] CurrentClock [ns] Current simulation time.
+ */
 void LinearTranslationOneDOFStateEffector::Reset(uint64_t CurrentClock [[maybe_unused]]) {
     this->validateConfiguration();
 }
@@ -63,6 +67,10 @@ void LinearTranslationOneDOFStateEffector::validateConfiguration() {
     }
 }
 
+/*! @brief Set the translating-body mass.
+ *
+ * @param[in] mass [kg] Mass value.
+ */
 void LinearTranslationOneDOFStateEffector::setMass(double mass) {
     if (mass > 0.0)
         this->mass = mass;
@@ -71,6 +79,10 @@ void LinearTranslationOneDOFStateEffector::setMass(double mass) {
     }
 }
 
+/*! @brief Set the body-frame translation direction.
+ *
+ * @param[in] fHat_B Translation direction expressed in body-frame components.
+ */
 void LinearTranslationOneDOFStateEffector::setFHat_B(Eigen::Vector3d fHat_B) {
     if (fHat_B.norm() > 0.01) {
         this->fHat_B = fHat_B.normalized();
@@ -80,6 +92,10 @@ void LinearTranslationOneDOFStateEffector::setFHat_B(Eigen::Vector3d fHat_B) {
     }
 }
 
+/*! @brief Set the translational spring coefficient.
+ *
+ * @param[in] k [N/m] Translational spring coefficient.
+ */
 void LinearTranslationOneDOFStateEffector::setK(double k) {
     if (k >= 0.0)
         this->k = k;
@@ -88,6 +104,10 @@ void LinearTranslationOneDOFStateEffector::setK(double k) {
     }
 }
 
+/*! @brief Set the translational damping coefficient.
+ *
+ * @param[in] c [N*s/m] Translational damping coefficient.
+ */
 void LinearTranslationOneDOFStateEffector::setC(double c) {
     if (c >= 0.0)
         this->c = c;
@@ -96,28 +116,40 @@ void LinearTranslationOneDOFStateEffector::setC(double c) {
     }
 }
 
-void LinearTranslationOneDOFStateEffector::linkInStates(DynParamManager& statesIn)
+/*! @brief Link the required dynamics states.
+ *
+ * @param[in] states Dynamic parameter manager containing the required states.
+ */
+void LinearTranslationOneDOFStateEffector::linkInStates(DynParamManager& states)
 {
     // Get access to the hub's states needed for dynamic coupling
-    this->hubOmega = statesIn.getStateObject("hubOmega");
+    this->hubOmega = states.getStateObject("hubOmega");
 
     // Get access to properties needed for dynamic coupling (Hub or prescribed)
-    this->inertialPositionProperty = statesIn.getPropertyReference(this->propName_inertialPosition);
-    this->inertialVelocityProperty = statesIn.getPropertyReference(this->propName_inertialVelocity);
-    this->hubSigmaState = statesIn.getStateObject(this->nameOfSpacecraftAttachedTo + this->stateNameOfSigma);
-    this->g_N = statesIn.getPropertyReference("g_N");
+    this->inertialPositionProperty = states.getPropertyReference(this->propName_inertialPosition);
+    this->inertialVelocityProperty = states.getPropertyReference(this->propName_inertialVelocity);
+    this->hubSigmaState = states.getStateObject(this->nameOfSpacecraftAttachedTo + this->stateNameOfSigma);
+    this->g_N = states.getPropertyReference("g_N");
 }
 
-void LinearTranslationOneDOFStateEffector::linkInPrescribedMotionProperties(DynParamManager& properties)
+/*! @brief Link the prescribed-motion properties.
+ *
+ * @param[in] states Dynamic parameter manager containing the required properties.
+ */
+void LinearTranslationOneDOFStateEffector::linkInPrescribedMotionProperties(DynParamManager& states)
 {
-    this->prescribedPositionProperty = properties.getPropertyReference(this->propName_prescribedPosition);
-    this->prescribedVelocityProperty = properties.getPropertyReference(this->propName_prescribedVelocity);
-    this->prescribedAccelerationProperty = properties.getPropertyReference(this->propName_prescribedAcceleration);
-    this->prescribedAttitudeProperty = properties.getPropertyReference(this->propName_prescribedAttitude);
-    this->prescribedAngVelocityProperty = properties.getPropertyReference(this->propName_prescribedAngVelocity);
-    this->prescribedAngAccelerationProperty = properties.getPropertyReference(this->propName_prescribedAngAcceleration);
+    this->prescribedPositionProperty = states.getPropertyReference(this->propName_prescribedPosition);
+    this->prescribedVelocityProperty = states.getPropertyReference(this->propName_prescribedVelocity);
+    this->prescribedAccelerationProperty = states.getPropertyReference(this->propName_prescribedAcceleration);
+    this->prescribedAttitudeProperty = states.getPropertyReference(this->propName_prescribedAttitude);
+    this->prescribedAngVelocityProperty = states.getPropertyReference(this->propName_prescribedAngVelocity);
+    this->prescribedAngAccelerationProperty = states.getPropertyReference(this->propName_prescribedAngAcceleration);
 }
 
+/*! @brief Register the effector dynamics states.
+ *
+ * @param[in,out] states Dynamic parameter manager used to register states or properties.
+ */
 void LinearTranslationOneDOFStateEffector::registerStates(DynParamManager& states)
 {
 	this->rhoState = states.registerState(1, 1, nameOfRhoState);
@@ -149,7 +181,10 @@ void LinearTranslationOneDOFStateEffector::addDynamicEffector(DynamicEffector *n
 }
 
 /*! This method registers the SB inertial properties with the dynamic parameter manager and links
- them into dependent dynamic effectors  */
+ them into dependent dynamic effectors
+ *
+ * @param[in,out] states Dynamic parameter manager used to register states or properties.
+ */
 void LinearTranslationOneDOFStateEffector::registerProperties(DynParamManager& states)
 {
     Eigen::Vector3d stateInit = Eigen::Vector3d::Zero();
@@ -187,7 +222,11 @@ void LinearTranslationOneDOFStateEffector::readInputMessages()
     }
 }
 
-void LinearTranslationOneDOFStateEffector::writeOutputStateMessages(uint64_t currentSimNanos)
+/*! @brief Write the effector state output messages.
+ *
+ * @param[in] CurrentSimNanos [ns] Current simulation time.
+ */
+void LinearTranslationOneDOFStateEffector::writeOutputStateMessages(uint64_t CurrentSimNanos)
 {
     this->computeTranslatingBodyInertialStates();
 
@@ -196,7 +235,7 @@ void LinearTranslationOneDOFStateEffector::writeOutputStateMessages(uint64_t cur
         translatingBodyBuffer = this->translatingBodyOutMsg.zeroMsgPayload;
         translatingBodyBuffer.rho = this->rho;
         translatingBodyBuffer.rhoDot = this->rhoDot;
-        this->translatingBodyOutMsg.write(&translatingBodyBuffer, this->moduleID, currentSimNanos);
+        this->translatingBodyOutMsg.write(&translatingBodyBuffer, this->moduleID, CurrentSimNanos);
     }
 
     if (this->translatingBodyConfigLogOutMsg.isLinked()) {
@@ -208,10 +247,14 @@ void LinearTranslationOneDOFStateEffector::writeOutputStateMessages(uint64_t cur
         eigenVector3d2CArray(this->v_FcN_N, configLogMsg.v_BN_N);
         eigenMatrixXd2CArray(*this->sigma_FN, configLogMsg.sigma_BN);
         eigenMatrixXd2CArray(*this->omega_FN_F, configLogMsg.omega_BN_B);
-        this->translatingBodyConfigLogOutMsg.write(&configLogMsg, this->moduleID, currentSimNanos);
+        this->translatingBodyConfigLogOutMsg.write(&configLogMsg, this->moduleID, CurrentSimNanos);
     }
 }
 
+/*! @brief Update the effector mass properties.
+ *
+ * @param[in] integTime [s] Current integration time.
+ */
 void LinearTranslationOneDOFStateEffector::updateEffectorMassProps(double integTime [[maybe_unused]])
 {
 	this->rho = this->rhoState->getStateReference()(0,0);
@@ -238,6 +281,14 @@ void LinearTranslationOneDOFStateEffector::updateEffectorMassProps(double integT
             + this->rTilde_FcB_B * this->rPrimeTilde_FcB_B);
 }
 
+/*! @brief Update the effector back-substitution contributions.
+ *
+ * @param[in] integTime [s] Current integration time.
+ * @param[in,out] backSubContr Back-substitution contributions.
+ * @param[in] sigma_BN Hub attitude relative to the inertial frame.
+ * @param[in] omega_BN_B [rad/s] Hub angular velocity expressed in body-frame components.
+ * @param[in] g_N [m/s^2] Gravitational acceleration expressed in inertial-frame components.
+ */
 void LinearTranslationOneDOFStateEffector::updateContributions(double integTime, BackSubMatrices & backSubContr,
                                                                Eigen::MRPd sigma_BN,
                                                                Eigen::Vector3d omega_BN_B,
@@ -255,6 +306,12 @@ void LinearTranslationOneDOFStateEffector::updateContributions(double integTime,
     computeBackSubContributions(backSubContr, F_g, integTime);
 }
 
+/*! @brief Compute the back-substitution contributions.
+ *
+ * @param[in,out] backSubContr Back-substitution contributions.
+ * @param[in] F_g Generalized gravitational-force vector.
+ * @param[in] integTime [s] Current integration time.
+ */
 void LinearTranslationOneDOFStateEffector::computeBackSubContributions(BackSubMatrices & backSubContr,
                                                                        const Eigen::Vector3d& F_g,
                                                                        double integTime)
@@ -312,6 +369,10 @@ void LinearTranslationOneDOFStateEffector::computeBackSubContributions(BackSubMa
                               this->dcm_FB.transpose() * attBodyForce_F);
 }
 
+/*! @brief Add prescribed-motion coupling terms.
+ *
+ * @param[in,out] backSubContr Back-substitution contributions.
+ */
 void LinearTranslationOneDOFStateEffector::addPrescribedMotionCouplingContributions(BackSubMatrices & backSubContr) {
 
     // Access prescribed motion properties
@@ -378,6 +439,13 @@ void LinearTranslationOneDOFStateEffector::addPrescribedMotionCouplingContributi
             + vecRotTerm5;
 }
 
+/*! @brief Compute the effector state derivatives.
+ *
+ * @param[in] integTime [s] Current integration time.
+ * @param[in] rDDot_BN_N [m/s^2] Hub translational acceleration expressed in inertial-frame components.
+ * @param[in] omegaDot_BN_B [rad/s^2] Hub angular acceleration expressed in body-frame components.
+ * @param[in] sigma_BN Hub attitude relative to the inertial frame.
+ */
 void LinearTranslationOneDOFStateEffector::computeDerivatives(double integTime [[maybe_unused]],
                                                               Eigen::Vector3d rDDot_BN_N,
                                                               Eigen::Vector3d omegaDot_BN_B,
@@ -394,6 +462,13 @@ void LinearTranslationOneDOFStateEffector::computeDerivatives(double integTime [
     this->rhoState->setDerivative(this->rhoDotState->getStateReference());
 }
 
+/*! @brief Update the effector energy and momentum contributions.
+ *
+ * @param[in] integTime [s] Current integration time.
+ * @param[in,out] rotAngMomPntCContr_B [kg*m^2/s] Rotational angular momentum contribution.
+ * @param[in,out] rotEnergyContr [J] Rotational energy contribution.
+ * @param[in] omega_BN_B [rad/s] Hub angular velocity expressed in body-frame components.
+ */
 void LinearTranslationOneDOFStateEffector::updateEnergyMomContributions(double integTime [[maybe_unused]],
                                                                         Eigen::Vector3d & rotAngMomPntCContr_B,
                                                                         double & rotEnergyContr,
@@ -437,8 +512,12 @@ void LinearTranslationOneDOFStateEffector::computeTranslatingBodyInertialStates(
                     this->r_FcB_B - this->dcm_FB.transpose() * this->r_FcF_F));
 }
 
-void LinearTranslationOneDOFStateEffector::UpdateState(uint64_t currentSimNanos)
+/*! @brief Update the scheduled effector state.
+ *
+ * @param[in] CurrentSimNanos [ns] Current simulation time.
+ */
+void LinearTranslationOneDOFStateEffector::UpdateState(uint64_t CurrentSimNanos)
 {
     this->readInputMessages();
-    this->writeOutputStateMessages(currentSimNanos);
+    this->writeOutputStateMessages(CurrentSimNanos);
 }

@@ -63,7 +63,8 @@ void DragDynamicEffector::validateConfiguration()
 }
 
 /*! The DragEffector does not write output messages to the rest of the sim.
-
+ *
+ * @param[in] CurrentClock [ns] Current simulation time.
  */
 void DragDynamicEffector::WriteOutputMessages(uint64_t CurrentClock [[maybe_unused]])
 {
@@ -172,7 +173,10 @@ void DragDynamicEffector::cannonballDrag(){
 
 /*! This method computes the body forces and torques for the dragEffector in a simulation loop,
 selecting the model type based on the settable attribute "modelType."
-*/
+ *
+ * @param[in] integTime [s] Current integration time.
+ * @param[in] timeStep [s] Integration time step.
+ */
 void DragDynamicEffector::computeForceTorque(double integTime [[maybe_unused]], double timeStep [[maybe_unused]]){
 	updateDragDir();
 	if(this->modelType == "cannonball"){

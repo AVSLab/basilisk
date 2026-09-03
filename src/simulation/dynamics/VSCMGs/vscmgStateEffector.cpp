@@ -50,15 +50,23 @@ VSCMGStateEffector::~VSCMGStateEffector()
     return;
 }
 
-void VSCMGStateEffector::linkInStates(DynParamManager& statesIn)
+/*! @brief Link the required dynamics states.
+ *
+ * @param[in] states Dynamic parameter manager containing the required states.
+ */
+void VSCMGStateEffector::linkInStates(DynParamManager& states)
 {
-    this->hubOmega = statesIn.getStateObject(this->stateNameOfOmega);
+    this->hubOmega = states.getStateObject(this->stateNameOfOmega);
     //! - Get access to the hub states
-    this->g_N = statesIn.getPropertyReference(this->propName_vehicleGravity);
+    this->g_N = states.getPropertyReference(this->propName_vehicleGravity);
 
     return;
 }
 
+/*! @brief Register the effector dynamics states.
+ *
+ * @param[in,out] states Dynamic parameter manager used to register states or properties.
+ */
 void VSCMGStateEffector::registerStates(DynParamManager& states)
 {
     //! - Find number of VSCMGs and number of VSCMGs with jitter
@@ -100,6 +108,10 @@ void VSCMGStateEffector::registerStates(DynParamManager& states)
     return;
 }
 
+/*! @brief Update the effector mass properties.
+ *
+ * @param[in] integTime [s] Current integration time.
+ */
 void VSCMGStateEffector::updateEffectorMassProps(double integTime [[maybe_unused]])
 {
     // - Zero the mass props information because these will be accumulated during this call
@@ -262,6 +274,14 @@ void VSCMGStateEffector::updateEffectorMassProps(double integTime [[maybe_unused
 	return;
 }
 
+/*! @brief Update the effector back-substitution contributions.
+ *
+ * @param[in] integTime [s] Current integration time.
+ * @param[in,out] backSubContr Back-substitution contributions.
+ * @param[in] sigma_BN Hub attitude relative to the inertial frame.
+ * @param[in] omega_BN_B [rad/s] Hub angular velocity expressed in body-frame components.
+ * @param[in] g_N [m/s^2] Gravitational acceleration expressed in inertial-frame components.
+ */
 void VSCMGStateEffector::updateContributions(double integTime [[maybe_unused]], BackSubMatrices & backSubContr, Eigen::MRPd sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N [[maybe_unused]])
 {
 	Eigen::Vector3d omegaLoc_BN_B;
@@ -391,6 +411,13 @@ void VSCMGStateEffector::updateContributions(double integTime [[maybe_unused]], 
 	return;
 }
 
+/*! @brief Compute the effector state derivatives.
+ *
+ * @param[in] integTime [s] Current integration time.
+ * @param[in] rDDot_BN_N [m/s^2] Hub translational acceleration expressed in inertial-frame components.
+ * @param[in] omegaDot_BN_B [rad/s^2] Hub angular acceleration expressed in body-frame components.
+ * @param[in] sigma_BN Hub attitude relative to the inertial frame.
+ */
 void VSCMGStateEffector::computeDerivatives(double integTime [[maybe_unused]], Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN)
 {
 	Eigen::MatrixXd OmegasDot(this->numVSCMG,1);
@@ -410,7 +437,7 @@ void VSCMGStateEffector::computeDerivatives(double integTime [[maybe_unused]], E
     int thetaCount = 0;
 	std::vector<VSCMGConfigMsgPayload>::iterator it;
 
-	//! Grab necessarry values from manager
+	//! Grab necessary values from manager
 	omegaDotBNLoc_B = omegaDot_BN_B;
 	omegaLoc_BN_B = this->hubOmega->getStateReference();
 	rDDotBNLoc_N = rDDot_BN_N;
@@ -449,6 +476,13 @@ void VSCMGStateEffector::computeDerivatives(double integTime [[maybe_unused]], E
     }
 }
 
+/*! @brief Update the effector energy and momentum contributions.
+ *
+ * @param[in] integTime [s] Current integration time.
+ * @param[in,out] rotAngMomPntCContr_B [kg*m^2/s] Rotational angular momentum contribution.
+ * @param[in,out] rotEnergyContr [J] Rotational energy contribution.
+ * @param[in] omega_BN_B [rad/s] Hub angular velocity expressed in body-frame components.
+ */
 void VSCMGStateEffector::updateEnergyMomContributions(double integTime [[maybe_unused]], Eigen::Vector3d & rotAngMomPntCContr_B,
                                                       double & rotEnergyContr, Eigen::Vector3d omega_BN_B [[maybe_unused]])
 {
@@ -483,10 +517,11 @@ void VSCMGStateEffector::updateEnergyMomContributions(double integTime [[maybe_u
 }
 
 
-/*! Reset the module to origina configuration values.
-
+/*! Reset the module to its original configuration values.
+ *
+ * @param[in] CurrentSimNanos [ns] Current simulation time.
  */
-void VSCMGStateEffector::Reset(uint64_t CurrenSimNanos [[maybe_unused]])
+void VSCMGStateEffector::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     VSCMGCmdMsgPayload VSCMGCmdInitializer;
     VSCMGCmdInitializer.u_s_cmd = 0.0;

@@ -137,17 +137,20 @@ NHingedRigidBodyStateEffector::computePanelInertialStates()
     return;
 }
 
-/*! This method allows the HRB state effector to have access to the hub states and gravity*/
-void NHingedRigidBodyStateEffector::linkInStates(DynParamManager& statesIn)
+/*! This method allows the HRB state effector to have access to the hub states and gravity
+ *
+ * @param[in] states Dynamic parameter manager containing the required states.
+ */
+void NHingedRigidBodyStateEffector::linkInStates(DynParamManager& states)
 {
     // - Get access to the hub states
-    this->g_N = statesIn.getPropertyReference(this->propName_vehicleGravity);
+    this->g_N = states.getPropertyReference(this->propName_vehicleGravity);
 
     this->inertialPositionProperty =
-      statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + this->propName_inertialPosition);
+      states.getPropertyReference(this->nameOfSpacecraftAttachedTo + this->propName_inertialPosition);
     this->inertialVelocityProperty =
-      statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + this->propName_inertialVelocity);
-    this->hubSigmaState = statesIn.getStateObject(this->nameOfSpacecraftAttachedTo + this->stateNameOfSigma);
+      states.getPropertyReference(this->nameOfSpacecraftAttachedTo + this->propName_inertialVelocity);
+    this->hubSigmaState = states.getStateObject(this->nameOfSpacecraftAttachedTo + this->stateNameOfSigma);
 
     return;
 }
@@ -180,8 +183,11 @@ NHingedRigidBodyStateEffector::checkPanelUniformity()
     }
 }
 
-/*! This method allows the HRB state effector to register its states: theta and thetaDot with the dyn param manager */
-void NHingedRigidBodyStateEffector::registerStates(DynParamManager& states)
+/*! This method allows the HRB state effector to register its states: theta and thetaDot with the dyn param manager
+ *
+ * @param[in,out] statesIn Dynamic parameter manager used to register states or properties.
+ */
+void NHingedRigidBodyStateEffector::registerStates(DynParamManager& statesIn)
 {
     this->checkPanelUniformity();
 
@@ -198,12 +204,12 @@ void NHingedRigidBodyStateEffector::registerStates(DynParamManager& states)
         this->totalMass += PanelIt->mass;
         it += 1;
     }
-    this->thetaState = states.registerState((uint32_t) this->PanelVec.size(), 1, this->nameOfThetaState);
+    this->thetaState = statesIn.registerState((uint32_t) this->PanelVec.size(), 1, this->nameOfThetaState);
     this->thetaState->setState(thetaInitMatrix);
-    this->thetaDotState = states.registerState((uint32_t) this->PanelVec.size(), 1, this->nameOfThetaDotState);
+    this->thetaDotState = statesIn.registerState((uint32_t) this->PanelVec.size(), 1, this->nameOfThetaDotState);
     this->thetaDotState->setState(thetaDotInitMatrix);
 
-    registerProperties(states);
+    registerProperties(statesIn);
 
     return;
 }
@@ -226,7 +232,10 @@ NHingedRigidBodyStateEffector::addDynamicEffector(DynamicEffector* newDynamicEff
 }
 
 /*! This method registers the panel inertial properties with the dynamic parameter manager and links
- them into dependent dynamic effectors */
+ them into dependent dynamic effectors
+ *
+ * @param[in,out] states Dynamic parameter manager used to register states or properties.
+ */
 void
 NHingedRigidBodyStateEffector::registerProperties(DynParamManager& states)
 {
@@ -248,7 +257,10 @@ NHingedRigidBodyStateEffector::registerProperties(DynParamManager& states)
 }
 
 /*! This method allows the HRB state effector to provide its contributions to the mass props and mass prop rates of the
- spacecraft */
+ spacecraft
+ *
+ * @param[in] integTime [s] Current integration time.
+ */
 void NHingedRigidBodyStateEffector::updateEffectorMassProps(double integTime [[maybe_unused]])
 {
     // - Define summation variables
@@ -344,7 +356,10 @@ void NHingedRigidBodyStateEffector::updateEffectorMassProps(double integTime [[m
     return;
 }
 
-//!* Method for defining the Heaviside function for the EOMs */
+/*! @brief Define the Heaviside function used by the equations of motion.
+ *
+ * @param[in] cond Condition evaluated by the Heaviside function.
+ */
 double NHingedRigidBodyStateEffector::HeaviFunc(double cond)
 {
     double ans;
@@ -354,7 +369,14 @@ double NHingedRigidBodyStateEffector::HeaviFunc(double cond)
 }
 
 /*! This method allows the HRB state effector to give its contributions to the matrices needed for the back-sub
- method */
+ method
+ *
+ * @param[in] integTime [s] Current integration time.
+ * @param[in,out] backSubContr Back-substitution contributions.
+ * @param[in] sigma_BN Hub attitude relative to the inertial frame.
+ * @param[in] omega_BN_B [rad/s] Hub angular velocity expressed in body-frame components.
+ * @param[in] g_N [m/s^2] Gravitational acceleration expressed in inertial-frame components.
+ */
 void NHingedRigidBodyStateEffector::updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::MRPd sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N [[maybe_unused]])
 {
     // - Find dcm_BN
@@ -619,10 +641,16 @@ void NHingedRigidBodyStateEffector::updateContributions(double integTime, BackSu
     return;
 }
 
-/*! This method is used to find the derivatives for the HRB stateEffector: thetaDDot and the kinematic derivative */
+/*! This method is used to find the derivatives for the HRB stateEffector: thetaDDot and the kinematic derivative
+ *
+ * @param[in] integTime [s] Current integration time.
+ * @param[in] rDDot_BN_N [m/s^2] Hub translational acceleration expressed in inertial-frame components.
+ * @param[in] omegaDot_BN_B [rad/s^2] Hub angular acceleration expressed in body-frame components.
+ * @param[in] sigma_BN Hub attitude relative to the inertial frame.
+ */
 void NHingedRigidBodyStateEffector::computeDerivatives(double integTime [[maybe_unused]], Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN)
 {
-    // - Grab necessarry values from manager (these have been previously computed in hubEffector)
+    // - Grab necessary values from manager (these have been previously computed in hubEffector)
     Eigen::Vector3d rDDotLoc_BN_N;
     Eigen::MRPd sigmaLocal_BN;
     Eigen::Vector3d omegaDotLoc_BN_B;
@@ -653,7 +681,13 @@ void NHingedRigidBodyStateEffector::computeDerivatives(double integTime [[maybe_
     return;
 }
 
-/*! This method is for calculating the contributions of the HRB state effector to the energy and momentum of the s/c */
+/*! This method is for calculating the contributions of the HRB state effector to the energy and momentum of the s/c
+ *
+ * @param[in] integTime [s] Current integration time.
+ * @param[in,out] rotAngMomPntCContr_B [kg*m^2/s] Rotational angular momentum contribution.
+ * @param[in,out] rotEnergyContr [J] Rotational energy contribution.
+ * @param[in] omega_BN_B [rad/s] Hub angular velocity expressed in body-frame components.
+ */
 void NHingedRigidBodyStateEffector::updateEnergyMomContributions(double integTime [[maybe_unused]], Eigen::Vector3d & rotAngMomPntCContr_B,
                                                                  double & rotEnergyContr, Eigen::Vector3d omega_BN_B)
 {

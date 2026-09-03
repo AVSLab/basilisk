@@ -69,7 +69,8 @@ ThrusterStateEffector::~ThrusterStateEffector()
 }
 
 /*! This method is used to reset the module.
-
+ *
+ * @param[in] CurrentSimNanos [ns] Current simulation time.
  */
 void ThrusterStateEffector::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
@@ -237,6 +238,10 @@ void ThrusterStateEffector::UpdateThrusterProperties()
     }
 }
 
+/*! @brief Add a thruster.
+ *
+ * @param[in] newThruster Thruster configuration to add.
+ */
 void ThrusterStateEffector::addThruster(std::shared_ptr<THRSimConfig> newThruster)
 {
     this->thrusterData.push_back(newThruster);
@@ -262,6 +267,11 @@ void ThrusterStateEffector::addThruster(std::shared_ptr<THRSimConfig> newThruste
     this->bodyToHubInfo.push_back(attachedBodyToHub);
 }
 
+/*! @brief Add a thruster.
+ *
+ * @param[in] newThruster Thruster configuration to add.
+ * @param[in] bodyStateMsg State message for the body carrying the thruster.
+ */
 void ThrusterStateEffector::addThruster(std::shared_ptr<THRSimConfig> newThruster, Message<SCStatesMsgPayload>* bodyStateMsg)
 {
     this->thrusterData.push_back(newThruster);
@@ -298,7 +308,10 @@ void ThrusterStateEffector::linkInStates(DynParamManager& states){
     this->inertialPositionProperty = states.getPropertyReference(this->nameOfSpacecraftAttachedTo + this->propName_inertialPosition);
 }
 
-/*! This method allows the thruster state effector to register its state kappa with the dyn param manager */
+/*! This method allows the thruster state effector to register its state kappa with the dyn param manager
+ *
+ * @param[in,out] states Dynamic parameter manager used to register states or properties.
+ */
 void ThrusterStateEffector::registerStates(DynParamManager& states)
 {
     // - Register the states associated with thruster - kappa
@@ -319,7 +332,13 @@ void ThrusterStateEffector::registerStates(DynParamManager& states)
     return;
 }
 
-/*! This method is used to find the derivatives for the thruster stateEffector */
+/*! This method is used to find the derivatives for the thruster stateEffector
+ *
+ * @param[in] integTime [s] Current integration time.
+ * @param[in] rDDot_BN_N [m/s^2] Hub translational acceleration expressed in inertial-frame components.
+ * @param[in] omegaDot_BN_B [rad/s^2] Hub angular acceleration expressed in body-frame components.
+ * @param[in] sigma_BN Hub attitude relative to the inertial frame.
+ */
 void ThrusterStateEffector::computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N [[maybe_unused]], Eigen::Vector3d omegaDot_BN_B [[maybe_unused]], Eigen::MRPd sigma_BN [[maybe_unused]])
 {
     std::vector<std::shared_ptr<THRSimConfig>>::iterator itp;
@@ -353,6 +372,11 @@ void ThrusterStateEffector::computeDerivatives(double integTime, Eigen::Vector3d
     return;
 }
 
+/*! @brief Calculate the force and torque exerted on the attached body.
+ *
+ * @param[in] integTime [s] Current integration time.
+ * @param[in] omega_BN_B [rad/s] Hub angular velocity expressed in body-frame components.
+ */
 void ThrusterStateEffector::calcForceTorqueOnBody(double integTime [[maybe_unused]], Eigen::Vector3d omega_BN_B)
 {
     // Save omega_BN_B
@@ -436,6 +460,14 @@ void ThrusterStateEffector::calcForceTorqueOnBody(double integTime [[maybe_unuse
     return;
 }
 
+/*! @brief Update the effector back-substitution contributions.
+ *
+ * @param[in] integTime [s] Current integration time.
+ * @param[in,out] backSubContr Back-substitution contributions.
+ * @param[in] sigma_BN Hub attitude relative to the inertial frame.
+ * @param[in] omega_BN_B [rad/s] Hub angular velocity expressed in body-frame components.
+ * @param[in] g_N [m/s^2] Gravitational acceleration expressed in inertial-frame components.
+ */
 void ThrusterStateEffector::updateContributions(double integTime [[maybe_unused]], BackSubMatrices& backSubContr, Eigen::MRPd sigma_BN [[maybe_unused]], Eigen::Vector3d omega_BN_B [[maybe_unused]], Eigen::Vector3d g_N [[maybe_unused]])
 {
     // Define the translational and rotational contributions from the computed force and torque
@@ -444,7 +476,10 @@ void ThrusterStateEffector::updateContributions(double integTime [[maybe_unused]
 
 }
 
-/*! This is the method for the thruster effector to add its contributions to the mass props and mass prop rates of the vehicle */
+/*! This is the method for the thruster effector to add its contributions to the mass props and mass prop rates of the vehicle
+ *
+ * @param[in] integTime [s] Current integration time.
+ */
 void ThrusterStateEffector::updateEffectorMassProps(double integTime [[maybe_unused]]) {
 
     std::vector<std::shared_ptr<THRSimConfig>>::iterator itp;
