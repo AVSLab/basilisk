@@ -71,8 +71,9 @@ void MtbEffector::validateConfiguration()
 }
 
 /*! This is the main method that gets called every time the module is updated.  Provide an appropriate description.
-
-*/
+ *
+ * @param[in] CurrentSimNanos [ns] Current simulation time.
+ */
 void MtbEffector::UpdateState(uint64_t CurrentSimNanos)
 {
     /*
@@ -85,7 +86,8 @@ void MtbEffector::UpdateState(uint64_t CurrentSimNanos)
 
 
 /*! This method is used to link the magnetic torque bar effector to the hub attitude.
-
+ *
+ * @param[in] states Dynamic parameter manager containing the required states.
  */
 void MtbEffector::linkInStates(DynParamManager& states)
 {
@@ -100,8 +102,10 @@ void MtbEffector::linkInStates(DynParamManager& states)
 }
 
 /*! This method computes the body torque contribution from all magnetic torque bars.
-
-*/
+ *
+ * @param[in] integTime [s] Current integration time.
+ * @param[in] timeStep [s] Integration time step.
+ */
 void MtbEffector::computeForceTorque(double integTime [[maybe_unused]], double timeStep [[maybe_unused]])
 {
     /*
@@ -166,7 +170,8 @@ void MtbEffector::computeForceTorque(double integTime [[maybe_unused]], double t
 }
 
 /*! Write the magnetic torque bar output message.
-
+ *
+ * @param[in] CurrentClock [ns] Current simulation time.
  */
 void MtbEffector::WriteOutputMessages(uint64_t CurrentClock)
 {

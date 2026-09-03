@@ -127,7 +127,10 @@ void SpinningBodyTwoDOFStateEffector::validateConfiguration()
 }
 
 
-/*! This method takes the computed theta states and outputs them to the messaging system. */
+/*! This method takes the computed theta states and outputs them to the messaging system.
+ *
+ * @param[in] CurrentClock [ns] Current simulation time.
+ */
 void SpinningBodyTwoDOFStateEffector::writeOutputStateMessages(uint64_t CurrentClock)
 {
     this->computeSpinningBodyInertialStates();
@@ -182,36 +185,45 @@ void SpinningBodyTwoDOFStateEffector::prependSpacecraftNameToStates()
     this->nameOfTheta2DotState = this->nameOfSpacecraftAttachedTo + this->nameOfTheta2DotState;
 }
 
-/*! This method allows the SB state effector to have access to the hub states and gravity*/
-void SpinningBodyTwoDOFStateEffector::linkInStates(DynParamManager& statesIn)
+/*! This method allows the SB state effector to have access to the hub states and gravity
+ *
+ * @param[in] states Dynamic parameter manager containing the required states.
+ */
+void SpinningBodyTwoDOFStateEffector::linkInStates(DynParamManager& states)
 {
     // Get access to the hub's states needed for dynamic coupling
-    this->hubOmega = statesIn.getStateObject("hubOmega");
+    this->hubOmega = states.getStateObject("hubOmega");
 
-    this->inertialPositionProperty = statesIn.getPropertyReference(this->propName_inertialPosition);
-    this->inertialVelocityProperty = statesIn.getPropertyReference(this->propName_inertialVelocity);
-    this->hubSigmaState = statesIn.getStateObject(this->nameOfSpacecraftAttachedTo + this->stateNameOfSigma);
+    this->inertialPositionProperty = states.getPropertyReference(this->propName_inertialPosition);
+    this->inertialVelocityProperty = states.getPropertyReference(this->propName_inertialVelocity);
+    this->hubSigmaState = states.getStateObject(this->nameOfSpacecraftAttachedTo + this->stateNameOfSigma);
 }
 
-/*! This method is used to link prescribed motion properties */
-void SpinningBodyTwoDOFStateEffector::linkInPrescribedMotionProperties(DynParamManager& properties)
+/*! This method is used to link prescribed motion properties
+ *
+ * @param[in] states Dynamic parameter manager containing the required properties.
+ */
+void SpinningBodyTwoDOFStateEffector::linkInPrescribedMotionProperties(DynParamManager& states)
 {
-    this->prescribedPositionProperty = properties.getPropertyReference(this->propName_prescribedPosition);
-    this->prescribedVelocityProperty = properties.getPropertyReference(this->propName_prescribedVelocity);
-    this->prescribedAccelerationProperty = properties.getPropertyReference(this->propName_prescribedAcceleration);
-    this->prescribedAttitudeProperty = properties.getPropertyReference(this->propName_prescribedAttitude);
-    this->prescribedAngVelocityProperty = properties.getPropertyReference(this->propName_prescribedAngVelocity);
-    this->prescribedAngAccelerationProperty = properties.getPropertyReference(this->propName_prescribedAngAcceleration);
+    this->prescribedPositionProperty = states.getPropertyReference(this->propName_prescribedPosition);
+    this->prescribedVelocityProperty = states.getPropertyReference(this->propName_prescribedVelocity);
+    this->prescribedAccelerationProperty = states.getPropertyReference(this->propName_prescribedAcceleration);
+    this->prescribedAttitudeProperty = states.getPropertyReference(this->propName_prescribedAttitude);
+    this->prescribedAngVelocityProperty = states.getPropertyReference(this->propName_prescribedAngVelocity);
+    this->prescribedAngAccelerationProperty = states.getPropertyReference(this->propName_prescribedAngAcceleration);
 }
 
-/*! This method allows the SB state effector to register its states: theta and thetaDot with the dynamic parameter manager */
-void SpinningBodyTwoDOFStateEffector::registerStates(DynParamManager& states)
+/*! This method allows the SB state effector to register its states: theta and thetaDot with the dynamic parameter manager
+ *
+ * @param[in,out] statesIn Dynamic parameter manager used to register states or properties.
+ */
+void SpinningBodyTwoDOFStateEffector::registerStates(DynParamManager& statesIn)
 {
     this->validateConfiguration();
 
     // Register the theta states
-    this->theta1State = states.registerState(1, 1, this->nameOfTheta1State);
-    this->theta2State = states.registerState(1, 1, this->nameOfTheta2State);
+    this->theta1State = statesIn.registerState(1, 1, this->nameOfTheta1State);
+    this->theta2State = statesIn.registerState(1, 1, this->nameOfTheta2State);
     Eigen::MatrixXd thetaInitMatrix(2,1);
     thetaInitMatrix(0,0) = this->theta1Init;
     thetaInitMatrix(1,0) = this->theta2Init;
@@ -219,15 +231,15 @@ void SpinningBodyTwoDOFStateEffector::registerStates(DynParamManager& states)
     this->theta2State->setState(thetaInitMatrix.row(1));
 
     // Register the thetaDot states
-    this->theta1DotState = states.registerState(1, 1, this->nameOfTheta1DotState);
-    this->theta2DotState = states.registerState(1, 1, this->nameOfTheta2DotState);
+    this->theta1DotState = statesIn.registerState(1, 1, this->nameOfTheta1DotState);
+    this->theta2DotState = statesIn.registerState(1, 1, this->nameOfTheta2DotState);
     Eigen::MatrixXd thetaDotInitMatrix(2,1);
     thetaDotInitMatrix(0,0) = this->theta1DotInit;
     thetaDotInitMatrix(1,0) = this->theta2DotInit;
     this->theta1DotState->setState(thetaDotInitMatrix.row(0));
     this->theta2DotState->setState(thetaDotInitMatrix.row(1));
 
-    registerProperties(states);
+    registerProperties(statesIn);
 }
 
 /*! This method attaches a dynamicEffector to the specified SB
@@ -241,7 +253,10 @@ void SpinningBodyTwoDOFStateEffector::addDynamicEffector(DynamicEffector *newDyn
 }
 
 /*! This method registers the SB inertial properties with the dynamic parameter manager and links
- them into dependent dynamic effectors  */
+ them into dependent dynamic effectors
+ *
+ * @param[in,out] states Dynamic parameter manager used to register states or properties.
+ */
 void SpinningBodyTwoDOFStateEffector::registerProperties(DynParamManager& states)
 {
     Eigen::Vector3d stateInit = Eigen::Vector3d::Zero();
@@ -263,7 +278,10 @@ void SpinningBodyTwoDOFStateEffector::registerProperties(DynParamManager& states
 }
 
 /*! This method allows the SB state effector to provide its contributions to the mass props and mass prop rates of the
- spacecraft */
+ spacecraft
+ *
+ * @param[in] integTime [s] Current integration time.
+ */
 void SpinningBodyTwoDOFStateEffector::updateEffectorMassProps(double integTime [[maybe_unused]])
 {
     // Give the mass of the spinning body to the effProps mass
@@ -351,7 +369,14 @@ void SpinningBodyTwoDOFStateEffector::updateEffectorMassProps(double integTime [
 }
 
 /*! This method allows the SB state effector to give its contributions to the matrices needed for the back-sub
- method */
+ method
+ *
+ * @param[in] integTime [s] Current integration time.
+ * @param[in,out] backSubContr Back-substitution contributions.
+ * @param[in] sigma_BN Hub attitude relative to the inertial frame.
+ * @param[in] omega_BN_B [rad/s] Hub angular velocity expressed in body-frame components.
+ * @param[in] g_N [m/s^2] Gravitational acceleration expressed in inertial-frame components.
+ */
 void SpinningBodyTwoDOFStateEffector::updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::MRPd sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N)
 {
     // Find the DCM from N to B frames
@@ -530,6 +555,10 @@ void SpinningBodyTwoDOFStateEffector::updateContributions(double integTime, Back
         + (this->r_S2S1_B + this->r_S1B_B).cross(this->dcm_BS2 * attBodyForce_S2);
 }
 
+/*! @brief Add prescribed-motion coupling terms.
+ *
+ * @param[in,out] backSubContr Back-substitution contributions.
+ */
 void SpinningBodyTwoDOFStateEffector::addPrescribedMotionCouplingContributions(BackSubMatrices & backSubContr) {
 
     // Access prescribed motion properties
@@ -657,7 +686,13 @@ void SpinningBodyTwoDOFStateEffector::addPrescribedMotionCouplingContributions(B
             + vecRotTerm7;
 }
 
-/*! This method is used to find the derivatives for the SB stateEffector: thetaDDot and the kinematic derivative */
+/*! This method is used to find the derivatives for the SB stateEffector: thetaDDot and the kinematic derivative
+ *
+ * @param[in] integTime [s] Current integration time.
+ * @param[in] rDDot_BN_N [m/s^2] Hub translational acceleration expressed in inertial-frame components.
+ * @param[in] omegaDot_BN_B [rad/s^2] Hub angular acceleration expressed in body-frame components.
+ * @param[in] sigma_BN Hub attitude relative to the inertial frame.
+ */
 void SpinningBodyTwoDOFStateEffector::computeDerivatives(double integTime [[maybe_unused]], Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN [[maybe_unused]])
 {
     // Grab omegaDot_BN_B
@@ -677,7 +712,13 @@ void SpinningBodyTwoDOFStateEffector::computeDerivatives(double integTime [[mayb
     this->theta2DotState->setDerivative(thetaDDot.row(1));
 }
 
-/*! This method is for calculating the contributions of the SB state effector to the energy and momentum of the spacecraft */
+/*! This method is for calculating the contributions of the SB state effector to the energy and momentum of the spacecraft
+ *
+ * @param[in] integTime [s] Current integration time.
+ * @param[in,out] rotAngMomPntCContr_B [kg*m^2/s] Rotational angular momentum contribution.
+ * @param[in,out] rotEnergyContr [J] Rotational energy contribution.
+ * @param[in] omega_BN_B [rad/s] Hub angular velocity expressed in body-frame components.
+ */
 void SpinningBodyTwoDOFStateEffector::updateEnergyMomContributions(double integTime [[maybe_unused]], Eigen::Vector3d & rotAngMomPntCContr_B, double & rotEnergyContr, Eigen::Vector3d omega_BN_B)
 {
     // Update omega_BN_B and omega_SN_B
@@ -736,7 +777,10 @@ void SpinningBodyTwoDOFStateEffector::computeSpinningBodyInertialStates()
     *this->v_S2N_N = (Eigen::Vector3d)(*this->inertialVelocityProperty) + this->dcm_BN.transpose() * this->rDot_S2B_B;
 }
 
-/*! This method is used so that the simulation will ask SB to update messages */
+/*! This method is used so that the simulation will ask SB to update messages
+ *
+ * @param[in] CurrentSimNanos [ns] Current simulation time.
+ */
 void SpinningBodyTwoDOFStateEffector::UpdateState(uint64_t CurrentSimNanos)
 {
     //! - Read the incoming command array

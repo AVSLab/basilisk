@@ -64,7 +64,8 @@ void FacetDragDynamicEffector::validateConfiguration()
 }
 
 /*! The DragEffector does not write output messages to the rest of the sim.
-
+ *
+ * @param[in] CurrentClock [ns] Current simulation time.
  */
 void FacetDragDynamicEffector::WriteOutputMessages(uint64_t CurrentClock [[maybe_unused]])
 {
@@ -91,12 +92,12 @@ bool FacetDragDynamicEffector::ReadInputs()
     return(dataGood);
 }
 
-/*!
-    add a facet
-    @param area
-    @param dragCoeff
-    @param B_normal_hat
-    @param B_location
+/*! @brief Add a facet to the drag model.
+ *
+ * @param[in] area [m^2] Facet area.
+ * @param[in] dragCoeff [-] Facet drag coefficient.
+ * @param[in] B_normal_hat [-] Facet normal expressed in the parent body frame.
+ * @param[in] B_location [m] Facet location relative to the parent body-frame origin.
  */
 void FacetDragDynamicEffector::addFacet(double area, double dragCoeff, Eigen::Vector3d B_normal_hat, Eigen::Vector3d B_location){
 	this->scGeometry.facetAreas.push_back(area);
@@ -202,7 +203,10 @@ void FacetDragDynamicEffector::plateDrag(){
 
 /*! This method computes the body forces and torques for the dragEffector in a simulation loop,
 selecting the model type based on the settable attribute "modelType."
-*/
+ *
+ * @param[in] integTime [s] Current integration time.
+ * @param[in] timeStep [s] Integration time step.
+ */
 void FacetDragDynamicEffector::computeForceTorque(double integTime [[maybe_unused]], double timeStep [[maybe_unused]]){
 	updateDragDir();
 	plateDrag();

@@ -1,2 +1,3 @@
 - Configuration validation for affected state and dynamic effectors now runs during spacecraft initialization as well as ``Reset()``, so attached-only effectors reject invalid setups without requiring separate task scheduling.
 - Concrete state and dynamic effector implementations are now declared ``final`` to make their existing non-extension contract explicit.  External C++ code should compose these effectors rather than inherit from them.
+- Concrete effector API documentation now includes complete Doxygen parameter descriptions, with matching declaration and definition names so parameter tables render consistently.

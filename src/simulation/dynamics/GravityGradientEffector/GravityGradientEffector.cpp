@@ -70,7 +70,8 @@ void GravityGradientEffector::addPlanetName(std::string planetName)
 
 
 /*! Write the gravity gradient torque output message.
-
+ *
+ * @param[in] CurrentClock [ns] Current simulation time.
  */
 void GravityGradientEffector::WriteOutputMessages(uint64_t CurrentClock)
 {
@@ -82,7 +83,8 @@ void GravityGradientEffector::WriteOutputMessages(uint64_t CurrentClock)
 }
 
 /*! This method is used to link the gravity gradient effector to the hub position, inertia tensor and center of mass vector.
-
+ *
+ * @param[in] states Dynamic parameter manager containing the required states and properties.
  */
 
 void GravityGradientEffector::linkInStates(DynParamManager& states){
@@ -102,7 +104,10 @@ void GravityGradientEffector::linkInStates(DynParamManager& states){
 }
 
 /*! This method computes the body forces and torques for the gravity gradient effector.
-*/
+ *
+ * @param[in] integTime [s] Current integration time.
+ * @param[in] timeStep [s] Integration time step.
+ */
 void GravityGradientEffector::computeForceTorque(double integTime [[maybe_unused]], double timeStep [[maybe_unused]]){
 	// Zero out the force/torque values to begin with
     this->torqueExternalPntB_B.setZero();

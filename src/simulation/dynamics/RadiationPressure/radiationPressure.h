@@ -63,7 +63,7 @@ public:
 
 private:
     void validateConfiguration();
-    void computeCannonballModel(Eigen::Vector3d rSunB_B);
+    void computeCannonballModel(Eigen::Vector3d rSunB_N);
     void computeLookupModel(Eigen::Vector3d rSunB_B);
 
 public:

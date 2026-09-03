@@ -51,12 +51,20 @@ ReactionWheelStateEffector::~ReactionWheelStateEffector()
     ReactionWheelData.clear();
 }
 
-void ReactionWheelStateEffector::linkInStates(DynParamManager& statesIn)
+/*! @brief Link the required dynamics states.
+ *
+ * @param[in] states Dynamic parameter manager containing the required states.
+ */
+void ReactionWheelStateEffector::linkInStates(DynParamManager& states)
 {
 	//! - Get access to the hub states
-    this->g_N = statesIn.getPropertyReference(this->propName_vehicleGravity);
+    this->g_N = states.getPropertyReference(this->propName_vehicleGravity);
 }
 
+/*! @brief Register the effector dynamics states.
+ *
+ * @param[in,out] states Dynamic parameter manager used to register states or properties.
+ */
 void ReactionWheelStateEffector::registerStates(DynParamManager& states)
 {
     //! - Find number of RWs and number of RWs with jitter
@@ -89,6 +97,10 @@ void ReactionWheelStateEffector::registerStates(DynParamManager& states)
     }
 }
 
+/*! @brief Update the effector mass properties.
+ *
+ * @param[in] integTime [s] Current integration time.
+ */
 void ReactionWheelStateEffector::updateEffectorMassProps(double integTime [[maybe_unused]])
 {
     // - Zero the mass props information because these will be accumulated during this call
@@ -166,6 +178,14 @@ void ReactionWheelStateEffector::updateEffectorMassProps(double integTime [[mayb
     }
 }
 
+/*! @brief Update the effector back-substitution contributions.
+ *
+ * @param[in] integTime [s] Current integration time.
+ * @param[in,out] backSubContr Back-substitution contributions.
+ * @param[in] sigma_BN Hub attitude relative to the inertial frame.
+ * @param[in] omega_BN_B [rad/s] Hub angular velocity expressed in body-frame components.
+ * @param[in] g_N [m/s^2] Gravitational acceleration expressed in inertial-frame components.
+ */
 void ReactionWheelStateEffector::updateContributions(double integTime [[maybe_unused]], BackSubMatrices & backSubContr, Eigen::MRPd sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N [[maybe_unused]])
 {
 	Eigen::Vector3d omegaLoc_BN_B;
@@ -268,6 +288,13 @@ void ReactionWheelStateEffector::updateContributions(double integTime [[maybe_un
 	}
 }
 
+/*! @brief Compute the effector state derivatives.
+ *
+ * @param[in] integTime [s] Current integration time.
+ * @param[in] rDDot_BN_N [m/s^2] Hub translational acceleration expressed in inertial-frame components.
+ * @param[in] omegaDot_BN_B [rad/s^2] Hub angular acceleration expressed in body-frame components.
+ * @param[in] sigma_BN Hub attitude relative to the inertial frame.
+ */
 void ReactionWheelStateEffector::computeDerivatives(double integTime [[maybe_unused]], Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN)
 {
 	Eigen::MatrixXd OmegasDot(this->numRW,1);
@@ -280,7 +307,7 @@ void ReactionWheelStateEffector::computeDerivatives(double integTime [[maybe_unu
 	Eigen::Vector3d rDDotBNLoc_B;                  /*! second time derivative of rBN in B frame */
     int thetaCount = 0;
 
-	//! Grab necessarry values from manager
+	//! Grab necessary values from manager
 	omegaDotBNLoc_B = omegaDot_BN_B;
 	rDDotBNLoc_N = rDDot_BN_N;
 	sigmaBNLocal = sigma_BN;
@@ -331,6 +358,13 @@ void ReactionWheelStateEffector::computeDerivatives(double integTime [[maybe_unu
     }
 }
 
+/*! @brief Update the effector energy and momentum contributions.
+ *
+ * @param[in] integTime [s] Current integration time.
+ * @param[in,out] rotAngMomPntCContr_B [kg*m^2/s] Rotational angular momentum contribution.
+ * @param[in,out] rotEnergyContr [J] Rotational energy contribution.
+ * @param[in] omega_BN_B [rad/s] Hub angular velocity expressed in body-frame components.
+ */
 void ReactionWheelStateEffector::updateEnergyMomContributions(double integTime [[maybe_unused]], Eigen::Vector3d & rotAngMomPntCContr_B,
                                                               double & rotEnergyContr, Eigen::Vector3d omega_BN_B)
 {
@@ -359,6 +393,8 @@ void ReactionWheelStateEffector::updateEnergyMomContributions(double integTime [
 }
 
 /*! add a RW data object to the reactionWheelStateEffector
+ *
+ * @param[in] NewRW Reaction-wheel configuration to add.
  */
 void ReactionWheelStateEffector::addReactionWheel(std::shared_ptr<RWConfigPayload> NewRW)
 {
@@ -372,10 +408,11 @@ void ReactionWheelStateEffector::addReactionWheel(std::shared_ptr<RWConfigPayloa
 }
 
 
-/*! Reset the module to origina configuration values.
-
+/*! Reset the module to its original configuration values.
+ *
+ * @param[in] CurrentSimNanos [ns] Current simulation time.
  */
-void ReactionWheelStateEffector::Reset(uint64_t CurrenSimNanos [[maybe_unused]])
+void ReactionWheelStateEffector::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     RWCmdMsgPayload RWCmdInitializer;
     RWCmdInitializer.u_cmd = 0.0;
@@ -390,7 +427,7 @@ void ReactionWheelStateEffector::Reset(uint64_t CurrenSimNanos [[maybe_unused]])
         auto & rw = *rwPtr;
         if (rw.betaStatic == 0.0)
         {
-            bskLogger.bskLog(BSK_WARNING, "Stribeck coefficent currently zero and should be positive to active this friction model, or negative to turn it off!");
+            bskLogger.bskLog(BSK_WARNING, "Stribeck coefficient currently zero and should be positive to activate this friction model, or negative to turn it off!");
         }
         //! Define CoM offset d and off-diagonal inertia J13 if using fully coupled model
         if (rw.RWModel == JitterFullyCoupled) {
