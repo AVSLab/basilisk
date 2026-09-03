@@ -152,7 +152,7 @@ private:
 };
 
 /*! spinning rigid body state effector class */
-class SpinningBodyNDOFStateEffector: public StateEffector, public SysModel {
+class SpinningBodyNDOFStateEffector final: public StateEffector, public SysModel {
 public:
     std::vector<Message<HingedRigidBodyMsgPayload>*> spinningBodyOutMsgs;       //!< state output message
     std::vector<Message<SCStatesMsgPayload>*> spinningBodyConfigLogOutMsgs;     //!< spinning body state config log message

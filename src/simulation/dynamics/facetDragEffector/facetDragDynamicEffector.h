@@ -49,7 +49,7 @@ typedef struct {
 
 
 /*! @brief faceted atmospheric drag dynamic effector */
-class FacetDragDynamicEffector: public SysModel, public DynamicEffector {
+class FacetDragDynamicEffector final: public SysModel, public DynamicEffector {
 public:
 
 

@@ -32,7 +32,7 @@
  * where @f$\tau@f$ is the time constant and @f$\sigma_{\mathrm{st}}@f$ is the stationary
  * standard deviation.
  */
-class MeanRevertingNoiseStateEffector : public StateEffector, public SysModel {
+class MeanRevertingNoiseStateEffector final : public StateEffector, public SysModel {
 public:
     /*! @brief Constructor. */
     MeanRevertingNoiseStateEffector();

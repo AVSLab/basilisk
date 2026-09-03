@@ -161,7 +161,7 @@ private:
 };
 
 /*! @brief translating body state effector class */
-class LinearTranslationNDOFStateEffector: public StateEffector, public SysModel {
+class LinearTranslationNDOFStateEffector final: public StateEffector, public SysModel {
 public:
 
     LinearTranslationNDOFStateEffector();         //!< -- Constructor
@@ -212,19 +212,19 @@ private:
     std::string propertyNameIndex;     //!< -- effector identifier used to name the per body properties
 
     // module functions
-    void Reset(uint64_t CurrentClock) final;
+    void Reset(uint64_t CurrentClock) override;
     void readInputMessages();
-    void writeOutputStateMessages(uint64_t CurrentClock) final;
-    void UpdateState(uint64_t CurrentSimNanos) final;
-    void registerStates(DynParamManager& statesIn) final;
-    void registerProperties(DynParamManager& states) final;
-    void addDynamicEffector(DynamicEffector* newDynamicEffector, int segment) final;
-    void linkInStates(DynParamManager& states) final;
+    void writeOutputStateMessages(uint64_t CurrentClock) override;
+    void UpdateState(uint64_t CurrentSimNanos) override;
+    void registerStates(DynParamManager& statesIn) override;
+    void registerProperties(DynParamManager& states) override;
+    void addDynamicEffector(DynamicEffector* newDynamicEffector, int segment) override;
+    void linkInStates(DynParamManager& states) override;
     void updateContributions(double integTime,
                              BackSubMatrices& backSubContr,
                              Eigen::MRPd sigma_BN,
                              Eigen::Vector3d omega_BN_B,
-                             Eigen::Vector3d g_N) final;
+                             Eigen::Vector3d g_N) override;
     void computeDependentEffectors(BackSubMatrices& backSubContr, double integTime);
     void computeMRho(Eigen::MatrixXd& MRho);
     void computeARhoStar(Eigen::MatrixX3d& ARhoStar);
@@ -234,13 +234,13 @@ private:
     void computeDerivatives(double integTime,
                             Eigen::Vector3d rDDot_BN_N,
                             Eigen::Vector3d omegaDot_BN_B,
-                            Eigen::MRPd sigma_BN) final;
-    void updateEffectorMassProps(double integTime) final;
+                            Eigen::MRPd sigma_BN) override;
+    void updateEffectorMassProps(double integTime) override;
     void updateEnergyMomContributions(double integTime,
                                       Eigen::Vector3d& rotAngMomPntCContr_B,
                                       double& rotEnergyContr,
-                                      Eigen::Vector3d omega_BN_B) final;
-    void prependSpacecraftNameToStates() final;
+                                      Eigen::Vector3d omega_BN_B) override;
+    void prependSpacecraftNameToStates() override;
     void validateConfiguration();
     void checkBodyConfiguration();
     void checkJointMassMatrix();

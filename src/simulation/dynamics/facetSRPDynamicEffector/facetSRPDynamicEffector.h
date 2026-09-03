@@ -45,7 +45,7 @@ typedef struct {
 }FacetedSRPSpacecraftGeometryData;
 
 /*! @brief Faceted Solar Radiation Pressure Dynamic Effector */
-class FacetSRPDynamicEffector: public SysModel, public DynamicEffector {
+class FacetSRPDynamicEffector final: public SysModel, public DynamicEffector {
 public:
     FacetSRPDynamicEffector() = default;                                                 //!< Constructor
     ~FacetSRPDynamicEffector() = default;                                                //!< Destructor

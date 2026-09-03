@@ -44,7 +44,7 @@
 
 
 /*! @brief reaction wheel state effector class */
-class ReactionWheelStateEffector:  public SysModel, public StateEffector {
+class ReactionWheelStateEffector final:  public SysModel, public StateEffector {
 public:
     ReactionWheelStateEffector();
 	~ReactionWheelStateEffector();

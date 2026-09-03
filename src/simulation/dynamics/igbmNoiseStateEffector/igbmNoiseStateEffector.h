@@ -48,7 +48,7 @@
  * so the factor's stationary mean and std are exactly @f$\mu@f$ and
  * @f$\sigma_{\mathrm{st}}@f$, and stationarity holds by construction.
  */
-class IgbmNoiseStateEffector : public StateEffector, public SysModel {
+class IgbmNoiseStateEffector final : public StateEffector, public SysModel {
 public:
     /*! @brief Constructor. */
     IgbmNoiseStateEffector();
