@@ -46,9 +46,9 @@ public:
     void computeForceTorque(double integTime, double timeStep);
 
 private:
-    CmdTorqueBodyMsgPayload incomingCmdTorqueBuffer;            //!< -- One-time allocation for savings
-    CmdForceInertialMsgPayload incomingCmdForceInertialBuffer;  //!< -- One-time allocation for savings
-    CmdForceBodyMsgPayload incomingCmdForceBodyBuffer;          //!< -- One-time allocation for savings
+    CmdTorqueBodyMsgPayload incomingCmdTorqueBuffer;            //!< One-time allocation for savings
+    CmdForceInertialMsgPayload incomingCmdForceInertialBuffer;  //!< One-time allocation for savings
+    CmdForceBodyMsgPayload incomingCmdForceBodyBuffer;          //!< One-time allocation for savings
 
 
 public:
@@ -56,7 +56,7 @@ public:
     Eigen::Vector3d extForce_B;         //!< [N]  external force in body frame components
     Eigen::Vector3d extTorquePntB_B;    //!< [Nm] external torque in body frame components
 
-    BSKLogger bskLogger;                      //!< -- BSK Logging
+    BSKLogger bskLogger;                      //!< BSK Logging
     ReadFunctor<CmdTorqueBodyMsgPayload> cmdTorqueInMsg;           //!< commanded torque input msg
     ReadFunctor<CmdForceBodyMsgPayload> cmdForceBodyInMsg;         //!< commanded force input msg in B frame
     ReadFunctor<CmdForceInertialMsgPayload>cmdForceInertialInMsg;  //!< commanded force input msg in N frame
