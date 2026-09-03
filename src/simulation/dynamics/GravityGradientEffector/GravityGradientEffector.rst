@@ -92,3 +92,15 @@ Module Output Message Name
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 The effector write an output message with the current gravity gradient torque information at each ``update`` cycle.
 The output message is ``gravityGradientOutMsg``.
+
+Initialization and Reset
+------------------------
+When the spacecraft links this effector to the hub states and mass properties, initialization verifies that at
+least one source planet was supplied with ``addPlanetName()``.  This validation occurs even if only the spacecraft
+is added to a task.
+
+Force and torque evaluation is driven by the spacecraft dynamics.  Add the effector to a task when
+``gravityGradientOutMsg`` must be updated, because the effector publishes that message from ``UpdateState()``.
+
+When the effector is scheduled, its ``Reset()`` repeats the planet-list validation and
+zeros all external force and torque outputs.  The linked spacecraft and planet property references are retained.

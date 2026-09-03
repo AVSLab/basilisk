@@ -85,6 +85,7 @@ public:
     void addPrescribedMotionCouplingContributions(BackSubMatrices& backSubContr) override;  //!< Method for adding coupling contributions for state effector branching on prescribed motion
 
 private:
+    void validateConfiguration();     //!< Validate and normalize the user-supplied configuration
     static uint64_t effectorID;         //!< [] ID number of this panel
     double u = 0.0;                     //!< [N-m] optional motor torque
     int lockFlag = 0;                   //!< [] flag for locking the rotation axis

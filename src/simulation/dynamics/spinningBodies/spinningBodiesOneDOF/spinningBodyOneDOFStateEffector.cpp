@@ -60,8 +60,17 @@ SpinningBodyOneDOFStateEffector::~SpinningBodyOneDOFStateEffector()
 {
 }
 
-/*! This method is used to reset the module. */
+/*! This method validates the module configuration when the scheduler resets the model.
+
+ @param CurrentClock [ns] Time at which the reset occurs
+ */
 void SpinningBodyOneDOFStateEffector::Reset(uint64_t CurrentClock [[maybe_unused]])
+{
+    this->validateConfiguration();
+}
+
+/*! Validate and normalize the user-supplied spinning-body configuration. */
+void SpinningBodyOneDOFStateEffector::validateConfiguration()
 {
     // Normalize the sHat vector
     if (this->sHat_S.norm() > 0.01) {
@@ -150,6 +159,8 @@ void SpinningBodyOneDOFStateEffector::linkInPrescribedMotionProperties(DynParamM
 /*! This method allows the SB state effector to register its states: theta and thetaDot with the dynamic parameter manager */
 void SpinningBodyOneDOFStateEffector::registerStates(DynParamManager& states)
 {
+    this->validateConfiguration();
+
     // Register the theta state
     this->thetaState = states.registerState(1, 1, this->nameOfThetaState);
     Eigen::MatrixXd thetaInitMatrix(1,1);

@@ -1,0 +1,1 @@
+- Configuration validation for affected state and dynamic effectors now runs during spacecraft initialization as well as ``Reset()``, so attached-only effectors reject invalid setups without requiring separate task scheduling.

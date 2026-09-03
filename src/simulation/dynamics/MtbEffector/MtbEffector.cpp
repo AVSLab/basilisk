@@ -35,10 +35,26 @@ MtbEffector::~MtbEffector()
 {
 }
 
-/*! This method is used to reset the module and checks that required input messages are connect.
+/*! Reset the effector outputs and validate required input-message connections.
 
+ @param CurrentSimNanos [ns] Time at which the reset occurs
 */
 void MtbEffector::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+{
+    this->validateConfiguration();
+
+    /*
+     * Zero the effector output forces and torques.
+     */
+    this->forceExternal_B.fill(0.0);
+    this->torqueExternalPntB_B.fill(0.0);
+    this->forceExternal_N.fill(0.0);
+
+    return;
+}
+
+/*! Validate that all required input messages are connected. */
+void MtbEffector::validateConfiguration()
 {
     /*
      * Check that required input messages are connected.
@@ -52,15 +68,6 @@ void MtbEffector::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
     if (!this->mtbParamsInMsg.isLinked()) {
         bskLogger.bskError("MtbEffector.mtbParamsInMsg was not linked.");
     }
-
-    /*
-     * Zero the effector output forces and torques.
-     */
-    this->forceExternal_B.fill(0.0);
-    this->torqueExternalPntB_B.fill(0.0);
-    this->forceExternal_N.fill(0.0);
-
-    return;
 }
 
 /*! This is the main method that gets called every time the module is updated.  Provide an appropriate description.
@@ -82,6 +89,8 @@ void MtbEffector::UpdateState(uint64_t CurrentSimNanos)
  */
 void MtbEffector::linkInStates(DynParamManager& states)
 {
+    this->validateConfiguration();
+
     /*
      * Link the Body relative to Inertial frame modified modriguez parameter.
      */

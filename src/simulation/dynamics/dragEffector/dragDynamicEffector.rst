@@ -38,6 +38,7 @@ Example setup:
     drag.densityCorrectionStateName = stochasticAtmo.getStateName()
 
     scObject.addDynamicEffector(drag)
+    scSim.AddModelToTask(simTaskName, drag)
 
 Wind Velocity Input
 --------------------
@@ -64,6 +65,7 @@ Example setup:
     drag.windVelInMsg.subscribeTo(windModel.envOutMsgs[0])
 
     scObject.addDynamicEffector(drag)
+    scSim.AddModelToTask(simTaskName, drag)
 
 Input Message Timing
 ---------------------
@@ -86,3 +88,14 @@ provides information on what this message is used for.
         atmospheric density input message.
     input windVelInMsg WindMsgPayload
         (optional) wind velocity input message; when linked, ``v_air_N`` is subtracted from the spacecraft inertial velocity to obtain the atmosphere-relative velocity.
+
+Initialization and Reset
+------------------------
+When the spacecraft links this effector to the hub states, initialization verifies that ``atmoDensInMsg`` is
+connected.  This validation occurs even if only the spacecraft is added to a task.
+
+Attachment-time validation does not replace task scheduling for this effector.  Add it to a task so that
+``UpdateState()`` refreshes the cached atmospheric density and optional wind data used during force evaluation.
+
+When the effector is scheduled, its ``Reset()`` repeats the required-message check.
+``Reset()`` does not clear the cached density, wind, force, or torque data.

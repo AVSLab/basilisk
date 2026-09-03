@@ -75,6 +75,7 @@ public:
     BSKLogger bskLogger;                                   //!< -- BSK Logging
 
 private:
+    void validateConfiguration();  //!< Validate required input-message connections
     AtmoPropsMsgPayload atmoInData;
     WindMsgPayload windInData;
 

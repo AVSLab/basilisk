@@ -125,6 +125,8 @@ public:
     uint64_t effectorStatus=1; //!< internal variable to toggle effector status
 
 private:
+    void validateConfiguration();  //!< Validate the user-supplied gain configuration
+    void initializeGains();  //!< Populate unspecified individual gains from alpha and beta
 
     // Counters and flags
     int scInitCounter = 0; //!< counter to kill simulation if more than two spacecraft initialized

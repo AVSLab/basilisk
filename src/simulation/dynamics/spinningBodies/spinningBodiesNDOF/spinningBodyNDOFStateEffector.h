@@ -177,6 +177,7 @@ public:
     std::string getNameOfThetaDotState() const {return this->nameOfThetaDotState;};
 
 private:
+    void validateConfiguration();
     static uint64_t effectorID;
 
     int numberOfDegreesOfFreedom = 0;

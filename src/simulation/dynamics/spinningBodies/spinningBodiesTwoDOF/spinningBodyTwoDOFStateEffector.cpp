@@ -73,8 +73,17 @@ SpinningBodyTwoDOFStateEffector::~SpinningBodyTwoDOFStateEffector()
 {
 }
 
-/*! This method is used to reset the module. */
+/*! This method validates the module configuration when the scheduler resets the model.
+
+ @param CurrentClock [ns] Time at which the reset occurs
+ */
 void SpinningBodyTwoDOFStateEffector::Reset(uint64_t CurrentClock [[maybe_unused]])
+{
+    this->validateConfiguration();
+}
+
+/*! Validate and normalize the user-supplied spinning-body configuration. */
+void SpinningBodyTwoDOFStateEffector::validateConfiguration()
 {
     // Normalize both sHat vectors
     if (this->s1Hat_S1.norm() > 0.01) {
@@ -88,7 +97,7 @@ void SpinningBodyTwoDOFStateEffector::Reset(uint64_t CurrentClock [[maybe_unused
         this->s2Hat_S2.normalize();
     }
     else {
-        bskLogger.bskError("Norm of s2Hat must be greater than 0. s1Hat may not have been set by the user.");
+        bskLogger.bskError("Norm of s2Hat must be greater than 0. s2Hat may not have been set by the user.");
     }
 
     // Verify the user-provided DCMs are proper rotations (orthogonal and right-handed)
@@ -198,6 +207,8 @@ void SpinningBodyTwoDOFStateEffector::linkInPrescribedMotionProperties(DynParamM
 /*! This method allows the SB state effector to register its states: theta and thetaDot with the dynamic parameter manager */
 void SpinningBodyTwoDOFStateEffector::registerStates(DynParamManager& states)
 {
+    this->validateConfiguration();
+
     // Register the theta states
     this->theta1State = states.registerState(1, 1, this->nameOfTheta1State);
     this->theta2State = states.registerState(1, 1, this->nameOfTheta2State);

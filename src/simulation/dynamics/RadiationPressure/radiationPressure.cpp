@@ -48,10 +48,17 @@ RadiationPressure::~RadiationPressure()
 
 
 
-/*! Reset the module to origina configuration values.
+/*! Validate the module configuration when the scheduler resets the model.
 
+ @param CurrentSimNanos [ns] Time at which the reset occurs
  */
-void RadiationPressure::Reset(uint64_t CurrenSimNanos [[maybe_unused]])
+void RadiationPressure::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+{
+    this->validateConfiguration();
+}
+
+/*! Validate that the required Sun ephemeris input is connected. */
+void RadiationPressure::validateConfiguration()
 {
     if(!this->sunEphmInMsg.isLinked())
     {
@@ -66,6 +73,8 @@ void RadiationPressure::Reset(uint64_t CurrenSimNanos [[maybe_unused]])
  */
 void RadiationPressure::linkInStates(DynParamManager& states)
 {
+    this->validateConfiguration();
+
     this->hubSigma = states.getStateObject(this->stateNameOfSigma);
     this->hubR_N = states.getStateObject(this->stateNameOfPosition);
 }

@@ -26,6 +26,12 @@
  @param currentSimNanos [ns] Time the method is called
 */
 void FacetedSRPEffector::Reset(uint64_t currentSimNanos [[maybe_unused]]) {
+    this->validateConfiguration();
+    this->initializeFacetData();
+}
+
+/*! Validate that every required input message is connected. */
+void FacetedSRPEffector::validateConfiguration() {
     // Check Sun state input message is linked
     if (!this->sunStateInMsg.isLinked()) {
         this->bskLogger.bskError("FacetedSRPEffector.sunStateInMsg was not linked.");
@@ -41,6 +47,10 @@ void FacetedSRPEffector::Reset(uint64_t currentSimNanos [[maybe_unused]]) {
         }
     }
 
+}
+
+/*! Size and initialize the cached facet data used during force evaluation. */
+void FacetedSRPEffector::initializeFacetData() {
     // Clear, allocate and initialize data lists
     this->facetAreaList.clear();
     this->facetProjectedAreaList.clear();
@@ -69,6 +79,9 @@ void FacetedSRPEffector::Reset(uint64_t currentSimNanos [[maybe_unused]]) {
  @param states Dynamic parameter states
 */
 void FacetedSRPEffector::linkInStates(DynParamManager& states) {
+    this->validateConfiguration();
+    this->initializeFacetData();
+
     this->hubSigma = states.getStateObject(this->stateNameOfSigma);
     this->hubPosition = states.getStateObject(this->stateNameOfPosition);
 }

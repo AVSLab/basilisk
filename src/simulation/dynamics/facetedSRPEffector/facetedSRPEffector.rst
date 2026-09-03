@@ -206,3 +206,18 @@ The following steps are required to set up the ``facetedSRPEffector`` module in 
 .. note::
     Add the spacecraft object to the task after the projected area module to ensure the SRP effector has valid input
     message data at the first integration timestep.
+
+Initialization and Reset
+------------------------
+When the spacecraft links this effector to the hub states, initialization verifies that ``sunStateInMsg`` and
+every configured facet geometry and projected-area input are connected.  It also sizes and zero-initializes the
+internal per-facet caches from ``numFacets``.  These operations therefore occur even if only the spacecraft is
+added to a task.
+
+Force and torque evaluation is driven entirely by the spacecraft dynamics, and the effector reads its input
+messages during that evaluation.  Scheduling the effector separately is therefore not required for force and
+torque computation.
+
+When the effector is scheduled, its ``Reset()`` repeats the message validation and
+reinitializes the per-facet caches.  The cached facet values are populated from their input messages during force
+and torque evaluation.

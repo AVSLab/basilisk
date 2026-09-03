@@ -36,8 +36,18 @@ ConstraintDynamicEffector::~ConstraintDynamicEffector()
 
 }
 
-/*! This method is used to reset the module */
+/*! Validate and initialize the constraint gains when the scheduler resets the model.
+
+ @param CurrentSimNanos [ns] Time at which the reset occurs
+ */
 void ConstraintDynamicEffector::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+{
+    this->validateConfiguration();
+    this->initializeGains();
+}
+
+/*! Validate that either the tuning parameters or individual gains were configured. */
+void ConstraintDynamicEffector::validateConfiguration()
 {
     // check if any individual gains are not specified
     bool gainset = this->k_d != 0 || this->c_d != 0 || this->k_a != 0 || this->c_a != 0;
@@ -45,8 +55,13 @@ void ConstraintDynamicEffector::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
         bskLogger.bskError("Alpha must be set to a positive nonzero value prior to initialization");
     }
     if (this->beta <= 0 && !gainset) {
-        bskLogger.bskError("Beta must be set to a positive nonzero value prior to initializaiton");
+        bskLogger.bskError("Beta must be set to a positive nonzero value prior to initialization");
     }
+}
+
+/*! Populate unspecified individual gains from the configured tuning parameters. */
+void ConstraintDynamicEffector::initializeGains()
+{
     // if individual k's or c's are already set, don't use alpha & beta
     if (this->k_d == 0) {
         this->k_d = pow(this->alpha,2);
@@ -233,6 +248,9 @@ void ConstraintDynamicEffector::linkInStates(DynParamManager& states)
         bskLogger.bskError("constraintDynamicEffector: tried to attach more than 2 parents");
     }
 
+    this->validateConfiguration();
+    this->initializeGains();
+
     int stateIdx = -1;
     if (this->scInitCounter == 0) {
         this->parent1.parentType = "hub";
@@ -266,6 +284,9 @@ void ConstraintDynamicEffector::linkInProperties(DynParamManager& properties){
     if (this->scInitCounter > 1) {
         bskLogger.bskError("constraintDynamicEffector: tried to attach more than 2 parents");
     }
+
+    this->validateConfiguration();
+    this->initializeGains();
 
     int propIdx = -1;
     if (this->scInitCounter == 0) {
