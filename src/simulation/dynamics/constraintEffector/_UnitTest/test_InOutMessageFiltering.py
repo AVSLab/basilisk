@@ -26,6 +26,7 @@ import os
 import pytest
 import matplotlib.pyplot as plt
 import numpy as np
+from collections import namedtuple
 from contextlib import nullcontext
 
 from Basilisk.utilities import (
@@ -395,6 +396,152 @@ def run_test(show_plots, CutOffFreq, useConstEffector):
         assert F_filtered_hist[-1]==0,"zero cut off frequency test case failed"
     elif wc == -1 and useConstEffector == 1:
         assert F_filtered_hist[-1]==0,"negative cut off frequency test case failed"
+
+def test_constraintEffectorDeviceStatusGatesLoads():
+    r"""Module Unit Test
+    **Validation Test Description**
+
+    This unit test checks that the device status message gates the constraint loads themselves and not only the module
+    output message. The two spacecraft of ``test_constraintEffectorAllCases`` start in a state that already satisfies
+    the constraint, so the constraint force there is negligible and the recorded dynamics cannot distinguish an
+    enabled effector from a disabled one. This test therefore uses a different premise: both spacecraft start at rest
+    with their attachment points held apart by more than the constraint length, so an enabled constraint imparts a
+    large impulse.
+
+    **Description of the test**
+
+    The scenario runs four times: with the device status commanding the effector off, commanding it on, commanding
+    it on before switching it off halfway through the run, and commanding it off before switching it on halfway
+    through the run. Each run initializes the effector's cached status to match the initial command. The accumulated
+    center of mass delta-V of both spacecraft is recorded, along with the constraint force and torques in the output
+    message and the total linear momentum of the two spacecraft. Because the constraint effector is the only effector
+    attached to either spacecraft, the disabled run must accumulate no delta-V, and every run must keep the zero
+    initial momentum. The enabled run must accumulate a delta-V far above that tolerance, which confirms the
+    configuration exercises the constraint. The run that switches off must end with zero force and torque in its
+    output message and accumulate no further delta-V, which confirms that the stored loads are cleared along with the
+    applied ones, while still reporting the direction constraint violation that the logged spacecraft states imply,
+    since that violation is a measurement of the drift rather than a load. The run that switches on must accumulate a
+    measurable delta-V while keeping zero momentum, which confirms that a constraint disabled through initialization
+    still assigns each spacecraft its own load once enabled.
+    """
+    accuracy = 1E-08
+    momentumAccuracy = 1E-06  # [kg m/s]
+    psiAccuracy = 1E-05  # [m] bounds the drift between the reported violation and the logged states
+    off = run_deviceStatus_case(0)
+    on = run_deviceStatus_case(1)
+    onOff = run_deviceStatus_case(1, switchTime=0.5)  # [s]
+    offOn = run_deviceStatus_case(0, switchTime=0.5)  # [s]
+
+    for runName, run in (("off", off), ("on", on), ("on then off", onOff), ("off then on", offOn)):
+        assert run.momentum < momentumAccuracy, (
+            f"{runName} run changed the total linear momentum by {run.momentum:.3e} kg m/s")
+    assert on.dvMax > 1E-03, "enabled constraint imparted no measurable impulse, so this test case is not discriminating"
+    assert offOn.dvMax > 1E-03, "constraint enabled after a disabled initialization imparted no measurable impulse"
+    assert on.dvAfterSwitch > 1E-03, "enabled constraint imparted no impulse over the second half of the run, so the switched off run is not discriminating"
+    assert np.linalg.norm(onOff.psiExpected_N) > 5 * psiAccuracy, "released spacecraft barely drifted apart, so the reported violation is not discriminating"
+    np.testing.assert_allclose(off.dvMax,0,atol = accuracy, err_msg = 'disabled constraint still accelerated the spacecraft')
+    np.testing.assert_allclose(onOff.finalLoads,0,atol = accuracy, err_msg = 'constraint switched off still reported loads in its output message')
+    np.testing.assert_allclose(onOff.dvAfterSwitch,0,atol = accuracy, err_msg = 'constraint switched off kept accelerating the spacecraft')
+    np.testing.assert_allclose(onOff.psi_N,onOff.psiExpected_N,atol = psiAccuracy, err_msg = 'constraint switched off stopped reporting the direction constraint violation')
+
+
+DeviceStatusRun = namedtuple("DeviceStatusRun", "dvMax dvAfterSwitch finalLoads psi_N psiExpected_N momentum")
+
+
+def run_deviceStatus_case(initialStatus, switchTime=None):
+    """Run the stretched-constraint case, toggling the device status at ``switchTime`` [s] when given.
+
+    Returns the peak center of mass delta-V over the run and the peak accumulated after the switch [m/s], the
+    final constraint force and torques, the reported and
+    state-derived direction constraint violations [m], and the peak magnitude of the total linear momentum of the
+    two spacecraft [kg m/s].
+    """
+    unitTestSim = SimulationBaseClass.SimBaseClass()
+
+    unitTaskName = "unitTask"
+    unitProcessName = "TestProcess"
+    testProcessRate = macros.sec2nano(0.001)  # [ns]
+    testProc = unitTestSim.CreateNewProcess(unitProcessName)
+    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+
+    scObject1 = spacecraft.Spacecraft()
+    scObject1.ModelTag = "spacecraftBody1"
+    scObject2 = spacecraft.Spacecraft()
+    scObject2.ModelTag = "spacecraftBody2"
+
+    integratorObject1 = svIntegrators.svIntegratorRKF45(scObject1)
+    scObject1.setIntegrator(integratorObject1)
+    scObject1.syncDynamicsIntegration(scObject2)
+
+    for scObject in (scObject1, scObject2):
+        scObject.hub.mHub = 750.0  # [kg]
+        scObject.hub.r_BcB_B = [[0.0], [0.0], [1.0]]  # [m]
+        scObject.hub.IHubPntBc_B = [[600.0, 0.0, 0.0], [0.0, 600.0, 0.0], [0.0, 0.0, 600.0]]  # [kg m^2]
+
+    # both hubs start at rest, with the attachment points stretched past the constraint length
+    linkAxis = np.array([1.0, 0.0, 0.0])
+    COMoffset = 0.1     # [m] hub COM to attachment point, same for both spacecraft
+    l = 0.1             # [m] constraint length
+    stretch = 1E-03     # [m] initial constraint violation
+    r_P1B1_B1 = linkAxis * COMoffset
+    r_P2B2_B2 = -linkAxis * COMoffset
+    r_P2P1_B1Init = linkAxis * l
+    scObject1.hub.r_CN_NInit = np.zeros(3)
+    scObject2.hub.r_CN_NInit = r_P1B1_B1 + r_P2P1_B1Init - r_P2B2_B2 + linkAxis * stretch
+
+    constraintEffector = constraintDynamicEffector.ConstraintDynamicEffector()
+    constraintEffector.ModelTag = "constraintEffector"
+    constraintEffector.setR_P1B1_B1(r_P1B1_B1)
+    constraintEffector.setR_P2B2_B2(r_P2B2_B2)
+    constraintEffector.setR_P2P1_B1Init(r_P2P1_B1Init)
+    constraintEffector.setAlpha(1E3)  # [-]
+    constraintEffector.setBeta(1E3)  # [-]
+    constraintEffector.setFilter_Data(0.1,1.0,0.7)
+    constraintEffector.effectorStatus = initialStatus
+
+    effectorStatusMsgPayload = messaging.DeviceStatusMsgPayload()
+    effectorStatusMsgPayload.deviceStatus = initialStatus
+    effectorStatusMsg = messaging.DeviceStatusMsg().write(effectorStatusMsgPayload)
+    constraintEffector.effectorStatusInMsg.subscribeTo(effectorStatusMsg)
+
+    scObject1.addDynamicEffector(constraintEffector)
+    scObject2.addDynamicEffector(constraintEffector)
+
+    datLog1 = scObject1.scStateOutMsg.recorder()
+    datLog2 = scObject2.scStateOutMsg.recorder()
+    cnstLog = constraintEffector.constraintElements.recorder()
+    unitTestSim.AddModelToTask(unitTaskName, scObject1)
+    unitTestSim.AddModelToTask(unitTaskName, scObject2)
+    unitTestSim.AddModelToTask(unitTaskName, constraintEffector)
+    unitTestSim.AddModelToTask(unitTaskName, datLog1)
+    unitTestSim.AddModelToTask(unitTaskName, datLog2)
+    unitTestSim.AddModelToTask(unitTaskName, cnstLog)
+
+    finalTime = 1.0  # [s]
+    unitTestSim.InitializeSimulation()
+    if switchTime is not None:
+        unitTestSim.ConfigureStopTime(macros.sec2nano(switchTime))
+        unitTestSim.ExecuteSimulation()
+        effectorStatusMsgPayload.deviceStatus = 1 - initialStatus
+        effectorStatusMsg.write(effectorStatusMsgPayload, unitTestSim.TotalSim.CurrentNanos)
+    unitTestSim.ConfigureStopTime(macros.sec2nano(finalTime))
+    unitTestSim.ExecuteSimulation()
+
+    # the effector reads the switched status on its next task step, so skip two steps before measuring the growth
+    splitTime = switchTime if switchTime is not None else finalTime / 2  # [s]
+    split = np.searchsorted(datLog1.times(), macros.sec2nano(splitTime) + 2 * testProcessRate)
+    dvAfterSwitch = max(np.max(np.abs(datLog1.TotalAccumDV_CN_N[split:] - datLog1.TotalAccumDV_CN_N[split])),
+                        np.max(np.abs(datLog2.TotalAccumDV_CN_N[split:] - datLog2.TotalAccumDV_CN_N[split])))
+    dvMax = max(np.max(np.abs(datLog1.TotalAccumDV_CN_N)), np.max(np.abs(datLog2.TotalAccumDV_CN_N)))
+    finalLoads = np.concatenate((cnstLog.Fc_N[-1], cnstLog.L1_B1[-1], cnstLog.L2_B2[-1]))
+    dcm_B1N = RigidBodyKinematics.MRP2C(datLog1.sigma_BN[-1])
+    dcm_B2N = RigidBodyKinematics.MRP2C(datLog2.sigma_BN[-1])
+    psiExpected_N = (datLog2.r_BN_N[-1] + dcm_B2N.T @ r_P2B2_B2 - datLog1.r_BN_N[-1] - dcm_B1N.T @ r_P1B1_B1
+                     - dcm_B1N.T @ r_P2P1_B1Init)
+    momentum_N = scObject1.hub.mHub * datLog1.v_CN_N + scObject2.hub.mHub * datLog2.v_CN_N  # [kg m/s]
+    return DeviceStatusRun(dvMax, dvAfterSwitch, finalLoads, cnstLog.psi_N[-1], psiExpected_N,
+                           np.max(np.linalg.norm(momentum_N, axis=1)))
+
 
 if __name__ == "__main__":
     test_constraintEffectorAllCases(True,0.1,-1)
