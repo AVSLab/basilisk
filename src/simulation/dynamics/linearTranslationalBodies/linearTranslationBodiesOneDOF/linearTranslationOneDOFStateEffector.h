@@ -103,10 +103,10 @@ private:
     Eigen::Matrix3d dcm_FB = Eigen::Matrix3d::Identity();     //!< DCM from the body frame to the F frame
     std::string nameOfRhoState{};     //!< Identifier for the rho state data container
     std::string nameOfRhoDotState{};  //!< Identifier for the rhoDot state data container
-    std::string nameOfInertialPositionProperty;                      //!< -- identifier for the inertial position property
-    std::string nameOfInertialVelocityProperty;                      //!< -- identifier for the inertial velocity property
-    std::string nameOfInertialAttitudeProperty;                      //!< -- identifier for the inertial attitude property
-    std::string nameOfInertialAngVelocityProperty;                   //!< -- identifier for the inertial angular velocity property
+    std::string nameOfInertialPositionProperty;                      //!< identifier for the inertial position property
+    std::string nameOfInertialVelocityProperty;                      //!< identifier for the inertial velocity property
+    std::string nameOfInertialAttitudeProperty;                      //!< identifier for the inertial attitude property
+    std::string nameOfInertialAngVelocityProperty;                   //!< identifier for the inertial angular velocity property
     std::vector<DynamicEffector*> dynEffectors;                      //!< Vector of dynamic effectors attached
 
     bool isAxisLocked = false;    //!< flag for locking the translation axis

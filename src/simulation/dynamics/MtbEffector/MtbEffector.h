@@ -52,7 +52,7 @@ public:
     ReadFunctor<MTBCmdMsgPayload> mtbCmdInMsg;              //!< input msg for commanded mtb dipole array in the magnetic torque bar frame T
     ReadFunctor<MagneticFieldMsgPayload> magInMsg;          //!< input msg for magnetic field data in inertial frame N
     ReadFunctor<MTBArrayConfigMsgPayload> mtbParamsInMsg;   //!< input msg for layout of magnetic torque bars
-    BSKLogger bskLogger;                                    //!< -- BSK Logging
+    BSKLogger bskLogger;                                    //!< BSK Logging
 
 private:
     void validateConfiguration();

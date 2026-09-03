@@ -44,42 +44,42 @@ public:
     double c = 0.0;                                                  //!< [N-m-s/rad] rotational damping coefficient
     double thetaInit = 0.0;                                          //!< [rad] initial spinning body angle
     double thetaDotInit = 0.0;                                       //!< [rad/s] initial spinning body angle rate
-    std::string nameOfThetaState;                                    //!< -- identifier for the theta state data container
-    std::string nameOfThetaDotState;                                 //!< -- identifier for the thetaDot state data container
-    std::string nameOfInertialPositionProperty;                      //!< -- identifier for the inertial position property
-    std::string nameOfInertialVelocityProperty;                      //!< -- identifier for the inertial velocity property
-    std::string nameOfInertialAttitudeProperty;                      //!< -- identifier for the inertial attitude property
-    std::string nameOfInertialAngVelocityProperty;                   //!< -- identifier for the inertial angular velocity property
+    std::string nameOfThetaState;                                    //!< identifier for the theta state data container
+    std::string nameOfThetaDotState;                                 //!< identifier for the thetaDot state data container
+    std::string nameOfInertialPositionProperty;                      //!< identifier for the inertial position property
+    std::string nameOfInertialVelocityProperty;                      //!< identifier for the inertial velocity property
+    std::string nameOfInertialAttitudeProperty;                      //!< identifier for the inertial attitude property
+    std::string nameOfInertialAngVelocityProperty;                   //!< identifier for the inertial angular velocity property
     Eigen::Vector3d r_SB_B{0.0, 0.0, 0.0};                  //!< [m] vector pointing from body frame B origin to spinning frame S origin in B frame components
     Eigen::Vector3d r_ScS_S{0.0, 0.0, 0.0};                 //!< [m] vector pointing from spinning frame S origin to point Sc (center of mass of the spinner) in S frame components
-    Eigen::Vector3d sHat_S{1.0, 0.0, 0.0};                  //!< -- spinning axis in S frame components.
+    Eigen::Vector3d sHat_S{1.0, 0.0, 0.0};                  //!< spinning axis in S frame components.
     Eigen::Matrix3d IPntSc_S;                                        //!< [kg-m^2] Inertia of spinning body about point Sc in S frame components
-    Eigen::Matrix3d dcm_S0B;                                         //!< -- DCM from the body frame to the S0 frame (S frame for theta=0)
+    Eigen::Matrix3d dcm_S0B;                                         //!< DCM from the body frame to the S0 frame (S frame for theta=0)
     Message<HingedRigidBodyMsgPayload> spinningBodyOutMsg;           //!< state output message
     Message<SCStatesMsgPayload> spinningBodyConfigLogOutMsg;         //!< spinning body state config log message
-    ReadFunctor<ArrayMotorTorqueMsgPayload> motorTorqueInMsg;        //!< -- (optional) motor torque input message
-    ReadFunctor<ArrayEffectorLockMsgPayload> motorLockInMsg;         //!< -- (optional) motor lock flag input message
-    ReadFunctor<HingedRigidBodyMsgPayload> spinningBodyRefInMsg;     //!< -- (optional) spinning body reference input message name
+    ReadFunctor<ArrayMotorTorqueMsgPayload> motorTorqueInMsg;        //!< (optional) motor torque input message
+    ReadFunctor<ArrayEffectorLockMsgPayload> motorLockInMsg;         //!< (optional) motor lock flag input message
+    ReadFunctor<HingedRigidBodyMsgPayload> spinningBodyRefInMsg;     //!< (optional) spinning body reference input message name
     std::vector<DynamicEffector*> dynEffectors;                      //!< Vector of dynamic effectors attached
 
-    SpinningBodyOneDOFStateEffector();  //!< -- Contructor
-    ~SpinningBodyOneDOFStateEffector() override; //!< -- Destructor
-    void Reset(uint64_t CurrentClock) override;  //!< -- Method for reset
-    void writeOutputStateMessages(uint64_t CurrentClock) override;   //!< -- Method for writing the output messages
-    void UpdateState(uint64_t CurrentSimNanos) override;             //!< -- Method for updating information
-    void registerStates(DynParamManager& statesIn) override;         //!< -- Method for registering the SB states
-    void linkInStates(DynParamManager& states) override;             //!< -- Method for getting access to other states
-    void addDynamicEffector(DynamicEffector *newDynamicEffector, int segment = 1) override;  //!< -- Method for adding attached dynamic effector
-    void registerProperties(DynParamManager& states) override;       //!< -- Method for registering the SB inertial properties
-    void linkInPrescribedMotionProperties(DynParamManager& states) override;         //!< -- Method for getting access to prescribed motion properties
+    SpinningBodyOneDOFStateEffector();  //!< Constructor
+    ~SpinningBodyOneDOFStateEffector() override; //!< Destructor
+    void Reset(uint64_t CurrentClock) override;  //!< Method for reset
+    void writeOutputStateMessages(uint64_t CurrentClock) override;   //!< Method for writing the output messages
+    void UpdateState(uint64_t CurrentSimNanos) override;             //!< Method for updating information
+    void registerStates(DynParamManager& statesIn) override;         //!< Method for registering the SB states
+    void linkInStates(DynParamManager& states) override;             //!< Method for getting access to other states
+    void addDynamicEffector(DynamicEffector *newDynamicEffector, int segment = 1) override;  //!< Method for adding attached dynamic effector
+    void registerProperties(DynParamManager& states) override;       //!< Method for registering the SB inertial properties
+    void linkInPrescribedMotionProperties(DynParamManager& states) override;         //!< Method for getting access to prescribed motion properties
     void updateContributions(double integTime,
                              BackSubMatrices& backSubContr, Eigen::MRPd sigma_BN,
-                             Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N) override;   //!< -- Method for back-substitution contributions
+                             Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N) override;   //!< Method for back-substitution contributions
     void computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N,
-                            Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN) override;                         //!< -- Method for SB to compute its derivatives
-    void updateEffectorMassProps(double integTime) override;         //!< -- Method for giving the s/c the HRB mass props and prop rates
+                            Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN) override;                         //!< Method for SB to compute its derivatives
+    void updateEffectorMassProps(double integTime) override;         //!< Method for giving the s/c the HRB mass props and prop rates
     void updateEnergyMomContributions(double integTime, Eigen::Vector3d& rotAngMomPntCContr_B,
-                                      double& rotEnergyContr, Eigen::Vector3d omega_BN_B) override;         //!< -- Method for computing energy and momentum for SBs
+                                      double& rotEnergyContr, Eigen::Vector3d omega_BN_B) override;         //!< Method for computing energy and momentum for SBs
     void prependSpacecraftNameToStates() override;                   //!< Method used for multiple spacecraft
     void computeSpinningBodyInertialStates();               //!< Method for computing the SB's states
     void addPrescribedMotionCouplingContributions(BackSubMatrices& backSubContr) override;  //!< Method for adding coupling contributions for state effector branching on prescribed motion
@@ -102,13 +102,13 @@ private:
     };
 
     // Terms needed for back substitution
-    Eigen::Vector3d aTheta{0.0, 0.0, 0.0};             //!< -- rDDot_BN term for back substitution
-    Eigen::Vector3d bTheta{0.0, 0.0, 0.0};             //!< -- omegaDot_BN term for back substitution
-    double cTheta = 0.0;                                        //!< -- scalar term for back substitution
-    double mTheta = 0.0;                                        //!< -- auxiliary term for back substitution
+    Eigen::Vector3d aTheta{0.0, 0.0, 0.0};             //!< rDDot_BN term for back substitution
+    Eigen::Vector3d bTheta{0.0, 0.0, 0.0};             //!< omegaDot_BN term for back substitution
+    double cTheta = 0.0;                                        //!< scalar term for back substitution
+    double mTheta = 0.0;                                        //!< auxiliary term for back substitution
 
     // Vector quantities
-    Eigen::Vector3d sHat_B{1.0, 0.0, 0.0};             //!< -- spinning axis in B frame components
+    Eigen::Vector3d sHat_B{1.0, 0.0, 0.0};             //!< spinning axis in B frame components
     Eigen::Vector3d r_ScS_B{0.0, 0.0, 0.0};            //!< [m] vector pointing from spinning frame S origin to point Sc in B frame components
     Eigen::Vector3d r_ScB_B{0.0, 0.0, 0.0};            //!< [m] vector pointing from body frame B origin to point Sc in B frame components.
     Eigen::Vector3d rPrime_ScS_B{0.0, 0.0, 0.0};       //!< [m/s] body frame time derivative of r_ScS_B
@@ -118,13 +118,13 @@ private:
     Eigen::Vector3d omega_SB_B{0.0, 0.0, 0.0};         //!< [rad/s] angular velocity of the S frame wrt the B frame in B frame components.
     Eigen::Vector3d omega_BN_B{0.0, 0.0, 0.0};         //!< [rad/s] angular velocity of the B frame wrt the N frame in B frame components.
     Eigen::Vector3d omega_SN_B{0.0, 0.0, 0.0};         //!< [rad/s] angular velocity of the S frame wrt the N frame in B frame components.
-    Eigen::MRPd sigma_BN{0.0, 0.0, 0.0};               //!< -- body frame attitude wrt to the N frame in MRPs
+    Eigen::MRPd sigma_BN{0.0, 0.0, 0.0};               //!< body frame attitude wrt to the N frame in MRPs
 
     // Matrix quantities
     Eigen::Matrix3d rTilde_ScB_B;       //!< [m] tilde matrix of r_ScB_B
     Eigen::Matrix3d omegaTilde_SB_B;    //!< [rad/s] tilde matrix of omega_SB_B
-    Eigen::Matrix3d dcm_BS;             //!< -- DCM from spinner frame to body frame
-    Eigen::Matrix3d dcm_BN;             //!< -- DCM from inertial frame to body frame
+    Eigen::Matrix3d dcm_BS;             //!< DCM from spinner frame to body frame
+    Eigen::Matrix3d dcm_BN;             //!< DCM from inertial frame to body frame
     Eigen::Matrix3d IPntSc_B;           //!< [kg-m^2] inertia of spinning body about point Sc in B frame components
 
     // Spinning body properties
@@ -132,7 +132,7 @@ private:
     Eigen::Vector3d v_ScN_N{0.0, 0.0, 0.0};            //!< [m/s] inertial velocity vector of Sc relative to inertial frame
     Eigen::MatrixXd* r_SN_N;             //!< [m] position vector of spinning body origin S relative to the inertial frame origin N
     Eigen::MatrixXd* v_SN_N;             //!< [m/s] inertial velocity vector of S relative to inertial frame
-    Eigen::MatrixXd* sigma_SN;           //!< -- MRP attitude of frame S relative to inertial frame
+    Eigen::MatrixXd* sigma_SN;           //!< MRP attitude of frame S relative to inertial frame
     Eigen::MatrixXd* omega_SN_S;         //!< [rad/s] inertial spinning body frame angular velocity vector
 
     // States
@@ -141,8 +141,8 @@ private:
     StateData* hubSigmaState = nullptr;  //!< hub attitude state, read live for the published kinematics
     Eigen::MatrixXd* inertialPositionProperty = nullptr;  //!< [m] r_N inertial position relative to system spice zeroBase/refBase
     Eigen::MatrixXd* inertialVelocityProperty = nullptr;  //!< [m/s] v_N inertial velocity relative to system spice zeroBase/refBase
-    StateData* thetaState = nullptr;              //!< -- state manager of theta for spinning body
-    StateData* thetaDotState = nullptr;           //!< -- state manager of thetaDot for spinning body
+    StateData* thetaState = nullptr;              //!< state manager of theta for spinning body
+    StateData* thetaDotState = nullptr;           //!< state manager of thetaDot for spinning body
 
     // Properties required for prescribed motion branching/attachment
     StateData* hubOmega;       //!< [rad/s] hub inertial angular velocity vector

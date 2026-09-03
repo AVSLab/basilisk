@@ -38,13 +38,13 @@ public:
     void computeForceTorque(double integTime, double timeStep);
 
 private:
-    int    c;                                   //!< numer of time steps for pulse
+    int    c;                                   //!< number of time steps for pulse
 
 public:
     Eigen::Vector3d pulsedTorqueExternalPntB_B; //!< pulsed torque vector about point B, in B frame components
     int countOnPulse;                           //!< number of integration time steps to simulate a pulse
     int countOff;                               //!< number of integration time steps to have no pulses
-    BSKLogger bskLogger;                      //!< -- BSK Logging
+    BSKLogger bskLogger;                      //!< BSK Logging
 
 };
 

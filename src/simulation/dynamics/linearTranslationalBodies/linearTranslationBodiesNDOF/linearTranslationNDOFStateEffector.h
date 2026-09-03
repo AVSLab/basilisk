@@ -95,12 +95,12 @@ private:
     double rhoRef = 0.0;           //!< [m] reference translating body distance from equilibrium
     double rhoDotRef = 0.0;        //!< [m/s] reference translating body velocity of F frame wrt F0 frame
     double u = 0.0;                //!< [N] motor force acting along the translating axis of the body
-    bool isAxisLocked = false;     //!< -- lock flag
+    bool isAxisLocked = false;     //!< lock flag
     Eigen::Matrix3d IPntFc_F = Eigen::Matrix3d::Identity();   //!< [kg-m^2] Inertia of body about point Fc in F frame components
     Eigen::Vector3d r_FcF_F = Eigen::Vector3d::Zero();        //!< [m] vector pointing from translating frame F origin to point Fc (center of mass of arm) in F frame components
     Eigen::Vector3d r_F0P_P = Eigen::Vector3d::Zero();        //!< [m] vector pointing from parent origin to translating frame F0 origin in parent frame components
-    Eigen::Vector3d fHat_P{1.0, 0.0, 0.0};           //!< -- translating axis in parent frame components.
-    Eigen::Matrix3d dcm_FP = Eigen::Matrix3d::Identity();     //!< -- DCM from parent frame to current F frame
+    Eigen::Vector3d fHat_P{1.0, 0.0, 0.0};           //!< translating axis in parent frame components.
+    Eigen::Matrix3d dcm_FP = Eigen::Matrix3d::Identity();     //!< DCM from parent frame to current F frame
 
     // Scalar Properties
     double rho = 0.0;              //!< [m] translating body distance from equilibrium
@@ -109,7 +109,7 @@ private:
     // Vector quantities
     Eigen::Vector3d r_FF0_B = Eigen::Vector3d::Zero();      //!< [m] vector pointing from translating frame F0 to translating frame F (magnitude rho)
     Eigen::Vector3d r_F0P_B = Eigen::Vector3d::Zero();      //!< [m] vector pointing from parent translating frame P to translating frame F0
-    Eigen::Vector3d fHat_B = Eigen::Vector3d::Zero();       //!< -- translating axis in B frame components.
+    Eigen::Vector3d fHat_B = Eigen::Vector3d::Zero();       //!< translating axis in B frame components.
     Eigen::Vector3d r_FcF_B = Eigen::Vector3d::Zero();      //!< [m] vector pointing from translating frame F origin to point Fc (center of mass of arm) in B frame components
     Eigen::Vector3d r_FB_B = Eigen::Vector3d::Zero();       //!< [m] vector pointing from body frame B origin to F frame in B frame components
     Eigen::Vector3d r_FcB_B = Eigen::Vector3d::Zero();      //!< [m] vector pointing from body frame B origin to Fc in B frame components
@@ -122,7 +122,7 @@ private:
     Eigen::Vector3d rDot_FcB_B = Eigen::Vector3d::Zero();   //!< [m/s] inertial frame time derivative of r_FcB_B
 
     // Matrix quantities
-    Eigen::Matrix3d dcm_FB = Eigen::Matrix3d::Identity();      //!< -- DCM from body frame to F frame
+    Eigen::Matrix3d dcm_FB = Eigen::Matrix3d::Identity();      //!< DCM from body frame to F frame
     Eigen::Matrix3d IPntFc_B = Eigen::Matrix3d::Zero();        //!< [kg-m^2] Inertia of body about point Fc in B frame components
     Eigen::Matrix3d IPrimePntFc_B = Eigen::Matrix3d::Zero();   //!< [kg-m^2/s] body frame time derivative of IPntFc_B
     Eigen::Matrix3d rTilde_FcB_B = Eigen::Matrix3d::Zero();    //!< [m] tilde matrix of r_FcB_B
@@ -132,15 +132,15 @@ private:
     Eigen::Vector3d v_FcN_N = Eigen::Vector3d::Zero();      //!< [m/s] inertial velocity vector of Fc relative to inertial frame
     Eigen::MatrixXd* r_FN_N = nullptr;      //!< [m] position vector of the translating frame F origin relative to the inertial frame origin N
     Eigen::MatrixXd* v_FN_N = nullptr;      //!< [m/s] inertial velocity vector of F relative to inertial frame
-    Eigen::MatrixXd* sigma_FN = nullptr;    //!< -- MRP attitude of frame F relative to inertial frame
+    Eigen::MatrixXd* sigma_FN = nullptr;    //!< MRP attitude of frame F relative to inertial frame
     Eigen::MatrixXd* omega_FN_F = nullptr;  //!< [rad/s] inertial translating body frame angular velocity vector
 
-    std::string nameOfInertialPositionProperty;    //!< -- identifier for the inertial position property
-    std::string nameOfInertialVelocityProperty;    //!< -- identifier for the inertial velocity property
-    std::string nameOfInertialAttitudeProperty;    //!< -- identifier for the inertial attitude property
-    std::string nameOfInertialAngVelocityProperty; //!< -- identifier for the inertial angular velocity property
+    std::string nameOfInertialPositionProperty;    //!< identifier for the inertial position property
+    std::string nameOfInertialVelocityProperty;    //!< identifier for the inertial velocity property
+    std::string nameOfInertialAttitudeProperty;    //!< identifier for the inertial attitude property
+    std::string nameOfInertialAngVelocityProperty; //!< identifier for the inertial angular velocity property
 
-    std::vector<DynamicEffector*> dynEffectors;    //!< -- vector of dynamic effectors attached to this body
+    std::vector<DynamicEffector*> dynEffectors;    //!< vector of dynamic effectors attached to this body
     Eigen::Vector3d extForce_B = Eigen::Vector3d::Zero();      //!< [N] attached effector force on this body in B frame components
     Eigen::Vector3d extTorquePntF_B = Eigen::Vector3d::Zero(); //!< [N-m] attached effector torque on this body about F in B frame components
 
@@ -164,14 +164,14 @@ private:
 class LinearTranslationNDOFStateEffector final: public StateEffector, public SysModel {
 public:
 
-    LinearTranslationNDOFStateEffector();         //!< -- Constructor
-    ~LinearTranslationNDOFStateEffector() override;  //!< -- Destructor
+    LinearTranslationNDOFStateEffector();         //!< Constructor
+    ~LinearTranslationNDOFStateEffector() override;  //!< Destructor
 
     std::vector<Message<LinearTranslationRigidBodyMsgPayload>*> translatingBodyOutMsgs;       //!< vector of state output messages
     std::vector<Message<SCStatesMsgPayload>*> translatingBodyConfigLogOutMsgs;                //!< vector of translating body state config log messages
     std::vector<ReadFunctor<LinearTranslationRigidBodyMsgPayload>> translatingBodyRefInMsgs;  //!< (optional) reference state input message
-    ReadFunctor<ArrayMotorForceMsgPayload> motorForceInMsg;           //!< -- (optional) motor force input message name
-    ReadFunctor<ArrayEffectorLockMsgPayload> motorLockInMsg;          //!< -- (optional) motor lock input message name
+    ReadFunctor<ArrayMotorForceMsgPayload> motorForceInMsg;           //!< (optional) motor force input message name
+    ReadFunctor<ArrayEffectorLockMsgPayload> motorLockInMsg;          //!< (optional) motor lock input message name
 
     /** method for adding a new translating body */
     void addTranslatingBody(const std::shared_ptr<TranslatingBody> newBody);
@@ -188,18 +188,18 @@ public:
 
 private:
     static uint64_t effectorID;    //!< [] ID number of this effector
-    int N = 0;    //!< -- number of translating body axes defined in the system
-    std::vector<std::shared_ptr<TranslatingBody>> translatingBodyVec; //!< -- vector of TB effector structs
+    int N = 0;    //!< number of translating body axes defined in the system
+    std::vector<std::shared_ptr<TranslatingBody>> translatingBodyVec; //!< vector of TB effector structs
 
     // Terms needed for back substitution
-    Eigen::MatrixX3d ARho;    //!< -- rDDot_BN term for back substitution
-    Eigen::MatrixX3d BRho;    //!< -- omegaDot_BN term for back substitution
-    Eigen::VectorXd CRho;     //!< -- scalar term for back substitution
+    Eigen::MatrixX3d ARho;    //!< rDDot_BN term for back substitution
+    Eigen::MatrixX3d BRho;    //!< omegaDot_BN term for back substitution
+    Eigen::VectorXd CRho;     //!< scalar term for back substitution
 
     // Hub properties
     Eigen::Vector3d omega_BN_B = Eigen::Vector3d::Zero();  //!< [rad/s] angular velocity of the B frame wrt the N frame in B frame components
-    Eigen::MRPd sigma_BN{0.0, 0.0, 0.0};                   //!< -- body frame attitude wrt to the N frame in MRPs
-    Eigen::Matrix3d dcm_BN = Eigen::Matrix3d::Identity();  //!< -- DCM from inertial frame to body frame
+    Eigen::MRPd sigma_BN{0.0, 0.0, 0.0};                   //!< body frame attitude wrt to the N frame in MRPs
+    Eigen::Matrix3d dcm_BN = Eigen::Matrix3d::Identity();  //!< DCM from inertial frame to body frame
 
     // States
     Eigen::MatrixXd* inertialPositionProperty = nullptr;    //!< [m] r_N inertial position relative to system spice zeroBase/refBase
@@ -207,9 +207,9 @@ private:
     StateData* rhoState = nullptr;
     StateData* rhoDotState = nullptr;
     StateData* hubSigmaState = nullptr; //!< hub attitude state, read live for the published kinematics
-    std::string nameOfRhoState;        //!< -- identifier for the rho state data container
-    std::string nameOfRhoDotState;     //!< -- identifier for the rhoDot state data container
-    std::string propertyNameIndex;     //!< -- effector identifier used to name the per body properties
+    std::string nameOfRhoState;        //!< identifier for the rho state data container
+    std::string nameOfRhoDotState;     //!< identifier for the rhoDot state data container
+    std::string propertyNameIndex;     //!< effector identifier used to name the per body properties
 
     // module functions
     void Reset(uint64_t CurrentClock) override;

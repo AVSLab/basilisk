@@ -23,20 +23,20 @@
 
 
 //Fuel tank models
-/*! @brief This class is a class that has the defines a generic fuel slosh paricle*/
+/*! @brief This class defines a generic fuel slosh particle. */
 class FuelSlosh {
 public:
-    FuelSlosh(){return;};                  //!< -- Contructor
-    virtual ~FuelSlosh(){return;};         //!< -- Destructor
+    FuelSlosh(){return;};                  //!< Constructor
+    virtual ~FuelSlosh(){return;};         //!< Destructor
     virtual void retrieveMassValue(double integTime [[maybe_unused]]){
-        return;}; //!< -- retrieve current mass value of fuelSlosh particle
+        return;}; //!< retrieve current mass value of fuelSlosh particle
 
 public:
     double fuelMass = 0.0;                 //!< [kg] mass of fuelSlosh particle
-    double massToTotalTankMassRatio = 0.0; //!< -- ratio of fuelSlosh particle mass to total mass of fuel tank
+    double massToTotalTankMassRatio = 0.0; //!< ratio of fuelSlosh particle mass to total mass of fuel tank
     double fuelMassDot = 0.0;              //!< [kg/s] mass depletion rate of fuelSlosh particle
-    bool omitMassRateDynamics = false;      //!< -- substitute zero depletion rates into generic rate-dependent terms
-    bool hasRegisteredStates = false;       //!< -- set after stateful FuelSlosh implementations register their states
+    bool omitMassRateDynamics = false;      //!< substitute zero depletion rates into generic rate-dependent terms
+    bool hasRegisteredStates = false;       //!< set after stateful FuelSlosh implementations register their states
 };
 
 
