@@ -125,12 +125,12 @@ private:
     Eigen::Matrix3d rTilde_ScB_B = Eigen::Matrix3d::Zero();      //!< [m] tilde matrix of r_ScB_B
     Eigen::Matrix3d omegaTilde_SB_B = Eigen::Matrix3d::Zero();   //!< [rad/s] tilde matrix of omega_SB_B
 
-    std::vector<DynamicEffector*> dynEffectors;     //!< -- Vector of dynamic effectors attached
+    std::vector<DynamicEffector*> dynEffectors;     //!< Vector of dynamic effectors attached
 
-    std::string nameOfInertialPositionProperty;     //!< -- identifier for the inertial position property
-    std::string nameOfInertialVelocityProperty;     //!< -- identifier for the inertial velocity property
-    std::string nameOfInertialAttitudeProperty;     //!< -- identifier for the inertial attitude property
-    std::string nameOfInertialAngVelocityProperty;  //!< -- identifier for the inertial angular velocity property
+    std::string nameOfInertialPositionProperty;     //!< identifier for the inertial position property
+    std::string nameOfInertialVelocityProperty;     //!< identifier for the inertial velocity property
+    std::string nameOfInertialAttitudeProperty;     //!< identifier for the inertial attitude property
+    std::string nameOfInertialAngVelocityProperty;  //!< identifier for the inertial angular velocity property
 
     Eigen::Vector3d r_ScN_N;                        //!< [m] position vector of the spinning body center of mass Sc relative to the inertial frame origin N
     Eigen::Vector3d v_ScN_N;                        //!< [m/s] inertial velocity vector of Sc relative to inertial frame

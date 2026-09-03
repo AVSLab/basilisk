@@ -48,53 +48,53 @@ public:
     void Reset(uint64_t CurrentSimNanos);
     bool ReadInputs();
     void writeOutputStateMessages(uint64_t CurrentClock);
-    void registerStates(DynParamManager& states);  //!< -- Method for the effector to register its states
-    void linkInStates(DynParamManager& states);  //!< -- Method for the effector to get access of other states
-    void computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN);  //!< -- Method for each stateEffector to calculate derivatives
+    void registerStates(DynParamManager& states);  //!< Method for the effector to register its states
+    void linkInStates(DynParamManager& states);  //!< Method for the effector to get access of other states
+    void computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN);  //!< Method for each stateEffector to calculate derivatives
     void calcForceTorqueOnBody(double integTime, Eigen::Vector3d omega_BN_B);
     void updateContributions(double integTime, BackSubMatrices& backSubContr, Eigen::MRPd sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N);  //!< Method to pass the forces and torques onto the hub
     void updateEffectorMassProps(double integTime);
     void UpdateState(uint64_t CurrentSimNanos);
 
 
-    void addThruster(std::shared_ptr<THRSimConfig> newThruster); //!< -- Add a new thruster to the thruster set
-    void addThruster(std::shared_ptr<THRSimConfig> newThruster, Message<SCStatesMsgPayload>* bodyStateMsg); //!< -- (overloaded) Add a new thruster to the thruster set connect to a body different than the hub
+    void addThruster(std::shared_ptr<THRSimConfig> newThruster); //!< Add a new thruster to the thruster set
+    void addThruster(std::shared_ptr<THRSimConfig> newThruster, Message<SCStatesMsgPayload>* bodyStateMsg); //!< (overloaded) Add a new thruster to the thruster set connect to a body different than the hub
     void ConfigureThrustRequests();
     void UpdateThrusterProperties();
 
 public:
     // Input and output messages
-    ReadFunctor<THRArrayOnTimeCmdMsgPayload> cmdsInMsg;  //!< -- input message with thruster commands
-    std::vector<Message<THROutputMsgPayload>*> thrusterOutMsgs;  //!< -- output message vector for thruster data
-    std::vector<std::shared_ptr<THRSimConfig>> thrusterData; //!< -- Thruster information
-    std::vector<double> NewThrustCmds;             //!< -- Incoming thrust commands
+    ReadFunctor<THRArrayOnTimeCmdMsgPayload> cmdsInMsg;  //!< input message with thruster commands
+    std::vector<Message<THROutputMsgPayload>*> thrusterOutMsgs;  //!< output message vector for thruster data
+    std::vector<std::shared_ptr<THRSimConfig>> thrusterData; //!< Thruster information
+    std::vector<double> NewThrustCmds;             //!< Incoming thrust commands
 
     // State information
     std::vector<double> kappaInit;                //!< [] Vector of initial thruster states
-    std::string nameOfKappaState;    //!< -- Identifier for the kappa state data container
+    std::string nameOfKappaState;    //!< Identifier for the kappa state data container
 
     // State structures
 	StateData *hubSigma;        //!< pointer to hub attitude states
     StateData *hubOmega;        //!< pointer to hub angular velocity states
-    StateData* kappaState;      //!< -- state manager of theta for hinged rigid body
+    StateData* kappaState;      //!< state manager of theta for hinged rigid body
     Eigen::MatrixXd* inertialPositionProperty;  //!< [m] r_N inertial position relative to system spice zeroBase/refBase
     Eigen::Vector3d r_PcP_P;                    //!< [m] position vector of parent body CoM w.r.t. parent body frame origin (only used if thrusters attached to non-hub body)
 
-    BSKLogger bskLogger;        //!< -- BSK Logging
+    BSKLogger bskLogger;        //!< BSK Logging
 
     // Mass flow rate
     double mDotTotal = 0.0;           //!< [kg/s] Current mass flow rate of thrusters
 
 private:
-    std::vector<THROutputMsgPayload> thrusterOutBuffer;//!< -- Message buffer for thruster data
+    std::vector<THROutputMsgPayload> thrusterOutBuffer;//!< Message buffer for thruster data
 
-    THRArrayOnTimeCmdMsgPayload incomingCmdBuffer;     //!< -- One-time allocation for savings
+    THRArrayOnTimeCmdMsgPayload incomingCmdBuffer;     //!< One-time allocation for savings
 
     std::vector<ReadFunctor<SCStatesMsgPayload>> attachedBodyInMsgs;       //!< vector of body states message where the thrusters attach to
     SCStatesMsgPayload attachedBodyBuffer;
     std::vector<BodyToHubInfo> bodyToHubInfo;
 
-    double prevCommandTime;                       //!< [s] -- Time for previous valid thruster firing
+    double prevCommandTime;                       //!< [s] Time for previous valid thruster firing
     static uint64_t effectorID;    //!< [] ID number of this panel
 };
 
