@@ -1,0 +1,3 @@
+- Added :ref:`scenarioThrusterArm`, :ref:`scenarioRoboticGrappling`, and :ref:`scenarioAerobrake`, which demonstrate effector branching across the supported parent and child effector pairings.
+- Added :ref:`scenarioBranchingConvergence` and :ref:`scenarioBranchingConservation`, which verify the branched equations of motion against the integrator's formal order and the impulse-momentum theorems.
+- Fixed :ref:`constraintDynamicEffector` applying its constraint force and torque while the device status message commanded it off, which previously suppressed only the output message.

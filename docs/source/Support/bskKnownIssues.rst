@@ -144,6 +144,10 @@ Version |release| (July 7, 2026)
 - :ref:`MJSystemCoM` reported mass-weighted material velocity rather than the
   time derivative of its center-of-mass position when individual MuJoCo body
   masses changed. This is fixed in the current version.
+- The :ref:`constraintDynamicEffector` applied its constraint force and torque regardless of the device
+  status message, which gated only the load filtering and the output message write. Commanding the effector
+  off left its logged force at zero whereas the constraint kept acting on the dynamics. The device status
+  now gates the force and torque computation. This is fixed in the current version.
 
 
 Version 2.11.0 (July 7, 2026)
