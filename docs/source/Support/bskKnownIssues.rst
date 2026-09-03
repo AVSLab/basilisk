@@ -42,6 +42,11 @@ Version |release|
   Conan's cached version. Running ``ninja -j 12`` in an existing build directory
   applies the fix and refreshes the metadata without a clean build.
 
+- GitHub issue 1393: The :ref:`constraintDynamicEffector` applied its constraint force and torque
+  regardless of the device status message, which gated only the load filtering and the output
+  message write. Commanding the effector off left its logged force at zero whereas the constraint
+  kept acting on the dynamics. This is fixed in the current version.
+
 Version 2.12.0 (September 21, 2026)
 -----------------------------------
 
