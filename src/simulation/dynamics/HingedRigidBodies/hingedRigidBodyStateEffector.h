@@ -35,7 +35,7 @@
 #include "architecture/utilities/bskLogging.h"
 
 /*! @brief hinged rigid body state effector class */
-class HingedRigidBodyStateEffector : public StateEffector, public SysModel {
+class HingedRigidBodyStateEffector final : public StateEffector, public SysModel {
 public:
     double mass;                     //!< [kg] mass of hinged rigid body
     double d;                        //!< [m] distance from hinge point H to hinged rigid body center of mass S

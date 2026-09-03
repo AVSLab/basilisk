@@ -27,7 +27,7 @@
 #include "architecture/utilities/bskLogging.h"
 
 /*! @brief spaecraft hub effector class */
-class HubEffector : public StateEffector {
+class HubEffector final : public StateEffector {
 public:
     double mHub;                         //!< [kg] mass of the hub
     uint64_t MRPSwitchCount;             //!< -- Count on times we've shadowed

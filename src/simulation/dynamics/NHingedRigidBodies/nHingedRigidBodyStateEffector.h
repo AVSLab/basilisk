@@ -95,7 +95,7 @@ struct HingedPanel {
 };
 
 /*! @brief NHingedRigidBodyStateEffector class */
-class NHingedRigidBodyStateEffector : public StateEffector, public SysModel {
+class NHingedRigidBodyStateEffector final : public StateEffector, public SysModel {
 public:
     std::string nameOfThetaState;    //!< -- Identifier for the theta state data container
     std::string nameOfThetaDotState; //!< -- Identifier for the thetaDot state data container

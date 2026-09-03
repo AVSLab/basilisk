@@ -35,7 +35,7 @@
 #include "architecture/messaging/messaging.h"
 
 /*! @brief dual hinged rigid body state effector */
-class DualHingedRigidBodyStateEffector : public StateEffector, public SysModel {
+class DualHingedRigidBodyStateEffector final : public StateEffector, public SysModel {
 public:
     DualHingedRigidBodyStateEffector();
     ~DualHingedRigidBodyStateEffector();

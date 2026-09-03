@@ -34,7 +34,7 @@
 #include "architecture/messaging/messaging.h"
 
 /*! @brief linear spring mass damper state effector class */
-class LinearTranslationOneDOFStateEffector :
+class LinearTranslationOneDOFStateEffector final :
 	public StateEffector, public SysModel
 {
 public:

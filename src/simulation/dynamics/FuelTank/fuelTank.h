@@ -265,7 +265,7 @@ public:
 };
 
 /*! Fuel tank effector model class */
-class FuelTank :
+class FuelTank final :
         public StateEffector, public SysModel {
 public:
     std::vector<FuelSlosh *> fuelSloshParticles;        //!< -- vector of fuel slosh particles

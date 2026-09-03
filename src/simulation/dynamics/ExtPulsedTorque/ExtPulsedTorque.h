@@ -26,7 +26,7 @@
 
 
 /*! @brief external pulsed torque module class */
-class ExtPulsedTorque: public SysModel, public DynamicEffector{
+class ExtPulsedTorque final: public SysModel, public DynamicEffector{
 public:
     ExtPulsedTorque();
     ~ExtPulsedTorque();

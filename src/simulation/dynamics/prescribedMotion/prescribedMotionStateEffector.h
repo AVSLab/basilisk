@@ -31,7 +31,7 @@
 #include "architecture/utilities/avsEigenMRP.h"
 
 /*! @brief prescribed motion state effector class */
-class PrescribedMotionStateEffector: public StateEffector, public SysModel {
+class PrescribedMotionStateEffector final: public StateEffector, public SysModel {
 public:
     PrescribedMotionStateEffector();
     ~PrescribedMotionStateEffector();

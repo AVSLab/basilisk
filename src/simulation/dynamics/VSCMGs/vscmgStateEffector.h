@@ -42,7 +42,7 @@
 
 
 /*! @brief VSCMG state effector class */
-class VSCMGStateEffector:  public SysModel, public StateEffector {
+class VSCMGStateEffector final:  public SysModel, public StateEffector {
 public:
     VSCMGStateEffector();
 	~VSCMGStateEffector();

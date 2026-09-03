@@ -36,7 +36,7 @@
 #include "architecture/utilities/bskLogging.h"
 
 /*! @brief spinning body state effector class */
-class SpinningBodyOneDOFStateEffector: public StateEffector, public SysModel {
+class SpinningBodyOneDOFStateEffector final: public StateEffector, public SysModel {
 
 public:
     double mass = 1.0;                                               //!< [kg] mass of spinning body
