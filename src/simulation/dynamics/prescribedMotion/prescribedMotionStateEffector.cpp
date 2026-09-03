@@ -129,40 +129,40 @@ void PrescribedMotionStateEffector::writeOutputStateMessages(uint64_t currentClo
 
 /*! This method allows the effector to have access to the hub states.
 
- @param statesIn Pointer to give the state effector access the hub states
+ @param[in] states Dynamic parameter manager containing the required hub states.
 */
-void PrescribedMotionStateEffector::linkInStates(DynParamManager& statesIn)
+void PrescribedMotionStateEffector::linkInStates(DynParamManager& states)
 {
     // Get access to the hub states needed for dynamic coupling
-    this->inertialPositionProperty = statesIn.getPropertyReference(this->propName_inertialPosition);
-    this->inertialVelocityProperty = statesIn.getPropertyReference(this->propName_inertialVelocity);
+    this->inertialPositionProperty = states.getPropertyReference(this->propName_inertialPosition);
+    this->inertialVelocityProperty = states.getPropertyReference(this->propName_inertialVelocity);
 
     // Loop through attached stateEffectors to link in their states
     std::vector<StateEffector*>::iterator stateIt;
     for(stateIt = this->stateEffectors.begin(); stateIt != this->stateEffectors.end(); stateIt++)
     {
-        (*stateIt)->linkInPrescribedMotionProperties(statesIn);
-        (*stateIt)->linkInStates(statesIn);
+        (*stateIt)->linkInPrescribedMotionProperties(states);
+        (*stateIt)->linkInStates(states);
     }
 }
 
 /*! This method allows the state effector to register its states with the dynamic parameter manager.
 
- @param states Pointer to give the state effector access the hub states
+ @param[in,out] statesIn Dynamic parameter manager used to register the effector states.
 */
-void PrescribedMotionStateEffector::registerStates(DynParamManager& states)
+void PrescribedMotionStateEffector::registerStates(DynParamManager& statesIn)
 {
-    this->sigma_PMState = states.registerState(3, 1, this->nameOfsigma_PMState);
+    this->sigma_PMState = statesIn.registerState(3, 1, this->nameOfsigma_PMState);
     this->sigma_PMState->setState(this->sigma_PM.coeffs());
 
     // Call method to register the prescribed motion properties
-    registerProperties(states);
+    registerProperties(statesIn);
 
     // Loop through attached stateEffectors to register their states
     std::vector<StateEffector*>::iterator stateIt;
     for(stateIt = this->stateEffectors.begin(); stateIt != this->stateEffectors.end(); stateIt++)
     {
-        (*stateIt)->registerStates(states);
+        (*stateIt)->registerStates(statesIn);
     }
 }
 
@@ -578,7 +578,10 @@ void PrescribedMotionStateEffector::UpdateState(uint64_t currentSimNanos)
     this->writeOutputStateMessages(currentSimNanos);
 }
 
-/*! This method attaches a stateEffector to the prescribedMotionStateEffector */
+/*! This method attaches a stateEffector to the prescribedMotionStateEffector
+ *
+ * @param[in] newStateEffector State effector to attach.
+ */
 void PrescribedMotionStateEffector::addStateEffector(StateEffector* newStateEffector)
 {
     this->assignStateParamNames<StateEffector *>(newStateEffector);

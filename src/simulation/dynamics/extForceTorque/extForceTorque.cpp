@@ -22,7 +22,7 @@
 
 
 /*! This is the constructor.  It sets some default initializers that can be
- overriden by the user.*/
+ overridden by the user.*/
 ExtForceTorque::ExtForceTorque()
 {
     /* initialize the 3 output vectors to zero */
@@ -45,7 +45,8 @@ ExtForceTorque::~ExtForceTorque()
 
 
 /*! This method is used to reset the module.
-
+ *
+ * @param[in] CurrentSimNanos [ns] Current simulation time.
  */
 void ExtForceTorque::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
@@ -56,6 +57,10 @@ void ExtForceTorque::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 }
 
 
+/*! @brief Link the required dynamics states.
+ *
+ * @param[in] statesIn Dynamic parameter manager containing the required states.
+ */
 void ExtForceTorque::linkInStates(DynParamManager& statesIn [[maybe_unused]])
 {
 
@@ -90,9 +95,12 @@ void ExtForceTorque::readInputMessages()
 }
 
 /*! This method is used to compute the RHS forces and torques.
-    Note:   the module can set any of these three vecors, or a subset.  Regarding the external force, the
-            matrix representations in the body (B) and inerial (N) frame components are treated as 2
+    Note:   the module can set any of these three vectors, or a subset.  Regarding the external force, the
+            matrix representations in the body (B) and inertial (N) frame components are treated as 2
             separate vectors.  Only set both if you mean to, as both vectors will be included.
+ *
+ * @param[in] integTime [s] Current integration time.
+ * @param[in] timeStep [s] Integration time step.
  */
 void ExtForceTorque::computeForceTorque(double integTime [[maybe_unused]], double timeStep [[maybe_unused]])
 {
@@ -125,6 +133,10 @@ void ExtForceTorque::computeForceTorque(double integTime [[maybe_unused]], doubl
     return;
 }
 
+/*! @brief Update the scheduled effector state.
+ *
+ * @param[in] CurrentSimNanos [ns] Current simulation time.
+ */
 void ExtForceTorque::UpdateState(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     this->readInputMessages();

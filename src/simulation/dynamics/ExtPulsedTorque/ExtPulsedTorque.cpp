@@ -20,7 +20,7 @@
 #include <iostream>
 
 /*! This is the constructor.  It sets some default initializers that can be
- overriden by the user.*/
+ overridden by the user.*/
 ExtPulsedTorque::ExtPulsedTorque()
 {
     this->c = 0;
@@ -36,7 +36,10 @@ ExtPulsedTorque::~ExtPulsedTorque()
 }
 
 
-/*! link the states */
+/*! link the states
+ *
+ * @param[in] statesIn Dynamic parameter manager containing the required states.
+ */
 void ExtPulsedTorque::linkInStates(DynParamManager& statesIn [[maybe_unused]])
 {
     return;
@@ -62,9 +65,12 @@ void ExtPulsedTorque::readInputMessages()
 }
 
 /*! This method is used to compute the RHS forces and torques.
-    Note:   the module can set any of these three vecors, or a subset.  Regarding the external force, the
-            matrix represnetations in the body (B) and inerial (N) frame components are treated as 2
+    Note:   the module can set any of these three vectors, or a subset.  Regarding the external force, the
+            matrix representations in the body (B) and inertial (N) frame components are treated as 2
             separate vectors.  Only set both if you mean to, as both vectors will be included.
+ *
+ * @param[in] integTime [s] Current integration time.
+ * @param[in] timeStep [s] Integration time step.
  */
 void ExtPulsedTorque::computeForceTorque(double integTime [[maybe_unused]], double timeStep [[maybe_unused]])
 {
@@ -88,6 +94,8 @@ void ExtPulsedTorque::computeForceTorque(double integTime [[maybe_unused]], doub
 }
 
 /*! Module update method
+ *
+ * @param[in] CurrentSimNanos [ns] Current simulation time.
  */
 void ExtPulsedTorque::UpdateState(uint64_t CurrentSimNanos [[maybe_unused]])
 {

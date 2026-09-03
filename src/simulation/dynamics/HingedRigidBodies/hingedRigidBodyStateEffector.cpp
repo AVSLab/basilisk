@@ -103,19 +103,22 @@ void HingedRigidBodyStateEffector::prependSpacecraftNameToStates()
     return;
 }
 
-/*! This method allows the HRB state effector to have access to the hub states and gravity*/
-void HingedRigidBodyStateEffector::linkInStates(DynParamManager& statesIn)
+/*! This method allows the HRB state effector to have access to the hub states and gravity
+ *
+ * @param[in] states Dynamic parameter manager containing the required states.
+ */
+void HingedRigidBodyStateEffector::linkInStates(DynParamManager& states)
 {
     // - Get access to the hubs sigma, omegaBN_B and velocity needed for dynamic coupling and gravity
     std::string tmpMsgName;
     tmpMsgName = this->nameOfSpacecraftAttachedTo + "centerOfMassSC";
-    this->c_B = statesIn.getPropertyReference(tmpMsgName);
+    this->c_B = states.getPropertyReference(tmpMsgName);
     tmpMsgName = this->nameOfSpacecraftAttachedTo + "centerOfMassPrimeSC";
-    this->cPrime_B = statesIn.getPropertyReference(tmpMsgName);
+    this->cPrime_B = states.getPropertyReference(tmpMsgName);
 
-    this->inertialPositionProperty = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + this->propName_inertialPosition);
-    this->inertialVelocityProperty = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + this->propName_inertialVelocity);
-    this->hubSigmaState = statesIn.getStateObject(this->nameOfSpacecraftAttachedTo + this->stateNameOfSigma);
+    this->inertialPositionProperty = states.getPropertyReference(this->nameOfSpacecraftAttachedTo + this->propName_inertialPosition);
+    this->inertialVelocityProperty = states.getPropertyReference(this->nameOfSpacecraftAttachedTo + this->propName_inertialVelocity);
+    this->hubSigmaState = states.getStateObject(this->nameOfSpacecraftAttachedTo + this->stateNameOfSigma);
 
     return;
 }
@@ -134,26 +137,32 @@ void HingedRigidBodyStateEffector::addDynamicEffector(DynamicEffector *newDynami
     this->dynEffectors.push_back(newDynamicEffector);
 }
 
-/*! This method allows the HRB state effector to register its states: theta and thetaDot with the dyn param manager */
-void HingedRigidBodyStateEffector::registerStates(DynParamManager& states)
+/*! This method allows the HRB state effector to register its states: theta and thetaDot with the dyn param manager
+ *
+ * @param[in,out] statesIn Dynamic parameter manager used to register states or properties.
+ */
+void HingedRigidBodyStateEffector::registerStates(DynParamManager& statesIn)
 {
     // - Register the states associated with hinged rigid bodies - theta and thetaDot
-    this->thetaState = states.registerState(1, 1, this->nameOfThetaState);
+    this->thetaState = statesIn.registerState(1, 1, this->nameOfThetaState);
     Eigen::MatrixXd thetaInitMatrix(1,1);
     thetaInitMatrix(0,0) = this->thetaInit;
     this->thetaState->setState(thetaInitMatrix);
-    this->thetaDotState = states.registerState(1, 1, this->nameOfThetaDotState);
+    this->thetaDotState = statesIn.registerState(1, 1, this->nameOfThetaDotState);
     Eigen::MatrixXd thetaDotInitMatrix(1,1);
     thetaDotInitMatrix(0,0) = this->thetaDotInit;
     this->thetaDotState->setState(thetaDotInitMatrix);
 
-    registerProperties(states);
+    registerProperties(statesIn);
 
     return;
 }
 
 /*! This method registers the HRB inertial properties with the dynamic parameter manager and links
- them into dependent dynamic effectors  */
+ them into dependent dynamic effectors
+ *
+ * @param[in,out] states Dynamic parameter manager used to register states or properties.
+ */
 void HingedRigidBodyStateEffector::registerProperties(DynParamManager& states)
 {
     Eigen::Vector3d stateInit = Eigen::Vector3d::Zero();
@@ -170,7 +179,10 @@ void HingedRigidBodyStateEffector::registerProperties(DynParamManager& states)
 }
 
 /*! This method allows the HRB state effector to provide its contributions to the mass props and mass prop rates of the
- spacecraft */
+ spacecraft
+ *
+ * @param[in] integTime [s] Current integration time.
+ */
 void HingedRigidBodyStateEffector::updateEffectorMassProps(double integTime [[maybe_unused]])
 {
     // - Convert initial variables to mother craft frame relative information
@@ -217,7 +229,14 @@ void HingedRigidBodyStateEffector::updateEffectorMassProps(double integTime [[ma
 }
 
 /*! This method allows the HRB state effector to give its contributions to the matrices needed for the back-sub
- method */
+ method
+ *
+ * @param[in] integTime [s] Current integration time.
+ * @param[in,out] backSubContr Back-substitution contributions.
+ * @param[in] sigma_BN Hub attitude relative to the inertial frame.
+ * @param[in] omega_BN_B [rad/s] Hub angular velocity expressed in body-frame components.
+ * @param[in] g_N [m/s^2] Gravitational acceleration expressed in inertial-frame components.
+ */
 void HingedRigidBodyStateEffector::updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::MRPd sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N)
 {
     // - Find dcm_BN
@@ -297,10 +316,16 @@ void HingedRigidBodyStateEffector::updateContributions(double integTime, BackSub
     return;
 }
 
-/*! This method is used to find the derivatives for the HRB stateEffector: thetaDDot and the kinematic derivative */
+/*! This method is used to find the derivatives for the HRB stateEffector: thetaDDot and the kinematic derivative
+ *
+ * @param[in] integTime [s] Current integration time.
+ * @param[in] rDDot_BN_N [m/s^2] Hub translational acceleration expressed in inertial-frame components.
+ * @param[in] omegaDot_BN_B [rad/s^2] Hub angular acceleration expressed in body-frame components.
+ * @param[in] sigma_BN Hub attitude relative to the inertial frame.
+ */
 void HingedRigidBodyStateEffector::computeDerivatives(double integTime [[maybe_unused]], Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN)
 {
-    // - Grab necessarry values from manager (these have been previously computed in hubEffector)
+    // - Grab necessary values from manager (these have been previously computed in hubEffector)
     Eigen::Vector3d rDDotLoc_PN_N = rDDot_BN_N;
     Eigen::MRPd sigmaLocal_PN;
     Eigen::Vector3d omegaDotLoc_PN_P;
@@ -324,7 +349,13 @@ void HingedRigidBodyStateEffector::computeDerivatives(double integTime [[maybe_u
     return;
 }
 
-/*! This method is for calculating the contributions of the HRB state effector to the energy and momentum of the s/c */
+/*! This method is for calculating the contributions of the HRB state effector to the energy and momentum of the s/c
+ *
+ * @param[in] integTime [s] Current integration time.
+ * @param[in,out] rotAngMomPntCContr_B [kg*m^2/s] Rotational angular momentum contribution.
+ * @param[in,out] rotEnergyContr [J] Rotational energy contribution.
+ * @param[in] omega_BN_B [rad/s] Hub angular velocity expressed in body-frame components.
+ */
 void HingedRigidBodyStateEffector::updateEnergyMomContributions(double integTime [[maybe_unused]], Eigen::Vector3d & rotAngMomPntCContr_B,
                                                                 double & rotEnergyContr, Eigen::Vector3d omega_BN_B)
 {
@@ -374,6 +405,11 @@ void HingedRigidBodyStateEffector::UpdateState(uint64_t CurrentSimNanos)
     return;
 }
 
+/*! @brief Calculate the force and torque exerted on the attached body.
+ *
+ * @param[in] integTime [s] Current integration time.
+ * @param[in] omega_BN_B [rad/s] Hub angular velocity expressed in body-frame components.
+ */
 void HingedRigidBodyStateEffector::calcForceTorqueOnBody(double integTime [[maybe_unused]], Eigen::Vector3d omega_BN_B)
 {
 
@@ -428,7 +464,7 @@ void HingedRigidBodyStateEffector::computePanelInertialStates()
         this->sigma_BN = Eigen::MRPd(this->hubSigmaState->getStateReference().data());
     }
     Eigen::MRPd sigmaBN = this->sigma_BN;
-    Eigen::Matrix3d dcm_NP = sigmaBN.toRotationMatrix();  // assumes P and B are idential
+    Eigen::Matrix3d dcm_NP = sigmaBN.toRotationMatrix();  // assumes P and B are identical
     Eigen::Matrix3d dcm_SN;
     dcm_SN = this->dcm_SP*dcm_NP.transpose();
     const Eigen::MRPd sigma_SN = eigenC2MRP(dcm_SN);

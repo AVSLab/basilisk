@@ -97,7 +97,8 @@ DualHingedRigidBodyStateEffector::~DualHingedRigidBodyStateEffector()
 
 
 /*! This method is used to reset the module.
-
+ *
+ * @param[in] CurrentSimNanos [ns] Current simulation time.
  */
 void DualHingedRigidBodyStateEffector::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
@@ -116,26 +117,34 @@ void DualHingedRigidBodyStateEffector::prependSpacecraftNameToStates()
 }
 
 
-void DualHingedRigidBodyStateEffector::linkInStates(DynParamManager& statesIn)
+/*! @brief Link the required dynamics states.
+ *
+ * @param[in] states Dynamic parameter manager containing the required states.
+ */
+void DualHingedRigidBodyStateEffector::linkInStates(DynParamManager& states)
 {
     // - Get access to the hubs sigma, omegaBN_B and velocity needed for dynamic coupling
-    this->g_N = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + "g_N");
+    this->g_N = states.getPropertyReference(this->nameOfSpacecraftAttachedTo + "g_N");
 
-    this->inertialPositionProperty = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + this->propName_inertialPosition);
-    this->inertialVelocityProperty = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + this->propName_inertialVelocity);
-    this->v_BN_NState = statesIn.getStateObject(this->nameOfSpacecraftAttachedTo + this->stateNameOfVelocity);
-    this->hubSigmaState = statesIn.getStateObject(this->nameOfSpacecraftAttachedTo + this->stateNameOfSigma);
+    this->inertialPositionProperty = states.getPropertyReference(this->nameOfSpacecraftAttachedTo + this->propName_inertialPosition);
+    this->inertialVelocityProperty = states.getPropertyReference(this->nameOfSpacecraftAttachedTo + this->propName_inertialVelocity);
+    this->v_BN_NState = states.getStateObject(this->nameOfSpacecraftAttachedTo + this->stateNameOfVelocity);
+    this->hubSigmaState = states.getStateObject(this->nameOfSpacecraftAttachedTo + this->stateNameOfSigma);
 
     return;
 }
 
-void DualHingedRigidBodyStateEffector::registerStates(DynParamManager& states)
+/*! @brief Register the effector dynamics states.
+ *
+ * @param[in,out] statesIn Dynamic parameter manager used to register states or properties.
+ */
+void DualHingedRigidBodyStateEffector::registerStates(DynParamManager& statesIn)
 {
     // - Register the states associated with hinged rigid bodies - theta and thetaDot
-    this->theta1State = states.registerState(1, 1, this->nameOfTheta1State);
-    this->theta1DotState = states.registerState(1, 1, this->nameOfTheta1DotState);
-    this->theta2State = states.registerState(1, 1, this->nameOfTheta2State);
-    this->theta2DotState = states.registerState(1, 1, this->nameOfTheta2DotState);
+    this->theta1State = statesIn.registerState(1, 1, this->nameOfTheta1State);
+    this->theta1DotState = statesIn.registerState(1, 1, this->nameOfTheta1DotState);
+    this->theta2State = statesIn.registerState(1, 1, this->nameOfTheta2State);
+    this->theta2DotState = statesIn.registerState(1, 1, this->nameOfTheta2DotState);
 
     // - Add this code to allow for non-zero initial conditions, as well hingedRigidBody
     Eigen::MatrixXd theta1InitMatrix(1,1);
@@ -151,7 +160,7 @@ void DualHingedRigidBodyStateEffector::registerStates(DynParamManager& states)
     theta2DotInitMatrix(0,0) = this->theta2DotInit;
     this->theta2DotState->setState(theta2DotInitMatrix);
 
-    registerProperties(states);
+    registerProperties(statesIn);
 }
 
 /*! This method attaches a dynamicEffector to one of the two panels
@@ -170,7 +179,10 @@ void DualHingedRigidBodyStateEffector::addDynamicEffector(DynamicEffector *newDy
 }
 
 /*! This method registers the panel inertial properties with the dynamic parameter manager and links
- them into dependent dynamic effectors  */
+ them into dependent dynamic effectors
+ *
+ * @param[in,out] states Dynamic parameter manager used to register states or properties.
+ */
 void DualHingedRigidBodyStateEffector::registerProperties(DynParamManager& states)
 {
     Eigen::Vector3d stateInit = Eigen::Vector3d::Zero();
@@ -198,6 +210,10 @@ void DualHingedRigidBodyStateEffector::registerProperties(DynParamManager& state
     }
 }
 
+/*! @brief Update the effector mass properties.
+ *
+ * @param[in] integTime [s] Current integration time.
+ */
 void DualHingedRigidBodyStateEffector::updateEffectorMassProps(double integTime [[maybe_unused]])
 {
     // - Convert initial variables to mother craft frame relative information
@@ -259,6 +275,14 @@ void DualHingedRigidBodyStateEffector::updateEffectorMassProps(double integTime 
     return;
 }
 
+/*! @brief Update the effector back-substitution contributions.
+ *
+ * @param[in] integTime [s] Current integration time.
+ * @param[in,out] backSubContr Back-substitution contributions.
+ * @param[in] sigma_BN Hub attitude relative to the inertial frame.
+ * @param[in] omega_BN_B [rad/s] Hub angular velocity expressed in body-frame components.
+ * @param[in] g_N [m/s^2] Gravitational acceleration expressed in inertial-frame components.
+ */
 void DualHingedRigidBodyStateEffector::updateContributions(double integTime [[maybe_unused]], BackSubMatrices & backSubContr, Eigen::MRPd sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N [[maybe_unused]])
 {
     Eigen::MRPd sigmaPNLocal;
@@ -390,9 +414,16 @@ void DualHingedRigidBodyStateEffector::updateContributions(double integTime [[ma
     return;
 }
 
+/*! @brief Compute the effector state derivatives.
+ *
+ * @param[in] integTime [s] Current integration time.
+ * @param[in] rDDot_BN_N [m/s^2] Hub translational acceleration expressed in inertial-frame components.
+ * @param[in] omegaDot_BN_B [rad/s^2] Hub angular acceleration expressed in body-frame components.
+ * @param[in] sigma_BN Hub attitude relative to the inertial frame.
+ */
 void DualHingedRigidBodyStateEffector::computeDerivatives(double integTime [[maybe_unused]], Eigen::Vector3d rDDot_BN_N [[maybe_unused]], Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN)
 {
-    // - Define necessarry variables
+    // - Define necessary variables
     Eigen::MRPd sigmaBNLocal;
     Eigen::Matrix3d dcmBN;                        /* direction cosine matrix from N to B */
     Eigen::Matrix3d dcmNB;                        /* direction cosine matrix from B to N */
@@ -402,7 +433,7 @@ void DualHingedRigidBodyStateEffector::computeDerivatives(double integTime [[may
     Eigen::Vector3d rDDotBNLoc_B;                 /* second time derivative of rBN in B frame */
     Eigen::Vector3d omegaDotBNLoc_B;              /* time derivative of omegaBN in B frame */
 
-    // Grab necessarry values from manager (these have been previously computed in hubEffector)
+    // Grab necessary values from manager (these have been previously computed in hubEffector)
     rDDotBNLoc_N = this->v_BN_NState->getStateDerivReference();
     this->sigma_BN = sigma_BN;
     sigmaBNLocal = this->sigma_BN;
@@ -423,8 +454,14 @@ void DualHingedRigidBodyStateEffector::computeDerivatives(double integTime [[may
 
     return;
 }
-/*! This method is for calculating the contributions of the DHRB state effector to the energy and momentum of the s/c */
-void DualHingedRigidBodyStateEffector::updateEnergyMomContributions(double integTime [[maybe_unused]], Eigen::Vector3d & rotAngMomPntCContr_P, double & rotEnergyContr, Eigen::Vector3d omega_BN_B)
+/*! This method is for calculating the contributions of the DHRB state effector to the energy and momentum of the s/c
+ *
+ * @param[in] integTime [s] Current integration time.
+ * @param[in,out] rotAngMomPntCContr_B [kg*m^2/s] Rotational angular momentum contribution.
+ * @param[in,out] rotEnergyContr [J] Rotational energy contribution.
+ * @param[in] omega_BN_B [rad/s] Hub angular velocity expressed in body-frame components.
+ */
+void DualHingedRigidBodyStateEffector::updateEnergyMomContributions(double integTime [[maybe_unused]], Eigen::Vector3d & rotAngMomPntCContr_B, double & rotEnergyContr, Eigen::Vector3d omega_BN_B)
 {
     // - Get the current omega state
     Eigen::Vector3d omegaLocal_PN_P;
@@ -448,7 +485,7 @@ void DualHingedRigidBodyStateEffector::updateEnergyMomContributions(double integ
     IPntS2_P = this->dcm_S2P.transpose()*this->IPntS2_S2*this->dcm_S2P;
     rDot_S1P_P = this->rPrimeS1P_P + omegaLocal_PN_P.cross(this->r_S1P_P);
     rDot_S2P_P = this->rPrimeS2P_P + omegaLocal_PN_P.cross(this->r_S2P_P);
-    rotAngMomPntCContr_P = IPntS1_P*omega_S1N_P + this->mass1*this->r_S1P_P.cross(rDot_S1P_P)
+    rotAngMomPntCContr_B = IPntS1_P*omega_S1N_P + this->mass1*this->r_S1P_P.cross(rDot_S1P_P)
                             + IPntS2_P*omega_S2N_P + this->mass2*this->r_S2P_P.cross(rDot_S2P_P);
 
     // - Find rotational energy contribution from the hub
