@@ -24,13 +24,13 @@
 #include <string>
 #include <Eigen/Dense>
 
+/** Mappings for general joint kinematics */
 const Eigen::Matrix<double, 3, 6> transMap =
         (Eigen::Matrix<double, 3, 6>() <<
                 1, 0, 0,  0, 0, 0,
                 0, 1, 0,  0, 0, 0,
                 0, 0, 1,  0, 0, 0
         ).finished();
-
 const Eigen::Matrix<double, 3, 6> rotMap =
         (Eigen::Matrix<double, 3, 6>() <<
                 0, 0, 0,  1, 0, 0,
