@@ -314,7 +314,7 @@ void ConstraintDynamicEffector::readInputMessage(){
         statusMsg = this->effectorStatusInMsg();
         this->effectorStatus = statusMsg.deviceStatus;
     }
-    else{
+    else{ // default to active if no message is linked
         this->effectorStatus = 1;
     }
 }
@@ -407,7 +407,8 @@ void ConstraintDynamicEffector::linkInProperties(DynParamManager& properties){
  */
 void ConstraintDynamicEffector::computeForceTorque(double integTime [[maybe_unused]], double timeStep [[maybe_unused]])
 {
-    if (this->scInitCounter == 2) { // only proceed once both spacecraft are added
+    // only proceed once both spacecraft are added (scInitCounter) and effector is active (effectorStatus)
+    if (this->scInitCounter == 2 && this->effectorStatus == 1) {
         // alternate assigning the constraint force and torque
         if (this->scID == 0) { // compute all forces and torques once, assign to spacecraft 1 and store for spacecraft 2
             Eigen::Vector3d r_B1N_N;
@@ -497,6 +498,14 @@ void ConstraintDynamicEffector::computeForceTorque(double integTime [[maybe_unus
         }
         this->scID = 1 - this->scID; // toggle spacecraft to be assigned forces and torques
     }
+    else {
+        this->forceExternal_N = Eigen::Vector3d::Zero();
+        this->torqueExternalPntB_B = Eigen::Vector3d::Zero();
+        this->Fc_N = Eigen::Vector3d::Zero();
+        this->T_B1 = Eigen::Vector3d::Zero();
+        this->T_B2 = Eigen::Vector3d::Zero();
+        this->psi_N = Eigen::Vector3d::Zero();
+    }
 }
 
 /*! This method takes the computed constraint force and torque states and outputs them to the
@@ -523,11 +532,9 @@ void ConstraintDynamicEffector::writeOutputStateMessage(uint64_t CurrentClock)
 void ConstraintDynamicEffector::UpdateState(uint64_t CurrentSimNanos)
 {
     this->readInputMessage();
-    if(this->effectorStatus){
-        this->computeFilteredForce(CurrentSimNanos);
-        this->computeFilteredTorque(CurrentSimNanos);
-        this->writeOutputStateMessage(CurrentSimNanos);
-    }
+    this->computeFilteredForce(CurrentSimNanos);
+    this->computeFilteredTorque(CurrentSimNanos);
+    this->writeOutputStateMessage(CurrentSimNanos);
 }
 
 /*! Filtering method to calculate filtered Constraint Force
