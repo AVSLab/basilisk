@@ -25,3 +25,15 @@ provides information on what this message is used for.
 User Guide
 ----------
 Note that the MTB input configuration message variable ``GtMatrix_B`` must be provided in a row major format.
+
+Initialization and Reset
+------------------------
+When the spacecraft links this effector to the hub attitude state, initialization verifies that ``mtbCmdInMsg``,
+``magInMsg``, and ``mtbParamsInMsg`` are connected.  This validation occurs even if only the spacecraft is added
+to a task.
+
+Torque evaluation is driven by the spacecraft dynamics and reads the input messages directly.  Add the effector
+to a task when ``mtbOutMsg`` must be updated, because the effector publishes that message from ``UpdateState()``.
+
+When the effector is scheduled, its ``Reset()`` repeats the required-message checks and
+zeros all external force and torque outputs.  The cached input-message data is not cleared.

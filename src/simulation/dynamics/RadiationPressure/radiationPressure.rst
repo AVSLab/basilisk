@@ -22,3 +22,14 @@ provides information on what this message is used for.
         sun state input message.
     input sunEclipseInMsg EclipseMsgPayload
         (optional) sun eclipse input message.
+
+Initialization and Reset
+------------------------
+When the spacecraft links this effector to the hub states, initialization verifies that ``sunEphmInMsg`` is
+connected.  This validation occurs even if only the spacecraft is added to a task.
+
+Attachment-time validation does not replace task scheduling for this effector.  Add it to a task so that
+``UpdateState()`` refreshes the cached Sun ephemeris and optional eclipse data used during force evaluation.
+
+When the effector is scheduled, its ``Reset()`` repeats the required-message check.
+``Reset()`` does not clear the cached ephemeris, illumination, force, or torque data.

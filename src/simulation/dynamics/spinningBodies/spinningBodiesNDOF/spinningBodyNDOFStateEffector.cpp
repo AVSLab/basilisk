@@ -47,8 +47,23 @@ SpinningBodyNDOFStateEffector::~SpinningBodyNDOFStateEffector()
     }
 }
 
+/*! Validate the module configuration when the scheduler resets the model.
+
+ @param CurrentClock [ns] Time at which the reset occurs
+ */
 void SpinningBodyNDOFStateEffector::Reset(uint64_t CurrentClock [[maybe_unused]])
 {
+    this->validateConfiguration();
+}
+
+/*! Validate the user-supplied spinning-body chain configuration. */
+void SpinningBodyNDOFStateEffector::validateConfiguration()
+{
+    if (this->spinningBodyVec.empty()) {
+        bskLogger.bskError("spinningBodyNDOFStateEffector: at least one spinning body is required.");
+        return;
+    }
+
     if (this->spinningBodyVec.back()->mass <= 0.0)
         bskLogger.bskError("The mass of the last element must be greater than 0.");
 
@@ -200,6 +215,8 @@ void SpinningBodyNDOFStateEffector::linkInStates(DynParamManager& statesIn)
 
 void SpinningBodyNDOFStateEffector::registerStates(DynParamManager& states)
 {
+    this->validateConfiguration();
+
     this->thetaState = states.registerState(static_cast<uint32_t>(numberOfDegreesOfFreedom), 1, this->nameOfThetaState);
     this->thetaDotState = states.registerState(static_cast<uint32_t>(numberOfDegreesOfFreedom), 1, this->nameOfThetaDotState);
 

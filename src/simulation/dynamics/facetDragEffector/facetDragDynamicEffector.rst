@@ -34,6 +34,7 @@ Example setup:
     drag.windVelInMsg.subscribeTo(windModel.envOutMsgs[0])
 
     scObject.addDynamicEffector(drag)
+    scSim.AddModelToTask(simTaskName, drag)
 
 Attaching to a State Effector
 -----------------------------
@@ -72,3 +73,15 @@ provides information on what this message is used for.
         input message for atmospheric density information.
     input windVelInMsg WindMsgPayload
         (optional) wind velocity input message; when linked, ``v_air_N`` is subtracted from the spacecraft inertial velocity to obtain the atmosphere-relative velocity.
+
+Initialization and Reset
+------------------------
+When this effector is attached to a spacecraft hub or a state-effector branch, initialization verifies that
+``atmoDensInMsg`` is connected.  The check is performed while linking either the hub states or the branch
+properties, so it does not depend on separately scheduling the effector.
+
+Attachment-time validation does not replace task scheduling for this effector.  Add it to a task so that
+``UpdateState()`` refreshes the cached atmospheric density and optional wind data used during force evaluation.
+
+When the effector is scheduled, its ``Reset()`` repeats the required-message check.
+``Reset()`` does not clear the cached atmosphere, wind, geometry, force, or torque data.
