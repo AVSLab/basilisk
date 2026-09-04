@@ -69,7 +69,7 @@ public:
                              BackSubMatrices & backSubContr,
                              Eigen::MRPd sigma_BN,
                              Eigen::Vector3d omega_BN_B,
-                             Eigen::Vector3d g_N) override;          //!< Method for computing the effector's back-substitution contributions
+                             Eigen::Vector3d g_N) override;          //!< Method for computing the effector's Backsubstitution contributions
     void computeDerivatives(double integTime,
                             Eigen::Vector3d rDDot_BN_N,
                             Eigen::Vector3d omegaDot_BN_B,

@@ -312,7 +312,7 @@ def makeIntegrator(dynObject, integratorName, tol):
 
 
 def buildBSM(integratorName, dt, tol, simDuration=SIM_DURATION, record=True):
-    """Build the back-substitution (BSM) 16-segment flexible-array simulation.
+    """Build the Backsubstitution (BSM) 16-segment flexible-array simulation.
 
     Args:
         integratorName (str): integrator attribute in ``svIntegrators``.
@@ -697,7 +697,7 @@ def _paretoFrontierPlot(bsmRows, mujocoRows, errorKey, ylabel):
     """
     fig, ax = plt.subplots(figsize=(8, 4), layout="constrained")
     for rows, engineLabel, color in (
-            (bsmRows, "Back-substitution (BSM)", tolColor(0)),
+            (bsmRows, "Backsubstitution (BSM)", tolColor(0)),
             (mujocoRows, "MuJoCo", tolColor(1))):
         if not rows:
             continue

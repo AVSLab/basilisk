@@ -232,7 +232,7 @@ void HingedRigidBodyStateEffector::updateEffectorMassProps(double integTime [[ma
  method
  *
  * @param[in] integTime [s] Current integration time.
- * @param[in,out] backSubContr Back-substitution contributions.
+ * @param[in,out] backSubContr Backsubstitution contributions.
  * @param[in] sigma_BN Hub attitude relative to the inertial frame.
  * @param[in] omega_BN_B [rad/s] Hub angular velocity expressed in body-frame components.
  * @param[in] g_N [m/s^2] Gravitational acceleration expressed in inertial-frame components.

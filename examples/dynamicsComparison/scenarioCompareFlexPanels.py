@@ -24,11 +24,11 @@ arrays into a serial chain of ``N`` rigid segments connected by torsional spring
 hinges. Sweeping ``N`` varies the model dimensionality (the state size grows with the
 number of hinges) and shows how each engine's wall-clock cost scales with complexity.
 
-The same physical chain is built three ways so the two back-substitution effector
+The same physical chain is built three ways so the two Backsubstitution effector
 implementations can be timed head to head against the recursive engine. On the BSM
 side each array is either a :ref:`nHingedRigidBodyStateEffector` (panels added through
 ``addHingedPanel``) or a :ref:`spinningBodyNDOFStateEffector` (an ``N``-link chain of
-``SpinningBody`` objects); both are advanced by the same back-substitution hub solve but
+``SpinningBody`` objects); both are advanced by the same Backsubstitution hub solve but
 differ in implementation maturity. On the MuJoCo side each array is a serial chain of
 ``N`` ``hinge``-jointed child bodies. To match the chain geometry across all three, each
 segment's center of mass is offset by ``-d`` along its local x-axis and the next hinge
@@ -226,7 +226,7 @@ def mujocoModel(nSegments):
 
 
 def buildBSM(nSegments, dt, record):
-    """Build (and initialize) the back-substitution (BSM) chained-panel simulation.
+    """Build (and initialize) the Backsubstitution (BSM) chained-panel simulation.
 
     Args:
         nSegments (int): number of segments per chain
@@ -285,8 +285,8 @@ def buildBsmNDOF(nSegments, dt, record):
     Models the identical flexible chain as :func:`buildBSM` (same segment mass,
     inertia, hinge stiffness/damping, geometry, and root deflection) but expressed with
     :ref:`spinningBodyNDOFStateEffector` instead of :ref:`nHingedRigidBodyStateEffector`,
-    so the two back-substitution effector implementations can be timed head to head. Both
-    ride the same back-substitution hub solve; only the appendage effector differs.
+    so the two Backsubstitution effector implementations can be timed head to head. Both
+    ride the same Backsubstitution hub solve; only the appendage effector differs.
 
     Args:
         nSegments (int): number of segments per chain

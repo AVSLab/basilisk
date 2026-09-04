@@ -19,7 +19,7 @@ r"""
 Shared runtime-timing helper for the dynamics-engine comparison series.
 
 Lets the accuracy-comparison scenarios (orbit, torque, reaction-wheel-and-panel,
-multi-body-in-orbit) time the back-substitution method (BSM, the :ref:`spacecraft` module)
+multi-body-in-orbit) time the Backsubstitution Method (BSM, the :ref:`spacecraft` module)
 against MuJoCo (the :ref:`MJScene<MJScene>` module) on the same problem and persist a small
 CSV table.
 

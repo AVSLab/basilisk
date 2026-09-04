@@ -27,7 +27,7 @@ wheel reaction torques, panel flexing, and the hub's rigid-body response.
 
 Matching the two engines requires accounting for how each models the components:
 
-#. **Reaction wheels.** Basilisk's back-substitution *balanced* :ref:`reactionWheelStateEffector`
+#. **Reaction wheels.** Basilisk's Backsubstitution *balanced* :ref:`reactionWheelStateEffector`
    adds no mass or inertia to the system; it injects only the spin-axis reaction and
    gyroscopic terms. MuJoCo models each wheel as a real spinning rigid body. The two are
    made equivalent by folding each wheel's inertia tensor into the BSM hub inertia,
@@ -220,7 +220,7 @@ def mujocoModel():
 
 
 def buildBSM(dt, tf, recordDt, record=True):
-    """Build the back-substitution hub-wheel-panel simulation without propagating it.
+    """Build the Backsubstitution hub-wheel-panel simulation without propagating it.
 
     Args:
         dt (float): integrator time step [s]
@@ -295,7 +295,7 @@ def buildBSM(dt, tf, recordDt, record=True):
 
 
 def runBSM(dt, tf, recordDt):
-    """Propagate the hub-wheel-panel system with the back-substitution :ref:`spacecraft`."""
+    """Propagate the hub-wheel-panel system with the Backsubstitution :ref:`spacecraft`."""
     scSim, outputs, handles = buildBSM(dt, tf, recordDt)
     scSim.ExecuteSimulation()
     return (*outputs, handles)

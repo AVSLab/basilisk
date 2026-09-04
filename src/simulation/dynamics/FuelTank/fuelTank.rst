@@ -8,7 +8,7 @@ effector attached to a rigid body hub and has the following functions:
 
 - Compute tank properties depending on the tank model being used
 - Provides its contributions to the mass properties of the spacecraft
-- Provides its contributions to the back-substitution matrices
+- Provides its contributions to the Backsubstitution matrices
 - Computes its derivative for its mass flow rate using the vector of attached thrusters
 - Provides its contributions to energy and momentum of the spacecraft
 
@@ -53,7 +53,7 @@ The configurable values are:
 - ``setR_TB_B()`` / ``getR_TB_B()``: position vector from the body-frame origin to the tank point, expressed in body-frame
   components in meters.
 - ``setUpdateOnly()`` / ``getUpdateOnly()``: flag selecting update-only mass depletion. The default value is ``True``.
-  Set this to ``False`` to include the additional mass-depletion back-substitution contributions.
+  Set this to ``False`` to include the additional mass-depletion Backsubstitution contributions.
 - ``setFuelLeakRate()`` / ``getFuelLeakRate()``: positive fuel mass flow rate leaving the tank in kg/s. This leak rate is
   added to any attached thruster fuel consumption and reduces the reported fuel mass without applying force or torque to
   the spacecraft. The leak stops when the available tank propellant reaches zero, and the module logs a ``BSK_WARNING``

@@ -435,7 +435,7 @@ void LinearTranslationNDOFStateEffector::updateEffectorMassProps(double integTim
  method
  *
  * @param[in] integTime [s] Current integration time.
- * @param[in,out] backSubContr Back-substitution contributions.
+ * @param[in,out] backSubContr Backsubstitution contributions.
  * @param[in] sigma_BN Hub attitude relative to the inertial frame.
  * @param[in] omega_BN_B [rad/s] Hub angular velocity expressed in body-frame components.
  * @param[in] g_N [m/s^2] Gravitational acceleration expressed in inertial-frame components.
@@ -526,7 +526,7 @@ void LinearTranslationNDOFStateEffector::computeMRho(Eigen::MatrixXd& MRho)
 
 /*! This method compute ARhoStar for back-sub
  *
- * @param[out] ARhoStar A-rho-star back-substitution matrix.
+ * @param[out] ARhoStar A-rho-star Backsubstitution matrix.
  */
 void
 LinearTranslationNDOFStateEffector::computeARhoStar(Eigen::MatrixX3d& ARhoStar)
@@ -544,7 +544,7 @@ LinearTranslationNDOFStateEffector::computeARhoStar(Eigen::MatrixX3d& ARhoStar)
 
 /*! This method compute BRhoStar for back-sub
  *
- * @param[out] BRhoStar B-rho-star back-substitution matrix.
+ * @param[out] BRhoStar B-rho-star Backsubstitution matrix.
  */
 void
 LinearTranslationNDOFStateEffector::computeBRhoStar(Eigen::MatrixX3d& BRhoStar)
@@ -565,7 +565,7 @@ LinearTranslationNDOFStateEffector::computeBRhoStar(Eigen::MatrixX3d& BRhoStar)
 
 /*! This method compute CRhoStar for back-sub
  *
- * @param[out] CRhoStar C-rho-star back-substitution vector.
+ * @param[out] CRhoStar C-rho-star Backsubstitution vector.
  * @param[in] g_N [m/s^2] Gravitational acceleration expressed in inertial-frame components.
  */
 void LinearTranslationNDOFStateEffector::computeCRhoStar(Eigen::VectorXd& CRhoStar,
@@ -602,7 +602,7 @@ void LinearTranslationNDOFStateEffector::computeCRhoStar(Eigen::VectorXd& CRhoSt
 
 /*! This method computes the back-sub contributions of the system
  *
- * @param[in,out] backSubContr Back-substitution contributions.
+ * @param[in,out] backSubContr Backsubstitution contributions.
  */
 void LinearTranslationNDOFStateEffector::computeBackSubContributions(BackSubMatrices& backSubContr) const
 {

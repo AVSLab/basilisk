@@ -430,11 +430,11 @@ Rearranging the terms as done in the previous sections
 Eqs. \eqref{eq:FSE6} and \eqref{eq:FSE7} are the Fuel Slosh Particle equations.
 
 
-\subsection{Back-substitution Method}
+\subsection{Backsubstitution Method}
 
-The equations presented in the previous sections result in $2N_P + 6$ coupled differential equations. Therefore, if the EOMs were placed into state space form, a system mass matrix of size $2N_P + 6$ would need to be inverted to numerically integrate the EOMs. This can result in a computationally expensive simulation. The computation effort to numerically invert an $N\times N$ matrix scales with $N^{3}$. In the following section, the EOMs are manipulated using a back-substitution method to increase the computational efficiency.
+The equations presented in the previous sections result in $2N_P + 6$ coupled differential equations. Therefore, if the EOMs were placed into state space form, a system mass matrix of size $2N_P + 6$ would need to be inverted to numerically integrate the EOMs. This can result in a computationally expensive simulation. The computation effort to numerically invert an $N\times N$ matrix scales with $N^{3}$. In the following section, the EOMs are manipulated using a Backsubstitution Method to increase the computational efficiency.
 
-This manipulation involves inverting twice a ($3\times 3$) matrix, the $A^{-1}$ and $(D-CA^{-1}B)^{-1}$ matrices as it is shown in eqs. \eqref{eq:finalsystemomega}  and \eqref{eq:finalsystemr}. Then the system is completely solved back substituting for fuel slosh and translational motions. The derivation of the back-substitution method can be seen in the following sections.
+This manipulation involves inverting twice a ($3\times 3$) matrix, the $A^{-1}$ and $(D-CA^{-1}B)^{-1}$ matrices as it is shown in eqs. \eqref{eq:finalsystemomega}  and \eqref{eq:finalsystemr}. Then the system is completely solved back substituting for fuel slosh and translational motions. The derivation of the Backsubstitution Method can be seen in the following sections.
 \\
 
 \subsubsection{Fuel Slosh Motion}
@@ -616,7 +616,7 @@ Next
 	\label{eq:Final7}
 \end{multline}
 
-\subsubsection{Remaining Back-substitution Steps}
+\subsubsection{Remaining Backsubstitution Steps}
 
 The following definitions can be defined:
 

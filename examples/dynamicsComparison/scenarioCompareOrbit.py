@@ -21,7 +21,7 @@ to propagate rigid-body dynamics, and this series compares them on equivalent
 problems of increasing complexity. The two engines are:
 
 #. The :ref:`spacecraft` :ref:`DynamicObject<dynamicObject>` (BSM), which uses the
-   *back-substitution* method. This formulation is hub-centric: one body is the "hub"
+   *Backsubstitution Method*. This formulation is hub-centric: one body is the "hub"
    and carries the 6-DOF rigid-body state, while ``StateEffectors`` and
    ``DynamicEffectors`` add their own degrees of freedom and external loads. Both the
    hub and the effectors are described in minimal (generalized) coordinates, and their
@@ -37,7 +37,7 @@ Both engines are ``DynamicObject`` subclasses advanced by the same Basilisk
 Runge-Kutta integrator: each exposes an ``equationsOfMotion`` that the shared
 ``integrateState`` steps in time. With matched integrator, time step, initial
 conditions, mass properties, and applied forces, any difference between the
-trajectories is due to the *formulation* (hub-centric analytical back-substitution
+trajectories is due to the *formulation* (hub-centric analytical Backsubstitution
 versus MuJoCo's recursive multi-body solver), not the time-stepping.
 
 This scenario is the simplest case: a single point-mass spacecraft on
@@ -180,7 +180,7 @@ def initialOrbitState(mu):
 
 
 def buildBSM(mass, mu, dt, tf, recordDt, record=True):
-    """Build the back-substitution orbit simulation without propagating it.
+    """Build the Backsubstitution orbit simulation without propagating it.
 
     Args:
         mass (float): spacecraft mass [kg]
@@ -231,7 +231,7 @@ def buildBSM(mass, mu, dt, tf, recordDt, record=True):
 
 
 def runBSM(mass, mu, dt, tf, recordDt):
-    """Propagate the orbit with the back-substitution :ref:`spacecraft` (BSM)."""
+    """Propagate the orbit with the Backsubstitution :ref:`spacecraft` (BSM)."""
     scSim, recorder, _ = buildBSM(mass, mu, dt, tf, recordDt)
     scSim.ExecuteSimulation()
     return recorder
@@ -486,7 +486,7 @@ def plotResults(timeAxis, truth, posBSM, posMujoco,
     ax.plot(truth[:, 0]/1e3, truth[:, 1]/1e3, "-", lw=1.5,
             color=COLOR_REFERENCE, label="Analytic Kepler")
     ax.plot(posBSM[:, 0]/1e3, posBSM[:, 1]/1e3, "-", lw=4, alpha=0.4,
-            color=COLOR_BSM, label="Back-substitution (BSM)")
+            color=COLOR_BSM, label="Backsubstitution (BSM)")
     if posMujoco is not None:
         ax.plot(posMujoco[:, 0]/1e3, posMujoco[:, 1]/1e3, "-", lw=1.3,
                 color=COLOR_MUJOCO, label="MuJoCo")
