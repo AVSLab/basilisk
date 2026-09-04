@@ -74,7 +74,7 @@ public:
     void linkInPrescribedMotionProperties(DynParamManager& states) override;         //!< Method for getting access to prescribed motion properties
     void updateContributions(double integTime,
                              BackSubMatrices& backSubContr, Eigen::MRPd sigma_BN,
-                             Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N) override;   //!< Method for back-substitution contributions
+                             Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N) override;   //!< Method for Backsubstitution contributions
     void computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N,
                             Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN) override;                         //!< Method for SB to compute its derivatives
     void updateEffectorMassProps(double integTime) override;         //!< Method for giving the s/c the HRB mass props and prop rates
@@ -101,11 +101,11 @@ private:
         effector->setPropName_inertialAngVelocity(this->nameOfInertialAngVelocityProperty);
     };
 
-    // Terms needed for back substitution
-    Eigen::Vector3d aTheta{0.0, 0.0, 0.0};             //!< rDDot_BN term for back substitution
-    Eigen::Vector3d bTheta{0.0, 0.0, 0.0};             //!< omegaDot_BN term for back substitution
-    double cTheta = 0.0;                                        //!< scalar term for back substitution
-    double mTheta = 0.0;                                        //!< auxiliary term for back substitution
+    // Terms needed for Backsubstitution
+    Eigen::Vector3d aTheta{0.0, 0.0, 0.0};             //!< rDDot_BN term for Backsubstitution
+    Eigen::Vector3d bTheta{0.0, 0.0, 0.0};             //!< omegaDot_BN term for Backsubstitution
+    double cTheta = 0.0;                                        //!< scalar term for Backsubstitution
+    double mTheta = 0.0;                                        //!< auxiliary term for Backsubstitution
 
     // Vector quantities
     Eigen::Vector3d sHat_B{1.0, 0.0, 0.0};             //!< spinning axis in B frame components

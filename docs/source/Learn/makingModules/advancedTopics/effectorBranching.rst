@@ -3,8 +3,8 @@
 Enabling Branching of Basilisk Effectors
 ========================================
 
-Back-substitution is the default method that manages the dynamics under the hood of Basilisk. The
-backsubstitution formulation assumes that all dynamical modules, a.k.a. "effectors", influencing the
+The Backsubstitution Method is the default formulation that manages the dynamics under the hood of
+Basilisk. It assumes that all dynamical modules, a.k.a. "effectors", influencing the
 dynamics of the spacecraft are attached directly to its central hub in parallel. These effectors are
 sub-classed as either :ref:`dynamicEffector` (provide external forces and torques acting on the
 body, but doesn't have state differential equations to integrate) or :ref:`stateEffector` (has
@@ -83,11 +83,11 @@ Additional Resources
     the state effector does not get knowledge of where dynamic effectors are attached to make such a
     correction.
 
-A more complete description of back-substitution, :ref:`stateEffector`, and :ref:`dynamicEffector`
+A more complete description of the Backsubstitution Method, :ref:`stateEffector`, and :ref:`dynamicEffector`
 can be found in :ref:`spacecraft` and its linked PDF description, particularly the Equations of
 Motion section. Specifics on setting up the corresponding integrated tests for any newly enabled
 branching effectors can be found in :ref:`test_effectorBranching_integrated`. A more detailed
-description of this augmentation of the back-substitution method can be found in the following
+description of this augmentation of the Backsubstitution Method can be found in the following
 conference paper.
 
 .. note::

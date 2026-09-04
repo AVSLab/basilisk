@@ -317,7 +317,7 @@ void QRDecomp(double *inMat, size_t nRow, double *Q , double *R)
     return;
 }
 
-/*! This performs a backsubstitution solve. This methods solves for n given Rn = V with R an upper triangular matrix.
+/*! This performs a Backsubstitution solve for n given Rn = V, where R is an upper-triangular matrix.
 
  @param R     The upper triangular matrix for the backsolve
  @param inVec Vector on the Right-Hand-Side of the Rn = V equation

@@ -41,7 +41,7 @@ def test_horizonOpNav():
     """
     Unit test for Horizon Navigation. The unit test specifically covers:
 
-        1. Individual methods: This module contains a back substitution method as well as a QR decomposition.
+        1. Individual methods: This module contains a Backsubstitution Method as well as a QR decomposition.
             This test ensures that they are working properly with a direct test of the method input/outputs with
             expected results
 

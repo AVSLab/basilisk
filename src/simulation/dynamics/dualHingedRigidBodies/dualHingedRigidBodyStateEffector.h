@@ -128,8 +128,8 @@ private:
     double theta1Dot;                 //!< [rad/s] hinged rigid body angle rate
     double theta2;                    //!< [rad] hinged rigid body angle
     double theta2Dot;                 //!< [rad/s] hinged rigid body angle rate
-    Eigen::Matrix2d matrixADHRB;      //!< [-] term needed for back substitution
-    Eigen::Matrix2d matrixEDHRB;      //!< [-] term needed for back substitution
+    Eigen::Matrix2d matrixADHRB;      //!< [-] term needed for Backsubstitution
+    Eigen::Matrix2d matrixEDHRB;      //!< [-] term needed for Backsubstitution
     Eigen::MatrixXd matrixFDHRB;
     Eigen::MatrixXd matrixGDHRB;
     Eigen::Vector2d vectorVDHRB;

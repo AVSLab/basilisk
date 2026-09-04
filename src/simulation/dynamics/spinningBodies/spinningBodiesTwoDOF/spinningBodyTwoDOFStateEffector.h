@@ -94,7 +94,7 @@ public:
                              BackSubMatrices& backSubContr,
                              Eigen::MRPd sigma_BN,
                              Eigen::Vector3d omega_BN_B,
-                             Eigen::Vector3d g_N) override;  //!< Method for back-substitution contributions
+                             Eigen::Vector3d g_N) override;  //!< Method for Backsubstitution contributions
     void computeDerivatives(double integTime,
                             Eigen::Vector3d rDDot_BN_N,
                             Eigen::Vector3d omegaDot_BN_B,
@@ -138,10 +138,10 @@ private:
         }
     };
 
-    // Terms needed for back substitution
-    Eigen::Matrix<double, 2, 3> ATheta;     //!< rDDot_BN term for back substitution
-    Eigen::Matrix<double, 2, 3> BTheta;     //!< omegaDot_BN term for back substitution
-    Eigen::Vector2d CTheta{0.0,0.0};                 //!< scalar term for back substitution
+    // Terms needed for Backsubstitution
+    Eigen::Matrix<double, 2, 3> ATheta;     //!< rDDot_BN term for Backsubstitution
+    Eigen::Matrix<double, 2, 3> BTheta;     //!< omegaDot_BN term for Backsubstitution
+    Eigen::Vector2d CTheta{0.0,0.0};                 //!< scalar term for Backsubstitution
 
     // Vector quantities
     Eigen::Vector3d s1Hat_B{1.0,0.0,0.0};            //!< first spinning axis in B frame components

@@ -275,10 +275,10 @@ void DualHingedRigidBodyStateEffector::updateEffectorMassProps(double integTime 
     return;
 }
 
-/*! @brief Update the effector back-substitution contributions.
+/*! @brief Update the effector Backsubstitution contributions.
  *
  * @param[in] integTime [s] Current integration time.
- * @param[in,out] backSubContr Back-substitution contributions.
+ * @param[in,out] backSubContr Backsubstitution contributions.
  * @param[in] sigma_BN Hub attitude relative to the inertial frame.
  * @param[in] omega_BN_B [rad/s] Hub angular velocity expressed in body-frame components.
  * @param[in] g_N [m/s^2] Gravitational acceleration expressed in inertial-frame components.
@@ -342,7 +342,7 @@ void DualHingedRigidBodyStateEffector::updateContributions(double integTime [[ma
     this->omega_PN_S1 = this->dcm_S1P*this->omega_PNLoc_P;
     this->omega_PN_S2 = this->dcm_S2P*this->omega_PNLoc_P;
 
-    // - Define matrices needed for back substitution
+    // - Define matrices needed for Backsubstitution
     this->matrixADHRB(0,0) = this->IPntS1_S1(1,1) + this->mass1*this->d1*this->d1 + this->mass2*this->l1*this->l1 + this->mass2*this->l1*this->d2*this->sHat13_P.transpose()*(this->sHat23_P);
     this->matrixADHRB(0,1) = this->mass2*this->l1*this->d2*this->sHat13_P.transpose()*(this->sHat23_P);
     this->matrixADHRB(1,0) = IPntS2_S2(1,1) + this->mass2*this->d2*this->d2 + this->mass2*this->l1*this->d2*this->sHat23_P.transpose()*this->sHat13_P;

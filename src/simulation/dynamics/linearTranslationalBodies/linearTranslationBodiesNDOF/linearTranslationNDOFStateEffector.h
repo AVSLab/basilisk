@@ -191,10 +191,10 @@ private:
     int N = 0;    //!< number of translating body axes defined in the system
     std::vector<std::shared_ptr<TranslatingBody>> translatingBodyVec; //!< vector of TB effector structs
 
-    // Terms needed for back substitution
-    Eigen::MatrixX3d ARho;    //!< rDDot_BN term for back substitution
-    Eigen::MatrixX3d BRho;    //!< omegaDot_BN term for back substitution
-    Eigen::VectorXd CRho;     //!< scalar term for back substitution
+    // Terms needed for Backsubstitution
+    Eigen::MatrixX3d ARho;    //!< rDDot_BN term for Backsubstitution
+    Eigen::MatrixX3d BRho;    //!< omegaDot_BN term for Backsubstitution
+    Eigen::VectorXd CRho;     //!< scalar term for Backsubstitution
 
     // Hub properties
     Eigen::Vector3d omega_BN_B = Eigen::Vector3d::Zero();  //!< [rad/s] angular velocity of the B frame wrt the N frame in B frame components

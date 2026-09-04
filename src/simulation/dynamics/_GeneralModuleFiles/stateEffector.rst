@@ -4,7 +4,7 @@ Executive Summary
 ``StateEffector`` is the abstract base class for effectors with integrated
 states, including reaction wheels, flexible bodies, prescribed motion, and
 fuel slosh. A dynamic object calls each effector during every integrator stage
-to assemble instantaneous mass properties, back-substitution terms, state
+to assemble instantaneous mass properties, Backsubstitution terms, state
 derivatives, and energy and momentum contributions.
 
 Retained Mass-Property Derivatives and Equation-of-Motion Overrides

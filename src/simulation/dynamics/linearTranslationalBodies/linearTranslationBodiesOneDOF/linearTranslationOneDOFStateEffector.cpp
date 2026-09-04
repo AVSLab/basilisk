@@ -281,10 +281,10 @@ void LinearTranslationOneDOFStateEffector::updateEffectorMassProps(double integT
             + this->rTilde_FcB_B * this->rPrimeTilde_FcB_B);
 }
 
-/*! @brief Update the effector back-substitution contributions.
+/*! @brief Update the effector Backsubstitution contributions.
  *
  * @param[in] integTime [s] Current integration time.
- * @param[in,out] backSubContr Back-substitution contributions.
+ * @param[in,out] backSubContr Backsubstitution contributions.
  * @param[in] sigma_BN Hub attitude relative to the inertial frame.
  * @param[in] omega_BN_B [rad/s] Hub angular velocity expressed in body-frame components.
  * @param[in] g_N [m/s^2] Gravitational acceleration expressed in inertial-frame components.
@@ -306,9 +306,9 @@ void LinearTranslationOneDOFStateEffector::updateContributions(double integTime,
     computeBackSubContributions(backSubContr, F_g, integTime);
 }
 
-/*! @brief Compute the back-substitution contributions.
+/*! @brief Compute the Backsubstitution contributions.
  *
- * @param[in,out] backSubContr Back-substitution contributions.
+ * @param[in,out] backSubContr Backsubstitution contributions.
  * @param[in] F_g Generalized gravitational-force vector.
  * @param[in] integTime [s] Current integration time.
  */
@@ -371,7 +371,7 @@ void LinearTranslationOneDOFStateEffector::computeBackSubContributions(BackSubMa
 
 /*! @brief Add prescribed-motion coupling terms.
  *
- * @param[in,out] backSubContr Back-substitution contributions.
+ * @param[in,out] backSubContr Backsubstitution contributions.
  */
 void LinearTranslationOneDOFStateEffector::addPrescribedMotionCouplingContributions(BackSubMatrices & backSubContr) {
 
