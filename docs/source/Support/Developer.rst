@@ -17,6 +17,7 @@ The following support files help with writing Basilisk modules.
    Developer/bskModuleCheckoutList
    Developer/UnderstandingBasilisk
    Developer/performanceBenchmarks
+   Developer/usageMetrics
    Developer/addSupportData
    Developer/bskReleaseGuide
    Developer/bskSdkReleaseGuide

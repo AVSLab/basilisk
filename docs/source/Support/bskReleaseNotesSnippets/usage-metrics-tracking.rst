@@ -1,0 +1,1 @@
+- Added daily PyPI and GitHub usage-metrics collection with durable CSV history, a generated summary, and a live documentation plot sourced from the ``usage-metrics`` branch.
