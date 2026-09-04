@@ -35,3 +35,11 @@ repos:
           entry: python src/utilities/preCommitTools/checkCommitMessage.py
           language: python
           stages: [commit-msg]
+      -   id: usage-metrics-tests
+          name: Test usage metrics collector
+          entry: >-
+            python -m unittest discover -s .github/scripts/tests
+            -p test_collect_usage_metrics.py
+          language: python
+          files: '^\.github/(scripts|workflows/usage-metrics\.yml)'
+          pass_filenames: false
